@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  width: 1
+  height: 1
+  size: 1
+  length: 1
+  codec: MyString
+
+two:
+  width: 1
+  height: 1
+  size: 1
+  length: 1
+  codec: MyString

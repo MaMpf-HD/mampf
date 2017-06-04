@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170604115005) do
+ActiveRecord::Schema.define(version: 20170604173743) do
 
   create_table "contents", force: :cascade do |t|
     t.integer "course_id"
@@ -36,6 +36,65 @@ ActiveRecord::Schema.define(version: 20170604115005) do
     t.index ["tag_id"], name: "index_disabled_contents_on_tag_id"
   end
 
+  create_table "external_references", force: :cascade do |t|
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "hyperlinks", force: :cascade do |t|
+    t.string "link"
+    t.string "linkable_type"
+    t.integer "linkable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["linkable_type", "linkable_id"], name: "index_hyperlinks_on_linkable_type_and_linkable_id"
+  end
+
+  create_table "learning_assets", force: :cascade do |t|
+    t.string "title"
+    t.string "author"
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "learning_manuscripts", force: :cascade do |t|
+    t.integer "learning_asset_id"
+    t.integer "manuscript_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["learning_asset_id"], name: "index_learning_manuscripts_on_learning_asset_id"
+    t.index ["manuscript_id"], name: "index_learning_manuscripts_on_manuscript_id"
+  end
+
+  create_table "learning_references", force: :cascade do |t|
+    t.integer "learning_asset_id"
+    t.integer "external_reference_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["external_reference_id"], name: "index_learning_references_on_external_reference_id"
+    t.index ["learning_asset_id"], name: "index_learning_references_on_learning_asset_id"
+  end
+
+  create_table "learning_video_files", force: :cascade do |t|
+    t.integer "learning_asset_id"
+    t.integer "video_file_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["learning_asset_id"], name: "index_learning_video_files_on_learning_asset_id"
+    t.index ["video_file_id"], name: "index_learning_video_files_on_video_file_id"
+  end
+
+  create_table "learning_video_streams", force: :cascade do |t|
+    t.integer "learning_asset_id"
+    t.integer "video_stream_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["learning_asset_id"], name: "index_learning_video_streams_on_learning_asset_id"
+    t.index ["video_stream_id"], name: "index_learning_video_streams_on_video_stream_id"
+  end
+
   create_table "lectures", force: :cascade do |t|
     t.string "term"
     t.string "course_id"
@@ -43,6 +102,12 @@ ActiveRecord::Schema.define(version: 20170604115005) do
     t.datetime "updated_at", null: false
     t.integer "teacher_id"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
+  end
+
+  create_table "manuscripts", force: :cascade do |t|
+    t.integer "pages"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tags", force: :cascade do |t|
@@ -54,6 +119,26 @@ ActiveRecord::Schema.define(version: 20170604115005) do
   create_table "teachers", force: :cascade do |t|
     t.string "name"
     t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "video_files", force: :cascade do |t|
+    t.integer "width"
+    t.integer "height"
+    t.integer "size"
+    t.integer "length"
+    t.string "codec"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "video_streams", force: :cascade do |t|
+    t.integer "width"
+    t.integer "height"
+    t.integer "size"
+    t.integer "length"
+    t.string "authoring_software"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
