@@ -1,9 +1,0 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
-
-one:
-  learning_asset: one
-  video_file: one
-
-two:
-  learning_asset: two
-  video_file: two
