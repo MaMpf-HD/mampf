@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170604115005) do
+ActiveRecord::Schema.define(version: 20170609161344) do
 
   create_table "contents", force: :cascade do |t|
     t.integer "course_id"
@@ -36,13 +36,46 @@ ActiveRecord::Schema.define(version: 20170604115005) do
     t.index ["tag_id"], name: "index_disabled_contents_on_tag_id"
   end
 
+  create_table "external_references", force: :cascade do |t|
+    t.text "description"
+  end
+
+  create_table "learning_assets", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "project"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "learning_media", force: :cascade do |t|
+    t.integer "medium_id"
+    t.integer "learning_asset_id"
+    t.index ["learning_asset_id"], name: "index_learning_media_on_learning_asset_id"
+    t.index ["medium_id"], name: "index_learning_media_on_medium_id"
+  end
+
   create_table "lectures", force: :cascade do |t|
     t.string "term"
-    t.string "course_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "teacher_id"
-    t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
+    t.integer "course_id"
+  end
+
+  create_table "manuscripts", force: :cascade do |t|
+    t.integer "pages"
+  end
+
+  create_table "media", force: :cascade do |t|
+    t.string "title"
+    t.string "author"
+    t.text "link"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "actable_type"
+    t.integer "actable_id"
+    t.index ["actable_type", "actable_id"], name: "index_media_on_actable_type_and_actable_id"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -56,6 +89,23 @@ ActiveRecord::Schema.define(version: 20170604115005) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "video_files", force: :cascade do |t|
+    t.integer "width"
+    t.integer "height"
+    t.integer "size", limit: 8
+    t.integer "frames_per_second"
+    t.string "codec"
+    t.integer "length"
+  end
+
+  create_table "video_streams", force: :cascade do |t|
+    t.integer "width"
+    t.integer "height"
+    t.integer "frames_per_second"
+    t.string "authoring_software"
+    t.integer "length"
   end
 
 end
