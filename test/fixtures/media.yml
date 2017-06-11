@@ -1,11 +1,41 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  title: MyString
-  author: MyString
-  link: MyText
+  has_video_stream?: false
+  has_video_file?: false
+  has_video_thumbnail?: false
+  has_manuscript?: false
+  has_external_reference?: false
+  video_stream_link: MyText
+  video_file_link: MyText
+  video_thumbnail_link: MyText
+  manuscript_link: MyText
+  external_reference_link: MyText
+  width: 1
+  height: 1
+  embedded_width: 1
+  embedded_height: 1
+  length: 1
+  video_size: 
+  pages: 1
+  manuscript_size: 1
 
 two:
-  title: MyString
-  author: MyString
-  link: MyText
+  has_video_stream?: false
+  has_video_file?: false
+  has_video_thumbnail?: false
+  has_manuscript?: false
+  has_external_reference?: false
+  video_stream_link: MyText
+  video_file_link: MyText
+  video_thumbnail_link: MyText
+  manuscript_link: MyText
+  external_reference_link: MyText
+  width: 1
+  height: 1
+  embedded_width: 1
+  embedded_height: 1
+  length: 1
+  video_size: 
+  pages: 1
+  manuscript_size: 1

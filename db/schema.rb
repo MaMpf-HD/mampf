@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170609161344) do
+ActiveRecord::Schema.define(version: 20170611164316) do
 
-  create_table "contents", force: :cascade do |t|
+  create_table "course_contents", force: :cascade do |t|
     t.integer "course_id"
     t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_contents_on_course_id"
-    t.index ["tag_id"], name: "index_contents_on_tag_id"
+    t.index ["course_id"], name: "index_course_contents_on_course_id"
+    t.index ["tag_id"], name: "index_course_contents_on_tag_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -36,25 +36,6 @@ ActiveRecord::Schema.define(version: 20170609161344) do
     t.index ["tag_id"], name: "index_disabled_contents_on_tag_id"
   end
 
-  create_table "external_references", force: :cascade do |t|
-    t.text "description"
-  end
-
-  create_table "learning_assets", force: :cascade do |t|
-    t.string "title"
-    t.text "description"
-    t.string "project"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "learning_media", force: :cascade do |t|
-    t.integer "medium_id"
-    t.integer "learning_asset_id"
-    t.index ["learning_asset_id"], name: "index_learning_media_on_learning_asset_id"
-    t.index ["medium_id"], name: "index_learning_media_on_medium_id"
-  end
-
   create_table "lectures", force: :cascade do |t|
     t.string "term"
     t.datetime "created_at", null: false
@@ -63,19 +44,47 @@ ActiveRecord::Schema.define(version: 20170609161344) do
     t.integer "course_id"
   end
 
-  create_table "manuscripts", force: :cascade do |t|
-    t.integer "pages"
+  create_table "lesson_contents", force: :cascade do |t|
+    t.integer "lesson_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lesson_id"], name: "index_lesson_contents_on_lesson_id"
+    t.index ["tag_id"], name: "index_lesson_contents_on_tag_id"
+  end
+
+  create_table "lessons", force: :cascade do |t|
+    t.integer "number"
+    t.date "date"
+    t.integer "lecture_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_lessons_on_lecture_id"
   end
 
   create_table "media", force: :cascade do |t|
-    t.string "title"
-    t.string "author"
-    t.text "link"
+    t.boolean "has_video_stream?"
+    t.boolean "has_video_file?"
+    t.boolean "has_video_thumbnail?"
+    t.boolean "has_manuscript?"
+    t.boolean "has_external_reference?"
+    t.text "video_stream_link"
+    t.text "video_file_link"
+    t.text "video_thumbnail_link"
+    t.text "manuscript_link"
+    t.text "external_reference_link"
+    t.integer "width"
+    t.integer "height"
+    t.integer "embedded_width"
+    t.integer "embedded_height"
+    t.integer "length"
+    t.bigint "video_size"
+    t.integer "pages"
+    t.integer "manuscript_size"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "actable_type"
-    t.integer "actable_id"
-    t.index ["actable_type", "actable_id"], name: "index_media_on_actable_type_and_actable_id"
+    t.string "title"
+    t.string "author"
   end
 
   create_table "tags", force: :cascade do |t|
@@ -89,23 +98,6 @@ ActiveRecord::Schema.define(version: 20170609161344) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "video_files", force: :cascade do |t|
-    t.integer "width"
-    t.integer "height"
-    t.integer "size", limit: 8
-    t.integer "frames_per_second"
-    t.string "codec"
-    t.integer "length"
-  end
-
-  create_table "video_streams", force: :cascade do |t|
-    t.integer "width"
-    t.integer "height"
-    t.integer "frames_per_second"
-    t.string "authoring_software"
-    t.integer "length"
   end
 
 end
