@@ -31,12 +31,21 @@ a2ss17.disabled_contents.create(tag: tensor_product)
 
 la2e01.lesson_contents.create(tag: jordan_normal_form)
 
-medium = Medium.create(title: 'LineareAlgebra.S02E15', author: 'Denis Vogel',
-has_video_stream?: true, has_video_file?: true, has_video_thumbnail?: true,
-has_manuscript?: true, has_external_reference?: false,
-video_file_link: 'https://mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/LineareAlgebra.S02E15.1080p/LineareAlgebra.S02E15.1080p.mp4',
-video_stream_link:'https://mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/LineareAlgebra.S02E15.1080p/LineareAlgebra.S02E15.1080p.html',
-manuscript_link: 'https://mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/pdf/LineareAlgebra.S02E15.pdf',
-width: 1620, height: 1080, length: 5388,
-embedded_width: 1280, embedded_height: 720,
-pages: 4)
+medium = Medium.create do |m|
+  m.title: 'LineareAlgebra.S02E15',
+  m.author: 'Denis Vogel',
+  m.video_file_link: 'https://mampf.mathi.uni-heidelberg.de/ss17/'
+    + 'Lineare_Algebra_2/' + 'LineareAlgebra.S02E15.1080p/'
+    + 'LineareAlgebra.S02E15.1080p.mp4',
+  m.video_stream_link: 'https://mampf.mathi.uni-heidelberg.de/ss17/'
+    + 'Lineare_Algebra_2/LineareAlgebra.S02E15.1080p/'
+    + 'LineareAlgebra.S02E15.1080p.html',
+  m.manuscript_link: 'https://mampf.mathi.uni-heidelberg.de/ss17/'
+    + 'Lineare_Algebra_2/pdf/LineareAlgebra.S02E15.pdf',
+  m.width: 1620,
+  m.height: 1080,
+  m.length: 5388,
+  m.embedded_width: 1280,
+  m.embedded_height: 720,
+  m.pages: 4
+end 
