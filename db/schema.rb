@@ -10,7 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170611164316) do
+ActiveRecord::Schema.define(version: 20170615154258) do
+
+  create_table "asset_media", force: :cascade do |t|
+    t.integer "learning_asset_id"
+    t.integer "medium_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["learning_asset_id"], name: "index_asset_media_on_learning_asset_id"
+    t.index ["medium_id"], name: "index_asset_media_on_medium_id"
+  end
+
+  create_table "asset_tags", force: :cascade do |t|
+    t.integer "learning_asset_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["learning_asset_id"], name: "index_asset_tags_on_learning_asset_id"
+    t.index ["tag_id"], name: "index_asset_tags_on_tag_id"
+  end
 
   create_table "course_contents", force: :cascade do |t|
     t.integer "course_id"
@@ -34,6 +52,34 @@ ActiveRecord::Schema.define(version: 20170611164316) do
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_disabled_contents_on_lecture_id"
     t.index ["tag_id"], name: "index_disabled_contents_on_tag_id"
+  end
+
+  create_table "erdbeere_assets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "kaviar_assets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "keks_assets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "learning_assets", force: :cascade do |t|
+    t.text "description"
+    t.string "type"
+    t.integer "course_id"
+    t.integer "lecture_id"
+    t.integer "lesson_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_learning_assets_on_course_id"
+    t.index ["lecture_id"], name: "index_learning_assets_on_lecture_id"
+    t.index ["lesson_id"], name: "index_learning_assets_on_lesson_id"
   end
 
   create_table "lectures", force: :cascade do |t|
@@ -63,11 +109,6 @@ ActiveRecord::Schema.define(version: 20170611164316) do
   end
 
   create_table "media", force: :cascade do |t|
-    t.boolean "has_video_stream?"
-    t.boolean "has_video_file?"
-    t.boolean "has_video_thumbnail?"
-    t.boolean "has_manuscript?"
-    t.boolean "has_external_reference?"
     t.text "video_stream_link"
     t.text "video_file_link"
     t.text "video_thumbnail_link"
@@ -78,13 +119,33 @@ ActiveRecord::Schema.define(version: 20170611164316) do
     t.integer "embedded_width"
     t.integer "embedded_height"
     t.integer "length"
-    t.bigint "video_size"
+    t.integer "video_size", limit: 8
     t.integer "pages"
     t.integer "manuscript_size"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "title"
     t.string "author"
+  end
+
+  create_table "relations", force: :cascade do |t|
+    t.integer "tag_id"
+    t.integer "related_tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["related_tag_id"], name: "index_relations_on_related_tag_id"
+    t.index ["tag_id", "related_tag_id"], name: "index_relations_on_tag_id_and_related_tag_id", unique: true
+    t.index ["tag_id"], name: "index_relations_on_tag_id"
+  end
+
+  create_table "reste_assets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sesam_assets", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "tags", force: :cascade do |t|

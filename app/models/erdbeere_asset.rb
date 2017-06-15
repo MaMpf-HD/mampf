@@ -1,0 +1,2 @@
+class ErdbeereAsset < LearningAsset
+end

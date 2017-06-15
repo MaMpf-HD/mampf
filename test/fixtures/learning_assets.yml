@@ -1,11 +1,15 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  title: MyString
   description: MyText
-  project: MyString
+  type: 
+  course: one
+  lecture: one
+  lesson: one
 
 two:
-  title: MyString
   description: MyText
-  project: MyString
+  type: 
+  course: two
+  lecture: two
+  lesson: two

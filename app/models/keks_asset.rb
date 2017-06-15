@@ -1,0 +1,2 @@
+class KeksAsset < LearningAsset
+end
