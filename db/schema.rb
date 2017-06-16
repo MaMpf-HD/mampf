@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170615154258) do
+ActiveRecord::Schema.define(version: 20170616081941) do
 
   create_table "asset_media", force: :cascade do |t|
     t.integer "learning_asset_id"
@@ -83,11 +83,12 @@ ActiveRecord::Schema.define(version: 20170615154258) do
   end
 
   create_table "lectures", force: :cascade do |t|
-    t.string "term"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "teacher_id"
     t.integer "course_id"
+    t.integer "term_id"
+    t.index ["term_id"], name: "index_lectures_on_term_id"
   end
 
   create_table "lesson_contents", force: :cascade do |t|
@@ -148,6 +149,11 @@ ActiveRecord::Schema.define(version: 20170615154258) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "summer_terms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tags", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
@@ -157,6 +163,18 @@ ActiveRecord::Schema.define(version: 20170615154258) do
   create_table "teachers", force: :cascade do |t|
     t.string "name"
     t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "terms", force: :cascade do |t|
+    t.integer "year"
+    t.string "type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "winter_terms", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

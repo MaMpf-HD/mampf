@@ -9,6 +9,9 @@
 denis = Teacher.create(name: 'Denis Vogel')
 malte = Teacher.create(name: 'Malte Witte')
 
+ss16 = SummerTerm.create(year: 2016)
+ss17 = SummerTerm.create(year: 2017)
+
 tensor_product = Tag.create(title: 'Tensorprodukt von Moduln')
 jordan_normal_form = Tag.create(title: 'Jordansche Normalform')
 abelian_categories = Tag.create(title: 'Abelsche Kategorien')
@@ -25,20 +28,20 @@ lineare_algebra2 = Course.create do |c|
 end
 
 a2_ss16 = Lecture.create do |l|
-  l.term = 'SS 2016'
+  l.term = ss16
   l.course = algebra2
   l.teacher = denis
 end
 
 a2_ss17 = Lecture.create do |l|
-  l.term = 'SS 2017'
+  l.term = ss17
   l.course = algebra2
   l.teacher = malte
   l.disabled_tags = [tensor_product]
 end
 
 la2_ss17 = Lecture.create do |l|
-  l.term = 'SS 2017'
+  l.term = ss17
   l.course = lineare_algebra2
   l.teacher = denis
 end

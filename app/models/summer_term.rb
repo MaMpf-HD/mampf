@@ -1,0 +1,2 @@
+class SummerTerm < Term
+end
