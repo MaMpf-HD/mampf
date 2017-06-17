@@ -12,8 +12,7 @@ class Tag < ApplicationRecord
   has_many :related_tags, through: :relations, dependent: :destroy
 
   def neighbours
-    related_ids = Relation.where(tag_id: id).map(&:related_tag_id)
-    inverse_ids = Relation.where(related_tag_id: id).map(&:tag_id)
-    Tag.where(id: related_ids).or(Tag.where(id: inverse_ids))
+    Tag.where(id: Relation.select(:related_tag_id).where(tag_id: id))
+       .or(Tag.where(id: Relation.select(:tag_id).where(related_tag_id: id)))
   end
 end
