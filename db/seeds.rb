@@ -6,8 +6,8 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-denis = Teacher.create(name: 'Denis Vogel')
-malte = Teacher.create(name: 'Malte Witte')
+denis = Teacher.create(name: 'Denis Vogel', email: 'vogel@mathi.uni-heidelberg.de')
+malte = Teacher.create(name: 'Malte Witte', email: 'witte@mathi.uni-heidelberg.de')
 
 ss16 = SummerTerm.create(year: 2016)
 ss17 = SummerTerm.create(year: 2017)
