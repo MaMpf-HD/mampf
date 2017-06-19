@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Term do
+RSpec.describe Term, type: :model do
   it 'has a valid factory' do
     expect(FactoryGirl.build(:term)).to be_valid
   end

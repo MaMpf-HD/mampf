@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Teacher do
+RSpec.describe Teacher, type: :model do
   it 'has a valid factory' do
     expect(FactoryGirl.build(:teacher)).to be_valid
   end

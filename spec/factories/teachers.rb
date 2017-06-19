@@ -1,8 +1,6 @@
-require 'faker'
-
 FactoryGirl.define do
   factory :teacher do
-    name { Faker::Name.name }
-    email { Faker::Internet.email }
+    sequence(:name) { |n| "Test Teacher #{n}" }
+    sequence(:email) { |n| "teacher#{n}@example.com" }
   end
 end

@@ -1,6 +1,9 @@
 FactoryGirl.define do
   factory :term do
-    type ["WinterTerm", "SummerTerm"].sample
-    year (2010..2030).to_a.sample
+    type 'WinterTerm'
+    sequence(:year) { |n| 2000+n }
+    trait :summer do
+      type 'SummerTerm'
+    end
   end
 end

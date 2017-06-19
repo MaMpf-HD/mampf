@@ -1,13 +1,9 @@
 class Relation < ApplicationRecord
   belongs_to :tag
-  belongs_to :related_tag, class_name: "Tag"
+  belongs_to :related_tag, class_name: 'Tag'
 
-  # after_create :create_inverse, unless: :has_inverse?
+  before_validation :cancel_saving_duplicate, if: :has_inverse?
   after_destroy :destroy_inverses, if: :has_inverse?
-
-  # def create_inverse
-  #   self.class.create(inverse_relation_options)
-  # end
 
   def destroy_inverses
     inverses.destroy_all
@@ -19,6 +15,11 @@ class Relation < ApplicationRecord
 
   def inverses
     self.class.where(inverse_relation_options)
+  end
+
+  def cancel_saving_duplicate
+    errors.add(:base, 'inverse relation already exists')
+    throw :abort
   end
 
   def inverse_relation_options
