@@ -6,29 +6,24 @@ RSpec.describe Teacher, type: :model do
   end
   it 'is invalid without a name' do
     teacher = FactoryGirl.build(:teacher, name: nil)
-    teacher.valid?
-    expect(teacher.errors[:name]).to include("can't be blank")
+    expect(teacher).to be_invalid
   end
   it 'is invalid without an email' do
     teacher = FactoryGirl.build(:teacher, email: nil)
-    teacher.valid?
-    expect(teacher.errors[:email]).to include("can't be blank")
+    expect(teacher).to be_invalid
   end
   it 'is invalid without a nonsense email' do
     teacher = FactoryGirl.build(:teacher, email: 'letstryit')
-    teacher.valid?
-    expect(teacher.errors[:email]).to include("is invalid")
+    expect(teacher).to be_invalid
   end
   it 'is invalid with a duplicate name' do
     FactoryGirl.create(:teacher, name: 'John Doe')
     teacher = FactoryGirl.build(:teacher, name: 'John Doe')
-    teacher.valid?
-    expect(teacher.errors[:name]).to include("has already been taken")
+    expect(teacher).to be_invalid
   end
   it 'is invalid with a duplicate email' do
     FactoryGirl.create(:teacher, email: 'john@doe.com')
     teacher = FactoryGirl.build(:teacher, email: 'john@doe.com')
-    teacher.valid?
-    expect(teacher.errors[:email]).to include("has already been taken")
+    expect(teacher).to be_invalid
   end
 end
