@@ -4,6 +4,9 @@ RSpec.describe Lecture, type: :model do
   it 'has a valid factory' do
     expect(FactoryGirl.build(:lecture)).to be_valid
   end
+  it 'has a valid factory for including tags' do
+    expect(FactoryGirl.build(:lecture, :with_disabled_tags)).to be_valid
+  end
   it 'is invalid without a term' do
     lecture = FactoryGirl.build(:lecture, term: nil)
     expect(lecture).to be_invalid

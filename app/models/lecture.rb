@@ -6,6 +6,6 @@ class Lecture < ApplicationRecord
   has_many :disabled_tags, through: :disabled_contents, source: :tag
   has_many :lessons
   has_many :learning_assets
-  validates :course, uniqueness: { scope: [:teacher_id,:term_id],
+  validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 end
