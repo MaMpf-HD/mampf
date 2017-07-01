@@ -1,3 +1,5 @@
+require 'faker'
+
 FactoryGirl.define do
   factory :teacher do
     name { Faker::Name.name }

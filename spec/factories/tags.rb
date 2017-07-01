@@ -1,3 +1,5 @@
+require 'faker'
+
 FactoryGirl.define do
   factory :tag, aliases: [:related_tag] do
     title { Faker::Company.bs }

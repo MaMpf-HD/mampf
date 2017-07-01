@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170616081941) do
+ActiveRecord::Schema.define(version: 20170701162205) do
 
   create_table "asset_media", force: :cascade do |t|
     t.integer "learning_asset_id"
@@ -120,13 +120,13 @@ ActiveRecord::Schema.define(version: 20170616081941) do
     t.integer "embedded_width"
     t.integer "embedded_height"
     t.integer "length"
-    t.integer "video_size", limit: 8
     t.integer "pages"
-    t.integer "manuscript_size"
+    t.string "manuscript_size"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "title"
     t.string "author"
+    t.string "video_size"
   end
 
   create_table "relations", force: :cascade do |t|
