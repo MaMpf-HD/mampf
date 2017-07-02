@@ -37,5 +37,6 @@ FactoryGirl.define do
     video_size Random.rand(1..1000.0).round(2).to_s + ' MiB'
     pages Random.rand(1..100)
     manuscript_size Random.rand(1..1000.0).round(2).to_s + ' KiB'
+    authoring_software 'Camtasia ' + [*8..9].sample.to_s
   end
 end
