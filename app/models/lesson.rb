@@ -3,7 +3,7 @@ class Lesson < ApplicationRecord
   belongs_to :lecture
   has_many :lesson_contents
   has_many :tags, through: :lesson_contents
-  has_many :learning_assets
+  has_many :learning_assets, as: :teachable
   validates :date, presence: true
   validates :number, presence: true,
                      numericality: { only_integer: true,
@@ -24,6 +24,11 @@ class Lesson < ApplicationRecord
   def term
     return unless lecture.present?
     lecture.term
+  end
+
+  def course
+    return unless lecture.present?
+    lecture.course
   end
 
   def valid_date_for_term?

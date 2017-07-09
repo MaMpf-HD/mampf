@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170702171211) do
+ActiveRecord::Schema.define(version: 20170709141622) do
 
   create_table "asset_media", force: :cascade do |t|
     t.integer "learning_asset_id"
@@ -72,14 +72,11 @@ ActiveRecord::Schema.define(version: 20170702171211) do
   create_table "learning_assets", force: :cascade do |t|
     t.text "description"
     t.string "type"
-    t.integer "course_id"
-    t.integer "lecture_id"
-    t.integer "lesson_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_learning_assets_on_course_id"
-    t.index ["lecture_id"], name: "index_learning_assets_on_lecture_id"
-    t.index ["lesson_id"], name: "index_learning_assets_on_lesson_id"
+    t.string "teachable_type"
+    t.integer "teachable_id"
+    t.index ["teachable_type", "teachable_id"], name: "index_learning_assets_on_teachable_type_and_teachable_id"
   end
 
   create_table "lectures", force: :cascade do |t|

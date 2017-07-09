@@ -74,9 +74,7 @@ end
 
 la2_ss17_e01_kaviar = KaviarAsset.create do |l|
   l.description = 'KaviarLA2'
-  l.course = lineare_algebra2
-  l.lecture = la2_ss17
-  l.lesson =  la2_ss17_e01
+  l.teachable =  la2_ss17_e01
   l.media = [la2_ss17_e01_recording]
   l.tags = [jordan_normal_form]
 end
