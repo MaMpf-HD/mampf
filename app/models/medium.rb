@@ -11,25 +11,25 @@ class Medium < ApplicationRecord
                                     less_than_or_equal_to: 8192 },
                     if: :video_content?
   validates :height, presence: true,
-                    numericality: { only_integer: true,
-                                    greater_than_or_equal_to: 100,
-                                    less_than_or_equal_to: 4320 },
-                    if: :video_content?
+                     numericality: { only_integer: true,
+                                     greater_than_or_equal_to: 100,
+                                     less_than_or_equal_to: 4320 },
+                     if: :video_content?
   validates :embedded_width, presence: true,
-                    numericality: { only_integer: true,
-                                    greater_than_or_equal_to: 100,
-                                    less_than_or_equal_to: 8192 },
-                    if: :video_content?
+                             numericality: { only_integer: true,
+                                             greater_than_or_equal_to: 100,
+                                             less_than_or_equal_to: 8192 },
+                             if: :video_content?
   validates :embedded_height, presence: true,
-                    numericality: { only_integer: true,
-                                    greater_than_or_equal_to: 100,
-                                    less_than_or_equal_to: 4320 },
-                    if: :video_content?
+                              numericality: { only_integer: true,
+                                              greater_than_or_equal_to: 100,
+                                              less_than_or_equal_to: 4320 },
+                              if: :video_content?
 
   validates :length, presence: true,
                      numericality: { only_integer: true,
                                      greater_than_or_equal_to: 1,
-                                     less_than_or_equal_to: 36000 },
+                                     less_than_or_equal_to: 36_000 },
                      if: :video_content?
   validates :video_size, presence: true,
                          format:
@@ -37,8 +37,8 @@ class Medium < ApplicationRecord
                          if: :video_file_content?
   validates :pages, presence: true,
                     numericality: { only_integer: true,
-                                     greater_than_or_equal_to: 1,
-                                     less_than_or_equal_to: 2000 },
+                                    greater_than_or_equal_to: 1,
+                                    less_than_or_equal_to: 2000 },
                     if: :manuscript_content?
   validates :manuscript_size, presence: true,
                               format:

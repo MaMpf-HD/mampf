@@ -37,4 +37,32 @@ RSpec.describe Term, type: :model do
     term = FactoryGirl.build(:term, type: 'SummerTerm', year: 2017)
     expect(term).to be_invalid
   end
+  describe 'begin_date returns begin date for term' do
+    context 'if the term is a winter term' do
+      it 'returns the correct begin date' do
+        term = FactoryGirl.build(:term, type: 'WinterTerm', year: 2017)
+        expect(term.begin_date).to eq Date.new(2017, 10, 1)
+      end
+    end
+    context 'if the term is a summer term' do
+      it 'returns the correct begin date' do
+        term = FactoryGirl.build(:term, type: 'SummerTerm', year: 2017)
+        expect(term.begin_date).to eq Date.new(2017, 4, 1)
+      end
+    end
+  end
+  describe 'end_date returns end_date for term' do
+    context 'if the term is a winter term' do
+      it 'returns the correct end date' do
+        term = FactoryGirl.build(:term, type: 'WinterTerm', year: 2017)
+        expect(term.end_date).to eq Date.new(2018, 3, 31)
+      end
+    end
+    context 'if the term is a summer term' do
+      it 'returns the correct end date' do
+        term = FactoryGirl.build(:term, type: 'SummerTerm', year: 2017)
+        expect(term.end_date).to eq Date.new(2017, 9, 30)
+      end
+    end
+  end
 end

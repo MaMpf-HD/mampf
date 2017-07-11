@@ -1,3 +1,4 @@
+# Tag class
 class Tag < ApplicationRecord
   alias_attribute :disabled_lectures, :lectures
   has_many :course_contents
@@ -11,7 +12,7 @@ class Tag < ApplicationRecord
   has_many :relations, dependent: :destroy
   has_many :related_tags, through: :relations, dependent: :destroy
   validates :title, presence: true, uniqueness: true
-  
+
   def neighbours
     Tag.where(id: Relation.select(:related_tag_id).where(tag_id: id))
        .or(Tag.where(id: Relation.select(:tag_id).where(related_tag_id: id)))

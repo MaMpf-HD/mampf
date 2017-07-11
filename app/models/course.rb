@@ -1,3 +1,4 @@
+# Course class
 class Course < ApplicationRecord
   has_many :lectures
   has_many :course_contents
@@ -8,6 +9,7 @@ class Course < ApplicationRecord
   def learning_assets_in_lectures
     LearningAsset.where(teachable: lectures)
   end
+
   def learning_assets_in_lessons
     lessons = Lesson.where(lecture: lectures)
     LearningAsset.where(teachable: lessons)

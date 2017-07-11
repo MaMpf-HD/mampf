@@ -12,8 +12,9 @@ class Lecture < ApplicationRecord
   def learning_assets_in_lessons
     LearningAsset.where(teachable: lessons)
   end
+
   def tags
-    disabled_ids =  disabled_tags.map(&:id)
+    disabled_ids = disabled_tags.map(&:id)
     course.tags.where.not(id: disabled_ids)
   end
 end
