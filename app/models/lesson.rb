@@ -14,13 +14,6 @@ class Lesson < ApplicationRecord
   validate :valid_date?
   validate :valid_date_for_term?
 
-  def valid_date?
-    return unless date.present?
-    return if date.is_a?(Date)
-    errors.add(:date, 'not a valid date')
-    false
-  end
-
   def term
     return unless lecture.present?
     lecture.term
@@ -31,11 +24,20 @@ class Lesson < ApplicationRecord
     lecture.course
   end
 
+  private
+
   def valid_date_for_term?
     return unless date.present? && term.present?
     return unless valid_date?
     return true if date.between?(term.begin_date, term.end_date)
     errors.add(:date, 'not a valid date for this term')
+    false
+  end
+
+  def valid_date?
+    return unless date.present?
+    return if date.is_a?(Date)
+    errors.add(:date, 'not a valid date')
     false
   end
 end

@@ -45,16 +45,6 @@ class Medium < ApplicationRecord
                                 { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
                               if: :manuscript_content?
 
-
-  def nonempty_content?
-    return true if video_stream_link.present? ||
-                   video_file_link.present? ||
-                   manuscript_link.present? ||
-                   external_reference_link.present?
-    errors.add(:base, 'empty content')
-    false
-  end
-
   def video_content?
     video_stream_link.present? || video_file_link.present?
   end
@@ -70,4 +60,16 @@ class Medium < ApplicationRecord
   def manuscript_content?
     manuscript_link.present?
   end
+
+  private
+
+  def nonempty_content?
+    return true if video_stream_link.present? ||
+                   video_file_link.present? ||
+                   manuscript_link.present? ||
+                   external_reference_link.present?
+    errors.add(:base, 'empty content')
+    false
+  end
+
 end

@@ -8,6 +8,8 @@ class Relation < ApplicationRecord
   validate :no_self_relations_allowed
   after_destroy :destroy_inverses, if: :has_inverse?
 
+  private
+
   def no_inverses_allowed
     errors.add(:base, 'inverse relation already exists') if has_inverse?
   end

@@ -34,6 +34,7 @@ gem 'active_record-acts_as'
 gem 'filesize'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
+gem 'rgl'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
