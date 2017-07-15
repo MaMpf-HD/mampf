@@ -17,13 +17,13 @@ class Tag < ApplicationRecord
   validates :title, presence: true, uniqueness: true
 
   def self.to_weighted_graph
-    tag_relations = all.map { |t| [t.id, t.related_tags.map(&:id)] }
+    tag_relations = all.map { |t| [t.id, t.related_tags.map(&:id)] }.to_h
     edge_weights = {}
     graph = RGL::AdjacencyGraph.new
     ids.each { |t| graph.add_vertex(t) }
-    tag_relations.each do |rel|
-      rel[1].each do |neighbour|
-        edge = [rel[0], neighbour]
+    tag_relations.each do |id, related|
+      related.each do |neighbour|
+        edge = [id, neighbour]
         graph.add_edges(edge)
         edge_weights.store(edge, 1)
       end
@@ -44,13 +44,13 @@ class Tag < ApplicationRecord
     graph = g[:graph]
     weight_map = g[:weight_map]
     paths = graph.dijkstra_shortest_paths(weight_map, tag.id)
-    paths.to_a.map { |p| [p[0], p[1].nil? ? nil : p[1].length - 1] }
+    paths.transform_values! { |v| v.nil? ? nil : v.length - 1 }
+    paths.transform_keys! { |k| Tag.find(k) }
   end
 
   def tags_with_given_distance(distance)
     distance_list = self.class.shortest_distances(self)
-    ids = distance_list.find_all { |d| d[1] == distance }.map { |t| t[0] }
-    self.class.find(ids)
+    distance_list.select { |_k, v| v == distance }.keys
   end
 
   def neighbours
