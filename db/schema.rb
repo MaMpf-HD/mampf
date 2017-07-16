@@ -10,7 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170709141622) do
+ActiveRecord::Schema.define(version: 20170716141100) do
+
+  create_table "additional_contents", force: :cascade do |t|
+    t.integer "lecture_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_additional_contents_on_lecture_id"
+    t.index ["tag_id"], name: "index_additional_contents_on_tag_id"
+  end
 
   create_table "asset_media", force: :cascade do |t|
     t.integer "learning_asset_id"

@@ -28,4 +28,17 @@ RSpec.describe Lecture, type: :model do
                                           term: term)
     expect(lecture).to be_invalid
   end
+  describe '#tags' do
+    it 'returns the correct tags for the lecture' do
+      tags = create_list(:tag,3)
+      course = FactoryGirl.create(:course, tags: tags)
+      additional_tags = create_list(:tag,2)
+      disabled_tags = [tags[0], tags[1]]
+      lecture = FactoryGirl.create(:lecture, course: course,
+                                            additional_tags: additional_tags,
+                                            disabled_tags: disabled_tags)
+      expect(lecture.tags).to match_array([tags[2],additional_tags[0],
+                                                   additional_tags[1]])
+    end
+  end
 end

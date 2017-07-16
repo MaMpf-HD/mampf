@@ -15,6 +15,7 @@ ss17 = SummerTerm.create(year: 2017)
 tensor_product = Tag.create(title: 'Tensorprodukt von Moduln')
 jordan_normal_form = Tag.create(title: 'Jordansche Normalform')
 abelian_categories = Tag.create(title: 'Abelsche Kategorien')
+weierstrass_normal_form = Tag.create(title: 'Weierstrass-Normalform')
 jordan_normal_form.related_tags = [tensor_product, abelian_categories]
 
 algebra2 = Course.create do |c|
@@ -44,6 +45,8 @@ la2_ss17 = Lecture.create do |l|
   l.term = ss17
   l.course = lineare_algebra2
   l.teacher = denis
+  l.additional_tags = [weierstrass_normal_form]
+    l.disabled_tags = [tensor_product]
 end
 
 la2_ss17_e01 = Lesson.create do |l|
