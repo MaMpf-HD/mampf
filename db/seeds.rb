@@ -12,10 +12,10 @@ malte = Teacher.create(name: 'Malte Witte', email: 'witte@mathi.uni-heidelberg.d
 ss16 = SummerTerm.create(year: 2016)
 ss17 = SummerTerm.create(year: 2017)
 
-tensor_product = Tag.create(title: 'Tensorprodukt von Moduln')
-jordan_normal_form = Tag.create(title: 'Jordansche Normalform')
-abelian_categories = Tag.create(title: 'Abelsche Kategorien')
-weierstrass_normal_form = Tag.create(title: 'Weierstrass-Normalform')
+tensor_product = Tag.create(title: 'TP von Moduln')
+jordan_normal_form = Tag.create(title: 'J Normalform')
+abelian_categories = Tag.create(title: 'Ab Kategorien')
+weierstrass_normal_form = Tag.create(title: 'W Normalform')
 jordan_normal_form.related_tags = [tensor_product, abelian_categories]
 
 algebra2 = Course.create do |c|
