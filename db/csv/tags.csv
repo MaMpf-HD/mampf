@@ -1,0 +1,94 @@
+title,related_tags,courses
+Eigenwert,Charakterisierungen von Diagonalisierbarkeit&Eigenraum&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts,Lineare Algebra 1
+Charakterisierungen von Diagonalisierbarkeit,Minimalpolynom eines Endomorphismus&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts&Jordansche Normalform,Lineare Algebra 1
+Eigenraum,,Lineare Algebra 1
+charakteristisches Polynom eines Endomorphismus,,Lineare Algebra 1
+algebraische Vielfachheit eines Eigenwerts,,Lineare Algebra 1
+Satz von Cayley-Hamilton,charakteristisches Polynom eines Endomorphismus&Minimalpolynom eines Endomorphismus,Lineare Algebra 1
+Minimalpolynom eines Endomorphismus,,Lineare Algebra 1
+Dualraum,Linearform&duale Basis&Annullator&duale Abbildung&Bidualraum,Lineare Algebra 1
+Linearform,,Lineare Algebra 1
+duale Basis,,Lineare Algebra 1
+Annullator,,Lineare Algebra 1
+duale Abbildung,,Lineare Algebra 1
+Bidualraum,,Lineare Algebra 1
+Bilinearform,Darstellungsmatrix einer Bilinearform&nicht-ausgeartete Bilinearform&perfekte Bilinearform&symmetrische Bilinearform&antisymmetrische Bilinearform&alternierende Bilinearform&quadratische Form,Lineare Algebra 2
+Darstellungsmatrix einer Bilinearform,,Lineare Algebra 2
+Transformationsformel für die Darstellungsmatrix einer Bilinearform,Darstellungsmatrix einer Bilinearform,Lineare Algebra 2
+nicht-ausgeartete Bilinearform,,Lineare Algebra 2
+perfekte Bilinearform,,Lineare Algebra 2
+symmetrische Bilinearform,hermitesche Form,Lineare Algebra 2
+antisymmetrische Bilinearform,,Lineare Algebra 2
+alternierende Bilinearform,,Lineare Algebra 2
+quadratische Form,quadratischer Raum,Lineare Algebra 2
+quadratischer Raum,Homomorphismus quadratischer Räume&Existenz von Orthogonalbasen quadratischer Räume&Klassifikation quadratischer Räume über C und R,Lineare Algebra 2
+Homomorphismus quadratischer Räume,,Lineare Algebra 2
+Existenz von Orthogonalbasen quadratischer Räume,,Lineare Algebra 2
+Klassifikation quadratischer Räume über C und R,Sylvesterscher Trägheitssatz,Lineare Algebra 2
+Sylvesterscher Trägheitssatz,Eigenwert,Lineare Algebra 2
+Skalarprodukt,Bilinearform&Euklidischer Raum&nicht-ausgeartete Bilinearform&Norm&orthogonales Komplement&Orthogonalprojektion&Gram-Schmidt-Verfahren&positiv definite Matrix&Cauchy-Schwarz-Ungleichung,Lineare Algebra 2
+Euklidischer Raum,,Lineare Algebra 2
+Norm,Cauchy-Schwarz-Ungleichung,Lineare Algebra 2
+orthogonales Komplement,,Lineare Algebra 2
+Orthogonalprojektion,Gram-Schmidt-Verfahren,Lineare Algebra 2
+Gram-Schmidt-Verfahren,,Lineare Algebra 2
+positiv definite Matrix,,Lineare Algebra 2
+Cauchy-Schwarz-Ungleichung,,Lineare Algebra 2
+Eigenschaften der Norm,Cauchy-Schwarz-Ungleichung,Lineare Algebra 2
+orthogonale Abbildungen und Matrizen,Euklidischer Raum&orthogonale und spezielle orthogonale Gruppe&O(2),Lineare Algebra 2
+orthogonale und spezielle orthogonale Gruppe,,Lineare Algebra 2
+O(2),,Lineare Algebra 2
+adjungierte Abbildung,selbstadjungierter Endomorphismus,Lineare Algebra 2
+selbstadjungierter Endomorphismus,Spektralsatz für selbstadjungierte Endomorphismen,Lineare Algebra 2
+Spektralsatz für selbstadjungierte Endomorphismen,Hauptachsentransformation&Charakterisierungen von Diagonalisierbarkeit&Eigenwert,Lineare Algebra 2
+Hauptachsentransformation,,Lineare Algebra 2
+Sesquilinearform,Bilinearform&hermitesche Form,Lineare Algebra 2
+hermitesche Form,unitärer Raum,Lineare Algebra 2
+unitärer Raum,Euklidischer Raum,Lineare Algebra 2
+normaler Endomorphismus,,Lineare Algebra 2
+Spektralsatz für normale Endomorphismen,normaler Endomorphismus&Spektralsatz für selbstadjungierte Endomorphismen&Charakterisierungen von Diagonalisierbarkeit&Eigenwert,Lineare Algebra 2
+Ring,Ringhomomorphismus&Ideal&Restklasse&Faktorring&Nullteiler&Einheit&nullteilerfreier Ring&Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma,Lineare Algebra 2
+Ringhomomorphismus,,Lineare Algebra 2
+Ideal,,Lineare Algebra 2
+Restklasse,,Lineare Algebra 2
+Faktorring,Restklasse,Lineare Algebra 2
+Nullteiler,,Lineare Algebra 2
+Einheit,,Lineare Algebra 2
+nullteilerfreier Ring,Nullteiler&Teiler&größter gemeinsamer Teiler&irreduzibles Element&Primelement&faktorieller Ring,Lineare Algebra 2
+Teiler,,Lineare Algebra 2
+größter gemeinsamer Teiler,,Lineare Algebra 2
+irreduzibles Element,,Lineare Algebra 2
+Primelement,,Lineare Algebra 2
+faktorieller Ring,,Lineare Algebra 2
+HIR sind faktoriell,faktorieller Ring,Lineare Algebra 2
+Euklidischer Ring,Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen&Elementarteilersatz,Lineare Algebra 2
+Euklidische Ringe sind faktoriell,faktorieller Ring,Lineare Algebra 2
+Euklidischer Algorithmus,,Lineare Algebra 2
+Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen,,Lineare Algebra 2
+Äquivalenz und Ähnlichkeit von Matrizen über Ringen,Satz von Frobenius,Lineare Algebra 2
+Fittingideale,,Lineare Algebra 2
+Fittings Lemma,,Lineare Algebra 2
+Elementarteilersatz,Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen&Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz&Begleitmatrix&Frobenius-Normalform&Weierstrass-Normalform&Jordanmatrix&Jordansche Normalform,Lineare Algebra 2
+Normalformen von Endomorphismen,charakteristische Matrix eines Endomorphismus&Satz von Frobenius&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz,Lineare Algebra 2
+charakteristische Matrix eines Endomorphismus,Satz von Frobenius,Lineare Algebra 2
+Satz von Frobenius,Invarianten- und Determinantenteiler einer Matrix,Lineare Algebra 2
+Invarianten- und Determinantenteiler einer Matrix,Invariantenteilersatz,Lineare Algebra 2
+Invariantenteilersatz,,Lineare Algebra 2
+Begleitmatrix,,Lineare Algebra 2
+Frobenius-Normalform,Begleitmatrix&Invarianten- und Determinantenteiler einer Matrix&Weierstrass-Normalform,Lineare Algebra 2
+Weierstrass-Normalform,Invarianten- und Determinantenteiler einer Matrix&Jordansche Normalform,Lineare Algebra 2
+Jordanmatrix,Jordansche Normalform,Lineare Algebra 2
+Jordansche Normalform,,Lineare Algebra 2
+Modul,Modulhomomorphismus&Untermodul&Faktormodul&lineare Unabhängigkeit in Moduln&Basis eines freien Moduls&freier Modul&Torsionsuntermodul&Länge eines Moduls&Länge einer direkten Summe von Moduln&Rang eines freien Moduls,Lineare Algebra 2
+Modulhomomorphismus,,Lineare Algebra 2
+Untermodul,,Lineare Algebra 2
+Faktormodul,,Lineare Algebra 2
+Erzeugendensystem eines Moduls,,Lineare Algebra 2
+lineare Unabhängigkeit in Moduln,,Lineare Algebra 2
+Basis eines freien Moduls,,Lineare Algebra 2
+freier Modul,Basis eines freien Moduls&Rang eines freien Moduls,Lineare Algebra 2
+Torsionsuntermodul,,Lineare Algebra 2
+Länge eines Moduls,,Lineare Algebra 2
+Länge einer direkten Summe von Moduln,Länge eines Moduls,Lineare Algebra 2
+Moduln über Hauptidealringen,Rang eines endlich freien Moduls über einem HIR,Lineare Algebra 2
+Rang eines endlich freien Moduls über einem HIR,,Lineare Algebra 2
