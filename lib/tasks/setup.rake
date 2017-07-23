@@ -43,7 +43,7 @@ namespace :setup do
 
     CSV.foreach(csv_file_path, headers: true) do |row|
       tag = Tag.find_by(title: row['title'])
-      if row['related_tags']
+      unless row['related_tags'].nil?
         related_ids = Tag.where(title: row['related_tags'].split('&'))
                          .pluck(:id)
         neighbour_ids = tag.neighbours.pluck(:id)
@@ -64,16 +64,52 @@ namespace :setup do
       term = Term.where(type: term_data[0], year: term_data[1].to_i).first
       teacher = Teacher.find_by(name: row['teacher'])
       lecture = Lecture.create!(course: course, term: term, teacher: teacher)
-      if row['additional_tags']
-        lecture.additional_tags = Tag.where(title: row['additional_tags'].split('&'))
+      unless row['additional_tags'].nil?
+        lecture.additional_tags = Tag.where(title: row['additional_tags']
+                                                     .split('&'))
       end
-      if row['disabled_tags']
-        lecture.disabled_tags = Tag.where(title: row['disabled_tags'].split('&'))
+      unless row['disabled_tags'].nil?
+        lecture.disabled_tags = Tag.where(title: row['disabled_tags']
+                                                   .split('&'))
       end
       puts 'Added lecture: ' + row['course'] + ' ' + row['term'] + ' by: ' +
-                               row['teacher'] + ' additional_tags: ' +
-                               row['additional_tags'].to_s + ' disabled_tags:' +
-                               row['disabled_tags'].to_s
+           row['teacher'] + ' additional_tags: ' + row['additional_tags'].to_s +
+           ' disabled_tags:' + row['disabled_tags'].to_s
+    end
+  end
+
+  desc 'Import chapters from csv file'
+  task import_chapters: :environment do
+    csv_file_path = 'db/csv/chapters.csv'
+
+    CSV.foreach(csv_file_path, headers: true) do |row|
+      course = Course.find_by(title: row['course'])
+      term_data = row['term'].split('&')
+      term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+      lecture = Lecture.where(course: course, term: term).first
+      Chapter.create!(lecture: lecture, number: row['number'].to_i,
+                      title: row['title'])
+      puts 'Added chapter: ' + row['course'] + ' ' + row['term'] + ' nr: ' +
+           row['number'] + ' title: ' + row['title']
+    end
+  end
+
+  desc 'Import sections from csv file'
+  task import_sections: :environment do
+    csv_file_path = 'db/csv/sections.csv'
+
+    CSV.foreach(csv_file_path, headers: true) do |row|
+      course = Course.find_by(title: row['course'])
+      term_data = row['term'].split('&')
+      term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+      lecture = Lecture.where(course: course, term: term).first
+      chapter = Chapter.where(lecture: lecture, number: row['chapter'].to_i)
+                       .first
+      section = Section.create(chapter: chapter, number: row['number'],
+                               title: row['title'])
+      section.number_alt = row['number_alt'] unless row['number_alt'].nil?
+      puts 'Added section: ' + row['course'] + ' ' + row['term'] + ' nr: ' +
+           row['number'] + ' title: ' + row['title']
     end
   end
 
@@ -89,12 +125,21 @@ namespace :setup do
       date = Date.new(row['year'].to_i, row['month'].to_i, row['day'].to_i)
       lesson = Lesson.create!(lecture: lecture, number: row['number'].to_i,
                               date: date)
-      if row['tags']
+      unless row['tags'].nil?
         lesson.tags = Tag.where(title: row['tags'].split('&'))
       end
+      unless row['sections'].nil?
+        section_list = row['sections'].split('&').map{ |r| r.split('x')}
+                                      .map{ |x| x.map(&:to_i) }
+        section_list.each do |s|
+          chapter = Chapter.where(lecture: lecture, number: s[0]).first
+          section = Section.where(chapter: chapter, number: s[1])
+          lesson.sections << section
+        end
+      end
       puts 'Added lesson: ' + row['course'] + ' ' + row['term'] + ' nr: ' +
-                              row['number'] + ' date: ' + date.to_s +
-                              ' tags:' + row['tags'].to_s
+           row['number'] + ' date: ' + date.to_s + 'sections: ' +
+           row['sections'] + ' tags:' + row['tags'].to_s
     end
   end
 
@@ -102,5 +147,6 @@ namespace :setup do
   task import_all: [:environment, 'db:reset', 'setup:import_teachers',
                     'setup:import_terms', 'setup:import_courses',
                     'setup:import_tags', 'setup:import_lectures',
+                    'setup:import_chapters', 'setup:import_sections',
                     'setup:import_lessons']
 end

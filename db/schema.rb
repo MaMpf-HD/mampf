@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170716141100) do
+ActiveRecord::Schema.define(version: 20170723135822) do
 
   create_table "additional_contents", force: :cascade do |t|
     t.integer "lecture_id"
@@ -37,6 +37,15 @@ ActiveRecord::Schema.define(version: 20170716141100) do
     t.datetime "updated_at", null: false
     t.index ["learning_asset_id"], name: "index_asset_tags_on_learning_asset_id"
     t.index ["tag_id"], name: "index_asset_tags_on_tag_id"
+  end
+
+  create_table "chapters", force: :cascade do |t|
+    t.integer "lecture_id"
+    t.integer "number"
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
   end
 
   create_table "course_contents", force: :cascade do |t|
@@ -106,6 +115,15 @@ ActiveRecord::Schema.define(version: 20170716141100) do
     t.index ["tag_id"], name: "index_lesson_contents_on_tag_id"
   end
 
+  create_table "lesson_headings", force: :cascade do |t|
+    t.integer "lesson_id"
+    t.integer "section_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lesson_id"], name: "index_lesson_headings_on_lesson_id"
+    t.index ["section_id"], name: "index_lesson_headings_on_section_id"
+  end
+
   create_table "lessons", force: :cascade do |t|
     t.integer "number"
     t.date "date"
@@ -149,6 +167,16 @@ ActiveRecord::Schema.define(version: 20170716141100) do
   create_table "reste_assets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "sections", force: :cascade do |t|
+    t.integer "chapter_id"
+    t.integer "number"
+    t.string "title"
+    t.string "number_alt"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 
   create_table "sesam_assets", force: :cascade do |t|

@@ -6,6 +6,7 @@ class Lecture < ApplicationRecord
   has_many :disabled_tags, through: :disabled_contents, source: :tag
   has_many :additional_contents
   has_many :additional_tags, through: :additional_contents, source: :tag
+  has_many :chapters
   has_many :lessons
   has_many :learning_assets, as: :teachable
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
@@ -21,5 +22,9 @@ class Lecture < ApplicationRecord
     additional_ids = additional_tags.pluck(:id)
     tag_ids = (course_tag_ids | additional_ids) - disabled_ids
     Tag.where(id: tag_ids)
+  end
+
+  def sections
+    Section.where(chapter: chapters)
   end
 end

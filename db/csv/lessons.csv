@@ -1,28 +1,28 @@
-course,term,number,year,month,day,tags
-Lineare Algebra 2,SummerTerm&2017,1,2017,4,18,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum
-Lineare Algebra 2,SummerTerm&2017,2,2017,4,20,Charakterisierungen von Diagonalisierbarkeit&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts
-Lineare Algebra 2,SummerTerm&2017,3,2017,4,25,Charakterisierungen von Diagonalisierbarkeit&Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus
-Lineare Algebra 2,SummerTerm&2017,4,2017,4,27,Charakterisierungen von Diagonalisierbarkeit&Minimalpolynom eines Endomorphismus&Dualraum&Linearform&duale Basis
-Lineare Algebra 2,SummerTerm&2017,5,2017,5,2,Annullator&duale Abbildung&Bidualraum&Bilinearform
-Lineare Algebra 2,SummerTerm&2017,6,2017,5,4,Darstellungsmatrix einer Bilinearform&Transformationsformel für die Darstellungsmatrix einer Bilinearform&nicht-ausgeartete Bilinearform&perfekte Bilinearform&symmetrische Bilinearform&antisymmetrische Bilinearform&alternierende Bilinearform
-Lineare Algebra 2,SummerTerm&2017,7,2017,5,9,quadratische Form&quadratischer Raum&Homomorphismus quadratischer Räume&Existenz von Orthogonalbasen quadratischer Räume
-Lineare Algebra 2,SummerTerm&2017,8,2017,5,11,Klassifikation quadratischer Räume über C und R&Sylvesterscher Trägheitssatz&Skalarprodukt&Euklidischer Raum&Norm
-Lineare Algebra 2,SummerTerm&2017,9,2017,5,16,orthogonales Komplement&Orthogonalprojektion&Gram-Schmidt-Verfahren&positiv definite Matrix&Cauchy-Schwarz-Ungleichung
-Lineare Algebra 2,SummerTerm&2017,10,2017,5,18,Eigenschaften der Norm&orthogonale Abbildungen und Matrizen&orthogonale und spezielle orthogonale Gruppe&O(2)
-Lineare Algebra 2,SummerTerm&2017,11,2017,5,23,O(2)&adjungierte Abbildung&selbstadjungierter Endomorphismus
-Lineare Algebra 2,SummerTerm&2017,12,2017,5,30,selbstadjungierter Endomorphismus&Spektralsatz für selbstadjungierte Endomorphismen&Hauptachsentransformation
-Lineare Algebra 2,SummerTerm&2017,13,2017,6,1,Sesquilinearform&hermitesche Form&unitärer Raum&normaler Endomorphismus
-Lineare Algebra 2,SummerTerm&2017,14,2017,6,6,Spektralsatz für normale Endomorphismen&Ring&Ringhomomorphismus&Ideal&Restklasse&Faktorring
-Lineare Algebra 2,SummerTerm&2017,15,2017,6,8,Nullteiler&Einheit&nullteilerfreier Ring&Teiler&größter gemeinsamer Teiler
-Lineare Algebra 2,SummerTerm&2017,16,2017,6,13,irreduzibles Element&Primelement&faktorieller Ring&HIR sind faktoriell
-Lineare Algebra 2,SummerTerm&2017,17,2017,6,20,Euklidischer Ring&Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen
-Lineare Algebra 2,SummerTerm&2017,18,2017,6,22,Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma&Elementarteilersatz
-Lineare Algebra 2,SummerTerm&2017,19,2017,6,27,charakteristische Matrix eines Endomorphismus&Satz von Frobenius&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz
-Lineare Algebra 2,SummerTerm&2017,20,2017,6,29,Begleitmatrix&Frobenius-Normalform
-Lineare Algebra 2,SummerTerm&2017,21,2017,7,4,Weierstrass-Normalform&Jordanmatrix&Jordansche Normalform
-Lineare Algebra 2,SummerTerm&2017,22,2017,7,6,Modul&Modulhomomorphismus&Untermodul&Faktormodul&Erzeugendensystem eines Moduls&lineare Unabhängigkeit in Moduln&Basis eines freien Moduls&freier Modul
-Lineare Algebra 2,SummerTerm&2017,23,2017,7,11,Torsionsuntermodul&Länge eines Moduls&Länge einer direkten Summe von Moduln
-Lineare Algebra 2,SummerTerm&2017,24,2017,7,13,Rang eines endlich freien Moduls über einem HIR&Diagonalisierung von Matrizen über einem HIR
-Lineare Algebra 2,SummerTerm&2017,25,2017,7,18,Elementarteilersatz für Untermoduln endlich freier Moduln über HIR
-Lineare Algebra 2,SummerTerm&2017,26,2017,7,20,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen&Chinesischer Restsatz über HIR
-Lineare Algebra 2,SummerTerm&2017,27,2017,7,25,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen
+course,term,number,year,month,day,sections,tags
+Lineare Algebra 2,SummerTerm&2017,1,2017,4,18,3x18,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum
+Lineare Algebra 2,SummerTerm&2017,2,2017,4,20,3x18,Charakterisierungen von Diagonalisierbarkeit&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts
+Lineare Algebra 2,SummerTerm&2017,3,2017,4,25,3x18,Charakterisierungen von Diagonalisierbarkeit&Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus
+Lineare Algebra 2,SummerTerm&2017,4,2017,4,27,3x18&3x19,Charakterisierungen von Diagonalisierbarkeit&Minimalpolynom eines Endomorphismus&Dualraum&Linearform&duale Basis
+Lineare Algebra 2,SummerTerm&2017,5,2017,5,2,3x19&4x20,Annullator&duale Abbildung&Bidualraum&Bilinearform
+Lineare Algebra 2,SummerTerm&2017,6,2017,5,4,4x20,Darstellungsmatrix einer Bilinearform&Transformationsformel für die Darstellungsmatrix einer Bilinearform&nicht-ausgeartete Bilinearform&perfekte Bilinearform&symmetrische Bilinearform&antisymmetrische Bilinearform&alternierende Bilinearform
+Lineare Algebra 2,SummerTerm&2017,7,2017,5,9,4x21,quadratische Form&quadratischer Raum&Homomorphismus quadratischer Räume&Existenz von Orthogonalbasen quadratischer Räume
+Lineare Algebra 2,SummerTerm&2017,8,2017,5,11,"4x21,4x22",Klassifikation quadratischer Räume über C und R&Sylvesterscher Trägheitssatz&Skalarprodukt&Euklidischer Raum&Norm
+Lineare Algebra 2,SummerTerm&2017,9,2017,5,16,4x22,orthogonales Komplement&Orthogonalprojektion&Gram-Schmidt-Verfahren&positiv definite Matrix&Cauchy-Schwarz-Ungleichung
+Lineare Algebra 2,SummerTerm&2017,10,2017,5,18,4x22&4x23,Eigenschaften der Norm&orthogonale Abbildungen und Matrizen&orthogonale und spezielle orthogonale Gruppe&O(2)
+Lineare Algebra 2,SummerTerm&2017,11,2017,5,23,4x23&4x24,O(2)&adjungierte Abbildung&selbstadjungierter Endomorphismus
+Lineare Algebra 2,SummerTerm&2017,12,2017,5,30,4x24,selbstadjungierter Endomorphismus&Spektralsatz für selbstadjungierte Endomorphismen&Hauptachsentransformation
+Lineare Algebra 2,SummerTerm&2017,13,2017,6,1,4x25,Sesquilinearform&hermitesche Form&unitärer Raum&normaler Endomorphismus
+Lineare Algebra 2,SummerTerm&2017,14,2017,6,6,4x25&4x26,Spektralsatz für normale Endomorphismen&Ring&Ringhomomorphismus&Ideal&Restklasse&Faktorring
+Lineare Algebra 2,SummerTerm&2017,15,2017,6,8,4x26,Nullteiler&Einheit&nullteilerfreier Ring&Teiler&größter gemeinsamer Teiler
+Lineare Algebra 2,SummerTerm&2017,16,2017,6,13,4x26,irreduzibles Element&Primelement&faktorieller Ring&HIR sind faktoriell
+Lineare Algebra 2,SummerTerm&2017,17,2017,6,20,4x27,Euklidischer Ring&Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen
+Lineare Algebra 2,SummerTerm&2017,18,2017,6,22,4x27,Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma&Elementarteilersatz
+Lineare Algebra 2,SummerTerm&2017,19,2017,6,27,4x28,charakteristische Matrix eines Endomorphismus&Satz von Frobenius&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz
+Lineare Algebra 2,SummerTerm&2017,20,2017,6,29,4x28,Begleitmatrix&Frobenius-Normalform
+Lineare Algebra 2,SummerTerm&2017,21,2017,7,4,4x28,Weierstrass-Normalform&Jordanmatrix&Jordansche Normalform
+Lineare Algebra 2,SummerTerm&2017,22,2017,7,6,4x29,Modul&Modulhomomorphismus&Untermodul&Faktormodul&Erzeugendensystem eines Moduls&lineare Unabhängigkeit in Moduln&Basis eines freien Moduls&freier Modul
+Lineare Algebra 2,SummerTerm&2017,23,2017,7,11,4x29,Torsionsuntermodul&Länge eines Moduls&Länge einer direkten Summe von Moduln
+Lineare Algebra 2,SummerTerm&2017,24,2017,7,13,4x30,Rang eines endlich freien Moduls über einem HIR&Diagonalisierung von Matrizen über einem HIR
+Lineare Algebra 2,SummerTerm&2017,25,2017,7,18,4x30,Elementarteilersatz für Untermoduln endlich freier Moduln über HIR
+Lineare Algebra 2,SummerTerm&2017,26,2017,7,20,4x30,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen&Chinesischer Restsatz über HIR
+Lineare Algebra 2,SummerTerm&2017,27,2017,7,25,4x30,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen
