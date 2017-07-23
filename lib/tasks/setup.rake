@@ -77,8 +77,30 @@ namespace :setup do
     end
   end
 
+  desc 'Import lessons from csv file'
+  task import_lessons: :environment do
+    csv_file_path = 'db/csv/lessons.csv'
+
+    CSV.foreach(csv_file_path, headers: true) do |row|
+      course = Course.find_by(title: row['course'])
+      term_data = row['term'].split('&')
+      term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+      lecture = Lecture.where(course: course, term: term).first
+      date = Date.new(row['year'].to_i, row['month'].to_i, row['day'].to_i)
+      lesson = Lesson.create!(lecture: lecture, number: row['number'].to_i,
+                              date: date)
+      if row['tags']
+        lesson.tags = Tag.where(title: row['tags'].split('&'))
+      end
+      puts 'Added lesson: ' + row['course'] + ' ' + row['term'] + ' nr: ' +
+                              row['number'] + ' date: ' + date.to_s +
+                              ' tags:' + row['tags'].to_s
+    end
+  end
+
   desc 'Resets db and imports all data'
   task import_all: [:environment, 'db:reset', 'setup:import_teachers',
                     'setup:import_terms', 'setup:import_courses',
-                    'setup:import_tags', 'setup:import_lectures']
+                    'setup:import_tags', 'setup:import_lectures',
+                    'setup:import_lessons']
 end

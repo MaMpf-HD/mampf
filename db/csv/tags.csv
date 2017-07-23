@@ -61,14 +61,14 @@ irreduzibles Element,,Lineare Algebra 2
 Primelement,,Lineare Algebra 2
 faktorieller Ring,,Lineare Algebra 2
 HIR sind faktoriell,faktorieller Ring,Lineare Algebra 2
-Euklidischer Ring,Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen&Elementarteilersatz,Lineare Algebra 2
+Euklidischer Ring,Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen&Elementarteilersatz für Matrizen über Euklidischen Ringen,Lineare Algebra 2
 Euklidische Ringe sind faktoriell,faktorieller Ring,Lineare Algebra 2
 Euklidischer Algorithmus,,Lineare Algebra 2
 Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen,,Lineare Algebra 2
 Äquivalenz und Ähnlichkeit von Matrizen über Ringen,Satz von Frobenius,Lineare Algebra 2
 Fittingideale,,Lineare Algebra 2
 Fittings Lemma,,Lineare Algebra 2
-Elementarteilersatz,Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen&Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz&Begleitmatrix&Frobenius-Normalform&Weierstrass-Normalform&Jordanmatrix&Jordansche Normalform,Lineare Algebra 2
+Elementarteilersatz für Matrizen über Euklidischen Ringen,Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen&Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz&Begleitmatrix&Frobenius-Normalform&Weierstrass-Normalform&Jordanmatrix&Jordansche Normalform,Lineare Algebra 2
 Normalformen von Endomorphismen,charakteristische Matrix eines Endomorphismus&Satz von Frobenius&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz,Lineare Algebra 2
 charakteristische Matrix eines Endomorphismus,Satz von Frobenius,Lineare Algebra 2
 Satz von Frobenius,Invarianten- und Determinantenteiler einer Matrix,Lineare Algebra 2
@@ -90,5 +90,10 @@ freier Modul,Basis eines freien Moduls&Rang eines freien Moduls,Lineare Algebra 
 Torsionsuntermodul,,Lineare Algebra 2
 Länge eines Moduls,,Lineare Algebra 2
 Länge einer direkten Summe von Moduln,Länge eines Moduls,Lineare Algebra 2
-Moduln über Hauptidealringen,Rang eines endlich freien Moduls über einem HIR,Lineare Algebra 2
+Moduln über Hauptidealringen,Rang eines endlich freien Moduls über einem HIR&Rang eines endlich freien Moduls über einem HIR&Diagonalisierung von Matrizen über einem HIR&Elementarteilersatz für Untermoduln endlich freier Moduln über HIR&Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen&Chinesischer Restsatz über HIR,Lineare Algebra 2
 Rang eines endlich freien Moduls über einem HIR,,Lineare Algebra 2
+Diagonalisierung von Matrizen über einem HIR,Elementarteilersatz für Untermoduln endlich freier Moduln über HIR,Lineare Algebra 2
+Elementarteilersatz für Untermoduln endlich freier Moduln über HIR,,Lineare Algebra 2
+Hauptsatz für endlich erzeugte Moduln über HIR,Hauptsatz für endlich erzeugte abelsche Gruppen,Lineare Algebra 2
+Hauptsatz für endlich erzeugte abelsche Gruppen,,Lineare Algebra 2
+Chinesischer Restsatz über HIR,,Lineare Algebra 2
