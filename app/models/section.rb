@@ -1,5 +1,7 @@
 class Section < ApplicationRecord
   belongs_to :chapter
+  has_many :section_contents
+  has_many :tags, through: :section_contents
   has_many :lesson_headings
   has_many :lessons, through: :lesson_headings
 

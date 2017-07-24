@@ -106,10 +106,13 @@ namespace :setup do
       chapter = Chapter.where(lecture: lecture, number: row['chapter'].to_i)
                        .first
       section = Section.create(chapter: chapter, number: row['number'],
-                               title: row['title'])
-      section.number_alt = row['number_alt'] unless row['number_alt'].nil?
+                               title: row['title'],
+                               number_alt: row['number_alt'])
+      unless row['tags'].nil?
+        section.tags = Tag.where(title: row['tags'].split('&'))
+      end
       puts 'Added section: ' + row['course'] + ' ' + row['term'] + ' nr: ' +
-           row['number'] + ' title: ' + row['title']
+           row['number'] + ' title: ' + row['title'] + ' tags: ' + row['tags']
     end
   end
 

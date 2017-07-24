@@ -27,9 +27,7 @@ class Medium < ApplicationRecord
                               if: :video_content?
 
   validates :length, presence: true,
-                     numericality: { only_integer: true,
-                                     greater_than_or_equal_to: 1,
-                                     less_than_or_equal_to: 36_000 },
+                     format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
                      if: :video_content?
   validates :video_size, presence: true,
                          format:

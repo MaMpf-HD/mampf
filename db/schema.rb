@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170723135822) do
+ActiveRecord::Schema.define(version: 20170724082626) do
 
   create_table "additional_contents", force: :cascade do |t|
     t.integer "lecture_id"
@@ -143,7 +143,7 @@ ActiveRecord::Schema.define(version: 20170723135822) do
     t.integer "height"
     t.integer "embedded_width"
     t.integer "embedded_height"
-    t.integer "length"
+    t.string "length"
     t.integer "pages"
     t.string "manuscript_size"
     t.datetime "created_at", null: false
@@ -167,6 +167,15 @@ ActiveRecord::Schema.define(version: 20170723135822) do
   create_table "reste_assets", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "section_contents", force: :cascade do |t|
+    t.integer "section_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "index_section_contents_on_section_id"
+    t.index ["tag_id"], name: "index_section_contents_on_tag_id"
   end
 
   create_table "sections", force: :cascade do |t|

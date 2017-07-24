@@ -106,16 +106,8 @@ RSpec.describe Medium, type: :model do
                                         video_size: '1234')
     expect(medium).to be_invalid
   end
-  it 'is invalid if length is not an integer' do
-    medium = FactoryGirl.build(:medium, length: 3512.25)
-    expect(medium).to be_invalid
-  end
-  it 'is invalid if length is lower than 1' do
-    medium = FactoryGirl.build(:medium, length: 0)
-    expect(medium).to be_invalid
-  end
-  it 'is invalid if length is greater than 36000' do
-    medium = FactoryGirl.build(:medium, length: 36001)
+  it 'is invalid if length is not a valid expression' do
+    medium = FactoryGirl.build(:medium, length: '1h77m5s')
     expect(medium).to be_invalid
   end
   it 'is invalid without pages if manuscript_link is given' do
