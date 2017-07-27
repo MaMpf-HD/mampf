@@ -29,6 +29,7 @@ class Medium < ApplicationRecord
   validates :length, presence: true,
                      format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
                      if: :video_content?
+  # video_size, manuscript_size are in a format compatible with 'filesize' gem
   validates :video_size, presence: true,
                          format:
                            { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },

@@ -1,7 +1,7 @@
 require 'csv'
 
 namespace :setup do
-  desc 'Import Teachers from csv file'
+  desc 'Import teachers from csv file'
   task import_teachers: :environment do
     csv_file_path = 'db/csv/teachers.csv'
 
@@ -11,7 +11,7 @@ namespace :setup do
     end
   end
 
-  desc 'Import Terms from csv file'
+  desc 'Import terms from csv file'
   task import_terms: :environment do
     csv_file_path = 'db/csv/terms.csv'
 
@@ -21,7 +21,7 @@ namespace :setup do
     end
   end
 
-  desc 'Import Courses from csv file'
+  desc 'Import courses from csv file'
   task import_courses: :environment do
     csv_file_path = 'db/csv/courses.csv'
 
@@ -31,7 +31,7 @@ namespace :setup do
     end
   end
 
-  desc 'Import Tags from csv file'
+  desc 'Import tags from csv file'
   task import_tags: :environment do
     csv_file_path = 'db/csv/tags.csv'
 
@@ -132,8 +132,8 @@ namespace :setup do
         lesson.tags = Tag.where(title: row['tags'].split('&'))
       end
       unless row['sections'].nil?
-        section_list = row['sections'].split('&').map{ |r| r.split('x')}
-                                      .map{ |x| x.map(&:to_i) }
+        section_list = row['sections'].split('&').map { |r| r.split('x') }
+                                      .map { |x| x.map(&:to_i) }
         section_list.each do |s|
           chapter = Chapter.where(lecture: lecture, number: s[0]).first
           section = Section.where(chapter: chapter, number: s[1])
@@ -146,10 +146,38 @@ namespace :setup do
     end
   end
 
+  desc 'Import media from csv file'
+  task import_media: :environment do
+    csv_file_path = 'db/csv/media.csv'
+    base_url = 'https://mampf.mathi.uni-heidelberg.de/'
+
+    CSV.foreach(csv_file_path, headers: true) do |row|
+      Medium.create! do |m|
+        m.title = row['title']
+        m.author = row['author']
+        m.video_file_link = base_url + row['video_file_link']
+        m.video_stream_link = base_url + row['video_stream_link']
+        m.video_thumbnail_link = base_url + row['video_thumbnail_link']
+        m.manuscript_link = base_url + row['manuscript_link']
+        m.external_reference_link = row['external_reference_link']
+        m.width = row['width']
+        m.height = row['height']
+        m.embedded_width = row['embedded_width']
+        m.embedded_height = row['embedded_height']
+        m.length = row['length']
+        m.pages = row['pages']
+        m.video_size = row['video_size']
+        m.manuscript_size = row['manuscript_size']
+        m.authoring_software = row['authoring_software']
+      end
+      puts 'Added medium: ' + row['title']
+    end
+  end
+
   desc 'Resets db and imports all data'
   task import_all: [:environment, 'db:reset', 'setup:import_teachers',
                     'setup:import_terms', 'setup:import_courses',
                     'setup:import_tags', 'setup:import_lectures',
                     'setup:import_chapters', 'setup:import_sections',
-                    'setup:import_lessons']
+                    'setup:import_lessons', 'setup:import_media']
 end
