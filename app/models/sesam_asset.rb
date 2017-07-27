@@ -1,2 +1,0 @@
-class SesamAsset < LearningAsset
-end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724082626) do
+ActiveRecord::Schema.define(version: 20170727155952) do
 
   create_table "additional_contents", force: :cascade do |t|
     t.integer "lecture_id"
@@ -152,6 +152,8 @@ ActiveRecord::Schema.define(version: 20170724082626) do
     t.string "author"
     t.string "video_size"
     t.string "authoring_software"
+    t.string "type"
+    t.integer "question_id"
   end
 
   create_table "relations", force: :cascade do |t|

@@ -1,0 +1,2 @@
+class KeksQuestionMedium < Medium
+end

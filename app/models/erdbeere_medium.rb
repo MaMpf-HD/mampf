@@ -1,0 +1,2 @@
+class ErdbeereMedium < Medium
+end

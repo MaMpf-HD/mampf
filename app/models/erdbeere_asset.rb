@@ -1,2 +1,0 @@
-class ErdbeereAsset < LearningAsset
-end

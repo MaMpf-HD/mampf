@@ -1,0 +1,2 @@
+class ResteMedium < Medium
+end

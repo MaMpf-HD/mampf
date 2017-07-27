@@ -1,0 +1,2 @@
+class KaviarMedium < Medium
+end

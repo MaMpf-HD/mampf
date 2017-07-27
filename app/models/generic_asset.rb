@@ -1,0 +1,2 @@
+class GenericAsset < LearningAsset
+end

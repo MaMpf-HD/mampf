@@ -1,2 +1,0 @@
-class KaviarAsset < LearningAsset
-end

@@ -1,0 +1,2 @@
+class SesamMedium < Medium
+end

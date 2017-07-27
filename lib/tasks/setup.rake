@@ -154,6 +154,7 @@ namespace :setup do
     CSV.foreach(csv_file_path, headers: true) do |row|
       Medium.create! do |m|
         m.title = row['title']
+        m.type = row['type']
         m.author = row['author']
         m.video_file_link = base_url + row['video_file_link']
         m.video_stream_link = base_url + row['video_stream_link']

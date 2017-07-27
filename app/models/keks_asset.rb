@@ -1,2 +1,0 @@
-class KeksAsset < LearningAsset
-end

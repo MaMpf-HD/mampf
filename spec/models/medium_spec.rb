@@ -4,6 +4,19 @@ RSpec.describe Medium, type: :model do
   it 'has a valid factory' do
     expect(FactoryGirl.build(:medium)).to be_valid
   end
+  it 'is invalid without a type' do
+    medium = FactoryGirl.build(:medium, type: nil)
+    expect(medium).to be_invalid
+  end
+  it 'is invalid with improper type' do
+    medium = FactoryGirl.build(:medium, type: 'Test')
+    expect(medium).to be_invalid
+  end
+  it 'is invalid if type is KeksQuestionMedium and no question_id is given ' do
+    medium = FactoryGirl.build(:medium, type: 'KeksQuestionMedium',
+                                        question_id: nil)
+    expect(medium).to be_invalid
+  end      
   it 'is invalid without an author' do
     medium = FactoryGirl.build(:medium, author: nil)
     expect(medium).to be_invalid

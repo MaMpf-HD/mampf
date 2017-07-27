@@ -2,6 +2,10 @@
 class Medium < ApplicationRecord
   has_many :asset_media
   has_many :learning_assets, through: :asset_media
+  validates :type, presence: true,
+                   inclusion: { in: %w[KaviarMedium ErdbeereMedium SesamMedium
+                                       ResteMedium KeksQuestionMedium] }
+  validates :question_id, presence: true, if: :keks_question?
   validates :author, presence: true
   validates :title, presence: true
   validate :nonempty_content?
@@ -58,6 +62,10 @@ class Medium < ApplicationRecord
 
   def manuscript_content?
     manuscript_link.present?
+  end
+
+  def keks_question?
+    type == 'KeksQuestionMedium'
   end
 
   private
