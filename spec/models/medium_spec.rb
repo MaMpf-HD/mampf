@@ -16,13 +16,22 @@ RSpec.describe Medium, type: :model do
     medium = FactoryGirl.build(:medium, type: 'KeksQuestionMedium',
                                         question_id: nil)
     expect(medium).to be_invalid
-  end      
+  end
   it 'is invalid without an author' do
     medium = FactoryGirl.build(:medium, author: nil)
     expect(medium).to be_invalid
   end
   it 'is invalid without a title' do
     medium = FactoryGirl.build(:medium, title: nil)
+    expect(medium).to be_invalid
+  end
+  it 'is invalid with a duplicate title' do
+    FactoryGirl.create(:medium, title: 'usual bs')
+    medium = FactoryGirl.build(:medium, title: 'usual bs')
+    expect(medium).to be_invalid
+  end
+  it 'is invalid without a description' do
+    medium = FactoryGirl.build(:medium, description: nil)
     expect(medium).to be_invalid
   end
   it 'is invalid with empty content' do

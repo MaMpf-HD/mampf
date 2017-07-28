@@ -2,9 +2,10 @@ require 'faker'
 
 FactoryGirl.define do
   factory :medium do
-    type %w[KaviarMedium ErdbeereMedium SesamMedium ResteMedium KeksQuestionMedium].sample
+    type %w[KaviarMedium ErdbeereMedium SesamMedium ResteMedium].sample
     author { Faker::Name.name }
     title { Faker::Book.title }
+    description { Faker::TwinPeaks.quote }
     video_stream_link do
       Faker::Internet.url +
         Faker::Lorem.word +

@@ -7,7 +7,8 @@ class Medium < ApplicationRecord
                                        ResteMedium KeksQuestionMedium] }
   validates :question_id, presence: true, if: :keks_question?
   validates :author, presence: true
-  validates :title, presence: true
+  validates :title, presence: true, uniqueness: true
+  validates :description, presence: true
   validate :nonempty_content?
   validates :width, presence: true,
                     numericality: { only_integer: true,

@@ -1,0 +1,2 @@
+class KaviarAsset < LearningAsset
+end

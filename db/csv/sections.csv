@@ -1,5 +1,5 @@
 course,term,number,title,chapter,number_alt,tags
-Lineare Algebra 2,SummerTerm&2017,18,Eigenwerte,3,,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts&Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus
+Lineare Algebra 2,SummerTerm&2017,18,Eigenwerte,3,,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum&charakteristisches Polynom einer Matrix&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts&Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus
 Lineare Algebra 2,SummerTerm&2017,19,Dualraum,3,,Dualraum&Linearform&duale Basis&Annullator&duale Abbildung&Bidualraum
 Lineare Algebra 2,SummerTerm&2017,20,Bilinearformen,4,,Bilinearform&Darstellungsmatrix einer Bilinearform&Transformationsformel für die Darstellungsmatrix einer Bilinearform&nicht-ausgeartete Bilinearform&perfekte Bilinearform&symmetrische Bilinearform&antisymmetrische Bilinearform&alternierende Bilinearform
 Lineare Algebra 2,SummerTerm&2017,21,Quadratische Räume,4,,quadratische Form&quadratischer Raum&Homomorphismus quadratischer Räume&Existenz von Orthogonalbasen quadratischer Räume&Klassifikation quadratischer Räume über C und R&Sylvesterscher Trägheitssatz

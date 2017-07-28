@@ -2,7 +2,8 @@ require 'faker'
 
 FactoryGirl.define do
   factory :learning_asset do
-    description { Faker::ChuckNorris.fact }
+    title { Faker::ChuckNorris.fact }
+    heading { Faker::Book.title }
     association :teachable, factory: [:lesson, :with_tags]
     trait :for_lecture do
       association :teachable, factory: :lecture
