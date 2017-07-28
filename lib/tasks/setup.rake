@@ -204,7 +204,16 @@ namespace :setup do
           l.media = Medium.where(title: row['media'].split('&'))
         end
       end
-      puts 'Added learning_asset: ' + row['title']
+    end
+
+    CSV.foreach(csv_file_path, headers: true) do |row|
+      asset = LearningAsset.find_by(title: row['title'])
+      unless row['linked_assets'].nil?
+        asset.linked_assets = LearningAsset.where(title: row['linked_assets']
+                                                           .split('&'))
+        puts 'Added linked_assets to learning_asset: ' + row['title'] +
+             ' -> ' + row['linked_assets']
+      end
     end
   end
 
