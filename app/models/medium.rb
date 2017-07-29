@@ -5,7 +5,7 @@ class Medium < ApplicationRecord
   validates :type, presence: true,
                    inclusion: { in: %w[KaviarMedium ErdbeereMedium SesamMedium
                                        ResteMedium KeksQuestionMedium] }
-  validates :question_id, presence: true, if: :keks_question?
+  validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
   validates :description, presence: true

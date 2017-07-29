@@ -157,10 +157,18 @@ namespace :setup do
         m.type = row['type']
         m.author = row['author']
         m.description = row['description']
-        m.video_file_link = base_url + row['video_file_link']
-        m.video_stream_link = base_url + row['video_stream_link']
-        m.video_thumbnail_link = base_url + row['video_thumbnail_link']
-        m.manuscript_link = base_url + row['manuscript_link']
+        unless row['video_file_link'].nil?
+          m.video_file_link = base_url + row['video_file_link']
+        end
+        unless row['video_stream_link'].nil?
+          m.video_stream_link = base_url + row['video_stream_link']
+        end
+        unless row['video_thumbnail_link'].nil?
+          m.video_thumbnail_link = base_url + row['video_thumbnail_link']
+        end
+        unless row['manuscript_link'].nil?
+          m.manuscript_link = base_url + row['manuscript_link']
+        end
         m.external_reference_link = row['external_reference_link']
         m.width = row['width']
         m.height = row['height']
@@ -171,6 +179,7 @@ namespace :setup do
         m.video_size = row['video_size']
         m.manuscript_size = row['manuscript_size']
         m.authoring_software = row['authoring_software']
+        m.question_id = row['question_id']
       end
       puts 'Added medium: ' + row['title']
     end
@@ -196,7 +205,9 @@ namespace :setup do
         l.title = row['title']
         l.type = row['type']
         l.teachable = teachable
+        l.link = row['link']
         l.heading = row['heading']
+        l.question_list = row['question_list']
         unless row['tags'].nil?
           l.tags = Tag.where(title: row['tags'].split('&'))
         end
@@ -204,6 +215,7 @@ namespace :setup do
           l.media = Medium.where(title: row['media'].split('&'))
         end
       end
+      puts 'Added learning_asset: ' + row['title']
     end
 
     CSV.foreach(csv_file_path, headers: true) do |row|

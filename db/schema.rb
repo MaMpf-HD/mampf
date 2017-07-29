@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170728133022) do
+ActiveRecord::Schema.define(version: 20170729151348) do
 
   create_table "additional_contents", force: :cascade do |t|
     t.integer "lecture_id"
@@ -105,6 +105,8 @@ ActiveRecord::Schema.define(version: 20170728133022) do
     t.string "teachable_type"
     t.integer "teachable_id"
     t.string "heading"
+    t.text "link"
+    t.string "question_list"
     t.index ["teachable_type", "teachable_id"], name: "index_learning_assets_on_teachable_type_and_teachable_id"
   end
 
