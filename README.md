@@ -11,4 +11,4 @@ As of now, only the models and some class methods have been implemented, togethe
   
   This imports a lot of data from the .csv files in the db/csv folder
 
-* How to run the test suite: rspec
+* Test suite: rspec
