@@ -1,2 +1,0 @@
-class GenericAsset < LearningAsset
-end

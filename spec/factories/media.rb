@@ -4,7 +4,7 @@ FactoryGirl.define do
   factory :medium do
     type %w[KaviarMedium ErdbeereMedium SesamMedium ResteMedium].sample
     author { Faker::Name.name }
-    title { Faker::Book.title }
+    title { Faker::Book.title + ' ' + Random.rand(1..9).to_s }
     description { Faker::TwinPeaks.quote }
     video_stream_link do
       Faker::Internet.url +

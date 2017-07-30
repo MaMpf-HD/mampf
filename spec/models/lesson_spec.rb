@@ -19,7 +19,7 @@ RSpec.describe Lesson, type: :model do
     lesson = FactoryGirl.build(:lesson, number: nil)
     expect(lesson).to be_invalid
   end
-  it 'is invalid if number is not a number' do
+  it 'is invalid if number is not an integer' do
     lesson = FactoryGirl.build(:lesson, number: 'hello')
     expect(lesson).to be_invalid
   end
