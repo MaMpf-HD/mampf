@@ -23,7 +23,7 @@ class Section < ApplicationRecord
 
   def valid_lessons?
     return unless chapter.present? && lessons.present?
-    return true if lessons.pluck(:lecture_id).uniq == [ lecture.id ]
+    return true if lessons.pluck(:lecture_id).uniq == [lecture.id]
     errors.add(:date, 'lessons do not belong to lecture for chapter')
     false
   end

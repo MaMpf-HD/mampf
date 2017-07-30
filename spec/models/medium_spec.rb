@@ -32,8 +32,8 @@ RSpec.describe Medium, type: :model do
   end
   it 'is invalid if type is KeksQuestionMedium and question_id is duplicate' do
     FactoryGirl.create(:medium, type: 'KeksQuestionMedium', question_id: 123)
-    medium =  FactoryGirl.build(:medium, type: 'KeksQuestionMedium',
-                                         question_id: 123)
+    medium = FactoryGirl.build(:medium, type: 'KeksQuestionMedium',
+                                        question_id: 123)
     expect(medium).to be_invalid
   end
   it 'is invalid without a description' do

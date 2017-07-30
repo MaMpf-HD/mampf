@@ -18,7 +18,8 @@ RSpec.describe Chapter, type: :model do
   it 'is invalid with duplicate lecture and number' do
     lecture = FactoryGirl.build(:lecture)
     FactoryGirl.create(:chapter, lecture: lecture, number: 42)
-    duplicate_chapter = FactoryGirl.build(:chapter, lecture: lecture, number: 42)
+    duplicate_chapter = FactoryGirl.build(:chapter, lecture: lecture,
+                                                    number: 42)
     expect(duplicate_chapter).to be_invalid
   end
   it 'is invalid if number is not an integer' do
