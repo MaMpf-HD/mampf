@@ -7,7 +7,7 @@ As of now, only the models and some class methods have been implemented, togethe
 * Rails Version: 5.1.1
 
 * Database initialization: 
-    rails setup:import_data
+    `rails setup:import_data`
   
   This imports a lot of data from the .csv files in the db/csv folder
 
