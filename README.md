@@ -5,10 +5,17 @@ As of now, only the models and some class methods have been implemented, togethe
 
 * Ruby version: 2.4.0
 * Rails Version: 5.1.2
+<<<<<<< HEAD
 
 * Database initialization:
     `rails setup:import_data`
 
+=======
+
+* Database initialization: 
+    `rails setup:import_data`
+  
+>>>>>>> 3bc872107baf7493a4e78d326124dd2846c1d817
   This imports a lot of data from the .csv files in the db/csv folder
 
 * Test suite: rspec
@@ -33,13 +40,24 @@ For the brevity of presentation, we pick out only very few data.
     # => ["Charakterisierungen von Diagonalisierbarkeit", "Elementarteilersatz für Matrizen über Euklidischen
     # Ringen", "Weierstrass-Normalform", "Jordanmatrix"]
     jnf.neighbours.first.assets.pluck(:title)
+<<<<<<< HEAD
     # => ["KaViaR.SS17.LA2.E01", "KaViaR.SS17.LA2.E02", "KaViaR.SS17.LA2.E03", "KaViaR.SS17.LA2.E04",
     # "RestE.SS17.LA2.AltQuiz.E01"]
     jnf.tags_with_given_distance(2).pluck(:title)
     # => ["Eigenwert", "charakteristisches Polynom eines Endomorphismus", "algebraische Vielfachheit eines
+=======
+    # => ["KaViaR.SS17.LA2.E01", "KaViaR.SS17.LA2.E02", "KaViaR.SS17.LA2.E03", "KaViaR.SS17.LA2.E04", 
+    # "RestE.SS17.LA2.AltQuiz.E01"]
+    jnf.tags_with_given_distance(2).pluck(:title)
+    # => ["Eigenwert", "charakteristisches Polynom eines Endomorphismus", "algebraische Vielfachheit eines 
+>>>>>>> 3bc872107baf7493a4e78d326124dd2846c1d817
     # Eigenwerts", "Minimalpolynom eines Endomorphismus", "Spektralsatz für selbstadjungierte Endomorphismen",
     # "Spektralsatz für normale Endomorphismen", "Euklidischer Ring", "Gauß-Diagonalisierung von Matrizen über
     # Euklidischen Ringen", "Äquivalenz und Ähnlichkeit von Matrizen über Ringen", "Fittingideale", "Fittings
     # Lemma", "Invarianten- und Determinantenteiler einer Matrix", "Invariantenteilersatz", "Begleitmatrix",
+<<<<<<< HEAD
     # "Frobenius-Normalform"]
+=======
+    # "Frobenius-Normalform"] 
+>>>>>>> 3bc872107baf7493a4e78d326124dd2846c1d817
 ```
