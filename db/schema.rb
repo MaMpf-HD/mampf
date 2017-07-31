@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731083107) do
+ActiveRecord::Schema.define(version: 20170731090640) do
 
   create_table "additional_contents", force: :cascade do |t|
     t.integer "lecture_id"
@@ -80,21 +80,6 @@ ActiveRecord::Schema.define(version: 20170731083107) do
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_disabled_contents_on_lecture_id"
     t.index ["tag_id"], name: "index_disabled_contents_on_tag_id"
-  end
-
-  create_table "erdbeere_assets", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "kaviar_assets", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "keks_assets", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "learning_assets", force: :cascade do |t|
@@ -180,11 +165,6 @@ ActiveRecord::Schema.define(version: 20170731083107) do
     t.index ["tag_id"], name: "index_relations_on_tag_id"
   end
 
-  create_table "reste_assets", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "section_contents", force: :cascade do |t|
     t.integer "section_id"
     t.integer "tag_id"
@@ -204,16 +184,6 @@ ActiveRecord::Schema.define(version: 20170731083107) do
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 
-  create_table "sesam_assets", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "summer_terms", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "tags", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
@@ -230,11 +200,6 @@ ActiveRecord::Schema.define(version: 20170731083107) do
   create_table "terms", force: :cascade do |t|
     t.integer "year"
     t.string "season"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "winter_terms", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

@@ -21,20 +21,20 @@ RSpec.describe LearningAsset, type: :model do
     learning_asset = FactoryGirl.build(:learning_asset, title: 'usual bs')
     expect(learning_asset).to be_invalid
   end
-  context 'KeksQuizAsset' do
+  context 'KeksQuiz' do
     it 'is invalid without a question_list' do
-      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuizAsset',
+      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuiz',
                                                           question_list: nil)
       expect(learning_asset).to be_invalid
     end
     it 'is invalid with improper question_list' do
-      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuizAsset',
+      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuiz',
                                                           question_list:
                                                             'Hallo')
       expect(learning_asset).to be_invalid
     end
     it 'is valid with proper question_list' do
-      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuizAsset',
+      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuiz',
                                                           question_list:
                                                             '25&30')
       expect(learning_asset).to be_valid

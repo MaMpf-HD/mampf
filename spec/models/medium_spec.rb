@@ -12,15 +12,15 @@ RSpec.describe Medium, type: :model do
     medium = FactoryGirl.build(:medium, sort: 'Test')
     expect(medium).to be_invalid
   end
-  context 'KeksQuizMedium' do
+  context 'KeksQuestion' do
     it 'is invalid if no question_id is given ' do
-      medium = FactoryGirl.build(:medium, sort: 'KeksQuestionMedium',
+      medium = FactoryGirl.build(:medium, sort: 'KeksQuestion',
                                           question_id: nil)
       expect(medium).to be_invalid
     end
     it 'is invalid if question_id is duplicate' do
-      FactoryGirl.create(:medium, sort: 'KeksQuestionMedium', question_id: 123)
-      medium = FactoryGirl.build(:medium, sort: 'KeksQuestionMedium',
+      FactoryGirl.create(:medium, sort: 'KeksQuestion', question_id: 123)
+      medium = FactoryGirl.build(:medium, sort: 'KeksQuestion',
                                           question_id: 123)
       expect(medium).to be_invalid
     end

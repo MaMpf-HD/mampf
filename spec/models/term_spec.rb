@@ -13,7 +13,7 @@ RSpec.describe Term, type: :model do
     expect(term).to be_invalid
   end
   it 'is invalid if season is not SummerTerm or WinterTerm' do
-    term = FactoryGirl.build(:term, season: 'SpringTerm')
+    term = FactoryGirl.build(:term, season: 'Spring')
     expect(term).to be_invalid
   end
   it 'is invalid if year is not a number' do
@@ -33,8 +33,8 @@ RSpec.describe Term, type: :model do
     expect(term).to be_invalid
   end
   it 'is invalid with duplicate season and year' do
-    FactoryGirl.create(:term, season: 'SummerTerm', year: 2017)
-    term = FactoryGirl.build(:term, season: 'SummerTerm', year: 2017)
+    FactoryGirl.create(:term, season: 'Summer', year: 2017)
+    term = FactoryGirl.build(:term, season: 'Summer', year: 2017)
     expect(term).to be_invalid
   end
   describe '#begin_date' do
