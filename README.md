@@ -5,7 +5,6 @@ As of now, only the models and some class methods have been implemented, togethe
 
 * Ruby version: 2.4.0
 * Rails Version: 5.1.2
-<<<<<<< HEAD
 
 * Database initialization:
     `rails setup:import_data`
@@ -41,5 +40,5 @@ For the brevity of presentation, we pick out only very few data.
     # "Spektralsatz für normale Endomorphismen", "Euklidischer Ring", "Gauß-Diagonalisierung von Matrizen über
     # Euklidischen Ringen", "Äquivalenz und Ähnlichkeit von Matrizen über Ringen", "Fittingideale", "Fittings
     # Lemma", "Invarianten- und Determinantenteiler einer Matrix", "Invariantenteilersatz", "Begleitmatrix",
-    # "Frobenius-Normalform"] 
+    # "Frobenius-Normalform"]
 ```
