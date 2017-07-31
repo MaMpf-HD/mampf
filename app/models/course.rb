@@ -1,8 +1,8 @@
 # Course class
 class Course < ApplicationRecord
   has_many :lectures
-  has_many :course_contents
-  has_many :tags, through: :course_contents
+  has_many :course_tag_joins
+  has_many :tags, through: :course_tag_joins
   has_many :learning_assets, as: :teachable
   validates :title, presence: true, uniqueness: true
 

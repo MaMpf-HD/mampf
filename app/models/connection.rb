@@ -11,6 +11,6 @@ class Connection < ApplicationRecord
 
   def no_self_connections_allowed
     return unless learning_asset_id == linked_asset_id
-    errors.add(:base, 'no self connectionss allowed')
+    errors.add(:base, 'no self connections allowed')
   end
 end

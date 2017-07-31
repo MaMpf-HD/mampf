@@ -10,16 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731090640) do
-
-  create_table "additional_contents", force: :cascade do |t|
-    t.integer "lecture_id"
-    t.integer "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_additional_contents_on_lecture_id"
-    t.index ["tag_id"], name: "index_additional_contents_on_tag_id"
-  end
+ActiveRecord::Schema.define(version: 20170731130734) do
 
   create_table "asset_media", force: :cascade do |t|
     t.integer "learning_asset_id"
@@ -58,28 +49,19 @@ ActiveRecord::Schema.define(version: 20170731090640) do
     t.index ["linked_asset_id"], name: "index_connections_on_linked_asset_id"
   end
 
-  create_table "course_contents", force: :cascade do |t|
+  create_table "course_tag_joins", force: :cascade do |t|
     t.integer "course_id"
     t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_course_contents_on_course_id"
-    t.index ["tag_id"], name: "index_course_contents_on_tag_id"
+    t.index ["course_id"], name: "index_course_tag_joins_on_course_id"
+    t.index ["tag_id"], name: "index_course_tag_joins_on_tag_id"
   end
 
   create_table "courses", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "disabled_contents", force: :cascade do |t|
-    t.integer "lecture_id"
-    t.integer "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_disabled_contents_on_lecture_id"
-    t.index ["tag_id"], name: "index_disabled_contents_on_tag_id"
   end
 
   create_table "learning_assets", force: :cascade do |t|
@@ -95,6 +77,24 @@ ActiveRecord::Schema.define(version: 20170731090640) do
     t.index ["teachable_type", "teachable_id"], name: "index_learning_assets_on_teachable_type_and_teachable_id"
   end
 
+  create_table "lecture_tag_additional_joins", force: :cascade do |t|
+    t.integer "lecture_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_lecture_tag_additional_joins_on_lecture_id"
+    t.index ["tag_id"], name: "index_lecture_tag_additional_joins_on_tag_id"
+  end
+
+  create_table "lecture_tag_disabled_joins", force: :cascade do |t|
+    t.integer "lecture_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_lecture_tag_disabled_joins_on_lecture_id"
+    t.index ["tag_id"], name: "index_lecture_tag_disabled_joins_on_tag_id"
+  end
+
   create_table "lectures", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -104,22 +104,22 @@ ActiveRecord::Schema.define(version: 20170731090640) do
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
 
-  create_table "lesson_contents", force: :cascade do |t|
-    t.integer "lesson_id"
-    t.integer "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lesson_id"], name: "index_lesson_contents_on_lesson_id"
-    t.index ["tag_id"], name: "index_lesson_contents_on_tag_id"
-  end
-
-  create_table "lesson_headings", force: :cascade do |t|
+  create_table "lesson_section_joins", force: :cascade do |t|
     t.integer "lesson_id"
     t.integer "section_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["lesson_id"], name: "index_lesson_headings_on_lesson_id"
-    t.index ["section_id"], name: "index_lesson_headings_on_section_id"
+    t.index ["lesson_id"], name: "index_lesson_section_joins_on_lesson_id"
+    t.index ["section_id"], name: "index_lesson_section_joins_on_section_id"
+  end
+
+  create_table "lesson_tag_joins", force: :cascade do |t|
+    t.integer "lesson_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lesson_id"], name: "index_lesson_tag_joins_on_lesson_id"
+    t.index ["tag_id"], name: "index_lesson_tag_joins_on_tag_id"
   end
 
   create_table "lessons", force: :cascade do |t|
@@ -165,13 +165,13 @@ ActiveRecord::Schema.define(version: 20170731090640) do
     t.index ["tag_id"], name: "index_relations_on_tag_id"
   end
 
-  create_table "section_contents", force: :cascade do |t|
+  create_table "section_tag_joins", force: :cascade do |t|
     t.integer "section_id"
     t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["section_id"], name: "index_section_contents_on_section_id"
-    t.index ["tag_id"], name: "index_section_contents_on_tag_id"
+    t.index ["section_id"], name: "index_section_tag_joins_on_section_id"
+    t.index ["tag_id"], name: "index_section_tag_joins_on_tag_id"
   end
 
   create_table "sections", force: :cascade do |t|

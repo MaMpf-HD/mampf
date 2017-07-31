@@ -1,6 +1,6 @@
-# LessonContent class
+# LessonTagJoin class
 # JoinTable for lesson <-> tag many-to-many-relation
-class LessonContent < ApplicationRecord
+class LessonTagJoin < ApplicationRecord
   belongs_to :lesson
   belongs_to :tag
 end

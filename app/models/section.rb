@@ -1,9 +1,10 @@
+# Section class
 class Section < ApplicationRecord
   belongs_to :chapter
-  has_many :section_contents
-  has_many :tags, through: :section_contents
-  has_many :lesson_headings
-  has_many :lessons, through: :lesson_headings
+  has_many :section_tag_joins
+  has_many :tags, through: :section_tag_joins
+  has_many :lesson_section_joins
+  has_many :lessons, through: :lesson_section_joins
   validates :title, presence: true
   validates :number, presence: true,
                      numericality: { only_integer: true,
