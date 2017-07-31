@@ -16,8 +16,8 @@ namespace :setup do
     csv_file_path = 'db/csv/terms.csv'
 
     CSV.foreach(csv_file_path, headers: true) do |row|
-      Term.create!(type: row['type'], year: row['year'])
-      puts 'Added term: ' + row['year'] + ' ' + row['type']
+      Term.create!(season: row['season'], year: row['year'])
+      puts 'Added term: ' + row['year'] + ' ' + row['season']
     end
   end
 
@@ -61,7 +61,7 @@ namespace :setup do
     CSV.foreach(csv_file_path, headers: true) do |row|
       course = Course.find_by(title: row['course'])
       term_data = row['term'].split('&')
-      term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+      term = Term.where(season: term_data[0], year: term_data[1].to_i).first
       teacher = Teacher.find_by(name: row['teacher'])
       lecture = Lecture.create!(course: course, term: term, teacher: teacher)
       unless row['additional_tags'].nil?
@@ -85,7 +85,7 @@ namespace :setup do
     CSV.foreach(csv_file_path, headers: true) do |row|
       course = Course.find_by(title: row['course'])
       term_data = row['term'].split('&')
-      term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+      term = Term.where(season: term_data[0], year: term_data[1].to_i).first
       lecture = Lecture.where(course: course, term: term).first
       Chapter.create!(lecture: lecture, number: row['number'].to_i,
                       title: row['title'])
@@ -101,7 +101,7 @@ namespace :setup do
     CSV.foreach(csv_file_path, headers: true) do |row|
       course = Course.find_by(title: row['course'])
       term_data = row['term'].split('&')
-      term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+      term = Term.where(season: term_data[0], year: term_data[1].to_i).first
       lecture = Lecture.where(course: course, term: term).first
       chapter = Chapter.where(lecture: lecture, number: row['chapter'].to_i)
                        .first
@@ -123,7 +123,7 @@ namespace :setup do
     CSV.foreach(csv_file_path, headers: true) do |row|
       course = Course.find_by(title: row['course'])
       term_data = row['term'].split('&')
-      term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+      term = Term.where(season: term_data[0], year: term_data[1].to_i).first
       lecture = Lecture.where(course: course, term: term).first
       date = Date.new(row['year'].to_i, row['month'].to_i, row['day'].to_i)
       lesson = Lesson.create!(lecture: lecture, number: row['number'].to_i,
@@ -154,7 +154,7 @@ namespace :setup do
     CSV.foreach(csv_file_path, headers: true) do |row|
       Medium.create! do |m|
         m.title = row['title']
-        m.type = row['type']
+        m.sort = row['sort']
         m.author = row['author']
         m.description = row['description']
         unless row['video_file_link'].nil?
@@ -194,7 +194,7 @@ namespace :setup do
       teachable = course
       if row['teachable_type'] != 'Course'
         term_data = row['term'].split('&')
-        term = Term.where(type: term_data[0], year: term_data[1].to_i).first
+        term = Term.where(season: term_data[0], year: term_data[1].to_i).first
         teachable = Lecture.where(course: course, term: term).first
         if row['teachable_type'] != 'Lecture'
           teachable = Lesson.where(lecture: teachable,
@@ -203,7 +203,7 @@ namespace :setup do
       end
       LearningAsset.create! do |l|
         l.title = row['title']
-        l.type = row['type']
+        l.sort = row['sort']
         l.teachable = teachable
         l.link = row['link']
         l.heading = row['heading']

@@ -2,7 +2,7 @@
 class Medium < ApplicationRecord
   has_many :asset_media
   has_many :learning_assets, through: :asset_media
-  validates :type, presence: true,
+  validates :sort, presence: true,
                    inclusion: { in: %w[KaviarMedium ErdbeereMedium SesamMedium
                                        ResteMedium KeksQuestionMedium] }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
@@ -66,7 +66,7 @@ class Medium < ApplicationRecord
   end
 
   def keks_question?
-    type == 'KeksQuestionMedium'
+    sort == 'KeksQuestionMedium'
   end
 
   private

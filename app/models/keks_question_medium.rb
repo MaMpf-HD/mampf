@@ -1,2 +1,0 @@
-class KeksQuestionMedium < Medium
-end

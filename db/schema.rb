@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170729151348) do
+ActiveRecord::Schema.define(version: 20170731083107) do
 
   create_table "additional_contents", force: :cascade do |t|
     t.integer "lecture_id"
@@ -99,7 +99,7 @@ ActiveRecord::Schema.define(version: 20170729151348) do
 
   create_table "learning_assets", force: :cascade do |t|
     t.text "title"
-    t.string "type"
+    t.string "sort"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "teachable_type"
@@ -165,7 +165,7 @@ ActiveRecord::Schema.define(version: 20170729151348) do
     t.string "author"
     t.string "video_size"
     t.string "authoring_software"
-    t.string "type"
+    t.string "sort"
     t.integer "question_id"
     t.string "description"
   end
@@ -229,7 +229,7 @@ ActiveRecord::Schema.define(version: 20170729151348) do
 
   create_table "terms", force: :cascade do |t|
     t.integer "year"
-    t.string "type"
+    t.string "season"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

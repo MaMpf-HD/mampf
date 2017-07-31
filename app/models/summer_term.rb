@@ -1,2 +1,0 @@
-class SummerTerm < Term
-end

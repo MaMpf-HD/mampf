@@ -1,2 +1,0 @@
-class ErdbeereMedium < Medium
-end

@@ -1,2 +1,0 @@
-class ResteMedium < Medium
-end

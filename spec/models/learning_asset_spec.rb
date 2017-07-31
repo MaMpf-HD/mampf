@@ -4,6 +4,14 @@ RSpec.describe LearningAsset, type: :model do
   it 'has a valid factory' do
     expect(FactoryGirl.build(:learning_asset)).to be_valid
   end
+  it 'is invalid without a sort' do
+    learning_asset = FactoryGirl.build(:learning_asset, sort: nil)
+    expect(learning_asset).to be_invalid
+  end
+  it 'is invalid with improper sort' do
+    learning_asset = FactoryGirl.build(:learning_asset, sort: 'Test')
+    expect(learning_asset).to be_invalid
+  end
   it 'is invalid without a title' do
     learning_asset = FactoryGirl.build(:learning_asset, title: nil)
     expect(learning_asset).to be_invalid
@@ -15,18 +23,18 @@ RSpec.describe LearningAsset, type: :model do
   end
   context 'KeksQuizAsset' do
     it 'is invalid without a question_list' do
-      learning_asset = FactoryGirl.build(:learning_asset, type: 'KeksQuizAsset',
+      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuizAsset',
                                                           question_list: nil)
       expect(learning_asset).to be_invalid
     end
     it 'is invalid with improper question_list' do
-      learning_asset = FactoryGirl.build(:learning_asset, type: 'KeksQuizAsset',
+      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuizAsset',
                                                           question_list:
                                                             'Hallo')
       expect(learning_asset).to be_invalid
     end
     it 'is valid with proper question_list' do
-      learning_asset = FactoryGirl.build(:learning_asset, type: 'KeksQuizAsset',
+      learning_asset = FactoryGirl.build(:learning_asset, sort: 'KeksQuizAsset',
                                                           question_list:
                                                             '25&30')
       expect(learning_asset).to be_valid

@@ -1,4 +1,4 @@
-title,type,teachable_type,course,term,lesson_number,media,linked_assets,link,heading,tags,question_list
+title,sort,teachable_type,course,term,lesson_number,media,linked_assets,link,heading,tags,question_list
 KaViaR.SS17.LA2.E01,KaviarAsset,Lesson,Lineare Algebra 2,SummerTerm&2017,1,KaViaR.SS17.LA2.E01,RestE.SS17.LA2.AltQuiz.E01,,,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum,
 KaViaR.SS17.LA2.E02,KaviarAsset,Lesson,Lineare Algebra 2,SummerTerm&2017,2,KaViaR.SS17.LA2.E02,SeSAM.SS17.LA2.E01,,,Charakterisierungen von Diagonalisierbarkeit&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts,
 KaViaR.SS17.LA2.E03,KaviarAsset,Lesson,Lineare Algebra 2,SummerTerm&2017,3,KaViaR.SS17.LA2.E03,RestE.SS17.LA2.AltQuiz.E02,,,Charakterisierungen von Diagonalisierbarkeit&Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus,

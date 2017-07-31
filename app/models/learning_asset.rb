@@ -8,6 +8,9 @@ class LearningAsset < ApplicationRecord
   has_many :connections
   has_many :linked_assets, through: :connections
   validates :title, presence: true, uniqueness: true
+  validates :sort, presence: true,
+                   inclusion: { in: %w[KaviarAsset ErdbeereAsset SesamAsset
+                                       ResteAsset KeksQuizAsset] }
   validates :question_list, presence: true,
                             format: { with: /\A(\d{1,}&)+\d{1,}\z/ },
                             if: :keks_quiz?
@@ -21,6 +24,6 @@ class LearningAsset < ApplicationRecord
   end
 
   def keks_quiz?
-    type == 'KeksQuizAsset'
+    sort == 'KeksQuizAsset'
   end
 end

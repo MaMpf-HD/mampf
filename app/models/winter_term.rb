@@ -1,2 +1,0 @@
-class WinterTerm < Term
-end

@@ -1,2 +1,0 @@
-class KaviarMedium < Medium
-end
