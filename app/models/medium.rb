@@ -1,7 +1,7 @@
 # Medium class
 class Medium < ApplicationRecord
-  has_many :asset_media
-  has_many :learning_assets, through: :asset_media
+  has_many :asset_medium_joins
+  has_many :assets, through: :asset_medium_joins
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
                                        KeksQuestion] }
@@ -79,5 +79,4 @@ class Medium < ApplicationRecord
     errors.add(:base, 'empty content')
     false
   end
-
 end

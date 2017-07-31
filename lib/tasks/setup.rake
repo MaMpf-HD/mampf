@@ -185,9 +185,9 @@ namespace :setup do
     end
   end
 
-  desc 'Import learning_assets from csv file'
+  desc 'Import assets from csv file'
   task import_assets: :environment do
-    csv_file_path = 'db/csv/learning_assets.csv'
+    csv_file_path = 'db/csv/assets.csv'
 
     CSV.foreach(csv_file_path, headers: true) do |row|
       course = Course.find_by(title: row['course'])
@@ -201,7 +201,7 @@ namespace :setup do
                                    number: row['lesson_number']).first
         end
       end
-      LearningAsset.create! do |l|
+      Asset.create! do |l|
         l.title = row['title']
         l.sort = row['sort']
         l.teachable = teachable
@@ -215,15 +215,15 @@ namespace :setup do
           l.media = Medium.where(title: row['media'].split('&'))
         end
       end
-      puts 'Added learning_asset: ' + row['title']
+      puts 'Added asset: ' + row['title']
     end
 
     CSV.foreach(csv_file_path, headers: true) do |row|
-      asset = LearningAsset.find_by(title: row['title'])
+      asset = Asset.find_by(title: row['title'])
       unless row['linked_assets'].nil?
-        asset.linked_assets = LearningAsset.where(title: row['linked_assets']
+        asset.linked_assets = Asset.where(title: row['linked_assets']
                                                            .split('&'))
-        puts 'Added linked_assets to learning_asset: ' + row['title'] +
+        puts 'Added linked_assets to asset: ' + row['title'] +
              ' -> ' + row['linked_assets']
       end
     end

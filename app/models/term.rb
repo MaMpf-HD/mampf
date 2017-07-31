@@ -2,9 +2,10 @@
 class Term < ApplicationRecord
   has_many :lectures
   validates :season, presence: true,
-                   inclusion: { in: %w[Summer Winter],
-                                message: 'not a valid type' },
-                   uniqueness: { scope: :year, message: 'term already exists' }
+                     inclusion: { in: %w[Summer Winter],
+                                  message: 'not a valid type' },
+                     uniqueness: { scope: :year,
+                                   message: 'term already exists' }
   validates :year, presence: true,
                    numericality: { only_integer: true,
                                    greater_than_or_equal_to: 2000,

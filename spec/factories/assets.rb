@@ -1,7 +1,7 @@
 require 'faker'
 
 FactoryGirl.define do
-  factory :learning_asset, aliases: [:linked_asset] do
+  factory :asset, aliases: [:linked_asset] do
     sort %w[Kaviar Erdbeere Sesam Reste].sample
     title { Faker::ChuckNorris.fact + ' ' + Faker::Number.between(1,99).to_s}
     heading { Faker::Book.title }

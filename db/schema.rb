@@ -10,24 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170731130734) do
+ActiveRecord::Schema.define(version: 20170731143601) do
 
-  create_table "asset_media", force: :cascade do |t|
-    t.integer "learning_asset_id"
+  create_table "asset_medium_joins", force: :cascade do |t|
+    t.integer "asset_id"
     t.integer "medium_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["learning_asset_id"], name: "index_asset_media_on_learning_asset_id"
-    t.index ["medium_id"], name: "index_asset_media_on_medium_id"
+    t.index ["asset_id"], name: "index_asset_medium_joins_on_asset_id"
+    t.index ["medium_id"], name: "index_asset_medium_joins_on_medium_id"
   end
 
-  create_table "asset_tags", force: :cascade do |t|
-    t.integer "learning_asset_id"
+  create_table "asset_tag_joins", force: :cascade do |t|
+    t.integer "asset_id"
     t.integer "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["learning_asset_id"], name: "index_asset_tags_on_learning_asset_id"
-    t.index ["tag_id"], name: "index_asset_tags_on_tag_id"
+    t.index ["asset_id"], name: "index_asset_tag_joins_on_asset_id"
+    t.index ["tag_id"], name: "index_asset_tag_joins_on_tag_id"
+  end
+
+  create_table "assets", force: :cascade do |t|
+    t.text "title"
+    t.string "sort"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "teachable_type"
+    t.integer "teachable_id"
+    t.string "heading"
+    t.text "link"
+    t.string "question_list"
+    t.index ["teachable_type", "teachable_id"], name: "index_assets_on_teachable_type_and_teachable_id"
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -40,12 +53,12 @@ ActiveRecord::Schema.define(version: 20170731130734) do
   end
 
   create_table "connections", force: :cascade do |t|
-    t.integer "learning_asset_id"
+    t.integer "asset_id"
     t.integer "linked_asset_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["learning_asset_id", "linked_asset_id"], name: "index_connections_on_learning_asset_id_and_linked_asset_id", unique: true
-    t.index ["learning_asset_id"], name: "index_connections_on_learning_asset_id"
+    t.index ["asset_id", "linked_asset_id"], name: "index_connections_on_asset_id_and_linked_asset_id", unique: true
+    t.index ["asset_id"], name: "index_connections_on_asset_id"
     t.index ["linked_asset_id"], name: "index_connections_on_linked_asset_id"
   end
 
@@ -62,19 +75,6 @@ ActiveRecord::Schema.define(version: 20170731130734) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "learning_assets", force: :cascade do |t|
-    t.text "title"
-    t.string "sort"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "teachable_type"
-    t.integer "teachable_id"
-    t.string "heading"
-    t.text "link"
-    t.string "question_list"
-    t.index ["teachable_type", "teachable_id"], name: "index_learning_assets_on_teachable_type_and_teachable_id"
   end
 
   create_table "lecture_tag_additional_joins", force: :cascade do |t|

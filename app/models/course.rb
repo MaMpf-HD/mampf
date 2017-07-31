@@ -3,15 +3,15 @@ class Course < ApplicationRecord
   has_many :lectures
   has_many :course_tag_joins
   has_many :tags, through: :course_tag_joins
-  has_many :learning_assets, as: :teachable
+  has_many :assets, as: :teachable
   validates :title, presence: true, uniqueness: true
 
-  def learning_assets_in_lectures
-    LearningAsset.where(teachable: lectures)
+  def assets_in_lectures
+    Asset.where(teachable: lectures)
   end
 
-  def learning_assets_in_lessons
+  def assets_in_lessons
     lessons = Lesson.where(lecture: lectures)
-    LearningAsset.where(teachable: lessons)
+    Asset.where(teachable: lessons)
   end
 end

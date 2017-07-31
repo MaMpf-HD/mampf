@@ -5,7 +5,7 @@ class Lesson < ApplicationRecord
   has_many :tags, through: :lesson_tag_joins
   has_many :lesson_section_joins
   has_many :sections, through: :lesson_section_joins
-  has_many :learning_assets, as: :teachable
+  has_many :assets, as: :teachable
   validates :date, presence: true
   validates :number, presence: true,
                      numericality: { only_integer: true,

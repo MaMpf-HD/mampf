@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :connection do
-    association :learning_asset
+    association :asset
     association :linked_asset
   end
 end

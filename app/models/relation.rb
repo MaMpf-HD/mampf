@@ -1,3 +1,5 @@
+# Relation class
+# Join table for tag<->tag many-to-many-relation
 class Relation < ApplicationRecord
   belongs_to :tag
   belongs_to :related_tag, class_name: 'Tag'
@@ -6,12 +8,12 @@ class Relation < ApplicationRecord
                                         message: 'relation already exists' }
   validate :no_inverses_allowed
   validate :no_self_relations_allowed
-  after_destroy :destroy_inverses, if: :has_inverse?
+  after_destroy :destroy_inverses, if: :inverse?
 
   private
 
   def no_inverses_allowed
-    errors.add(:base, 'inverse relation already exists') if has_inverse?
+    errors.add(:base, 'inverse relation already exists') if inverse?
   end
 
   def no_self_relations_allowed
@@ -22,7 +24,7 @@ class Relation < ApplicationRecord
     inverses.destroy_all
   end
 
-  def has_inverse?
+  def inverse?
     self.class.exists?(inverse_relation_options)
   end
 

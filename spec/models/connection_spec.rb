@@ -4,8 +4,8 @@ RSpec.describe Connection, type: :model do
   it 'has a valid factory' do
     expect(FactoryGirl.build(:connection)).to be_valid
   end
-  it 'is invalid without learning_asset' do
-    connection = FactoryGirl.build(:connection, learning_asset: nil)
+  it 'is invalid without asset' do
+    connection = FactoryGirl.build(:connection, asset: nil)
     expect(connection).to be_invalid
   end
   it 'is invalid without linked_asset' do
@@ -13,19 +13,19 @@ RSpec.describe Connection, type: :model do
     expect(connection).to be_invalid
   end
   it 'is invalid if connection already exists' do
-    learning_asset = FactoryGirl.create(:learning_asset)
+    asset = FactoryGirl.create(:asset)
     linked_asset = FactoryGirl.create(:linked_asset)
-    FactoryGirl.create(:connection, learning_asset: learning_asset,
+    FactoryGirl.create(:connection, asset: asset,
                                     linked_asset: linked_asset)
     duplicate_connection = FactoryGirl.build(:connection,
-                                                learning_asset: learning_asset,
+                                                asset: asset,
                                                 linked_asset: linked_asset)
     expect(duplicate_connection).to be_invalid
   end
-  it 'is invalid if it links learning_asset to itself' do
-    learning_asset = FactoryGirl.create(:learning_asset)
-    connection = FactoryGirl.build(:connection, learning_asset: learning_asset,
-                                                linked_asset: learning_asset)
+  it 'is invalid if it links asset to itself' do
+    asset = FactoryGirl.create(:asset)
+    connection = FactoryGirl.build(:connection, asset: asset,
+                                                linked_asset: asset)
     expect(connection).to be_invalid
   end
 end
