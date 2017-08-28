@@ -17,9 +17,9 @@ RSpec.describe Connection, type: :model do
     linked_asset = FactoryGirl.create(:linked_asset)
     FactoryGirl.create(:connection, asset: asset,
                                     linked_asset: linked_asset)
-    duplicate_connection = FactoryGirl.build(:connection,
-                                                asset: asset,
-                                                linked_asset: linked_asset)
+    duplicate_connection = FactoryGirl.build(:connection, asset: asset,
+                                                          linked_asset:
+                                                            linked_asset)
     expect(duplicate_connection).to be_invalid
   end
   it 'is invalid if it links asset to itself' do

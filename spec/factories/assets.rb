@@ -3,7 +3,7 @@ require 'faker'
 FactoryGirl.define do
   factory :asset, aliases: [:linked_asset] do
     sort %w[Kaviar Erdbeere Sesam Reste].sample
-    title { Faker::ChuckNorris.fact + ' ' + Faker::Number.between(1,99).to_s}
+    title { Faker::ChuckNorris.fact + ' ' + Faker::Number.between(1, 99).to_s }
     heading { Faker::Book.title }
     association :teachable, factory: [:lesson, :with_tags]
     trait :for_lecture do
