@@ -69,6 +69,8 @@ class Medium < ApplicationRecord
     sort == 'KeksQuestion'
   end
 
+  scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
+
   private
 
   def nonempty_content?
