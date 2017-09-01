@@ -1,4 +1,121 @@
 title,related_tags,courses
+Aussagen,,Lineare Algebra 1
+Negation,,Lineare Algebra 1
+Konjunktion,,Lineare Algebra 1
+Disjunktion,,Lineare Algebra 1
+Implikation,,Lineare Algebra 1
+Äquivalenz,,Lineare Algebra 1
+Beweisen,,Lineare Algebra 1
+Existenz- und Allquantor,,Lineare Algebra 1
+Mengen,,Lineare Algebra 1
+Teilmengen,,Lineare Algebra 1
+Durchschnitt,,Lineare Algebra 1
+Vereinigung,,Lineare Algebra 1
+kartesisches Produkt,,Lineare Algebra 1
+Potenzmenge,,Lineare Algebra 1
+Kardinalität,,Lineare Algebra 1
+vollständige Induktion,,Lineare Algebra 1
+Relationen,,Lineare Algebra 1
+Ordnungsrelationen,,Lineare Algebra 1
+größte Elemente,,Lineare Algebra 1
+maximale Elemente,,Lineare Algebra 1
+Äquivalenzrelationen,,Lineare Algebra 1
+Äquivalenzklassen,,Lineare Algebra 1
+Partitionen,,Lineare Algebra 1
+Abbildungen,,Lineare Algebra 1
+Bild,,Lineare Algebra 1
+Urbild,,Lineare Algebra 1
+Einschränkung,,Lineare Algebra 1
+Komposition von Abbildungen,,Lineare Algebra 1
+Injektivität,,Lineare Algebra 1
+Surjektivität,,Lineare Algebra 1
+Bijektivität,,Lineare Algebra 1
+Charakterisierung von Bijektivität,,Lineare Algebra 1
+Umkehrabbildung,,Lineare Algebra 1
+Auswahlaxiom,,Lineare Algebra 1
+Verknüpfungen,,Lineare Algebra 1
+Monoide,,Lineare Algebra 1
+Gruppen,,Lineare Algebra 1
+abelsche Gruppen,,Lineare Algebra 1
+symmetrische Gruppe,,Lineare Algebra 1
+Gruppe der Restklassen modulo n,,Lineare Algebra 1
+Gruppenhomomorphismen,,Lineare Algebra 1
+Ringe und deren Eigenschaften,,Lineare Algebra 1
+Integritätsbereiche,,Lineare Algebra 1
+Körper,,Lineare Algebra 1
+endliche Körper,,Lineare Algebra 1
+Charakteristik,,Lineare Algebra 1
+Polynome,,Lineare Algebra 1
+Grad,,Lineare Algebra 1
+Polynomdivision,,Lineare Algebra 1
+Nullstellen von Polynomen und deren Vielfachheiten,,Lineare Algebra 1
+Fundamentalsatz der Algebra,,Lineare Algebra 1
+Polynomfunktionen,,Lineare Algebra 1
+Untervektorräume und deren Eigenschaften,,Lineare Algebra 1
+Linearkombinationen,,Lineare Algebra 1
+lineare Hülle,,Lineare Algebra 1
+lineare (Un-)Abhängigkeit und deren Charakterisierung,,Lineare Algebra 1
+Erzeugendensystem,,Lineare Algebra 1
+Basis,,Lineare Algebra 1
+Basisauswahlsatz,,Lineare Algebra 1
+Austauschlemma,,Lineare Algebra 1
+Austauschsatz,,Lineare Algebra 1
+Dimension,,Lineare Algebra 1
+Dimension von UVR,,Lineare Algebra 1
+Basisergänzungssatz,,Lineare Algebra 1
+Zornsches Lemma,,Lineare Algebra 1
+Existenz von Basen,,Lineare Algebra 1
+Matrizen,,Lineare Algebra 1
+invertierbare Matrizen,,Lineare Algebra 1
+allgemeine lineare Gruppe,,Lineare Algebra 1
+elementare Zeilenumformungen,,Lineare Algebra 1
+Zeilenraum,,Lineare Algebra 1
+Zeilenstufenform,,Lineare Algebra 1
+Algorithmus zur Zeilenstufenform,,Lineare Algebra 1
+Transponierte,,Lineare Algebra 1
+Zeilenrang,,Lineare Algebra 1
+Spaltenrang,,Lineare Algebra 1
+Summe von UVR,,Lineare Algebra 1
+Dimensionsformel,,Lineare Algebra 1
+direkte Summe von UVR,,Lineare Algebra 1
+Charakterisierung direkter Summen,,Lineare Algebra 1
+Komplement,,Lineare Algebra 1
+lineare Abbildung,,Lineare Algebra 1
+Endomorphismen,,Lineare Algebra 1
+Isomorphismen,,Lineare Algebra 1
+Kern,,Lineare Algebra 1
+Bild einer linearen Abbildung,,Lineare Algebra 1
+Rang,,Lineare Algebra 1
+Dimensionsformel für lineare Abbildungen,,Lineare Algebra 1
+affine Unterräume,,Lineare Algebra 1
+Fasern linearer Abbildungen,,Lineare Algebra 1
+Dimension von Fasern,,Lineare Algebra 1
+Faktorraum,,Lineare Algebra 1
+Char. von UVR und affinen Unterräumen,,Lineare Algebra 1
+Homomorphiesatz,,Lineare Algebra 1
+Lineare Gleichungssysteme,,Lineare Algebra 1
+Lösbarkeitskriterien,,Lineare Algebra 1
+strenge Zeilenstufenform,,Lineare Algebra 1
+Gauß-Algorithmus für homogene und inhomogene LGS,,Lineare Algebra 1
+Konstruktion linearer Abb. durch Vorgabe auf Basen,,Lineare Algebra 1
+Koordinatensystem,,Lineare Algebra 1
+Darstellungsmatrix,,Lineare Algebra 1
+Charakterisierung von Invertierbarkeit von Matrizen,,Lineare Algebra 1
+Transformationsmatrizen,,Lineare Algebra 1
+Transformationsformel,,Lineare Algebra 1
+Äquivalenz von Matrizen,,Lineare Algebra 1
+Ähnlichkeit von Matrizen,,Lineare Algebra 1
+Determinanten,,Lineare Algebra 1
+Eigenschaften von Determinanten,,Lineare Algebra 1
+Signum und seine Eigenschaften,,Lineare Algebra 1
+Transpositionen,,Lineare Algebra 1
+alternierende Gruppe,,Lineare Algebra 1
+Leibnizformel,,Lineare Algebra 1
+Determinante der Transponierten,,Lineare Algebra 1
+komplementäre Matrix,,Lineare Algebra 1
+Entwicklungssatz von Laplace,,Lineare Algebra 1
+Cramersche Regel,,Lineare Algebra 1
+Determinante von Endomorphismen,,Lineare Algebra 1
 Eigenwert,Charakterisierungen von Diagonalisierbarkeit&Eigenraum&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts,Lineare Algebra 1
 Charakterisierungen von Diagonalisierbarkeit,Minimalpolynom eines Endomorphismus&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts&Jordansche Normalform,Lineare Algebra 1
 Eigenraum,,Lineare Algebra 1
