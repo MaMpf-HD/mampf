@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      get 'tag/:id', :to => 'tag#show'
-      get 'keks_question/:id', :to => 'medium#keks_question'
+      get 'tags', :to => 'tags#index'
+      get 'tags/:id', :to => 'tags#show'
+      get 'keks_questions/:id', :to => 'media#keks_question'
     end
   end
 

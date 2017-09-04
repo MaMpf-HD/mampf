@@ -1,8 +1,21 @@
 class MediumSerializer < ActiveModel::Serializer
-  attributes :id, :video_stream_link, :video_file_link, :video_thumbnail_link,
-             :manuscript_link, :external_reference_link, :width, :height,
-             :embedded_width, :embedded_height, :length, :pages,
-             :manuscript_size, :title, :author, :video_size,
-             :authoring_software, :sort, :question_id, :description
-  has_many :assets
+  attributes :embedded_video
+  def embedded_video
+    unless object.video_file_link.nil?
+      aspect_ratio = object.width.to_f / object.height
+      width = @instance_options[:width]
+      if width != nil then
+        height = (width.to_i/aspect_ratio).to_i.to_s
+        dimensions = 'width="' + width + '" height="' + height +'"'
+      else
+        dimensions = ''
+      end
+      html =  ['<video ', dimensions, ' controls><source src="',
+               object.video_file_link, '" type="video/mp4"></video>']
+      html.join
+    end
+   end
+   def passed
+     @instance_options[:width]
+   end
 end
