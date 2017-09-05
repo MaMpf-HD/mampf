@@ -229,11 +229,15 @@ namespace :setup do
     end
   end
 
-  desc 'Resets db and imports all data'
-  task import_all: [:environment, 'db:reset', 'setup:import_teachers',
+  desc 'imports all data without resetting db'
+  task import_all_noreset: [:environment, 'setup:import_teachers',
                     'setup:import_terms', 'setup:import_courses',
                     'setup:import_tags', 'setup:import_lectures',
                     'setup:import_chapters', 'setup:import_sections',
                     'setup:import_lessons', 'setup:import_media',
                     'setup:import_assets']
+
+  desc 'Resets db and imports all data'
+  task import_all: [:environment, 'db:reset', 'setup:import_all_noreset']
+
 end
