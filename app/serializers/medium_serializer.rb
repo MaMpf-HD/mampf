@@ -1,5 +1,5 @@
 class MediumSerializer < ActiveModel::Serializer
-  attributes :embedded_video
+  attributes :video_file_link, :embedded_video
   def embedded_video
     unless object.video_file_link.nil?
       aspect_ratio = object.width.to_f / object.height

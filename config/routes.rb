@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
 
-  root 'static_pages#home'
-  get 'about', to: 'static_pages#about'
-  get 'static_pages/home'
-  get 'static_pages/about'
+  root 'main#home'
+  get 'about', to: 'main#about'
+  get 'main/home'
+  get 'main/about'
 
   namespace :api do
     namespace :v1 do
