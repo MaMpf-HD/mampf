@@ -11,5 +11,3 @@ RUN apt-get update && apt-get install -y nodejs sqlite3 --no-install-recommends 
 
 COPY ./ /usr/src/app
 RUN bundle install
-RUN bundle exec rake db:migrate
-RUN bundle exec rake setup:import_all_noreset
