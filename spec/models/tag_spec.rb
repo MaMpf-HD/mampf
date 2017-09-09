@@ -9,8 +9,8 @@ RSpec.describe Tag, type: :model do
     expect(tag).to be_invalid
   end
   it 'is invalid with a duplicate title' do
-    FactoryGirl.create(:tag, title: 'usual bs')
-    tag = FactoryGirl.build(:tag, title: 'usual bs')
+    FactoryGirl.create(:tag, title: 'usual BS')
+    tag = FactoryGirl.build(:tag, title: 'usual BS')
     expect(tag).to be_invalid
   end
   describe 'graph theoretical methods' do
