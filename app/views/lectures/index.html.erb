@@ -1,0 +1,23 @@
+<h1>Lectures</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>LectureId</th>
+      <th>CourseTitle</th>
+      <th>Term</th>
+      <th>Teacher</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @lectures.each do |lecture| %>
+      <tr>
+        <td><%= lecture.id %></td>
+        <td><%= course_title(lecture) %></td>
+        <td><%= term_description(lecture)%></td>
+        <td><%= teacher(lecture) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

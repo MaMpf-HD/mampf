@@ -1,2 +1,10 @@
 <h1>mampf-dev</h1>
 <p>Testumgebung für die Entwicklung des MaMpf-Projektes</p>
+<% if user_signed_in? %>
+  <p><%= link_to "Edit user profile", edit_user_registration_path %>
+  <p><%= link_to "Logout", destroy_user_session_path, method: :delete %>
+<% else %>
+  <p><%= link_to "Sign_up", new_user_registration_path %>
+  <p><%= link_to "Login", new_user_session_path %>
+<% end %>
+<p><%= link_to "About", about_path%>

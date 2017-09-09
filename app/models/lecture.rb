@@ -11,6 +11,8 @@ class Lecture < ApplicationRecord
   has_many :chapters
   has_many :lessons
   has_many :learning_assets, as: :teachable
+  has_many :lecture_user_joins
+  has_many :users, through: :lecture_user_joins
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 

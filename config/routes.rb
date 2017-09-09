@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  get 'lectures/show'
+
+  get 'lectures/index'
+
+  devise_for :users
   root 'main#home'
   get 'about', to: 'main#about'
   get 'main/home'
