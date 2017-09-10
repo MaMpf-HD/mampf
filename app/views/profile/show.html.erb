@@ -1,4 +1,10 @@
-<h1>Lectures</h1>
+<%= link_to 'Main', root_path %>
+
+<h1>User Profile</h1>
+
+<%= link_to 'Edit', edit_profile_path %>
+
+<h2>Lectures</h2>
 
 <table>
   <thead>
@@ -9,7 +15,7 @@
   </thead>
 
   <tbody>
-    <% @lectures.each do |lecture| %>
+    <% @user.lectures.each do |lecture| %>
       <tr>
         <td><%= lecture.id %></td>
         <td><%= lecture.to_label %></td>

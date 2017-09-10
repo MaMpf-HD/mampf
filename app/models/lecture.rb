@@ -31,4 +31,8 @@ class Lecture < ApplicationRecord
   def sections
     Section.where(chapter: chapters)
   end
+
+  def to_label
+    course.title + ' ' + term.season + ' ' + term.year.to_s + ' ' + teacher.name
+  end
 end

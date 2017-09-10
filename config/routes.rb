@@ -1,5 +1,11 @@
 Rails.application.routes.draw do
 
+  get 'profile/show', as: 'profile'
+  get 'profile/edit', as: 'edit_profile'
+
+  patch 'profile/update'
+  put 'profile/update'
+
   get 'lectures/show'
 
   get 'lectures/index'
