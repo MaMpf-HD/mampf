@@ -69,6 +69,16 @@ class Medium < ApplicationRecord
     sort == 'KeksQuestion'
   end
 
+  def video_aspect_ratio
+    return unless height != 0 && width != 0
+    width.to_f / height
+  end
+
+  def video_scaled_height(new_width)
+    return unless height != 0 && width != 0
+    (new_width.to_f / video_aspect_ratio).to_i
+  end
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
 
   private

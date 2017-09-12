@@ -21,6 +21,8 @@ test:
   database: db/test.sqlite3
 
 production:
+  # <<: *default
+  # database: db/development.sqlite3
   adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
   encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
   database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>

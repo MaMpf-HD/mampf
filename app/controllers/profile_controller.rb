@@ -8,21 +8,23 @@ class ProfileController < ApplicationController
   end
 
   def update
-    @lecture_ids = user_params[:lecture_ids].delete_if{ |x| x == ''}.map{ |x| x.to_i}
+    @lecture_ids = user_params[:lecture_ids].delete_if { |x| x == '' }
+                                            .map(&:to_i)
     lectures = Lecture.where(id: @lecture_ids)
     @user.update(lectures: lectures)
     redirect_to profile_path, notice: 'Profile successfully updated'
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_user
-      @user = current_user
-    end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def user_params
-      params.fetch(:user, {})
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_user
+    @user = current_user
+  end
 
+  # Never trust parameters from the scary internet,
+  #  only allow the white list through.
+  def user_params
+    params.fetch(:user, {})
+  end
 end
