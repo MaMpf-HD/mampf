@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'assets/show/:id', to: 'assets#show'
+
   get 'profile/show', as: 'profile'
   get 'profile/edit', as: 'edit_profile'
 

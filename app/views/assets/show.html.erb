@@ -1,0 +1,7 @@
+<% @asset.media.each do |m| %>
+<p><%= m.title %></p>
+<% unless m.video_thumbnail_link.nil? %>
+<%= link_to image_tag(m.video_thumbnail_link, width: 200), m.video_stream_link%>
+<p>Tags: <%= tags(@asset) %></p>
+<% end %>
+<% end %>

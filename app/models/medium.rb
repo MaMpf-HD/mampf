@@ -80,6 +80,7 @@ class Medium < ApplicationRecord
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
+  scope :Kaviar, ->{ where(sort: 'Kaviar') }
 
   private
 
