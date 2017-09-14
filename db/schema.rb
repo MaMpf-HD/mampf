@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170909133037) do
+ActiveRecord::Schema.define(version: 20170914162323) do
 
   create_table "asset_medium_joins", force: :cascade do |t|
     t.integer "asset_id"
@@ -19,15 +19,6 @@ ActiveRecord::Schema.define(version: 20170909133037) do
     t.datetime "updated_at", null: false
     t.index ["asset_id"], name: "index_asset_medium_joins_on_asset_id"
     t.index ["medium_id"], name: "index_asset_medium_joins_on_medium_id"
-  end
-
-  create_table "asset_tag_joins", force: :cascade do |t|
-    t.integer "asset_id"
-    t.integer "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["asset_id"], name: "index_asset_tag_joins_on_asset_id"
-    t.index ["tag_id"], name: "index_asset_tag_joins_on_tag_id"
   end
 
   create_table "assets", force: :cascade do |t|
@@ -162,6 +153,15 @@ ActiveRecord::Schema.define(version: 20170909133037) do
     t.string "sort"
     t.integer "question_id"
     t.string "description"
+  end
+
+  create_table "medium_tag_joins", force: :cascade do |t|
+    t.integer "medium_id"
+    t.integer "tag_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medium_id"], name: "index_medium_tag_joins_on_medium_id"
+    t.index ["tag_id"], name: "index_medium_tag_joins_on_tag_id"
   end
 
   create_table "relations", force: :cascade do |t|

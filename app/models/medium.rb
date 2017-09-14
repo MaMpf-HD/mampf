@@ -2,6 +2,8 @@
 class Medium < ApplicationRecord
   has_many :asset_medium_joins
   has_many :assets, through: :asset_medium_joins
+  has_many :medium_tag_joins
+  has_many :tags, through: :medium_tag_joins
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
                                        KeksQuestion] }

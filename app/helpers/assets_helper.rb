@@ -1,5 +1,5 @@
 module AssetsHelper
-  def tags(asset)
-    asset.tags.map(&:title).join(', ')
+  def tags(medium)
+    medium.tags.map(&:title).join(', ')
   end
 end

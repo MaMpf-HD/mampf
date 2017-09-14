@@ -3,8 +3,6 @@ class Asset < ApplicationRecord
   belongs_to :teachable, polymorphic: true
   has_many :asset_medium_joins
   has_many :media, through: :asset_medium_joins
-  has_many :asset_tag_joins
-  has_many :tags, through: :asset_tag_joins
   has_many :connections
   has_many :linked_assets, through: :connections
   validates :title, presence: true, uniqueness: true
@@ -23,5 +21,9 @@ class Asset < ApplicationRecord
 
   def keks_quiz?
     sort == 'KeksQuiz'
+  end
+
+  def tags
+    media.all.map(&:tags)[0]
   end
 end

@@ -15,8 +15,8 @@ class Tag < ApplicationRecord
   has_many :lessons, through: :lesson_tag_joins
   has_many :section_tag_joins
   has_many :sections, through: :section_tag_joins
-  has_many :asset_tag_joins
-  has_many :assets, through: :asset_tag_joins
+  has_many :medium_tag_joins
+  has_many :media, through: :medium_tag_joins
   has_many :relations, dependent: :destroy
   has_many :related_tags, through: :relations, dependent: :destroy
   validates :title, presence: true, uniqueness: true

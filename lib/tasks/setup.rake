@@ -169,6 +169,9 @@ namespace :setup do
         unless row['manuscript_link'].nil?
           m.manuscript_link = base_url + row['manuscript_link']
         end
+        unless row['tags'].nil?
+          m.tags = Tag.where(title: row['tags'].split('&'))
+        end
         m.external_reference_link = row['external_reference_link']
         m.width = row['width']
         m.height = row['height']
@@ -208,9 +211,6 @@ namespace :setup do
         l.link = row['link']
         l.heading = row['heading']
         l.question_list = row['question_list']
-        unless row['tags'].nil?
-          l.tags = Tag.where(title: row['tags'].split('&'))
-        end
         unless row['media'].nil?
           l.media = Medium.where(title: row['media'].split('&'))
         end

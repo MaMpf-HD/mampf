@@ -135,7 +135,8 @@ Darstellungsmatrix einer Bilinearform,,Lineare Algebra 2
 Transformationsformel für die Darstellungsmatrix einer Bilinearform,Darstellungsmatrix einer Bilinearform,Lineare Algebra 2
 nicht-ausgeartete Bilinearform,,Lineare Algebra 2
 perfekte Bilinearform,,Lineare Algebra 2
-symmetrische Bilinearform,hermitesche Form,Lineare Algebra 2
+symmetrische Bilinearform,hermitesche Form&symmetrische Matrix,Lineare Algebra 2
+symmetrische Matrix,,Lineare Algebra 2
 antisymmetrische Bilinearform,,Lineare Algebra 2
 alternierende Bilinearform,,Lineare Algebra 2
 quadratische Form,quadratischer Raum,Lineare Algebra 2
@@ -157,8 +158,8 @@ orthogonale Abbildungen und Matrizen,Euklidischer Raum&orthogonale und spezielle
 orthogonale und spezielle orthogonale Gruppe,,Lineare Algebra 2
 O(2),,Lineare Algebra 2
 adjungierte Abbildung,selbstadjungierter Endomorphismus,Lineare Algebra 2
-selbstadjungierter Endomorphismus,Spektralsatz für selbstadjungierte Endomorphismen,Lineare Algebra 2
-Spektralsatz für selbstadjungierte Endomorphismen,Hauptachsentransformation&Charakterisierungen von Diagonalisierbarkeit&Eigenwert,Lineare Algebra 2
+selbstadjungierter Endomorphismus,Spektralsatz für selbstadjungierte Endomorphismen&symmetrische Matrix,Lineare Algebra 2
+Spektralsatz für selbstadjungierte Endomorphismen,Hauptachsentransformation&Charakterisierungen von Diagonalisierbarkeit&Eigenwert&symmetrische Matrix,Lineare Algebra 2
 Hauptachsentransformation,,Lineare Algebra 2
 Sesquilinearform,Bilinearform&hermitesche Form,Lineare Algebra 2
 hermitesche Form,unitärer Raum,Lineare Algebra 2
