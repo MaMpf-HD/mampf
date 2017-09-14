@@ -4,4 +4,6 @@
 <%= link_to image_tag(m.video_thumbnail_link, width: 200), m.video_stream_link%>
 <% end %>
 <p>Tags: <%= tags(m) %></p>
+<p>Tags(alt): <%= m.tag_titles %></p>
+<p>Length: <%= m.length %></p>
 <% end %>

@@ -24,6 +24,6 @@ class Asset < ApplicationRecord
   end
 
   def tags
-    media.all.map(&:tags)[0]
+    Tag.where(id: media.all.map(&:tags).flatten.map(&:id))
   end
 end
