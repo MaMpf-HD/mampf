@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :teachers, only: [:show, :index, :edit]
+
   get 'assets/show/:id', to: 'assets#show'
 
   get 'profile/show', as: 'profile'
