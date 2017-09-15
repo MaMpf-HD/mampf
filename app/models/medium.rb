@@ -81,6 +81,10 @@ class Medium < ApplicationRecord
     (new_width.to_f / video_aspect_ratio).to_i
   end
 
+  def tag_titles
+    tags.map(&:title).join(', ')
+  end
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, ->{ where(sort: 'Kaviar') }
 
