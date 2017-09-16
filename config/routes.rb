@@ -1,18 +1,15 @@
 Rails.application.routes.draw do
 
-  resources :teachers, only: [:show, :index, :edit]
-
-  get 'assets/show/:id', to: 'assets#show'
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  resources :teachers, only: [:show, :index, :edit, :update]
+  resources :assets, only: [:show]
+  resources :lectures, only: [:show, :index, :edit, :update]
 
   get 'profile/show', as: 'profile'
   get 'profile/edit', as: 'edit_profile'
 
   patch 'profile/update'
   put 'profile/update'
-
-  get 'lectures/show'
-
-  get 'lectures/index'
 
   devise_for :users
   root 'main#home'

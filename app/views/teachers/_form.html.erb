@@ -1,4 +1,4 @@
-<%= simple_form_for @teacher do |f|%>
+<%= simple_form_for @teacher, url: teacher_path do |f|%>
   <%= f.input :name %>
   <%= f.input :email %>
   <%= f.button :submit, 'Update profile' %>

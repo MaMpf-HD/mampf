@@ -1,0 +1,4 @@
+<%= simple_form_for @lecture, url: lecture_path do |l|%>
+  <%= l.association :course %>
+  <%= l.button :submit, 'Update profile' %>
+<% end %>

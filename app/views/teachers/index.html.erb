@@ -1,2 +1,9 @@
-<h1>Teachers#index</h1>
-<p>Find me in app/views/teachers/show.html.erb</p>
+<%= table_by_columns(@teachers) do %>
+  <% table_column('Id') { |t| t.id } %>
+  <% table_column('Name') { |t| t.name } %>
+  <% table_column('Email') { |t| t.email } %>
+  <% table_column('Edit') {|t| link_to "ändern", edit_teacher_path(t) } %>
+<% end %>
+<p>
+  <%= link_to 'Home', root_path %>
+</p>

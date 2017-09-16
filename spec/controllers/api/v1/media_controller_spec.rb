@@ -13,7 +13,7 @@ RSpec.describe Api::V1::MediaController, type: :controller do
                                          question_id: 2567)
       get :keks_question, params: { id: @keks_medium.question_id }
       question_response = JSON.parse(response.body, symbolize_names: true)
-      expect(question_response[:video_file_link]).to eql @keks_medium.video_file_link
+      expect(question_response[:medium][:video_file_link]).to eql @keks_medium.video_file_link
     end
   end
 end

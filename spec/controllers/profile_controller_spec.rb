@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ProfileController, type: :controller do
 
   before(:all) do
-    @user = User.create!(email: 'testprofi1@test.de', password: 'test123')
+    @user = User.create
     sign_in @user
   end
 

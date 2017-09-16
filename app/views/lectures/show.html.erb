@@ -1,2 +1,9 @@
-<h1>Lectures#show</h1>
-<p>Find me in app/views/lectures/show.html.erb</p>
+<p>Kurs: <%= @lecture.course.title %></p>
+<p>Jahr: <%= @lecture.term.year %></p>
+<p>Semester: <%= @lecture.term.season %></p>
+<p>Dozent: <%= link_to @lecture.teacher.name, teacher_path(@lecture.teacher) %></p>
+<p>
+  <%= link_to 'ändern', edit_lecture_path(@lecture) %>
+  <%= link_to 'Index Vorlesungen', lectures_path %>
+  <%= link_to 'zurück', :back %>
+</p>

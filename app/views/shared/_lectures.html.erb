@@ -1,0 +1,7 @@
+<%= table_by_columns(lectures) do %>
+  <% table_column('Id') { |l| l.id } %>
+  <% table_column('Kurs') { |l| l.course.title } %>
+  <% table_column('Jahr') { |l| l.term.year } %>
+  <% table_column('Semester') { |l| l.term.season } %>
+  <% table_column('Dozent') { |l| link_to l.teacher.name, teacher_path(l.teacher) } %>
+<% end %>

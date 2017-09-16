@@ -3,11 +3,10 @@ require 'rgl/dijkstra'
 
 # Tag class
 class Tag < ApplicationRecord
-  alias_attribute :disabled_lectures, :lectures
   has_many :course_tag_joins
   has_many :courses, through: :course_tag_joins
-  has_many :disabled_contents
-  has_many :disabled_lectures, through: :disabled_contents, source: :lecture
+  has_many :lecture_tag_disabled_joins
+  has_many :disabled_lectures, through: :lecture_tag_disabled_joins, source: :lecture
   has_many :lecture_tag_additional_joins
   has_many :additional_lectures, through: :lecture_tag_additional_joins,
                                  source: :lecture

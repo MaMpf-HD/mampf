@@ -18,4 +18,8 @@ class Term < ApplicationRecord
   def end_date
     season == 'SummerTerm' ? Date.new(year, 9, 30) : Date.new(year + 1, 3, 31)
   end
+
+  def to_label
+    season + ' ' + year.to_s
+  end
 end

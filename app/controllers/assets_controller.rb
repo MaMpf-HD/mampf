@@ -8,6 +8,9 @@ class AssetsController < ApplicationController
 
   # Use callbacks to share common setup or constraints between actions.
   def set_asset
-    @asset = Asset.find(params[:id])
+    @asset = Asset.find_by_id(params[:id])
+    if !@asset.present?
+      redirect_to :root, alert: 'Asset with requested id was not found.'
+    end
   end
 end
