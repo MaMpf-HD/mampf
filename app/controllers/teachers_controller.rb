@@ -1,17 +1,21 @@
 class TeachersController < ApplicationController
   before_action :set_teacher, only: [:show, :edit, :update]
+  authorize_resource
 
   def show
   end
 
   def index
+#    authorize! :index
     @teachers = Teacher.all
   end
 
   def edit
+#    authorize! :edit, @teacher
   end
 
   def update
+#    authorize! :update, @teacher
     @teacher.update(teacher_params)
     redirect_to teacher_path, notice: 'Teacher successfully updated'
   end

@@ -38,7 +38,7 @@ class Lesson < ApplicationRecord
 
   def valid_date?
     return unless date.present?
-    return if date.is_a?(Date)
+    return true if date.is_a?(Date)
     errors.add(:date, 'not a valid date')
     false
   end

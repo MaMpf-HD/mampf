@@ -1,4 +1,6 @@
 class Api::V1::MediaController < ApplicationController
+  skip_before_action :authenticate_user!
+  
   respond_to :json
   def keks_question
     @medium = Medium.KeksQuestion.find_by(question_id: params[:id])

@@ -1,4 +1,6 @@
 class Api::V1::TagsController < ApplicationController
+  skip_before_action :authenticate_user!
+
   respond_to :json
   def show
     @tag = Tag.find(params[:id])
