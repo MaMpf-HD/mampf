@@ -19,6 +19,7 @@ class Tag < ApplicationRecord
   has_many :relations, dependent: :destroy
   has_many :related_tags, through: :relations, dependent: :destroy
   validates :title, presence: true, uniqueness: true
+#  validates_associated :relations
 
   def self.to_weighted_graph
     tag_relations = all.map { |t| [t.id, t.related_tags.map(&:id)] }.to_h
