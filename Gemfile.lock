@@ -46,8 +46,14 @@ GEM
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     arel (8.0.0)
+    autoprefixer-rails (7.1.4)
+      execjs
     bcrypt (3.1.11)
     bindex (0.5.0)
+    bootstrap (4.0.0.beta)
+      autoprefixer-rails (>= 6.0.3)
+      popper_js (~> 1.11.1)
+      sass (>= 3.4.19)
     builder (3.2.3)
     byebug (9.1.0)
     cancancan (2.0.0)
@@ -144,6 +150,7 @@ GEM
       mini_portile2 (~> 2.3.0)
     orm_adapter (0.5.0)
     pg (0.21.0)
+    popper_js (1.11.1)
     public_suffix (3.0.0)
     puma (3.10.0)
     rack (2.0.3)
@@ -293,6 +300,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
+  bootstrap (~> 4.0.0.beta)
   byebug
   cancancan
   capybara (~> 2.13.0)
@@ -304,6 +312,7 @@ DEPENDENCIES
   faker
   filesize
   jbuilder (~> 2.5)
+  jquery-rails
   launchy
   listen (>= 3.0.5, < 3.2)
   pg
