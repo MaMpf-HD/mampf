@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   patch 'profile/update'
   put 'profile/update'
 
-  devise_for :users
+  devise_for :users, controllers: { registrations: 'registrations' }
   root 'main#home'
   get 'about', to: 'main#about'
   get 'main/home'

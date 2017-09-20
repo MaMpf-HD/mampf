@@ -1,3 +1,3 @@
 class MediumSerializer < ActiveModel::Serializer
-  attributes :video_file_link
+  attributes :video_file_link, :width, :height
 end
