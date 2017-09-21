@@ -1,12 +1,37 @@
 <% provide(:title, "Home") %>
-<% if user_signed_in? %>
-  <%= link_to "Logout", destroy_user_session_path, method: :delete %>
-  <%= link_to "Change password", edit_user_registration_path %>
-  <%= link_to "Show profile", profile_path %>
-<% else %>
-  <p><%= link_to "Sign_up", new_user_registration_path %>
-  <%= link_to "Login", new_user_session_path %>
-<% end %>
-<%= link_to "About", about_path%></p>
+<div class="jumbotron">
   <h1>mampf-dev</h1>
   <p>Testumgebung für die Entwicklung des MaMpf-Projektes</p>
+</div>
+<div class="row">
+  <div class="col-6 col-lg-4">
+    <h2>Heading</h2>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+  </div><!--/span-->
+  <div class="col-6 col-lg-4">
+    <h2>Heading</h2>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+  </div><!--/span-->
+  <div class="col-6 col-lg-4">
+    <h2>Heading</h2>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+  </div><!--/span-->
+  <div class="col-6 col-lg-4">
+    <h2>Heading</h2>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+  </div><!--/span-->
+  <div class="col-6 col-lg-4">
+    <h2>Heading</h2>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+  </div><!--/span-->
+  <div class="col-6 col-lg-4">
+    <h2>Heading</h2>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+    <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+  </div><!--/span-->
+</div><!--/row-->
