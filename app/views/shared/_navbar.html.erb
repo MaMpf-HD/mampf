@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-xl navbar-dark bg-dark">
+  <%= link_to "MaMpf", root_path, class: 'navbar-brand'%>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbarLg">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="navbar-collapse collapse" id="collapsingNavbarLg">
+    <ul class="navbar-nav mr-auto">
+      <% if user_signed_in? %>
+        <li class="nav-item">
+          <%= link_to "Show profile", profile_path, class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Change password", edit_user_registration_path, class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Logout", destroy_user_session_path, class: 'nav-link', method: :delete %>
+        </li>
+        <% if current_user.admin? %>
+          <li class="nav-item">
+            <%= link_to "Dashboard", rails_admin_path, class: 'nav-link' %>
+          </li>
+        <% end %>
+        <%= render 'shared/dropdown_lectures' %>
+      <% else %>
+        <li class="nav-item">
+          <%= link_to "Login", new_user_session_path, class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sign_up", new_user_registration_path, class: 'nav-link' %>
+        </li>
+      <% end %>
+    </ul>
+    <form class="form-inline mt-2 mt-md-0">
+      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
