@@ -3,7 +3,19 @@ class MediaController < ApplicationController
   authorize_resource
 
   def index
-    @media = Medium.all
+    if params[:lecture_id] && params[:module_id]
+      @lecture = Lecture.find_by_id(params[:lecture_id])
+      case params[:module_id].to_i
+      when 1
+         @media = Medium.where(teachable: @lecture.lessons, sort: 'Kaviar')
+      when 2
+         @media = @media = Medium.where(teachable: @lecture, sort: 'Sesam')
+      when 3
+        @media = @media = Medium.where(teachable: @lecture.course, sort: 'KeksQuestion')
+      end
+    else
+      @media = Medium.all
+    end
   end
 
   def show
