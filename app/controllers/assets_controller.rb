@@ -1,5 +1,6 @@
 class AssetsController < ApplicationController
   before_action :set_asset
+  authorize_resource
 
   def show
   end

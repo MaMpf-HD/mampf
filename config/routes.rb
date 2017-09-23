@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :teachers, only: [:show, :index, :edit, :update]
   resources :assets, only: [:show]
   resources :lectures, only: [:show, :index, :edit, :update]
-
+  resources :media, only: [:show, :index]
   get 'profile/show', as: 'profile'
   get 'profile/edit', as: 'edit_profile'
 

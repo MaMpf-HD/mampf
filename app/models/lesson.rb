@@ -6,6 +6,7 @@ class Lesson < ApplicationRecord
   has_many :lesson_section_joins
   has_many :sections, through: :lesson_section_joins
   has_many :assets, as: :teachable
+  has_many :media, as: :teachable
   validates :date, presence: true
   validates :number, presence: true,
                      numericality: { only_integer: true,
@@ -24,6 +25,18 @@ class Lesson < ApplicationRecord
   def course
     return unless lecture.present?
     lecture.course
+  end
+
+  def to_label
+    'Vorlesung ' + number.to_s + ', ' + date.to_s
+  end
+
+  def section_titles
+    sections.map(&:title).join(', ')
+  end
+
+  def description
+    { general: lecture.to_label, specific: to_label }
   end
 
   private

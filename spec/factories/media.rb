@@ -5,6 +5,7 @@ FactoryGirl.define do
     sort %w[Kaviar Erdbeere Sesam Reste].sample
     author { Faker::Name.name }
     title { Faker::Book.title + ' ' + Random.rand(1..9).to_s }
+    association :teachable, factory: [:lesson, :with_tags]
     description { Faker::TwinPeaks.quote }
     video_stream_link do
       Faker::Internet.url +

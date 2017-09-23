@@ -1,0 +1,41 @@
+   <div class="col-12 col-sm-6 col-lg-3 px-2 pb-4">
+    <div class="card" data-mh="media">
+      <div class="card-header bg-secondary text-white">
+        <%= medium.teachable.description[:general] %>
+      </div>
+      <% unless medium.teachable.description[:specific].empty? %>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item bg-light">
+            <%= medium.teachable.description[:specific] %>
+          </li>
+        </ul>
+      <% end %>
+      <% unless medium.video_thumbnail_link.nil? %>
+      <%= link_to image_tag(medium.video_thumbnail_link, alt: "Card image cap", class: "card-img-top"), medium.video_stream_link, target: :_blank%>
+      <% end %>
+      <div class="card-body">
+        <div class = "card-title">
+          <h5><%= medium.caption %></h5>
+        </div>
+        <p class="card-text">
+          <%= medium.tag_titles %>
+        </p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item bg-light text-center">
+          <% if medium.video_stream_link.present? %>
+            <%= link_to "Stream", medium.video_stream_link, class: "btn btn-outline-primary", target: :_blank %>
+          <% end %>
+          <% if medium.video_file_link.present? %>
+            <%= link_to "mp4", medium.video_file_link, class: "btn btn-outline-primary", target: :_blank %>
+          <% end %>
+          <% if medium.manuscript_link.present? %>
+            <%= link_to "pdf", medium.manuscript_link, class: "btn btn-outline-primary", target: :_blank %>
+          <% end %>
+        </li>
+      </ul>
+      <div class="card-footer text-center">
+        <a href="#" class="btn btn-info">Details</a>
+      </div>
+    </div>
+  </div>

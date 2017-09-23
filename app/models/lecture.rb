@@ -11,6 +11,7 @@ class Lecture < ApplicationRecord
   has_many :chapters
   has_many :lessons
   has_many :assets, as: :teachable
+  has_many :media, as: :teachable
   has_many :lecture_user_joins
   has_many :users, through: :lecture_user_joins
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
@@ -33,6 +34,11 @@ class Lecture < ApplicationRecord
   end
 
   def to_label
-    course.title + ' ' + term.season + ' ' + term.year.to_s + ' ' + teacher.name
+    course.title + ' | ' + term.season + ' ' + term.year.to_s + ' '
   end
+
+  def description
+    { general: to_label, specific: '' }
+  end
+
 end

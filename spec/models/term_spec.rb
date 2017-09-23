@@ -12,7 +12,7 @@ RSpec.describe Term, type: :model do
     term = FactoryGirl.build(:term, year: nil)
     expect(term).to be_invalid
   end
-  it 'is invalid if season is not SummerTerm or WinterTerm' do
+  it 'is invalid if season is not SSTerm or WSTerm' do
     term = FactoryGirl.build(:term, season: 'Spring')
     expect(term).to be_invalid
   end
@@ -33,20 +33,20 @@ RSpec.describe Term, type: :model do
     expect(term).to be_invalid
   end
   it 'is invalid with duplicate season and year' do
-    FactoryGirl.create(:term, season: 'Summer', year: 2017)
-    term = FactoryGirl.build(:term, season: 'Summer', year: 2017)
+    FactoryGirl.create(:term, season: 'SS', year: 2017)
+    term = FactoryGirl.build(:term, season: 'SS', year: 2017)
     expect(term).to be_invalid
   end
   describe '#begin_date' do
     context 'if the term is a winter term' do
       it 'returns the correct begin date' do
-        term = FactoryGirl.build(:term, season: 'WinterTerm', year: 2017)
+        term = FactoryGirl.build(:term, season: 'WS', year: 2017)
         expect(term.begin_date).to eq Date.new(2017, 10, 1)
       end
     end
     context 'if the term is a summer term' do
       it 'returns the correct begin date' do
-        term = FactoryGirl.build(:term, season: 'SummerTerm', year: 2017)
+        term = FactoryGirl.build(:term, season: 'SS', year: 2017)
         expect(term.begin_date).to eq Date.new(2017, 4, 1)
       end
     end
@@ -54,13 +54,13 @@ RSpec.describe Term, type: :model do
   describe '#end_date' do
     context 'if the term is a winter term' do
       it 'returns the correct end date' do
-        term = FactoryGirl.build(:term, season: 'WinterTerm', year: 2017)
+        term = FactoryGirl.build(:term, season: 'WS', year: 2017)
         expect(term.end_date).to eq Date.new(2018, 3, 31)
       end
     end
     context 'if the term is a summer term' do
       it 'returns the correct end date' do
-        term = FactoryGirl.build(:term, season: 'SummerTerm', year: 2017)
+        term = FactoryGirl.build(:term, season: 'SS', year: 2017)
         expect(term.end_date).to eq Date.new(2017, 9, 30)
       end
     end

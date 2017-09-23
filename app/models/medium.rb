@@ -4,6 +4,7 @@ class Medium < ApplicationRecord
   has_many :assets, through: :asset_medium_joins
   has_many :medium_tag_joins
   has_many :tags, through: :medium_tag_joins
+  belongs_to :teachable, polymorphic: true
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
                                        KeksQuestion] }
@@ -81,8 +82,17 @@ class Medium < ApplicationRecord
     (new_width.to_f / video_aspect_ratio).to_i
   end
 
+  def caption
+    return '' unless sort == 'Kaviar' && teachable_type='Lesson'
+    return teachable.section_titles
+  end
+
   def tag_titles
     tags.map(&:title).join(', ')
+  end
+
+  def teachable_type
+    teachable.class.name
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }

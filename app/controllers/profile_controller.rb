@@ -1,5 +1,5 @@
 class ProfileController < ApplicationController
-  before_action :authenticate_user!, :set_user
+  before_action :set_user
 
   def show
   end

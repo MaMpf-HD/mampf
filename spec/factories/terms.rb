@@ -1,9 +1,9 @@
 FactoryGirl.define do
   factory :term do
-    season 'Winter'
+    season 'WS'
     sequence(:year) { |n| 2000 + n }
     trait :summer do
-      season 'Summer'
+      season 'SS'
     end
   end
 end

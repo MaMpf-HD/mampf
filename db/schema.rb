@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170919123229) do
+ActiveRecord::Schema.define(version: 20170923111653) do
 
   create_table "asset_medium_joins", force: :cascade do |t|
     t.integer "asset_id"
@@ -153,6 +153,9 @@ ActiveRecord::Schema.define(version: 20170919123229) do
     t.string "sort"
     t.integer "question_id"
     t.string "description"
+    t.string "teachable_type"
+    t.integer "teachable_id"
+    t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|

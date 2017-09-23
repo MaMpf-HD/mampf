@@ -151,12 +151,35 @@ namespace :setup do
     csv_file_path = 'db/csv/media.csv'
     base_url = 'https://mampf.mathi.uni-heidelberg.de/'
 
+
     CSV.foreach(csv_file_path, headers: true) do |row|
+      course = Course.find_by(title: row['course'])
+      teachable = course
+      if row['teachable_type'] != 'Course'
+        term_data = row['term'].split('&')
+        term = Term.where(season: term_data[0], year: term_data[1].to_i).first
+        teachable = Lecture.where(course: course, term: term).first
+        if row['teachable_type'] != 'Lecture'
+          teachable = Lesson.where(lecture: teachable,
+                                   number: row['lesson_number']).first
+        end
+      end
       Medium.create! do |m|
         m.title = row['title']
         m.sort = row['sort']
         m.author = row['author']
         m.description = row['description']
+        m.teachable = teachable
+        teachable = course
+        if row['teachable_type'] != 'Course'
+          term_data = row['term'].split('&')
+          term = Term.where(season: term_data[0], year: term_data[1].to_i).first
+          teachable = Lecture.where(course: course, term: term).first
+          if row['teachable_type'] != 'Lecture'
+            teachable = Lesson.where(lecture: teachable,
+                                     number: row['lesson_number']).first
+          end
+        end
         unless row['video_file_link'].nil?
           m.video_file_link = base_url + row['video_file_link']
         end

@@ -14,7 +14,16 @@
   </head>
   <body>
    <%= render 'shared/navbar' %>
-
+   <% if alert.present? %>
+     <div class="alert alert-primary" role="alert">
+       <%= alert %>
+     </div>
+   <% end %>
+   <% if notice.present? %>
+     <div class="alert alert-secondary" role="alert">
+       <%= notice %>
+     </div>
+   <% end %>
     <div class="container-fluid">
        <div class="row mt-3">
 
@@ -32,7 +41,5 @@
     </footer>
 
   </div>
-  <p class="notice"><%= notice %></p>
-  <p class="alert"><%= alert %></p>
   </body>
 </html>
