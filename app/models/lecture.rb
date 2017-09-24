@@ -34,7 +34,7 @@ class Lecture < ApplicationRecord
   end
 
   def to_label
-    course.title + ' | ' + term.season + ' ' + term.year.to_s + ' '
+    course.title + ',  ' + term.season + ' ' + term.year.to_s + ' '
   end
 
   def short_title

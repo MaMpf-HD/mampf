@@ -1,4 +1,4 @@
-<%= simple_form_for @user, url: profile_update_path, html: { class: 'form-horizontal' } do |f|%>
-  <%= f.association :lectures, as: :check_boxes %>
-  <%= f.button :submit, 'Update profile' %>
+<%= bootstrap_form_for @user, url: profile_update_path do |f| %>
+  <%= f.collection_check_boxes :lecture_ids, Lecture.all, :id, :short_title, label: 'Abonnierte Vorlesungen(Inhalte momentan nur für die LA2 aus dem SS17)' %>
+  <%= f.submit "Profil updaten" %>
 <% end %>

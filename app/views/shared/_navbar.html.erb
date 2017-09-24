@@ -6,11 +6,9 @@
   <div class="navbar-collapse collapse" id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>
+        <%= render partial: 'shared/dropdown_lectures', locals: { lectures: current_user.lectures } %>
         <li class="nav-item">
-          <%= link_to "Show profile", profile_path, class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Change password", edit_user_registration_path, class: 'nav-link' %>
+          <%= link_to "Profil", edit_profile_path, class: 'nav-link' %>
         </li>
         <li class="nav-item">
           <%= link_to "Logout", destroy_user_session_path, class: 'nav-link', method: :delete %>
@@ -20,7 +18,6 @@
             <%= link_to "Dashboard", rails_admin_path, class: 'nav-link' %>
           </li>
         <% end %>
-        <%= render partial: 'shared/dropdown_lectures', locals: { lectures: current_user.lectures } %>
       <% else %>
         <li class="nav-item">
           <%= link_to "Login", new_user_session_path, class: 'nav-link' %>
@@ -38,8 +35,8 @@
       </ul>
     <% end %>
     <form class="form-inline mt-2 mt-md-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+      <input class="form-control mr-sm-2" type="text" placeholder="Suche" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Suche</button>
     </form>
   </div>
 </nav>

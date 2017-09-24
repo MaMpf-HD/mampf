@@ -37,7 +37,6 @@ gem 'active_model_serializers'
 gem 'responders'
 gem 'pg'
 gem 'devise'
-gem 'simple_form'
 gem 'rails_admin', '~> 1.2'
 gem 'rails_admin_import', '~>2.0'
 gem 'erubis'
@@ -45,6 +44,7 @@ gem 'cancancan'
 gem 'jquery-rails'
 gem 'bootstrap', '~> 4.0.0.beta'
 gem 'devise-bootstrap-views', '1.0.0.alpha1'
+gem 'bootstrap_form'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
