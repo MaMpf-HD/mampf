@@ -3,15 +3,22 @@ class MediaController < ApplicationController
   authorize_resource
 
   def index
+    if params[:lecture_id]
+      cookies[:current_lecture] = params[:lecture_id]
+    end
     if params[:lecture_id] && params[:module_id]
       @lecture = Lecture.find_by_id(params[:lecture_id])
       case params[:module_id].to_i
       when 1
-         @media = Medium.where(teachable: @lecture.lessons, sort: 'Kaviar')
+        @media = Medium.where(teachable: @lecture.lessons, sort: 'Kaviar')
       when 2
-         @media = @media = Medium.where(teachable: @lecture, sort: 'Sesam')
+        @media = Medium.where(teachable: @lecture, sort: 'Sesam')
       when 3
-        @media = @media = Medium.where(teachable: @lecture.course, sort: 'KeksQuestion')
+        @media = Medium.where(teachable: @lecture.course, sort: 'KeksQuestion')
+      when 4
+        @media = Medium.where(teachable: @lecture, sort: 'Reste')
+      else
+        redirect_to :root, alert: 'No module with requested id.'
       end
     else
       @media = Medium.all

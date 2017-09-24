@@ -37,6 +37,10 @@ class Lecture < ApplicationRecord
     course.title + ' | ' + term.season + ' ' + term.year.to_s + ' '
   end
 
+  def short_title
+    course.short_title + ' ' + term.season + ' ' + term.year.to_s + ' '
+  end
+
   def description
     { general: to_label, specific: '' }
   end

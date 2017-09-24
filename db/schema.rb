@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170923111653) do
+ActiveRecord::Schema.define(version: 20170924083728) do
 
   create_table "asset_medium_joins", force: :cascade do |t|
     t.integer "asset_id"
@@ -66,6 +66,7 @@ ActiveRecord::Schema.define(version: 20170923111653) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "short_title"
   end
 
   create_table "lecture_tag_additional_joins", force: :cascade do |t|

@@ -1,4 +1,4 @@
-<%= simple_form_for @user, url: profile_update_path do |f|%>
+<%= simple_form_for @user, url: profile_update_path, html: { class: 'form-horizontal' } do |f|%>
   <%= f.association :lectures, as: :check_boxes %>
   <%= f.button :submit, 'Update profile' %>
 <% end %>

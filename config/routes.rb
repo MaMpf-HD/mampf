@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   resources :media, only: [:show, :index]
   get 'profile/show', as: 'profile'
   get 'profile/edit', as: 'edit_profile'
-  get 'lectures/:lecture_id/modules/:module_id', to: 'media#index'
+  get 'lectures/:lecture_id/modules/:module_id', to: 'media#index', as: 'lecture_module'
 
   patch 'profile/update'
   put 'profile/update'

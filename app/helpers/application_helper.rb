@@ -12,4 +12,13 @@ module ApplicationHelper
       base_title + ' | ' + page_title
     end
   end
+
+  # def active_module
+  #   item_class = Array.new(5, '')
+  #   if params[:module_id]
+  #     item_class[params[:module_id].to_i] = ' active'
+  #   end
+  #   item_class
+  # end
+
 end

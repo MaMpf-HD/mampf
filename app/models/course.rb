@@ -6,6 +6,7 @@ class Course < ApplicationRecord
   has_many :assets, as: :teachable
   has_many :media, as: :teachable
   validates :title, presence: true, uniqueness: true
+  validates :short_title, presence: true, uniqueness: true
 
   def assets_in_lectures
     Asset.where(teachable: lectures)

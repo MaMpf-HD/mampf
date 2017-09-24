@@ -1,19 +1,21 @@
 <nav class="col-sm-3 col-md-2 d-block bg-light">
   <ul class="nav nav-pills flex-column">
+    <% modules = ['KaViaR', 'SeSAM', 'KeKs', 'RestE'] %>
+    <!-- <% item_class = Array.new(4, '') %>
+    <% if params[:module_id] %>
+      <% item_class[params[:module_id].to_i - 1] = ' active' %>
+    <% end %> -->
+    <% modules.each do |m| %>
+          <li class="nav-item">
+            <% active = params[:module_id].to_i == modules.index(m)+1 ? ' active' : '' %>
+            <%= link_to m, lecture_module_path(lecture_id: lecture_id, module_id: modules.index(m)+1), class: 'nav-link' + active %>
+          </li>
+    <% end %>
     <li class="nav-item">
-      <a class="nav-link active" data-toggle="pill" href="#">KaViaR <span class="sr-only">(current)</span></a>
+      <%= link_to "ErDBeere", 'https://erdbeere.mathi.uni-heidelberg.de/', target: :_blank, class: 'nav-link' %>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#" data-toggle="pill">SeSAM</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#" data-toggle="pill">ErDBeere</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#" data-toggle="pill">KeKs</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#" data-toggle="pill" role="pill">MÜSLI</a>
+      <%= link_to "MÜSLI", 'https://muesli.mathi.uni-heidelberg.de/', target: :_blank, class: 'nav-link' %>
     </li>
   </ul>
 </nav>

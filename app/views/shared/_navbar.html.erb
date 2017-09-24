@@ -20,7 +20,7 @@
             <%= link_to "Dashboard", rails_admin_path, class: 'nav-link' %>
           </li>
         <% end %>
-        <%= render 'shared/dropdown_lectures' %>
+        <%= render partial: 'shared/dropdown_lectures', locals: { lectures: current_user.lectures } %>
       <% else %>
         <li class="nav-item">
           <%= link_to "Login", new_user_session_path, class: 'nav-link' %>
@@ -30,6 +30,13 @@
         </li>
       <% end %>
     </ul>
+    <% if user_signed_in? %>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <%= link_to Lecture.find_by_id(cookies[:current_lecture]).short_title, lecture_path(cookies[:current_lecture]), class: 'nav-link' %>
+        </li>
+      </ul>
+    <% end %>
     <form class="form-inline mt-2 mt-md-0">
       <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>

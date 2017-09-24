@@ -3,6 +3,7 @@ class LecturesController < ApplicationController
   authorize_resource
 
   def show
+    cookies[:current_lecture] = params[:id]
   end
 
   def index
