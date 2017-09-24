@@ -1,9 +1,9 @@
 Rails.application.routes.draw do
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
-  resources :teachers, only: [:show, :index, :edit, :update]
+  resources :teachers, only: [:show, :index]
   resources :assets, only: [:show]
-  resources :lectures, only: [:show, :index, :edit, :update]
+  resources :lectures, only: [:show, :index]
   resources :media, only: [:show, :index]
   get 'profile/show', as: 'profile'
   get 'profile/edit', as: 'edit_profile'

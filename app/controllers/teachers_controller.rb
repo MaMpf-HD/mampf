@@ -6,18 +6,7 @@ class TeachersController < ApplicationController
   end
 
   def index
-#    authorize! :index
     @teachers = Teacher.all
-  end
-
-  def edit
-#    authorize! :edit, @teacher
-  end
-
-  def update
-#    authorize! :update, @teacher
-    @teacher.update(teacher_params)
-    redirect_to teacher_path, notice: 'Teacher successfully updated'
   end
 
   private
@@ -30,7 +19,4 @@ class TeachersController < ApplicationController
     end
   end
 
-  def teacher_params
-    params.fetch(:teacher, {}).permit(:name, :email)
-  end
 end

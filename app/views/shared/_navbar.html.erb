@@ -31,7 +31,7 @@
       <% end %>
     </ul>
     <% if user_signed_in? %>
-      <ul class="navbar-nav mr-auto">
+      <ul class="navbar-nav mr-auto bg-info">
         <li class="nav-item">
           <%= link_to Lecture.find_by_id(cookies[:current_lecture]).short_title, lecture_path(cookies[:current_lecture]), class: 'nav-link' %>
         </li>
