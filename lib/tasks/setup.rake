@@ -169,6 +169,7 @@ namespace :setup do
         m.sort = row['sort']
         m.author = row['author']
         m.description = row['description']
+        m.heading = row['heading']
         m.teachable = teachable
         teachable = course
         if row['teachable_type'] != 'Course'

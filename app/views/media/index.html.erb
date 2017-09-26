@@ -1,7 +1,9 @@
+ <div class="container css-grid-container css-grid--card">
 <div class="row">
 <% if @media.present? then %>
   <% @media.each do |medium| %>
   <%= render partial: 'medium', locals: { medium: medium} %>
   <% end %>
 <% end %>
+</div>
 </div>
