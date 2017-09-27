@@ -42,7 +42,7 @@ class Lecture < ApplicationRecord
   end
 
   def description
-    { general: to_label, specific: '' }
+    { general: to_label }
   end
 
 end

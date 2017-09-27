@@ -22,6 +22,6 @@ class Course < ApplicationRecord
   end
 
   def description
-    { general: title, specific: '' }
+    { general: title }
   end
 end

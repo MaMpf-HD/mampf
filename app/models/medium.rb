@@ -11,7 +11,6 @@ class Medium < ApplicationRecord
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
-  validates :description, presence: true
   validate :nonempty_content?
   validates :width, presence: true,
                     numericality: { only_integer: true,
@@ -84,12 +83,24 @@ class Medium < ApplicationRecord
 
   def caption
     return heading unless heading.nil?
-    return '' unless sort == 'Kaviar' && teachable_type='Lesson'
+    return unless sort == 'Kaviar' && teachable_type == 'Lesson'
     return teachable.section_titles
   end
 
   def tag_titles
     tags.map(&:title).join(', ')
+  end
+
+  def card_header_first
+    teachable.description[:general]
+  end
+
+  def card_header_second
+    return description unless description.nil?
+    return teachable.description[:specific] unless teachable.description[:specific].nil?
+    if sort == 'KeksQuestion'
+      return 'KeKs Frage Nr. ' + question_id.to_s
+    end
   end
 
   def teachable_type
