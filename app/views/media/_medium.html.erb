@@ -13,6 +13,9 @@
       <% unless medium.video_thumbnail_link.nil? %>
       <%= link_to image_tag(medium.video_thumbnail_link, alt: "Card image cap", class: "card-img-top"), medium.video_stream_link, target: :_blank%>
       <% end %>
+      <% if medium.keks_question? %>
+          <%= image_tag('/keks-196x196.png', alt: "Card image cap", class: "card-img-top") %>
+      <% end %>
       <div class="card-body">
         <div class = "card-title">
           <h5><%= medium.caption %></h5>
