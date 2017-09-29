@@ -27,7 +27,7 @@ RailsAdmin.config do |config|
   config.excluded_models = ['AssetMediumJoin', 'Connection', 'CourseTagJoin',
                             'LectureTagAdditionalJoin', 'LectureTagDisabledJoin',
                             'LectureUserJoin', 'LessonSectionJoin', 'LessonTagJoin',
-                            'MediumTagJoin', 'SectionTagJoin']
+                            'MediumTagJoin', 'Relation', 'SectionTagJoin']
 
   RailsAdmin.config {|c| c.label_methods << :to_label}
 
@@ -48,7 +48,7 @@ RailsAdmin.config do |config|
   end
 
   models = ['Asset', 'Chapter', 'Course', 'Lecture', 'Lesson', 'Medium',
-            'Section', 'Tag', 'Relation', 'Teacher', 'Term']
+            'Section', 'Tag', 'Teacher', 'Term']
 
   RailsAdmin.config do |config|
     models.each do |m|

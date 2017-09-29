@@ -28,9 +28,9 @@ RSpec.describe Relation, type: :model do
                                                     related_tag: tag)
     expect(inverse_relation).to be_invalid
   end
-  it 'is invalid if it relates tag to itself' do
+  it 'destroys itself if it relates tag to itself' do
     tag = FactoryGirl.create(:tag)
-    relation = FactoryGirl.build(:relation, tag: tag, related_tag: tag)
-    expect(relation).to be_invalid
+    relation = FactoryGirl.create(:relation, tag: tag, related_tag: tag)
+    expect(Relation.find_by_id(relation.id)).to be_nil
   end
 end

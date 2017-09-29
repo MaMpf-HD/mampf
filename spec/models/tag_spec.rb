@@ -22,21 +22,21 @@ RSpec.describe Tag, type: :model do
       @tags[4].related_tags << [@tags[5], @tags[6]]
       @tags[7].related_tags << [@tags[8]]
     end
-    context '#neighbours' do
-      it 'returns the correct list of neighbours' do
-        expect(@tags[0].neighbours).to match_array([@tags[1], @tags[2]])
-        expect(@tags[1].neighbours).to match_array([@tags[0], @tags[3],
+    context '#related_tags' do
+      it 'returns the correct list of related_tags' do
+        expect(@tags[0].related_tags).to match_array([@tags[1], @tags[2]])
+        expect(@tags[1].related_tags).to match_array([@tags[0], @tags[3],
                                                     @tags[6]])
-        expect(@tags[2].neighbours).to match_array([@tags[0]])
-        expect(@tags[3].neighbours).to match_array([@tags[1], @tags[4],
+        expect(@tags[2].related_tags).to match_array([@tags[0]])
+        expect(@tags[3].related_tags).to match_array([@tags[1], @tags[4],
                                                     @tags[5]])
-        expect(@tags[4].neighbours).to match_array([@tags[3], @tags[5],
+        expect(@tags[4].related_tags).to match_array([@tags[3], @tags[5],
                                                     @tags[6]])
-        expect(@tags[5].neighbours).to match_array([@tags[3], @tags[4]])
-        expect(@tags[6].neighbours).to match_array([@tags[1], @tags[4]])
-        expect(@tags[7].neighbours).to match_array([@tags[8]])
-        expect(@tags[8].neighbours).to match_array([@tags[7]])
-        expect(@tags[9].neighbours).to match_array([])
+        expect(@tags[5].related_tags).to match_array([@tags[3], @tags[4]])
+        expect(@tags[6].related_tags).to match_array([@tags[1], @tags[4]])
+        expect(@tags[7].related_tags).to match_array([@tags[8]])
+        expect(@tags[8].related_tags).to match_array([@tags[7]])
+        expect(@tags[9].related_tags).to match_array([])
       end
     end
     context '.shortest_distance' do

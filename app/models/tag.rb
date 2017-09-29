@@ -19,7 +19,6 @@ class Tag < ApplicationRecord
   has_many :relations, dependent: :destroy
   has_many :related_tags, through: :relations, dependent: :destroy
   validates :title, presence: true, uniqueness: true
-#  validates_associated :relations
 
   def self.to_weighted_graph
     tag_relations = all.map { |t| [t.id, t.related_tags.map(&:id)] }.to_h
@@ -58,8 +57,4 @@ class Tag < ApplicationRecord
     distance_list.select { |_k, v| v == distance }.keys
   end
 
-  def neighbours
-    Tag.where(id: Relation.select(:related_tag_id).where(tag_id: id))
-       .or(Tag.where(id: Relation.select(:tag_id).where(related_tag_id: id)))
-  end
 end

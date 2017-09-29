@@ -46,7 +46,7 @@ namespace :setup do
       unless row['related_tags'].nil?
         related_ids = Tag.where(title: row['related_tags'].split('&'))
                          .pluck(:id)
-        neighbour_ids = tag.neighbours.pluck(:id)
+        neighbour_ids = tag.related_tags.pluck(:id)
         new_relations = related_ids - neighbour_ids
         tag.related_tags = Tag.where(id: new_relations)
         puts 'Added relation for ' + row['title'] + ':' + row['related_tags']

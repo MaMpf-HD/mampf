@@ -9,7 +9,7 @@ As of now, only the models and some class methods have been implemented, togethe
 * Database initialization:
 
     `rails setup:import_data`
-    
+
   This imports a lot of data from the .csv files in the db/csv folder
 
 * Test suite: rspec
@@ -30,10 +30,10 @@ For the brevity of presentation, we pick out only very few data.
     #=>"https://mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/Quiz/Q09/LA2.Q09M01/LA2.Q09M01.html"
     jnf.lessons.pluck(:date)
     # => [Tue, 04 Jul 2017]
-    jnf.neighbours.pluck(:title)
+    jnf.related_tags.pluck(:title)
     # => ["Charakterisierungen von Diagonalisierbarkeit", "Elementarteilersatz für Matrizen über Euklidischen
     # Ringen", "Weierstrass-Normalform", "Jordanmatrix"]
-    jnf.neighbours.first.assets.pluck(:title)
+    jnf.related_tags.first.assets.pluck(:title)
     # => ["KaViaR.SS17.LA2.E01", "KaViaR.SS17.LA2.E02", "KaViaR.SS17.LA2.E03", "KaViaR.SS17.LA2.E04",
     # "RestE.SS17.LA2.AltQuiz.E01"]
     jnf.tags_with_given_distance(2).pluck(:title)

@@ -37,12 +37,12 @@ RSpec.describe Asset, type: :model do
       expect(asset).to be_valid
     end
   end
-  describe '#neighbours' do
-    it 'returns the correct list of neighbours' do
+  describe '#linked_assets' do
+    it 'returns the correct list of linked_assets' do
       assets = FactoryGirl.create_list(:asset, 3)
       assets[0].linked_assets << [assets[1]]
       assets[2].linked_assets << [assets[1]]
-      expect(assets[1].neighbours).to match_array([assets[0], assets[2]])
+      expect(assets[1].linked_assets).to match_array([assets[0], assets[2]])
     end
   end
 end

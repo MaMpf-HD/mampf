@@ -12,13 +12,6 @@ class Asset < ApplicationRecord
                             format: { with: /\A(\d{1,}&)+\d{1,}\z/ },
                             if: :keks_quiz?
 
-  def neighbours
-    Asset.where(id: Connection.select(:linked_asset_id)
-                                      .where(asset_id: id))
-         .or(Asset.where(id: Connection.select(:asset_id)
-                                       .where(linked_asset_id: id)))
-  end
-
   def keks_quiz?
     sort == 'KeksQuiz'
   end

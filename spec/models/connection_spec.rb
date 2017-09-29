@@ -22,10 +22,10 @@ RSpec.describe Connection, type: :model do
                                                             linked_asset)
     expect(duplicate_connection).to be_invalid
   end
-  it 'is invalid if it links asset to itself' do
+  it 'destroys itself if it links asset to itself' do
     asset = FactoryGirl.create(:asset)
-    connection = FactoryGirl.build(:connection, asset: asset,
+    connection = FactoryGirl.create(:connection, asset: asset,
                                                 linked_asset: asset)
-    expect(connection).to be_invalid
+    expect(Connection.find_by_id(connection.id)).to be_nil
   end
 end

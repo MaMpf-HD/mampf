@@ -38,10 +38,6 @@ RSpec.describe Medium, type: :model do
     medium = FactoryGirl.build(:medium, title: 'usual bs')
     expect(medium).to be_invalid
   end
-  it 'is invalid without a description' do
-    medium = FactoryGirl.build(:medium, description: nil)
-    expect(medium).to be_invalid
-  end
   it 'is invalid with empty content' do
     medium = FactoryGirl.build(:medium, video_stream_link: nil,
                                         video_file_link: nil,
