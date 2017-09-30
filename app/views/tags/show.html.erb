@@ -34,7 +34,7 @@
     <div class="card-body">
     <ul>
       <% @tag.courses.each do |c| %>
-      <li><%= c.title %></li>
+      <li><%= link_to c.title, course_path(c) %></li>
       <% end %>
     </ul>
     </div>
