@@ -2,7 +2,7 @@
   <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Vorlesung</a>
   <div class="dropdown-menu">
     <% lectures.each do |l| %>
-      <%= link_to l.short_title, lecture_path(l), class: 'dropdown-item' %>
+    <%= link_to l.short_title, lecture_path(l), class: 'dropdown-item' %>
     <% end %>
   </div>
 </li>

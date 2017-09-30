@@ -1,5 +1,5 @@
    <div class="col-12 col-sm-6 col-lg-3 px-2 pb-4">
-    <div class="card" data-mh="media">
+    <div class="card">
       <div class="card-header bg-secondary text-white">
         <%= medium.card_header_first %>
         <% if medium.sort == 'KeksQuestion' %>
@@ -26,7 +26,7 @@
       <div>
         <ul>
           <% medium.tags.each do |t| %>
-            <li><%= t.title %></li>
+            <li><%= link_to t.title, tag_path(t), class: "text-info" %></li>
           <% end %>
         </ul>
       </div>

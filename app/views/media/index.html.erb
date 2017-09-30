@@ -1,7 +1,1 @@
-<div class="row">
-<% if @media.present? then %>
-  <% @media.each do |medium| %>
-  <%= render partial: 'medium', locals: { medium: medium} %>
-  <% end %>
-<% end %>
-</div>
+<%= render partial: 'media', locals: { media: @media} %>

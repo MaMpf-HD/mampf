@@ -1,0 +1,5 @@
+<div class="row">
+<% media.each do |medium| %>
+<%= render partial: 'media/medium', locals: { medium: medium} %>
+<% end %>
+</div>
