@@ -1,52 +1,9 @@
-title,sort,teachable_type,course,term,lesson_number,media,linked_assets,link,heading,tags,question_list
-KaViaR.SS17.LA2.E01,Kaviar,Lesson,Lineare Algebra 2,SS&2017,1,KaViaR.SS17.LA2.E01,RestE.SS17.LA2.AltQuiz.E01,,,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum,
-KaViaR.SS17.LA2.E02,Kaviar,Lesson,Lineare Algebra 2,SS&2017,2,KaViaR.SS17.LA2.E02,SeSAM.SS17.LA2.E01,,,Charakterisierungen von Diagonalisierbarkeit&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts,
-KaViaR.SS17.LA2.E03,Kaviar,Lesson,Lineare Algebra 2,SS&2017,3,KaViaR.SS17.LA2.E03,RestE.SS17.LA2.AltQuiz.E02,,,Charakterisierungen von Diagonalisierbarkeit&Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus,
-KaViaR.SS17.LA2.E04,Kaviar,Lesson,Lineare Algebra 2,SS&2017,4,KaViaR.SS17.LA2.E04,SeSAM.SS17.LA2.E02,,,Charakterisierungen von Diagonalisierbarkeit&Minimalpolynom eines Endomorphismus&Dualraum&Linearform&duale Basis,
-KaViaR.SS17.LA2.E05,Kaviar,Lesson,Lineare Algebra 2,SS&2017,5,KaViaR.SS17.LA2.E05,RestE.SS17.LA2.AltQuiz.E03,,,Annullator&duale Abbildung&Bidualraum&Bilinearform,
-KaViaR.SS17.LA2.E06,Kaviar,Lesson,Lineare Algebra 2,SS&2017,6,KaViaR.SS17.LA2.E06,,,,Darstellungsmatrix einer Bilinearform&Transformationsformel für die Darstellungsmatrix einer Bilinearform&nicht-ausgeartete Bilinearform&perfekte Bilinearform&symmetrische Bilinearform&antisymmetrische Bilinearform&alternierende Bilinearform,
-KaViaR.SS17.LA2.E07,Kaviar,Lesson,Lineare Algebra 2,SS&2017,7,KaViaR.SS17.LA2.E07,RestE.SS17.LA2.AltQuiz.E04,,,quadratische Form&quadratischer Raum&Homomorphismus quadratischer Räume&Existenz von Orthogonalbasen quadratischer Räume,
-KaViaR.SS17.LA2.E08,Kaviar,Lesson,Lineare Algebra 2,SS&2017,8,KaViaR.SS17.LA2.E08,,,,Klassifikation quadratischer Räume über C und R&Sylvesterscher Trägheitssatz&Skalarprodukt&Euklidischer Raum&Norm,
-KaViaR.SS17.LA2.E09,Kaviar,Lesson,Lineare Algebra 2,SS&2017,9,KaViaR.SS17.LA2.E09,SESAM.SS17.LA2.E03,,,orthogonales Komplement&Orthogonalprojektion&Gram-Schmidt-Verfahren&positiv definite Matrix&Cauchy-Schwarz-Ungleichung,
-KaViaR.SS17.LA2.E10+,Kaviar,Lesson,Lineare Algebra 2,SS&2017,10,KaViaR.SS17.LA2.E10&KaViaR.SS17.LA2.SP01,,,,Eigenschaften der Norm&orthogonale Abbildungen und Matrizen&orthogonale und spezielle orthogonale Gruppe&O(2),
-KaViaR.SS17.LA2.E11+,Kaviar,Lesson,Lineare Algebra 2,SS&2017,11,KaViaR.SS17.LA2.E11&KaViaR.SS17.LA2.SP02,,,,O(2)&adjungierte Abbildung&selbstadjungierter Endomorphismus,
-KaViaR.SS17.LA2.E12+,Kaviar,Lesson,Lineare Algebra 2,SS&2017,12,KaViaR.SS17.LA2.E12&KaViaR.SS17.LA2.SP03,SeSAM.SS17.LA2.E04&KeKs.SS17.LA2.Q05,,,selbstadjungierter Endomorphismus&Spektralsatz für selbstadjungierte Endomorphismen&Hauptachsentransformation,
-KaViaR.SS17.LA2.E13,Kaviar,Lesson,Lineare Algebra 2,SS&2017,13,KaViaR.SS17.LA2.E13,KeKs.SS17.LA2.Q06,,,Sesquilinearform&hermitesche Form&unitärer Raum&normaler Endomorphismus,
-KaViaR.SS17.LA2.E14,Kaviar,Lesson,Lineare Algebra 2,SS&2017,14,KaViaR.SS17.LA2.E14,KeKs.SS17.LA2.Q07,,,Spektralsatz für normale Endomorphismen&Ring&Ringhomomorphismus&Ideal&Restklasse&Faktorring,
-KaViaR.SS17.LA2.E15,Kaviar,Lesson,Lineare Algebra 2,SS&2017,15,KaViaR.SS17.LA2.E15,KeKs.SS17.LA2.Q08,,,Nullteiler&Einheit&nullteilerfreier Ring&Teiler&größter gemeinsamer Teiler,
-KaViaR.SS17.LA2.E16,Kaviar,Lesson,Lineare Algebra 2,SS&2017,16,KaViaR.SS17.LA2.E16,,,,irreduzibles Element&Primelement&faktorieller Ring&HIR sind faktoriell,
-KaViaR.SS17.LA2.E17,Kaviar,Lesson,Lineare Algebra 2,SS&2017,17,KaViaR.SS17.LA2.E17,SeSAM.SS17.LA2.E05,,,Euklidischer Ring&Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen,
-KaViaR.SS17.LA2.E18,Kaviar,Lesson,Lineare Algebra 2,SS&2017,18,KaViaR.SS17.LA2.E18,SeSAM.SS17.LA2.E06,,,Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma&Elementarteilersatz für Matrizen über Euklidischen Ringen,
-KaViaR.SS17.LA2.E19,Kaviar,Lesson,Lineare Algebra 2,SS&2017,19,KaViaR.SS17.LA2.E19,SeSAM.SS17.LA2.E07,,,charakteristische Matrix eines Endomorphismus&Satz von Frobenius&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz,
-KaViaR.SS17.LA2.E20,Kaviar,Lesson,Lineare Algebra 2,SS&2017,20,KaViaR.SS17.LA2.E20,SeSAM.SS17.LA2.E08,,,Begleitmatrix&Frobenius-Normalform,
-KaViaR.SS17.LA2.E21,Kaviar,Lesson,Lineare Algebra 2,SS&2017,21,KaViaR.SS17.LA2.E21,SeSAM.SS17.LA2.E09&SeSAM.SS17.LA2.E10&KeKs.SS17.LA2.Q09,,,Weierstrass-Normalform&Jordanmatrix&Jordansche Normalform,
-KaViaR.SS17.LA2.E22,Kaviar,Lesson,Lineare Algebra 2,SS&2017,22,KaViaR.SS17.LA2.E22,KeKs.SS17.LA2.Q10,,,Modul&Modulhomomorphismus&Untermodul&Faktormodul&Erzeugendensystem eines Moduls&lineare Unabhängigkeit in Moduln&Basis eines freien Moduls&freier Modul,
-KaViaR.SS17.LA2.E23,Kaviar,Lesson,Lineare Algebra 2,SS&2017,23,KaViaR.SS17.LA2.E23,KeKs.SS17.LA2.Q11,,,Torsionsuntermodul&Länge eines Moduls&Länge einer direkten Summe von Moduln,
-KaViaR.SS17.LA2.E24,Kaviar,Lesson,Lineare Algebra 2,SS&2017,24,KaViaR.SS17.LA2.E24,,,,Rang eines endlich freien Moduls über einem HIR&Diagonalisierung von Matrizen über einem HIR,
-KaViaR.SS17.LA2.E25,Kaviar,Lesson,Lineare Algebra 2,SS&2017,25,KaViaR.SS17.LA2.E25,,,,Elementarteilersatz für Untermoduln endlich freier Moduln über HIR,
-KaViaR.SS17.LA2.E26,Kaviar,Lesson,Lineare Algebra 2,SS&2017,26,KaViaR.SS17.LA2.E26,KeKs.SS17.LA2.Q12,,,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen&Chinesischer Restsatz über HIR,
-KaViaR.SS17.LA2.E27,Kaviar,Lesson,Lineare Algebra 2,SS&2017,27,KaViaR.SS17.LA2.E27,SeSAM.SS17.LA2.E11,,,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen,
-SeSAM.SS17.LA2.E01,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E01,,,Charakteristisches Polynom einer Matrix,charakteristisches Polynom einer Matrix,
-SeSAM.SS17.LA2.E02,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E02,,,Eigenwerte und -räume,Eigenwert&Eigenraum,
-SeSAM.SS17.LA2.E03,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E03,,,Gram-Schmidt-Verfahren,Gram-Schmidt-Verfahren,
-SeSAM.SS17.LA2.E04,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E04,,,Hauptachsentransformation,Hauptachsentransformation,
-SeSAM.SS17.LA2.E05,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E05,,,Euklidischer Algorithmus,Euklidischer Algorithmus,
-SeSAM.SS17.LA2.E06,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E06,,,Elementarteiler,Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen,
-SeSAM.SS17.LA2.E07,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E07,,,Invarianten- und Determinantenteiler,Invarianten- und Determinantenteiler einer Matrix,
-SeSAM.SS17.LA2.E08,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E08,,,Frobenius-Normalform,Frobenius-Normalform,
-SeSAM.SS17.LA2.E09,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E09,,,Weierstrass-Normalform,Weierstrass-Normalform,
-SeSAM.SS17.LA2.E10,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E10,,,Jordansche Normalform,Jordansche Normalform,
-SeSAM.SS17.LA2.E11,Sesam,Lecture,Lineare Algebra 2,SS&2017,,SeSAM.SS17.LA2.E11,,,Klassifikation endlicher abelscher Gruppen,Hauptsatz für endlich erzeugte abelsche Gruppen,
-KeKs.SS17.LA2.Q05,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V395&KeKs.V393&KeKs.V396&KeKs.V391&KeKs.V397,,,Orthogonale Matrizen und der Spektralsatz,orthogonale Abbildungen und Matrizen&Spektralsatz für selbstadjungierte Endomorphismen,395&393&396&391&397
-KeKs.SS17.LA2.Q06,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,,,,"Sesquilinearformen, hermitesche und unitäre Matrizen",Sesquilinearform&hermitesche Form&unitärer Raum,466&473&480&484&499
-KeKs.SS17.LA2.Q07,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V207&KeKs.V210&KeKs.V214&KeKs.V215&KeKs.V216,,,Ringhomomorphismen und Ideale,Ringhomomorphismus&Ideal,207&210&214&215&216
-KeKs.SS17.LA2.Q08,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,,,,"Nullteiler, Einheiten und Ideale",Nullteiler&Einheit&Ideal,1257&2236&2240&2282&246
-KeKs.SS17.LA2.Q09,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V2516&KeKs.V2517&KeKs.V2522&KeKs.V2524,,,Jordansche Normalform,Jordansche Normalform,2516&2517&2522&2524
-KeKs.SS17.LA2.Q10,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V288&KeKs.V304&KeKs.V298&KeKs.V310&KeKs.V320,,,Moduln,Modul&Modulhomomorphismus&Erzeugendensystem eines Moduls&lineare Unabhängigkeit in Moduln&Basis eines freien Moduls&freier Modul,288&304&298&310&320
-KeKs.SS17.LA2.Q11,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V324&KeKs.V329&KeKs.V333&KeKs.V2384&KeKs.V2389,,,"Torsion, Länge von Moduln",Torsionsuntermodul&Länge eines Moduls,324&329&333&2384&2389
-KeKs.SS17.LA2.Q12,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V430&KeKs.V431&KeKs.V2467&KeKs.V2468,,,"Endliche abelsche Gruppen, Chinesischer Restsatz",Hauptsatz für endlich erzeugte abelsche Gruppen&Chinesischer Restsatz über HIR,430&431&2467&2468
-RestE.SS17.LA2.Skript,Reste,Lecture,Lineare Algebra 2,SS&2017,,Reste.SS17.LA2.Skript,,,Vorlesungsmanuskript LA2 SS17 (Dr. D. Vogel),,
-RestE.SS17.LA2.AltQuiz.E01,Reste,Lecture,Lineare Algebra 2,SS&2017,,Reste.SS17.LA2.AltQuiz.E01,,mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/Quiz/Q01/index.html,Eigenwerte und -räume,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum,
-RestE.SS17.LA2.AltQuiz.E02,Reste,Lecture,Lineare Algebra 2,SS&2017,,Reste.SS17.LA2.AltQuiz.E02,,mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/Quiz/Q02/index.html,Satz von Cayley-Hamilton und Minimalpolynom,Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts&,
-RestE.SS17.LA2.AltQuiz.E03,Reste,Lecture,Lineare Algebra 2,SS&2017,,Reste.SS17.LA2.AltQuiz.E03,,mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/Quiz/Q03/index.html,Dualraum,Dualraum&Linearform&duale Abbildung,
-RestE.SS17.LA2.AltQuiz.E04,Reste,Lecture,Lineare Algebra 2,SS&2017,,Reste.SS17.LA2.AltQuiz.E04,,mampf.mathi.uni-heidelberg.de/ss17/Lineare_Algebra_2/Quiz/Q04/index.html,Quadratische Formen,quadratische Form,
+title,sort,teachable_type,course,term,lesson_number,media,linked_assets,link,heading,question_list
+KeKs.SS17.LA2.Q05,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V395&KeKs.V393&KeKs.V396&KeKs.V391&KeKs.V397,,,Orthogonale Matrizen und der Spektralsatz,395&393&396&391&397
+KeKs.SS17.LA2.Q06,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,,,,"Sesquilinearformen, hermitesche und unitäre Matrizen",466&473&480&484&499
+KeKs.SS17.LA2.Q07,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V207&KeKs.V210&KeKs.V214&KeKs.V215&KeKs.V216,,,Ringhomomorphismen und Ideale,207&210&214&215&216
+KeKs.SS17.LA2.Q08,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,,,,"Nullteiler, Einheiten und Ideale",1257&2236&2240&2282&246
+KeKs.SS17.LA2.Q09,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V2516&KeKs.V2517&KeKs.V2522&KeKs.V2524,,,Jordansche Normalform,2516&2517&2522&2524
+KeKs.SS17.LA2.Q10,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V288&KeKs.V304&KeKs.V298&KeKs.V310&KeKs.V320,,,Moduln,288&304&298&310&320
+KeKs.SS17.LA2.Q11,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V324&KeKs.V329&KeKs.V333&KeKs.V2384&KeKs.V2389,,,"Torsion, Länge von Moduln",324&329&333&2384&2389
+KeKs.SS17.LA2.Q12,KeksQuiz,Lecture,Lineare Algebra 2,SS&2017,,KeKs.V430&KeKs.V431&KeKs.V2467&KeKs.V2468,,,"Endliche abelsche Gruppen, Chinesischer Restsatz",430&431&2467&2468

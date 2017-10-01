@@ -210,6 +210,16 @@ namespace :setup do
       end
       puts 'Added medium: ' + row['title']
     end
+
+    CSV.foreach(csv_file_path, headers: true) do |row|
+      medium = Medium.find_by(title: row['title'])
+      unless row['linked_media'].nil?
+        medium.linked_media = Medium.where(title: row['linked_media']
+                                                           .split('&'))
+        puts 'Added linked_media to medium: ' + row['title'] +
+             ' -> ' + row['linked_media']
+      end
+    end
   end
 
   desc 'Import assets from csv file'

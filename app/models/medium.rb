@@ -4,6 +4,8 @@ class Medium < ApplicationRecord
   has_many :assets, through: :asset_medium_joins
   has_many :medium_tag_joins
   has_many :tags, through: :medium_tag_joins
+  has_many :links
+  has_many :linked_media, through: :links
   belongs_to :teachable, polymorphic: true
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste

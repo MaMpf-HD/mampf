@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926152242) do
+ActiveRecord::Schema.define(version: 20171001163138) do
 
   create_table "asset_medium_joins", force: :cascade do |t|
     t.integer "asset_id"
@@ -130,6 +130,16 @@ ActiveRecord::Schema.define(version: 20170926152242) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_lessons_on_lecture_id"
+  end
+
+  create_table "links", force: :cascade do |t|
+    t.integer "medium_id"
+    t.integer "linked_medium_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["linked_medium_id"], name: "index_links_on_linked_medium_id"
+    t.index ["medium_id", "linked_medium_id"], name: "index_links_on_medium_id_and_linked_medium_id", unique: true
+    t.index ["medium_id"], name: "index_links_on_medium_id"
   end
 
   create_table "media", force: :cascade do |t|
