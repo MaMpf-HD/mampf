@@ -10,29 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171001163138) do
-
-  create_table "asset_medium_joins", force: :cascade do |t|
-    t.integer "asset_id"
-    t.integer "medium_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["asset_id"], name: "index_asset_medium_joins_on_asset_id"
-    t.index ["medium_id"], name: "index_asset_medium_joins_on_medium_id"
-  end
-
-  create_table "assets", force: :cascade do |t|
-    t.text "title"
-    t.string "sort"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "teachable_type"
-    t.integer "teachable_id"
-    t.string "heading"
-    t.text "link"
-    t.string "question_list"
-    t.index ["teachable_type", "teachable_id"], name: "index_assets_on_teachable_type_and_teachable_id"
-  end
+ActiveRecord::Schema.define(version: 20171001204632) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -41,16 +19,6 @@ ActiveRecord::Schema.define(version: 20171001163138) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
-  end
-
-  create_table "connections", force: :cascade do |t|
-    t.integer "asset_id"
-    t.integer "linked_asset_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["asset_id", "linked_asset_id"], name: "index_connections_on_asset_id_and_linked_asset_id", unique: true
-    t.index ["asset_id"], name: "index_connections_on_asset_id"
-    t.index ["linked_asset_id"], name: "index_connections_on_linked_asset_id"
   end
 
   create_table "course_tag_joins", force: :cascade do |t|
@@ -167,6 +135,7 @@ ActiveRecord::Schema.define(version: 20171001163138) do
     t.string "teachable_type"
     t.integer "teachable_id"
     t.string "heading"
+    t.text "question_list"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
 

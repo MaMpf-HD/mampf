@@ -4,7 +4,6 @@ Rails.application.routes.draw do
 
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :teachers, only: [:show, :index]
-  resources :assets, only: [:show]
   resources :lectures, only: [:show, :index]
   resources :courses, only: [:show]
   resources :media, only: [:show, :index]

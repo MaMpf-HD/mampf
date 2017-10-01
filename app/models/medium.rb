@@ -1,15 +1,14 @@
 # Medium class
 class Medium < ApplicationRecord
-  has_many :asset_medium_joins
-  has_many :assets, through: :asset_medium_joins
   has_many :medium_tag_joins
   has_many :tags, through: :medium_tag_joins
-  has_many :links
-  has_many :linked_media, through: :links
+  has_many :links, dependent: :destroy
+  has_many :linked_media, through: :links, dependent: :destroy
+  serialize :question_list
   belongs_to :teachable, polymorphic: true
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
-                                       KeksQuestion] }
+                                       KeksQuestion KeksQuiz] }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
@@ -103,6 +102,11 @@ class Medium < ApplicationRecord
     if sort == 'KeksQuestion'
       return 'KeKs Frage Nr. ' + question_id.to_s
     end
+  end
+
+  def question_ids
+    return unless !question_list.nil?
+    question_list.split("&").map{ |q| q.to_i }
   end
 
   def teachable_type

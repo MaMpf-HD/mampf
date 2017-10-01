@@ -207,6 +207,7 @@ namespace :setup do
         m.manuscript_size = row['manuscript_size']
         m.authoring_software = row['authoring_software']
         m.question_id = row['question_id']
+        m.question_list = row['question_list']
       end
       puts 'Added medium: ' + row['title']
     end
@@ -222,54 +223,12 @@ namespace :setup do
     end
   end
 
-  desc 'Import assets from csv file'
-  task import_assets: :environment do
-    csv_file_path = 'db/csv/assets.csv'
-
-    CSV.foreach(csv_file_path, headers: true) do |row|
-      course = Course.find_by(title: row['course'])
-      teachable = course
-      if row['teachable_type'] != 'Course'
-        term_data = row['term'].split('&')
-        term = Term.where(season: term_data[0], year: term_data[1].to_i).first
-        teachable = Lecture.where(course: course, term: term).first
-        if row['teachable_type'] != 'Lecture'
-          teachable = Lesson.where(lecture: teachable,
-                                   number: row['lesson_number']).first
-        end
-      end
-      Asset.create! do |l|
-        l.title = row['title']
-        l.sort = row['sort']
-        l.teachable = teachable
-        l.link = row['link']
-        l.heading = row['heading']
-        l.question_list = row['question_list']
-        unless row['media'].nil?
-          l.media = Medium.where(title: row['media'].split('&'))
-        end
-      end
-      puts 'Added asset: ' + row['title']
-    end
-
-    CSV.foreach(csv_file_path, headers: true) do |row|
-      asset = Asset.find_by(title: row['title'])
-      unless row['linked_assets'].nil?
-        asset.linked_assets = Asset.where(title: row['linked_assets']
-                                                           .split('&'))
-        puts 'Added linked_assets to asset: ' + row['title'] +
-             ' -> ' + row['linked_assets']
-      end
-    end
-  end
-
   desc 'imports all data without resetting db'
   task import_all_noreset: [:environment, 'setup:import_teachers',
                     'setup:import_terms', 'setup:import_courses',
                     'setup:import_tags', 'setup:import_lectures',
                     'setup:import_chapters', 'setup:import_sections',
-                    'setup:import_lessons', 'setup:import_media',
-                    'setup:import_assets']
+                    'setup:import_lessons', 'setup:import_media']
 
   desc 'Resets db and imports all data'
   task import_all: [:environment, 'db:reset', 'setup:import_all_noreset']
