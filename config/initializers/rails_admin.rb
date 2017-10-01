@@ -24,9 +24,9 @@ RailsAdmin.config do |config|
   ## To disable Gravatar integration in Navigation Bar set to false
   # config.show_gravatar = true
 
-  config.excluded_models = ['AssetMediumJoin', 'Connection', 'CourseTagJoin',
-                            'LectureTagAdditionalJoin', 'LectureTagDisabledJoin',
-                            'LectureUserJoin', 'LessonSectionJoin', 'LessonTagJoin',
+  config.excluded_models = ['CourseTagJoin', 'LectureTagAdditionalJoin',
+                            'LectureTagDisabledJoin', 'LectureUserJoin',
+                            'LessonSectionJoin', 'LessonTagJoin', 'Links',
                             'MediumTagJoin', 'Relation', 'SectionTagJoin']
 
   RailsAdmin.config {|c| c.label_methods << :to_label}
@@ -47,7 +47,7 @@ RailsAdmin.config do |config|
     # history_show
   end
 
-  models = ['Asset', 'Chapter', 'Course', 'Lecture', 'Lesson', 'Medium',
+  models = ['Chapter', 'Course', 'Lecture', 'Lesson', 'Medium',
             'Section', 'Tag', 'Teacher', 'Term']
 
   RailsAdmin.config do |config|
