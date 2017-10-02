@@ -1,10 +1,6 @@
 <nav class="col-sm-3 col-md-2 d-block bg-light">
   <ul class="nav nav-pills flex-column">
     <% modules = ['KaViaR', 'SeSAM', 'KeKs', 'RestE'] %>
-    <!-- <% item_class = Array.new(4, '') %>
-    <% if params[:module_id] %>
-      <% item_class[params[:module_id].to_i - 1] = ' active' %>
-    <% end %> -->
     <% modules.each do |m| %>
           <li class="nav-item">
             <% active = params[:module_id].to_i == modules.index(m)+1 ? ' active' : '' %>

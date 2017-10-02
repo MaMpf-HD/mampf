@@ -7,7 +7,13 @@ class ProfileController < ApplicationController
   def update
     @lecture_ids = user_params[:lecture_ids].map(&:to_i)
     lectures = Lecture.where(id: @lecture_ids)
+    if lectures.empty?
+      redirect_to :edit_profile,
+                  alert: 'Eine Vorlesung musst Du mindestens abonnieren.'
+      return
+    end
     @user.update(lectures: lectures)
+    cookies[:current_lecture] = lectures.first.id if lectures.present?
     redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
   end
 

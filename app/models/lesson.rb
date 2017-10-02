@@ -27,7 +27,7 @@ class Lesson < ApplicationRecord
   end
 
   def to_label
-    'Vorlesung ' + number.to_s + ', ' + date.to_s
+    'Sitzung ' + number.to_s + ', ' + date.to_s
   end
 
   def section_titles

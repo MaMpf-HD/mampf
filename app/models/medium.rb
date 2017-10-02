@@ -4,7 +4,6 @@ class Medium < ApplicationRecord
   has_many :tags, through: :medium_tag_joins
   has_many :links, dependent: :destroy
   has_many :linked_media, through: :links, dependent: :destroy
-  serialize :question_list
   belongs_to :teachable, polymorphic: true
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
@@ -37,6 +36,7 @@ class Medium < ApplicationRecord
   validates :length, presence: true,
                      format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
                      if: :video_content?
+
   # video_size, manuscript_size are in a format compatible with 'filesize' gem
   validates :video_size, presence: true,
                          format:
@@ -84,8 +84,8 @@ class Medium < ApplicationRecord
 
   def caption
     return heading unless heading.nil?
-    return unless sort == 'Kaviar' && teachable_type == 'Lesson'
-    return teachable.section_titles
+    return unless sort == 'Kaviar' && teachable_sort == 'Lesson'
+    teachable.section_titles
   end
 
   def tag_titles
@@ -102,19 +102,53 @@ class Medium < ApplicationRecord
     if sort == 'KeksQuestion'
       return 'KeKs Frage Nr. ' + question_id.to_s
     end
+    if sort == 'KeksQuiz'
+      return 'KeKs Quiz'
+    end
+    if sort == 'Sesam'
+      return 'SeSAM Video'
+    end
+  end
+
+  def sort_de
+    case sort
+    when 'Kaviar'
+      'KaViaR'
+    when 'Sesam'
+      'SeSAM'
+    when 'KeksQuestion'
+      'Keks-Frage'
+    when 'KeksQuiz'
+      'Keks-Quiz'
+    when 'Reste'
+      'RestE'
+    when 'Erdbeere'
+      'ErDBeere'
+    end
   end
 
   def question_ids
     return unless !question_list.nil?
-    question_list.split("&").map{ |q| q.to_i }
+    question_list.split('&').map { |q| q.to_i }
   end
 
-  def teachable_type
+  def teachable_sort
     teachable.class.name
   end
 
+  def teachable_sort_de
+    case teachable_sort
+    when 'Course'
+      'Kurs'
+    when 'Lecture'
+      'Vorlesung'
+    when 'Lesson'
+      'Sitzung'
+    end
+  end
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
-  scope :Kaviar, ->{ where(sort: 'Kaviar') }
+  scope :Kaviar, -> { where(sort: 'Kaviar') }
 
   private
 

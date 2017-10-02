@@ -41,9 +41,12 @@
   </div>
   </div>
 </div>
+<% media = @tag.media.where.not(sort: 'KeksQuestion') %>
+<% unless media.empty? %>
 <div class="row">
   <div class="col-12 pt-5">
     <h5>Assoziierte Medien</h5>
   </div>
 </div>
-<%= render partial: 'media/media', locals: { media: @tag.media} %>
+<%= render partial: 'media/media', locals: { media: media} %>
+<% end %>

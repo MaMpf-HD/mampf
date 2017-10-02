@@ -48,7 +48,7 @@ namespace :setup do
                          .pluck(:id)
         neighbour_ids = tag.related_tags.pluck(:id)
         new_relations = related_ids - neighbour_ids
-        tag.related_tags = Tag.where(id: new_relations)
+        tag.related_tags << Tag.where(id: new_relations)
         puts 'Added relation for ' + row['title'] + ':' + row['related_tags']
       end
     end
@@ -206,6 +206,7 @@ namespace :setup do
         m.video_size = row['video_size']
         m.manuscript_size = row['manuscript_size']
         m.authoring_software = row['authoring_software']
+        m.video_player = row['video_player']
         m.question_id = row['question_id']
         m.question_list = row['question_list']
       end
@@ -215,7 +216,7 @@ namespace :setup do
     CSV.foreach(csv_file_path, headers: true) do |row|
       medium = Medium.find_by(title: row['title'])
       unless row['linked_media'].nil?
-        medium.linked_media = Medium.where(title: row['linked_media']
+        medium.linked_media << Medium.where(title: row['linked_media']
                                                            .split('&'))
         puts 'Added linked_media to medium: ' + row['title'] +
              ' -> ' + row['linked_media']

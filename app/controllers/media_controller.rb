@@ -14,7 +14,7 @@ class MediaController < ApplicationController
       when 2
         @media = Medium.where(teachable: @lecture, sort: 'Sesam')
       when 3
-        @media = Medium.where(teachable: @lecture.course, sort: 'KeksQuestion')
+        @media = Medium.where(teachable: @lecture, sort: 'KeksQuiz')
       when 4
         @media = Medium.where(teachable: @lecture, sort: 'Reste')
       else
