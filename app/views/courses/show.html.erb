@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-12">
-    <h2><%= @course.title %></h2>
+    <h2><span class="badge badge-secondary mr-3">Kurs</span><%= @course.title %></h2>
   </div>
 </div>
 <div class="row">
@@ -11,6 +11,7 @@
 <div class="row pt-5">
 <div class="col-12">
   <%= render partial: 'tags/many_related_tags', locals: { many_related_tags: @course.tags,
-                                                tags_description: 'Verknüpfte Begriffe'} %>
+                                                tags_description: 'Verknüpfte Begriffe',
+                                                id: @course.id} %>
 </div>
 </div>

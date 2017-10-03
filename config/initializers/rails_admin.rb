@@ -26,7 +26,7 @@ RailsAdmin.config do |config|
 
   config.excluded_models = ['CourseTagJoin', 'LectureTagAdditionalJoin',
                             'LectureTagDisabledJoin', 'LectureUserJoin',
-                            'LessonSectionJoin', 'LessonTagJoin', 'Links',
+                            'LessonSectionJoin', 'LessonTagJoin', 'Link',
                             'MediumTagJoin', 'Relation', 'SectionTagJoin']
 
   RailsAdmin.config {|c| c.label_methods << :to_label}
