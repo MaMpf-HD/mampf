@@ -10,14 +10,14 @@
   <li>Beschreibung: <%= medium.description %></li>
   <% end %>
   <% if medium.teachable_sort == 'Course' %>
-     <li>Kurs: <%= link_to medium.teachable.to_label, course_path(medium.teachable) %></li>
+     <li>Kurs: <%= link_to medium.teachable.to_label, medium.teachable, class: 'text-dark' %></li>
   <% end %>
   <% if medium.teachable_sort == 'Lecture' %>
-     <li>Vorlesung: <%= link_to medium.teachable.to_label, lecture_path(medium.teachable) %></li>
+     <li>Vorlesung: <%= link_to medium.teachable.to_label, medium.teachable, class: 'text-dark' %></li>
   <% end %>
   <% if medium.teachable_sort == 'Lesson' %>
-     <li>Vorlesung: <%= link_to medium.teachable.lecture.to_label, lecture_path(medium.teachable.lecture) %></li>
-     <li>Sitzung: <%= medium.teachable.to_label %></li>
+     <li>Vorlesung: <%= link_to medium.teachable.lecture.to_label, medium.teachable.lecture, class: 'text-dark' %></li>
+     <li>Sitzung: <%= link_to medium.teachable.title, medium.teachable, class: 'text-dark' %></li>
   <% end %>
   <li>Erstellungsdatum:</li>
   <li>letzte Änderung:</li>

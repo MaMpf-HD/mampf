@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-12">
-    <h2><span class="badge badge-secondary mr-3">Begriff</span><%= @tag.title %></h2>
+    <h2><span class="badge badge-secondary mr-3">Begriff<%= ' #' + @tag.id.to_s %></span><%= @tag.title %></h2>
   </div>
 </div>
 <div class="row">
@@ -20,7 +20,7 @@
 <% unless media.empty? %>
 <div class="row">
   <div class="col-12 pt-5">
-    <h5>Assoziierte Medien</h5>
+    <h5>Verknüpfte Medien</h5>
   </div>
 </div>
 <%= render partial: 'media/media', locals: { media: media} %>

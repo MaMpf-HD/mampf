@@ -1,15 +1,19 @@
    <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-2 pb-4">
     <div class="card">
       <div class="card-header bg-secondary text-white">
-        <%= medium.card_header_first %>
+        <%= link_to medium.card_header, medium.card_header_teachable, class: 'text-light' %>
         <% if medium.sort == 'KeksQuestion' || medium.sort == 'KeksQuiz'%>
           <img src="/keks-16x16.png" width="16" height="16" style="float: right;">
         <% end %>
       </div>
-      <% unless medium.card_header_second.nil? %>
+      <% unless medium.card_subheader.nil? %>
         <ul class="list-group list-group-flush">
           <li class="list-group-item bg-light">
-            <%= medium.card_header_second %>
+          <% if medium.card_subheader.nil? %>
+            <%= medium.card_subheader %>
+          <% else %>
+            <%= link_to medium.card_subheader, medium.card_subheader_teachable, class: 'text-dark' %>
+          <% end %>
           </li>
         </ul>
       <% end %>

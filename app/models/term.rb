@@ -20,6 +20,23 @@ class Term < ApplicationRecord
   end
 
   def to_label
-    season + ' ' + year.to_s
+    season + ' ' + year_corrected
+  end
+
+  def to_label_short
+    season + ' ' + year_corrected_short
+  end
+
+
+  private
+
+  def year_corrected
+    return year.to_s unless season == 'WS'
+    year.to_s + "/" +  ((year % 100) + 1).to_s
+  end
+
+  def year_corrected_short
+    return (year % 100).to_s unless season == 'WS'
+    (year % 100).to_s + "/" +  ((year % 100) + 1).to_s
   end
 end

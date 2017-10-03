@@ -29,11 +29,15 @@ class Lecture < ApplicationRecord
   end
 
   def to_label
-    course.title + ',  ' + term.season + ' ' + term.year.to_s + ' '
+    course.title + ',  ' + term.to_label
   end
 
   def short_title
-    course.short_title + ' ' + term.season + ' ' + term.year.to_s + ' '
+    course.short_title + ' ' + term.to_label_short
+  end
+
+  def title
+    course.title + ', ' + + term.season + ' ' + term.year.to_s + ' '
   end
 
   def term_teacher_info

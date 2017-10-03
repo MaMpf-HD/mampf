@@ -1,13 +1,13 @@
 Rails.application.routes.draw do
 
-  get 'courses/show'
-
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :teachers, only: [:show, :index]
   resources :lectures, only: [:show, :index]
   resources :courses, only: [:show]
   resources :media, only: [:show, :index]
   resources :tags, only: [:show]
+  resources :lessons, only: [:show]
+  
   get 'profile/edit', as: 'edit_profile'
   get 'lectures/:lecture_id/modules/:module_id', to: 'media#index', as: 'lecture_module'
 

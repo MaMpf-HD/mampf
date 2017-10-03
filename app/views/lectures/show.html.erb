@@ -14,6 +14,16 @@
 </p>
 <hr>
 </div>
+<% unless @lecture.lessons.empty? %>
+<div class="row pt-5">
+<div class="col-12">
+  <%= render partial: 'lessons/lessons', locals: { lessons: @lecture.lessons,
+                                                lessons_description: 'Verknüpfte Sitzungen',
+                                                id: @lecture.id} %>
+</div>
+</div>
+<% end %>
+<% unless @lecture.tags.empty? %>
 <div class="row pt-5">
 <div class="col-12">
   <%= render partial: 'tags/many_related_tags', locals: { many_related_tags: @lecture.tags,
@@ -21,3 +31,4 @@
                                                 id: @lecture.id} %>
 </div>
 </div>
+<% end %>

@@ -72,16 +72,28 @@ class Medium < ApplicationRecord
     tags.map(&:title).join(', ')
   end
 
-  def card_header_first
+  def card_header
     teachable.description[:general]
   end
 
-  def card_header_second
+  def card_header_teachable
+    return teachable unless teachable_sort == 'Lesson'
+    teachable.lecture
+  end
+
+
+  def card_subheader
     return description unless description.nil?
     return teachable.description[:specific] unless teachable.description[:specific].nil?
     { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
       'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video' }[sort]
   end
+
+  def card_subheader_teachable
+    return if description.present? ||  teachable.description[:specific].nil?
+    teachable
+  end
+
 
   def sort_de
     { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',

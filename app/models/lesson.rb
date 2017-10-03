@@ -26,8 +26,16 @@ class Lesson < ApplicationRecord
     lecture.course
   end
 
+  def date_de
+    date.day.to_s + '.' + date.month.to_s + '.' + date.year.to_s
+  end
+
   def to_label
-    'Sitzung ' + number.to_s + ', ' + date.to_s
+    'Sitzung ' + number.to_s + ', ' + date_de.to_s
+  end
+
+  def title
+    to_label
   end
 
   def section_titles

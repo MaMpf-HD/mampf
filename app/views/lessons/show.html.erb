@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="col-12">
+    <h2><span class="badge badge-secondary mr-3">Sitzung<%= ' #' + @lesson.id.to_s %></span><%= @lesson.to_label %> von <%= link_to @lesson.lecture.title, @lesson.lecture %></h2>
+  </div>
+</div>
+<% unless @lesson.tags.empty? %>
+<div class="row">
+  <div class="col-12 col-md-6 col-lg-5 pt-3">
+    <%= render partial: 'tags/related_tags', locals: { related_tags: @lesson.tags,
+                                                  tags_description: 'Verknüpfte Begriffe'} %>
+  </div>
+</div>
+<% end %>
+<% unless @lesson.media.empty? %>
+<div class="row">
+  <div class="col-12 pt-5">
+    <h5>Verknüpfte Medien</h5>
+  </div>
+</div>
+<%= render partial: 'media/media', locals: { media: @lesson.media} %>
+<% end %>

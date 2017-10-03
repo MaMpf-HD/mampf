@@ -3,11 +3,14 @@
     <h2><span class="badge badge-secondary mr-3">Kurs</span><%= @course.title %></h2>
   </div>
 </div>
+<% unless @course.lectures.empty? %>
 <div class="row">
 <div class="col-12">
 <%= render partial: 'lectures/lectures', locals: { lectures: @course.lectures } %>
 </div>
 </div>
+<% end %>
+<% unless @course.tags.empty? %>
 <div class="row pt-5">
 <div class="col-12">
   <%= render partial: 'tags/many_related_tags', locals: { many_related_tags: @course.tags,
@@ -15,3 +18,4 @@
                                                 id: @course.id} %>
 </div>
 </div>
+<% end %>

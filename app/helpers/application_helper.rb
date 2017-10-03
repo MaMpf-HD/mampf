@@ -13,6 +13,10 @@ module ApplicationHelper
     end
   end
 
+  def split_list(list)
+    list.in_groups_of((list.count/4.0).round)
+  end
+
   # def active_module
   #   item_class = Array.new(5, '')
   #   if params[:module_id]

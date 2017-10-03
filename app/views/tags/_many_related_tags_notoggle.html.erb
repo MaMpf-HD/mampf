@@ -2,7 +2,7 @@
   <div class="card-header bg-primary"><h5><%= tags_description %></h5></div>
   <div class="card-body">
   <div class="row">
-  <% split_tags(many_related_tags).each do |tag_list| %>
+  <% split_list(many_related_tags).each do |tag_list| %>
   <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
   <ul>
     <% tag_list.each do |t| %>

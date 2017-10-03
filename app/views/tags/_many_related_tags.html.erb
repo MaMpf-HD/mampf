@@ -1,19 +1,19 @@
-<div id="tag_accordion<%= id %>" role="tablist">
+<div id="tags_accordion<%= id %>" role="tablist">
 <div class="card bg-info">
-  <div class="card-header bg-primary" role="tab" id="heading<%= id %>">
+  <div class="card-header bg-primary" role="tab" id="tags_heading<%= id %>">
     <h5><%= tags_description + ' (' + many_related_tags.count.to_s + ') '%>
-      <a class="btn btn-success" data-toggle="collapse" href="#collapse<%= id %>" aria-expanded="false" aria-controls="collapse<%= id %>">Ein-/Ausklappen</a>
+      <a class="btn btn-success" data-toggle="collapse" href="#tags_collapse<%= id %>" aria-expanded="false" aria-controls="tags_collapse<%= id %>">Ein-/Ausklappen</a>
     </h5>
   </div>
-  <div id="collapse<%= id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= id%>" data-parent="#tag_accordion<%= id %>">
+  <div id="tags_collapse<%= id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= id%>" data-parent="#tags_accordion<%= id %>">
 <div class="card-body">
   <div class="row">
-  <% split_tags(many_related_tags).each do |tag_list| %>
+  <% split_list(many_related_tags).each do |tag_list| %>
   <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
   <ul>
     <% tag_list.each do |t| %>
     <% unless t.nil? %>
-      <li class="text-light"><%= link_to t.title, tag_path(t), class: "text-light" %></li>
+      <li class="text-light"><%= link_to t.title, t, class: "text-light" %></li>
     <% end %>
     <% end %>
   </ul>
