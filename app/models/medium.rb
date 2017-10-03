@@ -52,26 +52,6 @@ class Medium < ApplicationRecord
                                 { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
                               if: :manuscript_content?
 
-  def video_content?
-    video_stream_link.present? || video_file_link.present?
-  end
-
-  def video_stream_content?
-    video_stream_link.present?
-  end
-
-  def video_file_content?
-    video_file_link.present?
-  end
-
-  def manuscript_content?
-    manuscript_link.present?
-  end
-
-  def keks_question?
-    sort == 'KeksQuestion'
-  end
-
   def video_aspect_ratio
     return unless height != 0 && width != 0
     width.to_f / height
@@ -99,37 +79,19 @@ class Medium < ApplicationRecord
   def card_header_second
     return description unless description.nil?
     return teachable.description[:specific] unless teachable.description[:specific].nil?
-    if sort == 'KeksQuestion'
-      return 'KeKs Frage Nr. ' + question_id.to_s
-    end
-    if sort == 'KeksQuiz'
-      return 'KeKs Quiz'
-    end
-    if sort == 'Sesam'
-      return 'SeSAM Video'
-    end
+    { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
+      'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video' }[sort]
   end
 
   def sort_de
-    case sort
-    when 'Kaviar'
-      'KaViaR'
-    when 'Sesam'
-      'SeSAM'
-    when 'KeksQuestion'
-      'Keks-Frage'
-    when 'KeksQuiz'
-      'Keks-Quiz'
-    when 'Reste'
-      'RestE'
-    when 'Erdbeere'
-      'ErDBeere'
-    end
+    { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',
+      'KeksQuestion' => 'Keks-Frage', 'KeksQuiz' => 'Keks-Quiz',
+      'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere' }[sort]
   end
 
   def question_ids
-    return unless !question_list.nil?
-    question_list.split('&').map { |q| q.to_i }
+    return if question_list.nil?
+    question_list.split('&').map(&:to_i)
   end
 
   def teachable_sort
@@ -137,20 +99,26 @@ class Medium < ApplicationRecord
   end
 
   def teachable_sort_de
-    case teachable_sort
-    when 'Course'
-      'Kurs'
-    when 'Lecture'
-      'Vorlesung'
-    when 'Lesson'
-      'Sitzung'
-    end
+    { 'Course' => 'Kurs', 'Lecture' => 'Vorlesung',
+      'Lesson' => 'Sitzung' }[teachable_sort]
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
   private
+
+  def video_content?
+    video_stream_link.present? || video_file_link.present?
+  end
+
+  def video_file_content?
+    video_file_link.present?
+  end
+
+  def manuscript_content?
+    manuscript_link.present?
+  end
 
   def nonempty_content?
     return true if video_stream_link.present? ||
@@ -159,5 +127,9 @@ class Medium < ApplicationRecord
                    external_reference_link.present?
     errors.add(:base, 'empty content')
     false
+  end
+
+  def keks_question?
+    sort == 'KeksQuestion'
   end
 end

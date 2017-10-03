@@ -1,6 +1,6 @@
 class Api::V1::MediaController < ApplicationController
   skip_before_action :authenticate_user!
-  
+
   respond_to :json
   def keks_question
     @medium = Medium.KeksQuestion.find_by(question_id: params[:id])
@@ -10,7 +10,7 @@ class Api::V1::MediaController < ApplicationController
         {
           medium: MediumSerializer.new(@medium),
           embedded_video:
-            render_to_string(partial: 'shared/video',
+            render_to_string(partial: 'api/v1/medium/video',
                              formats: :html,
                              layout: false,
                              locals:

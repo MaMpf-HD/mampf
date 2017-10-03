@@ -5,40 +5,15 @@
 </div>
 <div class="row">
   <div class="col-12 col-md-6 col-lg-5 pt-3">
-  <div class="card bg-info">
-    <div class="card-header bg-primary"><h5>Verwandte Begriffe</h5></div>
-    <div class="card-body">
-    <ul>
-      <% @tag.related_tags.each do |t| %>
-      <li class="text-light"><%= link_to t.title, tag_path(t), class: "text-light" %></li>
-      <% end %>
-    </ul>
-  </div>
-  </div>
+    <%= render partial: 'related_tags', locals: { related_tags: @tag.related_tags,
+                                                  tags_description: 'Verknüpfte Begriffe'} %>
   </div>
   <div class="col-12 col-md-6 col-lg-4 pt-3">
-  <div class="card bg-info">
-    <div class="card-header bg-primary"><h5>Begriffe im weiteren Umfeld</h5></div>
-    <div class="card-body">
-    <ul>
-      <% @tag.tags_with_given_distance(2).each do |t| %>
-      <li class="text-light"><%= link_to t.title, tag_path(t), class: "text-light" %></li>
-      <% end %>
-    </ul>
-  </div>
-  </div>
+    <%= render partial: 'related_tags', locals: { related_tags: @tag.tags_with_given_distance(2),
+                                                  tags_description: 'Begriffe im weiteren Umfeld'} %>
   </div>
   <div class="col-12 col-md-12 col-lg-3 pt-3">
-  <div class="card bg-warning">
-    <div class="card-header bg-danger"><h5>Kurse:</h5></div>
-    <div class="card-body">
-    <ul>
-      <% @tag.courses.each do |c| %>
-      <li><%= link_to c.title, course_path(c) %></li>
-      <% end %>
-    </ul>
-    </div>
-  </div>
+    <%= render partial: 'courses/courses', locals: { courses: @tag.courses } %>
   </div>
 </div>
 <% media = @tag.media.where.not(sort: 'KeksQuestion') %>

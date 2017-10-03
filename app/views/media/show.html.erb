@@ -5,93 +5,21 @@
 </div>
 <div class="row">
 <div class="col-12 col-md-6 col-lg-4 pt-3">
-<div class="card bg-warning">
-  <div class="card-header bg-danger"><h5>Organisatorisches</h5></div>
-  <% unless @medium.video_thumbnail_link.nil? %>
-  <%= image_tag(@medium.video_thumbnail_link, alt: "Card image cap", class: "card-img-top") %>
-  <% end %>
-  <div class="card-body">
-  <ul>
-  <li>Typ: <%= @medium.sort_de %></li>
-  <% if !@medium.description.nil? %>
-  <li>Beschreibung: <%= @medium.description %></li>
-  <% end %>
-  <% if @medium.teachable_sort == 'Course' %>
-     <li>Kurs: <%= link_to @medium.teachable.to_label, course_path(@medium.teachable) %></li>
-  <% end %>
-  <% if @medium.teachable_sort == 'Lecture' %>
-     <li>Vorlesung: <%= link_to @medium.teachable.to_label, lecture_path(@medium.teachable) %></li>
-  <% end %>
-  <% if @medium.teachable_sort == 'Lesson' %>
-     <li>Vorlesung: <%= link_to @medium.teachable.lecture.to_label, lecture_path(@medium.teachable.lecture) %></li>
-     <li>Sitzung: <%= @medium.teachable.to_label %></li>
-  <% end %>
-  <li>Erstellungsdatum:</li>
-  <li>letzte Änderung:</li>
-  <li>Autor: <%= @medium.author %>
-  </ul>
-  </div>
-</div>
+<%= render partial: 'organizational', locals: { medium: @medium } %>
 </div>
 <div class="col-12 col-md-6 col-lg-4 pt-3">
-<div class="card bg-secondary">
-  <div class="card-header bg-success"><h5>Technisches</h5></div>
-  <div class="card-body">
-  <ul class="list-group list-group-flush">
-  <% if @medium.video_stream_content? %>
-  <li class="list-group-item bg-secondary">
-  <%= link_to 'Video-Stream', @medium.video_stream_link, class: "btn btn-primary", target: :_blank %>
-  <ul>
-  <li>Länge: <%= @medium.length %></li>
-  <li>eingebettete Breite: <%= @medium.embedded_width.to_s + ' px'%></li>
-  <li>eingebettete Höhe: <%= @medium.embedded_height.to_s + ' px'%></li>
-  <li>Player: <%= @medium.video_player %></li>
-  </ul>
-  </li>
-  <% end %>
-  <% if @medium.video_file_content? %>
-  <li class="list-group-item bg-secondary"><%= link_to 'Videodatei', @medium.video_file_link, class: "btn btn-primary", target: :_blank %>
-  <ul>
-  <li>Dateigröße: <%= @medium.video_size %></li>
-  <li>Breite: <%= @medium.width.to_s + ' px'%></li>
-  <li>Höhe: <%= @medium.height.to_s + ' px'%></li>
-  </ul>
-  </li>
-  <% end %>
-  <% if @medium.manuscript_content? %>
-  <li class="list-group-item bg-secondary"><%= link_to 'Manuskript', @medium.manuscript_link, class: "btn btn-primary", target: :_blank %>
-  <ul>
-  <li>Dateigröße: <%= @medium.manuscript_size %></li>
-  <li>Länge: <%= @medium.pages.to_s + ' S' %></li>
-  </ul>
-  </li>
-  <% end %>
-  <% if @medium.external_reference_link.present? %>
-  <li class="list-group-item bg-secondary"><%= link_to 'externer Link', @medium.external_reference_link, class: "btn btn-primary", target: :_blank %></li>
-  <% end %>
-  </ul>
-</div>
-</div>
+<%= render partial: 'technical', locals: { medium: @medium } %>
 </div>
 <div class="col-12 col-md-6 col-lg-4 pt-3">
-<div class="card bg-info">
-  <div class="card-header bg-primary"><h5>Verknüpfte Begriffe</h5></div>
-  <div class="card-body">
-  <ul>
-    <% @medium.tags.each do |t| %>
-    <li class="text-light"><%= link_to t.title, tag_path(t), class: "text-light" %></li>
-    <% end %>
-  </ul>
+<%= render partial: 'tags/related_tags', locals: { related_tags: @medium.tags,
+                                                tags_description: 'Verknüpfte Begriffe'} %>
 </div>
 </div>
-</div>
-</div>
-<% linked_media = @medium.linked_media %>
-<% unless linked_media.empty? %>
+<% unless @medium.linked_media.empty? %>
 <div class="row">
   <div class="col-12 pt-5">
     <h5>Verknüpfte Medien</h5>
   </div>
 </div>
-<%= render partial: 'media/media', locals: { media: linked_media} %>
+<%= render partial: 'media/media', locals: { media: @medium.linked_media} %>
 <% end %>

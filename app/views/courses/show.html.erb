@@ -5,38 +5,12 @@
 </div>
 <div class="row">
 <div class="col-12">
-<!-- <div class="col-12 col-md-12 col-lg-3 pt-3"> -->
-<div class="card bg-warning">
-  <div class="card-header bg-danger"><h5>Vorlesungen:</h5></div>
-  <div class="card-body">
-  <ul>
-    <% @course.lectures.each do |l| %>
-    <li><%= link_to l.term_teacher_info, lecture_path(l) %></li>
-    <% end %>
-  </ul>
-  </div>
-</div>
+<%= render partial: 'lectures/lectures', locals: { lectures: @course.lectures } %>
 </div>
 </div>
 <div class="row pt-5">
 <div class="col-12">
-<div class="card bg-info">
-  <div class="card-header bg-primary"><h5>Verwandte Begriffe</h5></div>
-  <div class="card-body">
-  <div class="row">
-  <% split_tags(@course.tags).each do |tag_list| %>
-  <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-  <ul>
-    <% tag_list.each do |t| %>
-    <% unless t.nil? %>
-      <li class="text-light"><%= link_to t.title, tag_path(t), class: "text-light" %></li>
-    <% end %>
-    <% end %>
-  </ul>
-  </div>
-  <% end %>
-</div>
-</div>
-</div>
+  <%= render partial: 'tags/many_related_tags', locals: { many_related_tags: @course.tags,
+                                                tags_description: 'Verknüpfte Begriffe'} %>
 </div>
 </div>

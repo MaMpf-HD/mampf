@@ -1,0 +1,10 @@
+<div class="card bg-warning">
+  <div class="card-header bg-danger"><h5>Kurse:</h5></div>
+  <div class="card-body">
+  <ul>
+    <% courses.each do |c| %>
+    <li><%= link_to c.title, course_path(c) %></li>
+    <% end %>
+  </ul>
+  </div>
+</div>
