@@ -8,7 +8,7 @@ As of now, only the models and some class methods have been implemented, togethe
 
 * Database initialization:
 
-    `rails setup:import_data`
+    `rails setup:import_all`
 
   This imports a lot of data from the .csv files in the db/csv folder
 
