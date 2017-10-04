@@ -1,10 +1,10 @@
-<div class="card bg-secondary">
-  <div class="card-header bg-success"><h5>Technisches</h5></div>
+<div class="card bg-teal-lighten-5">
+  <div class="card-header bg-teal-darken-1"><h5 class="text-light">Technisches</h5></div>
   <div class="card-body">
   <ul class="list-group list-group-flush">
   <% if medium.video_stream_link.present? %>
-  <li class="list-group-item bg-secondary">
-  <%= link_to 'Video-Stream', medium.video_stream_link, class: "btn btn-primary", target: :_blank %>
+  <li class="list-group-item bg-teal-lighten-5">
+  <%= link_to 'Video-Stream', medium.video_stream_link, class: "btn btn-info", target: :_blank %>
   <ul>
   <li>Länge: <%= medium.length %></li>
   <li>eingebettete Breite: <%= medium.embedded_width.to_s + ' px'%></li>
@@ -14,7 +14,8 @@
   </li>
   <% end %>
   <% if medium.video_file_link.present? %>
-  <li class="list-group-item bg-secondary"><%= link_to 'Videodatei', medium.video_file_link, class: "btn btn-primary", target: :_blank %>
+  <li class="list-group-item bg-teal-lighten-5">
+  <%= link_to 'Videodatei', medium.video_file_link, class: "btn btn-info", target: :_blank %>
   <ul>
   <li>Dateigröße: <%= medium.video_size %></li>
   <li>Breite: <%= medium.width.to_s + ' px'%></li>
@@ -23,7 +24,7 @@
   </li>
   <% end %>
   <% if medium.manuscript_link.present? %>
-  <li class="list-group-item bg-secondary"><%= link_to 'Manuskript', medium.manuscript_link, class: "btn btn-primary", target: :_blank %>
+  <li class="list-group-item bg-teal-lighten-5"><%= link_to 'Manuskript', medium.manuscript_link, class: "btn btn-info", target: :_blank %>
   <ul>
   <li>Dateigröße: <%= medium.manuscript_size %></li>
   <li>Länge: <%= medium.pages.to_s + ' S' %></li>
@@ -31,7 +32,7 @@
   </li>
   <% end %>
   <% if medium.external_reference_link.present? %>
-  <li class="list-group-item bg-secondary"><%= link_to 'externer Link', medium.external_reference_link, class: "btn btn-primary", target: :_blank %></li>
+  <li class="list-group-item bg-teal-lighten-5"><%= link_to 'externer Link', medium.external_reference_link, class: "btn btn-info", target: :_blank %></li>
   <% end %>
   </ul>
 </div>

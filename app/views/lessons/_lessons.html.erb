@@ -1,8 +1,8 @@
 <div id="lessons_accordion<%= id %>" role="tablist">
-<div class="card bg-warning">
-  <div class="card-header bg-danger" role="tab" id="lessons_heading<%= id %>">
-    <h5><%= lessons_description + ' (' + lessons.count.to_s + ') '%>
-      <a class="btn btn-success" data-toggle="collapse" href="#lessons_collapse<%= id %>" aria-expanded="false" aria-controls="lessons_collapse<%= id %>">Ein-/Ausklappen</a>
+<div class="card bg-brown-lighten-4">
+  <div class="card-header bg-brown-darken-2" role="tab" id="lessons_heading<%= id %>">
+    <h5 class="text-light"><%= lessons_description + ' (' + lessons.count.to_s + ') '%>
+      <a class="btn btn-dark float-right" data-toggle="collapse" href="#lessons_collapse<%= id %>" aria-expanded="false" aria-controls="lessons_collapse<%= id %>">Ein-/Ausklappen</a>
     </h5>
   </div>
   <div id="lessons_collapse<%= id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= id%>" data-parent="#lessons_accordion<%= id %>">

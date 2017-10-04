@@ -1,8 +1,8 @@
 <div id="tags_accordion<%= id %>" role="tablist">
-<div class="card bg-info">
-  <div class="card-header bg-primary" role="tab" id="tags_heading<%= id %>">
-    <h5><%= tags_description + ' (' + many_related_tags.count.to_s + ') '%>
-      <a class="btn btn-success" data-toggle="collapse" href="#tags_collapse<%= id %>" aria-expanded="false" aria-controls="tags_collapse<%= id %>">Ein-/Ausklappen</a>
+<div class="card bg-green-lighten-4">
+  <div class="card-header bg-green-darken-3" role="tab" id="tags_heading<%= id %>">
+    <h5 class="text-light"><%= tags_description + ' (' + many_related_tags.count.to_s + ') '%>
+      <a class="btn btn-success float-right" data-toggle="collapse" href="#tags_collapse<%= id %>" aria-expanded="false" aria-controls="tags_collapse<%= id %>">Ein-/Ausklappen</a>
     </h5>
   </div>
   <div id="tags_collapse<%= id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= id%>" data-parent="#tags_accordion<%= id %>">
@@ -13,7 +13,7 @@
   <ul>
     <% tag_list.each do |t| %>
     <% unless t.nil? %>
-      <li class="text-light"><%= link_to t.title, t, class: "text-light" %></li>
+      <li class="text-dark"><%= link_to t.title, t, class: "text-dark" %></li>
     <% end %>
     <% end %>
   </ul>

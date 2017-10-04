@@ -1,6 +1,6 @@
    <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-2 pb-4">
-    <div class="card">
-      <div class="card-header bg-secondary text-white">
+    <div class="card bg-mdb-color-lighten-6">
+      <div class="card-header bg-mdb-color">
         <%= link_to medium.card_header, medium.card_header_teachable, class: 'text-light' %>
         <% if medium.sort == 'KeksQuestion' || medium.sort == 'KeksQuiz'%>
           <img src="/keks-16x16.png" width="16" height="16" style="float: right;">
@@ -8,11 +8,11 @@
       </div>
       <% unless medium.card_subheader.nil? %>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item bg-light">
-          <% if medium.card_subheader.nil? %>
-            <%= medium.card_subheader %>
+          <li class="list-group-item bg-mdb-color-lighten-3">
+          <% if medium.card_subheader_teachable.nil? %>
+            <div class="text-light"><%= medium.card_subheader %></div>
           <% else %>
-            <%= link_to medium.card_subheader, medium.card_subheader_teachable, class: 'text-dark' %>
+            <%= link_to medium.card_subheader, medium.card_subheader_teachable, class: 'text-light' %>
           <% end %>
           </li>
         </ul>
@@ -30,28 +30,28 @@
       <div>
         <ul>
           <% medium.tags.each do |t| %>
-            <li><%= link_to t.title, tag_path(t), class: "text-info" %></li>
+            <li><%= link_to t.title, tag_path(t), class: "text-dark" %></li>
           <% end %>
         </ul>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item bg-light text-center">
+        <li class="list-group-item bg-mdb-color-lighten-6 text-center">
           <% if medium.video_stream_link.present? %>
-            <%= link_to "Stream", medium.video_stream_link, class: "btn btn-outline-primary", target: :_blank %>
+            <%= link_to "Stream", medium.video_stream_link, class: "btn btn-secondary", target: :_blank %>
           <% end %>
           <% if medium.video_file_link.present? %>
-            <%= link_to "mp4", medium.video_file_link, class: "btn btn-outline-primary", target: :_blank %>
+            <%= link_to "mp4", medium.video_file_link, class: "btn btn-secondary", target: :_blank %>
           <% end %>
           <% if medium.manuscript_link.present? %>
-            <%= link_to "pdf", medium.manuscript_link, class: "btn btn-outline-primary", target: :_blank %>
+            <%= link_to "pdf", medium.manuscript_link, class: "btn btn-secondary", target: :_blank %>
           <% end %>
           <% if medium.external_reference_link.present? %>
-            <%= link_to "Link", medium.external_reference_link, class: "btn btn-outline-primary", target: :_blank %>
+            <%= link_to "Link", medium.external_reference_link, class: "btn btn-secondary", target: :_blank %>
           <% end %>
         </li>
       </ul>
       <div class="card-footer text-center">
-        <%= link_to "Details", medium_path(medium), class: "btn btn-info" %>
+        <%= link_to "Details", medium_path(medium), class: "btn btn-secondary" %>
       </div>
     </div>
   </div>

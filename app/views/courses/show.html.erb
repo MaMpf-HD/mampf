@@ -4,7 +4,7 @@
   </div>
 </div>
 <% unless @course.lectures.empty? %>
-<div class="row">
+<div class="row pt-3">
 <div class="col-12">
 <%= render partial: 'lectures/lectures', locals: { lectures: @course.lectures } %>
 </div>

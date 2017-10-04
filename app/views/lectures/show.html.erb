@@ -14,6 +14,13 @@
 </p>
 <hr>
 </div>
+<% unless @lecture.chapters.empty? %>
+<div class="row pt-5">
+<div class="col-12">
+  <%= render partial: 'sections' %>
+</div>
+</div>
+<% end %>
 <% unless @lecture.lessons.empty? %>
 <div class="row pt-5">
 <div class="col-12">
