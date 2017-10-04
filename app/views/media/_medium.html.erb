@@ -37,20 +37,20 @@
       <ul class="list-group list-group-flush">
         <li class="list-group-item bg-mdb-color-lighten-7 text-center">
           <% if medium.video_stream_link.present? %>
-            <%= link_to "Stream", medium.video_stream_link, class: "btn btn-secondary", target: :_blank %>
+            <%= link_to "Stream", medium.video_stream_link, class: "btn btn-outline-secondary", target: :_blank %>
           <% end %>
           <% if medium.video_file_link.present? %>
-            <%= link_to "mp4", medium.video_file_link, class: "btn btn-secondary", target: :_blank %>
+            <%= link_to "mp4", medium.video_file_link, class: "btn btn-outline-secondary", target: :_blank %>
           <% end %>
           <% if medium.manuscript_link.present? %>
-            <%= link_to "pdf", medium.manuscript_link, class: "btn btn-secondary", target: :_blank %>
+            <%= link_to "pdf", medium.manuscript_link, class: "btn btn-outline-secondary", target: :_blank %>
           <% end %>
           <% if medium.external_reference_link.present? %>
-            <%= link_to "Link", medium.external_reference_link, class: "btn btn-secondary", target: :_blank %>
+            <%= link_to "Link", medium.external_reference_link, class: "btn btn-outline-secondary", target: :_blank %>
           <% end %>
         </li>
       </ul>
-      <div class="card-footer text-center">
+      <div class="card-footer bg-mdb-color-lighten-7 text-center">
         <%= link_to "Details", medium_path(medium), class: "btn btn-secondary" %>
       </div>
     </div>
