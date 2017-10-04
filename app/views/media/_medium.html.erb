@@ -1,6 +1,6 @@
    <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-2 pb-4">
-    <div class="card bg-mdb-color-lighten-6">
-      <div class="card-header bg-mdb-color">
+    <div class="card bg-mdb-color-lighten-7">
+      <div class="card-header bg-mdb-color-lighten-1">
         <%= link_to medium.card_header, medium.card_header_teachable, class: 'text-light' %>
         <% if medium.sort == 'KeksQuestion' || medium.sort == 'KeksQuiz'%>
           <img src="/keks-16x16.png" width="16" height="16" style="float: right;">
@@ -8,7 +8,7 @@
       </div>
       <% unless medium.card_subheader.nil? %>
         <ul class="list-group list-group-flush">
-          <li class="list-group-item bg-mdb-color-lighten-3">
+          <li class="list-group-item bg-mdb-color-lighten-4">
           <% if medium.card_subheader_teachable.nil? %>
             <div class="text-light"><%= medium.card_subheader %></div>
           <% else %>
@@ -35,7 +35,7 @@
         </ul>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item bg-mdb-color-lighten-6 text-center">
+        <li class="list-group-item bg-mdb-color-lighten-7 text-center">
           <% if medium.video_stream_link.present? %>
             <%= link_to "Stream", medium.video_stream_link, class: "btn btn-secondary", target: :_blank %>
           <% end %>
