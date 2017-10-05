@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   resources :media, only: [:show, :index]
   resources :tags, only: [:show]
   resources :lessons, only: [:show]
-  
+  resources :sections, only: [:show]
+  resources :chapters, only: [:show]  
+
   get 'profile/edit', as: 'edit_profile'
   get 'lectures/:lecture_id/modules/:module_id', to: 'media#index', as: 'lecture_module'
 

@@ -9,4 +9,16 @@ class Chapter < ApplicationRecord
                                      less_than_or_equal_to: 999 },
                      uniqueness: { scope: :lecture_id,
                                    message: 'chapter already exists' }
+
+  def to_label
+    'Kapitel ' + number.to_s + '. ' + title
+  end
+
+  def tags
+     Tag.where(id: sections.all.map { |s| s.tags.pluck(:id) }.flatten)
+  end
+
+  def lessons
+     Lesson.where(id: sections.all.map { |s| s.lessons.pluck(:id) }.flatten)
+  end
 end

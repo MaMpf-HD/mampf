@@ -1,26 +1,10 @@
-<div id="lessons_accordion<%= id %>" role="tablist">
 <div class="card bg-brown-lighten-4">
-  <div class="card-header bg-brown-darken-2" role="tab" id="lessons_heading<%= id %>">
-    <h5 class="text-light"><%= lessons_description + ' (' + lessons.count.to_s + ') '%>
-      <a class="btn btn-dark float-right" data-toggle="collapse" href="#lessons_collapse<%= id %>" aria-expanded="false" aria-controls="lessons_collapse<%= id %>">Ein-/Ausklappen</a>
-    </h5>
-  </div>
-  <div id="lessons_collapse<%= id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= id%>" data-parent="#lessons_accordion<%= id %>">
-<div class="card-body">
-  <div class="row">
-  <% split_list(lessons).each do |lesson_list| %>
-  <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-  <ul class="text-dark">
-    <% lesson_list.each do |l| %>
-    <% unless l.nil? %>
-      <li><%= link_to l.title, lesson_path(l), class: 'text-dark' %></li>
-    <% end %>
+  <div class="card-header bg-brown-darken-2"><h5 class="text-light"><%= lessons_description %></h5></div>
+  <div class="card-body">
+  <ul>
+    <% lessons.each do |l| %>
+    <li class="text-dark"><%= link_to l.title, l, class: "text-dark" %></li>
     <% end %>
   </ul>
-  </div>
-  <% end %>
-</div>
-</div>
-</div>
 </div>
 </div>

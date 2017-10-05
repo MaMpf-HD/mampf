@@ -20,6 +20,11 @@ class Section < ApplicationRecord
     chapter.lecture
   end
 
+  def to_label
+    return '§' + number.to_s + '. ' + title unless number_alt.present?
+    '§' + number_alt + '. ' + title
+  end
+
   private
 
   def valid_lessons?

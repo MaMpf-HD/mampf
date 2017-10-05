@@ -13,8 +13,8 @@ module ApplicationHelper
     end
   end
 
-  def split_list(list)
-    list.in_groups_of((list.count/4.0).round)
+  def split_list(list,n=4)
+    list.in_groups_of((list.count/n.to_f).round)
   end
 
   # def active_module

@@ -1,0 +1,24 @@
+<% id = @lecture.id %>
+<div id="sections_accordion<%= id %>" role="tablist">
+<div class="card bg-lime-lighten-5">
+  <div class="card-header bg-lime-lighten-3" role="tab" id="sections_heading<%= id %>">
+    <h5 class="text-dark"><%= 'Verknüpfte Abschnitte' + ' (' + @lecture.sections.count.to_s + ') '%>
+      <a class="btn btn-dark float-right" data-toggle="collapse" href="#sections_collapse<%= id %>" aria-expanded="false" aria-controls="lessons_collapse<%= id %>">Ein-/Ausklappen</a>
+    </h5>
+  </div>
+  <div id="sections_collapse<%= id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= id%>" data-parent="#sections_accordion<%= id %>">
+<div class="card-body">
+<ul>
+<% @lecture.chapters.each do |c| %>
+<li><%= link_to c.to_label, c, class: 'text-dark' %></li>
+<ul>
+<% c.sections.each do |s| %>
+<li><%= link_to s.to_label, s, class: 'text-dark' %></li>
+<% end%>
+</ul>
+<% end %>
+</ul>
+</div>
+</div>
+</div>
+</div>
