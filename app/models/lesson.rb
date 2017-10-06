@@ -31,11 +31,11 @@ class Lesson < ApplicationRecord
   end
 
   def to_label
-    'Sitzung ' + number.to_s + ', ' + date_de.to_s
+    'Nr. ' + number.to_s + ', ' + date_de.to_s
   end
 
   def title
-    to_label
+    'Sitzung ' + number.to_s + ', ' + date_de.to_s
   end
 
   def section_titles
@@ -43,7 +43,7 @@ class Lesson < ApplicationRecord
   end
 
   def description
-    { general: lecture.to_label, specific: to_label }
+    { general: lecture.to_label, specific: title }
   end
 
   private

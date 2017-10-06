@@ -5,12 +5,12 @@
 </div>
 <div class="row">
   <div class="col-12 col-md-6 col-lg-5 pt-3">
-    <%= render partial: 'related_tags', locals: { related_tags: @tag.related_tags,
-                                                  tags_description: 'Verknüpfte Begriffe'} %>
+    <%= render partial: 'tags', locals: { related_tags: @tag.related_tags,
+                                          tags_description: 'Verknüpfte Begriffe'} %>
   </div>
   <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'related_tags', locals: { related_tags: @tag.tags_with_given_distance(2),
-                                                  tags_description: 'Begriffe im weiteren Umfeld'} %>
+    <%= render partial: 'tags', locals: { related_tags: @tag.tags_with_given_distance(2),
+                                          tags_description: 'Begriffe im weiteren Umfeld'} %>
   </div>
   <div class="col-12 col-md-12 col-lg-3 pt-3">
     <%= render partial: 'courses/courses', locals: { courses: @tag.courses } %>

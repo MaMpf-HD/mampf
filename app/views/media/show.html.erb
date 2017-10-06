@@ -11,8 +11,8 @@
 <%= render partial: 'technical', locals: { medium: @medium } %>
 </div>
 <div class="col-12 col-md-6 col-lg-4 pt-3">
-<%= render partial: 'tags/related_tags', locals: { related_tags: @medium.tags,
-                                                tags_description: 'Verknüpfte Begriffe'} %>
+<%= render partial: 'tags/tags', locals: { related_tags: @medium.tags,
+                                           tags_description: 'Verknüpfte Begriffe'} %>
 </div>
 </div>
 <% unless @medium.linked_media.empty? %>

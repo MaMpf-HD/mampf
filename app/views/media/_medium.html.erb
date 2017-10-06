@@ -30,7 +30,7 @@
       <div>
         <ul>
           <% medium.tags.each do |t| %>
-            <li><%= link_to t.title, tag_path(t), class: "text-dark" %></li>
+            <li><%= link_to t.title, t, class: "text-dark" %></li>
           <% end %>
         </ul>
       </div>
@@ -51,7 +51,7 @@
         </li>
       </ul>
       <div class="card-footer bg-mdb-color-lighten-7 text-center">
-        <%= link_to "Details", medium_path(medium), class: "btn btn-secondary" %>
+        <%= link_to "Details", medium, class: "btn btn-secondary" %>
       </div>
     </div>
   </div>

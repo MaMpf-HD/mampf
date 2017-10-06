@@ -17,7 +17,7 @@
   <% end %>
   <% if medium.teachable_sort == 'Lesson' %>
      <li>Vorlesung: <%= link_to medium.teachable.lecture.to_label, medium.teachable.lecture, class: 'text-dark' %></li>
-     <li>Sitzung: <%= link_to medium.teachable.title, medium.teachable, class: 'text-dark' %></li>
+     <li>Sitzung: <%= link_to medium.teachable.to_label, medium.teachable, class: 'text-dark' %></li>
   <% end %>
   <li>Erstellungsdatum:</li>
   <li>letzte Änderung:</li>
