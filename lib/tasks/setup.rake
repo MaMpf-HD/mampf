@@ -113,7 +113,7 @@ namespace :setup do
         section.tags = Tag.where(title: row['tags'].split('&'))
       end
       puts 'Added section: ' + row['course'] + ' ' + row['term'] + ' nr: ' +
-           row['number'] + ' title: ' + row['title'] + ' tags: ' + row['tags']
+           row['number'] + ' title: ' + row['title'] + ' tags: '
     end
   end
 

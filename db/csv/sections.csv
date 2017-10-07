@@ -1,4 +1,21 @@
 course,term,number,title,chapter,number_alt,tags
+Lineare Algebra 1,WS&2016,1,Naive Aussagenlogik,0,,Aussage&Negation&Konjunktion&Disjunktion&Implikation&Äquivalenz&Beweisen&Existenz- und Allquantor
+Lineare Algebra 1,WS&2016,2,Naive Mengenlehre,0,,Menge&Teilmenge&Durchschnitt&Vereinigung&kartesisches Produkt&Potenzmenge&Kardinalität&vollständige Induktion
+Lineare Algebra 1,WS&2016,3,Relationen,0,,Relation&Ordnungsrelation&größtes Element&maximales Element&Äquivalenzrelation&Äquivalenzklasse&Partition&Faktormenge
+Lineare Algebra 1,WS&2016,4,Abbildungen,0,,Abbildung&Bild&Urbild&Einschränkung&Komposition von Abbildungen&injektive Abbildung&surjektive Abbildung&Bijektivität&Charakterisierung von Bijektivität&Umkehrabbildung&Auswahlaxiom
+Lineare Algebra 1,WS&2016,5,Gruppen,1,,Verknüpfung&Monoid&Gruppe&abelsche Gruppe&symmetrische Gruppe&Permutation&Gruppe der Restklassen modulo n&Gruppenhomomorphismus
+Lineare Algebra 1,WS&2016,6,Ringe und Körper,1,,Integritätsbereich&Körper&endlicher Körper&Charakteristik
+Lineare Algebra 1,WS&2016,7,Polynome,1,,Polynom&Grad&Polynomdivision&Nullstelle eines Polynoms und deren Vielfachheit&Fundamentalsatz der Algebra&Polynomfunktion
+Lineare Algebra 1,WS&2016,8,Vektorräume,2,,Vektorraum&Untervektorraum&Linearkombination&lineare Hülle&lineare Unabhängigkeit in Vektorräumen
+Lineare Algebra 1,WS&2016,9,Basis und Dimension,2,,Erzeugendensystem eines Vektorraums&Basis eines Vektorraums&Basisauswahlsatz&Austauschlemma&Austauschsatz&Dimension&Dimension von Untervektorräumen&Basisergänzungssatz&Zornsches Lemma&Existenz von Basen von Vektorräumen
+Lineare Algebra 1,WS&2016,10,Matrizen,2,,Matrix&invertierbare Matrix&allgemeine lineare Gruppe&elementare Zeilenumformung&Zeilenraum&Zeilenstufenform&Algorithmus zur Zeilenstufenform&transponierte Matrix&Zeilenrang&Spaltenrang
+Lineare Algebra 1,WS&2016,11,Summen von Untervektorräumen,2,,Summe von Untervektorräumen&Dimensionsformel für Summen von Untervektorräumen&direkte Summe von Untervektorräumen&komplementärer Untervektorraum
+Lineare Algebra 1,WS&2016,12,Lineare Abbildungen,3,,lineare Abbildung&Endomorphismus eines Vektorraums&Isomorphismus von Vektorräumen&Kern einer linearen Abbildung&Bild einer linearen Abbildung&Rang einer linearen Abbildung&Rang einer Matrix&Dimensionsformel für lineare Abbildungen
+Lineare Algebra 1,WS&2016,13,Faktorräume und der Homomorphiesatz,3,,affiner Unterraum&Fasern einer linearen Abbildung&Dimension von Fasern&Faktorraum&Charakterisierung von Untervektorräumen und affinen Unterräumen&Homomorphiesatz
+Lineare Algebra 1,WS&2016,14,Lineare Gleichungssysteme,3,,Lineares Gleichungssystem (LGS)&Lösbarkeitskriterien für LGS&strenge Zeilenstufenform&Gauß-Algorithmus für homogene und inhomogene LGS
+Lineare Algebra 1,WS&2016,15,Lineare Abildungen und Matrizen,3,,Konstruktion linearer Abbildungen durch Vorgabe auf Basen&Koordinatensystem&Darstellungsmatrix einer linearen Abbildung&Charakterisierung von Invertierbarkeit von Matrizen
+Lineare Algebra 1,WS&2016,16,Basiswechsel,3,,Transformationsmatrix&Transformationsformel&Äquivalenz von Matrizen&Ähnlichkeit von Matrizen
+Lineare Algebra 1,WS&2016,17,Determinanten,3,,Determinante&Eigenschaften der Determinante&Signum einer Permutation&Transposition&alternierende Gruppe&Leibnizformel&Determinante der Transponierten&komplementäre Matrix&Entwicklungssatz von Laplace&Cramersche Regel&Determinante eines Endomorphismus
 Lineare Algebra 2,SS&2017,18,Eigenwerte,3,,Eigenwert&Charakterisierungen von Diagonalisierbarkeit&Eigenraum&charakteristisches Polynom einer Matrix&charakteristisches Polynom eines Endomorphismus&algebraische Vielfachheit eines Eigenwerts&Satz von Cayley-Hamilton&Minimalpolynom eines Endomorphismus
 Lineare Algebra 2,SS&2017,19,Dualraum,3,,Dualraum&Linearform&duale Basis&Annullator&duale Abbildung&Bidualraum
 Lineare Algebra 2,SS&2017,20,Bilinearformen,4,,Bilinearform&Darstellungsmatrix einer Bilinearform&Transformationsformel für die Darstellungsmatrix einer Bilinearform&nicht-ausgeartete Bilinearform&perfekte Bilinearform&symmetrische Bilinearform&antisymmetrische Bilinearform&alternierende Bilinearform

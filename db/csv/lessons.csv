@@ -26,3 +26,31 @@ Lineare Algebra 2,SS&2017,24,2017,7,13,5x30,Rang eines endlich freien Moduls üb
 Lineare Algebra 2,SS&2017,25,2017,7,18,5x30,Elementarteilersatz für Untermoduln endlich freier Moduln über HIR
 Lineare Algebra 2,SS&2017,26,2017,7,20,5x30,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen&Chinesischer Restsatz über HIR
 Lineare Algebra 2,SS&2017,27,2017,7,25,5x30,Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen
+Lineare Algebra 1,WS&2016,1,2016,10,18,0x1,Aussage&Negation&Konjunktion&Disjunktion&Implikation&Äquivalenz&Beweisen&Existenz- und Allquantor
+Lineare Algebra 1,WS&2016,2,2016,10,20,0x2,Menge&Teilmenge&Durchschnitt&Vereinigung&kartesisches Produkt&Potenzmenge&Kardinalität&vollständige Induktion
+Lineare Algebra 1,WS&2016,3,2016,10,25,0x3,Relation&Ordnungsrelation&größtes Element&maximales Element&Äquivalenzrelation&Äquivalenzklasse&Partition
+Lineare Algebra 1,WS&2016,4,2016,10,27,0x3&0x4,Faktormenge&Abbildung&Bild&Urbild&Einschränkung&Komposition von Abbildungen&injektive Abbildung&surjektive Abbildung&Bijektivität
+Lineare Algebra 1,WS&2016,5,2016,11,3,0x4&1x5,Charakterisierung von Bijektivität&Umkehrabbildung&Auswahlaxiom&Verknüpfung&Monoid&Gruppe
+Lineare Algebra 1,WS&2016,6,2016,11,8,1x5,abelsche Gruppe&symmetrische Gruppe&Permutation&Gruppe der Restklassen modulo n&Gruppenhomomorphismus
+Lineare Algebra 1,WS&2016,7,2016,11,10,1x6,Integritätsbereich&Körper&endlicher Körper
+Lineare Algebra 1,WS&2016,8,2016,11,15,1x6&1x7,Charakteristik&Polynom&Grad&Polynomdivision
+Lineare Algebra 1,WS&2016,9,2016,11,17,1x7&2x8,Nullstelle eines Polynoms und deren Vielfachheit&Fundamentalsatz der Algebra&Polynomfunktion&Vektorraum
+Lineare Algebra 1,WS&2016,10,2016,11,22,2x8,Untervektorraum&Linearkombination
+Lineare Algebra 1,WS&2016,11,2016,11,24,2x8,lineare Hülle&lineare Unabhängigkeit in Vektorräumen
+Lineare Algebra 1,WS&2016,12,2016,11,29,2x8&2x9,Erzeugendensystem eines Vektorraums&Basis eines Vektorraums&Basisauswahlsatz
+Lineare Algebra 1,WS&2016,13,2016,12,1,2x9,Austauschlemma&Austauschsatz&Dimension&Dimension von Untervektorräumen&Basisergänzungssatz
+Lineare Algebra 1,WS&2016,14,2016,12,6,2x9&2x10,Zornsches Lemma&Existenz von Basen von Vektorräumen&Matrix&invertierbare Matrix&allgemeine lineare Gruppe
+Lineare Algebra 1,WS&2016,15,2016,12,8,2x10,elementare Zeilenumformung&Zeilenraum&Zeilenstufenform&Algorithmus zur Zeilenstufenform
+Lineare Algebra 1,WS&2016,16,2016,12,13,2x10&2x11,transponierte Matrix&Zeilenrang&Spaltenrang&Summe von Untervektorräumen&Dimensionsformel für Summen von Untervektorräumen&direkte Summe von Untervektorräumen
+Lineare Algebra 1,WS&2016,17,2016,12,15,2x11&3x12,direkte Summe von Untervektorräumen&komplementärer Untervektorraum&lineare Abbildung
+Lineare Algebra 1,WS&2016,18,2016,12,20,3x12,Endomorphismus eines Vektorraums&Isomorphismus von Vektorräumen&Kern einer linearen Abbildung&Bild einer linearen Abbildung&Rang einer linearen Abbildung&Rang einer Matrix&Dimensionsformel für lineare Abbildungen
+Lineare Algebra 1,WS&2016,19,2016,12,22,3x13,affiner Unterraum&Fasern einer linearen Abbildung&Dimension von Fasern
+Lineare Algebra 1,WS&2016,20,2017,1,10,3x13&3x14,Faktorraum&Charakterisierung von Untervektorräumen und affinen Unterräumen&Homomorphiesatz&Lineares Gleichungssystem (LGS)
+Lineare Algebra 1,WS&2016,21,2017,1,12,3x14,Lineares Gleichungssystem (LGS)&Lösbarkeitskriterien für LGS&strenge Zeilenstufenform
+Lineare Algebra 1,WS&2016,22,2017,1,17,3x14&3x15,Gauß-Algorithmus für homogene und inhomogene LGS&Konstruktion linearer Abbildungen durch Vorgabe auf Basen
+Lineare Algebra 1,WS&2016,23,2017,1,19,3x15,Koordinatensystem&Darstellungsmatrix einer linearen Abbildung&Charakterisierung von Invertierbarkeit von Matrizen
+Lineare Algebra 1,WS&2016,24,2017,1,24,3x16,Transformationsmatrix&Transformationsformel&Äquivalenz von Matrizen
+Lineare Algebra 1,WS&2016,25,2017,1,26,3x16&3x17,Äquivalenz von Matrizen&Ähnlichkeit von Matrizen&Determinante&Eigenschaften der Determinante
+Lineare Algebra 1,WS&2016,26,2017,1,31,3x17,Eigenschaften der Determinante&Signum einer Permutation&Transposition
+Lineare Algebra 1,WS&2016,27,2017,2,2,3x17,alternierende Gruppe&Leibnizformel&Determinante der Transponierten&komplementäre Matrix
+Lineare Algebra 1,WS&2016,28,2017,2,7,3x17,Entwicklungssatz von Laplace&Cramersche Regel&Determinante eines Endomorphismus
