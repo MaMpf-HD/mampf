@@ -57,4 +57,15 @@ class Tag < ApplicationRecord
     distance_list.select { |_k, v| v == distance }.keys
   end
 
+  def in_lecture?(lecture)
+    return false unless (lecture.course.tags.include?(self) &&
+                        !lecture.disabled_tags.include?(self)) ||
+                        lecture.additional_tags.include?(self)
+    true
+  end
+
+  def lectures
+    Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))
+  end
+
 end

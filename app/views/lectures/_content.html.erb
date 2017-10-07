@@ -2,7 +2,7 @@
   <div class="card-header bg-lime-darken-3"><h5 class="text-light">Vorlesungsinhalt</h5></div>
   <div class="card-body">
     <ul>
-    <% @lecture.chapters.each do |c| %>
+    <% lecture.chapters.each do |c| %>
     <li><%= link_to c.to_label, c, class: 'text-dark' %></li>
     <ul>
     <% c.sections.each do |s| %>

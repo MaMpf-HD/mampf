@@ -1,5 +1,5 @@
-<%= table_by_columns(@teachers) do %>
-  <% table_column('Id') { |t| t.id } %>
-  <% table_column('Name') { |t| t.name } %>
-  <% table_column('Email') { |t| t.email } %>
-<% end %>
+<div class="row">
+  <div class="col-12 col-md-6 col-lg-4 pt-3">
+    <%= render partial: 'teachers', locals: { teachers: @teachers } %>
+  </div>
+</div>

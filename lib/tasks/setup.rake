@@ -6,7 +6,8 @@ namespace :setup do
     csv_file_path = 'db/csv/teachers.csv'
 
     CSV.foreach(csv_file_path, headers: true) do |row|
-      Teacher.create!(name: row['name'], email: row['email'])
+      Teacher.create!(name: row['name'], email: row['email'],
+                      homepage: row['homepage'])
       puts 'Added teacher: ' + row['name'] + ' ' + row['email']
     end
   end

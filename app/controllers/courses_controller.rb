@@ -5,6 +5,10 @@ class CoursesController < ApplicationController
   def show
   end
 
+  def index
+    @courses = Course.all
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.

@@ -26,8 +26,8 @@
   <% if medium.manuscript_link.present? %>
   <li class="list-group-item bg-teal-lighten-5"><%= link_to 'Manuskript', medium.manuscript_link, class: "btn btn-info", target: :_blank %>
   <ul>
-  <li>Dateigröße: <%= medium.manuscript_size %></li>
   <li>Länge: <%= medium.pages.to_s + ' S' %></li>
+  <li>Dateigröße: <%= medium.manuscript_size %></li>
   </ul>
   </li>
   <% end %>

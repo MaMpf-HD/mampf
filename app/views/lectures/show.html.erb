@@ -1,12 +1,19 @@
-<div class="jumbotron">
+<div class="jumbotron bg-light-blue-lighten-5">
 <div class="row">
-<h2><span class="badge badge-secondary mr-3">Vorlesung</span>
-  <%= link_to @lecture.course.title, course_path(@lecture.course) %>
+<div class="col-12 col-lg-9">
+<h2><span class="badge badge-secondary">Vorlesung</span>
+  <%= link_to @lecture.course.title, course_path(@lecture.course), class: 'text-dark' %>
   <%= ', ' + @lecture.term.to_label %>
 </h2>
 </div>
+<div class="col-12 col-lg-3">
+  <%= link_to 'Vorlesungsübersicht', lectures_path, class: 'btn btn-info float-right' %>
+</div>
+</div>
 <div class="row pt-3">
-<h5>Dozent: <%= link_to @lecture.teacher.name, teacher_path(@lecture.teacher) %></h5>
+<div class="col-12">
+  <h5>Dozent: <%= link_to @lecture.teacher.name, teacher_path(@lecture.teacher), class: 'text-dark' %></h5>
+</div>
 </div>
 <hr>
 <p class>
@@ -18,13 +25,13 @@
 <div class="row">
 <% unless @lecture.chapters.empty? %>
 <div class="col-12 col-md-12 col-lg-5 pt-3">
-  <%= render partial: 'content' %>
+  <%= render partial: 'content', locals: { lecture: @lecture } %>
 </div>
 <% end %>
 <% unless @lecture.lessons.empty? %>
 <div class="col-12 col-md-12 col-lg-7 pt-3">
   <%= render partial: 'lessons/lessons', locals: { lessons: @lecture.lessons,
-                                                lessons_description: 'Verknüpfte Sitzungen' } %>
+                                                   lessons_description: 'Verknüpfte Sitzungen' } %>
 </div>
 <% end %>
 </div>
@@ -32,9 +39,9 @@
 <% unless @lecture.tags.empty? %>
 <div class="row pt-5">
 <div class="col-12">
-  <%= render partial: 'tags/many_related_tags', locals: { many_related_tags: @lecture.tags,
-                                                tags_description: 'Verknüpfte Begriffe',
-                                                id: @lecture.id} %>
+  <%= render partial: 'tags/tags_toggle', locals: { tags: @lecture.tags,
+                                                    tags_description: 'Verknüpfte Begriffe',
+                                                    id: @lecture.id} %>
 </div>
 </div>
 <% end %>

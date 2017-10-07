@@ -37,7 +37,7 @@ class Lecture < ApplicationRecord
   end
 
   def title
-    course.title + ', ' + + term.season + ' ' + term.year.to_s + ' '
+    course.title + ', ' + term.to_label
   end
 
   def term_teacher_info

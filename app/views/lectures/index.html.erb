@@ -1,3 +1,5 @@
-<h1>Lectures</h1>
-
-<%= render partial: "shared/lectures", object: @lectures %>
+<div class="row">
+  <div class="col-12 col-md-6 col-lg-4 pt-3">
+    <%= render partial: "lectures", locals: { lectures: @lectures, type: 'lecture_info' } %>
+  </div>
+</div>

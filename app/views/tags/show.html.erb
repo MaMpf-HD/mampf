@@ -13,7 +13,8 @@
                                           tags_description: 'Begriffe im weiteren Umfeld'} %>
   </div>
   <div class="col-12 col-md-12 col-lg-3 pt-3">
-    <%= render partial: 'courses/courses', locals: { courses: @tag.courses } %>
+    <%= render partial: 'lectures/lectures', locals: { lectures: @tag.lectures,
+                                                       type: 'lecture_info'} %>
   </div>
 </div>
 <% media = @tag.media.where.not(sort: 'KeksQuestion') %>

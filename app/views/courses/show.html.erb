@@ -1,21 +1,25 @@
 <div class="row">
-  <div class="col-12">
+  <div class="col-12 col-sm-6">
     <h2><span class="badge badge-secondary mr-3">Kurs</span><%= @course.title %></h2>
+  </div>
+  <div class="col-12 col-sm-6">
+    <%= link_to 'Kursübersicht', courses_path, class: 'btn btn-info float-right' %>
   </div>
 </div>
 <% unless @course.lectures.empty? %>
 <div class="row pt-3">
-<div class="col-12">
-<%= render partial: 'lectures/lectures', locals: { lectures: @course.lectures } %>
+<div class="col-12 col-md-6 col-lg-4 pt-3">
+<%= render partial: 'lectures/lectures', locals: { lectures: @course.lectures,
+                                                   type: 'teacher_info'} %>
 </div>
 </div>
 <% end %>
 <% unless @course.tags.empty? %>
 <div class="row pt-5">
 <div class="col-12">
-  <%= render partial: 'tags/many_related_tags', locals: { many_related_tags: @course.tags,
-                                                tags_description: 'Verknüpfte Begriffe',
-                                                id: @course.id} %>
+  <%= render partial: 'tags/tags_toggle', locals: { tags: @course.tags,
+                                                    tags_description: 'Verknüpfte Begriffe',
+                                                    id: @course.id} %>
 </div>
 </div>
 <% end %>

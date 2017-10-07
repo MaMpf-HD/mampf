@@ -1,5 +1,19 @@
-<p>Name: <%= @teacher.name %></p>
-<p>Email: <%= @teacher.email %></p>
-<p>
-  <%= link_to 'Index Dozenten', teachers_path %>
-</p>
+<div class="row">
+  <div class="col-12 col-sm-6">
+    <h2><span class="badge badge-secondary mr-3">Dozent</span><%= @teacher.name %></h2>
+  </div>
+  <div class="col-12 col-sm-6">
+    <%= link_to 'Dozentenübersicht', teachers_path, class: 'btn btn-info float-right' %>
+  </div>
+</div>
+<div class="row pt-3">
+<div class="col-12 col-md-6 col-lg-4 pt-3">
+<%= render partial: 'teacher', locals: { teacher: @teacher } %>
+</div>
+<% unless @teacher.lectures.empty? %>
+<div class="col-12 col-md-6 col-lg-4 pt-3">
+<%= render partial: 'lectures/lectures', locals: { lectures: @teacher.lectures.order(:term_id).reverse_order,
+                                                   type: 'lecture_info'} %>
+</div>
+</div>
+<% end %>

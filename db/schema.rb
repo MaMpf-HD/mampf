@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171002153622) do
+ActiveRecord::Schema.define(version: 20171007115305) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -189,6 +189,7 @@ ActiveRecord::Schema.define(version: 20171002153622) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "homepage"
   end
 
   create_table "terms", force: :cascade do |t|

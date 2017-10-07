@@ -5,6 +5,7 @@ class Medium < ApplicationRecord
   has_many :links, dependent: :destroy
   has_many :linked_media, through: :links, dependent: :destroy
   belongs_to :teachable, polymorphic: true
+  after_create :create_keks_link, if: :keks_link_missing?
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
                                        KeksQuestion KeksQuiz] }
@@ -114,6 +115,18 @@ class Medium < ApplicationRecord
     { 'Course' => 'Kurs', 'Lecture' => 'Vorlesung',
       'Lesson' => 'Sitzung' }[teachable_sort]
   end
+
+  def keks_link_missing?
+    return false unless sort == 'KeksQuestion' && external_reference_link.nil?
+    true
+  end
+
+  def create_keks_link
+    self.update(external_reference_link:
+                  'https://keks.mathi.uni-heidelberg.de/hitme#hide-options' +
+                  '#hide-categories#question=' + question_id.to_s)
+  end
+
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
