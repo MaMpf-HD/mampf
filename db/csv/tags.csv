@@ -126,10 +126,10 @@ charakteristisches Polynom eines Endomorphismus,Endomorphismus eines Vektorraums
 algebraische Vielfachheit eines Eigenwerts,,Lineare Algebra 1
 Satz von Cayley-Hamilton,charakteristisches Polynom eines Endomorphismus&Minimalpolynom eines Endomorphismus,Lineare Algebra 1
 Minimalpolynom eines Endomorphismus,Endomorphismus eines Vektorraums,Lineare Algebra 1
-Dualraum,Linearform&duale Basis&Annullator&duale Abbildung&Bidualraum,Lineare Algebra 1
+Dualraum,Linearform&duale Basis&Annullator eines Untervektorraums&duale Abbildung&Bidualraum,Lineare Algebra 1
 Linearform,lineare Abbildung,Lineare Algebra 1
 duale Basis,Basis eines Vektorraums,Lineare Algebra 1
-Annullator,,Lineare Algebra 1
+Annullator eines Untervektorraums,,Lineare Algebra 1
 duale Abbildung,,Lineare Algebra 1
 Bidualraum,,Lineare Algebra 1
 Bilinearform,Darstellungsmatrix einer Bilinearform&nicht-ausgeartete Bilinearform&perfekte Bilinearform&symmetrische Bilinearform&antisymmetrische Bilinearform&alternierende Bilinearform&quadratische Form,Lineare Algebra 2
@@ -325,3 +325,112 @@ Konstruierbarkeit regelmäßiger n-Ecke,Konstruktionen mit Zirkel und Lineal&Kre
 Unmöglichkeit von Würfelverdopplung mit Zirkel und Lineal,Konstruktionen mit Zirkel und Lineal,Algebra 1
 Unmöglichkeit von Winkeldreiteilung mit Zirkel und Lineal,Konstruktionen mit Zirkel und Lineal&Konstruktionen regelmäßiger n-Ecke,Algebra 1
 Unmöglichkeit der Quadratur des Kreises mit Zirkel und Lineal,Konstruktionen mit Zirkel und Lineal,Algebra 1
+Kategorie,,Algebra 2
+kategorieller Monomorphismus,,Algebra 2
+kategorieller Epimorphismus,,Algebra 2
+kategorieller Isomorphismus,,Algebra 2
+Funktor,,Algebra 2
+Kategorienäquivalenz,,Algebra 2
+Teilkategorie,,Algebra 2
+natürliche Transformation,,Algebra 2
+inverser Funktor,,Algebra 2
+adjungierter Funktor,,Algebra 2
+kategorielles Produkt,,Algebra 2
+Differenzenkern,,Algebra 2
+kategorieller Limes,,Algebra 2
+kategorieller Kolimes,,Algebra 2
+Existenz kategorieller Limiten,,Algebra 2
+Vertauschen von Limiten mit adjungierten Funktoren,,Algebra 2
+Vertauschen von Limiten mit Limiten,,Algebra 2
+filtrierte Kategorie,,Algebra 2
+filtrierter Kolimes,,Algebra 2
+Vertauschen von filtrierten Kolimiten mit endlichen Limiten in (Mengen),,Algebra 2
+Filtrierte Limiten von endlichen Mengen,,Algebra 2
+finaler Funktor,,Algebra 2
+Bimodul,,Algebra 2
+exakte Folge,,Algebra 2
+"Exaktheit von Produkten, Koprodukten, filtrierten Kolimiten in (R-Mod)",,Algebra 2
+exakter Funktor,,Algebra 2
+Halbexaktheit adjungierter Funktoren in (R-Mod),,Algebra 2
+ausgewogene Abbildung,,Algebra 2
+Tensorprodukt,,Algebra 2
+Konstruktion des Tensorprodukts,,Algebra 2
+Adjunktion von Tensorprodukt und Hom-Funktor,,Algebra 2
+Eigenschaften des Tensorprodukts,,Algebra 2
+Erzeuger des Tensorprodukts,,Algebra 2
+Tensorprodukt von Algebren,,Algebra 2
+injektiver Modul,,Algebra 2
+projektiver Modul,,Algebra 2
+Charakterisierung projektiver und injektiver Moduln,,Algebra 2
+Charaktergruppe,,Algebra 2
+Kofreier Modul,,Algebra 2
+flacher Modul,,Algebra 2
+Charakterisierung flacher Moduln,,Algebra 2
+treuflacher Modul,,Algebra 2
+Noetherscher Modul,,Algebra 2
+Noetherscher Ring,,Algebra 2
+endlich präsentierbarer Modul,,Algebra 2
+kohärenter Modul,,Algebra 2
+kohärenter Ring,,Algebra 2
+Artinscher Modul,,Algebra 2
+Moduln endlicher Länge,,Algebra 2
+Satz von Jordan-Hölder,,Algebra 2
+Annullator eines Moduls,,Algebra 2
+Jacobson-Radikal,,Algebra 2
+nilpotentes Ideal,,Algebra 2
+Nil-Ideal,,Algebra 2
+Nakayama-Lemma,,Algebra 2
+lokaler Ring,,Algebra 2
+Erweiterung und Kontraktion von Idealen,,Algebra 2
+treuflacher Ringhomomorphismus,,Algebra 2
+Charakterisierung halbeinfacher Moduln und Ringe,,Algebra 2
+Artin-Wedderburn-Theorem,,Algebra 2
+artinscher Ring,,Algebra 2
+J-halbeinfacher Ring,,Algebra 2
+semilokaler Ring,,Algebra 2
+semiprimärer Ring,,Algebra 2
+Hopkins-Levitzki-Theorem,,Algebra 2
+Spektrum eines kommutativen Rings,,Algebra 2
+Primidealvermeidungssatz,,Algebra 2
+Lokalisierungen von Ringen und Moduln,,Algebra 2
+Flachheit der Lokalisierung,,Algebra 2
+Übertragen von Eigenschaften von Moduln auf ihre Lokalisierung,,Algebra 2
+Spektrum der Lokalisierung,,Algebra 2
+lokale Ringe des Spektrums,,Algebra 2
+affine Basis der Zariski-Topologie,,Algebra 2
+Quasi-Kompaktheit affiner Schemata,,Algebra 2
+Bild eines Morphismus affiner Schemata,,Algebra 2
+endliche Algebra,,Algebra 2
+endlich erzeugte Algebra,,Algebra 2
+ganzes Element,,Algebra 2
+ganze Algebra,,Algebra 2
+Charakterisierung endlicher Algebren,,Algebra 2
+ganzer Abschluss,,Algebra 2
+Ganzabgeschlossenheit ist lokal,,Algebra 2
+faktorielle Ringe sind ganz abgeschlossen,,Algebra 2
+Going-up-Theorem,,Algebra 2
+Incomparability,,Algebra 2
+Klassischer Hilbertscher Nullstellensatz,,Algebra 2
+Jacobson-Ring,,Algebra 2
+topologische Charakterisierung von Jacobson-Ringen und J-Halbeinfachheit,,Algebra 2
+J-Halbeinfachheit von Polynomringen über Integritätsbereichen,,Algebra 2
+J-Halbeinfachheit in endlich erzeugten Erweiterungen,,Algebra 2
+verallgemeinerter Nullstellensatz,,Algebra 2
+Beweis des klassischen Nullstellensatzes,,Algebra 2
+additive Kategorie,,Algebra 2
+abelsche Kategorie,,Algebra 2
+Bild und Kobild von Morphismen,,Algebra 2
+Exaktheit in abelschen Kategorien,,Algebra 2
+Freyd-Mitchell-Einbettungssatz,,Algebra 2
+Grothendieck-Kategorie,,Algebra 2
+Komplex,,Algebra 2
+Homotopie von Morphismen von Komplexen,,Algebra 2
+Homotopie-Äquivalenz,,Algebra 2
+Quasi-Isomorphismus von Komplexen,,Algebra 2
+injektive Auflösung,,Algebra 2
+universeller Deltafunktor,,Algebra 2
+Universalität auslöschbarer Deltafunktoren,,Algebra 2
+abgeleiteter Funktor,,Algebra 2
+abgeleitete Kategorie,,Algebra 2
+kosimpliziales Objekte,,Algebra 2
+Koketten-Komplex,,Algebra 2

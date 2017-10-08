@@ -3,20 +3,30 @@
     <h2><span class="badge badge-secondary mr-3">Begriff<%= ' #' + @tag.id.to_s %></span><%= @tag.title %></h2>
   </div>
 </div>
+<% tags_in_neighbourhood = @tag.tags_with_given_distance(2) %>
+<% lectures = @tag.lectures %>
+<% unless @tag.related_tags.empty? && tags_in_neighbourhood.empty? && lectures.empty? %>
 <div class="row">
+  <% unless @tag.related_tags.empty? %>
   <div class="col-12 col-md-6 col-lg-5 pt-3">
     <%= render partial: 'tags', locals: { related_tags: @tag.related_tags,
                                           tags_description: 'Verknüpfte Begriffe'} %>
   </div>
+  <% end %>
+  <% unless tags_in_neighbourhood.empty? %>
   <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'tags', locals: { related_tags: @tag.tags_with_given_distance(2),
+    <%= render partial: 'tags', locals: { related_tags: tags_in_neighbourhood,
                                           tags_description: 'Begriffe im weiteren Umfeld'} %>
   </div>
+  <% end %>
+  <% unless lectures.empty? %>
   <div class="col-12 col-md-12 col-lg-3 pt-3">
-    <%= render partial: 'lectures/lectures', locals: { lectures: @tag.lectures,
+    <%= render partial: 'lectures/lectures', locals: { lectures: lectures,
                                                        type: 'lecture_info'} %>
   </div>
+  <% end %>
 </div>
+<% end %>
 <% media = @tag.media.where.not(sort: 'KeksQuestion') %>
 <% unless media.empty? %>
 <div class="row">
