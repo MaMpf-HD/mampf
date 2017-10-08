@@ -3,7 +3,7 @@
     <h2><span class="badge badge-secondary mr-3">Begriff<%= ' #' + @tag.id.to_s %></span><%= @tag.title %></h2>
   </div>
 </div>
-<% tags_in_neighbourhood = @tag.tags_with_given_distance(2) %>
+<% tags_in_neighbourhood = @tag.tags_in_neighbourhood %>
 <% lectures = @tag.lectures %>
 <% unless @tag.related_tags.empty? && tags_in_neighbourhood.empty? && lectures.empty? %>
 <div class="row">

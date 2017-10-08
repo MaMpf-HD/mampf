@@ -57,6 +57,12 @@ class Tag < ApplicationRecord
     distance_list.select { |_k, v| v == distance }.keys
   end
 
+  def tags_in_neighbourhood
+    ids = related_tags.all.map{ |t| t.related_tags.pluck(:id) }.flatten.uniq
+    related_ids = related_tags.pluck(:id) + [id]
+    Tag.where(id: ids - related_ids)
+  end
+
   def in_lecture?(lecture)
     return false unless (lecture.course.tags.include?(self) &&
                         !lecture.disabled_tags.include?(self)) ||
