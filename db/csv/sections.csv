@@ -29,3 +29,27 @@ Lineare Algebra 2,SS&2017,27,Euklidische Ringe,5,,Euklidischer Ring&Euklidische 
 Lineare Algebra 2,SS&2017,28,Normalformen von Endomorphismen,5,,charakteristische Matrix eines Endomorphismus&Satz von Frobenius&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz&Begleitmatrix&Frobenius-Normalform&Weierstrass-Normalform&Jordanmatrix&Jordansche Normalform
 Lineare Algebra 2,SS&2017,29,Moduln,5,,Modul&Modulhomomorphismus&Untermodul&Faktormodul&Erzeugendensystem eines Moduls&lineare Unabhängigkeit in Moduln&Basis eines freien Moduls&freier Modul&Torsionsuntermodul&Länge eines Moduls&Länge einer direkten Summe von Moduln
 Lineare Algebra 2,SS&2017,30,Moduln über Hauptidealringen,5,,Rang eines endlich freien Moduls über einem HIR&Diagonalisierung von Matrizen über einem HIR&Elementarteilersatz für Untermoduln endlich freier Moduln über HIR&Hauptsatz für endlich erzeugte Moduln über HIR&Hauptsatz für endlich erzeugte abelsche Gruppen&Chinesischer Restsatz über HIR
+Algebra 1,WS&2016,1,"Monoide, Gruppen und Homomorphismen",1,,Monoid&Untermonoid&inverses Element&Gruppe&Gruppenordnung&Untergruppe&Untergruppenkriterium&Erzeugnis (gruppentheoretisch)&zyklische Gruppe&Gruppenhomomorphismus&Kern eines Gruppenhomomorphismus&Bild eines Gruppenhomomorphismus&Isomorphismus von Gruppen&Satz von Cayley
+Algebra 1,WS&2016,2,Normalteiler und Faktorgruppen,1,,Linksnebenklasse&Index einer Untergruppe&Satz von Lagrange&Normalteiler&Faktorgruppe&kanonische Projektion auf Faktorgruppe&Homomorphiesatz für Gruppen&Isomorphiesätze für Gruppen
+Algebra 1,WS&2016,3,Zyklische Gruppen,1,,zyklische Gruppe&Ordnung eines Gruppenelements&Kleiner Satz von Fermat&Hauptsatz für endlich erzeugte abelsche Gruppen
+Algebra 1,WS&2016,4,Ringe und Ideale,2,,Ring&Ideal&Hauptideal&Hauptidealring (HIR)&Restklasse&Faktorring&Nullteiler&Einheit&nullteilerfreier Ring&relativ prime Ideale&Chinesischer Restsatz
+Algebra 1,WS&2016,5,Primideale und maximale Ideale,2,,Primideal&maximales Ideal
+Algebra 1,WS&2016,6,Polynomringe,2,,Polynomring&Polynomdivision&Nullstelle eines Polynoms und deren Vielfachheit
+Algebra 1,WS&2016,7,Teilbarkeit und Primfaktorzerlegung,2,,Teiler&assoziierte Ringelemente&irreduzibles Element&Primelement&faktorieller Ring&Euklidischer Ring&Euklidische Ringe sind HIR&Euklidische Ringe sind faktoriell&Euklidischer Algorithmus
+Algebra 1,WS&2016,8,Lokalisierung,2,,Quotientenringe und-körper&universelle Eigenschaft von Quotientenringen
+Algebra 1,WS&2016,9,Der Satz von Gauß und Irreduzibilitätskriterien für Polynome,2,,Satz von Gauß über Polynomringe&Primelemente in Polynomringen&Reduktionskriterium&Eisensteinsches Irreduzibilitätskriterium
+Algebra 1,WS&2016,10,Charakteristik,3,,Charakteristik&Frobeniushomomorphismus
+Algebra 1,WS&2016,11,Endliche und algebraische Körpererweiterungen,3,,Körpererweiterung&Gradsatz&algebraische (Un-)Abhängigkeit&algebraisches Element&transzendentes Element&algebraische Körpererweiterung&Minimalpolynom eines algebraischen Elements&Grad eines Elements einer Körpererweiterung&endlich erzeugte Körpererweiterung
+Algebra 1,WS&2016,12,Algebraischer Abschluss,3,,Existenz eines algebraischen Abschlusses&Eindeutigkeit des algebraischen Abschlusses bis auf Isomorphie
+Algebra 1,WS&2016,13,Zerfällungskörper,3,,Zerfällungskörper&normale Körpererweiterung&normale Hülle einer algebraischen Körpererweiterung
+Algebra 1,WS&2016,14,Separable Körpererweiterungen,3,,separables Polynom&separable Körperweiterung&Separabilitätsgrad&separabler Abschluss&Satz vom primitiven Element
+Algebra 1,WS&2016,15,Endliche Körper,3,,endlicher Körper&relativer Frobeniusautomorphismus
+Algebra 1,WS&2016,16,Galoiserweiterungen,4,,Galoiserweiterung&Galoisgruppe&Fixkörper&Hauptsatz der Galoistheorie&abelsche Galoiserweiterung&Translationssatz der Galoistheorie
+Algebra 1,WS&2016,17,Galoisgruppen von Polynomen,4,,Galoisgruppe eines Polynoms&Diskriminante eines Polynoms&Galoisgruppen kubischer Polynome&symmetrische rationale Funktion&elementarsymmetrisches Polynom&allgemeines Polynom n-ten Grades&Hauptsatz über symmetrische rationale Funktionen&Galoisgruppe des allgemeinen Polynom n-ten Grades
+Algebra 1,WS&2016,18,Einheitswurzeln,4,,Einheitswurzel&primitive Einheitswurzel&zyklotomischer Charakter&Kreisteilungskörper und -polynome&Kreisteilungspolynome über endlichen Körpern
+Algebra 1,WS&2016,19,Gruppenoperationen,5,,Gruppenoperation&Zentrum einer Gruppe&Bahn&Stabilisator&Bahnengleichung&Zentralisator&Normalisator
+Algebra 1,WS&2016,20,Sylowgruppen,5,,p-Gruppe&p-Sylowgruppe&Sylowsätze&Anwendungen der Sylowsätze&Beweis der Sylowsätze
+Algebra 1,WS&2016,21,Auflösbare Gruppen,5,,Kommutator&Kommutatorgruppe&Normalreihe&auflösbare Gruppe
+Algebra 1,WS&2016,22,Norm und Hilberts Satz 90,6,,Norm in Körpererweiterungen&lineare Unabhängigkeit von Charakteren&Hilberts Satz 90
+Algebra 1,WS&2016,23,Auflösbarkeit von Gleichungen,6,,durch Radikale auflösbare Körpererweiterung&auflösbare Körpererweiterung&Nichtauflösbarkeit des allgemeinen Polynoms n-ten Grades für n>=5
+Algebra 1,WS&2016,24,Konstruktionen mit Zirkel und Lineal,6,,Konstruktionen mit Zirkel und Lineal&Konstruierbarkeit regelmäßiger n-Ecke&Unmöglichkeit von Würfelverdopplung mit Zirkel und Lineal&Unmöglichkeit von Winkeldreiteilung mit Zirkel und Lineal&Unmöglichkeit der Quadratur des Kreises mit Zirkel und Lineal

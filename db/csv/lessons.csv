@@ -12,10 +12,10 @@ Lineare Algebra 2,SS&2017,10,2017,5,18,4x22&4x23,Eigenschaften der Norm&orthogon
 Lineare Algebra 2,SS&2017,11,2017,5,23,4x23&4x24,O(2)&adjungierte Abbildung&selbstadjungierter Endomorphismus
 Lineare Algebra 2,SS&2017,12,2017,5,30,4x24,selbstadjungierter Endomorphismus&Spektralsatz für selbstadjungierte Endomorphismen&Hauptachsentransformation
 Lineare Algebra 2,SS&2017,13,2017,6,1,4x25,Sesquilinearform&hermitesche Form&unitärer Raum&normaler Endomorphismus
-Lineare Algebra 2,SS&2017,14,2017,6,6,4x25&5x26,Spektralsatz für normale Endomorphismen&Ring&Ringhomomorphismus&Ideal&Restklasse&Faktorring
-Lineare Algebra 2,SS&2017,15,2017,6,8,5x26,Nullteiler&Einheit&nullteilerfreier Ring&Teiler&größter gemeinsamer Teiler
+Lineare Algebra 2,SS&2017,14,2017,6,6,4x25&5x26,Spektralsatz für normale Endomorphismen&Ring&Ringhomomorphismus&Ideal&Hauptideal&Hauptidealring (HIR)&Restklasse&Faktorring
+Lineare Algebra 2,SS&2017,15,2017,6,8,5x26,Nullteiler&Einheit&nullteilerfreier Ring&Teiler&assoziierte Ringelemente&größter gemeinsamer Teiler
 Lineare Algebra 2,SS&2017,16,2017,6,13,5x26,irreduzibles Element&Primelement&faktorieller Ring&HIR sind faktoriell
-Lineare Algebra 2,SS&2017,17,2017,6,20,5x27,Euklidischer Ring&Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen
+Lineare Algebra 2,SS&2017,17,2017,6,20,5x27,Euklidischer Ring&Euklidische Ringe sind HIR&Euklidische Ringe sind faktoriell&Euklidischer Algorithmus&Gauß-Diagonalisierung von Matrizen über Euklidischen Ringen
 Lineare Algebra 2,SS&2017,18,2017,6,22,5x27,Äquivalenz und Ähnlichkeit von Matrizen über Ringen&Fittingideale&Fittings Lemma&Elementarteilersatz für Matrizen über Euklidischen Ringen
 Lineare Algebra 2,SS&2017,19,2017,6,27,5x28,charakteristische Matrix eines Endomorphismus&Satz von Frobenius&Invarianten- und Determinantenteiler einer Matrix&Invariantenteilersatz
 Lineare Algebra 2,SS&2017,20,2017,6,29,5x28,Begleitmatrix&Frobenius-Normalform
@@ -54,3 +54,31 @@ Lineare Algebra 1,WS&2016,25,2017,1,26,3x16&3x17,Äquivalenz von Matrizen&Ähnli
 Lineare Algebra 1,WS&2016,26,2017,1,31,3x17,Eigenschaften der Determinante&Signum einer Permutation&Transposition
 Lineare Algebra 1,WS&2016,27,2017,2,2,3x17,alternierende Gruppe&Leibnizformel&Determinante der Transponierten&komplementäre Matrix
 Lineare Algebra 1,WS&2016,28,2017,2,7,3x17,Entwicklungssatz von Laplace&Cramersche Regel&Determinante eines Endomorphismus
+Algebra 1,WS&2016,1,2016,10,17,1x1,Monoid&Untermonoid&inverses Element&Gruppe&Gruppenordnung&Untergruppe
+Algebra 1,WS&2016,2,2016,10,19,1x1,Untergruppenkriterium&Erzeugnis (gruppentheoretisch)&zyklische Gruppe&Gruppenhomomorphismus&Kern eines Gruppenhomomorphismus&Bild eines Gruppenhomomorphismus&Isomorphismus von Gruppen
+Algebra 1,WS&2016,3,2016,10,24,1x1&1x2,Satz von Cayley&Linksnebenklasse&Index einer Untergruppe&Satz von Lagrange&Normalteiler
+Algebra 1,WS&2016,4,2016,10,26,1x2,Faktorgruppe&kanonische Projektion auf Faktorgruppe&Homomorphiesatz für Gruppen&Isomorphiesätze für Gruppen
+Algebra 1,WS&2016,5,2016,10,31,1x3&2x4,zyklische Gruppe&Ordnung eines Gruppenelements&Kleiner Satz von Fermat&Hauptsatz für endlich erzeugte abelsche Gruppen&Ring&Ideal
+Algebra 1,WS&2016,6,2016,11,7,2x4,Hauptideal&Hauptidealring (HIR)&Restklasse&Faktorring&Nullteiler&Einheit&nullteilerfreier Ring&relativ prime Ideale&Chinesischer Restsatz
+Algebra 1,WS&2016,7,2016,11,9,2x5&2x6,Primideal&maximales Ideal&Polynomring&Polynomdivision&Nullstelle eines Polynoms und deren Vielfachheit
+Algebra 1,WS&2016,8,2016,11,14,2x7,Teiler&assoziierte Ringelemente&irreduzibles Element&Primelement&faktorieller Ring
+Algebra 1,WS&2016,9,2016,11,21,2x7,Euklidischer Ring&Euklidische Ringe sind HIR&Euklidische Ringe sind faktoriell&Euklidischer Algorithmus
+Algebra 1,WS&2016,10,2016,11,23,2x8,Quotientenringe und-körper&universelle Eigenschaft von Quotientenringen
+Algebra 1,WS&2016,11,2016,11,28,2x9,Satz von Gauß über Polynomringe&Primelemente in Polynomringen&Reduktionskriterium
+Algebra 1,WS&2016,12,2016,11,30,2x9&3x10&3x11,Eisensteinsches Irreduzibilitätskriterium&Charakteristik&Frobeniushomomorphismus&Körpererweiterung
+Algebra 1,WS&2016,13,2016,12,5,3x11,Gradsatz&algebraische (Un-)Abhängigkeit&algebraisches Element&transzendentes Element&algebraische Körpererweiterung&Minimalpolynom eines algebraischen Elements
+Algebra 1,WS&2016,14,2016,12,7,3x11&3x12,Grad eines Elements einer Körpererweiterung&endlich erzeugte Körpererweiterung&Existenz eines algebraischen Abschlusses
+Algebra 1,WS&2016,15,2016,12,12,3x12&3x13,Eindeutigkeit des algebraischen Abschlusses bis auf Isomorphie&Zerfällungskörper
+Algebra 1,WS&2016,16,2016,12,14,3x13,normale Körpererweiterung&normale Hülle einer algebraischen Körpererweiterung
+Algebra 1,WS&2016,17,2016,12,19,3x14,separables Polynom&separable Körperweiterung&Separabilitätsgrad
+Algebra 1,WS&2016,18,2016,12,21,3x14,Separabilitätsgrad&separabler Abschluss&Satz vom primitiven Element
+Algebra 1,WS&2016,19,2017,1,8,3x15&4x16,endlicher Körper&relativer Frobeniusautomorphismus&Galoiserweiterung&Galoisgruppe
+Algebra 1,WS&2016,20,2017,1,11,4x16,Fixkörper&Hauptsatz der Galoistheorie
+Algebra 1,WS&2016,21,2017,1,16,4x16&4x17,abelsche Galoiserweiterung&Translationssatz der Galoistheorie&Galoisgruppe eines Polynoms
+Algebra 1,WS&2016,22,2017,1,18,4x17,Diskriminante eines Polynoms&Galoisgruppen kubischer Polynome&symmetrische rationale Funktion&elementarsymmetrisches Polynom&allgemeines Polynom n-ten Grades
+Algebra 1,WS&2016,23,2017,1,23,4x18,Einheitswurzel&primitive Einheitswurzel&zyklotomischer Charakter&Kreisteilungskörper und -polynome
+Algebra 1,WS&2016,24,2017,1,25,4x18&5x19,Kreisteilungspolynome über endlichen Körpern&Gruppenoperation&Zentrum einer Gruppe&Bahn&Stabilisator&Bahnengleichung
+Algebra 1,WS&2016,25,2017,1,30,5x19&5x20,Zentralisator&Normalisator&p-Gruppe&p-Sylowgruppe&Sylowsätze&Anwendungen der Sylowsätze
+Algebra 1,WS&2016,26,2017,2,1,5x21,Kommutator&Kommutatorgruppe&Normalreihe&auflösbare Gruppe
+Algebra 1,WS&2016,27,2017,2,6,6x22&6x23,Norm in Körpererweiterungen&lineare Unabhängigkeit von Charakteren&Hilberts Satz 90&durch Radikale auflösbare Körpererweiterung&auflösbare Körpererweiterung&Nichtauflösbarkeit des allgemeinen Polynoms n-ten Grades für n>=5
+Algebra 1,WS&2016,28,2017,2,8,6x24,Konstruktionen mit Zirkel und Lineal&Konstruierbarkeit regelmäßiger n-Ecke&Unmöglichkeit von Würfelverdopplung mit Zirkel und Lineal&Unmöglichkeit von Winkeldreiteilung mit Zirkel und Lineal&Unmöglichkeit der Quadratur des Kreises mit Zirkel und Lineal
