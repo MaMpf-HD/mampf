@@ -6,7 +6,6 @@
   <div class="navbar-collapse collapse" id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>
-        <%= render partial: 'shared/dropdown_lectures', locals: { lectures: current_user.lectures } %>
         <li class="nav-item">
           <%= link_to "Profil", edit_profile_path, class: 'nav-link' %>
         </li>
@@ -29,9 +28,7 @@
     </ul>
     <% if user_signed_in? %>
       <ul class="navbar-nav mr-auto">
-        <li class="nav-item">
-          <%= link_to Lecture.find_by_id(cookies[:current_lecture]).short_title, lecture_path(cookies[:current_lecture]), class: 'btn btn-primary' %>
-        </li>
+        <%= render partial: 'shared/dropdown_lectures', locals: { lectures: current_user.lectures } %>
       </ul>
     <% end %>
     <form class="form-inline mt-2 mt-md-0">
