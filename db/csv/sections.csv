@@ -53,25 +53,25 @@ Algebra 1,WS&2016,21,Auflösbare Gruppen,5,,Kommutator&Kommutatorgruppe&Normalre
 Algebra 1,WS&2016,22,Norm und Hilberts Satz 90,6,,Norm in Körpererweiterungen&lineare Unabhängigkeit von Charakteren&Hilberts Satz 90
 Algebra 1,WS&2016,23,Auflösbarkeit von Gleichungen,6,,durch Radikale auflösbare Körpererweiterung&auflösbare Körpererweiterung&Nichtauflösbarkeit des allgemeinen Polynoms n-ten Grades für n>=5
 Algebra 1,WS&2016,24,Konstruktionen mit Zirkel und Lineal,6,,Konstruktionen mit Zirkel und Lineal&Konstruierbarkeit regelmäßiger n-Ecke&Unmöglichkeit von Würfelverdopplung mit Zirkel und Lineal&Unmöglichkeit von Winkeldreiteilung mit Zirkel und Lineal&Unmöglichkeit der Quadratur des Kreises mit Zirkel und Lineal
-Algebra 2,SS&2017,1,Definitionen,1,1.1,
-Algebra 2,SS&2017,2,Limiten und Kolimiten,1,1.2,
-Algebra 2,SS&2017,3,Die Kategorie der Moduln über einem Ring,2,2.1,
-Algebra 2,SS&2017,4,Erzeugendensysteme und freie Moduln,2,2.2,
-Algebra 2,SS&2017,5,Exaktheit,2,2.3,
-Algebra 2,SS&2017,6,Tensorprodukte,2,2.4,
-Algebra 2,SS&2017,7,"Injektive, projektive und flache Moduln",2,2.5,
-Algebra 2,SS&2017,8,Noethersche und kohärente Moduln,2,2.6,
-Algebra 2,SS&2017,9,"Artinsche Moduln, Moduln endlicher Länge",2,2.7,
-Algebra 2,SS&2017,10,Ideale,2,2.8,
-Algebra 2,SS&2017,11,Halbeinfache Ringe,2,2.9,
-Algebra 2,SS&2017,12,"Artinsche, J-halbeinfache und semilokale Ringe",2,2.10,
-Algebra 2,SS&2017,13,Primideale und maximale Ideale,3,3.1,
-Algebra 2,SS&2017,14,Lokalisierung,3,3.2,
-Algebra 2,SS&2017,15,Ganze Ringerweiterungen,3,3.3,
-Algebra 2,SS&2017,16,Der Hilbertsche Nullstellensatz,3,3.4,
-Algebra 2,SS&2017,17,Abelsche Kategorien,4,4.1,
-Algebra 2,SS&2017,18,Komplexe,4,4.2,
-Algebra 2,SS&2017,19,Injektive Auflösungen,4,4.3,
-Algebra 2,SS&2017,20,Universelle delta-Funktoren,4,4.4,
-Algebra 2,SS&2017,21,Abgeleitete Funktoren,4,4.5,
-Algebra 2,SS&2017,22,Kosimpliziale Objekte,4,4.6,
+Algebra 2,SS&2017,1,Definitionen,1,1.1,Kategorie&kategorieller Monomorphismus&kategorieller Epimorphismus&kategorieller Isomorphismus&Funktor&Kategorienäquivalenz&Teilkategorie&natürliche Transformation&inverser Funktor&adjungierter Funktor&kategorielles Produkt&Differenzenkern
+Algebra 2,SS&2017,2,Limiten und Kolimiten,1,1.2,kategorieller Limes&kategorieller Kolimes&Existenz kategorieller Limiten&Vertauschen von Limiten mit adjungierten Funktoren&Vertauschen von Limiten mit Limiten&filtrierte Kategorie&filtrierter Kolimes&Vertauschen von filtrierten Kolimiten mit endlichen Limiten in (Mengen)&filtrierte Limiten von endlichen Mengen&finaler Funktor
+Algebra 2,SS&2017,3,Die Kategorie der Moduln über einem Ring,2,2.1,Modul&Bimodul&Modulhomomorphismus&Untermodul
+Algebra 2,SS&2017,4,Erzeugendensysteme und freie Moduln,2,2.2,Erzeugendensystem eines Moduls&Basis eines freien Moduls&freier Modul
+Algebra 2,SS&2017,5,Exaktheit,2,2.3,"exakte Folge von Moduln&Exaktheit von Produkten, Koprodukten, filtrierten Kolimiten in (R-Mod)&exakter Funktor in (R-Mod)&Halbexaktheit adjungierter Funktoren in (R-Mod)"
+Algebra 2,SS&2017,6,Tensorprodukte,2,2.4,ausgewogene Abbildung&Tensorprodukt von Moduln&Konstruktion des Tensorprodukts&Adjunktion von Tensorprodukt und Hom-Funktor&Eigenschaften des Tensorprodukts von Moduln&Erzeuger des Tensorprodukts von Moduln&Tensorprodukt von Algebren
+Algebra 2,SS&2017,7,"Injektive, projektive und flache Moduln",2,2.5,injektiver Modul&projektiver Modul&Charakterisierung projektiver und injektiver Moduln&Charaktergruppe einer abelschen Gruppe&Kofreier Modul&flacher Modul&Charakterisierung flacher Moduln&treuflacher Modul
+Algebra 2,SS&2017,8,Noethersche und kohärente Moduln,2,2.6,Noetherscher Modul&Noetherscher Ring&endlich präsentierbarer Modul&kohärenter Modul&kohärenter Ring
+Algebra 2,SS&2017,9,"Artinsche Moduln, Moduln endlicher Länge",2,2.7,Artinscher Modul&Moduln endlicher Länge&Satz von Jordan-Hölder
+Algebra 2,SS&2017,10,Ideale,2,2.8,Ideal&Annullator eines Moduls&maximales Ideal&Jacobson-Radikal&nilpotentes Ideal&Nil-Ideal&Nakayama-Lemma&lokaler Ring&Erweiterung und Kontraktion von Idealen&treuflacher Ringhomomorphismus
+Algebra 2,SS&2017,11,Halbeinfache Ringe,2,2.9,Charakterisierung halbeinfacher Moduln und Ringe&Artin-Wedderburn-Theorem
+Algebra 2,SS&2017,12,"Artinsche, J-halbeinfache und semilokale Ringe",2,2.10,Artinscher Ring&J-halbeinfacher Ring&semilokaler Ring&semiprimärer Ring&Hopkins-Levitzki-Theorem
+Algebra 2,SS&2017,13,Primideale und maximale Ideale,3,3.1,Primideal&Spektrum eines kommutativen Rings&Primidealvermeidungssatz
+Algebra 2,SS&2017,14,Lokalisierung,3,3.2,Lokalisierung von Ringen und Moduln&Flachheit der Lokalisierung&Übertragen von Eigenschaften von Moduln auf ihre Lokalisierung&Spektrum der Lokalisierung&lokale Ringe des Spektrums&affine Basis der Zariski-Topologie&Quasi-Kompaktheit affiner Schemata&Bild eines Morphismus affiner Schemata
+Algebra 2,SS&2017,15,Ganze Ringerweiterungen,3,3.3,endliche Algebra&endlich erzeugte Algebra&ganzes Element einer Algebra&ganze Algebra&Charakterisierung endlicher Algebren&ganzer Abschluss&Ganzabgeschlossenheit ist lokal&faktorielle Ringe sind ganz abgeschlossen&Going-up-Theorem&Incomparability
+Algebra 2,SS&2017,16,Der Hilbertsche Nullstellensatz,3,3.4,Klassischer Hilbertscher Nullstellensatz&Jacobson-Ring&topologische Charakterisierung von Jacobson-Ringen und J-Halbeinfachheit&J-Halbeinfachheit von Polynomringen über Integritätsbereichen&J-Halbeinfachheit in endlich erzeugten Erweiterungen&verallgemeinerter Nullstellensatz&Beweis des klassischen Nullstellensatzes
+Algebra 2,SS&2017,17,Abelsche Kategorien,4,4.1,additive Kategorie&abelsche Kategorie&Bild und Kobild von Morphismen&Exaktheit in abelschen Kategorien&Freyd-Mitchell-Einbettungssatz&Grothendieck-Kategorie
+Algebra 2,SS&2017,18,Komplexe,4,4.2,Komplex&Homotopie von Morphismen von Komplexen&Homotopie-Äquivalenz&Quasi-Isomorphismus von Komplexen
+Algebra 2,SS&2017,19,Injektive Auflösungen,4,4.3,njektive Auflösung
+Algebra 2,SS&2017,20,Universelle Deltafunktoren,4,4.4,Deltafunktor&universeller Deltafunktor&Universalität auslöschbarer Deltafunktoren
+Algebra 2,SS&2017,21,Abgeleitete Funktoren,4,4.5,abgeleiteter Funktor&abgeleitete Kategorie
+Algebra 2,SS&2017,22,Kosimpliziale Objekte,4,4.6,kosimpliziales Objekt&Koketten-Komplex

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171007115305) do
+ActiveRecord::Schema.define(version: 20171009142032) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -70,6 +70,11 @@ ActiveRecord::Schema.define(version: 20171007115305) do
     t.integer "teacher_id"
     t.integer "course_id"
     t.integer "term_id"
+    t.boolean "kaviar"
+    t.boolean "sesam"
+    t.boolean "keks"
+    t.boolean "reste"
+    t.boolean "erdbeere"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
 

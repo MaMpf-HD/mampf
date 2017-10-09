@@ -3,8 +3,16 @@
     <% modules = ['KaViaR', 'SeSAM', 'KeKs', 'RestE'] %>
     <% modules.each do |m| %>
           <li class="nav-item">
+            <% if Lecture.find_by_id(lecture_id).modules[m] %>
             <% active = params[:module_id].to_i == modules.index(m)+1 ? ' active' : '' %>
             <%= link_to m, lecture_module_path(lecture_id: lecture_id, module_id: modules.index(m)+1), class: 'nav-link' + active %>
+            <% else %>
+            <% if m == 'KeKs' %>
+              <%= link_to m, 'https://keks.mathi.uni-heidelberg.de', class: 'nav-link', target: :_blank %>
+            <% else %>
+              <span class='nav-link disabled'><%= m %></span>
+            <% end %>
+            <% end %>
           </li>
     <% end %>
     <li class="nav-item">

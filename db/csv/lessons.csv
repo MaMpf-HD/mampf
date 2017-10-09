@@ -82,3 +82,32 @@ Algebra 1,WS&2016,25,2017,1,30,5x19&5x20,Zentralisator&Normalisator&p-Gruppe&p-S
 Algebra 1,WS&2016,26,2017,2,1,5x21,Kommutator&Kommutatorgruppe&Normalreihe&auflösbare Gruppe
 Algebra 1,WS&2016,27,2017,2,6,6x22&6x23,Norm in Körpererweiterungen&lineare Unabhängigkeit von Charakteren&Hilberts Satz 90&durch Radikale auflösbare Körpererweiterung&auflösbare Körpererweiterung&Nichtauflösbarkeit des allgemeinen Polynoms n-ten Grades für n>=5
 Algebra 1,WS&2016,28,2017,2,8,6x24,Konstruktionen mit Zirkel und Lineal&Konstruierbarkeit regelmäßiger n-Ecke&Unmöglichkeit von Würfelverdopplung mit Zirkel und Lineal&Unmöglichkeit von Winkeldreiteilung mit Zirkel und Lineal&Unmöglichkeit der Quadratur des Kreises mit Zirkel und Lineal
+Algebra 2,SS&2017,1,2017,4,19,1x1,Kategorie&kategorieller Monomorphismus&kategorieller Epimorphismus&kategorieller Isomorphismus&Funktor&Kategorienäquivalenz
+Algebra 2,SS&2017,2,2017,4,21,1x1,Teilkategorie&natürliche Transformation&inverser Funktor&adjungierter Funktor
+Algebra 2,SS&2017,3,2017,4,26,1x1&1x2,kategorielles Produkt&Differenzenkern&kategorieller Limes&kategorieller Kolimes&Existenz kategorieller Limiten&Vertauschen von Limiten mit adjungierten Funktoren
+Algebra 2,SS&2017,4,2017,4,28,1x2,Vertauschen von Limiten mit Limiten&filtrierte Kategorie&filtrierter Kolimes&Vertauschen von filtrierten Kolimiten mit endlichen Limiten in (Mengen)
+Algebra 2,SS&2017,5,2017,5,3,1x2&2x3,Filtrierte Limiten von endlichen Mengen&finaler Funktor&Modul
+Algebra 2,SS&2017,6,2017,5,5,2x3&2x4&2x4,Bimodul&Modulhomomorphismus&Untermodul&Erzeugendensystem eines Moduls&Basis eines freien Moduls&freier Modul&exakte Folge von Moduln
+Algebra 2,SS&2017,7,2017,5,10,2x5,"exakte Folge von Moduln&Exaktheit von Produkten, Koprodukten, filtrierten Kolimiten in (R-Mod)&exakter Funktor in (R-Mod)"
+Algebra 2,SS&2017,8,2017,5,12,2x5&2x6,Halbexaktheit adjungierter Funktoren in (R-Mod)&ausgewogene Abbildung&Tensorprodukt von Moduln
+Algebra 2,SS&2017,9,2017,5,17,2x6,Konstruktion des Tensorprodukts&Adjunktion von Tensorprodukt und Hom-Funktor&Eigenschaften des Tensorprodukts von Moduln
+Algebra 2,SS&2017,10,2017,5,19,2x6&2x7,Erzeuger des Tensorprodukts von Moduln&Tensorprodukt von Algebren&injektiver Modul&projektiver Modul
+Algebra 2,SS&2017,11,2017,5,24,2x7,Charakterisierung projektiver und injektiver Moduln&Charaktergruppe einer abelschen Gruppe&Kofreier Modul&flacher Modul
+Algebra 2,SS&2017,12,2017,5,31,2x7,Charakterisierung flacher Moduln&treuflacher Modul
+Algebra 2,SS&2017,13,2017,6,2,2x8,Noetherscher Modul&Noetherscher Ring&endlich präsentierbarer Modul
+Algebra 2,SS&2017,14,2017,6,7,2x8,endlich präsentierbarer Modul&kohärenter Modul&kohärenter Ring
+Algebra 2,SS&2017,15,2017,6,9,2x9&2x10,Artinscher Modul&Moduln endlicher Länge&Satz von Jordan-Hölder&Ideal
+Algebra 2,SS&2017,16,2017,6,14,2x10,Annullator eines Moduls&maximales Ideal&Jacobson-Radikal&nilpotentes Ideal&Nil-Ideal&Nakayama-Lemma
+Algebra 2,SS&2017,17,2017,6,16,2x10,lokaler Ring&Erweiterung und Kontraktion von Idealen&treuflacher Ringhomomorphismus
+Algebra 2,SS&2017,18,2017,6,21,2x11,Charakterisierung halbeinfacher Moduln und Ringe&Artin-Wedderburn-Theorem
+Algebra 2,SS&2017,19,2017,6,23,2x11&2x12,Artin-Wedderburn-Theorem&Artinscher Ring&J-halbeinfacher Ring&semilokaler Ring&semiprimärer Ring&Hopkins-Levitzki-Theorem
+Algebra 2,SS&2017,20,2017,6,28,3x13&3x14,Primideal&Spektrum eines kommutativen Rings&Primidealvermeidungssatz&Lokalisierung von Ringen und Moduln
+Algebra 2,SS&2017,21,2017,6,30,3x14,Flachheit der Lokalisierung&Übertragen von Eigenschaften von Moduln auf ihre Lokalisierung&Spektrum der Lokalisierung&lokale Ringe des Spektrums&affine Basis der Zariski-Topologie
+Algebra 2,SS&2017,22,2017,7,5,3x14&3x15,Quasi-Kompaktheit affiner Schemata&Bild eines Morphismus affiner Schemata&endliche Algebra&endlich erzeugte Algebra&ganzes Element einer Algebra&ganze Algebra
+Algebra 2,SS&2017,23,2017,7,7,3x15,Charakterisierung endlicher Algebren&ganzer Abschluss&Ganzabgeschlossenheit ist lokal&faktorielle Ringe sind ganz abgeschlossen&Going-up-Theorem&Incomparability
+Algebra 2,SS&2017,24,2017,7,12,3x16,Klassischer Hilbertscher Nullstellensatz&Jacobson-Ring&topologische Charakterisierung von Jacobson-Ringen und J-Halbeinfachheit&J-Halbeinfachheit von Polynomringen über Integritätsbereichen
+Algebra 2,SS&2017,25,2017,7,14,3x16&4x17,J-Halbeinfachheit in endlich erzeugten Erweiterungen&verallgemeinerter Nullstellensatz&Beweis des klassischen Nullstellensatzes&additive Kategorie&abelsche Kategorie
+Algebra 2,SS&2017,26,2017,7,19,4x17,Bild und Kobild von Morphismen&Exaktheit in abelschen Kategorien&Freyd-Mitchell-Einbettungssatz&Grothendieck-Kategorie
+Algebra 2,SS&2017,27,2017,7,21,4x18&4x19&4x20,Komplex&Homotopie von Morphismen von Komplexen&Homotopie-Äquivalenz&Quasi-Isomorphismus von Komplexen&injektive Auflösung&Deltafunktor&universeller Deltafunktor
+Algebra 2,SS&2017,28,2017,7,26,4x20&4x21,Universalität auslöschbarer Deltafunktoren&abgeleiteter Funktor
+Algebra 2,SS&2017,29,2017,7,28,4x21&4x22,abgeleitete Kategorie&kosimpliziales Objekt&Koketten-Komplex

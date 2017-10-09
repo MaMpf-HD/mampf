@@ -64,7 +64,12 @@ namespace :setup do
       term_data = row['term'].split('&')
       term = Term.where(season: term_data[0], year: term_data[1].to_i).first
       teacher = Teacher.find_by(name: row['teacher'])
-      lecture = Lecture.create!(course: course, term: term, teacher: teacher)
+      lecture = Lecture.create!(course: course, term: term, teacher: teacher,
+                                kaviar: row['kaviar'] == 'true',
+                                sesam: row['sesam'] == 'true',
+                                keks: row['keks'] == 'true',
+                                reste: row['reste'] == 'true',
+                                erdbeere: row['erdbeere'] == 'true')
       unless row['additional_tags'].nil?
         lecture.additional_tags = Tag.where(title: row['additional_tags']
                                                      .split('&'))

@@ -326,111 +326,118 @@ Unmöglichkeit von Würfelverdopplung mit Zirkel und Lineal,Konstruktionen mit Z
 Unmöglichkeit von Winkeldreiteilung mit Zirkel und Lineal,Konstruktionen mit Zirkel und Lineal&Konstruktionen regelmäßiger n-Ecke,Algebra 1
 Unmöglichkeit der Quadratur des Kreises mit Zirkel und Lineal,Konstruktionen mit Zirkel und Lineal,Algebra 1
 Kategorie,,Algebra 2
-kategorieller Monomorphismus,,Algebra 2
-kategorieller Epimorphismus,,Algebra 2
-kategorieller Isomorphismus,,Algebra 2
-Funktor,,Algebra 2
-Kategorienäquivalenz,,Algebra 2
-Teilkategorie,,Algebra 2
-natürliche Transformation,,Algebra 2
-inverser Funktor,,Algebra 2
-adjungierter Funktor,,Algebra 2
-kategorielles Produkt,,Algebra 2
-Differenzenkern,,Algebra 2
-kategorieller Limes,,Algebra 2
-kategorieller Kolimes,,Algebra 2
-Existenz kategorieller Limiten,,Algebra 2
-Vertauschen von Limiten mit adjungierten Funktoren,,Algebra 2
-Vertauschen von Limiten mit Limiten,,Algebra 2
-filtrierte Kategorie,,Algebra 2
-filtrierter Kolimes,,Algebra 2
-Vertauschen von filtrierten Kolimiten mit endlichen Limiten in (Mengen),,Algebra 2
-Filtrierte Limiten von endlichen Mengen,,Algebra 2
-finaler Funktor,,Algebra 2
-Bimodul,,Algebra 2
-exakte Folge,,Algebra 2
-"Exaktheit von Produkten, Koprodukten, filtrierten Kolimiten in (R-Mod)",,Algebra 2
-exakter Funktor,,Algebra 2
-Halbexaktheit adjungierter Funktoren in (R-Mod),,Algebra 2
+Morphismus,Kategorie,Algebra 2
+Objekt,Kategorie,Algebra 2
+kategorieller Monomorphismus,Morphismus,Algebra 2
+kategorieller Epimorphismus,Morphismus,Algebra 2
+kategorieller Isomorphismus,Morphismus,Algebra 2
+Funktor,Kategorie,Algebra 2
+Kategorienäquivalenz,Funktor,Algebra 2
+Teilkategorie,Kategorie,Algebra 2
+natürliche Transformation,Funktor,Algebra 2
+inverser Funktor,Funktor,Algebra 2
+adjungierter Funktor,Funktor,Algebra 2
+kategorielles Produkt,Kategorie,Algebra 2
+Differenzenkern,Morphismus,Algebra 2
+kategorieller Limes,Kategorie,Algebra 2
+kategorieller Kolimes,Kategorie,Algebra 2
+Existenz kategorieller Limiten,kategorieller Limes,Algebra 2
+Vertauschen von Limiten mit adjungierten Funktoren,kategorieller Limes,Algebra 2
+Vertauschen von Limiten mit Limiten,kategorieller Limes,Algebra 2
+filtrierte Kategorie,Kategorie,Algebra 2
+filtrierter Kolimes,kategorieller Kolimes,Algebra 2
+Vertauschen von filtrierten Kolimiten mit endlichen Limiten in (Mengen),filtrierter Kolimes&kategorieller Limes,Algebra 2
+filtrierte Limiten von endlichen Mengen,kategorieller Limes,Algebra 2
+finaler Funktor,Funktor,Algebra 2
+Bimodul,Modul,Algebra 2
+exakte Folge von Moduln,Modul,Algebra 2
+"Exaktheit von Produkten, Koprodukten, filtrierten Kolimiten in (R-Mod)",Modul,Algebra 2
+exakter Funktor in (R-Mod),exakte Folge von Moduln,Algebra 2
+Halbexaktheit adjungierter Funktoren in (R-Mod),exakter Funktor in (R-Mod),Algebra 2
 ausgewogene Abbildung,,Algebra 2
-Tensorprodukt,,Algebra 2
-Konstruktion des Tensorprodukts,,Algebra 2
-Adjunktion von Tensorprodukt und Hom-Funktor,,Algebra 2
-Eigenschaften des Tensorprodukts,,Algebra 2
-Erzeuger des Tensorprodukts,,Algebra 2
-Tensorprodukt von Algebren,,Algebra 2
-injektiver Modul,,Algebra 2
-projektiver Modul,,Algebra 2
-Charakterisierung projektiver und injektiver Moduln,,Algebra 2
-Charaktergruppe,,Algebra 2
-Kofreier Modul,,Algebra 2
-flacher Modul,,Algebra 2
-Charakterisierung flacher Moduln,,Algebra 2
-treuflacher Modul,,Algebra 2
-Noetherscher Modul,,Algebra 2
-Noetherscher Ring,,Algebra 2
-endlich präsentierbarer Modul,,Algebra 2
-kohärenter Modul,,Algebra 2
-kohärenter Ring,,Algebra 2
-Artinscher Modul,,Algebra 2
-Moduln endlicher Länge,,Algebra 2
-Satz von Jordan-Hölder,,Algebra 2
-Annullator eines Moduls,,Algebra 2
-Jacobson-Radikal,,Algebra 2
+Tensorprodukt von Moduln,ausgewogene Abbildung,Algebra 2
+Konstruktion des Tensorprodukts,Tensorprodukt von Moduln,Algebra 2
+Adjunktion von Tensorprodukt und Hom-Funktor,Tensorprodukt von Moduln,Algebra 2
+Eigenschaften des Tensorprodukts von Moduln,Tensorprodukt von Moduln,Algebra 2
+Erzeuger des Tensorprodukts von Moduln,Tensorprodukt von Moduln,Algebra 2
+Tensorprodukt von Algebren,Tensorprodukt von Moduln,Algebra 2
+injektiver Modul,exakter Funktor in (R-Mod),Algebra 2
+projektiver Modul,exakter Funktor in (R-Mod),Algebra 2
+Charakterisierung projektiver und injektiver Moduln,injektiver Modul&projektiver Modul,Algebra 2
+Charaktergruppe einer abelschen Gruppe,abelsche Gruppe,Algebra 2
+Kofreier Modul,freier Modul,Algebra 2
+flacher Modul,Tensorprodukt von Moduln,Algebra 2
+Charakterisierung flacher Moduln,flacher Modul,Algebra 2
+treuflacher Modul,flacher Modul,Algebra 2
+Noetherscher Modul,Modul,Algebra 2
+Noetherscher Ring,Noetherscher Modul,Algebra 2
+endlich präsentierbarer Modul,Modul,Algebra 2
+kohärenter Modul,endlich präsentierbarer Modul,Algebra 2
+kohärenter Ring,kohärenter Modul,Algebra 2
+Artinscher Modul,Noetherscher Modul,Algebra 2
+Moduln endlicher Länge,Länge eines Moduls,Algebra 2
+Satz von Jordan-Hölder,Länge eines Moduls,Algebra 2
+Annullator eines Moduls,Modul,Algebra 2
+Jacobson-Radikal,maximales Ideal,Algebra 2
 nilpotentes Ideal,,Algebra 2
-Nil-Ideal,,Algebra 2
-Nakayama-Lemma,,Algebra 2
-lokaler Ring,,Algebra 2
-Erweiterung und Kontraktion von Idealen,,Algebra 2
-treuflacher Ringhomomorphismus,,Algebra 2
-Charakterisierung halbeinfacher Moduln und Ringe,,Algebra 2
-Artin-Wedderburn-Theorem,,Algebra 2
-artinscher Ring,,Algebra 2
-J-halbeinfacher Ring,,Algebra 2
-semilokaler Ring,,Algebra 2
-semiprimärer Ring,,Algebra 2
-Hopkins-Levitzki-Theorem,,Algebra 2
-Spektrum eines kommutativen Rings,,Algebra 2
-Primidealvermeidungssatz,,Algebra 2
-Lokalisierungen von Ringen und Moduln,,Algebra 2
-Flachheit der Lokalisierung,,Algebra 2
-Übertragen von Eigenschaften von Moduln auf ihre Lokalisierung,,Algebra 2
-Spektrum der Lokalisierung,,Algebra 2
-lokale Ringe des Spektrums,,Algebra 2
-affine Basis der Zariski-Topologie,,Algebra 2
-Quasi-Kompaktheit affiner Schemata,,Algebra 2
-Bild eines Morphismus affiner Schemata,,Algebra 2
-endliche Algebra,,Algebra 2
-endlich erzeugte Algebra,,Algebra 2
-ganzes Element,,Algebra 2
-ganze Algebra,,Algebra 2
-Charakterisierung endlicher Algebren,,Algebra 2
-ganzer Abschluss,,Algebra 2
-Ganzabgeschlossenheit ist lokal,,Algebra 2
-faktorielle Ringe sind ganz abgeschlossen,,Algebra 2
-Going-up-Theorem,,Algebra 2
-Incomparability,,Algebra 2
+Nil-Ideal,nilpotentes Ideal,Algebra 2
+Nakayama-Lemma,Jacobson-Radikal,Algebra 2
+lokaler Ring,maximales Ideal,Algebra 2
+Erweiterung und Kontraktion von Idealen,Ideal,Algebra 2
+treuflacher Ringhomomorphismus,treuflacher Modul,Algebra 2
+halbeinfacher Modul,,Algebra 2
+halbeinfacher Ring,halbeinfacher Modul,Algebra 2
+Charakterisierung halbeinfacher Moduln und Ringe,halbeinfacher Modul&halbeinfacher Ring,Algebra 2
+Artin-Wedderburn-Theorem,Charakterisierung halbeinfacher Moduln und Ringe,Algebra 2
+Artinscher Ring,Artinscher Modul,Algebra 2
+J-halbeinfacher Ring,halbeinfacher Ring,Algebra 2
+semilokaler Ring,lokaler Ring,Algebra 2
+semiprimärer Ring,semilokaler Ring,Algebra 2
+Hopkins-Levitzki-Theorem,semiprimärer Ring&Artinscher Modul&Noetherscher Modul,Algebra 2
+Spektrum eines kommutativen Rings,Primideal,Algebra 2
+Primidealvermeidungssatz,Primideal,Algebra 2
+Lokalisierung von Ringen und Moduln,Quotientenringe und -körper,Algebra 2
+Flachheit der Lokalisierung,Lokalisierung von Ringen und Moduln,Algebra 2
+Übertragen von Eigenschaften von Moduln auf ihre Lokalisierung,Lokalisierung von Ringen und Moduln,Algebra 2
+Spektrum der Lokalisierung,Lokalisierung von Ringen und Moduln,Algebra 2
+lokale Ringe des Spektrums,Spektrum eines kommutativen Rings,Algebra 2
+affine Basis der Zariski-Topologie,Spektrum eines kommutativen Rings,Algebra 2
+affines Schema,Spektrum eines kommutativen Rings,Algebra 2
+Quasi-Kompaktheit affiner Schemata,affines Schema,Algebra 2
+Bild eines Morphismus affiner Schemata,affines Schema,Algebra 2
+Algebra,Modul,Algebra 2
+endliche Algebra,Algebra,Algebra 2
+endlich erzeugte Algebra,Algebra,Algebra 2
+ganzes Element einer Algebra,,Algebra 2
+ganze Algebra,ganzes Element einer Algebra,Algebra 2
+Charakterisierung endlicher Algebren,enliche Algebra,Algebra 2
+ganzer Abschluss,ganze Algebra,Algebra 2
+Ganzabgeschlossenheit ist lokal,ganzer Abschluss,Algebra 2
+faktorielle Ringe sind ganz abgeschlossen,ganzer Abschluss,Algebra 2
+Going-up-Theorem,ganze Algebra,Algebra 2
+Incomparability,ganze Algebra,Algebra 2
 Klassischer Hilbertscher Nullstellensatz,,Algebra 2
-Jacobson-Ring,,Algebra 2
-topologische Charakterisierung von Jacobson-Ringen und J-Halbeinfachheit,,Algebra 2
-J-Halbeinfachheit von Polynomringen über Integritätsbereichen,,Algebra 2
-J-Halbeinfachheit in endlich erzeugten Erweiterungen,,Algebra 2
-verallgemeinerter Nullstellensatz,,Algebra 2
-Beweis des klassischen Nullstellensatzes,,Algebra 2
-additive Kategorie,,Algebra 2
-abelsche Kategorie,,Algebra 2
-Bild und Kobild von Morphismen,,Algebra 2
-Exaktheit in abelschen Kategorien,,Algebra 2
-Freyd-Mitchell-Einbettungssatz,,Algebra 2
-Grothendieck-Kategorie,,Algebra 2
-Komplex,,Algebra 2
-Homotopie von Morphismen von Komplexen,,Algebra 2
-Homotopie-Äquivalenz,,Algebra 2
-Quasi-Isomorphismus von Komplexen,,Algebra 2
-injektive Auflösung,,Algebra 2
-universeller Deltafunktor,,Algebra 2
-Universalität auslöschbarer Deltafunktoren,,Algebra 2
-abgeleiteter Funktor,,Algebra 2
-abgeleitete Kategorie,,Algebra 2
-kosimpliziales Objekte,,Algebra 2
-Koketten-Komplex,,Algebra 2
+Jacobson-Ring,Primideal&maxiamles Ideal,Algebra 2
+topologische Charakterisierung von Jacobson-Ringen und J-Halbeinfachheit,Jacobson-Ring,Algebra 2
+J-Halbeinfachheit von Polynomringen über Integritätsbereichen,J-halbeinfacher Ring,Algebra 2
+J-Halbeinfachheit in endlich erzeugten Erweiterungen,J-halbeinfacher Ring,Algebra 2
+verallgemeinerter Nullstellensatz,Klassischer Hilbertscher Nullstellensatz,Algebra 2
+Beweis des klassischen Nullstellensatzes,Klassischer Hilbertscher Nullstellensatz,Algebra 2
+additive Kategorie,Kategorie,Algebra 2
+abelsche Kategorie,additive Kategorie,Algebra 2
+Bild und Kobild von Morphismen,Morphismus,Algebra 2
+Exaktheit in abelschen Kategorien,abelsche Kategorie,Algebra 2
+Freyd-Mitchell-Einbettungssatz,abelsche Kategorie,Algebra 2
+Grothendieck-Kategorie,abelsche Kategorie,Algebra 2
+Komplex,abelsche Kategorie,Algebra 2
+Homotopie von Morphismen von Komplexen,Komplex,Algebra 2
+Homotopie-Äquivalenz,Homotopie von Morphismen von Kopmplexen,Algebra 2
+Quasi-Isomorphismus von Komplexen,Komplex,Algebra 2
+injektive Auflösung,Komplex,Algebra 2
+Deltafunktor,,Algebra 2
+universeller Deltafunktor,Deltafunktor,Algebra 2
+Universalität auslöschbarer Deltafunktoren,universeller Deltafunktor,Algebra 2
+abgeleiteter Funktor,Funktor,Algebra 2
+abgeleitete Kategorie,abelsche Kategorie,Algebra 2
+kosimpliziales Objekt,Objekt,Algebra 2
+Koketten-Komplex,Komplex,Algebra 2

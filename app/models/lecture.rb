@@ -13,6 +13,11 @@ class Lecture < ApplicationRecord
   has_many :media, as: :teachable
   has_many :lecture_user_joins
   has_many :users, through: :lecture_user_joins
+  validates :kaviar, presence: true
+  validates :reste, presence: true
+  validates :sesam, presence: true
+  validates :erdbeere, presence: true
+  validates :keks, presence: true
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 
@@ -42,6 +47,11 @@ class Lecture < ApplicationRecord
 
   def term_teacher_info
     term.to_label + ', ' + teacher.name
+  end
+
+  def modules
+    { 'KaViaR' => kaviar, 'SeSAM' => sesam, 'RestE' => reste, 'KeKs' => keks,
+      'ErDBeere' => erdbeere }
   end
 
   def description
