@@ -1,4 +1,4 @@
-# Connection class
+# Link class
 # JoinTable for medium<->medium many-to-many-relation
 class Link < ApplicationRecord
   belongs_to :medium

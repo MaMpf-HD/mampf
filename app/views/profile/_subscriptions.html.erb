@@ -1,0 +1,9 @@
+<%= bootstrap_form_for @user, url: profile_update_path do |f| %>
+  <%= f.collection_check_boxes :lecture_ids, Lecture.all, :id, :to_label, label: 'Abonnierte Vorlesungen:' %>
+  <%= f.form_group :subscription_type, label: { text: "MaMpf liefert eine Vielzahl von verknüpfte Inhalten. Ich möchte verknüpfte Inhalte" }, help: "Ist noch zu implementieren." do %>
+  <%= f.radio_button :subscription_type, 1, label: "aus allen Vorlesungen sehen, auf der die von mir abonnierten Vorlesungen aufbauen", checked: @user.subscription_type == 1 || @user.subscription_type.nil? %>
+  <%= f.radio_button :subscription_type, 2, label: "aus allen Vorlesungen sehen.", checked: @user.subscription_type == 2 %>
+  <%= f.radio_button :subscription_type, 3, label: "ausschließlich aus den von mir abonnierten Vorlesungen sehen.", checked: @user.subscription_type == 3 %>
+<% end %>
+  <%= f.submit "Profil updaten" %>
+<% end %>

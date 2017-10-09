@@ -13,11 +13,13 @@ class Lecture < ApplicationRecord
   has_many :media, as: :teachable
   has_many :lecture_user_joins
   has_many :users, through: :lecture_user_joins
-  validates :kaviar, presence: true
-  validates :reste, presence: true
-  validates :sesam, presence: true
-  validates :erdbeere, presence: true
-  validates :keks, presence: true
+  has_many :connections, dependent: :destroy
+  has_many :preceding_lectures, through: :connections, dependent: :destroy
+  validates :kaviar, :inclusion => {:in => [true, false]}
+  validates :reste, :inclusion => {:in => [true, false]}
+  validates :sesam, :inclusion => {:in => [true, false]}
+  validates :erdbeere, :inclusion => {:in => [true, false]}
+  validates :keks, :inclusion => {:in => [true, false]}
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 
