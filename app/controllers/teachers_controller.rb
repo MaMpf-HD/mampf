@@ -15,7 +15,7 @@ class TeachersController < ApplicationController
   def set_teacher
     @teacher = Teacher.find_by_id(params[:id])
     if !@teacher.present?
-      redirect_to :root, alert: 'Teacher with requested id was not found.'
+      redirect_to :root, alert: 'Ein Dozent mit der angeforderten id existiert nicht.'
     end
   end
 

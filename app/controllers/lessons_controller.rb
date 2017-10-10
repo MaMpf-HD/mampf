@@ -11,7 +11,7 @@ class LessonsController < ApplicationController
   def set_lesson
     @lesson = Lesson.find_by_id(params[:id])
     if !@lesson.present?
-      redirect_to :root, alert: 'Lesson with requested id was not found.'
+      redirect_to :root, alert: 'Eine Sitzung mit der angeforderten id existiert nicht,'
     end
   end
 end

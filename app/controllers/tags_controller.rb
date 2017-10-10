@@ -11,7 +11,7 @@ class TagsController < ApplicationController
   def set_tag
     @tag = Tag.find_by_id(params[:id])
     if !@tag.present?
-      redirect_to :root, alert: 'Tag with requested id was not found.'
+      redirect_to :root, alert: 'Ein Begriff mit der angeforderten id existiert nicht.'
     end
   end
 end

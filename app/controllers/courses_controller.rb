@@ -15,7 +15,7 @@ class CoursesController < ApplicationController
   def set_course
     @course = Course.find_by_id(params[:id])
     if !@course.present?
-      redirect_to :root, alert: 'Course with requested id was not found.'
+      redirect_to :root, alert: 'Ein Kurs mit der angeforderten id existiert nicht.'
     end
   end
 end

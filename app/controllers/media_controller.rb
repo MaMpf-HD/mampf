@@ -18,7 +18,7 @@ class MediaController < ApplicationController
       when 4
         @media = Medium.where(teachable: @lecture, sort: 'Reste')
       else
-        redirect_to :root, alert: 'No module with requested id.'
+        redirect_to :root, alert: 'Ein Modul mit der angeforderten id existiert nicht.'
       end
     else
       @media = Medium.all
@@ -34,7 +34,7 @@ class MediaController < ApplicationController
   def set_medium
     @medium = Medium.find_by_id(params[:id])
     if !@medium.present?
-      redirect_to :root, alert: 'Medium with requested id was not found.'
+      redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert nicht.'
     end
   end
 end

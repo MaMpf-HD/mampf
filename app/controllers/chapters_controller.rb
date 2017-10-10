@@ -11,7 +11,7 @@ class ChaptersController < ApplicationController
   def set_chapter
     @chapter = Chapter.find_by_id(params[:id])
     if !@chapter.present?
-      redirect_to :root, alert: 'Chapter with requested id was not found.'
+      redirect_to :root, alert: 'Ein Kapitel mit der angeforderten id exisitiert nicht.'
     end
   end
 end
