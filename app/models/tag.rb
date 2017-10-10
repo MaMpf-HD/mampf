@@ -70,6 +70,10 @@ class Tag < ApplicationRecord
     true
   end
 
+  def in_lectures?(lectures)
+    lectures.map{ |l| in_lecture?(l) }.include?(true)
+  end
+
   def lectures
     Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))
   end

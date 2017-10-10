@@ -127,6 +127,21 @@ class Medium < ApplicationRecord
                   '#hide-categories#question=' + question_id.to_s)
   end
 
+  def related_to_lecture?(lecture)
+    case teachable_sort
+    when 'Course'
+      return true if teachable == lecture.course
+    when 'Lecture'
+      return true if teachable == lecture
+    when 'Lesson'
+      return true if teachable.lecture == lecture
+    end
+    false
+  end
+
+  def related_to_lectures?(lectures)
+    lectures.map{ |l| related_to_lecture?(l) }.include?(true)
+  end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }

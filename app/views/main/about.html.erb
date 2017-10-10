@@ -1,80 +1,73 @@
 <% provide(:title, "About") %>
-<h1>Was ist MaMpf?</h1>
-<p style="text-align:justify;">
-E-Learning-Konzepte haben bisher in mathematische Studiengänge deutlich
-weniger Einzug gehalten als in viele andere Studiengänge. Ein wichtiger Grund hierfür ist,
-dass es mit gegenwärtig verfügbaren E-Learning-Systemen schwierig ist, den
-spezifischen Anforderungen des mathematischen Lernprozesses  auf geeignete Weise zu begegnen.
-Das Projekt <b>MaMpf</b> ("Mathematische Medienplattform") stellt einen Versuch dar,
-modernste Techniken einzusetzen, um wichtige Teilaspekte des Verstehens und
-Erlernens von Mathematik in den E-Learning-Kontext abzubilden. Über die
-letzten Jahre ist an der Fakultät für Mathematik und Informatik der
-Universität Heidelberg eine Reihe an Projekten zum E-Learning und zur
-Studiumsorganisation entstanden. MaMpf vereinheitlicht und vernetzt die
-bisher getrennten Projekte und integriert neue Projekte. Die Teilprojekte
-von Projekt MaMpf sind KaViaR, KeKs, ErDBeere, SeSAM, RestE und MÜSLI.
-</p>
-<h3>KaViaR</h3>
-<p style="text-align:justify;">
-  Traditionelle Mathematikvorlesungen verwenden Tafel und Kreide als
-  Präsentationsmedium, Powerpointpräsentationen spielen
-  in mathematischen Fachvorlesungen dagegen so gut wie keine
-  Rolle. Der Grund hierfür ist keineswegs Faulheit der Lehrenden: Tafel
-  und Kreide begrenzen klar die Geschwindigkeit, in denen Informationen
-  vorgetragen werden können und zwingen sowohl Lernende als auch
-  Lehrende zu der besonderen Genauigkeit und Vorsicht bei
-  Detailformulierungen, die für die Mathematik charakteristisch sind.
-  Neuere Ansätze, die moderne Medien involvieren und darauf abzielen,
-  Vorlesungsinhalte online verfügbar zu machen, versuchen daher meist,
-  das Konzept der Tafelvorlesung beizubehalten und diese per Kamera auf
-  Video aufzuzeichnen. Das bringt jedoch etliche Probleme mit sich. Zum
-  einen benötigt man in der Regel zusätzliches Personal im
-  Hörsaal, das sich um den Aufzeichnungsprozess kümmert, zum anderen
-  braucht man geeignetes Kameraequipment. Ferner verdeckt die
-  Lehrperson ganz natürlich permanent einen Teil des
-  Tafelanschriebs. Das Projekt <b>KaViaR</b> ("Kameraloses Videoaufzeichnungssystem zur
-  Rekapitulationsunterstützung") zeigt eine Alternative auf,
-  welche das Potential einer kamerabasierten Videoaufzeichnung in unseren Augen
-  deutlich übertrifft, und das mit geringeren Kosten. Die relativ
-  einfache Grundidee besteht darin, den Prozess des Anschreibens zur
-  Entwicklung mathematischer Gedankengänge beizubehalten, diesen
-  jedoch auf einem stiftfähigen Tablet anstelle mit Kreide an der Tafel
-  auszuführen. Über einen Beamer wird der Anschrieb auf eine Leinwand projiziert,
-  so dass die Hörer weiterhin alles verfolgen können. Auf dem Tablet wird in einer
-  Notizsoftware geschrieben, im Hintergrund läuft eine Screenrecording-Software,
-  die ein Video von allen Bildschirmaktivitäten aufzeichnet und über ein
-  externes Mikrofon einen Audiomitschnitt anfertigt. Im Anschluss an die
-  Lehrveranstaltung kann ein Authoring des aufgezeichneten Videos
-  erfolgen. Insbesondere besteht die Möglichkeit, dieses durch
-  zusätzliche Elemente wie etwa Tags, Quizzes oder Hyperlinks zum
-  Vorlesungsmanuskript anzureichern. Das Erstellen eines pdf-Skriptes
-  aus dem Mitschrieb ist mit wenigen Mausklicks möglich. Der Besuch
-  der Vorlesung wird daher nicht nur imitiert, sondern durch zusätzliche
-  Materialien ergänzt, die die eigenständige Nachbearbeitung des
-  Materials durch die Lernenden erleichtern.
-</p>
-<h3>KeKs</h3>
-<p style="text-align:justify;">
-  Um die Beschäftigung mit dem Vorlesungsstoff zu intensivieren und
-  ein Feedback über die Lernzuwächse zu geben, bieten die meisten
-  modernen E-Learning-Systeme Quizzes an.  Im Kontext der Mathematik
-  können dabei in sinnvoller Weise nur Systeme eingesetzt werden, die
-  es erlauben, mathematische Textsatzsysteme wie LaTeX zu verwenden. So
-  gut die Möglichkeiten in diesen Systemen auch sind, einzelne
-  vorlesungsbegleitende Quizzes anzulegen, sind sie dennoch nicht
-  geeignet, umfangreichere Mengen von Quizfragen effizient zu verwalten.
+<ul class="nav nav-pills" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="kaviar-tab" data-toggle="tab" href="#kaviar" role="tab" aria-controls="kaviar" aria-expanded="true">KaViaR</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="keks-tab" data-toggle="tab" href="#keks" role="tab" aria-controls="keks" aria-expanded="true">KeKs</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="kaviar" role="tabpanel" aria-labelledby="kaviar-tab">
+    Traditionelle Mathematikvorlesungen verwenden Tafel und Kreide als
+    Präsentationsmedium, Powerpointpräsentationen spielen
+    in mathematischen Fachvorlesungen dagegen so gut wie keine
+    Rolle. Der Grund hierfür ist keineswegs Faulheit der Lehrenden: Tafel
+    und Kreide begrenzen klar die Geschwindigkeit, in denen Informationen
+    vorgetragen werden können und zwingen sowohl Lernende als auch
+    Lehrende zu der besonderen Genauigkeit und Vorsicht bei
+    Detailformulierungen, die für die Mathematik charakteristisch sind.
+    Neuere Ansätze, die moderne Medien involvieren und darauf abzielen,
+    Vorlesungsinhalte online verfügbar zu machen, versuchen daher meist,
+    das Konzept der Tafelvorlesung beizubehalten und diese per Kamera auf
+    Video aufzuzeichnen. Das bringt jedoch etliche Probleme mit sich. Zum
+    einen benötigt man in der Regel zusätzliches Personal im
+    Hörsaal, das sich um den Aufzeichnungsprozess kümmert, zum anderen
+    braucht man geeignetes Kameraequipment. Ferner verdeckt die
+    Lehrperson ganz natürlich permanent einen Teil des
+    Tafelanschriebs. Das Projekt KaViaR ("Kameraloses Videoaufzeichnungssystem zur
+    Rekapitulationsunterstützung") zeigt eine Alternative auf,
+    welche das Potential einer kamerabasierten Videoaufzeichnung in unseren Augen
+    deutlich übertrifft, und das mit geringeren Kosten. Die relativ
+    einfache Grundidee besteht darin, den Prozess des Anschreibens zur
+    Entwicklung mathematischer Gedankengänge beizubehalten, diesen
+    jedoch auf einem stiftfähigen Tablet anstelle mit Kreide an der Tafel
+    auszuführen. Über einen Beamer wird der Anschrieb auf eine Leinwand projiziert,
+    so dass die Hörer weiterhin alles verfolgen können. Auf dem Tablet wird in einer
+    Notizsoftware geschrieben, im Hintergrund läuft eine Screenrecording-Software,
+    die ein Video von allen Bildschirmaktivitäten aufzeichnet und über ein
+    externes Mikrofon einen Audiomitschnitt anfertigt. Im Anschluss an die
+    Lehrveranstaltung kann ein Authoring des aufgezeichneten Videos
+    erfolgen. Insbesondere besteht die Möglichkeit, dieses durch
+    zusätzliche Elemente wie etwa Tags, Quizzes oder Hyperlinks zum
+    Vorlesungsmanuskript anzureichern. Das Erstellen eines pdf-Skriptes
+    aus dem Mitschrieb ist mit wenigen Mausklicks möglich. Der Besuch
+    der Vorlesung wird daher nicht nur imitiert, sondern durch zusätzliche
+    Materialien ergänzt, die die eigenständige Nachbearbeitung des
+    Materials durch die Lernenden erleichtern.
+  </div>
+  <div class="tab-pane fade" id="keks" role="tabpanel" aria-labelledby="keks-tab">
+    Um die Beschäftigung mit dem Vorlesungsstoff zu intensivieren und
+    ein Feedback über die Lernzuwächse zu geben, bieten die meisten
+    modernen E-Learning-Systeme Quizzes an.  Im Kontext der Mathematik
+    können dabei in sinnvoller Weise nur Systeme eingesetzt werden, die
+    es erlauben, mathematische Textsatzsysteme wie LaTeX zu verwenden. So
+    gut die Möglichkeiten in diesen Systemen auch sind, einzelne
+    vorlesungsbegleitende Quizzes anzulegen, sind sie dennoch nicht
+    geeignet, umfangreichere Mengen von Quizfragen effizient zu verwalten.
 
-  An der Fakultät für Mathematik und  Informatik der Universität
-  Heidelberg ist auf Vorschlag der Fachschaft hin im Jahr 2013 von
-  studentischen Hilfskräften das System <b>KeKs</b> ("Kompetenzerweiterndes
-  Kurzfragensystem") entwickelt worden, welches seitdem weiter
-  ausgebaut und gepflegt worden ist. Hierbei handelt es sich um eine
-  umfangreiche Datenbank, in der Fragen zu klassischen
-  Mathematikvorlesungen der ersten Semester abgespeichert sind, zusammen
-  mit einer Weboberfläche, die es Studierenden ermöglicht, sich in
-  Quizform mit den Fragen zu beschäftigen. Die Fragendatenbank umfasst momentan
-  mehr als 5000 Fragen.
-</p>
+    An der Fakultät für Mathematik und  Informatik der Universität
+    Heidelberg ist auf Vorschlag der Fachschaft hin im Jahr 2013 von
+    studentischen Hilfskräften das System <b>KeKs</b> ("Kompetenzerweiterndes
+    Kurzfragensystem") entwickelt worden, welches seitdem weiter
+    ausgebaut und gepflegt worden ist. Hierbei handelt es sich um eine
+    umfangreiche Datenbank, in der Fragen zu klassischen
+    Mathematikvorlesungen der ersten Semester abgespeichert sind, zusammen
+    mit einer Weboberfläche, die es Studierenden ermöglicht, sich in
+    Quizform mit den Fragen zu beschäftigen. Die Fragendatenbank umfasst momentan
+    mehr als 5000 Fragen.
+  </div>
+</div>
 <h3>ErDBeere</h3>
 <p style="text-align:justify;">
   Von großer Bedeutung für das Verständnis mathematischer

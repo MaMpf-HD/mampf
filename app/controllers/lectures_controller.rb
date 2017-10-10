@@ -6,10 +6,6 @@ class LecturesController < ApplicationController
     cookies[:current_lecture] = params[:id]
   end
 
-  def index
-    @lectures = Lecture.all
-  end
-
   private
 
   # Use callbacks to share common setup or constraints between actions.

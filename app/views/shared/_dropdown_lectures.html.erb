@@ -1,5 +1,6 @@
 <% current_lecture = Lecture.find_by_id(cookies[:current_lecture]) %>
 <li class="nav-item">
+<% if lectures.count > 1 then %>
 <div class="btn-group">
   <%= link_to current_lecture.short_title, current_lecture, class: 'btn btn-primary text-light' %>
   <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -13,4 +14,7 @@
     <% end %>
   </div>
 </div>
+<% else %>
+<%= link_to current_lecture.short_title, current_lecture, class: 'btn btn-primary text-light' %>
+<% end %>
 </li>

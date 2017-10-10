@@ -3,13 +3,15 @@
     <h2><span class="badge badge-secondary mr-3">Begriff<%= ' #' + @tag.id.to_s %></span><%= @tag.title %></h2>
   </div>
 </div>
-<% tags_in_neighbourhood = @tag.tags_in_neighbourhood %>
-<% lectures = @tag.lectures %>
-<% unless @tag.related_tags.empty? && tags_in_neighbourhood.empty? && lectures.empty? %>
+<% related_lectures = current_user.related_lectures %>
+<% related_tags = filter_tags_by_lectures(@tag.related_tags, related_lectures) %>
+<% tags_in_neighbourhood = filter_tags_by_lectures(@tag.tags_in_neighbourhood, related_lectures) %>
+<% lectures = filter_lectures_by_lectures(@tag.lectures, related_lectures) %>
+<% unless related_tags.empty? && tags_in_neighbourhood.empty? && lectures.empty? %>
 <div class="row">
-  <% unless @tag.related_tags.empty? %>
+  <% unless related_tags.empty? %>
   <div class="col-12 col-md-6 col-lg-5 pt-3">
-    <%= render partial: 'tags', locals: { related_tags: @tag.related_tags,
+    <%= render partial: 'tags', locals: { related_tags: related_tags,
                                           tags_description: 'Verknüpfte Begriffe'} %>
   </div>
   <% end %>
@@ -27,7 +29,7 @@
   <% end %>
 </div>
 <% end %>
-<% media = @tag.media.where.not(sort: 'KeksQuestion') %>
+<% media = filter_media_by_lectures(@tag.media.where.not(sort: 'KeksQuestion'), related_lectures) %>
 <% unless media.empty? %>
 <div class="row">
   <div class="col-12 pt-5">
