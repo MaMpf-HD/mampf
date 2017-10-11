@@ -1,4 +1,5 @@
 <% provide(:title, "About") %>
+<div class="jumbotron bg-mdb-color-lighten-6">
 <ul class="nav nav-pills" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link active" id="kaviar-tab" data-toggle="tab" href="#kaviar" role="tab" aria-controls="kaviar" aria-expanded="true">KaViaR</a>
@@ -6,8 +7,20 @@
   <li class="nav-item">
     <a class="nav-link" id="keks-tab" data-toggle="tab" href="#keks" role="tab" aria-controls="keks" aria-expanded="true">KeKs</a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" id="sesam-tab" data-toggle="tab" href="#sesam" role="tab" aria-controls="sesam" aria-expanded="true">SeSAM</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="erdbeere-tab" data-toggle="tab" href="#erdbeere" role="tab" aria-controls="erdbeere" aria-expanded="true">ErDBeere</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="reste-tab" data-toggle="tab" href="#reste" role="tab" aria-controls="reste" aria-expanded="true">RestE</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="muesli-tab" data-toggle="tab" href="#muesli" role="tab" aria-controls="muesli" aria-expanded="true">MÜSLI</a>
+  </li>
 </ul>
-<div class="tab-content" id="myTabContent">
+<div class="tab-content pt-3" id="myTabContent">
   <div class="tab-pane fade show active" id="kaviar" role="tabpanel" aria-labelledby="kaviar-tab">
     Traditionelle Mathematikvorlesungen verwenden Tafel und Kreide als
     Präsentationsmedium, Powerpointpräsentationen spielen
@@ -25,7 +38,7 @@
     Hörsaal, das sich um den Aufzeichnungsprozess kümmert, zum anderen
     braucht man geeignetes Kameraequipment. Ferner verdeckt die
     Lehrperson ganz natürlich permanent einen Teil des
-    Tafelanschriebs. Das Projekt KaViaR ("Kameraloses Videoaufzeichnungssystem zur
+    Tafelanschriebs. Das Projekt <b>KaViaR</b> ("Kameraloses Videoaufzeichnungssystem zur
     Rekapitulationsunterstützung") zeigt eine Alternative auf,
     welche das Potential einer kamerabasierten Videoaufzeichnung in unseren Augen
     deutlich übertrifft, und das mit geringeren Kosten. Die relativ
@@ -67,9 +80,7 @@
     Quizform mit den Fragen zu beschäftigen. Die Fragendatenbank umfasst momentan
     mehr als 5000 Fragen.
   </div>
-</div>
-<h3>ErDBeere</h3>
-<p style="text-align:justify;">
+  <div class="tab-pane fade" id="erdbeere" role="tabpanel" aria-labelledby="erdbeere-tab">
   Von großer Bedeutung für das Verständnis mathematischer
   Theorien ist die intensive Beschäftigung mit Beispielen. Projekt
   <b>ErDBeere</b> ("Erkenntnisfördernde Datenbank zur Beispielerfassung und
@@ -86,9 +97,8 @@
   nach den Sätzen ... nicht existieren"'. Vom Projekt "ErDBeere" existiert
   bisher nur ein Prototyp, der im Laufe des Sommersemesters 2017 zum ersten Mal
   zum Einsatz kommen soll.
-</p>
-<h3>SeSAM</h3>
- <p style="text-align:justify;">
+</div>
+  <div class="tab-pane fade" id="sesam" role="tabpanel" aria-labelledby="sesam-tab">
    Algorithmen zur Problemlösung und Methoden zur Untersuchung der Eigenschaften
    mathematischer Objekte spielen eine wichtige Rolle in der Mathematik. Echtes
    Verständnis dafür wird aber nur erzielt, wenn man neben der theoretischen Kenntnis
@@ -100,17 +110,15 @@
    Anwendung klassischer Algorithmen und Methoden angelegt werden. Diese sollen dabei
    mit Techniken aus KaViaR in Videoform hinterlegt werden und über eine Webplattform
    abrufbar sein. Das Projekt SeSAM soll im Sommersemester 2017 starten.
- </p>
-<h3>RestE</h3>
-<p style="text-align:justify;">
+ </div>
+  <div class="tab-pane fade" id="reste" role="tabpanel" aria-labelledby="reste-tab">
   Das System <b>RestE</b> ("Restliche E-Learning-Angebote") nimmt innerhalb von
   MaMpf diejenigen Medien auf, die nicht unter die bisher genannten Konzepte
   fallen. Das beinhaltet etwa Vorlesungsmanuskripte außerhalb von KaViaR, Quizzes außerhalb von
   KeKs oder Beispiele außerhalb von ErDBeere und SeSAM. Außerdem soll RestE als
   Spielwiese für neue Ideen und Konzepte dienen.
-</p>
-<h3>MÜSLI</h3>
-<p style="text-align:justify;">
+</div>
+  <div class="tab-pane fade" id="muesli" role="tabpanel" aria-labelledby="muesli-tab">
   In der Fakultät für Mathematik und Informatik der Universität Heidelberg
   wird das System <b>MÜSLI</b> ("Mathematisches Übungsgruppen- und Scheinlisten-Interface")
   zur Verwaltung von Übungsgruppen eingesetzt.
@@ -125,23 +133,6 @@
   Optimierungs-Algorithmus zum Einsatz, der eine Einteilung erzeugt,
   die möglichst vielen Studierenden einen Termin gemäß ihrer Präferenzen
   zuordnet.
-</p>
-<h2>Ideen</h2>
-<p style="text-align:justify;">
-Es ist beabsichtigt, die Systeme in Zukunft zu vereinheitlichen und miteinander
-zu vernetzen. Unter anderem ist die Umsetzung der folgenden Punkte geplant:
-<ul>
- <li> Single-Sign-On für alle beteiligten Systeme mit der Uni-ID </li>
- <li> Vereinheitlichung der Oberfläche </li>
- <li> Abfrage der von einem Studierenden gegenwärtig belegten Module aus der
-   MÜSLI-Datenbank und automatische Bereitstellung der passenden Videokanäle
-   aus KaViaR und passender Fragen aus KeKs</li>
- <li> Erstellung von Videos zu allen Fragen aus der KeKs-Datenbank, in welchen
-   jeweils die Lösung erklärt wird, unter Verwendung von Techniken aus dem
-   KaViaR-Projekt</li>
- <li> Einbindung von KeKs-Fragen und SeSAM-Beispielen als interaktiver Inhalt
-   in Vorlesungsvideos aus dem Projekt KaViaR</li>
- <li> Anzeige verwandter Inhalte aus der Gesamtdatenbank bei Auswahl eines Mediums
-   aus einem der Teilprojekte </li>
-</ul>
-</p>
+</div>
+</div>
+</div>
