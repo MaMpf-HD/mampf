@@ -20,13 +20,13 @@ de:
     mailer:
       confirmation_instructions:
         greeting: "Willkommen bei MaMpf!"
-        instruction: "Folge dem untenstehenden Link, um Dein Konto zu bestätigen:"
-        subject: "Anleitung zur Bestätigung Deines Accounts"
+        instruction: "Folge dem untenstehenden Link, um Dein MaMpf-Konto zu bestätigen:"
+        subject: "Anleitung zur Bestätigung Deines MaMpf-Accounts"
       reset_password_instructions:
-        subject: "Anleitung für das Zurücksetzen Deines Passworts"
-        instruction: "Jemand hat einen Link zur Änderung Deines Passworts angefordert. Klicke auf den unten aufgeführten Link, um das Passwort zu ändern"
-        instruction_2: "Bitte ignoriere diese E-Mail, wenn Du kein neues Passwort angefordert hast."
-        .instruction_3: "Das Passwort wird nicht geändert, bis Du den obenstehenden Link abrufst und ein neues Passwort bestimmst."
+        subject: "Anleitung für das Zurücksetzen Deines MaMpf-Passworts"
+        instruction: "Jemand hat einen Link zur Änderung Deines MaMpf-Passworts angefordert. Klicke auf den unten aufgeführten Link, um das MaMpf-Passwort zu ändern"
+        instruction_2: "Bitte ignoriere diese E-Mail, wenn Du kein neues MaMpf-Passwort angefordert hast."
+        .instruction_3: "Das MaMpf-Passwort wird nicht geändert, bis Du den obenstehenden Link abrufst und ein neues MaMpf-Passwort bestimmst."
       unlock_instructions:
         subject: "Anleitung um Deinen Account freizuschalten"
     omniauth_callbacks:
@@ -47,8 +47,8 @@ de:
       update_needs_confirmation: "Deine Daten wurden aktualisiert, aber Du musst Deine neue E-Mail-Adresse bestätigen. Du erhältst in wenigen Minuten eine E-Mail, mit der Du die Änderung Deiner E-Mail-Adresse abschließen kannst."
       updated: "Deine Daten wurden aktualisiert."
     sessions:
-      signed_in: "Erfolgreich angemeldet."
-      signed_out: "Erfolgreich abgemeldet."
+      signed_in: "Du hast Dich erfolgreich angemeldet."
+      signed_out: "Du hast Dich erfolgreich abgemeldet."
       remember_me: "Erinnere Dich an mich"
 
     unlocks:

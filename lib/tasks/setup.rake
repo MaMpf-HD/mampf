@@ -155,7 +155,7 @@ namespace :setup do
   desc 'Import media from csv file'
   task import_media: :environment do
     csv_file_path = 'db/csv/media.csv'
-    base_url = 'https://mampf.mathi.uni-heidelberg.de/'
+    base_url = 'https://media.mathi.uni-heidelberg.de/'
 
 
     CSV.foreach(csv_file_path, headers: true) do |row|

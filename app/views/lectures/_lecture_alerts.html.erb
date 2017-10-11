@@ -1,3 +1,4 @@
+<% unless current_user.related_lectures.nil? %>
 <% unless current_user.related_lectures.include?(@lecture) %>
 <div class="row">
 <div class="col-12">
@@ -6,4 +7,5 @@ Aufgrund Deiner Profileinstellungen sind verknüpfte Inhalte zu dieser Vorlesung
 </div>
 </div>
 </div>
+<% end %>
 <% end %>
