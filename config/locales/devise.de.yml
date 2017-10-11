@@ -19,6 +19,7 @@ de:
       unconfirmed: "Du musst Deinen Account bestätigen, bevor Du fortfahren kannst."
     mailer:
       confirmation_instructions:
+        greeting: "Willkommen bei MaMpf, #{@resource.email}!"
         subject: "Anleitung zur Bestätigung Deines Accounts"
       reset_password_instructions:
         subject: "Anleitung um Dein Passwort zurückzusetzen"

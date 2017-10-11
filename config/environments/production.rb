@@ -61,7 +61,7 @@ Rails.application.configure do
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "mampf_#{Rails.env}"
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.action_mailer.default_url_options = { host: ENV["URL_HOST"] }
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
