@@ -20,6 +20,7 @@ class Term < ApplicationRecord
   end
 
   def to_label
+    return unless season.present?
     season + ' ' + year_corrected
   end
 

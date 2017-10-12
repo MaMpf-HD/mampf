@@ -44,6 +44,7 @@ class Lecture < ApplicationRecord
   end
 
   def title
+    return 'Vorlesung #' + id.to_s unless course.present? && term.present?
     course.title + ', ' + term.to_label
   end
 

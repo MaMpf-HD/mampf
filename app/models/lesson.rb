@@ -35,6 +35,7 @@ class Lesson < ApplicationRecord
   end
 
   def title
+    return 'Sitzung #' + id.to_s unless number.present? && date.present?
     'Sitzung ' + number.to_s + ', ' + date_de.to_s
   end
 
