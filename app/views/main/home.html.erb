@@ -1,4 +1,10 @@
 <% provide(:title, "Home") %>
+<% if !user_signed_in? %>
+<div class="alert alert-primary" role="alert">
+  Die MaMpf-Seiten wurden komplett überarbeitet. Falls Du noch keinen Account hast,
+  klicke einfach auf <%= link_to "Registrieren", new_user_registration_path %>.
+</div>
+<% end %>
 <div class="jumbotron bg-mdb-color-lighten-6">
   <h1>MaMpf</h1>
   <p>Herzlich willkommen auf der Homepage von MaMpf, der Mathematischen
