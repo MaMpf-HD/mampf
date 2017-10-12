@@ -28,7 +28,7 @@
              <div class="alert alert-secondary" role="alert">
                <%= notice %>
              </div>
-           <% end %> 
+           <% end %>
              <%= yield %>
          </main>
        </div>
@@ -37,7 +37,10 @@
     <hr>
 
     <footer>
-      <p>&copy; MaMpf Team 2017</p>
+      <p>&copy; MaMpf Team 2017. MaMpf ist auf <%= link_to 'github', 'https://github.com/fosterfarrell9/mampf' %>.
+      Powered by Rails, Bootstrap4 and Devise.<br>
+        Bugs meldest Du am besten auf der <%= link_to 'github', 'https://github.com/fosterfarrell9/mampf' %>-Seite.
+         Weiteres Feedback kannst Du gerne auch an <%= mail_to 'mampf@mathi.uni-heidelberg.de', nil, class: 'text-dark' %> schicken.
     </footer>
 
   </div>
