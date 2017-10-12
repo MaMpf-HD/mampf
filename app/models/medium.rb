@@ -84,7 +84,7 @@ class Medium < ApplicationRecord
 
 
   def card_subheader
-    return description unless description.nil?
+    return description if description.present?
     return teachable.description[:specific] unless teachable.description[:specific].nil?
     { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
       'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video' }[sort]

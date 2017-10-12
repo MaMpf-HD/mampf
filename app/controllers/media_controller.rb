@@ -10,13 +10,13 @@ class MediaController < ApplicationController
       @lecture = Lecture.find_by_id(params[:lecture_id])
       case params[:module_id].to_i
       when 1
-        @media = Medium.where(teachable: @lecture.lessons, sort: 'Kaviar')
+        @media = Medium.where(teachable: @lecture.lessons, sort: 'Kaviar').order(:id)
       when 2
-        @media = Medium.where(teachable: @lecture, sort: 'Sesam')
+        @media = Medium.where(teachable: @lecture, sort: 'Sesam').order(:id)
       when 3
-        @media = Medium.where(teachable: @lecture, sort: 'KeksQuiz')
+        @media = Medium.where(teachable: @lecture, sort: 'KeksQuiz').order(:id)
       when 4
-        @media = Medium.where(teachable: @lecture, sort: 'Reste')
+        @media = Medium.where(teachable: @lecture, sort: 'Reste').order(:id)
       else
         redirect_to :root, alert: 'Ein Modul mit der angeforderten id existiert nicht.'
       end
