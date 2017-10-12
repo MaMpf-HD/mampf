@@ -10,10 +10,12 @@
 <div class="col-12 col-md-6 col-lg-4 pt-3">
 <%= render partial: 'technical', locals: { medium: @medium } %>
 </div>
+<% unless @medium.tags.empty? %>
 <div class="col-12 col-md-6 col-lg-4 pt-3">
 <%= render partial: 'tags/tags', locals: { related_tags: @medium.tags,
                                            tags_description: 'Verknüpfte Begriffe'} %>
 </div>
+<% end %>
 </div>
 <% linked_media = filter_media_by_lectures(@medium.linked_media, current_user.related_lectures) %>
 <% unless linked_media.empty? %>
