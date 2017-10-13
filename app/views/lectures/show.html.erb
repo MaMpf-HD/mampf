@@ -14,8 +14,13 @@
 </div>
 </div>
 <hr>
-<p class>
-<h5>News:</h5> Noch nicht implementiert.
+<p>
+<h5>News:</h5>
+<% if @lecture.twitter.present? %>
+<%= @lecture.twitter.html_safe %>
+<% else %>
+Zur Zeit gibt es keine Neuigkeiten.
+<% end %>
 </p>
 <hr>
 </div>
