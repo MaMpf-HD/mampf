@@ -1,6 +1,6 @@
 <div class="card bg-brown-lighten-4">
   <div class="card-header bg-brown-darken-2"><h5 class="text-light">Organisatorisches</h5></div>
-  <% unless medium.video_thumbnail_link.nil? %>
+  <% if medium.video_thumbnail_link.present? %>
   <%= image_tag(medium.video_thumbnail_link, alt: "Card image cap", class: "card-img-top") %>
   <% end %>
   <div class="card-body">

@@ -17,7 +17,7 @@
           </li>
         </ul>
       <% end %>
-      <% unless medium.video_thumbnail_link.nil? %>
+      <% if medium.video_thumbnail_link.present? %>
       <%= image_tag(medium.video_thumbnail_link, alt: "Card image cap", class: "card-img-top") %>
       <% end %>
       <% unless medium.caption.nil? %>
