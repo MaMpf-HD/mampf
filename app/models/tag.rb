@@ -6,7 +6,8 @@ class Tag < ApplicationRecord
   has_many :course_tag_joins
   has_many :courses, through: :course_tag_joins
   has_many :lecture_tag_disabled_joins
-  has_many :disabled_lectures, through: :lecture_tag_disabled_joins, source: :lecture
+  has_many :disabled_lectures, through: :lecture_tag_disabled_joins,
+                               source: :lecture
   has_many :lecture_tag_additional_joins
   has_many :additional_lectures, through: :lecture_tag_additional_joins,
                                  source: :lecture
@@ -58,7 +59,7 @@ class Tag < ApplicationRecord
   end
 
   def tags_in_neighbourhood
-    ids = related_tags.all.map{ |t| t.related_tags.pluck(:id) }.flatten.uniq
+    ids = related_tags.all.map { |t| t.related_tags.pluck(:id) }.flatten.uniq
     related_ids = related_tags.pluck(:id) + [id]
     Tag.where(id: ids - related_ids)
   end
@@ -71,11 +72,10 @@ class Tag < ApplicationRecord
   end
 
   def in_lectures?(lectures)
-    lectures.map{ |l| in_lecture?(l) }.include?(true)
+    lectures.map { |l| in_lecture?(l) }.include?(true)
   end
 
   def lectures
     Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))
   end
-
 end

@@ -15,11 +15,11 @@ class Lecture < ApplicationRecord
   has_many :users, through: :lecture_user_joins
   has_many :connections, dependent: :destroy
   has_many :preceding_lectures, through: :connections, dependent: :destroy
-  validates :kaviar, :inclusion => {:in => [true, false]}
-  validates :reste, :inclusion => {:in => [true, false]}
-  validates :sesam, :inclusion => {:in => [true, false]}
-  validates :erdbeere, :inclusion => {:in => [true, false]}
-  validates :keks, :inclusion => {:in => [true, false]}
+  validates :kaviar, inclusion: { in: [true, false] }
+  validates :reste, inclusion: { in:  [true, false] }
+  validates :sesam, inclusion: { in: [true, false] }
+  validates :erdbeere, inclusion: { in: [true, false] }
+  validates :keks, inclusion: { in: [true, false] }
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 
@@ -60,5 +60,4 @@ class Lecture < ApplicationRecord
   def description
     { general: to_label }
   end
-
 end

@@ -5,7 +5,7 @@ class Medium < ApplicationRecord
   has_many :links, dependent: :destroy
   has_many :linked_media, through: :links, dependent: :destroy
   belongs_to :teachable, polymorphic: true
-  after_create :create_keks_link, if: :keks_link_missing?
+  after_save :create_keks_link, if: :keks_link_missing?
   validates :sort, presence: true,
                    inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
                                        KeksQuestion KeksQuiz] }
@@ -82,7 +82,6 @@ class Medium < ApplicationRecord
     teachable.lecture
   end
 
-
   def card_subheader
     return description if description.present?
     return teachable.description[:specific] unless teachable.description[:specific].nil?
@@ -91,10 +90,9 @@ class Medium < ApplicationRecord
   end
 
   def card_subheader_teachable
-    return if description.present? ||  teachable.description[:specific].nil?
+    return if description.present? || teachable.description[:specific].nil?
     teachable
   end
-
 
   def sort_de
     { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',
@@ -140,7 +138,7 @@ class Medium < ApplicationRecord
   end
 
   def related_to_lectures?(lectures)
-    lectures.map{ |l| related_to_lecture?(l) }.include?(true)
+    lectures.map { |l| related_to_lecture?(l) }.include?(true)
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }

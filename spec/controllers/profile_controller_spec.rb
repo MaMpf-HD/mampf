@@ -7,13 +7,6 @@ RSpec.describe ProfileController, type: :controller do
     sign_in @user
   end
 
-  describe "GET #show" do
-    it "returns http success" do
-      get :show
-      expect(response).to have_http_status(:success)
-    end
-  end
-
   describe "GET #edit" do
     it "returns http success" do
       get :edit
