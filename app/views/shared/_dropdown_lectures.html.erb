@@ -1,4 +1,5 @@
 <% current_lecture = Lecture.find_by_id(cookies[:current_lecture]) %>
+<% current_lecture ||= current_user.lectures.first %>
 <li class="nav-item">
 <% if lectures.count > 1 then %>
 <div class="btn-group">

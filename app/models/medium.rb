@@ -64,7 +64,7 @@ class Medium < ApplicationRecord
   end
 
   def caption
-    return heading unless heading.nil?
+    return heading if heading.present?
     return unless sort == 'Kaviar' && teachable_sort == 'Lesson'
     teachable.section_titles
   end
