@@ -33,16 +33,11 @@
          </main>
        </div>
      </div>
-
-    <hr>
+<!-- 
+    <hr> -->
 
     <footer>
-      <p>&copy; MaMpf Team 2017. MaMpf ist auf <%= link_to 'github', 'https://github.com/fosterfarrell9/mampf' %>.
-      Powered by <%= link_to 'Rails','http://rubyonrails.org/', target: :_blank %>, <%= link_to 'Bootstrap', 'https://getbootstrap.com/', target: :_blank %> and
-      <%= link_to 'Docker', 'https://www.docker.com/', target: :_blank %>.
-      <br>
-        Bugs meldest Du am besten auf der <%= link_to 'github', 'https://github.com/fosterfarrell9/mampf' %>-Seite.
-         Weiteres Feedback kannst Du gerne auch an <%= mail_to 'mampf@mathi.uni-heidelberg.de', nil %> schicken.
+      <%= render partial: 'shared/footer' %>
     </footer>
 
   </div>
