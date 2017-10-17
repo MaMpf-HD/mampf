@@ -19,6 +19,7 @@ class Lecture < ApplicationRecord
   validates :reste, inclusion: { in:  [true, false] }
   validates :sesam, inclusion: { in: [true, false] }
   validates :erdbeere, inclusion: { in: [true, false] }
+  validates :kiwi, inclusion: { in: [true, false] }
   validates :keks, inclusion: { in: [true, false] }
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
@@ -54,7 +55,7 @@ class Lecture < ApplicationRecord
 
   def modules
     { 'KaViaR' => kaviar, 'SeSAM' => sesam, 'RestE' => reste, 'KeKs' => keks,
-      'ErDBeere' => erdbeere }
+      'ErDBeere' => erdbeere, 'KIWi' => kiwi }
   end
 
   def description

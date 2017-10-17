@@ -7,7 +7,7 @@ class Medium < ApplicationRecord
   belongs_to :teachable, polymorphic: true
   after_save :create_keks_link, if: :keks_link_missing?
   validates :sort, presence: true,
-                   inclusion: { in: %w[Kaviar Erdbeere Sesam Reste
+                   inclusion: { in: %w[Kaviar Erdbeere Sesam Kiwi Reste
                                        KeksQuestion KeksQuiz] }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :author, presence: true
@@ -86,7 +86,8 @@ class Medium < ApplicationRecord
     return description if description.present?
     return teachable.description[:specific] unless teachable.description[:specific].nil?
     { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
-      'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video' }[sort]
+      'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video',
+      'Kiwi' => 'KIWi Video' }[sort]
   end
 
   def card_subheader_teachable
@@ -97,7 +98,7 @@ class Medium < ApplicationRecord
   def sort_de
     { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',
       'KeksQuestion' => 'Keks-Frage', 'KeksQuiz' => 'Keks-Quiz',
-      'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere' }[sort]
+      'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }[sort]
   end
 
   def question_ids

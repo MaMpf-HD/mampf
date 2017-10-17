@@ -2,7 +2,7 @@ require 'faker'
 
 FactoryGirl.define do
   factory :medium do
-    sort %w[Kaviar Erdbeere Sesam Reste].sample
+    sort %w[Kaviar Erdbeere Sesam Kiwi Reste].sample
     author { Faker::Name.name }
     title { Faker::Book.title + ' ' + Random.rand(1..9).to_s }
     association :teachable, factory: [:lesson, :with_tags]
