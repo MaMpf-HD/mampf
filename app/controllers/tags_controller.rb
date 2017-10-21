@@ -1,3 +1,4 @@
+# TagsController
 class TagsController < ApplicationController
   before_action :set_tag, only: [:show]
   authorize_resource
@@ -10,8 +11,8 @@ class TagsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_tag
     @tag = Tag.find_by_id(params[:id])
-    if !@tag.present?
-      redirect_to :root, alert: 'Ein Begriff mit der angeforderten id existiert nicht.'
-    end
+    return if @tag.present?
+    redirect_to :root, alert: 'Ein Begriff mit der angeforderten id existiert
+                               nicht.'
   end
 end

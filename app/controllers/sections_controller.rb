@@ -1,3 +1,4 @@
+# SectionController
 class SectionsController < ApplicationController
   before_action :set_section, only: [:show]
   authorize_resource
@@ -10,8 +11,8 @@ class SectionsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_section
     @section = Section.find_by_id(params[:id])
-    if !@section.present?
-      redirect_to :root, alert: 'Ein Abschnitt mit der angeforderten id existiert nicht.'
-    end
+    return if @section.present?
+    redirect_to :root, alert: 'Ein Abschnitt mit der angeforderten id existiert
+                               nicht.'
   end
 end

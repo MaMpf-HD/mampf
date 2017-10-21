@@ -52,6 +52,7 @@ class Medium < ApplicationRecord
                               format:
                                 { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
                               if: :manuscript_content?
+  validates :extras_description, presence: true, if: :extra_content?
 
   def video_aspect_ratio
     return unless height != 0 && width != 0
@@ -84,7 +85,8 @@ class Medium < ApplicationRecord
 
   def card_subheader
     return description if description.present?
-    return teachable.description[:specific] unless teachable.description[:specific].nil?
+    return teachable.description[:specific] if
+      teachable.description[:specific].present?
     { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
       'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video',
       'Kiwi' => 'KIWi Video' }[sort]
@@ -121,9 +123,9 @@ class Medium < ApplicationRecord
   end
 
   def create_keks_link
-    self.update(external_reference_link:
-                  'https://keks.mathi.uni-heidelberg.de/hitme#hide-options' +
-                  '#hide-categories#question=' + question_id.to_s)
+    update(external_reference_link:
+             'https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
+             '#hide-categories#question=' + question_id.to_s)
   end
 
   def related_to_lecture?(lecture)
@@ -157,6 +159,10 @@ class Medium < ApplicationRecord
 
   def manuscript_content?
     manuscript_link.present?
+  end
+
+  def extra_content?
+    extras_description.present?
   end
 
   def nonempty_content?

@@ -1,4 +1,4 @@
-   <div class="col-12 col-md-6 col-lg-4 col-xl-3 px-2 pb-4">
+   <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-2">
     <div class="card bg-mdb-color-lighten-7">
       <div class="card-header bg-mdb-color-lighten-1">
         <%= link_to medium.card_header, medium.card_header_teachable, class: 'text-light' %>
@@ -47,6 +47,9 @@
           <% end %>
           <% if medium.external_reference_link.present? %>
             <%= link_to "Link", medium.external_reference_link, class: "btn btn-outline-secondary", target: :_blank %>
+          <% end %>
+          <% if medium.extras_link.present? %>
+            <%= link_to "Extras", medium.extras_link, class: "btn btn-outline-secondary", target: :_blank %>
           <% end %>
         </li>
       </ul>

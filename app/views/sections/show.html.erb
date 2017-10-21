@@ -10,7 +10,7 @@
     </div>
 </div>
 <% unless @section.tags.empty? && @section.lessons.empty? %>
-<div class="row">
+<div class="row pb-3">
     <% unless @section.tags.empty? %>
     <div class="col-12 col-md-6 col-lg-4 pt-3">
       <%= render partial: 'tags/tags', locals: { related_tags: @section.tags,

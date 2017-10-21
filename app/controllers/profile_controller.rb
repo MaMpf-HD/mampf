@@ -1,3 +1,4 @@
+# ProfileController
 class ProfileController < ApplicationController
   before_action :set_user
 

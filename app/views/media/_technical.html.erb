@@ -34,6 +34,15 @@
   <% if medium.external_reference_link.present? %>
   <li class="list-group-item bg-teal-lighten-5"><%= link_to 'externer Link', medium.external_reference_link, class: "btn btn-info", target: :_blank %></li>
   <% end %>
+  <% if medium.extras_link.present? %>
+  <li class="list-group-item bg-teal-lighten-5"><%= link_to 'Extras', medium.extras_link, class: "btn btn-info", target: :_blank %>
+  <% if medium.extras_description.present? %>
+  <ul>
+  <li>Beschreibung: <%= medium.extras_description %></li>
+  <ul>
+  <% end %>  
+  </li>
+  <% end %>
   </ul>
 </div>
 </div>

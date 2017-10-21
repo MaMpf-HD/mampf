@@ -1,3 +1,4 @@
+# User class
 class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
@@ -10,7 +11,7 @@ class User < ApplicationRecord
     return if subscription_type.nil?
     case subscription_type
     when 1
-      ids = lectures.all.map { |l| l.preceding_lectures.pluck(:id)}.flatten +
+      ids = lectures.all.map { |l| l.preceding_lectures.pluck(:id) }.flatten +
             lectures.all.pluck(:id)
       return Lecture.where(id: ids)
     when 2
@@ -27,5 +28,4 @@ class User < ApplicationRecord
     self.subscription_type = 1 if subscription_type.nil?
     self.admin = false if admin.nil?
   end
-
 end

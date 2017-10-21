@@ -40,7 +40,7 @@ Zur Zeit gibt es keine Neuigkeiten.
 </div>
 <% end %>
 <% unless @lecture.tags.empty? %>
-<div class="row pt-5">
+<div class="row pt-5 pb-3">
 <div class="col-12">
   <%= render partial: 'tags/tags_toggle', locals: { tags: @lecture.tags,
                                                     tags_description: 'Verknüpfte Begriffe',

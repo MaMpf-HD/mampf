@@ -6,7 +6,7 @@
   <div class="card-body">
   <ul>
   <li>Typ: <%= medium.sort_de %></li>
-  <% if !medium.description.nil? %>
+  <% if medium.description.present? %>
   <li>Beschreibung: <%= medium.description %></li>
   <% end %>
   <% if medium.teachable_sort == 'Course' %>

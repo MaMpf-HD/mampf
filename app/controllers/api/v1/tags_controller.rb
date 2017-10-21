@@ -1,3 +1,4 @@
+# TagController for API
 class Api::V1::TagsController < ApplicationController
   skip_before_action :authenticate_user!
 

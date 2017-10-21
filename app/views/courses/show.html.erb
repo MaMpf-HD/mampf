@@ -13,7 +13,7 @@
 </div>
 <% end %>
 <% unless @course.tags.empty? %>
-<div class="row pt-5">
+<div class="row pt-3 pb-2">
 <div class="col-12">
   <%= render partial: 'tags/tags_toggle', locals: { tags: @course.tags,
                                                     tags_description: 'Verknüpfte Begriffe',

@@ -1,3 +1,4 @@
+# MediaController for API
 class Api::V1::MediaController < ApplicationController
   skip_before_action :authenticate_user!
 

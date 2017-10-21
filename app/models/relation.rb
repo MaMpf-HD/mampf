@@ -6,14 +6,14 @@ class Relation < ApplicationRecord
 
   validates :related_tag, uniqueness: { scope: :tag,
                                         message: 'relation already exists' }
-  after_create :create_inverse, unless: :inverse?
-  after_create :destroy_relation, if: :self_inverse?
+  after_save :create_inverse, unless: :inverse?
+  after_save :destroy, if: :self_inverse?
   after_destroy :destroy_inverses, if: :inverse?
 
   private
 
   def create_inverse
-     self.class.create(inverse_relation_options)
+    self.class.create(inverse_relation_options)
   end
 
   def destroy_inverses
@@ -24,12 +24,8 @@ class Relation < ApplicationRecord
     tag_id == related_tag_id
   end
 
-  def destroy_relation
-    self.destroy
-  end
-
   def inverse?
-    self.class.exists?(inverse_relation_options) && !self_inverse?
+    self.class.exists?(inverse_relation_options) || self_inverse?
   end
 
   def inverses

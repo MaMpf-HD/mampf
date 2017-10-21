@@ -4,7 +4,7 @@ RSpec.describe ProfileController, type: :controller do
 
   before(:all) do
     @user = User.create
-    sign_in @user
+    login_as @user, scope: :user
   end
 
   describe "GET #edit" do

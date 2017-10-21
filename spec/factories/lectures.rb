@@ -2,7 +2,7 @@ FactoryGirl.define do
   factory :lecture do
     association :course, factory: [:course, :with_tags]
     association :teacher
-    association :term
+    term Term.first_or_create(year: 2016, season: 'WS')
     kaviar [true, false].sample
     keks [true, false].sample
     sesam [true, false].sample
@@ -15,8 +15,5 @@ FactoryGirl.define do
     trait :with_additional_tags do
       after(:build) { |l| l.additional_tags = create_list(:tag, 2) }
     end
-    # trait :with_lessons do
-    #   after(:build) { |l| l.lessons = create_list(:lesson, 3) }
-    # end
   end
 end
