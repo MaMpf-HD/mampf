@@ -1,36 +1,41 @@
-<% modules = ['KaViaR', 'SeSAM', 'KIWi', 'KeKs', 'RestE'] %>
+<% modules = { '1' => 'KaViaR', '2' => 'SeSAM', '3' => 'KIWi', '4' => 'KeKs',
+               '5' => 'RestE' } %>
 <nav class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
   <ul class="nav nav-pills flex-column">
     <% if user_signed_in? %>
-    <% modules.each do |m| %>
-          <li class="nav-item">
-            <% if Lecture.find_by_id(lecture_id).modules[m] %>
-            <% active = params[:module_id].to_i == modules.index(m)+1 ? ' active' : '' %>
-            <%= link_to m, lecture_module_path(lecture_id: lecture_id, module_id: modules.index(m)+1), class: 'nav-link' + active %>
+      <% modules.each do |module_id, module_name| %>
+        <li class="nav-item">
+          <% if Lecture.find_by_id(lecture_id).modules[module_name] %>
+            <% active = params[:module_id].to_i == module_id ? ' active' : '' %>
+            <%= link_to module_name, lecture_module_path(lecture_id: lecture_id,
+                                                         module_id: module_id),
+                        class: 'nav-link' + active %>
+          <% else %>
+            <% if module_name == 'KeKs' %>
+              <%= link_to module_name, 'https://keks.mathi.uni-heidelberg.de',
+                                       class: 'nav-link',
+                                       target: :_blank %>
             <% else %>
-            <% if m == 'KeKs' %>
-              <%= link_to m, 'https://keks.mathi.uni-heidelberg.de', class: 'nav-link', target: :_blank %>
-            <% else %>
-              <span class='nav-link disabled'><%= m %></span>
+              <span class='nav-link disabled'><%= module_name %></span>
             <% end %>
-            <% end %>
-          </li>
-    <% end %>
-    <li class="nav-item">
-      <a href="https://erdbeere.mathi.uni-heidelberg.de/" class="nav-link" target="_blank">
-        <img src="/erdbeere-16x16.png" width="16" height="16">
-        ErDBeere
-      </a>
-    </li>
-    <li class="nav-item">
-      <a href="https://muesli.mathi.uni-heidelberg.de/" class="nav-link" target="_blank">
-        <img src="/muesli-16x16.png" width="16" height="16">
-        MÜSLI
-      </a>
-    </li>
+          <% end %>
+        </li>
+      <% end %>
+      <li class="nav-item">
+        <a href="https://erdbeere.mathi.uni-heidelberg.de/" class="nav-link" target="_blank">
+          <img src="/erdbeere-16x16.png" width="16" height="16">
+          ErDBeere
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="https://muesli.mathi.uni-heidelberg.de/" class="nav-link" target="_blank">
+          <img src="/muesli-16x16.png" width="16" height="16">
+          MÜSLI
+        </a>
+      </li>
     <% else %>
-      <% modules.each do |m| %>
-         <span class='nav-link disabled'><%= m %></span>
+      <% modules.each do |module_id, module_name| %>
+          <span class='nav-link disabled'><%= module_name %></span>
       <% end %>
       <span class='nav-link disabled'><img src="/erdbeere-16x16.png" width="16" height="16">ErDBeere</span>
       <span class='nav-link disabled'><img src="/muesli-16x16.png" width="16" height="16">Müsli</span>
