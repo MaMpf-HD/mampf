@@ -3,8 +3,13 @@ require 'rails_helper'
 RSpec.describe ProfileController, type: :controller do
 
   before(:all) do
-    @user = User.create
-    login_as @user, scope: :user
+    FactoryGirl.create(:lecture) if Lecture.count == 0
+    @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
+    login_as @user
+  end
+
+  after(:all) do
+    logout
   end
 
   describe "GET #edit" do
@@ -16,7 +21,7 @@ RSpec.describe ProfileController, type: :controller do
 
   describe "GET #update" do
     it "returns http success" do
-      get :update
+      patch :update
       expect(response).to have_http_status(:success)
     end
   end
