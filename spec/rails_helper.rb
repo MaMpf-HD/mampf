@@ -33,15 +33,10 @@ RSpec.configure do |config|
 
   # For Devise >= 4.1.0
   config.include Devise::Test::ControllerHelpers, type: :controller
-#  config.include Devise::Test::IntegrationHelpers, type: :feature
-  config.include Warden::Test::Helpers
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
-  config.after :each do
-    Warden.test_reset!
-  end
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.

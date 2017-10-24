@@ -2,27 +2,27 @@ require 'rails_helper'
 
 RSpec.describe ProfileController, type: :controller do
 
-  before(:all) do
-    FactoryGirl.create(:lecture) if Lecture.count == 0
-    @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
-    login_as @user
-  end
-
-  after(:all) do
-    logout
-  end
-
-  describe "GET #edit" do
+  describe "#edit" do
+    before do
+      FactoryGirl.create(:lecture) if Lecture.count == 0
+      @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
+    end
     it "returns http success" do
+      sign_in @user
       get :edit
       expect(response).to have_http_status(:success)
     end
   end
 
-  describe "GET #update" do
-    it "returns http success" do
-      patch :update
-      expect(response).to have_http_status(:success)
+  describe "#update" do
+    before do
+      FactoryGirl.create(:lecture) if Lecture.count == 0
+      @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
+    end
+    it "redirects to the main page" do
+      sign_in @user
+      patch :update, params: { user: {lecture_ids: ['1'], subscription_type: '2' } }
+      expect(response).to redirect_to root_path
     end
   end
 

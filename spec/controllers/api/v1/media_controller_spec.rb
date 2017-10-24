@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::MediaController, type: :controller do
-  describe "GET #keks_question" do
+  describe "#keks_question" do
     it "returns http success" do
       @keks_medium = FactoryGirl.create(:medium, sort: "KeksQuestion",
                                          question_id: 2567)
