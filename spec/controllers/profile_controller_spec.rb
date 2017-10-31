@@ -1,29 +1,81 @@
 require 'rails_helper'
 
 RSpec.describe ProfileController, type: :controller do
+  describe '#edit' do
+    context 'as an authenticated user' do
+      before do
+        lecture = FactoryGirl.create(:lecture)
+        @user = FactoryGirl.create(:user, lectures: [lecture], sign_in_count: 5)
+      end
 
-  describe "#edit" do
-    before do
-      FactoryGirl.create(:lecture) if Lecture.count == 0
-      @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
+      it 'responds successfully' do
+        sign_in @user
+        get :edit
+        expect(response).to be_success
+      end
+
+      it 'returns a 200 response' do
+        sign_in @user
+        get :edit
+        expect(response).to have_http_status '200'
+      end
     end
-    it "returns http success" do
-      sign_in @user
-      get :edit
-      expect(response).to have_http_status(:success)
+    context 'as an unauthenticated user' do
+      it 'returns a 302 response' do
+        get :edit
+        expect(response).to have_http_status '302'
+      end
+
+      it 'redirects to the sign-in page' do
+        get :edit
+        expect(response).to redirect_to user_session_path
+      end
     end
   end
 
-  describe "#update" do
+  describe '#update' do
     before do
-      FactoryGirl.create(:lecture) if Lecture.count == 0
-      @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
+      @new_lecture = FactoryGirl.create(:lecture)
     end
-    it "redirects to the main page" do
-      sign_in @user
-      patch :update, params: { user: {lecture_ids: ['1'], subscription_type: '2' } }
-      expect(response).to redirect_to root_path
+    context 'as an authenticated user' do
+      before do
+        lecture = FactoryGirl.create(:lecture)
+        @user = FactoryGirl.create(:user, lectures: [lecture],
+                                          subscription_type: 1,
+                                          sign_in_count: 5)
+      end
+      it 'updates the subscribed_lectures' do
+        sign_in @user
+        patch :update, params: { user: { lecture_ids: [@new_lecture.id.to_s],
+                                         subscription_type: '2' } }
+        expect(@user.reload.lectures).to eq [@new_lecture]
+      end
+
+      it 'updates the subscription type' do
+        sign_in @user
+        patch :update, params: { user: { lecture_ids: [@new_lecture.id.to_s],
+                                         subscription_type: '2' } }
+        expect(@user.reload.subscription_type).to eq 2
+      end
+
+      it 'redirects to the main page' do
+        sign_in @user
+        patch :update, params: { user: { lecture_ids: [@new_lecture.id.to_s],
+                                         subscription_type: '2' } }
+        expect(response).to redirect_to root_path
+      end
+    end
+    context 'as an unauthenticated user' do
+      it 'returns a 302 response' do
+        patch :update, params: { user: { lecture_ids: [@new_lecture.id.to_s],
+                                         subscription_type: '2' } }
+        expect(response).to have_http_status '302'
+      end
+      it 'redirects to the sign-in page' do
+        patch :update, params: { user: { lecture_ids: [@new_lecture.id.to_s],
+                                         subscription_type: '2' } }
+        expect(response).to redirect_to user_session_path
+      end
     end
   end
-
 end
