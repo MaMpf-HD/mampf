@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :section do
     association :chapter
     number { Faker::Number.between(1, 999) }

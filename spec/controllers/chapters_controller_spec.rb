@@ -3,11 +3,11 @@ require 'rails_helper'
 RSpec.describe ChaptersController, type: :controller do
   describe '#show' do
     before do
-      @chapter = FactoryGirl.create(:chapter)
+      @chapter = FactoryBot.create(:chapter)
     end
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryBot.create(:user)
       end
 
       it 'responds successfully' do

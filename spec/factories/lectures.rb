@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :lecture do
     association :course, factory: [:course, :with_tags]
     association :teacher

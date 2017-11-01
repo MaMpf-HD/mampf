@@ -3,11 +3,11 @@ require 'rails_helper'
 RSpec.describe CoursesController, type: :controller do
   describe '#show' do
     before do
-      @course = FactoryGirl.create(:course)
+      @course = FactoryBot.create(:course)
     end
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryBot.create(:user)
       end
 
       it 'responds successfully' do

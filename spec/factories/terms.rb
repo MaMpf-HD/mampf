@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :term do
     season 'WS'
     sequence(:year) { |n| 2000 + n }

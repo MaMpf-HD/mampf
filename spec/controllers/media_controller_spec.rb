@@ -3,11 +3,11 @@ require 'rails_helper'
 RSpec.describe MediaController, type: :controller do
   describe '#index' do
     before do
-      FactoryGirl.create(:medium)
+      FactoryBot.create(:medium)
     end
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryBot.create(:user)
       end
       it 'responds successfully' do
         sign_in @user
@@ -37,11 +37,11 @@ RSpec.describe MediaController, type: :controller do
 
   describe '#show' do
     before do
-      @medium = FactoryGirl.create(:medium)
+      @medium = FactoryBot.create(:medium)
     end
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryBot.create(:user)
       end
       it 'responds successfully' do
         sign_in @user

@@ -2,20 +2,20 @@ require 'rails_helper'
 
 RSpec.describe Tag, type: :model do
   it 'has a valid factory' do
-    expect(FactoryGirl.build(:tag)).to be_valid
+    expect(FactoryBot.build(:tag)).to be_valid
   end
   it 'is invalid without a title' do
-    tag = FactoryGirl.build(:tag, title: nil)
+    tag = FactoryBot.build(:tag, title: nil)
     expect(tag).to be_invalid
   end
   it 'is invalid with a duplicate title' do
-    FactoryGirl.create(:tag, title: 'usual BS')
-    tag = FactoryGirl.build(:tag, title: 'usual BS')
+    FactoryBot.create(:tag, title: 'usual BS')
+    tag = FactoryBot.build(:tag, title: 'usual BS')
     expect(tag).to be_invalid
   end
   describe 'graph theoretical methods' do
     before(:all) do
-      @tags = FactoryGirl.create_list(:tag, 10)
+      @tags = FactoryBot.create_list(:tag, 10)
       @tags[0].related_tags << [@tags[1], @tags[2]]
       @tags[1].related_tags << [@tags[3], @tags[6]]
       @tags[3].related_tags << [@tags[4], @tags[5]]

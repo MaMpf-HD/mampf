@@ -4,11 +4,11 @@ RSpec.describe TeachersController, type: :controller do
 
   describe '#show' do
     before do
-      @teacher = FactoryGirl.create(:teacher)
+      @teacher = FactoryBot.create(:teacher)
     end
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryBot.create(:user)
       end
       it 'responds successfully' do
         sign_in @user

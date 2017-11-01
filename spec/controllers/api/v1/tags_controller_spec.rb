@@ -10,7 +10,7 @@ RSpec.describe Api::V1::TagsController, type: :controller do
 
   describe '#show' do
     before do
-      @tag = FactoryGirl.create(:tag)
+      @tag = FactoryBot.create(:tag)
     end
     it 'responds successfully' do
       get :show, params: { id: @tag.id }

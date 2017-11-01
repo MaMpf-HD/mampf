@@ -44,8 +44,8 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
-  # FactoryGirl.create(:lecture) if Lecture.count == 0
-  # @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
+  # FactoryBot.create(:lecture) if Lecture.count == 0
+  # @user = FactoryBot.create(:user, lectures: Lecture.all, sign_in_count: 5)
   # post 'devise/sessions#create', params: { email: @user.email, password: @user.password }
   # put response.body
   # expect(response).to be_success

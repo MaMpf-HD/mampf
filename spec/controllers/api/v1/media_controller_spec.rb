@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::V1::MediaController, type: :controller do
   describe '#keks_question' do
     before do
-      @keks_medium = FactoryGirl.create(:medium, sort: 'KeksQuestion',
+      @keks_medium = FactoryBot.create(:medium, sort: 'KeksQuestion',
                                                  question_id: 2567)
     end
     it 'responds_successfully' do

@@ -4,7 +4,7 @@ RSpec.describe ProfileController, type: :controller do
   describe '#edit' do
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryBot.create(:user)
       end
 
       it 'responds successfully' do
@@ -34,11 +34,11 @@ RSpec.describe ProfileController, type: :controller do
 
   describe '#update' do
     before do
-      @lecture = FactoryGirl.create(:lecture)
+      @lecture = FactoryBot.create(:lecture)
     end
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user, subscription_type: 1)
+        @user = FactoryBot.create(:user, subscription_type: 1)
       end
       it 'updates the subscribed_lectures' do
         sign_in @user

@@ -1,6 +1,6 @@
 require 'faker'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :tag, aliases: [:related_tag] do
     title { Faker::Company.bs + ' ' + Random.rand(1..9999).to_s }
     trait :with_related_tags do

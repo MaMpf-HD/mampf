@@ -1,6 +1,6 @@
 require 'faker'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :medium do
     sort %w[Kaviar Erdbeere Sesam Kiwi Reste].sample
     author { Faker::Name.name }

@@ -1,6 +1,6 @@
 require 'faker'
 
-FactoryGirl.define do
+FactoryBot.define do
   factory :lesson do
     association :lecture, factory: [:lecture, :with_disabled_tags,
                                     :with_additional_tags]
