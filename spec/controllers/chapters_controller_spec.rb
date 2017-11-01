@@ -1,23 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe ChaptersController, type: :controller do
-
-  describe "#show" do
+  describe '#show' do
     before do
       @chapter = FactoryGirl.create(:chapter)
     end
     context 'as an authenticated user' do
       before do
-        @user = FactoryGirl.create(:user, lectures: Lecture.all, sign_in_count: 5)
+        @user = FactoryGirl.create(:user)
       end
 
-      it "responds successfully" do
+      it 'responds successfully' do
         sign_in @user
         get :show, params: { id: @chapter.id }
         expect(response).to be_success
       end
 
-      it "returns a 200 response" do
+      it 'returns a 200 response' do
         sign_in @user
         get :show, params: { id: @chapter.id }
         expect(response).to have_http_status '200'
