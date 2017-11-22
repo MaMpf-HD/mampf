@@ -10,6 +10,10 @@ RSpec.describe Api::V1::MediaController, type: :controller do
       get :keks_question, params: { id: @keks_medium.question_id }
       expect(response).to be_success
     end
+    it 'returns a 200 response' do
+      get :keks_question, params: { id: @keks_medium.question_id }
+      expect(response).to have_http_status '200'
+    end
     it 'returns the correct video_link' do
       get :keks_question, params: { id: @keks_medium.question_id }
       question_response = JSON.parse(response.body, symbolize_names: true)
