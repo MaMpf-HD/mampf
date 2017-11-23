@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'search/index'
+
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :teachers, only: [:show]
   resources :lectures, only: [:show]
@@ -9,6 +11,8 @@ Rails.application.routes.draw do
   resources :lessons, only: [:show]
   resources :sections, only: [:show]
   resources :chapters, only: [:show]
+
+  get 'search/index'
 
   get 'profile/edit', as: 'edit_profile'
   get 'lectures/:lecture_id/modules/:module_id', to: 'media#index', as: 'lecture_module'

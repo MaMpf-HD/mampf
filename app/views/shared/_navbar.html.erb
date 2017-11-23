@@ -31,9 +31,9 @@
         <%= render partial: 'shared/dropdown_lectures', locals: { lectures: current_user.lectures } %>
       </ul>
     <% end %>
-    <form class="form-inline mt-2 mt-md-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Funktioniert bald..." aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Suche</button>
-    </form>
+    <%= form_tag(search_index_path, method: 'get', class: 'form-inline mt-2 mt-md-0') do %>
+    <%= search_field_tag 'search', nil, class: 'form-control mr-sm-2', placeholder: 'Begriff eingeben'  %>
+    <%= submit_tag "Suche", class: 'btn btn-outline-success my-2 my-sm-0' %>
+    <% end %>
   </div>
 </nav>

@@ -42,10 +42,11 @@ gem 'rails_admin_import', '~>2.0'
 gem 'erubis'
 gem 'cancancan'
 gem 'jquery-rails'
-gem 'bootstrap', '~> 4.0.0.beta'
+gem 'bootstrap', '~> 4.0.0.beta2.1'
 gem 'devise-bootstrap-views', '1.0.0.alpha1'
 gem 'bootstrap_form'
 gem 'rubocop', '~> 0.50.0', require: false
+gem 'fuzzy-string-match'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

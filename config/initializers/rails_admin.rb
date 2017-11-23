@@ -48,8 +48,8 @@ RailsAdmin.config do |config|
     # history_show
   end
 
-  models = ['Chapter', 'Course', 'Lecture', 'Lesson', 'Medium',
-            'Section', 'Tag', 'Teacher', 'Term']
+  models = ['Chapter', 'Course', 'Lecture', 'Lesson', 'Section', 'Tag',
+            'Teacher', 'Term']
 
   RailsAdmin.config do |config|
     models.each do |m|
@@ -57,6 +57,38 @@ RailsAdmin.config do |config|
         list do
           exclude_fields :created_at, :updated_at
         end
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model User do
+      list do
+        field :id
+        field :email
+        field :created_at
+        field :sign_in_count do
+          label 'Visits'
+          column_width 80
+        end
+        field :current_sign_in_at
+        field :lectures
+        field :subscription_type do
+          label 'Type'
+        end
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model Medium do
+      list do
+        field :id
+        field :title
+        field :sort
+        field :teachable
+        field :heading
+        field :linked_media
       end
     end
   end
