@@ -9,7 +9,7 @@ Treffer aus der Datenbank nicht berücksichtigt.
 <% end %>
 <% if filtered_tags.present? then %>
 <div class="row">
-<div class="col-12 col-md-6 col-lg-6 pt-3 pb-3">
+<div class="col-12 col-lg-8 pt-3 pb-3">
 <%= render partial: 'tags/tags', locals: { related_tags: filtered_tags,
                                            tags_description: "Suchergebnisse für den Begriff \"#{@search_string}\""} %>
 </div>
@@ -21,7 +21,7 @@ Treffer aus der Datenbank nicht berücksichtigt.
   <% if filtered_similar_tags.present? then %>
     Meintest Du vielleicht etwas anderes?
     <div class="row">
-    <div class="col-12 col-md-6 col-lg-6 pt-3 pb-3">
+    <div class="col-12 col-lg-8 pt-3 pb-3">
     <%= render partial: 'tags/tags', locals: { related_tags: filtered_similar_tags,
                                              tags_description: "Zum Suchbegriff \"#{@search_string}\" ähnliche Begriffe"} %>
     </div>
