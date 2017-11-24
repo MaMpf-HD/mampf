@@ -2,18 +2,19 @@
 Deine Suche nach dem Begriff "<%= @search_string %>" hat <%= filtered_tags.count %>
 Treffer ergeben.
 <% if @tags.count != filtered_tags.count then %>
-Aufgrund Deiner <%= link_to "Profileinstellungen", edit_profile_path %>
-wurde<%= @tags.count - filtered_tags.count > 1 ? 'n' : '' %>
-<%= @tags.count - filtered_tags.count %>
-Treffer aus der Datenbank nicht berücksichtigt.
+  Aufgrund Deiner <%= link_to "Profileinstellungen", edit_profile_path %>
+  wurde<%= @tags.count - filtered_tags.count > 1 ? 'n' : '' %>
+  <%= @tags.count - filtered_tags.count %>
+  Treffer aus der Datenbank nicht berücksichtigt.
 <% end %>
 <% if filtered_tags.present? then %>
-<div class="row">
-<div class="col-12 col-lg-8 pt-3 pb-3">
-<%= render partial: 'tags/tags', locals: { related_tags: filtered_tags,
-                                           tags_description: "Suchergebnisse für den Begriff \"#{@search_string}\""} %>
-</div>
-</div>
+  <div class="row">
+    <div class="col-12 col-lg-8 pt-3 pb-3">
+      <%= render partial: 'tags/tags',
+                 locals: { related_tags: filtered_tags,
+                           tags_description: "Suchergebnisse für den Begriff \"#{@search_string}\""} %>
+    </div>
+  </div>
 <% end %>
 <% if @tags.empty? then %>
   <% similar_tags = similar_tags(@search_string) %>
@@ -21,10 +22,11 @@ Treffer aus der Datenbank nicht berücksichtigt.
   <% if filtered_similar_tags.present? then %>
     Meintest Du vielleicht etwas anderes?
     <div class="row">
-    <div class="col-12 col-lg-8 pt-3 pb-3">
-    <%= render partial: 'tags/tags', locals: { related_tags: filtered_similar_tags,
-                                             tags_description: "Zum Suchbegriff \"#{@search_string}\" ähnliche Begriffe"} %>
+      <div class="col-12 col-lg-8 pt-3 pb-3">
+        <%= render partial: 'tags/tags',
+                   locals: { related_tags: filtered_similar_tags,
+                             tags_description: "Zum Suchbegriff \"#{@search_string}\" ähnliche Begriffe"} %>
+      </div>
     </div>
-  </div>
   <% end %>
 <% end %>
