@@ -1,6 +1,6 @@
 <% filtered_tags = filter_tags_by_lectures(@tags, current_user.related_lectures) %>
-Deine Suche nach dem Begriff "<%= @search_string %>" hat <%= filtered_tags.count %>
-Treffer ergeben.
+Deine Suche nach dem Begriff "<%= @search_string %>"
+hat <%= filtered_tags.count %> Treffer ergeben.
 <% if @tags.count != filtered_tags.count then %>
   Aufgrund Deiner <%= link_to "Profileinstellungen", edit_profile_path %>
   wurde<%= @tags.count - filtered_tags.count > 1 ? 'n' : '' %>

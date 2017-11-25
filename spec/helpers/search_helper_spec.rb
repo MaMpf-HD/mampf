@@ -1,15 +1,13 @@
 require 'rails_helper'
 
-# Specs in this file have access to a helper object that includes
-# the SearchHelper. For example:
-#
-# describe SearchHelper do
-#   describe "string concat" do
-#     it "concats two strings with spaces" do
-#       expect(helper.concat_strings("this","that")).to eq("this that")
-#     end
-#   end
-# end
 RSpec.describe SearchHelper, type: :helper do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe '#similar_tags' do
+    it 'returns a correct list of similar tags' do
+      tags = FactoryBot.create_list(:tag, 3)
+      tags[0].update(title: 'Zufallszahl')
+      tags[1].update(title: 'Zufalszahl')
+      tags[2].update(title: 'was ganz anderes')
+      expect(similar_tags('Zufallszahl').to_a).to eql(tags.first(2))
+    end
+  end
 end

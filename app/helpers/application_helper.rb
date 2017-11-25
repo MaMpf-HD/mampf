@@ -10,7 +10,11 @@ module ApplicationHelper
   end
 
   def split_list(list, n = 4)
-    list.in_groups_of((list.count / n.to_f).round)
+    groups = list.in_groups_of(list.count / n)
+    return groups if list.count % n == 0
+    tail = groups.pop(1).first
+    groups.last.concat(tail)
+    return groups
   end
 
   def filter_tags_by_lectures(tags, filter_lectures)
