@@ -7,7 +7,7 @@ FactoryBot.define do
     title { Faker::Book.title + ' ' + Random.rand(1..99).to_s }
     number { Faker::Number.between(1, 999) }
     trait :with_sections do
-      after(:build) { |l| l.sections = create_list(:section, 3) }
+      after(:build) { |c| c.sections = create_list(:section, 3) }
     end
   end
 end

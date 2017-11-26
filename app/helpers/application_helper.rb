@@ -10,9 +10,11 @@ module ApplicationHelper
   end
 
   def split_list(list, n = 4)
-    groups = list.in_groups_of(list.count / n)
-    return groups if list.count % n == 0
-    tail = groups.pop(1).first
+    group_size = (list.count / n) != 0 ? list.count / n : 1
+    groups = list.in_groups_of(group_size)
+    diff = groups.count - n
+    return groups if diff <= 0
+    tail = groups.pop(diff).first(diff).flatten
     groups.last.concat(tail)
     return groups
   end

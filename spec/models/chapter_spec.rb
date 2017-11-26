@@ -34,4 +34,30 @@ RSpec.describe Chapter, type: :model do
     chapter = FactoryBot.build(:chapter, number: 1000)
     expect(chapter).to be_invalid
   end
+  describe '#to_label' do
+    it 'returns the correct label' do
+      chapter = FactoryBot.create(:chapter, number: 5, title: 'Star Wars')
+      expect(chapter.to_label).to eq('Kapitel 5. Star Wars')
+    end
+  end
+  describe '#tags' do
+    it 'returns the correct tags' do
+      chapter = FactoryBot.create(:chapter)
+      first_section = FactoryBot.create(:section, :with_tags)
+      second_section = FactoryBot.create(:section, :with_tags)
+      chapter.sections << [first_section,second_section]
+      tags = first_section.tags + second_section.tags
+      expect(chapter.tags.to_a).to match_array(tags)
+    end
+  end
+  describe '#lessons' do
+    it 'returns the correct lessons' do
+      chapter = FactoryBot.create(:chapter)
+      first_section = FactoryBot.create(:section, :with_lessons)
+      second_section = FactoryBot.create(:section, :with_lessons)
+      chapter.sections << [first_section,second_section]
+      lessons = first_section.lessons + second_section.lessons
+      expect(chapter.lessons.to_a).to match_array(lessons)
+    end
+  end
 end

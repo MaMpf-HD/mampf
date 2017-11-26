@@ -48,7 +48,7 @@ RailsAdmin.config do |config|
     # history_show
   end
 
-  models = ['Chapter', 'Course', 'Lecture', 'Lesson', 'Section', 'Tag',
+  models = ['Chapter', 'Course', 'Lesson', 'Section', 'Tag',
             'Teacher', 'Term']
 
   RailsAdmin.config do |config|
@@ -92,5 +92,42 @@ RailsAdmin.config do |config|
       end
     end
   end
+
+  RailsAdmin.config do |config|
+    config.model Lecture do
+      list do
+        field :id
+        field :term
+        field :course
+        field :teacher
+        field :kaviar do
+          column_width 50
+          label 'Kav'
+        end
+        field :keks do
+          column_width 50
+          label 'Kek'
+        end
+        field :sesam do
+          column_width 50
+          label 'Ses'
+        end
+        field :kiwi do
+          column_width 50
+          label 'Kiw'
+        end
+        field :erdbeere do
+          column_width 50
+          label 'Erd'
+        end
+        field :reste do
+          column_width 50
+          label 'Res'
+        end
+      end
+    end
+  end
+
+
 
 end

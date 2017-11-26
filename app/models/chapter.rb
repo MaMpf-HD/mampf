@@ -15,10 +15,10 @@ class Chapter < ApplicationRecord
   end
 
   def tags
-    Tag.where(id: sections.all.map { |s| s.tags.pluck(:id) }.flatten)
+    Tag.where(id: sections.map { |s| s.tags.pluck(:id) }.flatten)
   end
 
   def lessons
-    Lesson.where(id: sections.all.map { |s| s.lessons.pluck(:id) }.flatten)
+    Lesson.where(id: sections.map { |s| s.lessons.pluck(:id) }.flatten)
   end
 end
