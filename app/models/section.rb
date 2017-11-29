@@ -29,15 +29,15 @@ class Section < ApplicationRecord
 
   def valid_lessons?
     return unless chapter.present? && lessons.present?
-    return true if lessons.pluck(:lecture_id).uniq == [lecture.id]
-    errors.add(:date, 'lessons do not belong to lecture for chapter')
+    return true if lessons.map(&:lecture_id).uniq == [lecture.id]
+    errors.add(:base, 'The lessons you selected do not belong to the lecture that is associated to to this section.')
     false
   end
 
   def valid_tags?
     return unless chapter.present? && tags.present?
-    return true if (tags.pluck(:id) - lecture.tags.pluck(:id)).empty?
-    errors.add(:date, 'tags do not belong to lecture for chapter')
+    return true if (tags.map(&:id) - lecture.tags.pluck(:id)).empty?
+    errors.add(:base, 'The tags you selected are not activated for the lecture that is associated to to this section.')
     false
   end
 end
