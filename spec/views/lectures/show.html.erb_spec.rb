@@ -1,5 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe "lectures/show.html.erb", type: :view do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'shows the correct title' do
+    @lecture = FactoryBot.create(:lecture)
+    user = FactoryBot.create(:user)
+    allow(view).to receive(:current_user).and_return(user)
+    render
+    expect(rendered).to match(@lecture.course.title)
+  end
 end

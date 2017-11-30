@@ -48,8 +48,7 @@ RailsAdmin.config do |config|
     # history_show
   end
 
-  models = ['Chapter', 'Course', 'Lesson', 'Section', 'Tag',
-            'Teacher', 'Term']
+  models = ['Section', 'Tag', 'Teacher', 'Term']
 
   RailsAdmin.config do |config|
     models.each do |m|
@@ -90,13 +89,63 @@ RailsAdmin.config do |config|
         field :heading
         field :linked_media
       end
+      edit do
+        field :title
+        field :author
+        field :sort
+        field :teachable
+        field :video_stream_link
+        field :video_file_link
+        field :video_thumbnail_link
+        field :manuscript_link
+        field :external_reference_link
+        field :tags
+        field :linked_media
+        field :heading
+        field :description
+        field :question_id
+        field :question_list
+        field :length
+        field :video_size
+        field :width
+        field :height
+        field :embedded_width
+        field :embedded_height
+        field :pages
+        field :manuscript_size
+        field :authoring_software
+        field :video_player
+        field :extras_link
+        field :extras_description
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model Chapter do
+      list do
+        field :title
+        field :number
+        field :lecture
+        field :sections
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model Course do
+      list do
+        exclude_fields :id, :media, :created_at, :updated_at
+      end
+      create do
+        exclude_fields :media
+      end
     end
   end
 
   RailsAdmin.config do |config|
     config.model Lecture do
       list do
-        field :id
         field :term
         field :course
         field :teacher
@@ -124,6 +173,40 @@ RailsAdmin.config do |config|
           column_width 50
           label 'Res'
         end
+      end
+      edit do
+        field :teacher
+        field :course
+        field :term
+        field :kaviar
+        field :sesam
+        field :keks
+        field :reste
+        field :erdbeere
+        field :kiwi
+        field :twitter
+        field :additional_tags
+        field :disabled_tags
+        field :preceding_lectures
+        field :chapters
+        field :lessons
+        fields :media
+      end
+      create do
+        exclude_fields :chapters, :lessons, :media
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model Lesson do
+      list do
+        field :date
+        field :lecture
+        field :number
+        field :sections
+        field :tags
+        field :media
       end
     end
   end

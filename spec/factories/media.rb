@@ -1,7 +1,7 @@
 require 'faker'
 
 FactoryBot.define do
-  factory :medium do
+  factory :medium, aliases: [:linked_medium] do
     sort %w[Kaviar Erdbeere Sesam Kiwi Reste].sample
     author { Faker::Name.name }
     title { Faker::Book.title + ' ' + Random.rand(1..9).to_s }

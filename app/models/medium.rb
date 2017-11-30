@@ -7,8 +7,7 @@ class Medium < ApplicationRecord
   belongs_to :teachable, polymorphic: true
   after_save :create_keks_link, if: :keks_link_missing?
   validates :sort, presence: true,
-                   inclusion: { in: %w[Kaviar Erdbeere Sesam Kiwi Reste
-                                       KeksQuestion KeksQuiz] }
+                   inclusion: { in: :sort_enum }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
@@ -53,6 +52,17 @@ class Medium < ApplicationRecord
                                 { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
                               if: :manuscript_content?
   validates :extras_description, presence: true, if: :extra_content?
+
+  after_initialize do
+    if new_record?
+      self.sort = 'Kaviar'
+      self.width ||= 1620
+    end
+  end
+
+  def sort_enum
+    %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
+  end
 
   def video_aspect_ratio
     return unless height != 0 && width != 0

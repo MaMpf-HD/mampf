@@ -79,7 +79,39 @@ RSpec.describe Lecture, type: :model do
       course = FactoryBot.create(:course, title: 'Usual bs')
       term =   FactoryBot.create(:term)
       lecture = FactoryBot.build(:lecture, course: course, term: term)
-      expect(lecture.to_label) .to eq('Usual bs, ' + term.to_label)
+      expect(lecture.to_label).to eq('Usual bs, ' + term.to_label)
+    end
+  end
+  describe '#short_title' do
+    it 'returns the correct short_title' do
+      course = FactoryBot.create(:course, short_title: 'bs')
+      term =   FactoryBot.create(:term)
+      lecture = FactoryBot.build(:lecture, course: course, term: term)
+      expect(lecture.short_title).to eq('bs ' + term.to_label_short)
+    end
+  end
+  describe '#title' do
+    it 'returns the correct title' do
+      course = FactoryBot.create(:course, title: 'Usual bs')
+      term =   FactoryBot.create(:term)
+      lecture = FactoryBot.build(:lecture, course: course, term: term)
+      expect(lecture.title).to eq('Usual bs, ' + term.to_label)
+    end
+  end
+  describe '#term_teacher_info' do
+    it 'returns the correct information' do
+      term =   FactoryBot.create(:term)
+      teacher = FactoryBot.create(:teacher, name: 'Luke Skywalker')
+      lecture = FactoryBot.build(:lecture, teacher: teacher, term: term)
+      expect(lecture.term_teacher_info).to eq(term.to_label + ', Luke Skywalker')
+    end
+  end
+  describe '#description' do
+    it 'returns the correct description' do
+      course = FactoryBot.create(:course, title: 'Usual bs')
+      term =   FactoryBot.create(:term)
+      lecture = FactoryBot.build(:lecture, course: course, term: term)
+      expect(lecture.description).to eq({ general: 'Usual bs, ' + term.to_label })
     end
   end
 end
