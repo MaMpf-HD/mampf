@@ -98,21 +98,47 @@ RailsAdmin.config do |config|
         field :video_file_link
         field :video_thumbnail_link
         field :manuscript_link
-        field :external_reference_link
+        field :external_reference_link do
+          help "Optional. If Sort is 'KeksQuestion', this field will be filled automatically using the question_id."
+        end
         field :tags
         field :linked_media
-        field :heading
-        field :description
-        field :question_id
-        field :question_list
-        field :length
-        field :video_size
-        field :width
-        field :height
-        field :embedded_width
-        field :embedded_height
-        field :pages
-        field :manuscript_size
+        field :heading do
+          help "Optional. Used as heading in card body if Sort is 'KeksQuiz, 'Reste' or 'Kiwi'."
+        end
+        field :description do
+          help "Overrides the generic description in card subheader. Used if Sort is 'Reste'."
+        end
+        field :question_id do
+          help "Mandatory if sort is 'KeksQuestion'."
+        end
+        field :question_list do
+          help "Mandatory if sort is 'KeksQuiz'. In this case, use format like: 15&371&22"
+        end
+        field :length do
+          help "Mandatory if video file or stream is given. In this case, use format like: 1h26m12s"
+        end
+        field :video_size do
+          help "Mandatory video file is given. In this case, use format like: 123 MiB"
+        end
+        field :width do
+          help "Mandatory if video file or stream is given."
+        end
+        field :height do
+          help "Mandatory if video file or stream is given."
+        end
+        field :embedded_width do
+          help "Mandatory if video stream is given."
+        end
+        field :embedded_height do
+          help "Mandatory if video stream is given."
+        end
+        field :pages do
+          help "Mandatory if manuscript is given."
+        end
+        field :manuscript_size do
+          help "Mandatory if manuscript is given."
+        end
         field :authoring_software
         field :video_player
         field :extras_link
@@ -124,6 +150,7 @@ RailsAdmin.config do |config|
   RailsAdmin.config do |config|
     config.model Chapter do
       list do
+        field :id
         field :title
         field :number
         field :lecture
@@ -135,7 +162,7 @@ RailsAdmin.config do |config|
   RailsAdmin.config do |config|
     config.model Course do
       list do
-        exclude_fields :id, :media, :created_at, :updated_at
+        exclude_fields :media, :created_at, :updated_at
       end
       create do
         exclude_fields :media
@@ -201,6 +228,7 @@ RailsAdmin.config do |config|
   RailsAdmin.config do |config|
     config.model Lesson do
       list do
+        field :id
         field :date
         field :lecture
         field :number

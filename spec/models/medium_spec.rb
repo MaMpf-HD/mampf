@@ -4,6 +4,12 @@ RSpec.describe Medium, type: :model do
   it 'has a valid factory' do
     expect(FactoryBot.build(:medium)).to be_valid
   end
+  it 'has a valid factory with tags' do
+    expect(FactoryBot.build(:medium, :with_tags)).to be_valid
+  end
+  it 'has a valid factory with linked media' do
+    expect(FactoryBot.build(:medium, :with_linked_media)).to be_valid
+  end
   it 'is invalid without a sort' do
     medium = FactoryBot.build(:medium, sort: nil)
     expect(medium).to be_invalid
@@ -42,7 +48,8 @@ RSpec.describe Medium, type: :model do
     medium = FactoryBot.build(:medium, video_stream_link: nil,
                                         video_file_link: nil,
                                         manuscript_link: nil,
-                                        external_reference_link: nil)
+                                        external_reference_link: nil,
+                                        sort: 'Kaviar')
     expect(medium).to be_invalid
   end
   it 'is invalid without width if video_file_link is given' do
@@ -162,5 +169,153 @@ RSpec.describe Medium, type: :model do
     medium = FactoryBot.build(:medium, video_file_link: 'www.test.de/test.pdf',
                                         manuscript_size: '1234')
     expect(medium).to be_invalid
+  end
+  it 'is invalid without extras_description if extras_link is given' do
+    medium = FactoryBot.build(:medium, extras_link: 'www.bs.de', extras_description: nil)
+    expect(medium).to be_invalid
+  end
+  it 'is invalid without question_list if sort is KeksQuiz' do
+    medium = FactoryBot.build(:medium, sort: 'KeksQuiz', question_list: nil)
+    expect(medium).to be_invalid
+  end
+  it 'is valid if a valid question_list is given and sort is KeksQuiz' do
+    medium = FactoryBot.build(:medium, sort: 'KeksQuiz', question_list: '33&775&4')
+    expect(medium).to be_valid
+  end
+  it 'is invalid if an invalid question_list is given and sort is KeksQuiz' do
+    medium = FactoryBot.build(:medium, sort: 'KeksQuiz', question_list: 'abc')
+    expect(medium).to be_invalid
+  end
+  context 'callbacks' do
+    it 'sets the default sort to Kaviar' do
+      medium = Medium.new
+      expect(medium.sort).to eq('Kaviar')
+    end
+    it 'adds the keks link if question id is given but not the link' do
+      medium = FactoryBot.create(:medium, sort: 'KeksQuestion', question_id: 1234, external_reference_link: nil)
+      expect(medium.external_reference_link). to eq('https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
+                                                    '#hide-categories#question=1234')
+    end
+  end
+  describe '#video aspect ratio' do
+    it 'returns the correct aspect ratio' do
+      medium = FactoryBot.create(:medium, width: 1512, height: 541)
+      expect(medium.video_aspect_ratio).to eq(1512.to_f / 541)
+    end
+  end
+  describe '#video_scaled_height' do
+    it 'returns the correct scaled height' do
+      medium = FactoryBot.create(:medium, width: 1512, height: 541)
+      expect(medium.video_scaled_height(2000)).to eq(715)
+    end
+  end
+  describe '#caption' do
+    it 'returns the correct caption' do
+      lecture = FactoryBot.create(:lecture)
+      chapter = FactoryBot.create(:chapter, lecture: lecture)
+      first_section = FactoryBot.create(:section, chapter: chapter, title: 'Unsinn')
+      second_section = FactoryBot.create(:section, chapter: chapter, title: 'schon wieder')
+      lesson = FactoryBot.build(:lesson, lecture: lecture, sections: [first_section, second_section])
+      medium = FactoryBot.create(:medium, teachable: lesson, sort: 'Kaviar')
+      expect(medium.caption).to eq('Unsinn, schon wieder')
+    end
+  end
+  describe '#tag_titles' do
+    it 'returns the correct titles of the tags' do
+      first_tag = FactoryBot.create(:tag, title: 'Usual bs')
+      second_tag = FactoryBot.create(:tag, title: 'mal wieder')
+      medium = FactoryBot.create(:medium, tags: [first_tag, second_tag])
+      expect(medium.tag_titles).to eq('Usual bs, mal wieder')
+    end
+  end
+  describe '#card_header' do
+    it 'returns the correct header' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      expect(medium.card_header).to eq(lesson.lecture.to_label)
+    end
+  end
+  describe '#card_header_teachable' do
+    it 'returns the correct teachable' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      expect(medium.card_header_teachable).to eq(lesson.lecture)
+    end
+  end
+  describe '#card_subheader' do
+    context 'if medium belongs to a lesson' do
+      it 'returns the correct subheader' do
+        lesson = FactoryBot.create(:lesson)
+        medium = FactoryBot.build(:medium, teachable: lesson, description: nil)
+        expect(medium.card_subheader).to eq lesson.title
+      end
+    end
+    context 'if medium does not belong to a lesson' do
+      it 'returns the correct subheader' do
+        lecture = FactoryBot.create(:lecture)
+        medium = FactoryBot.build(:medium, teachable: lecture, description: nil, sort: 'Sesam')
+        expect(medium.card_subheader).to eq('SeSAM Video')
+      end
+    end
+  end
+  describe '#card_subheader_teachable' do
+    it 'returns the correct teachable' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson, description: nil)
+      expect(medium.card_subheader_teachable).to eq(lesson)
+    end
+  end
+  describe '#sort_de' do
+    it 'returns the correct sort in german spelling' do
+      medium = FactoryBot.build(:medium, sort: 'KeksQuestion')
+      expect(medium.sort_de).to eq('Keks-Frage')
+    end
+  end
+  describe '#question_ids' do
+    it 'retuns the correct question ids' do
+      medium = FactoryBot.build(:medium, question_list: '37&259&1002')
+      expect(medium.question_ids).to match_array([37,259,1002])
+    end
+  end
+  describe '#teachable_sort' do
+    it 'returns the correct kind of teachable' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      expect(medium.teachable_sort).to eq('Lesson')
+    end
+  end
+  describe '#teachable_sort_de' do
+    it 'returns the correct kind of teachable in german spelling' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      expect(medium.teachable_sort_de).to eq('Sitzung')
+    end
+  end
+  describe '#related_to_lecture' do
+    it 'returns true if the medium is related to the given lecture' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      expect(medium.related_to_lecture?(lesson.lecture)).to be true
+    end
+    it 'returns false if the medium is unrelated to the given lecture' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      lecture = FactoryBot.build(:lecture)
+      expect(medium.related_to_lecture?(lecture)).to be false
+    end
+  end
+  describe '#related_to_lectures_do' do
+    it 'returns true if the medium is related to the given lectures' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      lecture = FactoryBot.build(:lecture)
+      expect(medium.related_to_lectures?([lesson.lecture, lecture])).to be true
+    end
+    it 'returns false if the medium is unrelated to the given lectures' do
+      lesson = FactoryBot.create(:lesson)
+      medium = FactoryBot.build(:medium, teachable: lesson)
+      lectures = FactoryBot.build_list(:lecture, 2)
+      expect(medium.related_to_lectures?(lectures)).to be false
+    end
   end
 end

@@ -1,11 +1,10 @@
 # Medium class
 class Medium < ApplicationRecord
+  belongs_to :teachable, polymorphic: true
   has_many :medium_tag_joins
   has_many :tags, through: :medium_tag_joins
   has_many :links, dependent: :destroy
   has_many :linked_media, through: :links, dependent: :destroy
-  belongs_to :teachable, polymorphic: true
-  after_save :create_keks_link, if: :keks_link_missing?
   validates :sort, presence: true,
                    inclusion: { in: :sort_enum }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
@@ -26,12 +25,12 @@ class Medium < ApplicationRecord
                              numericality: { only_integer: true,
                                              greater_than_or_equal_to: 100,
                                              less_than_or_equal_to: 8192 },
-                             if: :video_content?
+                             if: :video_stream_content?
   validates :embedded_height, presence: true,
                               numericality: { only_integer: true,
                                               greater_than_or_equal_to: 100,
                                               less_than_or_equal_to: 4320 },
-                              if: :video_content?
+                              if: :video_stream_content?
 
   validates :length, presence: true,
                      format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
@@ -51,14 +50,13 @@ class Medium < ApplicationRecord
                               format:
                                 { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
                               if: :manuscript_content?
+  validates :question_list, presence: true,
+                            format: { with: /\A(\d+&)*\d+\z/ },
+                            if: :keks_quiz?
   validates :extras_description, presence: true, if: :extra_content?
 
-  after_initialize do
-    if new_record?
-      self.sort = 'Kaviar'
-      self.width ||= 1620
-    end
-  end
+  after_initialize :set_defaults
+  after_save :create_keks_link, if: :keks_link_missing?
 
   def sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
@@ -127,17 +125,6 @@ class Medium < ApplicationRecord
       'Lesson' => 'Sitzung' }[teachable_sort]
   end
 
-  def keks_link_missing?
-    return false unless sort == 'KeksQuestion' && external_reference_link.nil?
-    true
-  end
-
-  def create_keks_link
-    update(external_reference_link:
-             'https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
-             '#hide-categories#question=' + question_id.to_s)
-  end
-
   def related_to_lecture?(lecture)
     case teachable_sort
     when 'Course'
@@ -159,6 +146,10 @@ class Medium < ApplicationRecord
 
   private
 
+  def set_defaults
+    self.sort = 'Kaviar' if new_record?
+  end
+
   def video_content?
     video_stream_link.present? || video_file_link.present?
   end
@@ -167,24 +158,44 @@ class Medium < ApplicationRecord
     video_file_link.present?
   end
 
+  def video_stream_content?
+    video_stream_link.present?
+  end
+
   def manuscript_content?
     manuscript_link.present?
   end
 
   def extra_content?
-    extras_description.present?
+    extras_link.present?
   end
 
   def nonempty_content?
     return true if video_stream_link.present? ||
                    video_file_link.present? ||
                    manuscript_link.present? ||
-                   external_reference_link.present?
+                   external_reference_link.present? ||
+                   keks_question?
     errors.add(:base, 'empty content')
     false
   end
 
   def keks_question?
     sort == 'KeksQuestion'
+  end
+
+  def keks_quiz?
+    sort == 'KeksQuiz'
+  end
+
+  def keks_link_missing?
+    return false unless sort == 'KeksQuestion' && !external_reference_link.present?
+    true
+  end
+
+  def create_keks_link
+    update(external_reference_link:
+             'https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
+             '#hide-categories#question=' + question_id.to_s)
   end
 end

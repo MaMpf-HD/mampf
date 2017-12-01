@@ -43,5 +43,11 @@ FactoryBot.define do
     pages Random.rand(1..100)
     manuscript_size Random.rand(1..1000.0).round(2).to_s + ' KiB'
     authoring_software 'Camtasia ' + [*8..9].sample.to_s
+    trait :with_tags do
+      after(:build) { |m| m.tags = FactoryBot.create_list(:tag,2) }
+    end
+    trait :with_linked_media do
+      after(:build) { |m| m.linked_media = FactoryBot.create_list(:medium,2) }
+    end
   end
 end
