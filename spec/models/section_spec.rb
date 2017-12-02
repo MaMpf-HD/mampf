@@ -37,4 +37,37 @@ RSpec.describe Section, type: :model do
     section = FactoryBot.build(:section, number: 1000)
     expect(section).to be_invalid
   end
+  it 'is invalid if lecture for lessons and chapter does not match' do
+    first_lecture = FactoryBot.create(:lecture)
+    second_lecture = FactoryBot.create(:lecture)
+    lesson = FactoryBot.create(:lesson, lecture: first_lecture)
+    chapter = FactoryBot.create(:chapter, lecture: second_lecture)
+    section = FactoryBot.build(:section, chapter: chapter, lessons: [lesson])
+    expect(section).to be_invalid
+  end
+  it 'is invalid if tags do nor belong to lecture' do
+    lecture = FactoryBot.create(:lecture)
+    chapter = FactoryBot.create(:chapter, lecture: lecture)
+    tag = FactoryBot.create(:tag, :with_courses)
+    section = FactoryBot.build(:section, chapter: chapter, tags: [tag])
+    expect(section).to be_invalid
+  end
+  describe '#chapter' do
+    it 'returns the correct chapter' do
+      chapter = FactoryBot.create(:chapter)
+      section = FactoryBot.build(:section, chapter: chapter)
+      expect(section.chapter).to eq(chapter)
+    end
+  end
+  describe '#to_label' do
+    it 'returns the correct label' do
+      section = FactoryBot.create(:section, number: 7, title: 'Star Wars')
+      expect(section.to_label).to eq('§7. Star Wars')
+    end
+    it 'returns the correct label if number_alt is given' do
+      section = FactoryBot.create(:section, number: 7, number_alt: '5.2',
+                                            title: 'Star Wars')
+      expect(section.to_label).to eq('§5.2. Star Wars')
+    end
+  end
 end

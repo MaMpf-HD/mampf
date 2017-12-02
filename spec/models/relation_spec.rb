@@ -20,17 +20,23 @@ RSpec.describe Relation, type: :model do
                                                       related_tag: related_tag)
     expect(duplicate_relation).to be_invalid
   end
-  it 'is invalid if inverse relation already exists' do
-    tag = FactoryBot.create(:tag)
-    related_tag = FactoryBot.create(:tag)
-    FactoryBot.create(:relation, tag: tag, related_tag: related_tag)
-    inverse_relation = FactoryBot.build(:relation, tag: related_tag,
-                                                    related_tag: tag)
-    expect(inverse_relation).to be_invalid
-  end
   it 'destroys itself if it relates tag to itself' do
     tag = FactoryBot.create(:tag)
     relation = FactoryBot.create(:relation, tag: tag, related_tag: tag)
     expect(Relation.find_by_id(relation.id)).to be_nil
+  end
+  it 'creates an inverse if relation is not self-inverse' do
+    first_tag = FactoryBot.create(:tag)
+    second_tag = FactoryBot.create(:tag)
+    FactoryBot.create(:relation, tag: first_tag, related_tag: second_tag)
+    expect(Relation.exists?(tag: second_tag, related_tag: first_tag)).to be true
+  end
+  it 'destroys the inverse after deletion if reltion is not self-inverse' do
+    first_tag = FactoryBot.create(:tag)
+    second_tag = FactoryBot.create(:tag)
+    relation = FactoryBot.create(:relation, tag: first_tag,
+                                            related_tag: second_tag)
+    relation.destroy
+    expect(Relation.exists?(tag: second_tag, related_tag: first_tag)).to be false
   end
 end

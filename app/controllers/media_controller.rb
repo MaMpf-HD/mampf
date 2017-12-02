@@ -4,20 +4,22 @@ class MediaController < ApplicationController
   authorize_resource
 
   def index
-    cookies[:current_lecture] = params[:lecture_id] if params[:lecture_id]
-    sorts = { '1' => 'Kaviar', '2' => 'Sesam', '3' => 'Kiwi', '4' => 'KeksQuiz',
-              '5' => 'Reste' }
-    if params[:lecture_id] && params[:module_id]
-      unless (1..5).cover?(params[:module_id].to_i)
-        redirect_to :root, alert: 'Ein Modul mit der angeforderten id existiert
-                                   nicht.'
+    if params[:lecture_id]
+      unless Lecture.exists?(params[:lecture_id])
+        redirect_to :root, alert: 'Eine Vorlesung mit der angeforderten id
+                                   existiert nicht.'
         return
       end
-      @lecture = Lecture.find_by_id(params[:lecture_id])
-      teachable = params[:module_id] == '1' ? @lecture.lessons : @lecture
-      @media = Medium.where(teachable: teachable,
-                            sort: sorts[params[:module_id]]).order(:id)
-      return
+      cookies[:current_lecture] = params[:lecture_id] if params[:lecture_id]
+      if params[:lecture_id]
+        unless (1..5).cover?(params[:module_id].to_i)
+          redirect_to :root, alert: 'Ein Modul mit der angeforderten id existiert
+                                   nicht.'
+          return
+        end
+        @media = Medium.search(params)
+        return
+      end
     end
     @media = Medium.all
   end

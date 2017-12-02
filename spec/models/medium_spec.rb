@@ -186,6 +186,30 @@ RSpec.describe Medium, type: :model do
     medium = FactoryBot.build(:medium, sort: 'KeksQuiz', question_list: 'abc')
     expect(medium).to be_invalid
   end
+  it 'is invalid if video_file_link is not a valid http link' do
+    medium = FactoryBot.build(:medium, video_file_link: 'aaa')
+    expect(medium).to be_invalid
+  end
+  it 'is invalid if video_stream_link is not a valid http link' do
+    medium = FactoryBot.build(:medium, video_stream_link: 'aaa')
+    expect(medium).to be_invalid
+  end
+  it 'is invalid if video_thumbnail_link is not a valid http link' do
+    medium = FactoryBot.build(:medium, video_thumbnail_link: 'aaa')
+    expect(medium).to be_invalid
+  end
+  it 'is invalid if manuscript_link is not a valid http link' do
+    medium = FactoryBot.build(:medium, manuscript_link: 'aaa')
+    expect(medium).to be_invalid
+  end
+  it 'is invalid if external_reference_link is not a valid http link' do
+    medium = FactoryBot.build(:medium, external_reference_link: 'aaa')
+    expect(medium).to be_invalid
+  end
+  it 'is invalid if extras_link is not a valid http link' do
+    medium = FactoryBot.build(:medium, extras_link: 'aaa')
+    expect(medium).to be_invalid
+  end
   context 'callbacks' do
     it 'sets the default sort to Kaviar' do
       medium = Medium.new
@@ -195,6 +219,15 @@ RSpec.describe Medium, type: :model do
       medium = FactoryBot.create(:medium, sort: 'KeksQuestion', question_id: 1234, external_reference_link: nil)
       expect(medium.external_reference_link). to eq('https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
                                                     '#hide-categories#question=1234')
+    end
+  end
+  describe '#search' do
+    it 'returns the correct search results' do
+      lesson = FactoryBot.create(:lesson)
+      kaviar_medium = FactoryBot.create(:medium, teachable: lesson, sort: 'Kaviar')
+      sesam_medium = FactoryBot.create(:medium, teachable: lesson.lecture, sort: 'Sesam')
+      params = { lecture_id: lesson.lecture.id.to_s, module_id: '1'}
+      expect(Medium.search(params)).to match_array([kaviar_medium])
     end
   end
   describe '#video aspect ratio' do

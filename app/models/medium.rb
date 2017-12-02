@@ -11,6 +11,12 @@ class Medium < ApplicationRecord
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
   validate :nonempty_content?
+  validates :video_file_link, http_url: true, if: :video_file_content?
+  validates :video_thumbnail_link, http_url: true, if: :video_content?
+  validates :video_stream_link, http_url: true, if: :video_stream_content?
+  validates :manuscript_link, http_url: true, if: :manuscript_content?
+  validates :external_reference_link, http_url: true, if: :external_content?
+  validates :extras_link, http_url: true, if: :extra_content?
   validates :width, presence: true,
                     numericality: { only_integer: true,
                                     greater_than_or_equal_to: 100,
@@ -60,6 +66,16 @@ class Medium < ApplicationRecord
 
   def sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
+  end
+
+  def self.search(params)
+    sorts = { '1' => 'Kaviar', '2' => 'Sesam', '3' => 'Kiwi', '4' => 'KeksQuiz',
+              '5' => 'Reste' }
+    return unless Lecture.exists?(params[:lecture_id]) && (1..5).cover?(params[:module_id].to_i)
+    lecture = Lecture.find_by_id(params[:lecture_id])
+    teachable = params[:module_id] == '1' ? lecture.lessons : lecture
+    media = Medium.where(teachable: teachable,
+                         sort: sorts[params[:module_id]]).order(:id)
   end
 
   def video_aspect_ratio
@@ -166,6 +182,10 @@ class Medium < ApplicationRecord
     manuscript_link.present?
   end
 
+  def external_content?
+    external_reference_link.present?
+  end
+
   def extra_content?
     extras_link.present?
   end
@@ -198,4 +218,5 @@ class Medium < ApplicationRecord
              'https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
              '#hide-categories#question=' + question_id.to_s)
   end
+
 end

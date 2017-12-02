@@ -48,7 +48,7 @@ RailsAdmin.config do |config|
     # history_show
   end
 
-  models = ['Section', 'Tag', 'Teacher', 'Term']
+  models = ['Tag', 'Teacher', 'Term']
 
   RailsAdmin.config do |config|
     models.each do |m|
@@ -96,7 +96,9 @@ RailsAdmin.config do |config|
         field :teachable
         field :video_stream_link
         field :video_file_link
-        field :video_thumbnail_link
+        field :video_thumbnail_link do
+          help "Mandatory if 'Video stream link' or 'Video file link' are given."
+        end
         field :manuscript_link
         field :external_reference_link do
           help "Optional. If Sort is 'KeksQuestion', this field will be filled automatically using the question_id."
@@ -239,6 +241,28 @@ RailsAdmin.config do |config|
     end
   end
 
-
-
+  RailsAdmin.config do |config|
+    config.model Section do
+      list do
+        field :id
+        field :number
+        field :title
+        field :chapter
+        field :number_alt
+        field :lessons
+      end
+      edit do
+        field :chapter
+        field :number do
+          help 'Required. Number of the section if linear numbering is used.'
+        end
+        field :title
+        field :number_alt do
+          help 'Optional. Use e.g. if sections are numbered within chapter, e.g. 5.2'
+        end
+        field :tags
+        field :lessons
+      end
+    end
+  end
 end
