@@ -5,18 +5,22 @@
     <% if user_signed_in? %>
       <% modules.each do |module_id, module_name| %>
         <li class="nav-item">
-          <% if Lecture.find_by_id(lecture_id).modules[module_name] %>
-            <% active = params[:module_id].to_i == module_id ? ' active' : '' %>
-            <%= link_to module_name, lecture_module_path(lecture_id: lecture_id,
-                                                         module_id: module_id),
-                        class: 'nav-link' + active %>
-          <% else %>
-            <% if module_name == 'KeKs' %>
-              <%= link_to module_name, 'https://keks.mathi.uni-heidelberg.de',
-                                       class: 'nav-link',
-                                       target: :_blank %>
-            <% else %>
+          <% if Lecture.find_by_id(lecture_id).nil? %>
               <span class='nav-link disabled'><%= module_name %></span>
+          <% else %>
+            <% if Lecture.find_by_id(lecture_id).modules[module_name] %>
+              <% active = params[:module_id].to_i == module_id ? ' active' : '' %>
+              <%= link_to module_name, lecture_module_path(lecture_id: lecture_id,
+                                                           module_id: module_id),
+                                                           class: 'nav-link' + active %>
+            <% else %>
+              <% if module_name == 'KeKs' %>
+                <%= link_to module_name, 'https://keks.mathi.uni-heidelberg.de',
+                                         class: 'nav-link',
+                                         target: :_blank %>
+              <% else %>
+                <span class='nav-link disabled'><%= module_name %></span>
+              <% end %>
             <% end %>
           <% end %>
         </li>
