@@ -9,7 +9,7 @@ class ProfileController < ApplicationController
     @lecture_ids = user_params[:lecture_ids].map(&:to_i)
     subscription_type = user_params[:subscription_type].to_i
     lectures = Lecture.where(id: @lecture_ids)
-    if lectures.empty?
+    if lectures.empty? && Lecture.any?
       redirect_to :edit_profile,
                   alert: 'Eine Vorlesung musst Du mindestens abonnieren.'
       return
