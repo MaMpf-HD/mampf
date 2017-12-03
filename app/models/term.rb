@@ -8,8 +8,7 @@ class Term < ApplicationRecord
                                    message: 'term already exists' }
   validates :year, presence: true,
                    numericality: { only_integer: true,
-                                   greater_than_or_equal_to: 2000,
-                                   less_than_or_equal_to: 2200 }
+                                   greater_than_or_equal_to: 2000 }
 
   def begin_date
     season == 'SS' ? Date.new(year, 4, 1) : Date.new(year, 10, 1)

@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :lecture, aliases: [:preceding_lecture] do
     association :course, factory: [:course, :with_tags]
     association :teacher
-    term Term.first_or_create(year: 2016, season: 'WS')
+    association :term
     kaviar [true, false].sample
     keks [true, false].sample
     sesam [true, false].sample

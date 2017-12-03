@@ -48,18 +48,6 @@ RailsAdmin.config do |config|
     # history_show
   end
 
-  models = ['Tag', 'Teacher', 'Term']
-
-  RailsAdmin.config do |config|
-    models.each do |m|
-      config.model m do
-        list do
-          exclude_fields :created_at, :updated_at
-        end
-      end
-    end
-  end
-
   RailsAdmin.config do |config|
     config.model User do
       list do
@@ -262,6 +250,57 @@ RailsAdmin.config do |config|
         end
         field :tags
         field :lessons
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model Tag do
+      list do
+        field :id
+        field :title
+        field :courses
+        field :related_tags
+      end
+      edit do
+        field :title
+        field :courses
+        field :related_tags
+        field :additional_lectures
+        field :disabled_lectures
+        field :sections
+        fields :lessons
+        field :media
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model Teacher do
+      list do
+        field :id
+        field :name
+        field :email
+        field :lectures
+        field :homepage
+      end
+      edit do
+        field :id
+        field :name
+        field :email
+        field :lectures
+        field :homepage
+      end
+    end
+  end
+
+  RailsAdmin.config do |config|
+    config.model Term do
+      list do
+        field :id
+        field :year
+        field :season
+        field :lectures
       end
     end
   end

@@ -28,10 +28,6 @@ RSpec.describe Term, type: :model do
     term = FactoryBot.build(:term, year: 1999)
     expect(term).to be_invalid
   end
-  it 'is invalid if year is higher than 2200' do
-    term = FactoryBot.build(:term, year: 2201)
-    expect(term).to be_invalid
-  end
   it 'is invalid with duplicate season and year' do
     FactoryBot.create(:term, season: 'SS', year: 2017)
     term = FactoryBot.build(:term, season: 'SS', year: 2017)
@@ -63,6 +59,26 @@ RSpec.describe Term, type: :model do
         term = FactoryBot.build(:term, season: 'SS', year: 2017)
         expect(term.end_date).to eq Date.new(2017, 9, 30)
       end
+    end
+  end
+  describe '#to_label' do
+    it 'returns the correct label if the term is a winter term' do
+      term = FactoryBot.build(:term, season: 'WS', year: 2017)
+      expect(term.to_label).to eq('WS 2017/18')
+    end
+    it 'returns the correct label if the term is a summer term' do
+      term = FactoryBot.build(:term, season: 'SS', year: 2017)
+      expect(term.to_label).to eq('SS 2017')
+    end
+  end
+  describe '#to_label_short' do
+    it 'returns the correct label if the term is a winter term' do
+      term = FactoryBot.build(:term, season: 'WS', year: 2017)
+      expect(term.to_label_short).to eq('WS 17/18')
+    end
+    it 'returns the correct label if the term is a summer term' do
+      term = FactoryBot.build(:term, season: 'SS', year: 2017)
+      expect(term.to_label_short).to eq('SS 17')
     end
   end
 end
