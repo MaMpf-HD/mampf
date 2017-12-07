@@ -1,2 +1,17 @@
 <%= render partial: 'media_alerts' %>
-<%= render partial: 'media', locals: { media: @media} %>
+<div class="d-flex flex-row-reverse">
+<% unless params[:all] %>
+<%= will_paginate(@media, renderer: WillPaginate::ActionView::Bootstrap4LinkRenderer, class: 'pagination-sm') %>
+<% end %>
+<ul class="nav">
+  <li class="nav-item">
+    <% if params[:all] %>
+      <a class="nav-link" href="?page=1">Gruppieren</a>
+    <% else %>
+      <a class="nav-link" href="?all=1">Alle anzeigen
+    <% end %>
+  </a>
+  </li>
+</ul>
+</div>
+<%= render partial: 'media', locals: { media: @media } %>

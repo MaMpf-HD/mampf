@@ -1,6 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
   before_action :set_medium, only: [:show]
+  before_action :sanitize_page_param
   authorize_resource
 
   def index
@@ -17,11 +18,11 @@ class MediaController < ApplicationController
                                    nicht.'
           return
         end
-        @media = Medium.search(params)
+        @media = params[:all] ? Medium.search(params) : Medium.search(params).paginate(page: params[:page], per_page: 8)
         return
       end
     end
-    @media = Medium.all
+    @media = params[:all] ? Medium.all : Medium.all.paginate(page: params[:page], per_page: 8)
   end
 
   def show
@@ -35,5 +36,10 @@ class MediaController < ApplicationController
     return if @medium.present?
     redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert
                                nicht.'
+  end
+
+  def sanitize_page_param
+    params[:page] = params[:page].to_i > 0 ? params[:page].to_i : 1
+    params[:all] = params[:all].to_i == 1
   end
 end
