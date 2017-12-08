@@ -49,6 +49,7 @@ gem 'rubocop', '~> 0.50.0', require: false
 gem 'fuzzy-string-match'
 gem 'coveralls', require: false
 gem 'bootstrap-will_paginate'
+gem 'kaminari'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

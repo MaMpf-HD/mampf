@@ -1,7 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
   before_action :set_medium, only: [:show]
-  before_action :sanitize_page_param
+  before_action :sanitize_params
   authorize_resource
 
   def index
@@ -18,11 +18,13 @@ class MediaController < ApplicationController
                                    nicht.'
           return
         end
-        @media = params[:all] ? Medium.search(params) : Medium.search(params).paginate(page: params[:page], per_page: 8)
+        search_results = Medium.search(params)
+        search_results = search_results.reverse_order if params[:reverse]
+        @media = params[:all] ? search_results : Kaminari.paginate_array(search_results).page(params[:page]).per(params[:per])
         return
       end
     end
-    @media = params[:all] ? Medium.all : Medium.all.paginate(page: params[:page], per_page: 8)
+    @media = params[:all] ? Kaminari.paginate_array(Medium.all) : Medium.page(params[:page]).per(params[:per])
   end
 
   def show
@@ -38,8 +40,10 @@ class MediaController < ApplicationController
                                nicht.'
   end
 
-  def sanitize_page_param
+  def sanitize_params
     params[:page] = params[:page].to_i > 0 ? params[:page].to_i : 1
-    params[:all] = params[:all].to_i == 1
+    params[:all] = params[:all] == 'true'
+    params[:reverse] = params[:reverse] == 'true'
+    params[:per] = params[:per].to_i.in?([4,8,12,24]) ? params[:per].to_i : 8
   end
 end

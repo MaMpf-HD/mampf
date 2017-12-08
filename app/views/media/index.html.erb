@@ -1,16 +1,28 @@
 <%= render partial: 'media_alerts' %>
-<div class="d-flex flex-row-reverse">
+<div class="d-flex flex-row-reverse pb-2">
+  <div class="dropdown pl-2">
+    <button class="btn btn-sm dropdown-toggle text-primary" type="button" id="results_per_page" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Medien pro Seite
+    </button>
+    <div class="dropdown-menu" id="results_per_page">
+    <%= link_to '4', '?page=1&per=4&reverse=' + params[:reverse].to_s, class: 'dropdown-item' %>
+    <%= link_to '8', '?page=1&per=8&reverse=' + params[:reverse].to_s, class: 'dropdown-item' %>
+    <%= link_to '12', '?page=1&per=12&reverse=' + params[:reverse].to_s, class: 'dropdown-item' %>
+    <%= link_to '24', '?page=1&per=24&reverse=' + params[:reverse].to_s, class: 'dropdown-item' %>
+    </div>
+  </div>
 <% unless params[:all] %>
-<%= will_paginate(@media, renderer: WillPaginate::ActionView::Bootstrap4LinkRenderer, class: 'pagination-sm') %>
+<%= paginate @media %>
 <% end %>
 <ul class="nav">
-  <li class="nav-item">
-    <% if params[:all] %>
-      <a class="nav-link" href="?page=1">Gruppieren</a>
-    <% else %>
-      <a class="nav-link" href="?all=1">Alle anzeigen
+  <li class="nav-item pl-2 pr-2">
+    <a class ="nav-link btn btn-sm bg-grey-lighten-4" href="?reverse=<%= (!params[:reverse]).to_s%>&amp;all=<%= params[:all].to_s %>&amp;per=<%= params[:per].to_s %>">
+    Reihenfolge umkehren</a>
+  </li>
+  <li class="nav-item pl-2 pr-2">
+    <% unless @media.page(1).total_pages == 1 || params[:all] %>
+      <a class="nav-link btn btn-sm text-primary bg-grey-lighten-4" href="?all=true">Alle anzeigen</a>
     <% end %>
-  </a>
   </li>
 </ul>
 </div>
