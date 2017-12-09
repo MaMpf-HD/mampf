@@ -30,7 +30,7 @@
   </div>
   <div class="col-sm-12 col-md-12 col-lg-6 pt-1">
     <% unless params[:all] %>
-      <%= paginate @media %>
+      <%= paginate @media, window: 2 %>
     <% end %>
   </div>
   <!-- <div class="col-sm-12 col-md-2 col-lg-2 mr-auto">
