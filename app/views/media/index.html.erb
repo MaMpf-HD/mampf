@@ -9,7 +9,7 @@
       </li>
       <li class="nav-item pl-1 pr-1">
         <% unless @media.page(1).total_pages == 1 || params[:all] %>
-          <a class="nav-link btn btn-sm text-primary bg-grey-lighten-4" href="?all=true">Alle</a>
+          <a class="nav-link btn btn-sm text-primary bg-grey-lighten-4" href="?all=true&amp;reverse=<%= params[:reverse].to_s %>">Alle</a>
         <% end %>
       </li>
       <li class="nav-item pl-1">
@@ -33,19 +33,5 @@
       <%= paginate @media, window: 2 %>
     <% end %>
   </div>
-  <!-- <div class="col-sm-12 col-md-2 col-lg-2 mr-auto">
-    <div class="dropdown pl-2">
-      <button class="btn btn-sm dropdown-toggle text-primary" type="button"
-              id="results_per_page" data-toggle="dropdown" aria-haspopup="true"
-              aria-expanded="false">
-        Medien pro Seite
-      </button>
-      <div class="dropdown-menu" id="results_per_page">
-        <% [3,4,8,12,24].each do |hits| %>
-          <%= link_to hits.to_s, '?page=1&per=' + hits.to_s + '&reverse=' + params[:reverse].to_s, class: 'dropdown-item' %>
-        <% end %>
-      </div>
-    </div>
-  </div> -->
 </div>
 <%= render partial: 'media', locals: { media: @media } %>
