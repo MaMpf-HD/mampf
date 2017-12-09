@@ -44,6 +44,6 @@ class MediaController < ApplicationController
     params[:page] = params[:page].to_i > 0 ? params[:page].to_i : 1
     params[:all] = params[:all] == 'true'
     params[:reverse] = params[:reverse] == 'true'
-    params[:per] = params[:per].to_i.in?([4,8,12,24]) ? params[:per].to_i : 8
+    params[:per] = params[:per].to_i.in?([3,4,8,12,24]) ? params[:per].to_i : 8
   end
 end
