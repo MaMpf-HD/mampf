@@ -78,8 +78,8 @@ RSpec.describe Lecture, type: :model do
     it 'returns the correct modules' do
       lecture = FactoryBot.build(:lecture, kaviar: true, sesam: false,
                                            kiwi: true, keks: false,
-                                           erdbeere: true)
-      expect(lecture.available_modules).to eq ([nil, true, false, true, false, true])                                            
+                                           reste: true)
+      expect(lecture.available_modules).to eq ([nil, true, false, true, false, true])
     end
   end
   describe '#to_label' do
