@@ -36,6 +36,10 @@ class Lecture < ApplicationRecord
     Section.where(chapter: chapters)
   end
 
+  def available_modules
+    [nil, kaviar, sesam, kiwi, keks, reste]
+  end
+
   def to_label
     course.title + ', ' + term.to_label
   end

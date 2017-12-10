@@ -20,6 +20,35 @@ RSpec.describe MediaController, type: :controller do
         get :index
         expect(response).to have_http_status '200'
       end
+
+      it 'redirects to the root_page if lecture_id param is nonsense' do
+        sign_in @user
+        lecture = FactoryBot.create(:lecture)
+        id = lecture.id + 1
+        get :index, params: { lecture_id: id.to_s }
+        expect(response).to redirect_to root_path
+      end
+
+      it 'redirects to the root_page if module_id param is nonsense' do
+        sign_in @user
+        lecture = FactoryBot.create(:lecture)
+        get :index, params: { lecture_id: lecture.id.to_s, module_id: '7' }
+        expect(response).to redirect_to root_path
+      end
+
+      it 'redirects to the given module is deactivated for the given lecture' do
+        sign_in @user
+        lecture = FactoryBot.create(:lecture, kaviar: false)
+        get :index, params: { lecture_id: lecture.id.to_s, module_id: '1' }
+        expect(response).to redirect_to root_path
+      end
+
+      it 'returns a 200 response if the given lecture_id and module_id make sense' do
+        sign_in @user
+        lecture = FactoryBot.create(:lecture, kaviar: true)
+        get :index, params: { lecture_id: lecture.id.to_s, module_id: '1' }
+        expect(response).to have_http_status '200'
+      end
     end
 
     context 'as an unauthenticated user' do

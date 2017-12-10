@@ -18,6 +18,12 @@ class MediaController < ApplicationController
                                    nicht.'
           return
         end
+        available_modules = Lecture.find(params[:lecture_id]).available_modules
+        unless available_modules[params[:module_id].to_i]
+          redirect_to :root, alert: 'Da angeforderte Modul ist für diese
+                                     Vorlesung deaktiviert.'
+          return
+        end
         search_results = Medium.search(params)
         search_results = search_results.reverse_order if params[:reverse]
         @media = params[:all] ? search_results : Kaminari.paginate_array(search_results).page(params[:page]).per(params[:per])

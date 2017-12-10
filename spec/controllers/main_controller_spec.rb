@@ -25,4 +25,35 @@ RSpec.describe MainController, type: :controller do
     end
   end
 
+  describe '#error' do
+    context 'as an unauthenticated user' do
+      it 'returns a 302 response' do
+        get :error
+        expect(response).to have_http_status '302'
+      end
+
+      it 'redirects to the sign-in page' do
+        get :error
+        expect(response).to redirect_to user_session_path
+      end
+    end
+
+    context 'as an authenticated user' do
+      before do
+        @user = FactoryBot.create(:user)
+      end
+
+      it 'returns a 302 response' do
+        sign_in @user
+        get :error
+        expect(response).to have_http_status '302'
+      end
+
+      it 'redirects to the root page' do
+        sign_in @user
+        get :error
+        expect(response).to redirect_to root_path
+      end
+    end
+  end
 end

@@ -23,6 +23,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'registrations' }
   root 'main#home'
   get 'about', to: 'main#about'
+  get 'error', to: 'main#error'
   get 'main/home'
   get 'main/about'
 
