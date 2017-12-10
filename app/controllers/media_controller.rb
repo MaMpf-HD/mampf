@@ -20,7 +20,7 @@ class MediaController < ApplicationController
         end
         available_modules = Lecture.find(params[:lecture_id]).available_modules
         unless available_modules[params[:module_id].to_i]
-          redirect_to :root, alert: 'Da angeforderte Modul ist für diese
+          redirect_to :root, alert: 'Das angeforderte Modul ist für diese
                                      Vorlesung deaktiviert.'
           return
         end
