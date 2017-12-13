@@ -15,7 +15,7 @@ class Medium < ApplicationRecord
   validates :video_thumbnail_link, http_url: true, if: :video_content_not_keks_question?
   validates :video_stream_link, http_url: true, if: :video_stream_content?
   validates :manuscript_link, http_url: true, if: :manuscript_content?
-  validates :external_reference_link, http_url: true, if: :external_content_not_keks_question?
+  validates :external_reference_link, http_url: true, if: :external_content_not_keks?
   validates :extras_link, http_url: true, if: :extra_content?
   validates :width, presence: true,
                     numericality: { only_integer: true,
@@ -190,8 +190,8 @@ class Medium < ApplicationRecord
     external_reference_link.present?
   end
 
-  def external_content_not_keks_question?
-    external_reference_link.present? && !keks_question?
+  def external_content_not_keks?
+    external_reference_link.present? && !keks_question? && !keks_quiz?
   end
 
   def extra_content?
