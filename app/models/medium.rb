@@ -12,10 +12,10 @@ class Medium < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validate :nonempty_content?
   validates :video_file_link, http_url: true, if: :video_file_content?
-  validates :video_thumbnail_link, http_url: true, if: :video_content?
+  validates :video_thumbnail_link, http_url: true, if: :video_content_not_keks_question?
   validates :video_stream_link, http_url: true, if: :video_stream_content?
   validates :manuscript_link, http_url: true, if: :manuscript_content?
-  validates :external_reference_link, http_url: true, if: :external_content?
+  validates :external_reference_link, http_url: true, if: :external_content_not_keks_question?
   validates :extras_link, http_url: true, if: :extra_content?
   validates :width, presence: true,
                     numericality: { only_integer: true,
@@ -170,6 +170,10 @@ class Medium < ApplicationRecord
     video_stream_link.present? || video_file_link.present?
   end
 
+  def video_content_not_keks_question?
+    (video_stream_link.present? || video_file_link.present?) && !keks_question?
+  end
+
   def video_file_content?
     video_file_link.present?
   end
@@ -184,6 +188,10 @@ class Medium < ApplicationRecord
 
   def external_content?
     external_reference_link.present?
+  end
+
+  def external_content_not_keks_question?
+    external_reference_link.present? && !keks_question?
   end
 
   def extra_content?
