@@ -15,7 +15,7 @@
                                                            class: 'nav-link' + active %>
             <% else %>
               <% if module_name == 'KeKs' %>
-                <%= link_to module_name, 'https://keks.mathi.uni-heidelberg.de',
+                <%= link_to module_name, DefaultSetting::KEKS_LINK,
                                          class: 'nav-link',
                                          target: :_blank %>
               <% else %>
@@ -26,13 +26,13 @@
         </li>
       <% end %>
       <li class="nav-item">
-        <a href="https://erdbeere.mathi.uni-heidelberg.de/" class="nav-link" target="_blank">
+        <a href=<%= DefaultSetting::ERDBEERE_LINK %> class="nav-link" target="_blank">
           <img src="/erdbeere-16x16.png" width="16" height="16">
           ErDBeere
         </a>
       </li>
       <li class="nav-item">
-        <a href="https://muesli.mathi.uni-heidelberg.de/" class="nav-link" target="_blank">
+        <a href=<%= DefaultSetting::MUESLI_LINK %> class="nav-link" target="_blank">
           <img src="/muesli-16x16.png" width="16" height="16">
           MÜSLI
         </a>

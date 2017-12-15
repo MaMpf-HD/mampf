@@ -52,13 +52,13 @@ RSpec.describe Medium, type: :model do
                                         sort: 'Kaviar')
     expect(medium).to be_invalid
   end
-  it 'is invalid without width if video_file_link is given' do
-    medium = FactoryBot.build(:medium, video_file_link: 'www.test.de/test.mp4',
+  it 'gets assigned default width if video_file_link is given but no width' do
+    medium = FactoryBot.create(:medium, video_file_link: 'http://www.test.de/test.mp4',
                                         width: nil)
-    expect(medium).to be_invalid
+    expect(medium.width).to eq(DefaultSetting::VIDEO_WIDTH)
   end
   it 'is invalid without height if video_file_link is given' do
-    medium = FactoryBot.build(:medium, video_file_link: 'www.test.de/test.mp4',
+    medium = FactoryBot.build(:medium, video_file_link: 'http://www.test.de/test.mp4',
                                         height: nil)
     expect(medium).to be_invalid
   end
@@ -135,7 +135,7 @@ RSpec.describe Medium, type: :model do
     expect(medium).to be_invalid
   end
   it 'is invalid with nonsense video_size if video_file_link is given' do
-    medium = FactoryBot.build(:medium, video_file_link: 'www.test.de/test.mp4',
+    medium = FactoryBot.build(:medium, video_file_link: 'http://www.test.de/test.mp4',
                                         video_size: '1234')
     expect(medium).to be_invalid
   end
@@ -144,7 +144,7 @@ RSpec.describe Medium, type: :model do
     expect(medium).to be_invalid
   end
   it 'is invalid without pages if manuscript_link is given' do
-    medium = FactoryBot.build(:medium, manuscript_link: 'www.test.de/test.pdf',
+    medium = FactoryBot.build(:medium, manuscript_link: 'http://www.test.de/test.pdf',
                                         pages: nil)
     expect(medium).to be_invalid
   end
@@ -161,17 +161,17 @@ RSpec.describe Medium, type: :model do
     expect(medium).to be_invalid
   end
   it 'is invalid without manuscript_size if manuscript_link is given' do
-    medium = FactoryBot.build(:medium, manuscript_link: 'www.test.de/test.pdf',
+    medium = FactoryBot.build(:medium, manuscript_link: 'http://www.test.de/test.pdf',
                                         manuscript_size: nil)
     expect(medium).to be_invalid
   end
   it 'is invalid with nonsense manuscript_size if mansucript_link is given' do
-    medium = FactoryBot.build(:medium, video_file_link: 'www.test.de/test.pdf',
+    medium = FactoryBot.build(:medium, video_file_link: 'http://www.test.de/test.pdf',
                                         manuscript_size: '1234')
     expect(medium).to be_invalid
   end
   it 'is invalid without extras_description if extras_link is given' do
-    medium = FactoryBot.build(:medium, extras_link: 'www.bs.de', extras_description: nil)
+    medium = FactoryBot.build(:medium, extras_link: 'http://www.bs.de', extras_description: nil)
     expect(medium).to be_invalid
   end
   it 'is invalid without question_list if sort is KeksQuiz' do
@@ -217,8 +217,7 @@ RSpec.describe Medium, type: :model do
     end
     it 'adds the keks link if question id is given but not the link' do
       medium = FactoryBot.create(:medium, sort: 'KeksQuestion', question_id: 1234, external_reference_link: nil)
-      expect(medium.external_reference_link). to eq('https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
-                                                    '#hide-categories#question=1234')
+      expect(medium.external_reference_link). to eq(DefaultSetting::KEKS_QUESTION_LINK + '1234')
     end
   end
   describe '#search' do

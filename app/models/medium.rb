@@ -17,11 +17,10 @@ class Medium < ApplicationRecord
   validates :manuscript_link, http_url: true, if: :manuscript_content?
   validates :external_reference_link, http_url: true, if: :external_content?
   validates :extras_link, http_url: true, if: :extra_content?
-  validates :width, presence: true,
-                    numericality: { only_integer: true,
+  validates :width, numericality: { only_integer: true,
                                     greater_than_or_equal_to: 100,
                                     less_than_or_equal_to: 8192 },
-                    if: :video_content?
+                    if: Proc.new { |m| m.width.present? }
   validates :height, presence: true,
                      numericality: { only_integer: true,
                                      greater_than_or_equal_to: 100,
@@ -63,7 +62,7 @@ class Medium < ApplicationRecord
 
   after_initialize :set_defaults
   after_save :create_keks_link, if: :keks_link_missing?
-
+  after_save :set_default_width, if: :width_missing?
   def sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
   end
@@ -217,10 +216,17 @@ class Medium < ApplicationRecord
     true
   end
 
+  def width_missing?
+    video_content? && width.nil?
+  end
+
   def create_keks_link
     update(external_reference_link:
-             'https://keks.mathi.uni-heidelberg.de/hitme#hide-options' \
-             '#hide-categories#question=' + question_id.to_s)
+             DefaultSetting::KEKS_QUESTION_LINK + question_id.to_s)
+  end
+
+  def set_default_width
+    update(width: DefaultSetting::VIDEO_WIDTH)
   end
 
 end
