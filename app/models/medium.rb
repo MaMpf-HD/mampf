@@ -11,29 +11,30 @@ class Medium < ApplicationRecord
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
   validate :nonempty_content?
-  validates :video_file_link, http_url: true, if: :video_file_content?
-  validates :video_thumbnail_link, http_url: true, if: :video_content_not_keks_question?
-  validates :video_stream_link, http_url: true, if: :video_stream_content?
-  validates :manuscript_link, http_url: true, if: :manuscript_content?
-  validates :external_reference_link, http_url: true, if: :external_content?
-  validates :extras_link, http_url: true, if: :extra_content?
+  validates :video_file_link, http_url: true, if: :video_file_link?
+  validates :video_thumbnail_link, http_url: true,
+                                   if: :video_content_not_keks_question?
+  validates :video_stream_link, http_url: true, if: :video_stream_link?
+  validates :manuscript_link, http_url: true, if: :manuscript_link?
+  validates :external_reference_link, http_url: true,
+                                      if: :external_reference_link?
+  validates :extras_link, http_url: true, if: :extras_link?
   validates :width, numericality: { only_integer: true,
                                     greater_than_or_equal_to: 100,
                                     less_than_or_equal_to: 8192 },
-                    if: Proc.new { |m| m.width.present? }
+                    if: :width
   validates :height, numericality: { only_integer: true,
                                      greater_than_or_equal_to: 100,
                                      less_than_or_equal_to: 4320 },
-                     if: Proc.new { |m| m.height.present? }
+                     if: :height
   validates :embedded_width, numericality: { only_integer: true,
                                              greater_than_or_equal_to: 100,
                                              less_than_or_equal_to: 8192 },
-                             if: Proc.new { |m| m.embedded_width.present? }
+                             if: :embedded_width
   validates :embedded_height, numericality: { only_integer: true,
                                               greater_than_or_equal_to: 100,
                                               less_than_or_equal_to: 4320 },
-                              if: Proc.new { |m| m.embedded_height.present? }
-
+                              if: :embedded_height
   validates :length, presence: true,
                      format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
                      if: :video_content?
@@ -42,23 +43,23 @@ class Medium < ApplicationRecord
   validates :video_size, presence: true,
                          format:
                            { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
-                         if: :video_file_content?
+                         if: :video_file_link?
   validates :pages, presence: true,
                     numericality: { only_integer: true,
                                     greater_than_or_equal_to: 1,
                                     less_than_or_equal_to: 2000 },
-                    if: :manuscript_content?
+                    if: :manuscript_link?
   validates :manuscript_size, presence: true,
                               format:
                                 { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
-                              if: :manuscript_content?
+                              if: :manuscript_link?
   validates :question_list, presence: true,
                             format: { with: /\A(\d+&)*\d+\z/ },
                             if: :keks_quiz?
-  validates :extras_description, presence: true, if: :extra_content?
+  validates :extras_description, presence: true, if: :extras_link?
 
   after_initialize :set_defaults
-  after_save :fill_in_defaults_for_missing_params
+  before_save :fill_in_defaults_for_missing_params
   def sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
   end
@@ -66,11 +67,12 @@ class Medium < ApplicationRecord
   def self.search(params)
     sorts = { '1' => 'Kaviar', '2' => 'Sesam', '3' => 'Kiwi', '4' => 'KeksQuiz',
               '5' => 'Reste' }
-    return unless Lecture.exists?(params[:lecture_id]) && (1..5).cover?(params[:module_id].to_i)
+    return unless Lecture.exists?(params[:lecture_id]) &&
+                  (1..5).cover?(params[:module_id].to_i)
     lecture = Lecture.find_by_id(params[:lecture_id])
     teachable = params[:module_id] == '1' ? lecture.lessons : lecture
-    media = Medium.where(teachable: teachable,
-                         sort: sorts[params[:module_id]]).order(:id)
+    Medium.where(teachable: teachable,
+                 sort: sorts[params[:module_id]]).order(:id)
   end
 
   def video_aspect_ratio
@@ -169,26 +171,6 @@ class Medium < ApplicationRecord
     (video_stream_link.present? || video_file_link.present?) && !keks_question?
   end
 
-  def video_file_content?
-    video_file_link.present?
-  end
-
-  def video_stream_content?
-    video_stream_link.present?
-  end
-
-  def manuscript_content?
-    manuscript_link.present?
-  end
-
-  def external_content?
-    external_reference_link.present?
-  end
-
-  def extra_content?
-    extras_link.present?
-  end
-
   def nonempty_content?
     return true if video_stream_link.present? ||
                    video_file_link.present? ||
@@ -207,29 +189,28 @@ class Medium < ApplicationRecord
     sort == 'KeksQuiz'
   end
 
-  def keks_link_missing?
-    return false unless sort == 'KeksQuestion' && !external_reference_link.present?
-    true
+  def set_keks_defaults
+    self.external_reference_link = external_reference_link.presence ||
+                                   (DefaultSetting::KEKS_QUESTION_LINK +
+                                    question_id.to_s)
   end
 
-  def width_missing?
-    video_content? && width.nil?
+  def set_video_defaults
+    self.width ||= DefaultSetting::VIDEO_WIDTH
+    self.height ||= DefaultSetting::VIDEO_HEIGHT
+  end
+
+  def set_video_stream_defaults
+    self.embedded_width ||=  DefaultSetting::EMBEDDED_WIDTH
+    self.embedded_height ||= DefaultSetting::EMBEDDED_HEIGHT
+    self.video_player = video_player.presence || DefaultSetting::VIDEO_PLAYER
+    self.authoring_software = authoring_software.presence ||
+                              DefaultSetting::AUTHORING_SOFTWARE
   end
 
   def fill_in_defaults_for_missing_params
-    if sort == 'KeksQuestion' && !external_reference_link.present?
-      update(external_reference_link:
-               DefaultSetting::KEKS_QUESTION_LINK + question_id.to_s)
-    end
-    if video_content?
-      update(width: DefaultSetting::VIDEO_WIDTH) if width.nil?
-      update(height: DefaultSetting::VIDEO_HEIGHT) if height.nil?
-    end
-    if video_stream_content?
-      update(embedded_width: DefaultSetting::EMBEDDED_WIDTH) if embedded_width.nil?
-      update(embedded_height: DefaultSetting::EMBEDDED_HEIGHT) if embedded_height.nil?
-      update(video_player: DefaultSetting::VIDEO_PLAYER) if video_player.blank?
-      update(authoring_software: DefaultSetting::AUTHORING_SOFTWARE) if authoring_software.blank?
-    end
+    set_keks_defaults if sort == 'KeksQuestion'
+    set_video_defaults if video_content?
+    set_video_stream_defaults if video_stream_link.present?
   end
 end
