@@ -94,7 +94,7 @@ RailsAdmin.config do |config|
         field :tags
         field :linked_media
         field :heading do
-          help "Optional. Used as heading in card body if Sort is 'KeksQuiz, 'Reste' or 'Kiwi'."
+          help "Optional. Used as heading in card body if Sort is 'Sesam', 'KeksQuiz, 'Reste' or 'Kiwi'."
         end
         field :description do
           help "Overrides the generic description in card subheader. Used if Sort is 'Reste'."
@@ -112,16 +112,16 @@ RailsAdmin.config do |config|
           help "Mandatory video file is given. In this case, use format like: 123 MiB"
         end
         field :width do
-          help "Mandatory if video file or stream is given."
+          help "Mandatory if video file or stream is given. Will be set to default width if not given."
         end
         field :height do
-          help "Mandatory if video file or stream is given."
+          help "Mandatory if video file or stream is given. Will be set to default height if not given."
         end
         field :embedded_width do
-          help "Mandatory if video stream is given."
+          help "Mandatory if video stream is given. Will be set to default embedded width if not given."
         end
         field :embedded_height do
-          help "Mandatory if video stream is given."
+          help "Mandatory if video stream is given. Will be set to default embedded height if not given."
         end
         field :pages do
           help "Mandatory if manuscript is given."
@@ -129,8 +129,12 @@ RailsAdmin.config do |config|
         field :manuscript_size do
           help "Mandatory if manuscript is given."
         end
-        field :authoring_software
-        field :video_player
+        field :authoring_software do
+          help "Mandatory if video stream is given. Will be set to default authoring software if not given."
+        end
+        field :video_player do
+          help "Mandatory if video stream is given. Will be set to default video player if not given."
+        end
         field :extras_link
         field :extras_description
       end

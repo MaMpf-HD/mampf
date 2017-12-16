@@ -21,21 +21,18 @@ class Medium < ApplicationRecord
                                     greater_than_or_equal_to: 100,
                                     less_than_or_equal_to: 8192 },
                     if: Proc.new { |m| m.width.present? }
-  validates :height, presence: true,
-                     numericality: { only_integer: true,
+  validates :height, numericality: { only_integer: true,
                                      greater_than_or_equal_to: 100,
                                      less_than_or_equal_to: 4320 },
-                     if: :video_content?
-  validates :embedded_width, presence: true,
-                             numericality: { only_integer: true,
+                     if: Proc.new { |m| m.height.present? }
+  validates :embedded_width, numericality: { only_integer: true,
                                              greater_than_or_equal_to: 100,
                                              less_than_or_equal_to: 8192 },
-                             if: :video_stream_content?
-  validates :embedded_height, presence: true,
-                              numericality: { only_integer: true,
+                             if: Proc.new { |m| m.embedded_width.present? }
+  validates :embedded_height, numericality: { only_integer: true,
                                               greater_than_or_equal_to: 100,
                                               less_than_or_equal_to: 4320 },
-                              if: :video_stream_content?
+                              if: Proc.new { |m| m.embedded_height.present? }
 
   validates :length, presence: true,
                      format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
@@ -61,8 +58,7 @@ class Medium < ApplicationRecord
   validates :extras_description, presence: true, if: :extra_content?
 
   after_initialize :set_defaults
-  after_save :create_keks_link, if: :keks_link_missing?
-  after_save :set_default_width, if: :width_missing?
+  after_save :fill_in_defaults_for_missing_params
   def sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
   end
@@ -220,13 +216,20 @@ class Medium < ApplicationRecord
     video_content? && width.nil?
   end
 
-  def create_keks_link
-    update(external_reference_link:
-             DefaultSetting::KEKS_QUESTION_LINK + question_id.to_s)
+  def fill_in_defaults_for_missing_params
+    if sort == 'KeksQuestion' && !external_reference_link.present?
+      update(external_reference_link:
+               DefaultSetting::KEKS_QUESTION_LINK + question_id.to_s)
+    end
+    if video_content?
+      update(width: DefaultSetting::VIDEO_WIDTH) if width.nil?
+      update(height: DefaultSetting::VIDEO_HEIGHT) if height.nil?
+    end
+    if video_stream_content?
+      update(embedded_width: DefaultSetting::EMBEDDED_WIDTH) if embedded_width.nil?
+      update(embedded_height: DefaultSetting::EMBEDDED_HEIGHT) if embedded_height.nil?
+      update(video_player: DefaultSetting::VIDEO_PLAYER) if video_player.blank?
+      update(authoring_software: DefaultSetting::AUTHORING_SOFTWARE) if authoring_software.blank?
+    end
   end
-
-  def set_default_width
-    update(width: DefaultSetting::VIDEO_WIDTH)
-  end
-
 end

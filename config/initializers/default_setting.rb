@@ -10,5 +10,5 @@ class DefaultSetting
   EMBEDDED_WIDTH = 1080
   EMBEDDED_HEIGHT = 720
   AUTHORING_SOFTWARE = 'Camtasia 9'
-                          
+  VIDEO_PLAYER = 'TechSmith Smart Player'                    
 end

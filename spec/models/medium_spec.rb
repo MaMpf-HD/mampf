@@ -52,37 +52,15 @@ RSpec.describe Medium, type: :model do
                                         sort: 'Kaviar')
     expect(medium).to be_invalid
   end
-  it 'gets assigned default width if video_file_link is given but no width' do
-    medium = FactoryBot.create(:medium, video_file_link: 'http://www.test.de/test.mp4',
-                                        width: nil)
-    expect(medium.width).to eq(DefaultSetting::VIDEO_WIDTH)
-  end
-  it 'is invalid without height if video_file_link is given' do
-    medium = FactoryBot.build(:medium, video_file_link: 'http://www.test.de/test.mp4',
-                                        height: nil)
-    expect(medium).to be_invalid
-  end
-  it 'is invalid without embedded_width if video_stream_link is given' do
-    medium = FactoryBot.build(:medium, video_stream_link:
-                                          'www.test.de/test.mp4',
-                                        embedded_width: nil)
-    expect(medium).to be_invalid
-  end
-  it 'is invalid without embedded_height if video_stream_link is given' do
-    medium = FactoryBot.build(:medium, video_stream_link:
-                                          'www.test.de/test.mp4',
-                                        embedded_height: nil)
-    expect(medium).to be_invalid
-  end
   it 'is invalid without length if video_stream_link is given' do
     medium = FactoryBot.build(:medium, video_stream_link:
-                                          'www.test.de/test.mp4',
+                                         'http://www.test.de/test.mp4',
                                         length: nil)
     expect(medium).to be_invalid
   end
   it 'is invalid without video_size if video_file_link is given' do
-    medium = FactoryBot.build(:medium, video_file_link: 'www.test.de/test.mp4',
-                                        video_size: nil)
+    medium = FactoryBot.build(:medium, video_file_link: 'http://www.test.de/test.mp4',
+                                       video_size: nil)
     expect(medium).to be_invalid
   end
 
@@ -218,6 +196,40 @@ RSpec.describe Medium, type: :model do
     it 'adds the keks link if question id is given but not the link' do
       medium = FactoryBot.create(:medium, sort: 'KeksQuestion', question_id: 1234, external_reference_link: nil)
       expect(medium.external_reference_link). to eq(DefaultSetting::KEKS_QUESTION_LINK + '1234')
+    end
+    it 'gets assigned default width if video_file_link is given but no width' do
+      medium = FactoryBot.create(:medium, video_file_link: 'http://www.test.de/test.mp4',
+                                          width: nil)
+      expect(medium.width).to eq(DefaultSetting::VIDEO_WIDTH)
+    end
+    it 'gets assigned default height if video_file_link is given but no height' do
+      medium = FactoryBot.create(:medium, video_file_link: 'http://www.test.de/test.mp4',
+                                         height: nil)
+      expect(medium.height).to eq(DefaultSetting::VIDEO_HEIGHT)
+    end
+    it 'gets assigned default embedded_width if video_stream_link is given but no embedded_width' do
+      medium = FactoryBot.create(:medium, video_stream_link:
+                                           'http://www.test.de/test.mp4',
+                                         embedded_width: nil)
+      expect(medium.embedded_width).to eq(DefaultSetting::EMBEDDED_WIDTH)
+    end
+    it 'gets assigned default embedded_height if video_stream_link is given but no embedded_height' do
+      medium = FactoryBot.create(:medium, video_stream_link:
+                                           'http://www.test.de/test.mp4',
+                                          embedded_height: nil)
+      expect(medium.embedded_height).to eq(DefaultSetting::EMBEDDED_HEIGHT)
+    end
+    it 'gets assigned default video_player if video_stream_link is given but no video_player' do
+      medium = FactoryBot.create(:medium, video_stream_link:
+                                           'http://www.test.de/test.mp4',
+                                          video_player: nil)
+      expect(medium.video_player).to eq(DefaultSetting::VIDEO_PLAYER)
+    end
+    it 'gets assigned default authoring_software if video_stream_link is given but no authoring_software' do
+      medium = FactoryBot.create(:medium, video_stream_link:
+                                           'http://www.test.de/test.mp4',
+                                          authoring_software: nil)
+      expect(medium.authoring_software).to eq(DefaultSetting::AUTHORING_SOFTWARE)
     end
   end
   describe '#search' do
