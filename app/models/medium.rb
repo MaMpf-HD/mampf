@@ -22,19 +22,19 @@ class Medium < ApplicationRecord
   validates :width, numericality: { only_integer: true,
                                     greater_than_or_equal_to: 100,
                                     less_than_or_equal_to: 8192 },
-                    if: :width
+                    if: :width?
   validates :height, numericality: { only_integer: true,
                                      greater_than_or_equal_to: 100,
                                      less_than_or_equal_to: 4320 },
-                     if: :height
+                     if: :height?
   validates :embedded_width, numericality: { only_integer: true,
                                              greater_than_or_equal_to: 100,
                                              less_than_or_equal_to: 8192 },
-                             if: :embedded_width
+                             if: :embedded_width?
   validates :embedded_height, numericality: { only_integer: true,
                                               greater_than_or_equal_to: 100,
                                               less_than_or_equal_to: 4320 },
-                              if: :embedded_height
+                              if: :embedded_height?
   validates :length, presence: true,
                      format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
                      if: :video_content?

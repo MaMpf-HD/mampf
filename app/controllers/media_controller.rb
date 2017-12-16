@@ -11,11 +11,11 @@ class MediaController < ApplicationController
                                    existiert nicht.'
         return
       end
-      cookies[:current_lecture] = params[:lecture_id] if params[:lecture_id]
-      if params[:lecture_id]
+      cookies[:current_lecture] = params[:lecture_id]
+      if params[:module_id]
         unless (1..5).cover?(params[:module_id].to_i)
           redirect_to :root, alert: 'Ein Modul mit der angeforderten id existiert
-                                   nicht.'
+                                     nicht.'
           return
         end
         available_modules = Lecture.find(params[:lecture_id]).available_modules
