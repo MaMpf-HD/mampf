@@ -16,8 +16,7 @@
    <%= render 'shared/navbar' %>
     <div class="container-fluid">
        <div class="row">
-
-         <%= render partial: 'shared/sidebar', locals: { lecture_id: cookies[:current_lecture] ||= '1'} %>
+         <%= render partial: 'shared/sidebar', locals: { lecture_id: get_lecture_id } %>
          <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
            <% if alert.present? %>
              <div class="alert alert-primary" role="alert">
@@ -33,7 +32,7 @@
          </main>
        </div>
      </div>
-<!-- 
+<!--
     <hr> -->
 
     <footer>

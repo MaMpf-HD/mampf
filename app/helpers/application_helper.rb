@@ -32,4 +32,11 @@ module ApplicationHelper
       .where(id: media.select { |m| m.related_to_lectures?(filter_lectures) }
       .map(&:id))
   end
+
+  def get_lecture_id
+    return cookies[:current_lecture].to_i unless cookies[:current_lecture].nil?
+    return 1 if current_user.nil?
+    return current_user.lectures.first.id unless current_user.lectures.empty?
+    1
+  end
 end
