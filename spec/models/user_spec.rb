@@ -15,7 +15,7 @@ RSpec.describe User, type: :model do
     user = FactoryBot.create(:user)
     user.lectures = []
     user.save
-    expect(user.lectures.to_a).to match_array([Lecture.first])
+    expect(user.lectures.to_a).to match_array([Lecture.last])
   end
   it 'is given admin status false if admin is nil' do
     user = FactoryBot.create(:user)
