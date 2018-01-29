@@ -24,7 +24,7 @@ class User < ApplicationRecord
   private
 
   def set_defaults
-    self.lectures = [Lecture.first] if lectures.empty? && Lecture.any?      
+    self.lectures = [Lecture.last] if lectures.empty? && Lecture.any?      
     self.subscription_type = 1 if subscription_type.nil?
     self.admin = false if admin.nil?
   end
