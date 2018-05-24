@@ -1,4 +1,8 @@
 <%= render 'subscriptions' %>
 <div class="pt-3">
-<%= link_to "Passwort ändern", edit_user_registration_path, class: "btn btn-info" %>
+<%= link_to "Passwort ändern", edit_user_registration_path,
+            class: "btn btn-secondary mb-2" %>
+<%= link_to 'Account löschen', user_registration_path,
+            class: "btn btn-secondary mb-2",
+            data: { confirm: 'Bist Du sicher?' }, method: :delete %>
 </div>

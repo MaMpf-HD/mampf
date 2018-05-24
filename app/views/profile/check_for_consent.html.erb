@@ -1,0 +1,13 @@
+Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
+Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur Speicherung
+und Verarbeitung Deiner Daten gemäß der
+<%= link_to 'Datenschutzerklärung',
+            'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
+             target: :_blank %>
+der Universität Heidelberg.
+<div class="mt-2">
+<%= link_to 'Ich stimme zu.', add_consent_path, class: 'btn btn-primary',
+            method: :patch %>
+<%= link_to 'Account löschen', user_registration_path, class: 'btn btn-primary',
+            data: { confirm: 'Bist Du sicher?' }, method: :delete%>
+</div>

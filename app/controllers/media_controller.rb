@@ -1,8 +1,9 @@
 # MediaController
 class MediaController < ApplicationController
+  authorize_resource
   before_action :set_medium, only: [:show]
   before_action :sanitize_params
-  authorize_resource
+  before_action :check_for_consent
 
   def index
     if params[:lecture_id]
@@ -51,5 +52,9 @@ class MediaController < ApplicationController
     params[:all] = params[:all] == 'true'
     params[:reverse] = params[:reverse] == 'true'
     params[:per] = params[:per].to_i.in?([3,4,8,12,24]) ? params[:per].to_i : 8
+  end
+
+  def check_for_consent
+    redirect_to consent_profile_path unless current_user.consents
   end
 end

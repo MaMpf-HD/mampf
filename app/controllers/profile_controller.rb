@@ -3,6 +3,7 @@ class ProfileController < ApplicationController
   before_action :set_user
 
   def edit
+    redirect_to consent_profile_path unless @user.consents
   end
 
   def update
@@ -17,6 +18,16 @@ class ProfileController < ApplicationController
     @user.update(lectures: lectures, subscription_type: subscription_type)
     cookies[:current_lecture] = lectures.first.id if lectures.present?
     redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
+  end
+
+  def check_for_consent
+    redirect_to :root if @user.consents
+  end
+
+  def add_consent
+    @user.update(consents: true, consented_at: Time.now)
+    redirect_to :root, notice: 'Einwilligung zur Speicherung und Verbeitung'\
+                                'von Daten wurde erklärt.'
   end
 
   private

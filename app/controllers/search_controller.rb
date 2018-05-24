@@ -1,5 +1,7 @@
 # SearchController
 class SearchController < ApplicationController
+  before_action :check_for_consent
+
   def index
     @search_string = params[:search]
     if @search_string.nil?
@@ -17,5 +19,11 @@ class SearchController < ApplicationController
       matches = Tag.all.select { |x| x.title.downcase.include?(search_down) }
       @tags = Tag.where(id: matches.pluck(:id))
     end
+  end
+
+  private
+
+  def check_for_consent
+    redirect_to consent_profile_path unless current_user.consents
   end
 end

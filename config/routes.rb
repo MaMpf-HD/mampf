@@ -19,6 +19,9 @@ Rails.application.routes.draw do
 
   patch 'profile/update'
   put 'profile/update'
+  get 'profile/check_for_consent', as: 'consent_profile'
+  patch 'profile/add_consent', as: 'add_consent'
+  put 'profile/add_consent'
 
   devise_for :users, controllers: { registrations: 'registrations' }
   root 'main#home'

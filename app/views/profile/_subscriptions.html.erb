@@ -5,5 +5,5 @@
   <%= f.radio_button :subscription_type, 2, label: "aus allen Vorlesungen sehen.", checked: @user.subscription_type == 2 %>
   <%= f.radio_button :subscription_type, 3, label: "ausschließlich aus den von mir abonnierten Vorlesungen sehen.", checked: @user.subscription_type == 3 %>
 <% end %>
-  <%= f.submit "Profil updaten" %>
+  <%= f.submit "Profil updaten", class: 'btn btn-info' %>
 <% end %>
