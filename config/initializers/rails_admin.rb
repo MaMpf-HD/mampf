@@ -54,11 +54,6 @@ RailsAdmin.config do |config|
         field :id
         field :email
         field :created_at
-        field :sign_in_count do
-          label 'Visits'
-          column_width 80
-        end
-        field :current_sign_in_at
         field :lectures
         field :subscription_type do
           label 'Type'

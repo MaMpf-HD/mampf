@@ -49,7 +49,7 @@ de:
     sessions:
       signed_in: "Du hast Dich erfolgreich angemeldet."
       signed_out: "Du hast Dich erfolgreich abgemeldet."
-      remember_me: "Erinnere Dich an mich"
+      remember_me: "Erinnere Dich an mich (hierzu wird ein Cookie gesetzt)"
 
     unlocks:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
