@@ -26,7 +26,7 @@ class ProfileController < ApplicationController
 
   def add_consent
     @user.update(consents: true, consented_at: Time.now)
-    redirect_to :root, notice: 'Einwilligung zur Speicherung und Verbeitung'\
+    redirect_to :root, notice: 'Einwilligung zur Speicherung und Verarbeitung'\
                                 'von Daten wurde erklärt.'
   end
 
