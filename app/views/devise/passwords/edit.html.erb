@@ -14,7 +14,6 @@
     <%= f.label :password_confirmation, t('.confirm_new_password', default: 'Confirm new password') %>
     <%= f.password_field :password_confirmation, class: 'form-control'  %>
   </div>
-  <% unless resource.consents %>
     <div class="form-group">
       <%= f.check_box :consents, label: 'dshfj' %>
       <%= f.label :consents, raw('Ich stimme der Speicherung und Verarbeitung meiner '\
@@ -24,7 +23,6 @@
                                     target: :_blank) +
                                   ' der Universität Heidelberg zu.') %>
     </div>
-  <% end %>
   <div class="form-group">
     <%= f.submit t('.change_my_password', default: 'Change my password'), class: 'btn btn-primary' %>
   </div>
