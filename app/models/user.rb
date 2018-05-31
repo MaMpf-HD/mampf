@@ -6,8 +6,6 @@ class User < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :lectures, through: :lecture_user_joins, dependent: :destroy
   before_save :set_defaults
-  before_update :set_consent
-  validate :consented?
   after_create :set_consented_at
 
   def related_lectures
@@ -30,18 +28,6 @@ class User < ApplicationRecord
     self.lectures = [Lecture.last] if lectures.empty? && Lecture.any?
     self.subscription_type = 1 if subscription_type.nil?
     self.admin = false if admin.nil?
-  end
-
-  def set_consent
-    self.consents = true
-    self.consented_at = Time.now if self.consented_at.nil?
-  end
-
-  def consented?
-    return true if consents
-    errors.add(:base, 'Du hast der Einwilligung zur Speicherung und Verarbeitung' \
-                      ' Deiner Daten gemäß der Datenschutzerklärung nicht zugestimmt.')
-    false
   end
 
   def set_consented_at

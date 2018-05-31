@@ -15,17 +15,7 @@
     <%= f.password_field :password_confirmation, class: 'form-control'  %>
   </div>
   <div class="form-group">
-    <%= f.check_box :consents, id: 'dsgvo-consent' %>
-    <%= f.label :consents, raw('Ich stimme der Speicherung und Verarbeitung meiner '\
-                                 'Daten gemäß der ' +
-                                 link_to('Datenschutzerklärung',
-                                 'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
-                                  target: :_blank) +
-                                 ' der Universität Heidelberg zu.') %>
-  </div>
-  <div class="form-group">
-    <%= f.submit t('.change_my_password', default: 'Change my password'), class: 'btn btn-primary',
-                 id: 'pw-reset' %>
+    <%= f.submit t('.change_my_password', default: 'Change my password'), class: 'btn btn-primary' %>
   </div>
 <% end %>
 
