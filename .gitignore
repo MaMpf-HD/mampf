@@ -23,3 +23,6 @@
 
 .byebug_history
 coverage
+
+# Ignore master key for decrypting credentials and more.
+/config/master.key
