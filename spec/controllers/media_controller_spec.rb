@@ -12,7 +12,7 @@ RSpec.describe MediaController, type: :controller do
       it 'responds successfully' do
         sign_in @user
         get :index
-        expect(response).to be_success
+        expect(response).to be_successful
       end
 
       it 'returns a 200 response' do
@@ -75,7 +75,7 @@ RSpec.describe MediaController, type: :controller do
       it 'responds successfully' do
         sign_in @user
         get :show, params: { id: @medium.id }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
 
       it 'returns a 200 response' do

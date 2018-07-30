@@ -8,7 +8,7 @@ RSpec.describe Api::V1::MediaController, type: :controller do
     end
     it 'responds_successfully' do
       get :keks_question, params: { id: @keks_medium.question_id }
-      expect(response).to be_success
+      expect(response).to be_successful
     end
     it 'returns a 200 response' do
       get :keks_question, params: { id: @keks_medium.question_id }

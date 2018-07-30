@@ -17,7 +17,7 @@ RSpec.describe SearchController, type: :controller do
       it 'responds successfully' do
         sign_in @user
         get :index, params: { search: @tag.title }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
 
       it 'returns a 200 response' do

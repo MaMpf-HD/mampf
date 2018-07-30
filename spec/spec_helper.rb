@@ -53,7 +53,7 @@ RSpec.configure do |config|
   # @user = FactoryBot.create(:user, lectures: Lecture.all, sign_in_count: 5)
   # post 'devise/sessions#create', params: { email: @user.email, password: @user.password }
   # put response.body
-  # expect(response).to be_success
+  # expect(response).to be_successful
 
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.

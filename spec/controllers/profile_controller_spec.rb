@@ -10,7 +10,7 @@ RSpec.describe ProfileController, type: :controller do
       it 'responds successfully' do
         sign_in @user
         get :edit
-        expect(response).to be_success
+        expect(response).to be_successful
       end
 
       it 'returns a 200 response' do

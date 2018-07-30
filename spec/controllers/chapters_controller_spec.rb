@@ -13,7 +13,7 @@ RSpec.describe ChaptersController, type: :controller do
       it 'responds successfully' do
         sign_in @user
         get :show, params: { id: @chapter.id }
-        expect(response).to be_success
+        expect(response).to be_successful
       end
 
       it 'returns a 200 response' do
