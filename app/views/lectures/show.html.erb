@@ -17,7 +17,8 @@
 <p>
 <h5>News:</h5>
 <% if @lecture.twitter.present? %>
-<%= @lecture.twitter.html_safe %>
+<div id="twitter-news" data-profile="<%= @lecture.twitter %>" data-turbolinks-permanent>
+</div>
 <% else %>
 Zur Zeit gibt es keine Neuigkeiten.
 <% end %>

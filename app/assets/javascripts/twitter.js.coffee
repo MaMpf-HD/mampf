@@ -1,15 +1,15 @@
-# $ ->
-#   loadTwitterSDK()
-#   $(document).on 'page:change', renderTimelines
-#
-# loadTwitterSDK = ->
-#   $.getScript "//platform.twitter.com/widgets.js", ->
-#     renderTimelines()
-#
-# renderTimelines = ->
-#   $('.twitter-timeline').each ->
-#     $container = $(this)
-#     widgetId = $container.data 'widget-id'
-#     widgetOptions = $container.data 'widget-options'
-#     $container.empty()
-#     twttr?.widgets.createTimeline widgetId, $container[0], null, widgetOptions
+$(document).on 'turbolinks:load', ->
+  news = document.getElementById('twitter-news')
+  if news?
+    profile = news.dataset.profile
+    if profile?
+      if news.dataset.twitter?
+        location.reload()
+      else
+        $.getScript "https://platform.twitter.com/widgets.js", ->
+          twttr.widgets.createTimeline({
+            sourceType: 'profile',
+            screenName: profile
+          }, news, height: 300)
+          news.dataset.twitter = true
+  return

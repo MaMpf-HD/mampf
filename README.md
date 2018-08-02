@@ -4,6 +4,6 @@
 
 # README
 
-* Ruby version: 2.5.0
-* Rails Version: 5.1.5
+* Ruby version: 2.5.1
+* Rails Version: 5.2.0
 * Test suite: rspec
