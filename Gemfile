@@ -44,9 +44,11 @@ gem 'rails_admin_import', '~>2.1'
 gem 'erubis'
 gem 'cancancan'
 gem 'jquery-rails'
-gem 'bootstrap', '~> 4.0.0'
+gem 'bootstrap', '~> 4.1.1'
+gem "bootstrap_form",
+    git: "https://github.com/bootstrap-ruby/bootstrap_form.git",
+    branch: "master"
 gem 'devise-bootstrap-views', '1.0.0.alpha1'
-gem 'bootstrap_form'
 gem 'fuzzy-string-match'
 gem 'coveralls', require: false
 gem 'kaminari'

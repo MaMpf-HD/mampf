@@ -1,4 +1,4 @@
-<%= bootstrap_form_for @user, url: profile_update_path do |f| %>
+<%= bootstrap_form_with url: profile_update_path, scope: 'user', method: 'patch' do |f| %>
   <%= f.collection_check_boxes :lecture_ids, Lecture.all, :id, :to_label, label: 'Abonnierte Vorlesungen:' %>
   <%= f.form_group :subscription_type, label: { text: "MaMpf liefert eine Vielzahl von verknüpfte Inhalten. Ich möchte verknüpfte Inhalte" } do %>
   <%= f.radio_button :subscription_type, 1, label: "auch aus allen Vorlesungen sehen, die sich inhaltlich vor den von mir abonnierten Vorlesungen einsortieren.", checked: @user.subscription_type == 1 || @user.subscription_type.nil? %>
