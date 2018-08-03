@@ -1,6 +1,6 @@
 # Course class
 class Course < ApplicationRecord
-  has_many :lectures
+  has_many :lectures, dependent: :destroy
   has_many :course_tag_joins
   has_many :tags, through: :course_tag_joins
   has_many :media, as: :teachable

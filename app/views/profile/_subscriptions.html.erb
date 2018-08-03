@@ -1,9 +1,73 @@
-<%= bootstrap_form_with url: profile_update_path, scope: 'user', method: 'patch' do |f| %>
-  <%= f.collection_check_boxes :lecture_ids, Lecture.all, :id, :to_label, label: 'Abonnierte Vorlesungen:' %>
-  <%= f.form_group :subscription_type, label: { text: "MaMpf liefert eine Vielzahl von verknüpfte Inhalten. Ich möchte verknüpfte Inhalte" } do %>
-  <%= f.radio_button :subscription_type, 1, label: "auch aus allen Vorlesungen sehen, die sich inhaltlich vor den von mir abonnierten Vorlesungen einsortieren.", checked: @user.subscription_type == 1 || @user.subscription_type.nil? %>
-  <%= f.radio_button :subscription_type, 2, label: "aus allen Vorlesungen sehen.", checked: @user.subscription_type == 2 %>
-  <%= f.radio_button :subscription_type, 3, label: "ausschließlich aus den von mir abonnierten Vorlesungen sehen.", checked: @user.subscription_type == 3 %>
+<%= bootstrap_form_with url: profile_update_path, scope: 'user',
+                        method: 'patch' do |f| %>
+  <div class="row m-2">
+    <div class="col-12">
+      <div class="card bg-light" id="accordion">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-12">
+              <h5>
+                Module
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <% Course.all.each do |c| %>
+            <div class="card">
+              <div class="card-header %>"
+                   id="course-heading-<%= c.id %>">
+                <div class="row">
+                  <% co = 'course-' + c.id.to_s %>
+                  <div class="col-8">
+                    <%= f.form_group co do %>
+                      <%= f.check_box co, label: c.title %>
+                    <% end %>
+                  </div>
+                  <div class="col-4 text-right">
+                    <button id="details-course-<%= c.id %>" type="button"
+                            class="btn btn-sm btn-secondary rounded collapsed m-1"
+                            data-toggle="collapse"
+                            data-target="#collapse-course-<%= c.id %>"
+                            aria-expanded="true"
+                            aria-controls="collapse-course-<%= c.id %>">
+                      Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div id="collapse-course-<%= c.id %>" class="collapse"
+                   aria-labelledby="course-heading-<%= c.id %>"
+                   data-parent="#accordion"
+                  data-course="<%= c.id %>">
+                <div class="card-body" id="course-body-<%= c.id %>">
+                  Hier wird man Details zum Kurs auswählen können.
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= f.collection_check_boxes :lecture_ids, Lecture.all, :id, :to_label,
+                               label: 'Abonnierte Vorlesungen:' %>
+  <%= f.form_group :subscription_type,
+                   label: { text: 'MaMpf liefert eine Vielzahl von ' +
+                                  'verknüpften Inhalten. Ich möchte ' +
+                                  'verknüpfteInhalte' } do %>
+  <%= f.radio_button :subscription_type, 1,
+                     label: 'auch aus allen Vorlesungen sehen, die sich ' +
+                            'inhaltlich vor den von mir abonnierten ' +
+                            'Vorlesungen einsortieren.',
+                     checked: @user.subscription_type == 1 || @user.subscription_type.nil? %>
+  <%= f.radio_button :subscription_type, 2,
+                     label: "aus allen Vorlesungen sehen.",
+                     checked: @user.subscription_type == 2 %>
+  <%= f.radio_button :subscription_type, 3,
+                     label: 'ausschließlich aus den von mir abonnierten ' +
+                            'Vorlesungen sehen.',
+                     checked: @user.subscription_type == 3 %>
 <% end %>
   <%= f.submit "Profil updaten", class: 'btn btn-info' %>
 <% end %>
