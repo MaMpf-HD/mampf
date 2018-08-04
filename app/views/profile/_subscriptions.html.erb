@@ -125,8 +125,6 @@
       </div>
     </div>
   </div>
-  <%= f.collection_check_boxes :lecture_ids, Lecture.all, :id, :to_label,
-                               label: 'Abonnierte Vorlesungen:' %>
   <%= f.form_group :subscription_type,
                    label: { text: 'MaMpf liefert eine Vielzahl von ' +
                                   'verknüpften Inhalten. Ich möchte ' +

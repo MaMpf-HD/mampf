@@ -4,7 +4,9 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :validatable
 
   has_many :lecture_user_joins, dependent: :destroy
-  has_many :lectures, through: :lecture_user_joins, dependent: :destroy
+  has_many :lectures, through: :lecture_user_joins
+  has_many :course_user_joins, dependent: :destroy
+  has_many :courses, through: :course_user_joins
   before_save :set_defaults
   after_create :set_consented_at
 

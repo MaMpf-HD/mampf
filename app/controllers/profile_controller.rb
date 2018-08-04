@@ -7,9 +7,9 @@ class ProfileController < ApplicationController
   end
 
   def update
-    @lecture_ids = user_params[:lecture_ids].map(&:to_i)
+    puts course_ids
     subscription_type = user_params[:subscription_type].to_i
-    lectures = Lecture.where(id: @lecture_ids)
+    lectures = Lecture.where(id: lecture_ids)
     if lectures.empty? && Lecture.any?
       redirect_to :edit_profile,
                   alert: 'Eine Vorlesung musst Du mindestens abonnieren.'
@@ -40,6 +40,19 @@ class ProfileController < ApplicationController
   # Never trust parameters from the scary internet,
   #  only allow the white list through.
   def user_params
-    params.fetch(:user, {}).permit(:subscription_type, lecture_ids: [])
+    params[:user]
+  #  params.fetch(:user, {}).permit(:subscription_type, lecture_ids: [])
+  end
+
+  def course_ids
+    params[:user].keys.select { |k| k.start_with?('course-') }
+                 .select { |c| params[:user][c] == '1' }
+                 .map { |c| c.remove('course-').to_i }
+  end
+
+  def lecture_ids
+    params[:user].keys.select { |k| k.start_with?('lecture-') }
+                 .select { |c| params[:user][c] == '1' }
+                 .map { |c| c.remove('lecture-').to_i }
   end
 end
