@@ -14,4 +14,57 @@ class Course < ApplicationRecord
   def description
     { general: title }
   end
+
+  def kaviar
+    return if lectures.empty?
+    return true if lectures.map(&:kaviar).include?(true)
+    false
+  end
+
+  def sesam
+    return if lectures.empty?
+    return true if lectures.map(&:sesam).include?(true)
+    false
+  end
+
+  def keks
+    return if lectures.empty?
+    return true if lectures.map(&:keks).include?(true)
+    false
+  end
+
+  def erdbeere
+    return if lectures.empty?
+    return true if lectures.map(&:erdbeere).include?(true)
+    false
+  end
+
+  def kiwi
+    return if lectures.empty?
+    return true if lectures.map(&:kiwi).include?(true)
+    false
+  end
+
+  def reste
+    return if lectures.empty?
+    return true if lectures.map(&:reste).include?(true)
+    false
+  end
+
+  def kaviar_lectures
+    lectures.where(kaviar: true)
+  end
+
+  def kaviar_lectures_by_date
+    kaviar_lectures.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
+
+  def lectures_by_date
+    lectures.to_a.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
+
 end

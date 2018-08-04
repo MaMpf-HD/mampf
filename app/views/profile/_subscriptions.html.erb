@@ -18,10 +18,11 @@
               <div class="card-header %>"
                    id="course-heading-<%= c.id %>">
                 <div class="row">
-                  <% co = 'course-' + c.id.to_s %>
+                  <% course = 'course-' + c.id.to_s %>
                   <div class="col-8">
-                    <%= f.form_group co do %>
-                      <%= f.check_box co, label: c.title %>
+                    <%= f.form_group course do %>
+                      <%= f.check_box course, label: c.title, id: course,
+                                      data: { course: c.id } %>
                     <% end %>
                   </div>
                   <div class="col-4 text-right">
@@ -41,7 +42,81 @@
                    data-parent="#accordion"
                   data-course="<%= c.id %>">
                 <div class="card-body" id="course-body-<%= c.id %>">
-                  Hier wird man Details zum Kurs auswählen können.
+                  <div class="row">
+                    <% if c.kaviar %>
+                      <div class="col-12">
+                        Videoaufzeichnung aus dem Semester:
+                      </div>
+                      <div class="col-12">
+                        <%= f.form_group do %>
+                          <% c.kaviar_lectures_by_date.each do |l| %>
+                          <% lecture = 'lecture-' + l.id.to_s %>
+                          <%= f.check_box lecture, label: l.term.to_label_short,
+                                          checked: l.newest_kaviar?,
+                                          disabled: true,
+                                          inline: true %>
+                          <% end %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <div class="col-12">
+                      Weitere Angebote:
+                    </div>
+                    <% if c.news.present? %>
+                      <div class="col-12">
+                        <% news = 'news-' + c.id.to_s %>
+                        <%= f.form_group do %>
+                          <% f.check_box news, label: 'Newsfeed', checked: true,
+                                         disabled: true%>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <% if c.sesam %>
+                      <div class="col-12">
+                        <% sesam = 'sesam-' + c.id.to_s %>
+                        <%= f.form_group do %>
+                          <% f.check_box sesam, label: 'SeSAM', checked: true,
+                                         disabled: true %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <% if c.keks %>
+                      <div class="col-12">
+                        <% keks = 'keks-' + c.id.to_s %>
+                        <%= f.form_group do %>
+                          <% f.check_box keks, label: 'KeKs', checked: true,
+                                         disabled: true %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <% if c.erdbeere %>
+                      <div class="col-12">
+                        <% erdbeere = 'erdbeere-' + c.id.to_s %>
+                        <%= f.form_group do %>
+                          <% f.check_box erdbeere, label: 'ErDBeere',
+                                         disabled: true, checked: true %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <% if c.kiwi %>
+                      <div class="col-12">
+                        <% kiwi = 'kiwi-' + c.id.to_s %>
+                        <%= f.form_group do %>
+                          <% f.check_box kiwi, label: 'KIWi', checked: true,
+                                         disabled: true %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <% if c.reste %>
+                      <div class="col-12">
+                        <% reste = 'reste-' + c.id.to_s %>
+                        <%= f.form_group do %>
+                          <% f.check_box reste, label: 'RestE', checked: true,
+                                         disabled: true %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                  </div>
                 </div>
               </div>
             </div>

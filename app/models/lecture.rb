@@ -65,4 +65,12 @@ class Lecture < ApplicationRecord
   def description
     { general: to_label }
   end
+
+  def newest?
+    self == course.lectures_by_date.first
+  end
+
+  def newest_kaviar?
+    self == course.kaviar_lectures_by_date.first
+  end
 end
