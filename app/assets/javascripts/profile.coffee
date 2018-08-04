@@ -8,7 +8,7 @@ $(document).on 'turbolinks:load', ->
     if courseId?
       console.log 'Hier'
       $boxes = $('#collapse-course-' + courseId).find('input:checkbox')
-      if $(this).prop('checked', true)
+      if $(this).prop('checked') == true
         $boxes.prop('disabled', false)
       else
         $boxes.prop('disabled', true)
