@@ -14,6 +14,7 @@
         </div>
         <div class="card-body">
           <% Course.all.each do |c| %>
+            <% subscribed = @user.courses.where(id: c.id).present? %>
             <div class="card">
               <div class="card-header %>"
                    id="course-heading-<%= c.id %>">
@@ -22,6 +23,7 @@
                   <div class="col-8">
                     <%= f.form_group course do %>
                       <%= f.check_box course, label: c.title, id: course,
+                                      checked: subscribed,
                                       data: { course: c.id } %>
                     <% end %>
                   </div>
@@ -51,9 +53,10 @@
                         <%= f.form_group do %>
                           <% c.kaviar_lectures_by_date.each do |l| %>
                           <% lecture = 'lecture-' + l.id.to_s %>
+                          <% checked = @user.lectures.where(id: l.id).present? %>
                           <%= f.check_box lecture, label: l.term.to_label_short,
-                                          checked: l.newest_kaviar?,
-                                          disabled: true,
+                                          checked: subscribed ? checked : l.newest_kaviar?,
+                                          disabled: !subscribed,
                                           inline: true %>
                           <% end %>
                         <% end %>
@@ -67,7 +70,7 @@
                         <% news = 'news-' + c.id.to_s %>
                         <%= f.form_group do %>
                           <% f.check_box news, label: 'Newsfeed', checked: true,
-                                         disabled: true%>
+                                         disabled: !subscribed %>
                         <% end %>
                       </div>
                     <% end %>
@@ -76,7 +79,7 @@
                         <% sesam = 'sesam-' + c.id.to_s %>
                         <%= f.form_group do %>
                           <% f.check_box sesam, label: 'SeSAM', checked: true,
-                                         disabled: true %>
+                                         disabled: !subscribed %>
                         <% end %>
                       </div>
                     <% end %>
@@ -85,7 +88,7 @@
                         <% keks = 'keks-' + c.id.to_s %>
                         <%= f.form_group do %>
                           <% f.check_box keks, label: 'KeKs', checked: true,
-                                         disabled: true %>
+                                         disabled: !subscribed %>
                         <% end %>
                       </div>
                     <% end %>
@@ -94,7 +97,7 @@
                         <% erdbeere = 'erdbeere-' + c.id.to_s %>
                         <%= f.form_group do %>
                           <% f.check_box erdbeere, label: 'ErDBeere',
-                                         disabled: true, checked: true %>
+                                         disabled: !subscribed, checked: true %>
                         <% end %>
                       </div>
                     <% end %>
@@ -103,7 +106,7 @@
                         <% kiwi = 'kiwi-' + c.id.to_s %>
                         <%= f.form_group do %>
                           <% f.check_box kiwi, label: 'KIWi', checked: true,
-                                         disabled: true %>
+                                         disabled: !subscribed %>
                         <% end %>
                       </div>
                     <% end %>
@@ -112,7 +115,7 @@
                         <% reste = 'reste-' + c.id.to_s %>
                         <%= f.form_group do %>
                           <% f.check_box reste, label: 'RestE', checked: true,
-                                         disabled: true %>
+                                         disabled: !subscribed %>
                         <% end %>
                       </div>
                     <% end %>

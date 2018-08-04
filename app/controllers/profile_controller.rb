@@ -7,15 +7,16 @@ class ProfileController < ApplicationController
   end
 
   def update
-    puts course_ids
     subscription_type = user_params[:subscription_type].to_i
+    courses = Course.where(id: course_ids)
     lectures = Lecture.where(id: lecture_ids)
-    if lectures.empty? && Lecture.any?
+    if courses.empty? && Course.any?
       redirect_to :edit_profile,
-                  alert: 'Eine Vorlesung musst Du mindestens abonnieren.'
+                  alert: 'Ein Modul musst Du mindestens abonnieren.'
       return
     end
-    @user.update(lectures: lectures, subscription_type: subscription_type)
+    @user.update(lectures: lectures, courses: courses,
+                 subscription_type: subscription_type)
     cookies[:current_lecture] = lectures.first.id if lectures.present?
     redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
   end

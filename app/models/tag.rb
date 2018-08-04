@@ -20,7 +20,7 @@ class Tag < ApplicationRecord
   has_many :medium_tag_joins
   has_many :media, through: :medium_tag_joins
   has_many :relations, dependent: :destroy
-  has_many :related_tags, through: :relations, dependent: :destroy
+  has_many :related_tags, through: :relations
   validates :title, presence: true, uniqueness: true
 
   def tags_in_neighbourhood

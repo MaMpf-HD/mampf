@@ -4,7 +4,7 @@ class Medium < ApplicationRecord
   has_many :medium_tag_joins
   has_many :tags, through: :medium_tag_joins
   has_many :links, dependent: :destroy
-  has_many :linked_media, through: :links, dependent: :destroy
+  has_many :linked_media, through: :links
   validates :sort, presence: true,
                    inclusion: { in: :sort_enum }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
