@@ -17,8 +17,7 @@ Rails.application.routes.draw do
   get 'profile/edit', as: 'edit_profile'
   get 'lectures/:lecture_id/modules/:module_id', to: 'media#index', as: 'lecture_module'
 
-  patch 'profile/update'
-  put 'profile/update'
+  post 'profile/update'
   get 'profile/check_for_consent', as: 'consent_profile'
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'

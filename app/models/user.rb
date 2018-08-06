@@ -7,6 +7,8 @@ class User < ApplicationRecord
   has_many :lectures, through: :lecture_user_joins
   has_many :course_user_joins, dependent: :destroy
   has_many :courses, through: :course_user_joins
+  validates :courses, presence: { message: ' Es muss mindestens ein Modul abonniert werden.'},
+            if: :courses_exist?
   before_save :set_defaults
   after_create :set_consented_at
 
@@ -27,12 +29,15 @@ class User < ApplicationRecord
   private
 
   def set_defaults
-    self.lectures = [Lecture.last] if lectures.empty? && Lecture.any?
     self.subscription_type = 1 if subscription_type.nil?
     self.admin = false if admin.nil?
   end
 
   def set_consented_at
     update(consented_at: Time.now)
+  end
+
+  def courses_exist?
+    return true if Course.all.present? && edited_profile?
   end
 end

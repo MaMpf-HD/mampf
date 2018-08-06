@@ -7,18 +7,25 @@ class ProfileController < ApplicationController
   end
 
   def update
-    subscription_type = user_params[:subscription_type].to_i
+    subscription_type = params[:user][:subscription_type].to_i
     courses = Course.where(id: course_ids)
     lectures = Lecture.where(id: lecture_ids)
-    if courses.empty? && Course.any?
-      redirect_to :edit_profile,
-                  alert: 'Ein Modul musst Du mindestens abonnieren.'
+    if @user.update(lectures: lectures, courses: courses,
+                    subscription_type: subscription_type, edited_profile: true)
+      courses.each do |c|
+        details = CourseUserJoin.where(user: @user, course: c).first
+        unless details.update(c.extras(params[:user]))
+          @error = details.errors
+          @course = c
+          return
+        end
+      end
+      cookies[:current_lecture] = lectures.first.id if lectures.present?
+      redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
       return
+    else
+      @error = @user.errors
     end
-    @user.update(lectures: lectures, courses: courses,
-                 subscription_type: subscription_type)
-    cookies[:current_lecture] = lectures.first.id if lectures.present?
-    redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
   end
 
   def check_for_consent
@@ -33,16 +40,8 @@ class ProfileController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_user
     @user = current_user
-  end
-
-  # Never trust parameters from the scary internet,
-  #  only allow the white list through.
-  def user_params
-    params[:user]
-  #  params.fetch(:user, {}).permit(:subscription_type, lecture_ids: [])
   end
 
   def course_ids

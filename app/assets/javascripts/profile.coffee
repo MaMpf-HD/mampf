@@ -6,7 +6,6 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'change', '[id^="course-"]', ->
     courseId = this.dataset.course
     if courseId?
-      console.log 'Hier'
       $boxes = $('#collapse-course-' + courseId).find('input:checkbox')
       if $(this).prop('checked') == true
         $boxes.prop('disabled', false)

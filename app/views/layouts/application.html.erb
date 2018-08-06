@@ -18,8 +18,11 @@
        <div class="row">
          <%= render partial: 'shared/sidebar', locals: { lecture_id: get_lecture_id } %>
          <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+           <div class="alert alert-danger" id="js-messages" role="alert"
+                style="display: none;">
+           </div>
            <% if alert.present? %>
-             <div class="alert alert-primary" role="alert">
+             <div class="alert alert-danger" role="alert">
                <%= alert %>
              </div>
            <% end %>
