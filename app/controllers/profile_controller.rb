@@ -20,7 +20,10 @@ class ProfileController < ApplicationController
   end
 
   def check_for_consent
-    redirect_to :root if @user.consents && @user.edited_profile
+    if @user.consents && @user.edited_profile
+      redirect_to :root
+      return
+    end
     if @user.consents
       redirect_to edit_profile_path,
                   notice: 'Bitte nimm Dir ein paar Minuten Zeit, um Dein ' \
