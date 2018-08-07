@@ -42,21 +42,27 @@ RSpec.describe ProfileController, type: :controller do
       end
       it 'updates the subscribed_lectures' do
         sign_in @user
-        patch :update, params: { user: { lecture_ids: [@lecture.id.to_s],
+        patch :update, params: { user: { 'course-' + @lecture.course.id.to_s => '1',
+                                         'lecture-' + @lecture.id.to_s => '1',
+                                         'sesam-' +  @lecture.course.id.to_s => '1',
                                          subscription_type: '2' } }
         expect(@user.reload.lectures).to eq [@lecture]
       end
 
       it 'updates the subscription type' do
         sign_in @user
-        patch :update, params: { user: { lecture_ids: [@lecture.id.to_s],
+        patch :update, params: { user: { 'course-' + @lecture.course.id.to_s => '1',
+                                         'lecture-' + @lecture.id.to_s => '1',
+                                         'sesam-' +  @lecture.course.id.to_s => '1',
                                          subscription_type: '2' } }
         expect(@user.reload.subscription_type).to eq 2
       end
 
       it 'redirects to the main page' do
         sign_in @user
-        patch :update, params: { user: { lecture_ids: [@lecture.id.to_s],
+        patch :update, params: { user: { 'course-' + @lecture.course.id.to_s => '1',
+                                         'lecture-' + @lecture.id.to_s => '1',
+                                         'sesam-' +  @lecture.course.id.to_s => '1',
                                          subscription_type: '2' } }
         expect(response).to redirect_to root_path
       end

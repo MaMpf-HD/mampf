@@ -3,9 +3,9 @@ FactoryBot.define do
     association :course, factory: [:course, :with_tags]
     association :teacher
     association :term
-    kaviar [true, false].sample
+    kaviar [true].sample
     keks [true, false].sample
-    sesam [true, false].sample
+    sesam [true].sample
     erdbeere [true, false].sample
     reste [true, false].sample
     kiwi [true,false].sample

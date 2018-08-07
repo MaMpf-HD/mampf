@@ -10,13 +10,6 @@ RSpec.describe User, type: :model do
     user.save
     expect(user.subscription_type).to eq(1)
   end
-  it 'is given the default lecture if lecture list is empty' do
-    lecture = FactoryBot.create(:lecture)
-    user = FactoryBot.create(:user)
-    user.lectures = []
-    user.save
-    expect(user.lectures.to_a).to match_array([Lecture.last])
-  end
   it 'is given admin status false if admin is nil' do
     user = FactoryBot.create(:user)
     user.admin = nil
