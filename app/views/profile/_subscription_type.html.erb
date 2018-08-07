@@ -1,0 +1,22 @@
+<div class="row">
+  <div class="col-12">
+    <%= f.form_group :subscription_type,
+                      label: { text: 'MaMpf liefert eine Vielzahl von ' \
+                                     'verknüpften Inhalten. Ich möchte ' \
+                                     'verknüpfte Inhalte' } do %>
+      <%= f.radio_button :subscription_type, 1,
+                         label: 'auch aus allen Modulen sehen, die sich ' \
+                                'inhaltlich vor den von mir abonnierten ' \
+                                'Modulen einsortieren.',
+                         checked: @user.subscription_type == 1 ||
+                                  @user.subscription_type.nil? %>
+      <%= f.radio_button :subscription_type, 2,
+                         label: "aus allen Modulen sehen.",
+                         checked: @user.subscription_type == 2 %>
+      <%= f.radio_button :subscription_type, 3,
+                         label: 'ausschließlich aus den von mir abonnierten ' \
+                                'Modulen sehen.',
+                         checked: @user.subscription_type == 3 %>
+    <% end %>
+  </div>
+</div>

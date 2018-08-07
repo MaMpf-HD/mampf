@@ -7,7 +7,9 @@ class User < ApplicationRecord
   has_many :lectures, through: :lecture_user_joins
   has_many :course_user_joins, dependent: :destroy
   has_many :courses, through: :course_user_joins
-  validates :courses, presence: { message: ' Es muss mindestens ein Modul abonniert werden.'},
+  validates :courses,
+            presence: { message: 'Es muss mindestens ein Modul abonniert ' \
+                                 'werden.' },
             if: :courses_exist?
   before_save :set_defaults
   after_create :set_consented_at

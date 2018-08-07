@@ -7,29 +7,25 @@ class ProfileController < ApplicationController
   end
 
   def update
-    subscription_type = params[:user][:subscription_type].to_i
-    courses = Course.where(id: course_ids)
-    lectures = Lecture.where(id: lecture_ids)
-    if @user.update(lectures: lectures, courses: courses,
-                    subscription_type: subscription_type, edited_profile: true)
-      courses.each do |c|
-        details = CourseUserJoin.where(user: @user, course: c).first
-        unless details.update(c.extras(params[:user]))
-          @error = details.errors
-          @course = c
-          return
-        end
-      end
-      cookies[:current_lecture] = lectures.first.id if lectures.present?
+    set_basics
+    if @user.update(lectures: @lectures, courses: @courses,
+                    subscription_type: @subscription_type, edited_profile: true)
+      add_details
+      return if @problem_courses.present?
+      cookies[:current_lecture] = @lectures.first.id if @lectures.present?
       redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
-      return
     else
-      @error = @user.errors
+      @no_course_error = @user.errors
     end
   end
 
   def check_for_consent
-    redirect_to :root if @user.consents
+    redirect_to :root if @user.consents && @user.edited_profile
+    if @user.consents
+      redirect_to edit_profile_path,
+                  notice: 'Bitte nimm Dir ein paar Minuten Zeit, um Dein ' \
+                          'Profil zu bearbeiten.'
+    end
   end
 
   def add_consent
@@ -44,6 +40,12 @@ class ProfileController < ApplicationController
     @user = current_user
   end
 
+  def set_basics
+    @subscription_type = params[:user][:subscription_type].to_i
+    @courses = Course.where(id: course_ids)
+    @lectures = Lecture.where(id: lecture_ids)
+  end
+
   def course_ids
     params[:user].keys.select { |k| k.start_with?('course-') }
                  .select { |c| params[:user][c] == '1' }
@@ -54,5 +56,14 @@ class ProfileController < ApplicationController
     params[:user].keys.select { |k| k.start_with?('lecture-') }
                  .select { |c| params[:user][c] == '1' }
                  .map { |c| c.remove('lecture-').to_i }
+  end
+
+  def add_details
+    @problem_courses = []
+    @courses.each do |c|
+      details = CourseUserJoin.where(user: @user, course: c).first
+      next if details.update(c.extras(params[:user]))
+      @problem_courses.append(c.id)
+    end
   end
 end

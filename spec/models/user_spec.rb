@@ -26,7 +26,7 @@ RSpec.describe User, type: :model do
     context 'if subscription type is 1' do
       it 'gives the correct list of related lectures' do
         @user.update(subscription_type: 1)
-        expect(@user.related_lectures.to_a).to match_array([@lecture,@preceding_lecture])
+        expect(@user.related_lectures.to_a).to match_array([@lecture, @preceding_lecture])
       end
     end
     context 'if subscription type is 2' do
