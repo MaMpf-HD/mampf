@@ -165,41 +165,11 @@ RailsAdmin.config do |config|
         field :term
         field :course
         field :teacher
-        field :kaviar do
-          column_width 50
-          label 'Kav'
-        end
-        field :keks do
-          column_width 50
-          label 'Kek'
-        end
-        field :sesam do
-          column_width 50
-          label 'Ses'
-        end
-        field :kiwi do
-          column_width 50
-          label 'Kiw'
-        end
-        field :erdbeere do
-          column_width 50
-          label 'Erd'
-        end
-        field :reste do
-          column_width 50
-          label 'Res'
-        end
       end
       edit do
         field :teacher
         field :course
         field :term
-        field :kaviar
-        field :sesam
-        field :keks
-        field :reste
-        field :erdbeere
-        field :kiwi
         field :twitter
         field :additional_tags
         field :disabled_tags
