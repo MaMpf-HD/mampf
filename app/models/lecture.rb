@@ -45,7 +45,7 @@ class Lecture < ApplicationRecord
   end
 
   def keks?
-    Medium.where(sort: ['Keks', 'KeksQuestion']).any? { |m| m.lecture == self }
+    Medium.where(sort: ['KeksQuiz', 'KeksQuestion']).any? { |m| m.lecture == self }
   end
 
   def erdbeere?
