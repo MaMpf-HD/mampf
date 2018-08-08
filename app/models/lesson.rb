@@ -47,6 +47,10 @@ class Lesson < ApplicationRecord
     { general: lecture.to_label, specific: title }
   end
 
+  def lesson
+    self
+  end
+
   private
 
   def valid_date_for_term?

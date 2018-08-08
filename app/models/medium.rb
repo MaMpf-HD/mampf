@@ -154,6 +154,22 @@ class Medium < ApplicationRecord
     lectures.map { |l| related_to_lecture?(l) }.include?(true)
   end
 
+  def course
+    return if teachable.nil?
+    teachable.course
+  end
+
+  def lecture
+    return if teachable.nil?
+    teachable.lecture
+  end
+
+  def lesson
+    return if lesson.nil?
+    teachable.lesson
+  end
+
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 

@@ -36,8 +36,34 @@ class Lecture < ApplicationRecord
     Section.where(chapter: chapters)
   end
 
+  def kaviar?
+    Medium.where(sort: 'Kaviar').any? { |m| m.lecture == self }
+  end
+
+  def sesam?
+    Medium.where(sort: 'Sesam').any? { |m| m.lecture == self }
+  end
+
+  def keks?
+    Medium.where(sort: ['Keks', 'KeksQuestion']).any? { |m| m.lecture == self }
+  end
+
+  def erdbeere?
+    Medium.where(sort: 'Erdbeere').any? { |m| m.lecture == self }
+  end
+
+  def kiwi?
+    Medium.where(sort: 'Kiwi').any? { |m| m.lecture == self }
+  end
+
+  def reste?
+    Medium.where(sort: 'Reste').any? { |m| m.lecture == self }
+  end
+
+
+
   def available_modules
-    [nil, kaviar, sesam, kiwi, keks, reste]
+    [nil, kaviar?, sesam?, kiwi?, keks?, reste?]
   end
 
   def to_label
@@ -58,8 +84,8 @@ class Lecture < ApplicationRecord
   end
 
   def modules
-    { 'KaViaR' => kaviar, 'SeSAM' => sesam, 'RestE' => reste, 'KeKs' => keks,
-      'ErDBeere' => erdbeere, 'KIWi' => kiwi }
+    { 'KaViaR' => kaviar?, 'SeSAM' => sesam?, 'RestE' => reste?, 'KeKs' => keks?,
+      'ErDBeere' => erdbeere?, 'KIWi' => kiwi? }
   end
 
   def description
@@ -72,5 +98,12 @@ class Lecture < ApplicationRecord
 
   def newest_kaviar?
     self == course.kaviar_lectures_by_date.first
+  end
+
+  def lesson
+  end
+
+  def lecture
+    self
   end
 end

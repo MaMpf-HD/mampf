@@ -17,50 +17,38 @@ class Course < ApplicationRecord
     { general: title }
   end
 
-  def kaviar
-    return if lectures.empty?
-    return true if lectures.map(&:kaviar).include?(true)
-    false
+  def kaviar?
+    Medium.where(sort: 'Kaviar').any? { |m| m.course == self }
   end
 
-  def sesam
-    return if lectures.empty?
-    return true if lectures.map(&:sesam).include?(true)
-    false
+  def sesam?
+    Medium.where(sort: 'Sesam').any? { |m| m.course == self }
   end
 
-  def keks
-    return if lectures.empty?
-    return true if lectures.map(&:keks).include?(true)
-    false
+  def keks?
+    Medium.where(sort: ['Keks', 'KeksQuestion']).any? { |m| m.course == self }
   end
 
-  def erdbeere
-    return if lectures.empty?
-    return true if lectures.map(&:erdbeere).include?(true)
-    false
+  def erdbeere?
+    Medium.where(sort: 'Erdbeere').any? { |m| m.course == self }
   end
 
-  def kiwi
-    return if lectures.empty?
-    return true if lectures.map(&:kiwi).include?(true)
-    false
+  def kiwi?
+    Medium.where(sort: 'Kiwi').any? { |m| m.course == self }
   end
 
-  def reste
-    return if lectures.empty?
-    return true if lectures.map(&:reste).include?(true)
-    false
+  def reste?
+    Medium.where(sort: 'Reste').any? { |m| m.course == self }
   end
 
   def available_extras
-    hash = { 'news' => news.present?, 'sesam' => sesam, 'keks' => keks,
-             'erdbeere' => erdbeere, 'kiwi' => kiwi, 'reste' => reste }
+    hash = { 'news' => news.present?, 'sesam' => sesam?, 'keks' => keks?,
+             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'reste' => reste? }
     hash.keys.select { |k| hash[k] == true }
   end
 
   def kaviar_lectures
-    lectures.where(kaviar: true)
+    lectures.select { |l| l.kaviar? }
   end
 
   def kaviar_lectures_by_date
@@ -86,5 +74,15 @@ class Course < ApplicationRecord
     available_extras.each { |e| modules[e] = false }
     extra_modules.each { |e| modules[e] = true }
     modules
+  end
+
+  def course
+    self
+  end
+
+  def lecture
+  end
+
+  def lesson
   end
 end

@@ -1,5 +1,5 @@
 <div class="row">
-  <% if c.kaviar %>
+  <% if c.kaviar? %>
     <div class="col-12">
       Videoaufzeichnung aus dem Semester:
     </div>
@@ -30,7 +30,7 @@
         <% end %>
       </div>
     <% end %>
-    <% if c.sesam %>
+    <% if c.sesam? %>
       <div class="col-12">
         <% sesam = 'sesam-' + c.id.to_s %>
         <%= f.form_group do %>
@@ -40,7 +40,7 @@
         <% end %>
       </div>
     <% end %>
-    <% if c.keks %>
+    <% if c.keks? %>
       <div class="col-12">
         <% keks = 'keks-' + c.id.to_s %>
         <%= f.form_group do %>
@@ -50,7 +50,7 @@
         <% end %>
       </div>
     <% end %>
-    <% if c.erdbeere %>
+    <% if c.erdbeere? %>
       <div class="col-12">
         <% erdbeere = 'erdbeere-' + c.id.to_s %>
         <%= f.form_group do %>
@@ -60,7 +60,7 @@
         <% end %>
       </div>
     <% end %>
-    <% if c.kiwi %>
+    <% if c.kiwi? %>
       <div class="col-12">
         <% kiwi = 'kiwi-' + c.id.to_s %>
         <%= f.form_group do %>
@@ -70,7 +70,7 @@
         <% end %>
       </div>
     <% end %>
-    <% if c.reste %>
+    <% if c.reste? %>
       <div class="col-12">
         <% reste = 'reste-' + c.id.to_s %>
         <%= f.form_group do %>
