@@ -1,4 +1,9 @@
 <div class="row">
+  <% unless c.kaviar?  || c.available_extras.present? %>
+    <div class="col-12">
+    Zu diesem Kurs gibt es im Moment noch keine Inhalte.
+  </div>
+  <% end %>
   <% if c.kaviar? %>
     <div class="col-12">
       Videoaufzeichnung aus dem Semester:

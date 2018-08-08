@@ -1,6 +1,6 @@
 # Medium class
 class Medium < ApplicationRecord
-  belongs_to :teachable, polymorphic: true, touch: true
+  belongs_to :teachable, polymorphic: true
   has_many :medium_tag_joins
   has_many :tags, through: :medium_tag_joins
   has_many :links, dependent: :destroy
@@ -63,6 +63,7 @@ class Medium < ApplicationRecord
   def sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
   end
+  after_save :touch_teachable
 
   def self.search(params)
     sorts = { '1' => 'Kaviar', '2' => 'Sesam', '3' => 'Kiwi', '4' => 'KeksQuiz',
@@ -228,5 +229,12 @@ class Medium < ApplicationRecord
     set_keks_defaults if sort == 'KeksQuestion'
     set_video_defaults if video_content?
     set_video_stream_defaults if video_stream_link.present?
+  end
+
+  def touch_teachable
+    return if teachable.nil?
+    teachable.course.touch
+    teachable.lecture.touch if teachable.lecture.present?
+    teachable.lesson.touch if teachable.lesson.present?
   end
 end

@@ -11,7 +11,6 @@ class ProfileController < ApplicationController
     if @user.update(lectures: @lectures, courses: @courses,
                     subscription_type: @subscription_type, edited_profile: true)
       add_details
-      return if @problem_courses.present?
       cookies[:current_lecture] = @lectures.first.id if @lectures.present?
       redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
     else
@@ -65,8 +64,7 @@ class ProfileController < ApplicationController
     @problem_courses = []
     @courses.each do |c|
       details = CourseUserJoin.where(user: @user, course: c).first
-      next if details.update(c.extras(params[:user]))
-      @problem_courses.append(c.id)
+      details.update(c.extras(params[:user]))
     end
   end
 end
