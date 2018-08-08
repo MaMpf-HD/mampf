@@ -7,6 +7,7 @@ $(document).on 'turbolinks:load' , ->
     console.log evt.relatedTarget
     term = evt.relatedTarget.dataset.term
     teacher = evt.relatedTarget.dataset.teacher
-    $('#lecture-details').empty().append(term + ', Dozent: ' + teacher)
+    $('#lecture-term').empty().append(term)
+    $('#lecture-teacher').empty().append(teacher)
     return
   return

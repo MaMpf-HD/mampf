@@ -24,10 +24,12 @@
     </div>
   <% end %>
 </div>
+<% show_controls = @course.lectures.count > 1 ? 'block;' : 'none;' %>
 <div class="row mb-2">
   <div class="col-1">
     <a class="carousel-control-prev" href="#lectureCarousel"
-       role="button" data-slide="prev" style="left: 50%; color: black;">
+       role="button" data-slide="prev"
+       style="left: 50%; color: black; display: <%= show_controls %>">
       <i class="material-icons" style="font-size: 48px;">
         keyboard_arrow_left
       </i>
@@ -37,12 +39,25 @@
     </a>
   </div>
   <div id="lecture-details" class="col-10 text-center">
-    <%= @course.lectures.first.term.to_label + ', Dozent: ' + 
-        @course.lectures.first.teacher.name %>
+    <h4>
+      <span class="badge badge-secondary">
+        Semester
+      </span>
+      <span id="lecture-term">
+        <%= @course.lectures.first.term.to_label %>
+      </span>
+      <span class="badge badge-secondary ml-3">
+        DozentIn
+      </span>
+      <span id="lecture-teacher">
+        <%= @course.lectures.first.teacher.name %>
+      </span>
+    </h4>
   </div>
   <div class="col-1">
     <a class="carousel-control-next" href="#lectureCarousel"
-       role="button" data-slide="next" style="right: 50%; color: black;">
+       role="button" data-slide="next"
+       style="right: 50%; color: black; display: <%= show_controls %>">
       <i class="material-icons" style="font-size:48px">
         keyboard_arrow_right
       </i>
