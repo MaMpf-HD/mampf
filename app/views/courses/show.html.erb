@@ -1,23 +1,95 @@
-<div class="row">
-  <div class="col-12">
-    <h2><span class="badge badge-secondary mr-3">Kurs</span><%= @course.title %></h2>
+<div class="jumbotron bg-light-blue-lighten-5" style="padding: 2rem 2rem;">
+  <div class="row">
+    <div class="col-12">
+      <h2>
+        <span class="badge badge-secondary mr-3">
+          Kurs
+        </span>
+        <%= @course.title %>
+      </h2>
+    </div>
+  </div>
+  <% if @course.news.present? &&
+        CourseUserJoin.where(course: @course, user: current_user)
+                      .first.news? != false %>
+    <div class="row mt-2">
+      <div class="col-12">
+        <h5>
+          News:
+        </h5>
+        <div id="twitter-news" data-profile="<%= @course.news %>"
+             data-turbolinks-permanent>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+<div class="row mb-2">
+  <div class="col-1">
+    <a class="carousel-control-prev" href="#lectureCarousel"
+       role="button" data-slide="prev" style="left: 50%; color: black;">
+      <i class="material-icons" style="font-size: 48px;">
+        keyboard_arrow_left
+      </i>
+      <span class="sr-only">
+        Previous
+      </span>
+    </a>
+  </div>
+  <div id="lecture-details" class="col-10 text-center">
+    <%= @course.lectures.first.term.to_label + ', Dozent: ' + 
+        @course.lectures.first.teacher.name %>
+  </div>
+  <div class="col-1">
+    <a class="carousel-control-next" href="#lectureCarousel"
+       role="button" data-slide="next" style="right: 50%; color: black;">
+      <i class="material-icons" style="font-size:48px">
+        keyboard_arrow_right
+      </i>
+      <span class="sr-only">
+        Next
+      </span>
+    </a>
   </div>
 </div>
-<% lectures = filter_lectures_by_lectures(@course.lectures, current_user.related_lectures) %>
+<div class="row">
+  <div class="col-1">
+  </div>
+  <div class="col-10">
+    <div id="lectureCarousel" class="carousel slide" data-ride="carousel"
+         data-interval="false">
+      <div class="carousel-inner">
+        <% @course.lectures.each_with_index do |l, i| %>
+          <div class="carousel-item <%= i == 0 ? 'active' : ''%>"
+               data-term="<%= l.term.to_label %>"
+               data-teacher="<%= l.teacher.name %>">
+            <%= render partial: 'lectures/content', locals: { lecture: l } %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-1">
+  </div>
+</div>
+<% lectures = filter_lectures_by_lectures(@course.lectures,
+                                          current_user.related_lectures) %>
 <% unless lectures.empty? %>
-<div class="row pt-3">
-<div class="col-12 col-md-6 col-lg-4 pt-3">
-<%= render partial: 'lectures/lectures', locals: { lectures: lectures,
-                                                   type: 'teacher_info'} %>
-</div>
-</div>
+  <div class="row pt-3">
+    <div class="col-12 col-md-6 col-lg-4 pt-3">
+      <%= render partial: 'lectures/lectures',
+                 locals: { lectures: lectures,
+                           type: 'teacher_info'} %>
+    </div>
+  </div>
 <% end %>
 <% unless @course.tags.empty? %>
-<div class="row pt-3 pb-2">
-<div class="col-12">
-  <%= render partial: 'tags/tags_toggle', locals: { tags: @course.tags,
-                                                    tags_description: 'Verknüpfte Begriffe',
-                                                    id: @course.id} %>
-</div>
-</div>
+  <div class="row pt-3 pb-2">
+    <div class="col-12">
+      <%= render partial: 'tags/tags_toggle',
+                 locals: { tags: @course.tags,
+                           tags_description: 'Verknüpfte Begriffe',
+                           id: @course.id} %>
+    </div>
+  </div>
 <% end %>

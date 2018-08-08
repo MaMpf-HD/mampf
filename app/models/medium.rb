@@ -1,6 +1,6 @@
 # Medium class
 class Medium < ApplicationRecord
-  belongs_to :teachable, polymorphic: true
+  belongs_to :teachable, polymorphic: true, optional: true
   has_many :medium_tag_joins
   has_many :tags, through: :medium_tag_joins
   has_many :links, dependent: :destroy

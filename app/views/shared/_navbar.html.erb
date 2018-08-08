@@ -1,7 +1,9 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
   <%= link_to "MaMpf", root_path, class: 'navbar-brand'%>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbarLg">
-    <span class="navbar-toggler-icon"></span>
+  <button class="navbar-toggler" type="button"
+          data-toggle="collapse" data-target="#collapsingNavbarLg">
+    <span class="navbar-toggler-icon">
+    </span>
   </button>
   <div class="navbar-collapse collapse" id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
@@ -10,7 +12,8 @@
           <%= link_to "Profil", edit_profile_path, class: 'nav-link' %>
         </li>
         <li class="nav-item">
-          <%= link_to "Logout", destroy_user_session_path, class: 'nav-link', method: :delete %>
+          <%= link_to "Logout", destroy_user_session_path, class: 'nav-link',
+              method: :delete %>
         </li>
         <% if current_user.admin? %>
           <li class="nav-item">
@@ -22,18 +25,22 @@
           <%= link_to "Login", new_user_session_path, class: 'nav-link' %>
         </li>
         <li class="nav-item">
-          <%= link_to "Registrieren", new_user_registration_path, class: 'nav-link' %>
+          <%= link_to "Registrieren", new_user_registration_path,
+              class: 'nav-link' %>
         </li>
       <% end %>
     </ul>
     <% if user_signed_in? %>
-      <% unless current_user.lectures.empty? %>
+      <% unless current_user.courses.empty? %>
         <ul class="navbar-nav mr-auto">
-          <%= render partial: 'shared/dropdown_lectures', locals: { lectures: current_user.lectures } %>
+          <%= render partial: 'shared/dropdown_courses',
+                     locals: { courses: current_user.courses } %>
         </ul>
       <% end %>
-      <%= form_tag(search_index_path, method: 'get', class: 'form-inline mt-2 mt-md-0') do %>
-        <%= search_field_tag 'search', nil, class: 'form-control mr-sm-2', placeholder: 'Begriff eingeben'  %>
+      <%= form_tag(search_index_path, method: 'get',
+                   class: 'form-inline mt-2 mt-md-0') do %>
+        <%= search_field_tag 'search', nil, class: 'form-control mr-sm-2',
+                             placeholder: 'Begriff eingeben'  %>
         <%= submit_tag "Suche", class: 'btn btn-outline-success my-2 my-sm-0' %>
       <% end %>
     <% end %>

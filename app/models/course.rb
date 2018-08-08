@@ -6,6 +6,8 @@ class Course < ApplicationRecord
   has_many :media, as: :teachable
   has_many :course_user_joins, dependent: :destroy
   has_many :users, through: :course_user_joins
+  has_many :course_self_joins, dependent: :destroy
+  has_many :preceding_courses, through: :course_self_joins
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
 

@@ -4,6 +4,7 @@ class CoursesController < ApplicationController
   authorize_resource
 
   def show
+    cookies[:current_course] = params[:id]
   end
 
   private

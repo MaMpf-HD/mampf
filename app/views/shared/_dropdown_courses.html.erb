@@ -1,9 +1,9 @@
-<% current_lecture = Lecture.find_by_id(cookies[:current_lecture]) %>
-<% current_lecture ||= current_user.lectures.first %>
+<% current_course = Course.find_by_id(cookies[:current_course]) %>
+<% current_course ||= current_user.courses.first %>
 <li class="nav-item">
-  <% if lectures.count > 1 then %>
+  <% if courses.count > 1 then %>
     <div class="btn-group">
-      <%= link_to current_lecture.short_title, current_lecture,
+      <%= link_to current_course.title, current_course,
           class: 'btn btn-primary text-light' %>
       <button type="button"
               class="btn btn-primary dropdown-toggle dropdown-toggle-split"
@@ -11,15 +11,15 @@
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <div class="dropdown-menu">
-        <% lectures.each do |l| %>
-          <% unless l == current_lecture %>
-            <%= link_to l.short_title, l, class: 'dropdown-item' %>
+        <% courses.each do |c| %>
+          <% unless c == current_course %>
+            <%= link_to c.title, c, class: 'dropdown-item' %>
           <% end %>
         <% end %>
       </div>
     </div>
   <% else %>
-    <%= link_to current_lecture.short_title, current_lecture,
+    <%= link_to current_course.short_title, current_course,
                 class: 'btn btn-primary text-light' %>
   <% end %>
 </li>
