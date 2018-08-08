@@ -38,14 +38,15 @@ RSpec.describe MediaController, type: :controller do
 
       it 'redirects to the given module is deactivated for the given lecture' do
         sign_in @user
-        lecture = FactoryBot.create(:lecture, kaviar: false)
+        lecture = FactoryBot.create(:lecture)
         get :index, params: { lecture_id: lecture.id.to_s, module_id: '1' }
         expect(response).to redirect_to root_path
       end
 
       it 'returns a 200 response if the given lecture_id and module_id make sense' do
         sign_in @user
-        lecture = FactoryBot.create(:lecture, kaviar: true)
+        lecture = FactoryBot.create(:lecture)
+        FactoryBot.create(:medium, teachable: lecture, sort: 'Kaviar')
         get :index, params: { lecture_id: lecture.id.to_s, module_id: '1' }
         expect(response).to have_http_status '200'
       end

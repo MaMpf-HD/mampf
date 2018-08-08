@@ -28,30 +28,6 @@ RSpec.describe Lecture, type: :model do
                                           term: term)
     expect(lecture).to be_invalid
   end
-  it 'is invalid without kaviar' do
-    lecture = FactoryBot.build(:lecture, kaviar: nil)
-    expect(lecture).to be_invalid
-  end
-  it 'is invalid without reste' do
-    lecture = FactoryBot.build(:lecture, reste: nil)
-    expect(lecture).to be_invalid
-  end
-  it 'is invalid without sesam' do
-    lecture = FactoryBot.build(:lecture, sesam: nil)
-    expect(lecture).to be_invalid
-  end
-  it 'is invalid without erdbeere' do
-    lecture = FactoryBot.build(:lecture, erdbeere: nil)
-    expect(lecture).to be_invalid
-  end
-  it 'is invalid without kiwi' do
-    lecture = FactoryBot.build(:lecture, kiwi: nil)
-    expect(lecture).to be_invalid
-  end
-  it 'is invalid without keks' do
-    lecture = FactoryBot.build(:lecture, keks: nil)
-    expect(lecture).to be_invalid
-  end
   describe '#tags' do
     it 'returns the correct tags for the lecture' do
       tags = create_list(:tag, 3)
@@ -76,10 +52,10 @@ RSpec.describe Lecture, type: :model do
   end
   describe '#available_modules' do
     it 'returns the correct modules' do
-      lecture = FactoryBot.build(:lecture, kaviar: true, sesam: false,
-                                           kiwi: true, keks: false,
-                                           reste: true)
-      expect(lecture.available_modules).to eq ([nil, true, false, true, false, true])
+      lecture = FactoryBot.build(:lecture)
+      FactoryBot.create(:medium, teachable: lecture, sort: 'Kaviar')
+      FactoryBot.create(:medium, teachable: lecture, sort: 'Kiwi')
+      expect(lecture.available_modules).to eq ([nil, true, false, true, false, false])
     end
   end
   describe '#to_label' do
