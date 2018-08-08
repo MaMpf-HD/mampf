@@ -30,7 +30,7 @@
         <% news = 'news-' + c.id.to_s %>
         <%= f.form_group do %>
           <% f.check_box news, label: 'Newsfeed',
-                         checked: subscribed ? details.news != false : true,
+                         checked: subscribed ? details.news? != false : true,
                          disabled: !subscribed %>
         <% end %>
       </div>
@@ -40,7 +40,7 @@
         <% sesam = 'sesam-' + c.id.to_s %>
         <%= f.form_group do %>
           <% f.check_box sesam, label: 'SeSAM',
-                         checked: subscribed ? details.sesam != false : true,
+                         checked: subscribed ? details.sesam? != false : true,
                          disabled: !subscribed %>
         <% end %>
       </div>
@@ -50,7 +50,7 @@
         <% keks = 'keks-' + c.id.to_s %>
         <%= f.form_group do %>
           <% f.check_box keks, label: 'KeKs',
-                         checked: subscribed ? details.keks != false : true,
+                         checked: subscribed ? details.keks? != false : true,
                          disabled: !subscribed %>
         <% end %>
       </div>
@@ -61,7 +61,7 @@
         <%= f.form_group do %>
           <% f.check_box erdbeere, label: 'ErDBeere',
                          disabled: !subscribed,
-                         checked: subscribed ? details.erdbeere != false : true %>
+                         checked: subscribed ? details.erdbeere? != false : true %>
         <% end %>
       </div>
     <% end %>
@@ -70,7 +70,7 @@
         <% kiwi = 'kiwi-' + c.id.to_s %>
         <%= f.form_group do %>
           <% f.check_box kiwi, label: 'KIWi',
-                         checked: subscribed ? details.kiwi != false : true,
+                         checked: subscribed ? details.kiwi? != false : true,
                          disabled: !subscribed %>
         <% end %>
       </div>
@@ -80,7 +80,7 @@
         <% reste = 'reste-' + c.id.to_s %>
         <%= f.form_group do %>
           <% f.check_box reste, label: 'RestE',
-                         checked: subscribed ? details.reste != false : true,
+                         checked: subscribed ? details.reste? != false : true,
                          disabled: !subscribed %>
         <% end %>
       </div>

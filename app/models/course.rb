@@ -54,8 +54,8 @@ class Course < ApplicationRecord
   end
 
   def available_extras
-    hash = { 'news' => news.present?, 'sesam' => sesam?, 'keks' => keks?,
-             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'reste' => reste? }
+    hash = { 'news?' => news.present?, 'sesam?' => sesam?, 'keks?' => keks?,
+             'erdbeere?' => erdbeere?, 'kiwi?' => kiwi?, 'reste?' => reste? }
     hash.keys.select { |k| hash[k] == true }
   end
 
@@ -81,7 +81,7 @@ class Course < ApplicationRecord
       k.end_with?('-' + id.to_s) && !k.start_with?('lecture-') &&
         !k.start_with?('course-') && user_params[k] == '1'
     end
-    extra_modules = extra_keys.map{ |e| e.remove('-' + id.to_s) }
+    extra_modules = extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
     modules = {}
     available_extras.each { |e| modules[e] = false }
     extra_modules.each { |e| modules[e] = true }
