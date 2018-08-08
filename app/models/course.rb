@@ -18,27 +18,39 @@ class Course < ApplicationRecord
   end
 
   def kaviar?
-    Medium.where(sort: 'Kaviar').any? { |m| m.course == self }
+    Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
+      Medium.where(sort: 'Kaviar').any? { |m| m.course == self }
+    end
   end
 
   def sesam?
-    Medium.where(sort: 'Sesam').any? { |m| m.course == self }
+    Rails.cache.fetch("#{cache_key}/sesam", expires_in: 2.hours) do
+      Medium.where(sort: 'Sesam').any? { |m| m.course == self }
+    end
   end
 
   def keks?
-    Medium.where(sort: ['Keks', 'KeksQuestion']).any? { |m| m.course == self }
+    Rails.cache.fetch("#{cache_key}/keks", expires_in: 2.hours) do
+      Medium.where(sort: ['Keks', 'KeksQuestion']).any? { |m| m.course == self }
+    end
   end
 
   def erdbeere?
-    Medium.where(sort: 'Erdbeere').any? { |m| m.course == self }
+    Rails.cache.fetch("#{cache_key}/erdbeere", expires_in: 2.hours) do
+      Medium.where(sort: 'Erdbeere').any? { |m| m.course == self }
+    end
   end
 
   def kiwi?
-    Medium.where(sort: 'Kiwi').any? { |m| m.course == self }
+    Rails.cache.fetch("#{cache_key}/kiwi", expires_in: 2.hours) do
+      Medium.where(sort: 'Kiwi').any? { |m| m.course == self }
+    end
   end
 
   def reste?
-    Medium.where(sort: 'Reste').any? { |m| m.course == self }
+    Rails.cache.fetch("#{cache_key}/reste", expires_in: 2.hours) do
+      Medium.where(sort: 'Reste').any? { |m| m.course == self }
+    end
   end
 
   def available_extras
