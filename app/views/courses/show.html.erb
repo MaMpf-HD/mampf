@@ -29,7 +29,7 @@
   <div class="col-1">
     <a class="carousel-control-prev" href="#lectureCarousel"
        role="button" data-slide="prev"
-       style="left: 50%; color: black; display: <%= show_controls %>">
+       style="left: 50%; color: black; top: -8px; width: 100%; display: <%= show_controls %>">
       <i class="material-icons" style="font-size: 48px;">
         keyboard_arrow_left
       </i>
@@ -57,7 +57,7 @@
   <div class="col-1">
     <a class="carousel-control-next" href="#lectureCarousel"
        role="button" data-slide="next"
-       style="right: 50%; color: black; display: <%= show_controls %>">
+       style="right: 50%; color: black; top: -8px; width: 100%; display: <%= show_controls %>">
       <i class="material-icons" style="font-size:48px">
         keyboard_arrow_right
       </i>
@@ -67,44 +67,38 @@
     </a>
   </div>
 </div>
-<div class="row">
-  <div class="col-1">
-  </div>
-  <div class="col-10">
-    <div id="lectureCarousel" class="carousel slide" data-ride="carousel"
-         data-interval="false">
-      <div class="carousel-inner">
+<div id="lectureCarousel" class="carousel slide carousel-fade" data-ride="carousel"
+     data-interval="false">
+  <div class="carousel-inner">
         <% @course.lectures.each_with_index do |l, i| %>
           <div class="carousel-item <%= i == 0 ? 'active' : ''%>"
                data-term="<%= l.term.to_label %>"
                data-teacher="<%= l.teacher.name %>">
+            <div class="row">
+            <% unless l.chapters.empty? %>
+            <div class="col-12 col-md-12 col-lg-7 pt-3">
             <%= render partial: 'lectures/content', locals: { lecture: l } %>
+            </div>
+            <% end %>
+            <% unless l.lessons.empty? %>
+              <div class="col-12 col-md-12 col-lg-5 pt-3">
+                <%= render partial: 'lessons/lessons',
+                           locals: { lessons: l.lessons,
+                                     lessons_description: 'Verknüpfte Sitzungen' } %>
+               </div>
+            <% end %>
+            </div>
+            <% unless l.tags.empty? %>
+              <div class="row pt-5 pb-3">
+                <div class="col-12">
+                  <%= render partial: 'tags/tags_toggle',
+                      locals: { tags: l.tags,
+                                tags_description: 'Verknüpfte Begriffe',
+                                id: l.id} %>
+                </div>
+              </div>
+            <% end %>
           </div>
         <% end %>
-      </div>
-    </div>
-  </div>
-  <div class="col-1">
   </div>
 </div>
-<% lectures = filter_lectures_by_lectures(@course.lectures,
-                                          current_user.related_lectures) %>
-<% unless lectures.empty? %>
-  <div class="row pt-3">
-    <div class="col-12 col-md-6 col-lg-4 pt-3">
-      <%= render partial: 'lectures/lectures',
-                 locals: { lectures: lectures,
-                           type: 'teacher_info'} %>
-    </div>
-  </div>
-<% end %>
-<% unless @course.tags.empty? %>
-  <div class="row pt-3 pb-2">
-    <div class="col-12">
-      <%= render partial: 'tags/tags_toggle',
-                 locals: { tags: @course.tags,
-                           tags_description: 'Verknüpfte Begriffe',
-                           id: @course.id} %>
-    </div>
-  </div>
-<% end %>
