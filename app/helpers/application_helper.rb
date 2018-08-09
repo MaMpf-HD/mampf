@@ -9,6 +9,14 @@ module ApplicationHelper
     end
   end
 
+  def hide(value)
+    value ? 'none;' : 'block;'
+  end
+
+  def show(value)
+    value ? 'block;' : 'none;'
+  end
+
   def split_list(list, n = 4)
     group_size = (list.count / n) != 0 ? list.count / n : 1
     groups = list.in_groups_of(group_size)

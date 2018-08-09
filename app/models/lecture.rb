@@ -87,6 +87,11 @@ class Lecture < ApplicationRecord
     term.to_label + ', ' + teacher.name
   end
 
+  def term_teacher_kaviar_info
+    videos = kaviar? ? ' ' : ' nicht '
+    term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'
+  end
+
   def modules
     { 'KaViaR' => kaviar?, 'SeSAM' => sesam?, 'RestE' => reste?, 'KeKs' => keks?,
       'ErDBeere' => erdbeere?, 'KIWi' => kiwi? }
@@ -109,5 +114,11 @@ class Lecture < ApplicationRecord
 
   def lecture
     self
+  end
+
+  def primary?(user)
+    course_join = CourseUserJoin.where(user: user, course: lecture.course)
+    return if course_join.empty?
+    course_join.first.primary_lecture_id == id
   end
 end

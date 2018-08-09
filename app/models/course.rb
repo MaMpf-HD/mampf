@@ -80,13 +80,14 @@ class Course < ApplicationRecord
   def extras(user_params)
     all_keys = user_params.keys
     extra_keys = all_keys.select do |k|
-      k.end_with?('-' + id.to_s) && !k.start_with?('lecture-') &&
+      k.end_with?('-' + id.to_s) && !k.include?('lecture-') &&
         !k.start_with?('course-') && user_params[k] == '1'
     end
     extra_modules = extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
     modules = {}
     available_extras.each { |e| modules[e] = false }
     extra_modules.each { |e| modules[e] = true }
+    modules['primary_lecture_id'] = user_params['primary_lecture-' + id.to_s]
     modules
   end
 
@@ -98,5 +99,11 @@ class Course < ApplicationRecord
   end
 
   def lesson
+  end
+
+  def primary_lecture(user)
+    user_join = CourseUserJoin.where(course: self, user: user)
+    return if user_join.empty?
+    Lecture.find_by_id(user_join.first.primary_lecture_id)
   end
 end

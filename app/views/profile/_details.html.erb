@@ -1,30 +1,84 @@
-<div class="row">
-  <% unless c.kaviar?  || c.available_extras.present? %>
+<%  if c.lectures.empty?  && c.available_extras.blank? %>
+  <div class="row">
     <div class="col-12">
-    Zu diesem Kurs gibt es im Moment noch keine Inhalte.
-  </div>
-  <% end %>
-  <% if c.kaviar? %>
-    <div class="col-12">
-      Videoaufzeichnung aus dem Semester:
+      Zu diesem Kurs gibt es im Moment noch keine Inhalte.
     </div>
+  </div>
+<% end %>
+<% if c.lectures.present? %>
+  <div class="row">
     <div class="col-12">
-      <%= f.form_group do %>
-        <% c.kaviar_lectures_by_date.each do |l| %>
-          <% lecture = 'lecture-' + l.id.to_s %>
-          <% checked = @user.lectures.where(id: l.id).present? %>
-          <%= f.check_box lecture, label: l.term.to_label_short,
-                          checked: subscribed ? checked : l.newest_kaviar?,
-                          disabled: !subscribed,
-                          inline: true %>
+      Primäre Vorlesung:
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <% primary_lecture = 'primary_lecture-' + c.id.to_s %>
+      <%= f.form_group primary_lecture do %>
+        <% c.lectures_by_date.each do |l| %>
+          <% checked = subscribed ? CourseUserJoin.where(user: @user, course: c)
+                                                  .first.primary_lecture_id == l.id : false %>
+          <%= f.radio_button primary_lecture, l.id, label: l.term_teacher_info,
+                             data: { course: c.id },
+                             checked: subscribed ? checked : l.newest?,
+                             disabled: !subscribed,
+                             inline: true %>
+          <% if l.kaviar? %>
+            <span class="mr-5" style="position: relative; left: -0.5rem;">
+              <i class="fas fa-video"
+                 data-toggle="tooltip" data-placement="top"
+                 title="Vorlesungsvideos vorhanden">
+              </i>
+            </span>
+          <% end %>
         <% end %>
       <% end %>
     </div>
-  <% end %>
-  <% if c.available_extras.present? %>
+  </div>
+<% end %>
+<% if c.lectures.count > 1 %>
+  <div class="row">
+    <div class="col-12">
+      Weitere Vorlesungen:
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" id="secondaries-course-<%= c.id %>">
+      <%= f.form_group do %>
+        <% c.lectures_by_date.each do |l| %>
+          <% lecture = 'lecture-' + l.id.to_s %>
+          <% checked = @user.lectures.where(id: l.id).present? %>
+          <% if subscribed %>
+            <% show_box = hide(CourseUserJoin.where(user: @user, course: c).first.primary_lecture_id == l.id) %>
+          <% else %>
+            <% show_box = hide(l.newest?) %>
+          <% end %>
+          <div id="<%= 'course-' + c.id.to_s + '-' + l.id.to_s %>"
+               style="display: <%= show_box %>">
+            <%= f.check_box lecture, label: l.term_teacher_info,
+                            checked: subscribed ? checked : l.newest?,
+                            disabled: !subscribed, inline: true %>
+            <% if l.kaviar? %>
+              <span class="mr-5" style="position: relative; left: -0.5rem;">
+                <i class="fas fa-video"
+                   data-toggle="tooltip" data-placement="top"
+                   title="Vorlesungsvideos vorhanden">
+                 </i>
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+<% if c.available_extras.present? %>
+  <div class="row">
     <div class="col-12">
       Weitere Angebote:
     </div>
+  </div>
+  <div class="row">
     <% if c.news.present? %>
       <div class="col-12">
         <% news = 'news-' + c.id.to_s %>
@@ -85,5 +139,5 @@
         <% end %>
       </div>
     <% end %>
-  <% end %>
-</div>
+  </div>
+<% end %>

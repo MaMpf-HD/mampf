@@ -56,9 +56,12 @@ class ProfileController < ApplicationController
   end
 
   def lecture_ids
-    params[:user].keys.select { |k| k.start_with?('lecture-') }
-                 .select { |c| params[:user][c] == '1' }
-                 .map { |c| c.remove('lecture-').to_i }
+    secondary = params[:user].keys.select { |k| k.start_with?('lecture-') }
+                             .select { |c| params[:user][c] == '1' }
+                             .map { |c| c.remove('lecture-').to_i }
+    primary = params[:user].keys.select { |k| k.start_with?('primary_lecture-') }
+                           .map { |k| params[:user][k] }.map(&:to_i)
+    primary + secondary
   end
 
   def add_details

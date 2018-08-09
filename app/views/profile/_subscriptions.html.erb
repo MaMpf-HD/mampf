@@ -2,7 +2,7 @@
   <% subscribed = @user.courses.where(id: c.id).present? %>
   <% details = CourseUserJoin.where(user: @user, course: c).first if subscribed %>
   <div class="card" id="course-card-<%= c.id %>">
-    <div class="card-header %>"
+    <div class="card-header"
          id="course-heading-<%= c.id %>">
       <div class="row">
         <% course = 'course-' + c.id.to_s %>
