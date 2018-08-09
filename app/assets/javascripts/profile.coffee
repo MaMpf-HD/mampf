@@ -20,11 +20,13 @@ $(document).on 'turbolinks:load', ->
     primaryLecture = $(this).val()
     courseId = this.dataset.course
     course = 'course-' + courseId + '-'
-    console.log course
-    $('[id^="' + course + '"]').show()
-    $('#' + course + primaryLecture).hide()
-    secondaries = '#secondaries-course-' + courseId + ' .form-check-input'
-    console.log secondaries
-    $(secondaries).prop('checked', false)
+    secondaries = '#secondaries-course-' + courseId
+    if primaryLecture == '0'
+      $(secondaries).hide()
+    else
+      $(secondaries).show()
+      $('[id^="' + course + '"]').show()
+      $('#' + course + primaryLecture).hide()
+    $(secondaries + ' .form-check-input').prop('checked', false)
     return
   return

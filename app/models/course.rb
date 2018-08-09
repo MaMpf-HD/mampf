@@ -87,7 +87,8 @@ class Course < ApplicationRecord
     modules = {}
     available_extras.each { |e| modules[e] = false }
     extra_modules.each { |e| modules[e] = true }
-    modules['primary_lecture_id'] = user_params['primary_lecture-' + id.to_s]
+    primary_id = user_params['primary_lecture-' + id.to_s]
+    modules['primary_lecture_id'] = primary_id == '0' ? nil : primary_id.to_i
     modules
   end
 

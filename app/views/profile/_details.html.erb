@@ -32,11 +32,18 @@
             </span>
           <% end %>
         <% end %>
+        <%= f.radio_button primary_lecture, 0, label: "keine",
+                           data: { course: c.id },
+                           checked: c.primary_lecture(current_user).nil?,
+                           disabled: !subscribed,
+                           inline: true %>
       <% end %>
     </div>
   </div>
 <% end %>
 <% if c.lectures.count > 1 %>
+  <div id="secondaries-course-<%= c.id %>"
+       style="display: <%= show(c.primary_lecture(current_user).present?) %>">
   <div class="row">
     <div class="col-12">
       Weitere Vorlesungen:
@@ -71,6 +78,7 @@
       <% end %>
     </div>
   </div>
+</div>
 <% end %>
 <% if c.available_extras.present? %>
   <div class="row">

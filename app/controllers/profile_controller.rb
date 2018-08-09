@@ -60,7 +60,8 @@ class ProfileController < ApplicationController
                              .select { |c| params[:user][c] == '1' }
                              .map { |c| c.remove('lecture-').to_i }
     primary = params[:user].keys.select { |k| k.start_with?('primary_lecture-') }
-                           .map { |k| params[:user][k] }.map(&:to_i)
+                           .select { |c| params[:user][c] != '0' }
+                           .map { |c| params[:user][c] }.map(&:to_i)
     primary + secondary
   end
 
