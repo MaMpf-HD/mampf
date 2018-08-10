@@ -4,7 +4,6 @@
 
 $(document).on 'turbolinks:load' , ->
   $('#lectureCarousel'). on 'slid.bs.carousel', (evt) ->
-    console.log evt.relatedTarget
     term = evt.relatedTarget.dataset.term
     teacher = evt.relatedTarget.dataset.teacher
     $('#lecture-term').empty().append(term)

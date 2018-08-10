@@ -1,11 +1,8 @@
 $(document).on 'turbolinks:load', ->
   news = document.getElementById('twitter-news')
-  console.log 'turbolinks: ja'
   if news?
-    console.log 'news: ja'
     profile = news.dataset.profile
     if profile?
-      console.log 'profil: ja'
       if news.dataset.twitter?
         location.reload()
       else

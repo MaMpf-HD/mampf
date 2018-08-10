@@ -75,6 +75,19 @@
 </div>
 <div id="lectureCarousel" class="carousel slide" data-ride="carousel"
      data-interval="false">
+  <% if lectures.count > 1 %>
+    <div class="row mt-5">
+      <div class="col-12">
+        <ol class="carousel-indicators">
+          <% lectures.each_with_index do |l, i| %>
+            <li data-target="#lectureCarousel" data-slide-to="<%= i %>"
+                class="<%= l.primary?(current_user) ? 'active' : ''%>">
+            </li>
+          <% end %>
+        </ol>
+      </div>
+    </div>
+  <% end %>
   <div class="carousel-inner">
     <% lectures.each_with_index do |l, i| %>
       <div class="carousel-item <%= l.primary?(current_user) ? 'active' : ''%>"

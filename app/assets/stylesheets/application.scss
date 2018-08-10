@@ -17,6 +17,14 @@
  *= require rails_bootstrap_forms
  */
 
+.carousel-indicators li {
+  background-color: lightgray;
+}
+
+.carousel-indicators .active {
+  background-color: gray;
+}
+
 .blue
 {
    background-color: blue;
