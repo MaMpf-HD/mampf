@@ -15,7 +15,6 @@ Rails.application.routes.draw do
   get 'search/index'
 
   get 'profile/edit', as: 'edit_profile'
-  get 'lectures/:lecture_id/modules/:module_id', to: 'media#index', as: 'lecture_module'
   get 'courses/:course_id/food', to: 'media#index', as: 'course_food'
 
   post 'profile/update'

@@ -112,4 +112,8 @@ class Course < ApplicationRecord
     return if user_join.empty?
     Lecture.find_by_id(user_join.first.primary_lecture_id)
   end
+
+  def subscribed_lectures(user)
+    course.lectures & user.lectures
+  end
 end

@@ -1,21 +1,31 @@
+<% course = Course.find_by_id(course_id) %>
 <nav class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
   <ul class="nav nav-pills flex-column">
     <% if user_signed_in? %>
       <li class="nav-item">
-        <% if Course.find_by_id(course_id).nil? ||
-              !Course.find_by_id(course_id).kaviar?%>
+        <% if course.nil? || !course.kaviar?%>
           <span class="nav-link disabled">
             KaViaR
           </span>
         <% else %>
-            <%= link_to 'KaViaR', course_food_path(course_id: course_id,
-                                                   params: { project: 'kaviar'}),
-                        class: 'nav-link' %>
+          <%= link_to 'KaViaR', course_food_path(course_id: course_id,
+                                                 params: { project: 'kaviar'}),
+                      class: 'nav-link' %>
+          <ul class="nav nav-pills flex-column" style="padding-left: 1rem;">
+            <% course.subscribed_lectures(current_user).each do |l| %>
+            <li class="nav-item">
+              <%= link_to l.term.to_label_short,
+                          course_food_path(course_id: course_id,
+                                           params: { project: 'kaviar',
+                                                     lecture_id: l.id }),
+                  class: 'nav-link' %>
+            </li>
+            <% end %>
+          </ul>
         <% end %>
       </li>
       <li class="nav-item">
-        <% if Course.find_by_id(course_id).nil? ||
-              !Course.find_by_id(course_id).sesam?%>
+        <% if course.nil? || !course.sesam? %>
           <span class="nav-link disabled">
             SeSAM
           </span>
@@ -26,8 +36,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if Course.find_by_id(course_id).nil? ||
-              !Course.find_by_id(course_id).kiwi?%>
+        <% if course.nil? || !course.kiwi?%>
           <span class="nav-link disabled">
             KiWi
           </span>
@@ -38,8 +47,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if Course.find_by_id(course_id).nil? ||
-              !Course.find_by_id(course_id).kiwi?%>
+        <% if course.nil? || !course.kiwi?%>
           <span class="nav-link disabled">
             RestE
           </span>
@@ -50,8 +58,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if Course.find_by_id(course_id).nil? ||
-              !Course.find_by_id(course_id).keks?%>
+        <% if course.nil? || !course.keks? %>
           <a href="<%= DefaultSetting::KEKS_LINK %>"
              class="nav-link" target="_blank">
             KeKs
@@ -63,11 +70,19 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
-           class="nav-link" target="_blank">
-          <img src="/erdbeere-16x16.png" width="16" height="16">
-          ErDBeere
-        </a>
+        <% if course.nil? || !course.erdbeere? %>
+          <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
+             class="nav-link" target="_blank">
+            <img src="/erdbeere-16x16.png" width="16" height="16">
+            ErDBeere
+          </a>
+        <% else %>
+          <a href="<%= course_food_path(course_id: course_id, params: { project: 'erdbeere' }) %>"
+             class="nav-link" target="_blank">
+            <img src="/erdbeere-16x16.png" width="16" height="16">
+            ErDBeere
+          </a>
+        <% end %>
       </li>
       <li class="nav-item">
         <a href="<%= DefaultSetting::MUESLI_LINK %>" class="nav-link" target="_blank">

@@ -66,16 +66,6 @@ class Medium < ApplicationRecord
   after_save :touch_teachable
 
   def self.search(params)
-    if params[:lecture_id].present?
-      sorts = { '1' => 'Kaviar', '2' => 'Sesam', '3' => 'Kiwi', '4' => 'KeksQuiz',
-                '5' => 'Reste' }
-      return unless Lecture.exists?(params[:lecture_id]) &&
-                    (1..5).cover?(params[:module_id].to_i)
-      lecture = Lecture.find_by_id(params[:lecture_id])
-      teachable = params[:module_id] == '1' ? lecture.lessons : lecture
-      return Medium.where(teachable: teachable,
-                    sort: sorts[params[:module_id]]).order(:id)
-    end
     if params[:course_id].present?
       return unless Course.exists?(params[:course_id])
       course = Course.find(params[:course_id])
@@ -83,11 +73,17 @@ class Medium < ApplicationRecord
         project = params[:project]
         return unless course.available_food.include?(project)
         sort = project == 'keks' ? 'KeksQuiz' : project.capitalize
-        return Medium.where(sort: sort).order(:id)
-                     .select { |m| m.course == course }
+        filtered = Medium.where(sort: sort).order(:id)
       else
-        return Medium.order(:id).select { |m| m.course == course }
+        filtered =  Medium.order(:id)
       end
+      if params[:lecture_id].present?
+        lecture = Lecture.find_by_id(params[:lecture_id].to_i)
+        return if lecture.nil?
+        return unless course.lectures.include?(lecture)
+        return filtered.select { |m| m.lecture == lecture }
+      end
+      return filtered.select { |m| m.course == course }
     end
   end
 
