@@ -31,8 +31,10 @@
   <div class="col-1">
     <a class="carousel-control-prev" href="#lectureCarousel"
        role="button" data-slide="prev"
-       style="left: 50%; color: black; top: -8px; width: 100%; display: <%= show_controls %>">
-      <i class="material-icons" style="font-size: 48px;">
+       style="left: 50%; color: black; top: -12px; width: 100%; display: <%= show_controls %>">
+      <i class="material-icons" style="font-size: 60px;"
+         data-toggle="tooltip" data-placement="top"
+         title="Semester wechseln">
         keyboard_arrow_left
       </i>
       <span class="sr-only">
@@ -59,8 +61,10 @@
   <div class="col-1">
     <a class="carousel-control-next" href="#lectureCarousel"
        role="button" data-slide="next"
-       style="right: 50%; color: black; top: -8px; width: 100%; display: <%= show_controls %>">
-      <i class="material-icons" style="font-size:48px">
+       style="right: 50%; color: black; top: -12px; width: 100%; display: <%= show_controls %>">
+      <i class="material-icons" style="font-size:60px"
+         data-toggle="tooltip" data-placement="top"
+         title="Semester wechseln">
         keyboard_arrow_right
       </i>
       <span class="sr-only">
@@ -69,7 +73,7 @@
     </a>
   </div>
 </div>
-<div id="lectureCarousel" class="carousel slide carousel-fade" data-ride="carousel"
+<div id="lectureCarousel" class="carousel slide" data-ride="carousel"
      data-interval="false">
   <div class="carousel-inner">
     <% lectures.each_with_index do |l, i| %>

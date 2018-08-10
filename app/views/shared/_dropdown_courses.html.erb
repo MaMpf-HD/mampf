@@ -11,7 +11,7 @@
         <span class="sr-only">Toggle Dropdown</span>
       </button>
       <div class="dropdown-menu">
-        <% courses.each do |c| %>
+        <% courses.order(:title).each do |c| %>
           <% unless c == current_course %>
             <%= link_to c.title, c, class: 'dropdown-item' %>
           <% end %>
