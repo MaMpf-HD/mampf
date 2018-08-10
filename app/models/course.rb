@@ -56,9 +56,14 @@ class Course < ApplicationRecord
   end
 
   def available_extras
-    hash = { 'news?' => news.present?, 'sesam?' => sesam?, 'keks?' => keks?,
-             'erdbeere?' => erdbeere?, 'kiwi?' => kiwi?, 'reste?' => reste? }
+    hash = { 'news' => news.present?, 'sesam' => sesam?, 'keks' => keks?,
+             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'reste' => reste? }
     hash.keys.select { |k| hash[k] == true }
+  end
+
+  def available_food
+    kaviar_info = kaviar? ? ['kaviar'] : []
+    kaviar_info.concat(available_extras)
   end
 
   def kaviar_lectures
@@ -85,7 +90,7 @@ class Course < ApplicationRecord
     end
     extra_modules = extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
     modules = {}
-    available_extras.each { |e| modules[e] = false }
+    available_extras.each { |e| modules[e + '?'] = false }
     extra_modules.each { |e| modules[e] = true }
     primary_id = user_params['primary_lecture-' + id.to_s]
     modules['primary_lecture_id'] = primary_id == '0' ? nil : primary_id.to_i

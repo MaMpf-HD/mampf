@@ -47,4 +47,12 @@ module ApplicationHelper
     return current_user.lectures.first.id unless current_user.lectures.empty?
     1
   end
+
+  def get_course_id
+    return cookies[:current_course].to_i unless cookies[:current_course].nil?
+    return 1 if current_user.nil?
+    return current_user.courses.first.id unless current_user.courses.empty?
+    1
+  end
+
 end

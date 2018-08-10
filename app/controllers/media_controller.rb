@@ -6,6 +6,29 @@ class MediaController < ApplicationController
   before_action :check_for_consent
 
   def index
+    if params[:course_id]
+      unless Course.exists?(params[:course_id])
+        redirect_to :root, alert: 'Eine Modul mit der angeforderten id
+                                   existiert nicht.'
+        return
+      end
+      course = Course.find(params[:course_id])
+      cookies[:current_course] = params[:course_id]
+      if params[:project]
+        project = params[:project]
+        available_food = Course.find(params[:course_id]).available_food
+        unless available_food.include?(params[:project])
+          redirect_to :root, alert: 'Ein MaMpf-Teilprojekt mit der ' \
+                                    'angeforderten id existiert für dieses ' \
+                                    'Modul nicht.'
+          return
+        end
+      end
+      search_results = Medium.search(params)
+      search_results = search_results.reverse_order if params[:reverse]
+      @media = params[:all] ? search_results : Kaminari.paginate_array(search_results).page(params[:page]).per(params[:per])
+      return
+    end
     if params[:lecture_id]
       unless Lecture.exists?(params[:lecture_id])
         redirect_to :root, alert: 'Eine Vorlesung mit der angeforderten id

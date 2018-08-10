@@ -1,48 +1,104 @@
-<% modules = { '1' => 'KaViaR', '2' => 'SeSAM', '3' => 'KIWi', '4' => 'KeKs',
-               '5' => 'RestE' } %>
 <nav class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
   <ul class="nav nav-pills flex-column">
     <% if user_signed_in? %>
-      <% modules.each do |module_id, module_name| %>
-        <li class="nav-item">
-          <% if Lecture.find_by_id(lecture_id).nil? %>
-              <span class='nav-link disabled'><%= module_name %></span>
-          <% else %>
-            <% if Lecture.find_by_id(lecture_id).modules[module_name] %>
-              <% active = params[:module_id].to_i == module_id ? ' active' : '' %>
-              <%= link_to module_name, lecture_module_path(lecture_id: lecture_id,
-                                                           module_id: module_id),
-                                                           class: 'nav-link' + active %>
-            <% else %>
-              <% if module_name == 'KeKs' %>
-                <%= link_to module_name, DefaultSetting::KEKS_LINK,
-                                         class: 'nav-link',
-                                         target: :_blank %>
-              <% else %>
-                <span class='nav-link disabled'><%= module_name %></span>
-              <% end %>
-            <% end %>
-          <% end %>
-        </li>
-      <% end %>
       <li class="nav-item">
-        <a href=<%= DefaultSetting::ERDBEERE_LINK %> class="nav-link" target="_blank">
+        <% if Course.find_by_id(course_id).nil? ||
+              !Course.find_by_id(course_id).kaviar?%>
+          <span class="nav-link disabled">
+            KaViaR
+          </span>
+        <% else %>
+            <%= link_to 'KaViaR', course_food_path(course_id: course_id,
+                                                   params: { project: 'kaviar'}),
+                        class: 'nav-link' %>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <% if Course.find_by_id(course_id).nil? ||
+              !Course.find_by_id(course_id).sesam?%>
+          <span class="nav-link disabled">
+            SeSAM
+          </span>
+        <% else %>
+            <%= link_to 'SeSAM', course_food_path(course_id: course_id,
+                                                  params: { project: 'sesam'}),
+                        class: 'nav-link' %>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <% if Course.find_by_id(course_id).nil? ||
+              !Course.find_by_id(course_id).kiwi?%>
+          <span class="nav-link disabled">
+            KiWi
+          </span>
+        <% else %>
+            <%= link_to 'KIWi', course_food_path(course_id: course_id,
+                                                  params: { project: 'kiwi'}),
+                        class: 'nav-link' %>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <% if Course.find_by_id(course_id).nil? ||
+              !Course.find_by_id(course_id).kiwi?%>
+          <span class="nav-link disabled">
+            RestE
+          </span>
+        <% else %>
+            <%= link_to 'RestE', course_food_path(course_id: course_id,
+                                                  params: { project: 'reste'}),
+                        class: 'nav-link' %>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <% if Course.find_by_id(course_id).nil? ||
+              !Course.find_by_id(course_id).keks?%>
+          <a href="<%= DefaultSetting::KEKS_LINK %>"
+             class="nav-link" target="_blank">
+            KeKs
+          </a>
+        <% else %>
+            <%= link_to 'KeKs', course_food_path(course_id: course_id,
+                                                  params: { project: 'keks'}),
+                        class: 'nav-link' %>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
+           class="nav-link" target="_blank">
           <img src="/erdbeere-16x16.png" width="16" height="16">
           ErDBeere
         </a>
       </li>
       <li class="nav-item">
-        <a href=<%= DefaultSetting::MUESLI_LINK %> class="nav-link" target="_blank">
+        <a href="<%= DefaultSetting::MUESLI_LINK %>" class="nav-link" target="_blank">
           <img src="/muesli-16x16.png" width="16" height="16">
           MÜSLI
         </a>
       </li>
     <% else %>
-      <% modules.each do |module_id, module_name| %>
-          <span class='nav-link disabled'><%= module_name %></span>
-      <% end %>
-      <span class='nav-link disabled'><img src="/erdbeere-16x16.png" width="16" height="16">ErDBeere</span>
-      <span class='nav-link disabled'><img src="/muesli-16x16.png" width="16" height="16">Müsli</span>
+      <span class='nav-link disabled'>
+        KaViaR
+      </span>
+      <span class='nav-link disabled'>
+        SeSAM
+      </span>
+      <span class='nav-link disabled'>
+        KIWi
+      </span>
+      <span class='nav-link disabled'>
+        RestE
+      </span>
+      <span class='nav-link disabled'>
+        KeKs
+      </span>
+      <span class='nav-link disabled'>
+        <img src="/erdbeere-16x16.png" width="16" height="16">
+        ErDBeere
+      </span>
+      <span class='nav-link disabled'>
+        <img src="/muesli-16x16.png" width="16" height="16">
+        Müsli
+      </span>
     <% end %>
   </ul>
 </nav>

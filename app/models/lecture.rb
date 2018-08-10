@@ -44,7 +44,7 @@ class Lecture < ApplicationRecord
 
   def keks?
     Rails.cache.fetch("#{cache_key}/keks", expires_in: 2.hours) do
-      Medium.where(sort: ['KeksQuiz', 'KeksQuestion']).any? { |m| m.lecture == self }
+      Medium.where(sort: 'KeksQuiz').any? { |m| m.lecture == self }
     end
   end
 

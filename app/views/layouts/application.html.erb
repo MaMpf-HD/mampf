@@ -18,7 +18,8 @@
    <%= render 'shared/navbar' %>
     <div class="container-fluid">
        <div class="row">
-         <%= render partial: 'shared/sidebar', locals: { lecture_id: get_lecture_id } %>
+         <%= render partial: 'shared/sidebar',
+                    locals: { lecture_id: get_lecture_id, course_id: get_course_id } %>
          <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
            <div class="alert alert-danger" id="js-messages" role="alert"
                 style="display: none;">
