@@ -23,10 +23,13 @@ $(document).on 'turbolinks:load', ->
     secondaries = '#secondaries-course-' + courseId
     if primaryLecture == '0'
       $(secondaries).hide()
+      $(secondaries + ' .form-check-input').prop('checked', false)
+        .prop('disabled', true)
     else
+      $(secondaries + ' .form-check-input').prop('checked', false)
+        .prop('disabled', false)
       $(secondaries).show()
       $('[id^="' + course + '"]').show()
       $('#' + course + primaryLecture).hide()
-    $(secondaries + ' .form-check-input').prop('checked', false)
     return
   return

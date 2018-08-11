@@ -116,4 +116,10 @@ class Course < ApplicationRecord
   def subscribed_lectures(user)
     course.lectures & user.lectures
   end
+
+  def subscribed_lectures_by_date(user)
+    subscribed_lectures(user).to_a.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
 end

@@ -28,6 +28,12 @@ class User < ApplicationRecord
     end
   end
 
+  def lectures_by_date
+    lectures.to_a.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
+
   private
 
   def set_defaults

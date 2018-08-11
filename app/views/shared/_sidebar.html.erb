@@ -2,26 +2,33 @@
 <nav class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
   <ul class="nav nav-pills flex-column">
     <% if user_signed_in? %>
+      <% lectures = course.subscribed_lectures_by_date(current_user) %>
       <li class="nav-item">
-        <% if course.nil? || !course.kaviar?%>
+        <% if course.nil? || !lectures.map { |l| l.kaviar? }.include?(true)%>
           <span class="nav-link disabled">
             KaViaR
           </span>
         <% else %>
-          <%= link_to 'KaViaR', course_food_path(course_id: course_id,
+          <% if lectures.count == 1 %>
+            <%= link_to 'KaViaR', course_food_path(course_id: course_id,
                                                  params: { project: 'kaviar'}),
-                      class: 'nav-link' %>
-          <ul class="nav nav-pills flex-column" style="padding-left: 1rem;">
-            <% course.subscribed_lectures(current_user).each do |l| %>
-            <li class="nav-item">
-              <%= link_to l.term.to_label_short,
-                          course_food_path(course_id: course_id,
-                                           params: { project: 'kaviar',
-                                                     lecture_id: l.id }),
-                  class: 'nav-link' %>
-            </li>
-            <% end %>
-          </ul>
+                        class: 'nav-link' %>
+          <% else %>
+            <span class="text-primary nav-link">
+              KaViaR
+            </span>
+            <ul class="nav nav-pills flex-column" style="padding-left: 1rem;">
+              <% lectures.select { |l| l.kaviar? }.each do |l| %>
+                <li class="nav-item">
+                  <%= link_to l.term.to_label_short,
+                              course_food_path(course_id: course_id,
+                                               params: { project: 'kaviar',
+                                                         lecture_id: l.id }),
+                              class: 'nav-link' %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
         <% end %>
       </li>
       <li class="nav-item">

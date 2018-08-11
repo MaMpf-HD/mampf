@@ -24,7 +24,7 @@
     </div>
   <% end %>
 </div>
-<% lectures = current_user.lectures.select { |l| l.course == @course } %>
+<% lectures = current_user.lectures_by_date.select { |l| l.course == @course } %>
 <% if lectures.present? %>
 <% show_controls = lectures.count > 1 ? 'block;' : 'none;' %>
 <div class="row mb-2">
