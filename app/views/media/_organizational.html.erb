@@ -37,7 +37,8 @@
         <li>
           Vorlesung:
           <% if current_user.lectures.include?(medium.teachable) %>
-            <%= link_to medium.teachable.to_label, medium.teachable,
+            <%= link_to medium.teachable.to_label,
+                        medium.teachable.path(current_user),
                         class: 'text-dark' %>
           <% else %>
             <span>
@@ -51,7 +52,7 @@
           <li>
             Vorlesung:
             <%= link_to medium.teachable.lecture.to_label,
-                        medium.teachable.lecture,
+                        medium.teachable.lecture.path(current_user),
                         class: 'text-dark' %>
           </li>
           <li>

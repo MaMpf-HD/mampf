@@ -1,28 +1,35 @@
 <div class="row">
   <div class="col-12">
-    <h2><span class="badge badge-secondary mr-3">Medium <%= '#' + @medium.id.to_s %></span><%= @medium.caption %></h2>
+    <h2>
+      <span class="badge badge-secondary mr-3">
+        Medium <%= '#' + @medium.id.to_s %>
+      </span>
+      <%= @medium.caption %>
+    </h2>
   </div>
 </div>
 <div class="row pb-2">
-<div class="col-12 col-md-6 col-lg-4 pt-3">
-<%= render partial: 'organizational', locals: { medium: @medium } %>
-</div>
-<div class="col-12 col-md-6 col-lg-4 pt-3">
-<%= render partial: 'technical', locals: { medium: @medium } %>
-</div>
-<% unless @medium.tags.empty? %>
-<div class="col-12 col-md-6 col-lg-4 pt-3">
-<%= render partial: 'tags/tags', locals: { related_tags: @medium.tags,
-                                           tags_description: 'Verknüpfte Begriffe'} %>
-</div>
-<% end %>
-</div>
-<% linked_media = filter_media_by_lectures(@medium.linked_media, current_user.related_lectures) %>
-<% unless linked_media.empty? %>
-<div class="row">
-  <div class="col-12 pt-2">
-    <h5>Verknüpfte Medien</h5>
+  <div class="col-12 col-md-6 col-lg-4 pt-3">
+    <%= render partial: 'organizational', locals: { medium: @medium } %>
   </div>
+  <div class="col-12 col-md-6 col-lg-4 pt-3">
+    <%= render partial: 'technical', locals: { medium: @medium } %>
+  </div>
+  <% unless @medium.tags.empty? %>
+    <div class="col-12 col-md-6 col-lg-4 pt-3">
+      <%= render partial: 'tags/tags',
+                 locals: { related_tags: @medium.tags,
+                           tags_description: 'Verknüpfte Begriffe'} %>
+    </div>
+  <% end %>
 </div>
-<%= render partial: 'media/media', locals: { media: linked_media} %>
+<% linked_media = filter_media_by_lectures(@medium.linked_media,
+                                           current_user.related_lectures) %>
+<% unless linked_media.empty? %>
+  <div class="row">
+    <div class="col-12 pt-2">
+      <h5>Verknüpfte Medien</h5>
+    </div>
+  </div>
+  <%= render partial: 'media/media', locals: { media: linked_media} %>
 <% end %>
