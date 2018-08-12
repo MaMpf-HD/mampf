@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :lecture, aliases: [:preceding_lecture] do
+  factory :lecture do
     association :course, factory: [:course, :with_tags]
     association :teacher
     association :term

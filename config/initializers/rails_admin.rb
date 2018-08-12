@@ -173,7 +173,6 @@ RailsAdmin.config do |config|
         field :twitter
         field :additional_tags
         field :disabled_tags
-        field :preceding_lectures
         field :chapters
         field :lessons
         fields :media

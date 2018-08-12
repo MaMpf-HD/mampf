@@ -19,7 +19,7 @@ RSpec.describe User, type: :model do
   describe '#related_lectures' do
     before do
       @preceding_lecture = FactoryBot.create(:lecture)
-      @lecture = FactoryBot.create(:lecture, preceding_lectures: [@preceding_lecture])
+      @lecture = FactoryBot.create(:lecture)
       @user = FactoryBot.create(:user)
       @user.update(lectures: [@lecture])
     end

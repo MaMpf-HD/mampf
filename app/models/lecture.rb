@@ -13,8 +13,6 @@ class Lecture < ApplicationRecord
   has_many :media, as: :teachable
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, through: :lecture_user_joins
-  has_many :connections, dependent: :destroy
-  has_many :preceding_lectures, through: :connections
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 
