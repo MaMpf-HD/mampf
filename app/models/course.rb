@@ -11,6 +11,12 @@ class Course < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
 
+  def self.sort_by_title
+    Course.all.sort do |i,j|
+      i.title <=> j.title
+    end
+  end
+
   def to_label
     title
   end
