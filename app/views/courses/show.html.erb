@@ -61,7 +61,7 @@
         DozentIn
       </span>
       <span id="lecture-teacher">
-        <%= lecture.teacher.name %>
+        <%= link_to lecture.teacher.name, lecture.teacher, class: 'text-dark' %>
       </span>
     </h4>
   </div>

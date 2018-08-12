@@ -1,3 +1,7 @@
-<video <% unless width == 0 %>width="<%= width %>" height="<%= height %>"<% end %> controls>
+<video
+  <% unless width == 0 %>
+    width="<%= width %>" height="<%= height %>"
+  <% end %>
+  controls>
 <source src="<%= medium.video_file_link %>" type="video/mp4">
 </video>'

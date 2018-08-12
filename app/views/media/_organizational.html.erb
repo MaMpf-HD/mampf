@@ -1,25 +1,81 @@
 <div class="card bg-brown-lighten-4">
-  <div class="card-header bg-brown-darken-2"><h5 class="text-light">Organisatorisches</h5></div>
+  <div class="card-header bg-brown-darken-2">
+    <h5 class="text-light">
+      Organisatorisches
+    </h5>
+  </div>
   <% if medium.video_thumbnail_link.present? %>
-  <%= image_tag(medium.video_thumbnail_link, alt: "Card image cap", class: "card-img-top") %>
+    <%= image_tag(medium.video_thumbnail_link, alt: "Card image cap",
+                  class: "card-img-top") %>
   <% end %>
   <div class="card-body">
-  <ul>
-  <li>Typ: <%= medium.sort_de %></li>
-  <% if medium.description.present? %>
-  <li>Beschreibung: <%= medium.description %></li>
-  <% end %>
-  <% if medium.teachable_sort == 'Course' %>
-     <li>Kurs: <%= link_to medium.teachable.to_label, medium.teachable, class: 'text-dark' %></li>
-  <% end %>
-  <% if medium.teachable_sort == 'Lecture' %>
-     <li>Vorlesung: <%= link_to medium.teachable.to_label, medium.teachable, class: 'text-dark' %></li>
-  <% end %>
-  <% if medium.teachable_sort == 'Lesson' %>
-     <li>Vorlesung: <%= link_to medium.teachable.lecture.to_label, medium.teachable.lecture, class: 'text-dark' %></li>
-     <li>Sitzung: <%= link_to medium.teachable.to_label, medium.teachable, class: 'text-dark' %></li>
-  <% end %>
-  <li>Autor: <%= medium.author  %>
-  </ul>
+    <ul>
+      <li>
+        Typ:
+        <%= medium.sort_de %>
+      </li>
+      <% if medium.description.present? %>
+        <li>
+          Beschreibung:
+          <%= medium.description %>
+        </li>
+      <% end %>
+      <% if medium.teachable_sort == 'Course' %>
+        <li>
+          Kurs:
+          <% if current_user.courses.include?(medium.teachable) %>
+            <%= link_to medium.teachable.to_label, medium.teachable,
+                        class: 'text-dark' %>
+          <% else %>
+            <span>
+              <%= medium.teachable.to_label %>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+      <% if medium.teachable_sort == 'Lecture' %>
+        <li>
+          Vorlesung:
+          <% if current_user.lectures.include?(medium.teachable) %>
+            <%= link_to medium.teachable.to_label, medium.teachable,
+                        class: 'text-dark' %>
+          <% else %>
+            <span>
+              <%= medium.teachable.to_label %>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+      <% if medium.teachable_sort == 'Lesson' %>
+        <% if current_user.lectures.include?(medium.teachable.lecture) %>
+          <li>
+            Vorlesung:
+            <%= link_to medium.teachable.lecture.to_label,
+                        medium.teachable.lecture,
+                        class: 'text-dark' %>
+          </li>
+          <li>
+            Sitzung:
+            <%= link_to medium.teachable.to_label, medium.teachable,
+                        class: 'text-dark' %>
+          </li>
+        <% else %>
+          <li>
+            Vorlesung:
+            <%= medium.teachable.lecture.to_label %>
+          </li>
+          <li>
+            Sitzung:
+            <span>
+              <%= medium.teachable.to_label %>
+            </span>
+          </li>
+        <% end %>
+      <% end %>
+      <li>
+        Autor:
+        <%= medium.author  %>
+      </li>
+    </ul>
   </div>
 </div>

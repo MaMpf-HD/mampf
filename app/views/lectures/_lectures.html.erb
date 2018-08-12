@@ -1,14 +1,23 @@
 <div class="card bg-brown-lighten-4">
-  <div class="card-header bg-brown-darken-2"><h5 class="text-light">Vorlesungen</h5></div>
+  <div class="card-header bg-brown-darken-2">
+    <h5 class="text-light">
+      Vorlesungen
+    </h5>
+  </div>
   <div class="card-body">
-  <ul>
-    <% lectures.each do |l| %>
-    <% if type == 'teacher_info' then %>
-    <li><%= link_to l.term_teacher_info, l, class: 'text-dark' %></li>
-    <% else %>
-    <li><%= link_to l.to_label, l, class: 'text-dark' %></li>
-    <% end %>
-    <% end %>
-  </ul>
+    <ul>
+      <% lectures.each do |l| %>
+        <li>
+          <% if current_user.lectures.include?(l) %>
+            <%= link_to l.to_label, l.path(current_user),
+                        class: 'text-dark' %>
+          <% else %>
+            <span>
+              <%= l.to_label %>
+            </span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
   </div>
 </div>

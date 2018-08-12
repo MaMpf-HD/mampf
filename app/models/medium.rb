@@ -121,9 +121,15 @@ class Medium < ApplicationRecord
     teachable.description[:general]
   end
 
-  def card_header_teachable
-    return teachable unless teachable_sort == 'Lesson'
-    teachable.lecture
+  def card_header_teachable_path(user)
+    if teachable_sort == 'Course'
+      return unless user.courses.include?(teachable)
+      return Rails.application.routes.url_helpers.course_path(teachable)
+    end
+    return unless user.lectures.include?(teachable.lecture)
+    return Rails.application.routes.url_helpers
+                .course_path(teachable.course,
+                             params: { active: teachable.lecture.id })
   end
 
   def card_subheader
@@ -135,8 +141,9 @@ class Medium < ApplicationRecord
       'Kiwi' => 'KIWi Video' }[sort]
   end
 
-  def card_subheader_teachable
+  def card_subheader_teachable(user)
     return if description.present? || teachable.description[:specific].nil?
+    return unless user.lectures.include?(teachable.lecture)
     teachable
   end
 

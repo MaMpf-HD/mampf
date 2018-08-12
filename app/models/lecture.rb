@@ -121,4 +121,10 @@ class Lecture < ApplicationRecord
     return if course_join.empty?
     course_join.first.primary_lecture_id == id
   end
+
+  def path(user)
+    return unless user.lectures.include?(self)
+    Rails.application.routes.url_helpers
+         .course_path(self.course, params: { active: id })
+  end
 end

@@ -1,7 +1,14 @@
    <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-2">
     <div class="card bg-mdb-color-lighten-7">
       <div class="card-header bg-mdb-color-lighten-1">
-        <%= link_to medium.card_header, medium.card_header_teachable, class: 'text-light' %>
+        <% ref = medium.card_header_teachable_path(current_user) %>
+        <% if ref.present? %>
+          <%= link_to medium.card_header, ref, class: 'text-light' %>
+        <% else %>
+          <span class="text-light">
+            <%= medium.card_header %>
+          </span>
+        <% end %>
         <% if medium.sort == 'KeksQuestion' || medium.sort == 'KeksQuiz'%>
           <img src="/keks-16x16.png" width="16" height="16" style="float: right;">
         <% end %>
@@ -9,10 +16,12 @@
       <% unless medium.card_subheader.nil? %>
         <ul class="list-group list-group-flush">
           <li class="list-group-item bg-mdb-color-lighten-4">
-          <% if medium.card_subheader_teachable.nil? %>
+          <% if medium.card_subheader_teachable(current_user).nil? %>
             <div class="text-light"><%= medium.card_subheader %></div>
           <% else %>
-            <%= link_to medium.card_subheader, medium.card_subheader_teachable, class: 'text-light' %>
+            <%= link_to medium.card_subheader,
+                        medium.card_subheader_teachable(current_user),
+                        class: 'text-light' %>
           <% end %>
           </li>
         </ul>

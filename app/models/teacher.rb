@@ -8,6 +8,12 @@ class Teacher < ApplicationRecord
 
   validates :homepage, http_url: true, if: :homepage_present?
 
+  def lectures_by_date
+    lectures.to_a.sort do |i,j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
+
   private
 
   def homepage_present?

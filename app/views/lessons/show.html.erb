@@ -1,28 +1,47 @@
 <div class="row">
   <div class="col-12">
-    <h2><span class="badge badge-secondary mr-3">Sitzung</span><%= @lesson.to_label %> von <%= link_to @lesson.lecture.title, @lesson.lecture, class: 'text-dark' %></h2>
+    <h2>
+      <span class="badge badge-secondary mr-3">
+        Sitzung
+      </span>
+      <%= @lesson.to_label %>
+      von
+      <% if current_user.lectures.include?(@lesson.lecture) %>
+        <%= link_to @lesson.lecture.title,
+                    @lesson.lecture.path(current_user),
+                    class: 'text-dark' %>
+      <% else %>
+        <span>
+          <%= @lesson.lecture.title %>
+        </span>
+      <% end %>
+    </h2>
   </div>
 </div>
-<% unless @lesson.tags.empty? && @lesson.sections.empty?%>
-<div class="row">
-  <% unless @lesson.tags.empty? %>
-  <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'tags/tags', locals: { related_tags: @lesson.tags,
-                                               tags_description: 'Verknüpfte Begriffe'} %>
+<% unless @lesson.tags.empty? && @lesson.sections.empty? %>
+  <div class="row">
+    <% unless @lesson.tags.empty? %>
+      <div class="col-12 col-md-6 col-lg-4 pt-3">
+        <%= render partial: 'tags/tags',
+                   locals: { related_tags: @lesson.tags,
+                             tags_description: 'Verknüpfte Begriffe'} %>
+      </div>
+    <% end %>
+    <% unless @lesson.sections.empty? %>
+      <div class="col-12 col-md-6 col-lg-4 pt-3">
+        <%= render partial: 'sections/sections',
+                   locals: { sections: @lesson.sections } %>
+      </div>
+    <% end %>
   </div>
-  <% end %>
-  <% unless @lesson.sections.empty? %>
-  <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'sections/sections', locals: { sections: @lesson.sections } %>
-  </div>
-  <% end %>
-</div>
 <% end %>
 <% unless @lesson.media.empty? %>
-<div class="row">
-  <div class="col-12 pt-5">
-    <h5>Verknüpfte Medien</h5>
+  <div class="row">
+    <div class="col-12 pt-5">
+      <h5>
+        Verknüpfte Medien
+      </h5>
+    </div>
   </div>
-</div>
-<%= render partial: 'media/media', locals: { media: @lesson.media} %>
+  <%= render partial: 'media/media', locals: { media: @lesson.media} %>
 <% end %>

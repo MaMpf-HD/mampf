@@ -18,9 +18,8 @@ class MediaController < ApplicationController
         project = params[:project]
         available_food = Course.find(params[:course_id]).available_food
         unless available_food.include?(project)
-          redirect_to :root, alert: 'Ein MaMpf-Teilprojekt mit der ' \
-                                    'angeforderten id existiert für dieses ' \
-                                    'Modul nicht.'
+          redirect_to :root, alert: 'Ein solches MaMpf-Teilprojekt existiert ' \
+                                    'für dieses Modul nicht.'
           return
         end
       end
@@ -30,7 +29,6 @@ class MediaController < ApplicationController
       return
     end
     redirect_to :root
-  #  @media = params[:all] ? Kaminari.paginate_array(Medium.all) : Medium.page(params[:page]).per(params[:per])
   end
 
   def show

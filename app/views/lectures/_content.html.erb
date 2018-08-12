@@ -1,15 +1,23 @@
 <div class="card bg-lime-lighten-4">
-  <div class="card-header bg-lime-darken-3"><h5 class="text-light">Vorlesungsinhalt</h5></div>
+  <div class="card-header bg-lime-darken-3">
+    <h5 class="text-light">
+      Vorlesungsinhalt
+    </h5>
+  </div>
   <div class="card-body">
     <ul>
-    <% lecture.chapters.each do |c| %>
-    <li><%= link_to c.to_label, c, class: 'text-dark' %></li>
-    <ul>
-    <% c.sections.each do |s| %>
-    <li><%= link_to s.to_label, s, class: 'text-dark' %></li>
-    <% end%>
+      <% lecture.chapters.each do |c| %>
+        <li>
+          <%= link_to c.to_label, c, class: 'text-dark' %>
+        </li>
+        <ul>
+          <% c.sections.each do |s| %>
+            <li>
+              <%= link_to s.to_label, s, class: 'text-dark' %>
+            </li>
+          <% end%>
+        </ul>
+      <% end %>
     </ul>
-    <% end %>
-    </ul>
-</div>
+  </div>
 </div>

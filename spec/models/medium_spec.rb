@@ -280,11 +280,11 @@ RSpec.describe Medium, type: :model do
       expect(medium.card_header).to eq(lesson.lecture.to_label)
     end
   end
-  describe '#card_header_teachable' do
+  describe '#card_header_teachable_path' do
     it 'returns the correct teachable' do
       lesson = FactoryBot.create(:lesson)
       medium = FactoryBot.build(:medium, teachable: lesson)
-      expect(medium.card_header_teachable).to eq(lesson.lecture)
+      expect(medium.card_header_teachable_path).to eq(lesson.lecture)
     end
   end
   describe '#card_subheader' do

@@ -1,6 +1,10 @@
 <div class="row">
   <div class="col-12">
-    <h2><span class="badge badge-secondary mr-3">Begriff<%= ' #' + @tag.id.to_s %></span><%= @tag.title %></h2>
+    <h2>
+      <span class="badge badge-secondary mr-3">
+        Begriff<%= ' #' + @tag.id.to_s %>
+      </span>
+      <%= @tag.title %></h2>
   </div>
 </div>
 <% related_lectures = current_user.related_lectures %>
@@ -8,33 +12,39 @@
 <% tags_in_neighbourhood = filter_tags_by_lectures(@tag.tags_in_neighbourhood, related_lectures) %>
 <% lectures = filter_lectures_by_lectures(@tag.lectures, related_lectures) %>
 <% unless related_tags.empty? && tags_in_neighbourhood.empty? && lectures.empty? %>
-<div class="row">
-  <% unless related_tags.empty? %>
-  <div class="col-12 col-md-6 col-lg-5 pt-3">
-    <%= render partial: 'tags', locals: { related_tags: related_tags,
-                                          tags_description: 'Verknüpfte Begriffe'} %>
+  <div class="row">
+    <% unless related_tags.empty? %>
+      <div class="col-12 col-md-6 col-lg-5 pt-3">
+        <%= render partial: 'tags',
+                   locals: { related_tags: related_tags,
+                             tags_description: 'Verknüpfte Begriffe'} %>
+      </div>
+    <% end %>
+    <% unless tags_in_neighbourhood.empty? %>
+      <div class="col-12 col-md-6 col-lg-4 pt-3">
+        <%= render partial: 'tags',
+                   locals: { related_tags: tags_in_neighbourhood,
+                             tags_description: 'Begriffe im weiteren Umfeld'} %>
+      </div>
+    <% end %>
+    <% unless lectures.empty? %>
+      <div class="col-12 col-md-12 col-lg-3 pt-3">
+        <%= render partial: 'lectures/lectures',
+                   locals: { lectures: lectures,
+                             type: 'lecture_info'} %>
+      </div>
+    <% end %>
   </div>
-  <% end %>
-  <% unless tags_in_neighbourhood.empty? %>
-  <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'tags', locals: { related_tags: tags_in_neighbourhood,
-                                          tags_description: 'Begriffe im weiteren Umfeld'} %>
-  </div>
-  <% end %>
-  <% unless lectures.empty? %>
-  <div class="col-12 col-md-12 col-lg-3 pt-3">
-    <%= render partial: 'lectures/lectures', locals: { lectures: lectures,
-                                                       type: 'lecture_info'} %>
-  </div>
-  <% end %>
-</div>
 <% end %>
-<% media = filter_media_by_lectures(@tag.media.where.not(sort: 'KeksQuestion'), related_lectures) %>
+<% media = filter_media_by_lectures(@tag.media.where.not(sort: 'KeksQuestion'),
+                                    related_lectures) %>
 <% unless media.empty? %>
-<div class="row">
-  <div class="col-12 pt-5">
-    <h5>Verknüpfte Medien</h5>
+  <div class="row">
+    <div class="col-12 pt-5">
+      <h5>
+        Verknüpfte Medien
+      </h5>
+    </div>
   </div>
-</div>
-<%= render partial: 'media/media', locals: { media: media} %>
+  <%= render partial: 'media/media', locals: { media: media} %>
 <% end %>

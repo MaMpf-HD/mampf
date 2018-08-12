@@ -1,12 +1,22 @@
 <div class="card bg-orange-lighten-4">
-  <div class="card-header bg-orange-darken-2"><h5 class="text-light">Info</h5></div>
-  <%= image_tag('/unknown-person.gif', width: '128', alt: "Card image cap", class: 'mx-auto pt-3') %>
+  <div class="card-header bg-orange-darken-2">
+    <h5 class="text-light">
+      Info
+    </h5>
+  </div>
+  <%= image_tag('/unknown-person.gif', width: '128', alt: "Card image cap",
+                class: 'mx-auto pt-3') %>
   <div class="card-body">
-  <ul>
-    <% if teacher.homepage.present? %>
-    <li><%= link_to 'Homepage', teacher.homepage, class: 'text-dark' %></li>
-    <% end %>
-    <li>Email: <%= mail_to teacher.email, nil, class: 'text-dark' %></li>
-  </ul>
+    <ul>
+      <% if teacher.homepage.present? %>
+        <li>
+          <%= link_to 'Homepage', teacher.homepage, class: 'text-dark' %>
+        </li>
+      <% end %>
+      <li>
+        Email:
+        <%= mail_to teacher.email, nil, class: 'text-dark' %>
+      </li>
+    </ul>
   </div>
 </div>
