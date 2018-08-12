@@ -14,19 +14,40 @@ class User < ApplicationRecord
   before_save :set_defaults
   after_create :set_consented_at
 
-  def related_lectures
+  def related_courses
     return if subscription_type.nil?
     case subscription_type
     when 1
-      ids = lectures.all.map { |l| l.preceding_lectures.pluck(:id) }.flatten +
-            lectures.all.pluck(:id)
-      return Lecture.where(id: ids)
+      ids = courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
+                                  courses.all.pluck(:id)
+      return Course.where(id: ids)
     when 2
-      return Lecture.all
+      return Course.all
     when 3
-      return lectures
+      return courses
     end
   end
+
+  def related_lectures
+    related_courses.map { |c| c.lectures }.flatten
+  end
+
+  def filter_tags(tags)
+    Tag.where(id: tags.select { |t| t.in_lectures?(related_lectures) }
+                      .map(&:id))
+  end
+
+  def filter_lectures(lectures)
+    Lecture.where(id: lectures.pluck(:id) & related_lectures.pluck(:id))
+  end
+
+
+  def filter_media(media)
+    Medium
+      .where(id: media.select { |m| m.related_to_lectures?(related_lectures) }
+                      .map(&:id))
+  end
+
 
   def lectures_by_date
     lectures.to_a.sort do |i, j|

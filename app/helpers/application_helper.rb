@@ -27,20 +27,6 @@ module ApplicationHelper
     return groups
   end
 
-  def filter_tags_by_lectures(tags, filter_lectures)
-    Tag.where(id: tags.select { |t| t.in_lectures?(filter_lectures) }.map(&:id))
-  end
-
-  def filter_lectures_by_lectures(lectures, filter_lectures)
-    Lecture.where(id: lectures.pluck(:id) & filter_lectures.pluck(:id))
-  end
-
-  def filter_media_by_lectures(media, filter_lectures)
-    Medium
-      .where(id: media.select { |m| m.related_to_lectures?(filter_lectures) }
-      .map(&:id))
-  end
-
   def get_lecture_id
     return cookies[:current_lecture].to_i unless cookies[:current_lecture].nil?
     return 1 if current_user.nil?

@@ -1,13 +1,17 @@
-<% filtered_tags = filter_tags_by_lectures(@tags, current_user.related_lectures) %>
-Deine Suche nach dem Begriff "<%= @search_string %>"
-hat <%= filtered_tags.count %> Treffer ergeben.
-<% if @tags.count != filtered_tags.count then %>
-  Aufgrund Deiner <%= link_to "Profileinstellungen", edit_profile_path %>
+<% filtered_tags = current_user.filter_tags(@tags) %>
+Deine Suche nach dem Begriff
+"<%= @search_string %>"
+hat
+<%= filtered_tags.count %>
+Treffer ergeben.
+<% if @tags.count != filtered_tags.count %>
+  Aufgrund Deiner
+  <%= link_to "Profileinstellungen", edit_profile_path %>
   wurde<%= @tags.count - filtered_tags.count > 1 ? 'n' : '' %>
   <%= @tags.count - filtered_tags.count %>
   Treffer aus der Datenbank nicht berücksichtigt.
 <% end %>
-<% if filtered_tags.present? then %>
+<% if filtered_tags.present? %>
   <div class="row">
     <div class="col-12 col-lg-8 pt-3 pb-3">
       <%= render partial: 'tags/tags',
@@ -16,10 +20,10 @@ hat <%= filtered_tags.count %> Treffer ergeben.
     </div>
   </div>
 <% end %>
-<% if @tags.empty? then %>
+<% if @tags.empty? %>
   <% similar_tags = similar_tags(@search_string) %>
-  <% filtered_similar_tags = filter_tags_by_lectures(similar_tags, current_user.related_lectures) %>
-  <% if filtered_similar_tags.present? then %>
+  <% filtered_similar_tags = current_user.filter_tags(similar_tags) %>
+  <% if filtered_similar_tags.present? %>
     Meintest Du vielleicht etwas anderes?
     <div class="row">
       <div class="col-12 col-lg-8 pt-3 pb-3">

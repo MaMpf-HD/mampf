@@ -7,10 +7,9 @@
       <%= @tag.title %></h2>
   </div>
 </div>
-<% related_lectures = current_user.related_lectures %>
-<% related_tags = filter_tags_by_lectures(@tag.related_tags, related_lectures) %>
-<% tags_in_neighbourhood = filter_tags_by_lectures(@tag.tags_in_neighbourhood, related_lectures) %>
-<% lectures = filter_lectures_by_lectures(@tag.lectures, related_lectures) %>
+<% related_tags = current_user.filter_tags(@tag.related_tags) %>
+<% tags_in_neighbourhood = current_user.filter_tags(@tag.tags_in_neighbourhood) %>
+<% lectures = current_user.filter_lectures(@tag.lectures) %>
 <% unless related_tags.empty? && tags_in_neighbourhood.empty? && lectures.empty? %>
   <div class="row">
     <% unless related_tags.empty? %>
@@ -36,8 +35,7 @@
     <% end %>
   </div>
 <% end %>
-<% media = filter_media_by_lectures(@tag.media.where.not(sort: 'KeksQuestion'),
-                                    related_lectures) %>
+<% media = current_user.filter_media(@tag.media.where.not(sort: 'KeksQuestion')) %>
 <% unless media.empty? %>
   <div class="row">
     <div class="col-12 pt-5">
