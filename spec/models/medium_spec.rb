@@ -235,10 +235,11 @@ RSpec.describe Medium, type: :model do
   describe '#search' do
     it 'returns the correct search results' do
       lesson = FactoryBot.create(:lesson)
+      course = lesson.course
       kaviar_medium = FactoryBot.create(:medium, teachable: lesson, sort: 'Kaviar')
       sesam_medium = FactoryBot.create(:medium, teachable: lesson.lecture, sort: 'Sesam')
-      params = { lecture_id: lesson.lecture.id.to_s, module_id: '1'}
-      expect(Medium.search(params)).to match_array([kaviar_medium])
+      params = { course_id: course.id.to_s, lecture_id: lesson.lecture.id.to_s, project: 'kaviar'}
+      expect(Medium.search(lesson.lecture, params)).to match_array([kaviar_medium])
     end
   end
   describe '#video aspect ratio' do

@@ -43,18 +43,25 @@
     </a>
   </div>
   <div id="lecture-details" class="col-10 text-center">
+    <% lecture = @course.primary_lecture(current_user) %>
+    <% if params[:active].present? %>
+      <% preselected = params[:active].to_i %>
+      <% if lectures.map(&:id).include?(preselected) %>
+        <% lecture = Lecture.find(preselected) %>
+      <% end %>
+    <% end %>
     <h4>
       <span class="badge badge-secondary">
         Semester
       </span>
       <span id="lecture-term">
-        <%= @course.primary_lecture(current_user).term.to_label %>
+        <%= lecture.term.to_label %>
       </span>
       <span class="badge badge-secondary ml-3">
         DozentIn
       </span>
       <span id="lecture-teacher">
-        <%= @course.primary_lecture(current_user).teacher.name %>
+        <%= lecture.teacher.name %>
       </span>
     </h4>
   </div>
@@ -80,8 +87,15 @@
       <div class="col-12">
         <ol class="carousel-indicators">
           <% lectures.each_with_index do |l, i| %>
+            <% active = l.primary?(current_user) ? 'active' : '' %>
+            <% if params[:active].present? %>
+              <% preselected = params[:active].to_i %>
+              <% if lectures.map(&:id).include?(preselected) %>
+                <% active = (l.id == preselected) ? 'active' : '' %>
+              <% end %>
+            <% end %>
             <li data-target="#lectureCarousel" data-slide-to="<%= i %>"
-                class="<%= l.primary?(current_user) ? 'active' : ''%>">
+                class="<%= active %>">
             </li>
           <% end %>
         </ol>
@@ -90,7 +104,14 @@
   <% end %>
   <div class="carousel-inner">
     <% lectures.each_with_index do |l, i| %>
-      <div class="carousel-item <%= l.primary?(current_user) ? 'active' : ''%>"
+      <% active = l.primary?(current_user) ? 'active' : '' %>
+      <% if params[:active].present? %>
+        <% preselected = params[:active].to_i %>
+        <% if lectures.map(&:id).include?(preselected) %>
+          <% active = (l.id == preselected) ? 'active' : '' %>
+        <% end %>
+      <% end %>
+      <div class="carousel-item <%= active %>"
            data-term="<%= l.term.to_label %>"
            data-teacher="<%= l.teacher.name %>">
         <div class="row">

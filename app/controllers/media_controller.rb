@@ -24,12 +24,13 @@ class MediaController < ApplicationController
           return
         end
       end
-      search_results = Medium.search(params)
+      search_results = Medium.search(course.primary_lecture(current_user),params)
       search_results = search_results.reverse if params[:reverse]
       @media = params[:all] ? Kaminari.paginate_array(search_results) : Kaminari.paginate_array(search_results).page(params[:page]).per(params[:per])
       return
     end
-    @media = params[:all] ? Kaminari.paginate_array(Medium.all) : Medium.page(params[:page]).per(params[:per])
+    redirect_to :root
+  #  @media = params[:all] ? Kaminari.paginate_array(Medium.all) : Medium.page(params[:page]).per(params[:per])
   end
 
   def show

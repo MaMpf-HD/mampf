@@ -65,7 +65,7 @@ class Medium < ApplicationRecord
   end
   after_save :touch_teachable
 
-  def self.search(params)
+  def self.search(primary_lecture, params)
     if params[:course_id].present?
       return unless Course.exists?(params[:course_id])
       course = Course.find(params[:course_id])
@@ -81,9 +81,19 @@ class Medium < ApplicationRecord
         lecture = Lecture.find_by_id(params[:lecture_id].to_i)
         return if lecture.nil?
         return unless course.lectures.include?(lecture)
-        return filtered.select { |m| m.lecture == lecture }
+        lecture_results = filtered.select { |m| m.teachable == lecture }
+        lesson_results = filtered.select { |m| m.teachable_type == 'Lesson' &&
+                                               m.lecture == lecture }
+                                 .sort do |i, j|
+                                    i.lesson.number <=> j.lesson.number
+                                  end
+        return lecture_results + lesson_results
       end
-      return filtered.select { |m| m.course == course }
+      course_results = filtered.select { |m| m.teachable == course }
+      primary_results = filtered.select { |m| m.lecture == primary_lecture }
+      secondary_results = filtered.select { |m| m.course == course} -
+                          course_results - primary_results
+      return course_results + primary_results + secondary_results
     end
   end
 
@@ -177,7 +187,7 @@ class Medium < ApplicationRecord
   end
 
   def lesson
-    return if lesson.nil?
+    return if teachable.nil?
     teachable.lesson
   end
 

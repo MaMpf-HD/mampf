@@ -9,45 +9,40 @@ RSpec.describe MediaController, type: :controller do
       before do
         @user = FactoryBot.create(:user)
       end
-      it 'responds successfully' do
+
+      it 'redirects to root_page if no param is given' do
         sign_in @user
         get :index
-        expect(response).to be_successful
-      end
-
-      it 'returns a 200 response' do
-        sign_in @user
-        get :index
-        expect(response).to have_http_status '200'
-      end
-
-      it 'redirects to the root_page if lecture_id param is nonsense' do
-        sign_in @user
-        lecture = FactoryBot.create(:lecture)
-        id = lecture.id + 1
-        get :index, params: { lecture_id: id.to_s }
         expect(response).to redirect_to root_path
       end
 
-      it 'redirects to the root_page if module_id param is nonsense' do
+      it 'redirects to the root_page if course_id param is nonsense' do
         sign_in @user
-        lecture = FactoryBot.create(:lecture)
-        get :index, params: { lecture_id: lecture.id.to_s, module_id: '7' }
+        course = FactoryBot.create(:course)
+        id = course.id + 1
+        get :index, params: { course_id: id.to_s }
+        expect(response).to redirect_to root_path
+      end
+
+      it 'redirects to the root_page if project param is nonsense' do
+        sign_in @user
+        course = FactoryBot.create(:course)
+        get :index, params: { course_id: course.id.to_s, project: 'bs' }
         expect(response).to redirect_to root_path
       end
 
       it 'redirects to the given module is deactivated for the given lecture' do
         sign_in @user
-        lecture = FactoryBot.create(:lecture)
-        get :index, params: { lecture_id: lecture.id.to_s, module_id: '1' }
+        course = FactoryBot.create(:course)
+        get :index, params: { course_id: course.id.to_s, project: 'kaviar' }
         expect(response).to redirect_to root_path
       end
 
       it 'returns a 200 response if the given lecture_id and module_id make sense' do
         sign_in @user
-        lecture = FactoryBot.create(:lecture)
-        FactoryBot.create(:medium, teachable: lecture, sort: 'Kaviar')
-        get :index, params: { lecture_id: lecture.id.to_s, module_id: '1' }
+        course = FactoryBot.create(:course)
+        FactoryBot.create(:medium, teachable: course, sort: 'Kaviar')
+        get :index, params: { course_id: course.id.to_s, project: 'kaviar' }
         expect(response).to have_http_status '200'
       end
     end
