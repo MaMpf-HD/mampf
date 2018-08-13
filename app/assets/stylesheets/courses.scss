@@ -1,3 +1,33 @@
 // Place all the styles related to the courses controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.carousel-indicators li {
+  background-color: lightgray;
+}
+
+.carousel-indicators .active {
+  background-color: gray;
+}
+
+#course-jumbo {
+  padding: 2rem 2rem;
+}
+
+#lecture-prev {
+  left: 50%;
+  color: black;
+  top: -12px;
+  width: 100%;
+}
+
+#lecture-right {
+  right: 50%;
+  color: black;
+  top: -12px;
+  width: 100%;
+}
+
+#left-arrow, #right-arrow {
+  font-size: 60px;
+}

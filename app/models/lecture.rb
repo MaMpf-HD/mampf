@@ -120,9 +120,27 @@ class Lecture < ApplicationRecord
     course_join.first.primary_lecture_id == id
   end
 
+  def active?(user, preselected_lecture_id)
+    if course.subscribed_lectures(user).map(&:id)
+             .include?(preselected_lecture_id)
+      return id == preselected_lecture_id
+    end
+    primary?(user)
+  end
+
   def path(user)
     return unless user.lectures.include?(self)
     Rails.application.routes.url_helpers
          .course_path(self.course, params: { active: id })
+  end
+
+  def checked_as_primary_by?(user)
+    return primary?(user) if course.subscribed_by?(user)
+    false
+  end
+
+  def checked_as_secondary_by?(user)
+    return false unless course.subscribed_by?(user)
+    course.subscribed_lectures(user).include?(self)
   end
 end

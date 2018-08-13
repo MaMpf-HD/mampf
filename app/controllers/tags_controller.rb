@@ -5,6 +5,12 @@ class TagsController < ApplicationController
   authorize_resource
 
   def show
+    @related_tags = current_user.filter_tags(@tag.related_tags)
+    @tags_in_neighbourhood = current_user.filter_tags(@tag
+                                                        .tags_in_neighbourhood)
+    @lectures = current_user.filter_lectures(@tag.lectures)
+    @media = current_user.filter_media(@tag.media
+                                           .where.not(sort: 'KeksQuestion'))
   end
 
   private

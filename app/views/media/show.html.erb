@@ -10,10 +10,12 @@
 </div>
 <div class="row pb-2">
   <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'organizational', locals: { medium: @medium } %>
+    <%= render partial: 'media/organizational',
+               locals: { medium: @medium } %>
   </div>
   <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'technical', locals: { medium: @medium } %>
+    <%= render partial: 'media/technical',
+               locals: { medium: @medium } %>
   </div>
   <% unless @medium.tags.empty? %>
     <div class="col-12 col-md-6 col-lg-4 pt-3">

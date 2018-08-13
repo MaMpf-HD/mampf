@@ -1,4 +1,4 @@
-<div class="jumbotron bg-light-blue-lighten-5" style="padding: 2rem 2rem;">
+<div id="course-jumbo" class="jumbotron bg-light-blue-lighten-5">
   <div class="row">
     <div class="col-12">
       <h2>
@@ -9,9 +9,7 @@
       </h2>
     </div>
   </div>
-  <% if @course.news.present? &&
-        CourseUserJoin.where(course: @course, user: current_user)
-                      .first.news? != false %>
+  <% if @course.news_for_user?(current_user) %>
     <div class="row mt-2">
       <div class="col-12">
         <h5>
@@ -24,122 +22,56 @@
     </div>
   <% end %>
 </div>
-<% lectures = current_user.lectures_by_date.select { |l| l.course == @course } %>
-<% if lectures.present? %>
-<% show_controls = lectures.count > 1 ? 'block;' : 'none;' %>
-<div class="row mb-2">
-  <div class="col-1">
-    <a class="carousel-control-prev" href="#lectureCarousel"
-       role="button" data-slide="prev"
-       style="left: 50%; color: black; top: -12px; width: 100%; display: <%= show_controls %>">
-      <i class="material-icons" style="font-size: 60px;"
-         data-toggle="tooltip" data-placement="top"
-         title="Semester wechseln">
-        keyboard_arrow_left
-      </i>
-      <span class="sr-only">
-        Previous
-      </span>
-    </a>
-  </div>
-  <div id="lecture-details" class="col-10 text-center">
-    <% lecture = @course.primary_lecture(current_user) %>
-    <% if params[:active].present? %>
-      <% preselected = params[:active].to_i %>
-      <% if lectures.map(&:id).include?(preselected) %>
-        <% lecture = Lecture.find(preselected) %>
-      <% end %>
-    <% end %>
-    <h4>
-      <span class="badge badge-secondary">
-        Semester
-      </span>
-      <span id="lecture-term">
-        <%= lecture.term.to_label %>
-      </span>
-      <span class="badge badge-secondary ml-3">
-        DozentIn
-      </span>
-      <span id="lecture-teacher">
-        <%= link_to lecture.teacher.name, lecture.teacher, class: 'text-dark' %>
-      </span>
-    </h4>
-  </div>
-  <div class="col-1">
-    <a class="carousel-control-next" href="#lectureCarousel"
-       role="button" data-slide="next"
-       style="right: 50%; color: black; top: -12px; width: 100%; display: <%= show_controls %>">
-      <i class="material-icons" style="font-size:60px"
-         data-toggle="tooltip" data-placement="top"
-         title="Semester wechseln">
-        keyboard_arrow_right
-      </i>
-      <span class="sr-only">
-        Next
-      </span>
-    </a>
-  </div>
-</div>
-<div id="lectureCarousel" class="carousel slide" data-ride="carousel"
-     data-interval="false">
-  <% if lectures.count > 1 %>
-    <div class="row mt-5">
-      <div class="col-12">
-        <ol class="carousel-indicators">
-          <% lectures.each_with_index do |l, i| %>
-            <% active = l.primary?(current_user) ? 'active' : '' %>
-            <% if params[:active].present? %>
-              <% preselected = params[:active].to_i %>
-              <% if lectures.map(&:id).include?(preselected) %>
-                <% active = (l.id == preselected) ? 'active' : '' %>
-              <% end %>
-            <% end %>
-            <li data-target="#lectureCarousel" data-slide-to="<%= i %>"
-                class="<%= active %>">
-            </li>
-          <% end %>
-        </ol>
-      </div>
+<% if @lectures.present? %>
+  <div class="row mb-2">
+    <div class="col-1">
+      <a id="lecture-prev" class="carousel-control-prev"
+         href="#lectureCarousel" role="button"
+         data-slide="prev"
+         style="display: <%= show(@lectures.count > 1) %>">
+        <i id="left-arrow" class="material-icons"
+           data-toggle="tooltip" data-placement="top"
+           title="Semester wechseln">
+          keyboard_arrow_left
+        </i>
+        <span class="sr-only">
+          Previous
+        </span>
+      </a>
     </div>
-  <% end %>
-  <div class="carousel-inner">
-    <% lectures.each_with_index do |l, i| %>
-      <% active = l.primary?(current_user) ? 'active' : '' %>
-      <% if params[:active].present? %>
-        <% preselected = params[:active].to_i %>
-        <% if lectures.map(&:id).include?(preselected) %>
-          <% active = (l.id == preselected) ? 'active' : '' %>
-        <% end %>
-      <% end %>
-      <div class="carousel-item <%= active %>"
-           data-term="<%= l.term.to_label %>"
-           data-teacher="<%= l.teacher.name %>">
-        <div class="row">
-          <% unless l.chapters.empty? %>
-            <div class="col-12 col-md-12 col-lg-6 pt-3">
-              <%= render partial: 'lectures/content', locals: { lecture: l } %>
-            </div>
-          <% end %>
-          <% unless l.lessons.empty? %>
-            <div class="col-12 col-md-12 col-lg-6 pt-3">
-              <%= render partial: 'lessons/lessons',
-                         locals: { lessons: l.lessons,
-                                   lessons_description: 'Verknüpfte Sitzungen' } %>
-             </div>
-          <% end %>
-        </div>
-        <% unless l.tags.empty? %>
-          <div class="row pt-5 pb-3">
-            <div class="col-12">
-              <%= render partial: 'tags/tags_toggle',
-                         locals: { tags: l.tags,
-                                   tags_description: 'Verknüpfte Begriffe',
-                                   id: l.id} %>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
+    <div id="lecture-details" class="col-10 text-center">
+      <h4>
+        <span class="badge badge-secondary">
+          Semester
+        </span>
+        <span id="lecture-term">
+          <%= @front_lecture.term.to_label %>
+        </span>
+        <span class="badge badge-secondary ml-3">
+          DozentIn
+        </span>
+        <span id="lecture-teacher">
+          <%= link_to @front_lecture.teacher.name, @front_lecture.teacher,
+                      class: 'text-dark' %>
+        </span>
+      </h4>
+    </div>
+    <div class="col-1">
+      <a id="lecture-right" class="carousel-control-next"
+         href="#lectureCarousel" role="button"
+         data-slide="next"
+         style="display: <%= show(@lectures.count > 1) %>">
+        <i id="right-arrow" class="material-icons"
+           data-toggle="tooltip" data-placement="top"
+           title="Semester wechseln">
+          keyboard_arrow_right
+        </i>
+        <span class="sr-only">
+          Next
+        </span>
+      </a>
+    </div>
   </div>
-</div>
+  <%= render partial: 'courses/lecture_carousel',
+             locals: { lectures: @lectures } %>
 <% end %>

@@ -1,10 +1,16 @@
 <div class="card bg-lime-lighten-4">
-  <div class="card-header bg-lime-darken-3"><h5 class="text-light">Verknüpfte Abschnitte</h5></div>
+  <div class="card-header bg-lime-darken-3">
+    <h5 class="text-light">
+      Verknüpfte Abschnitte
+    </h5>
+  </div>
   <div class="card-body">
     <ul>
-    <% sections.each do |s| %>
-    <li><%= link_to s.to_label, s, class: 'text-dark' %></li>
-    <% end%>
+      <% sections.each do |s| %>
+        <li>
+          <%= link_to s.to_label, s, class: 'text-dark' %>
+        </li>
+      <% end%>
     </ul>
-</div>
+  </div>
 </div>

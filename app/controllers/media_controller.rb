@@ -12,7 +12,7 @@ class MediaController < ApplicationController
                                    existiert nicht.'
         return
       end
-      course = Course.find(params[:course_id])
+      @course = Course.find(params[:course_id])
       cookies[:current_course] = params[:course_id]
       if params[:project]
         project = params[:project]
@@ -23,7 +23,8 @@ class MediaController < ApplicationController
           return
         end
       end
-      search_results = Medium.search(course.primary_lecture(current_user),params)
+      search_results = Medium.search(@course.primary_lecture(current_user),
+                                     params)
       search_results = search_results.reverse if params[:reverse]
       @media = params[:all] ? Kaminari.paginate_array(search_results) : Kaminari.paginate_array(search_results).page(params[:page]).per(params[:per])
       return

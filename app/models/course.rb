@@ -88,6 +88,15 @@ class Course < ApplicationRecord
     end
   end
 
+  def news_for_user?(user)
+    return false unless news.present?
+    return false unless user.courses.include?(self)
+    if CourseUserJoin.where(course: self, user: user).first.news? == false
+      return false
+    end
+    true
+  end
+
   def extras(user_params)
     all_keys = user_params.keys
     extra_keys = all_keys.select do |k|
@@ -113,6 +122,13 @@ class Course < ApplicationRecord
   def lesson
   end
 
+  def front_lecture(user, active_lecture_id)
+    if subscribed_lectures(user).map(&:id).include?(active_lecture_id)
+      return Lecture.find(active_lecture_id)
+    end
+    primary_lecture(user)
+  end
+
   def primary_lecture(user)
     user_join = CourseUserJoin.where(course: self, user: user)
     return if user_join.empty?
@@ -127,5 +143,9 @@ class Course < ApplicationRecord
     subscribed_lectures(user).to_a.sort do |i, j|
       j.term.begin_date <=> i.term.begin_date
     end
+  end
+
+  def subscribed_by?(user)
+    user.courses.include?(self)
   end
 end

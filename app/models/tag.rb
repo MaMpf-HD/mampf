@@ -23,6 +23,15 @@ class Tag < ApplicationRecord
   has_many :related_tags, through: :relations
   validates :title, presence: true, uniqueness: true
 
+  def self.similar_tags(search_string)
+    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
+    Tag.where(id: Tag.all.select do |t|
+                    jarowinkler.getDistance(t.title.downcase,
+                                            search_string.downcase) > 0.9
+                  end
+                  .map(&:id))
+  end
+
   def tags_in_neighbourhood
     ids = related_tags.all.map { |t| t.related_tags.pluck(:id) }.flatten.uniq
     related_ids = related_tags.pluck(:id) + [id]

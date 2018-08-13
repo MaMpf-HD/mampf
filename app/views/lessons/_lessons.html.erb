@@ -1,26 +1,35 @@
 <div class="card bg-brown-lighten-4">
-  <div class="card-header bg-brown-darken-2"><h5 class="text-light"><%= lessons_description %></h5></div>
+  <div class="card-header bg-brown-darken-2">
+    <h5 class="text-light">
+      <%= lessons_description %>
+    </h5>
+  </div>
   <div class="card-body">
-  <% if lessons.count < 15 then %>
-  <ul>
-    <% lessons.each do |l| %>
-    <li class="text-dark"><%= link_to l.title, l, class: "text-dark" %></li>
+    <% if lessons.count < 15 %>
+      <ul>
+        <% lessons.each do |l| %>
+          <li class="text-dark">
+            <%= link_to l.title, l, class: "text-dark" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="row">
+        <% split_list(lessons,2).each do |lesson_list| %>
+          <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+            <ul class="text-dark">
+              <% lesson_list.each do |l| %>
+                <% unless l.nil? %>
+                  <li>
+                    <%= link_to l.to_label, lesson_path(l),
+                                class: 'text-dark' %>
+                  </li>
+                <% end %>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+      </div>
     <% end %>
-  </ul>
-  <% else %>
-  <div class="row">
-  <% split_list(lessons,2).each do |lesson_list| %>
-  <div class="col-12 col-sm-6 col-md-6 col-lg-6 col-xl-6">
-  <ul class="text-dark">
-    <% lesson_list.each do |l| %>
-    <% unless l.nil? %>
-      <li><%= link_to l.to_label, lesson_path(l), class: 'text-dark' %></li>
-    <% end %>
-    <% end %>
-  </ul>
   </div>
-  <% end %>
-  </div>
-  <% end %>
-</div>
 </div>

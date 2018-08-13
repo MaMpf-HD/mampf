@@ -11,7 +11,6 @@ class ProfileController < ApplicationController
     if @user.update(lectures: @lectures, courses: @courses,
                     subscription_type: @subscription_type, edited_profile: true)
       add_details
-      cookies[:current_lecture] = @lectures.first.id if @lectures.present?
       cookies[:current_course] = @courses.first.id
       redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
     else

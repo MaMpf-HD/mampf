@@ -1,26 +1,36 @@
 <div id="tags_accordion<%= id %>" role="tablist">
-<div class="card bg-green-lighten-4">
-  <div class="card-header bg-green-darken-3" role="tab" id="tags_heading<%= id %>">
-    <h5 class="text-light"><%= tags_description + ' (' + tags.count.to_s + ') '%>
-      <a class="btn btn-success float-right" data-toggle="collapse" href="#tags_collapse<%= id %>" aria-expanded="false" aria-controls="tags_collapse<%= id %>">Ein-/Ausklappen</a>
-    </h5>
+  <div class="card bg-green-lighten-4">
+    <div class="card-header bg-green-darken-3" role="tab"
+         id="tags_heading<%= id %>">
+      <h5 class="text-light">
+        <%= tags_description + ' (' + tags.count.to_s + ') '%>
+        <a class="btn btn-success float-right"
+           data-toggle="collapse" href="#tags_collapse<%= id %>"
+           aria-expanded="false" aria-controls="tags_collapse<%= id %>">
+          Ein-/Ausklappen
+        </a>
+      </h5>
+    </div>
+    <div id="tags_collapse<%= id %>" class="collapse" role="tabpanel"
+         aria-labelledby="heading<%= id%>"
+         data-parent="#tags_accordion<%= id %>">
+      <div class="card-body">
+        <div class="row">
+          <% split_list(tags).each do |tag_list| %>
+            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
+              <ul>
+                <% tag_list.each do |t| %>
+                  <% unless t.nil? %>
+                    <li class="text-dark">
+                      <%= link_to t.title, t, class: "text-dark" %>
+                    </li>
+                  <% end %>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
-  <div id="tags_collapse<%= id %>" class="collapse" role="tabpanel" aria-labelledby="heading<%= id%>" data-parent="#tags_accordion<%= id %>">
-<div class="card-body">
-  <div class="row">
-  <% split_list(tags).each do |tag_list| %>
-  <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-  <ul>
-    <% tag_list.each do |t| %>
-    <% unless t.nil? %>
-      <li class="text-dark"><%= link_to t.title, t, class: "text-dark" %></li>
-    <% end %>
-    <% end %>
-  </ul>
-  </div>
-  <% end %>
-</div>
-</div>
-</div>
-</div>
 </div>

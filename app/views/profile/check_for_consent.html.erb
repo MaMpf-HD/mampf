@@ -6,8 +6,9 @@ und Verarbeitung Deiner Daten gemäß der
              target: :_blank %>
 der Universität Heidelberg.
 <div class="mt-2">
-<%= link_to 'Ich stimme zu.', add_consent_path, class: 'btn btn-primary',
-            method: :patch %>
-<%= link_to 'Account löschen', user_registration_path, class: 'btn btn-primary',
-            data: { confirm: 'Bist Du sicher?' }, method: :delete%>
+  <%= link_to 'Ich stimme zu.', add_consent_path,
+              class: 'btn btn-primary', method: :patch %>
+  <%= link_to 'Account löschen', user_registration_path,
+              class: 'btn btn-primary',
+              data: { confirm: 'Bist Du sicher?' }, method: :delete %>
 </div>

@@ -1,10 +1,16 @@
 <div class="card bg-green-lighten-4">
-  <div class="card-header bg-green-darken-3"><h5 class="text-light"><%= tags_description %></h5></div>
+  <div class="card-header bg-green-darken-3">
+    <h5 class="text-light">
+      <%= tags_description %>
+    </h5>
+  </div>
   <div class="card-body">
-  <ul>
-    <% related_tags.each do |t| %>
-    <li class="text-dark"><%= link_to t.title, tag_path(t), class: "text-dark" %></li>
-    <% end %>
-  </ul>
-</div>
+    <ul>
+      <% related_tags.each do |t| %>
+        <li class="text-dark">
+          <%= link_to t.title, tag_path(t), class: "text-dark" %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 </div>

@@ -84,7 +84,8 @@
             ErDBeere
           </a>
         <% else %>
-          <a href="<%= course_food_path(course_id: course_id, params: { project: 'erdbeere' }) %>"
+          <a href="<%= course_food_path(course_id: course_id,
+                                        params: { project: 'erdbeere' }) %>"
              class="nav-link" target="_blank">
             <img src="/erdbeere-16x16.png" width="16" height="16">
             ErDBeere
@@ -92,7 +93,8 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <a href="<%= DefaultSetting::MUESLI_LINK %>" class="nav-link" target="_blank">
+        <a href="<%= DefaultSetting::MUESLI_LINK %>"
+           class="nav-link" target="_blank">
           <img src="/muesli-16x16.png" width="16" height="16">
           MÜSLI
         </a>

@@ -3,42 +3,48 @@
   <div class="col-sm-12 col-md-12 col-lg-6">
     <ul class="nav">
       <li class="nav-item pr-1">
-        <% project = params[:project].present? ? '&project=' + params[:project] : '' %>
-        <% lecture_id = params[:lecture_id].present? ? '&lecture_id=' + params[:lecture_id] : '' %>
-        <% ref = 'food?reverse=' + (!params[:reverse]).to_s +
-                 '&all=' + params[:all].to_s +
-                 '&per=' + params[:per].to_s +
-                 project + lecture_id %>
-        <a class ="nav-link btn btn-sm bg-grey-lighten-4"
-           href="<%= ref %>">
-        Reihenfolge umkehren</a>
+        <%= link_to 'Reihenfolge umkehren',
+                    course_food_path(@course,
+                                     params: { project: params[:project],
+                                               lecture_id: params[:lecture_id],
+                                               reverse: !params[:reverse],
+                                               all: params[:all],
+                                               per: params[:per] }),
+                    class: 'nav-link btn btn-sm bg-grey-lighten-4' %>
       </li>
       <li class="nav-item pl-1 pr-1">
         <% unless @media.page(1).total_pages == 1 || params[:all] %>
-          <% ref = 'food?reverse=' + params[:reverse].to_s +
-                   '&all=true' +
-                   '&per=' + params[:per].to_s +
-                   project + lecture_id %>
-          <a class="nav-link btn btn-sm text-primary bg-grey-lighten-4"
-             href="<%= ref %>">Alle</a>
+          <%= link_to 'Alle',
+                      course_food_path(@course,
+                                       params: { project: params[:project],
+                                                 lecture_id: params[:lecture_id],
+                                                 reverse: params[:reverse],
+                                                 all: true,
+                                                 per: params[:per] }),
+                      class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
+
         <% end %>
       </li>
       <li class="nav-item pl-1">
-      <div class="dropdown pl-2">
-        <button class="btn btn-sm dropdown-toggle text-primary" type="button"
-                id="results_per_page" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-          pro Seite
-        </button>
-        <div class="dropdown-menu" id="results_per_page">
-          <% [3,4,8,12,24].each do |hits| %>
-            <% ref = 'food?page=1&reverse=' + params[:reverse].to_s +
-                     '&per=' + hits.to_s +
-                     project + lecture_id %>
-            <%= link_to hits.to_s, ref, class: 'dropdown-item' %>
-          <% end %>
+        <div class="dropdown pl-2">
+          <button class="btn btn-sm dropdown-toggle text-primary" type="button"
+                  id="results_per_page" data-toggle="dropdown"
+                  aria-haspopup="true" aria-expanded="false">
+            pro Seite
+          </button>
+          <div class="dropdown-menu" id="results_per_page">
+            <% [3,4,8,12,24].each do |hits| %>
+              <%= link_to hits.to_s,
+                          course_food_path(@course,
+                                           params: { page: 1,
+                                                     project: params[:project],
+                                                     lecture_id: params[:lecture_id],
+                                                     reverse: params[:reverse],
+                                                     per: hits }),
+                          class: 'dropdown-item' %>
+            <% end %>
+          </div>
         </div>
-      </div>
       </li>
     </ul>
   </div>

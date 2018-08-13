@@ -1,35 +1,35 @@
-<% filtered_tags = current_user.filter_tags(@tags) %>
 Deine Suche nach dem Begriff
 "<%= @search_string %>"
 hat
-<%= filtered_tags.count %>
+<%= @filtered_tags.count %>
 Treffer ergeben.
-<% if @tags.count != filtered_tags.count %>
+<% if @tags.count != @filtered_tags.count %>
   Aufgrund Deiner
   <%= link_to "Profileinstellungen", edit_profile_path %>
-  wurde<%= @tags.count - filtered_tags.count > 1 ? 'n' : '' %>
-  <%= @tags.count - filtered_tags.count %>
+  wurde<%= plural_n(@tags, @filtered_tags) %>
+  <%= @tags.count - @filtered_tags.count %>
   Treffer aus der Datenbank nicht berücksichtigt.
 <% end %>
-<% if filtered_tags.present? %>
+<% if @filtered_tags.present? %>
   <div class="row">
     <div class="col-12 col-lg-8 pt-3 pb-3">
       <%= render partial: 'tags/tags',
-                 locals: { related_tags: filtered_tags,
-                           tags_description: "Suchergebnisse für den Begriff \"#{@search_string}\""} %>
+                 locals: { related_tags: @filtered_tags,
+                           tags_description: "Suchergebnisse für den " \
+                                             "Begriff \"#{@search_string}\""} %>
     </div>
   </div>
 <% end %>
 <% if @tags.empty? %>
-  <% similar_tags = similar_tags(@search_string) %>
-  <% filtered_similar_tags = current_user.filter_tags(similar_tags) %>
-  <% if filtered_similar_tags.present? %>
+  <% if @filtered_similar_tags.present? %>
     Meintest Du vielleicht etwas anderes?
     <div class="row">
       <div class="col-12 col-lg-8 pt-3 pb-3">
         <%= render partial: 'tags/tags',
-                   locals: { related_tags: filtered_similar_tags,
-                             tags_description: "Zum Suchbegriff \"#{@search_string}\" ähnliche Begriffe"} %>
+                   locals: { related_tags: @filtered_similar_tags,
+                             tags_description: "Zum Suchbegriff " \
+                                               "\"#{@search_string}\" ähnliche"\
+                                               " Begriffe"} %>
       </div>
     </div>
   <% end %>

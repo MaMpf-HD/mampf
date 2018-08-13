@@ -1,12 +1,13 @@
 <% if params[:project] ==  'keks' %>
-<div class="row">
-<div class="col-12">
-<div class = "alert alert-info">
-Hier findest Du speziell für diese Vorlesung zusammengestellte KeKs-Quizzes.
-Für noch mehr KeKs-Fragen kannst Du zur
-<%= link_to 'KeKs-Seite', DefaultSetting::KEKS_LINK, class: "btn btn-outline-info", target: :_blank %>
-gehen.
-</div>
-</div>
-</div>
+  <div class="row">
+    <div class="col-12">
+      <div class = "alert alert-info">
+        Hier findest Du speziell für diese Vorlesung zusammengestellte
+        KeKs-Quizzes. Für noch mehr KeKs-Fragen kannst Du zur
+        <%= link_to 'KeKs-Seite', DefaultSetting::KEKS_LINK,
+                    class: "btn btn-outline-info", target: :_blank %>
+        gehen.
+      </div>
+    </div>
+  </div>
 <% end %>

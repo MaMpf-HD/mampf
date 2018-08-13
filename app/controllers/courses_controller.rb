@@ -5,11 +5,12 @@ class CoursesController < ApplicationController
 
   def show
     cookies[:current_course] = params[:id]
+    @lectures = @course.subscribed_lectures_by_date(current_user)
+    @front_lecture = @course.front_lecture(current_user, params[:active].to_i)
   end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_course
     @course = Course.find_by_id(params[:id])
     return if @course.present?

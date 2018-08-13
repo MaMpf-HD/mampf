@@ -18,6 +18,11 @@ class SearchController < ApplicationController
       search_down = @search_string.downcase
       matches = Tag.all.select { |x| x.title.downcase.include?(search_down) }
       @tags = Tag.where(id: matches.pluck(:id))
+      @filtered_tags = current_user.filter_tags(@tags)
+      if @tags.empty?
+        @similar_tags = Tag.similar_tags(@search_string)
+        @filtered_similar_tags = current_user.filter_tags(@similar_tags)
+      end
     end
   end
 
