@@ -1,4 +1,4 @@
-<% Course.sort_by_title.each do |c| %>
+<% Course.all.sort_by(&:title).each do |c| %>
   <% subscribed = c.subscribed_by?(@user) %>
   <% details = CourseUserJoin.where(user: @user, course: c).first if subscribed %>
   <div class="card" id="course-card-<%= c.id %>">

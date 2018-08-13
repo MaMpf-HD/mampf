@@ -91,8 +91,8 @@ class Lecture < ApplicationRecord
   end
 
   def modules
-    { 'KaViaR' => kaviar?, 'SeSAM' => sesam?, 'RestE' => reste?, 'KeKs' => keks?,
-      'ErDBeere' => erdbeere?, 'KIWi' => kiwi? }
+    { 'KaViaR' => kaviar?, 'SeSAM' => sesam?, 'RestE' => reste?,
+      'KeKs' => keks?, 'ErDBeere' => erdbeere?, 'KIWi' => kiwi? }
   end
 
   def description
@@ -101,10 +101,6 @@ class Lecture < ApplicationRecord
 
   def newest?
     self == course.lectures_by_date.first
-  end
-
-  def newest_kaviar?
-    self == course.kaviar_lectures_by_date.first
   end
 
   def lesson
@@ -131,7 +127,7 @@ class Lecture < ApplicationRecord
   def path(user)
     return unless user.lectures.include?(self)
     Rails.application.routes.url_helpers
-         .course_path(self.course, params: { active: id })
+         .course_path(course, params: { active: id })
   end
 
   def checked_as_primary_by?(user)

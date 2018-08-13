@@ -11,12 +11,6 @@ class Course < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
 
-  def self.sort_by_title
-    Course.all.sort do |i,j|
-      i.title <=> j.title
-    end
-  end
-
   def to_label
     title
   end
@@ -72,16 +66,6 @@ class Course < ApplicationRecord
     kaviar_info.concat(available_extras)
   end
 
-  def kaviar_lectures
-    lectures.select { |l| l.kaviar? }
-  end
-
-  def kaviar_lectures_by_date
-    kaviar_lectures.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
-    end
-  end
-
   def lectures_by_date
     lectures.to_a.sort do |i, j|
       j.term.begin_date <=> i.term.begin_date
@@ -98,12 +82,7 @@ class Course < ApplicationRecord
   end
 
   def extras(user_params)
-    all_keys = user_params.keys
-    extra_keys = all_keys.select do |k|
-      k.end_with?('-' + id.to_s) && !k.include?('lecture-') &&
-        !k.start_with?('course-') && user_params[k] == '1'
-    end
-    extra_modules = extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
+    extra_modules = extract_extra_modules(user_params)
     modules = {}
     available_extras.each { |e| modules[e + '?'] = false }
     extra_modules.each { |e| modules[e] = true }
@@ -147,5 +126,19 @@ class Course < ApplicationRecord
 
   def subscribed_by?(user)
     user.courses.include?(self)
+  end
+
+  private
+
+  def filter_keys(user_params)
+    user_params.keys.select do |k|
+      k.end_with?('-' + id.to_s) && !k.include?('lecture-') &&
+        !k.start_with?('course-') && user_params[k] == '1'
+    end
+  end
+
+  def extract_extra_modules(user_params)
+    extra_keys = filter_keys(user_params)
+    extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
   end
 end

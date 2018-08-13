@@ -4,7 +4,7 @@ class Link < ApplicationRecord
   belongs_to :medium
   belongs_to :linked_medium, class_name: 'Medium'
   validates :linked_medium, uniqueness: { scope: :medium,
-                                          message: 'link already exists' }  
+                                          message: 'link already exists' }
   after_save :create_inverse, unless: :inverse?
   after_save :destroy, if: :self_inverse?
   after_destroy :destroy_inverses, if: :inverse?

@@ -66,35 +66,15 @@ class Medium < ApplicationRecord
   after_save :touch_teachable
 
   def self.search(primary_lecture, params)
-    if params[:course_id].present?
-      return unless Course.exists?(params[:course_id])
-      course = Course.find(params[:course_id])
-      if params[:project].present?
-        project = params[:project]
-        return unless course.available_food.include?(project)
-        sort = project == 'keks' ? 'KeksQuiz' : project.capitalize
-        filtered = Medium.where(sort: sort).order(:id)
-      else
-        filtered =  Medium.order(:id)
-      end
-      if params[:lecture_id].present?
-        lecture = Lecture.find_by_id(params[:lecture_id].to_i)
-        return if lecture.nil?
-        return unless course.lectures.include?(lecture)
-        lecture_results = filtered.select { |m| m.teachable == lecture }
-        lesson_results = filtered.select { |m| m.teachable_type == 'Lesson' &&
-                                               m.lecture == lecture }
-                                 .sort do |i, j|
-                                    i.lesson.number <=> j.lesson.number
-                                  end
-        return lecture_results + lesson_results
-      end
-      course_results = filtered.select { |m| m.teachable == course }
-      primary_results = filtered.select { |m| m.lecture == primary_lecture }
-      secondary_results = filtered.select { |m| m.course == course} -
-                          course_results - primary_results
-      return course_results + primary_results + secondary_results
+    return [] unless Course.exists?(params[:course_id])
+    course = Course.find(params[:course_id])
+    filtered = Medium.filter_media(course, params[:project])
+    if params[:lecture_id].present?
+      lecture = Lecture.find_by_id(params[:lecture_id].to_i)
+      return [] unless course.lectures.include?(lecture)
+      return Medium.lecture_lesson_results(filtered, lecture)
     end
+    search_results(filtered, course, primary_lecture)
   end
 
   def video_aspect_ratio
@@ -127,9 +107,9 @@ class Medium < ApplicationRecord
       return Rails.application.routes.url_helpers.course_path(teachable)
     end
     return unless user.lectures.include?(teachable.lecture)
-    return Rails.application.routes.url_helpers
-                .course_path(teachable.course,
-                             params: { active: teachable.lecture.id })
+    Rails.application.routes.url_helpers
+         .course_path(teachable.course,
+                      params: { active: teachable.lecture.id })
   end
 
   def card_subheader
@@ -198,6 +178,31 @@ class Medium < ApplicationRecord
     teachable.lesson
   end
 
+  def self.lecture_lesson_results(filtered_media, lecture)
+    lecture_results = filtered_media.select { |m| m.teachable == lecture }
+    lesson_results = filtered_media.select do |m|
+      m.teachable_type == 'Lesson' && m.lecture == lecture
+    end
+    lesson_results.sort! do |i, j|
+      i.lesson.number <=> j.lesson.number
+    end
+    lecture_results + lesson_results
+  end
+
+  def self.filter_media(course, project)
+    return Medium.order(:id) unless project.present?
+    return [] unless course.available_food.include?(project)
+    sort = project == 'keks' ? 'KeksQuiz' : project.capitalize
+    Medium.where(sort: sort).order(:id)
+  end
+
+  def self.search_results(filtered_media, course, primary_lecture)
+    course_results = filtered_media.select { |m| m.teachable == course }
+    primary_results = filtered_media.select { |m| m.lecture == primary_lecture }
+    secondary_results = filtered_media.select { |m| m.course == course } -
+                        course_results - primary_results
+    course_results + primary_results + secondary_results
+  end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }

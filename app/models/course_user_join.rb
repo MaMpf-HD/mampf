@@ -1,3 +1,5 @@
+# CourseUserJoin class
+# JoinTable for course <-> user many-to-many-relation
 class CourseUserJoin < ApplicationRecord
   belongs_to :course
   belongs_to :user

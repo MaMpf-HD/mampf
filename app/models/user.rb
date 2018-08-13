@@ -55,6 +55,51 @@ class User < ApplicationRecord
     end
   end
 
+  def sesam?(course)
+    return false if course.nil?
+    return false unless course.sesam?
+    join = CourseUserJoin.where(course: course, user: self)
+    return false if join.empty?
+    return false if join.first.sesam? == false
+    true
+  end
+
+  def kiwi?(course)
+    return false if course.nil?
+    return false unless course.kiwi?
+    join = CourseUserJoin.where(course: course, user: self)
+    return false if join.empty?
+    return false if join.first.kiwi? == false
+    true
+  end
+
+  def reste?(course)
+    return false if course.nil?
+    return false unless course.reste?
+    join = CourseUserJoin.where(course: course, user: self)
+    return false if join.empty?
+    return false if join.first.reste? == false
+    true
+  end
+
+  def keks?(course)
+    return false if course.nil?
+    return false unless course.keks?
+    join = CourseUserJoin.where(course: course, user: self)
+    return false if join.empty?
+    return false if join.first.keks? == false
+    true
+  end
+
+  def erdbeere?(course)
+    return false if course.nil?
+    return false unless course.erdbeere?
+    join = CourseUserJoin.where(course: course, user: self)
+    return false if join.empty?
+    return false if join.first.erdbeere? == false
+    true
+  end
+
   private
 
   def set_defaults

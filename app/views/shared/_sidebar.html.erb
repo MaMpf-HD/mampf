@@ -4,7 +4,7 @@
     <% if user_signed_in? %>
       <% lectures = course.subscribed_lectures_by_date(current_user) %>
       <li class="nav-item">
-        <% if course.nil? || !lectures.map { |l| l.kaviar? }.include?(true)%>
+        <% if course.nil? || !lectures.any? { |l| l.kaviar? } %>
           <span class="nav-link disabled">
             KaViaR
           </span>
@@ -17,7 +17,7 @@
             <span class="text-primary nav-link">
               KaViaR
             </span>
-            <ul class="nav nav-pills flex-column" style="padding-left: 1rem;">
+            <ul id="kaviar-sidebar" class="nav nav-pills flex-column">
               <% lectures.select { |l| l.kaviar? }.each do |l| %>
                 <li class="nav-item">
                   <%= link_to l.term.to_label_short,
@@ -32,7 +32,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if course.nil? || !course.sesam? %>
+        <% if !current_user.sesam?(course) %>
           <span class="nav-link disabled">
             SeSAM
           </span>
@@ -43,7 +43,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if course.nil? || !course.kiwi?%>
+        <% if !current_user.kiwi?(course) %>
           <span class="nav-link disabled">
             KiWi
           </span>
@@ -54,7 +54,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if course.nil? || !course.kiwi?%>
+        <% if !current_user.reste?(course) %>
           <span class="nav-link disabled">
             RestE
           </span>
@@ -65,7 +65,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if course.nil? || !course.keks? %>
+        <% if !current_user.keks?(course) %>
           <a href="<%= DefaultSetting::KEKS_LINK %>"
              class="nav-link" target="_blank">
             KeKs
@@ -77,7 +77,7 @@
         <% end %>
       </li>
       <li class="nav-item">
-        <% if course.nil? || !course.erdbeere? %>
+        <% if !current_user.erdbeere?(course) %>
           <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
              class="nav-link" target="_blank">
             <img src="/erdbeere-16x16.png" width="16" height="16">

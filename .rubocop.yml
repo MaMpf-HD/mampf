@@ -1,0 +1,8 @@
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/EmptyMethod:
+  Enabled: false
+Style/SymbolArray:
+  Enabled: false
+Style/WordArray:
+  Enabled: false
