@@ -11,7 +11,9 @@ class ProfileController < ApplicationController
     if @user.update(lectures: @lectures, courses: @courses,
                     subscription_type: @subscription_type, edited_profile: true)
       add_details
-      cookies[:current_course] = @courses.first.id
+      unless @user.courses.map(&:id).include?(cookies[:current_course].to_i)
+        cookies[:current_course] = @courses.first.id
+      end
       redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
     else
       @no_course_error = @user.errors
