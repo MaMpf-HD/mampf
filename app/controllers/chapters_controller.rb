@@ -8,11 +8,10 @@ class ChaptersController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_chapter
     @chapter = Chapter.find_by_id(params[:id])
     return if @chapter.present?
-    redirect_to :root, alert: 'Ein Kapitel mit der angeforderten id existiert
-                               nicht.'
+    redirect_to :root, alert: 'Ein Kapitel mit der angeforderten id ' \
+                              'existiert nicht.'
   end
 end

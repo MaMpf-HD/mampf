@@ -1,13 +1,13 @@
 # ProfileController
 class ProfileController < ApplicationController
   before_action :set_user
+  before_action :set_basics, only: [:update]
 
   def edit
     redirect_to consent_profile_path unless @user.consents
   end
 
   def update
-    set_basics
     if @user.update(lectures: @lectures, courses: @courses,
                     subscription_type: @subscription_type, edited_profile: true)
       add_details
@@ -25,11 +25,10 @@ class ProfileController < ApplicationController
       redirect_to :root
       return
     end
-    if @user.consents
-      redirect_to edit_profile_path,
-                  notice: 'Bitte nimm Dir ein paar Minuten Zeit, um Dein ' \
-                          'Profil zu bearbeiten.'
-    end
+    return unless @user.consents
+    redirect_to edit_profile_path,
+                notice: 'Bitte nimm Dir ein paar Minuten Zeit, um Dein ' \
+                        'Profil zu bearbeiten.'
   end
 
   def add_consent
@@ -57,13 +56,19 @@ class ProfileController < ApplicationController
   end
 
   def lecture_ids
-    primary = params[:user].keys.select { |k| k.start_with?('primary_lecture-') }
-                           .select { |c| params[:user][c] != '0' }
-                           .map { |c| params[:user][c] }.map(&:to_i)
-    secondary = params[:user].keys.select { |k| k.start_with?('lecture-') }
-                             .select { |c| params[:user][c] == '1' }
-                             .map { |c| c.remove('lecture-').to_i }
     primary + secondary
+  end
+
+  def primary
+    params[:user].keys.select { |k| k.start_with?('primary_lecture-') }
+                 .reject { |c| params[:user][c] == '0' }
+                 .map { |c| params[:user][c] }.map(&:to_i)
+  end
+
+  def secondary
+    params[:user].keys.select { |k| k.start_with?('lecture-') }
+                 .select { |c| params[:user][c] == '1' }
+                 .map { |c| c.remove('lecture-').to_i }
   end
 
   def add_details

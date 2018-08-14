@@ -16,20 +16,13 @@ class User < ApplicationRecord
 
   def related_courses
     return if subscription_type.nil?
-    case subscription_type
-    when 1
-      ids = courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
-                                  courses.all.pluck(:id)
-      return Course.where(id: ids)
-    when 2
-      return Course.all
-    when 3
-      return courses
-    end
+    return Course.where(id: preceding_course_ids) if subscription_type == 1
+    return Course.all if subscription_type == 2
+    courses
   end
 
   def related_lectures
-    related_courses.map { |c| c.lectures }.flatten
+    related_courses.map(&:lectures).flatten
   end
 
   def filter_tags(tags)
@@ -41,13 +34,11 @@ class User < ApplicationRecord
     Lecture.where(id: lectures.pluck(:id) & related_lectures.pluck(:id))
   end
 
-
   def filter_media(media)
     Medium
       .where(id: media.select { |m| m.related_to_lectures?(related_lectures) }
                       .map(&:id))
   end
-
 
   def lectures_by_date
     lectures.to_a.sort do |i, j|
@@ -55,49 +46,33 @@ class User < ApplicationRecord
     end
   end
 
-  def sesam?(course)
+  def project?(course, project)
     return false if course.nil?
-    return false unless course.sesam?
+    return false unless course.public_send(project + '?')
     join = CourseUserJoin.where(course: course, user: self)
     return false if join.empty?
-    return false if join.first.sesam? == false
+    return false if join.first.public_send(project + '?') == false
     true
+  end
+
+  def sesam?(course)
+    project?(course, 'sesam')
   end
 
   def kiwi?(course)
-    return false if course.nil?
-    return false unless course.kiwi?
-    join = CourseUserJoin.where(course: course, user: self)
-    return false if join.empty?
-    return false if join.first.kiwi? == false
-    true
+    project?(course, 'kiwi')
   end
 
   def reste?(course)
-    return false if course.nil?
-    return false unless course.reste?
-    join = CourseUserJoin.where(course: course, user: self)
-    return false if join.empty?
-    return false if join.first.reste? == false
-    true
+    project?(course, 'reste')
   end
 
   def keks?(course)
-    return false if course.nil?
-    return false unless course.keks?
-    join = CourseUserJoin.where(course: course, user: self)
-    return false if join.empty?
-    return false if join.first.keks? == false
-    true
+    project?(course, 'keks')
   end
 
   def erdbeere?(course)
-    return false if course.nil?
-    return false unless course.erdbeere?
-    join = CourseUserJoin.where(course: course, user: self)
-    return false if join.empty?
-    return false if join.first.erdbeere? == false
-    true
+    project?(course, 'erdbeere')
   end
 
   private
@@ -113,5 +88,10 @@ class User < ApplicationRecord
 
   def courses_exist?
     return true if Course.all.present? && edited_profile?
+  end
+
+  def preceding_course_ids
+    courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
+      courses.all.pluck(:id)
   end
 end

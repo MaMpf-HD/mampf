@@ -30,42 +30,38 @@ class Lecture < ApplicationRecord
 
   def kaviar?
     Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
-      Medium.where(sort: 'Kaviar').any? { |m| m.lecture == self }
+      Medium.where(sort: 'Kaviar').to_a.any? { |m| m.lecture == self }
     end
   end
 
   def sesam?
     Rails.cache.fetch("#{cache_key}/sesam", expires_in: 2.hours) do
-      Medium.where(sort: 'Sesam').any? { |m| m.lecture == self }
+      Medium.where(sort: 'Sesam').to_a.any? { |m| m.lecture == self }
     end
   end
 
   def keks?
     Rails.cache.fetch("#{cache_key}/keks", expires_in: 2.hours) do
-      Medium.where(sort: 'KeksQuiz').any? { |m| m.lecture == self }
+      Medium.where(sort: 'KeksQuiz').to_a.any? { |m| m.lecture == self }
     end
   end
 
   def erdbeere?
     Rails.cache.fetch("#{cache_key}/erdbeere", expires_in: 2.hours) do
-      Medium.where(sort: 'Erdbeere').any? { |m| m.lecture == self }
+      Medium.where(sort: 'Erdbeere').to_a.any? { |m| m.lecture == self }
     end
   end
 
   def kiwi?
     Rails.cache.fetch("#{cache_key}/kiwi", expires_in: 2.hours) do
-      Medium.where(sort: 'Kiwi').any? { |m| m.lecture == self }
+      Medium.where(sort: 'Kiwi').to_a.any? { |m| m.lecture == self }
     end
   end
 
   def reste?
     Rails.cache.fetch("#{cache_key}/reste", expires_in: 2.hours) do
-      Medium.where(sort: 'Reste').any? { |m| m.lecture == self }
+      Medium.where(sort: 'Reste').to_a.any? { |m| m.lecture == self }
     end
-  end
-
-  def available_modules
-    [nil, kaviar?, sesam?, kiwi?, keks?, reste?]
   end
 
   def to_label
@@ -138,5 +134,13 @@ class Lecture < ApplicationRecord
   def checked_as_secondary_by?(user)
     return false unless course.subscribed_by?(user)
     course.subscribed_lectures(user).include?(self)
+  end
+
+  def lecture_lesson_results(filtered_media)
+    lecture_results = filtered_media.select { |m| m.teachable == self }
+    lesson_results = filtered_media.select do |m|
+      m.teachable_type == 'Lesson' && m.lecture == self
+    end
+    lecture_results + lesson_results.sort_by { |m| m.lesson.number }
   end
 end

@@ -2,34 +2,14 @@
 class MediaController < ApplicationController
   authorize_resource
   before_action :set_medium, only: [:show]
+  before_action :set_course, only: [:index]
+  before_action :check_project, only: [:index]
   before_action :sanitize_params
   before_action :check_for_consent
 
   def index
-    if params[:course_id]
-      unless Course.exists?(params[:course_id])
-        redirect_to :root, alert: 'Eine Modul mit der angeforderten id
-                                   existiert nicht.'
-        return
-      end
-      @course = Course.find(params[:course_id])
-      cookies[:current_course] = params[:course_id]
-      if params[:project]
-        project = params[:project]
-        available_food = Course.find(params[:course_id]).available_food
-        unless available_food.include?(project)
-          redirect_to :root, alert: 'Ein solches MaMpf-Teilprojekt existiert ' \
-                                    'für dieses Modul nicht.'
-          return
-        end
-      end
-      search_results = Medium.search(@course.primary_lecture(current_user),
-                                     params)
-      search_results = search_results.reverse if params[:reverse]
-      @media = params[:all] ? Kaminari.paginate_array(search_results) : Kaminari.paginate_array(search_results).page(params[:page]).per(params[:per])
-      return
-    end
-    redirect_to :root
+    cookies[:current_course] = params[:course_id]
+    @media = paginated_results
   end
 
   def show
@@ -37,22 +17,60 @@ class MediaController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_medium
     @medium = Medium.find_by_id(params[:id])
     return if @medium.present?
-    redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert
-                               nicht.'
+    redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert ' \
+                              'nicht.'
+  end
+
+  def set_course
+    @course = Course.find_by_id(params[:course_id])
+    return if @course.present?
+    redirect_to :root, alert: 'Ein Modul mit der angeforderten id ' \
+                              'existiert nicht.'
+  end
+
+  def check_project
+    return unless params[:project]
+    return if @course.available_food.include?(params[:project])
+    redirect_to :root, alert: 'Ein solches MaMpf-Teilprojekt existiert ' \
+                              'für dieses Modul nicht.'
   end
 
   def sanitize_params
-    params[:page] = params[:page].to_i > 0 ? params[:page].to_i : 1
+    sanitize_page!
+    sanitize_per!
     params[:all] = params[:all] == 'true'
     params[:reverse] = params[:reverse] == 'true'
-    params[:per] = params[:per].to_i.in?([3,4,8,12,24]) ? params[:per].to_i : 8
   end
 
   def check_for_consent
     redirect_to consent_profile_path unless current_user.consents
+  end
+
+  def paginated_results
+    return Kaminari.paginate_array(search_results) if params[:all]
+    Kaminari.paginate_array(search_results).page(params[:page])
+            .per(params[:per])
+  end
+
+  def search_results
+    search_results = Medium.search(@course.primary_lecture(current_user),
+                                   params)
+    return search_results unless params[:reverse]
+    search_results.reverse
+  end
+
+  def sanitize_page!
+    params[:page] = params[:page].to_i > 0 ? params[:page].to_i : 1
+  end
+
+  def sanitize_per!
+    params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24])
+                     params[:per].to_i
+                   else
+                     8
+                   end
   end
 end

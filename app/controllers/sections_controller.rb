@@ -8,7 +8,6 @@ class SectionsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_section
     @section = Section.find_by_id(params[:id])
     return if @section.present?

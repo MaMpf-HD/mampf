@@ -50,14 +50,6 @@ RSpec.describe Lecture, type: :model do
       expect(lecture.sections.to_a).to match_array(sections)
     end
   end
-  describe '#available_modules' do
-    it 'returns the correct modules' do
-      lecture = FactoryBot.build(:lecture)
-      FactoryBot.create(:medium, teachable: lecture, sort: 'Kaviar')
-      FactoryBot.create(:medium, teachable: lecture, sort: 'Kiwi')
-      expect(lecture.available_modules).to eq ([nil, true, false, true, false, false])
-    end
-  end
   describe '#to_label' do
     it 'returns the correct label' do
       course = FactoryBot.create(:course, title: 'Usual bs')

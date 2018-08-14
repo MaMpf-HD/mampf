@@ -27,7 +27,7 @@
     <div class="container-fluid">
       <div class="row">
         <%= render partial: 'shared/sidebar',
-                   locals: { course_id: get_course_id } %>
+                   locals: { course_id: course_id_from_cookie } %>
         <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
           <div class="alert alert-danger" id="js-messages" role="alert"
                style="display: none;">

@@ -1,3 +1,4 @@
+# ApplicationHelper module
 module ApplicationHelper
   # Returns the full title on a per-page basis.
   def full_title(page_title = '')
@@ -17,21 +18,19 @@ module ApplicationHelper
     value ? 'block;' : 'none;'
   end
 
-  def split_list(list, n = 4)
-    group_size = (list.count / n) != 0 ? list.count / n : 1
+  def split_list(list, pieces = 4)
+    group_size = (list.count / pieces) != 0 ? list.count / pieces : 1
     groups = list.in_groups_of(group_size)
-    diff = groups.count - n
+    diff = groups.count - pieces
     return groups if diff <= 0
     tail = groups.pop(diff).first(diff).flatten
     groups.last.concat(tail)
-    return groups
+    groups
   end
 
-  def get_course_id
+  def course_id_from_cookie
     return cookies[:current_course].to_i unless cookies[:current_course].nil?
-    return 1 if current_user.nil?
+    return if current_user.nil?
     return current_user.courses.first.id unless current_user.courses.empty?
-    1
   end
-
 end

@@ -66,15 +66,15 @@ class Medium < ApplicationRecord
   after_save :touch_teachable
 
   def self.search(primary_lecture, params)
-    return [] unless Course.exists?(params[:course_id])
-    course = Course.find(params[:course_id])
+    course = Course.find_by_id(params[:course_id])
+    return [] if course.nil?
     filtered = Medium.filter_media(course, params[:project])
-    if params[:lecture_id].present?
-      lecture = Lecture.find_by_id(params[:lecture_id].to_i)
-      return [] unless course.lectures.include?(lecture)
-      return Medium.lecture_lesson_results(filtered, lecture)
+    unless params[:lecture_id].present?
+      return search_results(filtered, course, primary_lecture)
     end
-    search_results(filtered, course, primary_lecture)
+    lecture = Lecture.find_by_id(params[:lecture_id].to_i)
+    return [] unless course.lectures.include?(lecture)
+    lecture.lecture_lesson_results(filtered)
   end
 
   def video_aspect_ratio
@@ -104,21 +104,16 @@ class Medium < ApplicationRecord
   def card_header_teachable_path(user)
     if teachable_sort == 'Course'
       return unless user.courses.include?(teachable)
-      return Rails.application.routes.url_helpers.course_path(teachable)
+      return course_path(teachable)
     end
     return unless user.lectures.include?(teachable.lecture)
-    Rails.application.routes.url_helpers
-         .course_path(teachable.course,
-                      params: { active: teachable.lecture.id })
+    lecture_path(teachable)
   end
 
   def card_subheader
     return description if description.present?
-    return teachable.description[:specific] if
-      teachable.description[:specific].present?
-    { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
-      'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video',
-      'Kiwi' => 'KIWi Video' }[sort]
+    return subheader_heading unless teachable.description[:specific].present?
+    teachable.description[:specific]
   end
 
   def card_subheader_teachable(user)
@@ -148,14 +143,9 @@ class Medium < ApplicationRecord
   end
 
   def related_to_lecture?(lecture)
-    case teachable_sort
-    when 'Course'
-      return true if teachable == lecture.course
-    when 'Lecture'
-      return true if teachable == lecture
-    when 'Lesson'
-      return true if teachable.lecture == lecture
-    end
+    return true if belongs_to_course?(lecture)
+    return true if belongs_to_lecture?(lecture)
+    return true if belongs_to_lesson?(lecture)
     false
   end
 
@@ -176,17 +166,6 @@ class Medium < ApplicationRecord
   def lesson
     return if teachable.nil?
     teachable.lesson
-  end
-
-  def self.lecture_lesson_results(filtered_media, lecture)
-    lecture_results = filtered_media.select { |m| m.teachable == lecture }
-    lesson_results = filtered_media.select do |m|
-      m.teachable_type == 'Lesson' && m.lecture == lecture
-    end
-    lesson_results.sort! do |i, j|
-      i.lesson.number <=> j.lesson.number
-    end
-    lecture_results + lesson_results
   end
 
   def self.filter_media(course, project)
@@ -267,7 +246,39 @@ class Medium < ApplicationRecord
   def touch_teachable
     return if teachable.nil?
     teachable.course.touch
+    optional_touches
+  end
+
+  def optional_touches
     teachable.lecture.touch if teachable.lecture.present?
     teachable.lesson.touch if teachable.lesson.present?
+  end
+
+  def lecture_path(teachable)
+    Rails.application.routes.url_helpers
+         .course_path(teachable.course,
+                      params: { active: teachable.lecture.id })
+  end
+
+  def course_path(teachable)
+    Rails.application.routes.url_helpers.course_path(teachable)
+  end
+
+  def belongs_to_course?(lecture)
+    teachable_sort == 'Course' && teachable == lecture.course
+  end
+
+  def belongs_to_lecture?(lecture)
+    teachable_sort == 'Lecture' && teachable == lecture
+  end
+
+  def belongs_to_lesson?(lecture)
+    teachable_sort == 'Lesson' && teachable.lecture == lecture
+  end
+
+  def subheader_heading
+    { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
+      'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video',
+      'Kiwi' => 'KIWi Video' }[sort]
   end
 end

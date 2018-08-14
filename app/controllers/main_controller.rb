@@ -10,8 +10,8 @@ class MainController < ApplicationController
   end
 
   def error
-    redirect_to :root, alert: 'Die angeforderte Seit existiert nicht. Du wurdest
-                               auf die MaMpf-Homepage umgeleitet.'
+    redirect_to :root, alert: 'Die angeforderte Seit existiert nicht. Du ' \
+                              'wurdest auf die MaMpf-Homepage umgeleitet.'
   end
 
   private

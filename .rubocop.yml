@@ -6,3 +6,5 @@ Style/SymbolArray:
   Enabled: false
 Style/WordArray:
   Enabled: false
+Documentation:
+  Enabled: false
