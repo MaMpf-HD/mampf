@@ -50,9 +50,7 @@ class ProfileController < ApplicationController
   end
 
   def course_ids
-    params[:user].keys.select { |k| k.start_with?('course-') }
-                 .select { |c| params[:user][c] == '1' }
-                 .map { |c| c.remove('course-').to_i }
+    filter_by('course')
   end
 
   def lecture_ids
@@ -66,9 +64,13 @@ class ProfileController < ApplicationController
   end
 
   def secondary
-    params[:user].keys.select { |k| k.start_with?('lecture-') }
+    filter_by('lecture')
+  end
+
+  def filter_by(type)
+    params[:user].keys.select { |k| k.start_with?(type + '-') }
                  .select { |c| params[:user][c] == '1' }
-                 .map { |c| c.remove('lecture-').to_i }
+                 .map { |c| c.remove(type + '-').to_i }
   end
 
   def add_details
