@@ -34,36 +34,6 @@ class Lecture < ApplicationRecord
     end
   end
 
-  def sesam?
-    Rails.cache.fetch("#{cache_key}/sesam", expires_in: 2.hours) do
-      Medium.where(sort: 'Sesam').to_a.any? { |m| m.lecture == self }
-    end
-  end
-
-  def keks?
-    Rails.cache.fetch("#{cache_key}/keks", expires_in: 2.hours) do
-      Medium.where(sort: 'KeksQuiz').to_a.any? { |m| m.lecture == self }
-    end
-  end
-
-  def erdbeere?
-    Rails.cache.fetch("#{cache_key}/erdbeere", expires_in: 2.hours) do
-      Medium.where(sort: 'Erdbeere').to_a.any? { |m| m.lecture == self }
-    end
-  end
-
-  def kiwi?
-    Rails.cache.fetch("#{cache_key}/kiwi", expires_in: 2.hours) do
-      Medium.where(sort: 'Kiwi').to_a.any? { |m| m.lecture == self }
-    end
-  end
-
-  def reste?
-    Rails.cache.fetch("#{cache_key}/reste", expires_in: 2.hours) do
-      Medium.where(sort: 'Reste').to_a.any? { |m| m.lecture == self }
-    end
-  end
-
   def to_label
     course.title + ', ' + term.to_label
   end
@@ -84,11 +54,6 @@ class Lecture < ApplicationRecord
   def term_teacher_kaviar_info
     videos = kaviar? ? ' ' : ' nicht '
     term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'
-  end
-
-  def modules
-    { 'KaViaR' => kaviar?, 'SeSAM' => sesam?, 'RestE' => reste?,
-      'KeKs' => keks?, 'ErDBeere' => erdbeere?, 'KIWi' => kiwi? }
   end
 
   def description

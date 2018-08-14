@@ -20,40 +20,27 @@ class Course < ApplicationRecord
   end
 
   def kaviar?
-    Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
-      Medium.where(sort: 'Kaviar').to_a.any? { |m| m.course == self }
-    end
+    project?('kaviar')
   end
 
   def sesam?
-    Rails.cache.fetch("#{cache_key}/sesam", expires_in: 2.hours) do
-      Medium.where(sort: 'Sesam').to_a.any? { |m| m.course == self }
-    end
+    project?('sesam')
   end
 
   def keks?
-    Rails.cache.fetch("#{cache_key}/keks", expires_in: 2.hours) do
-      Medium.where(sort: ['Keks', 'KeksQuestion']).to_a
-            .any? { |m| m.course == self }
-    end
+    project?('keks')
   end
 
   def erdbeere?
-    Rails.cache.fetch("#{cache_key}/erdbeere", expires_in: 2.hours) do
-      Medium.where(sort: 'Erdbeere').to_a.any? { |m| m.course == self }
-    end
+    project?('erdbeere')
   end
 
   def kiwi?
-    Rails.cache.fetch("#{cache_key}/kiwi", expires_in: 2.hours) do
-      Medium.where(sort: 'Kiwi').to_a.any? { |m| m.course == self }
-    end
+    project?('kiwi')
   end
 
   def reste?
-    Rails.cache.fetch("#{cache_key}/reste", expires_in: 2.hours) do
-      Medium.where(sort: 'Reste').to_a.any? { |m| m.course == self }
-    end
+    project?('reste')
   end
 
   def available_extras
@@ -141,5 +128,17 @@ class Course < ApplicationRecord
   def extract_extra_modules(user_params)
     extra_keys = filter_keys(user_params)
     extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
+  end
+
+  def project?(project)
+    Rails.cache.fetch("#{cache_key}/#{project}", expires_in: 2.hours) do
+      Medium.where(sort: sort[project]).to_a.any? { |m| m.course == self }
+    end
+  end
+
+  def sort
+    { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
+      'keks' => ['KeksQuiz'], 'reste' => ['Reste'],
+      'erdbeere' => ['Erdbeere'] }
   end
 end
