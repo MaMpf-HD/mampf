@@ -5,7 +5,8 @@ RSpec.describe SearchController, type: :controller do
   describe '#index' do
 
     before do
-      lecture = FactoryBot.create(:lecture)
+      course = FactoryBot.create(:course, :with_tags)
+      lecture = FactoryBot.create(:lecture, course: course)
       @tag = lecture.tags.first
     end
 

@@ -281,10 +281,17 @@ RSpec.describe Medium, type: :model do
     end
   end
   describe '#card_header_teachable_path' do
-    it 'returns the correct teachable' do
-      lesson = FactoryBot.create(:lesson)
-      medium = FactoryBot.build(:medium, teachable: lesson)
-      expect(medium.card_header_teachable_path).to eq(lesson.lecture)
+    it 'returns the correct teachable path' do
+      user = FactoryBot.create(:user)
+      course = FactoryBot.create(:course)
+      lecture = FactoryBot.create(:lecture, course: course)
+      lesson = FactoryBot.create(:lesson, lecture: lecture)
+      user.courses << course
+      user.lectures << lecture
+      medium = FactoryBot.create(:medium, teachable: lesson)
+      expect(medium.card_header_teachable_path(user))
+        .to eq(Rails.application.routes.url_helpers
+                    .course_path(course, params: { active: lecture.id }))
     end
   end
   describe '#card_subheader' do
@@ -305,9 +312,14 @@ RSpec.describe Medium, type: :model do
   end
   describe '#card_subheader_teachable' do
     it 'returns the correct teachable' do
-      lesson = FactoryBot.create(:lesson)
-      medium = FactoryBot.build(:medium, teachable: lesson, description: nil)
-      expect(medium.card_subheader_teachable).to eq(lesson)
+      user = FactoryBot.create(:user)
+      course = FactoryBot.create(:course)
+      lecture = FactoryBot.create(:lecture, course: course)
+      lesson = FactoryBot.create(:lesson, lecture: lecture)
+      user.courses << course
+      user.lectures << lecture
+      medium = FactoryBot.create(:medium, teachable: lesson, description: nil)
+      expect(medium.card_subheader_teachable(user)).to eq(lesson)
     end
   end
   describe '#sort_de' do

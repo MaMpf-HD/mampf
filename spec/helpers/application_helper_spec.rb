@@ -42,39 +42,4 @@ RSpec.describe ApplicationHelper, type: :helper do
       end
     end
   end
-
-  describe '#filter_tags_by_lectures' do
-    it 'returns a correct list of tags' do
-      lectures = FactoryBot.create_list(:lecture, 3)
-      tags = FactoryBot.create_list(:tag, 2)
-      tags[0].additional_lectures = lectures.first(2)
-      tags[0].disabled_lectures = [lectures.last]
-      tags[1].additional_lectures = lectures.last(2)
-      tags[1].disabled_lectures = [lectures.first]
-      result = filter_tags_by_lectures(tags,[lectures[2]])
-      expect(result).to eq([tags[1]])
-    end
-  end
-
-  describe '#filter_lectures_by_lectures' do
-    it 'returns a correct list of lectures' do
-      lectures = FactoryBot.create_list(:lecture, 3)
-      filter_lectures = FactoryBot.create_list(:lecture,2).concat(lectures.first(2))
-      result = filter_lectures_by_lectures(lectures,filter_lectures)
-      expect(result).to eq(lectures.first(2))
-    end
-  end
-
-  describe '#filter_media_by_lectures' do
-    it 'returns a correct list of media' do
-      lectures = FactoryBot.create_list(:lecture, 3)
-      media = FactoryBot.create_list(:medium, 3)
-      media[0].teachable = lectures[0]
-      media[1].teachable = lectures[1].course
-      media[2].teachable = lectures[2]
-      result = filter_media_by_lectures(media,lectures.first(2))
-      expect(result).to eq(media.first(2))
-    end
-  end
-
 end

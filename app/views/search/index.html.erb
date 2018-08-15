@@ -1,8 +1,6 @@
 Deine Suche nach dem Begriff
 "<%= @search_string %>"
-hat
-<%= @filtered_tags.count %>
-Treffer ergeben.
+hat <%= @filtered_tags.count %> Treffer ergeben.
 <% if @tags.count != @filtered_tags.count %>
   Aufgrund Deiner
   <%= link_to "Profileinstellungen", edit_profile_path %>
