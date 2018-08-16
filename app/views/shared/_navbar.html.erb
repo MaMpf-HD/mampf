@@ -20,6 +20,11 @@
             <%= link_to "Dashboard", rails_admin_path, class: 'nav-link' %>
           </li>
         <% end %>
+        <% if current_user.admin || current_user.teacher? %>
+          <li class="nav-item">
+            <%= link_to "Administration", administration_path, class: 'nav-link' %>
+          </li>
+        <% end %>
       <% else %>
         <li class="nav-item">
           <%= link_to "Login", new_user_session_path, class: 'nav-link' %>

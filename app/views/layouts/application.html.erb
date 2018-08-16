@@ -23,7 +23,8 @@
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
   </head>
   <body>
-    <%= render 'shared/navbar' %>
+    <% unless cookies[:administrates] == 'true' %>
+    <%= render partial: 'shared/navbar' %>
     <div class="container-fluid">
       <div class="row">
         <%= render partial: 'shared/sidebar',
@@ -49,5 +50,15 @@
     <footer>
       <%= render partial: 'shared/footer' %>
     </footer>
+    <% else %>
+      <div id="administrate">
+        <div id="admin-sidebar">
+          <%= render partial: 'administration/navbar' %>
+        </div>
+        <div id="admin-area">
+          <%= yield %>
+        </div>
+      </div>
+    <% end %>
   </body>
 </html>

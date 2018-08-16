@@ -12,6 +12,7 @@ class Ability
       can :dashboard              # grant access to the dashboard
     else
       can :read, :all
+      cannot :read, :administration
     end
 
     #

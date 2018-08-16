@@ -80,6 +80,7 @@ class User < ApplicationRecord
   def set_defaults
     self.subscription_type = 1 if subscription_type.nil?
     self.admin = false if admin.nil?
+    self.teacher = false if teacher.nil?
   end
 
   def set_consented_at

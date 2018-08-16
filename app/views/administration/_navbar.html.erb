@@ -1,0 +1,37 @@
+<nav class="navbar navbar-expand-md navbar-light bg-orange-lighten-4">
+  <button class="navbar-toggler" type="button"
+          data-toggle="collapse" data-target="#collapsingNavbarLg">
+    <span class="navbar-toggler-icon">
+    </span>
+  </button>
+  <div class="navbar-collapse collapse" id="collapsingNavbarLg">
+    <ul class="navbar-nav mr-auto">
+      <% if user_signed_in? %>
+        <li class="nav-item">
+          <%= link_to "Übersicht", administration_path, class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Medien", '', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Module", '', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Vorlesungen", '', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Sitzungen", '', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Kapitel", '', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Abschnitte", '', class: 'nav-link' %>
+        </li>
+        <li class="nav-item">
+          <%= link_to "Beenden", exit_administration_path, class: 'nav-link' %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</nav>
