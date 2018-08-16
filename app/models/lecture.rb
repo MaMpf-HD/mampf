@@ -30,7 +30,7 @@ class Lecture < ApplicationRecord
 
   def kaviar?
     Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
-      Medium.where(sort: 'Kaviar').to_a.any? { |m| m.lecture == self }
+      Medium.where(sort: 'Kaviar').to_a.any? { |m| m.teachable.lecture == self }
     end
   end
 
@@ -104,8 +104,8 @@ class Lecture < ApplicationRecord
   def lecture_lesson_results(filtered_media)
     lecture_results = filtered_media.select { |m| m.teachable == self }
     lesson_results = filtered_media.select do |m|
-      m.teachable_type == 'Lesson' && m.lecture == self
+      m.teachable_type == 'Lesson' && m.teachable.lecture == self
     end
-    lecture_results + lesson_results.sort_by { |m| m.lesson.number }
+    lecture_results + lesson_results.sort_by { |m| m.teachable.lesson.number }
   end
 end
