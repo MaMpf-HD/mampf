@@ -7,26 +7,35 @@
   <div class="navbar-collapse collapse" id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>
-        <li class="nav-item">
-          <%= link_to "Übersicht", administration_path, class: 'nav-link' %>
+        <li class="nav-item <%= active(controller_name == 'administration') %>">
+          <%= link_to "Übersicht", administration_path,
+              class: 'nav-link ' %>
         </li>
         <li class="nav-item">
           <%= link_to "Medien", '', class: 'nav-link' %>
         </li>
+        <% if current_user.admin? %>
+          <li class="nav-item">
+            <%= link_to "Module", '', class: 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "Vorlesungen", '', class: 'nav-link' %>
+          </li>
+        <% end %>
         <li class="nav-item">
-          <%= link_to "Module", '', class: 'nav-link' %>
+          <%= link_to "Tags", '', class: 'nav-link' %>
         </li>
+        <% if current_user.admin? %>
+          <li class="nav-item <%= active(controller_name == 'terms') %>">
+            <%= link_to "Semester", terms_path,
+                class: 'nav-link ' %>
+          </li>
+          <li>
+            <%= link_to "DozentInnen", '', class: 'nav-link' %>
+          </li>
+        <% end %>
         <li class="nav-item">
-          <%= link_to "Vorlesungen", '', class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Sitzungen", '', class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Kapitel", '', class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Abschnitte", '', class: 'nav-link' %>
+          <%= link_to "Profil", '', class: 'nav-link' %>
         </li>
         <li class="nav-item">
           <%= link_to "Beenden", exit_administration_path, class: 'nav-link' %>

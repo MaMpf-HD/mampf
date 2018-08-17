@@ -144,6 +144,9 @@ GEM
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (6.0.1)
       railties (>= 3.2.16)
+    js-routes (1.4.4)
+      railties (>= 3.2)
+      sprockets-rails
     json (2.1.0)
     jsonapi-renderer (0.2.0)
     kaminari (1.1.1)
@@ -373,6 +376,7 @@ DEPENDENCIES
   fuzzy-string-match
   jbuilder
   jquery-rails
+  js-routes
   kaminari
   launchy
   listen (>= 3.0.5, < 3.2)

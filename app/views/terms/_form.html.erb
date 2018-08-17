@@ -1,0 +1,37 @@
+<%= form_with model: term  do |f|%>
+  <div class="form-row">
+    <div class="col-1">
+      <%= f.select :year,
+                   (2016...2025).to_a,
+                   {}, { class: 'form-control' }%>
+    </div>
+    <div class="col-1">
+      <%= f.select :season,
+                   ['WS', 'SS'],
+                   {}, { class: 'form-control' } %>
+    </div>
+    <div class="col-6">
+      <ul>
+        <% term.lectures.each do |l| %>
+          <li>
+            <%= l.title_teacher_info  %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="col-4">
+      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+        <button class="btn btn-secondary" id="cancel-term-edit"
+                data-term="<%= term.id %>">
+          abbrechen
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2">
+        <div class="invalid-feedback" id="term-error">
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

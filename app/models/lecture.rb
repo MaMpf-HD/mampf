@@ -51,6 +51,10 @@ class Lecture < ApplicationRecord
     term.to_label + ', ' + teacher.name
   end
 
+  def title_teacher_info
+    course.title + ' (' + teacher.name + ')'
+  end
+
   def term_teacher_kaviar_info
     videos = kaviar? ? ' ' : ' nicht '
     term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'

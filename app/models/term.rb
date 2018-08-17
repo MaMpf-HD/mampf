@@ -5,10 +5,11 @@ class Term < ApplicationRecord
                      inclusion: { in: %w[SS WS],
                                   message: 'not a valid type' },
                      uniqueness: { scope: :year,
-                                   message: 'term already exists' }
+                                   message: 'Semester existiert bereits.' }
   validates :year, presence: true,
                    numericality: { only_integer: true,
                                    greater_than_or_equal_to: 2000 }
+  paginates_per 8
 
   def begin_date
     season == 'SS' ? Date.new(year, 4, 1) : Date.new(year, 10, 1)

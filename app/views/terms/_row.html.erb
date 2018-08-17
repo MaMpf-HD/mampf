@@ -1,0 +1,26 @@
+<div class="col-1">
+  <%= term.year %>
+</div>
+<div class="col-1">
+  <%= term.season %>
+</div>
+<div class="col-6">
+  <ul>
+    <% term.lectures.each do |l| %>
+      <li>
+        <%= l.title_teacher_info  %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="col-4">
+  <%= link_to 'Bearbeiten', edit_term_path(term),
+              class: 'btn btn-outline-primary my-1',
+              remote: true %>
+  <% if term.lectures.empty? %>
+    <%= link_to 'Löschen', term_path(term), method: :delete,
+                data: { confirm: 'Bist Du sicher?' },
+                remote: true,
+                class: 'btn btn-outline-danger my-1' %>
+  <% end %>
+</div>

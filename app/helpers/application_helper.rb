@@ -18,6 +18,10 @@ module ApplicationHelper
     value ? 'block;' : 'none;'
   end
 
+  def active(value)
+    value ? 'active' : ''
+  end
+
   def split_list(list, pieces = 4)
     group_size = (list.count / pieces) != 0 ? list.count / pieces : 1
     groups = list.in_groups_of(group_size)

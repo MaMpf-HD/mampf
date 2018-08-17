@@ -13,6 +13,7 @@ class Ability
     else
       can :read, :all
       cannot :read, :administration
+      cannot :read, :term
     end
 
     #

@@ -11,8 +11,8 @@ Rails.application.routes.draw do
   resources :lessons, only: [:show]
   resources :sections, only: [:show]
   resources :chapters, only: [:show]
-
-
+  resources :terms, only: [:index, :new, :edit, :destroy, :update]
+  get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
   get 'search/index'
 
   get 'profile/edit', as: 'edit_profile'
