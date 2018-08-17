@@ -23,7 +23,8 @@
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
   </head>
   <body>
-    <% unless cookies[:administrates] == 'true' %>
+    <% unless user_signed_in? && (current_user.teacher? || current_user.admin?) &&
+              cookies[:administrates] == 'true' %>
     <%= render partial: 'shared/navbar' %>
     <div class="container-fluid">
       <div class="row">
