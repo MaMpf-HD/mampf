@@ -9,6 +9,8 @@ $(document).on 'turbolinks:load', ->
       $boxes = $('#collapse-course-' + courseId).find('input:checkbox')
       $radios = $('#collapse-course-' + courseId).find('input:radio')
       if $(this).prop('checked') == true
+        if $radios.length > 1 && $radios.last().prop('checked')
+          $radios.first().prop('checked', true)
         $boxes.prop('disabled', false)
         $radios.prop('disabled', false)
       else
