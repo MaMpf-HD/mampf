@@ -1,0 +1,21 @@
+<div class="row p-2">
+  <div class="col-6">
+    <div class="card bg-light mb-4" id="question-basics-edit">
+      <%= render partial: 'courses/basics', locals: { course: course } %>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card bg-light">
+      <div class="card-header">
+        <h5>
+          Tags
+        </h5>
+      </div>
+      <div class="card-body">
+        <div id="course-tags"></div>
+        <%= render partial: 'courses/tags',
+                   locals: { course: course } %>
+      </div>
+    </div>
+  </div>
+</div>

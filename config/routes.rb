@@ -5,13 +5,13 @@ Rails.application.routes.draw do
   get '/administration/exit', to: 'administration#exit', as: 'exit_administration'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :teachers, only: [:show]
-  resources :courses, only: [:show]
+  resources :courses
   resources :media, only: [:show, :index]
   resources :tags, only: [:show]
   resources :lessons, only: [:show]
   resources :sections, only: [:show]
   resources :chapters, only: [:show]
-  resources :terms, only: [:index, :new, :edit, :destroy, :update]
+  resources :terms, except: [:show]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
   get 'search/index'
 

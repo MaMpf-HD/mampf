@@ -1,0 +1,22 @@
+<div class="col-3">
+  <%= course.title %>
+</div>
+<div class="col-5">
+  <ul class="list-unstyled">
+    <% course.lectures_by_date.each do |l| %>
+      <li>
+        <%= l.term_teacher_info  %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="col-4">
+  <%= link_to 'Bearbeiten', edit_course_path(course),
+              class: 'btn btn-outline-primary my-1' %>
+  <% if course.lectures.empty? && course.media.empty? %>
+    <%= link_to 'Löschen', course_path(course), method: :delete,
+                data: { confirm: 'Bist Du sicher?' },
+                remote: true,
+                class: 'btn btn-outline-danger my-1' %>
+  <% end %>
+</div>

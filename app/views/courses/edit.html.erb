@@ -1,0 +1,20 @@
+<div class="row p-2 mb-3">
+  <div class="col-9">
+    <h4 class="p-2">
+      <span class="badge badge-secondary">
+        Modul
+      </span>
+      <%= @course.title %>
+    </h4>
+  </div>
+  <div class="col-3 text-right">
+    <%= link_to 'zur Modulübersicht', courses_path,
+                class: 'btn btn-primary' %>
+    <% if @course.lectures.empty? && @course.media.empty? %>
+      <%= link_to 'Modul löschen', course_path, method: :delete,
+                  data: { confirm: 'Bist Du sicher?' },
+                  class: 'btn btn-danger' %>
+    <% end %>
+  </div>
+</div>
+<%= render partial: 'courses/data', locals: { course: @course } %>

@@ -15,8 +15,9 @@
           <%= link_to "Medien", '', class: 'nav-link' %>
         </li>
         <% if current_user.admin? %>
-          <li class="nav-item">
-            <%= link_to "Module", '', class: 'nav-link' %>
+          <li class="nav-item <%= active(controller_name == 'courses') %>">
+            <%= link_to "Module", courses_path,
+                class: 'nav-link' %>
           </li>
           <li class="nav-item">
             <%= link_to "Vorlesungen", '', class: 'nav-link' %>

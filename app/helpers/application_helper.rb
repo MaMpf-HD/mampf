@@ -41,6 +41,7 @@ module ApplicationHelper
   def administrates?(controller, action)
     return true if controller == 'administration'
     return true if controller == 'terms'
+    return true if controller =='courses' && action != 'show'
     false
   end
 end

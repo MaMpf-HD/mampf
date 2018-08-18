@@ -1,6 +1,6 @@
 # TermsController
 class TermsController < ApplicationController
-  before_action :set_term, only: [:destroy, :edit, :update, :cancel]
+  before_action :set_term, only: [:destroy, :edit, :update]
   authorize_resource
 
   def index
@@ -12,6 +12,21 @@ class TermsController < ApplicationController
     redirect_to terms_path
   end
 
+  def new
+    @term = Term.new
+  end
+
+  def create
+    @term = Term.new(term_params)
+    @term.save(term_params)
+    if @term.valid?
+      redirect_to terms_path
+      return
+    end
+    @errors = @term.errors[:season].join(', ')
+    render :update
+  end
+
   def edit
   end
 
@@ -21,6 +36,9 @@ class TermsController < ApplicationController
   end
 
   def cancel
+    @id = params[:id]
+    @term = Term.find_by_id(@id)
+    @new_action = params[:new] == 'true'
   end
 
   private

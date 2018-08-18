@@ -1,7 +1,21 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show]
+  before_action :set_course_admin, only: [:edit, :update]
   authorize_resource
+
+  def index
+    @courses = Course.order(:title).page params[:page]
+  end
+
+  def edit
+  end
+
+  def update
+    puts params[:course]
+    @course.update(course_params)
+    @course.update(preceding_course_ids: params[:course][:preceding_course_ids])
+  end
 
   def show
     cookies[:current_course] = params[:id]
@@ -16,5 +30,15 @@ class CoursesController < ApplicationController
     return if @course.present?
     redirect_to :root, alert: 'Ein Kurs mit der angeforderten id existiert ' \
                               'nicht.'
+  end
+
+  def set_course_admin
+    @course = Course.find_by_id(params[:id])
+    return if @course.present?
+    redirect_to courses_path
+  end
+
+  def course_params
+    params.require(:course).permit(:title, :short_title, :news)
   end
 end
