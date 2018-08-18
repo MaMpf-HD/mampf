@@ -178,10 +178,10 @@ class Medium < ApplicationRecord
   def self.search_results(filtered_media, course, primary_lecture)
     course_results = filtered_media.select { |m| m.teachable == course }
     primary_results = filtered_media.select do |m|
-      m.teachable.lecture == primary_lecture
+      m.teachable.present? && m.teachable.lecture == primary_lecture
     end
     secondary_results = filtered_media.select do |m|
-      m.teachable.course == course
+      m.teachable.present? && m.teachable.course == course
     end
     secondary_results = secondary_results - course_results - primary_results
     course_results + primary_results + secondary_results

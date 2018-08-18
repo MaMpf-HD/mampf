@@ -37,4 +37,10 @@ module ApplicationHelper
     return if current_user.nil?
     return current_user.courses.first.id unless current_user.courses.empty?
   end
+
+  def administrates?(controller, action)
+    return true if controller == 'administration'
+    return true if controller == 'terms'
+    false
+  end
 end

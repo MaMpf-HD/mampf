@@ -133,7 +133,7 @@ class Course < ApplicationRecord
   def project?(project)
     Rails.cache.fetch("#{cache_key}/#{project}", expires_in: 2.hours) do
       Medium.where(sort: sort[project]).to_a
-            .any? { |m| m.teachable.course == self }
+            .any? { |m| m.teachable.present? && m.teachable.course == self }
     end
   end
 
