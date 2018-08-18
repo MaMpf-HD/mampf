@@ -53,6 +53,7 @@ gem 'devise-bootstrap-views', '1.0.0.alpha1'
 gem 'fuzzy-string-match'
 gem 'coveralls', require: false
 gem 'kaminari'
+gem "selectize-rails"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

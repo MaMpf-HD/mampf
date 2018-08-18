@@ -9,4 +9,6 @@ $(document).on 'turbolinks:load' , ->
     $('#lecture-term').empty().append(term)
     $('#lecture-teacher').empty().append(teacher)
     return
+
+  $('.selectize').selectize()
   return

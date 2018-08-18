@@ -1,3 +1,5 @@
-<% course.tags.each do |t| %>
-  <%= t.title %>
+<%= form_with model: course do |f| %>
+  <%= f.select :tag_ids, options_for_select(Tag.all.order(:title).map { |t| [t.title, t.id]},
+                                            course.tags.map(&:id)),
+               {}, { multiple: true, class: 'selectize' } %>
 <% end %>

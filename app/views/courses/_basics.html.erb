@@ -27,10 +27,11 @@
     <%= f.text_field :title, label: 'Titel' %>
     <%= f.text_field :short_title, label: 'Kurztitel' %>
     <%= f.text_field :news, label: 'Twitter-Nutzername' %>
-    <%= f.select :preceding_course_ids,
+    <%= f.label :preceding_course_ids, 'Vorangegangene Kurse' %>
+    <%= f.select_without_bootstrap :preceding_course_ids,
                  options_for_select(Course.all.map { |c| [c.title, c.id]},
                                     course.preceding_courses.map(&:id)),
-                 { label: 'Vorangegangene Kurse'}, { multiple: true } %>
+                 {}, { multiple: true, class: 'selectize' } %>
     Vorlesungen
     <ul>
       <% course.lectures_by_date.each do |l| %>
