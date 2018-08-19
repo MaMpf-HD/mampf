@@ -10,10 +10,19 @@ class Ability
       can :manage, :all
       can :access, :rails_admin   # grant access to rails_admin
       can :dashboard              # grant access to the dashboard
+    elsif user.teacher?
+      can :read, :all
+      can :manage, :administration
+      can :read, Course
+      can :update, Course do |course|
+        course.edited_by?(user)
+      end
+      cannot :create, Course
+      cannot :read, Term
     else
       can :read, :all
       cannot :read, :administration
-      cannot :read, :term
+      cannot :read, Term
     end
 
     #

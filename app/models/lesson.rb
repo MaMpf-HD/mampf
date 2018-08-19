@@ -6,6 +6,9 @@ class Lesson < ApplicationRecord
   has_many :lesson_section_joins
   has_many :sections, through: :lesson_section_joins
   has_many :media, as: :teachable
+  has_many :editable_user_joins, as: :editable
+  has_many :editors, through: :editable_user_joins, as: :editable,
+           source: :user  
   validates :date, presence: true
   validates :number, presence: true,
                      numericality: { only_integer: true,

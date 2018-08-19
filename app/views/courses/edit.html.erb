@@ -25,7 +25,7 @@
         </span>
         <%= link_to 'zur Modulübersicht', courses_path,
                     class: 'btn btn-primary' %>
-        <% if @course.lectures.empty? && @course.media.empty? %>
+        <% if @course.lectures.empty? && @course.media.empty? && @course.id.present? %>
           <%= link_to 'Modul löschen', course_path, method: :delete,
                       data: { confirm: 'Bist Du sicher?' },
                       class: 'btn btn-danger' %>

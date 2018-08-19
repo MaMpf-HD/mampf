@@ -14,7 +14,7 @@
         <li class="nav-item">
           <%= link_to "Medien", '', class: 'nav-link' %>
         </li>
-        <% if current_user.admin? %>
+        <% if current_user.admin? || current_user.edited_courses.present? %>
           <li class="nav-item <%= active(controller_name == 'courses') %>">
             <%= link_to "Module", courses_path,
                 class: 'nav-link' %>

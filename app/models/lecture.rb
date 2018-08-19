@@ -13,6 +13,9 @@ class Lecture < ApplicationRecord
   has_many :media, as: :teachable
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, through: :lecture_user_joins
+  has_many :editable_user_joins, as: :editable
+  has_many :editors, through: :editable_user_joins, as: :editable,
+           source: :user
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 

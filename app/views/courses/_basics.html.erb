@@ -13,9 +13,13 @@
   <%= f.text_field :news, label: 'Twitter-Nutzername' %>
   <%= f.label :preceding_course_ids, 'Vorangegangene Kurse' %>
   <%= f.select_without_bootstrap :preceding_course_ids,
-               options_for_select(Course.all.map { |c| [c.title, c.id]},
-                                  course.preceding_courses.map(&:id)),
-               {}, { multiple: true, class: 'selectize' } %>
+        options_for_select(Course.all.map { |c| [c.title, c.id]},
+        course.preceding_courses.map(&:id)),
+        {}, { multiple: true, class: 'selectize' } %>
+  <%= f.label :editor_ids, 'Editoren' %>
+  <%= f.select_without_bootstrap :editor_ids,
+         options_for_select(User.select_editors, course.editors.map(&:id)),
+         {}, { multiple: true, class: 'selectize' } %>
   Vorlesungen
   <ul>
     <% course.lectures_by_date.each do |l| %>

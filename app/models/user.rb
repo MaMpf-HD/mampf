@@ -7,12 +7,25 @@ class User < ApplicationRecord
   has_many :lectures, through: :lecture_user_joins
   has_many :course_user_joins, dependent: :destroy
   has_many :courses, through: :course_user_joins
+  has_many :editable_user_joins, foreign_key: :user_id
+  has_many :edited_courses, through: :editable_user_joins,
+           source: :editable, source_type: 'Course'
+  has_many :edited_lectures, through: :editable_user_joins,
+           source: :editable, source_type: 'Lecture'
+  has_many :edited_lessons, through: :editable_user_joins,
+           source: :editable, source_type: 'Lesson'
+  has_many :edited_media, through: :editable_user_joins,
+           source: :editable, source_type: 'Medium'
   validates :courses,
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
                                  'werden.' },
             if: :courses_exist?
   before_save :set_defaults
   after_create :set_consented_at
+
+  def self.select_editors
+    User.where(teacher: true).all.map { |c| [c.email, c.id] }
+  end
 
   def related_courses
     return if subscription_type.nil?

@@ -8,6 +8,9 @@ class Course < ApplicationRecord
   has_many :users, through: :course_user_joins
   has_many :course_self_joins, dependent: :destroy
   has_many :preceding_courses, through: :course_self_joins
+  has_many :editable_user_joins, as: :editable
+  has_many :editors, through: :editable_user_joins, as: :editable,
+           source: :user
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
 
@@ -114,6 +117,11 @@ class Course < ApplicationRecord
 
   def subscribed_by?(user)
     user.courses.include?(self)
+  end
+
+  def edited_by?(user)
+    return true if editors.include?(user)
+    false
   end
 
   private

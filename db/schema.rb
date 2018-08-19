@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_16_125644) do
+ActiveRecord::Schema.define(version: 2018_08_19_151835) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -62,6 +62,14 @@ ActiveRecord::Schema.define(version: 2018_08_16_125644) do
     t.datetime "updated_at", null: false
     t.string "short_title"
     t.text "news"
+  end
+
+  create_table "editable_user_joins", force: :cascade do |t|
+    t.integer "editable_id"
+    t.string "editable_type"
+    t.integer "user_id"
+    t.index ["editable_id", "editable_type", "user_id"], name: "polymorphic_many_to_many_idx"
+    t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
   end
 
   create_table "lecture_tag_additional_joins", force: :cascade do |t|

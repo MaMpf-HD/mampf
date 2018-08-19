@@ -5,6 +5,9 @@ class Medium < ApplicationRecord
   has_many :tags, through: :medium_tag_joins
   has_many :links, dependent: :destroy
   has_many :linked_media, through: :links
+  has_many :editable_user_joins, as: :editable
+  has_many :editors, through: :editable_user_joins, as: :editable,
+           source: :user
   validates :sort, presence: true,
                    inclusion: { in: :sort_enum }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
