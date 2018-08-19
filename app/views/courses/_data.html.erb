@@ -1,7 +1,7 @@
 <div class="row p-2">
   <div class="col-6">
     <div class="card bg-light mb-4" id="question-basics-edit">
-      <%= render partial: 'courses/basics', locals: { course: course } %>
+      <%= render partial: 'courses/basics', locals: { course: course, f: f } %>
     </div>
   </div>
   <div class="col-6">
@@ -14,7 +14,7 @@
       <div class="card-body">
         <div id="course-tags"></div>
         <%= render partial: 'courses/tags',
-                   locals: { course: course } %>
+                   locals: { course: course, f: f } %>
       </div>
     </div>
   </div>

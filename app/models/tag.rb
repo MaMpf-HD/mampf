@@ -32,6 +32,10 @@ class Tag < ApplicationRecord
                   .map(&:id))
   end
 
+  def self.select_by_title
+    Tag.all.to_a.sort_by { |t| t.title.downcase }.map { |t| [t.title, t.id] }
+  end
+
   def tags_in_neighbourhood
     ids = related_tags.all.map { |t| t.related_tags.pluck(:id) }.flatten.uniq
     related_ids = related_tags.pluck(:id) + [id]

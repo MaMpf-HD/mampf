@@ -14,7 +14,6 @@ class CoursesController < ApplicationController
   def update
     puts params[:course]
     @course.update(course_params)
-    @course.update(preceding_course_ids: params[:course][:preceding_course_ids])
   end
 
   def show
@@ -39,6 +38,7 @@ class CoursesController < ApplicationController
   end
 
   def course_params
-    params.require(:course).permit(:title, :short_title, :news)
+    params.require(:course).permit(:title, :short_title, :news, :tag_ids => [],
+                                   :preceding_course_ids => [])
   end
 end

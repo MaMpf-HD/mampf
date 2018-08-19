@@ -1,5 +1,4 @@
-<%= form_with model: course do |f| %>
-  <%= f.select :tag_ids, options_for_select(Tag.all.order(:title).map { |t| [t.title, t.id]},
-                                            course.tags.map(&:id)),
-               {}, { multiple: true, class: 'selectize' } %>
-<% end %>
+<%= f.select_without_bootstrap :tag_ids,
+                               options_for_select(Tag.select_by_title,
+                                                  course.tags.map(&:id)),
+                               {}, { multiple: true, class: 'selectize' } %>

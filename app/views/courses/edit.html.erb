@@ -1,20 +1,37 @@
-<div class="row p-2 mb-3">
-  <div class="col-9">
-    <h4 class="p-2">
-      <span class="badge badge-secondary">
-        Modul
-      </span>
-      <%= @course.title %>
-    </h4>
-  </div>
-  <div class="col-3 text-right">
-    <%= link_to 'zur Modulübersicht', courses_path,
-                class: 'btn btn-primary' %>
-    <% if @course.lectures.empty? && @course.media.empty? %>
-      <%= link_to 'Modul löschen', course_path, method: :delete,
-                  data: { confirm: 'Bist Du sicher?' },
-                  class: 'btn btn-danger' %>
-    <% end %>
-  </div>
+<div id="course-area">
+  <%= bootstrap_form_with model: @course, html: { id: 'course-form' } do |f| %>
+    <div class="row p-2 mb-3">
+      <div class="col-3">
+        <h4 class="pl-2">
+          <span class="badge badge-secondary">
+            Modul
+          </span>
+          <%= @course.title %>
+        </h4>
+      </div>
+      <div class="col-5">
+        <span id="course-basics-warning">
+          Achtung, es gibt ungespeicherte Änderungen!
+        </span>
+        <button type="button" class="btn btn-secondary ml-2"
+                id="course-basics-cancel" data-id="<%= @course.id %>">
+          verwerfen
+        </button>
+      </div>
+      <div class="col-4 text-center">
+        <span class="no_display", id="course-basics-options">
+          <%= f.submit "Speichern", class: "btn btn-primary",
+                                    id: "course-basics-save" %>
+        </span>
+        <%= link_to 'zur Modulübersicht', courses_path,
+                    class: 'btn btn-primary' %>
+        <% if @course.lectures.empty? && @course.media.empty? %>
+          <%= link_to 'Modul löschen', course_path, method: :delete,
+                      data: { confirm: 'Bist Du sicher?' },
+                      class: 'btn btn-danger' %>
+        <% end %>
+      </div>
+    </div>
+    <%= render partial: 'courses/data', locals: { course: @course, f: f } %>
+  <% end %>
 </div>
-<%= render partial: 'courses/data', locals: { course: @course } %>

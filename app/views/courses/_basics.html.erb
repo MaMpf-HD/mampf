@@ -1,44 +1,27 @@
-<%= bootstrap_form_with model: course do |f| %>
-  <div class="card-header">
-    <div class="row">
-      <div class="col-3">
-        <h5>
-          Basisdaten
-        </h5>
-      </div>
-      <div class="col-5">
-        <span class="no_display incorrect" id="course-basics-warning">
-          Achtung, es gibt ungespeicherte Änderungen!
-        </span>
-      </div>
-      <div class="col-4">
-        <span class="no_display", id="course-basics-options">
-          <%= f.submit "Speichern", class: "btn btn-primary btn-sm",
-                                    id: "course-basics-save" %>
-          <button type="button" class="btn btn-secondary btn-sm"
-                  id="course-basics-cancel" data-id="<%= course.id %>">
-            verwerfen
-          </button>
-        </span>
-      </div>
+<div class="card-header">
+  <div class="row">
+    <div class="col-12">
+      <h5>
+        Basisdaten
+      </h5>
     </div>
   </div>
-  <div class="card-body p-2">
-    <%= f.text_field :title, label: 'Titel' %>
-    <%= f.text_field :short_title, label: 'Kurztitel' %>
-    <%= f.text_field :news, label: 'Twitter-Nutzername' %>
-    <%= f.label :preceding_course_ids, 'Vorangegangene Kurse' %>
-    <%= f.select_without_bootstrap :preceding_course_ids,
-                 options_for_select(Course.all.map { |c| [c.title, c.id]},
-                                    course.preceding_courses.map(&:id)),
-                 {}, { multiple: true, class: 'selectize' } %>
-    Vorlesungen
-    <ul>
-      <% course.lectures_by_date.each do |l| %>
-        <li>
-          <%= l.term_teacher_info  %>
-        </li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
+</div>
+<div class="card-body p-2">
+  <%= f.text_field :title, label: 'Titel' %>
+  <%= f.text_field :short_title, label: 'Kurztitel' %>
+  <%= f.text_field :news, label: 'Twitter-Nutzername' %>
+  <%= f.label :preceding_course_ids, 'Vorangegangene Kurse' %>
+  <%= f.select_without_bootstrap :preceding_course_ids,
+               options_for_select(Course.all.map { |c| [c.title, c.id]},
+                                  course.preceding_courses.map(&:id)),
+               {}, { multiple: true, class: 'selectize' } %>
+  Vorlesungen
+  <ul>
+    <% course.lectures_by_date.each do |l| %>
+      <li>
+        <%= l.term_teacher_info  %>
+      </li>
+    <% end %>
+  </ul>
+</div>
