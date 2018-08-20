@@ -3,8 +3,17 @@ class UsersController < ApplicationController
   authorize_resource
 
   def index
-    @admins = User.where(admin: true)
-    @teachers_no_admin = User.where(admin: false).where(teacher: true)
-    @generic_users = User.where(admin: [false, nil], teacher: [false, nil])
+    @elevated_users = User.where(admin: true)
+                          .or(User.where(editor: true))
+                          .or(User.where.not(teacher: nil)).to_a
+    @generic_users = User.where(admin: [false, nil], editor: [false, nil],
+                                teacher: nil).to_a
+  end
+
+  def search
+    @user = User.find(params[:user_id])
+  end
+
+  def destroy
   end
 end

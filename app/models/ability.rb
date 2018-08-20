@@ -10,7 +10,7 @@ class Ability
       can :manage, :all
       can :access, :rails_admin   # grant access to rails_admin
       can :dashboard              # grant access to the dashboard
-    elsif user.teacher?
+    elsif user.editor?
       can :read, :all
       can :manage, :administration
       can :read, Course

@@ -1,28 +1,33 @@
-<div class="col-2">
-  <%= user.email %>
+<div class="col-3">
+  <%= user.name %>
 </div>
-<div class="col-2">
+<div class="col-3">
   <% if user.admin? %>
     <span class="badge badge-secondary">
       Admin
     </span>
   <% end %>
-  <% if user.teacher? %>
+  <% if user.editor? %>
+    <span class="badge badge-secondary">
+      EditorIn
+    </span>
+  <% end %>
+  <% if user.teacher.present? %>
     <span class="badge badge-secondary">
       DozentIn
     </span>
   <% end %>
 </div>
-<div class="col-6">
+<div class="col-2">
   <ul class="list-unstyled">
-    <% user.courses.each do |c| %>
+    <% user.edited_courses.each do |c| %>
       <li>
         <%= c.title %>
       </li>
     <% end %>
   </ul>
 </div>
-<div class="col-2">
+<div class="col-4">
   <%= link_to 'Bearbeiten', edit_user_path(user),
               class: 'btn btn-outline-primary my-1',
               remote: true %>

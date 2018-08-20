@@ -32,10 +32,7 @@
                 class: 'nav-link ' %>
           </li>
           <li class="nav-item <%= active(controller_name == 'users') %>">
-            <%= link_to "DozentInnen", '', class: 'nav-link' %>
-          </li>
-          <li class="nav-item">
-            <%= link_to "NutzerInnen", users_path, class: 'nav-link' %>
+            <%= link_to "Nutzerverwaltung", users_path, class: 'nav-link' %>
           </li>
         <% end %>
         <li class="nav-item">

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_19_151835) do
+ActiveRecord::Schema.define(version: 2018_08_20_152123) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -250,10 +250,12 @@ ActiveRecord::Schema.define(version: 2018_08_19_151835) do
     t.boolean "consents"
     t.datetime "consented_at"
     t.boolean "edited_profile"
-    t.boolean "teacher"
+    t.boolean "editor"
+    t.text "name"
     t.integer "teacher_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["teacher_id"], name: "index_users_on_teacher_id"
   end
 
 end

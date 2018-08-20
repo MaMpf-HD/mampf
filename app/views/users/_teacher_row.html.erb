@@ -1,0 +1,21 @@
+<div class="col-3">
+  <%= teacher.name %>
+</div>
+<div class="col-4">
+  <ul class="list-unstyled">
+    <% teacher.lectures.each do |l| %>
+      <li>
+        <%= l.title_term_info %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="col-5">
+  <%= link_to 'Bearbeiten', edit_teacher_path(teacher),
+              class: 'btn btn-outline-primary my-1',
+              remote: true %>
+  <%= link_to 'Löschen', user_path(teacher), method: :delete,
+                data: { confirm: 'Bist Du sicher?' },
+                remote: true,
+                class: 'btn btn-outline-danger my-1' %>
+</div>

@@ -16,6 +16,7 @@ class User < ApplicationRecord
            source: :editable, source_type: 'Lesson'
   has_many :edited_media, through: :editable_user_joins,
            source: :editable, source_type: 'Medium'
+  belongs_to :teacher, optional: true
   validates :courses,
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
                                  'werden.' },
@@ -24,7 +25,7 @@ class User < ApplicationRecord
   after_create :set_consented_at
 
   def self.select_editors
-    User.where(teacher: true).all.map { |c| [c.email, c.id] }
+    User.where(editor: true).all.map { |c| [c.email, c.id] }
   end
 
   def related_courses

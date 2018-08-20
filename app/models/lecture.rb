@@ -54,6 +54,10 @@ class Lecture < ApplicationRecord
     term.to_label + ', ' + teacher.name
   end
 
+  def title_term_info
+    course.title + ', ' + term.to_label
+  end
+
   def title_teacher_info
     course.title + ' (' + teacher.name + ')'
   end

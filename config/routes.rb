@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   get '/administration', to: 'administration#index', as: 'administration'
   get '/administration/exit', to: 'administration#exit', as: 'exit_administration'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
-  resources :teachers, only: [:show]
+  resources :teachers, only: [:show, :edit, :destroy, :update]
   resources :courses
   resources :media, only: [:show, :index]
   resources :tags, only: [:show]
@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   resources :sections, only: [:show]
   resources :chapters, only: [:show]
   resources :terms, except: [:show]
+  devise_for :users, controllers: { registrations: 'registrations' }
+  get 'users/search', to: 'users#search', as: 'search_user'
   resources :users, only: [:index, :edit, :destroy]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
   get 'search/index'
@@ -23,7 +25,6 @@ Rails.application.routes.draw do
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'
 
-  devise_for :users, controllers: { registrations: 'registrations' }
   root 'main#home'
   get 'about', to: 'main#about'
   get 'error', to: 'main#error'
