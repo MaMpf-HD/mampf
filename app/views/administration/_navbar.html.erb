@@ -31,8 +31,11 @@
             <%= link_to "Semester", terms_path,
                 class: 'nav-link ' %>
           </li>
-          <li>
+          <li class="nav-item <%= active(controller_name == 'users') %>">
             <%= link_to "DozentInnen", '', class: 'nav-link' %>
+          </li>
+          <li class="nav-item">
+            <%= link_to "NutzerInnen", users_path, class: 'nav-link' %>
           </li>
         <% end %>
         <li class="nav-item">

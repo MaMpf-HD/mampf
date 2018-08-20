@@ -19,10 +19,12 @@ class Ability
       end
       cannot :create, Course
       cannot :read, Term
+      cannot :read, User
     else
       can :read, :all
       cannot :read, :administration
       cannot :read, Term
+      cannot :read, User
     end
 
     #

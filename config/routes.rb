@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   resources :sections, only: [:show]
   resources :chapters, only: [:show]
   resources :terms, except: [:show]
+  resources :users, only: [:index, :edit, :destroy]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
   get 'search/index'
 

@@ -1,0 +1,35 @@
+<div class="col-2">
+  <%= user.email %>
+</div>
+<div class="col-2">
+  <% if user.admin? %>
+    <span class="badge badge-secondary">
+      Admin
+    </span>
+  <% end %>
+  <% if user.teacher? %>
+    <span class="badge badge-secondary">
+      DozentIn
+    </span>
+  <% end %>
+</div>
+<div class="col-6">
+  <ul class="list-unstyled">
+    <% user.courses.each do |c| %>
+      <li>
+        <%= c.title %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="col-2">
+  <%= link_to 'Bearbeiten', edit_user_path(user),
+              class: 'btn btn-outline-primary my-1',
+              remote: true %>
+  <% unless user.admin? %>
+    <%= link_to 'Löschen', user_path(user), method: :delete,
+                data: { confirm: 'Bist Du sicher?' },
+                remote: true,
+                class: 'btn btn-outline-danger my-1' %>
+  <% end %>
+</div>
