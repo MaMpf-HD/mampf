@@ -1,7 +1,7 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show]
-  before_action :set_course_admin, only: [:edit, :update]
+  before_action :set_course_admin, only: [:edit, :update, :destroy]
   authorize_resource
 
   def index
@@ -18,6 +18,7 @@ class CoursesController < ApplicationController
   def update
     puts params[:course]
     @course.update(course_params)
+    @errors = @course.errors unless @course.valid?
   end
 
   def new
@@ -28,12 +29,19 @@ class CoursesController < ApplicationController
   def create
     @course = Course.new(course_params)
     @course.save
+    @errors = @course.errors unless @course.valid?
+    render :update
   end
 
   def show
     cookies[:current_course] = params[:id]
     @lectures = @course.subscribed_lectures_by_date(current_user)
     @front_lecture = @course.front_lecture(current_user, params[:active].to_i)
+  end
+
+  def destroy
+    @course.destroy
+    redirect_to courses_path
   end
 
   private

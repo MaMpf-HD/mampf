@@ -1,4 +1,6 @@
-<%= f.select_without_bootstrap :tag_ids,
-                               options_for_select(Tag.select_by_title,
-                                                  course.tags.map(&:id)),
-                               {}, { multiple: true, class: 'selectize' } %>
+<div class="form-group">
+  <%= f.select :tag_ids,
+               options_for_select(Tag.select_by_title,
+                                  course.tags.map(&:id)),
+               {}, { multiple: true, class: 'selectize' } %>
+</div>

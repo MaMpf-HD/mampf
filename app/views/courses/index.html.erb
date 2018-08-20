@@ -29,9 +29,11 @@
     </strong>
   </div>
   <div class="col-2">
-    <%= link_to 'Kurs anlegen', new_course_path,
-                class: 'btn btn-secondary',
-                id: 'create-new-course' %>
+    <% if current_user.admin? %>
+      <%= link_to 'Modul anlegen', new_course_path,
+                  class: 'btn btn-secondary',
+                  id: 'create-new-course' %>
+    <% end %>
   </div>
 </div>
 <div id="row-new-course" class="border-bottom" style="display: none;" >
