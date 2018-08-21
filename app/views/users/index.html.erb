@@ -6,123 +6,26 @@
   </div>
 </div>
 <div class="row px-2">
-<div class="col-7">
-<div class="card">
-<div class="card-header">
-    <h5>
-      Admins, EditorInnen und  DozentInnen mit Nutzeraccount
-    </h5>
-</div>
-<div class="card-body">
-<div class="row bg-light py-3">
-  <div class="col-3">
-    <strong>
-      Name
-    </strong>
+  <div class="col-7">
+    <%= render partial: 'users/elevated_users_card',
+               locals: { elevated_users: @elevated_users } %>
   </div>
-  <div class="col-3">
-    <strong>
-      Rolle
-    </strong>
-  </div>
-  <div class="col-2">
-    <strong>
-      Editierte Kurse
-    </strong>
-  </div>
-  <div class="col-4">
-    <strong>
-      Aktionen
-    </strong>
-  </div>
-</div>
-<% @elevated_users.each do |u| %>
-  <div class="row border-bottom" id="row-user-<%= u.id %>">
-    <%= render partial: 'users/row', locals: { user: u }%>
-  </div>
-<% end %>
-</div>
-</div>
-</div>
-<div class="col-5">
-<div class="row">
-<div class="col-12">
-<div class="card">
-<div class="card-header">
-    <h5>
-      <div id="other-users">
-        Sonstige NutzerInnen (<%= @generic_users.count %>)
-      </div>
-      <div id="special-user">
-         Auswahl sonstige(r) NutzerIn
-      </div>
-    </h5>
-</div>
-<div class="card-body">
-<div id="user-search-form">
-  <% if @generic_users.present? %>
-    <%= form_with url: search_user_path, method: 'get' do |f| %>
-      <div class="form-group form-row p-2">
-        <div class="col-4">
-          <%= f.select :user_id,
-                       options_for_select([['auswählen','']] + @generic_users.map { |u| [u.email, u.id] }, nil),
-                       {}, { class: 'selectize' } %>
-        </div>
-        <div id="submit-user-search" class="col-auto">
-          <%= f.submit 'Rollen verwalten', class: 'btn btn-outline-primary' %>
-        </div>
-        <div class="col-auto">
-        <%= link_to 'Löschen', nil, method: :delete,
-                    data: { confirm: 'Bist Du sicher?' },
-                    remote: true,
-                    class: 'btn btn-outline-danger' %>
+  <div class="col-5">
+    <% if Teacher.without_accounts? %>
+      <div class="row mb-3">
+        <div class="col-12">
+          <%= render partial: 'users/accountless_teachers_card',
+                     locals: { teachers: Teacher.without_accounts}  %>
         </div>
       </div>
     <% end %>
-  <% end %>
-</div>
-<div id="user-details">
-</div>
-</div>
-</div>
-</div>
-</div>
-<% if Teacher.without_accounts? %>
-<div class="row">
-<div class="col-12">
-  <div class="card">
-  <div class="card-header">
-      <h5>
-        DozentInnen ohne Nutzeraccount
-      </h5>
-  </div>
-  <div class="card-body">
-  <div class="row bg-light px-4 py-3">
-    <div class="col-3">
-      <strong>
-        Name
-      </strong>
-    </div>
-    <div class="col-4">
-      <strong>
-        Dozent von
-      </strong>
-    </div>
-    <div class="col-5">
-      <strong>
-        Aktionen
-      </strong>
+    <div class="row">
+      <div class="col-12">
+        <div id="generic_user_card">
+          <%= render partial: 'users/generic_users_card',
+                     locals: { generic_users: @generic_users } %>
+        </div>
+      </div>
     </div>
   </div>
-  <% Teacher.without_accounts.each do |t| %>
-    <div class="row border-bottom px-4" id="row-teacher-<%= t.id %>">
-      <%= render partial: 'users/teacher_row', locals: { teacher: t }%>
-    </div>
-  <% end %>
-  </div>
 </div>
-</div>
-</div>
-</div>
-</div>
-<% end %>

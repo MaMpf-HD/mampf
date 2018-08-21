@@ -1,0 +1,95 @@
+<div class="card">
+  <div class="card-header">
+    <h5>
+      <div id="other-users">
+        Sonstige NutzerInnen (<%= generic_users.count %>)
+      </div>
+      <div id="special-user">
+         Auswahl sonstige(r) NutzerIn
+      </div>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div id="user-search-form">
+      <% if generic_users.present? %>
+        <%= form_with url: elevate_user_path, scope: 'generic_user',
+                      method: 'get' do |f| %>
+          <div class="form-group form-row">
+            <div class="col-4">
+              <%= f.select :id,
+                           options_for_select([['auswählen','']] + generic_users.map { |u| [u.email, u.id] }, nil),
+                           {}, { class: 'selectize' } %>
+            </div>
+            <div class="col-8 generic-user no_display">
+              <span id="submit-user-elevate" class="no_display">
+                <%= f.submit 'Speichern',
+                             class: 'btn btn-primary' %>
+              </span>
+              <span>
+                <button type="button" class="btn btn-secondary"
+                        id="cancel-generic-user">
+                  abbrechen
+                </button>
+              </span>
+              <span id="delete-generic-user">
+                <%= link_to 'Löschen', nil, method: :delete,
+                            data: { confirm: 'Bist Du sicher?' },
+                            remote: true,
+                            class: 'btn btn-outline-danger' %>
+              </span>
+            </div>
+          </div>
+          <div class="form-group form-row generic-user no_display">
+            <div class="col-4">
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :admin, class: 'custom-control-input' %>
+                <%= f.label :admin, 'Administrator',
+                            { class: 'custom-control-label' } %>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :editor, class: 'custom-control-input' %>
+                <%= f.label :editor, 'Editor',
+                            { class: 'custom-control-label' } %>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :teacher, class: 'custom-control-input' %>
+                <%= f.label :teacher, 'DozentIn',
+                            { class: 'custom-control-label' } %>
+              </div>
+            </div>
+          </div>
+          <div class="form-group form-row no_display" id="generic-nickname">
+            <div class="col-3 col-form-label">
+              <%= f.label :name, 'Nutzername' %>
+            </div>
+            <div class="col-6">
+              <%= f.text_field :name,
+                               { size: 30,
+                                 class: 'form-control' } %>
+              <div class="invalid-feedback" id="nickname-error">
+              </div>
+            </div>
+          </div>
+          <div class="form-group form-row no_display" id="generic-teachername">
+            <div class="col-3 col-form-label">
+              <%= f.label :teacher_name, 'Dozentenname' %>
+            </div>
+            <div class="col-6">
+              <%= f.text_field :teacher_name,
+                               { size: 30,
+                                 class: 'form-control' } %>
+              <div class="invalid-feedback" id="teachername-error">
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <div id="user-details">
+    </div>
+  </div>
+</div>

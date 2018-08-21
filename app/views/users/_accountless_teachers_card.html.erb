@@ -1,0 +1,32 @@
+<div class="card">
+  <div class="card-header">
+    <h5>
+      DozentInnen ohne Nutzeraccount
+      (<%= teachers.count %>)
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="row bg-light px-4 py-3">
+      <div class="col-3">
+        <strong>
+          Name
+        </strong>
+      </div>
+      <div class="col-4">
+        <strong>
+          Dozent von
+        </strong>
+      </div>
+      <div class="col-5">
+        <strong>
+          Aktionen
+        </strong>
+      </div>
+    </div>
+    <% teachers.each do |t| %>
+      <div class="row border-bottom px-4" id="row-teacher-<%= t.id %>">
+        <%= render partial: 'users/teacher_row', locals: { teacher: t } %>
+      </div>
+    <% end %>
+  </div>
+</div>

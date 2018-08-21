@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   resources :chapters, only: [:show]
   resources :terms, except: [:show]
   devise_for :users, controllers: { registrations: 'registrations' }
-  get 'users/search', to: 'users#search', as: 'search_user'
+  get 'users/elevate', to: 'users#elevate', as: 'elevate_user'
   resources :users, only: [:index, :edit, :destroy]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
   get 'search/index'

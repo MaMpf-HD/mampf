@@ -21,6 +21,9 @@ class User < ApplicationRecord
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
                                  'werden.' },
             if: :courses_exist?
+  validates :name, uniqueness: { message: 'Nutzername ist schon vorhanden.' }
+  validates :name, presence: { message: 'Es muss ein Nutzername angegeben werden.'},
+           if: :admin_or_editor?
   before_save :set_defaults
   after_create :set_consented_at
 
@@ -108,5 +111,10 @@ class User < ApplicationRecord
   def preceding_course_ids
     courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
       courses.all.pluck(:id)
+  end
+
+  def admin_or_editor?
+    return true if admin? || editor?
+    false
   end
 end
