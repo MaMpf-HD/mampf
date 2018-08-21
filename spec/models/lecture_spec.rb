@@ -21,7 +21,7 @@ RSpec.describe Lecture, type: :model do
   end
   it 'is invalid if duplicate combination of course,teacher and term' do
     course = FactoryBot.create(:course)
-    teacher = FactoryBot.create(:teacher)
+    teacher = FactoryBot.create(:user)
     term = FactoryBot.create(:term)
     FactoryBot.create(:lecture, course: course, teacher: teacher, term: term)
     lecture = FactoryBot.build(:lecture, course: course, teacher: teacher,
@@ -77,8 +77,8 @@ RSpec.describe Lecture, type: :model do
   describe '#term_teacher_info' do
     it 'returns the correct information' do
       term =   FactoryBot.create(:term)
-      teacher = FactoryBot.create(:teacher, name: 'Luke Skywalker')
-      lecture = FactoryBot.build(:lecture, teacher: teacher, term: term)
+      teacher = FactoryBot.create(:user, name: 'Luke Skywalker')
+      lecture = FactoryBot.build(:lecture, teacher: user, term: term)
       expect(lecture.term_teacher_info).to eq(term.to_label + ', Luke Skywalker')
     end
   end

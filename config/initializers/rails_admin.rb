@@ -244,25 +244,6 @@ RailsAdmin.config do |config|
   end
 
   RailsAdmin.config do |config|
-    config.model Teacher do
-      list do
-        field :id
-        field :name
-        field :email
-        field :lectures
-        field :homepage
-      end
-      edit do
-        field :id
-        field :name
-        field :email
-        field :lectures
-        field :homepage
-      end
-    end
-  end
-
-  RailsAdmin.config do |config|
     config.model Term do
       list do
         field :id

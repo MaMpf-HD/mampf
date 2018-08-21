@@ -1,7 +1,7 @@
 # Lecture class
 class Lecture < ApplicationRecord
   belongs_to :course
-  belongs_to :teacher
+  belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
   belongs_to :term
   has_many :lecture_tag_disabled_joins
   has_many :disabled_tags, through: :lecture_tag_disabled_joins, source: :tag

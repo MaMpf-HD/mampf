@@ -16,12 +16,13 @@ class User < ApplicationRecord
            source: :editable, source_type: 'Lesson'
   has_many :edited_media, through: :editable_user_joins,
            source: :editable, source_type: 'Medium'
-  belongs_to :teacher, optional: true
+  has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
   validates :courses,
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
                                  'werden.' },
             if: :courses_exist?
-  validates :name, uniqueness: { message: 'Nutzername ist schon vorhanden.' }
+  validates :name, uniqueness: { message: 'Nutzername ist schon vorhanden.' },
+            if: :name?
   validates :name, presence: { message: 'Es muss ein Nutzername angegeben werden.'},
            if: :admin_or_editor?
   before_save :set_defaults
@@ -29,6 +30,10 @@ class User < ApplicationRecord
 
   def self.select_editors
     User.where(editor: true).all.map { |c| [c.email, c.id] }
+  end
+
+  def self.teachers
+    User.select { |u| u.teacher? }
   end
 
   def related_courses
@@ -63,6 +68,12 @@ class User < ApplicationRecord
     end
   end
 
+  def given_lectures_by_date
+    given_lectures.to_a.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
+
   def project?(course, project)
     return false if course.nil?
     return false unless course.public_send(project + '?')
@@ -92,12 +103,16 @@ class User < ApplicationRecord
     project?(course, 'erdbeere')
   end
 
+  def teacher?
+    given_lectures.any?
+  end
+
   private
 
   def set_defaults
     self.subscription_type = 1 if subscription_type.nil?
     self.admin = false if admin.nil?
-    self.teacher = false if teacher.nil?
+    self.editor = false if editor.nil?
   end
 
   def set_consented_at

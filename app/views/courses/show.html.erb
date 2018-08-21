@@ -51,7 +51,7 @@
           DozentIn
         </span>
         <span id="lecture-teacher">
-          <%= link_to @front_lecture.teacher.name, @front_lecture.teacher,
+          <%= link_to @front_lecture.teacher.name, teacher_path(@front_lecture.teacher),
                       class: 'text-dark' %>
         </span>
       </h4>

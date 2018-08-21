@@ -54,35 +54,16 @@
                             { class: 'custom-control-label' } %>
               </div>
             </div>
-            <div class="col-4">
-              <div class="custom-control custom-checkbox">
-                <%= f.check_box :teacher, class: 'custom-control-input' %>
-                <%= f.label :teacher, 'DozentIn',
-                            { class: 'custom-control-label' } %>
-              </div>
-            </div>
           </div>
           <div class="form-group form-row no_display" id="generic-nickname">
             <div class="col-3 col-form-label">
-              <%= f.label :name, 'Nutzername' %>
+              <%= f.label :name, 'Name' %>
             </div>
             <div class="col-6">
               <%= f.text_field :name,
                                { size: 30,
                                  class: 'form-control' } %>
-              <div class="invalid-feedback" id="nickname-error">
-              </div>
-            </div>
-          </div>
-          <div class="form-group form-row no_display" id="generic-teachername">
-            <div class="col-3 col-form-label">
-              <%= f.label :teacher_name, 'Dozentenname' %>
-            </div>
-            <div class="col-6">
-              <%= f.text_field :teacher_name,
-                               { size: 30,
-                                 class: 'form-control' } %>
-              <div class="invalid-feedback" id="teachername-error">
+              <div class="invalid-feedback" id="username-error">
               </div>
             </div>
           </div>

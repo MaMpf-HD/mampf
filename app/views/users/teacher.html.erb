@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col-12">
+    <h2>
+      <span class="badge badge-secondary mr-3">
+        Dozent
+      </span>
+      <%= @teacher.name %>
+    </h2>
+  </div>
+</div>
+<div class="row pt-3 pb-2">
+  <div class="col-12 col-md-6 col-lg-4 pt-3">
+    <div class="card bg-orange-lighten-4">
+      <div class="card-header bg-orange-darken-2">
+        <h5 class="text-light">
+          Info
+        </h5>
+      </div>
+      <%= image_tag('/unknown-person.gif', width: '128', alt: "Card image cap",
+                    class: 'mx-auto pt-3') %>
+      <div class="card-body">
+        <ul>
+          <% if @teacher.homepage.present? %>
+            <li>
+              <%= link_to 'Homepage', @teacher.homepage, class: 'text-dark' %>
+            </li>
+          <% end %>
+          <li>
+            Email:
+            <%= mail_to @teacher.email, nil, class: 'text-dark' %>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <% unless @teacher.lectures.empty? %>
+    <div class="col-12 col-md-6 col-lg-4 pt-3">
+      <%= render partial: 'lectures/lectures',
+                 locals: { lectures: @teacher.given_lectures_by_date,
+                           type: 'lecture_info'} %>
+    </div>
+  </div>
+<% end %>

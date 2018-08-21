@@ -17,6 +17,7 @@ class ProfileController < ApplicationController
       redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
     else
       @no_course_error = @user.errors
+      puts @user.errors.messages
     end
   end
 

@@ -25,6 +25,7 @@ class Ability
       cannot :read, :administration
       cannot :read, Term
       cannot :read, User
+      can :teacher, User
     end
 
     #

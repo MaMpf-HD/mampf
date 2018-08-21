@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   get '/administration', to: 'administration#index', as: 'administration'
   get '/administration/exit', to: 'administration#exit', as: 'exit_administration'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
-  resources :teachers, only: [:show, :edit, :destroy, :update]
   resources :courses
   resources :media, only: [:show, :index]
   resources :tags, only: [:show]
@@ -14,6 +13,7 @@ Rails.application.routes.draw do
   resources :terms, except: [:show]
   devise_for :users, controllers: { registrations: 'registrations' }
   get 'users/elevate', to: 'users#elevate', as: 'elevate_user'
+  get 'users/teacher/:teacher_id', to: 'users#teacher', as: 'teacher'
   resources :users, only: [:index, :edit, :destroy]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
   get 'search/index'

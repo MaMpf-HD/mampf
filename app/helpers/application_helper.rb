@@ -42,7 +42,7 @@ module ApplicationHelper
     return true if controller == 'administration'
     return true if controller == 'terms'
     return true if controller =='courses' && action != 'show'
-    return true if controller == 'users'
+    return true if controller == 'users' && action != 'teacher'
     false
   end
 end

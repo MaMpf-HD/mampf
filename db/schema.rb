@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_20_152123) do
+ActiveRecord::Schema.define(version: 2018_08_21_164804) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -102,10 +102,11 @@ ActiveRecord::Schema.define(version: 2018_08_20_152123) do
   create_table "lectures", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "teacher_id"
     t.integer "course_id"
     t.integer "term_id"
     t.text "twitter"
+    t.integer "teacher_id"
+    t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
 
@@ -222,14 +223,6 @@ ActiveRecord::Schema.define(version: 2018_08_20_152123) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "teachers", force: :cascade do |t|
-    t.string "name"
-    t.string "email"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "homepage"
-  end
-
   create_table "terms", force: :cascade do |t|
     t.integer "year"
     t.string "season"
@@ -252,10 +245,9 @@ ActiveRecord::Schema.define(version: 2018_08_20_152123) do
     t.boolean "edited_profile"
     t.boolean "editor"
     t.text "name"
-    t.integer "teacher_id"
+    t.text "homepage"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["teacher_id"], name: "index_users_on_teacher_id"
   end
 
 end

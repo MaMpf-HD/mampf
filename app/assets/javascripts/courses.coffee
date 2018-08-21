@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'turbolinks:load', ->
-  $('#lectureCarousel'). on 'slid.bs.carousel', (evt) ->
+  $('#lectureCarousel').on 'slid.bs.carousel', (evt) ->
     term = evt.relatedTarget.dataset.term
     teacher = evt.relatedTarget.dataset.teacher
     $('#lecture-term').empty().append(term)

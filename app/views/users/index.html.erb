@@ -11,21 +11,9 @@
                locals: { elevated_users: @elevated_users } %>
   </div>
   <div class="col-5">
-    <% if Teacher.without_accounts? %>
-      <div class="row mb-3">
-        <div class="col-12">
-          <%= render partial: 'users/accountless_teachers_card',
-                     locals: { teachers: Teacher.without_accounts}  %>
-        </div>
-      </div>
-    <% end %>
-    <div class="row">
-      <div class="col-12">
-        <div id="generic_user_card">
-          <%= render partial: 'users/generic_users_card',
-                     locals: { generic_users: @generic_users } %>
-        </div>
-      </div>
+    <div id="generic_user_card">
+      <%= render partial: 'users/generic_users_card',
+                 locals: { generic_users: @generic_users } %>
     </div>
   </div>
 </div>
