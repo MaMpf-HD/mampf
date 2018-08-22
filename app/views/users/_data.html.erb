@@ -1,0 +1,53 @@
+<div class="row p-2">
+  <div class="col-5">
+    <div class="card bg-light mb-4" id="question-basics-edit">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-5">
+            <h5>
+              Basisdaten
+            <h5>
+          </div>
+          <div class="col-6 text-right">
+            <% if user.admin? %>
+              <span class="badge badge-info">
+                Admin
+              </span>
+            <% end %>
+            <% if user.editor? %>
+              <span class="badge badge-info">
+                EditorIn
+              </span>
+            <% end %>
+            <% if user.teacher? %>
+              <span class="badge badge-info">
+                DozentIn
+              </span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <%= render partial: 'users/basics', locals: { user: user, f: f } %>
+      </div>
+    </div>
+  </div>
+  <div class="col-7">
+    <div class="card bg-light">
+      <div class="card-header">
+        <h5>
+          Betreute Inhalte
+        </h5>
+      </div>
+      <div class="card-body">
+        <% if user.edited_courses.any? || user.edited_lectures.any? ||
+              user.given_lectures.any? %>
+          <%= render partial: 'users/administrative',
+                     locals: { user: user, f: f } %>
+        <% else %>
+          Es gibt noch keine entsprechenden Inhalte.
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

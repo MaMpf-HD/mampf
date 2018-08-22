@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'registrations' }
   get 'users/elevate', to: 'users#elevate', as: 'elevate_user'
   get 'users/teacher/:teacher_id', to: 'users#teacher', as: 'teacher'
-  resources :users, only: [:index, :edit, :destroy]
+  resources :users, only: [:index, :edit, :update, :destroy]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
   get 'search/index'
 

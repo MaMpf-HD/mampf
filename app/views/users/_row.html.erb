@@ -1,40 +1,30 @@
-<div class="col-3">
+<div class="col-2">
   <%= user.name %>
 </div>
 <div class="col-3">
+  <%= user.email %>
+</div>
+<div class="col-3">
   <% if user.admin? %>
-    <span class="badge badge-secondary">
+    <span class="badge badge-info">
       Admin
     </span>
   <% end %>
   <% if user.editor? %>
-    <span class="badge badge-secondary">
+    <span class="badge badge-info">
       EditorIn
     </span>
   <% end %>
   <% if user.teacher? %>
-    <span class="badge badge-secondary">
+    <span class="badge badge-info">
       DozentIn
     </span>
   <% end %>
 </div>
-<div class="col-2">
-  <ul class="list-unstyled">
-    <% user.edited_courses.each do |c| %>
-      <li>
-        <%= c.title %>
-      </li>
-    <% end %>
-  </ul>
+<div class="col-2 text-center">
+  <%= user.edited_media.count %>
 </div>
-<div class="col-4">
+<div class="col-2">
   <%= link_to 'Bearbeiten', edit_user_path(user),
-              class: 'btn btn-outline-primary my-1',
-              remote: true %>
-  <% unless user.admin? %>
-    <%= link_to 'Löschen', user_path(user), method: :delete,
-                data: { confirm: 'Bist Du sicher?' },
-                remote: true,
-                class: 'btn btn-outline-danger my-1' %>
-  <% end %>
+              class: 'btn btn-outline-primary my-1' %>
 </div>

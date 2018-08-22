@@ -1,0 +1,40 @@
+<% if user.teacher? %>
+  Gehaltene Vorlesungen (<%= user.given_lectures.count %>):
+  <ul>
+    <% user.given_lectures.each do |l| %>
+      <li>
+        <%= l.title_term_info %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+<% if user.edited_courses.any? %>
+  Editierte Kurse (<%= user.edited_courses.count %>):
+  <ul>
+    <% user.edited_courses.each do |c| %>
+      <li>
+        <%= link_to c.title, edit_course_path(c) %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+<% if user.edited_lectures.any? %>
+  Editierte Vorlesungen (<%= user.edited_lectures.count %>):
+  <ul>
+    <% user.edited_lectures.each do |l| %>
+      <li>
+        <%= l.title_term_info %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+<% if user.edited_courses.any? %>
+  Editierte Medien (<%= user.edited_media.count %>):
+  <ul>
+    <% user.edited_media.each do |m| %>
+      <li>
+        <%= m.title %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

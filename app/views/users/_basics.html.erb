@@ -1,0 +1,39 @@
+<div class="form-group">
+  <%= f.label :name, 'Anzeigename' %>
+  <%= f.text_field :name, { class: 'form-control' } %>
+  <div class="invalid-feedback" id="user-name-error">
+  </div>
+</div>
+<div class="form-group">
+  <%= f.label :email, 'Email (Achtung: Mit dieser erfolgt auch die Nutzeranmeldung.)' %>
+  <%= f.text_field :email, { class: 'form-control' } %>
+  <div class="invalid-feedback" id="user-email-error">
+  </div>
+</div>
+  <div class="form-group form-row">
+    <div class="col-12">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :admin, class: 'custom-control-input',
+                        disabled: user == current_user %>
+        <%= f.label :admin, 'Administrator',
+                    { class: 'custom-control-label' } %>
+      </div>
+    </div>
+  </div>
+<div class="form-group">
+  <%= f.label :homepage %>
+  <div class="row">
+    <div class="col-10">
+      <%= f.text_field :homepage, { class: 'form-control' } %>
+      <div class="invalid-feedback" id="user-homepage-error">
+      </div>
+    </div>
+    <div class="col-2">
+      <button id="test-link" type="button"
+              class="btn btn-sm btn-outline-info">
+        Test
+      </button>
+    </div>
+  </div>
+</div>
+Profilbild(kommt noch...)

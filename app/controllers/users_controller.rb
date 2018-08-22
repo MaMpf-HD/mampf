@@ -3,21 +3,33 @@ class UsersController < ApplicationController
   authorize_resource
 
   def index
-    @elevated_users = User.where(admin: true)
-                          .or(User.where(editor: true)).to_a | User.teachers
+    @elevated_users = User.where(admin: true).to_a | User.editors |
+                      User.teachers
     @generic_users = User.all.to_a - @elevated_users
+  end
+
+  def edit
+    @user = User.find_by_id(params[:id])
+  end
+
+  def update
+    @user = User.find_by_id(params[:id])
+    @user.update(user_params)
+    @errors = @user.errors
   end
 
   def elevate
     @errors = {}
     @user = User.find(elevate_params[:id])
     admin = elevate_params[:admin] == '1'
-    editor = elevate_params[:editor] == '1'
-    @user.update(admin: admin, editor: editor, name: elevate_params[:name])
-    unless @user.valid?
-      @errors = @user.errors
-      return
+    return unless admin
+    if @user.name.blank?
+      name = @user.email.split('@')[0]
+      @user.update(admin: true, name: name)
+    else
+      @user.update(admin: true)
     end
+    redirect_to users_path
   end
 
   def destroy
@@ -35,5 +47,9 @@ class UsersController < ApplicationController
 
   def elevate_params
     params.require(:generic_user).permit(:id, :admin, :editor, :teacher, :name)
+  end
+
+  def user_params
+    params.require(:user).permit(:name, :email, :admin, :homepage)
   end
 end

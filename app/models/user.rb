@@ -19,17 +19,23 @@ class User < ApplicationRecord
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
                                  'werden.' },
             if: :courses_exist?
+  validates :homepage, http_url: true, if: :homepage?
   validates :name,
-            presence: { message: 'Es muss ein Anzeigename angegeben werden.'}
+            presence: { message: 'Es muss ein Anzeigename angegeben werden.'},
+            if: :edited_profile?
   before_save :set_defaults
   after_create :set_consented_at
 
   def self.select_editors
-    User.where(editor: true).all.map { |c| [c.email, c.id] }
+    User.all.map { |c| [c.info, c.id] }
   end
 
   def self.teachers
     User.select { |u| u.teacher? }
+  end
+
+  def self.editors
+    User.select { |u| u.editor? }
   end
 
   def related_courses
@@ -107,12 +113,21 @@ class User < ApplicationRecord
     edited_courses.any? || edited_lectures.any? || edited_media.any?
   end
 
+  def info
+    return email unless name.present?
+    name + ' (' + email + ')'
+  end
+
+  def short_info
+    return email unless name.present?
+    name
+  end
+
   private
 
   def set_defaults
     self.subscription_type = 1 if subscription_type.nil?
     self.admin = false if admin.nil?
-    self.editor = false if editor.nil?
   end
 
   def set_consented_at
