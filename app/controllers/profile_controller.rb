@@ -8,7 +8,7 @@ class ProfileController < ApplicationController
   end
 
   def update
-    if @user.update(lectures: @lectures, courses: @courses,
+    if @user.update(lectures: @lectures, courses: @courses, name: @name,
                     subscription_type: @subscription_type, edited_profile: true)
       add_details
       unless @user.courses.map(&:id).include?(cookies[:current_course].to_i)
@@ -16,8 +16,7 @@ class ProfileController < ApplicationController
       end
       redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
     else
-      @no_course_error = @user.errors
-      puts @user.errors.messages
+      @errors = @user.errors
     end
   end
 
@@ -46,6 +45,7 @@ class ProfileController < ApplicationController
 
   def set_basics
     @subscription_type = params[:user][:subscription_type].to_i
+    @name = params[:user][:name]
     @courses = Course.where(id: course_ids)
     @lectures = Lecture.where(id: lecture_ids)
   end

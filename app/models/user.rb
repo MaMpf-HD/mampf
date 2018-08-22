@@ -12,8 +12,6 @@ class User < ApplicationRecord
            source: :editable, source_type: 'Course'
   has_many :edited_lectures, through: :editable_user_joins,
            source: :editable, source_type: 'Lecture'
-  has_many :edited_lessons, through: :editable_user_joins,
-           source: :editable, source_type: 'Lesson'
   has_many :edited_media, through: :editable_user_joins,
            source: :editable, source_type: 'Medium'
   has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
@@ -21,10 +19,8 @@ class User < ApplicationRecord
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
                                  'werden.' },
             if: :courses_exist?
-  validates :name, uniqueness: { message: 'Nutzername ist schon vorhanden.' },
-            if: :name?
-  validates :name, presence: { message: 'Es muss ein Nutzername angegeben werden.'},
-           if: :admin_or_editor?
+  validates :name,
+            presence: { message: 'Es muss ein Anzeigename angegeben werden.'}
   before_save :set_defaults
   after_create :set_consented_at
 
@@ -105,6 +101,10 @@ class User < ApplicationRecord
 
   def teacher?
     given_lectures.any?
+  end
+
+  def editor?
+    edited_courses.any? || edited_lectures.any? || edited_media.any?
   end
 
   private
