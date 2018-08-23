@@ -20,6 +20,7 @@ class Ability
       cannot :create, Course
       cannot :read, Term
       cannot :read, User
+      can :teacher, User
     else
       can :read, :all
       cannot :read, :administration

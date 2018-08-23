@@ -33,6 +33,9 @@ class UsersController < ApplicationController
   end
 
   def destroy
+    @user = User.find_by_id(params[:id])
+    @user.destroy unless @user.admin || @user.editor? || @user.teacher?
+    redirect_to users_path
   end
 
   def teacher

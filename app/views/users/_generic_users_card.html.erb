@@ -32,10 +32,10 @@
                   abbrechen
                 </button>
               </span>
-              <span id="delete-generic-user">
+              <span>
                 <%= link_to 'Löschen', nil, method: :delete,
                             data: { confirm: 'Bist Du sicher?' },
-                            remote: true,
+                            id: 'delete-generic-user',
                             class: 'btn btn-outline-danger' %>
               </span>
             </div>

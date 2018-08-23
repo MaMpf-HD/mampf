@@ -10,6 +10,7 @@ $(document).on 'turbolinks:load', ->
     $('#generic_user_admin').prop('checked', false).trigger 'change'
     if $(this).val() != ''
       $('.generic-user').removeClass('no_display')
+      $('#delete-generic-user').prop('href', Routes.user_path($(this).val()))
     else
       $('.generic-user').addClass('no_display')
     return
