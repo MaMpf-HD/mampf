@@ -19,7 +19,8 @@
       <% is_active = l.active?(current_user, params[:active].to_i) %>
       <div class="carousel-item <%= active(is_active) %>"
            data-term="<%= l.term.to_label %>"
-           data-teacher="<%= l.teacher.name %>">
+           data-teacher="<%= l.teacher.name %>"
+           data-id="<%= l.teacher.id %>">
         <div class="row">
           <% unless l.chapters.empty? %>
             <div class="col-12 col-md-12 col-lg-6 pt-3">

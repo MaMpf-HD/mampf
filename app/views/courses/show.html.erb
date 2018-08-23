@@ -50,8 +50,10 @@
         <span class="badge badge-secondary ml-3">
           DozentIn
         </span>
-        <span id="lecture-teacher">
-          <%= link_to @front_lecture.teacher.name, teacher_path(@front_lecture.teacher),
+        <span>
+          <%= link_to @front_lecture.teacher.name,
+                      teacher_path(@front_lecture.teacher),
+                      id: 'lecture-teacher',
                       class: 'text-dark' %>
         </span>
       </h4>

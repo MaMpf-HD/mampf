@@ -6,8 +6,10 @@ $(document).on 'turbolinks:load', ->
   $('#lectureCarousel').on 'slid.bs.carousel', (evt) ->
     term = evt.relatedTarget.dataset.term
     teacher = evt.relatedTarget.dataset.teacher
+    id = evt.relatedTarget.dataset.id
     $('#lecture-term').empty().append(term)
-    $('#lecture-teacher').empty().append(teacher)
+    $('#lecture-teacher').text(teacher)
+    $('#lecture-teacher').prop('href', Routes.teacher_path(id))
     return
 
   $('.selectize').selectize()
