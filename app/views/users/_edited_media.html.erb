@@ -1,0 +1,52 @@
+<% media = user.edited_media.where(sort: media_types[sort]) %>
+<% if media.present? %>
+  <% teachables = lecture_course_teachables(media) %>
+  <div class="row">
+    <div class="col-3">
+      <div class="nav flex-column nav-pills"
+           id="v-<%= sort %>-media-tab"
+           role="tablist" aria-orientation="vertical">
+        <% teachables.each_with_index do |t, i| %>
+          <a class="nav-link <%= active(i.zero?) %>"
+             id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>-tab"
+             data-toggle="pill"
+             href="#v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
+             role="tab"
+             aria-controls="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
+             aria-selected="true">
+            <%= t.short_title %>
+          </a>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-9">
+      <div class="tab-content" id="v-<%= sort %>-media-tabContent">
+        <% teachables.each_with_index do |t, i| %>
+          <div class="tab-pane fade <%= show_tab(i == 0) %>"
+               id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
+               role="tabpanel"
+               aria-labelledby="v-pills-<%= sort %>-<% t.class %>-<%= t.id %>-tab">
+            <% relevant = relevant_media(t, media) %>
+            <% if relevant.present? %>
+              <div class="row">
+                <% split_list(relevant, 2).each do |media_list| %>
+                  <div class="col-6">
+                    <ul>
+                      <% media_list.each do |m| %>
+                        <% unless m.nil? %>
+                          <li>
+                            <%= m.title %>
+                          </li>
+                        <% end %>
+                      <% end %>
+                    </ul>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
