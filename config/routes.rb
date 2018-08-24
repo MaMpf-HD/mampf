@@ -20,6 +20,7 @@ Rails.application.routes.draw do
 
   get 'profile/edit', as: 'edit_profile'
   get 'courses/:course_id/food', to: 'media#index', as: 'course_food'
+  get 'courses/:id/inspect', to: 'courses#inspect', as: 'inspect_course'
   post 'profile/update'
   get 'profile/check_for_consent', as: 'consent_profile'
   patch 'profile/add_consent', as: 'add_consent'

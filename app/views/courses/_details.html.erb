@@ -1,0 +1,108 @@
+<div class="row mt-2 p-2">
+  <div class="col-8">
+    <h4>
+      <%= course.title %>
+    </h4>
+  </div>
+  <div class="col-4 text-center">
+    <% if current_user.admin? || course.editors.include?(current_user) %>
+      <%= link_to 'Bearbeiten', edit_course_path(course),
+                  class: 'btn btn-primary my-1' %>
+    <% end %>
+    <%= link_to 'zur Modulübersicht', courses_path,
+                class: 'btn btn-primary' %>
+  </div>
+</div>
+<div class="row p-2">
+  <div class="col-12">
+    <div class="card bg-mdb-color-lighten-7 mb-4">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              Basisdaten
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-2">
+        <div class="row">
+          <div class="col-2">
+            Kurztitel:
+          </div>
+          <div class="col-10">
+              <%= course.short_title %>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-2">
+            Editoren:
+          </div>
+          <div class="col-10">
+            <ul  class="list-unstyled">
+              <% course.editors.each do |e| %>
+                <li>
+                  <%= e.name %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2">
+            Vorlesungen:
+          </div>
+          <div class="col-10">
+            <ul  class="list-unstyled">
+              <% course.lectures_by_date.each do |l| %>
+                <li>
+                  <%= l.term_teacher_info %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-2">
+            Vorangegangene Module:
+          </div>
+          <div class="col-10">
+            <ul  class="list-unstyled">
+              <% course.preceding_courses.each do |c| %>
+                <li>
+                  <%= link_to c.title, inspect_course_path(c) %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-2">
+            Newsfeed:
+          </div>
+          <div class="col-10">
+            <% if course.news? %>
+              <div id="twitter-news"
+                   data-profile="<%= course.news %>"
+                   data-turbolinks-permanent>
+              </div>
+            <% else %>
+              Kein Newsfeed vorhanden.
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% unless course.tags.empty? %>
+  <div class="row p-2">
+    <div class="col-12">
+      <%= render partial: 'tags/tags_toggle',
+                 locals: { tags: course.tags,
+                           tags_description: 'Verknüpfte Begriffe',
+                           id: course.id,
+                           inspection: true} %>
+    </div>
+  </div>
+<% end %>

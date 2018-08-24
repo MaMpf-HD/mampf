@@ -1,7 +1,16 @@
 <div class="col-3">
   <%= course.title %>
 </div>
-<div class="col-5">
+<div class="col-3">
+  <ul class="list-unstyled">
+    <% course.editors.each do |e| %>
+      <li>
+        <%= e.name  %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="col-3">
   <ul class="list-unstyled">
     <% course.lectures_by_date.each do |l| %>
       <li>
@@ -10,10 +19,15 @@
     <% end %>
   </ul>
 </div>
-<div class="col-4">
-  <%= link_to 'Bearbeiten', edit_course_path(course),
-              class: 'btn btn-outline-primary my-1' %>
-  <% if course.lectures.empty? && course.media.empty? %>
+<div class="col-3">
+  <% if current_user.admin? || course.editors.include?(current_user) %>
+    <%= link_to 'Bearbeiten', edit_course_path(course),
+                class: 'btn btn-outline-primary my-1' %>
+  <% end %>
+    <%= link_to 'Ansehen', inspect_course_path(course),
+                class: 'btn btn-outline-primary my-1' %>
+  <% if course.lectures.empty? && course.media.empty? &&
+        (current_user.admin? || course.editors.include?(current_user)) %>
     <%= link_to 'Löschen', course_path(course), method: :delete,
                 data: { confirm: 'Bist Du sicher?' },
                 remote: true,

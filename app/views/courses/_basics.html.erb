@@ -32,7 +32,7 @@
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :preceding_course_ids, 'Vorangegangene Kurse' %>
+    <%= f.label :preceding_course_ids, 'Vorangegangene Module' %>
     <%= f.select :preceding_course_ids,
                  options_for_select(Course.all.map { |c| [c.title, c.id]},
                                     course.preceding_courses.map(&:id)),

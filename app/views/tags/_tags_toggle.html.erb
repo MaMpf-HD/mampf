@@ -22,7 +22,11 @@
                 <% tag_list.each do |t| %>
                   <% unless t.nil? %>
                     <li class="text-dark">
-                      <%= link_to t.title, t, class: "text-dark" %>
+                      <% if inspection %>
+                        <%= t.title %>
+                      <% else %>
+                        <%= link_to t.title, tag_path(t) , class: "text-dark" %>
+                      <% end %>
                     </li>
                   <% end %>
                 <% end %>

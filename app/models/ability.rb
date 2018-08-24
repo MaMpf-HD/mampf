@@ -17,6 +17,7 @@ class Ability
       can :update, Course do |course|
         course.edited_by?(user)
       end
+      can :inspect, Course
       cannot :create, Course
       cannot :read, Term
       cannot :read, User

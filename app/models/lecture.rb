@@ -88,6 +88,10 @@ class Lecture < ApplicationRecord
     course_join.first.primary_lecture_id == id
   end
 
+  def latest?
+    course.lectures_by_date.first == self
+  end
+
   def active?(user, preselected_lecture_id)
     if course.subscribed_lectures(user).map(&:id)
              .include?(preselected_lecture_id)

@@ -1,15 +1,15 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :set_course, only: [:show]
-  before_action :set_course_admin, only: [:edit, :update, :destroy]
+  before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   authorize_resource
 
   def index
-    if current_user.admin?
-      @courses = Course.order(:title).page params[:page]
-      return
-    end
-    @courses = current_user.edited_courses.order(:title).page params[:page]
+    edited_courses = current_user.edited_courses.order(:title).to_a
+    other_courses = Course.select { |c| !c.editors.include?(current_user) }
+                          .sort_by(&:title)
+    @courses = Kaminari.paginate_array(edited_courses + other_courses)
+                      .page params[:page]
   end
 
   def edit
@@ -37,6 +37,9 @@ class CoursesController < ApplicationController
     cookies[:current_course] = params[:id]
     @lectures = @course.subscribed_lectures_by_date(current_user)
     @front_lecture = @course.front_lecture(current_user, params[:active].to_i)
+  end
+
+  def inspect
   end
 
   def destroy
