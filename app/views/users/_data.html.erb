@@ -28,7 +28,10 @@
         </div>
       </div>
       <div class="card-body">
-        <%= render partial: 'users/basics', locals: { user: user, f: f } %>
+        <%= render partial: 'users/basics',
+                   locals: { user: user,
+                             f: f,
+                             profile: profile } %>
       </div>
     </div>
   </div>

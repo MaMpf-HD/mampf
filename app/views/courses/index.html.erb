@@ -1,10 +1,10 @@
 <div class="row mt-3 p-2">
-  <div class="col-8">
+  <div class="col-10">
     <h4>
       Modulübersicht
     </h4>
   </div>
-  <div class="col-4">
+  <div class="col-2">
     <% if current_user.admin? %>
       <%= link_to 'Modul anlegen', new_course_path,
                   class: 'btn btn-secondary',

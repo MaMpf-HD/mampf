@@ -21,6 +21,9 @@ class Ability
       cannot :create, Course
       cannot :read, Term
       cannot :read, User
+      can :update, User do |user|
+        user == current_user
+      end
       can :teacher, User
     else
       can :read, :all

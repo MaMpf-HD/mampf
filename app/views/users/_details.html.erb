@@ -1,0 +1,37 @@
+<div id="user-area">
+  <%= form_with model: user, html: { id: 'user-form' } do |f| %>
+    <div class="row p-2 mb-3">
+      <div class="col-3">
+        <h4 class="pl-2">
+          <span class="badge badge-secondary">
+            NutzerIn
+          </span>
+          <%= user.short_info %>
+        </h4>
+      </div>
+      <div class="col-6">
+        <span id="user-basics-warning">
+          Achtung, es gibt ungespeicherte Änderungen!
+        </span>
+        <span class="no_display" id="user-basics-submit">
+          <%= f.submit "Speichern", class: "btn btn-primary",
+                                    id: "user-basics-save" %>
+        </span>
+        <button type="button" class="btn btn-secondary ml-2"
+                id="user-basics-cancel" data-id="<%= user.id %>">
+          verwerfen
+        </button>
+      </div>
+      <div class="col-3 text-center">
+        <% unless profile %>
+          <%= link_to 'zur NutzerInnenübersicht', users_path,
+                      class: 'btn btn-primary' %>
+        <% end %>
+      </div>
+    </div>
+    <%= render partial: 'users/data',
+               locals: { user: user,
+                         f: f,
+                         profile: profile } %>
+  <% end %>
+</div>

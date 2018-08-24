@@ -7,4 +7,7 @@ class AdministrationController < ApplicationController
   def exit
     redirect_to :root
   end
+
+  def profile
+  end
 end
