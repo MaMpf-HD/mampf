@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_22_105514) do
+ActiveRecord::Schema.define(version: 2018_08_24_155138) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -104,7 +104,6 @@ ActiveRecord::Schema.define(version: 2018_08_22_105514) do
     t.datetime "updated_at", null: false
     t.integer "course_id"
     t.integer "term_id"
-    t.text "twitter"
     t.integer "teacher_id"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
