@@ -78,7 +78,7 @@ RSpec.describe Lecture, type: :model do
     it 'returns the correct information' do
       term =   FactoryBot.create(:term)
       teacher = FactoryBot.create(:user, name: 'Luke Skywalker')
-      lecture = FactoryBot.build(:lecture, teacher: user, term: term)
+      lecture = FactoryBot.build(:lecture, teacher: teacher, term: term)
       expect(lecture.term_teacher_info).to eq(term.to_label + ', Luke Skywalker')
     end
   end

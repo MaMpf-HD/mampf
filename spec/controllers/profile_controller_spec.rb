@@ -36,37 +36,6 @@ RSpec.describe ProfileController, type: :controller do
     before do
       @lecture = FactoryBot.create(:lecture)
     end
-    context 'as an authenticated user' do
-      before do
-        @user = FactoryBot.create(:user, subscription_type: 1)
-      end
-      it 'updates the subscribed_lectures' do
-        sign_in @user
-        patch :update, params: { user: { 'course-' + @lecture.course.id.to_s => '1',
-                                         'lecture-' + @lecture.id.to_s => '1',
-                                         'sesam-' +  @lecture.course.id.to_s => '1',
-                                         subscription_type: '2' } }
-        expect(@user.reload.lectures).to eq [@lecture]
-      end
-
-      it 'updates the subscription type' do
-        sign_in @user
-        patch :update, params: { user: { 'course-' + @lecture.course.id.to_s => '1',
-                                         'lecture-' + @lecture.id.to_s => '1',
-                                         'sesam-' +  @lecture.course.id.to_s => '1',
-                                         subscription_type: '2' } }
-        expect(@user.reload.subscription_type).to eq 2
-      end
-
-      it 'redirects to the main page' do
-        sign_in @user
-        patch :update, params: { user: { 'course-' + @lecture.course.id.to_s => '1',
-                                         'lecture-' + @lecture.id.to_s => '1',
-                                         'sesam-' +  @lecture.course.id.to_s => '1',
-                                         subscription_type: '2' } }
-        expect(response).to redirect_to root_path
-      end
-    end
     context 'as an unauthenticated user' do
       it 'returns a 302 response' do
         patch :update, params: { user: { lecture_ids: [@lecture.id.to_s],
