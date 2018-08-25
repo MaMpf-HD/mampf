@@ -24,8 +24,8 @@
             <%= link_to "Vorlesungen", '', class: 'nav-link' %>
           </li>
         <% end %>
-        <li class="nav-item">
-          <%= link_to "Tags", '', class: 'nav-link' %>
+        <li class="nav-item <%= active(controller_name == 'tags') %>">
+          <%= link_to "Tags", tags_path, class: 'nav-link' %>
         </li>
         <% if current_user.admin? %>
           <li class="nav-item <%= active(controller_name == 'terms') %>">

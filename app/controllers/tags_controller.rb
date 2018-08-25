@@ -4,6 +4,11 @@ class TagsController < ApplicationController
   before_action :check_for_consent
   authorize_resource
 
+  def index
+    @tags = Tag.order(:title)
+    @tags_with_id = @tags.map { |t| { id: t.id, title: t.title } }.to_json
+  end
+
   def show
     @related_tags = current_user.filter_tags(@tag.related_tags)
     @tags_in_neighbourhood = current_user.filter_tags(@tag
@@ -11,6 +16,12 @@ class TagsController < ApplicationController
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: 'KeksQuestion'))
+  end
+
+  def edit
+  end
+
+  def new
   end
 
   private

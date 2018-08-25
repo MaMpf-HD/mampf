@@ -51,6 +51,8 @@ class Lecture < ApplicationRecord
   end
 
   def term_teacher_info
+    return term.to_label unless teacher.present?
+    return term.to_label unless teacher.name.present?
     term.to_label + ', ' + teacher.name
   end
 
@@ -59,6 +61,8 @@ class Lecture < ApplicationRecord
   end
 
   def title_teacher_info
+    return course.title unless teacher.present?
+    return course.title unless teacher.name.present?
     course.title + ' (' + teacher.name + ')'
   end
 

@@ -127,6 +127,11 @@ class Course < ApplicationRecord
     false
   end
 
+  def related_media
+    Medium.where(id: Medium.select { |m| m.teachable.course == self }
+                           .map(&:id))
+  end
+
   private
 
   def filter_keys(user_params)

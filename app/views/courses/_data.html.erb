@@ -1,7 +1,15 @@
 <div class="row p-2">
   <div class="col-6">
-    <div class="card bg-light mb-4" id="question-basics-edit">
-      <%= render partial: 'courses/basics', locals: { course: course, f: f } %>
+    <div class="row">
+      <div class="col-12">
+        <div class="card bg-light mb-4" id="question-basics-edit">
+          <%= render partial: 'courses/basics', locals: { course: course, f: f } %>
+        </div>
+      </div>
+      <div class="col-12">
+        <%= render partial: 'media/card',
+                   locals: { media: course.related_media } %>
+      </div>
     </div>
   </div>
   <div class="col-6">
@@ -12,7 +20,8 @@
         </h5>
       </div>
       <div class="card-body">
-        <div id="course-tags"></div>
+        <div id="course-tags">
+        </div>
         <%= render partial: 'courses/tags',
                    locals: { course: course, f: f } %>
       </div>

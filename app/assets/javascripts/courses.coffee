@@ -12,7 +12,7 @@ $(document).on 'turbolinks:load', ->
     $('#lecture-teacher').prop('href', Routes.teacher_path(id))
     return
 
-  $('.selectize').selectize()
+  $('.selectize').selectize({ plugins: ['remove_button'] })
 
   $('#course-form :input').on 'change', ->
     $('#course-basics-warning').show()

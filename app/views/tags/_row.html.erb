@@ -1,0 +1,27 @@
+<div class="col-3">
+  <%= tag.title %>
+</div>
+<div class="col-2">
+  <ul class="list-unstyled">
+    <% tag.courses.each do |c| %>
+      <li>
+        <%= c.title  %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+<div class="col-4">
+  <%= tag.related_tags.map(&:title).join(', ') %>
+</div>
+<div class="col-3">
+  <%= link_to 'Bearbeiten', edit_tag_path(tag),
+              class: 'btn btn-outline-primary my-1',
+              remote: true %>
+  <% if current_user.admin? ||
+        (tag.courses - current_user.edited_courses).blank? %>
+    <%= link_to 'Löschen', tag_path(tag), method: :delete,
+                data: { confirm: 'Bist Du sicher?' },
+                remote: true,
+                class: 'btn btn-outline-danger my-1' %>
+  <% end %>
+</div>

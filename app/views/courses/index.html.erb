@@ -41,8 +41,6 @@
     </strong>
   </div>
 </div>
-<div id="row-new-course" class="border-bottom" style="display: none;" >
-</div>
 <% @courses.each do |c| %>
   <div class="row border-bottom px-4" id="row-course-<%= c.id %>">
     <%= render partial: 'courses/row', locals: { course: c }%>

@@ -45,7 +45,7 @@
       <div class="card-body">
         <% if user.edited_courses.any? || user.edited_lectures.any? ||
               user.given_lectures.any? %>
-          <%= render partial: 'users/administrative',
+          <%= render partial: 'users/content',
                      locals: { user: user, f: f } %>
         <% else %>
           Es gibt noch keine entsprechenden Inhalte.

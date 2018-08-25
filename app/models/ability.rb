@@ -17,6 +17,7 @@ class Ability
       can :update, Course do |course|
         course.edited_by?(user)
       end
+      can :manage, Tag
       can :inspect, Course
       cannot :create, Course
       cannot :read, Term
@@ -28,6 +29,9 @@ class Ability
     else
       can :read, :all
       cannot :read, :administration
+      cannot :index, Tag
+      cannot :update, Tag
+      cannot :create, Tag
       cannot :read, Term
       cannot :read, User
       can :teacher, User
