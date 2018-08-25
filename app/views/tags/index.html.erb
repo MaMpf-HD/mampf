@@ -57,10 +57,12 @@
   </div>
 </div>
 <div id="tagTable" data-tags="<%= @tags_with_id %>">
+  <% cache(@tags) do %>
   <% @tags.each do |t| %>
     <div class="row border-bottom px-4" id="row-tag-<%= t.id %>"
          data-courses="<%= t.courses.each.map(&:id).to_json %>">
       <%= render partial: 'tags/row', locals: { tag: t }%>
     </div>
+  <% end %>
   <% end %>
 </div>
