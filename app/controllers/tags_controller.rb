@@ -26,6 +26,21 @@ class TagsController < ApplicationController
 
   def update
     puts tag_params
+    removed_tags = @tag.related_tag_ids - tag_params[:related_tag_ids].map(&:to_i)
+    added_tags = (tag_params[:related_tag_ids].map(&:to_i) - [0]) - @tag.related_tag_ids
+    puts removed_tags
+    if !current_user.admin?
+      if !(@tag.course_ids & current_user.edited_course_ids).present?
+        if removed_tags.any? { |t| (Tag.find_by_id(t).course_ids & current_user.edited_course_ids).empty? }
+          @errors = { related_tags: ['Das Tag gehört zu Kursen, für die Du kein Editor bist, und mindestens eines der entfernten Tags gehört zu Kursen, für die Du kein Editor bist.'] }
+          return
+        end
+        if added_tags.any? { |t| (Tag.find_by_id(t).course_ids & current_user.edited_course_ids).empty? }
+          @errors = { related_tags: ['Das Tag gehört zu Kursen, für die Du kein Editor bist, und mindestens eines der hinzugefügten Tags gehört zu Kursen, für die Du kein Editor bist.'] }
+          return
+        end
+      end
+    end
     removed_courses = @tag.course_ids - tag_params[:course_ids].map(&:to_i)
     unless current_user.admin? || removed_courses.all? { |c| c.in?(current_user.edited_courses.map(&:id)) }
       @errors = { courses: ['Du hast nicht die nötigen Rechte dafür.'] }

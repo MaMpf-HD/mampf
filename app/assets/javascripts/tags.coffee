@@ -38,20 +38,6 @@ $(document).on 'turbolinks:load', ->
 
   $('#tag-form :input').on 'change', ->
     $('#tag-basics-warning').show()
-    courseSelector = document.getElementById('tag_course_ids')
-    selectedCourses = courseSelector.selectize.getValue().map (item) -> parseInt(item)
-    editableCourses = JSON.parse(courseSelector.dataset.editable).map (item) -> parseInt(item)
-    if ($(editableCourses).not($(editableCourses).not($(selectedCourses)))).length > 0
-      $('#editable-tags').show()
-      $('#non-editable-tags').hide()
-    else
-      $('#editable-tags').hide()
-      relatedTagSelector = document.getElementById('tag_related_tag_ids')
-      oldValue = JSON.parse(relatedTagSelector.dataset.restore).map (x) -> x.toString()
-      console.log oldValue
-      console.log relatedTagSelector
-      relatedTagSelector.selectize.setValue(oldValue, true)
-      $('#non-editable-tags').show()
     return
 
   $('#tag-basics-cancel').on 'click', ->

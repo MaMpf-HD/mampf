@@ -3,6 +3,7 @@ $('#tag-title-error').empty()
 $('#tag-additional-lectures-error').empty()
 $('#tag-disabled-lectures-error').empty()
 $('#tag-courses-error').empty()
+$('#tag-related-tags-error').empty()
 <% if @errors.present? %>
 <% if @errors[:title].present? %>
 $('#tag-title-error').append('<%= @errors[:title].join(", ") %>').show()
@@ -18,6 +19,10 @@ $('#tag-disabled-lectures-error').append('<%= @errors[:disabled_lectures].join("
 <% end %>
 <% if @errors[:courses].present? %>
 $('#tag-courses-error').append('<%= @errors[:courses].join(" ") %>')
+  .show()
+<% end %>
+<% if @errors[:related_tags].present? %>
+$('#tag-related-tags-error').append('<%= @errors[:related_tags].join(" ") %>')
   .show()
 <% end %>
 <% else %>
