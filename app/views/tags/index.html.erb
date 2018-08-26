@@ -26,7 +26,8 @@
       </label>
       <select multiple id="inputCourses" class="selectize" placeholder="eingeben">
         <%= Course.all.each do |c| %>
-        <option selected value="<%= c.id %>">
+        <option <%= current_user.edited_courses.include?(c) ? 'selected' : '' %>
+                value="<%= c.id %>">
           <%= c.short_title %>
         </option>
         <% end %>
@@ -58,11 +59,12 @@
 </div>
 <div id="tagTable" data-tags="<%= @tags_with_id %>">
   <% cache(@tags) do %>
-  <% @tags.each do |t| %>
-    <div class="row border-bottom px-4" id="row-tag-<%= t.id %>"
-         data-courses="<%= t.courses.each.map(&:id).to_json %>">
-      <%= render partial: 'tags/row', locals: { tag: t }%>
-    </div>
-  <% end %>
+    <% @tags.each do |t| %>
+      <div class="row border-bottom px-4" id="row-tag-<%= t.id %>"
+           style="display: <%= show_no_block((t.course_ids & current_user.edited_course_ids).present?) %>"
+           data-courses="<%= t.courses.each.map(&:id).to_json %>">
+        <%= render partial: 'tags/row', locals: { tag: t }%>
+      </div>
+    <% end %>
   <% end %>
 </div>

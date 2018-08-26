@@ -16,8 +16,6 @@ $(document).on 'turbolinks:load', ->
 
   $('#course-form :input').on 'change', ->
     $('#course-basics-warning').show()
-    $('#course-basics-cancel').show()
-    $('#course-basics-options').show()
     return
 
   $('#course-basics-cancel').on 'click', ->

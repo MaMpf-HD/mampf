@@ -1,36 +1,35 @@
-<div id="course-area">
-  <%= form_with model: @course, html: { id: 'course-form' } do |f| %>
+<div id="tag-area">
+  <%= form_with model: @tag, html: { id: 'tag-form' } do |f| %>
     <div class="row p-2 mb-3">
       <div class="col-3">
         <h4 class="pl-2">
           <span class="badge badge-secondary">
-            Modul
+            Tag
           </span>
-          <%= @course.title %>
+          <%= @tag.title %>
         </h4>
       </div>
       <div class="col-6">
-        <div id="course-basics-warning">
+        <div id="tag-basics-warning">
           Achtung, es gibt ungespeicherte Änderungen!
           <%= f.submit "Speichern", class: "btn btn-primary" %>
           <button type="button" class="btn btn-secondary ml-2"
-                  id="course-basics-cancel" data-id="<%= @course.id %>">
+                  id="tag-basics-cancel" data-id="<%= @tag.id %>">
             verwerfen
           </button>
         </div>
       </div>
       <div class="col-3 text-center">
-        <%= link_to 'Ansehen', inspect_course_path(@course),
-                    class: 'btn btn-primary my-1' %>
-        <%= link_to 'zur Modulübersicht', courses_path,
+        <%= link_to 'zur Tagübersicht', tags_path,
                     class: 'btn btn-primary' %>
-        <% if @course.lectures.empty? && @course.media.empty? && @course.id.present? %>
-          <%= link_to 'Modul löschen', course_path, method: :delete,
+        <% if current_user.admin? ||
+              (@tag.courses - current_user.edited_courses).blank? %>
+          <%= link_to 'Tag löschen', course_path, method: :delete,
                       data: { confirm: 'Bist Du sicher?' },
                       class: 'btn btn-danger' %>
         <% end %>
       </div>
     </div>
-    <%= render partial: 'courses/data', locals: { course: @course, f: f } %>
+    <%= render partial: 'tags/data', locals: { tag: @tag, f: f } %>
   <% end %>
 </div>

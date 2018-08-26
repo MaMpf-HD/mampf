@@ -1,0 +1,68 @@
+<div class="card-header">
+  <div class="row">
+    <div class="col-12">
+      <h5>
+        Basisdaten
+      </h5>
+    </div>
+  </div>
+</div>
+<div class="card-body p-2">
+  <div class="form-group">
+    <%= f.label :title, 'Titel' %>
+    <%= f.text_field :title, { class: 'form-control' } %>
+    <div class="invalid-feedback" id="tag-title-error">
+    </div>
+  </div>
+  <% allowed_to_modify = current_user.admin? || (tag.courses.to_a & current_user.edited_courses.to_a).present? %>
+  <div id="editable-tags" class="form-group" style="display: <%= show(allowed_to_modify) %>">
+    <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
+    <%= f.select :related_tag_ids,
+                 options_for_select(Tag.where.not(id: tag.id).map { |t| [t.title, t.id]},
+                                    tag.related_tag_ids),
+                 {}, { multiple: true, class: 'selectize',
+                       data: { restore: tag.related_tag_ids.to_json } } %>
+  </div>
+  <div id="non-editable-tags" style="display: <%= hide(allowed_to_modify) %>">
+    Verknüpfte Tags
+    <div class="row mb-2">
+      <div class="col-12 d-flex flex-wrap mt-1">
+        <% tag.related_tags.each do |t| %>
+          <div class="d-flex flex-wrap mr-1 mb-1">
+            <span class="badge badge-secondary">
+              <%= t.title %>
+            <span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :course_ids, 'Module' %>
+    <%= f.select :course_ids,
+                 options_for_select(Course.all.map{ |t| [t.title, t.id ]},
+                                    tag.course_ids),
+                 {}, { multiple: true, class: 'selectize',
+                       data: { editable: current_user.editable_courses.map(&:id).to_json } } %>
+    <div class="invalid-feedback" id="tag-courses-error">
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :additional_lecture_ids, 'Zusätzliche Vorlesungen' %>
+    <%= f.select :additional_lecture_ids,
+                 options_for_select(Lecture.all.map{ |l| [l.title, l.id ]},
+                                    tag.additional_lecture_ids),
+                 {}, { multiple: true, class: 'selectize' } %>
+    <div class="invalid-feedback" id="tag-additional-lectures-error">
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :disabled_lecture_ids, 'Deaktivierte Vorlesungen' %>
+    <%= f.select :disabled_lecture_ids,
+                 options_for_select(Lecture.all.map{ |l| [l.title, l.id ]},
+                                    tag.disabled_lecture_ids),
+                 {}, { multiple: true, class: 'selectize' } %>
+    <div class="invalid-feedback" id="tag-disabled-lectures-error">
+    </div>
+  </div>
+</div>

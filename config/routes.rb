@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :courses
   resources :media, only: [:show, :index]
-  resources :tags, only: [:show, :edit, :new, :index]
+  resources :tags
   resources :lessons, only: [:show]
   resources :sections, only: [:show]
   resources :chapters, only: [:show]

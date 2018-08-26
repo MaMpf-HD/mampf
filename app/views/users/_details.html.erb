@@ -10,17 +10,14 @@
         </h4>
       </div>
       <div class="col-6">
-        <span id="user-basics-warning">
+        <div id="user-basics-warning">
           Achtung, es gibt ungespeicherte Änderungen!
-        </span>
-        <span class="no_display" id="user-basics-submit">
-          <%= f.submit "Speichern", class: "btn btn-primary",
-                                    id: "user-basics-save" %>
-        </span>
-        <button type="button" class="btn btn-secondary ml-2"
-                id="user-basics-cancel" data-id="<%= user.id %>">
-          verwerfen
-        </button>
+          <%= f.submit "Speichern", class: "btn btn-primary" %>
+          <button type="button" class="btn btn-secondary ml-2"
+                  id="user-basics-cancel" data-id="<%= user.id %>">
+            verwerfen
+          </button>
+        </div>
       </div>
       <div class="col-3 text-center">
         <% unless profile %>

@@ -2,8 +2,6 @@ $(document).on 'turbolinks:load', ->
 
   $('#user-form :input').on 'change', ->
     $('#user-basics-warning').show()
-    $('#user-basics-cancel').show()
-    $('#user-basics-submit').show()
     return
 
   $(document).on 'change', '#generic_user_id', ->

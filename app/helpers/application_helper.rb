@@ -18,6 +18,10 @@ module ApplicationHelper
     value ? 'block;' : 'none;'
   end
 
+  def show_no_block(value)
+    value ? '' : 'none;'
+  end
+
   def active(value)
     value ? 'active' : ''
   end

@@ -123,6 +123,15 @@ class User < ApplicationRecord
     name
   end
 
+  def editable_courses
+    return Course.all if admin
+    edited_courses
+  end
+
+  def edited_lectures_with_inheritance
+    edited_courses.map(&:lectures).flatten | edited_lectures.to_a
+  end
+
   private
 
   def set_defaults
