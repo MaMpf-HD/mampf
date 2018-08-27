@@ -1,5 +1,5 @@
 <div id="tags_accordion<%= id %>" role="tablist">
-  <div class="card <%= inspection ? '' : 'bg-green-lighten-4' %>">
+  <div class="card <%= inspection ? 'bg-mdb-color-lighten-6' : 'bg-green-lighten-4' %>">
     <div class="card-header <%= inspection ? '' : 'bg-green-darken-3' %>"
          role="tab" id="tags_heading<%= id %>">
       <h5 class="<%= inspection ? 'text-dark' : 'text-light' %>">
@@ -16,23 +16,17 @@
          data-parent="#tags_accordion<%= id %>">
       <div class="card-body">
         <div class="row">
-          <% split_list(tags).each do |tag_list| %>
-            <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-              <ul>
-                <% tag_list.each do |t| %>
-                  <% unless t.nil? %>
-                    <li class="text-dark">
-                      <% if inspection %>
-                        <%= link_to t.title, inspect_tag_path(t) , class: "text-dark" %>
-                      <% else %>
-                        <%= link_to t.title, tag_path(t) , class: "text-dark" %>
-                      <% end %>
-                    </li>
-                  <% end %>
+          <div class="col-12">
+            <% tags.sort_by(&:title).each do |t| %>
+              <% unless t.nil? %>
+                <% if inspection %>
+                  <%= link_to t.title, inspect_tag_path(t) , class: "badge badge-light" %>
+                <% else %>
+                  <%= link_to t.title, tag_path(t) , class: "badge badge-light" %>
                 <% end %>
-              </ul>
-            </div>
-          <% end %>
+              <% end %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
