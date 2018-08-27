@@ -5,15 +5,19 @@
   <ul class="list-unstyled">
     <% tag.courses.each do |c| %>
       <li>
-        <%= c.title  %>
+        <%= link_to c.title, inspect_course_path(c)  %>
       </li>
     <% end %>
   </ul>
 </div>
 <div class="col-4">
-  <%= tag.related_tags.map(&:title).join(', ') %>
+  <% tag.related_tags.each do |t| %>
+    <%= link_to t.title, inspect_tag_path(t), class:'badge badge-info' %>
+  <% end %>
 </div>
 <div class="col-3">
   <%= link_to 'Bearbeiten', edit_tag_path(tag),
+              class: 'btn btn-outline-primary my-1' %>
+  <%= link_to 'Ansehen', inspect_tag_path(tag),
               class: 'btn btn-outline-primary my-1' %>
 </div>

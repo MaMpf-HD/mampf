@@ -1,10 +1,10 @@
 <div id="tags_accordion<%= id %>" role="tablist">
-  <div class="card bg-green-lighten-4">
-    <div class="card-header bg-green-darken-3" role="tab"
-         id="tags_heading<%= id %>">
-      <h5 class="text-light">
+  <div class="card <%= inspection ? '' : 'bg-green-lighten-4' %>">
+    <div class="card-header <%= inspection ? '' : 'bg-green-darken-3' %>"
+         role="tab" id="tags_heading<%= id %>">
+      <h5 class="<%= inspection ? 'text-dark' : 'text-light' %>">
         <%= tags_description + ' (' + tags.count.to_s + ') '%>
-        <a class="btn btn-success float-right"
+        <a class="btn <%= inspection ? 'btn-primary' : 'btn-success' %> float-right"
            data-toggle="collapse" href="#tags_collapse<%= id %>"
            aria-expanded="false" aria-controls="tags_collapse<%= id %>">
           Ein-/Ausklappen
@@ -23,7 +23,7 @@
                   <% unless t.nil? %>
                     <li class="text-dark">
                       <% if inspection %>
-                        <%= t.title %>
+                        <%= link_to t.title, inspect_tag_path(t) , class: "text-dark" %>
                       <% else %>
                         <%= link_to t.title, tag_path(t) , class: "text-dark" %>
                       <% end %>

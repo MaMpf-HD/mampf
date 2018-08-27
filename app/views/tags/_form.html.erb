@@ -26,6 +26,8 @@
           </div>
         </div>
         <div class="col-3 text-center">
+          <%= link_to 'Ansehen', inspect_tag_path(tag),
+                      class: 'btn btn-primary my-1' %>
           <%= link_to 'zur Tagübersicht', tags_path,
                       class: 'btn btn-primary' %>
           <% if tag.id.present? && (current_user.admin? ||
@@ -39,7 +41,7 @@
     <% end %>
     <%= render partial: 'tags/data', locals: { tag: tag, f: f, new_tag: new_tag } %>
     <%= f.hidden_field :modal, value: modal %>
-    <% if modal %> 
+    <% if modal %>
       <%= f.submit "Speichern", class: "btn btn-primary" %>
       <button type="button" class="btn btn-secondary"
               data-dismiss="modal">

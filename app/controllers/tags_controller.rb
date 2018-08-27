@@ -1,6 +1,6 @@
 # TagsController
 class TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :edit, :destroy, :update]
+  before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect]
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
   authorize_resource
@@ -17,6 +17,9 @@ class TagsController < ApplicationController
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: 'KeksQuestion'))
+  end
+
+  def inspect
   end
 
   def edit

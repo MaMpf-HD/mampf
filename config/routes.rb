@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :courses
   resources :media, only: [:show, :index]
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
+  get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags
   resources :lessons, only: [:show]
   resources :sections, only: [:show]

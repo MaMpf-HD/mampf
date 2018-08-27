@@ -1,6 +1,6 @@
 <div class="row p-2">
   <div class="col-<%= new_tag ? '12' : '6'%>">
-    <div class="card bg-light mb-4" id="tag-basics-edit-<%= @tag.id.to_i %>">
+    <div class="card bg-light mb-4" id="tag-basics-edit-<%= tag.id.to_i %>">
       <%= render partial: 'tags/basics', locals: { tag: tag, f: f, new_tag: new_tag } %>
     </div>
   </div>
