@@ -5,8 +5,8 @@
 
 # Tag class
 class Tag < ApplicationRecord
-  has_many :course_tag_joins
-  has_many :courses, through: :course_tag_joins
+  has_many :course_tag_joins, dependent: :destroy
+  has_many :courses, through: :course_tag_joins, dependent: :destroy 
   has_many :lecture_tag_disabled_joins
   has_many :disabled_lectures, through: :lecture_tag_disabled_joins,
                                source: :lecture

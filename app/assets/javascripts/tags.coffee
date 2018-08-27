@@ -4,6 +4,8 @@
 
 $(document).on 'turbolinks:load', ->
   tagTable = document.getElementById('tagTable')
+  inputCourses = document.getElementById('inputCourses')
+  inputTag = document.getElementById('inputTag')
   if inputTag?
     tagsWithId = JSON.parse(tagTable.dataset.tags)
     ids = tagsWithId.map (item) -> item.id
@@ -36,12 +38,34 @@ $(document).on 'turbolinks:load', ->
     displayResults()
     return
 
-  $('#tag-form :input').on 'change', ->
-    $('#tag-basics-warning').show()
+  $('[id^="tag-form-"] :input').on 'change', ->
+    id = this.dataset.id
+    $('#tag-basics-warning-' + id).show()
     return
 
-  $('#tag-basics-cancel').on 'click', ->
+  $('[id^="tag-basics-cancel-"]').on 'click', ->
     location.reload()
     return
 
+  $('#tags-edited-courses').on 'click', ->
+    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
+    return
+
+  $('#tags-all-courses').on 'click', ->
+    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
+    return
+
+  $('#tags-no-courses').on 'click', ->
+    inputCourses.selectize.setValue()
+    return
+
+  $('#new-tag-button').on 'click', ->
+    $.ajax Routes.tag_modal_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        related_tag: this.dataset.tag
+        course: this.dataset.course
+      }
+    return
   return

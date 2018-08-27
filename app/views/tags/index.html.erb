@@ -7,34 +7,47 @@
   <div class="col-2">
     <%= link_to 'Tag anlegen', new_tag_path,
                 class: 'btn btn-secondary',
-                id: 'create-new-tag',
-                remote: true %>
+                id: 'create-new-tag' %>
   </div>
 </div>
-<form>
-  <div class="form-row mb-3 p-2">
-    <div class="form-group col-4 mx-3">
-      <label for="inputTag">
-        Titel
-      </label>
-      <input type="text" id="inputTag" class="form-control"
-             placeholder="suchen">
-    </div>
-    <div class="form-group col-6">
-      <label for="inputCourses">
-        Kurse
-      </label>
-      <select multiple id="inputCourses" class="selectize" placeholder="eingeben">
-        <%= Course.all.each do |c| %>
-        <option <%= current_user.edited_courses.include?(c) ? 'selected' : '' %>
-                value="<%= c.id %>">
-          <%= c.short_title %>
-        </option>
-        <% end %>
-      </select>
-    </div>
-  </div>
-</form>
+    <form>
+      <div class="form-row mb-3 p-2">
+        <div class="form-group col-3 mx-3">
+          <label for="inputTag">
+            Titel
+          </label>
+          <input type="text" id="inputTag" class="form-control"
+                 placeholder="suchen">
+        </div>
+        <div class="form-group col-6">
+          <label for="inputCourses">
+            Module
+          </label>
+          <select multiple id="inputCourses" class="selectize"
+                  placeholder="eingeben">
+            <%= Course.all.each do |c| %>
+              <option selected value="<%= c.id %>">
+                <%= c.short_title %>
+              </option>
+            <% end %>
+          </select>
+          <button id="tags-edited-courses" type="button"
+                  class="btn btn-sm btn-outline-info"
+                  data-courses="<%= current_user.edited_courses.map(&:id).to_json %>">
+            editierte Module
+          </button>
+          <button id="tags-all-courses" type="button"
+                  class="btn btn-sm btn-outline-info"
+                  data-courses="<%= Course.all.map(&:id).to_json %>">
+            alle Module
+          </button>
+          <button id="tags-no-courses" type="button"
+                  class="btn btn-sm btn-outline-info">
+            Module leeren
+          </button>
+        </div>
+      </div>
+    </form>
 <div class="row bg-light px-4 py-3">
   <div class="col-3">
     <strong>
@@ -61,7 +74,6 @@
   <% cache(@tags) do %>
     <% @tags.each do |t| %>
       <div class="row border-bottom px-4" id="row-tag-<%= t.id %>"
-           style="display: <%= show_no_block((t.course_ids & current_user.edited_course_ids).present?) %>"
            data-courses="<%= t.courses.each.map(&:id).to_json %>">
         <%= render partial: 'tags/row', locals: { tag: t }%>
       </div>

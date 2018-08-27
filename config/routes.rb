@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :courses
   resources :media, only: [:show, :index]
+  get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   resources :tags
   resources :lessons, only: [:show]
   resources :sections, only: [:show]

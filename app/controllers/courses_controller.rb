@@ -16,7 +16,6 @@ class CoursesController < ApplicationController
   end
 
   def update
-    puts params[:course]
     @course.update(course_params)
     @errors = @course.errors unless @course.valid?
   end

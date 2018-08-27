@@ -15,9 +15,19 @@
   <div class="col-6">
     <div class="card bg-light">
       <div class="card-header">
-        <h5>
-          Tags
-        </h5>
+        <div class="row">
+          <div class="col-4">
+            <h5>
+              Tags
+            </h5>
+          </div>
+          <div class="col-8 text-right">
+            <button type="button" class="btn btn-sm btn-outline-secondary"
+                    id="new-tag-button" data-course="<%= course.id %>">
+              Tag anlegen
+            </button>
+          </div>
+        </div>
       </div>
       <div class="card-body">
         <div id="course-tags">

@@ -1,0 +1,50 @@
+<div id="tag-area-<%= tag.id.to_i %>">
+  <%= form_with model: tag,
+                html: { id: 'tag-form-'+ tag.id.to_i.to_s,
+                        data: { id: tag.id.to_i } } do |f| %>
+    <% unless modal %>
+      <div class="row p-2 mb-3">
+        <div class="col-3">
+          <h4 class="pl-2">
+            <span class="badge badge-secondary">
+              Tag
+            </span>
+            <%= tag.title %>
+          </h4>
+        </div>
+        <div class="col-6">
+          <div id="tag-basics-warning-<%= tag.id.to_i %>"
+               class="redtext"
+               style="display: none;">
+            Achtung, es gibt ungespeicherte Änderungen!
+            <%= f.submit "Speichern", class: "btn btn-primary" %>
+            <button type="button" class="btn btn-secondary ml-2"
+                    id="tag-basics-cancel-<%= tag.id.to_i %>"
+                    data-id="<%= tag.id.to_i %>">
+              verwerfen
+            </button>
+          </div>
+        </div>
+        <div class="col-3 text-center">
+          <%= link_to 'zur Tagübersicht', tags_path,
+                      class: 'btn btn-primary' %>
+          <% if tag.id.present? && (current_user.admin? ||
+                (tag.courses - current_user.edited_courses).blank?) %>
+            <%= link_to 'Tag löschen', tag_path(tag), method: :delete,
+                        data: { confirm: 'Bist Du sicher?' },
+                        class: 'btn btn-danger' %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+    <%= render partial: 'tags/data', locals: { tag: tag, f: f, new_tag: new_tag } %>
+    <%= f.hidden_field :modal, value: modal %>
+    <% if modal %> 
+      <%= f.submit "Speichern", class: "btn btn-primary" %>
+      <button type="button" class="btn btn-secondary"
+              data-dismiss="modal">
+        abbrechen
+      </button>
+    <% end %>
+  <% end %>
+</div>
