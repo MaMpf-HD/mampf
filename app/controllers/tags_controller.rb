@@ -27,7 +27,6 @@ class TagsController < ApplicationController
   end
 
   def new
-    return if @errors.present?
     @tag = Tag.new
   end
 
@@ -46,7 +45,6 @@ class TagsController < ApplicationController
       render :update
       return
     end
-    puts tag_params
     @tag.update(tag_params)
     if @tag.valid?
       unless @modal
@@ -92,8 +90,29 @@ class TagsController < ApplicationController
                                 disabled_lecture_ids: [])
   end
 
+  def check_additional_lecture_compatibility
+    courses = Course.where(id: tag_params[:course_ids])
+    lectures = courses.collect(&:lectures).flatten
+    additional = Lecture.where(id: tag_params[:additional_lecture_ids]).to_a
+    return if (additional & lectures).empty?
+    @errors[:additional_lectures] = [error_hash['incompatible_addition']]
+  end
+
+  def check_disabled_lecture_compatibility
+    courses = Course.where(id: tag_params[:course_ids])
+    lectures = courses.collect(&:lectures).flatten
+    disabled = Lecture.where(id: tag_params[:disabled_lecture_ids]).to_a
+    return if disabled.empty? || (disabled & lectures).present?
+    @errors[:disabled_lectures] = [error_hash['incompatible_disabling']]
+  end
+
   def check_permissions
     @errors = {}
+    check_additional_lecture_compatibility
+    check_disabled_lecture_compatibility
+    puts 'Hi'
+    puts @errors
+    return if @errors.present?
     return if current_user.admin?
     permission_errors('course')
     permission_errors('additional_lecture')
@@ -139,6 +158,12 @@ class TagsController < ApplicationController
       'remove_course' => 'Für mindestens eines der Module, das Du entfernt ' \
                          'hast, hast Du keine Editorenrechte.',
       'add_course' => 'Für mindestens eines der Module, das Du hinzugefügt ' \
-                      'hast, hast Du keine Editorenrechte.' }
+                      'hast, hast Du keine Editorenrechte.',
+      'incompatible_addition' => 'Eine der zusätzlichen Vorlesungen ' \
+                                 'gehört zu einem Modul, was zu diesem ' \
+                                 'Tag aktiviert ist.',
+      'incompatible_disabling' => 'Eine der deaktivierten Vorlesungen ' \
+                                  'gehört nicht zu einem Modul, was zu ' \
+                                  'diesem Tag aktiviert ist.' }
   end
 end

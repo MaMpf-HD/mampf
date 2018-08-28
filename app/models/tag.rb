@@ -24,8 +24,6 @@ class Tag < ApplicationRecord
   validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
                                          'werden.' },
                     uniqueness: { message: 'Titel ist bereits vergeben.' }
-  validate :additional_lectures_sane?
-  validate :disabled_lectures_sane?
 
   def self.ids_titles_json
     Tag.order(:title).map { |t| { id: t.id, title: t.title } }.to_json
@@ -63,29 +61,5 @@ class Tag < ApplicationRecord
 
   def lectures
     Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))
-  end
-
-  private
-
-  def additional_lectures_sane?
-    if (additional_lectures.to_a & courses.collect(&:lectures).flatten).empty?
-      return true
-    end
-    errors.add(:additional_lectures, 'Eine der zusätzlichen Vorlesungen ' \
-                                     'gehört zu einem Modul, was zu diesem ' \
-                                     'Tag aktiviert ist.')
-    false
-  end
-
-  def disabled_lectures_sane?
-    puts disabled_lectures.to_a
-    return true if disabled_lectures.empty?
-    if (disabled_lectures.to_a & courses.collect(&:lectures).flatten).present?
-      return true
-    end
-    errors.add(:disabled_lectures, 'Eine der deaktivierten Vorlesungen ' \
-                                   'gehört nicht zu einem Modul, was zu ' \
-                                   'diesem Tag aktiviert ist.')
-    false
   end
 end

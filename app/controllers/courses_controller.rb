@@ -16,8 +16,10 @@ class CoursesController < ApplicationController
   end
 
   def update
+    old_tag_ids = @course.tag_ids
     @course.update(course_params)
-    @errors = @course.errors unless @course.valid?
+    update_disabled_additional_lectures(old_tag_ids) if @course.valid?
+    @errors = @course.errors
   end
 
   def new
@@ -66,5 +68,21 @@ class CoursesController < ApplicationController
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [])
+  end
+
+  def update_disabled_additional_lectures(old_tag_ids)
+    new_tag_ids = @course.tag_ids
+    update_tag_infos(new_tag_ids - old_tag_ids, 'additional')
+    update_tag_infos(old_tag_ids - new_tag_ids, 'disabled')
+  end
+
+  def update_tag_infos(relevant_ids, sort)
+    relevant_ids.each do |i|
+      tag = Tag.find(i)
+      old_lecture_ids = tag.send(sort + '_lecture_ids')
+      redundant_lecture_ids = @course.lecture_ids
+      new_lecture_ids = old_lecture_ids - redundant_lecture_ids
+      Tag.find(i).update(sort + '_lecture_ids' => new_lecture_ids)
+    end
   end
 end

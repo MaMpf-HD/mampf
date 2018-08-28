@@ -13,5 +13,5 @@ $('#course-short-title-error')
 $('#course_short_title').addClass('is-invalid')
 <% end %>
 <% else %>
-$('#course-basics-warning').hide()
+location.reload()
 <% end %>
