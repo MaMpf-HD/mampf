@@ -65,6 +65,8 @@ class Tag < ApplicationRecord
     Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))
   end
 
+  private
+
   def additional_lectures_sane?
     if (additional_lectures.to_a & courses.collect(&:lectures).flatten).empty?
       return true
@@ -76,6 +78,7 @@ class Tag < ApplicationRecord
   end
 
   def disabled_lectures_sane?
+    puts disabled_lectures.to_a
     return true if disabled_lectures.empty?
     if (disabled_lectures.to_a & courses.collect(&:lectures).flatten).present?
       return true
