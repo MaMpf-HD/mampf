@@ -1,6 +1,6 @@
 # AdministrationController
 class AdministrationController < ApplicationController
-  authorize_resource :class => false
+  authorize_resource class: false
   def index
   end
 

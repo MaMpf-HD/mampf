@@ -7,7 +7,7 @@ class Medium < ApplicationRecord
   has_many :linked_media, through: :links
   has_many :editable_user_joins, as: :editable
   has_many :editors, through: :editable_user_joins, as: :editable,
-           source: :user
+                     source: :user
   validates :sort, presence: true,
                    inclusion: { in: :sort_enum }
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
@@ -180,14 +180,22 @@ class Medium < ApplicationRecord
 
   def self.search_results(filtered_media, course, primary_lecture)
     course_results = filtered_media.select { |m| m.teachable == course }
-    primary_results = filtered_media.select do |m|
-      m.teachable.present? && m.teachable.lecture == primary_lecture
-    end
-    secondary_results = filtered_media.select do |m|
-      m.teachable.present? && m.teachable.course == course
-    end
+    primary_results = Medium.filter_primary(filtered_media, primary_lecture)
+    secondary_results = Medium.filter_secondary(filtered_media, course)
     secondary_results = secondary_results - course_results - primary_results
     course_results + primary_results + secondary_results
+  end
+
+  def self.filter_primary(filtered_media, primary_lecture)
+    filtered_media.select do |m|
+      m.teachable.present? && m.teachable.lecture == primary_lecture
+    end
+  end
+
+  def self.filter_secondary(filtered_media, course)
+    filtered_media.select do |m|
+      m.teachable.present? && m.teachable.course == course
+    end
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
@@ -287,5 +295,17 @@ class Medium < ApplicationRecord
     { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
       'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video',
       'Kiwi' => 'KIWi Video' }[sort]
+  end
+
+  def filter_primary(filtered_media, primary_lecture)
+    filtered_media.select do |m|
+      m.teachable.present? && m.teachable.lecture == primary_lecture
+    end
+  end
+
+  def filter_secondary(filtered_media, course)
+    filtered_media.select do |m|
+      m.teachable.present? && m.teachable.course == course
+    end
   end
 end

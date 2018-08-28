@@ -3,6 +3,7 @@ class TagsController < ApplicationController
   before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect]
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
+  before_action :check_creation_permission, only: [:create]
   authorize_resource
 
   def index
@@ -41,15 +42,12 @@ class TagsController < ApplicationController
   end
 
   def create
-    @modal = (params[:tag][:modal] == 'true')
-    @tag = Tag.new
-    check_permissions
     if @errors.present?
       render :update
       return
     end
-    @tag = Tag.new(tag_params)
-    @tag.save
+    puts tag_params
+    @tag.update(tag_params)
     if @tag.valid?
       unless @modal
         redirect_to edit_tag_path(@tag)
@@ -87,73 +85,60 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:title, :related_tag_ids => [],
-                                 :course_ids => [],
-                                 :additional_lecture_ids => [],
-                                 :disabled_lecture_ids => [])
+    params.require(:tag).permit(:title,
+                                related_tag_ids: [],
+                                course_ids: [],
+                                additional_lecture_ids: [],
+                                disabled_lecture_ids: [])
   end
 
   def check_permissions
     @errors = {}
     return if current_user.admin?
-    courses_errors
-    additional_lectures_errors
-    disabled_lectures_errors
+    permission_errors('course')
+    permission_errors('additional_lecture')
+    permission_errors('disabled_lecture')
   end
 
-  def courses_errors
+  def permission_errors(kind)
+    sort = kind + '_ids'
+    species = kind == 'course' ? 'course' : 'lecture'
     errors = []
-    removed_courses_ids = @tag.course_ids - tag_params[:course_ids].map(&:to_i)
-    added_courses_ids = (tag_params[:course_ids].map(&:to_i) - [0]) -
-                        @tag.course_ids
-    edited_courses_ids = current_user.edited_courses.map(&:id)
-    puts added_courses_ids
-    unless removed_courses_ids.all? { |c| c.in?(edited_courses_ids) }
-      errors.push('Für mindestens eines der Module, das Du entfernt hast, ' \
-                  'hast Du keine Editorenrechte.')
+    unless removed_ids(sort).all? { |c| c.in?(edited_ids(species)) }
+      errors.push(error_hash['remove_' + species])
     end
-    unless added_courses_ids.all? { |c| c.in?(edited_courses_ids) }
-      errors.push('Für mindestens eines der Module, das Du hinzugefügt hast, '\
-                  'hast Du keine Editorenrechte.')
+    unless added_ids(sort).all? { |c| c.in?(edited_ids(species)) }
+      errors.push(error_hash['add_' + species])
     end
-    @errors.merge!({ courses: errors}) if errors.present?
-    puts @errors
-    puts 'Hi'
+    @errors[(kind + 's').to_sym] = errors if errors.present?
   end
 
-  def additional_lectures_errors
-    errors = []
-    removed_additional_lectures_ids = @tag.additional_lecture_ids -
-                                      tag_params[:additional_lecture_ids].map(&:to_i)
-    added_additional_lectures_ids = (tag_params[:additional_lecture_ids].map(&:to_i) -
-                                    [0]) - @tag.additional_lecture_ids
-    edited_lectures_ids = current_user.edited_lectures_with_inheritance.map(&:id)
-    unless removed_additional_lectures_ids.all? { |c| c.in?(edited_lectures_ids) }
-      errors.push('Für mindestens eine der Vorlesungen, die Du entfernt ' \
-                  'hast, hast Du keine Editorenrechte.')
-    end
-    unless added_additional_lectures_ids.all? { |c| c.in?(edited_lectures_ids) }
-      errors.push('Für mindestens eine der Vorlesungen, die Du hinzugefügt ' \
-                   'hast, hast Du keine Editorenrechte.')
-    end
-    @errors.merge!({ additional_lectures: errors}) if errors.present?
+  def check_creation_permission
+    @modal = (params[:tag][:modal] == 'true')
+    @tag = Tag.new
+    check_permissions
   end
 
-  def disabled_lectures_errors
-    errors = []
-    removed_disabled_lectures_ids = @tag.disabled_lecture_ids -
-                                      tag_params[:disabled_lecture_ids].map(&:to_i)
-    added_disabled_lectures_ids = (tag_params[:disabled_lecture_ids].map(&:to_i) -
-                                    [0]) - @tag.disabled_lecture_ids
-    edited_lectures_ids = current_user.edited_lectures_with_inheritance.map(&:id)
-    unless removed_disabled_lectures_ids.all? { |c| c.in?(edited_lectures_ids) }
-      errors.push('Für mindestens eine der Vorlesungen, die Du entfernt hast, '\
-                   'hast Du keine Editorenrechte.')
-    end
-    unless added_disabled_lectures_ids.all? { |c| c.in?(edited_lectures_ids) }
-      errors.push('Für mindestens eine der Vorlesungen, die Du hinzugefügt ' \
-                  'hast, hast Du keine Editorenrechte.')
-    end
-    @errors.merge!({ disabled_lectures: errors}) if errors.present?
+  def removed_ids(sort)
+    @tag.send(sort) - tag_params[sort].map(&:to_i)
+  end
+
+  def edited_ids(species)
+    current_user.send('edited_' + species + 's_with_inheritance').map(&:id)
+  end
+
+  def added_ids(sort)
+    (tag_params[sort].map(&:to_i) - [0]) - @tag.send(sort)
+  end
+
+  def error_hash
+    { 'remove_lecture' => 'Für mindestens eine der Vorlesungen, die Du ' \
+                          'entfernt hast, hast Du keine Editorenrechte.',
+      'add_lecture' => 'Für mindestens eine der Vorlesungen, die Du ' \
+                       'hinzugefügt hast, hast Du keine Editorenrechte.',
+      'remove_course' => 'Für mindestens eines der Module, das Du entfernt ' \
+                         'hast, hast Du keine Editorenrechte.',
+      'add_course' => 'Für mindestens eines der Module, das Du hinzugefügt ' \
+                      'hast, hast Du keine Editorenrechte.' }
   end
 end

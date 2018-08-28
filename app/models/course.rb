@@ -10,12 +10,12 @@ class Course < ApplicationRecord
   has_many :preceding_courses, through: :course_self_joins
   has_many :editable_user_joins, as: :editable
   has_many :editors, through: :editable_user_joins, as: :editable,
-           source: :user
-  validates :title, presence: { message: 'Titel muss vorhanden sein.'},
-            uniqueness: { message: 'Titel ist bereits vergeben.'}
+                     source: :user
+  validates :title, presence: { message: 'Titel muss vorhanden sein.' },
+                    uniqueness: { message: 'Titel ist bereits vergeben.' }
   validates :short_title,
-            presence: { message: 'Kurztitel muss vorhanden sein.'},
-            uniqueness: { message: 'Kurztitel ist bereits vergeben.'}
+            presence: { message: 'Kurztitel muss vorhanden sein.' },
+            uniqueness: { message: 'Kurztitel ist bereits vergeben.' }
 
   def to_label
     title

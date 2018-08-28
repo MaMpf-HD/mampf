@@ -6,10 +6,10 @@ class CoursesController < ApplicationController
 
   def index
     edited_courses = current_user.edited_courses.order(:title).to_a
-    other_courses = Course.select { |c| !c.editors.include?(current_user) }
+    other_courses = Course.select { |c| c.editors.exclude?(current_user) }
                           .sort_by(&:title)
     @courses = Kaminari.paginate_array(edited_courses + other_courses)
-                      .page params[:page]
+                       .page params[:page]
   end
 
   def edit
@@ -62,8 +62,9 @@ class CoursesController < ApplicationController
   end
 
   def course_params
-    params.require(:course).permit(:title, :short_title, :news, :tag_ids => [],
-                                   :preceding_course_ids => [],
-                                   :editor_ids => [])
+    params.require(:course).permit(:title, :short_title, :news,
+                                   tag_ids: [],
+                                   preceding_course_ids: [],
+                                   editor_ids: [])
   end
 end

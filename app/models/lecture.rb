@@ -15,7 +15,7 @@ class Lecture < ApplicationRecord
   has_many :users, through: :lecture_user_joins
   has_many :editable_user_joins, as: :editable
   has_many :editors, through: :editable_user_joins, as: :editable,
-           source: :user
+                     source: :user
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'already exists' }
 
@@ -33,7 +33,9 @@ class Lecture < ApplicationRecord
 
   def kaviar?
     Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
-      Medium.where(sort: 'Kaviar').to_a.any? { |m| m.teachable.present? && m.teachable.lecture == self }
+      Medium.where(sort: 'Kaviar').to_a.any? do |m|
+        m.teachable.present? && m.teachable.lecture == self
+      end
     end
   end
 
@@ -61,8 +63,7 @@ class Lecture < ApplicationRecord
   end
 
   def title_teacher_info
-    return course.title unless teacher.present?
-    return course.title unless teacher.name.present?
+    return course.title unless teacher.present? && teacher.name.present?
     course.title + ' (' + teacher.name + ')'
   end
 
@@ -123,7 +124,8 @@ class Lecture < ApplicationRecord
   def lecture_lesson_results(filtered_media)
     lecture_results = filtered_media.select { |m| m.teachable == self }
     lesson_results = filtered_media.select do |m|
-      m.teachable_type == 'Lesson' && m.teachable.present? && m.teachable.lecture == self
+      m.teachable_type == 'Lesson' && m.teachable.present? &&
+        m.teachable.lecture == self
     end
     lecture_results + lesson_results.sort_by { |m| m.teachable.lesson.number }
   end

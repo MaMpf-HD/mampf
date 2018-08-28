@@ -6,7 +6,7 @@
 # Tag class
 class Tag < ApplicationRecord
   has_many :course_tag_joins, dependent: :destroy
-  has_many :courses, through: :course_tag_joins, dependent: :destroy 
+  has_many :courses, through: :course_tag_joins, dependent: :destroy
   has_many :lecture_tag_disabled_joins
   has_many :disabled_lectures, through: :lecture_tag_disabled_joins,
                                source: :lecture
@@ -21,8 +21,9 @@ class Tag < ApplicationRecord
   has_many :media, through: :medium_tag_joins
   has_many :relations, dependent: :destroy
   has_many :related_tags, through: :relations, dependent: :destroy
-  validates :title, presence: { message: 'Es muss ein Titel angegeben werden.'},
-                    uniqueness: { message: 'Titel ist bereits vergeben.'}
+  validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
+                                         'werden.' },
+                    uniqueness: { message: 'Titel ist bereits vergeben.' }
   validate :additional_lectures_sane?
   validate :disabled_lectures_sane?
 
@@ -67,23 +68,23 @@ class Tag < ApplicationRecord
   private
 
   def additional_lectures_sane?
-    if (additional_lectures.to_a & courses.collect{ |c| c.lectures }.flatten).empty?
+    if (additional_lectures.to_a & courses.collect(&:lectures).flatten).empty?
       return true
-    else
-      errors.add(:additional_lectures, 'Eine der zusätzlichen Vorlesungen gehört zu einem ' \
-                        'Modul, was zu diesem Tag aktiviert ist.')
-      return false
     end
+    errors.add(:additional_lectures, 'Eine der zusätzlichen Vorlesungen ' \
+                                     'gehört zu einem Modul, was zu diesem ' \
+                                     'Tag aktiviert ist.')
+    false
   end
 
   def disabled_lectures_sane?
     return true if disabled_lectures.empty?
-    if (disabled_lectures.to_a & courses.collect{ |c| c.lectures }.flatten).present?
+    if (disabled_lectures.to_a & courses.collect(&:lectures).flatten).present?
       return true
-    else
-      errors.add(:disabled_lectures, 'Eine der deaktivierten Vorlesungen gehört nicht zu einem ' \
-                                     'Modul, was zu diesem Tag aktiviert ist.')
-      return false
     end
+    errors.add(:disabled_lectures, 'Eine der deaktivierten Vorlesungen ' \
+                                   'gehört nicht zu einem Modul, was zu ' \
+                                   'diesem Tag aktiviert ist.')
+    false
   end
 end

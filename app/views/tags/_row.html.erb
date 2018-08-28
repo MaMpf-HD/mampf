@@ -12,7 +12,7 @@
 </div>
 <div class="col-4">
   <% tag.related_tags.each do |t| %>
-    <%= link_to t.title, inspect_tag_path(t), class:'badge badge-info' %>
+    <%= link_to t.title, inspect_tag_path(t), class:'badge badge-light' %>
   <% end %>
 </div>
 <div class="col-3">

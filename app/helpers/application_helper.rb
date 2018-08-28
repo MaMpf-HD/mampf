@@ -56,7 +56,7 @@ module ApplicationHelper
 
   def lecture_course_teachables(media)
     lecture_ids =  lecture_media(media).map { |m| m.teachable.lecture }
-                                .map(&:id).uniq
+                                       .map(&:id).uniq
     course_ids = course_media(media).map { |m| m.teachable.course }
                                     .map(&:id).uniq
     lectures = Lecture.where(id: lecture_ids)
@@ -68,7 +68,7 @@ module ApplicationHelper
     if teachable.class == Course
       return course_media(media).select { |m| m.course == teachable }
     end
-    return lecture_media(media).select{ |m| m.teachable.lecture == teachable }
+    lecture_media(media).select { |m| m.teachable.lecture == teachable }
   end
 
   def split_list(list, pieces = 4)

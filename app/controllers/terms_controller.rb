@@ -54,5 +54,4 @@ class TermsController < ApplicationController
   def term_params
     params.require(:term).permit(:year, :season)
   end
-
 end

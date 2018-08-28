@@ -26,8 +26,10 @@
           </div>
         </div>
         <div class="col-3 text-center">
-          <%= link_to 'Ansehen', inspect_tag_path(tag),
-                      class: 'btn btn-primary my-1' %>
+          <% unless new_tag %>
+            <%= link_to 'Ansehen', inspect_tag_path(tag),
+                        class: 'btn btn-primary my-1' %>
+          <% end %>
           <%= link_to 'zur Tagübersicht', tags_path,
                       class: 'btn btn-primary' %>
           <% if tag.id.present? && (current_user.admin? ||

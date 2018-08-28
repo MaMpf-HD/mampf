@@ -9,11 +9,11 @@ class User < ApplicationRecord
   has_many :courses, through: :course_user_joins
   has_many :editable_user_joins, foreign_key: :user_id
   has_many :edited_courses, through: :editable_user_joins,
-           source: :editable, source_type: 'Course'
+                            source: :editable, source_type: 'Course'
   has_many :edited_lectures, through: :editable_user_joins,
-           source: :editable, source_type: 'Lecture'
+                             source: :editable, source_type: 'Lecture'
   has_many :edited_media, through: :editable_user_joins,
-           source: :editable, source_type: 'Medium'
+                          source: :editable, source_type: 'Medium'
   has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
   validates :courses,
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
@@ -21,7 +21,7 @@ class User < ApplicationRecord
             if: :courses_exist?
   validates :homepage, http_url: true, if: :homepage?
   validates :name,
-            presence: { message: 'Es muss ein Anzeigename angegeben werden.'},
+            presence: { message: 'Es muss ein Anzeigename angegeben werden.' },
             if: :edited_profile?
   before_save :set_defaults
   after_create :set_consented_at
@@ -31,11 +31,11 @@ class User < ApplicationRecord
   end
 
   def self.teachers
-    User.select { |u| u.teacher? }
+    User.select(&:teacher?)
   end
 
   def self.editors
-    User.select { |u| u.editor? }
+    User.select(&:editor?)
   end
 
   def related_courses
@@ -130,6 +130,10 @@ class User < ApplicationRecord
 
   def edited_lectures_with_inheritance
     edited_courses.map(&:lectures).flatten | edited_lectures.to_a
+  end
+
+  def edited_courses_with_inheritance
+    edited_courses
   end
 
   private
