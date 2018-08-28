@@ -260,13 +260,19 @@ class Medium < ApplicationRecord
 
   def touch_teachable
     return if teachable.nil?
-    teachable.course.touch
+    if teachable.course.present? && teachable.course.persisted?
+      teachable.course.touch
+    end
     optional_touches
   end
 
   def optional_touches
-    teachable.lecture.touch if teachable.lecture.present?
-    teachable.lesson.touch if teachable.lesson.present?
+    if teachable.lecture.present? && teachable.lecture.persisted?
+      teachable.lecture.touch
+    end
+    if teachable.lesson.present? && teachable.lesson.persisted?
+      teachable.lesson.touch
+    end
   end
 
   def lecture_path(teachable)
