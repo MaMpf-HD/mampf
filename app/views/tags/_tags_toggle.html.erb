@@ -20,9 +20,11 @@
             <% tags.sort_by(&:title).each do |t| %>
               <% unless t.nil? %>
                 <% if inspection %>
-                  <%= link_to t.title, inspect_tag_path(t) , class: "badge badge-light" %>
+                  <%= link_to t.title, inspect_tag_path(t),
+                              class: "badge badge-light" %>
                 <% else %>
-                  <%= link_to t.title, tag_path(t) , class: "badge badge-light" %>
+                  <%= link_to t.title, tag_path(t),
+                              class: "badge badge-light" %>
                 <% end %>
               <% end %>
             <% end %>

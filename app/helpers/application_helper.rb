@@ -26,6 +26,10 @@ module ApplicationHelper
     value ? 'active' : ''
   end
 
+  def show_collapse(value)
+    value ? 'show collapse' : 'collapse'
+  end
+
   def show_tab(value)
     value ? 'show active' : ''
   end
@@ -88,11 +92,12 @@ module ApplicationHelper
   end
 
   def administrates?(controller, action)
-    return true if controller == 'administration'
-    return true if controller == 'terms'
-    return true if controller =='courses' && action != 'show'
+    return true if controller.in?(['administration', 'terms', 'lectures'])
+    return true if controller == 'courses' && action != 'show'
     return true if controller == 'users' && action != 'teacher'
     return true if controller == 'tags' && action != 'show'
+    return true if controller == 'chapters' && action != 'show'
+    return true if controller == 'sections' && action != 'show'
     false
   end
 end

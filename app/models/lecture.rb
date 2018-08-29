@@ -87,6 +87,19 @@ class Lecture < ApplicationRecord
     self
   end
 
+  def editors_with_inheritance
+    editors.to_a + course.editors
+  end
+
+  def teacher_and_editors_with_inheritance
+    ([teacher] + editors_with_inheritance).uniq
+  end
+
+  def edited_by?(user)
+    return true if editors_with_inheritance.include?(user)
+    false
+  end
+
   def primary?(user)
     course_join = CourseUserJoin.where(user: user, course: lecture.course)
     return if course_join.empty?
@@ -128,5 +141,11 @@ class Lecture < ApplicationRecord
         m.teachable.lecture == self
     end
     lecture_results + lesson_results.sort_by { |m| m.teachable.lesson.number }
+  end
+
+  def self.sort_by_date(lectures)
+    lectures.to_a.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
   end
 end

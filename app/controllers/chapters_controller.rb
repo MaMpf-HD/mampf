@@ -1,9 +1,13 @@
 # ChaptersController
 class ChaptersController < ApplicationController
-  before_action :set_chapter, only: [:show]
+  before_action :set_chapter, only: [:show, :edit]
   authorize_resource
 
   def show
+  end
+
+  def edit
+    @section = Section.find_by_id(params[:section_id])
   end
 
   private

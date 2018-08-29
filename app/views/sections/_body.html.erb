@@ -1,0 +1,47 @@
+<%= form_with model: section,
+              html: { id: 'section-form-' + section.id.to_i.to_s } do |f| %>
+  <div class="form-row">
+    <div class="col-4 form-group">
+      <%= f.label :title, 'Titel' %>
+      <%= f.text_field :title, { class: 'form-control',
+                                 id: 'section_title_' + section.id.to_i.to_s } %>
+      <div class="invalid-feedback"
+           id="section-title-error-<%= section.id.to_i %>">
+      </div>
+    </div>
+    <div class="col-2 form-group">
+      <%= f.label :number, 'Nummer' %>
+      <%= f.number_field :number, { class: 'form-control', disabled: true,
+                                    id: 'section_number_' + section.id.to_i.to_s} %>
+    </div>
+    <div class="col-6 form-group">
+      <%= f.label :number_alt,
+                  'Anzeigenummer (falls verschieden von Nummer)' %>
+      <%= f.text_field :number_alt, { class: 'form-control',
+                                      id: 'section_number_alt_' + section.id.to_i.to_s } %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :tag_ids, 'Verknüpfte Tags' %>
+    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
+            id="new-tag-button-<%= section.id.to_i.to_s %>"
+            data-course="<%= section.chapter.lecture.course.id %>">
+            Tag anlegen
+    </button>
+    <%= f.select :tag_ids,
+                 options_for_select(Tag.select_by_title,section.tag_ids),
+                 {}, { multiple: true,
+                       class: 'selectize mt-2',
+                       data: { id: section.id.to_i },
+                       id: 'section_tag_ids_' + section.id.to_i.to_s } %>
+  </div>
+  <div class="form-group">
+    <%= f.label :tag_ids, 'Sitzungen' %>
+    <%= f.select :lesson_ids,
+                 options_for_select(Lesson.select_by_date, section.lesson_ids),
+                 {}, { multiple: true,
+                       class: 'selectize mt-2',
+                       data: { id: section.id.to_i },
+                       id: 'section_lesson_ids_' + section.id.to_i.to_s } %>
+  </div>
+<% end %>

@@ -1,0 +1,117 @@
+<div id="lecture-area">
+<%= form_with model: @lecture, html: { id: 'lecture-form' } do |f| %>
+<div class="row px-4 py-2 mt-2">
+  <div class="col-4">
+    <h4 class="pl-2">
+      <span class="badge badge-secondary">
+        Vorlesung
+      </span>
+      <%= @lecture.title %>
+    </h4>
+  </div>
+  <div class="col-5">
+    <div id="lecture-basics-warning">
+      Achtung, es gibt ungespeicherte Änderungen!
+      <%= f.submit "Speichern", class: "btn btn-primary" %>
+      <button type="button" class="btn btn-secondary ml-2"
+              id="lecture-basics-cancel" data-id="<%= @lecture.id %>">
+        verwerfen
+      </button>
+    </div>
+  </div>
+  <div class="col-3 text-center">
+    <%= link_to 'Ansehen', inspect_lecture_path(@lecture),
+                class: 'btn btn-primary my-1' %>
+    <%= link_to 'zur Vorlesungsübersicht', lectures_path,
+                class: 'btn btn-primary' %>
+    <% if @lecture.lessons.empty? && @lecture.media.empty? &&
+          (current_user.admin? || lecture.editors.include?(current_user)) %>
+      <%= link_to 'Vorlesung löschen', lecture_path, method: :delete,
+                  data: { confirm: 'Bist Du sicher?' },
+                  class: 'btn btn-danger' %>
+    <% end %>
+  </div>
+</div>
+<div class="row px-4 py-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              Basisdaten
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="card-body p-2">
+        <div class="form-row">
+        <div class="col-2">
+          <div class="row">
+            <div class="col-12">
+              Modul
+            </div>
+            <div class="col-12">
+              <%= link_to @lecture.course.title, inspect_course_path(@lecture.course) %>
+            </div>
+          </div>
+        </div>
+        <div class="col-3 form-group">
+          <%= f.label :teacher, 'DozentIn' %>
+          <%= f.select :teacher,
+                       options_for_select(User.select_editors,
+                                          @lecture.teacher.id),
+                       {}, { class: 'selectize' } %>
+          <div class="invalid-feedback" id="lecture-teacher-error">
+          </div>
+        </div>
+        <div class="col-3 form-group">
+          <%= f.label :editor_ids, 'Vorlesungseditoren' %>
+          <%= f.select :editor_ids,
+                       options_for_select(User.select_editors,
+                                          @lecture.editors.map(&:id)),
+                       {}, { multiple: true, class: 'selectize' } %>
+        </div>
+        <div class="col-4">
+          Moduleditoren:
+          <ul>
+            <% @lecture.course.editors.each do |e| %>
+              <li>
+                <%= e.name %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row px-4 py-2">
+  <% unless @lecture.chapters.empty? %>
+    <div class="col-12 col-md-12 col-lg-6 pt-3">
+      <%= render partial: 'lectures/editable_content',
+                 locals: { lecture: @lecture } %>
+    </div>
+  <% end %>
+  <% unless @lecture.lessons.empty? %>
+    <div class="col-12 col-md-12 col-lg-6 pt-3">
+      <%= render partial: 'lectures/editable_lessons',
+                 locals: { lessons: @lecture.lessons,
+                           lessons_description: 'Verknüpfte Sitzungen' } %>
+    </div>
+  <% end %>
+</div>
+<% unless @lecture.tags.empty? %>
+  <div class="row p-4">
+    <div class="col-12">
+      <%= render partial: 'tags/tags_toggle',
+                 locals: { tags: @lecture.tags,
+                           tags_description: 'Verknüpfte Begriffe',
+                           id: @lecture.id,
+                           inspection: true } %>
+    </div>
+  </div>
+<% end %>
+<% end %>
+</div>

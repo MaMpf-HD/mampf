@@ -20,9 +20,13 @@ class Section < ApplicationRecord
     chapter.lecture
   end
 
+  def shown_number
+    return '§' + number.to_s unless number_alt.present?
+    '§' + number_alt
+  end
+
   def to_label
-    return '§' + number.to_s + '. ' + title unless number_alt.present?
-    '§' + number_alt + '. ' + title
+    shown_number + '. ' + title
   end
 
   private

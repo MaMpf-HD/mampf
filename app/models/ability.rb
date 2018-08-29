@@ -17,6 +17,16 @@ class Ability
       can :update, Course do |course|
         course.edited_by?(user)
       end
+      can :read, Lecture
+      can :update, Lecture do |lecture|
+        lecture.edited_by?(user)
+      end
+      can :read, Chapter
+      can :update, Chapter do |chapter|
+        chapter.lecture.edited_by?(user)
+      end
+      can :inspect, Chapter
+      can :inspect, Lecture
       can :manage, Tag
       can :inspect, Course
       cannot :create, Course

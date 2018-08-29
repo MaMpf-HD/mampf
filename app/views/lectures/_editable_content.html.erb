@@ -1,0 +1,24 @@
+<div class="card bg-mdb-color-lighten-6">
+  <div class="card-header">
+    <h5>
+      Vorlesungsinhalt
+    </h5>
+  </div>
+  <div class="card-body">
+    <ul>
+      <% lecture.chapters.each do |c| %>
+        <li>
+          <%= link_to c.to_label, edit_chapter_path(c) %>
+        </li>
+        <ul>
+          <% c.sections.each do |s| %>
+            <li>
+              <%= link_to s.to_label, edit_chapter_path(c, section_id: s.id),
+                          class: 'text-dark' %>
+            </li>
+          <% end%>
+        </ul>
+      <% end %>
+    </ul>
+  </div>
+</div>

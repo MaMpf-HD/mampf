@@ -17,6 +17,10 @@ class Lesson < ApplicationRecord
   validate :valid_date?
   validate :valid_date_for_term?
 
+  def self.select_by_date
+    Lesson.all.to_a.sort_by(&:date).map { |l| [l.date, l.id] }
+  end
+
   def term
     return unless lecture.present?
     lecture.term

@@ -11,9 +11,12 @@ Rails.application.routes.draw do
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags
   resources :lessons, only: [:show]
-  resources :sections, only: [:show]
-  resources :chapters, only: [:show]
+  resources :sections
+  get 'chapters/:id/inspect/', to: 'chapters#inspect', as: 'inspect_chapter'  
+  resources :chapters
   resources :terms, except: [:show]
+  get 'lectures/:id/inspect/', to: 'lectures#inspect', as: 'inspect_lecture'
+  resources :lectures
   devise_for :users, controllers: { registrations: 'registrations' }
   get 'users/elevate', to: 'users#elevate', as: 'elevate_user'
   get 'users/teacher/:teacher_id', to: 'users#teacher', as: 'teacher'

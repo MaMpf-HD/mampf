@@ -41,7 +41,8 @@
         </div>
       </div>
     <% end %>
-    <%= render partial: 'tags/data', locals: { tag: tag, f: f, new_tag: new_tag } %>
+    <%= render partial: 'tags/data',
+               locals: { tag: tag, f: f, new_tag: new_tag } %>
     <%= f.hidden_field :modal, value: modal %>
     <% if modal %>
       <%= f.submit "Speichern", class: "btn btn-primary" %>

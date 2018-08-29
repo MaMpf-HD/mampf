@@ -1,8 +1,19 @@
 # LecturesController
 class LecturesController < ApplicationController
-  before_action :set_lecture, only: [:show]
+  before_action :set_lecture, only: [:edit]
   authorize_resource
   before_action :check_for_consent
+
+  def index
+    lectures = current_user.edited_lectures_with_inheritance
+    edited_lectures = Lecture.sort_by_date(lectures).to_a
+    other_lectures = Lecture.sort_by_date(Lecture.all.to_a - lectures)
+    @lectures = Kaminari.paginate_array(edited_lectures + other_lectures)
+                        .page params[:page]
+  end
+
+  def edit
+  end
 
   private
 

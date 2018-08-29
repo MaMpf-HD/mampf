@@ -1,0 +1,46 @@
+<div class="row mt-3 p-2">
+  <div class="col-10">
+    <h4>
+      Vorlesungsübersicht
+    </h4>
+  </div>
+  <div class="col-2">
+    <%= link_to 'Vorlesung anlegen', new_lecture_path,
+                class: 'btn btn-secondary',
+                id: 'create-new-lecture' %>
+  </div>
+</div>
+<div class="row p-2">
+  <div class="col-8">
+  </div>
+  <div class="col-4 text-right">
+    <%= paginate @lectures %>
+  </div>
+</div>
+<div class="row bg-light px-4 py-3">
+  <div class="col-3">
+    <strong>
+      Modul
+    </strong>
+  </div>
+  <div class="col-2">
+    <strong>
+      Semester
+    </strong>
+  </div>
+  <div class="col-3">
+    <strong>
+      Verantwortliche
+    </strong>
+  </div>
+  <div class="col-4">
+    <strong>
+      Aktionen
+    </strong>
+  </div>
+</div>
+<% @lectures.each do |l| %>
+  <div class="row border-bottom px-4" id="row-lecture-<%= l.id %>">
+    <%= render partial: 'lectures/row', locals: { lecture: l }%>
+  </div>
+<% end %>
