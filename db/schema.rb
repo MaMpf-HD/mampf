@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_24_155138) do
+ActiveRecord::Schema.define(version: 2018_08_30_093646) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2018_08_24_155138) do
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "position"
     t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
   end
 
@@ -105,6 +106,9 @@ ActiveRecord::Schema.define(version: 2018_08_24_155138) do
     t.integer "course_id"
     t.integer "term_id"
     t.integer "teacher_id"
+    t.integer "start_chapter"
+    t.boolean "absolute_numbering"
+    t.integer "start_section"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -213,6 +217,7 @@ ActiveRecord::Schema.define(version: 2018_08_24_155138) do
     t.string "number_alt"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "position"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 

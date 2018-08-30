@@ -2,8 +2,12 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'click', '#register-user', (evt) ->
-  if $('#dsgvo-consent').prop('checked') == false
-    alert 'Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.'
-    evt.preventDefault()
+$(document).on 'turbolinks:load', ->
+
+  $(document).on 'click', '#register-user', (evt) ->
+    if $('#dsgvo-consent').prop('checked') == false
+      alert 'Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.'
+      evt.preventDefault()
+    return
+
   return

@@ -44,7 +44,7 @@
           </div>
         </div>
       </div>
-      <div class="card-body p-2">
+      <div class="card-body">
         <div class="form-row">
         <div class="col-2">
           <div class="row">
@@ -56,23 +56,24 @@
             </div>
           </div>
         </div>
-        <div class="col-3 form-group">
-          <%= f.label :teacher, 'DozentIn' %>
-          <%= f.select :teacher,
+        <div class="col-2 form-group">
+          <%= f.label :teacher_id, 'DozentIn' %>
+          <%= f.select :teacher_id,
                        options_for_select(User.select_editors,
                                           @lecture.teacher.id),
                        {}, { class: 'selectize' } %>
           <div class="invalid-feedback" id="lecture-teacher-error">
           </div>
         </div>
-        <div class="col-3 form-group">
+        <div class="col-2 form-group">
           <%= f.label :editor_ids, 'Vorlesungseditoren' %>
           <%= f.select :editor_ids,
-                       options_for_select(User.select_editors,
+                       options_for_select(User.select_editors -
+                                          @lecture.course.editors.map { |e| [e.info, e.id]},
                                           @lecture.editors.map(&:id)),
                        {}, { multiple: true, class: 'selectize' } %>
         </div>
-        <div class="col-4">
+        <div class="col-2">
           Moduleditoren:
           <ul>
             <% @lecture.course.editors.each do |e| %>
@@ -81,6 +82,24 @@
               </li>
             <% end %>
           </ul>
+        </div>
+        <div class="col-1 form-group">
+          <%= f.label :start_chapter, 'Startkapitel' %>
+          <%= f.number_field :start_chapter, value: @lecture.start_chapter || 1,
+                             class: 'form-control'  %>
+        </div>
+        <div class="col-2 mt-6">
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :absolute_numbering, class: 'custom-control-input' %>
+            <%= f.label :absolute_numbering, 'absolute Nummerierung',
+                      { class: 'custom-control-label' } %>
+          </div>
+          <div id="start-section-input"
+               style="display: <%= show(@lecture.absolute_numbering || false) %>">
+            <%= f.label :start_section, 'Startabschnitt' %>
+            <%= f.number_field :start_section, value: @lecture.start_section || 1,
+                             class: 'form-control' %>
+          </div>
         </div>
       </div>
       </div>

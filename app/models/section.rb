@@ -1,6 +1,7 @@
 # Section class
 class Section < ApplicationRecord
   belongs_to :chapter
+  acts_as_list scope: :chapter
   has_many :section_tag_joins
   has_many :tags, through: :section_tag_joins
   has_many :lesson_section_joins
@@ -21,8 +22,17 @@ class Section < ApplicationRecord
   end
 
   def shown_number
-    return '§' + number.to_s unless number_alt.present?
-    '§' + number_alt
+    return '§' + display_number
+  end
+
+  def display_number
+    unless lecture.absolute_numbering
+      return chapter.display_number + '.' + position.to_s
+    end
+    absolute_position = chapter.higher_items.map(&:sections).flatten
+                               .count + position
+    return absolute_position.to_s unless lecture.start_section.present?
+    (absolute_position + lecture.start_section - 1).to_s
   end
 
   def to_label

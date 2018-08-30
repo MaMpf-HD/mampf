@@ -8,7 +8,7 @@ class Lecture < ApplicationRecord
   has_many :lecture_tag_additional_joins
   has_many :additional_tags, through: :lecture_tag_additional_joins,
                              source: :tag
-  has_many :chapters, dependent: :destroy
+  has_many :chapters,  -> { order(position: :asc) }, dependent: :destroy
   has_many :lessons, dependent: :destroy
   has_many :media, as: :teachable
   has_many :lecture_user_joins, dependent: :destroy

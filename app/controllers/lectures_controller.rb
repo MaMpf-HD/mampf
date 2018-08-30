@@ -1,6 +1,6 @@
 # LecturesController
 class LecturesController < ApplicationController
-  before_action :set_lecture, only: [:edit]
+  before_action :set_lecture, only: [:edit, :update]
   authorize_resource
   before_action :check_for_consent
 
@@ -15,6 +15,11 @@ class LecturesController < ApplicationController
   def edit
   end
 
+  def update
+    @lecture.update(lecture_params)
+    @errors = @lecture.errors
+  end
+
   private
 
   def set_lecture
@@ -26,5 +31,11 @@ class LecturesController < ApplicationController
 
   def check_for_consent
     redirect_to consent_profile_path unless current_user.consents
+  end
+
+  def lecture_params
+    params.require(:lecture).permit(:teacher_id, :start_chapter,
+                                   :absolute_numbering, :start_section,
+                                   editor_ids: [])
   end
 end

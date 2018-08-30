@@ -1,7 +1,8 @@
 # Chapter class
 class Chapter < ApplicationRecord
   belongs_to :lecture
-  has_many :sections
+  acts_as_list scope: :lecture
+  has_many :sections, -> { order(position: :asc)}
   validates :title, presence: true
   validates :number, presence: true,
                      numericality: { only_integer: true,
@@ -11,7 +12,12 @@ class Chapter < ApplicationRecord
                                    message: 'chapter already exists' }
 
   def to_label
-    'Kapitel ' + number.to_s + '. ' + title
+    'Kapitel ' + display_number + '. ' + title
+  end
+
+  def display_number
+    return position.to_s unless lecture.start_chapter.present?
+    (lecture.start_chapter + position - 1).to_s
   end
 
   def tags

@@ -58,6 +58,8 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
+    acts_as_list (0.9.16)
+      activerecord (>= 3.0)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
     arel (9.0.0)
@@ -359,6 +361,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
+  acts_as_list
   bootsnap (>= 1.1.0)
   bootstrap (~> 4.1.1)
   bootstrap_form!
