@@ -33,7 +33,17 @@ $(document).on 'turbolinks:load', ->
       data: {
         id: sectionId
       }
-    $('#section-basics-warning-' + sectionId).hide()
+#    $('#section-basics-warning-' + sectionId).hide()
     return
 
+  $('[id^="section-tag-links-"]').on 'click', ->
+    sectionId = this.dataset.id
+    tags = document.getElementById('section_tag_ids_' + sectionId).selectize.getValue()
+    $.ajax Routes.list_section_tags_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: sectionId
+        tags: JSON.stringify(tags)
+      }
   return

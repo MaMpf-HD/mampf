@@ -14,6 +14,10 @@ class SectionsController < ApplicationController
     @errors = @section.errors
   end
 
+  def list_tags
+    @tags = Tag.where(id: JSON.parse(params[:tags])).sort_by(&:title)
+    @id = params[:id]
+  end
 
   private
 

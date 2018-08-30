@@ -48,6 +48,11 @@ class Tag < ApplicationRecord
     Tag.where(id: ids - related_ids)
   end
 
+  def short_title
+    return title unless title.length > 30
+    title[0, 27] + '...'
+  end
+
   def in_lecture?(lecture)
     return false unless (lecture.course.tags.include?(self) &&
                         !lecture.disabled_tags.include?(self)) ||

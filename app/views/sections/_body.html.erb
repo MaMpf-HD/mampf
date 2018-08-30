@@ -48,6 +48,11 @@
             data-course="<%= section.chapter.lecture.course.id %>">
             Tag anlegen
     </button>
+    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
+            id="section-tag-links-<%= section.id.to_i.to_s %>"
+            data-id="<%= section.id %>">
+            Tag-Links einblenden
+    </button>
     <%= f.select :tag_ids,
                  options_for_select(Tag.select_by_title,section.tag_ids),
                  {}, { multiple: true,
@@ -56,6 +61,9 @@
                        id: 'section_tag_ids_' + section.id.to_i.to_s } %>
     <div class="invalid-feedback"
          id="section-tags-error-<%= section.id.to_i %>">
+    </div>
+    <div id="section-tag-list-<%= section.id.to_i.to_s %>"
+         data-show="0">
     </div>
   </div>
   <div class="form-group">
