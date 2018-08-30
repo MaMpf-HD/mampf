@@ -8,7 +8,7 @@
     <ul>
       <% lecture.chapters.each do |c| %>
         <li>
-          <%= link_to c.to_label, edit_chapter_path(c) %>
+          <%= link_to c.to_label, edit_chapter_path(c), class: 'text-info' %>
         </li>
         <ul>
           <% c.sections.each do |s| %>

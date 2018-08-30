@@ -1,19 +1,25 @@
 <div class="row">
-  <div class="col-9">
-      <span class="badge badge-info">
-        <%= section.shown_number %>
+  <div class="col-6">
+      <span class="bg-info mr-2 section-badge">
+        <%= section.displayed_number %>
       </span>
       <%= section.title %>
   </div>
+  <div class="col-3">
+    <span id="section-unsaved-changes-<%= section.id%>"
+          style="display: none; color: red;">
+      Es gibt ungespeicherte Änderungen.
+    </span>
+  </div>
   <div class="col-3 text-right">
     <div class='btn-group'>
-      <button id="targets-section-<%= section.id %>"
+      <button id="details-section-<%= section.id %>"
               class="btn btn-sm btn-outline-primary rounded collapsed m-1"
               data-toggle="collapse"
               data-target="#collapse-section-<%= section.id %>"
               aria-expanded="true"
               aria-controls="collapse-section-<%= section.id %>">
-        Bearbeiten
+        <%= section == chosen_section ? 'Zuklappen' : 'Bearbeiten' %>
       </button>
       <%= link_to 'Löschen', section_path(section),
                   method: :delete,

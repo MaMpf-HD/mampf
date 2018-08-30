@@ -1,10 +1,19 @@
 # SectionController
 class SectionsController < ApplicationController
-  before_action :set_section, only: [:show]
+  before_action :set_section, only: [:show, :reset, :update]
   authorize_resource
 
   def show
   end
+
+  def reset
+  end
+
+  def update
+    @section.update(section_params)
+    @errors = @section.errors
+  end
+
 
   private
 
@@ -13,5 +22,10 @@ class SectionsController < ApplicationController
     return if @section.present?
     redirect_to :root, alert: 'Ein Abschnitt mit der angeforderten id existiert
                                nicht.'
+  end
+
+  def section_params
+    params.require(:section).permit(:title, :display_number, tag_ids: [],
+                                                             lesson_ids: [])
   end
 end

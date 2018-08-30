@@ -11,8 +11,9 @@ Rails.application.routes.draw do
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags
   resources :lessons, only: [:show]
+  get 'sections/reset/', to: 'sections#reset', as: 'reset_section' 
   resources :sections
-  get 'chapters/:id/inspect/', to: 'chapters#inspect', as: 'inspect_chapter'  
+  get 'chapters/:id/inspect/', to: 'chapters#inspect', as: 'inspect_chapter'
   resources :chapters
   resources :terms, except: [:show]
   get 'lectures/:id/inspect/', to: 'lectures#inspect', as: 'inspect_lecture'

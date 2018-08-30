@@ -3,19 +3,18 @@ class Chapter < ApplicationRecord
   belongs_to :lecture
   acts_as_list scope: :lecture
   has_many :sections, -> { order(position: :asc)}
-  validates :title, presence: true
-  validates :number, presence: true,
-                     numericality: { only_integer: true,
-                                     greater_than_or_equal_to: 0,
-                                     less_than_or_equal_to: 999 },
-                     uniqueness: { scope: :lecture_id,
-                                   message: 'chapter already exists' }
+  validates :title, presence: { message: 'Es muss ein Titel angegeben werden.'}
 
   def to_label
-    'Kapitel ' + display_number + '. ' + title
+    'Kapitel ' + displayed_number + '. ' + title
   end
 
-  def display_number
+  def displayed_number
+    return calculated_number unless display_number.present?
+    display_number
+  end
+
+  def calculated_number
     return position.to_s unless lecture.start_chapter.present?
     (lecture.start_chapter + position - 1).to_s
   end

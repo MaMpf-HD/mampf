@@ -1,3 +1,12 @@
 // Place all the styles related to the sections controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.section-badge {
+  padding: 2px;
+  border-radius: 5px;
+}
+
+.section-basics-warning {
+  color: red;
+}

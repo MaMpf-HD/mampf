@@ -4,9 +4,8 @@
   <div class="col-3">
     <h4 class="pl-2">
       <span class="badge badge-secondary">
-        Kapitel <%= @chapter.number %>
+        <%= @chapter.to_label %>
       </span>
-      <%= @chapter.title %>
     </h4>
   </div>
   <div class="col-5">
@@ -37,88 +36,9 @@
     </span>
   </div>
 </div>
-<div class="row p-4">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              Basisdaten
-            </h5>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-          <div class="form-row">
-            <div class="col-4 form-group">
-              <%= f.label :title, 'Titel' %>
-              <%= f.text_field :title, { class: 'form-control' } %>
-              <div class="invalid-feedback" id="chapter-title-error">
-              </div>
-            </div>
-            <div class="col-2 form-group">
-              <%= f.label :number, 'Nummer' %>
-              <%= f.number_field :number, { class: 'form-control',
-                                            disabled: true } %>
-              <div class="invalid-feedback" id="chapter-number-error">
-              </div>
-            </div>
-            <div class="col-3 form-group">
-              <%= f.label :display_number,
-                          'Anzeigenummer (falls verschieden von Nummer)' %>
-              <%= f.text_field :display_number, { class: 'form-control' } %>
-            <div class="invalid-feedback" id="chapter-display-number-error">
-            </div>
-            </div>
-          </div>
-      </div>
-    </div>
-  </div>
-</div>
+  <%= render partial: 'chapters/basics',
+             locals: { f: f } %>
 <% end %>
-<div class="row p-4">
-  <div class="col-12">
-    <div class="card" id="sections-accordion">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-4">
-            <h5>
-              Abschnitte
-            </h5>
-          </div>
-          <div class="col-8 text-right">
-            <div id="new_section_button">
-              <%= link_to 'Neuen Abschnitt anlegen',
-                          new_section_path,
-                          remote: true, class: 'btn btn-secondary' %>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <% @chapter.sections.each do |s| %>
-          <div class="card">
-            <div class="card-header"
-                 id="section-heading-<%= s.id %>">
-                <%= render partial: 'sections/header',
-                           locals: { section: s } %>
-            </div>
-            <div id="collapse-section-<%= s.id %>"
-                 class="<%= show_collapse(s == @section) %>"
-                 aria-labelledby="section-heading-<%= s.id %>"
-                 data-parent="#sections-accordion"
-                 data-section="<%= s.id %>"
-                 data-chapter="<%= @chapter.id %>">
-              <div class="card-body" id="section-body-<%=  s.id %>">
-                <%= render partial: 'sections/body',
-                           locals: { section: s } %>
-              </div>
-            </div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render partial: 'sections/accordion',
+           locals: { sections: @chapter.sections, chosen_section: @section } %>
 <%= render partial: 'tags/modal' %>

@@ -1,0 +1,35 @@
+<div class="row p-4">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              Basisdaten
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+          <div class="form-row">
+            <div class="col-4 form-group">
+              <%= f.label :title, 'Titel' %>
+              <%= f.text_field :title, { class: 'form-control' } %>
+              <div class="invalid-feedback" id="chapter-title-error">
+              </div>
+            </div>
+            <div class="col-2 form-group">
+              <%= f.label :calculated_number, 'Nummer' %>
+              <%= f.number_field :calculated_number, { class: 'form-control',
+                                                       disabled: true } %>
+            </div>
+            <div class="col-4 form-group">
+              <%= f.label :display_number,
+                          'Anzeigenummer (falls verschieden von Nummer)' %>
+              <%= f.text_field :display_number, { class: 'form-control' } %>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

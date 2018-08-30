@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_08_30_093646) do
+ActiveRecord::Schema.define(version: 2018_08_30_121545) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
-    t.integer "number"
     t.string "title"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position"
+    t.text "display_number"
     t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
   end
 
@@ -212,12 +212,11 @@ ActiveRecord::Schema.define(version: 2018_08_30_093646) do
 
   create_table "sections", force: :cascade do |t|
     t.integer "chapter_id"
-    t.integer "number"
     t.string "title"
-    t.string "number_alt"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "position"
+    t.text "display_number"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 

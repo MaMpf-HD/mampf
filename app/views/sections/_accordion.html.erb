@@ -1,0 +1,45 @@
+<div class="row p-4">
+  <div class="col-12">
+    <div class="card" id="sections-accordion">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-4">
+            <h5>
+              Abschnitte
+            </h5>
+          </div>
+          <div class="col-8 text-right">
+            <div id="new_section_button">
+              <%= link_to 'Neuen Abschnitt anlegen',
+                          new_section_path,
+                          remote: true, class: 'btn btn-secondary' %>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <% sections.each do |s| %>
+          <div id="card-section-<%= s.id %>"
+               class="card <%= s == chosen_section ? 'bg-mdb-color-lighten-6' : '' %>">
+            <div class="card-header"
+                 id="section-heading-<%= s.id %>">
+                <%= render partial: 'sections/header',
+                           locals: { section: s, chosen_section: chosen_section } %>
+            </div>
+            <div id="collapse-section-<%= s.id %>"
+                 class="<%= show_collapse(s == chosen_section) %>"
+                 aria-labelledby="section-heading-<%= s.id %>"
+                 data-parent="#sections-accordion"
+                 data-section="<%= s.id %>"
+                 data-chapter="<%= s.chapter.id %>">
+              <div class="card-body" id="section-body-<%=  s.id %>">
+                <%= render partial: 'sections/body',
+                           locals: { section: s } %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
