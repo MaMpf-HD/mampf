@@ -23,9 +23,6 @@ class SectionsController < ApplicationController
     @errors = @section.errors
   end
 
-  def reset
-  end
-
   def destroy
     chapter = @section.chapter
     @section.destroy
@@ -37,6 +34,7 @@ class SectionsController < ApplicationController
     @section.update(section_params)
     update_tags if @section.valid?
     @errors = @section.errors
+    redirect_to edit_chapter_path(@section.chapter) unless @errors.present?
   end
 
   def list_tags

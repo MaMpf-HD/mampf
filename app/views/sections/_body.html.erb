@@ -3,16 +3,11 @@
                       data: { id: section.id } } do |f| %>
   <div class="row">
     <div class="col-12 text-right mb-2">
-      <div id="section-basics-warning-<%= section.id.to_i %>"
+      <div id="section-basics-warning-<%= section.id %>"
            class="section-basics-warning"
            style="display: none;">
         Achtung, es gibt ungespeicherte Änderungen!
         <%= f.submit "Speichern", class: "btn btn-sm btn-primary ml-2" %>
-        <button type="button" class="btn btn-sm btn-secondary ml-2"
-                id="section-basics-cancel-<%= section.id.to_i %>"
-                data-id="<%= section.id %>">
-          verwerfen
-        </button>
       </div>
     </div>
   </div>
@@ -20,38 +15,40 @@
     <div class="col-6 form-group">
       <%= f.label :title, 'Titel' %>
       <%= f.text_field :title, { class: 'form-control',
-                                 id: 'section_title_' + section.id.to_i.to_s,
-                                 data: { id: section.id.to_i } } %>
+                                 id: 'section_title_' + section.id.to_s,
+                                 data: { id: section.id,
+                                         chapter: section.chapter.id } } %>
       <div class="invalid-feedback"
-           id="section-title-error-<%= section.id.to_i %>">
+           id="section-title-error-<%= section.id %>">
       </div>
     </div>
     <div class="col-2 form-group">
       <%= f.label :displayed_number, 'Nummer' %>
       <%= f.text_field :displayed_number,
                          { class: 'form-control', disabled: true,
-                           id: 'section_number_' + section.id.to_i.to_s } %>
+                           id: 'section_number_' + section.to_s } %>
     </div>
     <div class="col-4 form-group">
       <%= f.label :display_number,
                   'Anzeigenummer (falls verschieden von Nummer)' %>
       <%= f.text_field :display_number,
                        { class: 'form-control',
-                         id: 'section_number_alt_' + section.id.to_i.to_s,
-                         data: { id: section.id.to_i } } %>
+                         id: 'section_number_alt_' + section.id.to_s,
+                         data: { id: section.id,
+                                 chapter: section.chapter.id } } %>
     </div>
   </div>
   <div class="form-group">
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
     <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-            id="new-tag-button-<%= section.id.to_i.to_s %>"
+            id="new-tag-button-<%= section.id %>"
             data-course="<%= section.chapter.lecture.course.id %>"
             data-section="<%= section.id %>"
             data-from="section">
             Tag anlegen
     </button>
     <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-            id="section-tag-links-<%= section.id.to_i.to_s %>"
+            id="section-tag-links-<%= section.id %>"
             data-id="<%= section.id %>">
             Tag-Links einblenden
     </button>
@@ -59,12 +56,13 @@
                  options_for_select(Tag.select_by_title,section.tag_ids),
                  {}, { multiple: true,
                        class: 'selectize mt-2',
-                       data: { id: section.id.to_i },
-                       id: 'section_tag_ids_' + section.id.to_i.to_s } %>
+                       data: { id: section.id,
+                               chapter: section.chapter.id },
+                       id: 'section_tag_ids_' + section.id.to_s } %>
     <div class="invalid-feedback"
-         id="section-tags-error-<%= section.id.to_i %>">
+         id="section-tags-error-<%= section.id %>">
     </div>
-    <div id="section-tag-list-<%= section.id.to_i.to_s %>"
+    <div id="section-tag-list-<%= section.id %>"
          data-show="0" style="display: none;">
       <%= render partial: "tags/list",
                  locals: { tags: section.tags } %>
@@ -76,10 +74,11 @@
                  options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.date, l.id] }, section.lesson_ids),
                  {}, { multiple: true,
                        class: 'selectize mt-2',
-                       data: { id: section.id.to_i },
-                       id: 'section_lesson_ids_' + section.id.to_i.to_s } %>
+                       data: { id: section.id,
+                               chapter: section.chapter.id },
+                       id: 'section_lesson_ids_' + section.id.to_s } %>
     <div class="invalid-feedback"
-         id="section-lessons-error-<%= section.id.to_i %>">
+         id="section-lessons-error-<%= section.id %>">
     </div>
   </div>
 <% end %>

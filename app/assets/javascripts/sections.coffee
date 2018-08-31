@@ -6,7 +6,13 @@ $(document).on 'turbolinks:load', ->
 
   $('[id^="section-form-"] :input').on 'change', ->
     sectionId = this.dataset.id
-    $('#section-basics-warning-' + sectionId).show().data('shown', '1')
+    chapterId = this.dataset.chapter
+    $('#section-basics-warning-' + sectionId).show()
+    $('#details-section-' + sectionId).text('verwerfen')
+    $('#details-section-' + sectionId).on 'click', (event) ->
+      event.preventDefault()
+      window.location.href = Routes.edit_chapter_path(chapterId)
+      return
     tags = document.getElementById('section_tag_ids_' + sectionId).selectize.getValue()
     $.ajax Routes.list_section_tags_path(),
       type: 'GET'
@@ -17,30 +23,17 @@ $(document).on 'turbolinks:load', ->
       }
     return
 
-
   $('[id^="collapse-section-"]').on 'hidden.bs.collapse', ->
     sectionId = this.dataset.section
     $('#details-section-' + sectionId).text('Bearbeiten')
     $('#card-section-' + sectionId).removeClass('bg-mdb-color-lighten-6')
-    if $('#section-basics-warning-' + sectionId).data('shown') == '1'
-      $('#section-unsaved-changes-' + sectionId).show()
     return
 
   $('[id^="collapse-section-"]').on 'show.bs.collapse', ->
+    $('#cancel-new-section').trigger 'click'
     sectionId = this.dataset.section
     $('#card-section-' + sectionId).addClass('bg-mdb-color-lighten-6')
     $('#details-section-' + sectionId).text('Zuklappen')
-    $('#section-unsaved-changes-' + sectionId).hide()
-    return
-
-  $('[id^="section-basics-cancel-"]').on 'click', ->
-    sectionId = this.dataset.id
-    $.ajax Routes.reset_section_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        id: sectionId
-      }
     return
 
   $('[id^="section-tag-links-"]').on 'click', ->
