@@ -12,10 +12,6 @@ $('#section_title_<%= @section.id.to_i %>').addClass('is-invalid')
 $('#section-tags-error-<%= @section.id.to_i %>')
   .append('<%= @errors[:tags].join(", ") %>').show()
 <% end %>
-<% if @errors[:lessons].present? %>
-$('#section-lessons-error-<%= @section.id.to_i %>')
-  .append('<%= @errors[:lessons].join(", ") %>').show()
-<% end %>
 <% else %>
 $('#section-basics-cancel-<%= @section.id.to_i %>').trigger 'click'
 <% end %>

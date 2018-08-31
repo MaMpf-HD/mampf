@@ -110,8 +110,16 @@
       </div>
     </div>
     <div class="col-6">
-      <%= render partial: 'media/card',
-                 locals: { media: @tag.media } %>
+      <div class="row">
+        <div class="col-12">
+          <%= render partial: 'media/card',
+                     locals: { media: @tag.media } %>
+        </div>
+        <div class="col-12">
+          <%= render partial: 'sections/card',
+                     locals: { sections: @tag.sections, inspection: true } %>
+        </div>
+      </div>
     </div>
   </div>
 </div>

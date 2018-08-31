@@ -7,6 +7,14 @@ $(document).on 'turbolinks:load', ->
   $('[id^="section-form-"] :input').on 'change', ->
     sectionId = this.dataset.id
     $('#section-basics-warning-' + sectionId).show().data('shown', '1')
+    tags = document.getElementById('section_tag_ids_' + sectionId).selectize.getValue()
+    $.ajax Routes.list_section_tags_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: sectionId
+        tags: JSON.stringify(tags)
+      }
     return
 
 
@@ -33,17 +41,15 @@ $(document).on 'turbolinks:load', ->
       data: {
         id: sectionId
       }
-#    $('#section-basics-warning-' + sectionId).hide()
     return
 
   $('[id^="section-tag-links-"]').on 'click', ->
     sectionId = this.dataset.id
-    tags = document.getElementById('section_tag_ids_' + sectionId).selectize.getValue()
-    $.ajax Routes.list_section_tags_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        id: sectionId
-        tags: JSON.stringify(tags)
-      }
+    if $('#section-tag-list-' + sectionId).data('show') == 0
+      $('#section-tag-list-' + sectionId).data('show', 1).show()
+      $(this).text('Tag-Links ausblenden')
+    else
+      $('#section-tag-list-' + sectionId).data('show', 0).hide()
+      $(this).text('Tag-Links einblenden')
+    return
   return

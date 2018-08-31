@@ -1,0 +1,28 @@
+<div class="card bg-light mb-4">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-12">
+        <h5>
+          Abschnitte (<%= sections.count %>)
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-2">
+    <ul>
+      <% sections.each do |s| %>
+        <li>
+          <%= s.lecture.title + ': ' %>
+          <% if !inspection && (current_user.admin ||
+                current_user.in?(s.lecture.editors_with_inheritance)) %>
+            <%= link_to s.to_label, edit_chapter_path(s.chapter,
+                                                      section_id: s.id) %>
+          <% else %>
+            <%= link_to s.to_label, inspect_chapter_path(s.chapter,
+                                                      section_id: s.id) %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

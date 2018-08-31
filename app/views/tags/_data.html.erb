@@ -2,13 +2,20 @@
   <div class="col-<%= new_tag ? '12' : '6'%>">
     <div class="card bg-light mb-4" id="tag-basics-edit-<%= tag.id.to_i %>">
       <%= render partial: 'tags/basics',
-                 locals: { tag: tag, f: f, new_tag: new_tag } %>
+                 locals: { tag: tag, f: f, new_tag: new_tag, from: from } %>
     </div>
   </div>
   <% unless new_tag %>
     <div class="col-6">
-      <%= render partial: 'media/card',
-                 locals: { media: tag.media } %>
+      <div class="row">
+        <div class="col-12">
+          <%= render partial: 'media/card',
+                     locals: { media: tag.media } %>
+        </div>
+        <div class="col-12">
+          <%= render partial: 'sections/card',
+                     locals: { sections: tag.sections, inspection: false } %>
+        </div>
     </div>
   <% end %>
 </div>

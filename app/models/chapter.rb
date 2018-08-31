@@ -26,4 +26,12 @@ class Chapter < ApplicationRecord
   def lessons
     Lesson.where(id: sections.map { |s| s.lessons.pluck(:id) }.flatten)
   end
+
+  def last_section_by_position
+    sections.order(:position).last
+  end
+
+  def select_sections
+    sections.order(:position).reverse.map { |s| [s.to_label, s.position]}
+  end
 end

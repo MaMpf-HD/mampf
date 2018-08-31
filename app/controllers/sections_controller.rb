@@ -1,16 +1,41 @@
 # SectionController
 class SectionsController < ApplicationController
-  before_action :set_section, only: [:show, :reset, :update]
+  before_action :set_section, only: [:show, :reset, :update, :destroy]
   authorize_resource
 
   def show
   end
 
+  def new
+    @chapter = Chapter.find_by_id(params[:chapter_id])
+    @section = Section.new(chapter: @chapter)
+  end
+
+  def create
+    @section = Section.new(section_params)
+    position = params[:section][:predecessor]
+    if position.present?
+      @section.insert_at(position.to_i + 1)
+    else
+      @section.save
+    end
+    redirect_to edit_chapter_path(@section.chapter) if @section.valid?
+    @errors = @section.errors
+  end
+
   def reset
   end
 
+  def destroy
+    chapter = @section.chapter
+    @section.destroy
+    redirect_to edit_chapter_path(chapter)
+  end
+
   def update
+    @old_tags = @section.tags.to_a
     @section.update(section_params)
+    update_tags if @section.valid?
     @errors = @section.errors
   end
 
@@ -29,7 +54,20 @@ class SectionsController < ApplicationController
   end
 
   def section_params
-    params.require(:section).permit(:title, :display_number, tag_ids: [],
-                                                             lesson_ids: [])
+    params.require(:section).permit(:title, :display_number, :chapter_id,
+                                    tag_ids: [], lesson_ids: [])
+  end
+
+  def update_tags
+    new_tags = @section.tags.to_a
+    (new_tags - @old_tags).each do |t|
+      if @section.lecture.course.in?(t.courses)
+        next unless @section.lecture.in?(t.disabled_lectures)
+        t.disabled_lectures.delete(@section.lecture)
+        next
+      end
+      next if @section.lecture.in?(t.additional_lectures)
+      t.additional_lectures << @section.lecture
+    end
   end
 end

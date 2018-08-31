@@ -27,6 +27,10 @@ class Lecture < ApplicationRecord
     Tag.where(id: tag_ids)
   end
 
+  def content_tags
+    chapters.map(&:sections).flatten.collect { |s| s.tags }.flatten
+  end
+
   def sections
     Section.where(chapter: chapters)
   end

@@ -11,10 +11,12 @@
           <div class="col-8 text-right">
             <div id="new_section_button">
               <%= link_to 'Neuen Abschnitt anlegen',
-                          new_section_path,
+                          new_section_path(chapter_id: chapter.id),
                           remote: true, class: 'btn btn-secondary' %>
             </div>
           </div>
+        </div>
+        <div id="new-section-area" style="display: none;">
         </div>
       </div>
       <div class="card-body">

@@ -41,6 +41,7 @@ class TagsController < ApplicationController
   end
 
   def create
+    @section = Section.find_by_id(params[:tag][:section_id])
     if @errors.present?
       render :update
       return
@@ -67,6 +68,9 @@ class TagsController < ApplicationController
     @tag.related_tags << related_tag if related_tag.present?
     course = Course.find_by_id(params[:course])
     @tag.courses << course if course.present?
+    section = Section.find_by_id(params[:section])
+    @tag.sections << section if section.present?
+    @from = params[:from]
   end
 
   private
@@ -87,7 +91,8 @@ class TagsController < ApplicationController
                                 related_tag_ids: [],
                                 course_ids: [],
                                 additional_lecture_ids: [],
-                                disabled_lecture_ids: [])
+                                disabled_lecture_ids: [],
+                                section_ids: [])
   end
 
   def check_additional_lecture_compatibility
@@ -106,13 +111,35 @@ class TagsController < ApplicationController
     @errors[:disabled_lectures] = [error_hash['incompatible_disabling']]
   end
 
+  def check_additional_lectures_content
+    removed = @tag.additional_lectures -
+             Lecture.where(id: tag_params[:additional_lecture_ids])
+    removed.each do |l|
+      next if l.course.in?(Course.where(id: tag_params[:course_ids]))
+      next unless @tag.in?(l.content_tags)
+      @errors[:additional_lectures] = [error_hash['forbidden_removal']]
+      return
+    end
+  end
+
+  def check_disabled_lectures_content
+    added = Lecture.where(id: tag_params[:disabled_lecture_ids]) -
+            @tag.disabled_lectures
+    added.each do |l|
+      next unless @tag.in?(l.content_tags)
+      @errors[:disabled_lectures] = [error_hash['forbidden_adding']]
+      return
+    end
+  end
+
+
   def check_permissions
     @errors = {}
     check_additional_lecture_compatibility
     check_disabled_lecture_compatibility
-    puts 'Hi'
-    puts @errors
     return if @errors.present?
+    check_additional_lectures_content
+    check_disabled_lectures_content
     return if current_user.admin?
     permission_errors('course')
     permission_errors('additional_lecture')
@@ -164,6 +191,12 @@ class TagsController < ApplicationController
                                  'Tag aktiviert ist.',
       'incompatible_disabling' => 'Eine der deaktivierten Vorlesungen ' \
                                   'gehört nicht zu einem Modul, was zu ' \
-                                  'diesem Tag aktiviert ist.' }
+                                  'diesem Tag aktiviert ist.',
+      'forbidden_removal' => 'Für mindestens eine Vorlesung, die Du ' \
+                                 'entfernt hast, kommt das Tag in einem ' \
+                                 'Abschnitt vor.',
+      'forbidden_adding' => 'Für mindestens eine Vorlesung, die Du ' \
+                            'hinzugefügt hast, kommt das Tag in einem ' \
+                            'Abschnitt vor.' }
   end
 end

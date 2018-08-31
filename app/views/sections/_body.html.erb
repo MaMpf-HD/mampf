@@ -45,7 +45,9 @@
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
     <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
             id="new-tag-button-<%= section.id.to_i.to_s %>"
-            data-course="<%= section.chapter.lecture.course.id %>">
+            data-course="<%= section.chapter.lecture.course.id %>"
+            data-section="<%= section.id %>"
+            data-from="section">
             Tag anlegen
     </button>
     <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
@@ -63,13 +65,15 @@
          id="section-tags-error-<%= section.id.to_i %>">
     </div>
     <div id="section-tag-list-<%= section.id.to_i.to_s %>"
-         data-show="0">
+         data-show="0" style="display: none;">
+      <%= render partial: "tags/list",
+                 locals: { tags: section.tags } %>
     </div>
   </div>
   <div class="form-group">
     <%= f.label :tag_ids, 'Sitzungen' %>
     <%= f.select :lesson_ids,
-                 options_for_select(Lesson.select_by_date, section.lesson_ids),
+                 options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.date, l.id] }, section.lesson_ids),
                  {}, { multiple: true,
                        class: 'selectize mt-2',
                        data: { id: section.id.to_i },

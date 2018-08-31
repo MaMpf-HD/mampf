@@ -66,6 +66,8 @@ $(document).on 'turbolinks:load', ->
       data: {
         related_tag: this.dataset.tag
         course: this.dataset.course
+        section: this.dataset.section
+        from: this.dataset.from
       }
     return
   return

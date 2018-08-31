@@ -27,7 +27,7 @@
                        data: { id: tag.id.to_i } } %>
     <% unless new_tag %>
       <button type="button" class="btn btn-sm btn-outline-secondary"
-              id="new-tag-button" data-tag="<%= tag.id %>">
+              id="new-tag-button" data-tag="<%= tag.id %>" data-from="tag">
         Tag anlegen
       </button>
     <% end %>
@@ -70,4 +70,7 @@
          id="tag-disabled-lectures-error-<%= tag.id.to_i %>">
     </div>
   </div>
+  <% if from == 'section' %>
+    <%= f.hidden_field :section_id, value: @tag.section_ids.first %>
+  <% end %>
 </div>
