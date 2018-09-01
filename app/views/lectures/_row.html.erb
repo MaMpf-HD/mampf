@@ -1,35 +1,22 @@
-<div class="col-3">
+<div class="col-2">
   <%= lecture.course.title %>
 </div>
-<div class="col-2">
+<div class="col-1">
   <%= lecture.term.to_label_short %>
+</div>
+<div class="col-3">
+  <%= lecture.teacher.name %>
 </div>
 <div class="col-3">
   <ul class="list-unstyled">
     <% lecture.teacher_and_editors_with_inheritance.each do |e| %>
       <li>
-        <div class="row">
-        <div class="col-6">
-        <%= e.name  %>
-      </div>
-        <div class="col-6">
-        <% if e.editor? %>
-          <span class="badge badge-light">
-            EditorIn
-          </span>
-        <% end %>
-        <% if e == lecture.teacher %>
-          <span class="badge badge-light">
-            DozentIn
-          </span>
-        <% end %>
-      </div>
-    </div>
+        <%= e.name_or_email %>
       </li>
     <% end %>
   </ul>
 </div>
-<div class="col-4">
+<div class="col-3">
   <% if current_user.admin? || lecture.editors_with_inheritance.include?(current_user) %>
     <%= link_to 'Bearbeiten', edit_lecture_path(lecture),
                 class: 'btn btn-outline-primary my-1' %>
@@ -37,7 +24,7 @@
     <%= link_to 'Ansehen', inspect_lecture_path(lecture),
                 class: 'btn btn-outline-primary my-1' %>
   <% if lecture.lessons.empty? && lecture.media.empty? &&
-        (current_user.admin? || lecture.editors.include?(current_user)) %>
+        (current_user.admin? || lecture.editors_with_inheritance.include?(current_user)) %>
     <%= link_to 'Löschen', lecture_path(lecture), method: :delete,
                 data: { confirm: 'Bist Du sicher?' },
                 remote: true,

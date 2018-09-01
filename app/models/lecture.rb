@@ -17,7 +17,9 @@ class Lecture < ApplicationRecord
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
-                                   message: 'already exists' }
+                                   message: 'Eine Vorlesung mit derselben ' \
+                                            'Kombination aus Modul, Semester ' \
+                                            'und DozentIn existiert bereits.' }
 
   def tags
     course_tag_ids = course.tags.pluck(:id)
@@ -112,6 +114,14 @@ class Lecture < ApplicationRecord
 
   def latest?
     course.lectures_by_date.first == self
+  end
+
+  def select_chapters
+    chapters.order(:position).reverse.map { |c| [c.to_label, c.position]}
+  end
+
+  def last_chapter_by_position
+    chapters.order(:position).last
   end
 
   def active?(user, preselected_lecture_id)

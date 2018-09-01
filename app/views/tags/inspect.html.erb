@@ -17,7 +17,7 @@
   </div>
   <div class="row p-2">
     <div class="col-6">
-      <div class="card bg-light mb-4">
+      <div class="card bg-mdb-color-lighten-6 mb-4">
         <div class="card-header">
           <div class="row">
             <div class="col-12">
@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="card-body p-2">
-          <div class="row">
+          <div class="row mb-2">
             <div class="col-4">
               Verknüpfte Tags:
             </div>
@@ -36,12 +36,10 @@
               <% if @tag.related_tags.empty? %>
                 keine
               <% end %>
-              <ul  class="list-unstyled">
-                <% @tag.related_tags.each do |t| %>
+              <% @tag.related_tags.each do |t| %>
                   <%= link_to t.title, inspect_tag_path(t),
-                  class:'badge badge-info' %>
-                <% end %>
-              </ul>
+                  class:'badge badge-light' %>
+              <% end %>
             </div>
           </div>
           <div class="row">
@@ -67,7 +65,7 @@
                 <ul  class="list-unstyled">
                   <% @tag.additional_lectures.each do |l| %>
                     <li>
-                      <%= l.title %>
+                      <%= link_to l.title, inspect_lecture_path(l) %>
                     </li>
                   <% end %>
                 </ul>
@@ -83,7 +81,7 @@
                 <ul  class="list-unstyled">
                   <% @tag.disabled_lectures.each do |l| %>
                     <li>
-                      <%= l.title %>
+                      <%= link_to l.title, inspect_lecture_path(l) %>
                     </li>
                   <% end %>
                 </ul>
@@ -98,12 +96,10 @@
               <% if @tag.related_tags.empty? %>
                 keine
               <% end %>
-              <ul  class="list-unstyled">
-                <% @tag.tags_in_neighbourhood.each do |t| %>
-                  <%= link_to t.title, inspect_tag_path(t),
-                  class:'badge badge-info' %>
-                <% end %>
-              </ul>
+              <% @tag.tags_in_neighbourhood.each do |t| %>
+                <%= link_to t.title, inspect_tag_path(t),
+                            class:'badge badge-light' %>
+              <% end %>
             </div>
           </div>
         </div>

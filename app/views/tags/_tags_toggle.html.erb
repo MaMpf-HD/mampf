@@ -17,16 +17,20 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12">
-            <% tags.sort_by(&:title).each do |t| %>
-              <% unless t.nil? %>
-                <% if inspection %>
-                  <%= link_to t.title, inspect_tag_path(t),
-                              class: "badge badge-light" %>
-                <% else %>
-                  <%= link_to t.title, tag_path(t),
-                              class: "badge badge-light" %>
+            <% if tags.present? %>
+              <% tags.sort_by(&:title).each do |t| %>
+                <% unless t.nil? %>
+                  <% if inspection %>
+                    <%= link_to t.title, inspect_tag_path(t),
+                                class: "badge badge-light" %>
+                  <% else %>
+                    <%= link_to t.title, tag_path(t),
+                                class: "badge badge-light" %>
+                  <% end %>
                 <% end %>
               <% end %>
+            <% else %>
+              Es sind noch keine Begriffe vorhanden.
             <% end %>
           </div>
         </div>

@@ -56,8 +56,10 @@
         <div id="admin-navbar">
           <%= render partial: 'administration/navbar' %>
         </div>
-        <div id="admin-area">
-          <%= yield %>
+        <div class="container-fluid">
+          <div id="admin-area">
+            <%= yield %>
+          </div>
         </div>
       </div>
     <% end %>

@@ -8,9 +8,14 @@
     <% if current_user.admin? %>
       <%= link_to 'Modul anlegen', new_course_path,
                   class: 'btn btn-secondary',
+                  remote: true,
                   id: 'create-new-course' %>
     <% end %>
   </div>
+</div>
+<div id="new-course-area" style="display: none;">
+  <%= render partial: 'courses/new',
+             locals: { course: Course.new } %>
 </div>
 <div class="row p-2">
   <div class="col-8">

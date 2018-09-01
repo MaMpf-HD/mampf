@@ -1,0 +1,45 @@
+<hr>
+<div class="row">
+  <div class="col-12">
+    <h6>
+      Neues Modul anlegen
+    </h6>
+  </div>
+</div>
+<%= form_with model: course do |f| %>
+  <div class="form-row">
+    <div class="col-6 form-group">
+      <%= f.label :title, 'Titel' %>
+      <%= f.text_field :title, { class: 'form-control',
+                                 id: 'new_course_title' } %>
+      <div class="invalid-feedback"
+           id="new-course-title-error">
+      </div>
+    </div>
+    <div class="col-2 form-group">
+      <%= f.label :short_title, 'Kurztitel' %>
+      <%= f.text_field :short_title, { class: 'form-control',
+                                 id: 'new_course_short_title' } %>
+      <div class="invalid-feedback"
+           id="new-course-short-title-error">
+      </div>
+    </div>
+    <div class="col-4 form-group">
+      <%= f.label :editor_ids,
+                  'EditorInnen' %>
+      <%= f.select :editor_ids,
+                   options_for_select(User.all.map { |u| [u.info, u.id] }),
+                   {}, { class: 'selectize', multiple: true } %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+      <button type="button" id="cancel-new-chapter"
+              class="btn btn-secondary">
+        abbrechen
+      </button>
+    </div>
+  </div>
+<% end %>
+<hr>

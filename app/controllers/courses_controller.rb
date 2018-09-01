@@ -23,15 +23,15 @@ class CoursesController < ApplicationController
   end
 
   def new
-    @course = Course.new(editors: [current_user])
-    render :edit
+    @course = Course.new
   end
 
   def create
     @course = Course.new(course_params)
     @course.save
-    @errors = @course.errors unless @course.valid?
-    render :update
+    redirect_to courses_path if @course.valid?
+    @errors = @course.errors
+
   end
 
   def show

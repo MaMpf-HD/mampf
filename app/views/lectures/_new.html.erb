@@ -1,0 +1,52 @@
+<hr>
+<div class="row">
+  <div class="col-12">
+    <h6>
+      Neue Vorlesung anlegen
+    </h6>
+  </div>
+</div>
+<% if Course.count == 0 %>
+  Es muss zunächst ein Modul angelegt werden.
+<% elsif Term.count == 0 %>
+  Es muss zunächst ein Semester angelegt werden.
+<% else %>
+<%= form_with model: lecture do |f| %>
+  <div class="form-row">
+    <div class="col-4 form-group">
+      <%= f.label :course_id, 'Modul' %>
+      <%= f.select :course_id,
+                   options_for_select(current_user.select_administrated_courses),
+                   {}, { class: 'form-control' } %>
+      <div class="invalid-feedback"
+           id="new-lecture-course-error">
+      </div>
+    </div>
+    <div class="col-4 form-group">
+      <%= f.label :term_id,
+                  'Semester' %>
+      <%= f.select :term_id,
+                   options_for_select(Term.all.map { |t| [t.to_label, t.id] }),
+                   {}, { class: 'form-control' } %>
+    </div>
+    <div class="col-4 form-group">
+      <%= f.label :teacher_id,
+                  'DozentIn' %>
+      <%= f.select :teacher_id,
+                   options_for_select(User.all.map { |u| [u.info, u.id] },
+                                      current_user.id),
+                   {}, { class: 'selectize', data: { current: current_user.id } } %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+      <button type="button" id="cancel-new-lecture"
+              class="btn btn-secondary">
+        abbrechen
+      </button>
+    </div>
+  </div>
+<% end %>
+<% end %>
+<hr>

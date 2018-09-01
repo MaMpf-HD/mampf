@@ -2,7 +2,7 @@
 class Chapter < ApplicationRecord
   belongs_to :lecture
   acts_as_list scope: :lecture
-  has_many :sections, -> { order(position: :asc)}
+  has_many :sections, -> { order(position: :asc) }, dependent: :destroy
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.'}
 
   def to_label

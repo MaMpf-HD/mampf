@@ -25,7 +25,7 @@
     <%= link_to 'zur Vorlesungsübersicht', lectures_path,
                 class: 'btn btn-primary' %>
     <% if @lecture.lessons.empty? && @lecture.media.empty? &&
-          (current_user.admin? || lecture.editors.include?(current_user)) %>
+          (current_user.admin? || @lecture.editors_with_inheritance.include?(current_user)) %>
       <%= link_to 'Vorlesung löschen', lecture_path, method: :delete,
                   data: { confirm: 'Bist Du sicher?' },
                   class: 'btn btn-danger' %>
@@ -56,7 +56,7 @@
             </div>
           </div>
         </div>
-        <div class="col-3 form-group">
+        <div class="col-2 form-group">
           <%= f.label :teacher_id, 'DozentIn' %>
           <%= f.select :teacher_id,
                        options_for_select(User.select_editors,
@@ -65,23 +65,27 @@
           <div class="invalid-feedback" id="lecture-teacher-error">
           </div>
         </div>
+        <div class="col-2">
+          Moduleditoren:
+          <% if @lecture.course.editors.present? %>
+            <ul>
+              <% @lecture.course.editors.each do |e| %>
+                <li>
+                  <%= e.name %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <br>Es sind keine Moduleditoren eingetragen.
+          <% end %>
+        </div>
         <div class="col-2 form-group">
-          <%= f.label :editor_ids, 'Vorlesungseditoren' %>
+          <%= f.label :editor_ids, '(zusätzliche) Vorlesungseditoren' %>
           <%= f.select :editor_ids,
                        options_for_select(User.select_editors -
                                           @lecture.course.editors.map { |e| [e.info, e.id]},
                                           @lecture.editors.map(&:id)),
                        {}, { multiple: true, class: 'selectize' } %>
-        </div>
-        <div class="col-2">
-          Moduleditoren:
-          <ul>
-            <% @lecture.course.editors.each do |e| %>
-              <li>
-                <%= e.name %>
-              </li>
-            <% end %>
-          </ul>
         </div>
         <div class="col-1 form-group">
           <%= f.label :start_chapter, 'Startkapitel' %>
@@ -106,31 +110,25 @@
     </div>
   </div>
 </div>
-<div class="row px-4 py-2">
-  <% unless @lecture.chapters.empty? %>
-    <div class="col-12 col-md-12 col-lg-6 pt-3">
-      <%= render partial: 'lectures/editable_content',
-                 locals: { lecture: @lecture } %>
-    </div>
-  <% end %>
-  <% unless @lecture.lessons.empty? %>
-    <div class="col-12 col-md-12 col-lg-6 pt-3">
-      <%= render partial: 'lectures/editable_lessons',
-                 locals: { lessons: @lecture.lessons,
-                           lessons_description: 'Verknüpfte Sitzungen' } %>
-    </div>
-  <% end %>
-</div>
-<% unless @lecture.tags.empty? %>
-  <div class="row p-4">
-    <div class="col-12">
-      <%= render partial: 'tags/tags_toggle',
-                 locals: { tags: @lecture.tags,
-                           tags_description: 'Verknüpfte Begriffe',
-                           id: @lecture.id,
-                           inspection: true } %>
-    </div>
+<div class="row p-4">
+  <div class="col-12">
+    <%= render partial: 'lectures/editable_tags',
+               locals: { lecture: @lecture,
+                         f: f,
+                         inspection: false } %>
   </div>
+</div>
 <% end %>
-<% end %>
+<div class="row px-4 py-2">
+  <div class="col-12 col-md-12 col-lg-6 pt-3">
+    <%= render partial: 'lectures/editable_content',
+               locals: { lecture: @lecture,
+                         inspection: false } %>
+  </div>
+  <div class="col-12 col-md-12 col-lg-6 pt-3">
+    <%= render partial: 'lectures/editable_lessons',
+               locals: { lessons: @lecture.lessons,
+                         lessons_description: 'Verknüpfte Sitzungen' } %>
+  </div>
+</div>
 </div>

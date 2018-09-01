@@ -8,7 +8,7 @@
   <ul class="list-unstyled">
     <% term.lectures.each do |l| %>
       <li>
-        <%= l.title_teacher_info  %>
+        <%= link_to l.title_teacher_info, inspect_lecture_path(l)  %>
       </li>
     <% end %>
   </ul>

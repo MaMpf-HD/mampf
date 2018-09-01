@@ -45,6 +45,11 @@ class User < ApplicationRecord
     courses
   end
 
+  def select_administrated_courses
+    relevant = admin ? Course.all : edited_courses
+    relevant.map { |c| [c.title, c.id] }
+  end
+
   def related_lectures
     related_courses.map(&:lectures).flatten
   end
@@ -116,6 +121,11 @@ class User < ApplicationRecord
   def info
     return email unless name.present?
     name + ' (' + email + ')'
+  end
+
+  def name_or_email
+    return name unless name.blank?
+    email
   end
 
   def short_info

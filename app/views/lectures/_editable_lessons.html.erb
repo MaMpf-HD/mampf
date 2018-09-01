@@ -5,7 +5,9 @@
     </h5>
   </div>
   <div class="card-body">
-    <% if lessons.count < 15 %>
+    <% if !lessons.present? %>
+      Es sind noch keine Sitzungen vorhanden.
+    <% elsif lessons.count < 15 %>
       <ul>
         <% lessons.each do |l| %>
           <li class="text-dark">

@@ -1,0 +1,106 @@
+<div id="lecture-area">
+<div class="row px-4 py-2 mt-2">
+  <div class="col-4">
+    <h4 class="pl-2">
+      <span class="badge badge-secondary">
+        Vorlesung
+      </span>
+      <%= @lecture.title %>
+    </h4>
+  </div>
+  <div class="col-8 text-right">
+    <% if current_user.admin ||
+          current_user.in?(@lecture.editors_with_inheritance) %>
+      <%= link_to 'Bearbeiten', edit_lecture_path(@lecture),
+                  class: 'btn btn-primary my-1' %>
+    <% end %>
+    <%= link_to 'zur Vorlesungsübersicht', lectures_path,
+                class: 'btn btn-primary' %>
+  </div>
+</div>
+<div class="row px-4 py-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              Basisdaten
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-2">
+            Modul:
+            <%= link_to @lecture.course.title, inspect_course_path(@lecture.course) %>
+          </div>
+          <div class="col-2">
+            DozentIn:
+            <%= @lecture.teacher.name %>
+          </div>
+          <div class="col-2">
+            Moduleditoren:
+            <% if @lecture.course.editors.present? %>
+              <ul>
+                <% @lecture.course.editors.each do |e| %>
+                  <li>
+                    <%= e.name %>
+                  </li>
+                <% end %>
+              </ul>
+            <% else %>
+              <br>Es sind keine Moduleditoren eingetragen.
+            <% end %>
+          </div>
+          <div class="col-2">
+            (zusätzliche) Vorlesungseditoren:
+            <% if @lecture.editors.present? %>
+              <ul>
+                <% @lecture.editors.each do |e| %>
+                  <li>
+                    <%= e.name %>
+                  </li>
+                <% end %>
+              </ul>
+            <% else %>
+              <br>Es sind keine zusätzlichen Vorlesungseditoren eingetragen.
+            <% end %>
+          </div>
+          <div class="col-1">
+            Startkapitel:
+            <%= @lecture.start_chapter || 1 %>
+          </div>
+          <div class="col-2">
+            Nummerierung: <%= @lecture.absolute_numbering ? 'absolut' : 'relativ' %>
+            <% if @lecture.absolute_numbering %>
+              <br>
+                Startabschnitt: <%= @lecture.start_section || 1 %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row p-4">
+  <div class="col-12">
+    <%= render partial: 'lectures/editable_tags',
+               locals: { lecture: @lecture,
+                         inspection: true } %>
+  </div>
+</div>
+<div class="row px-4 py-2">
+  <div class="col-12 col-md-12 col-lg-6 pt-3">
+    <%= render partial: 'lectures/editable_content',
+               locals: { lecture: @lecture,
+                         inspection: true } %>
+  </div>
+  <div class="col-12 col-md-12 col-lg-6 pt-3">
+    <%= render partial: 'lectures/editable_lessons',
+               locals: { lessons: @lecture.lessons,
+                         lessons_description: 'Verknüpfte Sitzungen' } %>
+  </div>
+</div>
+</div>

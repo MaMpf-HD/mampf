@@ -5,7 +5,7 @@
   <ul class="list-unstyled">
     <% course.editors.each do |e| %>
       <li>
-        <%= e.name  %>
+        <%= e.name_or_email  %>
       </li>
     <% end %>
   </ul>
@@ -14,7 +14,7 @@
   <ul class="list-unstyled">
     <% course.lectures_by_date.each do |l| %>
       <li>
-        <%= l.term_teacher_info  %>
+        <%= link_to l.term_teacher_info, inspect_lecture_path(l)  %>
       </li>
     <% end %>
   </ul>

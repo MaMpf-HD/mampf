@@ -21,10 +21,32 @@ class Ability
       can :update, Lecture do |lecture|
         lecture.edited_by?(user)
       end
+      can :list_tags, Lecture
+      can :new, Lecture
+      can :destroy, Lecture do |lecture|
+        lecture.edited_by?(user)
+      end
+      can :create, Lecture
       can :read, Chapter
       can :update, Chapter do |chapter|
         chapter.lecture.edited_by?(user)
       end
+      can :destroy, Chapter do |chapter|
+        chapter.lecture.edited_by?(user)
+      end
+      can :new, Chapter
+      can :create, Chapter
+      can :update, Section do |section|
+        section.lecture.edited_by?(user)
+      end
+      can :destroy, Section do |section|
+        section.lecture.edited_by?(user)
+      end
+      can :list_tags, Section do |section|
+        section.lecture.edited_by?(user)
+      end
+      can :new, Section
+      can :create, Section
       can :inspect, Chapter
       can :inspect, Lecture
       can :manage, Tag

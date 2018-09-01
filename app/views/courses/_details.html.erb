@@ -56,7 +56,7 @@
             <ul  class="list-unstyled">
               <% course.lectures_by_date.each do |l| %>
                 <li>
-                  <%= l.term_teacher_info %>
+                  <%= link_to l.term_teacher_info, inspect_lecture_path(l) %>
                 </li>
               <% end %>
             </ul>
@@ -64,7 +64,7 @@
         </div>
         <div class="row">
           <div class="col-2">
-            Vorangegangene Module:
+            Module, auf denen das vorliegende Modul aufbaut:
           </div>
           <div class="col-10">
             <ul  class="list-unstyled">

@@ -1,0 +1,60 @@
+<div class="row p-2">
+  <div class="col-8">
+    <h4 class="pl-2">
+      <span class="badge badge-secondary">
+        <%= @chapter.to_label %>
+      </span>
+    </h4>
+  </div>
+  <div class="col-4">
+    <% if current_user.admin ||
+          current_user.in?(@chapter.lecture.editors_with_inheritance) %>
+      <%= link_to 'Bearbeiten', edit_chapter_path(@chapter),
+                  class: 'btn btn-primary' %>
+    <% end %>
+    <%= link_to 'zur Vorlesung', inspect_lecture_path(@chapter.lecture),
+                class: 'btn btn-primary' %>
+  </div>
+  <div class="col-12">
+    <span class="pl-2">
+      (zur Vorlesung
+      <%= link_to @chapter.lecture.title,
+                  inspect_lecture_path(@chapter.lecture) %>)
+    </span>
+  </div>
+</div>
+<div class="row p-2">
+  <div class="col-12">
+    <h5 class="pl-2">
+      Abschnitte
+    </h5>
+  </div>
+</div>
+<% @chapter.sections.each do |s| %>
+  <div class="row ml-3 mb-3">
+    <div class="col-12">
+      <span class="bg-info mr-2 section-badge">
+        <%= s.displayed_number %>
+      </span>
+      <strong>
+      <%= s.title %>
+    </strong>
+    </div>
+    <div class="col-12 ml-4">
+      <% s.tags.each do |t| %>
+        <%= link_to t.title, inspect_tag_path(t), class:'badge badge-light' %>
+      <% end %>
+    </div>
+    <div class="col-12 ml-4">
+      Sitzungen:
+      <ul>
+        <% s.lessons.each do |l| %>
+          <li>
+            <%= l.to_label %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+  <hr>
+<% end %>

@@ -7,8 +7,11 @@
   <div class="col-2">
     <%= link_to 'Vorlesung anlegen', new_lecture_path,
                 class: 'btn btn-secondary',
-                id: 'create-new-lecture' %>
+                remote: true,
+                id: 'new-lecture-button' %>
   </div>
+</div>
+<div id="new-lecture-area" style="display: none;">
 </div>
 <div class="row p-2">
   <div class="col-8">
@@ -18,22 +21,27 @@
   </div>
 </div>
 <div class="row bg-light px-4 py-3">
-  <div class="col-3">
+  <div class="col-2">
     <strong>
       Modul
     </strong>
   </div>
-  <div class="col-2">
+  <div class="col-1">
     <strong>
       Semester
     </strong>
   </div>
   <div class="col-3">
     <strong>
-      Verantwortliche
+      DozentIn
     </strong>
   </div>
-  <div class="col-4">
+  <div class="col-3">
+    <strong>
+      EditorInnen
+    </strong>
+  </div>
+  <div class="col-3">
     <strong>
       Aktionen
     </strong>
