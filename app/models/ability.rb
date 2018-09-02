@@ -13,11 +13,9 @@ class Ability
     elsif user.editor?
       can :read, :all
       can :manage, :administration
-      can :read, Course
       can :update, Course do |course|
         course.edited_by?(user)
       end
-      can :read, Lecture
       can :update, Lecture do |lecture|
         lecture.edited_by?(user)
       end
@@ -27,7 +25,6 @@ class Ability
         lecture.edited_by?(user)
       end
       can :create, Lecture
-      can :read, Chapter
       can :update, Chapter do |chapter|
         chapter.lecture.edited_by?(user)
       end
@@ -45,6 +42,16 @@ class Ability
       can :list_tags, Section do |section|
         section.lecture.edited_by?(user)
       end
+      can :new, Lesson
+      can :create, Lesson
+      can :update, Lesson do |lesson|
+        lesson.lecture.edited_by?(user)
+      end
+      can :destroy, Lesson do |lesson|
+        lesson.lecture.edited_by?(user)
+      end
+      can :list_sections, Lesson
+      can :inspect, Lesson
       can :new, Section
       can :create, Section
       can :inspect, Chapter

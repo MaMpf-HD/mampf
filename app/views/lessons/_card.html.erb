@@ -1,0 +1,26 @@
+<div class="card bg-light mb-4">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-12">
+        <h5>
+          Sitzungen (<%= lessons.count %>)
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-2">
+    <ul>
+      <% lessons.each do |l| %>
+        <li>
+          <%= l.lecture.title + ': ' %>
+          <% if !inspection && (current_user.admin ||
+                current_user.in?(l.lecture.editors_with_inheritance)) %>
+            <%= link_to l.to_label, edit_lesson_path(l) %>
+          <% else %>
+            <%= link_to l.to_label, inspect_lesson_path(l) %>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+</div>

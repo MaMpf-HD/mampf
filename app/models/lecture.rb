@@ -93,6 +93,20 @@ class Lecture < ApplicationRecord
     self
   end
 
+  def media_with_inheritance
+    Medium.where(id: Medium.select { |m| m.teachable.lecture == self }.map(&:id))
+  end
+
+  def sections
+    chapters.collect(&:sections).flatten
+  end
+
+  def section_tag_selection
+    sections.map do |s|
+      { section: s.id, tags: s.tags.map { |t| [t.id, t.title] } }
+    end
+  end
+
   def editors_with_inheritance
     editors.to_a + course.editors
   end

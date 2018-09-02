@@ -10,11 +10,13 @@ Rails.application.routes.draw do
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags
-  resources :lessons, only: [:show]
+  get 'lessons/:id/inspect/', to: 'lessons#inspect', as: 'inspect_lesson'
+  get 'lessons/list_sections/', to: 'lessons#list_sections', as: 'list_lesson_sections'
+  resources :lessons, except: [:index]
   get 'sections/list_tags/', to: 'sections#list_tags', as: 'list_section_tags'
-  resources :sections
+  resources :sections, except: [:index]
   get 'chapters/:id/inspect/', to: 'chapters#inspect', as: 'inspect_chapter'
-  resources :chapters
+  resources :chapters, except: [:index]
   resources :terms, except: [:show]
   get 'lectures/:id/inspect/', to: 'lectures#inspect', as: 'inspect_lecture'
   get 'lectures/list_tags/', to: 'lectures#list_tags', as: 'list_lecture_tags'

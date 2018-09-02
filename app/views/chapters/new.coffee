@@ -6,7 +6,9 @@ else
                           locals: { lecture: @lecture,
                                     chapter: @chapter} %>').show()
   $('#new_chapter_button').hide()
+  $('#new_lesson_button').hide()
   $('#cancel-new-chapter').on 'click', ->
     $('#new-chapter-area').empty().hide()
     $('#new_chapter_button').show()
+    $('#new_lesson_button').show()
     return

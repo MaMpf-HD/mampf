@@ -98,6 +98,7 @@ module ApplicationHelper
     return true if controller == 'tags' && action != 'show'
     return true if controller == 'chapters' && action != 'show'
     return true if controller == 'sections' && action != 'show'
+    return true if controller == 'lessons' && action != 'show'
     false
   end
 end

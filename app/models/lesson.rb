@@ -7,15 +7,7 @@ class Lesson < ApplicationRecord
   has_many :sections, through: :lesson_section_joins
   has_many :media, as: :teachable
   has_many :editable_user_joins, as: :editable
-  validates :date, presence: true
-  validates :number, presence: true,
-                     numericality: { only_integer: true,
-                                     greater_than_or_equal_to: 1,
-                                     less_than_or_equal_to: 999 },
-                     uniqueness: { scope: :lecture_id,
-                                   message: 'lesson already exists' }
-  validate :valid_date?
-  validate :valid_date_for_term?
+  validates :date, presence: { message: 'Es muss ein Datum angegeben werden.' }
 
   def self.select_by_date
     Lesson.all.to_a.sort_by(&:date).map { |l| [l.date, l.id] }
@@ -24,6 +16,10 @@ class Lesson < ApplicationRecord
   def term
     return unless lecture.present?
     lecture.term
+  end
+
+  def number
+    lecture.lessons.order(:date, :id).pluck(:id).index(id) + 1
   end
 
   def course
@@ -56,20 +52,7 @@ class Lesson < ApplicationRecord
     self
   end
 
-  private
-
-  def valid_date_for_term?
-    return unless date.present? && term.present?
-    return unless valid_date?
-    return true if date.between?(term.begin_date, term.end_date)
-    errors.add(:date, 'not a valid date for this term')
-    false
-  end
-
-  def valid_date?
-    return unless date.present?
-    return true if date.is_a?(Date)
-    errors.add(:date, 'not a valid date')
-    false
+  def section_tags
+    sections.collect(&:tags).flatten
   end
 end

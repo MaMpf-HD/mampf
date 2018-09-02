@@ -8,7 +8,7 @@ class LecturesController < ApplicationController
     lectures = current_user.edited_lectures_with_inheritance
     edited_lectures = Lecture.sort_by_date(lectures).to_a
     other_lectures = Lecture.sort_by_date(Lecture.all.to_a - lectures)
-    @lectures = Kaminari.paginate_array(edited_lectures + other_lectures)
+    @lectures = Kaminari.paginate_array(Lecture.sort_by_date(Lecture.all))
                         .page params[:page]
   end
 

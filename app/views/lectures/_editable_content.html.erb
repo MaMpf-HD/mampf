@@ -1,56 +1,72 @@
-<div class="card bg-mdb-color-lighten-6">
+<div class="card bg-mdb-color-lighten-5">
   <div class="card-header">
     <div class="row">
-      <div class="col-4">
+      <div class="col-3">
         <h5>
           Vorlesungsinhalt
         </h5>
       </div>
       <% unless inspection %>
-        <div class="col-4">
+        <div class="col-3">
           <span id="no-effect-warning" style="display: none; color: red;">
             Du musst zunächst die obigen Änderungen speichern oder verwerfen.
           </span>
         </div>
-        <div class="col-4 text-right">
-          <div id="new_chapter_button">
+        <div class="col-6 text-right">
             <%= link_to 'Neues Kapitel anlegen',
                         new_chapter_path(lecture_id: lecture.id),
-                        remote: true, class: 'btn btn-secondary' %>
-          </div>
+                        remote: true, class: 'btn btn-secondary',
+                        id: 'new_chapter_button' %>
+            <%= link_to 'Neue Sitzung anlegen',
+                        new_lesson_path(lecture_id: lecture.id),
+                        remote: true, class: 'btn btn-secondary',
+                        id: 'new_lesson_button'%>
         </div>
       <% end %>
     </div>
     <div id="new-chapter-area" style="display: none;">
     </div>
+    <div id="new-lesson-area" style="display: none;">
+    </div>
   </div>
   <div class="card-body">
+    <div class="row">
     <% if lecture.chapters.present? %>
-    <ul>
       <% lecture.chapters.each do |c| %>
-        <li>
+        <div class="col-6 my-2">
           <% if inspection %>
             <%= link_to c.to_label, inspect_chapter_path(c), class: 'text-info' %>
           <% else %>
             <%= link_to c.to_label, edit_chapter_path(c), class: 'text-info' %>
           <% end %>
-        </li>
-        <ul>
-          <% c.sections.each do |s| %>
-            <li>
-              <% if inspection %>
-                <%= s.to_label %>
-              <% else %>
-                <%= link_to s.to_label, edit_chapter_path(c, section_id: s.id),
-                            class: 'text-dark' %>
-              <% end %>
-            </li>
-          <% end%>
-        </ul>
+          <ul class="list-group">
+            <% c.sections.each do |s| %>
+              <li class="list-group-item bg-mdb-color-lighten-6">
+                <div class="row">
+                  <div class="col-6">
+                    <% if inspection %>
+                      <%= s.to_label %>
+                    <% else %>
+                      <%= link_to s.to_label, edit_chapter_path(c, section_id: s.id),
+                                  class: 'text-dark' %>
+                    <% end %>
+                  </div>
+                  <div class="col-6">
+                    <% s.lessons.each do |l| %>
+                      <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
+                                   '.' + l.date.year.to_s, edit_lesson_path(l),
+                                   class: 'badge badge-light' %>
+                    <% end %>
+                  </div>
+                </div>
+              </li>
+            <% end%>
+          </ul>
+        </div>
       <% end %>
-    </ul>
-    <% else %>
-      Es sind noch keine Kapitel vorhanden.
-    <% end %>
   </div>
+  <% else %>
+      Es sind noch keine Kapitel vorhanden.
+  <% end %>
+</div>
 </div>

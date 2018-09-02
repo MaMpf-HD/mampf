@@ -1,0 +1,9 @@
+<% sections.each do |s| %>
+  <% if inspection %>
+    <%= link_to s.to_label, inspect_chapter_path(s.chapter),
+                class: "badge badge-light" %>
+  <% else %>
+    <%= link_to s.to_label, edit_chapter_path(s.chapter, section_id: s.id),
+                class: "badge badge-light" %>
+  <% end %>
+<% end %>

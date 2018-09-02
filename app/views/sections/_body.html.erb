@@ -71,7 +71,7 @@
   <div class="form-group">
     <%= f.label :tag_ids, 'Sitzungen' %>
     <%= f.select :lesson_ids,
-                 options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.date, l.id] }, section.lesson_ids),
+                 options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.to_label, l.id] }, section.lesson_ids),
                  {}, { multiple: true,
                        class: 'selectize mt-2',
                        data: { id: section.id,

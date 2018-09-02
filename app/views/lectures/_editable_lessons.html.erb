@@ -1,8 +1,23 @@
 <div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
-    <h5>
-      <%= lessons_description %>
-    </h5>
+    <div class="row">
+      <div class="col-4">
+        <h5>
+          Verknüpfte Sitzungen
+        </h5>
+      </div>
+      <% unless inspection %>
+        <div class="col-4">
+          <span id="no-effect-warning-lessons" style="display: none; color: red;">
+            Du musst zunächst die obigen Änderungen speichern oder verwerfen.
+          </span>
+        </div>
+        <div class="col-4 text-right">
+        </div>
+      <% end %>
+    </div>
+    <div id="new-lesson-area" style="display: none;">
+    </div>
   </div>
   <div class="card-body">
     <% if !lessons.present? %>
@@ -11,7 +26,8 @@
       <ul>
         <% lessons.each do |l| %>
           <li class="text-dark">
-            <%= link_to l.title, l%>
+            <%= link_to l.to_label, edit_lesson_path(l),
+                        class: 'text-dark'%>
           </li>
         <% end %>
       </ul>
@@ -23,7 +39,7 @@
               <% lesson_list.each do |l| %>
                 <% unless l.nil? %>
                   <li>
-                    <%= link_to l.to_label, lesson_path(l),
+                    <%= link_to l.to_label, edit_lesson_path(l),
                                 class: 'text-dark' %>
                   </li>
                 <% end %>

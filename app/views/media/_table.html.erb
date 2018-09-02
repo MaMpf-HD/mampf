@@ -18,7 +18,7 @@
          role="tabpanel" aria-labelledby="<%= s %>-tab">
       <%= render partial: 'media/table_column',
                  locals: { media: media.where(sort: media_types[s]),
-                           sort: s} %>
+                           sort: s, small: small } %>
     </div>
   <% end %>
 </div>

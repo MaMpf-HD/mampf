@@ -1,15 +1,30 @@
+<div id="media_accordion" role="tablist">
 <div class="card bg-light mb-4">
-  <div class="card-header">
+  <div class="card-header" role="tab" id="media_heading" >
     <div class="row">
-      <div class="col-12">
+      <div class="col-6">
         <h5>
           Medien (<%= media.count %>)
         </h5>
       </div>
+      <% if collapsible %>
+        <div class="col-6 text-right">
+          <a class="btn btn-primary"
+             data-toggle="collapse" href="#media_collapse"
+             aria-expanded="false" aria-controls="media_collapse">
+            Ein-/Ausklappen
+          </a>
+        </div>
+      <% end %>
     </div>
   </div>
-  <div class="card-body p-2">
-    <%= render partial: 'media/table',
-               locals: { media: media } %>
+  <div id="media_collapse" class="<%= show_collapse(!collapsible) %>" role="tabpanel"
+       aria-labelledby="heading"
+       data-parent="#media_accordion">
+    <div class="card-body p-2">
+      <%= render partial: 'media/table',
+                 locals: { media: media, small: small } %>
+    </div>
   </div>
+</div>
 </div>

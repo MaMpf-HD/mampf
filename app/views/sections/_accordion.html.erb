@@ -1,6 +1,6 @@
 <div class="row p-4">
   <div class="col-12">
-    <div class="card" id="sections-accordion">
+    <div class="card bg-mdb-color-lighten-5" id="sections-accordion">
       <div class="card-header">
         <div class="row">
           <div class="col-4">
@@ -22,7 +22,7 @@
       <div class="card-body">
         <% sections.each do |s| %>
           <div id="card-section-<%= s.id %>"
-               class="card <%= s == chosen_section ? 'bg-mdb-color-lighten-6' : '' %>">
+               class="card <%= s == chosen_section ? '' : 'bg-mdb-color-lighten-6' %>">
             <div class="card-header"
                  id="section-heading-<%= s.id %>">
                 <%= render partial: 'sections/header',

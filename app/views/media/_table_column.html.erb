@@ -1,4 +1,13 @@
 <% if media.present? %>
+  <% if small %>
+    <ul>
+      <% media.each do |m| %>
+        <li>
+          <%= m.title %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
   <% teachables = lecture_course_teachables(media) %>
   <div class="row">
     <div class="col-3">
@@ -48,4 +57,5 @@
       </div>
     </div>
   </div>
+  <% end %>
 <% end %>

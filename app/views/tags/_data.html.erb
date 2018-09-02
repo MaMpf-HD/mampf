@@ -10,11 +10,16 @@
       <div class="row">
         <div class="col-12">
           <%= render partial: 'media/card',
-                     locals: { media: tag.media } %>
+                     locals: { media: tag.media, small: false,
+                               collapsible: false } %>
         </div>
         <div class="col-12">
           <%= render partial: 'sections/card',
                      locals: { sections: tag.sections, inspection: false } %>
+        </div>
+        <div class="col-12">
+          <%= render partial: 'lessons/card',
+                     locals: { lessons: tag.lessons, inspection: false } %>
         </div>
     </div>
   <% end %>

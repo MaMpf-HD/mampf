@@ -1,10 +1,13 @@
 <div class="row mt-2 p-2">
-  <div class="col-8">
-    <h4>
+  <div class="col-9">
+    <h4 class="pl-2">
+      <span class="badge badge-secondary">
+        Modul
+      </span>
       <%= course.title %>
     </h4>
   </div>
-  <div class="col-4 text-center">
+  <div class="col-3 text-center">
     <% if current_user.admin? || course.editors.include?(current_user) %>
       <%= link_to 'Bearbeiten', edit_course_path(course),
                   class: 'btn btn-primary my-1' %>
@@ -111,7 +114,8 @@
   <div class="row p-2">
     <div class="col-12">
       <%= render partial: 'media/card',
-                 locals: { media: related_media } %>
+                 locals: { media: related_media, small: false,
+                           collapsible: false } %>
     </div>
   </div>
 <% end %>

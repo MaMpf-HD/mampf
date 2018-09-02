@@ -2,13 +2,14 @@
   <div class="col-6">
     <div class="row">
       <div class="col-12">
-        <div class="card bg-light mb-4" id="question-basics-edit">
+        <div class="card bg-light mb-4">
           <%= render partial: 'courses/basics', locals: { course: course, f: f } %>
         </div>
       </div>
       <div class="col-12">
         <%= render partial: 'media/card',
-                   locals: { media: course.related_media } %>
+                   locals: { media: course.related_media, small: false,
+                             collapsible: false } %>
       </div>
     </div>
   </div>

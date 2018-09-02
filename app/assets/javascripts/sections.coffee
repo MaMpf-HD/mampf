@@ -26,13 +26,13 @@ $(document).on 'turbolinks:load', ->
   $('[id^="collapse-section-"]').on 'hidden.bs.collapse', ->
     sectionId = this.dataset.section
     $('#details-section-' + sectionId).text('Bearbeiten')
-    $('#card-section-' + sectionId).removeClass('bg-mdb-color-lighten-6')
+    $('#card-section-' + sectionId).addClass('bg-mdb-color-lighten-6')
     return
 
   $('[id^="collapse-section-"]').on 'show.bs.collapse', ->
     $('#cancel-new-section').trigger 'click'
     sectionId = this.dataset.section
-    $('#card-section-' + sectionId).addClass('bg-mdb-color-lighten-6')
+    $('#card-section-' + sectionId).removeClass('bg-mdb-color-lighten-6')
     $('#details-section-' + sectionId).text('Zuklappen')
     return
 

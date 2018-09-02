@@ -4,6 +4,7 @@ $('#new-section-area').empty()
                         locals: { section: @section,
                                   chapter: @chapter } %>').show()
 $('#new_section_button').hide()
+$('#new_chapter_button').hide()
 $('#cancel-new-section').on 'click', ->
   $('#new-section-area').empty().hide()
   $('#new_section_button').show()
