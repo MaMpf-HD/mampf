@@ -1,4 +1,4 @@
-<div class="card bg-mdb-color-lighten-4">
+<div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
     <h5>
       Vorlesungsinhalt
@@ -8,8 +8,10 @@
     <div class="card-columns">
       <% lecture.chapters.each do |c| %>
         <div class="card bg-mdb-color-lighten-5">
-          <div class="card-header">
-            <%= link_to c.to_label, chapter_path(c), class: 'text-dark' %>
+          <div class="card-header bg-mdb-color-lighten-2">
+            <span class="text-light">
+              <%= c.to_label %>
+            </span>
           </div>
           <div class="card-body">
           <ul class="list-group list-group-flush">
@@ -17,7 +19,9 @@
               <li class="list-group-item bg-mdb-color-lighten-5">
                 <div class="row">
                   <div class="col-6">
-                    <%= link_to s.to_label, section_path(s), class:'text-dark' %>
+                    <span class="text-primary">
+                      <%= s.to_label %>
+                    </span>
                   </div>
                   <div class="col-6">
                     <% s.lessons.each do |l| %>
