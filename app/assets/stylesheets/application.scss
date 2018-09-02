@@ -36,3 +36,19 @@ $modal-xxl:                   1600px !default;
 @include media-breakpoint-up(xxl) {
   .modal-xxl { max-width: $modal-xxl; }
 }
+
+
+.card-columns {
+  @include media-breakpoint-only(xl) {
+    column-count: 2;
+  }
+  @include media-breakpoint-only(lg) {
+    column-count: 2;
+  }
+  @include media-breakpoint-only(md) {
+    column-count: 1;
+  }
+  @include media-breakpoint-only(sm) {
+    column-count: 1;
+  }
+}

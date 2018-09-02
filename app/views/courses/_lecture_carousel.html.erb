@@ -23,30 +23,12 @@
            data-id="<%= l.teacher.id %>">
         <div class="row">
           <% unless l.chapters.empty? %>
-            <div class="col-12 col-md-12 col-lg-6 pt-3">
+            <div class="col-12">
               <%= render partial: 'lectures/content',
                          locals: { lecture: l } %>
             </div>
           <% end %>
-          <% unless l.lessons.empty? %>
-            <div class="col-12 col-md-12 col-lg-6 pt-3">
-              <%= render partial: 'lessons/lessons',
-                         locals: { lessons: l.lessons,
-                                   lessons_description: 'Verknüpfte Sitzungen' } %>
-            </div>
-          <% end %>
         </div>
-        <% unless l.tags.empty? %>
-          <div class="row pt-5 pb-3">
-            <div class="col-12">
-              <%= render partial: 'tags/tags_toggle',
-                         locals: { tags: l.tags,
-                                   tags_description: 'Verknüpfte Begriffe',
-                                   id: l.id,
-                                   inspection: false } %>
-            </div>
-          </div>
-        <% end %>
       </div>
     <% end %>
   </div>
