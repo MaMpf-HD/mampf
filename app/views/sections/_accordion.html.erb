@@ -9,14 +9,14 @@
             </h5>
           </div>
           <div class="col-8 text-right">
-            <div id="new_section_button">
+            <div id="new_section_button_<%= chapter.id %>" data-from="chapter">
               <%= link_to 'Neuen Abschnitt anlegen',
                           new_section_path(chapter_id: chapter.id),
                           remote: true, class: 'btn btn-secondary' %>
             </div>
           </div>
         </div>
-        <div id="new-section-area" style="display: none;">
+        <div id="new-section-area-<%= chapter.id %>" style="display: none;">
         </div>
       </div>
       <div class="card-body">

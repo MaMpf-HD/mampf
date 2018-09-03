@@ -28,10 +28,11 @@
     <% end %>
   </div>
   <%= f.hidden_field :chapter_id, value: chapter.id %>
+  <%= f.hidden_field :from %>
   <div class="row">
     <div class="col-12 text-center">
       <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-      <button type="button" id="cancel-new-section"
+      <button type="button" id="cancel-new-section-<%= chapter.id %>"
               class="btn btn-secondary">
         abbrechen
       </button>

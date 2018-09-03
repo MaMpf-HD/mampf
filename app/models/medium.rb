@@ -1,15 +1,14 @@
 # Medium class
 class Medium < ApplicationRecord
   belongs_to :teachable, polymorphic: true
-  has_many :medium_tag_joins
+  has_many :medium_tag_joins, dependent: :destroy
   has_many :tags, through: :medium_tag_joins
   has_many :links, dependent: :destroy
   has_many :linked_media, through: :links
-  has_many :editable_user_joins, as: :editable
+  has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
-  validates :sort, presence: true,
-                   inclusion: { in: :sort_enum }
+  validates :sort, presence: true
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
@@ -63,10 +62,11 @@ class Medium < ApplicationRecord
 
   after_initialize :set_defaults
   before_save :fill_in_defaults_for_missing_params
-  def sort_enum
+  after_save :touch_teachable
+
+  def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
   end
-  after_save :touch_teachable
 
   def self.search(primary_lecture, params)
     course = Course.find_by_id(params[:course_id])

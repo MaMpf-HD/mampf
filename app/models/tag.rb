@@ -6,21 +6,21 @@
 # Tag class
 class Tag < ApplicationRecord
   has_many :course_tag_joins, dependent: :destroy
-  has_many :courses, through: :course_tag_joins, dependent: :destroy
-  has_many :lecture_tag_disabled_joins
+  has_many :courses, through: :course_tag_joins
+  has_many :lecture_tag_disabled_joins, dependent: :destroy
   has_many :disabled_lectures, through: :lecture_tag_disabled_joins,
                                source: :lecture
-  has_many :lecture_tag_additional_joins
+  has_many :lecture_tag_additional_joins, dependent: :destroy
   has_many :additional_lectures, through: :lecture_tag_additional_joins,
                                  source: :lecture
-  has_many :lesson_tag_joins
+  has_many :lesson_tag_joins, dependent: :destroy
   has_many :lessons, through: :lesson_tag_joins
-  has_many :section_tag_joins
+  has_many :section_tag_joins, dependent: :destroy
   has_many :sections, through: :section_tag_joins
-  has_many :medium_tag_joins
+  has_many :medium_tag_joins, dependent: :destroy
   has_many :media, through: :medium_tag_joins
   has_many :relations, dependent: :destroy
-  has_many :related_tags, through: :relations, dependent: :destroy
+  has_many :related_tags, through: :relations
   validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
                                          'werden.' },
                     uniqueness: { message: 'Titel ist bereits vergeben.' }
@@ -48,9 +48,9 @@ class Tag < ApplicationRecord
     Tag.where(id: ids - related_ids)
   end
 
-  def short_title
-    return title unless title.length > 30
-    title[0, 27] + '...'
+  def short_title(n = 30)
+    return title unless title.length > n
+    title[0, n-3] + '...'
   end
 
   def in_lecture?(lecture)

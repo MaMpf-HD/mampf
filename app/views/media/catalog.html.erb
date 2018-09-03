@@ -1,0 +1,86 @@
+<div class="row mt-3 p-2">
+  <div class="col-10">
+    <h4>
+      Medienübersicht
+    </h4>
+  </div>
+  <div class="col-2">
+    <%= link_to 'Medium anlegen', new_medium_path,
+                class: 'btn btn-secondary',
+                id: 'create-new-tag' %>
+  </div>
+</div>
+<%= form_with url: media_search_path, scope: 'search',
+              remote: true, method: 'get' do |f| %>
+  <div class="form-row p-2">
+    <div class="col-3 form-group">
+      <%= f.label :types, 'Typ' %>
+      <%= f.select :types,
+                   options_for_select(Medium.sort_enum.map.with_index { |s,i| [s, i] }),
+                   {}, { multiple: true, class: 'selectize' } %>
+    </div>
+    <div class="col-3 form-group">
+      <%= f.label :teachable, 'assoziiert zu' %>
+      <%= f.select :teachable,
+                   options_for_select(Course.all.map { |c| [c.short_title, c.id] } +
+                                      Lecture.all.map { |l| [l.short_title, l.id + Course.last.id] }),
+                   {}, { multiple: true, class: 'selectize' } %>
+    </div>
+    <div class="col-3 form-group">
+      <%= f.label :tag_ids, 'Tags' %>
+      <%= f.select :tag_ids,
+                   options_for_select(Tag.select_by_title),
+                   {}, { multiple: true, class: 'selectize' } %>
+    </div>
+    <div class="col-3 form-group">
+      <%= f.label :editor_ids, 'Editoren' %>
+      <%= f.select :tag_ids,
+                   options_for_select(User.editors.map { |e| [e.info, e.id] }),
+                   {}, { multiple: true, class: 'selectize' } %>
+    </div>
+  </div>
+<div class="row mb-3">
+  <div class="col-12 text-center">
+    <%= f.submit 'Suchen', class: 'btn btn-primary' %>
+  </div>
+</div>
+<% end %>
+<div class="row bg-mdb-color-lighten-2 mx-2 py-3">
+  <div class="col-2 text-light">
+    <strong>
+      Titel
+    </strong>
+  </div>
+  <div class="col-1 text-light">
+    <strong>
+      Typ
+    </strong>
+  </div>
+  <div class="col-2 text-light">
+    <strong>
+      assoziiert zu
+    </strong>
+  </div>
+  <div class="col-3 text-light">
+    <strong>
+      Tags
+    </strong>
+  </div>
+  <div class="col-2 text-light">
+    <strong>
+      Editoren
+    </strong>
+  </div>
+  <div class="col-2 text-light">
+    <strong>
+      Aktionen
+    </strong>
+  </div>
+</div>
+<div id="mediaTable">
+  <% @media.each do |m| %>
+    <div class="row border-bottom mx-2" id="row-medium-<%= m.id %>">
+      <%= render partial: 'media/row', locals: { medium: m }%>
+    </div>
+  <% end %>
+</div>

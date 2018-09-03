@@ -6,14 +6,19 @@ Rails.application.routes.draw do
   get '/administration/profile', to: 'administration#profile', as: 'elevated_profile'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :courses
-  resources :media, only: [:show, :index]
+  get 'media/search', to: 'media#search', as: 'media_search'
+  get 'media/catalog', to: 'media#catalog', as: 'media_catalog'
+  get 'media/:id/inspect/', to: 'media#inspect', as: 'inspect_medium'
+  resources :media, only: [:show, :index, :new, :edit]
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags
+  get 'lessons/modal', to: 'lessons#modal', as: 'lesson_modal'
   get 'lessons/:id/inspect/', to: 'lessons#inspect', as: 'inspect_lesson'
   get 'lessons/list_sections/', to: 'lessons#list_sections', as: 'list_lesson_sections'
   resources :lessons, except: [:index]
   get 'sections/list_tags/', to: 'sections#list_tags', as: 'list_section_tags'
+  get 'sections/list_lessons/', to: 'sections#list_lessons', as: 'list_section_lessons'
   resources :sections, except: [:index]
   get 'chapters/:id/inspect/', to: 'chapters#inspect', as: 'inspect_chapter'
   resources :chapters, except: [:index]
@@ -26,7 +31,6 @@ Rails.application.routes.draw do
   get 'users/teacher/:teacher_id', to: 'users#teacher', as: 'teacher'
   resources :users, only: [:index, :edit, :update, :destroy]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
-  get 'search/index'
 
   get 'profile/edit', as: 'edit_profile'
   get 'courses/:course_id/food', to: 'media#index', as: 'course_food'

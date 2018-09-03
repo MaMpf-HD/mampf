@@ -2,9 +2,9 @@
 class Section < ApplicationRecord
   belongs_to :chapter
   acts_as_list scope: :chapter
-  has_many :section_tag_joins
+  has_many :section_tag_joins, dependent: :destroy
   has_many :tags, through: :section_tag_joins
-  has_many :lesson_section_joins
+  has_many :lesson_section_joins, dependent: :destroy
   has_many :lessons, through: :lesson_section_joins
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.'}
 

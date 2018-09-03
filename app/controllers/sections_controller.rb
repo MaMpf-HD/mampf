@@ -19,7 +19,14 @@ class SectionsController < ApplicationController
     else
       @section.save
     end
-    redirect_to edit_chapter_path(@section.chapter) if @section.valid?
+    if @section.valid?
+      if params[:section][:from] == 'lecture'
+        redirect_to edit_lecture_path(@section.lecture)
+        return
+      end
+      redirect_to edit_chapter_path(@section.chapter)
+      return
+    end
     @errors = @section.errors
   end
 
@@ -34,11 +41,16 @@ class SectionsController < ApplicationController
     @section.update(section_params)
     update_tags if @section.valid?
     @errors = @section.errors
-    redirect_to edit_chapter_path(@section.chapter) unless @errors.present?
+    redirect_to edit_chapter_path(@section.chapter, section_id: @section.id) unless @errors.present?
   end
 
   def list_tags
     @tags = Tag.where(id: JSON.parse(params[:tags])).sort_by(&:title)
+    @id = params[:id]
+  end
+
+  def list_lessons
+    @lessons = Lesson.where(id: JSON.parse(params[:lessons])).sort_by(&:date)
     @id = params[:id]
   end
 

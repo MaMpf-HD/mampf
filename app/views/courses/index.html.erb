@@ -24,30 +24,31 @@
     <%= paginate @courses %>
   </div>
 </div>
-<div class="row bg-light px-4 py-3">
-  <div class="col-3">
+<div class="row bg-mdb-color-lighten-2 mx-2 px-4 py-3">
+  <div class="col-3 text-light">
     <strong>
       Titel
     </strong>
   </div>
-  <div class="col-3">
+  <div class="col-3 text-light">
     <strong>
       Editoren
     </strong>
   </div>
-  <div class="col-3">
+  <div class="col-3 text-light">
     <strong>
       Vorlesungen
     </strong>
   </div>
-  <div class="col-3">
+  <div class="col-3 text-light">
     <strong>
       Aktionen
     </strong>
   </div>
 </div>
 <% @courses.each do |c| %>
-  <div class="row border-bottom px-4" id="row-course-<%= c.id %>">
+  <div class="row border-bottom mx-2 px-4 <%= c.edited_by?(current_user) ? 'bg-light' : '' %>" 
+       id="row-course-<%= c.id %>">
     <%= render partial: 'courses/row', locals: { course: c }%>
   </div>
 <% end %>

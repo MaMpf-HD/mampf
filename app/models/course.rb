@@ -1,14 +1,14 @@
 # Course class
 class Course < ApplicationRecord
   has_many :lectures, dependent: :destroy
-  has_many :course_tag_joins
+  has_many :course_tag_joins, dependent: :destroy
   has_many :tags, through: :course_tag_joins
   has_many :media, as: :teachable
   has_many :course_user_joins, dependent: :destroy
   has_many :users, through: :course_user_joins
   has_many :course_self_joins, dependent: :destroy
   has_many :preceding_courses, through: :course_self_joins
-  has_many :editable_user_joins, as: :editable
+  has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
   validates :title, presence: { message: 'Titel muss vorhanden sein.' },

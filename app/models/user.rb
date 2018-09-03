@@ -7,7 +7,7 @@ class User < ApplicationRecord
   has_many :lectures, through: :lecture_user_joins
   has_many :course_user_joins, dependent: :destroy
   has_many :courses, through: :course_user_joins
-  has_many :editable_user_joins, foreign_key: :user_id
+  has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy
   has_many :edited_courses, through: :editable_user_joins,
                             source: :editable, source_type: 'Course'
   has_many :edited_lectures, through: :editable_user_joins,
@@ -144,6 +144,14 @@ class User < ApplicationRecord
 
   def edited_courses_with_inheritance
     edited_courses
+  end
+
+  def edited_lessons_with_inheritance
+    edited_lectures_with_inheritance.collect(&:lessons).flatten
+  end
+
+  def lectures_as_module_editor
+    edited_lectures_with_inheritance - edited_lectures.to_a
   end
 
   private

@@ -39,9 +39,8 @@ class Ability
       can :destroy, Section do |section|
         section.lecture.edited_by?(user)
       end
-      can :list_tags, Section do |section|
-        section.lecture.edited_by?(user)
-      end
+      can :list_tags, Section
+      can :list_sections, Section
       can :new, Lesson
       can :create, Lesson
       can :update, Lesson do |lesson|

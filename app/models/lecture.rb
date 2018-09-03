@@ -3,9 +3,9 @@ class Lecture < ApplicationRecord
   belongs_to :course
   belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
   belongs_to :term
-  has_many :lecture_tag_disabled_joins
+  has_many :lecture_tag_disabled_joins, dependent: :destroy
   has_many :disabled_tags, through: :lecture_tag_disabled_joins, source: :tag
-  has_many :lecture_tag_additional_joins
+  has_many :lecture_tag_additional_joins, dependent: :destroy
   has_many :additional_tags, through: :lecture_tag_additional_joins,
                              source: :tag
   has_many :chapters,  -> { order(position: :asc) }, dependent: :destroy
@@ -13,7 +13,7 @@ class Lecture < ApplicationRecord
   has_many :media, as: :teachable
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, through: :lecture_user_joins
-  has_many :editable_user_joins, as: :editable
+  has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
@@ -136,6 +136,10 @@ class Lecture < ApplicationRecord
 
   def last_chapter_by_position
     chapters.order(:position).last
+  end
+
+  def orphaned_lessons
+    lessons.select { |l| l.sections.blank? }
   end
 
   def active?(user, preselected_lecture_id)

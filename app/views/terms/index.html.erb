@@ -18,23 +18,23 @@
     <%= paginate @terms %>
   </div>
 </div>
-<div class="row bg-light px-4 py-3">
-  <div class="col-2">
+<div class="row bg-mdb-color-lighten-2 mx-2 px-4 py-3">
+  <div class="col-2 text-light">
     <strong>
       Jahr
     </strong>
   </div>
-  <div class="col-2">
+  <div class="col-2 text-light">
     <strong>
       Typ
     </strong>
   </div>
-  <div class="col-4">
+  <div class="col-4 text-light">
     <strong>
       Vorlesungen
     </strong>
   </div>
-  <div class="col-4">
+  <div class="col-4 text-light">
     <strong>
       Aktionen
     </strong>
@@ -43,7 +43,7 @@
 <div id="row-new-term" class="border-bottom" style="display: none;" >
 </div>
 <% @terms.each do |t| %>
-  <div class="row border-bottom px-4" id="row-term-<%= t.id %>">
+  <div class="row border-bottom mx-2 px-4" id="row-term-<%= t.id %>">
     <%= render partial: 'terms/row', locals: { term: t }%>
   </div>
 <% end %>

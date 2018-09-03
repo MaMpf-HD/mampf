@@ -48,23 +48,23 @@
         </div>
       </div>
     </form>
-<div class="row bg-light px-4 py-3">
-  <div class="col-3">
+<div class="row bg-mdb-color-lighten-2 mx-2 px-4 py-3">
+  <div class="col-3 text-light">
     <strong>
       Titel
     </strong>
   </div>
-  <div class="col-2">
+  <div class="col-2 text-light">
     <strong>
       Module
     </strong>
   </div>
-  <div class="col-4">
+  <div class="col-4 text-light">
     <strong>
       verknüpfte Tags
     </strong>
   </div>
-  <div class="col-3">
+  <div class="col-3 text-light">
     <strong>
       Aktionen
     </strong>
@@ -73,7 +73,7 @@
 <div id="tagTable" data-tags="<%= @tags_with_id %>">
   <% cache(@tags) do %>
     <% @tags.each do |t| %>
-      <div class="row border-bottom px-4" id="row-tag-<%= t.id %>"
+      <div class="row border-bottom mx-2 px-4" id="row-tag-<%= t.id %>"
            data-courses="<%= t.courses.each.map(&:id).to_json %>">
         <%= render partial: 'tags/row', locals: { tag: t }%>
       </div>

@@ -12,7 +12,17 @@ class MediaController < ApplicationController
     @media = paginated_results
   end
 
+  def catalog
+    @media = Medium.all
+  end
+
   def show
+  end
+
+  def new
+  end
+
+  def search
   end
 
   private

@@ -15,10 +15,12 @@
               aria-controls="collapse-section-<%= section.id %>">
         <%= section == chosen_section ? 'Zuklappen' : 'Bearbeiten' %>
       </button>
-      <%= link_to 'Löschen', section_path(section),
-                  method: :delete,
-                  data: { confirm: 'Bist Du sicher?' },
-                  class: 'btn btn-outline-danger rounded btn-sm m-1' %>
+      <% if section.lessons.empty? %>
+        <%= link_to 'Löschen', section_path(section),
+                    method: :delete,
+                    data: { confirm: 'Bist Du sicher?' },
+                    class: 'btn btn-outline-danger rounded btn-sm m-1' %>
+      <% end %>
     </div>
   </div>
 </div>

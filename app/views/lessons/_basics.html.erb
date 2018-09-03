@@ -12,8 +12,8 @@
     <div class="row">
       <% if inspection %>
         <div class="col-12">
-          Datum: <%= @lesson.date.day.to_s + '.' + @lesson.date.month.to_s +
-                     '.' + @lesson.date.year.to_s  %>
+          Datum: <%= lesson.date.day.to_s + '.' + lesson.date.month.to_s +
+                     '.' + lesson.date.year.to_s  %>
         </div>
       <% else %>
         <div class="col-12">
@@ -47,12 +47,14 @@
           Es sind keine Abschnitte vorhanden.
         <% end %>
       </div>
-    <% else inspection %>
+    <% else %>
       <%= f.label :section_ids, 'Abschnitte' %>
-      <button type="button" class="btn btn-sm ml-2 mb-2 btn-outline-secondary"
-              id="lesson-sections-links">
-        Links einblenden
-      </button>
+      <% unless modal %>
+        <button type="button" class="btn btn-sm ml-2 mb-2 btn-outline-secondary"
+                id="lesson-sections-links">
+          Links einblenden
+        </button>
+      <% end %>
       <%= f.select :section_ids,
                    options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ]},
                                       lesson.section_ids),
@@ -64,7 +66,7 @@
                     locals: { sections: lesson.sections,
                               inspection: true } %>
       </div>
-      <div class="invalid-feedback" id="lesson-sections-error-<%= tag.id.to_i %>">
+      <div class="invalid-feedback" id="lesson-sections-error">
       </div>
     <% end %>
   </div>

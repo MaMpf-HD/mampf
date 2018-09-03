@@ -65,11 +65,22 @@
     <div id="section-tag-list-<%= section.id %>"
          data-show="0" style="display: none;">
       <%= render partial: "tags/list",
-                 locals: { tags: section.tags, inspection: true } %>
+                 locals: { tags: section.tags, inspection: false } %>
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :tag_ids, 'Sitzungen' %>
+    <%= f.label :lesson_ids, 'Sitzungen' %>
+    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
+            id="lesson-modal-button-<%= section.id %>"
+            data-section="<%= section.id %>"
+            data-from="section">
+            Sitzung anlegen
+    </button>
+    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
+            id="section-lesson-links-<%= section.id %>"
+            data-id="<%= section.id %>">
+            Sitzungs-Links einblenden
+    </button>
     <%= f.select :lesson_ids,
                  options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.to_label, l.id] }, section.lesson_ids),
                  {}, { multiple: true,
@@ -79,6 +90,11 @@
                        id: 'section_lesson_ids_' + section.id.to_s } %>
     <div class="invalid-feedback"
          id="section-lessons-error-<%= section.id %>">
+    </div>
+    <div id="section-lesson-list-<%= section.id %>"
+         data-show="0" style="display: none;">
+      <%= render partial: "lessons/list",
+                 locals: { lessons: section.lessons, inspection: false } %>
     </div>
   </div>
 <% end %>

@@ -23,10 +23,12 @@
                 class: 'btn btn-primary my-1' %>
     <%= link_to 'zur Vorlesung', edit_lecture_path(@chapter.lecture),
                 class: 'btn btn-primary' %>
-    <%= link_to 'Kapitel löschen', chapter_path(@chapter),
-                method: :delete,
-                data: { confirm: 'Bist Du sicher?' },
-                class: 'btn btn-danger' %>
+    <% if @chapter.lessons.empty? %>
+      <%= link_to 'Kapitel löschen', chapter_path(@chapter),
+                  method: :delete,
+                  data: { confirm: 'Bist Du sicher?' },
+                  class: 'btn btn-danger' %>
+    <% end %>
   </div>
 </div>
 <div class="row p-2 mb-3">
@@ -44,3 +46,4 @@
                      chosen_section: @section,
                      chapter: @chapter } %>
 <%= render partial: 'tags/modal' %>
+<%= render partial: 'lessons/modal' %>

@@ -8,10 +8,13 @@ $(document).on 'turbolinks:load', ->
     sectionId = this.dataset.id
     chapterId = this.dataset.chapter
     $('#section-basics-warning-' + sectionId).show()
+    $('#lesson-modal-button-' + sectionId).hide()
+    $('#section-lesson-links-' + sectionId).hide()
+    $('#section-tag-links-' + sectionId).hide()
     $('#details-section-' + sectionId).text('verwerfen')
     $('#details-section-' + sectionId).on 'click', (event) ->
       event.preventDefault()
-      window.location.href = Routes.edit_chapter_path(chapterId)
+      window.location.href = Routes.edit_chapter_path(chapterId, section_id: sectionId)
       return
     tags = document.getElementById('section_tag_ids_' + sectionId).selectize.getValue()
     $.ajax Routes.list_section_tags_path(),
@@ -20,6 +23,14 @@ $(document).on 'turbolinks:load', ->
       data: {
         id: sectionId
         tags: JSON.stringify(tags)
+      }
+    lessons = document.getElementById('section_lesson_ids_' + sectionId).selectize.getValue()
+    $.ajax Routes.list_section_lessons_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: sectionId
+        lessons: JSON.stringify(lessons)
       }
     return
 
@@ -44,5 +55,25 @@ $(document).on 'turbolinks:load', ->
     else
       $('#section-tag-list-' + sectionId).data('show', 0).hide()
       $(this).text('Tag-Links einblenden')
+    return
+
+  $('[id^="section-lesson-links-"]').on 'click', ->
+    sectionId = this.dataset.id
+    if $('#section-lesson-list-' + sectionId).data('show') == 0
+      $('#section-lesson-list-' + sectionId).data('show', 1).show()
+      $(this).text('Sitzungs-Links ausblenden')
+    else
+      $('#section-lesson-list-' + sectionId).data('show', 0).hide()
+      $(this).text('Sitzungs-Links einblenden')
+    return
+
+  $('[id^="lesson-modal-button"]').on 'click', ->
+    $.ajax Routes.lesson_modal_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        section: this.dataset.section
+        from: this.dataset.from
+      }
     return
   return

@@ -16,13 +16,13 @@ class LessonsController < ApplicationController
 
   def create
     @lesson = Lesson.new(lesson_params)
-    if @lesson.sections.empty?
-      @errors = { sections: ['Es muss mindestens ein Abschnitt angegeben werden'] }
-      render :update
-      return
-    end
     @lesson.save
     if @lesson.valid?
+      if params[:lesson][:from] == 'section'
+        @section = Section.find_by_id(params[:lesson][:section_id])
+        redirect_to edit_chapter_path(@section.chapter, section_id: @section.id)
+        return
+      end
       redirect_to edit_lecture_path(@lesson.lecture)
       return
     end
@@ -47,6 +47,14 @@ class LessonsController < ApplicationController
   end
 
   def inspect
+  end
+
+  def modal
+    @section = Section.find_by_id(params[:section])
+    @lesson = Lesson.new(lecture: @section.lecture)
+    @lesson.sections << @section
+    @lesson.tags << @section.tags
+    @from = params[:from]
   end
 
   private

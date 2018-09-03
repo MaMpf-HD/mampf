@@ -1,13 +1,15 @@
 # Lesson class
 class Lesson < ApplicationRecord
   belongs_to :lecture
-  has_many :lesson_tag_joins
+  has_many :lesson_tag_joins, dependent: :destroy
   has_many :tags, through: :lesson_tag_joins
-  has_many :lesson_section_joins
+  has_many :lesson_section_joins, dependent: :destroy
   has_many :sections, through: :lesson_section_joins
   has_many :media, as: :teachable
-  has_many :editable_user_joins, as: :editable
+  has_many :editable_user_joins, as: :editable, dependent: :destroy
   validates :date, presence: { message: 'Es muss ein Datum angegeben werden.' }
+  validates :sections, presence: { message: 'Es muss mindestens ein Abschnitt '\
+                                            'angegeben werden.'}
 
   def self.select_by_date
     Lesson.all.to_a.sort_by(&:date).map { |l| [l.date, l.id] }
@@ -38,6 +40,10 @@ class Lesson < ApplicationRecord
   def title
     return 'Sitzung #' + id.to_s unless number.present? && date.present?
     'Sitzung ' + number.to_s + ', ' + date_de.to_s
+  end
+
+  def short_title_with_lecture
+    lecture.short_title + ', S.' + number.to_s
   end
 
   def section_titles

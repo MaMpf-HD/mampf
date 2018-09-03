@@ -31,7 +31,7 @@
   <div class="col-6">
     <div class="card bg-mdb-color-lighten-6 mb-4" id="lesson-basics-edit-<%= @lesson.id.to_i %>">
       <%= render partial: 'lessons/basics',
-                 locals: { lesson: @lesson, inspection: true } %>
+                 locals: { lesson: @lesson, inspection: true, modal: false } %>
     </div>
   </div>
   <div class="col-6">
