@@ -1,0 +1,76 @@
+<div class="row bg-mdb-color-lighten-2 mx-2 py-3">
+  <div class="col-2 text-light">
+    <strong>
+      Titel
+    </strong>
+  </div>
+  <div class="col-1 text-light">
+    <strong>
+      Typ
+    </strong>
+  </div>
+  <div class="col-2 text-light">
+    <strong>
+      assoziiert zu
+    </strong>
+  </div>
+  <div class="col-3 text-light">
+    <strong>
+      Tags
+    </strong>
+  </div>
+  <div class="col-2 text-light">
+    <strong>
+      Editoren
+    </strong>
+  </div>
+  <div class="col-2 text-light">
+    <strong>
+      Aktionen
+    </strong>
+  </div>
+</div>
+<div id="mediaTable">
+  <% @media.each do |m| %>
+    <div class="row border-bottom mx-2" id="row-medium-<%= m.id %>">
+      <div class="col-2">
+        <%= m.title %>
+      </div>
+      <div class="col-1">
+        <%= m.sort_de %>
+      </div>
+      <div class="col-2">
+        <% if m.teachable_type == 'Course' %>
+          <%= link_to m.teachable.short_title, inspect_course_path(m.teachable) %>
+        <% elsif m.teachable_type == 'Lecture' %>
+          <%= link_to m.teachable.short_title, inspect_lecture_path(m.teachable) %>
+        <% else %>
+          <%= link_to m.teachable.short_title_with_lecture, inspect_lesson_path(m.teachable) %>
+        <% end %>
+      </div>
+      <div class="col-3">
+        <% m.tags.each do |t| %>
+          <%= link_to t.short_title, inspect_tag_path(t), class:'badge badge-light',
+                      data: { toggle: 'tooltip', placement: 'top'},
+                      title: t.title %>
+        <% end %>
+      </div>
+      <div class="col-2">
+        <ul class="list-unstyled">
+          <% m.editors.each do |e| %>
+            <li>
+              <%= e.name_or_email  %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="col-2">
+        <%= link_to 'Bearbeiten', edit_medium_path(m),
+                    class: 'btn btn-outline-primary my-1' %>
+        <%= link_to 'Ansehen', inspect_medium_path(m),
+                    class: 'btn btn-outline-primary my-1' %>
+      </div>
+
+    </div>
+  <% end %>
+</div>

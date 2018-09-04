@@ -15,28 +15,61 @@
   <div class="form-row p-2">
     <div class="col-3 form-group">
       <%= f.label :types, 'Typ' %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_types, class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_types'} %>
+        <%= f.label :all_types, 'alle',
+                    { class: 'custom-control-label' } %>
+      </div>
       <%= f.select :types,
-                   options_for_select(Medium.sort_enum.map.with_index { |s,i| [s, i] }),
-                   {}, { multiple: true, class: 'selectize' } %>
+                   options_for_select([['auswählen','']] + Medium.sort_enum.map.with_index { |s,i| [s, i] }),
+                   {}, { multiple: true, class: 'selectize',
+                         disabled: true } %>
     </div>
     <div class="col-3 form-group">
-      <%= f.label :teachable, 'assoziiert zu' %>
-      <%= f.select :teachable,
-                   options_for_select(Course.all.map { |c| [c.short_title, c.id] } +
-                                      Lecture.all.map { |l| [l.short_title, l.id + Course.last.id] }),
-                   {}, { multiple: true, class: 'selectize' } %>
+      <%= f.label :teachable_ids, 'assoziiert zu' %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_teachables, class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_teachable_ids' } %>
+        <%= f.label :all_teachables, 'alle',
+                    { class: 'custom-control-label' } %>
+      </div>
+      <%= f.select :teachable_ids,
+                   options_for_select([['auswählen','']] +
+                                      Course.all.map { |c| [c.short_title, 'course-' + c.id.to_s ] } +
+                                      Lecture.all.map { |l| [l.short_title, 'lecture-' + l.id.to_s ] }),
+                   {}, { multiple: true, class: 'selectize',
+                         disabled: true } %>
     </div>
     <div class="col-3 form-group">
       <%= f.label :tag_ids, 'Tags' %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_tags, class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_tag_ids' } %>
+        <%= f.label :all_tags, 'alle',
+                    { class: 'custom-control-label' } %>
+      </div>
       <%= f.select :tag_ids,
-                   options_for_select(Tag.select_by_title),
-                   {}, { multiple: true, class: 'selectize' } %>
+                   options_for_select([['auswählen','']] + Tag.select_by_title),
+                   {}, { multiple: true, class: 'selectize',
+                         disabled: true } %>
     </div>
     <div class="col-3 form-group">
       <%= f.label :editor_ids, 'Editoren' %>
-      <%= f.select :tag_ids,
-                   options_for_select(User.editors.map { |e| [e.info, e.id] }),
-                   {}, { multiple: true, class: 'selectize' } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_editors, class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_editor_ids' } %>
+        <%= f.label :all_editors, 'alle',
+                    { class: 'custom-control-label' } %>
+      </div>
+      <%= f.select :editor_ids,
+                   options_for_select([['auswählen','']] + User.editors.map { |e| [e.info, e.id] }),
+                   {}, { multiple: true, class: 'selectize',
+                         disabled: true } %>
     </div>
   </div>
 <div class="row mb-3">
@@ -44,43 +77,6 @@
     <%= f.submit 'Suchen', class: 'btn btn-primary' %>
   </div>
 </div>
+<div id="media-search-results">
+</div>
 <% end %>
-<div class="row bg-mdb-color-lighten-2 mx-2 py-3">
-  <div class="col-2 text-light">
-    <strong>
-      Titel
-    </strong>
-  </div>
-  <div class="col-1 text-light">
-    <strong>
-      Typ
-    </strong>
-  </div>
-  <div class="col-2 text-light">
-    <strong>
-      assoziiert zu
-    </strong>
-  </div>
-  <div class="col-3 text-light">
-    <strong>
-      Tags
-    </strong>
-  </div>
-  <div class="col-2 text-light">
-    <strong>
-      Editoren
-    </strong>
-  </div>
-  <div class="col-2 text-light">
-    <strong>
-      Aktionen
-    </strong>
-  </div>
-</div>
-<div id="mediaTable">
-  <% @media.each do |m| %>
-    <div class="row border-bottom mx-2" id="row-medium-<%= m.id %>">
-      <%= render partial: 'media/row', locals: { medium: m }%>
-    </div>
-  <% end %>
-</div>

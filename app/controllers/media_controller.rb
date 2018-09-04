@@ -23,6 +23,9 @@ class MediaController < ApplicationController
   end
 
   def search
+    @media = Medium.where(sort: search_sorts, teachable: search_teachables)
+    @media = @media.select { |m| (m.tags & search_tags).present? }
+    @media = @media.select { |m| (m.editors & search_editors).present? }
   end
 
   private
@@ -82,5 +85,51 @@ class MediaController < ApplicationController
                    else
                      8
                    end
+  end
+
+  def search_params
+    params.require(:search).permit(:all_types, :all_teachables, :all_tags,
+                                   :all_editors, types: [], teachable_ids: [],
+                                   tag_ids: [], editor_ids: [])
+  end
+
+  def search_sorts
+    return Medium.sort_enum unless search_params[:all_types] == '0'
+    types = search_params[:types] || []
+    types.map(&:to_i).map { |i| Medium.sort_enum[i] }
+  end
+
+  def search_teachables
+    unless search_params[:all_teachables] == '0'
+      return Course.all + Lecture.all + Lesson.all
+    end
+    lectures = Lecture.where(id: search_lecture_ids)
+    courses = Course.where(id: search_course_ids)
+    lessons = lectures.collect(&:lessons).flatten
+    courses + lectures +lessons
+  end
+
+  def search_tags
+    return Tag.all unless search_params[:all_tags] == '0'
+    tag_ids = search_params[:tag_ids] || []
+    Tag.where(id: tag_ids)
+  end
+
+  def search_editors
+    return User.editors unless search_params[:all_editors] == '0'
+    editor_ids = search_params[:editor_ids] || []
+    editors = User.where(id: editor_ids)
+  end
+
+  def search_lecture_ids
+    teachable_ids = search_params[:teachable_ids] || []
+    teachable_ids.select { |t| t.start_with?('lecture')}
+                 .map { |t| t.remove('lecture-')}
+  end
+
+  def search_course_ids
+    teachable_ids = search_params[:teachable_ids] || []
+    teachable_ids.select { |t| t.start_with?('course')}
+                 .map { |t| t.remove('course-')}
   end
 end
