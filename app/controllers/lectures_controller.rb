@@ -62,6 +62,8 @@ class LecturesController < ApplicationController
     @errors = {}
     removed_additional_tags = @lecture.additional_tags -
                               Tag.where(id: lecture_params[:additional_tag_ids])
+    puts 'Entfernte Tags'
+    puts (removed_additional_tags || []).map(&:id)
     removed_tags_compatibility(removed_additional_tags)
     added_disabled_tags = Tag.where(id: lecture_params[:disabled_tag_ids]) -
                           @lecture.disabled_tags
