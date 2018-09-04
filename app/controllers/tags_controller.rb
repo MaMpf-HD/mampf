@@ -113,12 +113,12 @@ class TagsController < ApplicationController
 
   def check_additional_lectures_content
     removed = @tag.additional_lectures -
-             Lecture.where(id: tag_params[:additional_lecture_ids])
+              Lecture.where(id: tag_params[:additional_lecture_ids])
     removed.each do |l|
       next if l.course.in?(Course.where(id: tag_params[:course_ids]))
       next unless @tag.in?(l.content_tags)
       @errors[:additional_lectures] = [error_hash['forbidden_removal']]
-      return
+      break
     end
   end
 
@@ -128,10 +128,9 @@ class TagsController < ApplicationController
     added.each do |l|
       next unless @tag.in?(l.content_tags)
       @errors[:disabled_lectures] = [error_hash['forbidden_adding']]
-      return
+      break
     end
   end
-
 
   def check_permissions
     @errors = {}

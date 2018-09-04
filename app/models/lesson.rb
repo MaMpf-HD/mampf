@@ -9,7 +9,7 @@ class Lesson < ApplicationRecord
   has_many :editable_user_joins, as: :editable, dependent: :destroy
   validates :date, presence: { message: 'Es muss ein Datum angegeben werden.' }
   validates :sections, presence: { message: 'Es muss mindestens ein Abschnitt '\
-                                            'angegeben werden.'}
+                                            'angegeben werden.' }
 
   def self.select_by_date
     Lesson.all.to_a.sort_by(&:date).map { |l| [l.date, l.id] }

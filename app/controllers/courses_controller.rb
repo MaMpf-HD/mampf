@@ -31,7 +31,6 @@ class CoursesController < ApplicationController
     @course.save
     redirect_to courses_path if @course.valid?
     @errors = @course.errors
-
   end
 
   def show

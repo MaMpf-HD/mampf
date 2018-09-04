@@ -41,7 +41,8 @@ class SectionsController < ApplicationController
     @section.update(section_params)
     update_tags if @section.valid?
     @errors = @section.errors
-    redirect_to edit_chapter_path(@section.chapter, section_id: @section.id) unless @errors.present?
+    return if @errors.present?
+    redirect_to edit_chapter_path(@section.chapter, section_id: @section.id)
   end
 
   def list_tags

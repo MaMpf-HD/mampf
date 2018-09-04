@@ -43,7 +43,8 @@ class LessonsController < ApplicationController
   end
 
   def list_sections
-    @sections = Section.where(id: JSON.parse(params[:section_ids])).order(:position)
+    @sections = Section.where(id: JSON.parse(params[:section_ids]))
+                       .order(:position)
   end
 
   def inspect

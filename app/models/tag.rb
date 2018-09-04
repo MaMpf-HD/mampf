@@ -48,9 +48,9 @@ class Tag < ApplicationRecord
     Tag.where(id: ids - related_ids)
   end
 
-  def short_title(n = 30)
-    return title unless title.length > n
-    title[0, n-3] + '...'
+  def short_title(max_letters = 30)
+    return title unless title.length > max_letters
+    title[0, max_letters - 3] + '...'
   end
 
   def in_lecture?(lecture)

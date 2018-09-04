@@ -5,9 +5,9 @@ class LecturesController < ApplicationController
   before_action :check_for_consent
 
   def index
-    lectures = current_user.edited_lectures_with_inheritance
-    edited_lectures = Lecture.sort_by_date(lectures).to_a
-    other_lectures = Lecture.sort_by_date(Lecture.all.to_a - lectures)
+    # lectures = current_user.edited_lectures_with_inheritance
+    # edited_lectures = Lecture.sort_by_date(lectures).to_a
+    # other_lectures = Lecture.sort_by_date(Lecture.all.to_a - lectures)
     @lectures = Kaminari.paginate_array(Lecture.sort_by_date(Lecture.all))
                         .page params[:page]
   end
@@ -43,8 +43,10 @@ class LecturesController < ApplicationController
   end
 
   def list_tags
-    @additional_tags = Tag.where(id: JSON.parse(params[:additional_tags])).sort_by(&:title)
-    @disabled_tags = Tag.where(id: JSON.parse(params[:disabled_tags])).sort_by(&:title)
+    @additional_tags = Tag.where(id: JSON.parse(params[:additional_tags]))
+                          .sort_by(&:title)
+    @disabled_tags = Tag.where(id: JSON.parse(params[:disabled_tags]))
+                        .sort_by(&:title)
   end
 
   private
@@ -72,7 +74,7 @@ class LecturesController < ApplicationController
       @errors[:additional_tags] = ['Einer der Begriffe, die Du entfernt ' \
                                    'hast, wird in einem Abschnitt dieser ' \
                                    'Vorlesung referenziert.']
-      return
+      break
     end
   end
 
@@ -82,10 +84,9 @@ class LecturesController < ApplicationController
       @errors[:disabled_tags] = ['Einer der Begriffe, die Du hinzugefügt ' \
                                    'hast, wird in einem Abschnitt dieser ' \
                                    'Vorlesung referenziert.']
-      return
+      break
     end
   end
-
 
   def check_for_consent
     redirect_to consent_profile_path unless current_user.consents

@@ -8,7 +8,7 @@ class Lecture < ApplicationRecord
   has_many :lecture_tag_additional_joins, dependent: :destroy
   has_many :additional_tags, through: :lecture_tag_additional_joins,
                              source: :tag
-  has_many :chapters,  -> { order(position: :asc) }, dependent: :destroy
+  has_many :chapters, -> { order(position: :asc) }, dependent: :destroy
   has_many :lessons, dependent: :destroy
   has_many :media, as: :teachable
   has_many :lecture_user_joins, dependent: :destroy
@@ -30,11 +30,7 @@ class Lecture < ApplicationRecord
   end
 
   def content_tags
-    chapters.map(&:sections).flatten.collect { |s| s.tags }.flatten
-  end
-
-  def sections
-    Section.where(chapter: chapters)
+    chapters.map(&:sections).flatten.collect(&:tags).flatten
   end
 
   def kaviar?
@@ -94,7 +90,8 @@ class Lecture < ApplicationRecord
   end
 
   def media_with_inheritance
-    Medium.where(id: Medium.select { |m| m.teachable.lecture == self }.map(&:id))
+    Medium.where(id: Medium.select { |m| m.teachable.lecture == self }
+          .map(&:id))
   end
 
   def sections
@@ -131,7 +128,7 @@ class Lecture < ApplicationRecord
   end
 
   def select_chapters
-    chapters.order(:position).reverse.map { |c| [c.to_label, c.position]}
+    chapters.order(:position).reverse.map { |c| [c.to_label, c.position] }
   end
 
   def last_chapter_by_position

@@ -3,7 +3,7 @@ class Chapter < ApplicationRecord
   belongs_to :lecture
   acts_as_list scope: :lecture
   has_many :sections, -> { order(position: :asc) }, dependent: :destroy
-  validates :title, presence: { message: 'Es muss ein Titel angegeben werden.'}
+  validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
 
   def to_label
     'Kapitel ' + displayed_number + '. ' + title
@@ -32,6 +32,6 @@ class Chapter < ApplicationRecord
   end
 
   def select_sections
-    sections.order(:position).reverse.map { |s| [s.to_label, s.position]}
+    sections.order(:position).reverse.map { |s| [s.to_label, s.position] }
   end
 end
