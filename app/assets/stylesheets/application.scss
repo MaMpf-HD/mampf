@@ -22,6 +22,14 @@
   padding-left: 1rem;
 }
 
+.badge-light {
+  background-color: #dae0e5;
+}
+
+.badge-light[href]:hover {
+  background-color: #f8f9fa;
+}
+
 .no_display {
   display: none;
 }
