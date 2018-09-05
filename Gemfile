@@ -50,6 +50,7 @@ gem 'rails_admin_import', '~>2.1'
 gem 'erubis'
 gem 'cancancan'
 gem 'jquery-rails'
+gem 'jquery_file_download-rails'
 gem 'js-routes'
 gem 'bootstrap', '~> 4.1.1'
 gem "bootstrap_form",

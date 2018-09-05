@@ -9,7 +9,8 @@ Rails.application.routes.draw do
   get 'media/search', to: 'media#search', as: 'media_search'
   get 'media/catalog', to: 'media#catalog', as: 'media_catalog'
   get 'media/:id/inspect/', to: 'media#inspect', as: 'inspect_medium'
-  resources :media, only: [:show, :index, :new, :edit]
+  get 'media/:id/enrich', to: 'media#enrich', as: 'enrich_medium'
+  resources :media, only: [:show, :index, :new, :edit, :update]
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags
@@ -53,6 +54,9 @@ Rails.application.routes.draw do
       get 'keks_questions/:id', to: 'media#keks_question'
     end
   end
+  mount ImageUploader.upload_endpoint(:cache) => "/images/upload"
+  mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
+  mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
 
   get '*path', to: 'main#error'
 

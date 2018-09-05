@@ -1,0 +1,49 @@
+<div id="manuscript-uploadArea" class="form-group">
+  <div class="row mb-2">
+    <div class="col-12" id="manuscript-informer" style="height: 1em;">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" id="manuscript-progressBar">
+    </div>
+  </div>
+  <div class="row">
+  </div>
+  <div class="row p-2">
+    <div id="manuscript-meta" class="col-12 meta rounded"
+         style="display:<%= show(medium.manuscript.present?) %>">
+      <div class="row">
+        <div class="col-11">
+          Datei:
+          <span id="manuscript-file">
+            <%= medium.manuscript_filename %>
+          </span>
+        </div>
+        <i id="detach-manuscript" class="material-icons detach">
+          close
+        </i>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          Größe:
+          <span id="manuscript-size">
+            <%= number_to_human_size(medium.manuscript_size) %>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          Länge:
+          <span id="manuscript-pages">
+            <%= medium.manuscript_pages.to_s + ' S' %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% if medium.manuscript.present? %>
+  <%= link_to image_tag(medium.manuscript_screenshot_url, class: 'img-fluid',
+                        id: 'manuscript-preview'),
+              medium.manuscript_url, target: :blank %>
+<% end %>

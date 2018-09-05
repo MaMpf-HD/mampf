@@ -1,7 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
   authorize_resource
-  before_action :set_medium, only: [:show]
+  before_action :set_medium, only: [:show, :edit, :update]
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :sanitize_params
@@ -22,6 +22,21 @@ class MediaController < ApplicationController
   def new
   end
 
+  def edit
+  end
+
+  def update
+    return unless @medium.update(medium_params)
+    if params[:medium][:detach_video] == 'true'
+      @medium.update(video: nil)
+      @medium.update(screenshot: nil)
+    end
+    if params[:medium][:detach_manuscript] == 'true'
+      @medium.update(manuscript: nil)
+    end
+    redirect_to edit_medium_path(@medium)
+  end
+
   def search
     @media = Medium.where(sort: search_sorts, teachable: search_teachables)
     tags = search_tags
@@ -37,6 +52,10 @@ class MediaController < ApplicationController
     return if @medium.present?
     redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert ' \
                               'nicht.'
+  end
+
+  def medium_params
+    params.require(:medium).permit(:title, :description, :video, :manuscript)
   end
 
   def set_course

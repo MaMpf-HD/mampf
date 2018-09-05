@@ -1,0 +1,61 @@
+<div id="video-uploadArea" class="form-group">
+  <div class="row mb-2">
+    <div class="col-12" id="video-informer" style="height: 1em;">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" id="video-progressBar">
+    </div>
+  </div>
+  <div class="row" id="video-wait" style="display: none;">
+    <div class="col-12">
+      Bitte warten...
+    </div>
+  </div>
+  <div class="row p-2">
+    <div id="video-meta" class="col-12 meta rounded"
+         style="display:<%= show(medium.video.present?) %>">
+      <div class="row">
+        <div class="col-11">
+          Datei:
+          <span id="video-file">
+            <%= medium.video_filename %>
+          </span>
+        </div>
+        <i id="detach-video" class="material-icons detach">
+          close
+        </i>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          Größe:
+          <span id="video-size">
+            <%= number_to_human_size(medium.video_size) %>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          Auflösung:
+          <span id="video-resolution">
+            <%= medium.video_resolution %>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          Länge:
+          <span id="video-duration">
+            <%= medium.video_duration_hms_string %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="video-preview-area"
+     style="display: <%= show(medium.video.present?) %>">
+  <video id="video-preview" controls
+         src="<%= medium.video_url %>">
+  </video>
+</div>

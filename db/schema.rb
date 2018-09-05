@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_02_065347) do
+ActiveRecord::Schema.define(version: 2018_09_05_085400) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -161,12 +161,12 @@ ActiveRecord::Schema.define(version: 2018_09_02_065347) do
     t.integer "embedded_height"
     t.string "length"
     t.integer "pages"
-    t.string "manuscript_size"
+    t.string "manuscript_size_dep"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "title"
     t.string "author"
-    t.string "video_size"
+    t.string "video_size_dep"
     t.string "authoring_software"
     t.string "sort"
     t.integer "question_id"
@@ -178,6 +178,9 @@ ActiveRecord::Schema.define(version: 2018_09_02_065347) do
     t.string "video_player"
     t.text "extras_link"
     t.text "extras_description"
+    t.text "video_data"
+    t.text "screenshot_data"
+    t.text "manuscript_data"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
 

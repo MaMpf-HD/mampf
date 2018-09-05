@@ -1,5 +1,6 @@
 # Medium class
 class Medium < ApplicationRecord
+  include ApplicationHelper
   belongs_to :teachable, polymorphic: true
   has_many :medium_tag_joins, dependent: :destroy
   has_many :tags, through: :medium_tag_joins
@@ -8,57 +9,13 @@ class Medium < ApplicationRecord
   has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
+  include VideoUploader[:video]
+  include ImageUploader[:screenshot]
+  include PdfUploader[:manuscript]
   validates :sort, presence: true
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :author, presence: true
   validates :title, presence: true, uniqueness: true
-  validate :nonempty_content?
-  validates :video_file_link, http_url: true, if: :video_file_link?
-  validates :video_thumbnail_link, http_url: true,
-                                   if: :video_content_not_keks_question?
-  validates :video_stream_link, http_url: true, if: :video_stream_link?
-  validates :manuscript_link, http_url: true, if: :manuscript_link?
-  validates :external_reference_link, http_url: true,
-                                      if: :external_reference_link?
-  validates :extras_link, http_url: true, if: :extras_link?
-  validates :width, numericality: { only_integer: true,
-                                    greater_than_or_equal_to: 100,
-                                    less_than_or_equal_to: 8192 },
-                    if: :width?
-  validates :height, numericality: { only_integer: true,
-                                     greater_than_or_equal_to: 100,
-                                     less_than_or_equal_to: 4320 },
-                     if: :height?
-  validates :embedded_width, numericality: { only_integer: true,
-                                             greater_than_or_equal_to: 100,
-                                             less_than_or_equal_to: 8192 },
-                             if: :embedded_width?
-  validates :embedded_height, numericality: { only_integer: true,
-                                              greater_than_or_equal_to: 100,
-                                              less_than_or_equal_to: 4320 },
-                              if: :embedded_height?
-  validates :length, presence: true,
-                     format: { with: /\A[0-9]h[0-5][0-9]m[0-5][0-9]s\z/ },
-                     if: :video_content?
-
-  # video_size, manuscript_size are in a format compatible with 'filesize' gem
-  validates :video_size, presence: true,
-                         format:
-                           { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
-                         if: :video_file_link?
-  validates :pages, presence: true,
-                    numericality: { only_integer: true,
-                                    greater_than_or_equal_to: 1,
-                                    less_than_or_equal_to: 2000 },
-                    if: :manuscript_link?
-  validates :manuscript_size, presence: true,
-                              format:
-                                { with: /\A([\d,.]+)?\s?(?:([kmgtpezy])i)?b\z/i },
-                              if: :manuscript_link?
-  validates :question_list, presence: true,
-                            format: { with: /\A(\d+&)*\d+\z/ },
-                            if: :keks_quiz?
-  validates :extras_description, presence: true, if: :extras_link?
 
   after_initialize :set_defaults
   before_save :fill_in_defaults_for_missing_params
@@ -78,6 +35,66 @@ class Medium < ApplicationRecord
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return [] unless course.lectures.include?(lecture)
     lecture.lecture_lesson_results(filtered)
+  end
+
+  def manuscript_pages
+    return unless manuscript.present?
+    manuscript[:original].metadata["pages"]
+  end
+
+  def screenshot_url
+    return unless screenshot.present?
+    screenshot.url(host: host)
+  end
+
+  def video_url
+    return unless video.present?
+    video.url(host: host)
+  end
+
+  def video_filename
+    return unless video.present?
+    video.metadata['filename']
+  end
+
+  def video_size
+    return video_size_dep unless video.present?
+    video.metadata['size']
+  end
+
+  def video_resolution
+    return unless video.present?
+    video.metadata['resolution']
+  end
+
+  def video_duration
+    return unless video.present?
+    video.metadata['duration']
+  end
+
+  def video_duration_hms_string
+    return unless video.present?
+    TimeStamp.new(total_seconds: video_duration).hms_string
+  end
+
+  def manuscript_url
+    return unless manuscript.present?
+    manuscript[:original].url(host: host)
+  end
+
+  def manuscript_filename
+    return unless manuscript.present?
+    manuscript[:original].metadata['filename']
+  end
+
+  def manuscript_size
+    return manuscript_size_dep unless manuscript.present?
+    manuscript[:original].metadata['size']
+  end
+
+  def manuscript_screenshot_url
+    return unless manuscript.present?
+    manuscript[:screenshot].url(host: host)
   end
 
   def video_aspect_ratio
@@ -213,16 +230,6 @@ class Medium < ApplicationRecord
 
   def video_content_not_keks_question?
     (video_stream_link.present? || video_file_link.present?) && !keks_question?
-  end
-
-  def nonempty_content?
-    return true if video_stream_link.present? ||
-                   video_file_link.present? ||
-                   manuscript_link.present? ||
-                   external_reference_link.present? ||
-                   keks_question?
-    errors.add(:base, 'empty content')
-    false
   end
 
   def keks_question?

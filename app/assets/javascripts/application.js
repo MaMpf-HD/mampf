@@ -17,5 +17,6 @@
 //= require activestorage
 //= require js-routes
 //= require selectize
+//= require jquery.fileDownload
 //= require_tree .
 //= require turbolinks

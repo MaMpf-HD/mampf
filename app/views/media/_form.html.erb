@@ -1,0 +1,83 @@
+<%= bootstrap_form_with(model: medium) do |f| %>
+  <div class="row my-3 p-2">
+    <div class="col-12">
+      <%= f.submit 'Speichern' %>
+      <%= link_to 'Zurücksetzen', edit_medium_path(medium),
+                  class: 'btn btn-info mx-3' %>
+      <%= link_to 'zurück zum Index', media_path,
+                  class: 'btn btn-info mx-3' %>
+    </div>
+  </div>
+  <div class="row mt-3 p-2">
+    <div class="col-4">
+      <div class="card bg-brown-lighten-4">
+        <div class="card-header bg-brown-darken-2 text-light">
+          Basisdaten
+        </div>
+        <div class="card-body">
+          <img id="screenshot-preview" class="img-fluid mb-3"
+               src="<%= medium.screenshot_url %>">
+          <%= f.text_field :title, label: 'Titel' %>
+          <%= f.text_field :description, label: 'Beschreibung' %>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card bg-teal-lighten-5">
+        <div class="card-header bg-teal-darken-1 text-light">
+          <div class="row">
+            <div class="col-4">
+              Video
+            </div>
+            <div class="col-4 text-right">
+              <% if medium.video.present? %>
+                <%= link_to 'Thyme-Editor', enrich_medium_path(medium),
+                            class: 'btn btn-sm btn-outline-light' %>
+              <% end %>
+            </div>
+            <div class="col-4 text-right" id="video-uploadButton">
+              <input type="hidden" name="medium[video]"
+                     value="<%= medium.cached_video_data %>"
+                     id="upload-video-hidden">
+              <input type="file" name="medium[video]" id="upload-video">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'media/upload_video',
+                     locals: { medium: medium } %>
+          <%= f.hidden_field :detach_video, value: false %>
+          <% # without the next lines, the POST request will ignore %>
+          <% # all uploaded file data %>
+          <% # no clue why %>
+          <div class="hidden">
+            <%= f.file_field :bs %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card bg-lime-lighten-5">
+        <div class="card-header bg-lime-darken-2 text-light">
+          <div class="row">
+            <div class="col-8">
+              Manuskript
+            </div>
+            <div class="col-4 text-right" id="manuscript-uploadButton">
+              <input type="hidden" name="medium[manuscript]"
+                     value="<%= medium.cached_manuscript_data %>"
+                     id="upload-manuscript-hidden">
+              <input type="file" name="medium[manuscript]"
+                     id="upload-manuscript">
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'media/upload_manuscript',
+                     locals: { medium: medium } %>
+          <%= f.hidden_field :detach_manuscript, value: false %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
