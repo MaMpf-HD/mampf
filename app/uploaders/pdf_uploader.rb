@@ -7,7 +7,7 @@ class PdfUploader < Shrine
   plugin :processing
   plugin :versions
   plugin :delete_raw
-
+  plugin :pretty_location
 
   add_metadata do |io, context|
     pdf = Shrine.with_file(io) do |file|

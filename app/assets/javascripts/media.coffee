@@ -28,7 +28,6 @@ $(document).on 'turbolinks:load', ->
     else
       selector.enable()
     return
-  return
 
   $('#detach-video').on 'click', ->
      $('#upload-video-hidden').val('')

@@ -18,8 +18,8 @@ class Medium < ApplicationRecord
   validates :title, presence: true, uniqueness: true
 
   after_initialize :set_defaults
-  before_save :fill_in_defaults_for_missing_params
-  after_save :touch_teachable
+  # before_save :fill_in_defaults_for_missing_params
+  # after_save :touch_teachable
 
   def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
@@ -212,6 +212,36 @@ class Medium < ApplicationRecord
   def self.filter_secondary(filtered_media, course)
     filtered_media.select do |m|
       m.teachable.present? && m.teachable.course == course
+    end
+  end
+
+  def relocate_data
+    if video_thumbnail_link.present?
+      screenshot = open(video_thumbnail_link)
+      file = Tempfile.new([title, '.png'])
+      file.binmode
+      file.write open(screenshot).read
+      file.rewind
+      file
+      self.update(screenshot: file)
+    end
+    if manuscript_link.present?
+      manuscript = open(manuscript_link)
+      file = Tempfile.new([title, '.pdf'])
+      file.binmode
+      file.write open(manuscript).read
+      file.rewind
+      file
+      self.update(manuscript: file)
+    end
+    if video_file_link.present?
+      video = open(video_file_link)
+      file = Tempfile.new([title, '.mp4'])
+      file.binmode
+      file.write open(video).read
+      file.rewind
+      file
+      self.update(video: file)
     end
   end
 

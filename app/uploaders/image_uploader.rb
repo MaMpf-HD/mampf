@@ -6,6 +6,7 @@ class ImageUploader < Shrine
   plugin :validation_helpers
   plugin :processing
   plugin :delete_raw
+  plugin :pretty_location
 
   Attacher.validate do
     validate_mime_type_inclusion %w[image/jpeg image/png image/gif], message: "falscher MIME-Typ"

@@ -4,6 +4,7 @@ class VideoUploader < Shrine
   plugin :add_metadata
   plugin :determine_mime_type
   plugin :validation_helpers
+  plugin :pretty_location  
 
   add_metadata do |io, context|
     movie = Shrine.with_file(io) { |file| FFMPEG::Movie.new(file.path) }
