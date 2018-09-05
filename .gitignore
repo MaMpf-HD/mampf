@@ -26,3 +26,6 @@ coverage
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Ignore shrine store
+/public/uploads
