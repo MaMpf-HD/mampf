@@ -218,7 +218,7 @@ class Medium < ApplicationRecord
   def relocate_data
     if video_thumbnail_link.present?
       screenshot = open(video_thumbnail_link)
-      file = Tempfile.new([title, '.png'])
+      file = Tempfile.new([title + '-', '.png'])
       file.binmode
       file.write open(screenshot).read
       file.rewind
@@ -227,7 +227,7 @@ class Medium < ApplicationRecord
     end
     if manuscript_link.present?
       manuscript = open(manuscript_link)
-      file = Tempfile.new([title, '.pdf'])
+      file = Tempfile.new([title + '-', '.pdf'])
       file.binmode
       file.write open(manuscript).read
       file.rewind
@@ -236,7 +236,7 @@ class Medium < ApplicationRecord
     end
     if video_file_link.present?
       video = open(video_file_link)
-      file = Tempfile.new([title, '.mp4'])
+      file = Tempfile.new([title + '-', '.mp4'])
       file.binmode
       file.write open(video).read
       file.rewind
