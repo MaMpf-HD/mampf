@@ -50,12 +50,12 @@
       </div>
     </div>
     <div class="card-footer bg-mdb-color-lighten-7 text-center">
-      <div class="row">
+      <div id="media-box-footer">
         <% if medium.video_stream_link.present? %>
-          <div class="col-3">
+          <div>
             <a href="<%= medium.video_stream_link %>"
                class="no-deco" target="_blank">
-              <i class="material-icons mediabox text-secondary"
+              <i class="material-icons text-secondary"
                  data-toggle="tooltip" data-placement="bottom" title="Camtasia-Player">
                 play_arrow
               </i>
@@ -63,10 +63,10 @@
           </div>
         <% end %>
         <% if medium.video.present? %>
-          <div class="col-3">
+          <div>
             <a href="<%= medium.video_url %>"
                class="no-deco" target="_blank">
-              <i class="material-icons mediabox text-secondary"
+              <i class="material-icons text-secondary"
                  data-toggle="tooltip" data-placement="bottom" title="Browser-Player">
                 play_circle_outline
               </i>
@@ -74,10 +74,10 @@
           </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div class="col-3">
+          <div>
             <a href="<%= medium.manuscript_url %>"
                class="no-deco" target="_blank">
-              <i class="material-icons mediabox text-secondary"
+              <i class="material-icons text-secondary"
                  data-toggle="tooltip" data-placement="bottom" title="pdf im Browser">
                 library_books
               </i>
@@ -85,10 +85,10 @@
           </div>
         <% end %>
         <% if medium.external_reference_link.present? %>
-          <div class="col-3">
+          <div>
             <a href="<%= medium.external_reference_link %>"
                class="no-deco" target="_blank">
-              <i class="material-icons mediabox text-secondary"
+              <i class="material-icons text-secondary"
                  data-toggle="tooltip" data-placement="bottom" title="externer Link">
                 link
               </i>
@@ -96,49 +96,42 @@
           </div>
         <% end %>
         <% if medium.extras_link.present? %>
-          <div class="col-3">
+          <div>
             <a href="<%= medium.extras_link %>"
                class="no-deco" target="_blank">
-              <i class="material-icons mediabox text-secondary"
+              <i class="material-icons text-secondary"
                  data-toggle="tooltip" data-placement="bottom" title="Extras">
                 control_point
               </i>
             </a>
           </div>
         <% end %>
-        <div class="col-3">
+        <div>
           <a href="<%= medium_path(medium) %>"
              class="no-deco" target="_blank">
-            <i class="material-icons mediabox text-secondary"
+            <i class="material-icons text-secondary"
                data-toggle="tooltip" data-placement="bottom" title="Details">
               info
             </i>
           </a>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-3">
-          <i class="material-icons mediabox text-secondary">
-            save_alt
-          </i>
-        </div>
         <% if medium.video.present? %>
-          <div class="col-3 mt-2">
+          <div>
             <%= link_to 'mp4', medium.video_url,
-                        class: "badge badge-secondary", download: 'Test.mp4',
+                        class: "badge badge-secondary", download: medium.video_filename,
                         title: 'Manuskript speichern',
                         data: { toggle: 'tooltip', placement: 'bottom'}    %>
           </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div class="col-3 mt-2">
+          <div>
             <%= link_to 'pdf', medium.manuscript_url,
-                        class: "badge badge-secondary", download: 'Test.mp4',
+                        class: "badge badge-secondary", download: medium.manuscript_filename,
                         title: 'Video speichern',
                         data: { toggle: 'tooltip', placement: 'bottom'} %>
+          </div>
         <% end %>
+      </div>
       </div>
     </div>
   </div>
-</div>
-</div>

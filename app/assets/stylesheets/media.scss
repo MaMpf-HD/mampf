@@ -6,6 +6,11 @@
   display: none;
 }
 
+#media-box-footer {
+  display: flex;
+  justify-content: space-around;
+}
+
 #video-preview {
   position: relative;
   width: 75%;
@@ -207,11 +212,6 @@
 .no-deco {
   text-decoration: none !important;
 }
-
-.mediabox {
-  font-size: 2em !important;
-}
-
 
 
 #create-section-button:focus, #create-section-button:active:focus, #create-section-button.active:focus{
