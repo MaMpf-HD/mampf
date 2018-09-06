@@ -250,6 +250,11 @@ class Medium < ApplicationRecord
     end
   end
 
+  def irrelevant?
+    video_stream_link.empty? && video.empty? && manuscript.empty? &&
+      external_reference_link.empty? && extras_link.empty?
+  end
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 

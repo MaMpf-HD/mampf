@@ -29,11 +29,20 @@ $(document).on 'turbolinks:load', ->
       selector.enable()
     return
 
+  $('#medium-form :input').on 'change', ->
+    $('#medium-basics-warning').show()
+    return
+
+  $('#medium-basics-cancel').on 'click', ->
+    location.reload()
+    return
+
   $('#detach-video').on 'click', ->
      $('#upload-video-hidden').val('')
      $('#video-meta').hide()
      $('#video-preview-area').hide()
      $('#medium_detach_video').val('true')
+     $('#medium-basics-warning').show()
      return
 
   $('#detach-manuscript').on 'click', ->
@@ -41,6 +50,7 @@ $(document).on 'turbolinks:load', ->
     $('#manuscript-meta').hide()
     $('#manuscript-preview').hide()
     $('#medium_detach_manuscript').val('true')
+    $('#medium-basics-warning').show()  
     return
 
   $(document).on 'change', '#item_sort', ->

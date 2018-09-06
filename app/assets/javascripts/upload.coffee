@@ -60,6 +60,7 @@ videoUpload = (fileInput) ->
 
   uppy.on 'upload', (data) ->
     $('#video-wait').show()
+    $('#medium-basics-warning').show()
     return
 
   uppy.on 'upload-success', (file, data) ->
@@ -85,6 +86,7 @@ videoUpload = (fileInput) ->
       $(metaData).show()
       $(videoPreviewArea).show()
       $('#medium_detach_video').val('false')
+      $('#medium-basics-warning').show()
     else
       uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
       uppy.reset()
@@ -146,6 +148,7 @@ manuscriptUpload = (fileInput) ->
       $('#manuscript-meta').show()
       $('#manuscript-preview').hide()
       $('#medium_detach_manuscript').val('false')
+      $('#medium-basics-warning').show()
     else if data.metadata.mime_type != 'application/pdf'
       uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
       uppy.reset()
@@ -168,5 +171,5 @@ $(document).on 'turbolinks:load', ->
   manuscriptUpload manuscript if manuscript?
 
   $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
-  .addClass('btn btn-sm btn-outline-light')
+  .addClass('btn btn-sm btn-outline-secondary')
   return

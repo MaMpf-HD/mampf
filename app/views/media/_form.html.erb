@@ -1,30 +1,43 @@
-<%= bootstrap_form_with(model: medium) do |f| %>
-  <div class="row my-3 p-2">
-    <div class="col-12">
-      <%= f.submit 'Speichern' %>
-      <%= link_to 'Zurücksetzen', edit_medium_path(medium),
-                  class: 'btn btn-info mx-3' %>
-      <%= link_to 'zurück zum Index', media_path,
-                  class: 'btn btn-info mx-3' %>
-    </div>
-  </div>
   <div class="row mt-3 p-2">
     <div class="col-4">
-      <div class="card bg-brown-lighten-4">
-        <div class="card-header bg-brown-darken-2 text-light">
+      <div class="card bg-mdb-color-lighten-5">
+        <div class="card-header bg-mdb-color-lighten-3">
           Basisdaten
         </div>
         <div class="card-body">
           <img id="screenshot-preview" class="img-fluid mb-3"
                src="<%= medium.screenshot_url %>">
-          <%= f.text_field :title, label: 'Titel' %>
-          <%= f.text_field :description, label: 'Beschreibung' %>
+          <div class="form-group">
+            <%= f.label :title, 'Titel' %>
+            <%= f.text_field :title, class: 'form-control' %>
+            <div class="invalid-feedback" id="medium-title-error">
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :types, 'Typ' %>
+            <%= f.select :types,
+                         options_for_select([['auswählen','']] + Medium.sort_enum.map.with_index { |s,i| [s, i] }),
+                         {}, { class: 'form-control' }%>
+          </div>
+          <div class="form-group">
+            <%= f.label :description, 'Beschreibung' %>
+            <%= f.text_field :description, class: 'form-control' %>
+            <div class="invalid-feedback" id="medium-description-error">
+            </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :tag_ids, 'Verknüpfte Begriffe' %>
+            <%= f.select :tag_ids,
+                         options_for_select(Tag.select_by_title,
+                                            medium.tags.map(&:id)),
+                         {}, { multiple: true, class: 'selectize' } %>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-4">
-      <div class="card bg-teal-lighten-5">
-        <div class="card-header bg-teal-darken-1 text-light">
+      <div class="card bg-light">
+        <div class="card-header">
           <div class="row">
             <div class="col-4">
               Video
@@ -32,7 +45,7 @@
             <div class="col-4 text-right">
               <% if medium.video.present? %>
                 <%= link_to 'Thyme-Editor', enrich_medium_path(medium),
-                            class: 'btn btn-sm btn-outline-light' %>
+                            class: 'btn btn-sm btn-outline-secondary' %>
               <% end %>
             </div>
             <div class="col-4 text-right" id="video-uploadButton">
@@ -57,8 +70,8 @@
       </div>
     </div>
     <div class="col-4">
-      <div class="card bg-lime-lighten-5">
-        <div class="card-header bg-lime-darken-2 text-light">
+      <div class="card bg-light">
+        <div class="card-header">
           <div class="row">
             <div class="col-8">
               Manuskript
@@ -80,4 +93,3 @@
       </div>
     </div>
   </div>
-<% end %>
