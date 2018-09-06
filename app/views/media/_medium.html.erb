@@ -52,7 +52,7 @@
     <div class="card-footer bg-mdb-color-lighten-7 text-center">
       <div class="row">
         <% if medium.video_stream_link.present? %>
-          <div class="col-3 col-lg-2">
+          <div class="col-3">
             <a href="<%= medium.video_stream_link %>"
                class="no-deco" target="_blank">
               <i class="material-icons mediabox text-secondary"
@@ -63,7 +63,7 @@
           </div>
         <% end %>
         <% if medium.video.present? %>
-          <div class="col-3 col-lg-2">
+          <div class="col-3">
             <a href="<%= medium.video_url %>"
                class="no-deco" target="_blank">
               <i class="material-icons mediabox text-secondary"
@@ -74,7 +74,7 @@
           </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div class="col-3 col-lg-2">
+          <div class="col-3">
             <a href="<%= medium.manuscript_url %>"
                class="no-deco" target="_blank">
               <i class="material-icons mediabox text-secondary"
@@ -85,7 +85,7 @@
           </div>
         <% end %>
         <% if medium.external_reference_link.present? %>
-          <div class="col-3 col-lg-2">
+          <div class="col-3">
             <a href="<%= medium.external_reference_link %>"
                class="no-deco" target="_blank">
               <i class="material-icons mediabox text-secondary"
@@ -96,7 +96,7 @@
           </div>
         <% end %>
         <% if medium.extras_link.present? %>
-          <div class="col-3 col-lg-2">
+          <div class="col-3">
             <a href="<%= medium.extras_link %>"
                class="no-deco" target="_blank">
               <i class="material-icons mediabox text-secondary"
@@ -106,7 +106,7 @@
             </a>
           </div>
         <% end %>
-        <div class="col-3 col-lg-2">
+        <div class="col-3">
           <a href="<%= medium_path(medium) %>"
              class="no-deco" target="_blank">
             <i class="material-icons mediabox text-secondary"
@@ -115,8 +115,15 @@
             </i>
           </a>
         </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <i class="material-icons mediabox text-secondary">
+            save_alt
+          </i>
+        </div>
         <% if medium.video.present? %>
-          <div class="col-3 col-lg-2">
+          <div class="col-3 mt-2">
             <%= link_to 'mp4', medium.video_url,
                         class: "badge badge-secondary", download: 'Test.mp4',
                         title: 'Manuskript speichern',
@@ -124,7 +131,7 @@
           </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div class="col-3 col-lg-2">
+          <div class="col-3 mt-2">
             <%= link_to 'pdf', medium.manuscript_url,
                         class: "badge badge-secondary", download: 'Test.mp4',
                         title: 'Video speichern',
