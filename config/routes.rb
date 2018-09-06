@@ -4,7 +4,6 @@ Rails.application.routes.draw do
   get '/administration', to: 'administration#index', as: 'administration'
   get '/administration/exit', to: 'administration#exit', as: 'exit_administration'
   get '/administration/profile', to: 'administration#profile', as: 'elevated_profile'
-  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   resources :courses
   get 'media/search', to: 'media#search', as: 'media_search'
   get 'media/catalog', to: 'media#catalog', as: 'media_catalog'

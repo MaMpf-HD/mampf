@@ -15,11 +15,6 @@
           <%= link_to "Logout", destroy_user_session_path, class: 'nav-link',
               method: :delete %>
         </li>
-        <% if current_user.admin? %>
-          <li class="nav-item">
-            <%= link_to "Dashboard", rails_admin_path, class: 'nav-link' %>
-          </li>
-        <% end %>
         <% if current_user.admin || current_user.editor? %>
           <li class="nav-item">
             <%= link_to "Administration", administration_path, class: 'nav-link' %>
