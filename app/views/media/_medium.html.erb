@@ -33,52 +33,95 @@
       <%= image_tag(medium.video_thumbnail_link, alt: "Card image cap",
                     class: "card-img-top") %>
     <% end %>
-    <% unless medium.caption.nil? %>
-      <div class="card-body">
-        <div class="card-title">
-          <h5>
-            <%= medium.caption %>
-          </h5>
-        </div>
-      </div>
-    <% end %>
-    <div>
-      <ul>
+    <div class="card-body">
+      <% unless medium.caption.nil? %>
+          <div class="card-title">
+            <h5>
+              <%= medium.caption %>
+            </h5>
+          </div>
+      <% end %>
+      <div>
         <% medium.tags.each do |t| %>
-          <li>
-            <%= link_to t.title, t, class: "text-dark" %>
-          </li>
+          <%= link_to t.title, t, class: "badge badge-light" %>
         <% end %>
-      </ul>
+      </div>
     </div>
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item bg-mdb-color-lighten-7 text-center">
+    <div class="card-footer bg-mdb-color-lighten-7 text-center">
+      <div class="row">
         <% if medium.video_stream_link.present? %>
-          <%= link_to "Stream", medium.video_stream_link,
-                      class: "btn btn-outline-secondary", target: :_blank %>
+          <div class="col-2">
+          <a href="<%= medium.video_stream_link %>"
+             class="no-deco" target="_blank">
+            <i class="material-icons mediabox text-secondary">
+              play_arrow
+            </i>
+          </a>
+          </div>
         <% end %>
         <% if medium.video.present? %>
-          <%= link_to "mp4", medium.video_url,
-                      class: "btn btn-outline-secondary", target: :_blank %>
-          <%= link_to 'cloud_download', medium.video_url,
-                      class: "material-icons", download: 'Test.mp4', style: 'text-decoration: none;' %>
+          <div class="col-2">
+          <a href="<%= medium.video_url %>"
+             class="no-deco" target="_blank">
+            <i class="material-icons mediabox text-secondary">
+              play_circle_outline
+            </i>
+          </a>
+        </div>
         <% end %>
-        <% if medium.manuscript_link.present? %>
-          <%= link_to "pdf", medium.manuscript_url,
-                      class: "btn btn-outline-secondary", target: :_blank %>
+        <% if medium.manuscript.present? %>
+          <div class="col-2">
+          <a href="<%= medium.manuscript_url %>"
+             class="no-deco" target="_blank">
+            <i class="material-icons mediabox text-secondary">
+              library_books
+            </i>
+          </a>
+          </div>
         <% end %>
         <% if medium.external_reference_link.present? %>
-          <%= link_to "Link", medium.external_reference_link,
-                      class: "btn btn-outline-secondary", target: :_blank %>
+          <div class="col-2">
+          <a href="<%= medium.external_reference_link %>"
+             class="no-deco" target="_blank">
+            <i class="material-icons mediabox text-secondary">
+              link
+            </i>
+          </a>
+        </div>
         <% end %>
         <% if medium.extras_link.present? %>
-          <%= link_to "Extras", medium.extras_link,
-                      class: "btn btn-outline-secondary", target: :_blank %>
+          <div class="col-2">
+          <a href="<%= medium.extras_link %>"
+             class="no-deco" target="_blank">
+             <i class="material-icons mediabox text-secondary">
+               control_point
+             </i>
+           </a>
+         </div>
         <% end %>
-      </li>
-    </ul>
-    <div class="card-footer bg-mdb-color-lighten-7 text-center">
-      <%= link_to "Details", medium, class: "btn btn-secondary" %>
+        <div class="col-2">
+          <a href="<%= medium_path(medium) %>"
+             class="no-deco" target="_blank">
+             <i class="material-icons mediabox text-secondary">
+               info
+             </i>
+           </a>
+         </div>
+       <% if medium.video.present? %>
+       <div class="col-2">
+         <%= link_to 'mp4', medium.video_url,
+                     class: "badge badge-secondary", download: 'Test.mp4',
+                     style: 'text-decoration: none;' %>
+       </div>
+       <% end %>
+       <% if medium.manuscript.present? %>
+       <div class="col-2">
+         <%= link_to 'pdf', medium.manuscript_url,
+                     class: "badge badge-secondary", download: 'Test.mp4',
+                     style: 'text-decoration: none;' %>
+        <% end %>
+      </div>
     </div>
   </div>
+</div>
 </div>
