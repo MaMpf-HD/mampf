@@ -18,8 +18,8 @@ class Medium < ApplicationRecord
   validates :title, presence: true, uniqueness: true
 
   after_initialize :set_defaults
-  # before_save :fill_in_defaults_for_missing_params
-  # after_save :touch_teachable
+  before_save :fill_in_defaults_for_missing_params
+  after_save :touch_teachable
 
   def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
@@ -63,7 +63,7 @@ class Medium < ApplicationRecord
   end
 
   def video_size
-    return video_size_dep unless video.present?
+    return unless video.present?
     video.metadata['size']
   end
 
@@ -93,7 +93,7 @@ class Medium < ApplicationRecord
   end
 
   def manuscript_size
-    return manuscript_size_dep unless manuscript.present?
+    return unless manuscript.present?
     manuscript[:original].metadata['size']
   end
 
@@ -281,23 +281,8 @@ class Medium < ApplicationRecord
                                     question_id.to_s)
   end
 
-  def set_video_defaults
-    self.width ||= DefaultSetting::VIDEO_WIDTH
-    self.height ||= DefaultSetting::VIDEO_HEIGHT
-  end
-
-  def set_video_stream_defaults
-    self.embedded_width ||=  DefaultSetting::EMBEDDED_WIDTH
-    self.embedded_height ||= DefaultSetting::EMBEDDED_HEIGHT
-    self.video_player = video_player.presence || DefaultSetting::VIDEO_PLAYER
-    self.authoring_software = authoring_software.presence ||
-                              DefaultSetting::AUTHORING_SOFTWARE
-  end
-
   def fill_in_defaults_for_missing_params
     set_keks_defaults if sort == 'KeksQuestion'
-    set_video_defaults if video_content?
-    set_video_stream_defaults if video_stream_link.present?
   end
 
   def touch_teachable

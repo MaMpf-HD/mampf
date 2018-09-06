@@ -57,12 +57,14 @@
           <%= link_to "Stream", medium.video_stream_link,
                       class: "btn btn-outline-secondary", target: :_blank %>
         <% end %>
-        <% if medium.video_file_link.present? %>
-          <%= link_to "mp4", medium.video_file_link,
+        <% if medium.video.present? %>
+          <%= link_to "mp4", medium.video_url,
                       class: "btn btn-outline-secondary", target: :_blank %>
+          <%= link_to 'cloud_download', medium.video_url,
+                      class: "material-icons", download: 'Test.mp4', style: 'text-decoration: none;' %>
         <% end %>
         <% if medium.manuscript_link.present? %>
-          <%= link_to "pdf", medium.manuscript_link,
+          <%= link_to "pdf", medium.manuscript_url,
                       class: "btn btn-outline-secondary", target: :_blank %>
         <% end %>
         <% if medium.external_reference_link.present? %>
