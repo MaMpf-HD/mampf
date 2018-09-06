@@ -43,7 +43,9 @@
       <% end %>
       <div>
         <% medium.tags.each do |t| %>
-          <%= link_to t.title, t, class: "badge badge-light" %>
+          <%= link_to t.short_title(30), t, class: "badge badge-light",
+                      title: t.title,
+                      data: { toggle: 'tooltip', placement: 'bottom'} %>
         <% end %>
       </div>
     </div>
@@ -53,72 +55,80 @@
           <div class="col-2">
           <a href="<%= medium.video_stream_link %>"
              class="no-deco" target="_blank">
-            <i class="material-icons mediabox text-secondary">
+            <i class="material-icons mediabox text-secondary"
+               data-toggle="tooltip" data-placement="bottom" title="Camtasia-Player">
               play_arrow
             </i>
           </a>
           </div>
         <% end %>
         <% if medium.video.present? %>
-          <div class="col-2">
+          <div class="col-3 col-lg-2">
           <a href="<%= medium.video_url %>"
              class="no-deco" target="_blank">
-            <i class="material-icons mediabox text-secondary">
+            <i class="material-icons mediabox text-secondary"
+               data-toggle="tooltip" data-placement="bottom" title="Browser-Player">
               play_circle_outline
             </i>
           </a>
         </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div class="col-2">
+          <div class="col-3 col-lg-2">
           <a href="<%= medium.manuscript_url %>"
              class="no-deco" target="_blank">
-            <i class="material-icons mediabox text-secondary">
+            <i class="material-icons mediabox text-secondary"
+               data-toggle="tooltip" data-placement="bottom" title="pdf im Browser">
               library_books
             </i>
           </a>
           </div>
         <% end %>
         <% if medium.external_reference_link.present? %>
-          <div class="col-2">
+          <div class="col-3 col-lg-2">
           <a href="<%= medium.external_reference_link %>"
              class="no-deco" target="_blank">
-            <i class="material-icons mediabox text-secondary">
+            <i class="material-icons mediabox text-secondary"
+               data-toggle="tooltip" data-placement="bottom" title="externer Link">
               link
             </i>
           </a>
         </div>
         <% end %>
         <% if medium.extras_link.present? %>
-          <div class="col-2">
+          <div class="col-3 col-lg-2">
           <a href="<%= medium.extras_link %>"
              class="no-deco" target="_blank">
-             <i class="material-icons mediabox text-secondary">
+             <i class="material-icons mediabox text-secondary"
+                data-toggle="tooltip" data-placement="bottom" title="Extras">
                control_point
              </i>
            </a>
          </div>
         <% end %>
-        <div class="col-2">
+        <div class="col-3 col-lg-2">
           <a href="<%= medium_path(medium) %>"
              class="no-deco" target="_blank">
-             <i class="material-icons mediabox text-secondary">
+             <i class="material-icons mediabox text-secondary"
+                data-toggle="tooltip" data-placement="bottom" title="Details">
                info
              </i>
            </a>
          </div>
        <% if medium.video.present? %>
-       <div class="col-2">
+       <div class="col-3 col-lg-2">
          <%= link_to 'mp4', medium.video_url,
                      class: "badge badge-secondary", download: 'Test.mp4',
-                     style: 'text-decoration: none;' %>
+                     title: 'Manuskript speichern',
+                     data: { toggle: 'tooltip', placement: 'bottom'}    %>
        </div>
        <% end %>
        <% if medium.manuscript.present? %>
-       <div class="col-2">
+       <div class="col-3 col-lg-2">
          <%= link_to 'pdf', medium.manuscript_url,
                      class: "badge badge-secondary", download: 'Test.mp4',
-                     style: 'text-decoration: none;' %>
+                     title: 'Video speichern',
+                     data: { toggle: 'tooltip', placement: 'bottom'} %>
         <% end %>
       </div>
     </div>
