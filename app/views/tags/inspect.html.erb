@@ -17,7 +17,7 @@
   </div>
   <div class="row p-2">
     <div class="col-6">
-      <div class="card bg-mdb-color-lighten-6 mb-4">
+      <div class="card bg-light mb-4">
         <div class="card-header">
           <div class="row">
             <div class="col-12">
@@ -29,10 +29,10 @@
         </div>
         <div class="card-body p-2">
           <div class="row mb-2">
-            <div class="col-4">
-              Verknüpfte Tags:
+            <div class="col-12">
+              Verknüpfte Tags
             </div>
-            <div class="col-8">
+            <div class="col-12">
               <% if @tag.related_tags.empty? %>
                 keine
               <% end %>
@@ -43,11 +43,11 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-4">
-              Module:
+            <div class="col-12">
+              Module
             </div>
-            <div class="col-8">
-              <ul  class="list-unstyled">
+            <div class="col-12">
+              <ul>
                 <% @tag.courses.each do |c| %>
                   <li>
                     <%= link_to c.title, inspect_course_path(c) %>
@@ -56,14 +56,14 @@
               </ul>
             </div>
           </div>
-          <% if @tag.additional_lectures.present? %>
+          <% if @tag.extra_lectures.present? %>
             <div class="row">
-              <div class="col-4">
-                Zusätzliche Vorlesungen:
+              <div class="col-12">
+                Zusätzliche Vorlesungen
               </div>
-              <div class="col-8">
-                <ul  class="list-unstyled">
-                  <% @tag.additional_lectures.each do |l| %>
+              <div class="col-12">
+                <ul>
+                  <% @tag.extra_lectures.each do |l| %>
                     <li>
                       <%= link_to l.title, inspect_lecture_path(l) %>
                     </li>
@@ -72,14 +72,14 @@
               </div>
             </div>
           <% end %>
-          <% if @tag.disabled_lectures.present? %>
+          <% if @tag.missing_lectures.present? %>
             <div class="row">
-              <div class="col-4">
-                Deaktivierte Vorlesungen:
+              <div class="col-12">
+                Fehlende Vorlesungen
               </div>
-              <div class="col-8">
-                <ul  class="list-unstyled">
-                  <% @tag.disabled_lectures.each do |l| %>
+              <div class="col-12">
+                <ul>
+                  <% @tag.missing_lectures.each do |l| %>
                     <li>
                       <%= link_to l.title, inspect_lecture_path(l) %>
                     </li>
@@ -89,10 +89,10 @@
             </div>
           <% end %>
           <div class="row">
-            <div class="col-4">
-              Tags mit Abstand 2:
+            <div class="col-12">
+              Tags mit Abstand 2
             </div>
-            <div class="col-8">
+            <div class="col-12">
               <% if @tag.related_tags.empty? %>
                 keine
               <% end %>

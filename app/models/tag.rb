@@ -7,12 +7,6 @@
 class Tag < ApplicationRecord
   has_many :course_tag_joins, dependent: :destroy
   has_many :courses, through: :course_tag_joins
-  has_many :lecture_tag_disabled_joins, dependent: :destroy
-  has_many :disabled_lectures, through: :lecture_tag_disabled_joins,
-                               source: :lecture
-  has_many :lecture_tag_additional_joins, dependent: :destroy
-  has_many :additional_lectures, through: :lecture_tag_additional_joins,
-                                 source: :lecture
   has_many :lesson_tag_joins, dependent: :destroy
   has_many :lessons, through: :lesson_tag_joins
   has_many :section_tag_joins, dependent: :destroy
@@ -42,6 +36,14 @@ class Tag < ApplicationRecord
     Tag.all.to_a.sort_by { |t| t.title.downcase }.map { |t| [t.title, t.id] }
   end
 
+  def extra_lectures
+    Lecture.where.not(course: courses).select { |l| self.in?(l.tags) }
+  end
+
+  def missing_lectures
+    Lecture.where(course: courses).select { |l| !self.in?(l.tags) }
+  end
+
   def tags_in_neighbourhood
     ids = related_tags.all.map { |t| t.related_tags.pluck(:id) }.flatten.uniq
     related_ids = related_tags.pluck(:id) + [id]
@@ -54,9 +56,7 @@ class Tag < ApplicationRecord
   end
 
   def in_lecture?(lecture)
-    return false unless (lecture.course.tags.include?(self) &&
-                        !lecture.disabled_tags.include?(self)) ||
-                        lecture.additional_tags.include?(self)
+    return false unless lecture.tags.include?(self)
     true
   end
 

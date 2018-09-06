@@ -37,6 +37,11 @@ class Medium < ApplicationRecord
     lecture.lecture_lesson_results(filtered)
   end
 
+  def edited_by?(user)
+    return true if user.in?(editors)
+    false
+  end
+
   def manuscript_pages
     return unless manuscript.present?
     manuscript[:original].metadata["pages"]

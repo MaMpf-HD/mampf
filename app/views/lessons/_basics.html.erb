@@ -84,7 +84,8 @@
     <% else %>
       <%= f.label :tag_ids, 'Verknüpfte Tags' %>
       <%= f.select :tag_ids,
-                   options_for_select(lesson.section_tags.map { |t| [t.title, t.id]},
+                   options_for_select(lesson.section_tags.map { |t| [t.title, t.id]} +
+                                      lesson.complement_of_section_tags.sort_by(&:title).map { |t| [t.title, t.id]},
                                       lesson.tag_ids),
                    {}, { multiple: true,
                          class: 'selectize' } %>

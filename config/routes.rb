@@ -25,7 +25,6 @@ Rails.application.routes.draw do
   resources :chapters, except: [:index]
   resources :terms, except: [:show]
   get 'lectures/:id/inspect/', to: 'lectures#inspect', as: 'inspect_lecture'
-  get 'lectures/list_tags/', to: 'lectures#list_tags', as: 'list_lecture_tags'
   resources :lectures
   devise_for :users, controllers: { registrations: 'registrations' }
   get 'users/elevate', to: 'users#elevate', as: 'elevate_user'

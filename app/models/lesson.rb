@@ -61,4 +61,8 @@ class Lesson < ApplicationRecord
   def section_tags
     sections.collect(&:tags).flatten
   end
+
+  def complement_of_section_tags
+    Tag.all - section_tags
+  end
 end

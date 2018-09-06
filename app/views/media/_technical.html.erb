@@ -12,22 +12,9 @@
                       class: "btn btn-info", target: :_blank %>
           <ul>
             <li>
-              Länge:
-              <%= medium.length %>
+              Dauer:
+              <%= medium.video_duration_hms_string %>
             </li>
-            <li>
-              eingebettete Breite:
-              <%= medium.embedded_width.to_s + ' px'%>
-            </li>
-            <li>
-              eingebettete Höhe:
-              <%= medium.embedded_height.to_s + ' px'%>
-            </li>
-            <% if medium.video_player.present? %>
-              <li>Player:
-                <%= medium.video_player %>
-              </li>
-            <% end %>
           </ul>
         </li>
       <% end %>
@@ -38,15 +25,11 @@
           <ul>
             <li>
               Dateigröße:
-              <%= medium.video_size %>
+              <%= number_to_human_size(medium.video_size) %>
             </li>
             <li>
-              Breite:
-              <%= medium.width.to_s + ' px'%>
-            </li>
-            <li>
-              Höhe:
-              <%= medium.height.to_s + ' px'%>
+              Auflösung:
+              <%= medium.video_resolution %>
             </li>
           </ul>
         </li>
@@ -58,11 +41,11 @@
           <ul>
             <li>
               Länge:
-              <%= medium.pages.to_s + ' S' %>
+              <%= medium.manuscript_pages.to_s + ' S' %>
             </li>
             <li>
               Dateigröße:
-              <%= medium.manuscript_size %>
+              <%= number_to_human_size(medium.manuscript_size) %>
             </li>
           </ul>
         </li>

@@ -1,0 +1,67 @@
+<div id="tags_accordion" role="tablist">
+  <div class="card bg-mdb-color-lighten-6">
+    <div class="card-header"
+         role="tab" id="tags_heading">
+      <div class="row">
+        <div class="col-6">
+          <h5 class="text-dark">
+            Verknüpfte Begriffe
+            <%= ' (' + lecture.tags.count.to_s + ') '%>
+          </h5>
+        </div>
+        <div class="col-6 text-right">
+          <a class="btn btn-primary"
+             data-toggle="collapse" href="#tags_collapse"
+             aria-expanded="false" aria-controls="tags_collapse">
+            Ein-/Ausklappen
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="tags_collapse" class="collapse" role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#tags_accordion">
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-12 mb-2">
+            (Bisher) behandelte Begriffe aus dem zugehörigen Modul
+            <%= link_to lecture.course.title, inspect_course_path(lecture.course) %>
+            <%= ' (' + lecture.course_tags.count.to_s + ')' %>
+          </div>
+          <div class="col-12">
+            <% if lecture.course_tags.present? %>
+              <%= render partial: "tags/list",
+                         locals: { tags: lecture.course_tags.sort_by(&:title),
+                                   inspection: true } %>
+            <% else %>
+              Es sind noch keine Begriffe vorhanden.
+            <% end %>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-12 mb-2">
+            Zusätzlich behandelte Begriffe
+            <%= ' (' + lecture.extra_tags.count.to_s + ')' %>
+          </div>
+          <div class="col-12">
+            <%= render partial: "tags/list",
+                         locals: { tags: lecture.extra_tags.sort_by(&:title),
+                                   inspection: true } %>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-12 mb-2">
+            (Noch) nicht behandelte Begriffe
+            <%= ' (' + lecture.deferred_tags.count.to_s + ')' %>
+          </div>
+          <div class="col-12">
+            <%= render partial: "tags/list",
+                       locals: { tags: lecture.deferred_tags.sort_by(&:title),
+                                 inspection: true } %>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

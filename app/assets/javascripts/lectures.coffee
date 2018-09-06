@@ -12,36 +12,10 @@ $(document).on 'turbolinks:load', ->
     else
       $('#start-section-input').hide()
       $('#lecture_start_section').prop('disabled', true)
-    additionalTags = document.getElementById('lecture_additional_tag_ids').selectize.getValue()
-    disabledTags = document.getElementById('lecture_disabled_tag_ids').selectize.getValue()
-    $.ajax Routes.list_lecture_tags_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        additional_tags: JSON.stringify(additionalTags)
-        disabled_tags: JSON.stringify(disabledTags)
-      }
     return
 
   $('#lecture-basics-cancel').on 'click', ->
     location.reload()
     return
-
-  $('#lecture-additional-tags-links').on 'click', ->
-    if $('#lecture-additional-tag-list').data('show') == 0
-      $('#lecture-additional-tag-list').data('show', 1).show()
-      $(this).text('Links ausblenden')
-    else
-      $('#lecture-additional-tag-list').data('show', 0).hide()
-      $(this).text('Links einblenden')
-    return
-
-  $('#lecture-disabled-tags-links').on 'click', ->
-    if $('#lecture-disabled-tag-list').data('show') == 0
-      $('#lecture-disabled-tag-list').data('show', 1).show()
-      $(this).text('Links ausblenden')
-    else
-      $('#lecture-disabled-tag-list').data('show', 0).hide()
-      $(this).text('Links einblenden')
-    return
+    
   return

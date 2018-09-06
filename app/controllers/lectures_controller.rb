@@ -19,8 +19,6 @@ class LecturesController < ApplicationController
   end
 
   def update
-    check_tag_compatibility
-    return if @errors.present?
     @lecture.update(lecture_params)
     redirect_to edit_lecture_path(@lecture) if @lecture.valid?
     @errors = @lecture.errors
@@ -42,13 +40,6 @@ class LecturesController < ApplicationController
     redirect_to lectures_path
   end
 
-  def list_tags
-    @additional_tags = Tag.where(id: JSON.parse(params[:additional_tags]))
-                          .sort_by(&:title)
-    @disabled_tags = Tag.where(id: JSON.parse(params[:disabled_tags]))
-                        .sort_by(&:title)
-  end
-
   private
 
   def set_lecture
@@ -56,38 +47,6 @@ class LecturesController < ApplicationController
     return if @lecture.present?
     redirect_to :root, alert: 'Eine Vorlesung mit der angeforderten id ' \
                               'existiert nicht.'
-  end
-
-  def check_tag_compatibility
-    @errors = {}
-    removed_additional_tags = @lecture.additional_tags -
-                              Tag.where(id: lecture_params[:additional_tag_ids])
-    puts 'Entfernte Tags'
-    puts (removed_additional_tags || []).map(&:id)
-    removed_tags_compatibility(removed_additional_tags)
-    added_disabled_tags = Tag.where(id: lecture_params[:disabled_tag_ids]) -
-                          @lecture.disabled_tags
-    added_tags_compatibility(added_disabled_tags)
-  end
-
-  def removed_tags_compatibility(relevant)
-    relevant.each do |t|
-      next unless t.in?(@lecture.content_tags)
-      @errors[:additional_tags] = ['Einer der Begriffe, die Du entfernt ' \
-                                   'hast, wird in einem Abschnitt dieser ' \
-                                   'Vorlesung referenziert.']
-      break
-    end
-  end
-
-  def added_tags_compatibility(relevant)
-    relevant.each do |t|
-      next unless t.in?(@lecture.content_tags)
-      @errors[:disabled_tags] = ['Einer der Begriffe, die Du hinzugefügt ' \
-                                   'hast, wird in einem Abschnitt dieser ' \
-                                   'Vorlesung referenziert.']
-      break
-    end
   end
 
   def check_for_consent
@@ -98,7 +57,6 @@ class LecturesController < ApplicationController
     params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
                                     :start_chapter, :absolute_numbering,
                                     :start_section,
-                                    editor_ids: [], additional_tag_ids: [],
-                                    disabled_tag_ids: [])
+                                    editor_ids: [])
   end
 end

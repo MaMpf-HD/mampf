@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_05_134510) do
+ActiveRecord::Schema.define(version: 2018_09_06_114938) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -71,24 +71,6 @@ ActiveRecord::Schema.define(version: 2018_09_05_134510) do
     t.integer "user_id"
     t.index ["editable_id", "editable_type", "user_id"], name: "polymorphic_many_to_many_idx"
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
-  end
-
-  create_table "lecture_tag_additional_joins", force: :cascade do |t|
-    t.integer "lecture_id"
-    t.integer "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_lecture_tag_additional_joins_on_lecture_id"
-    t.index ["tag_id"], name: "index_lecture_tag_additional_joins_on_tag_id"
-  end
-
-  create_table "lecture_tag_disabled_joins", force: :cascade do |t|
-    t.integer "lecture_id"
-    t.integer "tag_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_lecture_tag_disabled_joins_on_lecture_id"
-    t.index ["tag_id"], name: "index_lecture_tag_disabled_joins_on_tag_id"
   end
 
   create_table "lecture_user_joins", force: :cascade do |t|

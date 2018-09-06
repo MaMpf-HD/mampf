@@ -110,14 +110,6 @@
     </div>
   </div>
 </div>
-<div class="row px-4 py-3">
-  <div class="col-12">
-    <%= render partial: 'lectures/editable_tags',
-               locals: { lecture: @lecture,
-                         f: f,
-                         inspection: false } %>
-  </div>
-</div>
 <% end %>
 <div class="row px-4 py-2">
   <div class="col-12 pt-3">
@@ -129,6 +121,11 @@
     <%= render partial: 'media/card',
                locals: { media: @lecture.media_with_inheritance, small: false,
                          collapsible: true } %>
+  </div>
+  <div class="col-12">
+    <%= render partial: 'lectures/tags',
+               locals: { lecture: @lecture,
+                         inspection: false } %>
   </div>
 </div>
 </div>

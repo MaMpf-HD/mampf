@@ -78,8 +78,8 @@ class TagsController < ApplicationController
   def set_tag
     @tag = Tag.find_by_id(params[:id])
     return if @tag.present?
-    redirect_to :root, alert: 'Ein Begriff mit der angeforderten id existiert
-                               nicht.'
+    redirect_to :root, alert: 'Ein Begriff mit der angeforderten id existiert '\
+                              'nicht.'
   end
 
   def check_for_consent
@@ -90,72 +90,24 @@ class TagsController < ApplicationController
     params.require(:tag).permit(:title,
                                 related_tag_ids: [],
                                 course_ids: [],
-                                additional_lecture_ids: [],
-                                disabled_lecture_ids: [],
                                 section_ids: [])
-  end
-
-  def check_additional_lecture_compatibility
-    courses = Course.where(id: tag_params[:course_ids])
-    lectures = courses.collect(&:lectures).flatten
-    additional = Lecture.where(id: tag_params[:additional_lecture_ids]).to_a
-    return if (additional & lectures).empty?
-    @errors[:additional_lectures] = [error_hash['incompatible_addition']]
-  end
-
-  def check_disabled_lecture_compatibility
-    courses = Course.where(id: tag_params[:course_ids])
-    lectures = courses.collect(&:lectures).flatten
-    disabled = Lecture.where(id: tag_params[:disabled_lecture_ids]).to_a
-    return if disabled.empty? || (disabled & lectures).present?
-    @errors[:disabled_lectures] = [error_hash['incompatible_disabling']]
-  end
-
-  def check_additional_lectures_content
-    removed = @tag.additional_lectures -
-              Lecture.where(id: tag_params[:additional_lecture_ids])
-    removed.each do |l|
-      next if l.course.in?(Course.where(id: tag_params[:course_ids]))
-      next unless @tag.in?(l.content_tags)
-      @errors[:additional_lectures] = [error_hash['forbidden_removal']]
-      break
-    end
-  end
-
-  def check_disabled_lectures_content
-    added = Lecture.where(id: tag_params[:disabled_lecture_ids]) -
-            @tag.disabled_lectures
-    added.each do |l|
-      next unless @tag.in?(l.content_tags)
-      @errors[:disabled_lectures] = [error_hash['forbidden_adding']]
-      break
-    end
   end
 
   def check_permissions
     @errors = {}
-    check_additional_lecture_compatibility
-    check_disabled_lecture_compatibility
-    return if @errors.present?
-    check_additional_lectures_content
-    check_disabled_lectures_content
     return if current_user.admin?
-    permission_errors('course')
-    permission_errors('additional_lecture')
-    permission_errors('disabled_lecture')
+    permission_errors
   end
 
-  def permission_errors(kind)
-    sort = kind + '_ids'
-    species = kind == 'course' ? 'course' : 'lecture'
+  def permission_errors
     errors = []
-    unless removed_ids(sort).all? { |c| c.in?(edited_ids(species)) }
-      errors.push(error_hash['remove_' + species])
+    unless removed_courses.all? { |c| c.in?(current_user.edited_courses_with_inheritance) }
+      errors.push(error_hash['remove_course'])
     end
-    unless added_ids(sort).all? { |c| c.in?(edited_ids(species)) }
-      errors.push(error_hash['add_' + species])
+    unless added_courses.all? { |c| c.in?(current_user.edited_courses_with_inheritance) }
+      errors.push(error_hash['add_course'])
     end
-    @errors[(kind + 's').to_sym] = errors if errors.present?
+    @errors[:courses] = errors if errors.present?
   end
 
   def check_creation_permission
@@ -164,38 +116,18 @@ class TagsController < ApplicationController
     check_permissions
   end
 
-  def removed_ids(sort)
-    @tag.send(sort) - tag_params[sort].map(&:to_i)
+  def removed_courses
+    @tag.courses - Course.where(id: tag_params[:course_ids])
   end
 
-  def edited_ids(species)
-    current_user.send('edited_' + species + 's_with_inheritance').map(&:id)
-  end
-
-  def added_ids(sort)
-    (tag_params[sort].map(&:to_i) - [0]) - @tag.send(sort)
+  def added_courses
+    Course.where(id: tag_params[:course_ids]) - @tag.courses
   end
 
   def error_hash
-    { 'remove_lecture' => 'Für mindestens eine der Vorlesungen, die Du ' \
-                          'entfernt hast, hast Du keine Editorenrechte.',
-      'add_lecture' => 'Für mindestens eine der Vorlesungen, die Du ' \
-                       'hinzugefügt hast, hast Du keine Editorenrechte.',
-      'remove_course' => 'Für mindestens eines der Module, das Du entfernt ' \
+    { 'remove_course' => 'Für mindestens eines der Module, das Du entfernt ' \
                          'hast, hast Du keine Editorenrechte.',
       'add_course' => 'Für mindestens eines der Module, das Du hinzugefügt ' \
-                      'hast, hast Du keine Editorenrechte.',
-      'incompatible_addition' => 'Eine der zusätzlichen Vorlesungen ' \
-                                 'gehört zu einem Modul, was zu diesem ' \
-                                 'Tag aktiviert ist.',
-      'incompatible_disabling' => 'Eine der deaktivierten Vorlesungen ' \
-                                  'gehört nicht zu einem Modul, was zu ' \
-                                  'diesem Tag aktiviert ist.',
-      'forbidden_removal' => 'Für mindestens eine Vorlesung, die Du ' \
-                                 'entfernt hast, kommt das Tag in einem ' \
-                                 'Abschnitt vor.',
-      'forbidden_adding' => 'Für mindestens eine Vorlesung, die Du ' \
-                            'hinzugefügt hast, kommt das Tag in einem ' \
-                            'Abschnitt vor.' }
+                      'hast, hast Du keine Editorenrechte.' }
   end
 end

@@ -10,14 +10,6 @@ $('#tag-title-error-<%= @tag.id.to_i %>')
   .append('<%= @errors[:title].join(", ") %>').show()
 $('#tag_title_<%= @tag.id.to_i %>').addClass('is-invalid')
 <% end %>
-<% if @errors[:additional_lectures].present? %>
-$('#tag-additional-lectures-error-<%= @tag.id.to_i %>')
-  .append('<%= @errors[:additional_lectures].join(" ") %>').show()
-<% end %>
-<% if @errors[:disabled_lectures].present? %>
-$('#tag-disabled-lectures-error-<%= @tag.id.to_i %>')
-  .append('<%= @errors[:disabled_lectures].join(" ") %>').show()
-<% end %>
 <% if @errors[:courses].present? %>
 $('#tag-courses-error-<%= @tag.id.to_i %>')
   .append('<%= @errors[:courses].join(" ") %>').show()

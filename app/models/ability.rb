@@ -19,7 +19,6 @@ class Ability
       can :update, Lecture do |lecture|
         lecture.edited_by?(user)
       end
-      can :list_tags, Lecture
       can :new, Lecture
       can :destroy, Lecture do |lecture|
         lecture.edited_by?(user)
@@ -49,6 +48,7 @@ class Ability
       can :destroy, Lesson do |lesson|
         lesson.lecture.edited_by?(user)
       end
+      can :modal, Lesson
       can :list_sections, Lesson
       can :inspect, Lesson
       can :new, Section
@@ -64,6 +64,12 @@ class Ability
         user == u
       end
       can :teacher, User
+      can :catalog, Medium
+      can :search, Medium
+      can :inspect, Medium
+      can :edit, Medium do |medium|
+        medium.edited_by?(user)
+      end
     else
       can :read, :all
       cannot :read, :administration

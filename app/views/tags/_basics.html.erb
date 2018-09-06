@@ -46,30 +46,40 @@
     <div class="invalid-feedback" id="tag-courses-error-<%= tag.id.to_i %>">
     </div>
   </div>
-  <div class="form-group">
-    <%= f.label :additional_lecture_ids, 'Zusätzliche Vorlesungen' %>
-    <%= f.select :additional_lecture_ids,
-                 options_for_select(Lecture.all.map{ |l| [l.title, l.id ]},
-                                    tag.additional_lecture_ids),
-                 {}, { multiple: true,
-                       class: 'selectize',
-                       data: { id: tag.id.to_i } } %>
-    <div class="invalid-feedback"
-         id="tag-additional-lectures-error-<%= tag.id.to_i %>">
+  <% unless new_tag %>
+  <% if tag.extra_lectures.present? %>
+  <div class="row">
+    <div class="col-12">
+      Zusätzliche Vorlesungen
+    </div>
+    <div class="col-12">
+      <ul>
+        <% tag.extra_lectures.each do |l| %>
+          <li>
+            <%= link_to l.title, inspect_lecture_path(l) %>
+          </li>
+        <% end %>
+      </ul>
     </div>
   </div>
-  <div class="form-group">
-    <%= f.label :disabled_lecture_ids, 'Deaktivierte Vorlesungen' %>
-    <%= f.select :disabled_lecture_ids,
-                 options_for_select(Lecture.all.map{ |l| [l.title, l.id ]},
-                                    tag.disabled_lecture_ids),
-                 {}, { multiple: true,
-                       class: 'selectize',
-                       data: { id: tag.id.to_i } } %>
-    <div class="invalid-feedback"
-         id="tag-disabled-lectures-error-<%= tag.id.to_i %>">
+  <% end %>
+  <% if tag.missing_lectures.present? %>
+  <div class="row">
+    <div class="col-12">
+      Fehlende Vorlesungen
+    </div>
+    <div class="col-12">
+      <ul>
+        <% tag.missing_lectures.each do |l| %>
+          <li>
+            <%= link_to l.title, inspect_lecture_path(l) %>
+          </li>
+        <% end %>
+      </ul>
     </div>
   </div>
+  <% end %>
+  <% end %>
   <% if from == 'section' %>
     <%= f.hidden_field :section_id, value: @tag.section_ids.first %>
   <% end %>

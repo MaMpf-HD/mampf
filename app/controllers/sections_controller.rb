@@ -37,9 +37,7 @@ class SectionsController < ApplicationController
   end
 
   def update
-    @old_tags = @section.tags.to_a
     @section.update(section_params)
-    update_tags if @section.valid?
     @errors = @section.errors
     return if @errors.present?
     redirect_to edit_chapter_path(@section.chapter, section_id: @section.id)
@@ -67,18 +65,5 @@ class SectionsController < ApplicationController
   def section_params
     params.require(:section).permit(:title, :display_number, :chapter_id,
                                     tag_ids: [], lesson_ids: [])
-  end
-
-  def update_tags
-    new_tags = @section.tags.to_a
-    (new_tags - @old_tags).each do |t|
-      if @section.lecture.course.in?(t.courses)
-        next unless @section.lecture.in?(t.disabled_lectures)
-        t.disabled_lectures.delete(@section.lecture)
-        next
-      end
-      next if @section.lecture.in?(t.additional_lectures)
-      t.additional_lectures << @section.lecture
-    end
   end
 end

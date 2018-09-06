@@ -3,11 +3,6 @@ class Lecture < ApplicationRecord
   belongs_to :course
   belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
   belongs_to :term
-  has_many :lecture_tag_disabled_joins, dependent: :destroy
-  has_many :disabled_tags, through: :lecture_tag_disabled_joins, source: :tag
-  has_many :lecture_tag_additional_joins, dependent: :destroy
-  has_many :additional_tags, through: :lecture_tag_additional_joins,
-                             source: :tag
   has_many :chapters, -> { order(position: :asc) }, dependent: :destroy
   has_many :lessons, dependent: :destroy
   has_many :media, as: :teachable
@@ -22,15 +17,23 @@ class Lecture < ApplicationRecord
                                             'und DozentIn existiert bereits.' }
 
   def tags
-    course_tag_ids = course.tags.pluck(:id)
-    disabled_ids = disabled_tags.pluck(:id)
-    additional_ids = additional_tags.pluck(:id)
-    tag_ids = (course_tag_ids | additional_ids) - disabled_ids
-    Tag.where(id: tag_ids)
+    chapters.map(&:sections).flatten.collect(&:tags).flatten
   end
 
   def content_tags
     chapters.map(&:sections).flatten.collect(&:tags).flatten
+  end
+
+  def course_tags
+    tags & course.tags
+  end
+
+  def extra_tags
+    tags - course.tags
+  end
+
+  def deferred_tags
+    course.tags - tags
   end
 
   def kaviar?

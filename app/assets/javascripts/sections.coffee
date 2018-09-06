@@ -9,8 +9,6 @@ $(document).on 'turbolinks:load', ->
     chapterId = this.dataset.chapter
     $('#section-basics-warning-' + sectionId).show()
     $('#lesson-modal-button-' + sectionId).hide()
-    $('#section-lesson-links-' + sectionId).hide()
-    $('#section-tag-links-' + sectionId).hide()
     $('#details-section-' + sectionId).text('verwerfen')
     $('#details-section-' + sectionId).on 'click', (event) ->
       event.preventDefault()
