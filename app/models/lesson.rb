@@ -55,7 +55,7 @@ class Lesson < ApplicationRecord
   end
 
   def card_header
-    lecture.short_title_brackets + ', ' + date_de + ' (#' + number.to_s + ')'
+    lecture.short_title_brackets + ', ' + date_de
   end
 
   def card_header_path(user)
