@@ -62,17 +62,6 @@
             </a>
           </div>
         <% end %>
-        <% if medium.video.present? %>
-          <div>
-            <a href="<%= medium.video_url %>"
-               class="no-deco" target="_blank">
-              <i class="material-icons text-secondary"
-                 data-toggle="tooltip" data-placement="bottom" title="Browser-Player">
-                play_circle_outline
-              </i>
-            </a>
-          </div>
-        <% end %>
         <% if medium.manuscript.present? %>
           <div>
             <a href="<%= medium.manuscript_url %>"
@@ -117,19 +106,31 @@
         </div>
         <% if medium.video.present? %>
           <div class="download-button">
-            <%= link_to 'mp4', medium.video_url,
-                        class: "badge badge-secondary", download: medium.video_filename,
-                        title: 'Manuskript speichern',
-                        data: { toggle: 'tooltip', placement: 'bottom'}    %>
+            <a href="<%= medium.video_url %>"
+               download="<%= medium.video_filename %>">
+              <span>
+                <span class="badge badge-secondary"
+                      data-toggle="tooltip" data-placement="bottom"
+                      title="Video speichern">
+                  &#x2B73;mp4
+                </span>
+              </span>
+            </a>
           </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div class="download-button">
-            <%= link_to 'pdf', medium.manuscript_url,
-                        class: "badge badge-secondary", download: medium.manuscript_filename,
-                        title: 'Video speichern',
-                        data: { toggle: 'tooltip', placement: 'bottom'} %>
-          </div>
+        <div class="download-button">
+          <a href="<%= medium.manuscript_url %>"
+             download="<%= medium.manuscript_filename %>">
+            <span>
+              <span class="badge badge-secondary"
+                    data-toggle="tooltip" data-placement="bottom"
+                    title="Manuskript speichern">
+                &#x2B73;pdf
+              </span>
+            </span>
+          </a>
+        </div>
         <% end %>
       </div>
       </div>
