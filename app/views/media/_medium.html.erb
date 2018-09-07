@@ -116,7 +116,7 @@
           </a>
         </div>
         <% if medium.video.present? %>
-          <div>
+          <div class="download-button">
             <%= link_to 'mp4', medium.video_url,
                         class: "badge badge-secondary", download: medium.video_filename,
                         title: 'Manuskript speichern',
@@ -124,7 +124,7 @@
           </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div>
+          <div class="download-button">
             <%= link_to 'pdf', medium.manuscript_url,
                         class: "badge badge-secondary", download: medium.manuscript_filename,
                         title: 'Video speichern',

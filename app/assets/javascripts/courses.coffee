@@ -3,6 +3,11 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'turbolinks:load', ->
+
+  # mobile no download button
+  mobile = ! !navigator.platform and /iPad|iPhone|Android/.test(navigator.platform)
+  $('.download-button').hide() if mobile
+
   $('#lectureCarousel').on 'slid.bs.carousel', (evt) ->
     term = evt.relatedTarget.dataset.term
     teacher = evt.relatedTarget.dataset.teacher
