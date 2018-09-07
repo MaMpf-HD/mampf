@@ -45,7 +45,8 @@
           <div class="form-group">
             <%= f.label :types, 'Typ' %>
             <%= f.select :types,
-                         options_for_select([['auswählen','']] + Medium.sort_enum.map.with_index { |s,i| [s, i] }),
+                         options_for_select(Medium.sort_enum.map.with_index { |s,i| [s, i] },
+                                            Medium.sort_enum.index(medium.sort)),
                          {}, { class: 'form-control' }%>
           </div>
           <div class="form-group">

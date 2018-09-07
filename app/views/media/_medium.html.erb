@@ -107,7 +107,7 @@
         <% if medium.video.present? %>
           <div class="download-button">
             <a href="<%= medium.video_url %>"
-               download="<%= medium.video_filename %>">
+               download>
               <span>
                 <span class="badge badge-secondary"
                       data-toggle="tooltip" data-placement="bottom"
@@ -121,7 +121,7 @@
         <% if medium.manuscript.present? %>
         <div class="download-button">
           <a href="<%= medium.manuscript_url %>"
-             download="<%= medium.manuscript_filename %>">
+             download>
             <span>
               <span class="badge badge-secondary"
                     data-toggle="tooltip" data-placement="bottom"
