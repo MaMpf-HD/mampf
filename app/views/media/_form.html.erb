@@ -36,8 +36,6 @@
           Basisdaten
         </div>
         <div class="card-body">
-          <img id="screenshot-preview" class="img-fluid mb-3"
-               src="<%= medium.screenshot_url %>">
           <div class="form-group">
             <%= f.label :title, 'Titel' %>
             <%= f.text_field :title, class: 'form-control' %>
@@ -50,6 +48,13 @@
                          options_for_select([['auswählen','']] + Medium.sort_enum.map.with_index { |s,i| [s, i] }),
                          {}, { class: 'form-control' }%>
           </div>
+          <div class="form-group">
+            <%= f.label :teachable, 'assoziiert zu' %>
+            <%= f.select :teachable,
+                         options_for_select(all_teachables, medium.teachable_select),
+                         {}, { class: 'selectize' } %>
+          </div>
+
           <div class="form-group">
             <%= f.label :description, 'Beschreibung' %>
             <%= f.text_field :description, class: 'form-control' %>
@@ -97,6 +102,13 @@
           <div class="hidden">
             <%= f.file_field :bs %>
           </div>
+          <% if medium.screenshot.present? %>
+            <div class="my-2">
+              Screenshot
+            </div>
+            <img id="screenshot-preview" class="img-fluid mb-3"
+                 src="<%= medium.screenshot_url %>">
+          <% end %>
         </div>
       </div>
     </div>

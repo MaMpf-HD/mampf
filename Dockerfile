@@ -10,5 +10,8 @@ CMD ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 
 
 RUN apt-get update && apt-get install -y nodejs ffmpeg imagemagick ghostscript graphviz sqlite3 --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-COPY ./ /usr/src/app
+COPY ./.delete_upload_caches.sh /etc/cron.weekly/delete_upload_caches.sh
+RUN chmod 555 /etc/cron.weekly/delete_upload_caches.sh
+COPY ./Gemfile /usr/src/app/Gemfile
 RUN bundle install
+COPY ./ /usr/src/app

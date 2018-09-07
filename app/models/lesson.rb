@@ -46,6 +46,10 @@ class Lesson < ApplicationRecord
     lecture.short_title + ', S.' + number.to_s
   end
 
+  def short_title_with_lecture_date
+    lecture.short_title + ', ' + date_de
+  end
+
   def section_titles
     sections.map(&:title).join(', ')
   end

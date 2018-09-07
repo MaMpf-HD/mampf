@@ -255,6 +255,10 @@ class Medium < ApplicationRecord
       external_reference_link.empty? && extras_link.empty?
   end
 
+  def teachable_select
+    teachable_type.downcase + '-' + teachable_id.to_s
+  end
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
