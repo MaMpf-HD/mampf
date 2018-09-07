@@ -104,13 +104,23 @@ class Medium < ApplicationRecord
     manuscript[:screenshot].url(host: host)
   end
 
+  def video_width
+    return unless video.present?
+    video_resolution.split('x')[0].to_i
+  end
+
+  def video_height
+    return unless video.present?
+    video_resolution.split('x')[1].to_i
+  end
+
   def video_aspect_ratio
-    return unless height != 0 && width != 0
-    width.to_f / height
+    return unless video_height != 0 && video_width != 0
+    video_width.to_f / video_height
   end
 
   def video_scaled_height(new_width)
-    return unless height != 0 && width != 0
+    return unless video_height != 0 && video_width != 0
     (new_width.to_f / video_aspect_ratio).to_i
   end
 
@@ -240,12 +250,17 @@ class Medium < ApplicationRecord
   end
 
   def irrelevant?
-    video_stream_link.empty? && video.empty? && manuscript.empty? &&
-      external_reference_link.empty? && extras_link.empty?
+    video_stream_link.blank? && video.nil? && manuscript.nil? &&
+      external_reference_link.blank? && extras_link.blank?
   end
 
   def teachable_select
     teachable_type.downcase + '-' + teachable_id.to_s
+  end
+
+  def questions
+    return unless sort == 'KeksQuiz'
+    external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK)
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
@@ -298,12 +313,6 @@ class Medium < ApplicationRecord
 
   def belongs_to_lesson?(lecture)
     teachable_sort == 'Lesson' && teachable.lecture == lecture
-  end
-
-  def subheader_heading
-    { 'KeksQuestion' => 'KeKs Frage Nr. ' + question_id.to_s,
-      'KeksQuiz' => 'KeksQuiz', 'Sesam' => 'SeSAM Video',
-      'Kiwi' => 'KIWi Video' }[sort]
   end
 
   def filter_primary(filtered_media, primary_lecture)
