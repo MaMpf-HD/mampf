@@ -29,3 +29,6 @@ coverage
 
 # Ignore shrine store
 /public/uploads
+
+# Ignore environment variables
+/config/app_environment_variables.rb
