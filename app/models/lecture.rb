@@ -1,5 +1,6 @@
 # Lecture class
 class Lecture < ApplicationRecord
+  include ApplicationHelper
   belongs_to :course
   belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
   belongs_to :term
@@ -17,10 +18,6 @@ class Lecture < ApplicationRecord
                                             'und DozentIn existiert bereits.' }
 
   def tags
-    chapters.map(&:sections).flatten.collect(&:tags).flatten
-  end
-
-  def content_tags
     chapters.map(&:sections).flatten.collect(&:tags).flatten
   end
 
@@ -44,17 +41,20 @@ class Lecture < ApplicationRecord
     end
   end
 
-  def to_label
-    course.title + ', ' + term.to_label
-  end
-
   def short_title
     course.short_title + ' ' + term.to_label_short
   end
 
+  def short_title_brackets
+    course.short_title + ' (' + term.to_label_short + ')'
+  end
+
   def title
-    return 'Vorlesung #' + id.to_s unless course.present? && term.present?
     course.title + ', ' + term.to_label
+  end
+
+  def to_label
+    title
   end
 
   def term_teacher_info
@@ -76,9 +76,14 @@ class Lecture < ApplicationRecord
     videos = kaviar? ? ' ' : ' nicht '
     term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'
   end
+  
+  def card_header
+    title
+  end
 
-  def description
-    { general: to_label }
+  def card_header_path(user)
+    return unless user.lectures.include?(self)
+    lecture_path
   end
 
   def newest?
@@ -180,4 +185,13 @@ class Lecture < ApplicationRecord
       j.term.begin_date <=> i.term.begin_date
     end
   end
+
+  private
+
+  def lecture_path
+    Rails.application.routes.url_helpers
+         .course_path(course,
+                      params: { active: id })
+  end
+
 end

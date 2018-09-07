@@ -9,26 +9,15 @@
           <%= medium.card_header %>
         </span>
       <% end %>
-      <% if medium.sort == 'KeksQuestion' || medium.sort == 'KeksQuiz'%>
-        <img src="/keks-16x16.png" width="16" height="16"
-             style="float: right;">
-      <% end %>
     </div>
-    <% unless medium.card_subheader.nil? %>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item bg-mdb-color-lighten-4">
-          <% if medium.card_subheader_teachable(current_user).nil? %>
-            <div class="text-light">
-              <%= medium.card_subheader %>
-            </div>
-          <% else %>
-            <%= link_to medium.card_subheader,
-                        medium.card_subheader_teachable(current_user),
-                        class: 'text-light' %>
-          <% end %>
-          </li>
-        </ul>
-    <% end %>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item bg-mdb-color-lighten-4">
+        <div class="text-light">
+          <%= medium.card_subheader %>
+        </div>
+        <% else %>
+      </li>
+    </ul>
     <% if medium.video_thumbnail_link.present? %>
       <%= image_tag(medium.video_thumbnail_link, alt: "Card image cap",
                     class: "card-img-top") %>

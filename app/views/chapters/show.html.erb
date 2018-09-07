@@ -12,11 +12,11 @@
   <div class="col-12">
     Vorlesung:
     <% if current_user.lectures.include?(@chapter.lecture) %>
-      <%= link_to @chapter.lecture.to_label,
+      <%= link_to @chapter.lecture.title,
                   @chapter.lecture.path(current_user) %>
     <% else %>
       <span>
-        <%= @chapter.lecture.to_label %>
+        <%= @chapter.lecture.title %>
       </span>
     <% end %>
   </div>

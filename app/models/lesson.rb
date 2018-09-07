@@ -54,8 +54,13 @@ class Lesson < ApplicationRecord
     sections.map(&:title).join(', ')
   end
 
-  def description
-    { general: lecture.to_label, specific: title }
+  def card_header
+    lecture.short_title_brackets + ', ' + date_de + ' (#' + number.to_s + ')'
+  end
+
+  def card_header_path(user)
+    return unless user.lectures.include?(lecture)
+    lesson_path
   end
 
   def lesson
@@ -68,5 +73,11 @@ class Lesson < ApplicationRecord
 
   def complement_of_section_tags
     Tag.all - section_tags
+  end
+
+  private
+
+  def lesson_path
+    Rails.application.routes.url_helpers.lesson_path(self)
   end
 end

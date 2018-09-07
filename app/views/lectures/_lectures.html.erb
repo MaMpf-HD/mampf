@@ -9,11 +9,11 @@
       <% lectures.each do |l| %>
         <li>
           <% if current_user.lectures.include?(l) %>
-            <%= link_to l.to_label, l.path(current_user),
+            <%= link_to l.title, l.path(current_user),
                         class: 'text-dark' %>
           <% else %>
             <span>
-              <%= l.to_label %>
+              <%= l.title %>
             </span>
           <% end %>
         </li>

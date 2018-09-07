@@ -45,7 +45,7 @@
         <% elsif m.teachable_type == 'Lecture' %>
           <%= link_to m.teachable.short_title, inspect_lecture_path(m.teachable) %>
         <% else %>
-          <%= link_to m.teachable.short_title_with_lecture, inspect_lesson_path(m.teachable) %>
+          <%= link_to m.teachable.short_title_with_lecture_date, inspect_lesson_path(m.teachable) %>
         <% end %>
       </div>
       <div class="col-3">

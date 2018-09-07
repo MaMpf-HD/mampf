@@ -56,7 +56,7 @@
         <ul>
         <% current_user.edited_lessons_with_inheritance.sort_by(&:date).reverse.first(10).each do |l| %>
           <li>
-            <%= link_to l.lecture.short_title + ', ' + l.to_label, edit_lesson_path(l) %>
+            <%= link_to l.lecture.short_title + ', ' + l.title, edit_lesson_path(l) %>
           </li>
         <% end %>
         </ul>

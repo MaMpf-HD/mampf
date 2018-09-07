@@ -1,5 +1,6 @@
 # Course class
 class Course < ApplicationRecord
+  include ApplicationHelper
   has_many :lectures, dependent: :destroy
   has_many :course_tag_joins, dependent: :destroy
   has_many :tags, through: :course_tag_joins
@@ -21,8 +22,13 @@ class Course < ApplicationRecord
     title
   end
 
-  def description
-    { general: title }
+  def card_header
+    title
+  end
+
+  def card_header_path(user)
+    return unless user.courses.include?(self)
+    course_path
   end
 
   def kaviar?
@@ -157,5 +163,9 @@ class Course < ApplicationRecord
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
       'keks' => ['KeksQuiz'], 'reste' => ['Reste'],
       'erdbeere' => ['Erdbeere'] }
+  end
+
+  def course_path
+    Rails.application.routes.url_helpers.course_path(self)
   end
 end

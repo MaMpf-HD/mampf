@@ -37,12 +37,6 @@
         </div>
         <div class="card-body">
           <div class="form-group">
-            <%= f.label :title, 'Titel' %>
-            <%= f.text_field :title, class: 'form-control' %>
-            <div class="invalid-feedback" id="medium-title-error">
-            </div>
-          </div>
-          <div class="form-group">
             <%= f.label :types, 'Typ' %>
             <%= f.select :types,
                          options_for_select(Medium.sort_enum.map.with_index { |s,i| [s, i] },
@@ -55,7 +49,13 @@
                          options_for_select(all_teachables, medium.teachable_select),
                          {}, { class: 'selectize' } %>
           </div>
-
+          <div class="form-group">
+            <%= f.label :editor_ids, 'Editoren' %>
+            <%= f.select :editor_ids,
+                         options_for_select(User.select_editors,
+                                            medium.editors.map(&:id)),
+                         {}, { multiple: true, class: 'selectize' } %>
+          </div>
           <div class="form-group">
             <%= f.label :description, 'Beschreibung' %>
             <%= f.text_field :description, class: 'form-control' %>
@@ -67,6 +67,13 @@
             <%= f.select :tag_ids,
                          options_for_select(Tag.select_by_title,
                                             medium.tags.map(&:id)),
+                         {}, { multiple: true, class: 'selectize' } %>
+          </div>
+          <div class="form-group">
+            <%= f.label :linked_media_ids, 'Verknüpfte Medien' %>
+            <%= f.select :linked_media_ids,
+                         options_for_select(Medium.select_by_title,
+                                            medium.linked_media.map(&:id)),
                          {}, { multiple: true, class: 'selectize' } %>
           </div>
         </div>

@@ -14,10 +14,8 @@ class Medium < ApplicationRecord
   include PdfUploader[:manuscript]
   validates :sort, presence: true
   validates :question_id, presence: true, uniqueness: true, if: :keks_question?
-  validates :author, presence: true
   validates :title, presence: true, uniqueness: true
 
-  after_initialize :set_defaults
   before_save :fill_in_defaults_for_missing_params
   after_save :touch_teachable
 
@@ -35,6 +33,10 @@ class Medium < ApplicationRecord
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return [] unless course.lectures.include?(lecture)
     lecture.lecture_lesson_results(filtered)
+  end
+
+  def self.select_by_title
+    Medium.all.map { |m| [m.title, m.id] }
   end
 
   def edited_by?(user)
@@ -113,7 +115,7 @@ class Medium < ApplicationRecord
   end
 
   def caption
-    return heading if heading.present?
+    return description if description.present?
     return unless sort == 'Kaviar' && teachable_sort == 'Lesson'
     teachable.section_titles
   end
@@ -123,28 +125,15 @@ class Medium < ApplicationRecord
   end
 
   def card_header
-    teachable.description[:general]
+    teachable.card_header
   end
 
   def card_header_teachable_path(user)
-    if teachable_sort == 'Course'
-      return unless user.courses.include?(teachable)
-      return course_path(teachable)
-    end
-    return unless user.lectures.include?(teachable.lecture)
-    lecture_path(teachable)
+    teachable.card_header_path(user)
   end
 
   def card_subheader
-    return description if description.present?
-    return subheader_heading unless teachable.description[:specific].present?
-    teachable.description[:specific]
-  end
-
-  def card_subheader_teachable(user)
-    return if description.present? || teachable.description[:specific].nil?
-    return unless user.lectures.include?(teachable.lecture)
-    teachable
+    sort_de
   end
 
   def sort_de
@@ -264,18 +253,6 @@ class Medium < ApplicationRecord
 
   private
 
-  def set_defaults
-    self.sort = 'Kaviar' if new_record?
-  end
-
-  def video_content?
-    video_stream_link.present? || video_file_link.present?
-  end
-
-  def video_content_not_keks_question?
-    (video_stream_link.present? || video_file_link.present?) && !keks_question?
-  end
-
   def keks_question?
     sort == 'KeksQuestion'
   end
@@ -309,16 +286,6 @@ class Medium < ApplicationRecord
     if teachable.lesson.present? && teachable.lesson.persisted?
       teachable.lesson.touch
     end
-  end
-
-  def lecture_path(teachable)
-    Rails.application.routes.url_helpers
-         .course_path(teachable.course,
-                      params: { active: teachable.lecture.id })
-  end
-
-  def course_path(teachable)
-    Rails.application.routes.url_helpers.course_path(teachable)
   end
 
   def belongs_to_course?(lecture)
