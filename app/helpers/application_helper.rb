@@ -2,8 +2,8 @@
 module ApplicationHelper
 
   def host
-  Rails.env.production? ? 'https://media.mathi.uni-heidelberg.de/mampf-dev' : ''
-end
+    Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['MEDIA_FOLDER'] : ''
+  end
 
   # Returns the full title on a per-page basis.
   def full_title(page_title = '')
