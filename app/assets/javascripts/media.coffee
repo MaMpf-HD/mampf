@@ -31,6 +31,14 @@ $(document).on 'turbolinks:load', ->
 
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
+    teachableSelector = document.getElementById('medium_teachable').selectize
+    value = teachableSelector.getValue()
+    if value != ''
+      $('#medium_teachable_id').val(value.split('-')[1])
+      $('#medium_teachable_type').val(value.split('-')[0])
+    else
+      $('#medium_teachable_id').val('')
+      $('#medium_teachable_type').val('')
     return
 
   $('#medium-basics-cancel').on 'click', ->
@@ -50,7 +58,12 @@ $(document).on 'turbolinks:load', ->
     $('#manuscript-meta').hide()
     $('#manuscript-preview').hide()
     $('#medium_detach_manuscript').val('true')
-    $('#medium-basics-warning').show()  
+    $('#medium-basics-warning').show()
+    return
+
+  $(document).on 'click', '#test-external-link', ->
+    url = $('#medium_external_reference_link').val()
+    window.open(url, '_blank')
     return
 
   $(document).on 'change', '#item_sort', ->

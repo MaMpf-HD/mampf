@@ -3,7 +3,7 @@
     <ul>
       <% media.each do |m| %>
         <li>
-          <%= m.ident %>
+          <%= link_to m.ident, inspect_medium_path(m) %>
         </li>
       <% end %>
     </ul>
@@ -43,7 +43,7 @@
                       <% media_list.each do |m| %>
                         <% unless m.nil? %>
                           <li>
-                            <%= m.ident %>
+                            <%= link_to m.ident, inspect_medium_path(m) %>
                           </li>
                         <% end %>
                       <% end %>

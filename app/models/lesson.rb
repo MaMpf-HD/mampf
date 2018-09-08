@@ -38,8 +38,11 @@ class Lesson < ApplicationRecord
   end
 
   def title
-    return 'Sitzung #' + id.to_s unless number.present? && date.present?
     'Sitzung ' + number.to_s + ', ' + date_de.to_s
+  end
+
+  def long_title
+    lecture.title + ', ' + title
   end
 
   def short_title_with_lecture

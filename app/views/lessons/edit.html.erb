@@ -53,7 +53,11 @@
       <div class="col-12">
         <%= render partial: 'media/card',
                    locals: { media: @lesson.media, small: true,
-                             collapsible: false } %>
+                             collapsible: false,
+                             teachable_type: 'Lesson',
+                             teachable_id: @lesson.id,
+                             inspection: false,
+                             tag_ids: @lesson.tag_ids } %>
       </div>
     </div>
   </div>

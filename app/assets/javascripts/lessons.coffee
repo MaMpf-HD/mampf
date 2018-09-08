@@ -6,6 +6,7 @@ $(document).on 'turbolinks:load', ->
 
   $('#lesson-form :input').on 'change', ->
     $('#lesson-basics-warning').show()
+    $('#create-new-medium').hide()
     sections = document.getElementById('lesson_section_ids').selectize.getValue()
     $.ajax Routes.list_lesson_sections_path(),
       type: 'GET'

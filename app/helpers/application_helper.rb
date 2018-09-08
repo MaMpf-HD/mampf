@@ -107,4 +107,15 @@ module ApplicationHelper
     return true if controller == 'media' && action != 'show' && action != 'index'
     false
   end
+
+  def inspect_teachable_path(teachable)
+    return inspect_course_path(teachable) if teachable.class.to_s == 'Course'
+    return inspect_lecture_path(teachable) if teachable.class.to_s == 'Lecture'
+    inspect_lesson_path(teachable)
+  end
+
+  def long_title(teachable)
+    return teachable.title if teachable.class.to_s.in?(['Course', 'Lecture'])
+    return teachable.long_title  
+  end
 end

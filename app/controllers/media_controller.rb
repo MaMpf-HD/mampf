@@ -1,7 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
   authorize_resource
-  before_action :set_medium, only: [:show, :edit, :update]
+  before_action :set_medium, only: [:show, :edit, :update, :destroy, :inspect]
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :sanitize_params
@@ -20,13 +20,24 @@ class MediaController < ApplicationController
   end
 
   def new
+    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson']) &&
+       params[:teachable_id].present?
+      teachable = params[:teachable_type].constantize
+                                         .find_by_id(params[:teachable_id])
+    end
+    @medium = Medium.new(teachable: teachable)
+    @medium.editors << current_user
+    tags = Tag.where(id: params[:tag_ids])
+    @medium.tags << tags if tags.present?
   end
 
   def edit
   end
 
   def update
-    return unless @medium.update(medium_params)
+    @medium.update(medium_params)
+    @errors = @medium.errors
+    return unless @errors.empty?
     if params[:medium][:detach_video] == 'true'
       @medium.update(video: nil)
       @medium.update(screenshot: nil)
@@ -35,6 +46,25 @@ class MediaController < ApplicationController
       @medium.update(manuscript: nil)
     end
     redirect_to edit_medium_path(@medium)
+  end
+
+  def create
+    @medium = Medium.new(medium_params)
+    @medium.save
+    if @medium.valid?
+      redirect_to edit_medium_path(@medium)
+      return
+    end
+    @errors = @medium.errors
+    render :update
+  end
+
+  def destroy
+    @medium.destroy
+    redirect_to administration_path
+  end
+
+  def inspect
   end
 
   def search
@@ -55,8 +85,12 @@ class MediaController < ApplicationController
   end
 
   def medium_params
-    params.require(:medium).permit(:title, :description, :video, :manuscript)
+    params.require(:medium).permit(:sort,:description, :video, :manuscript,
+                                   :external_reference_link, :teachable_type,
+                                   :teachable_id, editor_ids: [], tag_ids: [],
+                                   linked_medium_ids: [])
   end
+
 
   def set_course
     @course = Course.find_by_id(params[:course_id])

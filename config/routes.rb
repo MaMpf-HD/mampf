@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   get 'media/catalog', to: 'media#catalog', as: 'media_catalog'
   get 'media/:id/inspect/', to: 'media#inspect', as: 'inspect_medium'
   get 'media/:id/enrich', to: 'media#enrich', as: 'enrich_medium'
-  resources :media, only: [:show, :index, :new, :edit, :update]
+  resources :media
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags

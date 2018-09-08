@@ -70,6 +70,7 @@ class Ability
       can :edit, Medium do |medium|
         medium.edited_by?(user)
       end
+      can :create, Medium
     else
       can :read, :all
       cannot :read, :administration

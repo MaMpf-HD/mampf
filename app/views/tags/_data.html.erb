@@ -11,7 +11,11 @@
         <div class="col-12">
           <%= render partial: 'media/card',
                      locals: { media: tag.media, small: false,
-                               collapsible: false } %>
+                               collapsible: false,
+                               teachable_type: nil,
+                               teachable_id: nil,
+                               tag_ids: [tag.id],
+                               inspection: false } %>
         </div>
         <div class="col-12">
           <%= render partial: 'sections/card',

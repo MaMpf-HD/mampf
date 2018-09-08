@@ -120,7 +120,8 @@
   <div class="col-12 pt-3">
     <%= render partial: 'media/card',
                locals: { media: @lecture.media_with_inheritance, small: false,
-                         collapsible: true } %>
+                         collapsible: true, teachable_id: @lecture.id,
+                         teachable_type: 'Lecture', inspection: false, tag_ids: nil } %>
   </div>
   <div class="col-12">
     <%= render partial: 'lectures/tags',

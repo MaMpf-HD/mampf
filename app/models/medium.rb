@@ -12,8 +12,16 @@ class Medium < ApplicationRecord
   include VideoUploader[:video]
   include ImageUploader[:screenshot]
   include PdfUploader[:manuscript]
-  validates :sort, presence: true
-
+  validates :sort, presence: { message: 'Es muss ein Typ angegeben werden.'}
+  validates :external_reference_link, http_url: true,
+                                      if: :external_reference_link?
+  validates :teachable, presence: { message: 'Es muss eine Assoziation ' \
+                                            'angegeben werden.'}
+  validates :description, presence: { message: 'Es muss eine Beschreibung' \
+                                               'angegeben werden.' },
+                          unless: :kaviar?
+  validates :editors, presence: { message: 'Es muss ein Editor ' \
+                                           'angegeben werden.'}
   after_save :touch_teachable
 
   def self.sort_enum
@@ -33,7 +41,7 @@ class Medium < ApplicationRecord
   end
 
   def self.select_by_name
-    Medium.all.map { |m| [m.name, m.id] }
+    Medium.all.map { |m| [m.title, m.id] }
   end
 
   def edited_by?(user)
@@ -213,7 +221,7 @@ class Medium < ApplicationRecord
   end
 
   def teachable_select
-    teachable_type.downcase + '-' + teachable_id.to_s
+    teachable_type + '-' + teachable_id.to_s
   end
 
   def question_id
@@ -248,7 +256,7 @@ class Medium < ApplicationRecord
     ''
   end
 
-  def name
+  def title
     return ident if details.blank?
     ident + '.' + details
   end
@@ -257,6 +265,10 @@ class Medium < ApplicationRecord
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
   private
+
+  def kaviar?
+    sort == 'Kaviar'
+  end
 
   def touch_teachable
     return if teachable.nil?
