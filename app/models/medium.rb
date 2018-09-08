@@ -13,10 +13,8 @@ class Medium < ApplicationRecord
   include ImageUploader[:screenshot]
   include PdfUploader[:manuscript]
   validates :sort, presence: true
-  validates :question_id, presence: true, uniqueness: true, if: :keks_question?
   validates :title, presence: true, uniqueness: true
 
-  before_save :fill_in_defaults_for_missing_params
   after_save :touch_teachable
 
   def self.sort_enum
@@ -152,11 +150,6 @@ class Medium < ApplicationRecord
       'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }[sort]
   end
 
-  def question_ids
-    return if question_list.nil?
-    question_list.split('&').map(&:to_i)
-  end
-
   def teachable_sort
     teachable.class.name
   end
@@ -273,24 +266,6 @@ class Medium < ApplicationRecord
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
   private
-
-  def keks_question?
-    sort == 'KeksQuestion'
-  end
-
-  def keks_quiz?
-    sort == 'KeksQuiz'
-  end
-
-  def set_keks_defaults
-    self.external_reference_link = external_reference_link.presence ||
-                                   (DefaultSetting::KEKS_QUESTION_LINK +
-                                    question_id.to_s)
-  end
-
-  def fill_in_defaults_for_missing_params
-    set_keks_defaults if sort == 'KeksQuestion'
-  end
 
   def touch_teachable
     return if teachable.nil?
