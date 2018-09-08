@@ -28,6 +28,10 @@ class Term < ApplicationRecord
     season + ' ' + year_corrected_short
   end
 
+  def medium_title
+    season + year_corrected_short
+  end
+
   private
 
   def year_corrected

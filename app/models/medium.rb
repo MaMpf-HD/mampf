@@ -13,7 +13,6 @@ class Medium < ApplicationRecord
   include ImageUploader[:screenshot]
   include PdfUploader[:manuscript]
   validates :sort, presence: true
-  validates :title, presence: true, uniqueness: true
 
   after_save :touch_teachable
 
@@ -33,8 +32,8 @@ class Medium < ApplicationRecord
     lecture.lecture_lesson_results(filtered)
   end
 
-  def self.select_by_title
-    Medium.all.map { |m| [m.title, m.id] }
+  def self.select_by_name
+    Medium.all.map { |m| [m.name, m.id] }
   end
 
   def edited_by?(user)
@@ -128,10 +127,6 @@ class Medium < ApplicationRecord
     teachable.section_titles
   end
 
-  def tag_titles
-    tags.map(&:title).join(', ')
-  end
-
   def card_header
     teachable.card_header
   end
@@ -212,36 +207,6 @@ class Medium < ApplicationRecord
     end
   end
 
-  def relocate_data
-    if video_thumbnail_link.present?
-      screenshot = open(video_thumbnail_link)
-      file = Tempfile.new([title + '-', '.png'])
-      file.binmode
-      file.write open(screenshot).read
-      file.rewind
-      file
-      self.update(screenshot: file)
-    end
-    if manuscript_link.present?
-      manuscript = open(manuscript_link)
-      file = Tempfile.new([title + '-', '.pdf'])
-      file.binmode
-      file.write open(manuscript).read
-      file.rewind
-      file
-      self.update(manuscript: file)
-    end
-    if video_file_link.present?
-      video = open(video_file_link)
-      file = Tempfile.new([title + '-', '.mp4'])
-      file.binmode
-      file.write open(video).read
-      file.rewind
-      file
-      self.update(video: file)
-    end
-  end
-
   def irrelevant?
     video_stream_link.blank? && video.nil? && manuscript.nil? &&
       external_reference_link.blank? && extras_link.blank?
@@ -251,15 +216,41 @@ class Medium < ApplicationRecord
     teachable_type.downcase + '-' + teachable_id.to_s
   end
 
-  def question
+  def question_id
     return unless sort == 'KeksQuestion'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK).to_i
   end
 
-  def questions
+  def question_ids
     return unless sort == 'KeksQuiz'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK)
                            .split(',').map(&:to_i)
+  end
+
+  def position
+    teachable.media.where(sort: self.sort).order(:id).index(self)  + 1
+  end
+
+  def siblings
+    teachable.media.where(sort: self.sort)
+  end
+
+  def ident
+    ident = sort_de + '.' + teachable.medium_title
+    return ident unless siblings.count > 1
+    ident + '.(' + position.to_s + '/' + siblings.count.to_s + ')'
+  end
+
+  def details
+    return description if description.present?
+    return 'Frage ' + question_id.to_s if sort == 'KeksQuestion'
+    return 'Fragen ' + question_ids.join(', ') if sort == 'KeksQuiz'
+    ''
+  end
+
+  def name
+    return ident if details.blank?
+    ident + '.' + details
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }

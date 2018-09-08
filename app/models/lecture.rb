@@ -53,6 +53,10 @@ class Lecture < ApplicationRecord
     course.title + ', ' + term.to_label
   end
 
+  def medium_title
+    course.medium_title + '.' + term.medium_title
+  end
+
   def to_label
     title
   end
@@ -76,7 +80,7 @@ class Lecture < ApplicationRecord
     videos = kaviar? ? ' ' : ' nicht '
     term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'
   end
-  
+
   def card_header
     title
   end

@@ -22,6 +22,10 @@ class Course < ApplicationRecord
     title
   end
 
+  def medium_title
+    short_title
+  end
+
   def card_header
     title
   end

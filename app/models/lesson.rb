@@ -50,6 +50,14 @@ class Lesson < ApplicationRecord
     lecture.short_title + ', ' + date_de
   end
 
+  def short_title
+    lecture.short_title + '_E' + number.to_s
+  end
+
+  def medium_title
+    lecture.medium_title + '.E' + number.to_s
+  end
+
   def section_titles
     sections.map(&:title).join(', ')
   end

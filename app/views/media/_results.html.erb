@@ -1,12 +1,7 @@
 <div class="row bg-mdb-color-lighten-2 mx-2 py-3">
   <div class="col-2 text-light">
     <strong>
-      Titel
-    </strong>
-  </div>
-  <div class="col-1 text-light">
-    <strong>
-      Typ
+      Ident
     </strong>
   </div>
   <div class="col-2 text-light">
@@ -19,9 +14,14 @@
       Tags
     </strong>
   </div>
-  <div class="col-2 text-light">
+  <div class="col-1 text-light">
     <strong>
       Editoren
+    </strong>
+  </div>
+  <div class="col-2 text-light">
+    <strong>
+      Details
     </strong>
   </div>
   <div class="col-2 text-light">
@@ -34,10 +34,7 @@
   <% @media.each do |m| %>
     <div class="row border-bottom mx-2" id="row-medium-<%= m.id %>">
       <div class="col-2">
-        <%= m.title %>
-      </div>
-      <div class="col-1">
-        <%= m.sort_de %>
+        <%= m.ident %>
       </div>
       <div class="col-2">
         <% if m.teachable_type == 'Course' %>
@@ -55,7 +52,7 @@
                       title: t.title %>
         <% end %>
       </div>
-      <div class="col-2">
+      <div class="col-1">
         <ul class="list-unstyled">
           <% m.editors.each do |e| %>
             <li>
@@ -63,6 +60,9 @@
             </li>
           <% end %>
         </ul>
+      </div>
+      <div class="col-2">
+        <%= m.details %>
       </div>
       <div class="col-2">
         <%= link_to 'Bearbeiten', edit_medium_path(m),

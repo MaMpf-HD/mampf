@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_07_155337) do
+ActiveRecord::Schema.define(version: 2018_09_08_122719) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -139,13 +139,10 @@ ActiveRecord::Schema.define(version: 2018_09_07_155337) do
     t.text "external_reference_link"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title"
     t.string "sort"
-    t.integer "question_id"
     t.string "description"
     t.string "teachable_type"
     t.integer "teachable_id"
-    t.text "question_list"
     t.text "extras_link"
     t.text "extras_description"
     t.text "video_data"

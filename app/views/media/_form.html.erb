@@ -5,7 +5,7 @@
       <span class="badge badge-secondary">
         Medium
       </span>
-      <%= medium.title %>
+      <%= medium.name %>
     </h4>
   </div>
   <div class="col-5">
@@ -73,9 +73,26 @@
           <div class="form-group">
             <%= f.label :linked_media_ids, 'Verknüpfte Medien' %>
             <%= f.select :linked_media_ids,
-                         options_for_select(Medium.select_by_title,
+                         options_for_select(Medium.select_by_name,
                                             medium.linked_media.map(&:id)),
                          {}, { multiple: true, class: 'selectize' } %>
+          </div>
+          <div class="form-group">
+            <%= f.label :external_reference_link, 'Externer Link' %>
+            <div class="row">
+              <div class="col-10">
+                <%= f.text_field :external_reference_link,
+                                 { class: 'form-control' } %>
+                <div class="invalid-feedback" id="external-reference-error">
+                </div>
+              </div>
+              <div class="col-2">
+                <button id="test-external-link" type="button"
+                        class="btn btn-sm btn-outline-info">
+                  Test
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
