@@ -258,9 +258,15 @@ class Medium < ApplicationRecord
     teachable_type.downcase + '-' + teachable_id.to_s
   end
 
+  def question
+    return unless sort == 'KeksQuestion'
+    external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK).to_i
+  end
+
   def questions
     return unless sort == 'KeksQuiz'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK)
+                           .split(',').map(&:to_i)
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }

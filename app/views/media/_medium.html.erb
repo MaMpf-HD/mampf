@@ -40,7 +40,7 @@
     <div class="card-footer bg-mdb-color-lighten-7 text-center">
       <div id="media-box-footer">
         <% if medium.video_stream_link.present? %>
-          <div>
+          <div class="mr-2">
             <a href="<%= medium.video_stream_link %>"
                class="no-deco" target="_blank">
               <i class="material-icons text-secondary"
@@ -51,7 +51,7 @@
           </div>
         <% end %>
         <% if medium.manuscript.present? %>
-          <div>
+          <div class="mr-2">
             <a href="<%= medium.manuscript_url %>"
                class="no-deco" target="_blank">
               <i class="material-icons text-secondary"
@@ -62,7 +62,7 @@
           </div>
         <% end %>
         <% if medium.external_reference_link.present? %>
-          <div>
+          <div class="mr-2">
             <a href="<%= medium.external_reference_link %>"
                class="no-deco" target="_blank">
               <i class="material-icons text-secondary"
@@ -73,7 +73,7 @@
           </div>
         <% end %>
         <% if medium.extras_link.present? %>
-          <div>
+          <div class="mr-2">
             <a href="<%= medium.extras_link %>"
                class="no-deco" target="_blank">
               <i class="material-icons text-secondary"
@@ -83,7 +83,7 @@
             </a>
           </div>
         <% end %>
-        <div>
+        <div class="mr-2">
           <a href="<%= medium_path(medium) %>"
              class="no-deco" target="_blank">
             <i class="material-icons text-secondary"
