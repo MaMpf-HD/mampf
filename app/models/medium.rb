@@ -9,6 +9,9 @@ class Medium < ApplicationRecord
   has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
+  has_many :items, dependent: :destroy
+  has_many :referrals, dependent: :destroy
+  has_many :referenced_items, through: :referrals, source: :item
   include VideoUploader[:video]
   include ImageUploader[:screenshot]
   include PdfUploader[:manuscript]
@@ -47,6 +50,46 @@ class Medium < ApplicationRecord
   def edited_by?(user)
     return true if editors.include?(user)
     false
+  end
+
+  def toc_to_vtt
+    path = toc_path
+    File.open(path, 'w+:UTF-8') do |f|
+      f.write vtt_start
+      proper_items_by_time.each do |i|
+        f.write i.vtt_time_span
+        f.write i.vtt_reference
+      end
+    end
+    path
+  end
+
+  def references_to_vtt
+    path = references_path
+    File.open(path, 'w+:UTF-8') do |f|
+      f.write vtt_start
+      referrals_by_time.each do |r|
+        f.write r.vtt_time_span
+        f.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
+      end
+    end
+    path
+  end
+
+  def proper_items
+    items.where.not(sort: 'self')
+  end
+
+  def proper_items_by_time
+    proper_items.to_a.sort do |i, j|
+      i.start_time.total_seconds <=> j.start_time.total_seconds
+    end
+  end
+
+  def referrals_by_time
+    referrals.to_a.sort do |r, s|
+      r.start_time.total_seconds <=> s.start_time.total_seconds
+    end
   end
 
   def manuscript_pages
@@ -285,6 +328,18 @@ class Medium < ApplicationRecord
     if teachable.lesson.present? && teachable.lesson.persisted?
       teachable.lesson.touch
     end
+  end
+
+  def toc_path
+    Rails.root.join('public', 'tmp').to_s + '/toc-' + SecureRandom.hex + '.vtt'
+  end
+
+  def references_path
+    Rails.root.join('public', 'tmp').to_s + '/ref-' + SecureRandom.hex + '.vtt'
+  end
+
+  def vtt_start
+    "WEBVTT\n\n"
   end
 
   def belongs_to_course?(lecture)

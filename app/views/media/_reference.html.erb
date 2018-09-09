@@ -1,0 +1,23 @@
+<% if medium.referrals.present? %>
+  <ol id="meta-list">
+    <% medium.referrals_by_time.each do |r| %>
+      <li>
+        <a id="<%='metaref-' + r.id.to_s %>"
+           data-time="<%= r.start_time.total_seconds %>"
+           data-referral="<%= r.id %>">
+          <div class="row">
+            <div class="col-2">
+              <%= r.start_time.hms_colon_string %>
+            </div>
+            <div class="col-2" style="background: <%= r.item.background %>">
+              <%= r.item.short_reference %>
+            </div>
+            <div class="col-8">
+              <%= r.item.short_description %>
+            </div>
+          </div>
+        </a>
+      </li>
+    <% end %>
+  </ol>
+<% end %>

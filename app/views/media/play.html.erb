@@ -1,0 +1,97 @@
+<div id="thyme-container">
+  <div id="thyme">
+    <figure id="hypervideo-container">
+      <div id="video-container">
+        <video id="video" data-paused="true" data-time="<%= @time %>">
+          <source src="<%= @medium.video.url(host: host) %>">
+            <track kind="chapters"
+                   src="<%= @toc %>"
+                   srclang="de" default type="text/vtt" >
+            <track kind="metadata"
+                   src="<%= @ref %>"
+                   srclang="de" default type="text/vtt" >
+        </video>
+        <div id="video-controlBar">
+          <div id="video-controls">
+            <div id="timeline">
+              <i id="play-pause" class="material-icons clickable">
+                play_arrow
+              </i>
+              <span id="current-time">
+                0:00:00
+              </span>
+              <input type="range" id="seek-bar"
+                     min="0" max="100" step="0.1" value="0">
+              <span id="max-time">
+                0:00:00
+              </span>
+            </div>
+            <div id="special-buttons">
+              <i id="minus-ten" class="material-icons clickable">
+                replay_10
+              </i>
+              <i id="plus-ten" class="material-icons clickable">
+                forward_10
+              </i>
+              <i id="previous-chapter" class="material-icons clickable">
+                skip_previous
+              </i>
+              <i id="next-chapter" class="material-icons clickable">
+                skip_next
+              </i>
+            </div>
+            <div id="volume-controls">
+              <i id="mute" class="material-icons clickable">
+                volume_up
+              </i>
+              <input type="range" id="volume-bar"
+                     min="0" max="1" step="0.1" value="1">
+            </div>
+            <div id="speed-control">
+              <select id="speed" name="speed">
+                <option value="0.85">0.85x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.25">1.25x</option>
+                <option value="1.5">1.5x</option>
+                <option value="1.75">1.75x</option>
+                <option value="2">2x</option>
+              </select>
+            </div>
+            <div id="size-buttons">
+              <i id="ia-active" class="material-icons clickable"
+                 data-status="true">
+                add_to_queue
+              </i>
+              <i id="full-screen" class="material-icons clickable ml-1"
+                 data-status="false">
+                fullscreen
+              </i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <figcaption id="caption" tabindex="0" role="menu"
+                  aria-label="Captions">
+        <div id="infobar">
+          <%= @medium.description %>
+          <i id="ia-close" class="material-icons replay"
+             style="font-size: 1em;">
+            close
+          </i>
+        </div>
+        <ol id="chapters" data-state="true">
+        </ol>
+        <div id="separator">
+          <div>
+            <button id="back-button" type="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    style="display: none;">
+            </button>
+          </div>
+        </div>
+        <ol id="metadata">
+        </ol>
+      </figcaption>
+    </figure>
+  </div>
+</div>

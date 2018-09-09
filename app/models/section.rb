@@ -8,6 +8,18 @@ class Section < ApplicationRecord
   has_many :lessons, through: :lesson_section_joins
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
 
+  # only temporary for thyme integration
+
+  def reference
+    '§' + position.to_s + '. ' + title
+  end
+
+  def self.list
+    Section.all.map { |s| [s.reference, s.id] }
+  end
+
+  # until here
+
   def lecture
     return unless chapter.present?
     chapter.lecture

@@ -1,12 +1,12 @@
 # MediaController
 class MediaController < ApplicationController
-  before_action :set_medium, only: [:show, :edit, :update, :destroy, :inspect]
+  before_action :set_medium, except: [:index, :catalog, :new, :create, :search]
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :sanitize_params
   before_action :check_for_consent
   authorize_resource
-  
+
   def index
     cookies[:current_course] = params[:course_id]
     @media = paginated_results
@@ -73,6 +73,80 @@ class MediaController < ApplicationController
     editors = search_editors
     @media = @media.select { |m| (m.tags & tags).present? }
     @media = @media.select { |m| (m.editors & editors).present? }
+  end
+
+  def play
+    @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
+    @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
+    @time = params[:time]
+  end
+
+  def add_item
+    @time = params[:time].to_f
+    @item = Item.new(medium: @medium,
+                     start_time: TimeStamp.new(total_seconds: @time))
+  end
+
+  def add_reference
+    @time = params[:time].to_f
+    @end_time = [@time + 60, @medium.video_duration].min
+    @referral = Referral.new(medium: @medium,
+                             start_time: TimeStamp.new(total_seconds: @time),
+                             end_time: TimeStamp.new(total_seconds: @end_time))
+    puts @referral
+  end
+
+  def add_screenshot
+    tempfile = Tempfile.new(['screenshot', '.png'])
+    File.open(tempfile, 'wb') do |f|
+      f.write params[:image].read
+    end
+    @medium.screenshot = File.open(tempfile)
+    @medium.save
+    respond_to do |format|
+      format.js { render :add_screenshot }
+    end
+  end
+
+  def remove_screenshot
+    return if @medium.screenshot.nil?
+    @medium.update(screenshot: nil)
+  end
+
+  def enrich
+  end
+
+  def export_toc
+    file = @medium.toc_to_vtt
+    cookies['fileDownload'] = 'true'
+
+    send_file file,
+              filename: 'toc-' + @medium.title + '.vtt',
+              type: 'content-type',
+              x_sendfile: true
+  end
+
+  def export_references
+    file = @medium.references_to_vtt
+    cookies['fileDownload'] = 'true'
+
+    send_file file,
+              filename: 'references-' + @medium.title + '.vtt',
+              type: 'content-type',
+              x_sendfile: true
+  end
+
+  def export_screenshot
+    return if @medium.screenshot.nil?
+    path = Rails.root.join('public', 'tmp')
+    file = Tempfile.new(['screenshot', '.png'], path)
+    @medium.screenshot.stream(file.path)
+    cookies['fileDownload'] = 'true'
+
+    send_file file,
+              filename: 'screenshot-' + @medium.title + '.png',
+              type: 'content-type',
+              x_sendfile: true
   end
 
   private
