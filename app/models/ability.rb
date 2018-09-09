@@ -67,8 +67,8 @@ class Ability
       can :catalog, Medium
       can :search, Medium
       can :inspect, Medium
-      can :edit, Medium do |medium|
-        medium.edited_by?(user)
+      can :edit, Medium do |m|
+        m.edited_by?(user)
       end
       can :create, Medium
     else

@@ -19,7 +19,7 @@ class Medium < ApplicationRecord
                                             'angegeben werden.'}
   validates :description, presence: { message: 'Es muss eine Beschreibung' \
                                                'angegeben werden.' },
-                          unless: :kaviar?
+                          unless: :undescribable?
   validates :editors, presence: { message: 'Es muss ein Editor ' \
                                            'angegeben werden.'}
   after_save :touch_teachable
@@ -45,7 +45,7 @@ class Medium < ApplicationRecord
   end
 
   def edited_by?(user)
-    return true if user.in?(editors)
+    return true if editors.include?(user)
     false
   end
 
@@ -266,8 +266,8 @@ class Medium < ApplicationRecord
 
   private
 
-  def kaviar?
-    sort == 'Kaviar'
+  def undescribable?
+    sort == 'Kaviar' || sort == 'KeksQuestion'
   end
 
   def touch_teachable

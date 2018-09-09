@@ -1,12 +1,12 @@
 # MediaController
 class MediaController < ApplicationController
-  authorize_resource
   before_action :set_medium, only: [:show, :edit, :update, :destroy, :inspect]
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :sanitize_params
   before_action :check_for_consent
-
+  authorize_resource
+  
   def index
     cookies[:current_course] = params[:course_id]
     @media = paginated_results
