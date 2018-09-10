@@ -25,9 +25,13 @@ class Section < ApplicationRecord
     chapter.lecture
   end
 
+  def reference_number
+    return calculated_number unless display_number.present?
+    display_number
+  end
+
   def displayed_number
-    return '§' + calculated_number unless display_number.present?
-    '§' + display_number
+    return '§' + reference_number
   end
 
   def calculated_number

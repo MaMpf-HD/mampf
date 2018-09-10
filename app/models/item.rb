@@ -125,7 +125,7 @@ class Item < ApplicationRecord
 
   def math_item_number
     if section.present? && sort != 'annotation'
-      return section.number.to_s + '.' + number.to_s
+      return section.reference_number.to_s + '.' + number.to_s
     end
     number.to_s
   end
@@ -140,7 +140,7 @@ class Item < ApplicationRecord
   end
 
   def section_reference
-    return '§' + section.number.to_s if section.present?
+    return section.displayed_number.to_s if section.present?
     '§' + number.to_s
   end
 
