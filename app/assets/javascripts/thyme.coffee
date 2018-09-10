@@ -69,7 +69,7 @@ iconClass = (type) ->
 metadataAfter = (seconds) ->
   metaList = document.getElementById('metadata')
   times = JSON.parse(metaList.dataset.times)
-  return if times.length == 0
+  return $() if times.length == 0
   i = 0
   while i < times.length
     if times[i] > seconds

@@ -1,10 +1,11 @@
 # MediaController
 class MediaController < ApplicationController
+  skip_before_action :authenticate_user!, only: [:play]
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search]
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :sanitize_params
-  before_action :check_for_consent
+  before_action :check_for_consent, except: [:play]
   authorize_resource
 
   def index

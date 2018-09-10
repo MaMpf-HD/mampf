@@ -67,12 +67,18 @@ class Ability
       can :catalog, Medium
       can :search, Medium
       can :inspect, Medium
-      can :edit, Medium do |m|
+      can [:edit, :enrich, :add_item, :add_reference, :add_screenshot,
+           :remove_screenshot, :export_toc, :export_references,
+           :export_screenshot], Medium do |m|
         m.edited_by?(user)
       end
+      can :play, Medium
       can :create, Medium
+      can :manage, Item
+      can :manage, Referral
     else
       can :read, :all
+      can :play, Medium
       cannot :read, :administration
       cannot :index, Tag
       cannot :update, Tag
