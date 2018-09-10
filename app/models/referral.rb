@@ -25,7 +25,7 @@ class Referral < ApplicationRecord
     manuscript_link = item.manuscript_link if manuscript
     video_link = item.video_link if video
     { 'video' => video_link, 'manuscript' => manuscript_link,
-      'link' => link, 'reference' => item.vtt_meta_reference,
+      'link' => link, 'reference' => item.vtt_meta_reference(medium),
       'text' => item.vtt_text, 'explanation' => vtt_explanation }.compact
   end
 
@@ -104,6 +104,11 @@ class Referral < ApplicationRecord
 
   def reference_present
     return true if item.medium.nil?
+    unless item.medium.video.present? || item.medium.manuscript.present?
+      errors.add(:video, 'Das gewählte Medium kann nicht referenziert werden, '\
+                         'da es weder Audio- noch Videodateien bereithält.')
+      return false
+    end
     return true if enough_references
     errors.add(:video, 'Es muss mindestens eine Referenz ausgewählt sein.')
   end

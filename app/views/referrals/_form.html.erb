@@ -42,9 +42,9 @@
       <div class="col-2 col-form-label">
         <%= f.label :item_id, 'Eintrag' %>
       </div>
-      <div class="col-8">
+      <div class="col-10">
         <%= f.select :item_id,
-                     [['externen Eintrag anlegen', '']] + Item.list,
+                     [['externen Eintrag anlegen', '']] + items_for_thyme(referral.medium),
                      {}, { class: 'selectize' } %>
       </div>
     </div>

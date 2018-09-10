@@ -26,6 +26,7 @@ class Medium < ApplicationRecord
   validates :editors, presence: { message: 'Es muss ein Editor ' \
                                            'angegeben werden.'}
   after_save :touch_teachable
+  after_create :create_self_item
 
   def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
@@ -286,10 +287,10 @@ class Medium < ApplicationRecord
     teachable.media.where(sort: self.sort)
   end
 
-  def ident
-    ident = sort_de + '.' + teachable.medium_title
-    return ident unless siblings.count > 1
-    ident + '.(' + position.to_s + '/' + siblings.count.to_s + ')'
+  def compact_info
+    compact_info = sort_de + '.' + teachable.compact_title
+    return compact_info unless siblings.count > 1
+    compact_info + '.(' + position.to_s + '/' + siblings.count.to_s + ')'
   end
 
   def details
@@ -300,8 +301,12 @@ class Medium < ApplicationRecord
   end
 
   def title
-    return ident if details.blank?
-    ident + '.' + details
+    return compact_info if details.blank?
+    compact_info + '.' + details
+  end
+
+  def title_for_viewers
+    sort_de + ', ' + teachable.title_for_viewers + description.to_s 
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
@@ -364,5 +369,9 @@ class Medium < ApplicationRecord
     filtered_media.select do |m|
       m.teachable.present? && m.teachable.course == course
     end
+  end
+
+  def create_self_item
+    Item.create(sort: 'self', medium: self)
   end
 end

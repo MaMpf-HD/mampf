@@ -28,7 +28,7 @@ class Term < ApplicationRecord
     season + ' ' + year_corrected_short
   end
 
-  def medium_title
+  def compact_title
     season + year_corrected_short
   end
 

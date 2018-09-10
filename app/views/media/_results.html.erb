@@ -34,7 +34,7 @@
   <% @media.each do |m| %>
     <div class="row border-bottom mx-2" id="row-medium-<%= m.id %>">
       <div class="col-2">
-        <%= m.ident %>
+        <%= m.compact_info %>
       </div>
       <div class="col-2">
         <% if m.teachable_type == 'Course' %>
@@ -65,7 +65,7 @@
         <%= m.details %>
       </div>
       <div class="col-2">
-        <% if m.edited_by?(current_user) %>
+        <% if current_user.admin || m.edited_by?(current_user) %>
           <%= link_to 'Bearbeiten', edit_medium_path(m),
                       class: 'btn btn-outline-primary my-1' %>
         <% end %>

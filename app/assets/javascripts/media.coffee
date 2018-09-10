@@ -69,11 +69,9 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'change', '#item_sort', ->
     $('#item_section_select').show()
     $('#item_number_field').show()
-    if $(this).val() in ['section', 'chapter']
+    if $(this).val() == 'section'
       $('#item_section_id').trigger('change')
       $("label[for='item_description']").empty().append('Titel')
-      if $(this).val() == 'chapter'
-        $('#item_section_select').hide()
     else
       $('#item_section_select').show()
       $('#item_number_field').show()
@@ -82,7 +80,8 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'change', '#item_section_id', ->
-    if $(this).val() != '0' && $('#item_sort').val() == 'section'
+    if $(this).val() != '' && $('#item_sort').val() == 'section'
+      $('#item_description').val('')
       $('#item_description_field').hide()
       $('#item_number_field').hide()
     else

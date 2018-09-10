@@ -33,6 +33,10 @@ class Lecture < ApplicationRecord
     course.tags - tags
   end
 
+  def items
+    sections.collect {|s| s.items}.flatten
+  end
+
   def kaviar?
     Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
       Medium.where(sort: 'Kaviar').to_a.any? do |m|
@@ -53,8 +57,8 @@ class Lecture < ApplicationRecord
     course.title + ', ' + term.to_label
   end
 
-  def medium_title
-    course.medium_title + '.' + term.medium_title
+  def compact_title
+    course.compact_title + '.' + term.compact_title
   end
 
   def to_label
@@ -79,6 +83,10 @@ class Lecture < ApplicationRecord
   def term_teacher_kaviar_info
     videos = kaviar? ? ' ' : ' nicht '
     term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'
+  end
+
+  def title_for_viewers
+    short_title
   end
 
   def card_header
@@ -108,6 +116,10 @@ class Lecture < ApplicationRecord
 
   def sections
     chapters.collect(&:sections).flatten
+  end
+
+  def section_selection
+    sections.sort_by(&:calculated_number).map { |s| [s.to_label, s.id]}
   end
 
   def section_tag_selection

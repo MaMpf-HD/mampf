@@ -8,7 +8,7 @@ class Item < ApplicationRecord
 
   validates :sort, inclusion: { in: ['remark', 'theorem', 'lemma', 'definition',
                                      'annotation', 'example', 'section',
-                                     'chapter', 'self', 'link'],
+                                     'self', 'link'],
                                 message: 'Unzulässiger Typ' }
   validates :link, http_url: true, if: :proper_link?
   validates :description,
@@ -34,10 +34,47 @@ class Item < ApplicationRecord
     toc_reference
   end
 
+  def long_reference
+    unless sort.in?(['self', 'link'])
+      if section.present?
+        return medium.teachable.lecture.title_for_viewers +
+               ', ' + short_reference
+      end
+      return medium.title_for_viewers + ', ' + short_reference
+    end
+    short_reference
+  end
+
   def short_description
     return section.title if sort == 'section' && section.present?
-    return medium.title if sort == 'self'
+    return medium.title_for_viewers if sort == 'self'
     description
+  end
+
+  def local_reference
+    unless sort.in?(['self','link'])
+      return short_reference + ' ' + description.to_s unless sort == 'section'
+      return short_reference + ' ' + description if description.present?
+      return short_reference + ' ' + section.title if section.present?
+      return short_reference
+    end
+    non_math_reference
+  end
+
+  def local?(referring_medium)
+    return false unless section.present?
+    self.in?(referring_medium.teachable.lecture.items)
+  end
+
+  def global_reference
+    unless sort.in?(['self', 'link'])
+      if section.present?
+        return medium.teachable.lecture.title_for_viewers +
+               ', ' + local_reference
+      end
+      return medium.title_for_viewers + ', ' + local_reference
+    end
+    non_math_reference
   end
 
   def vtt_text
@@ -49,9 +86,10 @@ class Item < ApplicationRecord
     short_reference + ': ' + short_description + "\n\n"
   end
 
-  def vtt_meta_reference
+  def vtt_meta_reference(referring_medium)
     return 'externe Referenz:' if sort == 'link'
-    'Verweis auf ' + short_reference + ':'
+    ref = local?(referring_medium) ? short_reference : long_reference
+    'Verweis auf ' + ref + ':'
   end
 
   def background
@@ -77,7 +115,7 @@ class Item < ApplicationRecord
   def self.internal_sorts
     [['Definition', 'definition'], ['Bemerkung', 'remark'], ['Lemma', 'lemma'],
      ['Satz', 'theorem'], ['Beispiel', 'example'], ['Anmerkung', 'annotation'],
-     ['Abschnitt', 'section'], ['Kapitel', 'chapter']]
+     ['Abschnitt', 'section']]
   end
 
   def self.list
@@ -93,6 +131,10 @@ class Item < ApplicationRecord
     medium.present? && medium.manuscript.present?
   end
 
+  def link?
+    sort == 'link'
+  end
+
   private
 
   def math_items
@@ -100,11 +142,7 @@ class Item < ApplicationRecord
   end
 
   def other_items
-    ['section', 'chapter', 'self', 'link']
-  end
-
-  def link?
-    sort == 'link'
+    ['section', 'self', 'link']
   end
 
   def proper_link?
@@ -125,9 +163,9 @@ class Item < ApplicationRecord
 
   def math_item_number
     if section.present? && sort != 'annotation'
-      return section.reference_number.to_s + '.' + number.to_s
+      return section.reference_number.to_s + '.' + (ref_number || '')
     end
-    number.to_s
+    ref_number
   end
 
   def math_reference
@@ -141,12 +179,11 @@ class Item < ApplicationRecord
 
   def section_reference
     return section.displayed_number.to_s if section.present?
-    '§' + number.to_s
+    '§' + (ref_number || '')
   end
 
   def toc_reference
     return section_reference if sort == 'section'
-    return 'Kapitel ' + number.to_s if sort == 'chapter'
     special_reference
   end
 
@@ -202,5 +239,10 @@ class Item < ApplicationRecord
                'Link und Erläuterung können nicht gleichzeitig leer sein.')
     errors.add(:explanation,
                'Link und Erläuterung können nicht gleichzeitig leer sein.')
+  end
+
+  def non_math_reference
+    return medium.title_for_viewers if sort == 'self'
+    'extern ' + description.to_s if sort == 'link'
   end
 end

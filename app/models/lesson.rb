@@ -57,8 +57,12 @@ class Lesson < ApplicationRecord
     lecture.short_title + '_E' + number.to_s
   end
 
-  def medium_title
-    lecture.medium_title + '.E' + number.to_s
+  def title_for_viewers
+    lecture.title_for_viewers + ', Sitzung vom ' + date_de
+  end
+
+  def compact_title
+    lecture.compact_title + '.E' + number.to_s
   end
 
   def section_titles
@@ -76,6 +80,10 @@ class Lesson < ApplicationRecord
 
   def lesson
     self
+  end
+
+  def edited_by?(user)
+    lecture.edited_by?(user)
   end
 
   def section_tags

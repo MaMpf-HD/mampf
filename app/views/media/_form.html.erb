@@ -51,9 +51,9 @@
           <div class="form-group">
             <%= f.label :teachable, 'assoziiert zu' %>
             <%= f.select :teachable,
-                         options_for_select(all_teachables,
+                         options_for_select([['auswählen', '']] + all_teachables_selection(current_user),
                                             medium.teachable.present? ? medium.teachable_select : nil),
-                         { prompt: 'auswählen' }, { class: 'selectize' } %>
+                         {}, { class: 'selectize' } %>
             <div class="invalid-feedback" id="medium-teachable-error">
             </div>
           </div>

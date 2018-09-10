@@ -41,7 +41,7 @@ class ItemsController < ApplicationController
 
   def item_params
     filter = params.require(:item).permit(:sort, :start_time, :section_id,
-                                          :medium_id, :number, :description,
+                                          :medium_id, :ref_number, :description,
                                           :link, :page).clone
     if filter[:medium_id].present?
       filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])

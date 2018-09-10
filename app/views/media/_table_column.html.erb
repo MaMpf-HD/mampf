@@ -3,7 +3,7 @@
     <ul>
       <% media.each do |m| %>
         <li>
-          <%= link_to m.ident, inspect_medium_path(m) %>
+          <%= link_to m.compact_info, inspect_medium_path(m) %>
         </li>
       <% end %>
     </ul>
@@ -43,7 +43,7 @@
                       <% media_list.each do |m| %>
                         <% unless m.nil? %>
                           <li>
-                            <%= link_to m.ident, inspect_medium_path(m) %>
+                            <%= link_to m.compact_info, inspect_medium_path(m) %>
                           </li>
                         <% end %>
                       <% end %>

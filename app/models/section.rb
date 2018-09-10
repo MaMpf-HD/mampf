@@ -7,18 +7,7 @@ class Section < ApplicationRecord
   has_many :lesson_section_joins, dependent: :destroy
   has_many :lessons, through: :lesson_section_joins
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
-
-  # only temporary for thyme integration
-
-  def reference
-    '§' + position.to_s + '. ' + title
-  end
-
-  def self.list
-    Section.all.map { |s| [s.reference, s.id] }
-  end
-
-  # until here
+  has_many :items
 
   def lecture
     return unless chapter.present?
@@ -32,6 +21,10 @@ class Section < ApplicationRecord
 
   def displayed_number
     return '§' + reference_number
+  end
+
+  def long_reference
+    chapter.lecture.short_title + ', ' + to_label
   end
 
   def calculated_number

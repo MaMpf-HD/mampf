@@ -28,29 +28,30 @@
                      { class: 'form-control' } %>
       </div>
     </div>
-    <div id="item_section_select" class="form-group form-row">
-      <div class="col-2 col-form-label">
-        <%= f.label :section_id, 'Abschnitt' %>
+    <% if item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
+      <div id="item_section_select" class="form-group form-row">
+        <div class="col-2 col-form-label">
+          <%= f.label :section_id, 'Abschnitt' %>
+        </div>
+        <div class="col-10">
+          <%= f.select :section_id,
+                        options_for_select([['kein zugeordneter Abschnitt aus der Datenbank', '']] +
+                                           item.medium.teachable.lecture
+                                               .section_selection,
+                                           item.section_id) ,
+                        {},
+                        { class: 'selectize'} %>
+        </div>
       </div>
-      <div class="col-7">
-        <%= f.select :section_id,
-                      [['kein zugeordneter Abschnitt aus der Datenbank', '']] +
-                      Section.list, {}, { class: 'selectize'} %>
-      </div>
-      <div class="col-3">
-        <button type="button" class="btn btn-outline-secondary"
-                data-toggle="modal" data-target="#sectionModal"
-                id="create-section-button">
-          Abschnitt anlegen
-        </button>
-      </div>
-    </div>
+    <% else %>
+      <%= f.hidden_field :section_id, value: '' %>
+    <% end %>
     <div id="item_number_field" class="form-group form-row">
       <div class="col-2 col-form-label">
-        <%= f.label :number, 'Nummer' %>
+        <%= f.label :ref_number, 'Nummer' %>
       </div>
       <div class="col-auto">
-        <%= f.number_field :number, { in: 0...999, class: 'form-control' } %>
+        <%= f.text_field :ref_number, class: 'form-control' %>
       </div>
     </div>
     <div id="item_description_field" class="form-group form-row">
@@ -90,29 +91,4 @@
       <% end %>
     </div>
   <% end %>
-</div>
-<div class="modal fade" id="sectionModal" tabindex="-1" role="dialog"
-     aria-labelledby="sectionModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="sectionModalLabel">
-          Abschnitt anlegen
-        </h5>
-        <button type="button" class="close"
-                data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">
-            &times;
-          </span>
-        </button>
-      </div>
-      <div class="modal-body" id="sectionModal-body">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">
-          Schließen
-        </button>
-      </div>
-    </div>
-  </div>
 </div>
