@@ -84,21 +84,19 @@
         Screenshot
       </div>
       <div>
+        <%= link_to 'Entfernen', remove_screenshot_path(@medium), method: :patch,
+                    remote: true, data: { confirm: 'Bist Du sicher?' },
+                    id: 'remove-screenshot',
+                    class: 'btn btn-sm btn-outline-light',
+                    style: 'display: ' + show_inline(@medium.screenshot.present?) %>
         <%= link_to 'Exportieren', export_screenshot_path(@medium),
                     class: 'btn btn-outline-light btn-sm',
                     id: 'export-screenshot',
-                    style: 'display: ' + show(@medium.screenshot.present?) %>
+                    style: 'display: ' + show_inline(@medium.screenshot.present?) %>
       </div>
     </div>
     <div id="screenshot-area" class="mt-3">
       <%= render partial: 'media/screenshot', locals: { medium: @medium } %>
-    </div>
-    <div style="display: flex; justify-content: center;">
-      <%= link_to 'Entfernen', remove_screenshot_path(@medium), method: :patch,
-                  remote: true, data: { confirm: 'Bist Du sicher?' },
-                  id: 'remove-screenshot',
-                  class: 'btn btn-sm btn-outline-secondary mt-3',
-                  style: 'display: ' + show(@medium.screenshot.present?) %>
     </div>
   </div>
   <div id="toc-edit">
