@@ -344,7 +344,7 @@ class Medium < ApplicationRecord
                       'Bsp.' => 'example', 'Folgerung' => 'corollary' }[mathitem.captures.first]
         item_desc = t[:text].match(/\((.+)\)/)&.captures&.first
         item_section_nr = t[:text].match(/(\d+)\.\d+/)&.captures&.first
-        item_nr = t[:text].match(/\d+\.(\d+)/)&.captures&.first&.to_i
+        item_nr = t[:text].match(/(\d+\.\d+)/)&.captures&.first
       elsif secitem.present?
         item_sort = 'section'
         item_section_nr = secitem.captures&.first
@@ -353,9 +353,10 @@ class Medium < ApplicationRecord
       item_section = teachable.lecture.sections
                               .find { |s| s.reference_number == item_section_nr }
       item_start_time = TimeStamp.new(total_seconds: t[:start_time] / 1000.0)
-      Item.create(sort: item_sort, start_time: item_start_time,
+      i = Item.create(sort: item_sort, start_time: item_start_time,
                   description: item_desc, section: item_section,
                   ref_number: item_nr, medium: self)
+      puts i.errors
       scraped_items.push([item_start_time, item_sort, item_desc,
                           item_section_nr, item_nr])
     end
