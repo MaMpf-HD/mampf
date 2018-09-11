@@ -8,7 +8,7 @@ class Item < ApplicationRecord
 
   validates :sort, inclusion: { in: ['remark', 'theorem', 'lemma', 'definition',
                                      'annotation', 'example', 'section',
-                                     'self', 'link'],
+                                     'self', 'link', 'corollary'],
                                 message: 'Unzulässiger Typ' }
   validates :link, http_url: true, if: :proper_link?
   validates :description,
@@ -93,7 +93,7 @@ class Item < ApplicationRecord
   end
 
   def background
-    return '#0c0;' if ['remark', 'theorem', 'lemma'].include?(sort)
+    return '#0c0;' if ['remark', 'theorem', 'lemma', 'corollary'].include?(sort)
     return '#1ad1ff;' if ['definition', 'annotation', 'example'].include?(sort)
     return 'lightgray;' if sort == 'link' || sort == 'self'
     ''
@@ -115,7 +115,7 @@ class Item < ApplicationRecord
   def self.internal_sorts
     [['Definition', 'definition'], ['Bemerkung', 'remark'], ['Lemma', 'lemma'],
      ['Satz', 'theorem'], ['Beispiel', 'example'], ['Anmerkung', 'annotation'],
-     ['Abschnitt', 'section']]
+     ['Folgerung', 'corollary'], ['Abschnitt', 'section']]
   end
 
   def self.list
@@ -138,7 +138,8 @@ class Item < ApplicationRecord
   private
 
   def math_items
-    ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example']
+    ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
+     'corollary']
   end
 
   def other_items
@@ -157,7 +158,8 @@ class Item < ApplicationRecord
 
   def sort_long
     hash = { 'definition' => 'Def.', 'theorem' => 'Satz', 'remark' => 'Bem.',
-             'lemma' => 'Lemma', 'annotation' => 'Anm.', 'example' => 'Bsp.' }
+             'lemma' => 'Lemma', 'annotation' => 'Anm.', 'example' => 'Bsp.',
+             'corollary' => 'Folgerung'}
     hash[sort]
   end
 
@@ -165,7 +167,7 @@ class Item < ApplicationRecord
     if section.present? && sort != 'annotation'
       return section.reference_number.to_s + '.' + (ref_number || '')
     end
-    ref_number
+    ref_number.to_s
   end
 
   def math_reference

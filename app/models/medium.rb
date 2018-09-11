@@ -306,7 +306,7 @@ class Medium < ApplicationRecord
   end
 
   def title_for_viewers
-    sort_de + ', ' + teachable.title_for_viewers + description.to_s
+    sort_de + ', ' + teachable.title_for_viewers + ', ' + description.to_s
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
@@ -326,6 +326,40 @@ class Medium < ApplicationRecord
     external_selection = external_items.map { |i| [i.global_reference, i.id] }
     global_selection = global_items.map { |i| [i.global_reference, i.id] }
     local_selection + external_selection + global_selection
+  end
+
+  def create_camtasia_items
+    return unless video_stream_link.present?
+    return unless video.present?
+    return unless sort == 'Kaviar'
+    puts id
+    scraped_toc = CamtasiaScraper.new(video_stream_link).to_h[:toc]
+    scraped_items = []
+    scraped_toc.each do |t|
+      mathitem = t[:text].match(/(Bem.|Satz|Anm.|Def.|Bsp.|Folgerung)/)
+      secitem = t[:text].match(/§(\d+)\./)
+      if mathitem.present?
+        item_sort = { 'Bem.' => 'remark', 'Satz' => 'theorem',
+                      'Def.' => 'definition', 'Anm.' => 'annotation',
+                      'Bsp.' => 'example', 'Folgerung' => 'corollary' }[mathitem.captures.first]
+        item_desc = t[:text].match(/\((.+)\)/)&.captures&.first
+        item_section_nr = t[:text].match(/(\d+)\.\d+/)&.captures&.first
+        item_nr = t[:text].match(/\d+\.(\d+)/)&.captures&.first&.to_i
+      elsif secitem.present?
+        item_sort = 'section'
+        item_section_nr = secitem.captures&.first
+      else next
+      end
+      item_section = teachable.lecture.sections
+                              .find { |s| s.reference_number == item_section_nr }
+      item_start_time = TimeStamp.new(total_seconds: t[:start_time] / 1000.0)
+      Item.create(sort: item_sort, start_time: item_start_time,
+                  description: item_desc, section: item_section,
+                  ref_number: item_nr, medium: self)
+      scraped_items.push([item_start_time, item_sort, item_desc,
+                          item_section_nr, item_nr])
+    end
+    scraped_items
   end
 
   private
