@@ -48,7 +48,7 @@ class Item < ApplicationRecord
   def short_description
     return section.title if sort == 'section' && section.present?
     return medium.title_for_viewers if sort == 'self'
-    description
+    description.to_s
   end
 
   def local_reference
