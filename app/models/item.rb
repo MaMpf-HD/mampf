@@ -164,9 +164,6 @@ class Item < ApplicationRecord
   end
 
   def math_item_number
-    if section.present? && sort != 'annotation'
-      return section.reference_number.to_s + '.' + (ref_number || '')
-    end
     ref_number.to_s
   end
 
