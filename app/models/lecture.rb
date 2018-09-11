@@ -34,7 +34,8 @@ class Lecture < ApplicationRecord
   end
 
   def items
-    sections.collect {|s| s.items}.flatten
+    chapters.collect { |c| c.sections.includes(:items)}
+            .flatten.collect {|s| s.items}.flatten
   end
 
   def kaviar?
@@ -115,7 +116,7 @@ class Lecture < ApplicationRecord
   end
 
   def sections
-    chapters.collect(&:sections).flatten
+    chapters.includes(:sections).collect(&:sections).flatten
   end
 
   def section_selection
@@ -197,7 +198,7 @@ class Lecture < ApplicationRecord
   end
 
   def self.sort_by_date(lectures)
-    lectures.to_a.sort do |i, j|
+    lectures.includes(:term).to_a.sort do |i, j|
       j.term.begin_date <=> i.term.begin_date
     end
   end

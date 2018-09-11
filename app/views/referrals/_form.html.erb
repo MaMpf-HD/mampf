@@ -44,7 +44,8 @@
       </div>
       <div class="col-10">
         <%= f.select :item_id,
-                     [['externen Eintrag anlegen', '']] + items_for_thyme(referral.medium),
+                     [['externen Eintrag anlegen', '']] +
+                       @item_selection,
                      {}, { class: 'selectize' } %>
       </div>
     </div>
