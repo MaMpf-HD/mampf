@@ -1,11 +1,12 @@
 # MediaController
 class MediaController < ApplicationController
-  authorize_resource
-  before_action :set_medium, only: [:show, :edit, :update]
+  skip_before_action :authenticate_user!, only: [:play]
+  before_action :set_medium, except: [:index, :catalog, :new, :create, :search]
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :sanitize_params
-  before_action :check_for_consent
+  before_action :check_for_consent, except: [:play]
+  authorize_resource
 
   def index
     cookies[:current_course] = params[:course_id]
@@ -20,13 +21,24 @@ class MediaController < ApplicationController
   end
 
   def new
+    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson']) &&
+       params[:teachable_id].present?
+      teachable = params[:teachable_type].constantize
+                                         .find_by_id(params[:teachable_id])
+    end
+    @medium = Medium.new(teachable: teachable)
+    @medium.editors << current_user
+    tags = Tag.where(id: params[:tag_ids])
+    @medium.tags << tags if tags.present?
   end
 
   def edit
   end
 
   def update
-    return unless @medium.update(medium_params)
+    @medium.update(medium_params)
+    @errors = @medium.errors
+    return unless @errors.empty?
     if params[:medium][:detach_video] == 'true'
       @medium.update(video: nil)
       @medium.update(screenshot: nil)
@@ -37,12 +49,105 @@ class MediaController < ApplicationController
     redirect_to edit_medium_path(@medium)
   end
 
+  def create
+    @medium = Medium.new(medium_params)
+    @medium.save
+    if @medium.valid?
+      redirect_to edit_medium_path(@medium)
+      return
+    end
+    @errors = @medium.errors
+    render :update
+  end
+
+  def destroy
+    @medium.destroy
+    redirect_to administration_path
+  end
+
+  def inspect
+  end
+
   def search
     @media = Medium.where(sort: search_sorts, teachable: search_teachables)
     tags = search_tags
     editors = search_editors
     @media = @media.select { |m| (m.tags & tags).present? }
     @media = @media.select { |m| (m.editors & editors).present? }
+  end
+
+  def play
+    @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
+    @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
+    @time = params[:time]
+  end
+
+  def add_item
+    @time = params[:time].to_f
+    @item = Item.new(medium: @medium,
+                     start_time: TimeStamp.new(total_seconds: @time))
+  end
+
+  def add_reference
+    @time = params[:time].to_f
+    @end_time = [@time + 60, @medium.video_duration].min
+    @referral = Referral.new(medium: @medium,
+                             start_time: TimeStamp.new(total_seconds: @time),
+                             end_time: TimeStamp.new(total_seconds: @end_time))
+    @item_selection = @medium.items_for_thyme 
+  end
+
+  def add_screenshot
+    tempfile = Tempfile.new(['screenshot', '.png'])
+    File.open(tempfile, 'wb') do |f|
+      f.write params[:image].read
+    end
+    @medium.screenshot = File.open(tempfile)
+    @medium.save
+    respond_to do |format|
+      format.js { render :add_screenshot }
+    end
+  end
+
+  def remove_screenshot
+    return if @medium.screenshot.nil?
+    @medium.update(screenshot: nil)
+  end
+
+  def enrich
+  end
+
+  def export_toc
+    file = @medium.toc_to_vtt
+    cookies['fileDownload'] = 'true'
+
+    send_file file,
+              filename: 'toc-' + @medium.title + '.vtt',
+              type: 'content-type',
+              x_sendfile: true
+  end
+
+  def export_references
+    file = @medium.references_to_vtt
+    cookies['fileDownload'] = 'true'
+
+    send_file file,
+              filename: 'references-' + @medium.title + '.vtt',
+              type: 'content-type',
+              x_sendfile: true
+  end
+
+  def export_screenshot
+    return if @medium.screenshot.nil?
+    path = Rails.root.join('public', 'tmp')
+    file = Tempfile.new(['screenshot', '.png'], path)
+    @medium.screenshot.stream(file.path)
+    cookies['fileDownload'] = 'true'
+
+    send_file file,
+              filename: 'screenshot-' + @medium.title + '.png',
+              type: 'content-type',
+              x_sendfile: true
   end
 
   private
@@ -55,8 +160,12 @@ class MediaController < ApplicationController
   end
 
   def medium_params
-    params.require(:medium).permit(:title, :description, :video, :manuscript)
+    params.require(:medium).permit(:sort,:description, :video, :manuscript,
+                                   :external_reference_link, :teachable_type,
+                                   :teachable_id, editor_ids: [], tag_ids: [],
+                                   linked_medium_ids: [])
   end
+
 
   def set_course
     @course = Course.find_by_id(params[:course_id])

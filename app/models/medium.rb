@@ -9,13 +9,24 @@ class Medium < ApplicationRecord
   has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
+  has_many :items, dependent: :destroy
+  has_many :referrals, dependent: :destroy
+  has_many :referenced_items, through: :referrals, source: :item
   include VideoUploader[:video]
   include ImageUploader[:screenshot]
   include PdfUploader[:manuscript]
-  validates :sort, presence: true
-  validates :title, presence: true, uniqueness: true
-
+  validates :sort, presence: { message: 'Es muss ein Typ angegeben werden.'}
+  validates :external_reference_link, http_url: true,
+                                      if: :external_reference_link?
+  validates :teachable, presence: { message: 'Es muss eine Assoziation ' \
+                                            'angegeben werden.'}
+  validates :description, presence: { message: 'Es muss eine Beschreibung' \
+                                               'angegeben werden.' },
+                          unless: :undescribable?
+  validates :editors, presence: { message: 'Es muss ein Editor ' \
+                                           'angegeben werden.'}
   after_save :touch_teachable
+  after_create :create_self_item
 
   def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
@@ -33,13 +44,53 @@ class Medium < ApplicationRecord
     lecture.lecture_lesson_results(filtered)
   end
 
-  def self.select_by_title
-    Medium.all.map { |m| [m.title, m.id] }
+  def self.select_by_name
+    Medium.includes(:teachable).all.map { |m| [m.title, m.id] }
   end
 
   def edited_by?(user)
-    return true if user.in?(editors)
+    return true if editors.include?(user)
     false
+  end
+
+  def toc_to_vtt
+    path = toc_path
+    File.open(path, 'w+:UTF-8') do |f|
+      f.write vtt_start
+      proper_items_by_time.each do |i|
+        f.write i.vtt_time_span
+        f.write i.vtt_reference
+      end
+    end
+    path
+  end
+
+  def references_to_vtt
+    path = references_path
+    File.open(path, 'w+:UTF-8') do |f|
+      f.write vtt_start
+      referrals_by_time.each do |r|
+        f.write r.vtt_time_span
+        f.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
+      end
+    end
+    path
+  end
+
+  def proper_items
+    items.where.not(sort: 'self')
+  end
+
+  def proper_items_by_time
+    proper_items.to_a.sort do |i, j|
+      i.start_time.total_seconds <=> j.start_time.total_seconds
+    end
+  end
+
+  def referrals_by_time
+    referrals.to_a.sort do |r, s|
+      r.start_time.total_seconds <=> s.start_time.total_seconds
+    end
   end
 
   def manuscript_pages
@@ -128,10 +179,6 @@ class Medium < ApplicationRecord
     teachable.section_titles
   end
 
-  def tag_titles
-    tags.map(&:title).join(', ')
-  end
-
   def card_header
     teachable.card_header
   end
@@ -212,60 +259,114 @@ class Medium < ApplicationRecord
     end
   end
 
-  def relocate_data
-    if video_thumbnail_link.present?
-      screenshot = open(video_thumbnail_link)
-      file = Tempfile.new([title + '-', '.png'])
-      file.binmode
-      file.write open(screenshot).read
-      file.rewind
-      file
-      self.update(screenshot: file)
-    end
-    if manuscript_link.present?
-      manuscript = open(manuscript_link)
-      file = Tempfile.new([title + '-', '.pdf'])
-      file.binmode
-      file.write open(manuscript).read
-      file.rewind
-      file
-      self.update(manuscript: file)
-    end
-    if video_file_link.present?
-      video = open(video_file_link)
-      file = Tempfile.new([title + '-', '.mp4'])
-      file.binmode
-      file.write open(video).read
-      file.rewind
-      file
-      self.update(video: file)
-    end
-  end
-
   def irrelevant?
     video_stream_link.blank? && video.nil? && manuscript.nil? &&
       external_reference_link.blank? && extras_link.blank?
   end
 
   def teachable_select
-    teachable_type.downcase + '-' + teachable_id.to_s
+    teachable_type + '-' + teachable_id.to_s
   end
 
-  def question
+  def question_id
     return unless sort == 'KeksQuestion'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK).to_i
   end
 
-  def questions
+  def question_ids
     return unless sort == 'KeksQuiz'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK)
                            .split(',').map(&:to_i)
   end
 
+  def position
+    teachable.media.where(sort: self.sort).order(:id).index(self)  + 1
+  end
+
+  def siblings
+    teachable.media.where(sort: self.sort)
+  end
+
+  def compact_info
+    compact_info = sort_de + '.' + teachable.compact_title
+    return compact_info unless siblings.count > 1
+    compact_info + '.(' + position.to_s + '/' + siblings.count.to_s + ')'
+  end
+
+  def details
+    return description if description.present?
+    return 'Frage ' + question_id.to_s if sort == 'KeksQuestion'
+    return 'Fragen ' + question_ids.join(', ') if sort == 'KeksQuiz'
+    ''
+  end
+
+  def title
+    return compact_info if details.blank?
+    compact_info + '.' + details
+  end
+
+  def title_for_viewers
+    sort_de + ', ' + teachable.title_for_viewers + ', ' + description.to_s
+  end
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
+  def items_for_thyme
+    if teachable_type.in?(['Lesson', 'Lecture'])
+      local_items = teachable.lecture.items - items
+      local_selection = local_items.map { |i| [i.local_reference, i.id] }
+    else
+      local_items = teachable.items - items
+      local_selection = local_items.map { |i| [i.global_reference, i.id] }
+    end
+    external_items = (Item.includes(medium: :teachable).all - local_items).select(&:link?) - items
+    global_items = ((Item.includes(medium: :teachable).all - local_items) -
+                     external_items) - items
+    external_selection = external_items.map { |i| [i.global_reference, i.id] }
+    global_selection = global_items.map { |i| [i.global_reference, i.id] }
+    local_selection + external_selection + global_selection
+  end
+
+  def create_camtasia_items
+    return unless video_stream_link.present?
+    return unless video.present?
+    return unless sort == 'Kaviar'
+    puts id
+    scraped_toc = CamtasiaScraper.new(video_stream_link).to_h[:toc]
+    scraped_items = []
+    scraped_toc.each do |t|
+      mathitem = t[:text].match(/(Bem.|Satz|Anm.|Def.|Bsp.|Folgerung)/)
+      secitem = t[:text].match(/§(\d+)\./)
+      if mathitem.present?
+        item_sort = { 'Bem.' => 'remark', 'Satz' => 'theorem',
+                      'Def.' => 'definition', 'Anm.' => 'annotation',
+                      'Bsp.' => 'example', 'Folgerung' => 'corollary' }[mathitem.captures.first]
+        item_desc = t[:text].match(/\((.+)\)/)&.captures&.first
+        item_section_nr = t[:text].match(/(\d+)\.\d+/)&.captures&.first
+        item_nr = t[:text].match(/\d+\.(\d+)/)&.captures&.first&.to_i
+      elsif secitem.present?
+        item_sort = 'section'
+        item_section_nr = secitem.captures&.first
+      else next
+      end
+      item_section = teachable.lecture.sections
+                              .find { |s| s.reference_number == item_section_nr }
+      item_start_time = TimeStamp.new(total_seconds: t[:start_time] / 1000.0)
+      Item.create(sort: item_sort, start_time: item_start_time,
+                  description: item_desc, section: item_section,
+                  ref_number: item_nr, medium: self)
+      scraped_items.push([item_start_time, item_sort, item_desc,
+                          item_section_nr, item_nr])
+    end
+    scraped_items
+  end
+
   private
+
+  def undescribable?
+    sort == 'Kaviar' || sort == 'KeksQuestion'
+  end
 
   def touch_teachable
     return if teachable.nil?
@@ -282,6 +383,18 @@ class Medium < ApplicationRecord
     if teachable.lesson.present? && teachable.lesson.persisted?
       teachable.lesson.touch
     end
+  end
+
+  def toc_path
+    Rails.root.join('public', 'tmp').to_s + '/toc-' + SecureRandom.hex + '.vtt'
+  end
+
+  def references_path
+    Rails.root.join('public', 'tmp').to_s + '/ref-' + SecureRandom.hex + '.vtt'
+  end
+
+  def vtt_start
+    "WEBVTT\n\n"
   end
 
   def belongs_to_course?(lecture)
@@ -306,5 +419,9 @@ class Medium < ApplicationRecord
     filtered_media.select do |m|
       m.teachable.present? && m.teachable.course == course
     end
+  end
+
+  def create_self_item
+    Item.create(sort: 'self', medium: self)
   end
 end

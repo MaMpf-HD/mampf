@@ -6,6 +6,7 @@ $(document).on 'turbolinks:load', ->
 
   $('#lecture-form :input').on 'change', ->
     $('#lecture-basics-warning').show()
+    $('#create-new-medium').hide()
     if $('#lecture_absolute_numbering').prop('checked')
       $('#start-section-input').show()
       $('#lecture_start_section').prop('disabled', false)
@@ -17,5 +18,5 @@ $(document).on 'turbolinks:load', ->
   $('#lecture-basics-cancel').on 'click', ->
     location.reload()
     return
-    
+
   return

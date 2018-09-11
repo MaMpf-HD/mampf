@@ -13,11 +13,12 @@
           crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <%= javascript_include_tag 'application',
                                'data-turbolinks-track': 'reload' %>
     <script src="https://unpkg.com/babel-polyfill@6.26.0/dist/polyfill.min.js"></script>
     <script src="https://transloadit.edgly.net/releases/uppy/v0.25.2/dist/uppy.min.js"></script>
-    <link href="https://transloadit.edgly.net/releases/uppy/v0.25.2/dist/uppy.min.css" rel="stylesheet" />                               
+    <link href="https://transloadit.edgly.net/releases/uppy/v0.25.2/dist/uppy.min.css" rel="stylesheet" />
     <!--[if lt IE 9]>
        <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js">
        </script>
@@ -26,6 +27,9 @@
           content="width=device-width, initial-scale=1, shrink-to-fit=no">
   </head>
   <body>
+    <% if thyme?(controller_name, action_name) %>
+      <%= yield %>
+    <% else %>
     <% unless user_signed_in? && (current_user.editor? || current_user.admin?) &&
               administrates?(controller_name, action_name) %>
     <%= render partial: 'shared/navbar' %>
@@ -59,12 +63,17 @@
         <div id="admin-navbar">
           <%= render partial: 'administration/navbar' %>
         </div>
+        <% unless enrich?(controller_name, action_name) %>
         <div class="container-fluid">
+        <% end %>
           <div id="admin-area">
             <%= yield %>
           </div>
+        <% unless enrich?(controller_name, action_name) %>
         </div>
+        <% end %>
       </div>
+    <% end %>
     <% end %>
   </body>
 </html>

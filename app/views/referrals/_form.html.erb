@@ -1,0 +1,163 @@
+<div class="action-box">
+  <%= form_with model: referral  do |f|%>
+    <div class="form-group form-row">
+      <div class="col-2 col-form-label">
+        Startzeit
+      </div>
+      <div class="col-3">
+        <%= f.text_field :start_time,
+                         { value: referral.start_time.simple_vtt_string,
+                           size: 12, maxlength: 12, class: 'form-control' } %>
+        <div class="invalid-feedback" id="start-time-error">
+        </div>
+      </div>
+      <div class="col-1 col-form-label">
+        <i class="material-icons clickable timer" data-toggle="tooltip"
+           data-placement="right" title="Zeit aus Video übernehmen"
+           data-timer="referral_start_time">
+          timer
+        </i>
+      </div>
+    </div>
+    <div class="form-group form-row">
+      <div class="col-2 col-form-label">
+        Endzeit
+      </div>
+      <div class="col-3">
+        <%= f.text_field :end_time,
+                         { value: referral.end_time.simple_vtt_string,
+                           size: 12, maxlength: 12, class: 'form-control' } %>
+        <div class="invalid-feedback" id="end-time-error">
+        </div>
+      </div>
+      <div class="col-1 col-form-label">
+        <i class="material-icons clickable timer" data-toggle="tooltip"
+           data-placement="right" title="Zeit aus Video übernehmen"
+           data-timer="referral_end_time">
+          timer
+        </i>
+      </div>
+    </div>
+    <div id="item_select" class="form-group form-row">
+      <div class="col-2 col-form-label">
+        <%= f.label :item_id, 'Eintrag' %>
+      </div>
+      <div class="col-10">
+        <%= f.select :item_id,
+                     [['externen Eintrag anlegen', '']] +
+                       @item_selection,
+                     {}, { class: 'selectize' } %>
+      </div>
+    </div>
+    <div id="link_details" style="display: <%= show(referral.show_link) %>">
+      <div id="referral_description_field" class="form-group form-row">
+        <div class="col-2 col-form-label">
+          <%= f.label :description, 'Titel' %>
+        </div>
+        <div class="col-6">
+          <%= f.text_field :description,
+                           { value: referral.prefilled_description, size: 50,
+                             class: 'form-control' } %>
+          <div class="invalid-feedback" id="description-error">
+          </div>
+        </div>
+      </div>
+      <div id="referral_link_field" class="form-group form-row">
+        <div class="col-2 col-form-label">
+          <%= f.label :link, 'Link' %>
+        </div>
+        <div class="col-8">
+          <%= f.text_field :link,
+                           { value: referral.prefilled_link, size: 50,
+                             class: 'form-control' } %>
+          <div class="invalid-feedback" id="link-error">
+          </div>
+        </div>
+        <div class="col-2 col-form-label">
+          <button id="test-link" type="button"
+                  class="btn btn-sm btn-outline-info">
+            Test
+          </button>
+        </div>
+      </div>
+      <div class="form-row mb-2">
+        <div class="col-2">
+        </div>
+        <div class="col-10">
+          <div id="link_reappearance"
+               style="display: <%= show(referral.reappears) %>">
+            Zur Info: Der externe Eintrag ist bereits von woanders referenziert.
+            Wenn Du den externen Eintrag bearbeitest, ändern sich sämtliche
+            Referenzen.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="item_details" style="display: <%= hide(referral.show_link) %>">
+      <div class="form-group form-row">
+        <div class="col-2">
+        </div>
+        <div class="col-4" id="video-ref"
+             style="display: <%= show(referral.video?) %>">
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :video, class: 'custom-control-input' %>
+            <%= f.label :video, 'Video-Link',
+                        { class: 'custom-control-label' } %>
+            <span id="video-test">
+              <% if referral.video? %>
+                <%= link_to 'Test', referral.item.video_link,
+                            class: 'btn btn-outline-info btn-sm ml-3',
+                            target: :blank %>
+              <% end %>
+            </span>
+          </div>
+        </div>
+        <div class="col-4" id="manuscript-ref"
+             style="display: <%= show(referral.manuscript?) %>">
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :manuscript, class: 'custom-control-input' %>
+            <%= f.label :manuscript, 'Manuskript-Link',
+                        { class: 'custom-control-label' } %>
+            <span id='manuscript-test'>
+              <% if referral.manuscript? %>
+                <%= link_to 'Test', referral.item.manuscript_link,
+                            class: 'btn btn-outline-info btn-sm ml-3',
+                            target: :blank %>
+              <% end %>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-2">
+        </div>
+        <div class="col-8">
+          <div class="invalid-feedback" id="ref-error">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group form-row">
+      <div class="col-2 col-form-label">
+        <%= f.label :explanation, 'Erläuterung' %>
+      </div>
+      <div class="col-8">
+        <%= f.text_area :explanation, { value: referral.explain,
+                                        class: 'form-control', escape: true } %>
+        <div class="invalid-feedback" id="explanation-error">
+        </div>
+      </div>
+    </div>
+    <%= f.hidden_field :ref_id, value: referral.id %>
+    <%= f.hidden_field :medium_id, value: referral.medium_id %>
+    <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+    <button id="cancel-item" class="btn btn-secondary ml-3" type="button">
+      Abbrechen
+    </button>
+    <% if referral.id.present? %>
+      <%= link_to 'Löschen', referral_path(referral), method: :delete,
+                  remote: true, data: { confirm: 'Bist Du sicher?' },
+                  id: 'delete-item', class: 'btn btn-danger' %>
+    <% end %>
+  <% end %>
+</div>

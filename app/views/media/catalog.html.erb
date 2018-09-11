@@ -64,12 +64,12 @@
                         checked: true,
                         data: { id: 'search_editor_ids' } %>
         <%= f.label :all_editors, 'alle',
-                    { class: 'custom-control-label',
-                      disabled: true} %>
+                    { class: 'custom-control-label' } %>
       </div>
       <%= f.select :editor_ids,
                    options_for_select([['auswählen','']] + User.editors.map { |e| [e.info, e.id] }),
-                   {}, { multiple: true, class: 'selectize' } %>
+                   {}, { multiple: true, class: 'selectize',
+                         disabled: true } %>
     </div>
   </div>
 <div class="row mb-3">

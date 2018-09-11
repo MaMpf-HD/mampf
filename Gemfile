@@ -80,6 +80,7 @@ group :development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.1'
   gem 'rubocop', '~> 0.54.0', require: false
+  gem 'bullet'
 end
 
 group :test do

@@ -7,15 +7,24 @@ class Section < ApplicationRecord
   has_many :lesson_section_joins, dependent: :destroy
   has_many :lessons, through: :lesson_section_joins
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
+  has_many :items
 
   def lecture
     return unless chapter.present?
     chapter.lecture
   end
 
+  def reference_number
+    return calculated_number unless display_number.present?
+    display_number
+  end
+
   def displayed_number
-    return '§' + calculated_number unless display_number.present?
-    '§' + display_number
+    return '§' + reference_number
+  end
+
+  def long_reference
+    chapter.lecture.short_title + ', ' + to_label
   end
 
   def calculated_number

@@ -31,6 +31,14 @@ $(document).on 'turbolinks:load', ->
 
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
+    teachableSelector = document.getElementById('medium_teachable').selectize
+    value = teachableSelector.getValue()
+    if value != ''
+      $('#medium_teachable_id').val(value.split('-')[1])
+      $('#medium_teachable_type').val(value.split('-')[0])
+    else
+      $('#medium_teachable_id').val('')
+      $('#medium_teachable_type').val('')
     return
 
   $('#medium-basics-cancel').on 'click', ->
@@ -50,17 +58,20 @@ $(document).on 'turbolinks:load', ->
     $('#manuscript-meta').hide()
     $('#manuscript-preview').hide()
     $('#medium_detach_manuscript').val('true')
-    $('#medium-basics-warning').show()  
+    $('#medium-basics-warning').show()
+    return
+
+  $(document).on 'click', '#test-external-link', ->
+    url = $('#medium_external_reference_link').val()
+    window.open(url, '_blank')
     return
 
   $(document).on 'change', '#item_sort', ->
     $('#item_section_select').show()
     $('#item_number_field').show()
-    if $(this).val() in ['section', 'chapter']
+    if $(this).val() == 'section'
       $('#item_section_id').trigger('change')
       $("label[for='item_description']").empty().append('Titel')
-      if $(this).val() == 'chapter'
-        $('#item_section_select').hide()
     else
       $('#item_section_select').show()
       $('#item_number_field').show()
@@ -69,7 +80,8 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'change', '#item_section_id', ->
-    if $(this).val() != '0' && $('#item_sort').val() == 'section'
+    if $(this).val() != '' && $('#item_sort').val() == 'section'
+      $('#item_description').val('')
       $('#item_description_field').hide()
       $('#item_number_field').hide()
     else

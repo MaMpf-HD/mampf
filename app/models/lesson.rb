@@ -38,8 +38,11 @@ class Lesson < ApplicationRecord
   end
 
   def title
-    return 'Sitzung #' + id.to_s unless number.present? && date.present?
     'Sitzung ' + number.to_s + ', ' + date_de.to_s
+  end
+
+  def long_title
+    lecture.title + ', ' + title
   end
 
   def short_title_with_lecture
@@ -48,6 +51,18 @@ class Lesson < ApplicationRecord
 
   def short_title_with_lecture_date
     lecture.short_title + ', ' + date_de
+  end
+
+  def short_title
+    lecture.short_title + '_E' + number.to_s
+  end
+
+  def title_for_viewers
+    lecture.title_for_viewers + ', Sitzung vom ' + date_de
+  end
+
+  def compact_title
+    lecture.compact_title + '.E' + number.to_s
   end
 
   def section_titles
@@ -65,6 +80,10 @@ class Lesson < ApplicationRecord
 
   def lesson
     self
+  end
+
+  def edited_by?(user)
+    lecture.edited_by?(user)
   end
 
   def section_tags

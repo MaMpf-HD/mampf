@@ -1,0 +1,23 @@
+<% if medium.items.present? %>
+  <ol id="toc-list">
+    <% medium.proper_items_by_time.each do |i| %>
+      <li>
+        <a id="<%='tocitem-' + i.id.to_s %>"
+           data-time="<%= i.start_time.total_seconds %>"
+           data-item="<%= i.id %>">
+          <div class="row">
+            <div class="col-2">
+              <%= i.start_time.hms_colon_string %>
+            </div>
+            <div class="col-2" style="background: <%= i.background %>">
+              <%= i.short_reference %>
+            </div>
+            <div class="col-8">
+              <%= i.short_description %>
+            </div>
+          </div>
+        </a>
+      </li>
+    <% end %>
+  </ol>
+<% end %>

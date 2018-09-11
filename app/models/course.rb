@@ -22,6 +22,14 @@ class Course < ApplicationRecord
     title
   end
 
+  def compact_title
+    short_title
+  end
+
+  def title_for_viewers
+    short_title
+  end
+
   def card_header
     title
   end
@@ -99,6 +107,10 @@ class Course < ApplicationRecord
   end
 
   def lesson
+  end
+
+  def items
+    lectures.collect { |l| l.items }.flatten
   end
 
   def front_lecture(user, active_lecture_id)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_07_155337) do
+ActiveRecord::Schema.define(version: 2018_09_11_085149) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -71,6 +71,23 @@ ActiveRecord::Schema.define(version: 2018_09_07_155337) do
     t.integer "user_id"
     t.index ["editable_id", "editable_type", "user_id"], name: "polymorphic_many_to_many_idx"
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
+  end
+
+  create_table "items", force: :cascade do |t|
+    t.text "start_time"
+    t.text "sort"
+    t.integer "page"
+    t.text "description"
+    t.integer "number"
+    t.text "link"
+    t.text "explanation"
+    t.integer "medium_id"
+    t.integer "section_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.text "ref_number"
+    t.index ["medium_id"], name: "index_items_on_medium_id"
+    t.index ["section_id"], name: "index_items_on_section_id"
   end
 
   create_table "lecture_user_joins", force: :cascade do |t|
@@ -139,13 +156,10 @@ ActiveRecord::Schema.define(version: 2018_09_07_155337) do
     t.text "external_reference_link"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "title"
     t.string "sort"
-    t.integer "question_id"
     t.string "description"
     t.string "teachable_type"
     t.integer "teachable_id"
-    t.text "question_list"
     t.text "extras_link"
     t.text "extras_description"
     t.text "video_data"
@@ -161,6 +175,20 @@ ActiveRecord::Schema.define(version: 2018_09_07_155337) do
     t.datetime "updated_at", null: false
     t.index ["medium_id"], name: "index_medium_tag_joins_on_medium_id"
     t.index ["tag_id"], name: "index_medium_tag_joins_on_tag_id"
+  end
+
+  create_table "referrals", force: :cascade do |t|
+    t.text "start_time"
+    t.text "end_time"
+    t.boolean "video"
+    t.boolean "manuscript"
+    t.text "explanation"
+    t.integer "item_id"
+    t.integer "medium_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["item_id"], name: "index_referrals_on_item_id"
+    t.index ["medium_id"], name: "index_referrals_on_medium_id"
   end
 
   create_table "relations", force: :cascade do |t|

@@ -21,6 +21,7 @@ $(document).on 'turbolinks:load', ->
 
   $('#course-form :input').on 'change', ->
     $('#course-basics-warning').show()
+    $('#create-new-medium').hide()
     return
 
   $('#course-basics-cancel').on 'click', ->

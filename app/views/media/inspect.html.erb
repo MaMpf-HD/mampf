@@ -1,0 +1,221 @@
+<div class="row px-4 py-2 mt-2">
+  <div class="col-9">
+    <h4 class="pl-2">
+      <span class="badge badge-secondary">
+        Medium
+      </span>
+      <%= @medium.title %>
+    </h4>
+  </div>
+  <div class="col-3 text-center">
+    <% if current_user.in?(@medium.editors)%>
+      <%= link_to 'Bearbeiten', edit_medium_path(@medium),
+                  class: 'btn btn-primary my-1' %>
+    <% end %>
+    <%= link_to 'zur Medienübersicht', media_catalog_path,
+                class: 'btn btn-primary' %>
+  </div>
+</div>
+<div class="row mt-3 p-2">
+  <div class="col-4">
+    <div class="card bg-mdb-color-lighten-5">
+      <div class="card-header bg-mdb-color-lighten-3">
+        Basisdaten
+      </div>
+      <div class="card-body">
+        <div class="row mb-2">
+          <div class="col-2">
+            Typ:
+          </div>
+          <div class="col-10">
+            <%= @medium.sort_de %>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-12">
+            assoziiert zu
+          </div>
+          <div class="col-12">
+            <%= link_to long_title(@medium.teachable),
+                        inspect_teachable_path(@medium.teachable) %>
+          </div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-12">
+            Editoren
+          </div>
+          <div class="col-12">
+            <ul>
+              <% @medium.editors.each do |e| %>
+                <li>
+                  <%= e.name_or_email %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <% if @medium.description.present? %>
+          <div class="row mb-2">
+            <div class="col-12">
+              Beschreibung
+            </div>
+            <div class="col-12">
+              <%= @medium.description %>
+            </div>
+          </div>
+        <% end %>
+        <% if @medium.tags.present? %>
+        <div class="row mb-2">
+          <div class="col-12">
+            Verknüpfte Begriffe
+          </div>
+          <div class="col-12">
+            <%= render partial: 'tags/list',
+                       locals: { tags: @medium.tags, inspection: true} %>
+          </div>
+        </div>
+        <% end %>
+        <% if @medium.linked_media.present? %>
+        <div class="row mb-2">
+          <div class="col-12">
+            Verknüpfte Medien
+          </div>
+          <div class="col-12">
+            <ul>
+              <% @medium.linked_media.each do |m| %>
+                <li>
+                  <%= link_to m.title, inspect_medium_path(m) %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        </div>
+        <% end %>
+        <% if @medium.external_reference_link.present? %>
+        <div class="row">
+          <div class="col-12">
+            Externer Link
+          </div>
+          <div class="col-12">
+            <%= link_to @medium.external_reference_link, @medium.external_reference_link %>
+          </div>
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-4">
+    <div class="card bg-light">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            Video
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <% if @medium.video.present? %>
+        <div class="row p-2">
+          <div id="video-meta" class="col-12 meta rounded">
+            <div class="row">
+              <div class="col-12">
+                Datei:
+                <span id="video-file">
+                  <%= @medium.video_filename %>
+                </span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                Größe:
+                <span id="video-size">
+                  <%= number_to_human_size(@medium.video_size) %>
+                </span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                Auflösung:
+                <span id="video-resolution">
+                  <%= @medium.video_resolution %>
+                </span>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                Länge:
+                <span id="video-duration">
+                  <%= @medium.video_duration_hms_string %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      <div id="video-preview-area">
+        <video id="video-preview" controls
+               src="<%= @medium.video_url %>">
+        </video>
+      </div>
+      <% else %>
+        Es ist kein Video vorhanden.
+      <% end %>
+      <% if @medium.screenshot.present? %>
+        <div class="my-2">
+          Screenshot
+        </div>
+        <img id="screenshot-preview" class="img-fluid mb-3"
+             src="<%= @medium.screenshot_url %>">
+      <% end %>
+    </div>
+  </div>
+</div>
+<div class="col-4">
+  <div class="card bg-light">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-12">
+          Manuskript
+        </div>
+
+      </div>
+    </div>
+    <div class="card-body">
+      <% if @medium.manuscript.present? %>
+      <div class="row p-2">
+        <div id="manuscript-meta" class="col-12 meta rounded">
+          <div class="row">
+            <div class="col-12">
+              Datei:
+              <span id="manuscript-file">
+                <%= @medium.manuscript_filename %>
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              Größe:
+              <span id="manuscript-size">
+                <%= number_to_human_size(@medium.manuscript_size) %>
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              Länge:
+              <span id="manuscript-pages">
+                <%= @medium.manuscript_pages.to_s + ' S' %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <%= link_to image_tag(@medium.manuscript_screenshot_url, class: 'img-fluid',
+                            id: 'manuscript-preview'),
+                  @medium.manuscript_url, target: :blank %>
+      <% else %>
+        Es ist kein Manuskript vorhanden.
+      <% end %>
+    </div>
+  </div>
+</div>
+</div>

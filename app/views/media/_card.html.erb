@@ -7,15 +7,23 @@
           Medien (<%= media.count %>)
         </h5>
       </div>
-      <% if collapsible %>
-        <div class="col-6 text-right">
+      <div class="col-6 text-right">
+        <% unless inspection %>
+          <%= link_to 'Medium anlegen',
+                      new_medium_path(params: { teachable_id: teachable_id,
+                                                teachable_type: teachable_type,
+                                                tag_ids: tag_ids }),
+                      class: 'btn btn-primary',
+                      id: 'create-new-medium' %>
+        <% end %>
+        <% if collapsible %>
           <a class="btn btn-primary"
              data-toggle="collapse" href="#media_collapse"
              aria-expanded="false" aria-controls="media_collapse">
             Ein-/Ausklappen
           </a>
-        </div>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
   <div id="media_collapse" class="<%= show_collapse(!collapsible) %>" role="tabpanel"

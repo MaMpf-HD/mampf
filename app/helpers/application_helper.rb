@@ -23,6 +23,10 @@ module ApplicationHelper
     value ? 'block;' : 'none;'
   end
 
+  def show_inline(value)
+    value ? 'inline;' : 'none;'
+  end
+
   def show_no_block(value)
     value ? '' : 'none;'
   end
@@ -96,6 +100,16 @@ module ApplicationHelper
     return current_user.courses.first.id unless current_user.courses.empty?
   end
 
+  def thyme?(controller, action)
+    return true if controller == 'media' && action == 'play'
+    false
+  end
+
+  def enrich?(controller, action)
+    return true if controller == 'media' && action == 'enrich'
+    false
+  end
+
   def administrates?(controller, action)
     return true if controller.in?(['administration', 'terms', 'lectures'])
     return true if controller == 'courses' && action != 'show'
@@ -106,5 +120,21 @@ module ApplicationHelper
     return true if controller == 'lessons' && action != 'show'
     return true if controller == 'media' && action != 'show' && action != 'index'
     false
+  end
+
+  def inspect_teachable_path(teachable)
+    return inspect_course_path(teachable) if teachable.class.to_s == 'Course'
+    return inspect_lecture_path(teachable) if teachable.class.to_s == 'Lecture'
+    inspect_lesson_path(teachable)
+  end
+
+  def long_title(teachable)
+    return teachable.title if teachable.class.to_s.in?(['Course', 'Lecture'])
+    return teachable.long_title
+  end
+
+  def thyme_caption(medium)
+    medium.sort_de + ' ' + long_title(medium.teachable) + ' ' +
+      (medium.description || '')
   end
 end

@@ -9,7 +9,18 @@ Rails.application.routes.draw do
   get 'media/catalog', to: 'media#catalog', as: 'media_catalog'
   get 'media/:id/inspect/', to: 'media#inspect', as: 'inspect_medium'
   get 'media/:id/enrich', to: 'media#enrich', as: 'enrich_medium'
-  resources :media, only: [:show, :index, :new, :edit, :update]
+  get 'media/:id/play', to: 'media#play', as: 'play_medium'
+  get 'media/:id/add_item', to: 'media#add_item', as: 'add_item'
+  get 'media/:id/add_reference', to: 'media#add_reference', as: 'add_reference'
+  get 'media/:id/export_toc', to: 'media#export_toc', as: 'export_toc'
+  get 'media/:id/export_references', to: 'media#export_references', as: 'export_references'
+  get 'media/:id/export_screenshot', to: 'media#export_screenshot', as: 'export_screenshot'
+  patch 'media/:id/remove_screenshot', to: 'media#remove_screenshot', as: 'remove_screenshot'
+  post 'media/:id/add_screenshot', to: 'media#add_screenshot', as: 'add_screenshot'
+  resources :media
+  get 'items/:id/display', to: 'items#display', as: 'display_item'
+  resources :items, only: [:update, :create, :edit, :destroy]
+  resources :referrals, only: [:update, :create, :edit, :destroy]
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags

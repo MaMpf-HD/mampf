@@ -28,13 +28,13 @@
 #video-edit {
   border: 1px solid gray;
   position: relative;
-  max-width: 100%;
-  max-height: calc(100% - 48px);
+  max-width: 600px;
+  max-height: 500px;
 }
 
 #thyme-edit {
-  height:100vh;
-  width: 100vw;
+  height:100%;
+  width: 100%;
   display: grid;
   grid-template-rows: 60% 40%;
   grid-template-columns: 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5% 12.5%;
@@ -199,7 +199,7 @@
 }
 
 .thyme-header {
-  background: #f2f2f2;
+  // background: #f2f2f2;
   border-radius: 5px;
   border: 1px solid lightgrey;
   max-width: 100%;
@@ -218,11 +218,6 @@
   text-decoration: none !important;
 }
 
-
-#create-section-button:focus, #create-section-button:active:focus, #create-section-button.active:focus{
-    outline:none;
-    box-shadow:none;
-}
 
 #create-item-button:focus, #create-item-button:active:focus, #create-item-button.active:focus{
     outline:none;

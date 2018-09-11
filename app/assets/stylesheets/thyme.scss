@@ -1,0 +1,302 @@
+
+#thyme-container {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	font-family: 'Roboto';
+}
+
+#thyme {
+	min-width: 100%;
+	min-height: 100%;
+	width: auto;
+	height: auto;
+	background: black;
+}
+
+#hypervideo-container {
+  font-size: 0;
+  position: relative;
+  background: white;
+  margin: 0;
+}
+
+#video {
+  width: 82%;
+  height: auto;
+  display: inline-block;
+}
+
+#hypervideo-container figcaption {
+  position: absolute;
+  right: 0; top: 0;
+  background: white;
+  width: 18%;
+  font-size: .8rem;
+  color: #666;
+  height: 100%;
+	outline: 0;
+}
+
+#hypervideo-container figcaption ol {
+  position: relative;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#video-container {
+	position: relative;
+}
+
+#video-controlBar {
+	width: 82%;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 5px;
+	width: 82%;
+	height: auto;
+	background: lightgray;
+	-webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+#video-controls {
+	position: relative;
+	display: inline-block;
+	height: 30px;
+	width: 100%;
+}
+
+
+#timeline {
+	position: absolute;
+	display: flex;
+	width: 50%;
+}
+
+#current-time {
+	font-size: 12px;
+	padding: 4px;
+}
+
+#seek-bar {
+	flex-grow: 5;
+	margin-top: 7px;
+}
+
+#max-time {
+	font-size: 12px;
+	padding: 4px;
+}
+
+#special-buttons {
+	position: absolute;
+	display: flex;
+	left: 52%;
+}
+
+.clickable
+{
+  cursor: pointer;
+}
+
+#previous-chapter {
+	margin-left: 10px;
+}
+
+#volume-controls {
+	position: absolute;
+	display: flex;
+	width: 10%;
+	left: 68%;
+}
+
+#speed-control {
+	position: absolute;
+	padding: 3px;
+	font-size: 12px;
+	left: 81%;
+}
+
+#volume-bar {
+	flex-grow: 2;
+	min-width: 50%;
+	margin-top: 7px;
+	margin-left: 4px;
+}
+
+#size-buttons {
+	position: absolute;
+	right: 0%;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border-radius: 6px;
+    height: 10px;
+		background-image: linear-gradient(
+      to right,
+      #2497E3,
+      #2497E3 0%,
+      #ffffff 0%,
+      #ffffff
+    );
+}
+
+input[type="range"]::-moz-range-track {
+    border: none;
+    background: none;
+    outline: none;
+}
+
+input[type=range]:focus {
+    outline: none;
+    border: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background-color: #2497E3;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+		border: 1px solid black;
+}
+
+input[type=range]::-moz-range-thumb {
+  border: 1px solid black;
+  background-color: #2497E3;
+  height: 13px;
+  width: 13px;
+  border-radius: 50%;
+}
+
+input[type=range]::-moz-focus-outer {
+    border: 0;
+}
+
+figure {
+  box-sizing: border-box;
+}
+
+
+#chapters li a {
+  display: block;
+  color: black;
+  padding: .7rem 1rem;
+  transition: .3s;
+  border-bottom: 1px solid lightgrey;
+}
+
+#chapters .current {
+  background: lightcyan;
+  color: #000;
+}
+
+
+#metadata {
+  position: relative;
+  height: calc(0.5*(100% - 5em - 4em));
+  border: 1px solid darkgray;
+  overflow-y: scroll;
+	color: #484848;
+}
+
+#metadata .current {
+  color: black;
+}
+
+#metadata li a i {
+	font-size: 1.5em;
+}
+
+#metadata li {
+	display: flex;
+	justify-content: space-between;
+  position: relative;
+  border-bottom: 1px solid darkgrey;
+	text-decoration: none;
+	padding: 5px;
+}
+
+#metadata li a {
+	color: inherit;
+  display: block;
+  text-decoration: none;
+  padding: 3px;
+}
+
+.item:hover, .item:focus{
+	background: #f0f0f0;
+	cursor: pointer;
+}
+
+
+#chapters li a:not(.current):hover,
+#chapters li a:not(.current):focus {
+  background: #f0f0f0;
+  color: #000;
+  cursor: pointer;
+}
+
+#chapters li a.current:hover,
+#chapters li a.current:focus {
+  background: #b3ffff;
+  color: #000;
+  cursor: pointer;
+}
+
+
+#infobar {
+  height: 5em;
+  background: lightgray;
+  color: black;
+  padding: 3px;
+  border-left: 1px solid darkgray;
+  border-right: 1px solid darkgray;
+  border-top: 1px solid darkgray;
+}
+
+#separator {
+  height: 4em;
+  background: #e6e6e6;
+  border-left: 1px solid darkgray;
+  border-right: 1px solid darkgray;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+
+#chapters {
+  position: relative;
+  height: calc(0.5*(100% - 5em - 4em));
+  border: 1px solid darkgray;
+  overflow-y: scroll;
+}
+
+.replay {
+  position: absolute;
+  top: 0;
+  right:0;
+  padding: 3px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+.bg-active {
+  background: lightgrey;
+}
+
+:-webkit-full-screen::-webkit-backdrop
+ {
+   background-color: black;
+ }
