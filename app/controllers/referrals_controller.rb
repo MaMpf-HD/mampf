@@ -11,6 +11,7 @@ class ReferralsController < ApplicationController
   end
 
   def edit
+    @item_selection = @referral.medium.items_for_thyme
   end
 
   def create

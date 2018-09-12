@@ -31,7 +31,7 @@ class Section < ApplicationRecord
     unless lecture.absolute_numbering
       return chapter.displayed_number + '.' + position.to_s
     end
-    absolute_position = chapter.higher_items.map(&:sections).flatten
+    absolute_position = chapter.higher_items.includes(:sections).map(&:sections).flatten
                                .count + position
     return absolute_position.to_s unless lecture.start_section.present?
     (absolute_position + lecture.start_section - 1).to_s

@@ -94,7 +94,7 @@ class MediaController < ApplicationController
     @referral = Referral.new(medium: @medium,
                              start_time: TimeStamp.new(total_seconds: @time),
                              end_time: TimeStamp.new(total_seconds: @end_time))
-    @item_selection = @medium.items_for_thyme 
+    @item_selection = @medium.items_for_thyme
   end
 
   def add_screenshot

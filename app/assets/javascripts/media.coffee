@@ -181,3 +181,9 @@ $(document).on 'turbolinks:load', ->
     return
 
   return
+
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'click', '[id^="tocitem-"]'
+  $(document).off 'click', '[id^="metaref-"]'
+  $(document).off 'change', '#referral_item_id'
+  return

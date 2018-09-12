@@ -313,19 +313,16 @@ class Medium < ApplicationRecord
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
   def items_for_thyme
-    if teachable_type.in?(['Lesson', 'Lecture'])
-      local_items = teachable.lecture.items - items
-      local_selection = local_items.map { |i| [i.local_reference, i.id] }
-    else
-      local_items = teachable.items - items
-      local_selection = local_items.map { |i| [i.global_reference, i.id] }
-    end
-    external_items = (Item.includes(medium: :teachable).all - local_items).select(&:link?) - items
-    global_items = ((Item.includes(medium: :teachable).all - local_items) -
-                     external_items) - items
-    external_selection = external_items.map { |i| [i.global_reference, i.id] }
-    global_selection = global_items.map { |i| [i.global_reference, i.id] }
-    local_selection + external_selection + global_selection
+#    Rails.cache.fetch("#{cache_key}/items_for_thyme", expires_in: 2.hours) do
+      locals = local_items
+      local_selection = locals.map { |i| [i.local_reference, i.id] }
+      external_items = (Item.includes(medium: :teachable).all - locals).select(&:link?) - items
+      global_items = ((Item.includes(medium: :teachable).all - locals) -
+                       external_items) - items
+      external_selection = external_items.map { |i| [i.global_reference, i.id] }
+      global_selection = global_items.map { |i| [i.global_reference, i.id] }
+      local_selection + external_selection + global_selection
+  #  end
   end
 
   def create_camtasia_items
@@ -424,5 +421,10 @@ class Medium < ApplicationRecord
 
   def create_self_item
     Item.create(sort: 'self', medium: self)
+  end
+
+  def local_items
+    return teachable.items - items if teachable_type == 'Course'
+    teachable.lecture.items - items
   end
 end
