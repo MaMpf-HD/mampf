@@ -378,6 +378,47 @@ class Medium < ApplicationRecord
     scraped_items
   end
 
+  def create_camtasia_items_var
+    return unless video_stream_link.present?
+    return unless video.present?
+    return unless sort == 'Kaviar'
+    puts id
+    if teachable_type == 'Lesson'
+      current_section_nr = teachable.sections.first.reference_number
+    end
+    scraped_toc = CamtasiaScraper.new(video_stream_link).to_h[:toc]
+                                 .sort_by{ |h| h[:start_time] }
+    scraped_items = []
+    scraped_toc.each do |t|
+      mathitem = t[:text].match(/(Bemerkung|Beispiel|Definition|Lemma|Satz|Folgerung)/)
+      secitem = t[:text].match(/(\d+\.\d+)/)
+      if mathitem.present?
+        item_sort = { 'Bemerkung' => 'remark', 'Satz' => 'theorem',
+                      'Definition' => 'definition', 'Lemma' => 'lemma',
+                      'Beispiel' => 'example',
+                      'Folgerung' => 'corollary' }[mathitem.captures.first]
+        item_desc = t[:text].match(/\((.+)\)/)&.captures&.first
+        item_section_nr = current_section_nr
+        item_nr = t[:text].match(/(\d+)/)&.captures&.first
+      elsif secitem.present?
+        item_sort = 'section'
+        item_section_nr = secitem.captures&.first
+        current_section_nr = item_section_nr
+      else next
+      end
+      item_section = teachable.lecture.sections
+                              .find { |s| s.reference_number == item_section_nr }
+      item_start_time = TimeStamp.new(total_seconds: t[:start_time] / 1000.0)
+      i = Item.create(sort: item_sort, start_time: item_start_time,
+                      description: item_desc, section: item_section,
+                      ref_number: item_nr, medium: self)
+      puts i.errors
+      scraped_items.push([item_start_time, item_sort, item_desc,
+                          item_section_nr, item_nr])
+    end
+    scraped_items
+  end
+
   private
 
   def undescribable?
