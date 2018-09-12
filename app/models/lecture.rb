@@ -50,6 +50,10 @@ class Lecture < ApplicationRecord
     course.short_title + ' ' + term.to_label_short
   end
 
+  def media_scope
+    self
+  end
+
   def short_title_brackets
     course.short_title + ' (' + term.to_label_short + ')'
   end

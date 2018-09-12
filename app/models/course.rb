@@ -150,6 +150,10 @@ class Course < ApplicationRecord
                            .map(&:id))
   end
 
+  def media_scope
+    self
+  end
+
   private
 
   def filter_keys(user_params)

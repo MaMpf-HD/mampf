@@ -316,16 +316,29 @@ class Medium < ApplicationRecord
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
   def items_for_thyme
-#    Rails.cache.fetch("#{cache_key}/items_for_thyme", expires_in: 2.hours) do
-      locals = local_items
-      local_selection = locals.map { |i| [i.local_reference, i.id] }
-      external_items = (Item.includes(medium: :teachable).all - locals).select(&:link?) - items
-      global_items = ((Item.includes(medium: :teachable).all - locals) -
-                       external_items) - items
-      external_selection = external_items.map { |i| [i.global_reference, i.id] }
-      global_selection = global_items.map { |i| [i.global_reference, i.id] }
-      local_selection + external_selection + global_selection
-  #  end
+    scope_type = teachable.media_scope.class.to_s
+    scope_id = teachable.media_scope.id
+    internal_items = Medium.where.not(id: id).map(&:items_with_references)
+                           .flatten.map do |i|
+      reference = if i[:scope_type] == scope_type && i[:scope_id] == scope_id
+                    i[:local]
+                  else
+                    i[:global]
+                  end
+      [reference, i[:id]]
+    end
+    external_items = Item.where(medium: nil)
+                         .map { |i| [i.global_reference, i.id]}
+    internal_items + external_items
+  end
+
+  def items_with_references
+    Rails.cache.fetch("#{cache_key}/items_with_reference") do
+      items.map { |i| { id: i.id, global: i.global_reference,
+                        local: i.local_reference,
+                        scope_type: teachable.media_scope.class.to_s,
+                        scope_id: teachable.media_scope.id } }
+    end
   end
 
   def create_camtasia_items
@@ -341,7 +354,8 @@ class Medium < ApplicationRecord
       if mathitem.present?
         item_sort = { 'Bem.' => 'remark', 'Satz' => 'theorem',
                       'Def.' => 'definition', 'Anm.' => 'annotation',
-                      'Bsp.' => 'example', 'Folgerung' => 'corollary' }[mathitem.captures.first]
+                      'Bsp.' => 'example',
+                      'Folgerung' => 'corollary' }[mathitem.captures.first]
         item_desc = t[:text].match(/\((.+)\)/)&.captures&.first
         item_section_nr = t[:text].match(/(\d+)\.\d+/)&.captures&.first
         item_nr = t[:text].match(/(\d+\.\d+)/)&.captures&.first

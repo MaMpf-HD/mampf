@@ -82,6 +82,10 @@ class Lesson < ApplicationRecord
     self
   end
 
+  def media_scope
+    lecture
+  end
+
   def edited_by?(user)
     lecture.edited_by?(user)
   end
