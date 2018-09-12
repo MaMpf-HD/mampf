@@ -18,6 +18,7 @@ class Item < ApplicationRecord
   validate :start_time_not_too_late
   validate :no_duplicate_start_time
   validate :nonempty_link_or_explanation
+  after_save :touch_medium
 
   def end_time
     return unless video?
@@ -243,5 +244,10 @@ class Item < ApplicationRecord
   def non_math_reference
     return medium.title_for_viewers if sort == 'self'
     'extern ' + description.to_s if sort == 'link'
+  end
+
+  def touch_medium
+    return unless medium.present? && medium.persisted?
+    medium.touch
   end
 end

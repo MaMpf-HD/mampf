@@ -22,7 +22,7 @@ $('#tag-related-tags-error-<%= @tag.id.to_i %>')
 <% if @modal %>
 $('#newTagModal').modal('hide')
 if $('#newTagModal').data('from') == 'section'
-  tagSelector = document.getElementById('section_tag_ids_<%= @section.id.to_i %>').selectize
+  tagSelector = document.getElementById('section_tag_ids_<%= @section&.id&.to_i %>').selectize
   tagSelector.addOption({ value: <%= @tag.id %>, text: '<%= @tag.title %>'})
   tagSelector.refreshOptions()
   values = tagSelector.getValue()
