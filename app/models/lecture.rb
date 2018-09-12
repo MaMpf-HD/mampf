@@ -124,7 +124,9 @@ class Lecture < ApplicationRecord
   end
 
   def section_selection
-    sections.sort_by(&:calculated_number).map { |s| [s.to_label, s.id]}
+   Rails.cache.fetch("#{cache_key}/section_selection") do
+      sections.sort_by(&:calculated_number).map { |s| [s.to_label, s.id]}
+   end
   end
 
   def section_tag_selection

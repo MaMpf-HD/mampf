@@ -8,6 +8,10 @@ class Section < ApplicationRecord
   has_many :lessons, through: :lesson_section_joins
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
   has_many :items
+  after_save :touch_lecture
+  after_save :touch_media
+  before_destroy :touch_lecture
+  before_destroy :touch_media
 
   def lecture
     return unless chapter.present?
@@ -39,5 +43,16 @@ class Section < ApplicationRecord
 
   def to_label
     displayed_number + '. ' + title
+  end
+
+  private
+
+  def touch_lecture
+    return unless lecture.present? && lecture.persisted?
+    lecture.touch
+  end
+
+  def touch_media
+    lecture.media_with_inheritance.each(&:touch)
   end
 end

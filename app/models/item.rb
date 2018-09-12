@@ -19,6 +19,7 @@ class Item < ApplicationRecord
   validate :no_duplicate_start_time
   validate :nonempty_link_or_explanation
   after_save :touch_medium
+  before_destroy :touch_medium
 
   def end_time
     return unless video?

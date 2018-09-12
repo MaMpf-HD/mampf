@@ -154,6 +154,10 @@ class Course < ApplicationRecord
     self
   end
 
+  def sections
+    lectures.collect(&:sections).flatten
+  end
+
   private
 
   def filter_keys(user_params)
