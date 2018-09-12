@@ -37,6 +37,8 @@ class Medium < ApplicationRecord
     return [] if course.nil?
     filtered = Medium.filter_media(course, params[:project])
     unless params[:lecture_id].present?
+      puts 'Hallo'
+      puts filtered.count
       return search_results(filtered, course, primary_lecture)
     end
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
@@ -248,6 +250,7 @@ class Medium < ApplicationRecord
   end
 
   def self.filter_primary(filtered_media, primary_lecture)
+    return [] unless primary_lecture.present?
     filtered_media.select do |m|
       m.teachable.present? && m.teachable.lecture == primary_lecture
     end

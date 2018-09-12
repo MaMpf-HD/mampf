@@ -67,7 +67,7 @@ class Ability
       can :catalog, Medium
       can :search, Medium
       can :inspect, Medium
-      can [:edit, :enrich, :add_item, :add_reference, :add_screenshot,
+      can [:edit, :update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot], Medium do |m|
         m.edited_by?(user)
