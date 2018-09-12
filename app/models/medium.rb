@@ -309,7 +309,8 @@ class Medium < ApplicationRecord
   end
 
   def title_for_viewers
-    sort_de + ', ' + teachable.title_for_viewers + ', ' + description.to_s
+    sort_de + ', ' + teachable.title_for_viewers +
+      (description.present? ? ', ' + description : '')
   end
 
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }

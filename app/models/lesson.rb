@@ -10,6 +10,8 @@ class Lesson < ApplicationRecord
   validates :date, presence: { message: 'Es muss ein Datum angegeben werden.' }
   validates :sections, presence: { message: 'Es muss mindestens ein Abschnitt '\
                                             'angegeben werden.' }
+  after_save :touch_media
+  before_destroy :touch_media
 
   def self.select_by_date
     Lesson.all.to_a.sort_by(&:date).map { |l| [l.date, l.id] }
@@ -58,7 +60,8 @@ class Lesson < ApplicationRecord
   end
 
   def title_for_viewers
-    lecture.title_for_viewers + ', Sitzung vom ' + date_de
+    lecture.title_for_viewers + ', Sitzung ' + number.to_s + ' vom ' +
+      date_de
   end
 
   def compact_title
@@ -102,5 +105,9 @@ class Lesson < ApplicationRecord
 
   def lesson_path
     Rails.application.routes.url_helpers.lesson_path(self)
+  end
+
+  def touch_media
+    lecture.media_with_inheritance.each(&:touch)
   end
 end
