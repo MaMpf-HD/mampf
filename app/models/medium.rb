@@ -427,10 +427,23 @@ class Medium < ApplicationRecord
                                  .sort_by{ |h| h[:start_time] }
     scraped_items = []
     scraped_ref.each do |r|
-      m = Medium.where(video_stream_link: r[:link])
-      scraped_items.push([r[:start_time], m.first.id ]) if m.present?
-      m = Medium.where(external_reference_link: r[:link])
-      scraped_items.push([r[:start_time], m.first.id ]) if m.present?      
+      m = Medium.where(external_reference_link: r[:link]).first
+      m = Medium.where(video_stream_link: r[:link]).first if m.nil?
+      if m.present?
+        start_time = r[:start_time] / 1000.0
+        end_time = [start_time + 60, video_duration.floor].min
+        ref_start_time = TimeStamp.new(total_seconds: start_time)
+        ref_end_time = TimeStamp.new(total_seconds: end_time)
+        scraped_items.push({ start_time: ref_start_time, medium_id: id,
+                             end_time: ref_end_time, video: m.video.present?,
+                             manuscript: m.manuscript.present?,
+                             medium_link: m.external_reference_link.present? })
+        item = Item.where(medium: m, sort: 'self').first
+        Referral.create(medium: self, item: item, start_time: ref_start_time,
+                        end_time: ref_end_time, video: m.video.present?,
+                        manuscript: m.manuscript.present?,
+                        medium_link: m.external_reference_link.present?)
+      end
     end
     scraped_items
   end
