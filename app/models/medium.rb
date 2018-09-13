@@ -427,6 +427,7 @@ class Medium < ApplicationRecord
                                  .sort_by{ |h| h[:start_time] }
     scraped_items = []
     scraped_ref.each do |r|
+      next if r[:link].blank?
       m = Medium.where(external_reference_link: r[:link]).first
       m = Medium.where(video_stream_link: r[:link]).first if m.nil?
       if m.present?
