@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_11_085149) do
+ActiveRecord::Schema.define(version: 2018_09_13_110737) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -187,6 +187,7 @@ ActiveRecord::Schema.define(version: 2018_09_11_085149) do
     t.integer "medium_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "medium_link"
     t.index ["item_id"], name: "index_referrals_on_item_id"
     t.index ["medium_id"], name: "index_referrals_on_medium_id"
   end

@@ -114,6 +114,11 @@ class Item < ApplicationRecord
     link
   end
 
+  def medium_link
+    return unless medium_link?
+    medium.external_reference_link
+  end
+
   def self.internal_sorts
     [['Definition', 'definition'], ['Bemerkung', 'remark'], ['Lemma', 'lemma'],
      ['Satz', 'theorem'], ['Beispiel', 'example'], ['Anmerkung', 'annotation'],
@@ -131,6 +136,10 @@ class Item < ApplicationRecord
 
   def manuscript?
     medium.present? && medium.manuscript.present?
+  end
+
+  def medium_link?
+    medium.present? && medium.external_reference_link.present?
   end
 
   def link?

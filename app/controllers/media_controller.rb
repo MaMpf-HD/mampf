@@ -237,8 +237,10 @@ class MediaController < ApplicationController
     unless search_params[:all_teachables] == '0'
       return Course.all + Lecture.all + Lesson.all
     end
-    lectures = Lecture.where(id: search_lecture_ids)
     courses = Course.where(id: search_course_ids)
+    inherited_lectures = Lecture.where(course: courses)
+    selected_lectures = Lecture.where(id: search_lecture_ids)
+    lectures = (inherited_lectures + selected_lectures).uniq
     lessons = lectures.collect(&:lessons).flatten
     courses + lectures + lessons
   end

@@ -1,4 +1,3 @@
-<% if @errors.present? %>
 # clean up errors from last submission
 $('#referral_start_time').removeClass('is-invalid')
 $('#start-time-error').empty()
@@ -6,6 +5,7 @@ $('#referral_end_time').removeClass('is-invalid')
 $('#end-time-error').empty()
 $('#referral_manuscript').removeClass('is-invalid')
 $('#referral_video').removeClass('is-invalid')
+$('#referral_medium_link').removeClass('is-invalid')
 $('#ref-error').empty()
 $('#referral_link').removeClass('is-invalid')
 $('#link-error').empty()
@@ -14,6 +14,7 @@ $('#description-error').empty()
 $('#referral_explanation').removeClass('is-invalid')
 $('#explanation-error').empty()
 # here come the new error messages
+<% if @errors.present? %>
 <% if @errors[:start_time].present? %>
 $('#referral_start_time').addClass('is-invalid')
 $('#start-time-error').append('<%= @errors[:start_time].join(' ') %>')
@@ -27,6 +28,7 @@ $('#end-time-error').append('<%= @errors[:end_time].join(' ') %>')
 <% if @errors[:video].present? %>
 $('#referral_manuscript').addClass('is-invalid')
 $('#referral_video').addClass('is-invalid')
+$('#referral_medium_link').addClass('is-invalid')
 $('#ref-error').append('<%= @errors[:video].join(' ') %>').show()
 <% end %>
 <% if @errors[:link].present? %>

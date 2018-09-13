@@ -21,6 +21,7 @@ class Referral < ApplicationRecord
   end
 
   def vtt_properties
+    link = item.medium_link if medium_link
     link = item.link if item.link.present?
     manuscript_link = item.manuscript_link if manuscript
     video_link = item.video_link if video
@@ -54,6 +55,11 @@ class Referral < ApplicationRecord
 
   def manuscript?
     return true if item.present? && item.manuscript?
+    false
+  end
+
+  def medium_link?
+    return true if item.present? && item.medium_link?
     false
   end
 
@@ -104,9 +110,11 @@ class Referral < ApplicationRecord
 
   def reference_present
     return true if item.medium.nil?
-    unless item.medium.video.present? || item.medium.manuscript.present?
+    unless item.medium.video.present? || item.medium.manuscript.present? ||
+           item.medium.external_reference_link.present?
+
       errors.add(:video, 'Das gewählte Medium kann nicht referenziert werden, '\
-                         'da es weder Audio- noch Videodateien bereithält.')
+                         'da es keine Inhalte bereithält.')
       return false
     end
     return true if enough_references
@@ -115,6 +123,7 @@ class Referral < ApplicationRecord
 
   def enough_references
     (item.medium.video.present? && video) ||
-      (item.medium.manuscript.present? && manuscript)
+      (item.medium.manuscript.present? && manuscript) ||
+      (item.medium.external_reference_link.present? && medium_link)
   end
 end

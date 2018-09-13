@@ -418,6 +418,23 @@ class Medium < ApplicationRecord
     scraped_items
   end
 
+  def create_camtasia_references
+    return unless video_stream_link.present?
+    return unless video.present?
+    return unless sort == 'Kaviar'
+    puts id
+    scraped_ref = CamtasiaScraper.new(video_stream_link).to_h[:references]
+                                 .sort_by{ |h| h[:start_time] }
+    scraped_items = []
+    scraped_ref.each do |r|
+      m = Medium.where(video_stream_link: r[:link])
+      scraped_items.push([r[:start_time], m.first.id ]) if m.present?
+      m = Medium.where(external_reference_link: r[:link])
+      scraped_items.push([r[:start_time], m.first.id ]) if m.present?      
+    end
+    scraped_items
+  end
+
   private
 
   def undescribable?

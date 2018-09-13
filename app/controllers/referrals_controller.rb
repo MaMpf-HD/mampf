@@ -39,13 +39,14 @@ class ReferralsController < ApplicationController
   def set_basics
     @video = params[:referral][:video]
     @manuscript = params[:referral][:manuscript]
+    @medium_link = params[:referral][:medium_link]
     @item_id = params[:referral][:item_id].to_i
   end
 
   def referral_params
     filter = params.require(:referral).permit(:medium_id, :item_id, :start_time,
                                               :end_time, :description, :link,
-                                              :video, :manuscript,
+                                              :video, :manuscript, :medium_link,
                                               :explanation, :ref_id).clone
     filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
     filter[:end_time] = TimeStamp.new(time_string: filter[:end_time])
@@ -85,6 +86,6 @@ class ReferralsController < ApplicationController
       explanation: referral_params[:explanation],
       start_time: referral_params[:start_time],
       end_time: referral_params[:end_time],
-      video: @video, manuscript: @manuscript }
+      video: @video, manuscript: @manuscript, medium_link: @medium_link }
   end
 end
