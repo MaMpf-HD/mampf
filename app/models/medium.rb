@@ -409,9 +409,9 @@ class Medium < ApplicationRecord
       item_section = teachable.lecture.sections
                               .find { |s| s.reference_number == item_section_nr }
       item_start_time = TimeStamp.new(total_seconds: t[:start_time] / 1000.0)
-      # i = Item.create(sort: item_sort, start_time: item_start_time,
-      #                 description: item_desc, section: item_section,
-      #                 ref_number: item_nr, medium: self)
+      i = Item.create(sort: item_sort, start_time: item_start_time,
+                      description: item_desc, section: item_section,
+                      ref_number: item_nr, medium: self)
       scraped_items.push([item_start_time, item_sort, item_desc,
                           item_section_nr, item_nr])
     end
