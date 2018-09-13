@@ -449,6 +449,46 @@ class Medium < ApplicationRecord
     scraped_items
   end
 
+  def next_medium
+    return unless sort == 'Kaviar'
+    return if description.present?
+    return if teachable_type != 'Lesson'
+    next_l = Lesson.select { |l| l.number == teachable.number + 1 && l.lecture == teachable.lecture }
+    Medium.where(teachable: next_l)&.select { |m| m.description.blank? }&.first
+  end
+
+  def previous_medium
+    return unless sort == 'Kaviar'
+    return if description.present?
+    return if teachable_type != 'Lesson'
+    previous_l = Lesson.select { |l| l.number == teachable.number - 1 && l.lecture == teachable.lecture }
+    Medium.where(teachable: previous_l)&.select { |m| m.description.blank? }&.first
+  end
+
+  def create_neighbouring_references
+    prev_m = previous_medium
+    next_m = next_medium
+    if prev_m.present?
+      start_time = TimeStamp.new(total_seconds: 0)
+      end_time = TimeStamp.new(total_seconds: 60)
+      item = Item.where(medium: prev_m, sort: 'self').first
+      Referral.create(medium: self, item: item, start_time: start_time,
+                      end_time: end_time, video: prev_m.video.present?,
+                      manuscript: prev_m.manuscript.present?,
+                      explanation: 'vorige Sitzung')
+    end
+    if next_m.present?
+      start_time = TimeStamp.new(total_seconds: video_duration - 15)
+      end_time = TimeStamp.new(total_seconds: (video_duration * 1000).floor / 1000.0)
+      item = Item.where(medium: next_m, sort: 'self').first
+      r = Referral.create(medium: self, item: item, start_time: start_time,
+                      end_time: end_time, video: next_m.video.present?,
+                      manuscript: next_m.manuscript.present?,
+                      explanation: 'nächste Sitzung')
+      puts r.errors
+    end
+  end
+
   private
 
   def undescribable?
