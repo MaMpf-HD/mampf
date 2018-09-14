@@ -466,6 +466,10 @@ class Medium < ApplicationRecord
   end
 
   def create_neighbouring_references
+    return unless video.present?
+    return unless sort == 'Kaviar'
+    return if description.present?
+    return if teachable_type != 'Lesson'
     prev_m = previous_medium
     next_m = next_medium
     if prev_m.present?
