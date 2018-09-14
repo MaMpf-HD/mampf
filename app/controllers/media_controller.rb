@@ -72,7 +72,7 @@ class MediaController < ApplicationController
     @media = Medium.where(sort: search_sorts, teachable: search_teachables)
     tags = search_tags
     editors = search_editors
-    @media = @media.select { |m| (m.tags & tags).present? }
+    @media = @media.select { |m| m.tags.empty? || (m.tags & tags).present? }
     @media = @media.select { |m| (m.editors & editors).present? }
   end
 
