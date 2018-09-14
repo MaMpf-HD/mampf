@@ -144,6 +144,10 @@ class Medium < ApplicationRecord
     manuscript[:original].url(host: host)
   end
 
+  def manuscript_download_url
+    manuscript[:original].url(host: download_host)
+  end
+
   def manuscript_filename
     return unless manuscript.present?
     manuscript[:original].metadata['filename']

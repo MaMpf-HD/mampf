@@ -65,7 +65,7 @@ videoUpload = (fileInput) ->
 
   uppy.on 'upload-success', (file, data) ->
     $('#video-wait').hide()
-    if data.metadata.mime_type in ['video/mp4', 'video/webm', 'video/ogg']
+    if data.metadata.mime_type in ['video/mp4']
       # show video preview
       videoPreview.src = URL.createObjectURL(file.data)
 
