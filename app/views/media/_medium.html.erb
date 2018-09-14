@@ -95,7 +95,7 @@
         <% if medium.video.present? %>
           <div class="download-button">
             <a href="<%= medium.video_url %>"
-               download>
+               download="<%= medium.title %>">
               <span>
                 <span class="badge badge-secondary"
                       data-toggle="tooltip" data-placement="bottom"

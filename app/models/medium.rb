@@ -110,6 +110,10 @@ class Medium < ApplicationRecord
     video.url(host: host)
   end
 
+  def video_download_url
+    video.url(host: download_host)
+  end
+
   def video_filename
     return unless video.present?
     video.metadata['filename']

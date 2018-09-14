@@ -5,6 +5,10 @@ module ApplicationHelper
     Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['MEDIA_FOLDER'] : ''
   end
 
+  def download_host
+    Rails.env.production? ? ENV['DOWNLOAD_LOCATION'] : ''
+  end
+
   # Returns the full title on a per-page basis.
   def full_title(page_title = '')
     base_title = 'MaMpf'
