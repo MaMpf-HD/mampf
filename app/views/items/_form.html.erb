@@ -28,7 +28,7 @@
                      { class: 'form-control' } %>
       </div>
     </div>
-    <% if item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
+    <% if item.medium.teachable_type == 'Kaviar' && item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
       <div id="item_section_select" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :section_id, 'Abschnitt' %>
