@@ -85,6 +85,7 @@ class Item < ApplicationRecord
   end
 
   def vtt_reference
+    return short_description + "\n\n" unless short_reference.present?
     short_reference + ': ' + short_description + "\n\n"
   end
 
@@ -189,7 +190,8 @@ class Item < ApplicationRecord
 
   def section_reference
     return section.displayed_number.to_s if section.present?
-    '§' + (ref_number || '')
+    return '§' + ref_number if ref_number.present?
+    ''
   end
 
   def toc_reference
