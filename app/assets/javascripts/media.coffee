@@ -74,7 +74,7 @@ $(document).on 'turbolinks:load', ->
       $("label[for='item_description']").empty().append('Titel')
     else
       $('#item_section_select').show()
-      $('#item_number_field').show()
+      $('#item_number_field').hide() if $(this).val() == 'label'
       $('#item_description_field').show()
       $("label[for='item_description']").empty().append('Beschreibung')
     return

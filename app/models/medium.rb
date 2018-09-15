@@ -457,6 +457,29 @@ class Medium < ApplicationRecord
     scraped_items
   end
 
+  def create_camtasia_dummy_references(dummy_item)
+    return unless video_stream_link.present?
+    return unless video.present?
+    return unless sort == 'Kaviar'
+    puts id
+    scraped_ref = CamtasiaScraper.new(video_stream_link).to_h[:references]
+                                 .sort_by{ |h| h[:start_time] }
+    scraped_items = []
+    scraped_ref.each do |r|
+      start_time = r[:start_time] / 1000.0
+      end_time = [start_time + 60, video_duration.floor].min
+      ref_start_time = TimeStamp.new(total_seconds: start_time)
+      ref_end_time = TimeStamp.new(total_seconds: end_time)
+      scraped_items.push({ start_time: ref_start_time, medium_id: id,
+                           end_time: ref_end_time })
+      Referral.create(medium: self, item: dummy_item, start_time: ref_start_time,
+                      end_time: ref_end_time, video: dummy_item.medium.video.present?,
+                      manuscript: dummy_item.medium.manuscript.present?,
+                      medium_link: dummy_item.medium.external_reference_link.present?)
+    end
+    scraped_items
+  end
+
   def next_medium
     return unless sort == 'Kaviar'
     return if description.present?

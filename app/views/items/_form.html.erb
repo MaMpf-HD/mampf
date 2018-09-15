@@ -46,7 +46,8 @@
     <% else %>
       <%= f.hidden_field :section_id, value: '' %>
     <% end %>
-    <div id="item_number_field" class="form-group form-row">
+    <div id="item_number_field" style="display: <%= show_no_block(item.sort != 'label') %>" 
+         class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :ref_number, 'Nummer' %>
       </div>

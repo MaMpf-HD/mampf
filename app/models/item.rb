@@ -8,7 +8,8 @@ class Item < ApplicationRecord
 
   validates :sort, inclusion: { in: ['remark', 'theorem', 'lemma', 'definition',
                                      'annotation', 'example', 'section',
-                                     'algorithm', 'self', 'link', 'corollary'],
+                                     'algorithm', 'self', 'link', 'corollary',
+                                     'label'],
                                 message: 'Unzulässiger Typ' }
   validates :link, http_url: true, if: :proper_link?
   validates :description,
@@ -39,9 +40,10 @@ class Item < ApplicationRecord
   def long_reference
     unless sort.in?(['self', 'link'])
       if section.present?
-        return medium.teachable.lecture.title_for_viewers +
-               ', ' + short_reference
+        return medium.teachable.lecture.title_for_viewers unless short_reference.present?
+        return medium.teachable.lecture.title_for_viewers + ', ' + short_reference
       end
+      return medium.title_for_viewers unless short_reference.present?
       return medium.title_for_viewers + ', ' + short_reference
     end
     short_reference
@@ -123,7 +125,8 @@ class Item < ApplicationRecord
   def self.internal_sorts
     [['Definition', 'definition'], ['Bemerkung', 'remark'], ['Lemma', 'lemma'],
      ['Satz', 'theorem'], ['Beispiel', 'example'], ['Anmerkung', 'annotation'],
-     ['Algorithmus', 'algorithm'], ['Folgerung', 'corollary'], ['Abschnitt', 'section']]
+     ['Algorithmus', 'algorithm'], ['Folgerung', 'corollary'], ['Abschnitt', 'section'],
+     ['Markierung', 'label']]
   end
 
   def self.list
@@ -155,7 +158,7 @@ class Item < ApplicationRecord
   end
 
   def other_items
-    ['section', 'self', 'link']
+    ['section', 'self', 'link', 'label']
   end
 
   def proper_link?
@@ -196,6 +199,7 @@ class Item < ApplicationRecord
 
   def toc_reference
     return section_reference if sort == 'section'
+    return '' if sort == 'label'
     special_reference
   end
 
