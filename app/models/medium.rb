@@ -460,7 +460,7 @@ class Medium < ApplicationRecord
   def create_camtasia_dummy_references(dummy_item)
     return unless video_stream_link.present?
     return unless video.present?
-    return unless sort == 'Kaviar'
+    return unless sort == 'Kaviar' || sort = 'Kiwi'
     puts id
     scraped_ref = CamtasiaScraper.new(video_stream_link).to_h[:references]
                                  .sort_by{ |h| h[:start_time] }
