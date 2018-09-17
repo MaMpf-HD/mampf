@@ -86,7 +86,7 @@ $(document).on 'turbolinks:load', ->
       $('#item_number_field').hide()
     else
       $('#item_description_field').show()
-      $('#item_number_field').show()
+      $('#item_number_field').show() unless $('#item_sort').val() == 'label'
     return
 
   $(document).on 'click', '[id^="tocitem-"]', ->
