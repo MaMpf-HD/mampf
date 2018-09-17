@@ -8,7 +8,7 @@
     <ul class="list-group list-group-flush">
       <% if medium.video.present? %>
         <li class="list-group-item bg-teal-lighten-5">
-          <%= link_to 'Video', medium.video_url,
+          <%= link_to 'Video', play_medium_path(medium),
                       class: "btn btn-info", target: :_blank %>
           <ul>
             <li>

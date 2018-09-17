@@ -39,12 +39,12 @@
     </div>
     <div class="card-footer bg-mdb-color-lighten-7 text-center">
       <div id="media-box-footer">
-        <% if medium.video_stream_link.present? %>
+        <% if medium.video.present? %>
           <div class="mr-2">
-            <a href="<%= medium.video_stream_link %>"
+            <a href="<%= play_medium_path(medium) %>"
                class="no-deco" target="_blank">
               <i class="material-icons text-secondary"
-                 data-toggle="tooltip" data-placement="bottom" title="Camtasia-Player">
+                 data-toggle="tooltip" data-placement="bottom" title="Thyme Player">
                 play_arrow
               </i>
             </a>
