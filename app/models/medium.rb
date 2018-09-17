@@ -279,7 +279,7 @@ class Medium < ApplicationRecord
 
   def irrelevant?
     video_stream_link.blank? && video.nil? && manuscript.nil? &&
-      external_reference_link.blank? && extras_link.blank?
+      external_reference_link.blank?
   end
 
   def teachable_select
