@@ -75,7 +75,10 @@
         <div id="infobar">
           <%= @medium.sort_de %><br>
           <%= shorten(long_title(@medium.teachable), 40) %><br>
-          <%= shorten(@medium.description, 40) %>
+          <span title="<%= @medium.description %>"
+                data-toggle="tooltip" data-placement="bottom">
+            <%= shorten(@medium.description, 40) %>
+          </span>
           <i id="ia-close" class="material-icons replay"
              style="font-size: 1em;">
             close
