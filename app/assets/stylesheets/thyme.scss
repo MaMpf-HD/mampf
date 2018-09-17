@@ -210,7 +210,38 @@ figure {
 
 #metadata .current {
   color: black;
+	-webkit-animation: yellow-fade 10s;
+	-moz-animation: yellow-fade 10s;
+	-o-animation: yellow-fade 10s;
+	animation: yellow-fade 10s;
 }
+
+
+@-webkit-keyframes yellow-fade {
+  from {
+    background: gold;
+  }
+  to {
+    background: #fff;
+  }
+}
+@-moz-keyframes yellow-fade {
+  from {
+    background: gold;
+  }
+  to {
+    background: #fff;
+  }
+}
+@keyframes yellow-fade {
+  from {
+    background: gold;
+  }
+  to {
+    background: #fff;
+  }
+}
+
 
 #metadata li a i {
 	font-size: 1.5em;
