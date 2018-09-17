@@ -74,8 +74,8 @@
                   aria-label="Captions">
         <div id="infobar">
           <%= @medium.sort_de %><br>
-          <%= long_title(@medium.teachable) %><br>
-          <%= @medium.description %>
+          <%= shorten(long_title(@medium.teachable), 40) %><br>
+          <%= shorten(@medium.description, 40) %>
           <i id="ia-close" class="material-icons replay"
              style="font-size: 1em;">
             close

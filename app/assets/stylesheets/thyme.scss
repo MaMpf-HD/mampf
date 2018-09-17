@@ -202,7 +202,7 @@ figure {
 
 #metadata {
   position: relative;
-  height: calc(0.5*(100% - 5em - 4em));
+  height: calc(0.5*(100% - 6em - 4em));
   border: 1px solid darkgray;
   overflow-y: scroll;
 	color: #484848;
@@ -254,7 +254,7 @@ figure {
 
 
 #infobar {
-  height: 5em;
+  height: 6em;
   background: lightgray;
   color: black;
   padding: 3px;
@@ -276,7 +276,7 @@ figure {
 
 #chapters {
   position: relative;
-  height: calc(0.5*(100% - 5em - 4em));
+  height: calc(0.5*(100% - 6em - 4em));
   border: 1px solid darkgray;
   overflow-y: scroll;
 }

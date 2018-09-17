@@ -137,6 +137,12 @@ module ApplicationHelper
     return teachable.long_title
   end
 
+  def shorten(title, max_letters)
+    return title unless title.length > max_letters
+    title[0, max_letters - 3] + '...'
+  end
+
+
   def thyme_caption(medium)
     medium.sort_de + ' ' + long_title(medium.teachable) + ' ' +
       (medium.description || '')
