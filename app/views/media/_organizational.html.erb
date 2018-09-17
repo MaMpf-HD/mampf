@@ -4,8 +4,8 @@
       Organisatorisches
     </h5>
   </div>
-  <% if medium.video_thumbnail_link.present? %>
-    <%= image_tag(medium.video_thumbnail_link, alt: "Card image cap",
+  <% if medium.screenshot.present? %>
+    <%= image_tag(medium.screenshot_url, alt: "Card image cap",
                   class: "card-img-top") %>
   <% end %>
   <div class="card-body">
