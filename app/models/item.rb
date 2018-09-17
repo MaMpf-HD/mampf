@@ -67,7 +67,7 @@ class Item < ApplicationRecord
 
   def local?(referring_medium)
     return false unless section.present?
-    self.in?(referring_medium.teachable.lecture.items)
+    self.in?(referring_medium.teachable.lecture&.items)
   end
 
   def global_reference
