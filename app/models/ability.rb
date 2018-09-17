@@ -70,7 +70,7 @@ class Ability
       can [:edit, :update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot, :destroy], Medium do |m|
-        m.edited_by?(user)
+        m.edited_with_inheritance_by?(user)
       end
       can :play, Medium
       can :create, Medium

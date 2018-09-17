@@ -55,6 +55,13 @@ class Medium < ApplicationRecord
     false
   end
 
+  def edited_with_inheritance_by?(user)
+    return true if editors.include?(user)
+    return true if teachable.lecture&.editors&.include?(user)
+    return true if teachable.course.editors&.include?(user)
+    false
+  end
+
   def toc_to_vtt
     path = toc_path
     File.open(path, 'w+:UTF-8') do |f|

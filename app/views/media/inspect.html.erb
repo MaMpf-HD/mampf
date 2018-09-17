@@ -8,7 +8,7 @@
     </h4>
   </div>
   <div class="col-3 text-center">
-    <% if current_user.admin || current_user.in?(@medium.editors)%>
+    <% if current_user.admin || @medium.edited_with_inheritance_by?(current_user)%>
       <%= link_to 'Bearbeiten', edit_medium_path(@medium),
                   class: 'btn btn-primary my-1' %>
     <% end %>
