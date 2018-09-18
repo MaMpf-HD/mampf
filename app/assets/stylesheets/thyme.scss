@@ -210,10 +210,10 @@ figure {
 
 #metadata .current {
   color: black;
-	-webkit-animation: yellow-fade 10s;
-	-moz-animation: yellow-fade 10s;
-	-o-animation: yellow-fade 10s;
-	animation: yellow-fade 10s;
+	-webkit-animation: yellow-fade 10s ease-in;
+	-moz-animation: yellow-fade 10s ease-in;
+	-o-animation: yellow-fade 10s ease-in;
+	animation: yellow-fade 10s ease-in;
 }
 
 

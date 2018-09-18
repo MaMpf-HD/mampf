@@ -104,12 +104,17 @@ setupHypervideo = ->
     backButton.dataset.time = video.currentTime
     currentChapter = $('#chapters .current')
     if currentChapter.length > 0
-      backInfo = currentChapter.text().split(':', 1)[0]
+      backInfo = currentChapter.data('text').split(':', 1)[0]
       if backInfo? && backInfo.length > 20
-        backInfo = backInfo.substring(0,18) + '...'
-      $(backButton).empty()
-        .append('zurück zu ' + backInfo)
-        .show()
+        backInfo = 'zurück'
+      else
+        backInfo = 'zurück zu ' + backInfo
+      $(backButton).empty().append(backInfo).show()
+      MathJax.Hub.Queue [
+        'Typeset'
+        MathJax.Hub
+        backButton.id
+      ]
     return
 
   displayChapters = ->
@@ -134,6 +139,7 @@ setupHypervideo = ->
           ]
         else
           console.log 'MathJax ist noch nicht da.'
+        $('#c-' + $.escapeSelector(start)).data('text', chapterName)
         $('#c-' + $.escapeSelector(start)).on 'click', ->
           displayBackButton()
           video.currentTime = @id.replace('c-', '')
