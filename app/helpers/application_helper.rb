@@ -138,6 +138,7 @@ module ApplicationHelper
   end
 
   def shorten(title, max_letters)
+    return '' unless title.present?
     return title unless title.length > max_letters
     title[0, max_letters - 3] + '...'
   end
