@@ -104,8 +104,11 @@ setupHypervideo = ->
     backButton.dataset.time = video.currentTime
     currentChapter = $('#chapters .current')
     if currentChapter.length > 0
+      backInfo = currentChapter.text().split(':', 1)[0]
+      if backInfo.length > 20
+        backInfo = backInfo.substring(0,18) + '...'
       $(backButton).empty()
-        .append('zurück zu ' + currentChapter.text().split(':', 1)[0].substring(0,20))
+        .append('zurück zu ' + backInfo)
         .show()
     return
 
