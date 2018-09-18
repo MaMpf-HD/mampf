@@ -105,7 +105,7 @@ setupHypervideo = ->
     currentChapter = $('#chapters .current')
     if currentChapter.length > 0
       backInfo = currentChapter.text().split(':', 1)[0]
-      if backInfo.length > 20
+      if backInfo? && backInfo.length > 20
         backInfo = backInfo.substring(0,18) + '...'
       $(backButton).empty()
         .append('zurück zu ' + backInfo)
