@@ -219,3 +219,11 @@
   </div>
 </div>
 </div>
+<% if @medium.manuscript_destinations.present? %>
+  <div class="row mt-2 p-2">
+    <div class="col-12">
+      <%= render partial: 'media/destinations',
+                 locals: { medium: @medium } %>
+    </div>
+  </div>
+<% end %>

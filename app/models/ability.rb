@@ -73,12 +73,14 @@ class Ability
         m.edited_with_inheritance_by?(user)
       end
       can :play, Medium
+      can :display, Medium
       can :create, Medium
       can :manage, Item
       can :manage, Referral
     else
       can :read, :all
       can :play, Medium
+      can :display, Medium
       cannot :read, :administration
       cannot :index, Tag
       cannot :update, Tag

@@ -12,15 +12,20 @@ class PdfUploader < Shrine
   add_metadata do |io, context|
     pdf = Shrine.with_file(io) do |file|
       begin
-        PDF::Reader.new(file.path)
+        Origami::PDF.read(file.path)
       rescue StandardError => e
         puts "Pdf Error, will ignore: #{e}"
       end
     end
     if pdf.present?
-      { "pages"   => pdf.page_count }
+      destinations = []
+      pdf.each_named_dest do |d|
+        destinations.push d.to_s.force_encoding('UTF-8')
+                           .string_between_markers('(',')')
+       end
+      { "pages" => pdf.pages.size, "destinations" => destinations }
     else
-      { "pages" => nil }
+      { "pages" => nil, "destinations" => nil }
     end
   end
 
@@ -30,7 +35,9 @@ class PdfUploader < Shrine
 
   process(:store) do |io, context|
     original = io.download
-    screenshot   = ImageProcessing::MiniMagick.source(original).loader(page: 0).convert("png").resize_to_limit!(400, 565)
+    screenshot   = ImageProcessing::MiniMagick.source(original).loader(page: 0)
+                                              .convert("png")
+                                              .resize_to_limit!(400, 565)
     original.close!
     { original: io, screenshot: screenshot }
   end

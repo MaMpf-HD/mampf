@@ -39,6 +39,16 @@
           </span>
         </div>
       </div>
+      <% if medium.manuscript_destinations.present? %>
+        <div id="manuscript-destinations" class="row">
+          <div class="col-12">
+            Zielpunkte:
+            <span>
+              <%= medium.manuscript_destinations.count %>
+            </span>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>

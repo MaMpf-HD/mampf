@@ -145,6 +145,8 @@ manuscriptUpload = (fileInput) ->
       manuscriptFile.innerHTML = data.metadata.filename
       manuscriptSize.innerHTML = formatBytes(data.metadata.size)
       manuscriptPages.innerHTML = data.metadata.pages + ' S'
+      $('#manuscript-destinations').empty().hide()
+      $('#medium-manuscript-destinations').empty().hide()
       $('#manuscript-meta').show()
       $('#manuscript-preview').hide()
       $('#medium_detach_manuscript').val('false')

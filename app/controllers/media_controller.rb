@@ -46,6 +46,7 @@ class MediaController < ApplicationController
     if params[:medium][:detach_manuscript] == 'true'
       @medium.update(manuscript: nil)
     end
+    @medium.reset_pdf_destinations if @medium.saved_change_to_manuscript_data?
     redirect_to edit_medium_path(@medium)
   end
 
@@ -53,6 +54,8 @@ class MediaController < ApplicationController
     @medium = Medium.new(medium_params)
     @medium.save
     if @medium.valid?
+      puts @medium.manuscript_data
+      @medium.reset_pdf_destinations
       redirect_to edit_medium_path(@medium)
       return
     end
@@ -80,6 +83,14 @@ class MediaController < ApplicationController
     @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
     @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
     @time = params[:time]
+  end
+
+  def display
+    unless params[:destination].present?
+      redirect_to @medium.manuscript_url unless params[:destination].present?
+      return
+    end
+    redirect_to @medium.manuscript_url + '#' + params[:destination]
   end
 
   def add_item

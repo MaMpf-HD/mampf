@@ -9,7 +9,7 @@ class Item < ApplicationRecord
   validates :sort, inclusion: { in: ['remark', 'theorem', 'lemma', 'definition',
                                      'annotation', 'example', 'section',
                                      'algorithm', 'self', 'link', 'corollary',
-                                     'label'],
+                                     'label', 'pdf_destination'],
                                 message: 'Unzulässiger Typ' }
   validates :link, http_url: true, if: :proper_link?
   validates :description,
@@ -56,7 +56,7 @@ class Item < ApplicationRecord
   end
 
   def local_reference
-    unless sort.in?(['self','link'])
+    unless sort.in?(['self','link', 'pdf_destination'])
       return short_reference + ' ' + description.to_s unless sort == 'section'
       return short_reference + ' ' + description if description.present?
       return short_reference + ' ' + section.title if section.present?
@@ -158,7 +158,7 @@ class Item < ApplicationRecord
   end
 
   def other_items
-    ['section', 'self', 'link', 'label']
+    ['section', 'self', 'link', 'label', 'pdf_destination']
   end
 
   def proper_link?
@@ -188,6 +188,7 @@ class Item < ApplicationRecord
 
   def special_reference
     return 'Medium' if sort == 'self'
+    return 'pdf-Ziel' if sort == 'pdf_destination'
     'extern'
   end
 
@@ -220,7 +221,7 @@ class Item < ApplicationRecord
   end
 
   def start_time_not_required
-    medium.nil? || sort == 'self' || !start_time.valid?
+    medium.nil? || sort == 'self' || sort == 'pdf_destination' || !start_time.valid?
   end
 
   def start_time_not_too_late
@@ -259,6 +260,7 @@ class Item < ApplicationRecord
 
   def non_math_reference
     return medium.title_for_viewers if sort == 'self'
+    return medium.title_for_viewers + ' # ' + description if sort == 'pdf_destination'
     'extern ' + description.to_s if sort == 'link'
   end
 

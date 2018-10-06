@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get 'media/:id/inspect/', to: 'media#inspect', as: 'inspect_medium'
   get 'media/:id/enrich', to: 'media#enrich', as: 'enrich_medium'
   get 'media/:id/play', to: 'media#play', as: 'play_medium'
+  get 'media/:id/display', to: 'media#display', as: 'display_medium'
   get 'media/:id/add_item', to: 'media#add_item', as: 'add_item'
   get 'media/:id/add_reference', to: 'media#add_reference', as: 'add_reference'
   get 'media/:id/export_toc', to: 'media#export_toc', as: 'export_toc'

@@ -1,6 +1,7 @@
 # Medium class
 class Medium < ApplicationRecord
   include ApplicationHelper
+  include ActiveModel::Dirty
   belongs_to :teachable, polymorphic: true
   has_many :medium_tag_joins, dependent: :destroy
   has_many :tags, through: :medium_tag_joins
@@ -87,7 +88,7 @@ class Medium < ApplicationRecord
   end
 
   def proper_items
-    items.where.not(sort: 'self')
+    items.where.not(sort: ['self', 'pdf_destination'])
   end
 
   def proper_items_by_time
@@ -168,6 +169,16 @@ class Medium < ApplicationRecord
   def manuscript_screenshot_url
     return unless manuscript.present?
     manuscript[:screenshot].url(host: host)
+  end
+
+  def manuscript_destinations
+    return unless manuscript.present?
+    if manuscript.class.to_s == 'PdfUploader::UploadedFile'
+      return manuscript.metadata['destinations']
+    end
+    if manuscript.class.to_s == 'Hash' && manuscript.keys == [:original, :screenshot]
+      return manuscript[:original].metadata['destinations']
+    end
   end
 
   def video_width
@@ -381,6 +392,13 @@ class Medium < ApplicationRecord
                       manuscript: next_m.manuscript.present?,
                       explanation: 'nächste Sitzung')
       puts r.errors
+    end
+  end
+
+  def reset_pdf_destinations
+    Item.where(medium: self, sort: 'pdf_destination').each(&:destroy)
+    manuscript_destinations.each do |d|
+      Item.create(medium: self, sort: 'pdf_destination', description: d)
     end
   end
 
