@@ -24,13 +24,14 @@ class Item < ApplicationRecord
 
   def self.create_manuscript_destinations(medium, destinations)
     destinations.each do |d|
-      Item.create(medium: medium, sort: 'pdf_destination', description: d)
+      Item.create(medium: medium, sort: 'pdf_destination', description: d,
+                  pdf_destination: d)
     end
   end
 
   def self.destroy_manuscript_destinations(medium, destinations)
     Item.where(medium: medium, sort: 'pdf_destination',
-               description: destinations).each(&:destroy)
+               pdf_destination: destinations).each(&:destroy)
     medium.items.where(pdf_destination: destinations).each do |i|
       i.update(pdf_destination: nil)
     end
