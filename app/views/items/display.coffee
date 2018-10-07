@@ -18,7 +18,7 @@ $('#referral_explanation').val('<%= @explanation %>')
 <% if @item.sort != 'link' %>
 $('#link_details').hide()
 <% if @item.medium.present? %>
-<% if @item.medium.video.present? %>
+<% if @item.sort != 'pdf_destination' && @item.medium.video.present? %>
 $('#referral_video').prop('checked', true)
 $('#video-ref').show()
 $('#video-test').append('<%= link_to "Test",
@@ -41,7 +41,7 @@ $('#manuscript-test')
 $('#referral_manuscript').prop('checked',false)
 $('#manuscript-ref').hide()
 <% end %>
-<% if @item.medium.external_reference_link.present? %>
+<% if @item.sort != 'pdf_destination' && @item.medium.external_reference_link.present? %>
 $('#referral_medium_link').prop('checked', true)
 $('#medium-link-ref').show()
 $('#medium-link-test')
