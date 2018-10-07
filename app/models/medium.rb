@@ -38,8 +38,6 @@ class Medium < ApplicationRecord
     return [] if course.nil?
     filtered = Medium.filter_media(course, params[:project])
     unless params[:lecture_id].present?
-      puts 'Hallo'
-      puts filtered.count
       return search_results(filtered, course, primary_lecture)
     end
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
@@ -172,7 +170,7 @@ class Medium < ApplicationRecord
   end
 
   def manuscript_destinations
-    return unless manuscript.present?
+    return [] unless manuscript.present?
     if manuscript.class.to_s == 'PdfUploader::UploadedFile'
       return manuscript.metadata['destinations']
     end
@@ -367,34 +365,6 @@ class Medium < ApplicationRecord
     end
   end
 
-  def create_neighbouring_references
-    return unless video.present?
-    return unless sort == 'Kaviar'
-    return if description.present?
-    return if teachable_type != 'Lesson'
-    prev_m = previous_medium
-    next_m = next_medium
-    if prev_m.present?
-      start_time = TimeStamp.new(total_seconds: 0)
-      end_time = TimeStamp.new(total_seconds: 60)
-      item = Item.where(medium: prev_m, sort: 'self').first
-      Referral.create(medium: self, item: item, start_time: start_time,
-                      end_time: end_time, video: prev_m.video.present?,
-                      manuscript: prev_m.manuscript.present?,
-                      explanation: 'vorige Sitzung')
-    end
-    if next_m.present?
-      start_time = TimeStamp.new(total_seconds: video_duration - 15)
-      end_time = TimeStamp.new(total_seconds: (video_duration * 1000).floor / 1000.0)
-      item = Item.where(medium: next_m, sort: 'self').first
-      r = Referral.create(medium: self, item: item, start_time: start_time,
-                      end_time: end_time, video: next_m.video.present?,
-                      manuscript: next_m.manuscript.present?,
-                      explanation: 'nächste Sitzung')
-      puts r.errors
-    end
-  end
-
   def reset_pdf_destinations
     Item.where(medium: self, sort: 'pdf_destination').each(&:destroy)
     manuscript_destinations.each do |d|
@@ -405,7 +375,7 @@ class Medium < ApplicationRecord
   private
 
   def undescribable?
-    sort == 'Kaviar' || sort == 'KeksQuestion'
+    (sort == 'Kaviar' && teachable.class.to_s == 'Lesson') || sort == 'KeksQuestion'
   end
 
   def touch_teachable

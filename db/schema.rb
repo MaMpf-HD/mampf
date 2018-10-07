@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_13_110737) do
+ActiveRecord::Schema.define(version: 2018_10_07_101351) do
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -86,6 +86,7 @@ ActiveRecord::Schema.define(version: 2018_09_13_110737) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "ref_number"
+    t.text "pdf_destination"
     t.index ["medium_id"], name: "index_items_on_medium_id"
     t.index ["section_id"], name: "index_items_on_section_id"
   end

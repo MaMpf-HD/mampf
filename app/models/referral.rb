@@ -49,7 +49,7 @@ class Referral < ApplicationRecord
   end
 
   def video?
-    return true if item.present? && item.video?
+    return true if item.present? && item.video? && item.sort != 'pdf_destination'
     false
   end
 

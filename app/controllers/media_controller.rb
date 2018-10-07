@@ -36,6 +36,7 @@ class MediaController < ApplicationController
   end
 
   def update
+    @old_manuscript_destinations = @medium.manuscript_destinations
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
@@ -46,16 +47,16 @@ class MediaController < ApplicationController
     if params[:medium][:detach_manuscript] == 'true'
       @medium.update(manuscript: nil)
     end
-    @medium.reset_pdf_destinations if @medium.saved_change_to_manuscript_data?
+    update_manuscript_destinations if @medium.saved_change_to_manuscript_data?
     redirect_to edit_medium_path(@medium)
   end
 
   def create
     @medium = Medium.new(medium_params)
+    @old_manuscript_destinations = []
     @medium.save
     if @medium.valid?
-      puts @medium.manuscript_data
-      @medium.reset_pdf_destinations
+      update_manuscript_destinations
       redirect_to edit_medium_path(@medium)
       return
     end
@@ -278,5 +279,14 @@ class MediaController < ApplicationController
     teachable_ids = search_params[:teachable_ids] || []
     teachable_ids.select { |t| t.start_with?('course') }
                  .map { |t| t.remove('course-') }
+  end
+
+  def update_manuscript_destinations
+    Item.create_manuscript_destinations(@medium,
+                                        @medium.manuscript_destinations -
+                                        @old_manuscript_destinations)
+    Item.destroy_manuscript_destinations(@medium,
+                                         @old_manuscript_destinations -
+                                         @medium.manuscript_destinations)
   end
 end

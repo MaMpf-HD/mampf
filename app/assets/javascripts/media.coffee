@@ -89,6 +89,13 @@ $(document).on 'turbolinks:load', ->
       $('#item_number_field').show() unless $('#item_sort').val() == 'label'
     return
 
+  $(document).on 'change', '#item_pdf_destination', ->
+    if $(this).val() != ''
+      $('#item_page_field').hide()
+    else
+      $('#item_page_field').show()
+    return    
+
   $(document).on 'click', '[id^="tocitem-"]', ->
     time = this.dataset.time
     item = this.dataset.item

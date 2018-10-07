@@ -22,6 +22,20 @@ class Item < ApplicationRecord
   after_save :touch_medium
   before_destroy :touch_medium
 
+  def self.create_manuscript_destinations(medium, destinations)
+    destinations.each do |d|
+      Item.create(medium: medium, sort: 'pdf_destination', description: d)
+    end
+  end
+
+  def self.destroy_manuscript_destinations(medium, destinations)
+    Item.where(medium: medium, sort: 'pdf_destination',
+               description: destinations).each(&:destroy)
+    medium.items.where(pdf_destination: destinations).each do |i|
+      i.update(pdf_destination: nil)
+    end
+  end
+
   def end_time
     return unless video?
     return TimeStamp.new(total_seconds: medium.video_duration) if next_item.nil?
@@ -71,7 +85,7 @@ class Item < ApplicationRecord
   end
 
   def global_reference
-    unless sort.in?(['self', 'link'])
+    unless sort.in?(['self', 'link', 'pdf_destination'])
       if section.present?
         return medium.teachable.lecture.title_for_viewers +
                ', ' + local_reference
@@ -113,7 +127,8 @@ class Item < ApplicationRecord
   def manuscript_link
     return unless manuscript?
     link = medium.manuscript[:original].url(host: host)
-    link += '#page=' + page.to_s if page.present?
+    return link + '#' + pdf_destination if pdf_destination.present?
+    return link + '#page=' + page.to_s if page.present?
     link
   end
 
@@ -260,7 +275,7 @@ class Item < ApplicationRecord
 
   def non_math_reference
     return medium.title_for_viewers if sort == 'self'
-    return medium.title_for_viewers + ' # ' + description if sort == 'pdf_destination'
+    return medium.title_for_viewers + ' (pdf) # ' + description if sort == 'pdf_destination'
     'extern ' + description.to_s if sort == 'link'
   end
 
