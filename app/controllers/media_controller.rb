@@ -5,7 +5,7 @@ class MediaController < ApplicationController
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :sanitize_params
-  before_action :check_for_consent, except: [:play]
+  before_action :check_for_consent, except: [:play, :display]
   authorize_resource
 
   def index
