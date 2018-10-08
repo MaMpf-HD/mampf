@@ -11,7 +11,7 @@
 ```
 createuser mampf
 createdb -O mampf mampf
-psql -c "ALTER USER mampf PASSWORD '$PASSWORD'" 
+psql -c "ALTER USER mampf PASSWORD '$PASSWORD'"
 ```
  2. Create an environment file like this:
 ```
@@ -26,8 +26,12 @@ MAILSERVER=localhost
 FROM_ADDRESS=mampf@localhost
 URL_HOST=localhost
 RAILS_MASTER_KEY=$MASTER_KEY
+KEKS_SERVER = your_keks_server
+ERDBEERE_SERVER = your_erdbeere_server
+MUESLI_SERVER = your_muesli_server
+PROJECT_EMAIL = your_project_email
 ```
- 3. Execute the following commands to install and run the service: 
+ 3. Execute the following commands to install and run the service:
 ```
 git clone -b master git@github.com:fosterfarrell9/mampf.git
 docker build --label "mampf" mampf
