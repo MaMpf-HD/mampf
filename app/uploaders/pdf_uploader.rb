@@ -20,8 +20,7 @@ class PdfUploader < Shrine
     if pdf.present?
       destinations = []
       pdf.each_named_dest do |d|
-        destinations.push d.to_s.force_encoding('UTF-8')
-                           .string_between_markers('(',')')
+        destinations.push(d.value.force_encoding('UTF-8'))
       end
       destinations.reject! { |d| d.include?(' ') || d.include?('.') }
       { "pages" => pdf.pages.size, "destinations" => destinations }
