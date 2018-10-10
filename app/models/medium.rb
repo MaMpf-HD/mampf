@@ -172,10 +172,10 @@ class Medium < ApplicationRecord
   def manuscript_destinations
     return [] unless manuscript.present?
     if manuscript.class.to_s == 'PdfUploader::UploadedFile'
-      return manuscript.metadata['destinations']
+      return manuscript.metadata['destinations'] || []
     end
     if manuscript.class.to_s == 'Hash' && manuscript.keys == [:original, :screenshot]
-      return manuscript[:original].metadata['destinations']
+      return manuscript[:original].metadata['destinations'] || []
     end
   end
 
