@@ -12,3 +12,8 @@ resetSelectized = (index, select) ->
 $(document).on 'turbolinks:before-cache', ->
   $('.selectized').each resetSelectized
   return
+
+$(document).on 'turbolinks:load', ->
+  $('.selectize').selectize({ plugins: ['remove_button'] })
+  $('input[id$="-selectized"]').css('width', '100%')
+  return

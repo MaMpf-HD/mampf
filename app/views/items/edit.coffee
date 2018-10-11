@@ -9,4 +9,5 @@ $('#item_description_field').hide()
 $('#item_number_field').hide()
 <% end %>
 <% end %>
-$('.selectize').selectize()
+$('.selectize').selectize({ plugins: ['remove_button'] })
+$('input[id$="-selectized"]').css('width', '100%')
