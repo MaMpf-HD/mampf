@@ -4,3 +4,4 @@ $('#action-container').empty()
                         locals: { referral: @referral,
                                   item_selection: @item_selection }%>')
 $('.selectize').selectize({ plugins: ['remove_button'] })
+$('input[id$="-selectized"]').css('width', '100%')
