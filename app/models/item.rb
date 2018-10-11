@@ -97,6 +97,7 @@ class Item < ApplicationRecord
   end
 
   def vtt_text
+    return '' if sort == 'pdf_destination'
     return description if sort == 'link'
     short_description
   end
@@ -204,7 +205,7 @@ class Item < ApplicationRecord
 
   def special_reference
     return 'Medium' if sort == 'self'
-    return 'pdf-Ziel' if sort == 'pdf_destination'
+    return '' if sort == 'pdf_destination'
     'extern'
   end
 
