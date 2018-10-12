@@ -74,14 +74,14 @@
       </div>
       <div class="card-body">
         <ul>
-        <% current_user.edited_media.order(:updated_at).reverse.first(10).each do |m| %>
+        <% current_user.edited_media.order(:updated_at).reverse.first(20).each do |m| %>
           <li>
             <%= link_to m.title, edit_medium_path(m) %>
           </li>
         <% end %>
         </ul>
-        <% if current_user.edited_lessons_with_inheritance.count > 10 %>
-          Es werden nur die 10 zuletzt geupdateten Medien angezeigt.
+        <% if current_user.edited_media.count > 20 %>
+          Es werden nur die 20 zuletzt geupdateten Medien angezeigt.
         <% end %>
       </div>
     </div>
