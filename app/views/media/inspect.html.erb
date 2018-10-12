@@ -108,8 +108,18 @@
     <div class="card bg-light">
       <div class="card-header">
         <div class="row">
-          <div class="col-12">
+          <div class="col-3">
             Video
+            <span class="badge badge-secondary">
+              mp4
+            </span>
+          </div>
+          <div class="col-9 text-right">
+            <% if @medium.video.present? %>
+              <%= link_to 'Thyme', play_medium_path(@medium),
+                          class: 'btn btn-outline-secondary btn-sm',
+                          target: :blank %>
+            <% end %>
           </div>
         </div>
       </div>

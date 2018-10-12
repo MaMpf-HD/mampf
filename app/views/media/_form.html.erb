@@ -113,16 +113,22 @@
       <div class="card bg-light">
         <div class="card-header">
           <div class="row">
-            <div class="col-4">
-              Video (mp4)
+            <div class="col-3">
+              Video
+              <span class="badge badge-secondary">
+                mp4
+              </span>
             </div>
-            <div class="col-4 text-right">
+            <div class="col-6 text-right">
               <% if medium.video.present? %>
+                <%= link_to 'Thyme', play_medium_path(medium),
+                            class: 'btn btn-outline-secondary btn-sm',
+                            target: :blank %>
                 <%= link_to 'Thyme-Editor', enrich_medium_path(medium),
                             class: 'btn btn-sm btn-outline-secondary' %>
               <% end %>
             </div>
-            <div class="col-4 text-right" id="video-uploadButton">
+            <div class="col-3 text-right" id="video-uploadButton">
               <input type="hidden" name="medium[video]"
                      value="<%= medium.cached_video_data %>"
                      id="upload-video-hidden">
@@ -155,7 +161,10 @@
         <div class="card-header">
           <div class="row">
             <div class="col-8">
-              Manuskript (pdf)
+              Manuskript
+              <span class="badge badge-secondary">
+                pdf
+              </span>
               <i class="far fa-question-circle" style="cursor: pointer;"
                  data-toggle="modal"
                  data-target="#manuscriptInfoModal">
