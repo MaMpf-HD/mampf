@@ -107,6 +107,7 @@ class MediaController < ApplicationController
                              start_time: TimeStamp.new(total_seconds: @time),
                              end_time: TimeStamp.new(total_seconds: @end_time))
     @item_selection = @medium.items_for_thyme
+    @item = Item.new(sort: 'link')
   end
 
   def add_screenshot

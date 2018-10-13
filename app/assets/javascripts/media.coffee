@@ -94,7 +94,7 @@ $(document).on 'turbolinks:load', ->
       $('#item_page_field').hide()
     else
       $('#item_page_field').show()
-    return    
+    return
 
   $(document).on 'click', '[id^="tocitem-"]', ->
     time = this.dataset.time
@@ -127,9 +127,9 @@ $(document).on 'turbolinks:load', ->
     itemId = $(this).val()
     refId = $('#referral_ref_id').val()
     if itemId == ''
-      $('#link_reappearance').hide()
       $('#item_details').hide()
-      $('#link_details').show()
+      $('#link_details').hide()
+      $('#explanation_details').hide()
       $('#referral_link').val('')
       $('#referral_description').val('')
       $('#referral_explanation').val('')
@@ -147,6 +147,11 @@ $(document).on 'turbolinks:load', ->
     window.open(url, '_blank')
     return
 
+  $(document).on 'click', '#item-test-link', ->
+    url = $('#item_link').val()
+    window.open(url, '_blank')
+    return
+
   $(document).on 'click', '.timer', ->
     video = document.getElementById('video-edit')
     video.pause()
@@ -155,6 +160,15 @@ $(document).on 'turbolinks:load', ->
     roundTime = intTime + Math.floor((time - intTime) * 1000) / 1000
     video.currentTime = roundTime
     $('#' + this.dataset.timer).val(fancyTimeFormat(video.currentTime))
+    return
+
+  $(document).on 'click', '#create_external_link', ->
+    $('#external_item_form')[0].reset();
+    $('#item_link').removeClass('is-invalid')
+    $('#item-link-error').empty()
+    $('#item_description').removeClass('is-invalid')
+    $('#item-description-error').empty()
+    $('#newItemModal').modal('show')
     return
 
   $('#export-toc').on 'click', (e) ->

@@ -12,6 +12,7 @@ class ReferralsController < ApplicationController
 
   def edit
     @item_selection = @referral.medium.items_for_thyme
+    @item = Item.new(sort: 'link')
   end
 
   def create

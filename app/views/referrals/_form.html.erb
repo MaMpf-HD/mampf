@@ -42,17 +42,34 @@
       <div class="col-2 col-form-label">
         <%= f.label :item_id, 'Eintrag' %>
       </div>
-      <div class="col-10">
+      <div class="col-9">
         <%= f.select :item_id,
-                     [['externen Eintrag anlegen', '']] +
+                     [['auswählen', '']] +
                        item_selection,
                      {}, { class: 'selectize' } %>
+      </div>
+      <div class="col-1 col-form-label">
+        <i id="create_external_link" class="material-icons clickable"
+           data-toggle="tooltip"
+           data-placement="left" title="externen Eintrag anlegen">
+          note_add
+        </i>
       </div>
     </div>
     <div id="link_details" style="display: <%= show(referral.show_link) %>">
       <div id="referral_description_field" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :description, 'Titel' %>
+          <i id="link_reappearance_title"
+             class="material-icons"
+             style="display: <%= show_inline(referral.reappears) %>"
+             data-toggle="tooltip"
+             data-placement="left"
+             title="Zur Info: Der externe Eintrag ist bereits von woanders referenziert.
+             Wenn Du den Titel bearbeitest, ändern sich dieser
+             an alle Stellen, an denen der Eintrag referenziert ist.">
+            warning
+          </i>
         </div>
         <div class="col-6">
           <%= f.text_field :description,
@@ -65,6 +82,16 @@
       <div id="referral_link_field" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :link, 'Link' %>
+          <i id="link_reappearance_link"
+             class="material-icons"
+             style="display: <%= show_inline(referral.reappears) %>"
+             data-toggle="tooltip"
+             data-placement="left"
+             title="Zur Info: Der externe Eintrag ist bereits von woanders referenziert.
+             Wenn Du den Link bearbeitest, ändern sich dieser
+             an alle Stellen, an denen der Eintrag referenziert ist.">
+            warning
+          </i>
         </div>
         <div class="col-8">
           <%= f.text_field :link,
@@ -78,18 +105,6 @@
                   class="btn btn-sm btn-outline-info">
             Test
           </button>
-        </div>
-      </div>
-      <div class="form-row mb-2">
-        <div class="col-2">
-        </div>
-        <div class="col-10">
-          <div id="link_reappearance"
-               style="display: <%= show(referral.reappears) %>">
-            Zur Info: Der externe Eintrag ist bereits von woanders referenziert.
-            Wenn Du den externen Eintrag bearbeitest, ändern sich sämtliche
-            Referenzen.
-          </div>
         </div>
       </div>
     </div>
@@ -152,14 +167,17 @@
         </div>
       </div>
     </div>
-    <div class="form-group form-row">
-      <div class="col-2 col-form-label">
-        <%= f.label :explanation, 'Erläuterung' %>
-      </div>
-      <div class="col-8">
-        <%= f.text_area :explanation, { value: referral.explain,
-                                        class: 'form-control', escape: true } %>
-        <div class="invalid-feedback" id="explanation-error">
+    <div id="explanation_details"
+         style="display: <%= show(referral.show_explanation) %>;">
+      <div class="form-group form-row">
+        <div class="col-2 col-form-label">
+          <%= f.label :explanation, 'Erläuterung' %>
+        </div>
+        <div class="col-8">
+          <%= f.text_area :explanation, { value: referral.explain,
+                                          class: 'form-control', escape: true } %>
+          <div class="invalid-feedback" id="explanation-error">
+          </div>
         </div>
       </div>
     </div>
@@ -176,3 +194,5 @@
     <% end %>
   <% end %>
 </div>
+<%= render partial: 'items/modal',
+           locals: { item: item }%>

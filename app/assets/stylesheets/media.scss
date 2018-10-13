@@ -218,6 +218,10 @@
   text-decoration: none !important;
 }
 
+#link_reappearance_title, #link_reappearance_link {
+  color: gold;
+}
+
 
 #create-item-button:focus, #create-item-button:active:focus, #create-item-button.active:focus{
     outline:none;

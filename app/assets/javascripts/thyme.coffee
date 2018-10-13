@@ -323,8 +323,8 @@ $(document).on 'turbolinks:load', ->
   setupHypervideo()
 
   # iOS no fullscreen button
-  # iOS = ! !navigator.platform and /iPad|iPhone/.test(navigator.platform)
-  # fullScreenButton.style.display = 'none' if iOS
+  iOS = ! !navigator.platform and /iPad|iPhone/.test(navigator.platform)
+  fullScreenButton.style.display = 'none' if iOS
 
   mobileDisplay = ->
     $('#caption').hide()

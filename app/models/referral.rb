@@ -31,8 +31,13 @@ class Referral < ApplicationRecord
   end
 
   def show_link
-    return true if item.nil? || (item.present? && item.sort == 'link')
+    return true if item.present? && item.sort == 'link'
     false
+  end
+
+  def show_explanation
+    return false if item.nil?
+    true
   end
 
   def reappears

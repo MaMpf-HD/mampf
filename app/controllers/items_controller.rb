@@ -13,6 +13,7 @@ class ItemsController < ApplicationController
   def create
     @item = Item.create(item_params)
     @errors = @item.errors unless @item.valid?
+    @from = params[:item][:from]
     render :update
   end
 

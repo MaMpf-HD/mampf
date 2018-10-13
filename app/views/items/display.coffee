@@ -15,6 +15,7 @@ $('#video-test').empty()
 $('#manuscript-test').empty()
 $('#medium-link-test').empty()
 $('#referral_explanation').val('<%= @explanation %>')
+$('#explanation_details').show()
 <% if @item.sort != 'link' %>
 $('#link_details').hide()
 <% if @item.medium.present? %>
@@ -57,11 +58,13 @@ $('#medium-link-ref').hide()
 $('#item_details').show()
 <% else %>
 $('#item_details').hide()
-$('#link_reappearance').hide()
+$('#link_reappearance_title').hide()
+$('#link_reappearance_link').hide()
 $('#referral_description').val('<%= @item.description %>')
 $('#referral_link').val('<%= @item.link %>')
 <% if @reappears %>
-$('#link_reappearance').show()
+$('#link_reappearance_title').show()
+$('#link_reappearance_link').show()
 <% end %>
 $('#link_details').show()
 <% end %>

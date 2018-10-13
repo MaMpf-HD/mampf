@@ -1,0 +1,57 @@
+<div class="modal fade" id="newItemModal" tabindex="-1" role="dialog"
+     aria-labelledby="newItemModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="newItemModalLabel">
+          Externen Eintrag anlegen
+        </h5>
+        <button type="button" class="close"
+                data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+      </div>
+      <div class="modal-body" id="new-item-modal-content">
+        <%= form_with model: item, id: 'external_item_form' do |f|%>
+          <div id="referral_description_field" class="form-group form-row">
+            <div class="col-2 col-form-label">
+              <%= f.label :description, 'Titel' %>
+            </div>
+            <div class="col-8">
+              <%= f.text_field :description,
+                               { size: 50, class: 'form-control' } %>
+              <div class="invalid-feedback" id="item-description-error">
+              </div>
+            </div>
+          </div>
+          <div id="referral_link_field" class="form-group form-row">
+            <div class="col-2 col-form-label">
+              <%= f.label :link, 'Link' %>
+            </div>
+            <div class="col-8">
+              <%= f.text_field :link,
+                               { size: 50, class: 'form-control' } %>
+              <div class="invalid-feedback" id="item-link-error">
+              </div>
+            </div>
+            <div class="col-2 col-form-label">
+              <button id="item-test-link" type="button"
+                      class="btn btn-sm btn-outline-info">
+                Test
+              </button>
+            </div>
+          </div>
+          <%= f.hidden_field :sort, value: 'link' %>
+          <%= f.hidden_field :from, value: 'referral' %>
+          <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+          <button class="btn btn-secondary ml-3" type="button"
+                  data-dismiss="modal">
+            Abbrechen
+          </button>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
