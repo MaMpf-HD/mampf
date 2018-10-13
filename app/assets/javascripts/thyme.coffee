@@ -310,7 +310,7 @@ $(document).on 'turbolinks:load', ->
   # detect IE/edge and cancel if true
   if document.documentMode || /Edge/.test(navigator.userAgent)
     alert 'Dein Browser wird von Thyme leider nicht unterstützt.' +
-    'Du kannst das Video nur mit dem Browser-Player aunschauen.'
+    'Du kannst das Video nur mit dem Browser-Player anschauen.'
     $('#caption').hide()
     $('#video-controlBar').hide()
     video.style.width = '100%'
@@ -323,8 +323,8 @@ $(document).on 'turbolinks:load', ->
   setupHypervideo()
 
   # iOS no fullscreen button
-  iOS = ! !navigator.platform and /iPad|iPhone/.test(navigator.platform)
-  fullScreenButton.style.display = 'none' if iOS
+  # iOS = ! !navigator.platform and /iPad|iPhone/.test(navigator.platform)
+  # fullScreenButton.style.display = 'none' if iOS
 
   mobileDisplay = ->
     $('#caption').hide()
