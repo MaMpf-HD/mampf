@@ -1,3 +1,6 @@
+# filename starts with underscore to move it in the first
+# position of the asset pipeline
+
 resetSelectized = (index, select) ->
   selectedValue = select.selectize.getValue()
   select.selectize.destroy()
