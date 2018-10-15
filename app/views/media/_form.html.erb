@@ -119,20 +119,20 @@
                 mp4
               </span>
             </div>
-            <div class="col-6 text-right">
-              <% if medium.video.present? %>
-                <%= link_to 'Thyme', play_medium_path(medium),
-                            class: 'btn btn-outline-secondary btn-sm',
-                            target: :blank %>
-                <%= link_to 'Thyme-Editor', enrich_medium_path(medium),
-                            class: 'btn btn-sm btn-outline-secondary' %>
-              <% end %>
-            </div>
             <div class="col-3 text-right" id="video-uploadButton">
               <input type="hidden" name="medium[video]"
                      value="<%= medium.cached_video_data %>"
                      id="upload-video-hidden">
               <input type="file" name="medium[video]" id="upload-video">
+            </div>
+            <div class="col-6 text-right">
+              <% if medium.video.present? %>
+                <%= link_to 'Editor', enrich_medium_path(medium),
+                            class: 'btn btn-sm btn-outline-secondary' %>
+                <%= link_to 'Thyme', play_medium_path(medium),
+                            class: 'btn btn-outline-secondary btn-sm',
+                            target: :blank %>
+              <% end %>
             </div>
           </div>
         </div>

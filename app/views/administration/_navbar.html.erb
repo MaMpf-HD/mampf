@@ -6,33 +6,40 @@
   </button>
   <div class="navbar-collapse collapse" id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
-        <li class="nav-item <%= active(controller_name == 'administration' && action_name == "index") %>">
-          <%= link_to "Übersicht", administration_path,
-              class: 'nav-link ' %>
-        </li>
+      <li class="nav-item <%= active(controller_name == 'administration' && action_name == "index") %>">
+        <%= link_to "Übersicht", administration_path,
+                    class: 'nav-link ' %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Administration beenden", exit_administration_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Logout", destroy_user_session_path, class: 'nav-link',
+            method: :delete %>
+      </li>
     </ul>
-        <ul class="navbar-nav mr-auto">
-        <li class="nav-item <%= active(controller_name == 'media') %>">
-          <%= link_to "Medien", media_catalog_path, class: 'nav-link' %>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item <%= active(controller_name == 'media') %>">
+        <%= link_to "Medien", media_catalog_path, class: 'nav-link' %>
+      </li>
+      <% if current_user.admin? || current_user.edited_courses.present? %>
+        <li class="nav-item <%= active(controller_name == 'courses') %>">
+          <%= link_to "Module", courses_path,
+                      class: 'nav-link' %>
         </li>
-        <% if current_user.admin? || current_user.edited_courses.present? %>
-          <li class="nav-item <%= active(controller_name == 'courses') %>">
-            <%= link_to "Module", courses_path,
-                class: 'nav-link' %>
-          </li>
-          <li class="nav-item <%= active(controller_name == 'lectures') %>">
-            <%= link_to "Vorlesungen", lectures_path, class: 'nav-link' %>
-          </li>
-        <% end %>
-        <li class="nav-item <%= active(controller_name == 'tags') %>">
-          <%= link_to "Tags", tags_path, class: 'nav-link' %>
+        <li class="nav-item <%= active(controller_name == 'lectures') %>">
+          <%= link_to "Vorlesungen", lectures_path, class: 'nav-link' %>
         </li>
-        <% if current_user.admin? %>
-          <li class="nav-item <%= active(controller_name == 'terms') %>">
-            <%= link_to "Semester", terms_path,
-                class: 'nav-link ' %>
-          </li>
-        <% end %>
+      <% end %>
+      <li class="nav-item <%= active(controller_name == 'tags') %>">
+        <%= link_to "Tags", tags_path, class: 'nav-link' %>
+      </li>
+      <% if current_user.admin? %>
+        <li class="nav-item <%= active(controller_name == 'terms') %>">
+          <%= link_to "Semester", terms_path,
+                      class: 'nav-link ' %>
+        </li>
+      <% end %>
     </ul>
     <% if current_user.admin? %>
     <ul class="navbar-nav mr-auto">
@@ -44,13 +51,6 @@
     <ul class="navbar-nav">
       <li class="nav-item <%= active(controller_name == 'administration' && action_name == "profile") %>">
         <%= link_to "Profil", elevated_profile_path, class: 'nav-link' %>
-      </li>
-      <li class="nav-item">
-        <%= link_to "Administration beenden", exit_administration_path, class: 'nav-link' %>
-      </li>
-      <li class="nav-item">
-        <%= link_to "Logout", destroy_user_session_path, class: 'nav-link',
-            method: :delete %> 
       </li>
     </ul>
   </div>
