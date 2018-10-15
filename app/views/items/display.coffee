@@ -2,9 +2,6 @@ $('#referral_start_time').removeClass('is-invalid')
 $('#start-time-error').empty()
 $('#referral_end_time').removeClass('is-invalid')
 $('#end-time-error').empty()
-$('#referral_manuscript').removeClass('is-invalid')
-$('#referral_video').removeClass('is-invalid')
-$('#ref-error').empty()
 $('#referral_link').removeClass('is-invalid')
 $('#link-error').empty()
 $('#referral_description').removeClass('is-invalid')
@@ -20,38 +17,32 @@ $('#explanation_details').show()
 $('#link_details').hide()
 <% if @item.medium.present? %>
 <% if @item.sort != 'pdf_destination' && @item.medium.video.present? %>
-$('#referral_video').prop('checked', true)
 $('#video-ref').show()
 $('#video-test').append('<%= link_to "Test",
                                      @item.video_link,
-                                     class: "badge badge-info ml-4",
+                                     class: "badge badge-info",
                                      target: :blank %>')
 <% else %>
-$('#referral_video').prop('checked', false)
 $('#video-ref').hide()
 <% end %>
 <% if @item.medium.manuscript.present? %>
-$('#referral_manuscript').prop('checked', true)
 $('#manuscript-ref').show()
 $('#manuscript-test')
   .append('<%= link_to "Test",
                        @item.manuscript_link,
-                       class: "badge badge-info ml-4",
+                       class: "badge badge-info",
                        target: :blank %>')
 <% else %>
-$('#referral_manuscript').prop('checked',false)
 $('#manuscript-ref').hide()
 <% end %>
 <% if @item.sort != 'pdf_destination' && @item.medium.external_reference_link.present? %>
-$('#referral_medium_link').prop('checked', true)
 $('#medium-link-ref').show()
 $('#medium-link-test')
   .append('<%= link_to "Test",
                        @item.medium_link,
-                       class: "badge badge-info ml-4",
+                       class: "badge badge-info",
                        target: :blank %>')
 <% else %>
-$('#referral_medium_link').prop('checked', false)
 $('#medium-link-ref').hide()
 <% end %>
 <% end %>

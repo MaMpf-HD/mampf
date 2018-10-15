@@ -38,16 +38,12 @@ class ReferralsController < ApplicationController
   end
 
   def set_basics
-    @video = params[:referral][:video]
-    @manuscript = params[:referral][:manuscript]
-    @medium_link = params[:referral][:medium_link]
     @item_id = params[:referral][:item_id].to_i
   end
 
   def referral_params
     filter = params.require(:referral).permit(:medium_id, :item_id, :start_time,
                                               :end_time, :description, :link,
-                                              :video, :manuscript, :medium_link,
                                               :explanation, :ref_id).clone
     filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
     filter[:end_time] = TimeStamp.new(time_string: filter[:end_time])
@@ -60,8 +56,6 @@ class ReferralsController < ApplicationController
                        explanation: referral_params[:explanation])
     @errors = item.errors unless item.valid?
     @item_id = item.id
-    @video = nil
-    @manuscript = nil
   end
 
   def update_item
@@ -70,8 +64,6 @@ class ReferralsController < ApplicationController
                 description: referral_params[:description],
                 explanation: referral_params[:explanation])
     @errors = item.errors unless item.valid?
-    @video = nil
-    @manuscript = nil
   end
 
   def update_or_create_item
@@ -86,7 +78,6 @@ class ReferralsController < ApplicationController
     { medium_id: referral_params[:medium_id], item_id: @item_id,
       explanation: referral_params[:explanation],
       start_time: referral_params[:start_time],
-      end_time: referral_params[:end_time],
-      video: @video, manuscript: @manuscript, medium_link: @medium_link }
+      end_time: referral_params[:end_time] }
   end
 end

@@ -112,50 +112,42 @@
       <div class="form-group form-row">
         <div class="col-2">
         </div>
-        <div class="col-3" id="video-ref"
+        <div class="col-1">
+          verlinkt:
+        </div>
+        <div class="col-3 text-right" id="video-ref"
              style="display: <%= show(referral.video?) %>">
-          <div class="custom-control custom-checkbox">
-            <%= f.check_box :video, class: 'custom-control-input' %>
-            <%= f.label :video, 'Video-Link',
-                        { class: 'custom-control-label' } %>
-          </div>
-          <div id="video-test">
+          Video
+          <span id="video-test">
             <% if referral.video? %>
-              <%= link_to 'Test', referral.item.video_link,
-                          class: 'badge badge-info ml-4',
+              <%= link_to 'Test',
+                          referral.item.video_link,
+                          class: 'badge badge-info',
                           target: :blank %>
             <% end %>
-          </div>
+          </span>
         </div>
-        <div class="col-3" id="manuscript-ref"
+        <div class="col-3 text-right" id="manuscript-ref"
              style="display: <%= show(referral.manuscript?) %>">
-          <div class="custom-control custom-checkbox">
-            <%= f.check_box :manuscript, class: 'custom-control-input' %>
-            <%= f.label :manuscript, 'Manuskript-Link',
-                        { class: 'custom-control-label' } %>
-          </div>
-          <div id='manuscript-test'>
+          Manuskript
+          <span id='manuscript-test'>
             <% if referral.manuscript? %>
               <%= link_to 'Test', referral.item.manuscript_link,
-                          class: 'badge badge-info ml-4',
+                          class: 'badge badge-info',
                           target: :blank %>
             <% end %>
-          </div>
+          </span>
         </div>
-        <div class="col-3" id="medium-link-ref"
+        <div class="col-3 text-right" id="medium-link-ref"
              style="display: <%= show(referral.medium_link?) %>">
-          <div class="custom-control custom-checkbox">
-            <%= f.check_box :medium_link, class: 'custom-control-input' %>
-            <%= f.label :medium_link, 'externer Link',
-                        { class: 'custom-control-label' } %>
-          </div>
-          <div id='medium-link-test'>
+          externer Link
+          <span id='medium-link-test'>
             <% if referral.medium_link? %>
-              <%= link_to 'Test', referral.item.medium_link,
-                          class: 'badge badge-info ml-4',
+              <%= link_to 'T', referral.item.medium_link,
+                          class: 'badge badge-info',
                           target: :blank %>
             <% end %>
-          </div>
+          </span>
         </div>
       </div>
       <div class="row mb-3">

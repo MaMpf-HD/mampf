@@ -9,7 +9,6 @@ class Referral < ApplicationRecord
   validate :start_time_not_too_late
   validate :end_time_not_too_late
   validate :end_time_not_too_soon
-  validate :reference_present
 
   def explain
     return explanation if item.nil?
@@ -21,10 +20,10 @@ class Referral < ApplicationRecord
   end
 
   def vtt_properties
-    link = item.medium_link if medium_link
+    link = item.medium_link
     link = item.link if item.link.present?
-    manuscript_link = item.manuscript_link if manuscript
-    video_link = item.video_link if video
+    manuscript_link = item.manuscript_link
+    video_link = item.video_link
     { 'video' => video_link, 'manuscript' => manuscript_link,
       'link' => link, 'reference' => item.vtt_meta_reference(medium),
       'text' => item.vtt_text, 'explanation' => vtt_explanation }.compact
@@ -111,24 +110,5 @@ class Referral < ApplicationRecord
     return true if start_time.total_seconds < end_time.total_seconds
     errors.add(:end_time, 'Endzeit muss hinter der Startzeit liegen.')
     false
-  end
-
-  def reference_present
-    return true if item.medium.nil?
-    unless item.medium.video.present? || item.medium.manuscript.present? ||
-           item.medium.external_reference_link.present?
-
-      errors.add(:video, 'Das gewählte Medium kann nicht referenziert werden, '\
-                         'da es keine Inhalte bereithält.')
-      return false
-    end
-    return true if enough_references
-    errors.add(:video, 'Es muss mindestens eine Referenz ausgewählt sein.')
-  end
-
-  def enough_references
-    (item.medium.video.present? && video) ||
-      (item.medium.manuscript.present? && manuscript) ||
-      (item.medium.external_reference_link.present? && medium_link)
   end
 end
