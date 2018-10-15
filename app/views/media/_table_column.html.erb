@@ -3,7 +3,7 @@
     <ul>
       <% media.each do |m| %>
         <li>
-          <%= link_to m.compact_info, inspect_medium_path(m) %>
+          <%= link_to m.local_info, inspect_medium_path(m) %>
         </li>
       <% end %>
     </ul>
@@ -34,7 +34,7 @@
                id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
                role="tabpanel"
                aria-labelledby="v-pills-<%= sort %>-<% t.class %>-<%= t.id %>-tab">
-            <% relevant = relevant_media(t, media)&.sort_by(&:compact_info) %>
+            <% relevant = relevant_media(t, media)&.sort_by(&:local_info) %>
             <% if relevant.present? %>
               <div class="row">
                 <% split_list(relevant, 2).each do |media_list| %>
@@ -43,7 +43,7 @@
                       <% media_list.each do |m| %>
                         <% unless m.nil? %>
                           <li>
-                            <%= link_to m.compact_info, inspect_medium_path(m) %>
+                            <%= link_to m.local_info, inspect_medium_path(m) %>
                           </li>
                         <% end %>
                       <% end %>

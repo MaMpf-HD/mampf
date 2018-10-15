@@ -319,6 +319,13 @@ class Medium < ApplicationRecord
     compact_info + '.(' + position.to_s + '/' + siblings.count.to_s + ')'
   end
 
+  def local_info
+    return description if description.present?
+    return 'ohne Titel' unless undescribable?
+    return 'zu Sitzung ' + teachable.lesson&.number&.to_s if sort == 'Kaviar'
+    'KeksFrage ' + position.to_s + '/' + siblings.count.to_s
+  end
+
   def details
     return description if description.present?
     return 'Frage ' + question_id.to_s if sort == 'KeksQuestion'
@@ -342,15 +349,19 @@ class Medium < ApplicationRecord
   def items_for_thyme
     scope_type = teachable.media_scope.class.to_s
     scope_id = teachable.media_scope.id
+    # internal_items = Medium.where.not(id: id).map(&:items_with_references)
+    #                        .flatten.map do |i|
+    # reference = if i[:scope_type] == scope_type && i[:scope_id] == scope_id
+    #               i[:local]
+    #             else
+    #               i[:global]
+    #             end
+    #    [reference, i[:id]]
+    # end
     internal_items = Medium.where.not(id: id).map(&:items_with_references)
-                           .flatten.map do |i|
-      reference = if i[:scope_type] == scope_type && i[:scope_id] == scope_id
-                    i[:local]
-                  else
-                    i[:global]
-                  end
-      [reference, i[:id]]
-    end
+                           .flatten
+                           .select { |i| i[:scope_type] == scope_type && i[:scope_id] == scope_id}
+                           .map { |i| [i[:local], i[:id]] }
     external_items = Item.where(medium: nil)
                          .map { |i| [i.global_reference, i.id]}
     internal_items + external_items

@@ -108,7 +108,7 @@
         </div>
       </div>
     </div>
-    <div id="item_details" style="display: <%= hide(referral.show_link) %>">
+    <div id="item_details" style="display: <%= hide(referral.show_link || referral.new_record?) %>">
       <div class="form-group form-row">
         <div class="col-2">
         </div>
@@ -143,7 +143,7 @@
           externer Link
           <span id='medium-link-test'>
             <% if referral.medium_link? %>
-              <%= link_to 'T', referral.item.medium_link,
+              <%= link_to 'Test', referral.item.medium_link,
                           class: 'badge badge-info',
                           target: :blank %>
             <% end %>

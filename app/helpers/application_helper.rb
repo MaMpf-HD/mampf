@@ -78,7 +78,7 @@ module ApplicationHelper
                                     .map(&:id).uniq
     lectures = Lecture.where(id: lecture_ids)
     courses = Course.where(id: course_ids)
-    lectures + courses
+    courses + lectures
   end
 
   def relevant_media(teachable, media)
