@@ -80,11 +80,6 @@ class Item < ApplicationRecord
     local_non_math_reference
   end
 
-  def global_title
-    return '' unless medium.present?
-    medium.teachable.media_scope.short_title + ', ' + local_reference
-  end
-
   def title_within_course
     return '' unless medium.present?
     return local_reference if medium.teachable.class.to_s == 'Course'
@@ -95,28 +90,9 @@ class Item < ApplicationRecord
     local_reference
   end
 
-  def prefix(viewpoint)
-    return '' unless medium.present?
-    if medium.teachable.class.to_s == 'Lesson'
-      return '' if teachable.media_scope == viewpoint.media_scope
-    end
-
-  end
-
   def local?(referring_medium)
     return false unless section.present?
     self.in?(referring_medium.teachable.lecture&.items)
-  end
-
-  def global_reference
-    unless sort.in?(['self', 'link', 'pdf_destination'])
-      if section.present?
-        return medium.teachable.lecture.title_for_viewers +
-               ', ' + local_reference
-      end
-      return medium.title_for_viewers + ', ' + local_reference
-    end
-    non_math_reference
   end
 
   def vtt_text

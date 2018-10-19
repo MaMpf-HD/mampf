@@ -353,32 +353,12 @@ class Medium < ApplicationRecord
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
-  def items_for_thyme
-    scope_type = teachable.media_scope.class.to_s
-    scope_id = teachable.media_scope.id
-    internal_items = Medium.where.not(id: id).map(&:items_with_references)
-                           .flatten.map do |i|
-    reference = if i[:scope_type] == scope_type && i[:scope_id] == scope_id
-                  i[:local]
-                else
-                  i[:global]
-                end
-       [reference, i[:id]]
-    end
-    external_items = Item.where(medium: nil)
-                         .map { |i| [i.global_reference, i.id]}
-    internal_items + external_items
-  end
-
   def items_with_references
     Rails.cache.fetch("#{cache_key}/items_with_reference") do
-      items.map { |i| { id: i.id, global: i.global_reference,
-                        local: i.local_reference,
-                        global_title: i.global_title,
+      items.map { |i| { id: i.id,
                         title_within_course: i.title_within_course,
-                        title_within_lecture: i.title_within_lecture,
-                        scope_type: teachable.media_scope.class.to_s,
-                        scope_id: teachable.media_scope.id } }
+                        title_within_lecture: i.title_within_lecture
+                        } }
     end
   end
 

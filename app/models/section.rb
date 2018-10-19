@@ -27,10 +27,6 @@ class Section < ApplicationRecord
     return '§' + reference_number
   end
 
-  def long_reference
-    chapter.lecture.short_title + ', ' + to_label
-  end
-
   def calculated_number
     unless lecture.absolute_numbering
       return chapter.displayed_number + '.' + position.to_s
