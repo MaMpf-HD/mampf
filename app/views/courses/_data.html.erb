@@ -8,7 +8,8 @@
       </div>
       <div class="col-12">
         <%= render partial: 'media/card',
-                   locals: { media: course.related_media, small: false,
+                   locals: { media: course.media_with_inheritance,
+                             small: false,
                              collapsible: false,
                              teachable_type: 'Course',
                              teachable_id: course.id,

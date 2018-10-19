@@ -109,7 +109,7 @@
     </div>
   </div>
 <% end %>
-<% related_media = course.related_media %>
+<% related_media = course.media_with_inheritance %>
 <% unless related_media.empty? %>
   <div class="row p-2">
     <div class="col-12">

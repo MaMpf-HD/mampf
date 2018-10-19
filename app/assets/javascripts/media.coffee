@@ -142,6 +142,34 @@ $(document).on 'turbolinks:load', ->
         }
     return
 
+  $(document).on 'change', '#referral_teachable', ->
+    teachableId = $(this).val()
+    $('#create_external_link').hide()
+    if teachableId == ''
+      itemSelectize = document.getElementById('referral_item_id').selectize
+      itemSelectize.clear()
+      itemSelectize.clearOptions()
+      itemSelectize.refreshOptions(false)
+      itemSelectize.refreshItems()
+      return
+    $.ajax Routes.list_items_path(),
+      type: 'GET'
+      dataType: 'json'
+      data: {
+        teachable_id: teachableId
+      }
+      success: (result) ->
+        itemSelectize = document.getElementById('referral_item_id').selectize
+        itemSelectize.clear()
+        itemSelectize.clearOptions()
+        if result?
+          for r in result
+            itemSelectize.addOption({ value: r[1], text: r[0] })
+        itemSelectize.refreshOptions(false)
+        $('#create_external_link').show() if teachableId == 'external-0'
+        return
+    return
+
   $(document).on 'click', '#test-link', ->
     url = $('#referral_link').val()
     window.open(url, '_blank')

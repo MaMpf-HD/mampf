@@ -343,25 +343,28 @@ class Medium < ApplicationRecord
       (description.present? ? ', ' + description : '')
   end
 
+  def local_title_for_viewers
+    if  sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
+      return 'KaViaR, ' + teachable.local_title_for_viewers
+    end
+    sort_de + (description.present? ? ', ' + description : ', ohne Titel')
+  end
+
   scope :KeksQuestion, -> { where(sort: 'KeksQuestion') }
   scope :Kaviar, -> { where(sort: 'Kaviar') }
 
   def items_for_thyme
     scope_type = teachable.media_scope.class.to_s
     scope_id = teachable.media_scope.id
-    # internal_items = Medium.where.not(id: id).map(&:items_with_references)
-    #                        .flatten.map do |i|
-    # reference = if i[:scope_type] == scope_type && i[:scope_id] == scope_id
-    #               i[:local]
-    #             else
-    #               i[:global]
-    #             end
-    #    [reference, i[:id]]
-    # end
     internal_items = Medium.where.not(id: id).map(&:items_with_references)
-                           .flatten
-                           .select { |i| i[:scope_type] == scope_type && i[:scope_id] == scope_id}
-                           .map { |i| [i[:local], i[:id]] }
+                           .flatten.map do |i|
+    reference = if i[:scope_type] == scope_type && i[:scope_id] == scope_id
+                  i[:local]
+                else
+                  i[:global]
+                end
+       [reference, i[:id]]
+    end
     external_items = Item.where(medium: nil)
                          .map { |i| [i.global_reference, i.id]}
     internal_items + external_items
@@ -371,6 +374,9 @@ class Medium < ApplicationRecord
     Rails.cache.fetch("#{cache_key}/items_with_reference") do
       items.map { |i| { id: i.id, global: i.global_reference,
                         local: i.local_reference,
+                        global_title: i.global_title,
+                        title_within_course: i.title_within_course,
+                        title_within_lecture: i.title_within_lecture,
                         scope_type: teachable.media_scope.class.to_s,
                         scope_id: teachable.media_scope.id } }
     end

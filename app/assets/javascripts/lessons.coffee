@@ -43,7 +43,7 @@ $(document).on 'turbolinks:load', ->
         tagSelectize.removeItem(i)
         tagSelectize.removeOption(i)
       tagSelectize.refreshItems()
-      tagSelectize.refreshOptions()
+      tagSelectize.refreshOptions(false)
       return
 
     sectionSelectize.on 'item_add', (value) ->
@@ -52,6 +52,6 @@ $(document).on 'turbolinks:load', ->
         tagSelectize.addOption({ value: i[0], text: i[1] })
         tagSelectize.addItem(i[0])
       tagSelectize.refreshItems()
-      tagSelectize.refreshOptions()
+      tagSelectize.refreshOptions(false)
       return
   return

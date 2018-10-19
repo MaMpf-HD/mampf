@@ -38,6 +38,17 @@
         </i>
       </div>
     </div>
+    <div id="teachable_selector" class="form-group form-row">
+      <div class="col-2 col-form-label">
+        <%= f.label :teachable, 'Vorauswahl' %>
+      </div>
+      <div class="col-9">
+        <%= f.select :teachable,
+                     grouped_options_for_select(grouped_teachable_list,
+                                                teachable_selector(referral)),
+                     { prompt: 'auswählen' }, { class: 'selectize' } %>
+      </div>
+    </div>
     <div id="item_select" class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :item_id, 'Eintrag' %>
@@ -51,7 +62,8 @@
       <div class="col-1 col-form-label">
         <i id="create_external_link" class="material-icons clickable"
            data-toggle="tooltip"
-           data-placement="left" title="externen Eintrag anlegen">
+           data-placement="left" title="externen Eintrag anlegen"
+           style="display: <%= show(referral.item.present? && referral.item.sort == 'link') %>">
           note_add
         </i>
       </div>

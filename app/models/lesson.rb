@@ -64,6 +64,10 @@ class Lesson < ApplicationRecord
       date_de
   end
 
+  def local_title_for_viewers
+    'Sitzung ' + number.to_s + ' vom ' + date_de
+  end
+
   def compact_title
     lecture.compact_title + '.E' + number.to_s
   end

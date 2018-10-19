@@ -38,6 +38,13 @@ class Lecture < ApplicationRecord
             .flatten.collect {|s| s.items}.flatten
   end
 
+  def media_items_with_inheritance
+    media_with_inheritance.collect do |m|
+      m.items_with_references.collect { |i| [i[:title_within_lecture], i[:id]] }
+    end
+    .reduce(:concat)
+  end
+
   def kaviar?
     Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
       Medium.where(sort: 'Kaviar').to_a.any? do |m|

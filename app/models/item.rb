@@ -77,7 +77,30 @@ class Item < ApplicationRecord
       return short_reference + ' ' + section.title if section.present?
       return short_reference
     end
-    non_math_reference
+    local_non_math_reference
+  end
+
+  def global_title
+    return '' unless medium.present?
+    medium.teachable.media_scope.short_title + ', ' + local_reference
+  end
+
+  def title_within_course
+    return '' unless medium.present?
+    return local_reference if medium.teachable.class.to_s == 'Course'
+    medium.teachable.media_scope.term.to_label_short + ', ' + local_reference
+  end
+
+  def title_within_lecture
+    local_reference
+  end
+
+  def prefix(viewpoint)
+    return '' unless medium.present?
+    if medium.teachable.class.to_s == 'Lesson'
+      return '' if teachable.media_scope == viewpoint.media_scope
+    end
+
   end
 
   def local?(referring_medium)
@@ -278,6 +301,12 @@ class Item < ApplicationRecord
   def non_math_reference
     return medium.title_for_viewers if sort == 'self'
     return medium.title_for_viewers + ' (pdf) # ' + description if sort == 'pdf_destination'
+    'extern ' + description.to_s if sort == 'link'
+  end
+
+  def local_non_math_reference
+    return medium.local_title_for_viewers if sort == 'self'
+    return medium.local_title_for_viewers + ' (pdf) # ' + description if sort == 'pdf_destination'
     'extern ' + description.to_s if sort == 'link'
   end
 

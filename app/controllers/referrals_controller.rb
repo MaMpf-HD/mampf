@@ -11,7 +11,12 @@ class ReferralsController < ApplicationController
   end
 
   def edit
-    @item_selection = @referral.medium.items_for_thyme
+    if @referral.item.sort == 'link'
+      @item_selection = Item.where(medium: nil).map { |i| [i.description, i.id]}
+    else
+      @item_selection = @referral.item.medium.teachable.media_scope
+                                 .media_items_with_inheritance
+    end
     @item = Item.new(sort: 'link')
   end
 
@@ -29,6 +34,17 @@ class ReferralsController < ApplicationController
   def destroy
     @medium = @referral.medium
     @referral.destroy
+  end
+
+  def list_items
+    teachable_id = params[:teachable_id].to_s.split('-')
+    if teachable_id[0] == 'external'
+      result = Item.where(medium: nil).map { |i| [i.description, i.id]}
+    else
+      @teachable = teachable_id[0].constantize.find_by_id(teachable_id[1])
+      result = @teachable.media_items_with_inheritance
+    end
+    render json: result
   end
 
   private

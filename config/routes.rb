@@ -22,6 +22,7 @@ Rails.application.routes.draw do
   get 'items/:id/display', to: 'items#display', as: 'display_item'
   resources :items, only: [:update, :create, :edit, :destroy]
   resources :referrals, only: [:update, :create, :edit, :destroy]
+  get 'referrals/list_items', to: 'referrals#list_items', as: 'list_items'
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
   resources :tags

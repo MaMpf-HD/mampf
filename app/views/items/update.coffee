@@ -41,7 +41,7 @@ setTimeout (->
 $('#newItemModal').modal('hide')
 itemSelector = document.getElementById('referral_item_id').selectize
 itemSelector.addOption({ value: <%= @item.id %>, text: 'extern <%= @item.description %>'})
-itemSelector.refreshOptions()
+itemSelector.refreshOptions(false)
 itemSelector.setValue(<%= @item.id %>)
 <% end %>
 <% end %>

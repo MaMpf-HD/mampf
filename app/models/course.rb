@@ -145,9 +145,16 @@ class Course < ApplicationRecord
     false
   end
 
-  def related_media
+  def media_with_inheritance
     Medium.where(id: Medium.select { |m| m.teachable.course == self }
                            .map(&:id))
+  end
+
+  def media_items_with_inheritance
+    media_with_inheritance.collect do |m|
+      m.items_with_references.collect { |i| [i[:title_within_course], i[:id]] }
+    end
+    .reduce(:concat)
   end
 
   def media_scope
