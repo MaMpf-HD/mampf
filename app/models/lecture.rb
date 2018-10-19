@@ -18,7 +18,7 @@ class Lecture < ApplicationRecord
                                             'und DozentIn existiert bereits.' }
 
   def tags
-    chapters.map(&:sections).flatten.collect(&:tags).flatten
+    chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags).flatten
   end
 
   def course_tags
@@ -122,7 +122,7 @@ class Lecture < ApplicationRecord
   end
 
   def media_with_inheritance
-    Medium.where(id: Medium.select { |m| m.teachable.lecture == self }
+    Medium.where(id: Medium.includes(:teachable).select { |m| m.teachable.lecture == self }
           .map(&:id))
   end
 
@@ -174,7 +174,7 @@ class Lecture < ApplicationRecord
   end
 
   def orphaned_lessons
-    lessons.select { |l| l.sections.blank? }
+    lessons.includes(:lesson_section_joins, :sections).select { |l| l.sections.blank? }
   end
 
   def active?(user, preselected_lecture_id)

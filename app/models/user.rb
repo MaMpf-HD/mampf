@@ -27,7 +27,7 @@ class User < ApplicationRecord
   after_create :set_consented_at
 
   def self.select_editors
-    User.all.map { |c| [c.info, c.id] }
+    User.all.map { |u| [u.info, u.id] }
   end
 
   def self.teachers

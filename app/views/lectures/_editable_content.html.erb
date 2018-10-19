@@ -32,7 +32,7 @@
   <div class="card-body">
     <% if lecture.chapters.present? %>
       <div class="card-columns">
-      <% lecture.chapters.each do |c| %>
+      <% lecture.chapters.includes([:sections,:lecture]).each do |c| %>
         <div class="card bg-mdb-color-lighten-5">
           <div class="card-header bg-mdb-color-lighten-2">
             <div class="row">
@@ -62,7 +62,7 @@
                    style="display: none;">
               </div>
               <ul class="list-group">
-            <% c.sections.each do |s| %>
+            <% c.sections.includes(:chapter).each do |s| %>
               <li class="list-group-item bg-mdb-color-lighten-6">
                 <div class="row">
                   <div class="col-6">
