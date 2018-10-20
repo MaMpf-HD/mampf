@@ -57,7 +57,7 @@
             <div class="invalid-feedback" id="medium-teachable-error">
             </div>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <%= f.label :editor_ids, 'Editoren' %>
             <%= f.select :editor_ids,
                          options_for_select(User.select_editors,
@@ -65,7 +65,7 @@
                          {}, { multiple: true, class: 'selectize' } %>
             <div class="invalid-feedback" id="medium-editors-error">
             </div>
-          </div>
+          </div> -->
           <div class="form-group">
             <%= f.label :description, 'Beschreibung' %>
             <%= f.text_field :description, class: 'form-control' %>
