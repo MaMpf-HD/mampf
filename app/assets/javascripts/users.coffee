@@ -20,15 +20,30 @@ $(document).on 'turbolinks:load', ->
       $('#submit-user-elevate').addClass('no_display')
     return
 
-  $(document).on 'click', '#cancel-generic-user', ->
-    $('#generic_user_id').get(0).selectize.setValue('')
-
   $(document).on 'click', '#test-link', ->
     url = $('#user_homepage').val()
     window.open(url, '_blank')
     return
 
+  $(document).on 'click', '#open-generic-users-modal', ->
+    $.ajax Routes.list_generic_users_path(),
+      type: 'GET'
+      dataType: 'script'
+    return
+
   $('#user-basics-cancel').on 'click', ->
     location.reload()
     return
+
+  $('#genericUsersModal').on 'hide.bs.modal', ->
+    location.reload()
+    return
+  return
+
+
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'change', '#generic_user_id'
+  $(document).off 'change', '#generic_user_admin'
+  $(document).off 'click', '#test-link'
+  $(document).off 'click', '#open-generic-users-modal'
   return

@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   devise_for :users, controllers: { registrations: 'registrations' }
   get 'users/elevate', to: 'users#elevate', as: 'elevate_user'
   get 'users/teacher/:teacher_id', to: 'users#teacher', as: 'teacher'
+  get 'users/list_generic_users', to: 'users#list_generic_users', as: 'list_generic_users'
   resources :users, only: [:index, :edit, :update, :destroy]
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
 

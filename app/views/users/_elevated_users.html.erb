@@ -1,9 +1,19 @@
 <div class="card">
   <div class="card-header">
-    <h5>
-      Admins, EditorInnen und  DozentInnen
-      (<%= elevated_users.count %>)
-    </h5>
+    <div class="row">
+      <div class="col-6">
+        <h5>
+          Admins, EditorInnen und  DozentInnen
+          (<%= elevated_users.count %>)
+        </h5>
+      </div>
+      <div class="col-6 text-right">
+        <button id="open-generic-users-modal" type="button"
+                class="btn btn-outline-primary">
+          Sonstige NutzerInnen (<%= generic_users_count %>) bearbeiten
+        </button>
+      </div>
+    </div>
   </div>
   <div class="card-body">
     <div class="row bg-mdb-color-lighten-2 py-3">

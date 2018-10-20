@@ -1,11 +1,10 @@
 # TermsController
 class UsersController < ApplicationController
+  before_action :set_elevated_users, only: [:index, :list_generic_users]
   authorize_resource
 
   def index
-    @elevated_users = User.where(admin: true).to_a | User.editors |
-                      User.teachers
-    @generic_users = User.all.to_a - @elevated_users
+    @generic_users_count = User.count - @elevated_users.count
   end
 
   def edit
@@ -29,7 +28,10 @@ class UsersController < ApplicationController
     else
       @user.update(admin: true)
     end
-    redirect_to users_path
+  end
+
+  def list_generic_users
+    @generic_users = User.all.to_a - @elevated_users
   end
 
   def destroy
@@ -54,5 +56,10 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :admin, :homepage)
+  end
+
+  def set_elevated_users
+    @elevated_users = User.where(admin: true).to_a | User.editors |
+                      User.teachers
   end
 end
