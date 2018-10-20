@@ -31,11 +31,11 @@ class User < ApplicationRecord
   end
 
   def self.teachers
-    User.select(&:teacher?)
+    User.includes(:given_lectures).select(&:teacher?)
   end
 
   def self.editors
-    User.select(&:editor?)
+    User.includes(:edited_courses,:edited_lectures, :edited_media).select(&:editor?)
   end
 
   def related_courses
