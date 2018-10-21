@@ -47,7 +47,12 @@ class MediaController < ApplicationController
     if params[:medium][:detach_manuscript] == 'true'
       @medium.update(manuscript: nil)
     end
-    update_manuscript_destinations if @medium.saved_change_to_manuscript_data?
+    create_manuscript_destinations if @medium.saved_change_to_manuscript_data?
+    if @medium.saved_change_to_manuscript_data? &&
+       (@old_manuscript_destinations - @medium.manuscript_destinations).present?
+      render :destination_warning
+      return
+    end
     redirect_to edit_medium_path(@medium)
   end
 
@@ -56,7 +61,7 @@ class MediaController < ApplicationController
     @old_manuscript_destinations = []
     @medium.save
     if @medium.valid?
-      update_manuscript_destinations
+      create_manuscript_destinations
       redirect_to edit_medium_path(@medium)
       return
     end
@@ -161,6 +166,10 @@ class MediaController < ApplicationController
               filename: 'screenshot-' + @medium.title + '.png',
               type: 'content-type',
               x_sendfile: true
+  end
+
+  def delete_destinations
+    Item.destroy_manuscript_destinations(@medium, params[:destinations].to_a)
   end
 
   private
@@ -283,11 +292,13 @@ class MediaController < ApplicationController
   end
 
   def update_manuscript_destinations
+    create_manuscript_destinations
+    destroy_manuscript_destinations
+  end
+
+  def create_manuscript_destinations
     Item.create_manuscript_destinations(@medium,
                                         @medium.manuscript_destinations -
                                         @old_manuscript_destinations)
-    Item.destroy_manuscript_destinations(@medium,
-                                         @old_manuscript_destinations -
-                                         @medium.manuscript_destinations)
   end
 end

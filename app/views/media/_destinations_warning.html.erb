@@ -1,0 +1,36 @@
+<div class="modal fade" id="destinationWarningModal" tabindex="-1" role="dialog"
+     aria-labelledby="destinationWarningModalLabel" aria-hidden="true"
+     data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="destinationWarningModalLabel">
+          Warnung: Löschung von Verknüpfungen
+        </h5>
+      </div>
+      <div class="modal-body">
+        Im der hochgeladenen pdf-Datei sind einige der named destinations
+        aus letzten Version nicht mehr vorhanden. An dieser Stelle musst Du
+        Dich entscheiden, ob Verknüpfungen auf diese nicht mehr vorhandenen named
+        destinations ebenfalls gelöscht werden sollen.
+        <p>
+        Um die Datenbank nicht unnötig zu verstopfen wird empfohlen, die
+        Verknüpfungen nur dann beizubehalten, wenn es triftige Gründe gibt:
+        Das könnte bespielsweise Sinn machen, wenn die Du entsprechenden
+        named destinations in der aktuellen Fassung auskommentiert hast und
+        sie später wieder aktivieren möchtest.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button id="delete-old-destinations" type="button"
+                class="btn btn-primary">
+          Löschen
+        </button>
+        <button id="keep-old-destinations" type="button"
+                class="btn btn-secondary">
+          Beibehalten
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
