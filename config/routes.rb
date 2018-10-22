@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   resources :courses
   get 'media/search', to: 'media#search', as: 'media_search'
   get 'media/catalog', to: 'media#catalog', as: 'media_catalog'
+  get 'media/delete_destinations', to: 'media#delete_destinations', as: 'delete_destinations'
   get 'media/:id/inspect/', to: 'media#inspect', as: 'inspect_medium'
   get 'media/:id/enrich', to: 'media#enrich', as: 'enrich_medium'
   get 'media/:id/play', to: 'media#play', as: 'play_medium'

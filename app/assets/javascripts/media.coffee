@@ -45,6 +45,25 @@ $(document).on 'turbolinks:load', ->
     location.reload()
     return
 
+  $('#keep-old-destinations').on 'click', ->
+    location.reload()
+    return
+
+  $('#delete-old-destinations').on 'click', ->
+    mediumId = $(this).data('mediumId')
+    destinations = $(this).data('destinations')
+    $.ajax Routes.delete_destinations_path(mediumId),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: mediumId
+        destinations: destinations
+      }
+      success: ->
+        location.reload()
+        return
+    return
+
   $('#detach-video').on 'click', ->
      $('#upload-video-hidden').val('')
      $('#video-meta').hide()

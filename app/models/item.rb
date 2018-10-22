@@ -24,8 +24,11 @@ class Item < ApplicationRecord
 
   def self.create_manuscript_destinations(medium, destinations)
     destinations.each do |d|
-      Item.create(medium: medium, sort: 'pdf_destination', description: d,
-                  pdf_destination: d)
+      unless Item.exists?(medium: medium, sort: 'pdf_destination',
+                          description: d, pdf_destination: d)
+        Item.create(medium: medium, sort: 'pdf_destination', description: d,
+                    pdf_destination: d)
+      end
     end
   end
 
@@ -120,6 +123,7 @@ class Item < ApplicationRecord
   end
 
   def video_link
+    return if sort == 'pdf_destination'
     return unless video?
     return video_link_untimed if sort == 'self'
     video_link_timed
