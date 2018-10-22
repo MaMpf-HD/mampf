@@ -22,24 +22,6 @@ class Item < ApplicationRecord
   after_save :touch_medium
   before_destroy :touch_medium
 
-  def self.create_manuscript_destinations(medium, destinations)
-    destinations.each do |d|
-      unless Item.exists?(medium: medium, sort: 'pdf_destination',
-                          description: d, pdf_destination: d)
-        Item.create(medium: medium, sort: 'pdf_destination', description: d,
-                    pdf_destination: d)
-      end
-    end
-  end
-
-  def self.destroy_manuscript_destinations(medium, destinations)
-    Item.where(medium: medium, sort: 'pdf_destination',
-               pdf_destination: destinations).each(&:destroy)
-    medium.items.where(pdf_destination: destinations).each do |i|
-      i.update(pdf_destination: nil)
-    end
-  end
-
   def end_time
     return unless video?
     return TimeStamp.new(total_seconds: medium.video_duration) if next_item.nil?

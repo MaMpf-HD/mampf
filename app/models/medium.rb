@@ -49,6 +49,47 @@ class Medium < ApplicationRecord
     Medium.includes(:teachable).all.map { |m| [m.title, m.id] }
   end
 
+  def protected_items
+    pdf_items = Item.where(medium: self, sort: 'pdf_destination')
+    referred_items = Referral.where(item: pdf_items).map(&:item)
+    referencing_items = proper_items.select do |i|
+      i.pdf_destination.in?(pdf_items.map(&:pdf_destination))
+    end
+    destination_items = Item.where(medium: self, sort: 'pdf_destination',
+                                   pdf_destination: referencing_items.map(&:pdf_destination))
+    (referred_items + destination_items).to_a.uniq
+  end
+
+  def create_pdf_destinations!
+    manuscript_destinations.each do |d|
+      unless Item.exists?(medium: self, sort: 'pdf_destination',
+                          description: d, pdf_destination: d)
+        Item.create(medium: self, sort: 'pdf_destination', description: d,
+                    pdf_destination: d)
+      end
+    end
+  end
+
+  def update_pdf_destinations!
+    items_to_conserve = protected_items
+    create_pdf_destinations!
+    items_to_destroy = Item.where(medium: self, sort: 'pdf_destination')
+                           .reject do |i|
+      i.pdf_destination.in?(manuscript_destinations) ||
+      i.in?(items_to_conserve)
+    end
+    items_to_destroy.each(&:destroy)
+  end
+
+  def destroy_pdf_destinations!(destinations)
+    Item.where(medium: self, sort: 'pdf_destination',
+               pdf_destination: destinations).each(&:destroy)
+    proper_items.where(pdf_destination: destinations)
+                .each do |i|
+      i.update(pdf_destination: nil)
+    end
+  end
+
   def edited_by?(user)
     return true if editors.include?(user)
     false

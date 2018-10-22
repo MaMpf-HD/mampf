@@ -47,21 +47,23 @@ class MediaController < ApplicationController
     if params[:medium][:detach_manuscript] == 'true'
       @medium.update(manuscript: nil)
     end
-    create_manuscript_destinations if @medium.saved_change_to_manuscript_data?
-    if @medium.saved_change_to_manuscript_data? &&
-       (@old_manuscript_destinations - @medium.manuscript_destinations).present?
-      render :destination_warning
-      return
+    if @medium.saved_change_to_manuscript_data?
+      @protected_destinations = @medium.protected_items.map(&:pdf_destination) -
+                                @medium.manuscript_destinations
+      @medium.update_pdf_destinations!
+      if @protected_destinations.present?
+        render :destination_warning
+        return
+      end
     end
     redirect_to edit_medium_path(@medium)
   end
 
   def create
     @medium = Medium.new(medium_params)
-    @old_manuscript_destinations = []
     @medium.save
     if @medium.valid?
-      create_manuscript_destinations
+      @medium.create_pdf_destinations!
       redirect_to edit_medium_path(@medium)
       return
     end
@@ -169,7 +171,7 @@ class MediaController < ApplicationController
   end
 
   def delete_destinations
-    Item.destroy_manuscript_destinations(@medium, params[:destinations].to_a)
+    @medium.destroy_pdf_destinations!(params[:destinations].to_a)
   end
 
   private
@@ -289,16 +291,5 @@ class MediaController < ApplicationController
     teachable_ids = search_params[:teachable_ids] || []
     teachable_ids.select { |t| t.start_with?('course') }
                  .map { |t| t.remove('course-') }
-  end
-
-  def update_manuscript_destinations
-    create_manuscript_destinations
-    destroy_manuscript_destinations
-  end
-
-  def create_manuscript_destinations
-    Item.create_manuscript_destinations(@medium,
-                                        @medium.manuscript_destinations -
-                                        @old_manuscript_destinations)
   end
 end

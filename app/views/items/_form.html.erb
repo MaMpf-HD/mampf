@@ -87,7 +87,8 @@
           <div class="col-10">
             <%= f.select :pdf_destination,
                          options_for_select([['auswählen (setzt Seitenauswahl außer Kraft)', '']] +
-                                           item.medium.manuscript_destinations.map { |d| [d, d] },
+                                           (item.medium.manuscript_destinations | [item.pdf_destination])
+                                             .map { |d| [d, d] },
                                            item.pdf_destination) ,
                     {},
                     { class: 'selectize'} %>
