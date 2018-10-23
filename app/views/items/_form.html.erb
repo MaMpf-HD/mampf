@@ -79,7 +79,7 @@
                       class: 'btn btn-outline-info', target: :blank %>
         </div>
       </div>
-      <% if item.medium.manuscript_destinations.present? %>
+      <% if item.medium.manuscript_destinations.present? || item.pdf_destination.present? %>
         <div id="item_pdf_destination_field" class="form-group form-row">
           <div class="col-2 col-form-label">
             <%= f.label :pdf_destination, 'pdf-Zielpunkt' %>

@@ -1,4 +1,5 @@
 $('#delete-old-destinations').data('destinations', <%= raw(@protected_destinations) %>)
 $('#delete-old-destinations').data('mediumId',<%= @medium.id %>)
-$('#protected-destinations').empty().append('<%= @protected_destinations.count %>')
+$('#protected-destinations').empty().append('<%= @protected_destinations.count > 1 ? ("sind #{@protected_destinations.count} named destinations") : "ist eine named destination" %>')
+$('#protected-destinations').prop('title','<%= @protected_destinations.join(", ") %>')
 $('#destinationWarningModal').modal('show')
