@@ -12,6 +12,7 @@ class LessonsController < ApplicationController
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     @lesson = Lesson.new(lecture: @lecture)
+    render :edit
   end
 
   def create
@@ -27,12 +28,13 @@ class LessonsController < ApplicationController
       return
     end
     @errors = @lesson.errors
+    pp @errors
     render :update
   end
 
   def update
     @lesson.update(lesson_params)
-    redirect_to edit_lesson_path(@lesson) if @lesson.valid?
+    redirect_to edit_lecture_path(@lesson.lecture) if @lesson.valid?
     @errors = @lesson.errors
   end
 

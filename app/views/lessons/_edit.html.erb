@@ -1,0 +1,52 @@
+<hr>
+<div class="row">
+  <div class="col-6">
+    <h6>
+      <% if action_name == 'new' %>
+        Neue Sitzung anlegen
+      <% else %>
+        Sitzung bearbeiten
+      <% end %>
+    </h6>
+  </div>
+  <div class="col-6">
+    <div id="lesson-basics-warning">
+      Achtung, es gibt ungespeicherte Änderungen!
+    </div>
+  </div>
+</div>
+<%= form_with model: @lesson,
+              html: { id: 'lesson-form' } do |f| %>
+  <%= f.hidden_field :lecture_id, value: lesson.lecture_id %>
+<div class="row p-2">
+  <div class="col-6">
+    <div class="card bg-mdb-color-lighten-6 mb-4" id="lesson-basics-edit-<%= @lesson.id.to_i %>">
+      <%= render partial: 'lessons/basics',
+                 locals: { lesson: @lesson, f: f, inspection: false,
+                           modal: false } %>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="row">
+      <div class="col-12">
+        <%= render partial: 'media/card',
+                   locals: { media: @lesson.media, small: true,
+                             collapsible: false,
+                             teachable_type: 'Lesson',
+                             teachable_id: @lesson.id,
+                             inspection: false,
+                             tag_ids: @lesson.tag_ids } %>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row mb-3">
+   <div class="col-12 text-center">
+     <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+     <button type="button" id="cancel-new-lesson"
+             class="btn btn-secondary">
+       abbrechen
+     </button>
+   </div>
+</div>
+<% end %>

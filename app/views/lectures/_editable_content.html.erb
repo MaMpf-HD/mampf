@@ -77,7 +77,7 @@
                     <% s.lessons.order(:date).each do |l| %>
                       <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
                                    '.' + l.date.year.to_s, edit_lesson_path(l),
-                                   class: 'badge badge-light' %>
+                                   class: 'badge badge-light', remote: true %>
                     <% end %>
                   </div>
                 </div>

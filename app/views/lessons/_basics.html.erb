@@ -49,23 +49,11 @@
       </div>
     <% else %>
       <%= f.label :section_ids, 'Abschnitte' %>
-      <% unless modal %>
-        <button type="button" class="btn btn-sm ml-2 mb-2 btn-outline-secondary"
-                id="lesson-sections-links">
-          Links einblenden
-        </button>
-      <% end %>
       <%= f.select :section_ids,
                    options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ]},
                                       lesson.section_ids),
                    {}, { multiple: true,
                          class: 'selectize', data: { tags: lesson.lecture.section_tag_selection.to_json } }%>
-      <div id="lesson-section-list" style="display: <%= show(inspection) %>"
-           data-show="0">
-         <%= render partial: "sections/list",
-                    locals: { sections: lesson.sections,
-                              inspection: true } %>
-      </div>
       <div class="invalid-feedback" id="lesson-sections-error">
       </div>
     <% end %>
