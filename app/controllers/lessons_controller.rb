@@ -12,11 +12,11 @@ class LessonsController < ApplicationController
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     @lesson = Lesson.new(lecture: @lecture)
-    render :edit
   end
 
   def create
     @lesson = Lesson.new(lesson_params)
+    @lesson.tags = @lesson.sections.map(&:tags).flatten
     @lesson.save
     if @lesson.valid?
       if params[:lesson][:from] == 'section'
@@ -24,7 +24,11 @@ class LessonsController < ApplicationController
         redirect_to edit_chapter_path(@section.chapter, section_id: @section.id)
         return
       end
-      redirect_to edit_lecture_path(@lesson.lecture)
+      if params[:commit] == 'Speichern'
+        redirect_to edit_lecture_path(@lesson.lecture)
+      else
+        render :edit
+      end
       return
     end
     @errors = @lesson.errors
@@ -34,7 +38,14 @@ class LessonsController < ApplicationController
 
   def update
     @lesson.update(lesson_params)
-    redirect_to edit_lecture_path(@lesson.lecture) if @lesson.valid?
+    if @lesson.valid?
+      if params[:commit] == 'Speichern'
+        render :edit
+      else
+        redirect_to edit_lecture_path(@lesson.lecture) if @lesson.valid?
+      end
+      return
+    end
     @errors = @lesson.errors
   end
 

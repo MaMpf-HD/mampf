@@ -2,12 +2,11 @@ if $('#lecture-basics-warning').is(':visible')
   $('#no-effect-warning').show()
 else
   $('#new-lesson-area').empty()
+  $('#lesson-modal-content').empty()
     .append('<%= j render partial: "lessons/edit",
                           locals: { lesson: @lesson } %>').show()
-  $('#new-lesson-area .selectize').selectize({ plugins: ['remove_button'] })
-  $('#new_lesson_button').hide()
-  $('#new_chapter_button').hide()
-  $('[id^="new_section_button"]').hide()
+  $('#lessonModal').modal('show')
+  $('#lesson-modal-content .selectize').selectize({ plugins: ['remove_button'] })
   sectionSelector = document.getElementById('lesson_section_ids')
   tagSelector = document.getElementById('lesson_tag_ids')
   sectionSelectize = sectionSelector.selectize
@@ -31,10 +30,3 @@ else
       tagSelectize.addItem(i[0])
     tagSelectize.refreshItems()
     tagSelectize.refreshOptions(false)
-
-  $('#cancel-new-lesson').on 'click', ->
-    $('#new-lesson-area').empty().hide()
-    $('#new_lesson_button').show()
-    $('#new_chapter_button').show()
-    $('[id^="new_section_button"]').show()
-    return

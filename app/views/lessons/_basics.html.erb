@@ -1,85 +1,98 @@
-<div class="card-header">
+<div class="form-group">
   <div class="row">
-    <div class="col-12">
-      <h5>
-        Basisdaten
-      </h5>
-    </div>
-  </div>
-</div>
-<div class="card-body p-2">
-  <div class="form-group">
-    <div class="row">
-      <% if inspection %>
-        <div class="col-12">
-          Datum: <%= lesson.date.day.to_s + '.' + lesson.date.month.to_s +
-                     '.' + lesson.date.year.to_s  %>
-        </div>
-      <% else %>
-        <div class="col-12">
-          <%= f.label :date, 'Datum' %>
-        </div>
-        <div class="col-12">
-          <%= f.date_field :date %>
-        </div>
-      <% end %>
-    </div>
-    <div class="invalid-feedback" id="lesson-date-error">
-    </div>
-  </div>
-  <div class="form-group">
     <% if inspection %>
-      <div class="row">
-        <div class="col-12">
-          Abschnitte
-        </div>
-      </div>
       <div class="col-12">
-        <% if lesson.sections.present? %>
-          <ul>
-            <% lesson.sections.each do |s| %>
-              <li>
-                <%= link_to s.to_label, inspect_chapter_path(s.chapter) %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          Es sind keine Abschnitte vorhanden.
-        <% end %>
+        Datum: <%= lesson.date.day.to_s + '.' + lesson.date.month.to_s +
+                   '.' + lesson.date.year.to_s  %>
       </div>
     <% else %>
-      <%= f.label :section_ids, 'Abschnitte' %>
-      <%= f.select :section_ids,
-                   options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ]},
-                                      lesson.section_ids),
-                   {}, { multiple: true,
-                         class: 'selectize', data: { tags: lesson.lecture.section_tag_selection.to_json } }%>
-      <div class="invalid-feedback" id="lesson-sections-error">
+      <div class="col-6">
+        <%= f.label :date, 'Datum' %>
+      </div>
+      <div class="col-2">
+        Medien
+      </div>
+      <div class="col-4 text-right">  
+        <%= link_to 'Medium anlegen',
+                     new_medium_path(params: { teachable_id: lesson.id,
+                                               teachable_type: 'Lesson',
+                                               tag_ids: lesson.tags.map(&:id) }),
+                      class: 'btn btn-sm btn-primary',
+                      id: 'create-new-lesson-medium' %>
+      </div>
+      <div class="col-6">
+        <%= f.date_field :date %>
+      </div>
+      <div class="col-6">
+        <% if lesson.media.present? %>
+          <ul>
+            <li>
+              <% lesson.media.each do |m| %>
+                <%= link_to m.sort + ', ' + m.local_info, edit_medium_path(m) %>
+              <% end %>
+            </li>
+          </ul>
+        <% else %>
+          Es sind noch keine Medien vorhanden.
+        <% end %>
       </div>
     <% end %>
   </div>
-  <div class="form-group">
-    <% if inspection %>
-      <div class="row">
-        <div class="col-12">
-          Verknüpfte Tags
-        </div>
-        <div class="col-12">
-          <%= render partial: 'tags/list',
-                     locals: { tags: lesson.tags, inspection: true } %>
-        </div>
+  <div class="invalid-feedback" id="lesson-date-error">
+  </div>
+</div>
+<div class="form-group">
+  <% if inspection %>
+    <div class="row">
+      <div class="col-12">
+        Abschnitte
       </div>
-    <% else %>
-      <%= f.label :tag_ids, 'Verknüpfte Tags' %>
-      <%= f.select :tag_ids,
-                   options_for_select(lesson.section_tags.map { |t| [t.title, t.id]} +
-                                      lesson.complement_of_section_tags.sort_by(&:title).map { |t| [t.title, t.id]},
+    </div>
+    <div class="col-12">
+      <% if lesson.sections.present? %>
+        <ul>
+          <% lesson.sections.each do |s| %>
+            <li>
+              <%= link_to s.to_label, inspect_chapter_path(s.chapter) %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        Es sind keine Abschnitte vorhanden.
+      <% end %>
+    </div>
+  <% else %>
+    <%= f.label :section_ids, 'Abschnitte' %>
+    <%= f.select :section_ids,
+                 options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ]},
+                                      lesson.section_ids),
+                 {}, { multiple: true,
+                       class: 'selectize', data: { tags: lesson.lecture.section_tag_selection.to_json } }%>
+    <div class="invalid-feedback" id="lesson-sections-error">
+    </div>
+  <% end %>
+</div>
+<div class="form-group">
+  <% if inspection %>
+    <div class="row">
+      <div class="col-12">
+        Verknüpfte Tags
+      </div>
+      <div class="col-12">
+        <%= render partial: 'tags/list',
+                   locals: { tags: lesson.tags, inspection: true } %>
+      </div>
+    </div>
+  <% else %>
+    <%= f.label :tag_ids, 'Verknüpfte Tags' %>
+    <%= f.select :tag_ids,
+                 options_for_select(lesson.section_tags.map { |t| [t.title, t.id]} +
+                                    lesson.complement_of_section_tags.sort_by(&:title).map { |t| [t.title, t.id]},
                                       lesson.tag_ids),
                    {}, { multiple: true,
                          class: 'selectize' } %>
-      <div class="invalid-feedback"
-           id="lesson-tags-error">
-      </div>
-    <% end %>
-  </div>
+    <div class="invalid-feedback"
+         id="lesson-tags-error">
+    </div>
+  <% end %>
 </div>

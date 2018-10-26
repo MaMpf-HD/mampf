@@ -11,4 +11,12 @@ $(document).on 'turbolinks:load', ->
   $('#chapter-basics-cancel').on 'click', ->
     location.reload()
     return
+
+  $(document).on 'click', '#cancel-chapter', ->
+  	$('#chapterModal').modal('hide')
+  	return
+  return
+
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'click', 'cancel-chapter'
   return

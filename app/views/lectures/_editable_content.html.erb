@@ -24,12 +24,12 @@
         </div>
       <% end %>
     </div>
+  </div>
+  <div class="card-body">
     <div id="new-chapter-area" style="display: none;">
     </div>
     <div id="new-lesson-area" style="display: none;">
     </div>
-  </div>
-  <div class="card-body">
     <% if lecture.chapters.present? %>
       <div class="card-columns">
       <% lecture.chapters.includes([:sections,:lecture]).each do |c| %>
@@ -41,8 +41,15 @@
                   <%= link_to c.to_label, inspect_chapter_path(c),
                               class: 'text-light' %>
                 <% else %>
-                  <%= link_to c.to_label, edit_chapter_path(c),
-                              class: 'text-light' %>
+                  <span class="text-light">
+                    <%= c.to_label %>
+                  </span>
+                  <a href="<%= edit_chapter_path(c) %>" class="text-light" data-toggle="tooltip"
+                     data-placement="bottom" title="Editieren"
+                     data-remote="true">
+                    <i class="far fa-edit">
+                    </i>
+                  </a>            
                 <% end %>
               </div>
               <% unless inspection %>
@@ -66,20 +73,33 @@
               <li class="list-group-item bg-mdb-color-lighten-6">
                 <div class="row">
                   <div class="col-6">
-                    <% if inspection %>
-                      <%= s.to_label %>
-                    <% else %>
-                      <%= link_to s.to_label, edit_chapter_path(c, section_id: s.id),
-                                  class: 'text-dark' %>
-                    <% end %>
+                    <strong>
+                      <% if inspection %>
+                        <%= s.to_label %>
+                      <% else %>
+                        <%= s.to_label %>
+                        <a href="<%= edit_chapter_path(c, section_id: s.id) %>" class="text-dark" data-toggle="tooltip"
+                           data-placement="bottom" title="Editieren"
+                           data-remote="true">
+                          <i class="far fa-edit">
+                          </i>
+                        </a>          
+                      <% end %>
+                    </strong>
                   </div>
                   <div class="col-6">
                     <% s.lessons.order(:date).each do |l| %>
                       <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
                                    '.' + l.date.year.to_s, edit_lesson_path(l),
-                                   class: 'badge badge-light', remote: true %>
+                                   class: 'badge badge-secondary', remote: true %>
                     <% end %>
                   </div>
+                  <div class="col-12 mt-2">
+                    <% s.tags.each do |t| %>
+                      <%= link_to t.title, edit_tag_path(t),
+                                  class: "badge badge-light" %>
+                    <% end %>
+                  </div>             
                 </div>
               </li>
             <% end%>

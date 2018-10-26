@@ -51,7 +51,7 @@ gem 'cancancan'
 gem 'jquery-rails'
 gem 'jquery_file_download-rails'
 gem 'js-routes'
-gem 'bootstrap', '~> 4.1.1'
+gem 'bootstrap', '~> 4.1.3'
 gem "bootstrap_form",
     git: "https://github.com/bootstrap-ruby/bootstrap_form.git",
     branch: "master"

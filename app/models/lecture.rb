@@ -18,7 +18,8 @@ class Lecture < ApplicationRecord
                                             'und DozentIn existiert bereits.' }
 
   def tags
-    chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags).flatten
+    chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
+            .flatten.uniq
   end
 
   def course_tags

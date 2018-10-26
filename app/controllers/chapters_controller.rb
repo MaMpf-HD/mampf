@@ -12,6 +12,18 @@ class ChaptersController < ApplicationController
 
   def update
     @chapter.update(chapter_params)
+    if @chapter.valid?
+      predecessor = params[:chapter][:predecessor]
+      if predecessor.present?
+        position = predecessor.to_i
+        position -= 1 if position > @chapter.position
+        @chapter.insert_at(position + 1)
+      else
+        @chapter.save
+      end
+      redirect_to edit_lecture_path(@chapter.lecture)
+      return
+    end
     @errors = @chapter.errors
   end
 
