@@ -1,18 +1,26 @@
-<%= form_with model: section,
-              html: { id: 'section-form-' + section.id.to_i.to_s,
-                      data: { id: section.id } } do |f| %>
-  <div class="row">
-    <div class="col-12 text-right mb-2">
-      <div id="section-basics-warning-<%= section.id %>"
-           class="section-basics-warning"
-           style="display: none;">
-        Achtung, es gibt ungespeicherte Änderungen!
-        <%= f.submit "Speichern", class: "btn btn-sm btn-primary ml-2" %>
-      </div>
+<div class="row">
+  <div class="col-6">
+    <h6>
+      Abschnitt
+      <span class="redtext">
+      <%= section.to_label %>
+      </span>
+      bearbeiten
+    </h6>
+  </div>
+  <div class="col-6">
+    <div id="section-basics-warning"
+         class="section-basics-warning"
+         style="display: none;">
+      Achtung, es gibt ungespeicherte Änderungen!
     </div>
   </div>
+</div>
+<%= form_with model: section,
+              html: { id: 'section-form',
+                      data: { id: section.id } } do |f| %>
   <div class="form-row">
-    <div class="col-6 form-group">
+    <div class="col-12 form-group">
       <%= f.label :title, 'Titel' %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'section_title_' + section.id.to_s,
@@ -22,15 +30,34 @@
            id="section-title-error-<%= section.id %>">
       </div>
     </div>
-    <div class="col-2 form-group">
-      <%= f.label :displayed_number, 'Nummer' %>
-      <%= f.text_field :displayed_number,
-                         { class: 'form-control', disabled: true,
-                           id: 'section_number_' + section.to_s } %>
+  </div>
+  <div class="form-row">
+    <div class="col-5 form-group">
+      <%= f.label :chapter_id,
+                  'Kapitel' %>
+      <%= f.select :chapter_id,
+                   options_for_select(section.chapter.lecture.chapters
+                                             .map { |c| [c.to_label, c.id] },
+                                      section.chapter.id), {},
+                   { class: 'form-control'} %>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-5 form-group">
+      <%= f.label :predecessor,
+                  'Positionierung nach Abschnitt' %>
+      <%= f.select :predecessor,
+                   options_for_select([['am Anfang', 0]] +
+                                      section.chapter.select_sections -
+                                      [[section.to_label, section.position]],
+                                      section.position - 1) ,
+                                      {}, { class: 'form-control' } %>
+    </div>
+    <div class="col-2 form-group">
       <%= f.label :display_number,
-                  'Anzeigenummer (falls verschieden von Nummer)' %>
+                  'Anzeigenr.' %>
+      <i class="far fa-question-circle" style="cursor: pointer;"
+         data-toggle="modal"
+         data-target="#displayNumberModal">
+      </i>
       <%= f.text_field :display_number,
                        { class: 'form-control',
                          id: 'section_number_alt_' + section.id.to_s,
@@ -41,16 +68,11 @@
   <div class="form-group">
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
     <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-            id="new-tag-button-<%= section.id %>"
+            id="new-tag-button"
             data-course="<%= section.chapter.lecture.course.id %>"
             data-section="<%= section.id %>"
             data-from="section">
             Tag anlegen
-    </button>
-    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-            id="section-tag-links-<%= section.id %>"
-            data-id="<%= section.id %>">
-            Tag-Links einblenden
     </button>
     <%= f.select :tag_ids,
                  options_for_select(Tag.select_by_title,section.tag_ids),
@@ -62,25 +84,9 @@
     <div class="invalid-feedback"
          id="section-tags-error-<%= section.id %>">
     </div>
-    <div id="section-tag-list-<%= section.id %>"
-         data-show="0" style="display: none;">
-      <%= render partial: "tags/list",
-                 locals: { tags: section.tags, inspection: false } %>
-    </div>
   </div>
   <div class="form-group">
     <%= f.label :lesson_ids, 'Sitzungen' %>
-    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-            id="lesson-modal-button-<%= section.id %>"
-            data-section="<%= section.id %>"
-            data-from="section">
-            Sitzung anlegen
-    </button>
-    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-            id="section-lesson-links-<%= section.id %>"
-            data-id="<%= section.id %>">
-            Sitzungs-Links einblenden
-    </button>
     <%= f.select :lesson_ids,
                  options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.to_label, l.id] }, section.lesson_ids),
                  {}, { multiple: true,
@@ -91,10 +97,14 @@
     <div class="invalid-feedback"
          id="section-lessons-error-<%= section.id %>">
     </div>
-    <div id="section-lesson-list-<%= section.id %>"
-         data-show="0" style="display: none;">
-      <%= render partial: "lessons/list",
-                 locals: { lessons: section.lessons, inspection: false } %>
+  </div>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= f.submit "Speichern", class: "btn btn-primary mr-2" %>
+      <%= f.submit "Speichern und zurück", class: "btn btn-primary mr-2" %>
+      <button type="button" class="btn btn-secondary" id="cancel-section">
+        abbrechen
+      </button>
     </div>
   </div>
 <% end %>

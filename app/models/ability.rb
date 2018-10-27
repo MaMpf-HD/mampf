@@ -48,6 +48,9 @@ class Ability
       can :destroy, Lesson do |lesson|
         lesson.lecture.edited_by?(user)
       end
+      can :edit, Lesson do |lesson|
+        lesson.lecture.edited_by?(user)
+      end
       can :modal, Lesson
       can :list_sections, Lesson
       can :inspect, Lesson

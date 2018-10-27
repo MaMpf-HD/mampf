@@ -7,7 +7,3 @@ $('#section-title-error-<%= @section.id.to_i %>')
   .append('<%= @errors[:title].join(", ") %>').show()
 $('#section_title_<%= @section.id.to_i %>').addClass('is-invalid')
 <% end %>
-<% if @errors[:tags].present? %>
-$('#section-tags-error-<%= @section.id.to_i %>')
-  .append('<%= @errors[:tags].join(", ") %>').show()
-<% end %>

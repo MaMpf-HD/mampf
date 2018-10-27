@@ -1,9 +1,12 @@
 # SectionController
 class SectionsController < ApplicationController
-  before_action :set_section, only: [:show, :reset, :update, :destroy]
+  before_action :set_section, only: [:show, :reset, :update, :destroy, :edit]
   authorize_resource
 
   def show
+  end
+
+  def edit
   end
 
   def new
@@ -37,20 +40,23 @@ class SectionsController < ApplicationController
   end
 
   def update
+    old_chapter = @section.chapter
     @section.update(section_params)
+    if @section.valid?
+      predecessor = params[:section][:predecessor]
+      if predecessor.present?
+        position = predecessor.to_i
+        position -= 1 if position > @section.position && old_chapter == @section.chapter
+        @section.insert_at(position + 1)
+      end
+      if params[:commit] == 'Speichern'
+        render :edit
+      else
+        redirect_to edit_lecture_path(@section.chapter.lecture)
+      end
+      return
+    end
     @errors = @section.errors
-    return if @errors.present?
-    redirect_to edit_chapter_path(@section.chapter, section_id: @section.id)
-  end
-
-  def list_tags
-    @tags = Tag.where(id: JSON.parse(params[:tags])).sort_by(&:title)
-    @id = params[:id]
-  end
-
-  def list_lessons
-    @lessons = Lesson.where(id: JSON.parse(params[:lessons])).sort_by(&:date)
-    @id = params[:id]
   end
 
   private

@@ -38,8 +38,9 @@
             <div class="row">
               <div class="col-6">
                 <% if inspection %>
-                  <%= link_to c.to_label, inspect_chapter_path(c),
-                              class: 'text-light' %>
+                  <span class="text-light">
+                    <%= c.to_label %>
+                  </span>
                 <% else %>
                   <span class="text-light">
                     <%= c.to_label %>
@@ -49,7 +50,7 @@
                      data-remote="true">
                     <i class="far fa-edit">
                     </i>
-                  </a>            
+                  </a>
                 <% end %>
               </div>
               <% unless inspection %>
@@ -70,7 +71,7 @@
               </div>
               <ul class="list-group">
             <% c.sections.includes(:chapter).each do |s| %>
-              <li class="list-group-item bg-mdb-color-lighten-6">
+              <li class="list-group-item bg-mdb-color-lighten-6" id="<%= dom_id(s) %>">
                 <div class="row">
                   <div class="col-6">
                     <strong>
@@ -78,12 +79,12 @@
                         <%= s.to_label %>
                       <% else %>
                         <%= s.to_label %>
-                        <a href="<%= edit_chapter_path(c, section_id: s.id) %>" class="text-dark" data-toggle="tooltip"
+                        <a href="<%= edit_section_path(s) %>" class="text-dark" data-toggle="tooltip"
                            data-placement="bottom" title="Editieren"
                            data-remote="true">
                           <i class="far fa-edit">
                           </i>
-                        </a>          
+                        </a>
                       <% end %>
                     </strong>
                   </div>
@@ -99,7 +100,7 @@
                       <%= link_to t.title, edit_tag_path(t),
                                   class: "badge badge-light" %>
                     <% end %>
-                  </div>             
+                  </div>
                 </div>
               </li>
             <% end%>

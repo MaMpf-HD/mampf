@@ -32,6 +32,6 @@ class Chapter < ApplicationRecord
   end
 
   def select_sections
-    sections.order(:position).reverse.map { |s| [s.to_label, s.position] }
+    sections.order(:position).map { |s| [s.to_label, s.position] }
   end
 end

@@ -7,24 +7,24 @@
 </div>
 <%= form_with model: chapter do |f| %>
   <div class="form-row">
-    <div class="col-6 form-group">
+    <div class="col-12 form-group">
       <%= f.label :title, 'Titel' %>
       <%= f.text_field :title, { class: 'form-control' } %>
       <div class="invalid-feedback" id="chapter-title-error">
       </div>
     </div>
-    <div class="col-6 form-group">
+  </div>
+  <div class="form-row">
+    <div class="col-12 form-group">
       <%= f.label :predecessor,
                   'Positionierung nach Kapitel' %>
       <%= f.select :predecessor,
-                   options_for_select([['am Anfang', 0]] + 
-                                      lecture.select_chapters - 
+                   options_for_select([['am Anfang', 0]] +
+                                      lecture.select_chapters -
                                       [[chapter.to_label, chapter.position]],
                                       chapter.position - 1) ,
                                       {}, { class: 'form-control' } %>
     </div>
-  </div>
-  <div class="form-row">
     <div class="col-12 form-group">
       <%= f.label :display_number,
                   'Anzeigenummer (falls verschieden von errechneter Nummer)' %>

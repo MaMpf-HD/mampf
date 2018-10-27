@@ -59,7 +59,7 @@ $(document).on 'turbolinks:load', ->
     inputCourses.selectize.setValue()
     return
 
-  $('[id^="new-tag-button"]').on 'click', ->
+  $(document).on 'click', '#new-tag-button', ->
     $.ajax Routes.tag_modal_path(),
       type: 'GET'
       dataType: 'script'
@@ -70,4 +70,8 @@ $(document).on 'turbolinks:load', ->
         from: this.dataset.from
       }
     return
+  return
+
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'click', '#new-tag-button'
   return

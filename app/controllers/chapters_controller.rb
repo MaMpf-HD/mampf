@@ -1,6 +1,6 @@
 # ChaptersController
 class ChaptersController < ApplicationController
-  before_action :set_chapter, only: [:show, :edit, :update, :destroy, :inspect]
+  before_action :set_chapter, only: [:show, :edit, :update, :destroy, :inspect, :list_sections]
   authorize_resource
 
   def show
@@ -18,8 +18,6 @@ class ChaptersController < ApplicationController
         position = predecessor.to_i
         position -= 1 if position > @chapter.position
         @chapter.insert_at(position + 1)
-      else
-        @chapter.save
       end
       redirect_to edit_lecture_path(@chapter.lecture)
       return
@@ -51,6 +49,11 @@ class ChaptersController < ApplicationController
   end
 
   def inspect
+  end
+
+  def list_sections
+    result = @chapter.select_sections
+    render json: result
   end
 
   private

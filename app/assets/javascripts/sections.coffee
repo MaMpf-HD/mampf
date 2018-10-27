@@ -4,74 +4,32 @@
 
 $(document).on 'turbolinks:load', ->
 
-  $('[id^="section-form-"] :input').on 'change', ->
-    sectionId = this.dataset.id
-    chapterId = this.dataset.chapter
-    $('#section-basics-warning-' + sectionId).show()
-    $('#lesson-modal-button-' + sectionId).hide()
-    $('#details-section-' + sectionId).text('verwerfen')
-    $('#details-section-' + sectionId).on 'click', (event) ->
-      event.preventDefault()
-      window.location.href = Routes.edit_chapter_path(chapterId, section_id: sectionId)
-      return
-    tags = document.getElementById('section_tag_ids_' + sectionId).selectize.getValue()
-    $.ajax Routes.list_section_tags_path(),
+  $(document).on 'change', '#section-form :input', ->
+    $('#section-basics-warning').show()
+    return
+
+  $(document).on 'change', '#section_chapter_id', ->
+    chapterId = $(this).val()
+    $.ajax Routes.list_sections_path(chapterId),
       type: 'GET'
-      dataType: 'script'
-      data: {
-        id: sectionId
-        tags: JSON.stringify(tags)
-      }
-    lessons = document.getElementById('section_lesson_ids_' + sectionId).selectize.getValue()
-    $.ajax Routes.list_section_lessons_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        id: sectionId
-        lessons: JSON.stringify(lessons)
-      }
+      dataType: 'json'
+      success: (result) ->
+        console.log result
+        $('#section_predecessor').children('option').remove()
+        $("#section_predecessor").append('<option value="0">am Anfang</option>')
+        for x in result
+          $('#section_predecessor').append $('<option></option>').attr('value', x[1]).text(x[0])
+        return
     return
 
-  $('[id^="collapse-section-"]').on 'hidden.bs.collapse', ->
-    sectionId = this.dataset.section
-    $('#details-section-' + sectionId).text('Bearbeiten')
-    $('#card-section-' + sectionId).addClass('bg-mdb-color-lighten-6')
+  $(document).on 'click', '#cancel-section', ->
+    location.reload()
     return
 
-  $('[id^="collapse-section-"]').on 'show.bs.collapse', ->
-    $('#cancel-new-section').trigger 'click'
-    sectionId = this.dataset.section
-    $('#card-section-' + sectionId).removeClass('bg-mdb-color-lighten-6')
-    $('#details-section-' + sectionId).text('Zuklappen')
-    return
+  return
 
-  $('[id^="section-tag-links-"]').on 'click', ->
-    sectionId = this.dataset.id
-    if $('#section-tag-list-' + sectionId).data('show') == 0
-      $('#section-tag-list-' + sectionId).data('show', 1).show()
-      $(this).text('Tag-Links ausblenden')
-    else
-      $('#section-tag-list-' + sectionId).data('show', 0).hide()
-      $(this).text('Tag-Links einblenden')
-    return
-
-  $('[id^="section-lesson-links-"]').on 'click', ->
-    sectionId = this.dataset.id
-    if $('#section-lesson-list-' + sectionId).data('show') == 0
-      $('#section-lesson-list-' + sectionId).data('show', 1).show()
-      $(this).text('Sitzungs-Links ausblenden')
-    else
-      $('#section-lesson-list-' + sectionId).data('show', 0).hide()
-      $(this).text('Sitzungs-Links einblenden')
-    return
-
-  $('[id^="lesson-modal-button"]').on 'click', ->
-    $.ajax Routes.lesson_modal_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        section: this.dataset.section
-        from: this.dataset.from
-      }
-    return
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'change', '#section-form :input'
+  $(document).off 'change', '#section_chapter_id'
+  $(document).off 'click', '#cancel-section'
   return
