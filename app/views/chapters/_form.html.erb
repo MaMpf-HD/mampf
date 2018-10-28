@@ -1,11 +1,20 @@
 <div class="row">
-  <div class="col-12">
+  <div class="col-6">
     <h6>
-      Kapitel bearbeiten
+      Kapitel
+      <span class="redtext">
+      <%= chapter.to_label %>
+      </span>
+      bearbeiten
     </h6>
   </div>
+  <div class="col-6">
+    <div id="chapter-basics-warning">
+      Achtung, es gibt ungespeicherte Änderungen!
+    </div>
+  </div>
 </div>
-<%= form_with model: chapter do |f| %>
+<%= form_with model: chapter, html: { id: 'chapter-form' } do |f| %>
   <div class="form-row">
     <div class="col-12 form-group">
       <%= f.label :title, 'Titel' %>
@@ -15,7 +24,7 @@
     </div>
   </div>
   <div class="form-row">
-    <div class="col-12 form-group">
+    <div class="col-10 form-group">
       <%= f.label :predecessor,
                   'Positionierung nach Kapitel' %>
       <%= f.select :predecessor,
@@ -25,9 +34,13 @@
                                       chapter.position - 1) ,
                                       {}, { class: 'form-control' } %>
     </div>
-    <div class="col-12 form-group">
+    <div class="col-2 form-group">
       <%= f.label :display_number,
-                  'Anzeigenummer (falls verschieden von errechneter Nummer)' %>
+                  'Anzeigenr.' %>
+      <i class="far fa-question-circle" style="cursor: pointer;"
+         data-toggle="modal"
+         data-target="#displayNumberModal">
+      </i>
       <%= f.text_field :display_number, { class: 'form-control' } %>
     </div>
   </div>

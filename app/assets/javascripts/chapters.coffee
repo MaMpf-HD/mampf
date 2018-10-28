@@ -4,19 +4,28 @@
 
 $(document).on 'turbolinks:load', ->
 
-  $('#chapter-form :input').on 'change', ->
+  $(document).on 'change', '#chapter-form :input', ->
     $('#chapter-basics-warning').show()
     return
 
-  $('#chapter-basics-cancel').on 'click', ->
-    location.reload()
+  $(document).on 'click', '#cancel-chapter', ->
+  	location.reload()
+  	return
+
+  $(document).on 'click', '#cancel-new-chapter', ->
+    $('#new-chapter-area').empty().hide()
+    $('.fa-edit').show()
+    $('.new-in-lecture').show()
+    $('#lecture-form input').prop('disabled', false)
+    $('#lecture-form .selectized').each ->
+      this.selectize.enable()
+      return
     return
 
-  $(document).on 'click', '#cancel-chapter', ->
-  	$('#chapterModal').modal('hide')
-  	return
   return
 
 $(document).on 'turbolinks:before-cache', ->
-  $(document).off 'click', 'cancel-chapter'
+  $(document).off 'change', '#chapter-form :input'
+  $(document).off 'click', '#cancel-chapter'
+  $(document).off 'click', '#cancel-new-chapter'
   return

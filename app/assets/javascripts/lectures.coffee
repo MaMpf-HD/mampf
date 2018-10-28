@@ -6,7 +6,8 @@ $(document).on 'turbolinks:load', ->
 
   $('#lecture-form :input').on 'change', ->
     $('#lecture-basics-warning').show()
-    $('#create-new-medium').hide()
+    $('.fa-edit').hide()
+    $('.new-in-lecture').hide()
     if $('#lecture_absolute_numbering').prop('checked')
       $('#start-section-input').show()
       $('#lecture_start_section').prop('disabled', false)

@@ -22,6 +22,10 @@ $(document).on 'turbolinks:load', ->
         return
     return
 
+  $(document).on 'click', '#cancel-new-section', ->
+    location.reload()
+    return
+
   $(document).on 'click', '#cancel-section', ->
     location.reload()
     return
@@ -32,4 +36,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#section-form :input'
   $(document).off 'change', '#section_chapter_id'
   $(document).off 'click', '#cancel-section'
+  $(document).off 'click', '#cancel-new-section'
   return
