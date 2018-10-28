@@ -1,4 +1,4 @@
-if $('#lecture-basics-warning').is(':visible')
+if $('#lecture-basics-warning').is(':visible') || $('#lecture-preferences-warning').is(':visible')
   $('#no-effect-warning').show()
 else
   $('#new-lesson-area').empty()

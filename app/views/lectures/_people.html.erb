@@ -1,0 +1,112 @@
+<div id="people_accordion" role="tablist">
+<div class="card bg-light">
+  <div class="card-header" role="tab" id="people_heading">
+    <div class="row">
+      <div class="col-6">
+        <h5>
+          Personen
+        </h5>
+      </div>
+      <div class="col-6 text-right">
+        <a class="btn btn-primary"
+           data-toggle="collapse" href="#people_collapse"
+           id="people_collapse_button"
+           aria-expanded="false" aria-controls="people_collapse">
+          Ein-/Ausklappen
+        </a>
+      </div>
+    </div>
+  </div>
+  <div id="people_collapse" class="collapse" role="tabpanel"
+       aria-labelledby="heading"
+       data-parent="#people_accordion">
+  <div class="card-body">
+    <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
+    <div class="form-row">
+      <div class="col-4 form-group">
+        <%= f.label :teacher_id, 'DozentIn' %>
+        <a href="<%= update_teacher_path(lecture) %>" class="text-dark"
+           data-toggle="tooltip"
+           data-placement="bottom" title="Bearbeiten"
+           data-remote="true">
+          <i class="far fa-edit" id="update-teacher-button">
+          </i>
+        </a>
+        <div id="lecture_teacher_select" style="display: none;" %>
+        <%= f.select :teacher_id,
+                     options_for_select([[lecture.teacher.info, lecture.teacher.id]],
+                                        lecture.teacher.id),
+                     {}, { class: 'selectize', disabled: true } %>
+        <div class="invalid-feedback" id="lecture-teacher-error">
+        </div>
+      </div>
+        <div id="lecture_teacher_info">
+          <%= lecture.teacher.name %>
+        </div>
+      </div>
+      <div class="col-4">
+        ModuleditorInnen
+        <% if lecture.course.editors.present? %>
+          <ul>
+            <% lecture.course.editors.each do |e| %>
+              <li>
+                <%= e.name %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <br>Es sind keine ModuleditorInnen eingetragen.
+        <% end %>
+      </div>
+      <div class="col-4 form-group">
+      <%= f.label :editor_ids, '(zusätzliche) VorlesungseditorInnen' %>
+      <a href="<%= update_editors_path(lecture) %>" class="text-dark"
+         data-toggle="tooltip"
+         data-placement="bottom" title="Bearbeiten"
+         data-remote="true">
+        <i class="far fa-edit" id="update-editors-button">
+        </i>
+      </a>
+      <div id="lecture_editors_select" style="display: none;" %>
+      <%= f.select :editor_ids,
+                   options_for_select(lecture.editors.map { |e| [e.info, e.id]},
+                                      lecture.editors.map(&:id)),
+                   {}, { multiple: true, class: 'selectize', disabled: true } %>
+      </div>
+      <div id="lecture_editors_info">
+      <% if lecture.course.editors.present? %>
+        <ul>
+          <% lecture.editors.each do |e| %>
+            <li>
+              <%= e.name %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <br>Es sind keine (zusätzlichen) VorlesungseditorInnen eingetragen.
+      <% end %>
+      </div>
+    </div>
+  </div>
+    <div class="row">
+      <div class="col-12">
+        Abonnentenzahl: <%= lecture.users&.count %>
+      </div>
+    </div>
+  <div class="row">
+    <div class="col-12 text-center">
+    <div id="lecture-basics-warning">
+      Achtung, es gibt ungespeicherte Änderungen!
+      <%= f.submit "Speichern", class: "btn btn-primary" %>
+      <button type="button" class="btn btn-secondary ml-2"
+              id="lecture-basics-cancel" data-id="<%= lecture.id %>">
+        verwerfen
+      </button>
+    </div>
+  </div>
+  </div>
+  <% end %>
+  </div>
+</div>
+</div>
+</div>

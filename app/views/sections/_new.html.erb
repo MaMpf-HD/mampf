@@ -32,6 +32,7 @@
     <div class="col-12 text-center">
       <%= f.submit 'Speichern', class: 'btn btn-primary' %>
       <button type="button" id="cancel-new-section"
+              data-chapter="<%= chapter.id %>"
               class="btn btn-secondary">
         abbrechen
       </button>

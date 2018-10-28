@@ -9,7 +9,7 @@
       <% unless inspection %>
         <div class="col-3">
           <span id="no-effect-warning" style="display: none; color: red;">
-            Du musst zunächst die obigen Änderungen speichern oder verwerfen.
+            Du musst zunächst die anderen Änderungen speichern oder verwerfen.
           </span>
         </div>
         <div class="col-6 text-right">
@@ -48,7 +48,7 @@
                     <%= c.to_label %>
                   </span>
                   <a href="<%= edit_chapter_path(c) %>" class="text-light" data-toggle="tooltip"
-                     data-placement="bottom" title="Editieren"
+                     data-placement="bottom" title="Bearbeiten"
                      data-remote="true">
                     <i class="far fa-edit">
                     </i>
@@ -84,7 +84,7 @@
                       <% else %>
                         <%= s.to_label %>
                         <a href="<%= edit_section_path(s) %>" class="text-dark" data-toggle="tooltip"
-                           data-placement="bottom" title="Editieren"
+                           data-placement="bottom" title="Bearbeiten"
                            data-remote="true">
                           <i class="far fa-edit">
                           </i>

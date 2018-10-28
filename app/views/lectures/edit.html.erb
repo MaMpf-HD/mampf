@@ -1,5 +1,4 @@
 <div id="lecture-area">
-<%= form_with model: @lecture, html: { id: 'lecture-form' } do |f| %>
 <div class="row px-4 py-2 mt-2">
   <div class="col-4">
     <h4 class="pl-2">
@@ -10,14 +9,6 @@
     </h4>
   </div>
   <div class="col-5">
-    <div id="lecture-basics-warning">
-      Achtung, es gibt ungespeicherte Änderungen!
-      <%= f.submit "Speichern", class: "btn btn-primary" %>
-      <button type="button" class="btn btn-secondary ml-2"
-              id="lecture-basics-cancel" data-id="<%= @lecture.id %>">
-        verwerfen
-      </button>
-    </div>
   </div>
   <div class="col-3 text-center">
     <%= link_to 'Ansehen', inspect_lecture_path(@lecture),
@@ -34,91 +25,13 @@
 </div>
 <div class="row px-4 py-2">
   <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              Basisdaten
-            </h5>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div class="form-row">
-        <div class="col-2">
-          <div class="row">
-            <div class="col-12">
-              Modul
-            </div>
-            <div class="col-12">
-              <%= link_to @lecture.course.title, inspect_course_path(@lecture.course) %>
-            </div>
-          </div>
-        </div>
-        <div class="col-2 form-group">
-          <%= f.label :teacher_id, 'DozentIn' %>
-          <%= f.select :teacher_id,
-                       options_for_select(User.select_editors,
-                                          @lecture.teacher.id),
-                       {}, { class: 'selectize' } %>
-          <div class="invalid-feedback" id="lecture-teacher-error">
-          </div>
-        </div>
-        <div class="col-2">
-          Moduleditoren:
-          <% if @lecture.course.editors.present? %>
-            <ul>
-              <% @lecture.course.editors.each do |e| %>
-                <li>
-                  <%= e.name %>
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            <br>Es sind keine Moduleditoren eingetragen.
-          <% end %>
-        </div>
-        <div class="col-2 form-group">
-          <%= f.label :editor_ids, '(zusätzliche) Vorlesungseditoren' %>
-          <%= f.select :editor_ids,
-                       options_for_select(User.select_editors -
-                                          @lecture.course.editors.map { |e| [e.info, e.id]},
-                                          @lecture.editors.map(&:id)),
-                       {}, { multiple: true, class: 'selectize' } %>
-        </div>
-        <div class="col-1 form-group">
-          <%= f.label :start_chapter, 'Startkapitel' %>
-          <%= f.number_field :start_chapter, value: @lecture.start_chapter || 1,
-                             class: 'form-control'  %>
-        </div>
-        <div class="col-2 mt-6">
-          <div class="custom-control custom-checkbox">
-            <%= f.check_box :absolute_numbering, class: 'custom-control-input' %>
-            <%= f.label :absolute_numbering, 'absolute Nummerierung',
-                      { class: 'custom-control-label' } %>
-          </div>
-          <div id="start-section-input"
-               style="display: <%= show(@lecture.absolute_numbering || false) %>">
-            <%= f.label :start_section, 'Startabschnitt' %>
-            <%= f.number_field :start_section, value: @lecture.start_section || 1,
-                             class: 'form-control' %>
-          </div>
-        </div>
-      </div>
-      Abonnentenzahl: <%= @lecture.users&.count %>
-      </div>
-    </div>
-  </div>
-</div>
-<% end %>
-<div class="row px-4 py-2">
-  <div class="col-12 pt-3">
     <%= render partial: 'lectures/editable_content',
                locals: { lecture: @lecture,
                          inspection: false } %>
   </div>
-  <div class="col-12 pt-3">
+</div>
+<div class="row px-4 py-2 mt-3">
+  <div class="col-12">
     <%= render partial: 'media/card',
                locals: { media: @lecture.media_with_inheritance, small: false,
                          collapsible: true, teachable_id: @lecture.id,
@@ -128,6 +41,14 @@
     <%= render partial: 'lectures/tags',
                locals: { lecture: @lecture,
                          inspection: false } %>
+  </div>
+  <div class="col-12">
+    <%= render partial: 'lectures/people',
+               locals: { lecture: @lecture } %>
+  </div>
+  <div class="col-12">
+    <%= render partial: 'lectures/preferences',
+               locals: { lecture: @lecture } %>
   </div>
 </div>
 </div>

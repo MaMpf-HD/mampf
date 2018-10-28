@@ -30,6 +30,10 @@ class User < ApplicationRecord
     User.all.map { |u| [u.info, u.id] }
   end
 
+  def self.select_editors_hash
+    User.all.map { |u| { text: u.info, value: u.id } }
+  end
+
   def self.teachers
     User.includes(:given_lectures).select(&:teacher?)
   end

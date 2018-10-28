@@ -1,6 +1,7 @@
 # LecturesController
 class LecturesController < ApplicationController
-  before_action :set_lecture, only: [:edit, :update, :destroy, :inspect]
+  before_action :set_lecture, only: [:edit, :update, :destroy, :inspect,
+                                     :update_teacher, :update_editors]
   authorize_resource
   before_action :check_for_consent
 
@@ -38,6 +39,18 @@ class LecturesController < ApplicationController
   def destroy
     @lecture.destroy
     redirect_to lectures_path
+  end
+
+  def update_teacher
+    @teacher_selection = (User.select_editors_hash -
+                          [{ text: @lecture.teacher.info,
+                           value: @lecture.teacher.id }]).to_json
+  end
+
+  def update_editors
+    @editor_selection = (User.select_editors_hash -
+      @lecture.course.editors.map { |e| { text: e.info, value: e.id } } -
+      @lecture.editors.map { |e| { text: e.info, value: e.id } }).to_json
   end
 
   private

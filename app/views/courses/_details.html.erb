@@ -120,7 +120,7 @@
 <% related_media = course.media_with_inheritance %>
 <% unless related_media.empty? %>
   <div class="row p-2">
-    <div class="col-12">
+    <div class="col-12 mb-4">
       <%= render partial: 'media/card',
                  locals: { media: related_media, small: false,
                            collapsible: false, inspection: true } %>

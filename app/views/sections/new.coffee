@@ -1,5 +1,6 @@
 $('.fa-edit').hide()
 $('.new-in-lecture').hide()
+$('#lecture-preferences-form input').prop('disabled', true) 
 $('#lecture-form input').prop('disabled', true)
 $('#lecture-form .selectized').each ->
   this.selectize.disable()

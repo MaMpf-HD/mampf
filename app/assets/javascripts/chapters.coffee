@@ -16,6 +16,7 @@ $(document).on 'turbolinks:load', ->
     $('#new-chapter-area').empty().hide()
     $('.fa-edit').show()
     $('.new-in-lecture').show()
+    $('#lecture-preferences-form input').prop('disabled', false)
     $('#lecture-form input').prop('disabled', false)
     $('#lecture-form .selectized').each ->
       this.selectize.enable()

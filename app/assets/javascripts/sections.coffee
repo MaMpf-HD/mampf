@@ -23,7 +23,15 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#cancel-new-section', ->
-    location.reload()
+    chapterId = this.dataset.chapter
+    $('#new-section-area-' + chapterId).empty().hide()
+    $('.fa-edit').show()
+    $('.new-in-lecture').show()
+    $('#lecture-preferences-form input').prop('disabled', false)
+    $('#lecture-form input').prop('disabled', false)
+    $('#lecture-form .selectized').each ->
+      this.selectize.enable()
+      return
     return
 
   $(document).on 'click', '#cancel-section', ->

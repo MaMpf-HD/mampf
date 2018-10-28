@@ -15,9 +15,9 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'click', '#cancel-new-lesson', ->
     $('#new-lesson-area').empty().hide()
-    $('#new_lesson_button').show()
-    $('#new_chapter_button').show()
-    $('[id^="new_section_button"]').show()
+    $('.fa-edit').show()
+    $('.new-in-lecture').show()
+    $('#lecture-preferences-form input').prop('disabled', false)
     $('#lecture-form input').prop('disabled', false)
     $('#lecture-form .selectized').each ->
       this.selectize.enable()
