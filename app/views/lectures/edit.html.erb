@@ -1,6 +1,6 @@
 <div id="lecture-area">
 <div class="row px-4 py-2 mt-2">
-  <div class="col-4">
+  <div class="col-7">
     <h4 class="pl-2">
       <span class="badge badge-secondary">
         Vorlesung
@@ -8,9 +8,7 @@
       <%= @lecture.title %>
     </h4>
   </div>
-  <div class="col-5">
-  </div>
-  <div class="col-3 text-center">
+  <div class="col-5 text-right">
     <%= link_to 'Ansehen', inspect_lecture_path(@lecture),
                 class: 'btn btn-primary my-1' %>
     <%= link_to 'zur Vorlesungsübersicht', lectures_path,

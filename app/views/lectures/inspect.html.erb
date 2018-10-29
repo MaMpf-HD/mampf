@@ -1,6 +1,6 @@
 <div id="lecture-area">
 <div class="row px-4 py-2 mt-2">
-  <div class="col-4">
+  <div class="col-7">
     <h4 class="pl-2">
       <span class="badge badge-secondary">
         Vorlesung
@@ -8,7 +8,7 @@
       <%= @lecture.title %>
     </h4>
   </div>
-  <div class="col-8 text-right">
+  <div class="col-5 text-right">
     <% if current_user.admin ||
           current_user.in?(@lecture.editors_with_inheritance) %>
       <%= link_to 'Bearbeiten', edit_lecture_path(@lecture),
