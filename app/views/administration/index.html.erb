@@ -1,5 +1,5 @@
 <div class="row mt-2">
-  <div class="col-3">
+  <div class="col-4">
     <div class="card">
       <div class="card-header">
         Meine Module
@@ -16,7 +16,7 @@
       </div>
     </div>
   </div>
-  <div class="col-3">
+  <div class="col-4">
     <div class="card">
       <div class="card-header">
         Meine Vorlesungen
@@ -46,27 +46,7 @@
       </div>
     </div>
   </div>
-  <div class="col-3">
-    <div class="card">
-      <div class="card-header">
-        Meine Sitzungen
-        (<%= current_user.edited_lessons_with_inheritance.count %>)
-      </div>
-      <div class="card-body">
-        <ul>
-        <% current_user.edited_lessons_with_inheritance.sort_by(&:date).reverse.first(10).each do |l| %>
-          <li>
-            <%= link_to l.lecture.short_title + ', ' + l.title, edit_lesson_path(l) %>
-          </li>
-        <% end %>
-        </ul>
-        <% if current_user.edited_lessons_with_inheritance.count > 10 %>
-          Es werden nur die letzten 10 Sitzungen angezeigt.
-        <% end %>
-      </div>
-    </div>
-  </div>
-  <div class="col-3">
+  <div class="col-4">
     <div class="card">
       <div class="card-header">
         Meine Medien
