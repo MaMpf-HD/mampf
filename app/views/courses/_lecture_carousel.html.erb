@@ -17,10 +17,14 @@
   <div class="carousel-inner">
     <% lectures.each do |l| %>
       <% is_active = l.active?(current_user, params[:active].to_i) %>
+      <% privileged = current_user.admin ||
+                        current_user.in?(l.editors_with_inheritance) %>
       <div class="carousel-item <%= active(is_active) %>"
            data-term="<%= l.term.to_label %>"
            data-teacher="<%= l.teacher.name %>"
-           data-id="<%= l.teacher.id %>">
+           data-id="<%= l.teacher.id %>"
+           data-editable="<%= privileged %>"
+           data-lecture="<%= l.id %>">
         <div class="row">
           <% unless l.chapters.empty? %>
             <div class="col-12">

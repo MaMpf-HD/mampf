@@ -56,6 +56,12 @@
                       id: 'lecture-teacher',
                       class: 'text-dark' %>
         </span>
+        <% privileged = current_user.admin ||
+                        current_user.in?(@front_lecture.editors_with_inheritance) %>
+        <%= link_to 'Bearbeiten', edit_lecture_path(front_lecture),
+                     id: 'lecture-edit',
+                     class: 'btn btn-outline-primary ml-4',
+                     style: 'display: ' + show_inline(privileged) %>
       </h4>
     </div>
     <div class="col-1">

@@ -12,9 +12,16 @@ $(document).on 'turbolinks:load', ->
     term = evt.relatedTarget.dataset.term
     teacher = evt.relatedTarget.dataset.teacher
     id = evt.relatedTarget.dataset.id
+    lecture = evt.relatedTarget.dataset.lecture
+    editable = evt.relatedTarget.dataset.editable
     $('#lecture-term').empty().append(term)
     $('#lecture-teacher').text(teacher)
     $('#lecture-teacher').prop('href', Routes.teacher_path(id))
+    $('#lecture-edit').prop('href', Routes.edit_lecture_path(lecture))
+    if editable == 'true'
+      $('#lecture-edit').show()
+    else
+      $('#lecture-edit').hide()
     return
 
   $('#course-form :input').on 'change', ->
