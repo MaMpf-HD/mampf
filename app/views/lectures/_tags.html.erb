@@ -32,7 +32,7 @@
             <% if lecture.course_tags.present? %>
               <%= render partial: "tags/list",
                          locals: { tags: lecture.course_tags.sort_by(&:title),
-                                   inspection: true } %>
+                                   inspection: inspection } %>
             <% else %>
               Es sind noch keine Begriffe vorhanden.
             <% end %>
@@ -44,7 +44,7 @@
             </h6>
             <%= render partial: "tags/list",
                          locals: { tags: lecture.extra_tags.sort_by(&:title),
-                                   inspection: true } %>
+                                   inspection: inspection } %>
           </li>
         <li>
           <h6>
@@ -53,7 +53,7 @@
           </h6>
           <%= render partial: "tags/list",
                      locals: { tags: lecture.deferred_tags.sort_by(&:title),
-                               inspection: true } %>
+                               inspection: inspection } %>
         </li>
       </ul>
     </div>

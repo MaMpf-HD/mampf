@@ -3,7 +3,11 @@
     <ul>
       <% media.each do |m| %>
         <li>
-          <%= link_to m.local_info, inspect_medium_path(m) %>
+          <% if inspection %>
+            <%= link_to m.local_info, inspect_medium_path(m) %>
+          <% else %>
+            <%= link_to m.local_info, edit_medium_path(m) %>
+          <% end %>
         </li>
       <% end %>
     </ul>
@@ -43,7 +47,11 @@
                       <% media_list.each do |m| %>
                         <% unless m.nil? %>
                           <li>
-                            <%= link_to m.local_info, inspect_medium_path(m) %>
+                            <% if inspection %>
+                              <%= link_to m.local_info, inspect_medium_path(m) %>
+                            <% else %>
+                              <%= link_to m.local_info, edit_medium_path(m) %>
+                            <% end %>
                           </li>
                         <% end %>
                       <% end %>

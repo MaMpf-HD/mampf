@@ -28,7 +28,8 @@
               <%= f.label :start_chapter, 'Nummer des ersten Kapitels' %>
               <%= f.number_field :start_chapter,
                                  value: @lecture.start_chapter || 1,
-                                 class: 'form-control'  %>
+                                 class: 'form-control',
+                                 disabled: inspection  %>
             </div>
             <div class="col-4 mt-6">
               <div id="start-section-input">
@@ -36,13 +37,14 @@
                 <%= f.number_field :start_section,
                                    value: @lecture.start_section || 1,
                                    class: 'form-control',
-                                   disabled: !@lecture.absolute_numbering %>
+                                   disabled: inspection || !@lecture.absolute_numbering %>
               </div>
             </div>
             <div class="col-4 mt-6">
               <div class="custom-control custom-checkbox">
                 <%= f.check_box :absolute_numbering,
-                                class: 'custom-control-input' %>
+                                class: 'custom-control-input',
+                                disabled: inspection %>
                 <%= f.label :absolute_numbering, 'absolute Nummerierung',
                             { class: 'custom-control-label' } %>
               </div>

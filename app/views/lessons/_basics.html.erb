@@ -53,7 +53,7 @@
         <ul>
           <% lesson.sections.each do |s| %>
             <li>
-              <%= link_to s.to_label, inspect_chapter_path(s.chapter) %>
+              <%= s.to_label %>
             </li>
           <% end %>
         </ul>

@@ -18,7 +18,7 @@
             <%= link_to s.to_label, edit_chapter_path(s.chapter,
                                                       section_id: s.id) %>
           <% else %>
-            <%= link_to s.to_label, inspect_chapter_path(s.chapter) %>
+            <%= s.to_label %>
           <% end %>
         </li>
       <% end %>

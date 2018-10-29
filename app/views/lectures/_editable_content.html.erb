@@ -74,7 +74,7 @@
                    style="display: none;">
               </div>
               <ul class="list-group">
-            <% c.sections.includes(:chapter).each do |s| %>
+            <% c.sections.includes(:chapter, :tags).each do |s| %>
               <li class="list-group-item bg-mdb-color-lighten-6" id="<%= dom_id(s) %>">
                 <div class="row">
                   <div class="col-6">
@@ -94,15 +94,21 @@
                   </div>
                   <div class="col-6">
                     <% s.lessons.order(:date).each do |l| %>
+                      <% lesson_link = inspection ? inspect_lesson_path(l) : edit_lesson_path(l) %> 
                       <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
-                                   '.' + l.date.year.to_s, edit_lesson_path(l),
-                                   class: 'badge badge-secondary', remote: true %>
+                                   '.' + l.date.year.to_s, lesson_link,
+                                   class: 'badge badge-secondary', remote: !inspection %>
                     <% end %>
                   </div>
                   <div class="col-12 mt-2">
                     <% s.tags.each do |t| %>
-                      <%= link_to t.title, edit_tag_path(t),
-                                  class: "badge badge-light" %>
+                      <% if inspection %>
+                        <%= link_to t.title, inspect_tag_path(t),
+                                    class: "badge badge-light" %>
+                      <% else %>
+                        <%= link_to t.title, edit_tag_path(t),
+                                    class: "badge badge-light" %>
+                      <% end %>
                     <% end %>
                   </div>
                 </div>

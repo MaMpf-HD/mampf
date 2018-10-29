@@ -123,8 +123,9 @@ class Lecture < ApplicationRecord
   end
 
   def media_with_inheritance
-    Medium.where(id: Medium.includes(:teachable).select { |m| m.teachable.lecture == self }
-          .map(&:id))
+    Medium.where(id: Medium.includes(:teachable)
+                           .select { |m| m.teachable.lecture == self }
+                           .map(&:id))
   end
 
   def sections
