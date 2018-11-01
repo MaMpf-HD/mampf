@@ -29,13 +29,16 @@
                     <% s.lessons.order(:date).each do |l| %>
                       <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
                                    '.' + l.date.year.to_s, lesson_path(l),
-                                  class: 'badge badge-secondary' %>
+                                  class: 'badge badge-secondary lecture-lesson',
+                                  id: 'lecture-' + dom_id(l),
+                                  data: { id: l.id, tags: l.tags.map(&:id) }  %>
                     <% end %>
                   </div>
                   <div class="col-12 mt-2">
                     <% s.tags.each do |t| %>
                       <%= link_to t.title, tag_path(t),
-                                  class: "badge badge-light" %>
+                                  class: "badge badge-light lecture-tag",
+                                  data: { id: t.id } %>
                     <% end %>
                   </div>
                 </div>

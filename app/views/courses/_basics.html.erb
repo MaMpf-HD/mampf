@@ -62,7 +62,12 @@
     <ul>
       <% course.lectures_by_date.each do |l| %>
         <li>
-          <%= link_to l.term_teacher_info, inspect_lecture_path(l)  %>
+          <% if current_user.admin ||
+                current_user.in?(lecture.editors_with_inheritance) %>
+            <%= link_to l.term_teacher_info, edit_lecture_path(l)  %>
+          <% else %>
+            <%= link_to l.term_teacher_info, inspect_lecture_path(l)  %>
+          <% end %>
         </li>
       <% end %>
     </ul>

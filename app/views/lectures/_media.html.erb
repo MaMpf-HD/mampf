@@ -1,0 +1,68 @@
+<div class="card bg-mdb-color-lighten-6">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-6">
+        <h5>
+          Medien
+        </h5>
+      </div>
+      <div class="col-6 text-right">
+        <% unless inspection %>
+          <%= link_to 'Medium anlegen',
+                      new_medium_path(params: { teachable_id: lecture_id,
+                                                teachable_type: 'Lecture' }),
+                      class: 'btn btn-primary new-in-lecture',
+                      id: 'create-new-medium' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4">
+        <ul class="nav flex-column nav-pills" id="edited-media-tab" role="tablist">
+          <% media_sorts.each do |s| %>
+            <li class="nav-item">
+              <a class="nav-link <%= active(s == 'kaviar') %>"
+                 id="<%= s %>-tab"
+                 data-toggle="tab" href="#<%= s %>-media" role="tab"
+                 aria-controls="<%= s%>-media" aria-selected="true">
+                <%= media_names[s] %>
+                (<%= media.where(sort: media_types[s]).count %>)
+              </a>
+           </li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="col-8">
+        <div class="tab-content" id="edited-media-tabContent">
+          <% media_sorts.each do |s| %>
+            <div class="tab-pane fade <%= show_tab(s == 'kaviar') %>"
+                 id="<%= s %>-media"
+                 role="tabpanel" aria-labelledby="<%= s %>-tab">
+              <ul>
+                <% media.where(sort: media_types[s]).each do |m| %>
+                  <li>
+                    <% if inspection %>
+                      <%= link_to m.local_info, inspect_medium_path(m), 
+                                  id: "lecture-#{dom_id(m)}",
+                                  data: { type: m.teachable.class.to_s,
+                                          id: m.teachable.id,
+                                          tags: m.tags.map(&:id) } %>
+                    <% else %>
+                      <%= link_to m.local_info, edit_medium_path(m),
+                                  id: "lecture-#{dom_id(m)}",
+                                  data: { type: m.teachable.class.to_s,
+                                          id: m.teachable.id,
+                                          tags: m.tags.map(&:id) } %>
+                    <% end %>
+                  </li>
+                <% end %>
+              </ul>   
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

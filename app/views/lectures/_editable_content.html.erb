@@ -97,17 +97,22 @@
                       <% lesson_link = inspection ? inspect_lesson_path(l) : edit_lesson_path(l) %> 
                       <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
                                    '.' + l.date.year.to_s, lesson_link,
-                                   class: 'badge badge-secondary', remote: !inspection %>
+                                   class: 'badge badge-secondary lecture-lesson', 
+                                   id: 'lecture-' + dom_id(l),
+                                   remote: !inspection,
+                                   data: { id: l.id, tags: l.tags.map(&:id) } %>
                     <% end %>
                   </div>
                   <div class="col-12 mt-2">
                     <% s.tags.each do |t| %>
                       <% if inspection %>
                         <%= link_to t.title, inspect_tag_path(t),
-                                    class: "badge badge-light" %>
+                                    class: "badge badge-light lecture-tag",
+                                    data: { id: t.id } %>
                       <% else %>
                         <%= link_to t.title, edit_tag_path(t),
-                                    class: "badge badge-light" %>
+                                    class: "badge badge-light lecture-tag",
+                                    data: { id: t.id } %>
                       <% end %>
                     <% end %>
                   </div>

@@ -10,15 +10,20 @@
     </div>
     <div class="col-5 text-right">
       <% if inspection && (current_user.admin ||
-          current_user.in?(@lecture.editors_with_inheritance)) %>
+          current_user.in?(lecture.editors_with_inheritance)) %>
         <%= link_to 'Bearbeiten', edit_lecture_path(lecture),
                      class: 'btn btn-primary my-1' %>
       <% else %>
         <%= link_to 'Ansehen', inspect_lecture_path(lecture),
                     class: 'btn btn-primary my-1' %>
       <% end %>
-      <%= link_to 'zur Vorlesungsübersicht', lectures_path,
-                  class: 'btn btn-primary' %>
+      <% if inspection || !lecture.course.editors.include?(current_user) %>
+        <%= link_to 'zum Modul', inspect_course_path(lecture.course),
+                    class: 'btn btn-primary' %>
+      <% else %>
+        <%= link_to 'zum Modul', edit_course_path(lecture.course),
+                    class: 'btn btn-primary' %>
+      <% end %>
       <% if !inspection && lecture.lessons.empty? && lecture.media.empty? &&
             (current_user.admin? || lecture.editors_with_inheritance.include?(current_user)) %>
         <%= link_to 'Vorlesung löschen', lecture_path, method: :delete,
@@ -27,21 +32,20 @@
       <% end %>
     </div>
   </div>
-  <div class="row px-4 py-2">
-    <div class="col-12">
+  <div class="row px-4 py-2"> 
+    <div class="col-9">
       <%= render partial: 'lectures/editable_content',
                  locals: { lecture: lecture,
                            inspection: inspection } %>
     </div>
+    <div class="col-3">
+      <%= render partial: 'lectures/media',
+                 locals: { media: lecture.media_with_inheritance,
+                           inspection: inspection,
+                           lecture_id: lecture.id } %>
+    </div>
   </div>
   <div class="row px-4 py-2 mt-3">
-    <div class="col-12">
-      <%= render partial: 'media/card',
-                 locals: { media: lecture.media_with_inheritance, small: false,
-                           collapsible: true, teachable_id: lecture.id,
-                           teachable_type: 'Lecture', inspection: inspection, 
-                           tag_ids: nil } %>
-    </div>
     <div class="col-12">
       <%= render partial: 'lectures/tags',
                  locals: { lecture: lecture,

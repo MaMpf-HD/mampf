@@ -25,8 +25,24 @@
       <%= link_to 'Ansehen', inspect_medium_path(medium),
                   class: 'btn btn-primary my-1' %>
     <% end %>
-    <%= link_to 'zur Medienübersicht', media_catalog_path,
-                class: 'btn btn-primary' %>
+    <% teachable_scope = medium.teachable.media_scope %>
+    <% if teachable_scope.class.to_s == 'Course' %>
+      <% if current_user.admin? || course.editors.include?(current_user) %>
+        <%= link_to 'zum Modul', edit_course_path(teachable_scope),
+                    class: 'btn btn-primary' %>
+      <% else %>
+        <%= link_to 'zum Modul', inspect_course_path(teachable_scope),
+                    class: 'btn btn-primary'%>
+      <% end %>
+    <% else %>
+      <% if current_user.admin || current_user.in?(@lecture.editors_with_inheritance) %>
+        <%= link_to 'zur Vorlesung', edit_lecture_path(teachable_scope),
+                    class: 'btn btn-primary' %>
+      <% else %>
+        <%= link_to 'zur Vorlesung', inspect_lecture_path(teachable_scope),
+                    class: 'btn btn-primary' %>
+      <% end %>
+    <% end %>
     <% if !new_medium && medium.irrelevant? %>
       <%= link_to 'Medium löschen', medium_path, method: :delete,
                   data: { confirm: 'Bist Du sicher?' },

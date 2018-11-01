@@ -363,7 +363,7 @@ class Medium < ApplicationRecord
   def local_info
     return description if description.present?
     return 'ohne Titel' unless undescribable?
-    return 'zu Sitzung ' + teachable.lesson&.number&.to_s if sort == 'Kaviar'
+    return "zu Sitzung #{teachable.lesson&.number&.to_s}, #{teachable.lesson&.date_de}" if sort == 'Kaviar'
     'KeksFrage ' + position.to_s + '/' + siblings.count.to_s
   end
 

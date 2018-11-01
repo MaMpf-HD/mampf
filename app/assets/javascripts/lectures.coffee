@@ -35,4 +35,38 @@ $(document).on 'turbolinks:load', ->
   $('#cancel-lecture-preferences').on 'click', ->
     location.reload()
     return
+
+  $('[id^="lecture-medium_"]').on 'mouseenter', ->
+    if this.dataset.type == 'Lesson'
+      lessonId = this.dataset.id
+      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-secondary').addClass('badge-info')
+    tags = $(this).data('tags')
+    for t in tags
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light').addClass('badge-warning')
+    return
+
+  $('[id^="lecture-medium_"]').on 'mouseleave', ->
+    if this.dataset.type == 'Lesson'
+      lessonId = this.dataset.id
+      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-info').addClass('badge-secondary')
+    tags = $(this).data('tags')
+    for t in tags
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning').addClass('badge-light')  
+    return
+
+  $('[id^="lecture-lesson_"]').on 'mouseenter', ->
+    tags = $(this).data('tags')
+    for t in tags
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light').addClass('badge-warning')
+    return
+
+   $('[id^="lecture-lesson_"]').on 'mouseleave', ->
+    tags = $(this).data('tags')
+    for t in tags
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning').addClass('badge-light')
+    return  
+  return
+
+$(document).on 'turbolinks:before-cache', ->
+  $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
   return
