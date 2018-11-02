@@ -86,7 +86,7 @@
   <% if from == 'medium' %>
     <%= f.hidden_field :medium_id, value: tag.medium_ids.first %>
     <% medium = Medium.find_by_id(tag.medium_ids.first) %>
-    <% if medium.present? && medium.teachable.class != 'Course' %>
+    <% if medium.present? && medium.teachable.class.to_s != 'Course' %>
       <% section_selection = medium.teachable.lecture.section_selection %>
       <% if medium.teachable.class.to_s == 'Lecture' %>
         <% preselected_sections = [] %>
