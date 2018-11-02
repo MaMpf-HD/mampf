@@ -39,34 +39,55 @@ $(document).on 'turbolinks:load', ->
   $('[id^="lecture-medium_"]').on 'mouseenter', ->
     if this.dataset.type == 'Lesson'
       lessonId = this.dataset.id
-      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-secondary').addClass('badge-info')
+      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-secondary')
+        .addClass('badge-info')
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light').addClass('badge-warning')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light')
+        .addClass('badge-warning')
     return
 
   $('[id^="lecture-medium_"]').on 'mouseleave', ->
     if this.dataset.type == 'Lesson'
       lessonId = this.dataset.id
-      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-info').addClass('badge-secondary')
+      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-info')
+        .addClass('badge-secondary')
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning').addClass('badge-light')  
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning')
+        .addClass('badge-light')  
     return
 
   $('[id^="lecture-lesson_"]').on 'mouseenter', ->
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light').addClass('badge-warning')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light')
+        .addClass('badge-warning')
     return
 
    $('[id^="lecture-lesson_"]').on 'mouseleave', ->
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning').addClass('badge-light')
-    return  
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning')
+        .addClass('badge-light')
+    return
+
+  $('[id^="lecture-tag_"]').on 'mouseenter', ->
+    lessons = $(this).data('lessons')
+    for l in lessons
+      $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-secondary')
+        .addClass('badge-info')
+    return
+
+  $('[id^="lecture-tag_"]').on 'mouseleave', ->
+    lessons = $(this).data('lessons')
+    for l in lessons
+      $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-info')
+        .addClass('badge-secondary')
+    return     
   return
 
 $(document).on 'turbolinks:before-cache', ->
   $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
+  $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
   return

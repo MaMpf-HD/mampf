@@ -37,8 +37,10 @@
                   <div class="col-12 mt-2">
                     <% s.tags.each do |t| %>
                       <%= link_to t.title, tag_path(t),
+                                  id: 'lecture-' + dom_id(t),
                                   class: "badge badge-light lecture-tag",
-                                  data: { id: t.id } %>
+                                  data: { id: t.id,
+                                          lessons: t.lessons.map(&:id) } %>
                     <% end %>
                   </div>
                 </div>

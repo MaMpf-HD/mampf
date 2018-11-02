@@ -107,12 +107,16 @@
                     <% s.tags.each do |t| %>
                       <% if inspection %>
                         <%= link_to t.title, inspect_tag_path(t),
-                                    class: "badge badge-light lecture-tag",
-                                    data: { id: t.id } %>
+                                    id: 'lecture-' + dom_id(t),
+                                    class: 'badge badge-light lecture-tag',
+                                    data: { id: t.id,
+                                            lessons: t.lessons.map(&:id) } %>
                       <% else %>
                         <%= link_to t.title, edit_tag_path(t),
+                                    id: 'lecture-' + dom_id(t),
                                     class: "badge badge-light lecture-tag",
-                                    data: { id: t.id } %>
+                                    data: { id: t.id,
+                                            lessons: t.lessons.map(&:id) } %>
                       <% end %>
                     <% end %>
                   </div>
