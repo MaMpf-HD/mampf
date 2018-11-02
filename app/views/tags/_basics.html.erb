@@ -81,6 +81,25 @@
   <% end %>
   <% end %>
   <% if from == 'section' %>
-    <%= f.hidden_field :section_id, value: @tag.section_ids.first %>
+    <%= f.hidden_field :section_id, value: tag.section_ids.first %>
+  <% end %>
+  <% if from == 'medium' %>
+    <%= f.hidden_field :medium_id, value: tag.medium_ids.first %>
+    <% medium = Medium.find_by_id(tag.medium_ids.first) %>
+    <% if medium.present? && medium.teachable.class != 'Course' %>
+      <% section_selection = medium.teachable.lecture.section_selection %>
+      <% if medium.teachable.class.to_s == 'Lecture' %>
+        <% preselected_sections = [] %>
+      <% else %>
+        <% preselected_sections = medium.teachable.sections.map(&:id) %>
+      <% end %>
+      <div class="form-group">
+        <%= f.label :section_ids, 'Abschnitte' %>
+        <%= f.select :section_ids,
+                 options_for_select(section_selection, preselected_sections),
+                 {}, { multiple: true,
+                       class: 'selectize'} %>
+      </div>
+    <% end %>
   <% end %>
 </div>

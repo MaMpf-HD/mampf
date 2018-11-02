@@ -90,6 +90,13 @@
           </div>
           <div class="form-group">
             <%= f.label :tag_ids, 'Verknüpfte Begriffe' %>
+            <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
+                    id="new-tag-button"
+                    data-course="<%= medium.course.id %>"
+                    data-medium="<%= medium.id %>"
+                    data-from="medium">
+              Tag anlegen
+            </button>
             <%= f.select :tag_ids,
                          options_for_select(Tag.select_by_title,
                                             medium.tags.map(&:id)),

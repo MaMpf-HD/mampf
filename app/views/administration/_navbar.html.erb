@@ -22,7 +22,7 @@
       <li class="nav-item <%= active(controller_name == 'media') %>">
         <%= link_to "Medien", media_catalog_path, class: 'nav-link' %>
       </li>
-      <% if current_user.admin? || current_user.edited_courses.present? %>
+      <% if current_user.admin? || current_user.edited_courses_with_inheritance.present? %>
         <li class="nav-item <%= active(controller_name == 'courses') %>">
           <%= link_to "Module", courses_path,
                       class: 'nav-link' %>

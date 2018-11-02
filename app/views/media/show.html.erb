@@ -1,11 +1,18 @@
 <div class="row">
-  <div class="col-12">
+  <div class="col-10">
     <h2>
       <span class="badge badge-secondary mr-3">
         Medium <%= '#' + @medium.id.to_s %>
       </span>
       <%= @medium.caption %>
     </h2>
+  </div>
+  <div class="col-2 text-right">
+    <% if current_user.admin ||
+          @medium.edited_with_inheritance_by?(current_user) %>
+      <%= link_to 'Bearbeiten', edit_medium_path(@medium),
+                  class: 'btn btn-outline-primary' %> 
+    <% end %>
   </div>
 </div>
 <div class="row pb-2">

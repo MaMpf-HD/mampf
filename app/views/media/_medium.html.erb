@@ -109,6 +109,15 @@
             </a>
           </div>
         <% end %>
+        <% if current_user.admin ||
+              medium.edited_with_inheritance_by?(current_user) %>
+          <a href="<%= edit_medium_path(medium) %>" class="text-secondary ml-4" 
+             data-toggle="tooltip"
+             data-placement="bottom" title="Bearbeiten">
+            <i class="far fa-edit">
+            </i>
+          </a>
+        <% end %>
       </div>
       </div>
     </div>

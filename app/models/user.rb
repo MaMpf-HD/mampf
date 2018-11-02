@@ -147,7 +147,7 @@ class User < ApplicationRecord
   end
 
   def edited_courses_with_inheritance
-    edited_courses
+    (edited_courses + edited_lectures.map(&:course)).uniq
   end
 
   def edited_lessons_with_inheritance

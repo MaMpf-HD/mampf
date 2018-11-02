@@ -23,11 +23,7 @@ class SectionsController < ApplicationController
       @section.save
     end
     if @section.valid?
-      if params[:section][:from] == 'lecture'
-        redirect_to edit_lecture_path(@section.lecture)
-        return
-      end
-      redirect_to edit_chapter_path(@section.chapter)
+      redirect_to edit_lecture_path(@section.lecture)
       return
     end
     @errors = @section.errors

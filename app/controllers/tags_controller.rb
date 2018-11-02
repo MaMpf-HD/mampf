@@ -42,6 +42,7 @@ class TagsController < ApplicationController
 
   def create
     @section = Section.find_by_id(params[:tag][:section_id])
+    @medium = Medium.find_by_id(params[:tag][:medium_id])
     if @errors.present?
       render :update
       return
@@ -70,6 +71,8 @@ class TagsController < ApplicationController
     @tag.courses << course if course.present?
     section = Section.find_by_id(params[:section])
     @tag.sections << section if section.present?
+    medium = Medium.find_by_id(params[:medium])
+    @tag.media << medium if medium.present?
     @from = params[:from]
   end
 
@@ -90,7 +93,8 @@ class TagsController < ApplicationController
     params.require(:tag).permit(:title,
                                 related_tag_ids: [],
                                 course_ids: [],
-                                section_ids: [])
+                                section_ids: [],
+                                media_ids: [])
   end
 
   def check_permissions
@@ -101,7 +105,7 @@ class TagsController < ApplicationController
 
   def permission_errors
     errors = []
-    unless removed_courses.all? { |c| c.in?(current_user.edited_courses_with_inheritance) }
+    unless removed_courses.all? { |c| c.in?(current_user.edited_courses) }
       errors.push(error_hash['remove_course'])
     end
     unless added_courses.all? { |c| c.in?(current_user.edited_courses_with_inheritance) }
@@ -126,8 +130,8 @@ class TagsController < ApplicationController
 
   def error_hash
     { 'remove_course' => 'Für mindestens eines der Module, das Du entfernt ' \
-                         'hast, hast Du keine Editorenrechte.',
+                         'hast, hast Du keine Editorenrechte für Tags.',
       'add_course' => 'Für mindestens eines der Module, das Du hinzugefügt ' \
-                      'hast, hast Du keine Editorenrechte.' }
+                      'hast, hast Du keine Editorenrechte  für Tags.' }
   end
 end
