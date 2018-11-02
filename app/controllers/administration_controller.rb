@@ -5,7 +5,8 @@ class AdministrationController < ApplicationController
   end
 
   def exit
-    redirect_to :root
+  	course_id = cookies[:current_course]
+    redirect_to course_path(course_id)
   end
 
   def profile

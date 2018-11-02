@@ -35,7 +35,7 @@
                     class: 'btn btn-primary'%>
       <% end %>
     <% else %>
-      <% if current_user.admin || current_user.in?(@lecture.editors_with_inheritance) %>
+      <% if current_user.admin || current_user.in?(teachable_scope.editors_with_inheritance) %>
         <%= link_to 'zur Vorlesung', edit_lecture_path(teachable_scope),
                     class: 'btn btn-primary' %>
       <% else %>

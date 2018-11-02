@@ -32,5 +32,6 @@
   Editierte Medien (<%= user.edited_media.count %>):
   <%= render partial: 'media/table',
              locals: { media: user.edited_media,
-                       small: false } %>
+                       small: false,
+                       inspection: true } %>
 <% end %>

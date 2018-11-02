@@ -41,7 +41,7 @@
                  id="<%= s %>-media"
                  role="tabpanel" aria-labelledby="<%= s %>-tab">
               <ul>
-                <% media.where(sort: media_types[s]).each do |m| %>
+                <% media.includes(:tags).where(sort: media_types[s]).each do |m| %>
                   <li>
                     <% if inspection %>
                       <%= link_to m.local_info, inspect_medium_path(m), 

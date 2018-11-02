@@ -93,7 +93,7 @@
                     </strong>
                   </div>
                   <div class="col-6">
-                    <% s.lessons.order(:date).each do |l| %>
+                    <% s.lessons.includes(:tags).order(:date).each do |l| %>
                       <% lesson_link = inspection ? inspect_lesson_path(l) : edit_lesson_path(l) %> 
                       <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
                                    '.' + l.date.year.to_s, lesson_link,
@@ -104,7 +104,7 @@
                     <% end %>
                   </div>
                   <div class="col-12 mt-2">
-                    <% s.tags.each do |t| %>
+                    <% s.tags.includes(:lessons).each do |t| %>
                       <% if inspection %>
                         <%= link_to t.title, inspect_tag_path(t),
                                     id: 'lecture-' + dom_id(t),

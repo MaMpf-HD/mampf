@@ -32,6 +32,7 @@ class CoursesController < ApplicationController
   end
 
   def show
+    @course = Course.includes(lectures: [:teacher, :term, :chapters]).find_by_id(params[:id])
     cookies[:current_course] = params[:id]
     @lectures = @course.subscribed_lectures_by_date(current_user)
     @front_lecture = @course.front_lecture(current_user, params[:active].to_i)

@@ -7,7 +7,7 @@ class TagsController < ApplicationController
   authorize_resource
 
   def index
-    @tags = Tag.order(:title)
+    @tags = Tag.includes(:courses, :related_tags).order(:title)
     @tags_with_id = Tag.ids_titles_json
   end
 
