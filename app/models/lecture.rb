@@ -218,7 +218,7 @@ class Lecture < ApplicationRecord
   end
 
   def self.sort_by_date(lectures)
-    lectures.includes(:term).to_a.sort do |i, j|
+    lectures.to_a.sort do |i, j|
       j.term.begin_date <=> i.term.begin_date
     end
   end

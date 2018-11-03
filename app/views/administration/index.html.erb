@@ -1,18 +1,42 @@
 <div class="row mt-2">
   <div class="col-4">
     <div class="card">
-      <div class="card-header">
+      <div class="card-header bg-primary text-white">
         Meine Module
         (<%= current_user.edited_courses.count  %>)
       </div>
       <div class="card-body">
-        <ul>
-        <% current_user.edited_courses.each do |c| %>
-          <li>
-            <%= link_to c.title, edit_course_path(c) %>
-          </li>
-        <% end %>
-        </ul>
+        <div class="list-group">
+          <div class="list-group-item list-group-item-info">
+            <div class="row">
+              <div class="col-8">
+                Titel
+              </div>
+              <div class="col-4 text-right">
+                EditorInnen
+              </div>
+            </div>
+          </div>
+          <% current_user.edited_courses.sort_by(&:title).each do |c| %>
+            <a href="<%= edit_course_path(c) %>"
+               class="list-group-item list-group-item-action">
+              <div class="row">
+                <div class="col-8">
+                  <%= c.title %>
+                </div>
+                <div class="col-4 text-right">
+                  <ul class="list-unstyled">
+                    <% c.editors.each do |e| %>
+                      <li>
+                        <%= e.name %>
+                      </li>
+                    <% end %>
+                  </ul>
+                </div>
+              </div>
+            </a>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
@@ -25,23 +49,59 @@
       <div class="card-body">
         <% if current_user.edited_lectures.present? %>
         als Vorlesungeditor:
-        <ul>
-        <% current_user.edited_lectures.each do |c| %>
-          <li>
-            <%= link_to c.title, edit_lecture_path(c) %>
-          </li>
-        <% end %>
-        </ul>
+        <div class="list-group mb-2">
+          <div class="list-group-item list-group-item-info">
+            <div class="row">
+              <div class="col-8">
+                Titel
+              </div>
+              <div class="col-4 text-right">
+                Dozentin
+              </div>
+            </div>
+          </div>
+          <% Lecture.sort_by_date(current_user.edited_lectures).each do |l| %>
+            <a href="<%= edit_lecture_path(l) %>"
+               class="list-group-item list-group-item-action">
+              <div class="row">
+                <div class="col-8">
+                   <%= l.title %>
+                </div>
+                <div class="col-4 text-right">
+                  <%= l.teacher&.name %>
+                </div>
+              </div>
+            </a>
+          <% end %>
+        </div>
         <% end %>
         <% if current_user.lectures_as_module_editor.present? %>
         als Moduleditor:
-        <ul>
-          <% current_user.lectures_as_module_editor.each do |c| %>
-            <li>
-              <%= link_to c.title, edit_lecture_path(c) %>
-            </li>
+        <div class="list-group">
+          <div class="list-group-item list-group-item-info">
+            <div class="row">
+              <div class="col-8">
+                Titel
+              </div>
+              <div class="col-4 text-right">
+                Dozentin
+              </div>
+            </div>
+          </div>
+          <% Lecture.sort_by_date(current_user.lectures_as_module_editor).each do |l| %>
+            <a href="<%= edit_lecture_path(l) %>"
+               class="list-group-item list-group-item-action">
+              <div class="row">
+                <div class="col-8">
+                  <%= l.title %>
+                </div>
+                <div class="col-4 text-right">
+                  <%= l.teacher&.name %>
+                </div>
+              </div>
+            </a>
           <% end %>
-        </ul>
+        </div>
         <% end %>
       </div>
     </div>
@@ -63,6 +123,83 @@
         <% if current_user.edited_media.count > 20 %>
           Es werden nur die 20 zuletzt geupdateten Medien angezeigt.
         <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+  <div class="row mt-2">
+    <div class="col-4">
+      <div class="card">
+        <div class="card-header">
+          Sonstige Module
+        </div>
+        <div class="card-body">
+          <div class="list-group">
+            <div class="list-group-item list-group-item-info">
+              <div class="row">
+                <div class="col-8">
+                  Titel
+                </div>
+                <div class="col-4 text-right">
+                  EditorInnen
+                </div>
+              </div>
+            </div>
+            <% (Course.all - current_user.edited_courses).sort_by(&:title).each do |c| %>
+              <a href="<%= inspect_course_path(c) %>"
+                 class="list-group-item list-group-item-action">
+                <div class="row">
+                  <div class="col-8">
+                     <%= c.title %>
+                  </div>
+                  <div class="col-4 text-right">
+                    <ul class="list-unstyled">
+                      <% c.editors.each do |e| %>
+                        <li>
+                          <%= e.name %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  </div>
+                </div>
+              </a>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-4">
+      <div class="card">
+        <div class="card-header">
+          Sonstige Vorlesungen
+        </div>
+        <div class="card-body">
+          <ul class="list-group">
+            <div class="list-group-item list-group-item-info">
+              <div class="row">
+                <div class="col-8">
+                  Titel
+                </div>
+                <div class="col-4 text-right">
+                  Dozentin
+                </div>
+              </div>
+            </div>
+            <% (Lecture.all - current_user.edited_lectures_with_inheritance).sort_by(&:title).each do |l| %>
+              <a class="list-group-item list-group-item-action"
+                 href="<%= inspect_lecture_path(l) %>">
+                <div class="row">
+                  <div class="col-8">
+                    <%= l.title %>
+                  </div>
+                  <div class="col-4 text-right">
+                    <%= l.teacher&.name %>
+                  </div>
+                </div>
+              </a>
+            <% end %>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
