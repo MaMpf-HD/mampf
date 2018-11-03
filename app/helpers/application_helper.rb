@@ -160,4 +160,34 @@ module ApplicationHelper
     end
     list.push [ 'externe Referenzen', [['extern alle', 'external-0']]]
   end
+
+  def edit_or_inspect_course_path(course)
+    if current_user.admin || course.editors.include?(current_user)
+      return edit_course_path(course)
+    end
+    inspect_course_path(course)
+  end
+
+  def edit_or_inspect_course_icon(course)
+    if current_user.admin || course.editors.include?(current_user)
+      return "far fa-edit"
+    end
+    "far fa-eye"
+  end
+
+  def edit_or_inspect_lecture_path(lecture)
+    if current_user.admin ||
+       lecture.editors_with_inheritance.include?(current_user)
+      return edit_lecture_path(lecture)
+    end
+    inspect_lecture_path(lecture)
+  end
+
+  def edit_or_inspect_lecture_icon(lecture)
+    if current_user.admin ||
+       lecture.editors_with_inheritance.include?(current_user)
+      return "far fa-edit"
+    end
+    "far fa-eye"
+  end
 end

@@ -70,6 +70,11 @@ class Lecture < ApplicationRecord
     course.title + ', ' + term.to_label
   end
 
+  def title_with_teacher
+    return title unless (teacher.present? && teacher.name.present?)
+    "#{title} (#{teacher.name})"
+  end
+
   def compact_title
     course.compact_title + '.' + term.compact_title
   end

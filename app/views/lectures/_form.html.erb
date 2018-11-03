@@ -5,7 +5,7 @@
         <span class="badge badge-secondary">
           Vorlesung
         </span>
-        <%= lecture.title %>
+        <%= lecture.title_with_teacher %>
       </h4>
     </div>
     <div class="col-5 text-right">
@@ -32,7 +32,7 @@
       <% end %>
     </div>
   </div>
-  <div class="row px-4 py-2"> 
+  <div class="row px-4 py-2">
     <div class="col-9">
       <%= render partial: 'lectures/editable_content',
                  locals: { lecture: lecture,
@@ -60,7 +60,7 @@
       <%= render partial: 'lectures/preferences',
                  locals: { lecture: lecture,
                            inspection: inspection } %>
-    </div> 
+    </div>
   </div>
 </div>
 <% unless inspection %>

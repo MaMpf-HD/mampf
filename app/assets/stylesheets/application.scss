@@ -45,6 +45,21 @@ $modal-xxl:                   1600px !default;
   .modal-xxl { max-width: $modal-xxl; }
 }
 
+.dropdown-menu a {
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+}
+
 
 .card-columns {
   @include media-breakpoint-only(xl) {

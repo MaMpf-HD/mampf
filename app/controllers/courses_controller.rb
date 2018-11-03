@@ -13,6 +13,7 @@ class CoursesController < ApplicationController
   end
 
   def edit
+    cookies[:edited_course] = params[:id]
   end
 
   def update

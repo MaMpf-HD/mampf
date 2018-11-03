@@ -27,13 +27,8 @@
     <% end %>
     <% teachable_scope = medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-      <% if current_user.admin? || course.editors.include?(current_user) %>
-        <%= link_to 'zum Modul', edit_course_path(teachable_scope),
-                    class: 'btn btn-primary' %>
-      <% else %>
-        <%= link_to 'zum Modul', inspect_course_path(teachable_scope),
-                    class: 'btn btn-primary'%>
-      <% end %>
+      <%= link_to 'zum Modul', edit_or_inspect_course_path(teachable_scope),
+                  class: 'btn btn-primary' %>
     <% else %>
       <% if current_user.admin || current_user.in?(teachable_scope.editors_with_inheritance) %>
         <%= link_to 'zur Vorlesung', edit_lecture_path(teachable_scope),

@@ -19,6 +19,10 @@
       </li>
     </ul>
     <ul class="navbar-nav mr-auto">
+      <%= render partial: 'administration/dropdown_teachables',
+                 locals: { courses: editable_courses_dropdown } %>
+    </ul>
+    <ul class="navbar-nav mr-auto">
       <li class="nav-item <%= active(controller_name == 'media') %>">
         <%= link_to "Medien", media_catalog_path, class: 'nav-link' %>
       </li>

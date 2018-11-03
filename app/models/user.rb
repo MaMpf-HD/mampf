@@ -150,6 +150,10 @@ class User < ApplicationRecord
     (edited_courses + edited_lectures.map(&:course)).uniq
   end
 
+  def editable_courses_with_inheritance
+    (editable_courses + edited_lectures.map(&:course)).uniq
+  end
+
   def edited_lessons_with_inheritance
     edited_lectures_with_inheritance.collect(&:lessons).flatten
   end

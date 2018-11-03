@@ -1,0 +1,34 @@
+<li class="nav-item dropdown">
+  <a href="#" id="menu" data-toggle="dropdown" class="nav-link dropdown-toggle">
+    Lehrveranstaltung
+  </a>
+  <div class="dropdown-menu">
+    <% courses.each do |c| %>
+      <% if c == 'divider' %>
+        <div class="dropdown-divider"></div>
+      <% else %>
+        <div class="dropdown-item dropdown-submenu">
+          <a data-toggle="dropdown" class="dropdown-item">
+            <%= c.title %>
+          </a>
+          <div class="dropdown-menu">
+            <a href="<%= edit_or_inspect_course_path(c) %>"
+               class="dropdown-item">
+              Modul
+              <i class="<%= edit_or_inspect_course_icon(c) %>">
+              </i>
+            </a>
+            <% Lecture.sort_by_date(c.lectures).each do |l| %>
+              <a href="<%= edit_or_inspect_lecture_path(l) %>"
+                 class="dropdown-item">
+                <%= l.term_teacher_info %>
+                <i class="<%= edit_or_inspect_lecture_icon(l) %>">
+                </i>
+              </a>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</li>

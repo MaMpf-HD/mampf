@@ -12,8 +12,14 @@
       <%= link_to 'Bearbeiten', edit_medium_path(@medium),
                   class: 'btn btn-primary my-1' %>
     <% end %>
-    <%= link_to 'zur Medienübersicht', media_catalog_path,
-                class: 'btn btn-primary' %>
+    <% teachable_scope = @medium.teachable.media_scope %>
+    <% if teachable_scope.class.to_s == 'Course' %>
+      <%= link_to 'zum Modul', inspect_course_path(teachable_scope),
+                  class: 'btn btn-primary' %>
+    <% else %>
+      <%= link_to 'zur Vorlesung', inspect_lecture_path(teachable_scope),
+                  class: 'btn btn-primary' %>
+    <% end %>
   </div>
 </div>
 <div class="row mt-3 p-2">
