@@ -31,6 +31,12 @@
                                    inspection: false,
                                    teacher: true } %>
             <% end %>
+            <% if current_user.given_lectures.empty? &&
+                  current_user.edited_lectures.empty? &&
+                  current_user.lectures_as_module_editor.empty? %>
+              Es gibt keine Vorlesung, für die Du als DozentIn oder EditorIn
+              eingetragen bist.
+            <% end %>
           </div>
         </div>
       </div>
@@ -41,9 +47,13 @@
             (<%= current_user.edited_courses.count  %>)
           </div>
           <div class="card-body">
-            <%= render partial: 'administration/courses_card',
-                       locals: { courses: current_user.edited_courses.sort_by(&:title),
-                                 inspection: false } %>
+            <% if current_user.edited_courses.present? %>
+              <%= render partial: 'administration/courses_card',
+                         locals: { courses: current_user.edited_courses.sort_by(&:title),
+                                   inspection: false } %>
+            <% else %>
+              Es gibt keine Module, für die Du als EditorIn eingetragen bist.
+            <% end %>
           </div>
         </div>
       </div>
@@ -93,17 +103,21 @@
         (<%= current_user.edited_media.count %>)
       </div>
       <div class="card-body">
-        <ul>
-          <% current_user.edited_media.order(:updated_at).reverse.first(25).each do |m| %>
-            <li>
-              <%= link_to m.title, edit_medium_path(m) %>
-            </li>
+        <% if current_user.edited_media.present? %>
+          <ul>
+            <% current_user.edited_media.order(:updated_at).reverse.first(25).each do |m| %>
+              <li>
+                <%= link_to m.title, edit_medium_path(m) %>
+              </li>
+            <% end %>
+          </ul>
+          <% if current_user.edited_media.count > 25 %>
+            Es werden nur die 25 zuletzt geupdateten Medien angezeigt.
+            Mehr Medien findest Du über die
+            <%= link_to 'Medien-Suche', media_catalog_path %>.
           <% end %>
-        </ul>
-        <% if current_user.edited_media.count > 25 %>
-          Es werden nur die 25 zuletzt geupdateten Medien angezeigt.
-          Mehr Medien findest Du über die
-          <%= link_to 'Medien-Suche', media_catalog_path %>.
+        <% else %>
+          Es gibt keine Medien, für die Du als EditorIn eingetragen bist.
         <% end %>
       </div>
     </div>
