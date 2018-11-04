@@ -142,10 +142,6 @@ class User < ApplicationRecord
     edited_courses
   end
 
-  def edited_lectures_with_inheritance
-    edited_courses.map(&:lectures).flatten | edited_lectures.to_a
-  end
-
   def edited_courses_with_inheritance
     (edited_courses + edited_lectures.map(&:course)).uniq
   end
@@ -154,12 +150,12 @@ class User < ApplicationRecord
     (editable_courses + edited_lectures.map(&:course)).uniq
   end
 
-  def edited_lessons_with_inheritance
-    edited_lectures_with_inheritance.collect(&:lessons).flatten
+  def lectures_as_module_editor
+    edited_courses.map(&:lectures).flatten - edited_lectures.to_a - given_lectures.to_a
   end
 
-  def lectures_as_module_editor
-    edited_lectures_with_inheritance - edited_lectures.to_a
+  def teaching_unrelated_lectures
+    Lecture.all - given_lectures - edited_lectures - lectures_as_module_editor
   end
 
   private

@@ -61,7 +61,7 @@
               <% end %>
             </div>
             <div class="col-4 form-group">
-              <%= f.label :editor_ids, '(zusätzliche) VorlesungseditorInnen' %>
+              <%= f.label :editor_ids, 'zusätzliche VorlesungseditorInnen' %>
               <a href="<%= update_editors_path(lecture) %>" class="text-dark"
                  data-toggle="tooltip"
                  data-placement="bottom" title="Bearbeiten"
@@ -73,8 +73,8 @@
               </a>
               <div id="lecture_editors_select" style="display: none;" %>
                 <%= f.select :editor_ids,
-                             options_for_select(lecture.editors.map { |e| [e.info, e.id]}, lecture.editors.map(&:id)),
-                             {}, { multiple: true, class: 'selectize', 
+                             options_for_select([['keiner', '']] + lecture.editors.map { |e| [e.info, e.id]}, lecture.editors.map(&:id)),
+                             {}, { multiple: true, class: 'selectize',
                                    disabled: true } %>
               </div>
               <div id="lecture_editors_info">
@@ -95,7 +95,7 @@
           </div>
           <div class="row">
             <div class="col-12">
-              Abonnentenzahl: 
+              Abonnentenzahl:
               <%= lecture.users&.count %>
             </div>
           </div>
@@ -105,7 +105,7 @@
                 Achtung, es gibt ungespeicherte Änderungen!
                 <%= f.submit "Speichern", class: "btn btn-primary" %>
                 <button type="button" class="btn btn-secondary ml-2"
-                        id="lecture-basics-cancel" 
+                        id="lecture-basics-cancel"
                         data-id="<%= lecture.id %>">
                   verwerfen
                 </button>

@@ -24,19 +24,10 @@
     </ul>
     <ul class="navbar-nav mr-auto">
       <li class="nav-item <%= active(controller_name == 'media') %>">
-        <%= link_to "Medien", media_catalog_path, class: 'nav-link' %>
+        <%= link_to "Mediensuche", media_catalog_path, class: 'nav-link' %>
       </li>
-      <% if current_user.admin? || current_user.edited_courses_with_inheritance.present? %>
-        <li class="nav-item <%= active(controller_name == 'courses') %>">
-          <%= link_to "Module", courses_path,
-                      class: 'nav-link' %>
-        </li>
-        <li class="nav-item <%= active(controller_name == 'lectures') %>">
-          <%= link_to "Vorlesungen", lectures_path, class: 'nav-link' %>
-        </li>
-      <% end %>
       <li class="nav-item <%= active(controller_name == 'tags') %>">
-        <%= link_to "Tags", tags_path, class: 'nav-link' %>
+        <%= link_to "Tagübersicht", tags_path, class: 'nav-link' %>
       </li>
       <% if current_user.admin? %>
         <li class="nav-item <%= active(controller_name == 'terms') %>">

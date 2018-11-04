@@ -1,205 +1,111 @@
-<div class="row mt-2">
+<div class="row mt-3">
+  <div class="col-8">
+    <div class="row">
+      <div class="col-7">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            Meine Vorlesungen
+          </div>
+          <div class="card-body">
+            <% if current_user.given_lectures.present? %>
+              als DozentIn
+              (<%= current_user.given_lectures.count %>)
+              <%= render partial: 'administration/lectures_card',
+                         locals: { lectures: Lecture.sort_by_date(current_user.given_lectures),
+                                   inspection: false,
+                                   teacher: false } %>
+            <% end %>
+            <% if current_user.edited_lectures.present? %>
+              als zusätzlicher Vorlesungeditor
+              (<%= current_user.edited_lectures.count %>)
+              <%= render partial: 'administration/lectures_card',
+                         locals: { lectures: Lecture.sort_by_date(current_user.edited_lectures),
+                                   inspection: false,
+                                   teacher: true } %>
+            <% end %>
+            <% if current_user.lectures_as_module_editor.present? %>
+              als Moduleditor
+              (<%= current_user.lectures_as_module_editor.count %>)
+              <%= render partial: 'administration/lectures_card',
+                         locals: { lectures: Lecture.sort_by_date(current_user.lectures_as_module_editor),
+                                   inspection: false,
+                                   teacher: true } %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="card">
+          <div class="card-header bg-primary text-white">
+            Meine Module
+            (<%= current_user.edited_courses.count  %>)
+          </div>
+          <div class="card-body">
+            <%= render partial: 'administration/courses_card',
+                       locals: { courses: current_user.edited_courses.sort_by(&:title),
+                                 inspection: false } %>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-7">
+        <div class="card">
+          <div class="card-header bg-teal-lighten-4">
+            Sonstige Vorlesungen
+            (<%= current_user.teaching_unrelated_lectures.count  %>)
+          </div>
+          <div class="card-body">
+            <% if current_user.teaching_unrelated_lectures.present? %>
+              <%= render partial: 'administration/lectures_card',
+                         locals: { lectures: Lecture.sort_by_date(current_user.teaching_unrelated_lectures),
+                                   inspection: true,
+                                   teacher: true } %>
+            <% else %>
+              Es gibt keine sonstigen Vorlesungen.
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="col-5">
+        <div class="card">
+          <div class="card-header bg-teal-lighten-4">
+            Sonstige Module
+            (<%= Course.count - current_user.edited_courses.count  %>)
+          </div>
+          <div class="card-body">
+            <% if (Course.all - current_user.edited_courses).present? %>
+              <%= render partial: 'administration/courses_card',
+                         locals: { courses: (Course.all - current_user.edited_courses).sort_by(&:title),
+                                   inspection: true } %>
+            <% else %>
+              Es gibt keine sonstigen Module.
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="col-4">
     <div class="card">
       <div class="card-header bg-primary text-white">
-        Meine Module
-        (<%= current_user.edited_courses.count  %>)
-      </div>
-      <div class="card-body">
-        <div class="list-group">
-          <div class="list-group-item list-group-item-info">
-            <div class="row">
-              <div class="col-8">
-                Titel
-              </div>
-              <div class="col-4 text-right">
-                EditorInnen
-              </div>
-            </div>
-          </div>
-          <% current_user.edited_courses.sort_by(&:title).each do |c| %>
-            <a href="<%= edit_course_path(c) %>"
-               class="list-group-item list-group-item-action">
-              <div class="row">
-                <div class="col-8">
-                  <%= c.title %>
-                </div>
-                <div class="col-4 text-right">
-                  <ul class="list-unstyled">
-                    <% c.editors.each do |e| %>
-                      <li>
-                        <%= e.name %>
-                      </li>
-                    <% end %>
-                  </ul>
-                </div>
-              </div>
-            </a>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-4">
-    <div class="card">
-      <div class="card-header">
-        Meine Vorlesungen
-        (<%= current_user.edited_lectures_with_inheritance.count %>)
-      </div>
-      <div class="card-body">
-        <% if current_user.edited_lectures.present? %>
-        als Vorlesungeditor:
-        <div class="list-group mb-2">
-          <div class="list-group-item list-group-item-info">
-            <div class="row">
-              <div class="col-8">
-                Titel
-              </div>
-              <div class="col-4 text-right">
-                Dozentin
-              </div>
-            </div>
-          </div>
-          <% Lecture.sort_by_date(current_user.edited_lectures).each do |l| %>
-            <a href="<%= edit_lecture_path(l) %>"
-               class="list-group-item list-group-item-action">
-              <div class="row">
-                <div class="col-8">
-                   <%= l.title %>
-                </div>
-                <div class="col-4 text-right">
-                  <%= l.teacher&.name %>
-                </div>
-              </div>
-            </a>
-          <% end %>
-        </div>
-        <% end %>
-        <% if current_user.lectures_as_module_editor.present? %>
-        als Moduleditor:
-        <div class="list-group">
-          <div class="list-group-item list-group-item-info">
-            <div class="row">
-              <div class="col-8">
-                Titel
-              </div>
-              <div class="col-4 text-right">
-                Dozentin
-              </div>
-            </div>
-          </div>
-          <% Lecture.sort_by_date(current_user.lectures_as_module_editor).each do |l| %>
-            <a href="<%= edit_lecture_path(l) %>"
-               class="list-group-item list-group-item-action">
-              <div class="row">
-                <div class="col-8">
-                  <%= l.title %>
-                </div>
-                <div class="col-4 text-right">
-                  <%= l.teacher&.name %>
-                </div>
-              </div>
-            </a>
-          <% end %>
-        </div>
-        <% end %>
-      </div>
-    </div>
-  </div>
-  <div class="col-4">
-    <div class="card">
-      <div class="card-header">
         Meine Medien
         (<%= current_user.edited_media.count %>)
       </div>
       <div class="card-body">
         <ul>
-        <% current_user.edited_media.order(:updated_at).reverse.first(20).each do |m| %>
-          <li>
-            <%= link_to m.title, edit_medium_path(m) %>
-          </li>
-        <% end %>
+          <% current_user.edited_media.order(:updated_at).reverse.first(25).each do |m| %>
+            <li>
+              <%= link_to m.title, edit_medium_path(m) %>
+            </li>
+          <% end %>
         </ul>
-        <% if current_user.edited_media.count > 20 %>
-          Es werden nur die 20 zuletzt geupdateten Medien angezeigt.
+        <% if current_user.edited_media.count > 25 %>
+          Es werden nur die 25 zuletzt geupdateten Medien angezeigt.
+          Mehr Medien findest Du über die
+          <%= link_to 'Medien-Suche', media_catalog_path %>.
         <% end %>
       </div>
     </div>
   </div>
 </div>
-  <div class="row mt-2">
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header">
-          Sonstige Module
-        </div>
-        <div class="card-body">
-          <div class="list-group">
-            <div class="list-group-item list-group-item-info">
-              <div class="row">
-                <div class="col-8">
-                  Titel
-                </div>
-                <div class="col-4 text-right">
-                  EditorInnen
-                </div>
-              </div>
-            </div>
-            <% (Course.all - current_user.edited_courses).sort_by(&:title).each do |c| %>
-              <a href="<%= inspect_course_path(c) %>"
-                 class="list-group-item list-group-item-action">
-                <div class="row">
-                  <div class="col-8">
-                     <%= c.title %>
-                  </div>
-                  <div class="col-4 text-right">
-                    <ul class="list-unstyled">
-                      <% c.editors.each do |e| %>
-                        <li>
-                          <%= e.name %>
-                        </li>
-                      <% end %>
-                    </ul>
-                  </div>
-                </div>
-              </a>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card">
-        <div class="card-header">
-          Sonstige Vorlesungen
-        </div>
-        <div class="card-body">
-          <ul class="list-group">
-            <div class="list-group-item list-group-item-info">
-              <div class="row">
-                <div class="col-8">
-                  Titel
-                </div>
-                <div class="col-4 text-right">
-                  Dozentin
-                </div>
-              </div>
-            </div>
-            <% (Lecture.all - current_user.edited_lectures_with_inheritance).sort_by(&:title).each do |l| %>
-              <a class="list-group-item list-group-item-action"
-                 href="<%= inspect_lecture_path(l) %>">
-                <div class="row">
-                  <div class="col-8">
-                    <%= l.title %>
-                  </div>
-                  <div class="col-4 text-right">
-                    <%= l.teacher&.name %>
-                  </div>
-                </div>
-              </a>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>

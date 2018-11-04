@@ -16,6 +16,7 @@ class Lecture < ApplicationRecord
                                    message: 'Eine Vorlesung mit derselben ' \
                                             'Kombination aus Modul, Semester ' \
                                             'und DozentIn existiert bereits.' }
+  after_save :remove_teacher_as_editor
 
   def tags
     chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
@@ -150,7 +151,7 @@ class Lecture < ApplicationRecord
   end
 
   def editors_with_inheritance
-    editors.to_a + course.editors
+    ([teacher] + editors.to_a + course.editors).to_a
   end
 
   def teacher_and_editors_with_inheritance
@@ -229,6 +230,10 @@ class Lecture < ApplicationRecord
     Rails.application.routes.url_helpers
          .course_path(course,
                       params: { active: id })
+  end
+
+  def remove_teacher_as_editor
+    editors.delete(teacher)
   end
 
 end

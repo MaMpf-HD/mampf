@@ -16,7 +16,7 @@ class Ability
       can :update, Course do |course|
         course.edited_by?(user)
       end
-      can :update, Lecture do |lecture|
+      can [:update, :update_teacher, :update_editors], Lecture do |lecture|
         lecture.edited_by?(user)
       end
       can :new, Lecture
