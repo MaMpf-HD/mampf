@@ -22,8 +22,6 @@
       <div class="col-3 text-center">
         <%= link_to 'Ansehen', inspect_course_path(@course),
                     class: 'btn btn-primary my-1' %>
-        <%= link_to 'zur Modulübersicht', courses_path,
-                    class: 'btn btn-primary' %>
         <% if @course.lectures.empty? && @course.media.empty? && @course.id.present? %>
           <%= link_to 'Modul löschen', course_path, method: :delete,
                       data: { confirm: 'Bist Du sicher?' },
