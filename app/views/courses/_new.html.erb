@@ -1,4 +1,3 @@
-<hr>
 <div class="row">
   <div class="col-12">
     <h6>
@@ -8,7 +7,7 @@
 </div>
 <%= form_with model: course do |f| %>
   <div class="form-row">
-    <div class="col-6 form-group">
+    <div class="col-8 form-group">
       <%= f.label :title, 'Titel' %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'new_course_title' } %>
@@ -16,7 +15,7 @@
            id="new-course-title-error">
       </div>
     </div>
-    <div class="col-2 form-group">
+    <div class="col-4 form-group">
       <%= f.label :short_title, 'Kurztitel' %>
       <%= f.text_field :short_title, { class: 'form-control',
                                  id: 'new_course_short_title' } %>
@@ -24,7 +23,7 @@
            id="new-course-short-title-error">
       </div>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-12 form-group">
       <%= f.label :editor_ids,
                   'EditorInnen' %>
       <%= f.select :editor_ids,
@@ -42,4 +41,3 @@
     </div>
   </div>
 <% end %>
-<hr>

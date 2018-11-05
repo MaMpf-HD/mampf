@@ -4,9 +4,23 @@
       <div class="col-7">
         <div class="card">
           <div class="card-header bg-primary text-white">
-            Meine Vorlesungen
+            <div class="row">
+              <div class="col-8">
+                Meine Vorlesungen
+              </div>
+              <div class="col-4">
+                <%= link_to 'Vorlesung anlegen', new_lecture_path,
+                             class: 'btn btn-outline-light',
+                             remote: true,
+                             id: 'new-lecture-button' %>
+              </div>
+            </div>
           </div>
           <div class="card-body">
+            <div id="new-lecture-area"
+                 class="bg-green-lighten-4 p-3 mb-3 rounded"
+                 style="display: none;">
+            </div>
             <% if current_user.given_lectures.present? %>
               als DozentIn
               (<%= current_user.given_lectures.count %>)
@@ -43,10 +57,28 @@
       <div class="col-5">
         <div class="card">
           <div class="card-header bg-primary text-white">
-            Meine Module
-            (<%= current_user.edited_courses.count  %>)
+            <div class="row">
+              <div class="col-8">
+                Meine Module
+                (<%= current_user.edited_courses.count  %>)
+              </div>
+              <div class="col-4 text-right">
+                <% if current_user.admin? %>
+                  <%= link_to 'Modul anlegen', new_course_path,
+                              class: 'btn btn-outline-light',
+                              remote: true,
+                              id: 'create-new-course' %>
+                  <% end %>
+              </div>
+            </div>
           </div>
           <div class="card-body">
+            <div id="new-course-area" 
+                 class="bg-green-lighten-4 p-3 mb-3 rounded"
+                 style="display: none;">
+              <%= render partial: 'courses/new',
+                         locals: { course: Course.new } %>
+            </div>
             <% if current_user.edited_courses.present? %>
               <%= render partial: 'administration/courses_card',
                          locals: { courses: current_user.edited_courses.sort_by(&:title),

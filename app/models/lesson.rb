@@ -105,6 +105,10 @@ class Lesson < ApplicationRecord
     Tag.all - section_tags
   end
 
+  def section_selection
+    sections.map { |s| [s.to_label, s.id]}
+  end
+
   private
 
   def lesson_path

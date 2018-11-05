@@ -28,7 +28,7 @@ class CoursesController < ApplicationController
   def create
     @course = Course.new(course_params)
     @course.save
-    redirect_to courses_path if @course.valid?
+    redirect_to administration_path if @course.valid?
     @errors = @course.errors
   end
 
@@ -44,7 +44,7 @@ class CoursesController < ApplicationController
 
   def destroy
     @course.destroy
-    redirect_to courses_path
+    redirect_to administration_path
   end
 
   private
@@ -59,7 +59,7 @@ class CoursesController < ApplicationController
   def set_course_admin
     @course = Course.find_by_id(params[:id])
     return if @course.present?
-    redirect_to courses_path
+    redirect_to administration_path
   end
 
   def course_params

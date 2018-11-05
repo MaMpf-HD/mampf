@@ -29,13 +29,13 @@ class LecturesController < ApplicationController
   def create
     @lecture = Lecture.new(lecture_params)
     @lecture.save
-    redirect_to lectures_path if @lecture.valid?
+    redirect_to administration_path if @lecture.valid?
     @errors = @lecture.errors
   end
 
   def destroy
     @lecture.destroy
-    redirect_to lectures_path
+    redirect_to administration_path
   end
 
   def update_teacher
