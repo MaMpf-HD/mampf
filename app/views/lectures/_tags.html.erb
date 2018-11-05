@@ -28,6 +28,12 @@
               (Bisher) behandelte Begriffe aus dem zugehörigen Modul
               <%= link_to lecture.course.title, inspect_course_path(lecture.course) %>
               <%= ' (' + lecture.course_tags.count.to_s + ')' %>
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Hier werden diejenigen Tags aus dem zugeordneten Modul angezeigt, die in mindestens einem Abschnitt dieser Vorlesung vorkommen.">
+              </i>
             </h6>
             <% if lecture.course_tags.present? %>
               <%= render partial: "tags/list",
@@ -41,6 +47,12 @@
             <h6>
               Zusätzlich behandelte Begriffe
               <%= ' (' + lecture.extra_tags.count.to_s + ')' %>
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Hier werden diejenigen Tags angezeigt, welche in mindestens einem Abschnitt dieser Vorlesung vorkommen, jedoch kein Tag des zugeordneten Moduls sind.">
+              </i>
             </h6>
             <%= render partial: "tags/list",
                          locals: { tags: lecture.extra_tags.sort_by(&:title),
@@ -50,6 +62,12 @@
           <h6>
             (Noch) nicht behandelte Begriffe
             <%= ' (' + lecture.deferred_tags.count.to_s + ')' %>
+            <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Hier werden diejenigen Tags aus dem zugeordneten Modul angezeigt, die in keinem Abschnitt dieser Vorlesung vorkommen.">
+              </i>
           </h6>
           <%= render partial: "tags/list",
                      locals: { tags: lecture.deferred_tags.sort_by(&:title),

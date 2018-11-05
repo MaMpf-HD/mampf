@@ -26,6 +26,12 @@
           <div class="form-row">
             <div class="col-4 form-group">
               <%= f.label :start_chapter, 'Nummer des ersten Kapitels' %>
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Soll das erste Kapitel eine von eins verschiedene Nummer haben, so kann dies hier eingetragen werden. Anwendungsmöglichkeiten sind z.B. Kapitelnummerierungen, die in Fortsetzungsvorlesungen weitergeführt werden.">
+              </i>
               <%= f.number_field :start_chapter,
                                  value: @lecture.start_chapter || 1,
                                  class: 'form-control',
@@ -34,6 +40,12 @@
             <div class="col-4 mt-6">
               <div id="start-section-input">
                 <%= f.label :start_section, 'Startabschnitt' %>
+                <i class="far fa-question-circle helpdesk ml-2" 
+                   tabindex="0"  
+                   data-toggle="popover" data-trigger="focus" 
+                   title="Info" 
+                   data-content="Ist die absolute Nummerierung für Abschnitte aktiviert, so kann hier die Nummer des ersten Abschnitts eingestellt werden.">
+                </i>
                 <%= f.number_field :start_section,
                                    value: @lecture.start_section || 1,
                                    class: 'form-control',
@@ -47,6 +59,12 @@
                                 disabled: inspection %>
                 <%= f.label :absolute_numbering, 'absolute Nummerierung',
                             { class: 'custom-control-label' } %>
+                <i class="far fa-question-circle helpdesk ml-2" 
+                   tabindex="0"  
+                   data-toggle="popover" data-trigger="focus" 
+                   title="Info" 
+                   data-content="Standardmäßig wird für Abschnitte eine Nummerierung relativ zum Kapitel angezeigt: Der dritte Abschnitt in Kapitel 4 ist etwa §4.3. Durch Aktivierung der absoluten Nummerierung wird dieses Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen weitergezählt. ">
+                </i>            
               </div>
             </div>
           </div>

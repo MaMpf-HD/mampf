@@ -4,12 +4,20 @@
       <div class="col-6">
         <h5>
           Medien
+          <i class="far fa-question-circle helpdesk ml-2" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Hier werden alle Medien angezeigt, die direkt zu dieser Vorlesung oder zu Sitzungen dieser Vorlesung assoziiert sind.
+             Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
+             angesiedelt sind, so wird darauf hingeweisen.">
+          </i>
         </h5>
       </div>
       <div class="col-6 text-right">
         <% unless inspection %>
           <%= link_to 'Medium anlegen',
-                      new_medium_path(params: { teachable_id: lecture_id,
+                      new_medium_path(params: { teachable_id: lecture.id,
                                                 teachable_type: 'Lecture' }),
                       class: 'btn btn-primary new-in-lecture',
                       id: 'create-new-medium' %>
@@ -59,7 +67,19 @@
                     <% end %>
                   </li>
                 <% end %>
-              </ul>   
+              </ul>
+              <% course_material = Medium.where(teachable: lecture.course,
+                                                sort: media_types[s]) %>
+              <% if course_material.present? %>
+                Es gibt 
+                <%= course_material.count %> 
+                <%= course_material.count == 1 ? 'Medium' : 'Medien' %>
+                dieses Typs, die auf der Ebene des zugehörigen 
+                Moduls
+                <%= link_to lecture.course.title,
+                            inspection ? inspect_course_path(lecture.course) : edit_course_path(lecture.course) %>  
+                angesiedelt sind.
+              <% end %>   
             </div>
           <% end %>
         </div>

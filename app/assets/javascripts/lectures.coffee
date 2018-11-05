@@ -4,6 +4,8 @@
 
 $(document).on 'turbolinks:load', ->
 
+  $('[data-toggle="popover"]').popover()
+
   $('#lecture-form :input').on 'change', ->
     $('#lecture-basics-warning').show()
     $('#people_collapse_button').hide()

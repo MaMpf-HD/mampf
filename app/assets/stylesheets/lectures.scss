@@ -16,3 +16,12 @@
   color: red;
   display: none;
 }
+
+.helpdesk {
+  text-decoration: none; 
+  cursor: pointer; 
+  -webkit-user-select: none; 
+  -moz-user-select: none; 
+  user-select: none; 
+  outline: none;
+}

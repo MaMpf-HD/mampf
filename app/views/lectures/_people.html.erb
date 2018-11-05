@@ -34,6 +34,12 @@
                   </i>
                 <% end %>
               </a>
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Die DozentIn sollte im Normalfall diejenige Person sein, die die Vorlesung hält. Möchte die entsprechende Person sich nicht selbst um das Einstellen von Materialien kümmern, so kann dies durch zusätzliche Vorlesungseditoren geschehen.">
+              </i>
               <div id="lecture_teacher_select" style="display: none;" %>
                 <%= f.select :teacher_id,
                              options_for_select([[lecture.teacher.info, lecture.teacher.id]], lecture.teacher.id),
@@ -47,6 +53,12 @@
             </div>
             <div class="col-4">
               ModuleditorInnen
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="ModuleditorInnen haben das Bearbeitungsrecht für das zugeordnete Modul. Dieses vererbt sich auf jede Vorlesung zu diesem Modul.">
+              </i>
               <% if lecture.course.editors.present? %>
                 <ul>
                   <% lecture.course.editors.each do |e| %>
@@ -71,6 +83,12 @@
                   </i>
                 <% end %>
               </a>
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Zusätzliche Vorlesungseditoren sind bearbeitungsberechtigte Personen, die verschieden vom Dozenten und von den Moduleditoren sind. Das können z.B. VorlesungsassistentInnen sein, die Materialien zur Vorlesung einpflegen.">
+              </i>
               <div id="lecture_editors_select" style="display: none;" %>
                 <%= f.select :editor_ids,
                              options_for_select([['keiner', '']] + lecture.editors.map { |e| [e.info, e.id]}, lecture.editors.map(&:id)),
