@@ -7,6 +7,12 @@
           <h5 class="text-dark">
             Zielpunkte im Manuskript
             <%= ' (' + medium.manuscript_destinations.count.to_s + ') '%>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Dies ist eine Liste aller named destinations aus dem Manuskript. Diese können im Thyme-Editor als Sprungstellen für Referenzen in das Manuskript benutzt werden.">
+              </i>
           </h5>
         </div>
         <div class="col-6 text-right">

@@ -3,6 +3,6 @@ $('#new-lesson-modal-content').empty()
                         locals: { lesson: @lesson,
                                   from: @from,
                                   section: @section,
-                                  inspection: false }%>')
+                                  inspection: false }%>')  
 $('#new-lesson-modal-content .selectize').selectize({ plugins: ['remove_button'] })
 $('#newLessonModal').modal('show').data('from','<%= @from %>')

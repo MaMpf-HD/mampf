@@ -4,5 +4,6 @@ $('#new-tag-modal-content').empty()
                                   new_tag: true,
                                   modal: true,
                                   from: @from }%>')
+$('[data-toggle="popover"]').popover()  
 $('#new-tag-modal-content .selectize').selectize({ plugins: ['remove_button'] })
 $('#newTagModal').modal('show').data('from','<%= @from %>')

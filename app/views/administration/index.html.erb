@@ -7,6 +7,12 @@
             <div class="row">
               <div class="col-8">
                 Meine Vorlesungen
+                <i class="far fa-question-circle helpdesk ml-2" 
+                   tabindex="0"  
+                   data-toggle="popover" data-trigger="focus" 
+                   title="Info" 
+                   data-content="Dies ist eine Liste aller Vorlesungen, für die Du Bearbeitungsrechte hast.">
+                </i>
               </div>
               <div class="col-4">
                 <%= link_to 'Vorlesung anlegen', new_lecture_path,
@@ -24,6 +30,13 @@
             <% if current_user.given_lectures.present? %>
               als DozentIn
               (<%= current_user.given_lectures.count %>)
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Dies ist eine Liste aller Vorlesungen, die Du als
+                 Dozent verantwortet hast. Für diese hast Du natürlich die Bearbeitungsberechtigung.">
+              </i>
               <%= render partial: 'administration/lectures_card',
                          locals: { lectures: Lecture.sort_by_date(current_user.given_lectures),
                                    inspection: false,
@@ -32,6 +45,13 @@
             <% if current_user.edited_lectures.present? %>
               als zusätzlicher Vorlesungeditor
               (<%= current_user.edited_lectures.count %>)
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Dies ist eine Liste aller Vorlesungen, für die als
+                 zusätzlicher Editor eingetragen bist. Dadurch hast Du Bearbeitungsrechte an diesen Vorlesungen.">
+              </i>
               <%= render partial: 'administration/lectures_card',
                          locals: { lectures: Lecture.sort_by_date(current_user.edited_lectures),
                                    inspection: false,
@@ -40,6 +60,13 @@
             <% if current_user.lectures_as_module_editor.present? %>
               als Moduleditor
               (<%= current_user.lectures_as_module_editor.count %>)
+              <i class="far fa-question-circle helpdesk ml-2" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Dies ist eine Liste aller Vorlesungen, die zu
+                 Modulen gehören, für die du EditorIn bist, abzüglich der Vorlesungen, die Du selbst als DozentIn gehalten hast. Durch Deine Rechte als ModuleditorIn erbst Du Bearbeitungsrechte an diesen Vorlesungen.">
+              </i>
               <%= render partial: 'administration/lectures_card',
                          locals: { lectures: Lecture.sort_by_date(current_user.lectures_as_module_editor),
                                    inspection: false,
@@ -61,6 +88,12 @@
               <div class="col-8">
                 Meine Module
                 (<%= current_user.edited_courses.count  %>)
+                <i class="far fa-question-circle helpdesk ml-2" 
+                   tabindex="0"  
+                   data-toggle="popover" data-trigger="focus" 
+                   title="Info" 
+                   data-content="Dies ist eine Liste aller Module, für die Du EditorIn bist und damit Bearbeitungsrechte hast.">
+                </i>
               </div>
               <div class="col-4 text-right">
                 <% if current_user.admin? %>
@@ -96,6 +129,12 @@
           <div class="card-header bg-teal-lighten-4">
             Sonstige Vorlesungen
             (<%= current_user.teaching_unrelated_lectures.count  %>)
+            <i class="far fa-question-circle helpdesk ml-2" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Dies ist eine Liste aller Vorlesungen, für die Du keine Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )">
+            </i>
           </div>
           <div class="card-body">
             <% if current_user.teaching_unrelated_lectures.present? %>
@@ -114,6 +153,12 @@
           <div class="card-header bg-teal-lighten-4">
             Sonstige Module
             (<%= Course.count - current_user.edited_courses.count  %>)
+            <i class="far fa-question-circle helpdesk ml-2" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Dies ist eine Liste aller Vorlesungen, für die Du kein(e) EditorIn bist und somit keine Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )">
+            </i>
           </div>
           <div class="card-body">
             <% if (Course.all - current_user.edited_courses).present? %>
@@ -133,6 +178,13 @@
       <div class="card-header bg-primary text-white">
         Meine Medien
         (<%= current_user.edited_media.count %>)
+        <i class="far fa-question-circle helpdesk ml-2" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Dies ist eine Liste aller Vorlesungen, für die Du als BearbeiterIn eingetragen bist. Medien, für Die Du Bearbeitungsrechte
+               erbst (beispielsweise als ModuleditorIn), sind in dieser Liste nicht aufgeführt.">
+        </i>
       </div>
       <div class="card-body">
         <% if current_user.edited_media.present? %>
@@ -146,7 +198,7 @@
           <% if current_user.edited_media.count > 25 %>
             Es werden nur die 25 zuletzt geupdateten Medien angezeigt.
             Mehr Medien findest Du über die
-            <%= link_to 'Medien-Suche', media_catalog_path %>.
+            <%= link_to 'Mediensuche', media_catalog_path %>.
           <% end %>
         <% else %>
           Es gibt keine Medien, für die Du als EditorIn eingetragen bist.

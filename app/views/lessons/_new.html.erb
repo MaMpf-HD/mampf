@@ -24,6 +24,12 @@
       <div class="col-8">
         <div class="form-group">
           <%= f.label :section_ids, 'Abschnitte' %>
+          <i class="far fa-question-circle helpdesk ml-2" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Hier wird angegeben, welche Abschnitte aus der Vorlesung in der entsprechenden Sitzung behandelt wurden. Dadurch erhält die Sitzung automatisch alle Tags zugewiesen, die zu den entsprechenden Abschnitten gehören. Beim Editieren der Sitzung kann diese Auswahl dann nachbearbeitet werden.">
+          </i>
           <%= f.select :section_ids,
                        options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ] }),
                        {}, { multiple: true,

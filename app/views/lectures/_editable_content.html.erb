@@ -6,13 +6,25 @@
           Vorlesungsinhalt
         </h5>
       </div>
+      <div class="col-2">
+        zum Workflow
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Der ideale Workflow sieht so aus, dass man zunächst Kapitel und
+                         Abschnitte anlegt und diese tagged. Danach werden Sitzungen und zugeordnete
+                         Medien angelegt, diese erben dann die entsprechenden Tags. Andersherum geht es natürlich auch,
+                         dann ist jedoch ein höherer Aufwand beim Tagging erforderlich.">
+        </i>
+      </div>
       <% unless inspection %>
-        <div class="col-3">
+        <div class="col-2">
           <span id="no-effect-warning" style="display: none; color: red;">
             Du musst zunächst die anderen Änderungen speichern oder verwerfen.
           </span>
         </div>
-        <div class="col-6 text-right">
+        <div class="col-5 text-right">
             <%= link_to 'Kapitel anlegen',
                         new_chapter_path(lecture_id: lecture.id),
                         remote: true, class: 'btn btn-secondary new-in-lecture',

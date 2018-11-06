@@ -54,6 +54,14 @@
         <div class="card-body">
           <div class="form-group">
             <%= f.label :sort, 'Typ' %>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Jedes Medium hat genau einen Typ. Die folgenden Typen mit stehen zur Auswahl: <ul><li>KaViaR: Vorlesungsvideos</li><li>SeSAM: Worked-Example-Videos</li><li>KIWi: Wiederholungsvideos</li><li>KeKs-Quiz: Quiz auf der KeKs-Plattform</li><li>KeKs-Frage: Frage auf der KeKs-Plattform</li>
+               <li>ErDBeere: Medium auf der ErDBeere-Plattform</li><li>RestE: alles, was in keine der anderen Kategorien passt</li></ul>"
+               data-html="true">
+            </i>
             <%= f.select :sort,
                          options_for_select(Medium.sort_enum.map { |s| [s, s] },
                                             medium.sort),
@@ -61,6 +69,14 @@
           </div>
           <div class="form-group">
             <%= f.label :teachable, 'assoziiert zu' %>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Jedes Medium ist zu genau einer Lehrveranstaltung assoziiert. Die Assoziation erfolgt hierbei zu einer/einem<ul><li><i>Sitzung</i>, wenn der Inhalt zu einer Vorlesungssitzung gehört, beispielsweise eine Videoaufzeichnung aus KaViaR</li><li><i>Vorlesung</i>, wenn der Inhalt spezifisch für die konkrete Vorlesung ist, jedoch ohne Bezug zu einer konkreten Sitzung, beispielsweise bei SeSAM-Videos</li><li><i>Modul</i>, wenn der Inhalt zum Modul gehört, jedoch keinen Bezug zu einer konkreten Vorlesung braucht, bespielsweise SeSAM-Videos zu Grundlagen, die in jeder Vorlesung eines entsprechenden Moduls gleich behandelt werden.
+               </li></ul>"
+               data-html="true">
+            </i>
             <%= f.select :teachable,
                          options_for_select([['auswählen', '']] + all_teachables_selection(current_user),
                                             medium.teachable.present? ? medium.teachable_select : nil),
@@ -70,6 +86,13 @@
           </div>
           <div class="form-group">
             <%= f.label :editor_ids, 'Editoren' %>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Dies eine Liste aller Personen, die für diese Medium als Editor verantwortlich sind. Es muss mindestens eine angegeben werden, jede dieser Personen erhält das Bearbeitungsrecht für das Medium. <br>Anmerkung: Unabhängig davon kann das Medium auch von Personen mit höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren oder Vorlesungeditorem aus dem zugeordneten Modul bzw. der zugeordneten Vorlesung."
+               data-html="true">
+            </i>
             <%= f.select :editor_ids,
                          options_for_select(User.select_editors,
                                             medium.editors.map(&:id)),
@@ -79,12 +102,24 @@
           </div>
           <div class="form-group">
             <%= f.label :description, 'Beschreibung' %>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Die Beschreibung wird in Verweisen auf das Medium verwendet. Die Angabe einer Beschreibung ist obligatorisch, außer im Falle eines KaViar-Mediums, das zu einer Sitzung assoziiert ist oder im Falle einer KeKs-Frage.">
+            </i>
             <%= f.text_field :description, class: 'form-control' %>
             <div class="invalid-feedback" id="medium-description-error">
             </div>
           </div>
           <div class="form-group">
             <%= f.label :tag_ids, 'Verknüpfte Begriffe' %>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Dies ist eine Liste aller Tags, die mit diesem Medium verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt, so stehen hier zunächst alle zu dieser Sitzung assoziierten Tags; diese Wauswahl kann natürlich bearbeitet werden.">
+            </i>
             <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
                     id="new-tag-button"
                     data-course="<%= medium.course.id %>"
@@ -99,6 +134,14 @@
           </div>
           <div class="form-group">
             <%= f.label :linked_medium_ids, 'Verknüpfte Medien' %>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Dies ist eine Liste aller Medien, die mit diesem Medium verknüpft sind bzw. die von diesem Medium aus referenziert werden. Typisches Anwendungsbeispiel ist etwa die Liste aller zuheörigen KeKs-Fragen aus einem KeKs-Quiz heraus. <br><b>Achtung:</b> Das Feature wird vermutlich spätestens nach der Integration von BananE abgeschafft werden, da diese Informationen 
+               dann automatisch erfasst werden können; für die via Thyme referenzierten Medien gilt das bereits jetzt."
+               data-html="true">
+            </i>
             <%= f.select :linked_medium_ids,
                          options_for_select(Medium.select_by_name,
                                             medium.linked_media.map(&:id)),
@@ -106,6 +149,12 @@
           </div>
           <div class="form-group">
             <%= f.label :external_reference_link, 'Externer Link' %>
+            <i class="far fa-question-circle helpdesk" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Externer Link, der einen Teil diese Mediums ausmacht. Typisches Anwendungsbeispiel im Moment: KeKs-Quiz, KeKs-Frage.">
+            </i>
             <div class="row">
               <div class="col-10">
                 <%= f.text_field :external_reference_link,
@@ -136,6 +185,14 @@
               <span class="badge badge-secondary">
                 mp4
               </span>
+              <i class="far fa-question-circle helpdesk" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Das Manuskript sollte im mp4-Format vorliegen.
+                 Die empfohlene horizontale Auflösung ist 1080 Pixel, um eine hinreichende Zukunftskompatibilität zu gewährleisten. Für den thyme-Player ist ein 3:2 Bildschirmverhältnis optimal, da in diesem Fall der Platz für interne und externe Referenzen bestmöglich ausgenutzt wird, sofern ein 16:9 Monitor verwendet wird."
+                 data-html="true">
+              </i>
             </div>
             <div class="col-3 text-right" id="video-uploadButton">
               <input type="hidden" name="medium[video]"
@@ -183,9 +240,16 @@
               <span class="badge badge-secondary">
                 pdf
               </span>
-              <i class="far fa-question-circle" style="cursor: pointer;"
-                 data-toggle="modal"
-                 data-target="#manuscriptInfoModal">
+              <i class="far fa-question-circle helpdesk" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Das Manuskript sollte im pdf-Format vorliegen.
+                 MaMpf ist in der Lage, <i>named destinations</i> aus dem pdf zu extrahieren, um diese später als Sprungmarken zu verwenden.
+                 Named destinations können in Latex bei Verwendung des hyperref-Pakets durch den <code>\hypertarget</code>
+                 Befehl erzeugt werden. Auch Adobe Acrobat (nicht der Reader)
+                 kann named destinations anlegen."
+                 data-html="true">
               </i>
             </div>
             <div class="col-4 text-right" id="manuscript-uploadButton">

@@ -18,6 +18,12 @@
   </div>
   <div class="form-group">
     <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
+    <i class="far fa-question-circle helpdesk ml-2" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Die Tags bilden einen Graphen. Verknüpfte Tags sind genau die Nachbarn eines Tags.">
+    </i>
     <%= f.select :related_tag_ids,
                  options_for_select(Tag.where.not(id: tag.id)
                                        .map { |t| [t.title, t.id]},
@@ -51,6 +57,13 @@
   <div class="row">
     <div class="col-12">
       Zusätzliche Vorlesungen
+      <i class="far fa-question-circle helpdesk ml-2" 
+         tabindex="0"  
+         data-toggle="popover" data-trigger="focus" 
+         title="Info" 
+         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag 
+         nicht zu dem übergeordneten Modul assoziiert ist, jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.">
+      </i>
     </div>
     <div class="col-12">
       <ul>
@@ -67,6 +80,13 @@
   <div class="row">
     <div class="col-12">
       Fehlende Vorlesungen
+      <i class="far fa-question-circle helpdesk ml-2" 
+         tabindex="0"  
+         data-toggle="popover" data-trigger="focus" 
+         title="Info" 
+         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag 
+         zu dem übergeordneten Modul assoziiert ist, jedoch in keinem Abschnitt der entsprechenden Vorlesung auftaucht.">
+        </i>
     </div>
     <div class="col-12">
       <ul>

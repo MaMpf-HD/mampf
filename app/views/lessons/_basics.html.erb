@@ -76,7 +76,7 @@
   <% if inspection %>
     <div class="row">
       <div class="col-12">
-        Verknüpfte Tags
+        Verknüpfte Tags      
       </div>
       <div class="col-12">
         <%= render partial: 'tags/list',
@@ -85,6 +85,14 @@
     </div>
   <% else %>
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
+    <i class="far fa-question-circle helpdesk ml-2" 
+       tabindex="0"  
+       data-toggle="popover" data-trigger="focus" 
+       title="Info" 
+       data-content="Dies ist eine Liste aller Tags, die zu dieser Sitzung assoziiert sind.
+       Beim Anlegen einer Sitzung werden hier automatisch alle Tags aus sämtlichen mit dieser Sitzung
+       mit der Sitzung verknüpften Abschnitten eingetragen. Diese Auswahl kann man hier nachbearbeiten.">
+    </i>      
     <%= f.select :tag_ids,
                  options_for_select(lesson.section_tags.map { |t| [t.title, t.id]} +
                                     lesson.complement_of_section_tags.sort_by(&:title).map { |t| [t.title, t.id]},

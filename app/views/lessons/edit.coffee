@@ -6,6 +6,7 @@ else
     .append('<%= j render partial: "lessons/edit",
                           locals: { lesson: @lesson } %>').show()
   $('#lessonModal').modal('show')
+  $('[data-toggle="popover"]').popover()  
   $('#lesson-modal-content .selectize').selectize({ plugins: ['remove_button'] })
   sectionSelector = document.getElementById('lesson_section_ids')
   tagSelector = document.getElementById('lesson_tag_ids')

@@ -17,6 +17,12 @@
     </div>
     <div class="col-4 form-group">
       <%= f.label :short_title, 'Kurztitel' %>
+      <i class="far fa-question-circle helpdesk ml-2" 
+               tabindex="0"  
+               data-toggle="popover" data-trigger="focus" 
+               title="Info" 
+               data-content="Der Kurztitel wird an mehreren Stellen als Abkürzung verwendet.">
+      </i>
       <%= f.text_field :short_title, { class: 'form-control',
                                  id: 'new_course_short_title' } %>
       <div class="invalid-feedback"
