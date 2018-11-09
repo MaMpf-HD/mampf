@@ -38,6 +38,19 @@ $(document).on 'turbolinks:load', ->
     location.reload()
     return
 
+  $('#hide-media-button').on 'click', ->
+    $('#lecture-media-card').hide()
+    $('#lecture-content-card').removeClass('col-9').addClass('col-12')
+    $('#show-media-button').show()
+    return
+
+  $('#show-media-button').on 'click', ->
+    $('#lecture-content-card').removeClass('col-12').addClass('col-9')
+    $('#lecture-media-card').show()   
+    $('#show-media-button').hide()
+    return
+
+
   $('[id^="lecture-medium_"]').on 'mouseenter', ->
     if this.dataset.type == 'Lesson'
       lessonId = this.dataset.id

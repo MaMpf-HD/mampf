@@ -4,6 +4,11 @@
       <div class="col-3">
         <h5>
           Vorlesungsinhalt
+          <i id="show-media-button"
+             class="far fa-list-alt clickable"
+             style="display: none;"
+             data-toggle="tooltip" title="Medien einblenden">
+          </i> 
         </h5>
       </div>
       <div class="col-2">
@@ -25,14 +30,14 @@
           </span>
         </div>
         <div class="col-5 text-right">
-            <%= link_to 'Kapitel anlegen',
-                        new_chapter_path(lecture_id: lecture.id),
-                        remote: true, class: 'btn btn-secondary new-in-lecture',
-                        id: 'new_chapter_button' %>
-            <%= link_to 'Sitzung anlegen',
-                        new_lesson_path(lecture_id: lecture.id),
-                        remote: true, class: 'btn btn-secondary new-in-lecture',
-                        id: 'new_lesson_button'%>
+          <%= link_to 'Kapitel anlegen',
+                       new_chapter_path(lecture_id: lecture.id),
+                       remote: true, class: 'btn btn-secondary new-in-lecture',
+                       id: 'new_chapter_button' %>
+          <%= link_to 'Sitzung anlegen',
+                       new_lesson_path(lecture_id: lecture.id),
+                       remote: true, class: 'btn btn-secondary new-in-lecture',
+                       id: 'new_lesson_button'%>
         </div>
       <% end %>
     </div>
