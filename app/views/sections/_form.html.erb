@@ -32,7 +32,7 @@
     </div>
   </div>
   <div class="form-row">
-    <div class="col-5 form-group">
+    <div class="col-12 form-group">
       <%= f.label :chapter_id,
                   'Kapitel' %>
       <%= f.select :chapter_id,
@@ -41,7 +41,7 @@
                                       section.chapter.id), {},
                    { class: 'form-control'} %>
     </div>
-    <div class="col-5 form-group">
+    <div class="col-8 form-group">
       <%= f.label :predecessor,
                   'Positionierung nach Abschnitt' %>
       <%= f.select :predecessor,
@@ -51,12 +51,15 @@
                                       section.position - 1) ,
                                       {}, { class: 'form-control' } %>
     </div>
-    <div class="col-2 form-group">
+    <div class="col-4 form-group">
       <%= f.label :display_number,
                   'Anzeigenr.' %>
-      <i class="far fa-question-circle" style="cursor: pointer;"
-         data-toggle="modal"
-         data-target="#displayNumberModal">
+      <i class="far fa-question-circle helpdesk" 
+         tabindex="0"  
+         data-toggle="popover" data-trigger="focus" 
+         title="Info" 
+         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
+         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel haben möchte.">
       </i>
       <%= f.text_field :display_number,
                        { class: 'form-control',
@@ -67,13 +70,13 @@
   </div>
   <div class="form-group">
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
-    <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-            id="new-tag-button"
-            data-course="<%= section.chapter.lecture.course.id %>"
-            data-section="<%= section.id %>"
-            data-from="section">
-            Tag anlegen
-    </button>
+    <a class="fas fa-plus-circle clickable"
+       id="new-tag-button"
+       data-toggle="tooltip" title="Tag anlegen"
+       data-course="<%= section.chapter.lecture.course.id %>"
+       data-section="<%= section.id %>"
+       data-from="section">
+    </a>
     <%= f.select :tag_ids,
                  options_for_select(Tag.select_by_title,section.tag_ids),
                  {}, { multiple: true,

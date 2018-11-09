@@ -120,13 +120,13 @@
                title="Info" 
                data-content="Dies ist eine Liste aller Tags, die mit diesem Medium verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt, so stehen hier zunächst alle zu dieser Sitzung assoziierten Tags; diese Wauswahl kann natürlich bearbeitet werden.">
             </i>
-            <button type="button" class="btn btn-sm ml-2 btn-outline-secondary"
-                    id="new-tag-button"
-                    data-course="<%= medium.course.id %>"
-                    data-medium="<%= medium.id %>"
-                    data-from="medium">
-              Tag anlegen
-            </button>
+            <a class="fas fa-plus-circle clickable"
+               id="new-tag-button"
+               data-toggle="tooltip" title="Tag anlegen"
+               data-course="<%= medium.course.id %>"
+               data-medium="<%= medium.id %>"
+               data-from="medium">
+            </a>
             <%= f.select :tag_ids,
                          options_for_select(Tag.select_by_title,
                                             medium.tags.map(&:id)),

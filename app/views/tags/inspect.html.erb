@@ -28,25 +28,17 @@
           </div>
         </div>
         <div class="card-body p-2">
-          <div class="row mb-2">
-            <div class="col-12">
-              Verknüpfte Tags
-            </div>
-            <div class="col-12">
-              <% if @tag.related_tags.empty? %>
-                keine
-              <% end %>
-              <% @tag.related_tags.each do |t| %>
-                  <%= link_to t.title, inspect_tag_path(t),
-                  class:'badge badge-light' %>
-              <% end %>
-            </div>
-          </div>
           <div class="row">
-            <div class="col-12">
+            <div class="col-4">
               Module
+              <i class="far fa-question-circle helpdesk" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Die ist die Liste aller Module, zu denen dieser Tag assoziiert ist.">
+              </i>              
             </div>
-            <div class="col-12">
+            <div class="col-8">
               <ul>
                 <% @tag.courses.each do |c| %>
                   <li>
@@ -58,10 +50,16 @@
           </div>
           <% if @tag.extra_lectures.present? %>
             <div class="row">
-              <div class="col-12">
+              <div class="col-4">
                 Zusätzliche Vorlesungen
+                <i class="far fa-question-circle helpdesk" 
+                   tabindex="0"  
+                   data-toggle="popover" data-trigger="focus" 
+                   title="Info" 
+                   data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag nicht zu dem übergeordneten Modul assoziiert ist, jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.">
+                </i>
               </div>
-              <div class="col-12">
+              <div class="col-8">
                 <ul>
                   <% @tag.extra_lectures.each do |l| %>
                     <li>
@@ -74,10 +72,16 @@
           <% end %>
           <% if @tag.missing_lectures.present? %>
             <div class="row">
-              <div class="col-12">
+              <div class="col-4">
                 Fehlende Vorlesungen
+                <i class="far fa-question-circle helpdesk" 
+                   tabindex="0"  
+                   data-toggle="popover" data-trigger="focus" 
+                   title="Info" 
+                   data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag zu dem übergeordneten Modul assoziiert ist, jedoch in keinem Abschnitt der entsprechenden Vorlesung auftaucht.">
+        </i>
               </div>
-              <div class="col-12">
+              <div class="col-8">
                 <ul>
                   <% @tag.missing_lectures.each do |l| %>
                     <li>
@@ -88,11 +92,37 @@
               </div>
             </div>
           <% end %>
-          <div class="row">
-            <div class="col-12">
-              Tags mit Abstand 2
+          <div class="row mb-2">
+            <div class="col-4">
+              Verknüpfte Tags
+              <i class="far fa-question-circle helpdesk" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Die Tags bilden einen Graphen. Verknüpfte Tags sind genau die Nachbarn eines Tags.">
+              </i>
             </div>
-            <div class="col-12">
+            <div class="col-8">
+              <% if @tag.related_tags.empty? %>
+                keine
+              <% end %>
+              <% @tag.related_tags.each do |t| %>
+                  <%= link_to t.title, inspect_tag_path(t),
+                  class:'badge badge-light' %>
+              <% end %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">
+              Tags mit Abstand 2
+              <i class="far fa-question-circle helpdesk" 
+                 tabindex="0"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Die Tags bilden einen Graphen. Tags mit Abstand 2 sind diejenigen Nachbarn von Nachbarn dieses Tags, die selbst keine Nachbarn des Tags sind und vom Tag verschieden sind.">
+              </i>
+            </div>
+            <div class="col-8">
               <% if @tag.related_tags.empty? %>
                 keine
               <% end %>
@@ -115,6 +145,10 @@
         <div class="col-12">
           <%= render partial: 'sections/card',
                      locals: { sections: @tag.sections, inspection: true } %>
+        </div>
+        <div class="col-12">
+          <%= render partial: 'lessons/card',
+                     locals: { lessons: @tag.lessons, inspection: true } %>
         </div>
       </div>
     </div>

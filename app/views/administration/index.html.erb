@@ -14,11 +14,13 @@
                    data-content="Dies ist eine Liste aller Vorlesungen, für die Du Bearbeitungsrechte hast.">
                 </i>
               </div>
-              <div class="col-4">
-                <%= link_to 'Vorlesung anlegen', new_lecture_path,
-                             class: 'btn btn-outline-light',
-                             remote: true,
-                             id: 'new-lecture-button' %>
+              <div class="col-4 text-right">
+                <a href="<%= new_lecture_path %>"
+                   class="fas fa-plus-circle text-light"
+                   style="text-decoration: none;"
+                   data-remote="true"
+                   data-toggle="tooltip" title="Vorlesung anlegen">
+                </a>  
               </div>
             </div>
           </div>
@@ -97,11 +99,13 @@
               </div>
               <div class="col-4 text-right">
                 <% if current_user.admin? %>
-                  <%= link_to 'Modul anlegen', new_course_path,
-                              class: 'btn btn-outline-light',
-                              remote: true,
-                              id: 'create-new-course' %>
-                  <% end %>
+                  <a href="<%= new_course_path %>"
+                     class="fas fa-plus-circle text-light"
+                     style="text-decoration: none;"
+                     data-remote="true"
+                     data-toggle="tooltip" title="Modul anlegen">
+                  </a> 
+                <% end %>
               </div>
             </div>
           </div>

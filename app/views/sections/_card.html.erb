@@ -4,6 +4,12 @@
       <div class="col-12">
         <h5>
           Abschnitte (<%= sections.count %>)
+          <i class="far fa-question-circle helpdesk" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Dies ist die Liste aller assoziierten Abschnitte.">
+          </i>
         </h5>
       </div>
     </div>
@@ -12,14 +18,14 @@
     <ul>
       <% sections.each do |s| %>
         <li>
-          <%= s.lecture.title + ': ' %>
           <% if !inspection && (current_user.admin ||
                 current_user.in?(s.lecture.editors_with_inheritance)) %>
-            <%= link_to s.to_label, edit_chapter_path(s.chapter,
-                                                      section_id: s.id) %>
+            <%= link_to s.lecture.title, edit_lecture_path(s.lecture) %>
           <% else %>
-            <%= s.to_label %>
+            <%= link_to s.lecture.title, inspect_lecture_path(s.lecture) %>
           <% end %>
+          :
+          <%= s.to_label %>
         </li>
       <% end %>
     </ul>

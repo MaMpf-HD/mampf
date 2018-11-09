@@ -10,3 +10,4 @@ $('#<%= dom_id(@chapter) %>').empty().removeClass('bg-mdb-color-lighten-2')
   .append('<%= j render partial: "chapters/form",
                         locals: { chapter: @chapter,
                                   lecture: @chapter.lecture } %>')
+$('[data-toggle="popover"]').popover()

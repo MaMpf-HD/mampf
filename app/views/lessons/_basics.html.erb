@@ -8,17 +8,31 @@
     <% else %>
       <div class="col-6">
         <%= f.label :date, 'Datum' %>
+        <i class="far fa-question-circle helpdesk ml-2" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du das Datum auswählen, an dem die
+           Vorlesung stattgefunden hat.">
+        </i> 
       </div>
-      <div class="col-2">
+      <div class="col-6">
         Medien
-      </div>
-      <div class="col-4 text-right">  
-        <%= link_to 'Medium anlegen',
-                     new_medium_path(params: { teachable_id: lesson.id,
+        <i class="far fa-question-circle helpdesk ml-2" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Dies ist eine Liste aller Medien, die zu dieser 
+           Sitzung assoziiert sind.">
+        </i> 
+        <a href="<%= new_medium_path(params: { teachable_id: lesson.id,
                                                teachable_type: 'Lesson',
-                                               tag_ids: lesson.tags.map(&:id) }),
-                      class: 'btn btn-sm btn-primary',
-                      id: 'create-new-lesson-medium' %>
+                                               tag_ids: lesson.tags.map(&:id) }) %>"
+           class="fas fa-plus-circle text-dark"
+           id="create-new-lesson-medium"
+           data-toggle="tooltip" title="Medium anlegen"
+           style="text-decoration: none;">
+        </a>
       </div>
       <div class="col-6">
         <%= f.date_field :date %>
@@ -63,6 +77,13 @@
     </div>
   <% else %>
     <%= f.label :section_ids, 'Abschnitte' %>
+    <i class="far fa-question-circle helpdesk ml-2" 
+       tabindex="0"  
+       data-toggle="popover" data-trigger="focus" 
+       title="Info" 
+       data-content="Hier kannst Du auswählen, welche Abschnitte aus der zugeordneten 
+       Vorlesung in dieser Sitzung behandelt wurden.">
+    </i> 
     <%= f.select :section_ids,
                  options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ]},
                                       lesson.section_ids),

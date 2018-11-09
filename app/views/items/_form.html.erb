@@ -3,6 +3,12 @@
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
         Startzeit
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du die Zeit eingeben, an der entsprechende Eintrag im Video beginnt. Wenn Du den 'Eintrag hinzufügen'-Button an der richtigen Stelle im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen. Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder manuell eintippen.">
+        </i>
       </div>
       <div class="col-auto">
         <%= f.text_field :start_time,
@@ -22,6 +28,12 @@
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :sort, 'Typ' %>
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du angeben, um welche Art von Eintrag es sich handelt (Satz, Bemerkung, Lemma etc.). Passt keine der klassischen Auswahlen, empfiehlt es sich, 'Markierung' auszuwählen und Details in der Beschreibung nachzuliefern.">
+        </i>
       </div>
       <div class="col-auto">
         <%= f.select :sort, Item.internal_sorts, {},
@@ -32,11 +44,19 @@
       <div id="item_section_select" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :section_id, 'Abschnitt' %>
+          <i class="far fa-question-circle helpdesk" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Hier kannst Du auswählen, zu welchem Abschnitt der Eintrag gehört. Du hast hierbei zwei Möglichkeiten:
+             <ul><li>Ist das Medium zu einer Vorlesung oder einer Sitzung assoziiert, kannst Du einen von den Abschnitten auswählen, die zu dieser Vorlesung bzw. Sitzung assoziiert sind. Dies ist im wesentlichen für KaViaR-Videos gedacht.</li><li>Du möchtest keinen Abschnitt aus der Datenbank assoziieren. In dem Fall kannst Du Titel und Nummer in weiteren Eingabefeldern eintragen. Das macht z.B. Sinn, wenn die Abschnitte der Gliederung des Videos dienen, aber keine strukturelle Bedeutung im Rahmen einer Vorlesung haben.</li></ul>"
+             data-html="true">
+          </i>
         </div>
         <div class="col-10">
           <%= f.select :section_id,
                         options_for_select([['kein zugeordneter Abschnitt aus der Datenbank', '']] +
-                                           item.medium.teachable.lecture
+                                           item.medium.teachable
                                                .section_selection,
                                            item.section_id) ,
                         {},
@@ -50,6 +70,12 @@
          class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :ref_number, 'Nummer' %>
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du die Nummer des Eintrags in der von Dir bevorzugten Art der Nummerierung eintragen, also typischerweise so etwas wie '7.4' oder '7.1.3'.">
+        </i>
       </div>
       <div class="col-auto">
         <%= f.text_field :ref_number, class: 'form-control' %>
@@ -58,6 +84,12 @@
     <div id="item_description_field" class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :description, 'Beschreibung' %>
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du den Eintrag näher beschreiben, also so etwas wie 'Satz von Wilson'. Du kannt hierbei auch LaTeX verwenden, und zwar in dem Umfang, wie es durch MathJax bereitgestellt wird.">
+        </i>
       </div>
       <div class="col-auto">
         <%= f.text_field :description, { size: 50, class: 'form-control' } %>
@@ -68,6 +100,12 @@
            style="display: <%= show_no_block(item.pdf_destination.blank?) %>">
         <div class="col-2 col-form-label">
           <%= f.label :page, 'Seite im pdf' %>
+          <i class="far fa-question-circle helpdesk" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Hier kannst Du optional angeben, auf welcher Seite im zugeordneten Manuskript sich der Eintrag befindet. Bei Referenzierung dieses Eintrags wird dann im pdf an die entsprechende Stelle gesprungen. Gibst Du nichts ein, wird an den Anfang des Manuskripts gesprungen.">
+          </i>
         </div>
         <div class="col-auto">
           <%= f.number_field :page,
@@ -83,6 +121,14 @@
         <div id="item_pdf_destination_field" class="form-group form-row">
           <div class="col-2 col-form-label">
             <%= f.label :pdf_destination, 'pdf-Zielpunkt' %>
+            <i class="far fa-question-circle helpdesk" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Im zugehörigen Manuskript sind <i>named destinations</i>
+             vorhanden. Hier kannst Du auswählen, zu welcher named destination der Eintrag gehören soll. Die Referenzierung auf named destinations überstimmt evtl. bereits vorhandene Verweise auf Seitenzahlen."
+             data-html="true">
+            </i>
           </div>
           <div class="col-10">
             <%= f.select :pdf_destination,

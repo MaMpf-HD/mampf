@@ -3,7 +3,7 @@
   <ul>
     <% user.given_lectures.each do |l| %>
       <li>
-        <%= l.title_term_info %>
+        <%= link_to l.title_term_info, edit_lecture_path(l) %>
       </li>
     <% end %>
   </ul>
@@ -23,7 +23,7 @@
   <ul>
     <% user.edited_lectures.each do |l| %>
       <li>
-        <%= l.title_term_info %>
+        <%= link_to l.title_term_info, edit_lecture_path(l) %>
       </li>
     <% end %>
   </ul>
@@ -33,5 +33,5 @@
   <%= render partial: 'media/table',
              locals: { media: user.edited_media,
                        small: false,
-                       inspection: true } %>
+                       inspection: false } %>
 <% end %>

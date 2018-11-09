@@ -5,3 +5,4 @@ $('#action-container').empty()
                                   item_selection: @item_selection,
                                   item: @item }%>')
 $('.selectize').selectize({ plugins: ['remove_button'] })
+$('[data-toggle="popover"]').popover()

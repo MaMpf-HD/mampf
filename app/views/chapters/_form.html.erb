@@ -36,10 +36,13 @@
     </div>
     <div class="col-2 form-group">
       <%= f.label :display_number,
-                  'Anzeigenr.' %>
-      <i class="far fa-question-circle" style="cursor: pointer;"
-         data-toggle="modal"
-         data-target="#displayNumberModal">
+                  'Anz.nr.' %>
+      <i class="far fa-question-circle helpdesk" 
+         tabindex="0"  
+         data-toggle="popover" data-trigger="focus" 
+         title="Info" 
+         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
+         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel haben möchte.">
       </i>
       <%= f.text_field :display_number, { class: 'form-control' } %>
     </div>

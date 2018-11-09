@@ -12,16 +12,18 @@
         </h5>
       </div>
       <div class="col-2">
+        <% unless inspection %>
         zum Workflow
-        <i class="far fa-question-circle helpdesk" 
-           tabindex="0"  
-           data-toggle="popover" data-trigger="focus" 
-           title="Info" 
-           data-content="Der ideale Workflow sieht so aus, dass man zunächst Kapitel und
-                         Abschnitte anlegt und diese tagged. Danach werden Sitzungen und zugeordnete
-                         Medien angelegt, diese erben dann die entsprechenden Tags. Andersherum geht es natürlich auch,
-                         dann ist jedoch ein höherer Aufwand beim Tagging erforderlich.">
-        </i>
+          <i class="far fa-question-circle helpdesk" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Der ideale Workflow sieht so aus, dass man zunächst Kapitel und
+                           Abschnitte anlegt und diese tagged. Danach werden Sitzungen und zugeordnete
+                           Medien angelegt, diese erben dann die entsprechenden Tags. Andersherum geht es natürlich auch,
+                           dann ist jedoch ein höherer Aufwand beim Tagging erforderlich.">
+          </i>
+        <% end %>
       </div>
       <% unless inspection %>
         <div class="col-2">
@@ -76,10 +78,12 @@
                 <div class="col-6 text-right">
                   <div id="new_section_button_<%= c.id %>" data-from="lecture"
                        class="new-in-lecture">
-                    <%= link_to 'Abschnitt anlegen',
-                                new_section_path(chapter_id: c.id),
-                                remote: true,
-                                class: 'btn btn-outline-light' %>
+                    <a href="<%= new_section_path(chapter_id: c.id) %>"
+                       class="fas fa-plus-circle text-light"
+                       style="text-decoration: none;"
+                       data-remote="true"
+                       data-toggle="tooltip" title="Abschnitt anlegen">
+                    </a>  
                   </div>
                 </div>
               <% end %>

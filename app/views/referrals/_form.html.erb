@@ -3,6 +3,12 @@
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
         Startzeit
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du die Zeit eingeben, an der die entsprechende Referenz im Video beginnen soll. Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen. Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder manuell eintippen.">
+        </i>
       </div>
       <div class="col-3">
         <%= f.text_field :start_time,
@@ -22,6 +28,13 @@
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
         Endzeit
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du die Zeit eingeben, an der die entsprechende Referenz im Video enden soll. Im Thyme-Player ist sie danach immer noch sichtbar, wird aber leicht ausgegraut.
+           Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen. Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder manuell eintippen.">
+        </i>
       </div>
       <div class="col-3">
         <%= f.text_field :end_time,
@@ -41,6 +54,12 @@
     <div id="teachable_selector" class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :teachable, 'Vorauswahl' %>
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du eine Vorauswahl treffen, aus welchem Modul bzw. welcher Vorlesung der zu referenzierende Eintragt stammen soll, bzw. ob es sich um einen externen Eintrag (typischerweise z.B. eine Webseite) handelt. Ein externer Eintrag kann bei Bedarf auch neu angelegt werden.">
+        </i>
       </div>
       <div class="col-9">
         <%= f.select :teachable,
@@ -52,6 +71,12 @@
     <div id="item_select" class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :item_id, 'Eintrag' %>
+        <i class="far fa-question-circle helpdesk" 
+           tabindex="0"  
+           data-toggle="popover" data-trigger="focus" 
+           title="Info" 
+           data-content="Hier kannst Du den zu referenzierenden Eintrag auswählen.">
+        </i>
       </div>
       <div class="col-9">
         <%= f.select :item_id,
@@ -124,10 +149,17 @@
       <div class="form-group form-row">
         <div class="col-2">
         </div>
-        <div class="col-1">
-          verlinkt:
+        <div class="col-2">
+          verlinkt
+          <i class="far fa-question-circle helpdesk" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Hier wird Dir angezeigt, in welchen Medienformen
+             der zu referenzierende Eintrag vorliegt.">
+          </i>
         </div>
-        <div class="col-3 text-right" id="video-ref"
+        <div class="col-2 text-right" id="video-ref"
              style="display: <%= show(referral.video?) %>">
           Video
           <span id="video-test">
@@ -176,6 +208,13 @@
       <div class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :explanation, 'Erläuterung' %>
+          <i class="far fa-question-circle helpdesk" 
+             tabindex="0"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Hier kannst Du den zu referenzierenden Eintrag noch
+             mit einer (optionalen) zusätzlichen Beschreibung versehen.">
+        </i>
         </div>
         <div class="col-8">
           <%= f.text_area :explanation, { value: referral.explain,

@@ -1,4 +1,4 @@
-$('#action-placeholder').empty().append('Item bearbeiten')
+$('#action-placeholder').empty().append('Eintrag bearbeiten')
 $('#action-container').empty()
   .append('<%= j render partial: "items/form",
                         locals: { item: @item }%>')
@@ -11,3 +11,4 @@ $('#item_number_field').hide()
 <% end %>
 $('.selectize').selectize({ plugins: ['remove_button'] })
 $('input[id$="-selectized"]').css('width', '100%')
+$('[data-toggle="popover"]').popover()
