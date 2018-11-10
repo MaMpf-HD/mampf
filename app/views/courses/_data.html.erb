@@ -25,14 +25,24 @@
           <div class="col-4">
             <h5>
               Tags
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
+                 data-content="Das ist die Liste aller zu diesem Modul assoziierten
+                 Tags. Diese korrespondieren typischerweise zum Inhalt der
+                 Modulbeschreibung aus dem Modulhandbuch. Du kannst Tags
+                 hinzufügen, entfernen oder neue Tags anlegen.">
+              </i>
             </h5>
           </div>
           <div class="col-8 text-right">
-            <button type="button" class="btn btn-sm btn-outline-secondary"
-                    id="new-tag-button" data-course="<%= course.id %>"
-                    data-from="course">
-              Tag anlegen
-            </button>
+            <a class="fas fa-plus-circle fa-lg clickable"
+               id="new-tag-button"
+               data-toggle="tooltip" title="Tag anlegen"
+               data-course="<%= course.id %>"
+               data-from="course">
+            </a>
           </div>
         </div>
       </div>

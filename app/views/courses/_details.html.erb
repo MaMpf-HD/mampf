@@ -29,7 +29,14 @@
       <div class="card-body p-2">
         <div class="row">
           <div class="col-2">
-            Kurztitel:
+            Kurztitel
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Der Kurztitel wird an Stellen mit wenig
+               Platz anstelle des Modultitels verwendet.">
+            </i>
           </div>
           <div class="col-10">
               <%= course.short_title %>
@@ -37,7 +44,16 @@
         </div>
         <div class="row mt-2">
           <div class="col-2">
-            Editoren:
+            EditorInnen
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Das ist die Liste aller ModuleditorInnen für dies Modul.
+               Diese können das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
+               des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
+               alle Vorlesungen innerhalb des Moduls.">
+            </i>
           </div>
           <div class="col-10">
             <ul  class="list-unstyled">
@@ -51,7 +67,13 @@
         </div>
         <div class="row">
           <div class="col-2">
-            Vorlesungen:
+            Vorlesungen
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Dies ist die Liste aller Vorlesungen zu diesem Modul.">
+            </i>
           </div>
           <div class="col-10">
             <ul  class="list-unstyled">
@@ -65,7 +87,19 @@
         </div>
         <div class="row">
           <div class="col-2">
-            Module, auf denen das vorliegende Modul aufbaut:
+            Module, auf denen das vorliegende Modul aufbaut
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Das ist die Liste derjenigen Module, auf denen
+               das vorliegende Modul aufbaut.
+               Beispielsweise könnte das Modul Algebra 1 auf den Modulen Lineare Algebra 1
+               und Lineare Algebra 2 aufbauen. Das ist insofern relevant, als dass Nutzer
+               in ihren Profileinstellungen angeben können, ob sie verknüpfte Materialien
+               auch von inhaltlich vorher einzuordnenden Modulen angezeigt bekommen
+               möchten.">
+            </i>
           </div>
           <div class="col-10">
             <ul  class="list-unstyled">
@@ -79,7 +113,14 @@
         </div>
         <div class="row mt-2">
           <div class="col-2">
-            Newsfeed:
+            Newsfeed
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Falls zu diesem Kurs ein Twitter-Feed existiert,
+               sollte er hier zu sehen sein.">
+            </i>
           </div>
           <div class="col-10">
             <% if course.news? %>
@@ -94,7 +135,14 @@
         </div>
         <div class="row mt-2">
           <div class="col-2">
-            Abonnentenzahl:
+            Abonnentenzahl
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Dies ist Anzahl aller NutzerInnen, die diesen Kurs
+               in ihren Profileinstellungen abonniert haben.">
+            </i>
           </div>
           <div class="col-10">
             <%= course.users&.count %>

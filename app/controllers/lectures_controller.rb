@@ -24,12 +24,22 @@ class LecturesController < ApplicationController
 
   def new
     @lecture = Lecture.new
+    @from = params[:from]
+    return unless @from == 'course'
+    @lecture.course = Course.find_by_id(params[:course])
   end
 
   def create
     @lecture = Lecture.new(lecture_params)
     @lecture.save
-    redirect_to administration_path if @lecture.valid?
+    if @lecture.valid?
+      unless params[:lecture][:from] == 'course'
+        redirect_to administration_path
+        return
+      end
+      redirect_to edit_course_path(@lecture.course)
+      return
+    end
     @errors = @lecture.errors
   end
 

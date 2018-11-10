@@ -4,6 +4,12 @@
          role="tab" id="tags_heading<%= id %>">
       <h5 class="<%= inspection ? 'text-dark' : 'text-light' %>">
         <%= tags_description + ' (' + tags.count.to_s + ') '%>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Das ist die Liste aller assoziierten Tags.">
+        </i>
         <a class="btn <%= inspection ? 'btn-primary' : 'btn-success' %> float-right"
            data-toggle="collapse" href="#tags_collapse<%= id %>"
            aria-expanded="false" aria-controls="tags_collapse<%= id %>">

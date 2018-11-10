@@ -26,10 +26,24 @@ $(document).on 'turbolinks:load', ->
 
   $('#course-form :input').on 'change', ->
     $('#course-basics-warning').show()
+    $('#new-lecture-button').hide()
     $('#create-new-medium').hide()
+    $('#new-tag-button').hide()
     return
 
   $('#course-basics-cancel').on 'click', ->
     location.reload()
     return
+
+  $(document).on 'click', '#cancel-new-lecture', ->
+    if $('#course_preceding_course_ids').length == 1
+      location.reload()
+    else
+      $('#new-lecture-area').empty().hide()
+      $('.admin-index-button').show()
+    return
+  return
+
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'click', '#cancel-new-lecture'
   return

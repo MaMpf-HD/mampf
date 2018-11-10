@@ -10,18 +10,40 @@
 <div class="card-body p-2">
   <div class="form-group">
     <%= f.label :title, 'Titel' %>
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
+       data-content="Hier musst Du den Titel des Moduls eintragen.
+       Typischerweise sollte das der Titel aus dem Modulhandbuch sein.">
+    </i>
     <%= f.text_field :title, { class: 'form-control' } %>
     <div class="invalid-feedback" id="course-title-error">
     </div>
   </div>
   <div class="form-group">
     <%= f.label :short_title, 'Kurztitel' %>
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
+       data-content="Hier musst Du einen Kurztitel für das Modul eintragen.
+       Dieser wird an Stellen mit wenig Platz anstelle des Modultitels verwendet.">
+    </i>
     <%= f.text_field :short_title, { class: 'form-control' } %>
     <div class="invalid-feedback" id="course-short-title-error">
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :news, 'Twitter-Nutzername' %>
+    <%= f.label :news, 'Twitter-Handle' %>
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
+       data-content="Falls zu diesem Kurs ein Twitter-Feed existiert,
+       kannst Du hier den Twitter-Handle dazu eingeben. Der Feed wird dann
+       auf der Kursseite eingeblendet.">
+    </i>
     <div class="input_group">
       <div class="input-group-prepend">
         <div class="input-group-text">
@@ -33,6 +55,17 @@
   </div>
   <div class="form-group">
     <%= f.label :preceding_course_ids, 'Module, auf denen das vorliegende Modul aufbaut' %>
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
+       data-content="Hier kannst Du angeben, auf welchen Modulen das vorliegende Modul aufbaut.
+       Beispielsweise könnte das Modul Algebra 1 auf den Modulen Lineare Algebra 1
+       und Lineare Algebra 2 aufbauen. Das ist insofern relevant, als dass Nutzer
+       in ihren Profileinstellungen angeben können, ob sie verknüpfte Materialien
+       auch von inhaltlich vorher einzuordnenden Modulen angezeigt bekommen
+       möchten.">
+    </i>
     <%= f.select :preceding_course_ids,
                  options_for_select(Course.all.map { |c| [c.title, c.id]},
                                     course.preceding_courses.map(&:id)),
@@ -41,7 +74,16 @@
   </div>
   <% if current_user.admin? %>
     <div class="form-group">
-      <%= f.label :editor_ids, 'Editoren' %>
+      <%= f.label :editor_ids, 'EditorInnen' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier gibst Du die ModuleditorInnen an. Diese können
+         das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
+         des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
+         alle Vorlesungen innerhalb des Moduls.">
+      </i>
       <%= f.select :editor_ids,
                    options_for_select(User.select_editors,
                                       course.editors.map(&:id)),
@@ -57,8 +99,21 @@
       <% end %>
     </ul>
   <% end %>
+  Vorlesungen
+  <i class="far fa-question-circle helpdesk"
+     tabindex="0"
+     data-toggle="popover" data-trigger="focus"
+     title="Info"
+     data-content="Dies ist die Liste aller Vorlesungen zu diesem Modul.">
+  </i>
+  <a href="<%= new_lecture_path(params: { from: 'course', course: course.id }) %>"
+     class="fas fa-plus-circle text-dark"
+     id="new-lecture-button"
+     style="text-decoration: none;"
+     data-remote="true"
+     data-toggle="tooltip" title="Vorlesung anlegen">
+  </a>
   <% if course.lectures.present? %>
-    Vorlesungen
     <ul>
       <% course.lectures_by_date.each do |l| %>
         <li>
@@ -75,4 +130,11 @@
     Für diesen Kurs gibt es noch keine Vorlesungen.
   <% end %>
   Abonnentenzahl: <%= course.users&.count %>
+  <i class="far fa-question-circle helpdesk"
+     tabindex="0"
+     data-toggle="popover" data-trigger="focus"
+     title="Info"
+     data-content="Dies ist Anzahl aller NutzerInnen, die diesen Kurs
+     in ihren Profileinstellungen abonniert haben.">
+  </i>
 </div>
