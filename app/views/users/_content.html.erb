@@ -33,13 +33,13 @@
   </ul>
 <% end %>
 <% if user.edited_lectures.any? %>
-  Editierte Vorlesungen (<%= user.edited_lectures.count %>)
+  Zusätzlich editierte Vorlesungen (<%= user.edited_lectures.count %>)
   <i class="far fa-question-circle helpdesk"
      tabindex="0"
      data-toggle="popover" data-trigger="focus"
      title="Info"
-     data-content="Dies ist die Liste aller Module, für die
-     Moduleditorenrechte bestehen.">
+     data-content="Dies ist die Liste aller Vorlesungen, für die
+     zusätzliche Editorenrechte bestehen.">
   </i>
   <ul>
     <% user.edited_lectures.each do |l| %>
