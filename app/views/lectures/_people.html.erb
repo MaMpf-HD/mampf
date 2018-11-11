@@ -25,19 +25,21 @@
           <div class="form-row">
             <div class="col-4 form-group">
               <%= f.label :teacher_id, 'DozentIn' %>
-              <a href="<%= update_teacher_path(lecture) %>" class="text-dark"
-                 data-toggle="tooltip"
-                 data-placement="bottom" title="Bearbeiten"
-                 data-remote="true">
-                <% unless inspection %>
-                  <i class="far fa-edit" id="update-teacher-button">
+              <% unless inspection %>
+                <a href="<%= update_teacher_path(lecture) %>" class="text-dark"
+                   data-toggle="tooltip"
+                   id="update-teacher-button"
+                   style="text-decoration: none;"
+                   data-placement="bottom" title="Bearbeiten"
+                   data-remote="true">
+                  <i class="far fa-edit">
                   </i>
-                <% end %>
-              </a>
-              <i class="far fa-question-circle helpdesk ml-2" 
-                 tabindex="0"  
-                 data-toggle="popover" data-trigger="focus" 
-                 title="Info" 
+                </a>
+              <% end %>
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
                  data-content="Die DozentIn sollte im Normalfall diejenige Person sein, die die Vorlesung hält. Möchte die entsprechende Person sich nicht selbst um das Einstellen von Materialien kümmern, so kann dies durch zusätzliche Vorlesungseditoren geschehen.">
               </i>
               <div id="lecture_teacher_select" style="display: none;" %>
@@ -53,10 +55,10 @@
             </div>
             <div class="col-4">
               ModuleditorInnen
-              <i class="far fa-question-circle helpdesk ml-2" 
-                 tabindex="0"  
-                 data-toggle="popover" data-trigger="focus" 
-                 title="Info" 
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
                  data-content="ModuleditorInnen haben das Bearbeitungsrecht für das zugeordnete Modul. Dieses vererbt sich auf jede Vorlesung zu diesem Modul.">
               </i>
               <% if lecture.course.editors.present? %>
@@ -74,19 +76,22 @@
             </div>
             <div class="col-4 form-group">
               <%= f.label :editor_ids, 'zusätzliche VorlesungseditorInnen' %>
-              <a href="<%= update_editors_path(lecture) %>" class="text-dark"
-                 data-toggle="tooltip"
-                 data-placement="bottom" title="Bearbeiten"
-                 data-remote="true">
-                <% unless inspection %>
-                  <i class="far fa-edit" id="update-editors-button">
-                  </i>
-                <% end %>
-              </a>
-              <i class="far fa-question-circle helpdesk ml-2" 
-                 tabindex="0"  
-                 data-toggle="popover" data-trigger="focus" 
-                 title="Info" 
+              <% unless inspection %>
+                <a href="<%= update_editors_path(lecture) %>"
+                   class="text-dark"
+                   id="update-editors-button"
+                   style="text-decoration: none;"
+                   data-toggle="tooltip"
+                   data-placement="bottom" title="Bearbeiten"
+                   data-remote="true">
+                   <i class="far fa-edit">
+                   </i>
+                 </a>
+              <% end %>
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
                  data-content="Zusätzliche Vorlesungseditoren sind bearbeitungsberechtigte Personen, die verschieden vom Dozenten und von den Moduleditoren sind. Das können z.B. VorlesungsassistentInnen sein, die Materialien zur Vorlesung einpflegen.">
               </i>
               <div id="lecture_editors_select" style="display: none;" %>
@@ -115,10 +120,10 @@
             <div class="col-12">
               Abonnentenzahl:
               <%= lecture.users&.count %>
-              <i class="far fa-question-circle helpdesk ml-2" 
-                 tabindex="0"  
-                 data-toggle="popover" data-trigger="focus" 
-                 title="Info" 
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
                  data-content="Das ist die Zahl aller NutzerInnen, die diese Vorlesung in ihrem Profil abonniert haben.">
               </i>
             </div>

@@ -2,11 +2,12 @@ if $('#lecture-basics-warning').is(':visible') || $('#lecture-preferences-warnin
   $('#no-effect-warning').show()
 else
   $('#new-lesson-area').empty()
+  $('#lesson-action').empty().append('bearbeiten')
   $('#lesson-modal-content').empty()
     .append('<%= j render partial: "lessons/edit",
                           locals: { lesson: @lesson } %>').show()
   $('#lessonModal').modal('show')
-  $('[data-toggle="popover"]').popover()  
+  $('[data-toggle="popover"]').popover()
   $('#lesson-modal-content .selectize').selectize({ plugins: ['remove_button'] })
   sectionSelector = document.getElementById('lesson_section_ids')
   tagSelector = document.getElementById('lesson_tag_ids')

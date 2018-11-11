@@ -9,6 +9,14 @@
   <div class="form-row">
     <div class="col-8 form-group">
       <%= f.label :title, 'Titel' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier musst Du den Titel des Moduls eintragen.
+         Typischerweise sollte das der Titel aus dem Modulhandbuch sein.
+         Modulnamen dürfen nur einmal vergeben werden.">
+      </i>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'new_course_title' } %>
       <div class="invalid-feedback"
@@ -17,10 +25,10 @@
     </div>
     <div class="col-4 form-group">
       <%= f.label :short_title, 'Kurztitel' %>
-      <i class="far fa-question-circle helpdesk ml-2" 
-               tabindex="0"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
+      <i class="far fa-question-circle helpdesk ml-2"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
                data-content="Der Kurztitel wird an mehreren Stellen als Abkürzung verwendet.">
       </i>
       <%= f.text_field :short_title, { class: 'form-control',
@@ -32,6 +40,15 @@
     <div class="col-12 form-group">
       <%= f.label :editor_ids,
                   'EditorInnen' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier gibst Du die ModuleditorInnen an. Diese können
+         das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
+         des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
+         alle Vorlesungen innerhalb des Moduls.">
+      </i>            
       <%= f.select :editor_ids,
                    options_for_select(User.all.map { |u| [u.info, u.id] }),
                    {}, { class: 'selectize', multiple: true } %>

@@ -22,6 +22,12 @@
   <div class="form-row">
     <div class="col-12 form-group">
       <%= f.label :title, 'Titel' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du den Titel des Abschnitts angeben.">
+      </i>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'section_title_' + section.id.to_s,
                                  data: { id: section.id,
@@ -35,6 +41,13 @@
     <div class="col-12 form-group">
       <%= f.label :chapter_id,
                   'Kapitel' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du auswählen, in welchem Kapitel sich der
+         Abschnitt befinden soll.">
+      </i>
       <%= f.select :chapter_id,
                    options_for_select(section.chapter.lecture.chapters
                                              .map { |c| [c.to_label, c.id] },
@@ -44,6 +57,14 @@
     <div class="col-8 form-group">
       <%= f.label :predecessor,
                   'Positionierung nach Abschnitt' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du auswählen, an welcher Stelle der
+         Abschnitt positioniert werden soll, indem Du den Vorgängerabschnitt
+         auswählst.">
+      </i>
       <%= f.select :predecessor,
                    options_for_select([['am Anfang', 0]] +
                                       section.chapter.select_sections -
@@ -54,10 +75,10 @@
     <div class="col-4 form-group">
       <%= f.label :display_number,
                   'Anzeigenr.' %>
-      <i class="far fa-question-circle helpdesk" 
-         tabindex="0"  
-         data-toggle="popover" data-trigger="focus" 
-         title="Info" 
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
          data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
          '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel haben möchte.">
       </i>
@@ -70,6 +91,13 @@
   </div>
   <div class="form-group">
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
+       data-content="Hier kannst Du die Tags auswählen, die zu diesem Abschnitts
+       assoziiert sein sollen und ggf. neue Tags erstellen.">
+    </i>
     <a class="fas fa-plus-circle clickable"
        id="new-tag-button"
        data-toggle="tooltip" title="Tag anlegen"
@@ -90,6 +118,13 @@
   </div>
   <div class="form-group">
     <%= f.label :lesson_ids, 'Sitzungen' %>
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
+       data-content="Hier kannst Du die Sitzungen auswählen, in denen Inhalte
+       aus diesem Abschnitt behandelt werden bzw. wurden.">
+    </i>
     <%= f.select :lesson_ids,
                  options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.to_label, l.id] }, section.lesson_ids),
                  {}, { multiple: true,

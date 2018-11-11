@@ -21,50 +21,67 @@
          aria-labelledby="heading"
          data-parent="#preferences_accordion">
       <div class="card-body">
-        <%= form_with model: @lecture,
+        <%= form_with model: lecture,
                       html: { id: 'lecture-preferences-form' } do |f| %>
           <div class="form-row">
-            <div class="col-4 form-group">
+            <div class="col-3 form-group">
+              <%= f.label :term_id,
+                          'Semester' %>
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
+                 data-content="Hier kannst Du das Semester auswählen, in dem diese
+                 Vorlesung stattfindet bzw. stattgefunden hat.">
+              </i>
+              <%= f.select :term_id,
+                           options_for_select(Term.all.map { |t| [t.to_label, t.id] },
+                                              lecture.term.id),
+                           {}, { class: 'form-control' } %>
+              <div class="invalid-feedback" id="lecture-term-error">
+              </div>
+            </div>
+            <div class="col-3 form-group">
               <%= f.label :start_chapter, 'Nummer des ersten Kapitels' %>
-              <i class="far fa-question-circle helpdesk ml-2" 
-                 tabindex="0"  
-                 data-toggle="popover" data-trigger="focus" 
-                 title="Info" 
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
                  data-content="Soll das erste Kapitel eine von eins verschiedene Nummer haben, so kann dies hier eingetragen werden. Anwendungsmöglichkeiten sind z.B. Kapitelnummerierungen, die in Fortsetzungsvorlesungen weitergeführt werden.">
               </i>
               <%= f.number_field :start_chapter,
-                                 value: @lecture.start_chapter || 1,
+                                 value: lecture.start_chapter || 1,
                                  class: 'form-control',
                                  disabled: inspection  %>
             </div>
-            <div class="col-4 mt-6">
+            <div class="col-3 mt-6">
               <div id="start-section-input">
                 <%= f.label :start_section, 'Startabschnitt' %>
-                <i class="far fa-question-circle helpdesk ml-2" 
-                   tabindex="0"  
-                   data-toggle="popover" data-trigger="focus" 
-                   title="Info" 
+                <i class="far fa-question-circle helpdesk"
+                   tabindex="0"
+                   data-toggle="popover" data-trigger="focus"
+                   title="Info"
                    data-content="Ist die absolute Nummerierung für Abschnitte aktiviert, so kann hier die Nummer des ersten Abschnitts eingestellt werden.">
                 </i>
                 <%= f.number_field :start_section,
-                                   value: @lecture.start_section || 1,
+                                   value: lecture.start_section || 1,
                                    class: 'form-control',
-                                   disabled: inspection || !@lecture.absolute_numbering %>
+                                   disabled: inspection || !lecture.absolute_numbering %>
               </div>
             </div>
-            <div class="col-4 mt-6">
+            <div class="col-3 mt-6">
               <div class="custom-control custom-checkbox">
                 <%= f.check_box :absolute_numbering,
                                 class: 'custom-control-input',
                                 disabled: inspection %>
                 <%= f.label :absolute_numbering, 'absolute Nummerierung',
                             { class: 'custom-control-label' } %>
-                <i class="far fa-question-circle helpdesk ml-2" 
-                   tabindex="0"  
-                   data-toggle="popover" data-trigger="focus" 
-                   title="Info" 
+                <i class="far fa-question-circle helpdesk"
+                   tabindex="0"
+                   data-toggle="popover" data-trigger="focus"
+                   title="Info"
                    data-content="Standardmäßig wird für Abschnitte eine Nummerierung relativ zum Kapitel angezeigt: Der dritte Abschnitt in Kapitel 4 ist etwa §4.3. Durch Aktivierung der absoluten Nummerierung wird dieses Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen weitergezählt. ">
-                </i>            
+                </i>
               </div>
             </div>
           </div>

@@ -16,6 +16,14 @@
           <label for="inputTag">
             Titel
           </label>
+          <i class="far fa-question-circle helpdesk"
+             tabindex="0"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="Hier kannst Du den Titel des Tags eingeben.
+             Die Liste der angezeigten Tags wird nach dann entsprechend
+             gefiltert.">
+          </i>
           <input type="text" id="inputTag" class="form-control"
                  placeholder="suchen">
         </div>
@@ -23,6 +31,14 @@
           <label for="inputCourses">
             Module
           </label>
+          <i class="far fa-question-circle helpdesk"
+             tabindex="0"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="Hier kannst Du (im Sinne von <i>ODER</i>)
+             auswählen, zu welchen Modulen das Tag assoziiert sein soll."
+             data-html="true">
+          </i>
           <select multiple id="inputCourses" class="selectize"
                   placeholder="eingeben">
             <%= Course.all.each do |c| %>
@@ -34,7 +50,7 @@
           <button id="tags-edited-courses" type="button"
                   class="btn btn-sm btn-outline-info"
                   data-courses="<%= current_user.edited_courses.map(&:id).to_json %>">
-            editierte Module
+            von mir editierte Module
           </button>
           <button id="tags-all-courses" type="button"
                   class="btn btn-sm btn-outline-info"
@@ -59,12 +75,12 @@
       Module
     </strong>
   </div>
-  <div class="col-4 text-light">
+  <div class="col-6 text-light">
     <strong>
       verknüpfte Tags
     </strong>
   </div>
-  <div class="col-3 text-light">
+  <div class="col-1 text-light">
     <strong>
       Aktionen
     </strong>

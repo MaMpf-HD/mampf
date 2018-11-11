@@ -161,6 +161,19 @@ module ApplicationHelper
     list.push [ 'externe Referenzen', [['extern alle', 'external-0']]]
   end
 
+
+  def grouped_teachable_list_alternative
+    list = []
+    Course.all.each do |c|
+      lectures = [[c.short_title + ' Modul', 'course-' + c.id.to_s]]
+      c.lectures.includes(:term).each do |l|
+        lectures.push [l.short_title, 'lecture-' + l.id.to_s]
+      end
+      list.push [c.title, lectures]
+    end
+    list
+  end
+
   def edit_or_inspect_course_path(course)
     if current_user.admin || course.editors.include?(current_user)
       return edit_course_path(course)

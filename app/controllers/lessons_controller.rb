@@ -63,14 +63,6 @@ class LessonsController < ApplicationController
   def inspect
   end
 
-  def modal
-    @section = Section.find_by_id(params[:section])
-    @lesson = Lesson.new(lecture: @section.lecture)
-    @lesson.sections << @section
-    @lesson.tags << @section.tags
-    @from = params[:from]
-  end
-
   private
 
   # Use callbacks to share common setup or constraints between actions.

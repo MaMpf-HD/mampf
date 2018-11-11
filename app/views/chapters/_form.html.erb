@@ -18,6 +18,12 @@
   <div class="form-row">
     <div class="col-12 form-group">
       <%= f.label :title, 'Titel' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du den Titel des Kapitels angeben.">
+      </i>
       <%= f.text_field :title, { class: 'form-control' } %>
       <div class="invalid-feedback" id="chapter-title-error">
       </div>
@@ -27,6 +33,13 @@
     <div class="col-10 form-group">
       <%= f.label :predecessor,
                   'Positionierung nach Kapitel' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du auswählen, an welcher Stelle das Kapitel
+                       positioniert werden soll, indem Du das Vorgängerkapitel auswählst.">
+      </i>
       <%= f.select :predecessor,
                    options_for_select([['am Anfang', 0]] +
                                       lecture.select_chapters -
@@ -37,12 +50,14 @@
     <div class="col-2 form-group">
       <%= f.label :display_number,
                   'Anz.nr.' %>
-      <i class="far fa-question-circle helpdesk" 
-         tabindex="0"  
-         data-toggle="popover" data-trigger="focus" 
-         title="Info" 
-         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
-         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel haben möchte.">
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese
+         die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
+         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel
+         haben möchtest.">
       </i>
       <%= f.text_field :display_number, { class: 'form-control' } %>
     </div>

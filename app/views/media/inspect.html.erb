@@ -7,7 +7,7 @@
       <%= @medium.title %>
     </h4>
   </div>
-  <div class="col-3 text-center">
+  <div class="col-3 text-right">
     <% if current_user.admin || @medium.edited_with_inheritance_by?(current_user)%>
       <%= link_to 'Bearbeiten', edit_medium_path(@medium),
                   class: 'btn btn-primary my-1' %>
@@ -32,10 +32,10 @@
         <div class="row mb-2">
           <div class="col-4">
             Typ
-            <i class="far fa-question-circle helpdesk" 
-               tabindex="0"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
                data-content="Jedes Medium hat genau einen Typ. Die folgenden Typen mit stehen zur Auswahl: <ul><li>KaViaR: Vorlesungsvideos</li><li>SeSAM: Worked-Example-Videos</li><li>KIWi: Wiederholungsvideos</li><li>KeKs-Quiz: Quiz auf der KeKs-Plattform</li><li>KeKs-Frage: Frage auf der KeKs-Plattform</li>
                <li>ErDBeere: Medium auf der ErDBeere-Plattform</li><li>RestE: alles, was in keine der anderen Kategorien passt</li></ul>"
                data-html="true">
@@ -48,14 +48,14 @@
         <div class="row mb-2">
           <div class="col-4">
             assoziiert zu
-            <i class="far fa-question-circle helpdesk" 
-               tabindex="0"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
                data-content="Jedes Medium ist zu genau einer Lehrveranstaltung assoziiert. Die Assoziation erfolgt hierbei zu einer/einem<ul><li><i>Sitzung</i>, wenn der Inhalt zu einer Vorlesungssitzung gehört, beispielsweise eine Videoaufzeichnung aus KaViaR</li><li><i>Vorlesung</i>, wenn der Inhalt spezifisch für die konkrete Vorlesung ist, jedoch ohne Bezug zu einer konkreten Sitzung, beispielsweise bei SeSAM-Videos</li><li><i>Modul</i>, wenn der Inhalt zum Modul gehört, jedoch keinen Bezug zu einer konkreten Vorlesung braucht, bespielsweise SeSAM-Videos zu Grundlagen, die in jeder Vorlesung eines entsprechenden Moduls gleich behandelt werden.
                </li></ul>"
                data-html="true">
-            </i>            
+            </i>
           </div>
           <div class="col-8">
             <%= link_to long_title(@medium.teachable),
@@ -65,10 +65,10 @@
         <div class="row mb-2">
           <div class="col-4">
             Editoren
-            <i class="far fa-question-circle helpdesk" 
-               tabindex="0"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
                data-content="Dies eine Liste aller Personen, die für diese Medium als Editor verantwortlich sind. Jede dieser Personen hat Bearbeitungsrecht für das Medium. <br>Anmerkung: Unabhängig davon kann das Medium auch von Personen mit höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren oder Vorlesungeditorem aus dem zugeordneten Modul bzw. der zugeordneten Vorlesung."
                data-html="true">
             </i>
@@ -87,10 +87,10 @@
           <div class="row mb-2">
             <div class="col-4">
               Beschreibung
-              <i class="far fa-question-circle helpdesk" 
-                 tabindex="0"  
-                 data-toggle="popover" data-trigger="focus" 
-                 title="Info" 
+              <i class="far fa-question-circle helpdesk"
+                 tabindex="0"
+                 data-toggle="popover" data-trigger="focus"
+                 title="Info"
                  data-content="Die Beschreibung wird in Verweisen auf das Medium verwendet.">
               </i>
             </div>
@@ -103,10 +103,10 @@
         <div class="row mb-2">
           <div class="col-4">
             Verknüpfte Begriffe
-            <i class="far fa-question-circle helpdesk" 
-               tabindex="0"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
                data-content="Dies ist eine Liste aller Tags, die mit diesem Medium verknüpft sind.">
             </i>
           </div>
@@ -120,11 +120,11 @@
         <div class="row mb-2">
           <div class="col-4">
             Verknüpfte Medien
-            <i class="far fa-question-circle helpdesk" 
-               tabindex="0"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
-               data-content="Dies ist eine Liste aller Medien, die mit diesem Medium verknüpft sind bzw. die von diesem Medium aus referenziert werden. Typisches Anwendungsbeispiel ist etwa die Liste aller zuheörigen KeKs-Fragen aus einem KeKs-Quiz heraus. <br><b>Achtung:</b> Das Feature wird vermutlich spätestens nach der Integration von BananE abgeschafft werden, da diese Informationen 
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Dies ist eine Liste aller Medien, die mit diesem Medium verknüpft sind bzw. die von diesem Medium aus referenziert werden. Typisches Anwendungsbeispiel ist etwa die Liste aller zuheörigen KeKs-Fragen aus einem KeKs-Quiz heraus. <br><b>Achtung:</b> Das Feature wird vermutlich spätestens nach der Integration von BananE abgeschafft werden, da diese Informationen
                dann automatisch erfasst werden können; für die via Thyme referenzierten Medien gilt das bereits jetzt."
                data-html="true">
             </i>
@@ -144,10 +144,10 @@
         <div class="row">
           <div class="col-4">
             Externer Link
-            <i class="far fa-question-circle helpdesk" 
-               tabindex="0"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
                data-content="Externer Link, der einen Teil diese Mediums ausmacht. Typisches Anwendungsbeispiel im Moment: KeKs-Quiz, KeKs-Frage.">
             </i>
           </div>

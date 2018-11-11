@@ -15,6 +15,14 @@
   <div class="form-row p-2">
     <div class="col-3 form-group">
       <%= f.label :types, 'Typ' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du (im Sinne von <i>ODER</i>) auswählen,
+         was der Typ des Mediums sein soll."
+         data-html="true">
+      </i>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_types, class: 'custom-control-input',
                         checked: true,
@@ -29,6 +37,19 @@
     </div>
     <div class="col-3 form-group">
       <%= f.label :teachable_ids, 'assoziiert mit Vererbung zu' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du (im Sinne von <i>ODER</i>)
+         auswählen, zu welchen Modulen bzw.
+         Vorlesungen das Medium <i>mit Vererbung</i> assoziiert sein soll.
+         Bei Auswahl eines Moduls werden also auch alle Medien angezeigt,
+         die zu dazugehörigen Vorlesungen oder Sitzungen verknüpft sind;
+         bei Auswahl einer Vorlesung werden auch alle Medien angezeigt,
+         die mit Sitzungen dieser Vorlesung verknüpft sind."
+         data-html="true">
+      </i>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_teachables, class: 'custom-control-input',
                         checked: true,
@@ -37,14 +58,20 @@
                     { class: 'custom-control-label' } %>
       </div>
       <%= f.select :teachable_ids,
-                   options_for_select([['auswählen','']] +
-                                      Course.all.map { |c| [c.short_title, 'course-' + c.id.to_s ] } +
-                                      Lecture.all.map { |l| [l.short_title, 'lecture-' + l.id.to_s ] }),
-                   {}, { multiple: true, class: 'selectize',
-                         disabled: true } %>
+                   grouped_options_for_select(grouped_teachable_list_alternative),
+                   { prompt: 'auswählen'}, { multiple: true, class: 'selectize',
+                                             disabled: true } %>
     </div>
     <div class="col-3 form-group">
       <%= f.label :tag_ids, 'Tags' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du (im Sinne von <i>ODER</i>) die Tags
+         auswählen, mit denen das Medium verknüpft sein soll."
+         data-html="true">
+      </i>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_tags, class: 'custom-control-input',
                         checked: true,
@@ -58,7 +85,15 @@
                          disabled: true } %>
     </div>
     <div class="col-3 form-group">
-      <%= f.label :editor_ids, 'Editoren' %>
+      <%= f.label :editor_ids, 'EditorInnen' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du (im Sinne von <i>ODER</i>) auswählen,
+         wer die EditorInnen des Mediums sein sollen."
+         data-html="true">
+      </i>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_editors, class: 'custom-control-input',
                         checked: true,

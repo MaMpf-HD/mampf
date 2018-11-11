@@ -1,5 +1,12 @@
 <% if user.teacher? %>
-  Gehaltene Vorlesungen (<%= user.given_lectures.count %>):
+  Gehaltene Vorlesungen (<%= user.given_lectures.count %>)
+  <i class="far fa-question-circle helpdesk"
+     tabindex="0"
+     data-toggle="popover" data-trigger="focus"
+     title="Info"
+     data-content="Dies ist die Liste aller Vorlesungen, die als DozentIn
+     verantwortet wurden bzw. werden.">
+  </i>
   <ul>
     <% user.given_lectures.each do |l| %>
       <li>
@@ -9,7 +16,14 @@
   </ul>
 <% end %>
 <% if user.edited_courses.any? %>
-  Editierte Kurse (<%= user.edited_courses.count %>):
+  Editierte Module (<%= user.edited_courses.count %>)
+  <i class="far fa-question-circle helpdesk"
+     tabindex="0"
+     data-toggle="popover" data-trigger="focus"
+     title="Info"
+     data-content="Dies ist die Liste aller Module, für die
+     Moduleditorenrechte bestehen.">
+  </i>
   <ul>
     <% user.edited_courses.each do |c| %>
       <li>
@@ -19,7 +33,14 @@
   </ul>
 <% end %>
 <% if user.edited_lectures.any? %>
-  Editierte Vorlesungen (<%= user.edited_lectures.count %>):
+  Editierte Vorlesungen (<%= user.edited_lectures.count %>)
+  <i class="far fa-question-circle helpdesk"
+     tabindex="0"
+     data-toggle="popover" data-trigger="focus"
+     title="Info"
+     data-content="Dies ist die Liste aller Module, für die
+     Moduleditorenrechte bestehen.">
+  </i>
   <ul>
     <% user.edited_lectures.each do |l| %>
       <li>
@@ -29,7 +50,14 @@
   </ul>
 <% end %>
 <% if user.edited_media.any? %>
-  Editierte Medien (<%= user.edited_media.count %>):
+  Editierte Medien (<%= user.edited_media.count %>)
+  <i class="far fa-question-circle helpdesk"
+     tabindex="0"
+     data-toggle="popover" data-trigger="focus"
+     title="Info"
+     data-content="Dies ist die Liste aller Medien, für die
+     Medieneditorenrechte bestehen.">
+  </i>
   <%= render partial: 'media/table',
              locals: { media: user.edited_media,
                        small: false,

@@ -16,6 +16,13 @@
   <div class="form-row">
     <div class="col-8 form-group">
       <%= f.label :course_id, 'Modul' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="DHier kannst Du das Modul auswählen, zu dem diese
+         Vorlesung gehört.">
+      </i>
       <%= f.select :course_id,
                    options_for_select(current_user.select_administrated_courses,
                    lecture.course&.id),
@@ -30,6 +37,13 @@
     <div class="col-4 form-group">
       <%= f.label :term_id,
                   'Semester' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du das Semester auswählen, in dem diese
+         Vorlesung stattfindet bzw. stattgefunden hat.">
+      </i>
       <%= f.select :term_id,
                    options_for_select(Term.all.map { |t| [t.to_label, t.id] }),
                    {}, { class: 'form-control' } %>
@@ -37,6 +51,17 @@
     <div class="col-12 form-group">
       <%= f.label :teacher_id,
                   'DozentIn' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du die DozentIn der Vorlesung auswählen.
+                       Die DozentIn sollte im Normalfall diejenige Person sein,
+                       die die Vorlesung hält. Möchte die entsprechende Person
+                       sich nicht selbst um das Einstellen von Materialien
+                       kümmern, so kann dies durch zusätzliche
+                       Vorlesungseditoren geschehen.">
+      </i>
       <%= f.select :teacher_id,
                    options_for_select(User.all.map { |u| [u.info, u.id] },
                                       current_user.id),

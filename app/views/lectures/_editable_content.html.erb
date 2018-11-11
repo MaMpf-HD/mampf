@@ -8,16 +8,16 @@
              class="far fa-list-alt clickable"
              style="display: none;"
              data-toggle="tooltip" title="Medien einblenden">
-          </i> 
+          </i>
         </h5>
       </div>
       <div class="col-2">
         <% unless inspection %>
         zum Workflow
-          <i class="far fa-question-circle helpdesk" 
-             tabindex="0"  
-             data-toggle="popover" data-trigger="focus" 
-             title="Info" 
+          <i class="far fa-question-circle helpdesk"
+             tabindex="0"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
              data-content="Der ideale Workflow sieht so aus, dass man zunächst Kapitel und
                            Abschnitte anlegt und diese tagged. Danach werden Sitzungen und zugeordnete
                            Medien angelegt, diese erben dann die entsprechenden Tags. Andersherum geht es natürlich auch,
@@ -83,7 +83,7 @@
                        style="text-decoration: none;"
                        data-remote="true"
                        data-toggle="tooltip" title="Abschnitt anlegen">
-                    </a>  
+                    </a>
                   </div>
                 </div>
               <% end %>
@@ -115,12 +115,12 @@
                   </div>
                   <div class="col-6">
                     <% s.lessons.includes(:tags).order(:date).each do |l| %>
-                      <% lesson_link = inspection ? inspect_lesson_path(l) : edit_lesson_path(l) %> 
+                      <% lesson_link = inspection ? inspect_lesson_path(l) : edit_lesson_path(l) %>
                       <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
                                    '.' + l.date.year.to_s, lesson_link,
-                                   class: 'badge badge-secondary lecture-lesson', 
+                                   class: 'badge badge-secondary lecture-lesson',
                                    id: 'lecture-' + dom_id(l),
-                                   remote: !inspection,
+                                   remote: true,
                                    data: { id: l.id, tags: l.tags.map(&:id) } %>
                     <% end %>
                   </div>

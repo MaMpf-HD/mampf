@@ -10,14 +10,22 @@
     <% end %>
   </ul>
 </div>
-<div class="col-4">
+<div class="col-6">
   <% tag.related_tags.each do |t| %>
     <%= link_to t.title, inspect_tag_path(t), class:'badge badge-light' %>
   <% end %>
 </div>
-<div class="col-3">
-  <%= link_to 'Bearbeiten', edit_tag_path(tag),
-              class: 'btn btn-outline-primary my-1' %>
-  <%= link_to 'Ansehen', inspect_tag_path(tag),
-              class: 'btn btn-outline-primary my-1' %>
+<div class="col-1">
+  <a href="<%= edit_tag_path(tag) %>" class="text-dark" data-toggle="tooltip"
+     style="text-decoration: none;"
+     data-placement="bottom" title="Bearbeiten">
+    <i class="far fa-edit">
+    </i>
+  </a>
+  <a href="<%= inspect_tag_path(tag) %>" class="text-dark" data-toggle="tooltip"
+     style="text-decoration: none;"
+     data-placement="bottom" title="Ansehen">
+    <i class="far fa-eye">
+    </i>
+  </a>
 </div>

@@ -1,30 +1,63 @@
 <div class="form-group">
   <div class="row">
     <% if inspection %>
-      <div class="col-12">
-        Datum: <%= lesson.date.day.to_s + '.' + lesson.date.month.to_s +
+      <div class="col-6">
+        Datum
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Das ist das Datum, an dem die
+           Sitzung stattgefunden hat.">
+        </i>
+      </div>
+      <div class="col-6">
+        Medien
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Dies ist eine Liste aller Medien, die zu dieser
+           Sitzung assoziiert sind.">
+        </i>
+      </div>
+      <div class="col-6">
+        <%= lesson.date.day.to_s + '.' + lesson.date.month.to_s +
                    '.' + lesson.date.year.to_s  %>
+      </div>
+      <div class="col-6">
+        <% if lesson.media.present? %>
+          <ul>
+            <li>
+              <% lesson.media.each do |m| %>
+                <%= link_to m.sort + ', ' + m.local_info, inspect_medium_path(m) %>
+              <% end %>
+            </li>
+          </ul>
+        <% else %>
+          Es sind noch keine Medien vorhanden.
+        <% end %>
       </div>
     <% else %>
       <div class="col-6">
         <%= f.label :date, 'Datum' %>
-        <i class="far fa-question-circle helpdesk ml-2" 
-           tabindex="0"  
-           data-toggle="popover" data-trigger="focus" 
-           title="Info" 
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
            data-content="Hier kannst Du das Datum auswählen, an dem die
-           Vorlesung stattgefunden hat.">
-        </i> 
+           Sitzung stattgefunden hat.">
+        </i>
       </div>
       <div class="col-6">
         Medien
-        <i class="far fa-question-circle helpdesk ml-2" 
-           tabindex="0"  
-           data-toggle="popover" data-trigger="focus" 
-           title="Info" 
-           data-content="Dies ist eine Liste aller Medien, die zu dieser 
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Dies ist eine Liste aller Medien, die zu dieser
            Sitzung assoziiert sind.">
-        </i> 
+        </i>
         <a href="<%= new_medium_path(params: { teachable_id: lesson.id,
                                                teachable_type: 'Lesson',
                                                tag_ids: lesson.tags.map(&:id) }) %>"
@@ -60,6 +93,13 @@
     <div class="row">
       <div class="col-12">
         Abschnitte
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Dies ist die Liste aller Abschnitte aus der zugeordneten
+           Vorlesung, die in dieser Sitzung behandelt wurden.">
+        </i>
       </div>
     </div>
     <div class="col-12">
@@ -77,13 +117,13 @@
     </div>
   <% else %>
     <%= f.label :section_ids, 'Abschnitte' %>
-    <i class="far fa-question-circle helpdesk ml-2" 
-       tabindex="0"  
-       data-toggle="popover" data-trigger="focus" 
-       title="Info" 
-       data-content="Hier kannst Du auswählen, welche Abschnitte aus der zugeordneten 
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
+       data-content="Hier kannst Du auswählen, welche Abschnitte aus der zugeordneten
        Vorlesung in dieser Sitzung behandelt wurden.">
-    </i> 
+    </i>
     <%= f.select :section_ids,
                  options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ]},
                                       lesson.section_ids),
@@ -97,7 +137,13 @@
   <% if inspection %>
     <div class="row">
       <div class="col-12">
-        Verknüpfte Tags      
+        Verknüpfte Tags
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Dies ist die Liste aller Tags, die zu dieser Sitzung assoziiert sind.">
+        </i>
       </div>
       <div class="col-12">
         <%= render partial: 'tags/list',
@@ -106,14 +152,14 @@
     </div>
   <% else %>
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
-    <i class="far fa-question-circle helpdesk ml-2" 
-       tabindex="0"  
-       data-toggle="popover" data-trigger="focus" 
-       title="Info" 
+    <i class="far fa-question-circle helpdesk"
+       tabindex="0"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
        data-content="Dies ist eine Liste aller Tags, die zu dieser Sitzung assoziiert sind.
        Beim Anlegen einer Sitzung werden hier automatisch alle Tags aus sämtlichen mit dieser Sitzung
        mit der Sitzung verknüpften Abschnitten eingetragen. Diese Auswahl kann man hier nachbearbeiten.">
-    </i>      
+    </i>
     <%= f.select :tag_ids,
                  options_for_select(lesson.section_tags.map { |t| [t.title, t.id]} +
                                     lesson.complement_of_section_tags.sort_by(&:title).map { |t| [t.title, t.id]},

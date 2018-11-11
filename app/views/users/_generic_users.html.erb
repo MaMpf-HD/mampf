@@ -16,6 +16,13 @@
             <%= f.check_box :admin, class: 'custom-control-input' %>
             <%= f.label :admin, 'zum Administrator befördern',
                         { class: 'custom-control-label' } %>
+            <i class="far fa-question-circle helpdesk"
+               tabindex="0"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Wenn Du das anklickst, wird die NutzerIn zur
+               AdministratorIn befördert.">
+            </i>
           </div>
         </div>
         <div class="col-3">

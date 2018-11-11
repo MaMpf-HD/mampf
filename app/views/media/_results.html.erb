@@ -9,7 +9,7 @@
       assoziiert zu
     </strong>
   </div>
-  <div class="col-3 text-light">
+  <div class="col-4 text-light">
     <strong>
       Tags
     </strong>
@@ -24,7 +24,7 @@
       Details
     </strong>
   </div>
-  <div class="col-2 text-light">
+  <div class="col-1 text-light">
     <strong>
       Aktionen
     </strong>
@@ -45,7 +45,7 @@
           <%= link_to m.teachable.short_title_with_lecture_date, inspect_lesson_path(m.teachable) %>
         <% end %>
       </div>
-      <div class="col-3">
+      <div class="col-4">
         <% m.tags.each do |t| %>
           <%= link_to t.short_title, inspect_tag_path(t), class:'badge badge-light',
                       data: { toggle: 'tooltip', placement: 'top'},
@@ -64,15 +64,22 @@
       <div class="col-2">
         <%= m.details %>
       </div>
-      <div class="col-2">
+      <div class="col-1">
         <% if current_user.admin || m.edited_with_inheritance_by?(current_user) %>
-          <%= link_to 'Bearbeiten', edit_medium_path(m),
-                      class: 'btn btn-outline-primary my-1' %>
+          <a href="<%= edit_medium_path(m) %>" class="text-dark" data-toggle="tooltip"
+             style="text-decoration: none;"
+             data-placement="bottom" title="Bearbeiten">
+            <i class="far fa-edit">
+            </i>
+          </a>
         <% end %>
-        <%= link_to 'Ansehen', inspect_medium_path(m),
-                    class: 'btn btn-outline-primary my-1' %>
+        <a href="<%= inspect_medium_path(m) %>" class="text-dark" data-toggle="tooltip"
+           style="text-decoration: none;"
+           data-placement="bottom" title="Ansehen">
+          <i class="far fa-eye">
+          </i>
+        </a>
       </div>
-
     </div>
   <% end %>
 </div>

@@ -9,6 +9,12 @@
   <div class="form-row">
     <div class="col-6 form-group">
       <%= f.label :title, 'Titel' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="0"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Hier kannst Du den Titel des Abschnitts angeben.">
+      </i>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'new_section_title' } %>
       <div class="invalid-feedback"
@@ -19,6 +25,14 @@
       <div class="col-6 form-group">
         <%= f.label :predecessor,
                     'Einfügen nach Abschnitt' %>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="0"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du auswählen, an welcher Stelle der
+           Abschnitt eingefügt werden soll, indem Du den Vorgängerabschnitt
+           auswählst.">
+        </i>
         <%= f.select :predecessor,
                      options_for_select([['am Anfang des Kapitels', 0]] + chapter.select_sections,
                                         chapter.last_section_by_position.position) ,
