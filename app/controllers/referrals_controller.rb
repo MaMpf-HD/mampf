@@ -4,7 +4,7 @@ class ReferralsController < ApplicationController
   before_action :set_basics, only: [:update, :create]
 
   def update
-    update_or_create_item
+    update_item if Item.find_by_id(@item_id)&.sort == 'link'
     return if @errors.present?
     @referral.update(updated_params)
     @errors = @referral.errors unless @referral.valid?
@@ -21,7 +21,7 @@ class ReferralsController < ApplicationController
   end
 
   def create
-    update_or_create_item
+    update_item if Item.find_by_id(@item_id)&.sort == 'link'
     if @errors.present?
       render :update
       return
@@ -66,28 +66,11 @@ class ReferralsController < ApplicationController
     filter
   end
 
-  def create_item
-    item = Item.create(sort: 'link', link: referral_params[:link],
-                       description: referral_params[:description],
-                       explanation: referral_params[:explanation])
-    @errors = item.errors unless item.valid?
-    @item_id = item.id
-  end
-
   def update_item
     item = Item.find(@item_id)
     item.update(link: referral_params[:link],
-                description: referral_params[:description],
-                explanation: referral_params[:explanation])
+                description: referral_params[:description])
     @errors = item.errors unless item.valid?
-  end
-
-  def update_or_create_item
-    if @item_id.zero?
-      create_item
-    elsif @item_id != 0 && Item.find(@item_id).sort == 'link'
-      update_item
-    end
   end
 
   def updated_params

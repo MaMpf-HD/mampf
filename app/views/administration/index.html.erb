@@ -8,7 +8,7 @@
               <div class="col-8">
                 Meine Vorlesungen
                 <i class="far fa-question-circle helpdesk ml-2"
-                   tabindex="0"
+                   tabindex="-1"
                    data-toggle="popover" data-trigger="focus"
                    title="Info"
                    data-content="Dies ist eine Liste aller <i>Vorlesungen</i>,
@@ -40,7 +40,7 @@
               als DozentIn
               (<%= current_user.given_lectures.count %>)
               <i class="far fa-question-circle helpdesk ml-2"
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Dies ist eine Liste aller Vorlesungen, die Du als
@@ -55,7 +55,7 @@
               als zusätzlicher Vorlesungeditor
               (<%= current_user.edited_lectures.count %>)
               <i class="far fa-question-circle helpdesk ml-2"
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Dies ist eine Liste aller Vorlesungen, für die als
@@ -70,7 +70,7 @@
               als Moduleditor
               (<%= current_user.lectures_as_module_editor.count %>)
               <i class="far fa-question-circle helpdesk ml-2"
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Dies ist eine Liste aller Vorlesungen, die zu
@@ -98,7 +98,7 @@
                 Meine Module
                 (<%= current_user.edited_courses.count  %>)
                 <i class="far fa-question-circle helpdesk ml-2"
-                   tabindex="0"
+                   tabindex="-1"
                    data-toggle="popover" data-trigger="focus"
                    title="Info"
                    data-content="Dies ist eine Liste aller <i>Module</i>,
@@ -148,7 +148,7 @@
             Sonstige Vorlesungen
             (<%= current_user.teaching_unrelated_lectures.count  %>)
             <i class="far fa-question-circle helpdesk ml-2"
-               tabindex="0"
+               tabindex="-1"
                data-toggle="popover" data-trigger="focus"
                title="Info"
                data-content="Dies ist eine Liste aller Vorlesungen, für die Du keine Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )">
@@ -172,7 +172,7 @@
             Sonstige Module
             (<%= Course.count - current_user.edited_courses.count  %>)
             <i class="far fa-question-circle helpdesk ml-2"
-               tabindex="0"
+               tabindex="-1"
                data-toggle="popover" data-trigger="focus"
                title="Info"
                data-content="Dies ist eine Liste aller Module, für die Du kein(e) EditorIn bist und somit keine Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )">
@@ -197,7 +197,7 @@
         Meine Medien
         (<%= current_user.edited_media.count %>)
         <i class="far fa-question-circle helpdesk ml-2"
-           tabindex="0"
+           tabindex="-1"
            data-toggle="popover" data-trigger="focus"
            title="Info"
            data-content="Dies ist eine Liste aller <i>Medien</i>, für die Du als BearbeiterIn eingetragen bist. Medien, für Die Du Bearbeitungsrechte

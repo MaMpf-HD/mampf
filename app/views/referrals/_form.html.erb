@@ -4,7 +4,7 @@
       <div class="col-2 col-form-label">
         Startzeit
         <i class="far fa-question-circle helpdesk" 
-           tabindex="0"  
+           tabindex="-1"  
            data-toggle="popover" data-trigger="focus" 
            title="Info" 
            data-content="Hier kannst Du die Zeit eingeben, an der die entsprechende Referenz im Video beginnen soll. Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen. Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder manuell eintippen.">
@@ -29,7 +29,7 @@
       <div class="col-2 col-form-label">
         Endzeit
         <i class="far fa-question-circle helpdesk" 
-           tabindex="0"  
+           tabindex="-1"  
            data-toggle="popover" data-trigger="focus" 
            title="Info" 
            data-content="Hier kannst Du die Zeit eingeben, an der die entsprechende Referenz im Video enden soll. Im Thyme-Player ist sie danach immer noch sichtbar, wird aber leicht ausgegraut.
@@ -55,7 +55,7 @@
       <div class="col-2 col-form-label">
         <%= f.label :teachable, 'Vorauswahl' %>
         <i class="far fa-question-circle helpdesk" 
-           tabindex="0"  
+           tabindex="-1"  
            data-toggle="popover" data-trigger="focus" 
            title="Info" 
            data-content="Hier kannst Du eine Vorauswahl treffen, aus welchem Modul bzw. welcher Vorlesung der zu referenzierende Eintragt stammen soll, bzw. ob es sich um einen externen Eintrag (typischerweise z.B. eine Webseite) handelt. Ein externer Eintrag kann bei Bedarf auch neu angelegt werden.">
@@ -72,7 +72,7 @@
       <div class="col-2 col-form-label">
         <%= f.label :item_id, 'Eintrag' %>
         <i class="far fa-question-circle helpdesk" 
-           tabindex="0"  
+           tabindex="-1"  
            data-toggle="popover" data-trigger="focus" 
            title="Info" 
            data-content="Hier kannst Du den zu referenzierenden Eintrag auswählen.">
@@ -97,15 +97,23 @@
       <div id="referral_description_field" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :description, 'Titel' %>
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="Hier kannst Du den Titel des externen Eintrages bearbeiten.<br><i>Achtung:</i> Hierbei handelt es sich um
+             eine globale Bearbeitung des externen Eintrages, d.h. der Titel
+             ändert sich dann an allen Stellen, an denen dieser Eintrag referenziert ist. Falls der externe Eintrag noch von woanders
+             referenziert wird, wird dies durch eine Warnmeldung angezeigt."
+             data-html="true">
+          </i>
           <i id="link_reappearance_title"
-             class="material-icons"
+             class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
              data-toggle="tooltip"
              data-placement="left"
-             title="Zur Info: Der externe Eintrag ist bereits von woanders referenziert.
-             Wenn Du den Titel bearbeitest, ändern sich dieser
-             an alle Stellen, an denen der Eintrag referenziert ist.">
-            warning
+             title="Achtung: Der externe Eintrag ist bereits von woanders referenziert. Wenn Du den Titel bearbeitest, ändert sich dieser
+             an allen Stellen, an denen der Eintrag referenziert ist.">
           </i>
         </div>
         <div class="col-6">
@@ -119,15 +127,23 @@
       <div id="referral_link_field" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :link, 'Link' %>
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="Hier kannst Du einen ggf. vorhandenen Link, auf den der externe Eintrag verweist, bearbeiten.<br><i>Achtung:</i> Hierbei handelt es sich um
+             eine globale Bearbeitung des externen Eintrages, d.h. der Link
+             ändert sich dann an allen Stellen, an denen dieser Eintrag referenziert ist. Falls der externe Eintrag noch von woanders
+             referenziert wird, wird dies durch eine Warnmeldung angezeigt."
+             data-html="true">
+          </i>
           <i id="link_reappearance_link"
-             class="material-icons"
+             class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
              data-toggle="tooltip"
              data-placement="left"
-             title="Zur Info: Der externe Eintrag ist bereits von woanders referenziert.
-             Wenn Du den Link bearbeitest, ändern sich dieser
-             an alle Stellen, an denen der Eintrag referenziert ist.">
-            warning
+             title="Achtung: Der externe Eintrag ist bereits von woanders referenziert. Wenn Du den Link bearbeitest, ändert sich dieser
+             an allen Stellen, an denen der Eintrag referenziert ist.">
           </i>
         </div>
         <div class="col-8">
@@ -152,7 +168,7 @@
         <div class="col-2">
           verlinkt
           <i class="far fa-question-circle helpdesk" 
-             tabindex="0"  
+             tabindex="-1"  
              data-toggle="popover" data-trigger="focus" 
              title="Info" 
              data-content="Hier wird Dir angezeigt, in welchen Medienformen
@@ -209,12 +225,15 @@
         <div class="col-2 col-form-label">
           <%= f.label :explanation, 'Erläuterung' %>
           <i class="far fa-question-circle helpdesk" 
-             tabindex="0"  
+             tabindex="-1"  
              data-toggle="popover" data-trigger="focus" 
              title="Info" 
              data-content="Hier kannst Du den zu referenzierenden Eintrag noch
-             mit einer (optionalen) zusätzlichen Beschreibung versehen.">
-        </i>
+             mit einer (optionalen) zusätzlichen Beschreibung versehen.<br><br> 
+             <i>Achtung:</i>Falls es sich um einen externen Eintrag handelt, ist hier die Erläuterung des externen Eintrags voreingestellt. Du kannst 
+             das Feld bearbeiten, die Änderung wirkt sich nur auf die vorliegende Referenzierung, jedoch nicht auf den externen Eintrag aus."
+             data-html="true">
+          </i>
         </div>
         <div class="col-8">
           <%= f.text_area :explanation, { value: referral.explain,

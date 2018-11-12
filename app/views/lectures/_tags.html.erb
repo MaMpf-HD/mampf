@@ -29,7 +29,7 @@
               <%= link_to lecture.course.title, inspect_course_path(lecture.course) %>
               <%= ' (' + lecture.course_tags.count.to_s + ')' %>
               <i class="far fa-question-circle helpdesk"
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Hier werden diejenigen Tags aus dem zugeordneten Modul angezeigt, die in mindestens einem Abschnitt dieser Vorlesung vorkommen.">
@@ -48,7 +48,7 @@
               Zusätzlich behandelte Begriffe
               <%= ' (' + lecture.extra_tags.count.to_s + ')' %>
               <i class="far fa-question-circle helpdesk"
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Hier werden diejenigen Tags angezeigt, welche in mindestens einem Abschnitt dieser Vorlesung vorkommen, jedoch kein Tag des zugeordneten Moduls sind.">
@@ -63,7 +63,7 @@
             (Noch) nicht behandelte Begriffe
             <%= ' (' + lecture.deferred_tags.count.to_s + ')' %>
             <i class="far fa-question-circle helpdesk" 
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Hier werden diejenigen Tags aus dem zugeordneten Modul angezeigt, die in keinem Abschnitt dieser Vorlesung vorkommen.">

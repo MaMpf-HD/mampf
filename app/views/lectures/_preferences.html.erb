@@ -28,7 +28,7 @@
               <%= f.label :term_id,
                           'Semester' %>
               <i class="far fa-question-circle helpdesk"
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Hier kannst Du das Semester auswählen, in dem diese
@@ -44,7 +44,7 @@
             <div class="col-3 form-group">
               <%= f.label :start_chapter, 'Nummer des ersten Kapitels' %>
               <i class="far fa-question-circle helpdesk"
-                 tabindex="0"
+                 tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
                  data-content="Soll das erste Kapitel eine von eins verschiedene Nummer haben, so kann dies hier eingetragen werden. Anwendungsmöglichkeiten sind z.B. Kapitelnummerierungen, die in Fortsetzungsvorlesungen weitergeführt werden.">
@@ -58,7 +58,7 @@
               <div id="start-section-input">
                 <%= f.label :start_section, 'Startabschnitt' %>
                 <i class="far fa-question-circle helpdesk"
-                   tabindex="0"
+                   tabindex="-1"
                    data-toggle="popover" data-trigger="focus"
                    title="Info"
                    data-content="Ist die absolute Nummerierung für Abschnitte aktiviert, so kann hier die Nummer des ersten Abschnitts eingestellt werden.">
@@ -77,7 +77,7 @@
                 <%= f.label :absolute_numbering, 'absolute Nummerierung',
                             { class: 'custom-control-label' } %>
                 <i class="far fa-question-circle helpdesk"
-                   tabindex="0"
+                   tabindex="-1"
                    data-toggle="popover" data-trigger="focus"
                    title="Info"
                    data-content="Standardmäßig wird für Abschnitte eine Nummerierung relativ zum Kapitel angezeigt: Der dritte Abschnitt in Kapitel 4 ist etwa §4.3. Durch Aktivierung der absoluten Nummerierung wird dieses Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen weitergezählt. ">

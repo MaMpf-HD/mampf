@@ -1,6 +1,6 @@
 <div class="modal fade" id="newItemModal" tabindex="-1" role="dialog"
      aria-labelledby="newItemModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="newItemModalLabel">
@@ -18,6 +18,12 @@
           <div id="referral_description_field" class="form-group form-row">
             <div class="col-2 col-form-label">
               <%= f.label :description, 'Titel' %>
+              <i class="far fa-question-circle helpdesk" 
+             tabindex="-1"  
+             data-toggle="popover" data-trigger="focus" 
+             title="Info" 
+             data-content="Hier kannst einen Titel für den Eintrag eingeben.">
+            </i>
             </div>
             <div class="col-8">
               <%= f.text_field :description,
@@ -29,6 +35,12 @@
           <div id="referral_link_field" class="form-group form-row">
             <div class="col-2 col-form-label">
               <%= f.label :link, 'Link' %>
+              <i class="far fa-question-circle helpdesk" 
+                 tabindex="-1"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Hier kannst Du (optional) einen Link eingeben.">
+              </i>
             </div>
             <div class="col-8">
               <%= f.text_field :link,
@@ -41,6 +53,25 @@
                       class="btn btn-sm btn-outline-info">
                 Test
               </button>
+            </div>
+          </div>
+          <div id="referral_explanation_field" class="form-group form-row">
+            <div class="col-2 col-form-label">
+              <%= f.label :explanation, 'Erläuterung' %>
+              <i class="far fa-question-circle helpdesk" 
+                 tabindex="-1"  
+                 data-toggle="popover" data-trigger="focus" 
+                 title="Info" 
+                 data-content="Hier kannst Du (optional) eine Erläuterung zu
+                 diesem Eintrag eingeben. Dies ist eine generische Erläuterung,
+                 die für einzelne Referenzen überschrieben werden kann.">
+              </i>
+            </div>
+            <div class="col-8">
+              <%= f.text_area :explanation,
+                               { class: 'form-control' } %>
+              <div class="invalid-feedback" id="item-explanation-error">
+              </div>
             </div>
           </div>
           <%= f.hidden_field :sort, value: 'link' %>

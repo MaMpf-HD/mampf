@@ -70,7 +70,7 @@ class Referral < ApplicationRecord
   private
 
   def vtt_explanation
-    return explanation if item.sort != 'link' && explanation.present?
+    return explanation if explanation.present?
     return item.explanation if item.sort == 'link' && item.explanation.present?
   end
 

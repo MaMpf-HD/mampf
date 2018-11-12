@@ -35,15 +35,17 @@ class ItemsController < ApplicationController
   end
 
   def set_explanation
-    return if @referral_id.zero? || @item != Referral.find(@referral_id).item
-    return @item.explanation if @item.sort == 'link'
+    if @referral_id.zero? || @item != Referral.find(@referral_id).item
+      return @item.explanation
+    end
     Referral.find(@referral_id).explanation
   end
 
   def item_params
     filter = params.require(:item).permit(:sort, :start_time, :section_id,
                                           :medium_id, :ref_number, :description,
-                                          :link, :page, :pdf_destination).clone
+                                          :link, :page, :pdf_destination, 
+                                          :explanation).clone
     if filter[:medium_id].present?
       filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
     end

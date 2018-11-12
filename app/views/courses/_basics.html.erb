@@ -11,7 +11,7 @@
   <div class="form-group">
     <%= f.label :title, 'Titel' %>
     <i class="far fa-question-circle helpdesk"
-       tabindex="0"
+       tabindex="-1"
        data-toggle="popover" data-trigger="focus"
        title="Info"
        data-content="Hier musst Du den Titel des Moduls eintragen.
@@ -25,7 +25,7 @@
   <div class="form-group">
     <%= f.label :short_title, 'Kurztitel' %>
     <i class="far fa-question-circle helpdesk"
-       tabindex="0"
+       tabindex="-1"
        data-toggle="popover" data-trigger="focus"
        title="Info"
        data-content="Hier musst Du einen Kurztitel für das Modul eintragen.
@@ -38,7 +38,7 @@
   <div class="form-group">
     <%= f.label :news, 'Twitter-Handle' %>
     <i class="far fa-question-circle helpdesk"
-       tabindex="0"
+       tabindex="-1"
        data-toggle="popover" data-trigger="focus"
        title="Info"
        data-content="Falls zu diesem Kurs ein Twitter-Feed existiert,
@@ -57,7 +57,7 @@
   <div class="form-group">
     <%= f.label :preceding_course_ids, 'Module, auf denen das vorliegende Modul aufbaut' %>
     <i class="far fa-question-circle helpdesk"
-       tabindex="0"
+       tabindex="-1"
        data-toggle="popover" data-trigger="focus"
        title="Info"
        data-content="Hier kannst Du angeben, auf welchen Modulen das vorliegende Modul aufbaut.
@@ -77,7 +77,7 @@
     <div class="form-group">
       <%= f.label :editor_ids, 'EditorInnen' %>
       <i class="far fa-question-circle helpdesk"
-         tabindex="0"
+         tabindex="-1"
          data-toggle="popover" data-trigger="focus"
          title="Info"
          data-content="Hier gibst Du die ModuleditorInnen an. Diese können
@@ -102,7 +102,7 @@
   <% end %>
   Vorlesungen
   <i class="far fa-question-circle helpdesk"
-     tabindex="0"
+     tabindex="-1"
      data-toggle="popover" data-trigger="focus"
      title="Info"
      data-content="Dies ist die Liste aller Vorlesungen zu diesem Modul.">
@@ -132,7 +132,7 @@
   <% end %>
   Abonnentenzahl: <%= course.users&.count %>
   <i class="far fa-question-circle helpdesk"
-     tabindex="0"
+     tabindex="-1"
      data-toggle="popover" data-trigger="focus"
      title="Info"
      data-content="Dies ist Anzahl aller NutzerInnen, die diesen Kurs

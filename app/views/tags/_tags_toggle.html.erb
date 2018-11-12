@@ -5,7 +5,7 @@
       <h5 class="<%= inspection ? 'text-dark' : 'text-light' %>">
         <%= tags_description + ' (' + tags.count.to_s + ') '%>
         <i class="far fa-question-circle helpdesk"
-           tabindex="0"
+           tabindex="-1"
            data-toggle="popover" data-trigger="focus"
            title="Info"
            data-content="Das ist die Liste aller assoziierten Tags.">
