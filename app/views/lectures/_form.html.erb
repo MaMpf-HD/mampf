@@ -13,7 +13,7 @@
           current_user.in?(lecture.editors_with_inheritance)) %>
         <%= link_to 'Bearbeiten', edit_lecture_path(lecture),
                      class: 'btn btn-primary my-1' %>
-      <% else %>
+      <% elsif !inspection %>
         <%= link_to 'Ansehen', inspect_lecture_path(lecture),
                     class: 'btn btn-primary my-1' %>
       <% end %>
