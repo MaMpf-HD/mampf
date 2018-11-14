@@ -1,6 +1,7 @@
 # ItemsController
 class ItemsController < ApplicationController
   before_action :set_item, except: [:create]
+  authorize_resource
 
   def update
     @item.update(item_params)

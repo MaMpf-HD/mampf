@@ -1,115 +1,74 @@
 # Ability class
+# Class for defining access rights for admins, editors and normal users
+# using the cancancan gem
 class Ability
+  # See the wiki for details:
+  # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   include CanCan::Ability
 
   def initialize(user)
-    # Define abilities for the passed in user here. For example:
+    # Define abilities for the passed in user here.
 
-    user ||= User.new # guest user (not logged in)
+    # guest user (not logged in)
+    user ||= User.new
     if user.admin?
       can :manage, :all
-      can :access, :rails_admin   # grant access to rails_admin
-      can :dashboard              # grant access to the dashboard
     elsif user.editor?
-      can :read, :all
-      can :manage, :administration
+      # :read is a cancancan alias for index and show actions
+      can [:read, :inspect], :all
+      can :manage, [:administration, Item, Referral]
+      # :create is a cancancan alias for new and create actions
+      can :create, [Chapter, Lecture, Lesson, Medium, Section]
+      # :update is a cancancan alias for update and edit actions
+
+      # only users who are editors of a chapter's lecture can edit, update
+      # or destroy them
+      can [:update, :destroy], Chapter do |chapter|
+        chapter.lecture.edited_by?(user)
+      end
+
+      # editors are only allowed to edit, not to destroy courses
       can :update, Course do |course|
         course.edited_by?(user)
       end
-      can [:update, :update_teacher, :update_editors], Lecture do |lecture|
+
+      can [:update, :update_teacher, :update_editors, :destroy],
+          Lecture do |lecture|
         lecture.edited_by?(user)
       end
-      can :new, Lecture
-      can :destroy, Lecture do |lecture|
-        lecture.edited_by?(user)
+
+      can [:update, :destroy], Lesson do |lesson|
+        lesson.lecture.edited_by?(user)
       end
-      can :create, Lecture
-      can :update, Chapter do |chapter|
-        chapter.lecture.edited_by?(user)
+      can [:modal, :list_sections], Lesson
+
+      can [:catalog, :search, :play, :display], Medium
+      can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
+           :remove_screenshot, :export_toc, :export_references,
+           :export_screenshot, :destroy], Medium do |m|
+        m.edited_with_inheritance_by?(user)
       end
-      can :destroy, Chapter do |chapter|
-        chapter.lecture.edited_by?(user)
-      end
-      can :new, Chapter
-      can :create, Chapter
-      can :update, Section do |section|
+
+      can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
       end
-      can :destroy, Section do |section|
-        section.lecture.edited_by?(user)
-      end
-      can :list_tags, Section
-      can :list_sections, Section
-      can :new, Lesson
-      can :create, Lesson
-      can :update, Lesson do |lesson|
-        lesson.lecture.edited_by?(user)
-      end
-      can :destroy, Lesson do |lesson|
-        lesson.lecture.edited_by?(user)
-      end
-      can :edit, Lesson do |lesson|
-        lesson.lecture.edited_by?(user)
-      end
-      can :modal, Lesson
-      can :list_sections, Lesson
-      can :inspect, Lesson
-      can :new, Section
-      can :create, Section
-      can :inspect, Chapter
-      can :inspect, Lecture
+      can [:list_tags, :list_sections], Section
+
       can :manage, Tag
-      can :inspect, Course
-      cannot :create, Course
+
       cannot :read, Term
+
       cannot :read, User
       can :update, User do |u|
         user == u
       end
       can :teacher, User
-      can :catalog, Medium
-      can :search, Medium
-      can :inspect, Medium
-      can [:edit, :update, :enrich, :add_item, :add_reference, :add_screenshot,
-           :remove_screenshot, :export_toc, :export_references,
-           :export_screenshot, :destroy], Medium do |m|
-        m.edited_with_inheritance_by?(user)
-      end
-      can :play, Medium
-      can :display, Medium
-      can :create, Medium
-      can :manage, Item
-      can :manage, Referral
     else
       can :read, :all
-      can :play, Medium
-      can :display, Medium
-      cannot :read, :administration
-      cannot :index, Tag
-      cannot :update, Tag
-      cannot :create, Tag
-      cannot :read, Term
-      cannot :read, User
+      cannot :read, [:administration, Term, User]
+      can [:play, :display], Medium
+      cannot [:index, :update, :create], Tag
       can :teacher, User
     end
-
-    #
-    # The first argument to `can` is the action you are giving the user
-    # permission to do.
-    # If you pass :manage it will apply to every action. Other common actions
-    # here are :read, :create, :update and :destroy.
-    #
-    # The second argument is the resource the user can perform the action on.
-    # If you pass :all it will apply to every resource. Otherwise pass a Ruby
-    # class of the resource.
-    #
-    # The third argument is an optional hash of conditions to further filter the
-    # objects.
-    # For example, here the user can only update published articles.
-    #
-    #   can :update, Article, :published => true
-    #
-    # See the wiki for details:
-    # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
   end
 end
