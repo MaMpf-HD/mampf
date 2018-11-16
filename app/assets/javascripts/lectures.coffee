@@ -46,7 +46,7 @@ $(document).on 'turbolinks:load', ->
 
   $('#show-media-button').on 'click', ->
     $('#lecture-content-card').removeClass('col-12').addClass('col-9')
-    $('#lecture-media-card').show()   
+    $('#lecture-media-card').show()
     $('#show-media-button').hide()
     return
 
@@ -70,7 +70,7 @@ $(document).on 'turbolinks:load', ->
     tags = $(this).data('tags')
     for t in tags
       $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning')
-        .addClass('badge-light')  
+        .addClass('badge-light')
     return
 
   $('[id^="lecture-lesson_"]').on 'mouseenter', ->
@@ -99,7 +99,7 @@ $(document).on 'turbolinks:load', ->
     for l in lessons
       $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-info')
         .addClass('badge-secondary')
-    return     
+    return
   return
 
 $(document).on 'turbolinks:before-cache', ->

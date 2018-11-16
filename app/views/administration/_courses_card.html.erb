@@ -10,7 +10,7 @@
     </div>
   </div>
   <% courses.each do |c| %>
-    <a href="<%= inspection ? inspect_course_path(c) : edit_course_path(c) %>"
+    <a href="<%= edit_or_inspect_course_path(c) %>"
        class="list-group-item list-group-item-action">
       <div class="row">
         <div class="col-8">

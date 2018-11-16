@@ -1,10 +1,24 @@
 Rails.application.routes.draw do
 
   get 'search/index'
-  get '/administration', to: 'administration#index', as: 'administration'
-  get '/administration/exit', to: 'administration#exit', as: 'exit_administration'
-  get '/administration/profile', to: 'administration#profile', as: 'elevated_profile'
-  resources :courses
+
+  get '/administration', to: 'administration#index',
+                         as: 'administration'
+  get '/administration/exit', to: 'administration#exit',
+                              as: 'exit_administration'
+  get '/administration/profile', to: 'administration#profile',
+                                 as: 'elevated_profile'
+
+  resources :chapters, except: [:index]
+  get 'chapters/:id/list_sections/', to: 'chapters#list_sections',
+                                     as: 'list_sections'
+
+  resources :courses, except: [:index]
+  get 'courses/:course_id/food', to: 'media#index',
+                                 as: 'course_food'
+  get 'courses/:id/inspect', to: 'courses#inspect',
+                             as: 'inspect_course'
+
   get 'media/search', to: 'media#search', as: 'media_search'
   get 'media/catalog', to: 'media#catalog', as: 'media_catalog'
   get 'media/delete_destinations', to: 'media#delete_destinations', as: 'delete_destinations'
@@ -31,8 +45,6 @@ Rails.application.routes.draw do
   resources :lessons, except: [:index]
   get 'sections/list_tags/', to: 'sections#list_tags', as: 'list_section_tags'
   resources :sections, except: [:index]
-  get 'chapters/:id/list_sections/', to: 'chapters#list_sections', as: 'list_sections'
-  resources :chapters, except: [:index]
   resources :terms, except: [:show]
   get 'lectures/:id/inspect/', to: 'lectures#inspect', as: 'inspect_lecture'
   get 'lectures/:id/update_teacher/', to: 'lectures#update_teacher', as: 'update_teacher'
@@ -46,8 +58,6 @@ Rails.application.routes.draw do
   get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
 
   get 'profile/edit', as: 'edit_profile'
-  get 'courses/:course_id/food', to: 'media#index', as: 'course_food'
-  get 'courses/:id/inspect', to: 'courses#inspect', as: 'inspect_course'
   post 'profile/update'
   get 'profile/check_for_consent', as: 'consent_profile'
   patch 'profile/add_consent', as: 'add_consent'

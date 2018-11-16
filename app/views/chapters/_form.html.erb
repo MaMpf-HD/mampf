@@ -3,7 +3,7 @@
     <h6>
       Kapitel
       <span class="redtext">
-      <%= chapter.to_label %>
+        <%= chapter.to_label %>
       </span>
       bearbeiten
     </h6>
@@ -20,7 +20,8 @@
       <%= f.label :title, 'Titel' %>
       <i class="far fa-question-circle helpdesk"
          tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
+         data-toggle="popover"
+         data-trigger="focus"
          title="Info"
          data-content="Hier kannst Du den Titel des Kapitels angeben.">
       </i>
@@ -38,7 +39,7 @@
          data-toggle="popover" data-trigger="focus"
          title="Info"
          data-content="Hier kannst Du auswählen, an welcher Stelle das Kapitel
-                       positioniert werden soll, indem Du das Vorgängerkapitel auswählst.">
+         positioniert werden soll, indem Du das Vorgängerkapitel auswählst.">
       </i>
       <%= f.select :predecessor,
                    options_for_select([['am Anfang', 0]] +
@@ -52,7 +53,8 @@
                   'Anz.nr.' %>
       <i class="far fa-question-circle helpdesk"
          tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
+         data-toggle="popover"
+         data-trigger="focus"
          title="Info"
          data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese
          die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
@@ -70,6 +72,12 @@
               class="btn btn-secondary">
         abbrechen
       </button>
+      <% if chapter.sections.empty? %>
+        <%= link_to 'Löschen', chapter_path(chapter),
+                    class: 'btn btn-danger',
+                    method: :delete,
+                    data: { confirm: 'Bist Du sicher?' }%>
+      <% end %>
     </div>
   </div>
 <% end %>

@@ -14,7 +14,6 @@ $(document).on 'turbolinks:load', ->
       type: 'GET'
       dataType: 'json'
       success: (result) ->
-        console.log result
         $('#section_predecessor').children('option').remove()
         $("#section_predecessor").append('<option value="0">am Anfang</option>')
         for x in result

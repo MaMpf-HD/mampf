@@ -1,21 +1,29 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-  <button class="navbar-toggler" type="button"
-          data-toggle="collapse" data-target="#collapsingNavbarLg">
+  <button class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#collapsingNavbarLg">
     <span class="navbar-toggler-icon">
     </span>
   </button>
-  <div class="navbar-collapse collapse" id="collapsingNavbarLg">
+  <div class="navbar-collapse collapse"
+       id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item <%= active(controller_name == 'administration' && action_name == "index") %>">
-        <%= link_to "Übersicht", administration_path,
+      <li class="nav-item <%= active_controller?('administration', 'index') %>">
+        <%= link_to "Übersicht",
+                    administration_path,
                     class: 'nav-link ' %>
       </li>
       <li class="nav-item">
-        <%= link_to "Administration beenden", exit_administration_path, class: 'nav-link' %>
+        <%= link_to "Administration beenden",
+            exit_administration_path,
+            class: 'nav-link' %>
       </li>
       <li class="nav-item">
-        <%= link_to "Logout", destroy_user_session_path, class: 'nav-link',
-            method: :delete %>
+        <%= link_to "Logout",
+                    destroy_user_session_path,
+                    class: 'nav-link',
+                    method: :delete %>
       </li>
     </ul>
     <ul class="navbar-nav mr-auto">
@@ -23,29 +31,38 @@
                  locals: { courses: editable_courses_dropdown } %>
     </ul>
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item <%= active(controller_name == 'media') %>">
-        <%= link_to "Mediensuche", media_catalog_path, class: 'nav-link' %>
+      <li class="nav-item <%= active_controller?('media') %>">
+        <%= link_to "Mediensuche",
+                    media_catalog_path,
+                    class: 'nav-link' %>
       </li>
-      <li class="nav-item <%= active(controller_name == 'tags') %>">
-        <%= link_to "Tagübersicht", tags_path, class: 'nav-link' %>
+      <li class="nav-item <%= active_controller?('tags') %>">
+        <%= link_to "Tagübersicht",
+                    tags_path,
+                    class: 'nav-link' %>
       </li>
       <% if current_user.admin? %>
-        <li class="nav-item <%= active(controller_name == 'terms') %>">
-          <%= link_to "Semester", terms_path,
+        <li class="nav-item <%= active_controller?('terms') %>">
+          <%= link_to "Semester",
+                      terms_path,
                       class: 'nav-link ' %>
         </li>
       <% end %>
     </ul>
     <% if current_user.admin? %>
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item <%= active(controller_name == 'users') %>">
-        <%= link_to "Nutzerverwaltung", users_path, class: 'nav-link' %>
+      <li class="nav-item <%= active_controller?('users') %>">
+        <%= link_to "Nutzerverwaltung",
+                    users_path,
+                    class: 'nav-link' %>
       </li>
     </ul>
     <% end %>
     <ul class="navbar-nav">
-      <li class="nav-item <%= active(controller_name == 'administration' && action_name == "profile") %>">
-        <%= link_to "Profil", elevated_profile_path, class: 'nav-link' %>
+      <li class="nav-item <%= active_controller?('administration', 'profile') %>">
+        <%= link_to "Profil",
+                    elevated_profile_path,
+                    class: 'nav-link' %>
       </li>
     </ul>
   </div>

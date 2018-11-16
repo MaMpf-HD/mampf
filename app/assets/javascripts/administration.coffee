@@ -7,8 +7,8 @@ $(document).on 'turbolinks:load', ->
     e.stopPropagation()
     return
 
+  # hide any open menus when parent closes
   $('.dropdown').on 'hidden.bs.dropdown', ->
-    # hide any open menus when parent closes
     $('.dropdown-menu.show').removeClass 'show'
     return
 

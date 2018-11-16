@@ -1,6 +1,7 @@
 # ChaptersController
 class ChaptersController < ApplicationController
-  before_action :set_chapter, only: [:show, :edit, :update, :destroy, :inspect, :list_sections]
+  before_action :set_chapter, only: [:show, :edit, :update, :destroy, :inspect,
+                                     :list_sections]
   authorize_resource
 
   def show
@@ -14,6 +15,7 @@ class ChaptersController < ApplicationController
     @chapter.update(chapter_params)
     if @chapter.valid?
       predecessor = params[:chapter][:predecessor]
+      # place the chapter in the correct position
       if predecessor.present?
         position = predecessor.to_i
         position -= 1 if position > @chapter.position
@@ -28,6 +30,7 @@ class ChaptersController < ApplicationController
   def create
     @chapter = Chapter.new(chapter_params)
     position = params[:chapter][:predecessor]
+    # place the chapter in the correct position
     if position.present?
       @chapter.insert_at(position.to_i + 1)
     else
@@ -46,9 +49,6 @@ class ChaptersController < ApplicationController
     lecture = @chapter.lecture
     @chapter.destroy
     redirect_to edit_lecture_path(lecture)
-  end
-
-  def inspect
   end
 
   def list_sections

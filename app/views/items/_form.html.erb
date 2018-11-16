@@ -3,11 +3,16 @@
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
         Startzeit
-        <i class="far fa-question-circle helpdesk" 
-           tabindex="-1"  
-           data-toggle="popover" data-trigger="focus" 
-           title="Info" 
-           data-content="Hier kannst Du die Zeit eingeben, an der entsprechende Eintrag im Video beginnt. Wenn Du den 'Eintrag hinzufügen'-Button an der richtigen Stelle im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen. Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder manuell eintippen.">
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du die Zeit eingeben, an der entsprechende
+           Eintrag im Video beginnt. Wenn Du den 'Eintrag hinzufügen'-Button
+           an der richtigen Stelle im Video gedrückt hast, sollte hier schon
+           die korrekte Zeit stehen. Du kannst sie aber auch mit Button
+           'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder
+           manuell eintippen.">
         </i>
       </div>
       <div class="col-auto">
@@ -28,11 +33,15 @@
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :sort, 'Typ' %>
-        <i class="far fa-question-circle helpdesk" 
-           tabindex="-1"  
-           data-toggle="popover" data-trigger="focus" 
-           title="Info" 
-           data-content="Hier kannst Du angeben, um welche Art von Eintrag es sich handelt (Satz, Bemerkung, Lemma etc.). Passt keine der klassischen Auswahlen, empfiehlt es sich, 'Markierung' auszuwählen und Details in der Beschreibung nachzuliefern.">
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du angeben, um welche Art von Eintrag es
+           sich handelt (Satz, Bemerkung, Lemma etc.).
+           Passt keine der klassischen Auswahlen, empfiehlt es sich,
+           'Markierung' auszuwählen und Details in der Beschreibung
+           nachzuliefern.">
         </i>
       </div>
       <div class="col-auto">
@@ -40,24 +49,38 @@
                      { class: 'form-control' } %>
       </div>
     </div>
-    <% if item.medium.sort == 'Kaviar' && item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
+    <% if item.medium.sort == 'Kaviar' &&
+          item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
       <div id="item_section_select" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :section_id, 'Abschnitt' %>
-          <i class="far fa-question-circle helpdesk" 
-             tabindex="-1"  
-             data-toggle="popover" data-trigger="focus" 
-             title="Info" 
-             data-content="Hier kannst Du auswählen, zu welchem Abschnitt der Eintrag gehört. Du hast hierbei zwei Möglichkeiten:
-             <ul><li>Ist das Medium zu einer Vorlesung oder einer Sitzung assoziiert, kannst Du einen von den Abschnitten auswählen, die zu dieser Vorlesung bzw. Sitzung assoziiert sind. Dies ist im wesentlichen für KaViaR-Videos gedacht.</li><li>Du möchtest keinen Abschnitt aus der Datenbank assoziieren. In dem Fall kannst Du Titel und Nummer in weiteren Eingabefeldern eintragen. Das macht z.B. Sinn, wenn die Abschnitte der Gliederung des Videos dienen, aber keine strukturelle Bedeutung im Rahmen einer Vorlesung haben.</li></ul>"
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="Hier kannst Du auswählen, zu welchem Abschnitt der
+             Eintrag gehört. Du hast hierbei zwei Möglichkeiten:
+             <ul>
+             <li>
+             Ist das Medium zu einer Vorlesung oder einer Sitzung assoziiert,
+             kannst Du einen von den Abschnitten auswählen, die zu dieser
+             Vorlesung bzw. Sitzung assoziiert sind.
+             Dies ist im wesentlichen für KaViaR-Videos gedacht.
+             </li>
+             <li>
+             Du möchtest keinen Abschnitt aus der Datenbank assoziieren.
+             In dem Fall kannst Du Titel und Nummer in weiteren Eingabefeldern
+             eintragen. Das macht z.B. Sinn, wenn die Abschnitte der Gliederung
+             des Videos dienen, aber keine strukturelle Bedeutung im Rahmen
+             einer Vorlesung haben.
+             </li>
+             </ul>"
              data-html="true">
           </i>
         </div>
         <div class="col-10">
           <%= f.select :section_id,
-                        options_for_select([['kein zugeordneter Abschnitt aus der Datenbank', '']] +
-                                           item.medium.teachable
-                                               .section_selection,
+                        options_for_select(select_sections(item),
                                            item.section_id) ,
                         {},
                         { class: 'selectize'} %>
@@ -66,15 +89,19 @@
     <% else %>
       <%= f.hidden_field :section_id, value: '' %>
     <% end %>
-    <div id="item_number_field" style="display: <%= show_no_block(item.sort != 'label') %>"
+    <div id="item_number_field"
+         style="display: <%= show_no_block(item.sort != 'label') %>"
          class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :ref_number, 'Nummer' %>
-        <i class="far fa-question-circle helpdesk" 
-           tabindex="-1"  
-           data-toggle="popover" data-trigger="focus" 
-           title="Info" 
-           data-content="Hier kannst Du die Nummer des Eintrags in der von Dir bevorzugten Art der Nummerierung eintragen, also typischerweise so etwas wie '7.4' oder '7.1.3'.">
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du die Nummer des Eintrags in der von
+           Dir bevorzugten Art der Nummerierung eintragen, also typischerweise
+           so etwas wie '7.4' oder '7.1.3'.">
         </i>
       </div>
       <div class="col-auto">
@@ -84,11 +111,15 @@
     <div id="item_description_field" class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :description, 'Beschreibung' %>
-        <i class="far fa-question-circle helpdesk" 
-           tabindex="-1"  
-           data-toggle="popover" data-trigger="focus" 
-           title="Info" 
-           data-content="Hier kannst Du den Eintrag näher beschreiben, also so etwas wie 'Satz von Wilson'. Du kannt hierbei auch LaTeX verwenden, und zwar in dem Umfang, wie es durch MathJax bereitgestellt wird.">
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du den Eintrag näher beschreiben,
+           also so etwas wie 'Satz von Wilson'. Du kannt hierbei auch LaTeX
+           verwenden, und zwar in dem Umfang, wie es durch MathJax
+           bereitgestellt wird.">
         </i>
       </div>
       <div class="col-auto">
@@ -100,11 +131,16 @@
            style="display: <%= show_no_block(item.pdf_destination.blank?) %>">
         <div class="col-2 col-form-label">
           <%= f.label :page, 'Seite im pdf' %>
-          <i class="far fa-question-circle helpdesk" 
-             tabindex="-1"  
-             data-toggle="popover" data-trigger="focus" 
-             title="Info" 
-             data-content="Hier kannst Du optional angeben, auf welcher Seite im zugeordneten Manuskript sich der Eintrag befindet. Bei Referenzierung dieses Eintrags wird dann im pdf an die entsprechende Stelle gesprungen. Gibst Du nichts ein, wird an den Anfang des Manuskripts gesprungen.">
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover"
+             data-trigger="focus"
+             title="Info"
+             data-content="Hier kannst Du optional angeben, auf welcher Seite
+             im zugeordneten Manuskript sich der Eintrag befindet.
+             Bei Referenzierung dieses Eintrags wird dann im pdf an die
+             entsprechende Stelle gesprungen. Gibst Du nichts ein, wird an
+             den Anfang des Manuskripts gesprungen.">
           </i>
         </div>
         <div class="col-auto">
@@ -113,31 +149,37 @@
                                class: 'form-control' } %>
         </div>
         <div class="col-2">
-          <%= link_to 'pdf ansehen', item.medium.manuscript[:original].url(host: host),
-                      class: 'btn btn-outline-info', target: :blank %>
+          <%= link_to 'pdf ansehen',
+                      item.medium.manuscript[:original].url(host: host),
+                      class: 'btn btn-outline-info',
+                      target: :blank %>
         </div>
       </div>
-      <% if item.medium.manuscript_destinations.present? || item.pdf_destination.present? %>
+      <% if item.medium.manuscript_destinations.present? ||
+            item.pdf_destination.present? %>
         <div id="item_pdf_destination_field" class="form-group form-row">
           <div class="col-2 col-form-label">
             <%= f.label :pdf_destination, 'pdf-Zielpunkt' %>
-            <i class="far fa-question-circle helpdesk" 
-             tabindex="-1"  
-             data-toggle="popover" data-trigger="focus" 
-             title="Info" 
-             data-content="Im zugehörigen Manuskript sind <i>named destinations</i>
-             vorhanden. Hier kannst Du auswählen, zu welcher named destination der Eintrag gehören soll. Die Referenzierung auf named destinations überstimmt evtl. bereits vorhandene Verweise auf Seitenzahlen."
+            <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover"
+             data-trigger="focus"
+             title="Info"
+             data-content="Im zugehörigen Manuskript sind
+             <i>named destinations</i>
+             vorhanden. Hier kannst Du auswählen, zu welcher named destination
+             der Eintrag gehören soll. Die Referenzierung auf named
+             destinations überstimmt evtl. bereits vorhandene Verweise auf
+             Seitenzahlen."
              data-html="true">
             </i>
           </div>
           <div class="col-10">
             <%= f.select :pdf_destination,
-                         options_for_select([['auswählen (setzt Seitenauswahl außer Kraft)', '']] +
-                                           (item.medium.manuscript_destinations | [item.pdf_destination])
-                                             .map { |d| [d, d] },
-                                           item.pdf_destination) ,
-                    {},
-                    { class: 'selectize'} %>
+                         options_for_select(select_destinations(item),
+                                           item.pdf_destination),
+                         {},
+                         { class: 'selectize'} %>
           </div>
         </div>
       <% end %>
@@ -145,12 +187,18 @@
     <div>
       <%= f.hidden_field :medium_id, value: item.medium.id %>
       <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-      <button id="cancel-item" class="btn btn-secondary ml-3" type="button">
+      <button id="cancel-item"
+              class="btn btn-secondary ml-3"
+              type="button">
         Abbrechen
       </button>
       <% if item.id.present? %>
-      <%= link_to 'Löschen', item_path(item), method: :delete, remote: true,
-                  data: { confirm: 'Bist Du sicher?' }, id: 'delete-item',
+      <%= link_to 'Löschen',
+                  item_path(item),
+                  method: :delete,
+                  remote: true,
+                  data: { confirm: 'Bist Du sicher?' },
+                  id: 'delete-item',
                   class: 'btn btn-danger' %>
       <% end %>
     </div>

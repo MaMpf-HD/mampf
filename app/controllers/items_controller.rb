@@ -14,6 +14,10 @@ class ItemsController < ApplicationController
   def create
     @item = Item.create(item_params)
     @errors = @item.errors unless @item.valid?
+    # @from stores information about where the creation was triggered
+    # @from is nil if the item was created as a toc item in thyme editor,
+    # and 'referral' if it was triggered when creating an external item
+    # for a reference
     @from = params[:item][:from]
     render :update
   end
@@ -23,6 +27,8 @@ class ItemsController < ApplicationController
     @item.destroy
   end
 
+  # if an item is selected form within the reference editor in thyme,
+  # the display action provides informations abut the selected item
   def display
     @referral_id = params[:referral_id].to_i
     @reappears = true if (@item.referrals.map(&:id) - [@referral_id]).present?
@@ -43,9 +49,10 @@ class ItemsController < ApplicationController
   end
 
   def item_params
+    # params are cloned and then start time is converted to a TimeStamp object
     filter = params.require(:item).permit(:sort, :start_time, :section_id,
                                           :medium_id, :ref_number, :description,
-                                          :link, :page, :pdf_destination, 
+                                          :link, :page, :pdf_destination,
                                           :explanation).clone
     if filter[:medium_id].present?
       filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])

@@ -1,0 +1,27 @@
+ <div class="card">
+  <div class="card-header bg-teal-lighten-4">
+    Sonstige Vorlesungen
+    (<%= current_user.teaching_unrelated_lectures.count  %>)
+    <i class="far fa-question-circle helpdesk ml-2"
+       tabindex="-1"
+       data-toggle="popover"
+       data-trigger="focus"
+       title="Info"
+       data-content="Dies ist eine Liste aller Vorlesungen,
+       für die Du keine Bearbeitungsrechte hast.
+       (Es sei denn, Du bist Admin :-P )">
+    </i>
+  </div>
+  <div class="card-body">
+    <% if current_user.teaching_unrelated_lectures.present? %>
+      <%= render partial: 'administration/lectures_card',
+                 locals: { lectures:
+                             Lecture.sort_by_date(current_user
+                                                    .teaching_unrelated_lectures),
+                           inspection: true,
+                           teacher: true } %>
+    <% else %>
+      Es gibt keine sonstigen Vorlesungen.
+    <% end %>
+  </div>
+</div>

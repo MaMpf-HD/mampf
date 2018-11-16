@@ -51,7 +51,7 @@ class LecturesController < ApplicationController
   def update_teacher
     @teacher_selection = (User.select_editors_hash -
                           [{ text: @lecture.teacher.info,
-                           value: @lecture.teacher.id }]).to_json
+                             value: @lecture.teacher.id }]).to_json
   end
 
   def update_editors

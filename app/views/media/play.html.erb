@@ -74,7 +74,7 @@
                   aria-label="Captions">
         <div id="infobar">
           <%= @medium.sort_de %><br>
-          <%= long_title(@medium.teachable) %><br>
+          <%= @medium.teachable.long_title %><br>
           <span title="<%= @medium.description %>"
                 data-toggle="tooltip" data-placement="bottom">
             <%= shorten(@medium.description, 40) %>

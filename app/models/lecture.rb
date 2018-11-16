@@ -18,6 +18,47 @@ class Lecture < ApplicationRecord
                                             'und DozentIn existiert bereits.' }
   after_save :remove_teacher_as_editor
 
+  # The next methods coexist for lectures and lessons as well.
+  # Therefore, they can be called on any *teachable*
+
+  def lecture
+    self
+  end
+
+  def lesson
+  end
+
+  def title
+    course.title + ', ' + term.to_label
+  end
+
+  def to_label
+    title
+  end
+
+  def compact_title
+    course.compact_title + '.' + term.compact_title
+  end
+
+  def title_for_viewers
+    short_title
+  end
+
+  def long_title
+    title
+  end
+
+  def card_header
+    title
+  end
+
+  def card_header_path(user)
+    return unless user.lectures.include?(self)
+    lecture_path
+  end
+
+  # specific methods
+
   def tags
     chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
             .flatten.uniq
@@ -36,15 +77,15 @@ class Lecture < ApplicationRecord
   end
 
   def items
-    chapters.collect { |c| c.sections.includes(:items)}
-            .flatten.collect {|s| s.items}.flatten
+    chapters.collect { |c| c.sections.includes(:items) }
+            .flatten.collect(&:items).flatten
   end
 
   def media_items_with_inheritance
     media_with_inheritance.collect do |m|
       m.items_with_references.collect { |i| [i[:title_within_lecture], i[:id]] }
     end
-    .reduce(:concat)
+                          .reduce(:concat)
   end
 
   def kaviar?
@@ -67,21 +108,9 @@ class Lecture < ApplicationRecord
     course.short_title + ' (' + term.to_label_short + ')'
   end
 
-  def title
-    course.title + ', ' + term.to_label
-  end
-
   def title_with_teacher
-    return title unless (teacher.present? && teacher.name.present?)
+    return title unless teacher.present? && teacher.name.present?
     "#{title} (#{teacher.name})"
-  end
-
-  def compact_title
-    course.compact_title + '.' + term.compact_title
-  end
-
-  def to_label
-    title
   end
 
   def term_teacher_info
@@ -104,28 +133,8 @@ class Lecture < ApplicationRecord
     term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'
   end
 
-  def title_for_viewers
-    short_title
-  end
-
-  def card_header
-    title
-  end
-
-  def card_header_path(user)
-    return unless user.lectures.include?(self)
-    lecture_path
-  end
-
   def newest?
     self == course.lectures_by_date.first
-  end
-
-  def lesson
-  end
-
-  def lecture
-    self
   end
 
   def media_with_inheritance
@@ -139,9 +148,9 @@ class Lecture < ApplicationRecord
   end
 
   def section_selection
-   Rails.cache.fetch("#{cache_key}/section_selection") do
-      sections.sort_by(&:calculated_number).map { |s| [s.to_label, s.id]}
-   end
+    Rails.cache.fetch("#{cache_key}/section_selection") do
+      sections.sort_by(&:calculated_number).map { |s| [s.to_label, s.id] }
+    end
   end
 
   def section_tag_selection
@@ -182,7 +191,8 @@ class Lecture < ApplicationRecord
   end
 
   def orphaned_lessons
-    lessons.includes(:lesson_section_joins, :sections).select { |l| l.sections.blank? }
+    lessons.includes(:lesson_section_joins, :sections)
+           .select { |l| l.sections.blank? }
   end
 
   def active?(user, preselected_lecture_id)
@@ -235,5 +245,4 @@ class Lecture < ApplicationRecord
   def remove_teacher_as_editor
     editors.delete(teacher)
   end
-
 end

@@ -23,7 +23,7 @@
 </div>
 <% unless @chapter.sections.empty? && @chapter.tags.empty? &&
           @chapter.lessons.empty? %>
-  <div class="row">
+  <div class="row mb-2">
     <% unless @chapter.sections.empty? %>
       <div class="col-12 col-md-6 col-lg-4 pt-3">
         <%= render partial: 'sections/sections',

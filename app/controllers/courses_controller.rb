@@ -4,14 +4,6 @@ class CoursesController < ApplicationController
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   authorize_resource
 
-  def index
-    edited_courses = current_user.edited_courses.order(:title).to_a
-    other_courses = Course.select { |c| c.editors.exclude?(current_user) }
-                          .sort_by(&:title)
-    @courses = Kaminari.paginate_array(edited_courses + other_courses)
-                       .page params[:page]
-  end
-
   def edit
     cookies[:edited_course] = params[:id]
   end
@@ -33,9 +25,13 @@ class CoursesController < ApplicationController
   end
 
   def show
-    @course = Course.includes(lectures: [:teacher, :term, :chapters]).find_by_id(params[:id])
+    @course = Course.includes(lectures: [:teacher, :term, :chapters])
+                    .find_by_id(params[:id])
+    # id of the current course is stored in a cookie
+    # the cookie is used to keep track of the course in the course dropdown
     cookies[:current_course] = params[:id]
     @lectures = @course.subscribed_lectures_by_date(current_user)
+    # determine which lecture gets the top position in the lecture carousel
     @front_lecture = @course.front_lecture(current_user, params[:active].to_i)
   end
 

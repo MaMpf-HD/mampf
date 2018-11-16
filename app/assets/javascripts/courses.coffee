@@ -4,10 +4,11 @@
 
 $(document).on 'turbolinks:load', ->
 
-  # mobile no download button
+  # hide download button for media on mobile devices
   mobile = ! !navigator.platform and /iPad|iPhone|Android/.test(navigator.platform)
   $('.download-button').hide() if mobile
 
+  # update lecture informations after lecture carousel has slided
   $('#lectureCarousel').on 'slid.bs.carousel', (evt) ->
     term = evt.relatedTarget.dataset.term
     teacher = evt.relatedTarget.dataset.teacher
@@ -24,6 +25,7 @@ $(document).on 'turbolinks:load', ->
       $('#lecture-edit').hide()
     return
 
+  # if any input is given to the course form, disable other input
   $('#course-form :input').on 'change', ->
     $('#course-basics-warning').show()
     $('#new-lecture-button').hide()
@@ -31,10 +33,14 @@ $(document).on 'turbolinks:load', ->
     $('#new-tag-button').hide()
     return
 
+  # rewload current page if course editing is cancelled
   $('#course-basics-cancel').on 'click', ->
     location.reload()
     return
 
+  # after creation of new lecture is cancelled,
+  # reload the page (if that happended on the course edit page) or
+  # clean the page up (if it happened on the admin index page)
   $(document).on 'click', '#cancel-new-lecture', ->
     if $('#course_preceding_course_ids').length == 1
       location.reload()
@@ -44,6 +50,7 @@ $(document).on 'turbolinks:load', ->
     return
   return
 
+# clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'
   return

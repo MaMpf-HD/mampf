@@ -1,0 +1,51 @@
+<div class="card">
+  <div class="card-header bg-primary text-white">
+    <div class="row">
+      <div class="col-8">
+        Meine Module
+        (<%= current_user.edited_courses.count  %>)
+        <i class="far fa-question-circle helpdesk ml-2"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Dies ist eine Liste aller
+           <i>Module</i>,
+           für die Du EditorIn bist und damit Bearbeitungsrechte hast.
+           <br>
+           </br>
+           Ein <i>Modul</i> im Sinne von MaMpf ist hierbei eher abstrakt
+           zu verstehen als eine thematisch abgegerenzte, inhaltlich
+           durch die Modulbeschreibung festgelegte Lerneinheit. "
+           data-html="true">
+        </i>
+      </div>
+      <div class="col-4 text-right">
+        <% if current_user.admin? %>
+          <a href="<%= new_course_path %>"
+             id="new-course-button"
+             class="fas fa-plus-circle text-light admin-index-button"
+             data-remote="true"
+             data-toggle="tooltip" title="Modul anlegen">
+          </a>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div id="new-course-area"
+         class="bg-green-lighten-4 p-3 mb-3 rounded"
+         style="display: none;">
+      <%= render partial: 'courses/new',
+                 locals: { course: Course.new } %>
+    </div>
+    <% if current_user.edited_courses.present? %>
+      <%= render partial: 'administration/courses_card',
+                 locals: { courses:
+                             current_user.edited_courses.sort_by(&:title),
+                           inspection: false } %>
+    <% else %>
+      Es gibt keine Module, für die Du als EditorIn eingetragen bist.
+    <% end %>
+  </div>
+</div>

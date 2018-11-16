@@ -4,6 +4,7 @@
 
 $(document).on 'turbolinks:load', ->
 
+  # if form is changed, display warning that there are unsaved changes
   $(document).on 'change', '#chapter-form :input', ->
     $('#chapter-basics-warning').show()
     return
@@ -12,6 +13,7 @@ $(document).on 'turbolinks:load', ->
   	location.reload()
   	return
 
+  # restore everything after input of new chapter is cancelled
   $(document).on 'click', '#cancel-new-chapter', ->
     $('#new-chapter-area').empty().hide()
     $('.fa-edit').show()
@@ -25,6 +27,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
+# clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#chapter-form :input'
   $(document).off 'click', '#cancel-chapter'

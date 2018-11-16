@@ -1,10 +1,15 @@
 # ApplicationHelper module
 module ApplicationHelper
-
+  # Returns the complete url for the media upload folder if in production
   def host
     Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['MEDIA_FOLDER'] : ''
   end
 
+  # The HTML download attribute only works for files within the domain of
+  # the webpage. Therefore, we use an apache redirect from an internal folder
+  # which is stored in the DOWNLOAD_LOCATION environment variable, to
+  # the actual media server.
+  # This is used for the download buttons for videos and manuscripts.
   def download_host
     Rails.env.production? ? ENV['DOWNLOAD_LOCATION'] : ''
   end
@@ -19,6 +24,7 @@ module ApplicationHelper
     end
   end
 
+  # next methods are service methods for the display status of HTML elmements
   def hide(value)
     value ? 'none;' : 'block;'
   end
@@ -35,10 +41,12 @@ module ApplicationHelper
     value ? '' : 'none;'
   end
 
+  # active attribute for navs
   def active(value)
     value ? 'active' : ''
   end
 
+  # show/collapse attributes for collapses and accordions
   def show_collapse(value)
     value ? 'show collapse' : 'collapse'
   end
@@ -47,30 +55,38 @@ module ApplicationHelper
     value ? 'show active' : ''
   end
 
+  # media_sort -> database fields
   def media_types
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
       'keks' => ['KeksQuiz', 'KeksQuestion'], 'kiwi' => ['Kiwi'],
       'erdbeere' => ['Erdbeere'], 'reste' => ['Reste'] }
   end
 
+  # media_sorts
   def media_sorts
     ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'reste']
   end
 
+  # media_sort -> acronym
   def media_names
     { 'kaviar' => 'KaViaR', 'sesam' => 'SeSAM',
       'keks' => 'KeKs', 'kiwi' => 'KIWi',
       'erdbeere' => 'ErDBeere', 'reste' => 'RestE' }
   end
 
+  # Selects all media associated to lectures and lessons from a given list
+  # of media
   def lecture_media(media)
     media.select { |m| m.teachable_type.in?(['Lecture', 'Lesson']) }
   end
 
+  # Selects all media associated to courses from a given list of media
   def course_media(media)
     media.select { |m| m.teachable_type == 'Course' }
   end
 
+  # For a given list of media, returns the array of courses and lectures
+  # the given media are associated to.
   def lecture_course_teachables(media)
     lecture_ids =  lecture_media(media).map { |m| m.teachable.lecture }
                                        .map(&:id).uniq
@@ -81,6 +97,11 @@ module ApplicationHelper
     courses + lectures
   end
 
+  # For a given list of media and a given (a)course/(b)lecture,
+  # returns all media who are
+  # (a) associated to the same given course
+  # (b) associated to the given lecture or a lesson associated to the given
+  # lecture
   def relevant_media(teachable, media)
     if teachable.class == Course
       return course_media(media).select { |m| m.course == teachable }
@@ -88,6 +109,7 @@ module ApplicationHelper
     lecture_media(media).select { |m| m.teachable.lecture == teachable }
   end
 
+  # splits an array into smaller parts
   def split_list(list, pieces = 4)
     group_size = (list.count / pieces) != 0 ? list.count / pieces : 1
     groups = list.in_groups_of(group_size)
@@ -98,57 +120,56 @@ module ApplicationHelper
     groups
   end
 
+  # Determines current course id form cookie.
+  # Is used for the rendering of the sidebar.
   def course_id_from_cookie
     return cookies[:current_course].to_i unless cookies[:current_course].nil?
     return if current_user.nil?
     return current_user.courses.first.id unless current_user.courses.empty?
   end
 
+  # returns true for 'media#play' action
   def thyme?(controller, action)
     return true if controller == 'media' && action == 'play'
     false
   end
 
+  # returns true for 'media#enrich' action
   def enrich?(controller, action)
     return true if controller == 'media' && action == 'enrich'
     false
   end
 
+  # Determines if the current controller action is an action used
+  # for administration or editing purposes.
   def administrates?(controller, action)
     return true if controller.in?(['administration', 'terms', 'lectures'])
-    return true if controller == 'courses' && action != 'show'
+    if controller.in?(['courses', 'tags', 'chapters', 'sections', 'lessons']) &&
+       action != 'show'
+      return true
+    end
     return true if controller == 'users' && action != 'teacher'
-    return true if controller == 'tags' && action != 'show'
-    return true if controller == 'chapters' && action != 'show'
-    return true if controller == 'sections' && action != 'show'
-    return true if controller == 'lessons' && action != 'show'
-    return true if controller == 'media' && action != 'show' && action != 'index'
+    return true if controller == 'media' && !action.in?(['show', 'index'])
     false
   end
 
+  # Returns the path for the inspect action for a given course/lecture/lesson.
   def inspect_teachable_path(teachable)
     return inspect_course_path(teachable) if teachable.class.to_s == 'Course'
     return inspect_lecture_path(teachable) if teachable.class.to_s == 'Lecture'
     inspect_lesson_path(teachable)
   end
 
-  def long_title(teachable)
-    return teachable.title if teachable.class.to_s.in?(['Course', 'Lecture'])
-    return teachable.long_title
-  end
-
+  # cuts off a given string so that a given number of letters is not exceeded
+  # string is given ... as ending if it is too long
   def shorten(title, max_letters)
     return '' unless title.present?
     return title unless title.length > max_letters
     title[0, max_letters - 3] + '...'
   end
 
-
-  def thyme_caption(medium)
-    medium.sort_de + ' ' + long_title(medium.teachable) + ' ' +
-      (medium.description || '')
-  end
-
+  # Returns the grouped list of all courses/lectures/references together
+  # with their ids. Is used in grouped_options_for_select in form helpers.
   def grouped_teachable_list
     list = []
     Course.all.each do |c|
@@ -158,10 +179,11 @@ module ApplicationHelper
       end
       list.push [c.title, lectures]
     end
-    list.push [ 'externe Referenzen', [['extern alle', 'external-0']]]
+    list.push ['externe Referenzen', [['extern alle', 'external-0']]]
   end
 
-
+  # Returns the grouped list of all courses/lectures together with their ids.
+  # Is used in grouped_options_for_select in form helpers
   def grouped_teachable_list_alternative
     list = []
     Course.all.each do |c|
@@ -174,6 +196,8 @@ module ApplicationHelper
     list
   end
 
+  # Returns the path for the inspect or edit action of a given course,
+  # depending on  whether the current user has editor rights for the course.
   def edit_or_inspect_course_path(course)
     if current_user.admin || course.editors.include?(current_user)
       return edit_course_path(course)
@@ -181,13 +205,19 @@ module ApplicationHelper
     inspect_course_path(course)
   end
 
+  # Returns the fontawesome icon name for inspecting or editing a given course,
+  # depending on  whether the current user has editor rights for the course.
   def edit_or_inspect_course_icon(course)
     if current_user.admin || course.editors.include?(current_user)
-      return "far fa-edit"
+      return 'far fa-edit'
     end
-    "far fa-eye"
+    'far fa-eye'
   end
 
+  # Returns the path for the inspect or edit action of a given lecture,
+  # depending on  whether the current user has editor rights for the course.
+  # Editor rights are determnined by inheritance, e.g. module editors
+  # can edit all lectures associated to the course.
   def edit_or_inspect_lecture_path(lecture)
     if current_user.admin ||
        lecture.editors_with_inheritance.include?(current_user)
@@ -196,11 +226,15 @@ module ApplicationHelper
     inspect_lecture_path(lecture)
   end
 
+  # Returns the fontawesome icon name for inspecting or editing a given lecture,
+  # depending on  whether the current user has editor rights for the course.
+  # Editor rights are determnined by inheritance, e.g. module editors
+  # can edit all lectures associated to the course.
   def edit_or_inspect_lecture_icon(lecture)
     if current_user.admin ||
        lecture.editors_with_inheritance.include?(current_user)
-      return "far fa-edit"
+      return 'far fa-edit'
     end
-    "far fa-eye"
+    'far fa-eye'
   end
 end

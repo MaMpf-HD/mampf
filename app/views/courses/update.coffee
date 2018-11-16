@@ -1,7 +1,10 @@
+# clean up from previous error messages
 $('#course_title').removeClass('is-invalid')
 $('#course_short_title').removeClass('is-invalid')
 $('#course-title-error').empty()
 $('#course-short-title-error').empty()
+
+# display error message or reload page
 <% if @errors.present? %>
 <% if @errors[:title].present? %>
 $('#course-title-error').append('<%= @errors[:title].join(", ") %>').show()

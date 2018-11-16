@@ -1,3 +1,5 @@
+AllCops:
+  TargetRubyVersion: 2.5
 Style/FrozenStringLiteralComment:
   Enabled: false
 Style/EmptyMethod:
@@ -5,6 +7,4 @@ Style/EmptyMethod:
 Style/SymbolArray:
   Enabled: false
 Style/WordArray:
-  Enabled: false
-Documentation:
   Enabled: false
