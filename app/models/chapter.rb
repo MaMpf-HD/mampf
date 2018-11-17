@@ -38,7 +38,8 @@ class Chapter < ApplicationRecord
     sections.order(:position).last
   end
 
-  # Returns the list of sections of this chapter together with their ids.
+  # Returns the list of sections of this chapter (by label), together with
+  # their ids.
   # Is used in options_for_select in form helpers.
   def select_sections
     sections.order(:position).map { |s| [s.to_label, s.position] }

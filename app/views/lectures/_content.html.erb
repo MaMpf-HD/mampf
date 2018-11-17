@@ -14,40 +14,41 @@
             </span>
           </div>
           <div class="card-body">
-          <ul class="list-group list-group-flush">
-            <% c.sections.includes(:chapter).each do |s| %>
-              <li class="list-group-item bg-mdb-color-lighten-5">
-                <div class="row">
-                  <div class="col-6">
-                    <span class="text-dark">
-                      <strong>
-                        <%= s.to_label %>
-                      </strong>
-                    </span>
+            <ul class="list-group list-group-flush">
+              <% c.sections.includes(:chapter).each do |s| %>
+                <li class="list-group-item bg-mdb-color-lighten-5">
+                  <div class="row">
+                    <div class="col-6">
+                      <span class="text-dark">
+                        <strong>
+                          <%= s.to_label %>
+                        </strong>
+                      </span>
+                    </div>
+                    <div class="col-6">
+                      <% s.lessons.includes(:tags).order(:date).each do |l| %>
+                        <%= link_to  l.date_de,
+                                     lesson_path(l),
+                                     class: 'badge badge-secondary lecture-lesson',
+                                     id: 'lecture-' + dom_id(l),
+                                     data: { id: l.id,
+                                             tags: l.tags.map(&:id) }  %>
+                      <% end %>
+                    </div>
+                    <div class="col-12 mt-2">
+                      <% s.tags.includes(:lessons).each do |t| %>
+                        <%= link_to t.title, tag_path(t),
+                                    id: 'lecture-' + dom_id(t),
+                                    class: "badge badge-light lecture-tag",
+                                    data: { id: t.id,
+                                            lessons: t.lessons.map(&:id) } %>
+                      <% end %>
+                    </div>
                   </div>
-                  <div class="col-6">
-                    <% s.lessons.includes(:tags).order(:date).each do |l| %>
-                      <%= link_to  l.date.day.to_s + '.' + l.date.month.to_s +
-                                   '.' + l.date.year.to_s, lesson_path(l),
-                                  class: 'badge badge-secondary lecture-lesson',
-                                  id: 'lecture-' + dom_id(l),
-                                  data: { id: l.id, tags: l.tags.map(&:id) }  %>
-                    <% end %>
-                  </div>
-                  <div class="col-12 mt-2">
-                    <% s.tags.includes(:lessons).each do |t| %>
-                      <%= link_to t.title, tag_path(t),
-                                  id: 'lecture-' + dom_id(t),
-                                  class: "badge badge-light lecture-tag",
-                                  data: { id: t.id,
-                                          lessons: t.lessons.map(&:id) } %>
-                    <% end %>
-                  </div>
-                </div>
-              </li>
-            <% end%>
-          </ul>
-        </div>
+                </li>
+              <% end%>
+            </ul>
+          </div>
         </div>
       <% end %>
     </div>

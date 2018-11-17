@@ -242,8 +242,8 @@ class Medium < ApplicationRecord
 
   def caption
     return description if description.present?
-    return unless sort == 'Kaviar' && teachable_sort == 'Lesson'
-    teachable.section_titles
+    return '' unless sort == 'Kaviar' && teachable_sort == 'Lesson'
+    teachable.section_titles || ''
   end
 
   def card_header
@@ -311,7 +311,8 @@ class Medium < ApplicationRecord
     primary_results = Medium.filter_primary(filtered_media, primary_lecture)
     secondary_results = Medium.filter_secondary(filtered_media, course)
     secondary_results = secondary_results - course_results - primary_results
-    course_results + primary_results + secondary_results
+    course_results.sort_by(&:caption) + primary_results.sort_by(&:caption) +
+    secondary_results.sort_by(&:caption)
   end
 
   def self.filter_primary(filtered_media, primary_lecture)

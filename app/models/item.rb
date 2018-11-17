@@ -101,12 +101,10 @@ class Item < ApplicationRecord
   # result might look like this:
   #  "LA 2 SS 17, Bem. 29.13"
   def long_reference
-    unless sort.in?(['self', 'link'])
-      return short_ref_with_teachable if section.present?
-      return medium.title_for_viewers unless short_reference.present?
-      return medium.title_for_viewers + ', ' + short_reference
-    end
-    short_reference
+    return short_reference if sort.in?(['self', 'link'])
+    return short_ref_with_teachable if section.present?
+    return medium.title_for_viewers unless short_reference.present?
+    medium.title_for_viewers + ', ' + short_reference
   end
 
   # returns just the description, unless sort is section or self

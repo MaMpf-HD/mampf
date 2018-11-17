@@ -19,6 +19,14 @@ Rails.application.routes.draw do
   get 'courses/:id/inspect', to: 'courses#inspect',
                              as: 'inspect_course'
 
+  resources :lectures, except: [:index, :show]
+  get 'lectures/:id/inspect/', to: 'lectures#inspect',
+                               as: 'inspect_lecture'
+  get 'lectures/:id/update_teacher/', to: 'lectures#update_teacher',
+                                      as: 'update_teacher'
+  get 'lectures/:id/update_editors/', to: 'lectures#update_editors',
+                                      as: 'update_editors'
+
   get 'media/search', to: 'media#search', as: 'media_search'
   get 'media/catalog', to: 'media#catalog', as: 'media_catalog'
   get 'media/delete_destinations', to: 'media#delete_destinations', as: 'delete_destinations'
@@ -46,10 +54,6 @@ Rails.application.routes.draw do
   get 'sections/list_tags/', to: 'sections#list_tags', as: 'list_section_tags'
   resources :sections, except: [:index]
   resources :terms, except: [:show]
-  get 'lectures/:id/inspect/', to: 'lectures#inspect', as: 'inspect_lecture'
-  get 'lectures/:id/update_teacher/', to: 'lectures#update_teacher', as: 'update_teacher'
-  get 'lectures/:id/update_editors/', to: 'lectures#update_editors', as: 'update_editors'
-  resources :lectures
   devise_for :users, controllers: { registrations: 'registrations' }
   get 'users/elevate', to: 'users#elevate', as: 'elevate_user'
   get 'users/teacher/:teacher_id', to: 'users#teacher', as: 'teacher'

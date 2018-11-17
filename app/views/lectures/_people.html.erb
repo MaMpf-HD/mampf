@@ -1,6 +1,9 @@
-<div id="people_accordion" role="tablist">
+<div id="people_accordion"
+     role="tablist">
   <div class="card bg-light">
-    <div class="card-header" role="tab" id="people_heading">
+    <div class="card-header"
+         role="tab"
+         id="people_heading">
       <div class="row">
         <div class="col-6">
           <h5>
@@ -9,7 +12,8 @@
         </div>
         <div class="col-6 text-right">
           <a class="btn btn-primary"
-             data-toggle="collapse" href="#people_collapse"
+             data-toggle="collapse"
+             href="#people_collapse"
              id="people_collapse_button"
              aria-expanded="false" aria-controls="people_collapse">
             Ein-/Ausklappen
@@ -17,35 +21,45 @@
         </div>
       </div>
     </div>
-    <div id="people_collapse" class="collapse" role="tabpanel"
+    <div id="people_collapse"
+         class="collapse"
+         role="tabpanel"
          aria-labelledby="heading"
          data-parent="#people_accordion">
       <div class="card-body">
         <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
           <div class="form-row">
             <div class="col-4 form-group">
-              <%= f.label :teacher_id, 'DozentIn' %>
+              <%= f.label :teacher_id,
+                          'DozentIn' %>
               <% unless inspection %>
-                <a href="<%= update_teacher_path(lecture) %>" class="text-dark"
+                <a href="<%= update_teacher_path(lecture) %>"
+                   class="far fa-edit text-dark"
                    data-toggle="tooltip"
                    id="update-teacher-button"
                    style="text-decoration: none;"
                    data-placement="bottom" title="Bearbeiten"
                    data-remote="true">
-                  <i class="far fa-edit">
-                  </i>
                 </a>
               <% end %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Die DozentIn sollte im Normalfall diejenige Person sein, die die Vorlesung hält. Möchte die entsprechende Person sich nicht selbst um das Einstellen von Materialien kümmern, so kann dies durch zusätzliche Vorlesungseditoren geschehen.">
+                 data-content="Die DozentIn sollte im Normalfall diejenige
+                 Person sein, die die Vorlesung hält. Möchte die entsprechende
+                 Person sich nicht selbst um das Einstellen von Materialien
+                 kümmern, so kann dies durch zusätzliche Vorlesungseditoren
+                 geschehen.">
               </i>
-              <div id="lecture_teacher_select" style="display: none;" %>
+              <div id="lecture_teacher_select" %>
                 <%= f.select :teacher_id,
-                             options_for_select([[lecture.teacher.info, lecture.teacher.id]], lecture.teacher.id),
-                             {}, { class: 'selectize', disabled: true } %>
+                             options_for_select([[lecture.teacher.info,
+                                                  lecture.teacher.id]],
+                                                lecture.teacher.id),
+                             {},
+                             { class: 'selectize', disabled: true } %>
                 <div class="invalid-feedback" id="lecture-teacher-error">
                 </div>
               </div>
@@ -59,7 +73,9 @@
                  tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
-                 data-content="ModuleditorInnen haben das Bearbeitungsrecht für das zugeordnete Modul. Dieses vererbt sich auf jede Vorlesung zu diesem Modul.">
+                 data-content="ModuleditorInnen haben das Bearbeitungsrecht
+                 für das zugeordnete Modul. Dieses vererbt sich auf jede
+                 Vorlesung zu diesem Modul.">
               </i>
               <% if lecture.course.editors.present? %>
                 <ul>
@@ -75,33 +91,42 @@
               <% end %>
             </div>
             <div class="col-4 form-group">
-              <%= f.label :editor_ids, 'zusätzliche VorlesungseditorInnen' %>
+              <%= f.label :editor_ids,
+                          'zusätzliche VorlesungseditorInnen' %>
               <% unless inspection %>
                 <a href="<%= update_editors_path(lecture) %>"
-                   class="text-dark"
+                   class="far fa-edit text-dark"
                    id="update-editors-button"
                    style="text-decoration: none;"
                    data-toggle="tooltip"
-                   data-placement="bottom" title="Bearbeiten"
+                   data-placement="bottom"
+                   title="Bearbeiten"
                    data-remote="true">
-                   <i class="far fa-edit">
-                   </i>
                  </a>
               <% end %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Zusätzliche Vorlesungseditoren sind bearbeitungsberechtigte Personen, die verschieden vom Dozenten und von den Moduleditoren sind. Das können z.B. VorlesungsassistentInnen sein, die Materialien zur Vorlesung einpflegen.">
+                 data-content="Zusätzliche Vorlesungseditoren sind
+                 bearbeitungsberechtigte Personen, die verschieden vom
+                 Dozenten und von den Moduleditoren sind. Das können z.B.
+                 VorlesungsassistentInnen sein, die Materialien zur
+                 Vorlesung einpflegen.">
               </i>
-              <div id="lecture_editors_select" style="display: none;" %>
+              <div id="lecture_editors_select" %>
                 <%= f.select :editor_ids,
-                             options_for_select([['keiner', '']] + lecture.editors.map { |e| [e.info, e.id]}, lecture.editors.map(&:id)),
-                             {}, { multiple: true, class: 'selectize',
-                                   disabled: true } %>
+                             options_for_select([['keiner', '']] +
+                                                lecture.select_editors,
+                                                lecture.editors.map(&:id)),
+                             {},
+                             { multiple: true,
+                               class: 'selectize',
+                               disabled: true } %>
               </div>
               <div id="lecture_editors_info">
-                <% if lecture.course.editors.present? %>
+                <% if lecture.editors.present? %>
                   <ul>
                     <% lecture.editors.each do |e| %>
                       <li>
@@ -111,7 +136,8 @@
                   </ul>
                 <% else %>
                   <br>
-                  Es sind keine (zusätzlichen) VorlesungseditorInnen eingetragen.
+                  Es sind keine (zusätzlichen) VorlesungseditorInnen
+                  eingetragen.
                 <% end %>
               </div>
             </div>
@@ -122,9 +148,11 @@
               <%= lecture.users&.count %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Das ist die Zahl aller NutzerInnen, die diese Vorlesung in ihrem Profil abonniert haben.">
+                 data-content="Das ist die Zahl aller NutzerInnen, die diese
+                 Vorlesung in ihrem Profil abonniert haben.">
               </i>
             </div>
           </div>
@@ -132,8 +160,10 @@
             <div class="col-12 text-center">
               <div id="lecture-basics-warning">
                 Achtung, es gibt ungespeicherte Änderungen!
-                <%= f.submit "Speichern", class: "btn btn-primary" %>
-                <button type="button" class="btn btn-secondary ml-2"
+                <%= f.submit "Speichern",
+                    class: "btn btn-primary" %>
+                <button type="button"
+                        class="btn btn-secondary ml-2"
                         id="lecture-basics-cancel"
                         data-id="<%= lecture.id %>">
                   verwerfen

@@ -17,6 +17,23 @@
   display: none;
 }
 
+#show-media-button {
+  display: none;
+}
+
+#new-chapter-area, #new-lesson-area {
+  display: none;
+}
+
+#lecture_teacher_select, #lecture_editors_select {
+  display: none;
+}
+
+#no-effect-warning, #no-effect-warning-lessons {
+  display: none;
+  color: red;
+}
+
 .helpdesk {
   text-decoration: none;
   cursor: pointer;

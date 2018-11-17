@@ -5,11 +5,6 @@ class LecturesController < ApplicationController
   authorize_resource
   before_action :check_for_consent
 
-  def index
-    @lectures = Kaminari.paginate_array(Lecture.sort_by_date(Lecture.all))
-                        .page params[:page]
-  end
-
   def edit
   end
 
@@ -26,6 +21,8 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new
     @from = params[:from]
     return unless @from == 'course'
+    # if new action was triggered from inside a course view, add the course
+    # info to the lecture
     @lecture.course = Course.find_by_id(params[:course])
   end
 
@@ -33,6 +30,8 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new(lecture_params)
     @lecture.save
     if @lecture.valid?
+      # depending on where the destroy action was trriggered from, return
+      # to admin index view or edit course view
       unless params[:lecture][:from] == 'course'
         redirect_to administration_path
         return
@@ -48,12 +47,18 @@ class LecturesController < ApplicationController
     redirect_to administration_path
   end
 
+  # teacher selection is prepared here (in the view, it will be injected
+  # as additional options for a selectize input field; therefore the subtraction
+  # of the current value and the .to_json)
   def update_teacher
     @teacher_selection = (User.select_editors_hash -
                           [{ text: @lecture.teacher.info,
                              value: @lecture.teacher.id }]).to_json
   end
 
+  # editor selection is prepared here (in the view, it will be injected
+  # as additional options for a selectize input field; therefore the subtraction
+  # of t he current value and the .to_json)
   def update_editors
     @editor_selection = (User.select_editors_hash -
       @lecture.course.editors.map { |e| { text: e.info, value: e.id } } -

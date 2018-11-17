@@ -12,71 +12,81 @@
 <% elsif Term.count == 0 %>
   Es muss zunächst ein Semester angelegt werden.
 <% else %>
-<%= form_with model: lecture do |f| %>
-  <div class="form-row">
-    <div class="col-8 form-group">
-      <%= f.label :course_id, 'Modul' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
-         title="Info"
-         data-content="DHier kannst Du das Modul auswählen, zu dem diese
-         Vorlesung gehört.">
-      </i>
-      <%= f.select :course_id,
-                   options_for_select(current_user.select_administrated_courses,
-                   lecture.course&.id),
-                   {}, { class: 'form-control', disabled: from == 'course' } %>
-      <% if from == 'course' %>
-        <%= f.hidden_field :course_id, value: lecture.course.id %>
-      <% end %>
-      <div class="invalid-feedback"
-           id="new-lecture-course-error">
+  <%= form_with model: lecture do |f| %>
+    <div class="form-row">
+      <div class="col-8 form-group">
+        <%= f.label :course_id, 'Modul' %>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du das Modul auswählen, zu dem diese
+           Vorlesung gehört.">
+        </i>
+        <%= f.select :course_id,
+                     options_for_select(current_user
+                                          .select_administrated_courses,
+                                        lecture.course&.id),
+                     {},
+                     { class: 'form-control', disabled: from == 'course' } %>
+        <% if from == 'course' %>
+          <%= f.hidden_field :course_id, value: lecture.course.id %>
+        <% end %>
+        <div class="invalid-feedback"
+             id="new-lecture-course-error">
+        </div>
+      </div>
+      <div class="col-4 form-group">
+        <%= f.label :term_id,
+                    'Semester' %>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du das Semester auswählen, in dem diese
+           Vorlesung stattfindet bzw. stattgefunden hat.">
+        </i>
+        <%= f.select :term_id,
+                     options_for_select(Term.select_terms),
+                     {},
+                     { class: 'form-control' } %>
+      </div>
+      <div class="col-12 form-group">
+        <%= f.label :teacher_id,
+                    'DozentIn' %>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du die DozentIn der Vorlesung auswählen.
+           Die DozentIn sollte im Normalfall diejenige Person sein,
+           die die Vorlesung hält. Möchte die entsprechende Person
+           sich nicht selbst um das Einstellen von Materialien
+           kümmern, so kann dies durch zusätzliche
+           Vorlesungseditoren geschehen.">
+        </i>
+        <%= f.select :teacher_id,
+                     options_for_select(User.select_editors,
+                                        current_user.id),
+                     {},
+                     { class: 'selectize',
+                       data: { current: current_user.id } } %>
       </div>
     </div>
-    <div class="col-4 form-group">
-      <%= f.label :term_id,
-                  'Semester' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du das Semester auswählen, in dem diese
-         Vorlesung stattfindet bzw. stattgefunden hat.">
-      </i>
-      <%= f.select :term_id,
-                   options_for_select(Term.all.map { |t| [t.to_label, t.id] }),
-                   {}, { class: 'form-control' } %>
+    <div class="row">
+      <div class="col-12 text-center">
+        <%= f.submit 'Speichern',
+            class: 'btn btn-primary' %>
+        <button type="button"
+                id="cancel-new-lecture"
+                class="btn btn-secondary">
+          abbrechen
+        </button>
+      </div>
     </div>
-    <div class="col-12 form-group">
-      <%= f.label :teacher_id,
-                  'DozentIn' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du die DozentIn der Vorlesung auswählen.
-                       Die DozentIn sollte im Normalfall diejenige Person sein,
-                       die die Vorlesung hält. Möchte die entsprechende Person
-                       sich nicht selbst um das Einstellen von Materialien
-                       kümmern, so kann dies durch zusätzliche
-                       Vorlesungseditoren geschehen.">
-      </i>
-      <%= f.select :teacher_id,
-                   options_for_select(User.all.map { |u| [u.info, u.id] },
-                                      current_user.id),
-                   {}, { class: 'selectize', data: { current: current_user.id } } %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12 text-center">
-      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-      <button type="button" id="cancel-new-lecture"
-              class="btn btn-secondary">
-        abbrechen
-      </button>
-    </div>
-  </div>
-  <%= f.hidden_field :from, value: from %>
-<% end %>
+    <%= f.hidden_field :from, value: from %>
+  <% end %>
 <% end %>

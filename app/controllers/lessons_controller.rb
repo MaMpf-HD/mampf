@@ -32,7 +32,6 @@ class LessonsController < ApplicationController
       return
     end
     @errors = @lesson.errors
-    pp @errors
     render :update
   end
 

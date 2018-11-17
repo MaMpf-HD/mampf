@@ -43,4 +43,8 @@ class Term < ApplicationRecord
     return (year % 100).to_s unless season == 'WS'
     (year % 100).to_s + '/' + ((year % 100) + 1).to_s
   end
+
+  def self.select_terms
+    Term.all.map { |t| [t.to_label, t.id] }
+  end
 end

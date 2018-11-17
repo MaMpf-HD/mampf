@@ -6,9 +6,12 @@
           Medien
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
-             data-content="Hier werden alle Medien angezeigt, die direkt zu dieser Vorlesung oder zu Sitzungen dieser Vorlesung assoziiert sind.
+             data-content="Hier werden alle Medien angezeigt, die direkt zu
+             dieser Vorlesung oder zu Sitzungen dieser Vorlesung assoziiert
+             sind.
              Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
              angesiedelt sind, so wird darauf hingeweisen.">
           </i>
@@ -16,11 +19,13 @@
       </div>
       <div class="col-3">
         <% unless inspection %>
-          <a href="<%= new_medium_path(params: { teachable_id: lecture.id,
-                                                 teachable_type: 'Lecture' }) %>"
+          <a href="<%= new_medium_path(params:
+                                         { teachable_id: lecture.id,
+                                           teachable_type: 'Lecture' }) %>"
              class="fas fa-plus-circle fa-lg new-in-lecture text-dark"
              style="text-decoration: none; "
-             data-toggle="tooltip" title="Medium anlegen"
+             data-toggle="tooltip"
+             title="Medium anlegen"
              id="create-new-medium">
           </a>
         <% end %>
@@ -28,7 +33,8 @@
       <div class="col-3 text-right">
         <i id="hide-media-button"
            class="far fa-window-close clickable"
-           data-toggle="tooltip" title="Medien ausblenden">
+           data-toggle="tooltip"
+           title="Medien ausblenden">
         </i>
       </div>
     </div>
@@ -36,7 +42,9 @@
   <div class="card-body">
     <div class="row">
       <div class="col-4">
-        <ul class="nav flex-column nav-pills" id="edited-media-tab" role="tablist">
+        <ul class="nav flex-column nav-pills"
+            id="edited-media-tab"
+            role="tablist">
           <% media_sorts.each do |s| %>
             <li class="nav-item">
               <a class="nav-link <%= active(s == 'kaviar') %>"
@@ -55,24 +63,19 @@
           <% media_sorts.each do |s| %>
             <div class="tab-pane fade <%= show_tab(s == 'kaviar') %>"
                  id="<%= s %>-media"
-                 role="tabpanel" aria-labelledby="<%= s %>-tab">
+                 role="tabpanel"
+                 aria-labelledby="<%= s %>-tab">
               <ul>
                 <% media.includes(:tags).where(sort: media_types[s])
-                                        .order(created_at: :desc).each do |m| %>
+                                        .order(created_at: :desc)
+                                        .each do |m| %>
                   <li>
-                    <% if inspection %>
-                      <%= link_to m.local_info, inspect_medium_path(m),
-                                  id: "lecture-#{dom_id(m)}",
-                                  data: { type: m.teachable.class.to_s,
-                                          id: m.teachable.id,
-                                          tags: m.tags.map(&:id) } %>
-                    <% else %>
-                      <%= link_to m.local_info, edit_medium_path(m),
-                                  id: "lecture-#{dom_id(m)}",
-                                  data: { type: m.teachable.class.to_s,
-                                          id: m.teachable.id,
-                                          tags: m.tags.map(&:id) } %>
-                    <% end %>
+                    <%= link_to m.local_info,
+                                inspect_or_edit_medium_path(m, inspection),
+                                id: "lecture-#{dom_id(m)}",
+                                data: { type: m.teachable.class.to_s,
+                                        id: m.teachable.id,
+                                        tags: m.tags.map(&:id) } %>
                   </li>
                 <% end %>
               </ul>
@@ -85,7 +88,7 @@
                 dieses Typs, die auf der Ebene des zugehörigen
                 Moduls
                 <%= link_to lecture.course.title,
-                            inspection ? inspect_course_path(lecture.course) : edit_course_path(lecture.course) %>
+                            edit_or_inspect_course_path(lecture.course) %>
                 angesiedelt sind.
               <% end %>
             </div>

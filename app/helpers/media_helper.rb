@@ -21,4 +21,8 @@ module MediaHelper
   def sections_for_thyme(medium)
     medium.teachable.lecture.section_selection
   end
+
+  def inspect_or_edit_medium_path(medium, inspection)
+    inspection ? inspect_medium_path(medium) : edit_medium_path(medium)
+  end
 end
