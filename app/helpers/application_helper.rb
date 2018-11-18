@@ -155,8 +155,8 @@ module ApplicationHelper
 
   # Returns the path for the inspect action for a given course/lecture/lesson.
   def inspect_teachable_path(teachable)
-    return inspect_course_path(teachable) if teachable.class.to_s == 'Course'
-    return inspect_lecture_path(teachable) if teachable.class.to_s == 'Lecture'
+    return inspect_course_path(teachable) if teachable.class == Course
+    return inspect_lecture_path(teachable) if teachable.class == Lecture
     inspect_lesson_path(teachable)
   end
 

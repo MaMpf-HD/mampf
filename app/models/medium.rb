@@ -264,15 +264,6 @@ class Medium < ApplicationRecord
       'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }[sort]
   end
 
-  def teachable_sort
-    teachable.class.name
-  end
-
-  def teachable_sort_de
-    { 'Course' => 'Kurs', 'Lecture' => 'Vorlesung',
-      'Lesson' => 'Sitzung' }[teachable_sort]
-  end
-
   def related_to_lecture?(lecture)
     return true if belongs_to_course?(lecture)
     return true if belongs_to_lecture?(lecture)

@@ -11,14 +11,17 @@
         </div>
         <div class="col-6 text-right">
           <a class="btn btn-primary"
-             data-toggle="collapse" href="#tags_collapse"
+             data-toggle="collapse"
+             href="#tags_collapse"
              aria-expanded="false" aria-controls="tags_collapse">
             Ein-/Ausklappen
           </a>
         </div>
       </div>
     </div>
-    <div id="tags_collapse" class="collapse" role="tabpanel"
+    <div id="tags_collapse"
+         class="collapse"
+         role="tabpanel"
          aria-labelledby="heading"
          data-parent="#tags_accordion">
       <div class="card-body">
@@ -26,18 +29,23 @@
           <li class="mb-2">
             <h6>
               (Bisher) behandelte Begriffe aus dem zugehörigen Modul
-              <%= link_to lecture.course.title, inspect_course_path(lecture.course) %>
+              <%= link_to lecture.course.title,
+                          inspect_course_path(lecture.course) %>
               <%= ' (' + lecture.course_tags.count.to_s + ')' %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Hier werden diejenigen Tags aus dem zugeordneten Modul angezeigt, die in mindestens einem Abschnitt dieser Vorlesung vorkommen.">
+                 data-content="Hier werden diejenigen Tags aus dem zugeordneten
+                 Modul angezeigt, die in mindestens einem Abschnitt dieser
+                 Vorlesung vorkommen.">
               </i>
             </h6>
             <% if lecture.course_tags.present? %>
               <%= render partial: "tags/list",
-                         locals: { tags: lecture.course_tags.natural_sort_by(&:title),
+                         locals: { tags: lecture.course_tags
+                                                .natural_sort_by(&:title),
                                    inspection: inspection } %>
             <% else %>
               Es sind noch keine Begriffe vorhanden.
@@ -49,32 +57,40 @@
               <%= ' (' + lecture.extra_tags.count.to_s + ')' %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Hier werden diejenigen Tags angezeigt, welche in mindestens einem Abschnitt dieser Vorlesung vorkommen, jedoch kein Tag des zugeordneten Moduls sind.">
+                 data-content="Hier werden diejenigen Tags angezeigt, welche
+                 in mindestens einem Abschnitt dieser Vorlesung vorkommen,
+                 jedoch kein Tag des zugeordneten Moduls sind.">
               </i>
             </h6>
             <%= render partial: "tags/list",
-                         locals: { tags: lecture.extra_tags.natural_sort_by(&:title),
+                         locals: { tags: lecture.extra_tags
+                                                .natural_sort_by(&:title),
                                    inspection: inspection } %>
           </li>
-        <li>
-          <h6>
-            (Noch) nicht behandelte Begriffe
-            <%= ' (' + lecture.deferred_tags.count.to_s + ')' %>
-            <i class="far fa-question-circle helpdesk"
+          <li>
+            <h6>
+              (Noch) nicht behandelte Begriffe
+              <%= ' (' + lecture.deferred_tags.count.to_s + ')' %>
+              <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Hier werden diejenigen Tags aus dem zugeordneten Modul angezeigt, die in keinem Abschnitt dieser Vorlesung vorkommen.">
+                 data-content="Hier werden diejenigen Tags aus dem zugeordneten
+                 Modul angezeigt, die in keinem Abschnitt dieser Vorlesung
+                 vorkommen.">
               </i>
-          </h6>
-          <%= render partial: "tags/list",
-                     locals: { tags: lecture.deferred_tags.natural_sort_by(&:title),
-                               inspection: inspection } %>
-        </li>
-      </ul>
+            </h6>
+            <%= render partial: "tags/list",
+                       locals: { tags: lecture.deferred_tags
+                                              .natural_sort_by(&:title),
+                                 inspection: inspection } %>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
-</div>
 </div>
