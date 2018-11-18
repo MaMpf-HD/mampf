@@ -312,8 +312,7 @@ class Medium < ApplicationRecord
     secondary_results = Medium.filter_secondary(filtered_media, course)
     secondary_results = secondary_results - course_results - primary_results
     course_results.natural_sort_by(&:caption) +
-      primary_results.natural_sort_by(&:caption) +
-      secondary_results.natural_sort_by(&:caption)
+      primary_results + secondary_results
   end
 
   def self.filter_primary(filtered_media, primary_lecture)

@@ -9,7 +9,8 @@
         </div>
         <div class="col-6 text-right">
           <a class="btn btn-primary"
-             data-toggle="collapse" href="#preferences_collapse"
+             data-toggle="collapse"
+             href="#preferences_collapse"
              id="preferences_collapse_button"
              aria-expanded="false" aria-controls="preferences_collapse">
             Ein-/Ausklappen
@@ -17,7 +18,9 @@
         </div>
       </div>
     </div>
-    <div id="preferences_collapse" class="collapse" role="tabpanel"
+    <div id="preferences_collapse"
+         class="collapse"
+         role="tabpanel"
          aria-labelledby="heading"
          data-parent="#preferences_accordion">
       <div class="card-body">
@@ -29,25 +32,33 @@
                           'Semester' %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Hier kannst Du das Semester auswählen, in dem diese
-                 Vorlesung stattfindet bzw. stattgefunden hat.">
+                 data-content="Hier kannst Du das Semester auswählen, in dem
+                 diese Vorlesung stattfindet bzw. stattgefunden hat.">
               </i>
               <%= f.select :term_id,
-                           options_for_select(Term.all.map { |t| [t.to_label, t.id] },
+                           options_for_select(Term.select_terms,
                                               lecture.term.id),
-                           {}, { class: 'form-control' } %>
-              <div class="invalid-feedback" id="lecture-term-error">
+                           {},
+                           { class: 'form-control' } %>
+              <div class="invalid-feedback"
+                   id="lecture-term-error">
               </div>
             </div>
             <div class="col-3 form-group">
               <%= f.label :start_chapter, 'Nummer des ersten Kapitels' %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Soll das erste Kapitel eine von eins verschiedene Nummer haben, so kann dies hier eingetragen werden. Anwendungsmöglichkeiten sind z.B. Kapitelnummerierungen, die in Fortsetzungsvorlesungen weitergeführt werden.">
+                 data-content="Soll das erste Kapitel eine von eins
+                 verschiedene Nummer haben, so kann dies hier eingetragen
+                 werden. Anwendungsmöglichkeiten sind z.B.
+                 Kapitelnummerierungen, die in Fortsetzungsvorlesungen
+                 weitergeführt werden.">
               </i>
               <%= f.number_field :start_chapter,
                                  value: lecture.start_chapter || 1,
@@ -56,17 +67,21 @@
             </div>
             <div class="col-3 mt-6">
               <div id="start-section-input">
-                <%= f.label :start_section, 'Startabschnitt' %>
+                <%= f.label :start_section,
+                            'Startabschnitt' %>
                 <i class="far fa-question-circle helpdesk"
                    tabindex="-1"
                    data-toggle="popover" data-trigger="focus"
                    title="Info"
-                   data-content="Ist die absolute Nummerierung für Abschnitte aktiviert, so kann hier die Nummer des ersten Abschnitts eingestellt werden.">
+                   data-content="Ist die absolute Nummerierung für Abschnitte
+                   aktiviert, so kann hier die Nummer des ersten Abschnitts
+                   eingestellt werden.">
                 </i>
                 <%= f.number_field :start_section,
                                    value: lecture.start_section || 1,
                                    class: 'form-control',
-                                   disabled: inspection || !lecture.absolute_numbering %>
+                                   disabled: inspection ||
+                                               !lecture.absolute_numbering %>
               </div>
             </div>
             <div class="col-3 mt-6">
@@ -74,13 +89,20 @@
                 <%= f.check_box :absolute_numbering,
                                 class: 'custom-control-input',
                                 disabled: inspection %>
-                <%= f.label :absolute_numbering, 'absolute Nummerierung',
+                <%= f.label :absolute_numbering,
+                            'absolute Nummerierung',
                             { class: 'custom-control-label' } %>
                 <i class="far fa-question-circle helpdesk"
                    tabindex="-1"
-                   data-toggle="popover" data-trigger="focus"
+                   data-toggle="popover"
+                   data-trigger="focus"
                    title="Info"
-                   data-content="Standardmäßig wird für Abschnitte eine Nummerierung relativ zum Kapitel angezeigt: Der dritte Abschnitt in Kapitel 4 ist etwa §4.3. Durch Aktivierung der absoluten Nummerierung wird dieses Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen weitergezählt. ">
+                   data-content="Standardmäßig wird für Abschnitte eine
+                   Nummerierung relativ zum Kapitel angezeigt:
+                   Der dritte Abschnitt in Kapitel 4 ist etwa §4.3.
+                   Durch Aktivierung der absoluten Nummerierung wird dieses
+                   Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen
+                   weitergezählt. ">
                 </i>
               </div>
             </div>
@@ -89,7 +111,8 @@
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">
                 Achtung, es gibt ungespeicherte Änderungen!
-                <%= f.submit "Speichern und zurück", class: "btn btn-primary" %>
+                <%= f.submit "Speichern und zurück",
+                             class: "btn btn-primary" %>
                 <button type="button" id="cancel-lecture-preferences"
                         class="btn btn-secondary">
                   abbrechen
