@@ -4,8 +4,9 @@ module AdministrationHelper
   # they can be edited by current user.
   # Used for dropdown menu in admin navbar.
   def editable_courses_dropdown
-    editable = current_user.editable_courses_with_inheritance.sort_by(&:title)
-    non_editable = (Course.all - editable).sort_by(&:title)
+    editable = current_user.editable_courses_with_inheritance
+                           .natural_sort_by(&:title)
+    non_editable = (Course.all - editable).natural_sort_by(&:title)
     return editable if non_editable.blank?
     return non_editable if editable.blank?
     # Provide dropdown divider if both editable and non-editable courses are

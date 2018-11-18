@@ -24,7 +24,7 @@
         <div class="row">
           <div class="col-12">
             <% if tags.present? %>
-              <% tags.sort_by(&:title).each do |t| %>
+              <% tags.natural_sort_by(&:title).each do |t| %>
                 <% unless t.nil? %>
                   <% if inspection %>
                     <%= link_to t.title, inspect_tag_path(t),

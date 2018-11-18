@@ -38,7 +38,7 @@
                id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
                role="tabpanel"
                aria-labelledby="v-pills-<%= sort %>-<% t.class %>-<%= t.id %>-tab">
-            <% relevant = relevant_media(t, media)&.sort_by(&:local_info) %>
+            <% relevant = relevant_media(t, media)&.natural_sort_by(&:local_info) %>
             <% if relevant.present? %>
               <div class="row">
                 <% split_list(relevant, 2).each do |media_list| %>

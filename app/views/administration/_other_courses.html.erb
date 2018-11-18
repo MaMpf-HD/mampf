@@ -15,7 +15,7 @@
   <div class="card-body">
     <% if (Course.all - current_user.edited_courses).present? %>
       <%= render partial: 'administration/courses_card',
-                 locals: { courses: non_edited_courses.sort_by(&:title),
+                 locals: { courses: non_edited_courses.natural_sort_by(&:title),
                            inspection: true } %>
     <% else %>
       Es gibt keine sonstigen Module.

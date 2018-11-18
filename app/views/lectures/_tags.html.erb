@@ -37,7 +37,7 @@
             </h6>
             <% if lecture.course_tags.present? %>
               <%= render partial: "tags/list",
-                         locals: { tags: lecture.course_tags.sort_by(&:title),
+                         locals: { tags: lecture.course_tags.natural_sort_by(&:title),
                                    inspection: inspection } %>
             <% else %>
               Es sind noch keine Begriffe vorhanden.
@@ -55,14 +55,14 @@
               </i>
             </h6>
             <%= render partial: "tags/list",
-                         locals: { tags: lecture.extra_tags.sort_by(&:title),
+                         locals: { tags: lecture.extra_tags.natural_sort_by(&:title),
                                    inspection: inspection } %>
           </li>
         <li>
           <h6>
             (Noch) nicht behandelte Begriffe
             <%= ' (' + lecture.deferred_tags.count.to_s + ')' %>
-            <i class="far fa-question-circle helpdesk" 
+            <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
@@ -70,7 +70,7 @@
               </i>
           </h6>
           <%= render partial: "tags/list",
-                     locals: { tags: lecture.deferred_tags.sort_by(&:title),
+                     locals: { tags: lecture.deferred_tags.natural_sort_by(&:title),
                                inspection: inspection } %>
         </li>
       </ul>

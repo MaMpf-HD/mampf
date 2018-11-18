@@ -42,7 +42,8 @@
     <% if current_user.edited_courses.present? %>
       <%= render partial: 'administration/courses_card',
                  locals: { courses:
-                             current_user.edited_courses.sort_by(&:title),
+                             current_user.edited_courses
+                                         .natural_sort_by(&:title),
                            inspection: false } %>
     <% else %>
       Es gibt keine Module, für die Du als EditorIn eingetragen bist.

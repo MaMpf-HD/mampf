@@ -33,7 +33,7 @@ class Tag < ApplicationRecord
   end
 
   def self.select_by_title
-    Tag.all.to_a.sort_by { |t| t.title.downcase }.map { |t| [t.title, t.id] }
+    Tag.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
   def extra_lectures
