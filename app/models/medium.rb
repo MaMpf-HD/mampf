@@ -308,11 +308,25 @@ class Medium < ApplicationRecord
 
   def self.search_results(filtered_media, course, primary_lecture)
     course_results = filtered_media.select { |m| m.teachable == course }
+    # media associated to primary lecture and its lessons
     primary_results = Medium.filter_primary(filtered_media, primary_lecture)
+    # media associated to the course, all of its lectures and their lessons
     secondary_results = Medium.filter_secondary(filtered_media, course)
+    # throw out media that have appeared as one of the above two types
     secondary_results = secondary_results - course_results - primary_results
+    # differentiate primary results whether they are associated to the lecture
+    # or a lesson of it
+    primary_lecture_results = Medium.filter_by_lecture(primary_results)
+    primary_lessons_results = primary_results - primary_lecture_results
+    # sort them in the following way
+    # - course results, by caption
+    # - primary lecture results, by caption
+    # - primary lesson results, by date
+    # - secondary results
     course_results.natural_sort_by(&:caption) +
-      primary_results + secondary_results
+      primary_lecture_results.natural_sort_by(&:caption) +
+      primary_lessons_results.sort_by { |m| m.teachable.date } +
+      secondary_results
   end
 
   def self.filter_primary(filtered_media, primary_lecture)
@@ -320,6 +334,10 @@ class Medium < ApplicationRecord
     filtered_media.select do |m|
       m.teachable.present? && m.teachable.lecture == primary_lecture
     end
+  end
+
+  def self.filter_by_lecture(media)
+    media.select { |m| m.teachable_type == 'Lecture' }
   end
 
   def self.filter_secondary(filtered_media, course)
