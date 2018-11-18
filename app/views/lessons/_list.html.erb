@@ -1,7 +1,0 @@
-<% lessons.each do |l| %>
-  <% if inspection %>
-    <%= link_to l.to_label, inspect_lesson_path(l), class: "badge badge-light" %>
-  <% else %>
-    <%= link_to l.to_label, edit_lesson_path(l), class: "badge badge-light" %>
-  <% end %>
-<% end %>

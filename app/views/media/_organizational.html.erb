@@ -20,7 +20,7 @@
           <%= medium.description %>
         </li>
       <% end %>
-      <% if medium.teachable_sort == 'Course' && medium.teachable.present? %>
+      <% if medium.teachable_type == 'Course' && medium.teachable.present? %>
         <li>
           Kurs:
           <% if current_user.courses.include?(medium.teachable) %>
@@ -33,7 +33,7 @@
           <% end %>
         </li>
       <% end %>
-      <% if medium.teachable_sort == 'Lecture' && medium.teachable.present? %>
+      <% if medium.teachable_type == 'Lecture' && medium.teachable.present? %>
         <li>
           Vorlesung:
           <% if current_user.lectures.include?(medium.teachable) %>
@@ -47,7 +47,7 @@
           <% end %>
         </li>
       <% end %>
-      <% if medium.teachable_sort == 'Lesson' && medium.teachable.present? %>
+      <% if medium.teachable_type == 'Lesson' && medium.teachable.present? %>
         <% if current_user.lectures.include?(medium.teachable.lecture) %>
           <li>
             Vorlesung:

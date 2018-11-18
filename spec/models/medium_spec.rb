@@ -334,18 +334,18 @@ RSpec.describe Medium, type: :model do
       expect(medium.question_ids).to match_array([37,259,1002])
     end
   end
-  describe '#teachable_sort' do
+  describe '#teachable_type' do
     it 'returns the correct kind of teachable' do
       lesson = FactoryBot.create(:lesson)
       medium = FactoryBot.build(:medium, teachable: lesson)
-      expect(medium.teachable_sort).to eq('Lesson')
+      expect(medium.teachable_type).to eq('Lesson')
     end
   end
-  describe '#teachable_sort_de' do
+  describe '#teachable_type_de' do
     it 'returns the correct kind of teachable in german spelling' do
       lesson = FactoryBot.create(:lesson)
       medium = FactoryBot.build(:medium, teachable: lesson)
-      expect(medium.teachable_sort_de).to eq('Sitzung')
+      expect(medium.teachable_type_de).to eq('Sitzung')
     end
   end
   describe '#related_to_lecture' do

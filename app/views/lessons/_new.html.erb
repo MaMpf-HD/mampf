@@ -6,56 +6,65 @@
   </div>
 </div>
 <%= form_with model: lesson do |f| %>
-    <div class="form-row">
-      <div class="col-4">
-        <div class="row">
-          <div class="col-12">
-            <%= f.label :date, 'Datum' %>
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Hier kannst Du das Datum auswählen, an dem die
-               Sitzung stattgefunden hat.">
-            </i>
-          </div>
-          <div class="col-12">
-            <%= f.date_field :date %>
-          </div>
-          <div class="col-12">
-            <div class="invalid-feedback" id="lesson-date-error">
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-8">
-        <div class="form-group">
-          <%= f.label :section_ids, 'Abschnitte' %>
+  <div class="form-row">
+    <div class="col-4">
+      <div class="row">
+        <div class="col-12">
+          <%= f.label :date,
+                      'Datum' %>
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
-             data-content="Hier kannst Du auswählen, welche Abschnitte aus der
-             Vorlesung in der entsprechenden Sitzung behandelt wurden.
-             Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
-             die zu den entsprechenden Abschnitten gehören. Beim Editieren
-             der Sitzung kann diese Auswahl dann nachbearbeitet werden.">
+             data-content="Hier kannst Du das Datum auswählen, an dem die
+             Sitzung stattgefunden hat.">
           </i>
-          <%= f.select :section_ids,
-                       options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ] }),
-                       {}, { multiple: true,
-                             class: 'selectize' }%>
-          <div class="invalid-feedback" id="lesson-sections-error">
+        </div>
+        <div class="col-12">
+          <%= f.date_field :date %>
+        </div>
+        <div class="col-12">
+          <div class="invalid-feedback" id="lesson-date-error">
           </div>
         </div>
       </div>
     </div>
-  <%= f.hidden_field :lecture_id, value: lesson.lecture_id %>
+    <div class="col-8">
+      <div class="form-group">
+        <%= f.label :section_ids,
+                    'Abschnitte' %>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Hier kannst Du auswählen, welche Abschnitte aus der
+           Vorlesung in der entsprechenden Sitzung behandelt wurden.
+           Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
+           die zu den entsprechenden Abschnitten gehören. Beim Editieren
+           der Sitzung kann diese Auswahl dann nachbearbeitet werden.">
+        </i>
+        <%= f.select :section_ids,
+                     options_for_select(lesson.lecture.section_selection),
+                     {},
+                     { multiple: true,
+                       class: 'selectize' } %>
+        <div class="invalid-feedback" id="lesson-sections-error">
+        </div>
+      </div>
+    </div>
+  </div>
+  <%= f.hidden_field :lecture_id,
+                     value: lesson.lecture_id %>
   <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-      <%= f.submit 'Speichern und Bearbeiten', class: 'btn btn-primary' %>
-      <button type="button" id="cancel-new-lesson"
+      <%= f.submit 'Speichern',
+                   class: 'btn btn-primary' %>
+      <%= f.submit 'Speichern und Bearbeiten',
+                   class: 'btn btn-primary' %>
+      <button type="button"
+              id="cancel-new-lesson"
               class="btn btn-secondary">
         abbrechen
       </button>

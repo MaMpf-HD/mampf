@@ -5,32 +5,34 @@
         Datum
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Das ist das Datum, an dem die
-           Sitzung stattgefunden hat.">
+           data-content="Das ist das Datum, an dem die Sitzung
+           stattgefunden hat.">
         </i>
       </div>
       <div class="col-6">
         Medien
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
            data-content="Dies ist eine Liste aller Medien, die zu dieser
            Sitzung assoziiert sind.">
         </i>
       </div>
       <div class="col-6">
-        <%= lesson.date.day.to_s + '.' + lesson.date.month.to_s +
-                   '.' + lesson.date.year.to_s  %>
+        <%= lesson.date_de  %>
       </div>
       <div class="col-6">
         <% if lesson.media.present? %>
           <ul>
             <li>
               <% lesson.media.each do |m| %>
-                <%= link_to m.sort + ', ' + m.local_info, inspect_medium_path(m) %>
+                <%= link_to m.sort + ', ' + m.local_info,
+                            inspect_medium_path(m) %>
               <% end %>
             </li>
           </ul>
@@ -43,7 +45,8 @@
         <%= f.label :date, 'Datum' %>
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
            data-content="Hier kannst Du das Datum auswählen, an dem die
            Sitzung stattgefunden hat.">
@@ -53,17 +56,20 @@
         Medien
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
            data-content="Dies ist eine Liste aller Medien, die zu dieser
            Sitzung assoziiert sind.">
         </i>
         <a href="<%= new_medium_path(params: { teachable_id: lesson.id,
                                                teachable_type: 'Lesson',
-                                               tag_ids: lesson.tags.map(&:id) }) %>"
+                                               tag_ids:
+                                                 lesson.tags.map(&:id) }) %>"
            class="fas fa-plus-circle text-dark"
            id="create-new-lesson-medium"
-           data-toggle="tooltip" title="Medium anlegen"
+           data-toggle="tooltip"
+           title="Medium anlegen"
            style="text-decoration: none;">
         </a>
       </div>
@@ -75,7 +81,8 @@
           <ul>
             <li>
               <% lesson.media.each do |m| %>
-                <%= link_to m.sort + ', ' + m.local_info, edit_medium_path(m) %>
+                <%= link_to m.sort + ', ' + m.local_info,
+                            edit_medium_path(m) %>
               <% end %>
             </li>
           </ul>
@@ -95,10 +102,11 @@
         Abschnitte
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Dies ist die Liste aller Abschnitte aus der zugeordneten
-           Vorlesung, die in dieser Sitzung behandelt wurden.">
+           data-content="Dies ist die Liste aller Abschnitte aus der
+           zugeordneten Vorlesung, die in dieser Sitzung behandelt wurden.">
         </i>
       </div>
     </div>
@@ -119,16 +127,20 @@
     <%= f.label :section_ids, 'Abschnitte' %>
     <i class="far fa-question-circle helpdesk"
        tabindex="-1"
-       data-toggle="popover" data-trigger="focus"
+       data-toggle="popover"
+       data-trigger="focus"
        title="Info"
-       data-content="Hier kannst Du auswählen, welche Abschnitte aus der zugeordneten
-       Vorlesung in dieser Sitzung behandelt wurden.">
+       data-content="Hier kannst Du auswählen, welche Abschnitte aus der
+       zugeordneten Vorlesung in dieser Sitzung behandelt wurden.">
     </i>
     <%= f.select :section_ids,
-                 options_for_select(lesson.lecture.sections.map { |s| [s.to_label, s.id ]},
-                                      lesson.section_ids),
-                 {}, { multiple: true,
-                       class: 'selectize', data: { tags: lesson.lecture.section_tag_selection.to_json } }%>
+                 options_for_select(lesson.lecture.section_selection,
+                                    lesson.section_ids),
+                 {},
+                 { multiple: true,
+                   class: 'selectize',
+                   data: { tags:
+                            lesson.lecture.section_tag_selection.to_json } }%>
     <div class="invalid-feedback" id="lesson-sections-error">
     </div>
   <% end %>
@@ -140,32 +152,38 @@
         Verknüpfte Tags
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Dies ist die Liste aller Tags, die zu dieser Sitzung assoziiert sind.">
+           data-content="Dies ist die Liste aller Tags, die zu dieser Sitzung
+           assoziiert sind.">
         </i>
       </div>
       <div class="col-12">
         <%= render partial: 'tags/list',
-                   locals: { tags: lesson.tags, inspection: true } %>
+                   locals: { tags: lesson.tags,
+                             inspection: true } %>
       </div>
     </div>
   <% else %>
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
     <i class="far fa-question-circle helpdesk"
        tabindex="-1"
-       data-toggle="popover" data-trigger="focus"
+       data-toggle="popover"
+       data-trigger="focus"
        title="Info"
-       data-content="Dies ist eine Liste aller Tags, die zu dieser Sitzung assoziiert sind.
-       Beim Anlegen einer Sitzung werden hier automatisch alle Tags aus sämtlichen mit dieser Sitzung
-       mit der Sitzung verknüpften Abschnitten eingetragen. Diese Auswahl kann man hier nachbearbeiten.">
+       data-content="Dies ist eine Liste aller Tags, die zu dieser Sitzung
+       assoziiert sind.
+       Beim Anlegen einer Sitzung werden hier automatisch alle Tags aus
+       sämtlichen mit dieser Sitzung mit der Sitzung verknüpften Abschnitten
+       eingetragen. Diese Auswahl kannst Du hier nachbearbeiten.">
     </i>
     <%= f.select :tag_ids,
-                 options_for_select(lesson.section_tags.map { |t| [t.title, t.id]} +
-                                    lesson.complement_of_section_tags.natural_sort_by(&:title).map { |t| [t.title, t.id]},
-                                      lesson.tag_ids),
-                   {}, { multiple: true,
-                         class: 'selectize' } %>
+                 options_for_select(lesson_tag_selection(lesson),
+                                    lesson.tag_ids),
+                 {},
+                 { multiple: true,
+                   class: 'selectize' } %>
     <div class="invalid-feedback"
          id="lesson-tags-error">
     </div>

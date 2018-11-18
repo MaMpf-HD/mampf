@@ -2,7 +2,7 @@ $ ->
   loadMathJax()
   $(document).on 'turbolinks:load', loadMathJax
 
-
+# make loading mathjax idempotent by storing the state in a data attribute
 loadMathJax = ->
   unless $("body").attr('data-has-mathjax') == 'has-mathjax'
     $("body").attr('data-has-mathjax', 'has-mathjax')

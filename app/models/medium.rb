@@ -242,7 +242,7 @@ class Medium < ApplicationRecord
 
   def caption
     return description if description.present?
-    return '' unless sort == 'Kaviar' && teachable_sort == 'Lesson'
+    return '' unless sort == 'Kaviar' && teachable_type == 'Lesson'
     teachable.section_titles || ''
   end
 
@@ -456,15 +456,15 @@ class Medium < ApplicationRecord
   end
 
   def belongs_to_course?(lecture)
-    teachable_sort == 'Course' && teachable == lecture.course
+    teachable_type == 'Course' && teachable == lecture.course
   end
 
   def belongs_to_lecture?(lecture)
-    teachable_sort == 'Lecture' && teachable == lecture
+    teachable_type == 'Lecture' && teachable == lecture
   end
 
   def belongs_to_lesson?(lecture)
-    teachable_sort == 'Lesson' && teachable.lecture == lecture
+    teachable_type == 'Lesson' && teachable.lecture == lecture
   end
 
   def filter_primary(filtered_media, primary_lecture)

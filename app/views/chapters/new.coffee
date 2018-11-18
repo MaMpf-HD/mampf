@@ -1,4 +1,4 @@
-# disable all other input fields when a new chapter is created
+# disable all other input fields when a new chapter is being created
 $('.fa-edit').hide()
 $('.new-in-lecture').hide()
 $('#lecture-form input').prop('disabled', true)

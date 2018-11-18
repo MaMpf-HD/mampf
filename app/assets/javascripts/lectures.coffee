@@ -4,6 +4,7 @@
 
 $(document).on 'turbolinks:load', ->
 
+  # activate all popovers
   $('[data-toggle="popover"]').popover()
 
   # if any input is given to the lecture form, disable other input

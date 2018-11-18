@@ -11,14 +11,18 @@
   <div class="row p-2">
     <div class="col-12">
         <%= render partial: 'lessons/basics',
-                   locals: { lesson: @lesson, f: f, inspection: false,
+                   locals: { lesson: @lesson,
+                             f: f,
+                             inspection: false,
                              modal: false } %>
     </div>
   </div>
   <div class="row mb-3">
      <div class="col-12 text-center">
-       <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-       <%= f.submit 'Speichern und zurück', class: 'btn btn-primary' %>
+       <%= f.submit 'Speichern',
+                    class: 'btn btn-primary' %>
+       <%= f.submit 'Speichern und zurück',
+                    class: 'btn btn-primary' %>
        <button type="button"
                class="btn btn-secondary cancel-lesson">
          abbrechen

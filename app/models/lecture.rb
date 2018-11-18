@@ -1,21 +1,43 @@
 # Lecture class
 class Lecture < ApplicationRecord
   include ApplicationHelper
+
   belongs_to :course
+
+  # teacher is the user that gives the lecture
   belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
+
+  # a lecture takes place in a certain term
   belongs_to :term
+
+  # a lecture has many chapters, who have positions
   has_many :chapters, -> { order(position: :asc) }, dependent: :destroy
+
+  # during the term, a lot of lessons take place for this lecture
   has_many :lessons, dependent: :destroy
+
+  # being a teachable (course/lecture/lesson), a lecture has associated media
   has_many :media, as: :teachable
+
+  # a lecture has many users who have subscribed it in their profile
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, through: :lecture_user_joins
+
+  # a lecture has many editors
+  # these are users different from the teacher who have the right to
+  # modify lecture contents
   has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
+
+  # we do not allow that a teacher gives a certain lecture in a given term twice
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'Eine Vorlesung mit derselben ' \
                                             'Kombination aus Modul, Semester ' \
                                             'und DozentIn existiert bereits.' }
+
+  # as a teacher has editing rights by definition, we do not need him in the
+  # list of editors
   after_save :remove_teacher_as_editor
 
   # The next methods coexist for lectures and lessons as well.
@@ -295,6 +317,8 @@ class Lecture < ApplicationRecord
 
   private
 
+  # a there is no show action for lessons, this is the path to the show action
+  # for courses, with the lecture on top in the carousel
   def lecture_path
     Rails.application.routes.url_helpers
          .course_path(course,

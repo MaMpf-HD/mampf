@@ -16,19 +16,11 @@ class LessonsController < ApplicationController
 
   def create
     @lesson = Lesson.new(lesson_params)
+    # add all tags from sections associated to this lesson
     @lesson.tags = @lesson.sections.map(&:tags).flatten
     @lesson.save
     if @lesson.valid?
-      if params[:lesson][:from] == 'section'
-        @section = Section.find_by_id(params[:lesson][:section_id])
-        redirect_to edit_chapter_path(@section.chapter, section_id: @section.id)
-        return
-      end
-      if params[:commit] == 'Speichern'
-        redirect_to edit_lecture_path(@lesson.lecture)
-      else
-        render :edit
-      end
+      redirect_or_edit
       return
     end
     @errors = @lesson.errors
@@ -41,7 +33,8 @@ class LessonsController < ApplicationController
       if params[:commit] == 'Speichern'
         render :edit
       else
-        redirect_to edit_lecture_path(@lesson.lecture) if @lesson.valid?
+        # if user clicked 'save and back'
+        redirect_to edit_lecture_path(@lesson.lecture)
       end
       return
     end
@@ -64,7 +57,6 @@ class LessonsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
   def set_lesson
     @lesson = Lesson.find_by_id(params[:id])
     return if @lesson.present?
@@ -73,7 +65,17 @@ class LessonsController < ApplicationController
   end
 
   def lesson_params
-    params.require(:lesson).permit(:date, :lecture_id, section_ids: [],
+    params.require(:lesson).permit(:date, :lecture_id,
+                                   section_ids: [],
                                    tag_ids: [])
+  end
+
+  def redirect_or_edit
+    if params[:commit] == 'Speichern'
+      redirect_to edit_lecture_path(@lesson.lecture)
+    else
+      # if user clicked 'save and edit'
+      render :edit
+    end
   end
 end

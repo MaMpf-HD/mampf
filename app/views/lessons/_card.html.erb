@@ -6,7 +6,8 @@
           Sitzungen (<%= lessons.count %>)
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
              data-content="Dies ist die Liste aller assoziierten Sitzungen.">
           </i>
@@ -18,8 +19,7 @@
     <ul>
       <% lessons.each do |l| %>
         <li>
-          <% if !inspection && (current_user.admin ||
-                current_user.in?(l.lecture.editors_with_inheritance)) %>
+          <% if no_inspection_and_editor?(inspection, l.lecture) %>
             <%= link_to l.lecture.title, edit_lecture_path(l.lecture) %>
           <% else %>
             <%= link_to l.lecture.title, inspect_lecture_path(l.lecture) %>

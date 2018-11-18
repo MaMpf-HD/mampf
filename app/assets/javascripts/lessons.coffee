@@ -4,15 +4,19 @@
 
 $(document).on 'turbolinks:load', ->
 
+  # if any input is given to the lesson form, disable creation of media and
+  # issue warning
   $(document).on 'change', '#lesson-form :input', ->
     $('#lesson-basics-warning').show()
     $('#create-new-lesson-medium').addClass('disabled')
     return
 
+  #reload current page if lesson editing is cancelled
   $(document).on 'click', '.cancel-lesson', ->
     location.reload()
     return
 
+  # restore page if creation of new lesson is cancelled
   $(document).on 'click', '#cancel-new-lesson', ->
     $('#new-lesson-area').empty().hide()
     $('.fa-edit').show()
@@ -23,12 +27,17 @@ $(document).on 'turbolinks:load', ->
       this.selectize.enable()
     return
 
+  # add/remove associated tags in the tag selector
+  # if sections are selected/deselected
+  # this code has to be here, as turbolinks will not remember event handlers
+  # from a lesson modal
   sectionSelector = document.getElementById('lesson_section_ids')
   tagSelector = document.getElementById('lesson_tag_ids')
 
   if sectionSelector? && tagSelector?
     sectionSelectize = sectionSelector.selectize
     tagSelectize = tagSelector.selectize
+    # tags and their associated sections are stored in the data-tags attribute
     tags = $(sectionSelector).data('tags')
 
     sectionSelectize.on 'item_remove', (value) ->
@@ -52,6 +61,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
+# clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#lesson-form :input'
   $(document).off 'click', '.cancel-lesson'
