@@ -225,7 +225,6 @@ class MediaController < ApplicationController
   def search_results
     search_results = Medium.search(@course.primary_lecture(current_user),
                                    params)
-    puts 'Parameter:' + params.to_s
     return search_results unless params[:reverse]
     search_results.reverse
   end
