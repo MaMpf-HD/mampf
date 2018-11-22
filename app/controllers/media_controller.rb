@@ -4,6 +4,7 @@ class MediaController < ApplicationController
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search]
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
+  before_action :set_teachable, only: [:new]
   before_action :sanitize_params
   before_action :check_for_consent, except: [:play, :display]
   authorize_resource
@@ -21,12 +22,7 @@ class MediaController < ApplicationController
   end
 
   def new
-    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson']) &&
-       params[:teachable_id].present?
-      teachable = params[:teachable_type].constantize
-                                         .find_by_id(params[:teachable_id])
-    end
-    @medium = Medium.new(teachable: teachable)
+    @medium = Medium.new(teachable: @teachable)
     @medium.editors << current_user
     tags = Tag.where(id: params[:tag_ids])
     @medium.tags << tags if tags.present?
@@ -40,16 +36,14 @@ class MediaController < ApplicationController
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
-    if params[:medium][:detach_video] == 'true'
-      @medium.update(video: nil)
-      @medium.update(screenshot: nil)
-    end
-    if params[:medium][:detach_manuscript] == 'true'
-      @medium.update(manuscript: nil)
-    end
+    # detach the video or manuscript if this was chosen by the user
+    detach_video_or_manuscript
+    # if changes to the manuscript have been made, find out
+    # whether named destination items are affected by the
+    # changes. If this is the case, the user gets a warning
+    # and can then decide whether to keep old items or to delete them
     if @medium.saved_change_to_manuscript_data?
-      @protected_destinations = @medium.protected_items.map(&:pdf_destination) -
-                                @medium.manuscript_destinations
+      @protected_destinations = @medium.protected_destinations
       @medium.update_pdf_destinations!
       if @protected_destinations.present?
         render :destination_warning
@@ -63,6 +57,7 @@ class MediaController < ApplicationController
     @medium = Medium.new(medium_params)
     @medium.save
     if @medium.valid?
+      # convert pdf destinations from extracted metadata to actual items
       @medium.create_pdf_destinations!
       redirect_to edit_medium_path(@medium)
       return
@@ -79,20 +74,19 @@ class MediaController < ApplicationController
   def inspect
   end
 
+  # return all media that match the search parameters
   def search
-    @media = Medium.where(sort: search_sorts, teachable: search_teachables)
-    tags = search_tags
-    editors = search_editors
-    @media = @media.select { |m| m.tags.empty? || (m.tags & tags).present? }
-    @media = @media.select { |m| (m.editors & editors).present? }
+    @media = Medium.search_by_attributes(search_params)
   end
 
+  # play the video using thyme player
   def play
     @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
     @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
     @time = params[:time]
   end
 
+  # show the pdf, optionally at specified page or named destination
   def display
     unless params[:destination].present?
       redirect_to @medium.manuscript_url unless params[:destination].present?
@@ -101,12 +95,14 @@ class MediaController < ApplicationController
     redirect_to @medium.manuscript_url + '#' + params[:destination]
   end
 
+  # add a toc item for the video
   def add_item
     @time = params[:time].to_f
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
   end
 
+  # add a reference for the video
   def add_reference
     @time = params[:time].to_f
     @end_time = [@time + 60, @medium.video_duration].min
@@ -117,6 +113,7 @@ class MediaController < ApplicationController
     @item = Item.new(sort: 'link')
   end
 
+  # add a screenshot for the video
   def add_screenshot
     tempfile = Tempfile.new(['screenshot', '.png'])
     File.open(tempfile, 'wb') do |f|
@@ -129,14 +126,17 @@ class MediaController < ApplicationController
     end
   end
 
+  # remove the video's screenshot
   def remove_screenshot
     return if @medium.screenshot.nil?
     @medium.update(screenshot: nil)
   end
 
+  # start the thyme editor
   def enrich
   end
 
+  # export the video's toc data to a .vtt file
   def export_toc
     file = @medium.toc_to_vtt
     cookies['fileDownload'] = 'true'
@@ -147,6 +147,7 @@ class MediaController < ApplicationController
               x_sendfile: true
   end
 
+  # export the video's references to a .vtt file
   def export_references
     file = @medium.references_to_vtt
     cookies['fileDownload'] = 'true'
@@ -157,6 +158,7 @@ class MediaController < ApplicationController
               x_sendfile: true
   end
 
+  # export the video's screenshot to a .vtt file
   def export_screenshot
     return if @medium.screenshot.nil?
     path = Rails.root.join('public', 'tmp')
@@ -170,11 +172,21 @@ class MediaController < ApplicationController
               x_sendfile: true
   end
 
+  # delete the items associated to the manuscript's pdf_destinations
   def delete_destinations
     @medium.destroy_pdf_destinations!(params[:destinations].to_a)
   end
 
   private
+
+  def medium_params
+    params.require(:medium).permit(:sort, :description, :video, :manuscript,
+                                   :external_reference_link, :teachable_type,
+                                   :teachable_id,
+                                   editor_ids: [],
+                                   tag_ids: [],
+                                   linked_medium_ids: [])
+  end
 
   def set_medium
     @medium = Medium.find_by_id(params[:id])
@@ -183,19 +195,28 @@ class MediaController < ApplicationController
                               'nicht.'
   end
 
-  def medium_params
-    params.require(:medium).permit(:sort,:description, :video, :manuscript,
-                                   :external_reference_link, :teachable_type,
-                                   :teachable_id, editor_ids: [], tag_ids: [],
-                                   linked_medium_ids: [])
-  end
-
-
   def set_course
     @course = Course.find_by_id(params[:course_id])
     return if @course.present?
     redirect_to :root, alert: 'Ein Modul mit der angeforderten id ' \
                               'existiert nicht.'
+  end
+
+  def set_teachable
+    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson']) &&
+       params[:teachable_id].present?
+      @teachable = params[:teachable_type].constantize
+                                          .find_by_id(params[:teachable_id])
+    end
+  end
+
+  def detach_video_or_manuscript
+    if params[:medium][:detach_video] == 'true'
+      @medium.update(video: nil)
+      @medium.update(screenshot: nil)
+    end
+    return unless params[:medium][:detach_manuscript] == 'true'
+    @medium.update(manuscript: nil)
   end
 
   def check_project
@@ -230,7 +251,7 @@ class MediaController < ApplicationController
   end
 
   def sanitize_page!
-    params[:page] = params[:page].to_i > 0 ? params[:page].to_i : 1
+    params[:page] = params[:page].to_i.positive? ? params[:page].to_i : 1
   end
 
   def sanitize_per!
@@ -248,47 +269,5 @@ class MediaController < ApplicationController
                                    teachable_ids: [],
                                    tag_ids: [],
                                    editor_ids: [])
-  end
-
-  def search_sorts
-    return Medium.sort_enum unless search_params[:all_types] == '0'
-    types = search_params[:types] || []
-    types.map(&:to_i).map { |i| Medium.sort_enum[i] }
-  end
-
-  def search_teachables
-    unless search_params[:all_teachables] == '0'
-      return Course.all + Lecture.all + Lesson.all
-    end
-    courses = Course.where(id: search_course_ids)
-    inherited_lectures = Lecture.where(course: courses)
-    selected_lectures = Lecture.where(id: search_lecture_ids)
-    lectures = (inherited_lectures + selected_lectures).uniq
-    lessons = lectures.collect(&:lessons).flatten
-    courses + lectures + lessons
-  end
-
-  def search_tags
-    return Tag.all unless search_params[:all_tags] == '0'
-    tag_ids = search_params[:tag_ids] || []
-    Tag.where(id: tag_ids)
-  end
-
-  def search_editors
-    return User.editors unless search_params[:all_editors] == '0'
-    editor_ids = search_params[:editor_ids] || []
-    User.where(id: editor_ids)
-  end
-
-  def search_lecture_ids
-    teachable_ids = search_params[:teachable_ids] || []
-    teachable_ids.select { |t| t.start_with?('lecture') }
-                 .map { |t| t.remove('lecture-') }
-  end
-
-  def search_course_ids
-    teachable_ids = search_params[:teachable_ids] || []
-    teachable_ids.select { |t| t.start_with?('course') }
-                 .map { |t| t.remove('course-') }
   end
 end

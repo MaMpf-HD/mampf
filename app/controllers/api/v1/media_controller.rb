@@ -4,7 +4,8 @@ class Api::V1::MediaController < ApplicationController
 
   respond_to :json
   def keks_question
-    @medium = Medium.KeksQuestion.find { |m| m.question_id == params[:id].to_i }
+    @medium = Medium.where(sort: 'KeksQuestion')
+                    .find { |m| m.question_id == params[:id].to_i }
     width = params[:width].to_i
     if @medium.present?
       render json:

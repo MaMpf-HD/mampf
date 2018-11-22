@@ -36,6 +36,14 @@ class Tag < ApplicationRecord
     Tag.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
+  # returns the ARel of all tags or whose id is among a given array of ids
+  # search params is a hash having keys :all_tags, :tag_ids
+  def self.search_tags(search_params)
+    return Tag.all unless search_params[:all_tags] == '0'
+    tag_ids = search_params[:tag_ids] || []
+    Tag.where(id: tag_ids)
+  end
+
   def extra_lectures
     Lecture.where.not(course: courses).select { |l| self.in?(l.tags) }
   end

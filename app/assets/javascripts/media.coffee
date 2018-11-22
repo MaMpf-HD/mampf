@@ -2,11 +2,8 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-secondsToTime = (seconds) ->
-  date = new Date(null)
-  date.setSeconds seconds
-  return date.toISOString().substr(12, 7)
-
+# converts a time in seconds given as a float to a string of the form
+# hh:mm:ss.MMM
 fancyTimeFormat = (time) ->
   floor_seconds = Math.floor(time)
   milli = Math.round((time - floor_seconds) * 1000)
@@ -21,6 +18,8 @@ fancyTimeFormat = (time) ->
 
 $(document).on 'turbolinks:load', ->
 
+  # disable/enable search field on the media search page, depending on
+  # whether 'all tags'/'all editors'/... are selected
   $('[id^="search_all_"]').on 'change', ->
     selector = document.getElementById(this.dataset.id).selectize
     if $(this).prop('checked')
@@ -29,6 +28,9 @@ $(document).on 'turbolinks:load', ->
       selector.enable()
     return
 
+  # issue a wrning if an inpu has been changed in the media form
+  # extract the teachable type and id from the teachable selection and
+  # store it in hidden fields' values
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
     teachableSelector = document.getElementById('medium_teachable').selectize

@@ -217,6 +217,36 @@ class Course < ApplicationRecord
     lectures.collect(&:sections).flatten
   end
 
+  # returns an array of teachables determined  by the search params
+  # search_params is a hash with keys :all_teachables, :teachable_ids
+  # teachable ids is an array made up of strings composed of 'lecture-'
+  # or 'course-' followed by the id
+  # search is done with inheritance
+  def self.search_teachables(search_params)
+    unless search_params[:all_teachables] == '0'
+      return Course.all + Lecture.all + Lesson.all
+    end
+    courses = Course.where(id: Course.search_course_ids(search_params))
+    inherited_lectures = Lecture.where(course: courses)
+    selected_lectures = Lecture.where(id: Course
+                                            .search_lecture_ids(search_params))
+    lectures = (inherited_lectures + selected_lectures).uniq
+    lessons = lectures.collect(&:lessons).flatten
+    courses + lectures + lessons
+  end
+
+  def self.search_lecture_ids(search_params)
+    teachable_ids = search_params[:teachable_ids] || []
+    teachable_ids.select { |t| t.start_with?('lecture') }
+                 .map { |t| t.remove('lecture-') }
+  end
+
+  def self.search_course_ids(search_params)
+    teachable_ids = search_params[:teachable_ids] || []
+    teachable_ids.select { |t| t.start_with?('course') }
+                 .map { |t| t.remove('course-') }
+  end
+
   private
 
   # the next two methods are auxiliary methods used in the extras method

@@ -42,6 +42,15 @@ class User < ApplicationRecord
     User.includes(:edited_courses,:edited_lectures, :edited_media).select(&:editor?)
   end
 
+  # returns the ARel of all users that are editors or whose id is among a
+  # given array of ids
+  # search params is a hash having keys :all_editors, :editor_ids
+  def self.search_editors(search_params)
+    return User.editors unless search_params[:all_editors] == '0'
+    editor_ids = search_params[:editor_ids] || []
+    User.where(id: editor_ids)
+  end
+
   def related_courses
     return if subscription_type.nil?
     return Course.where(id: preceding_course_ids) if subscription_type == 1

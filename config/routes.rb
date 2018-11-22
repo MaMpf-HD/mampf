@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   get 'courses/:id/inspect', to: 'courses#inspect',
                              as: 'inspect_course'
 
+  resources :items, only: [:update, :create, :edit, :destroy]
+  get 'items/:id/display', to: 'items#display',
+                           as: 'display_item'
+
   resources :lectures, except: [:index, :show]
   get 'lectures/:id/inspect/', to: 'lectures#inspect',
                                as: 'inspect_lecture'
@@ -42,8 +46,6 @@ Rails.application.routes.draw do
   patch 'media/:id/remove_screenshot', to: 'media#remove_screenshot', as: 'remove_screenshot'
   post 'media/:id/add_screenshot', to: 'media#add_screenshot', as: 'add_screenshot'
   resources :media
-  get 'items/:id/display', to: 'items#display', as: 'display_item'
-  resources :items, only: [:update, :create, :edit, :destroy]
   resources :referrals, only: [:update, :create, :edit, :destroy]
   get 'referrals/list_items', to: 'referrals#list_items', as: 'list_items'
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
