@@ -12,7 +12,8 @@ class ReferralsController < ApplicationController
 
   def edit
     if @referral.item.sort == 'link'
-      @item_selection = Item.where(medium: nil).map { |i| [i.description, i.id]}
+      @item_selection = Item.where(medium: nil)
+                            .map { |i| [i.description, i.id] }
     else
       @item_selection = @referral.item.medium.teachable.media_scope
                                  .media_items_with_inheritance
@@ -39,7 +40,7 @@ class ReferralsController < ApplicationController
   def list_items
     teachable_id = params[:teachable_id].to_s.split('-')
     if teachable_id[0] == 'external'
-      result = Item.where(medium: nil).map { |i| [i.description, i.id]}
+      result = Item.where(medium: nil).map { |i| [i.description, i.id] }
     else
       @teachable = teachable_id[0].constantize.find_by_id(teachable_id[1])
       result = @teachable.media_items_with_inheritance

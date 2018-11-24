@@ -28,9 +28,10 @@ $(document).on 'turbolinks:load', ->
       selector.enable()
     return
 
-  # issue a wrning if an inpu has been changed in the media form
+  # issue a warning if an input has been changed in the media form
   # extract the teachable type and id from the teachable selection and
   # store it in hidden fields' values
+  # (relevant on media edit page)
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
     teachableSelector = document.getElementById('medium_teachable').selectize
@@ -43,14 +44,22 @@ $(document).on 'turbolinks:load', ->
       $('#medium_teachable_type').val('')
     return
 
+  # reload page if editing of medium is cancelled
+  # (relevant on media edit page)
   $('#medium-basics-cancel').on 'click', ->
     location.reload()
     return
 
+  # reload page (thereby closing the modal) if user wants to keep
+  # named destination items that point to no longer existing pdf destinations
+  # (relevant on media edit page)
   $('#keep-old-destinations').on 'click', ->
     location.reload()
     return
 
+  # trigger deletion of named destination that no longer point to existing
+  # pdf destinations
+  # (relevant on media edit page)
   $('#delete-old-destinations').on 'click', ->
     mediumId = $(this).data('mediumId')
     destinations = $(this).data('destinations')
@@ -66,6 +75,8 @@ $(document).on 'turbolinks:load', ->
         return
     return
 
+  # if user detaches video, adjust hidden values
+  # (relevant on media edit page)
   $('#detach-video').on 'click', ->
      $('#upload-video-hidden').val('')
      $('#video-meta').hide()
@@ -74,6 +85,8 @@ $(document).on 'turbolinks:load', ->
      $('#medium-basics-warning').show()
      return
 
+  # if user detaches manuscript, adjust hidden values
+  # (relevant on media edit page)
   $('#detach-manuscript').on 'click', ->
     $('#upload-manuscript-hidden').val('')
     $('#manuscript-meta').hide()
@@ -82,125 +95,15 @@ $(document).on 'turbolinks:load', ->
     $('#medium-basics-warning').show()
     return
 
+  # test external link provided by the user in an external tab
+  # (relevant on media edit page)
   $(document).on 'click', '#test-external-link', ->
     url = $('#medium_external_reference_link').val()
     window.open(url, '_blank')
     return
 
-  $(document).on 'change', '#item_sort', ->
-    $('#item_section_select').show()
-    $('#item_number_field').show()
-    if $(this).val() == 'section'
-      $('#item_section_id').trigger('change')
-      $("label[for='item_description']").empty().append('Titel')
-    else
-      $('#item_section_select').show()
-      $('#item_number_field').hide() if $(this).val() == 'label'
-      $('#item_description_field').show()
-      $("label[for='item_description']").empty().append('Beschreibung')
-    return
-
-  $(document).on 'change', '#item_section_id', ->
-    if $(this).val() != '' && $('#item_sort').val() == 'section'
-      $('#item_description').val('')
-      $('#item_description_field').hide()
-      $('#item_number_field').hide()
-    else
-      $('#item_description_field').show()
-      $('#item_number_field').show() unless $('#item_sort').val() == 'label'
-    return
-
-  $(document).on 'change', '#item_pdf_destination', ->
-    if $(this).val() != ''
-      $('#item_page_field').hide()
-    else
-      $('#item_page_field').show()
-    return
-
-  $(document).on 'click', '[id^="tocitem-"]', ->
-    time = this.dataset.time
-    item = this.dataset.item
-    video = document.getElementById('video-edit')
-    video.pause()
-    video.currentTime = time
-    $.ajax Routes.edit_item_path(item),
-      type: 'GET'
-      dataType: 'script'
-    return
-
-  $(document).on 'click', '#cancel-item', ->
-    $('#action-placeholder').empty()
-    $('#action-container').empty()
-    return
-
-  $(document).on 'click', '[id^="metaref-"]', ->
-    time = this.dataset.time
-    referral = this.dataset.referral
-    video = document.getElementById('video-edit')
-    video.pause()
-    video.currentTime = time
-    $.ajax Routes.edit_referral_path(referral),
-      type: 'GET'
-      dataType: 'script'
-    return
-
-  $(document).on 'change', '#referral_item_id', ->
-    itemId = $(this).val()
-    refId = $('#referral_ref_id').val()
-    if itemId == ''
-      $('#item_details').hide()
-      $('#link_details').hide()
-      $('#explanation_details').hide()
-      $('#referral_link').val('')
-      $('#referral_description').val('')
-      $('#referral_explanation').val('')
-    else
-      $.ajax Routes.display_item_path(itemId),
-        type: 'GET'
-        dataType: 'script'
-        data: {
-          referral_id: refId
-        }
-    return
-
-  $(document).on 'change', '#referral_teachable', ->
-    teachableId = $(this).val()
-    $('#create_external_link').hide()
-    if teachableId == ''
-      itemSelectize = document.getElementById('referral_item_id').selectize
-      itemSelectize.clear()
-      itemSelectize.clearOptions()
-      itemSelectize.refreshOptions(false)
-      itemSelectize.refreshItems()
-      return
-    $.ajax Routes.list_items_path(),
-      type: 'GET'
-      dataType: 'json'
-      data: {
-        teachable_id: teachableId
-      }
-      success: (result) ->
-        itemSelectize = document.getElementById('referral_item_id').selectize
-        itemSelectize.clear()
-        itemSelectize.clearOptions()
-        if result?
-          for r in result
-            itemSelectize.addOption({ value: r[1], text: r[0] })
-        itemSelectize.refreshOptions(false)
-        $('#create_external_link').show() if teachableId == 'external-0'
-        return
-    return
-
-  $(document).on 'click', '#test-link', ->
-    url = $('#referral_link').val()
-    window.open(url, '_blank')
-    return
-
-  $(document).on 'click', '#item-test-link', ->
-    url = $('#item_link').val()
-    window.open(url, '_blank')
-    return
-
+  # grab current time from video and put the value in the associated input field
+  # (relevant on media enrich page)
   $(document).on 'click', '.timer', ->
     video = document.getElementById('video-edit')
     video.pause()
@@ -211,15 +114,8 @@ $(document).on 'turbolinks:load', ->
     $('#' + this.dataset.timer).val(fancyTimeFormat(video.currentTime))
     return
 
-  $(document).on 'click', '#create_external_link', ->
-    $('#external_item_form')[0].reset();
-    $('#item_link').removeClass('is-invalid')
-    $('#item-link-error').empty()
-    $('#item_description').removeClass('is-invalid')
-    $('#item-description-error').empty()
-    $('#newItemModal').modal('show')
-    return
-
+  # trigger file download for toc .vtt file
+  # (relevant on media enrich page)
   $('#export-toc').on 'click', (e) ->
     e.preventDefault()
     $.fileDownload $(this).prop('href'),
@@ -230,6 +126,8 @@ $(document).on 'turbolinks:load', ->
         return
     return
 
+  # trigger file download for video screenshot .png file
+  # (relevant on media enrich page)
   $('#export-screenshot').on 'click', (e) ->
     e.preventDefault()
     $.fileDownload $(this).prop('href'),
@@ -240,6 +138,8 @@ $(document).on 'turbolinks:load', ->
         return
     return
 
+  # trigger file download for references .vtt file
+  # (relevant on media enrich page)
   $('#export-references').on 'click', (e) ->
     e.preventDefault()
     $.fileDownload $(this).prop('href'),
@@ -253,8 +153,9 @@ $(document).on 'turbolinks:load', ->
   return
 
 $(document).on 'turbolinks:before-cache', ->
-  $(document).off 'click', '[id^="tocitem-"]'
-  $(document).off 'click', '[id^="metaref-"]'
-  $(document).off 'change', '#referral_item_id'
-  $(document).off 'change', '#referral_teachable'
+  $(document).off 'click', '#test-external-link'
+  $(document).off 'click', '.timer'
+  $(document).off 'click', '#export-toc'
+  $(document).off 'click', '#export-references'
+  $(document).off 'click', '#export-screenshot'
   return

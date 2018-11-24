@@ -1,8 +1,10 @@
+# convert time in seconds to string of the form H:MM:SS
 secondsToTime = (seconds) ->
   date = new Date(null)
   date.setSeconds seconds
   return date.toISOString().substr(12, 7)
 
+# convert given dataURL to Blob, used for converting screenshot canvas to png
 dataURLtoBlob = (dataURL) ->
   # Decode the dataURL
   binary = atob(dataURL.split(',')[1])
@@ -136,8 +138,10 @@ $(document).on 'turbolinks:load', ->
       }
     return
 
+  # Event listener for add screenshot button
   addScreenshotButton.addEventListener 'click', ->
     video.pause()
+    # extract video screenshot from canvas
     context = canvas.getContext('2d')
     context.drawImage(video, 0, 0, canvas.width, canvas.height)
     base64image = canvas.toDataURL('image/png')
@@ -155,6 +159,8 @@ $(document).on 'turbolinks:load', ->
       contentType: false
     return
 
+  # after video metadata have been loaded, set up video length, volume bar and
+  # seek bar
   video.addEventListener 'loadedmetadata', ->
     maxTime.innerHTML = secondsToTime(video.duration)
     volumeBar.value = video.volume

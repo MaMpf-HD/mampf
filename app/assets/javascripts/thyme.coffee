@@ -1,13 +1,10 @@
-primaryTarget = (meta) ->
-  return meta.manuscript if meta.manuscript?
-  return meta.video if meta.video?
-  meta.link
-
+# convert time in seconds to string of the form H:MM:SS
 secondsToTime = (seconds) ->
   date = new Date(null)
   date.setSeconds seconds
   return date.toISOString().substr(12, 7)
 
+# return the start time of the next chapter relative to a given time in seconds
 nextChapterStart = (seconds) ->
   chapters = document.getElementById('chapters')
   times = JSON.parse(chapters.dataset.times)
@@ -18,6 +15,8 @@ nextChapterStart = (seconds) ->
     ++i
   return
 
+# return the start time of the previous chapter relative to a givben time in
+# seconds
 previousChapterStart = (seconds) ->
   chapters = document.getElementById('chapters')
   times = JSON.parse(chapters.dataset.times)
@@ -40,6 +39,7 @@ hideControlBar = ->
   $('#video').css('cursor', 'none')
   return
 
+# hide control bar after 3 seconds of inactivity
 idleHideControlBar = ->
   t = undefined
 
@@ -55,6 +55,7 @@ idleHideControlBar = ->
   window.onclick = resetTimer
   return
 
+# material icons that represent different media types
 iconClass = (type) ->
   if type == 'video'
     return 'video_library'
@@ -66,6 +67,8 @@ iconClass = (type) ->
     return 'info'
   return
 
+# returns the jQuery object of all metadata elements that start after the
+# given time in seconds
 metadataAfter = (seconds) ->
   metaList = document.getElementById('metadata')
   times = JSON.parse(metaList.dataset.times)
@@ -78,9 +81,13 @@ metadataAfter = (seconds) ->
     ++i
   return $()
 
+# returns the jQuery object of all metadata elements that start before the
+# given time in seconds
 metadataBefore = (seconds) ->
   return $('[id^="m-"]').not(metadataAfter(seconds))
 
+# for a given time, show all metadata elements that start before this time
+# and hide all that start later
 metaIntoView = (time) ->
   metadataAfter(time).hide()
   $before =  metadataBefore(time)
@@ -90,6 +97,7 @@ metaIntoView = (time) ->
     $before.get(previousLength - 1).scrollIntoView()
   return
 
+# set up everything: read out track data and initialize html elements
 setupHypervideo = ->
   $chapterList = $('#chapters')
   $metaList = $('#metadata')
@@ -100,6 +108,7 @@ setupHypervideo = ->
   chaptersElement = $('#video track[kind="chapters"]').get 0
   metadataElement = $('#video track[kind="metadata"]').get 0
 
+  # set up back button (transports back to the current chapter)
   displayBackButton = ->
     backButton.dataset.time = video.currentTime
     currentChapter = $('#chapters .current')
@@ -117,12 +126,15 @@ setupHypervideo = ->
       ]
     return
 
+  # set up the chapter elements
   displayChapters = ->
     if chaptersElement.readyState == 2 and
     (chaptersTrack = chaptersElement.track)
       chaptersTrack.mode = 'hidden'
       i = 0
       times = []
+      # read out the chapter track cues and generate html elements for chapters,
+      # run MathJax on them
       while i < chaptersTrack.cues.length
         cue = chaptersTrack.cues[i]
         chapterName = cue.text
@@ -140,13 +152,18 @@ setupHypervideo = ->
         else
           console.log 'MathJax ist noch nicht da.'
         $('#c-' + $.escapeSelector(start)).data('text', chapterName)
+        # if a chapter element is clicked, transport to chapter start time
         $('#c-' + $.escapeSelector(start)).on 'click', ->
           displayBackButton()
           video.currentTime = @id.replace('c-', '')
           return
         ++i
+      # store start times as data attribute
       $chapterList.get(0).dataset.times = JSON.stringify(times)
       $chapterList.show()
+      # if the chapters cue changes (i.e. a switch between chapters), highlight
+      # current chapter elment and scroll it into view, remove highlighting from
+      # old chapter
       $(chaptersTrack).on 'cuechange', ->
         $('#chapters li a').removeClass 'current'
         if @activeCues.length > 0
@@ -157,11 +174,14 @@ setupHypervideo = ->
         return
     return
 
+  # set up the metadata elements
   displayMetadata = ->
     if metadataElement.readyState == 2 and (metaTrack = metadataElement.track)
       metaTrack.mode = 'hidden'
       i = 0
       times = []
+      # read out the metadata track cues and generate html elements for
+      # metadata, run MathJax on them
       while i < metaTrack.cues.length
         cue = metaTrack.cues[i]
         meta = JSON.parse cue.text
@@ -232,11 +252,16 @@ setupHypervideo = ->
         else
           console.log 'MathJax ist noch nicht da.'
         ++i
+      # store metadata start times as data attribute
       $metaList.get(0).dataset.times = JSON.stringify(times)
+      # if user jumps to a new position in the video, display all metadata
+      # that start before this time and hide all that start later
       $(video).on 'seeked', ->
         time = video.currentTime
         metaIntoView(time)
         return
+      # if the metadata cue changes, highlight all current media and scroll
+      # them into view
       $(metaTrack).on 'cuechange', ->
         j = 0
         time = video.currentTime
@@ -253,6 +278,8 @@ setupHypervideo = ->
         return
     return
 
+  # after video metadata have been loaded, display chapters and metadat in the
+  # interactive area
   $(video).on 'loadedmetadata', ->
     if chaptersElement.readyState == 2
       displayChapters()
@@ -263,6 +290,7 @@ setupHypervideo = ->
 
 $(document).on 'turbolinks:load', ->
   thymeContainer = document.getElementById('thyme-container')
+  # no need for thyme if no thyme container on the page
   return if thymeContainer == null
   # Video
   video = document.getElementById('video')
@@ -289,7 +317,8 @@ $(document).on 'turbolinks:load', ->
   # ControlBar
   videoControlBar = document.getElementById('video-controlBar')
 
-  # function that resizes the thyme container
+  # resizes the thyme container to the window dimensions, taking into account
+  # whether the interactive area is displayed or hidden
   resizeContainer = ->
     height = $(window).height()
     factor = if $('#caption').is(':hidden') then 1 else 1 / 0.82
@@ -307,7 +336,8 @@ $(document).on 'turbolinks:load', ->
     $('#thyme-container').css('left', left + 'px')
     return
 
-  # detect IE/edge and cancel if true
+  # detect IE/edge and inform user that they are not suppported if necessary,
+  # only use browser player
   if document.documentMode || /Edge/.test(navigator.userAgent)
     alert 'Dein Browser wird von Thyme leider nicht unterstützt.' +
     'Du kannst das Video nur mit dem Browser-Player anschauen.'
@@ -322,10 +352,7 @@ $(document).on 'turbolinks:load', ->
 
   setupHypervideo()
 
-  # iOS no fullscreen button
-  # iOS = ! !navigator.platform and /iPad|iPhone/.test(navigator.platform)
-  # fullScreenButton.style.display = 'none' if iOS
-
+  # on small mobile display, fall back to standard browser player
   mobileDisplay = ->
     $('#caption').hide()
     $('#video-controlBar').hide()
@@ -333,6 +360,7 @@ $(document).on 'turbolinks:load', ->
     video.style.width = '100%'
     return
 
+  # on lareg display, use anything thyme has to offer, disable native player
   largeDisplay = ->
     video.controls = false
     $('#caption').show()
@@ -377,6 +405,8 @@ $(document).on 'turbolinks:load', ->
   video.onloadedmetadata =  resizeContainer
 
   idleHideControlBar()
+
+  # if mouse is moved or screen is toiched, show control bar
   video.addEventListener 'mouseover', showControlBar, false
   video.addEventListener 'mousemove', showControlBar, false
   video.addEventListener 'touchstart', showControlBar, false
@@ -438,7 +468,7 @@ $(document).on 'turbolinks:load', ->
     video.playbackRate = @options[@selectedIndex].value
     return
 
-  # Event handler for ia activation button
+  # Event handler for interactive area activation button
   iaButton.addEventListener 'click', ->
     if iaButton.dataset.status == 'true'
       iaButton.innerHTML = 'remove_from_queue'
@@ -463,12 +493,13 @@ $(document).on 'turbolinks:load', ->
     $('#back-reference').hide()
     return
 
-  # Event handler for close ia button
+  # Event handler for close interactive area button
   iaClose.addEventListener 'click', ->
     $(iaButton).trigger('click')
     return
 
   # Event listener for the full-screen button
+  # unfortunately, lots of brwoser specific code
   fullScreenButton.addEventListener 'click', ->
     if fullScreenButton.dataset.status == 'true'
       if document.exitFullscreen
@@ -513,12 +544,13 @@ $(document).on 'turbolinks:load', ->
       fullScreenButton.dataset.status = 'false'
     return
 
-  # Event listener for the seek bar
+  # Event listeners for the seek bar
   seekBar.addEventListener 'input', ->
     time = video.duration * seekBar.value / 100
     video.currentTime = time
     return
 
+  # if mouse is moved over seek bar, display tooltip with current chapter
   seekBar.addEventListener 'mousemove', (evt) ->
     positionInfo = seekBar.getBoundingClientRect()
     width = positionInfo.width;
@@ -531,6 +563,8 @@ $(document).on 'turbolinks:load', ->
     seekBar.setAttribute('title', info)
     return
 
+  # if videomedtadata have been loaded, set up video length, volume bar and
+  # seek bar
   video.addEventListener 'loadedmetadata', ->
     maxTime.innerHTML = secondsToTime(video.duration)
     volumeBar.value = video.volume
@@ -546,6 +580,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   # Update the seek bar as the video plays
+  # uses a gradient for seekbar video time visualization
   video.addEventListener 'timeupdate', ->
     value = 100 / video.duration * video.currentTime
     seekBar.value = value
@@ -578,6 +613,16 @@ $(document).on 'turbolinks:load', ->
     ' #2497E3, #2497E3 ' + value*100 + '%, #ffffff ' + value*100 + '%, #ffffff)'
     return
 
+  # thyme can be used by keyboard as well
+  # Arrow up - next chapter
+  # Arrow down - previous chapter
+  # Arrow right - plus ten seconds
+  # Arrow left - minus ten seconds
+  # f - fullscreen
+  # Page up - volume up
+  # Page down - volume down
+  # m - mute
+  # i - toggle interactive area
   window.addEventListener 'keydown', (evt) ->
     key = evt.key
     if key == ' '
