@@ -5,7 +5,7 @@ class LessonsController < ApplicationController
   layout 'administration'
 
   def show
-    render layout: 'aplication'
+    render layout: 'application'
   end
 
   def edit
