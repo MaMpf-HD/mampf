@@ -1,4 +1,5 @@
-<div id="destinations_accordion" role="tablist">
+<div id="destinations_accordion"
+     role="tablist">
   <div class="card bg-mdb-color-lighten-6">
     <div class="card-header"
          role="tab" id="destinations_heading">
@@ -9,30 +10,37 @@
             <%= ' (' + medium.manuscript_destinations.count.to_s + ') '%>
             <i class="far fa-question-circle helpdesk"
                tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
+               data-toggle="popover"
+               data-trigger="focus"
                title="Info"
-               data-content="Dies ist eine Liste aller named destinations aus dem Manuskript. Diese können im Thyme-Editor als Sprungstellen für Referenzen in das Manuskript benutzt werden.">
-              </i>
+               data-content="Dies ist eine Liste aller named destinations
+               aus dem Manuskript. Diese können im Thyme-Editor als
+               Sprungstellen für Referenzen in das Manuskript benutzt werden.">
+            </i>
           </h5>
         </div>
         <div class="col-6 text-right">
           <a class="btn btn-primary"
-             data-toggle="collapse" href="#destinations_collapse"
+             data-toggle="collapse"
+             href="#destinations_collapse"
              aria-expanded="false" aria-controls="destinations_collapse">
             Ein-/Ausklappen
           </a>
         </div>
       </div>
     </div>
-    <div id="destinations_collapse" class="collapse" role="tabpanel"
+    <div id="destinations_collapse"
+         class="collapse"
+         role="tabpanel"
          aria-labelledby="heading"
          data-parent="#destinations_accordion">
       <div class="card-body">
         <div class="row">
           <div class="col-12">
             <% medium.manuscript_destinations.each do |d| %>
-              <%= link_to d, display_medium_path(medium,
-                                                 params: { destination: d }),
+              <%= link_to d,
+                          display_medium_path(medium,
+                                              params: { destination: d }),
                           target: :blank,
                           class: "badge badge-light" %>
             <% end %>

@@ -10,8 +10,13 @@
     </div>
     <div class="col-2 text-right">
       <% if current_user.admin || current_user.in?(course.editors) %>
-        <%= link_to 'Bearbeiten', edit_course_path(course),
-                    class: 'btn btn-outline-primary' %>
+        <a href="<%= edit_course_path(course) %>"
+           class="far fa-edit fa-lg text-secondary"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           title="Bearbeiten"
+           style="text-decoration: none;">
+        </a>
       <% end %>
     </div>
   </div>
@@ -64,10 +69,15 @@
         </span>
         <% privileged = current_user.admin ||
                         current_user.in?(@front_lecture.editors_with_inheritance) %>
-        <%= link_to 'Bearbeiten', edit_lecture_path(front_lecture),
-                     id: 'lecture-edit',
-                     class: 'btn btn-outline-primary ml-4',
-                     style: 'display: ' + show_inline(privileged) %>
+        <a href="<%= edit_lecture_path(front_lecture) %>"
+           id="lecture-edit"
+           class="far fa-edit text-secondary"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           title="Bearbeiten"
+           style="text-decoration: none;
+                  display: <%= show_inline(privileged) %>">
+        </a>
       </h4>
     </div>
     <div class="col-1">

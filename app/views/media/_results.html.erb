@@ -32,22 +32,28 @@
 </div>
 <div id="mediaTable">
   <% @media.each do |m| %>
-    <div class="row border-bottom mx-2" id="row-medium-<%= m.id %>">
+    <div class="row border-bottom mx-2"
+         id="row-medium-<%= m.id %>">
       <div class="col-2">
         <%= m.compact_info %>
       </div>
       <div class="col-2">
         <% if m.teachable_type == 'Course' %>
-          <%= link_to m.teachable.short_title, inspect_course_path(m.teachable) %>
+          <%= link_to m.teachable.short_title,
+                      inspect_course_path(m.teachable) %>
         <% elsif m.teachable_type == 'Lecture' %>
-          <%= link_to m.teachable.short_title, inspect_lecture_path(m.teachable) %>
+          <%= link_to m.teachable.short_title,
+                      inspect_lecture_path(m.teachable) %>
         <% else %>
-          <%= link_to m.teachable.short_title_with_lecture_date, inspect_lesson_path(m.teachable) %>
+          <%= link_to m.teachable.short_title_with_lecture_date,
+                      inspect_lesson_path(m.teachable) %>
         <% end %>
       </div>
       <div class="col-4">
         <% m.tags.each do |t| %>
-          <%= link_to t.short_title, inspect_tag_path(t), class:'badge badge-light',
+          <%= link_to t.short_title,
+                      inspect_tag_path(t),
+                      class:'badge badge-light',
                       data: { toggle: 'tooltip', placement: 'top'},
                       title: t.title %>
         <% end %>
@@ -65,17 +71,23 @@
         <%= m.details %>
       </div>
       <div class="col-1">
-        <% if current_user.admin || m.edited_with_inheritance_by?(current_user) %>
-          <a href="<%= edit_medium_path(m) %>" class="text-dark" data-toggle="tooltip"
+        <% if medium_editor?(m) %>
+          <a href="<%= edit_medium_path(m) %>"
+             class="text-dark"
+             data-toggle="tooltip"
              style="text-decoration: none;"
-             data-placement="bottom" title="Bearbeiten">
+             data-placement="bottom"
+             title="Bearbeiten">
             <i class="far fa-edit">
             </i>
           </a>
         <% end %>
-        <a href="<%= inspect_medium_path(m) %>" class="text-dark" data-toggle="tooltip"
+        <a href="<%= inspect_medium_path(m) %>"
+           class="text-dark"
+           data-toggle="tooltip"
            style="text-decoration: none;"
-           data-placement="bottom" title="Ansehen">
+           data-placement="bottom"
+           title="Ansehen">
           <i class="far fa-eye">
           </i>
         </a>

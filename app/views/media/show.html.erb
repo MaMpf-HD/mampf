@@ -11,7 +11,7 @@
     <% if current_user.admin ||
           @medium.edited_with_inheritance_by?(current_user) %>
       <%= link_to 'Bearbeiten', edit_medium_path(@medium),
-                  class: 'btn btn-outline-primary' %> 
+                  class: 'btn btn-outline-primary' %>
     <% end %>
   </div>
 </div>

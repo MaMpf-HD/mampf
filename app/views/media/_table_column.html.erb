@@ -3,67 +3,60 @@
     <ul>
       <% media.each do |m| %>
         <li>
-          <% if inspection %>
-            <%= link_to m.local_info, inspect_medium_path(m) %>
-          <% else %>
-            <%= link_to m.local_info, edit_medium_path(m) %>
-          <% end %>
+          <%= link_to m.local_info,
+                      inspect_or_edit_medium_path(m, inspection) %>
         </li>
       <% end %>
     </ul>
   <% else %>
-  <% teachables = lecture_course_teachables(media) %>
-  <div class="row">
-    <div class="col-3">
-      <div class="nav flex-column nav-tabs"
-           id="v-<%= sort %>-media-tab"
-           role="tablist" aria-orientation="vertical">
-        <% teachables.each_with_index do |t, i| %>
-          <a class="nav-link <%= active(i.zero?) %>"
-             id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>-tab"
-             data-toggle="pill"
-             href="#v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
-             role="tab"
-             aria-controls="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
-             aria-selected="true">
-            <%= t.short_title %>
-          </a>
-        <% end %>
+    <% teachables = lecture_course_teachables(media) %>
+    <div class="row">
+      <div class="col-3">
+        <div class="nav flex-column nav-tabs"
+             id="v-<%= sort %>-media-tab"
+             role="tablist"
+             aria-orientation="vertical">
+          <% teachables.each_with_index do |t, i| %>
+            <a class="nav-link <%= active(i.zero?) %>"
+               id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>-tab"
+               data-toggle="pill"
+               href="#v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
+               role="tab">
+              <%= t.short_title %>
+            </a>
+          <% end %>
+        </div>
       </div>
-    </div>
-    <div class="col-9">
-      <div class="tab-content" id="v-<%= sort %>-media-tabContent">
-        <% teachables.each_with_index do |t, i| %>
-          <div class="tab-pane fade <%= show_tab(i == 0) %>"
-               id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
-               role="tabpanel"
-               aria-labelledby="v-pills-<%= sort %>-<% t.class %>-<%= t.id %>-tab">
-            <% relevant = relevant_media(t, media)&.natural_sort_by(&:local_info) %>
-            <% if relevant.present? %>
-              <div class="row">
-                <% split_list(relevant, 2).each do |media_list| %>
-                  <div class="col-6">
-                    <ul>
-                      <% media_list.each do |m| %>
-                        <% unless m.nil? %>
-                          <li>
-                            <% if inspection %>
-                              <%= link_to m.local_info, inspect_medium_path(m) %>
-                            <% else %>
-                              <%= link_to m.local_info, edit_medium_path(m) %>
-                            <% end %>
-                          </li>
+      <div class="col-9">
+        <div class="tab-content"
+             id="v-<%= sort %>-media-tabContent">
+          <% teachables.each_with_index do |t, i| %>
+            <div class="tab-pane fade <%= show_tab(i == 0) %>"
+                 id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
+                 role="tabpanel">
+              <% relevant = relevant_media(t, media)&.natural_sort_by(&:local_info) %>
+              <% if relevant.present? %>
+                <div class="row">
+                  <% split_list(relevant, 2).each do |media_list| %>
+                    <div class="col-6">
+                      <ul>
+                        <% media_list.each do |m| %>
+                          <% unless m.nil? %>
+                            <li>
+                              <%= link_to m.local_info,
+                                  inspect_or_edit_medium_path(m, inspection) %>
+                            </li>
+                          <% end %>
                         <% end %>
-                      <% end %>
-                    </ul>
-                  </div>
-                <% end %>
-              </div>
-            <% end %>
-          </div>
-        <% end %>
+                      </ul>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
-  </div>
   <% end %>
 <% end %>

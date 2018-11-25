@@ -69,6 +69,17 @@ class Medium < ApplicationRecord
     %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
   end
 
+  # media sorts and their german names
+  def self.sort_de
+    { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',
+      'KeksQuestion' => 'Keks-Frage', 'KeksQuiz' => 'Keks-Quiz',
+      'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }
+  end
+
+  def self.select_sorts
+    Medium.sort_de.map { |k,v| [v, k] }
+  end
+
   # returns the array of all media subject to the conditions
   # provided by the params hash (keys: :course_id, :lecture_id, :project)
   # and the user's primary lecture for the given course (this is relevant for
@@ -418,9 +429,7 @@ class Medium < ApplicationRecord
   end
 
   def sort_de
-    { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',
-      'KeksQuestion' => 'Keks-Frage', 'KeksQuiz' => 'Keks-Quiz',
-      'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }[sort]
+    Medium.sort_de[sort]
   end
 
   # returns true if the medium's teachable if one of the following:
@@ -461,6 +470,7 @@ class Medium < ApplicationRecord
   end
 
   def teachable_select
+    return nil unless teachable.present?
     teachable_type + '-' + teachable_id.to_s
   end
 

@@ -1,46 +1,54 @@
 <div id="media_accordion" role="tablist">
-<div class="card bg-light">
-  <div class="card-header" role="tab" id="media_heading" >
-    <div class="row">
-      <div class="col-6">
-        <h5>
-          Medien (<%= media.count %>)
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
-             title="Info"
-             data-content="Dies ist die Liste aller assoziierten Medien.">
-          </i>
-        </h5>
+  <div class="card bg-light">
+    <div class="card-header" role="tab" id="media_heading" >
+      <div class="row">
+        <div class="col-6">
+          <h5>
+            Medien (<%= media.count %>)
+            <i class="far fa-question-circle helpdesk"
+               tabindex="-1"
+               data-toggle="popover"
+               data-trigger="focus"
+               title="Info"
+               data-content="Dies ist die Liste aller assoziierten Medien.">
+            </i>
+          </h5>
+        </div>
+        <div class="col-6 text-right">
+          <% unless inspection %>
+            <a href="<%= new_medium_path(params:
+                                          { teachable_id: teachable_id,
+                                            teachable_type: teachable_type,
+                                            tag_ids: tag_ids }) %>"
+               class="fas fa-plus-circle fa-lg new-in-lecture text-dark"
+               style="text-decoration: none; "
+               data-toggle="tooltip"
+               title="Medium anlegen"
+               id="create-new-medium">
+            </a>
+          <% end %>
+          <% if collapsible %>
+            <a class="btn btn-primary"
+               data-toggle="collapse"
+               href="#media_collapse"
+               aria-expanded="false" aria-controls="media_collapse">
+              Ein-/Ausklappen
+            </a>
+          <% end %>
+        </div>
       </div>
-      <div class="col-6 text-right">
-        <% unless inspection %>
-          <a href="<%= new_medium_path(params: { teachable_id: teachable_id,
-                                                 teachable_type: teachable_type,
-                                                 tag_ids: tag_ids }) %>"
-           class="fas fa-plus-circle fa-lg new-in-lecture text-dark"
-           style="text-decoration: none; "
-           data-toggle="tooltip" title="Medium anlegen"
-           id="create-new-medium">
-          </a>
-        <% end %>
-        <% if collapsible %>
-          <a class="btn btn-primary"
-             data-toggle="collapse" href="#media_collapse"
-             aria-expanded="false" aria-controls="media_collapse">
-            Ein-/Ausklappen
-          </a>
-        <% end %>
+    </div>
+    <div id="media_collapse"
+         class="<%= show_collapse(!collapsible) %>"
+         role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#media_accordion">
+      <div class="card-body p-2">
+        <%= render partial: 'media/table',
+                   locals: { media: media,
+                             small: small,
+                             inspection: inspection } %>
       </div>
     </div>
   </div>
-  <div id="media_collapse" class="<%= show_collapse(!collapsible) %>" role="tabpanel"
-       aria-labelledby="heading"
-       data-parent="#media_accordion">
-    <div class="card-body p-2">
-      <%= render partial: 'media/table',
-                 locals: { media: media, small: small, inspection: inspection } %>
-    </div>
-  </div>
-</div>
 </div>

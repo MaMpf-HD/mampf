@@ -1,25 +1,24 @@
+# Media Helper
 module MediaHelper
-
+  # returns the array of all teachables, together with a string made up
+  # from their class and id
+  # Is used in options_for_select in form helpers.
   def all_teachables_selection(user)
-    if user.admin?
-      return Course.order(:title).map { |c| [c.short_title, 'Course-' + c.id.to_s] } +
-        Lecture.sort_by_date(Lecture.includes(:course).all)
-               .map { |l| [l.short_title, 'Lecture-' + l.id.to_s] } +
-        Lesson.includes(:lecture).order(:date).reverse
-              .map { |l| [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s ] }
-    end
-    Course.includes(:editors, :editable_user_joins)
-          .order(:title).select { |c| c.edited_by?(user) }
-          .map { |c| [c.short_title, 'Course-' + c.id.to_s] } +
-      Lecture.sort_by_date(Lecture.includes(:course, :editors).all)
-             .select { |l| l.edited_by?(user) }
-             .map { |l| [l.short_title, 'Lecture-' + l.id.to_s] } +
-      Lesson.includes(:lecture).order(:date).reverse.select { |l| l.edited_by?(user) }
-            .map { |l| [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s ] }
+    Course.editable_selection(user) + Lecture.editable_selection(user) +
+      Lesson.editable_selection(user)
   end
 
-  def sections_for_thyme(medium)
-    medium.teachable.lecture.section_selection
+  # does the current user have the right to edit the given medium?
+  def medium_editor?(medium)
+    current_user.admin || medium.edited_with_inheritance_by?(current_user)
+  end
+
+  def video_download_file(medium)
+    medium.title + '.mp4'
+  end
+
+  def manuscript_download_file(medium)
+    medium.title + '.pdf'
   end
 
   def inspect_or_edit_medium_path(medium, inspection)

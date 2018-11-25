@@ -247,6 +247,19 @@ class Course < ApplicationRecord
                  .map { |t| t.remove('course-') }
   end
 
+  # returns the array of courses that can be edited by the given user,
+  # together with a string made up of 'Course-' and their id
+  # Is used in options_for_select in form helpers.
+  def self.editable_selection(user)
+    if user.admin?
+      return Course.order(:title)
+                   .map { |c| [c.short_title, 'Course-' + c.id.to_s] }
+    end
+    Course.includes(:editors, :editable_user_joins)
+          .order(:title).select { |c| c.edited_by?(user) }
+          .map { |c| [c.short_title, 'Course-' + c.id.to_s] }
+  end
+
   private
 
   # the next two methods are auxiliary methods used in the extras method

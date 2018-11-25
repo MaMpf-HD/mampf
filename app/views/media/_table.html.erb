@@ -1,9 +1,13 @@
-<ul class="nav nav-tabs my-3" id="edited-media-tab" role="tablist">
+<ul class="nav nav-tabs my-3"
+    id="edited-media-tab"
+    role="tablist">
   <% media_sorts.each do |s| %>
     <li class="nav-item">
       <a class="nav-link <%= active(s == 'kaviar') %>"
          id="<%= s %>-tab"
-         data-toggle="tab" href="#<%= s %>-media" role="tab"
+         data-toggle="tab"
+         href="#<%= s %>-media"
+         role="tab"
          aria-controls="<%= s%>-media" aria-selected="true">
         <%= media_names[s] %>
         (<%= media.where(sort: media_types[s]).count %>)
@@ -11,14 +15,18 @@
     </li>
   <% end %>
 </ul>
-<div class="tab-content" id="edited-media-tabContent">
+<div class="tab-content"
+     id="edited-media-tabContent">
   <% media_sorts.each do |s| %>
     <div class="tab-pane fade <%= show_tab(s == 'kaviar') %>"
          id="<%= s %>-media"
-         role="tabpanel" aria-labelledby="<%= s %>-tab">
+         role="tabpanel"
+         aria-labelledby="<%= s %>-tab">
       <%= render partial: 'media/table_column',
                  locals: { media: media.where(sort: media_types[s]),
-                           sort: s, small: small, inspection: inspection } %>
+                           sort: s,
+                           small: small,
+                           inspection: inspection } %>
     </div>
   <% end %>
 </div>

@@ -11,14 +11,26 @@
   display: none;
 }
 
+#protected-destinations {
+  font-weight: bold;
+}
+
 #media-box-footer {
   display: flex;
   justify-content: flex-start;
 }
 
+#video-wait {
+  display: none;
+}
+
 #video-preview {
   position: relative;
   width: 75%;
+}
+
+#manuscript-informer, #video-informer {
+  height: 1em;
 }
 
 #manuscript-preview {

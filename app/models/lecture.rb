@@ -223,7 +223,20 @@ class Lecture < ApplicationRecord
   # their ids.
   # Is used in options_for_select in form helpers
   def select_editors
-    editors.map { |e| [e.info, e.id]}
+    editors.map { |e| [e.info, e.id] }
+  end
+
+  # returns the array of lectures that can be edited by the given user,
+  # together with a string made up of 'Lecture-' and their id
+  # Is used in options_for_select in form helpers.
+  def self.editable_selection(user)
+    if user.admin?
+      return Lecture.sort_by_date(Lecture.includes(:course).all)
+                    .map { |l| [l.short_title, 'Lecture-' + l.id.to_s] }
+    end
+    Lecture.sort_by_date(Lecture.includes(:course, :editors).all)
+           .select { |l| l.edited_by?(user) }
+           .map { |l| [l.short_title, 'Lecture-' + l.id.to_s] }
   end
 
   # the next methods provide infos on editors and teacher

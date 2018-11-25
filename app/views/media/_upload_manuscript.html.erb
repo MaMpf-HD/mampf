@@ -1,16 +1,20 @@
-<div id="manuscript-uploadArea" class="form-group">
+<div id="manuscript-uploadArea"
+     class="form-group">
   <div class="row mb-2">
-    <div class="col-12" id="manuscript-informer" style="height: 1em;">
+    <div class="col-12"
+         id="manuscript-informer">
     </div>
   </div>
   <div class="row">
-    <div class="col-12" id="manuscript-progressBar">
+    <div class="col-12"
+         id="manuscript-progressBar">
     </div>
   </div>
   <div class="row">
   </div>
   <div class="row p-2">
-    <div id="manuscript-meta" class="col-12 meta rounded"
+    <div id="manuscript-meta"
+         class="col-12 meta rounded"
          style="display:<%= show(medium.manuscript.present?) %>">
       <div class="row">
         <div class="col-11">
@@ -19,7 +23,8 @@
             <%= medium.manuscript_filename %>
           </span>
         </div>
-        <i id="detach-manuscript" class="material-icons detach">
+        <i id="detach-manuscript"
+           class="material-icons detach">
           close
         </i>
       </div>
@@ -40,7 +45,8 @@
         </div>
       </div>
       <% if medium.manuscript_destinations.present? %>
-        <div id="manuscript-destinations" class="row">
+        <div id="manuscript-destinations"
+             class="row">
           <div class="col-12">
             Zielpunkte:
             <span>
@@ -53,7 +59,8 @@
   </div>
 </div>
 <% if medium.manuscript.present? %>
-  <%= link_to image_tag(medium.manuscript_screenshot_url, class: 'img-fluid',
+  <%= link_to image_tag(medium.manuscript_screenshot_url,
+                        class: 'img-fluid',
                         id: 'manuscript-preview'),
               medium.manuscript_url, target: :blank %>
 <% end %>

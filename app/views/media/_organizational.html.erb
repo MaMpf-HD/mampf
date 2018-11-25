@@ -5,7 +5,8 @@
     </h5>
   </div>
   <% if medium.screenshot.present? %>
-    <%= image_tag(medium.screenshot_url, alt: "Card image cap",
+    <%= image_tag(medium.screenshot_url,
+                  alt: "Card image cap",
                   class: "card-img-top") %>
   <% end %>
   <div class="card-body">
@@ -24,7 +25,8 @@
         <li>
           Kurs:
           <% if current_user.courses.include?(medium.teachable) %>
-            <%= link_to medium.teachable.to_label, medium.teachable,
+            <%= link_to medium.teachable.to_label,
+                        medium.teachable,
                         class: 'text-dark' %>
           <% else %>
             <span>

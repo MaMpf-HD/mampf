@@ -7,7 +7,7 @@ class Lesson < ApplicationRecord
   has_many :tags, through: :lesson_tag_joins
 
   # a lesson has many sections
-  # they correspon to these sections of the lecture's chapters who have been
+  # they correspond to these sections of the lecture's chapters who have been
   # taught in the lesson
   has_many :lesson_section_joins, dependent: :destroy
   has_many :sections, through: :lesson_section_joins
@@ -128,6 +128,25 @@ class Lesson < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def section_selection
     sections.map { |s| [s.to_label, s.id] }
+  end
+
+  def self.order_reverse
+    Lesson.includes(:lecture).order(:date).reverse
+  end
+
+  # returns the array of lessons that can be edited by the given user,
+  # together with a string made up of 'Lesson' and their id
+  # Is used in options_for_select in form helpers.
+  def self.editable_selection(user)
+    if user.admin?
+      return Lesson.order_reverse
+                   .map do |l|
+                     [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s]
+                   end
+    end
+    Lesson.order_reverse
+          .select { |l| l.edited_by?(user) }
+          .map { |l| [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s] }
   end
 
   private

@@ -3,7 +3,9 @@
     <div class="card-header bg-mdb-color-lighten-1">
       <% ref = medium.card_header_teachable_path(current_user) %>
       <% if ref.present? %>
-        <%= link_to medium.card_header, ref, class: 'text-light' %>
+        <%= link_to medium.card_header,
+                    ref,
+                    class: 'text-light' %>
       <% else %>
         <span class="text-light">
           <%= medium.card_header %>
@@ -18,7 +20,8 @@
       </li>
     </ul>
     <% if medium.screenshot.present? %>
-      <%= image_tag(medium.screenshot_url, alt: "Card image cap",
+      <%= image_tag(medium.screenshot_url,
+                    alt: "Card image cap",
                     class: "card-img-top") %>
     <% end %>
     <div class="card-body">
@@ -31,7 +34,9 @@
       <% end %>
       <div>
         <% medium.tags.each do |t| %>
-          <%= link_to t.short_title(30), t, class: "badge badge-light",
+          <%= link_to t.short_title(30),
+                      t,
+                      class: "badge badge-light",
                       title: t.title,
                       data: { toggle: 'tooltip', placement: 'bottom'} %>
         <% end %>
@@ -42,9 +47,12 @@
         <% if medium.video.present? %>
           <div class="mr-2">
             <a href="<%= play_medium_path(medium) %>"
-               class="no-deco" target="_blank">
+               class="no-deco"
+               target="_blank">
               <i class="material-icons text-secondary"
-                 data-toggle="tooltip" data-placement="bottom" title="Thyme Player">
+                 data-toggle="tooltip"
+                 data-placement="bottom"
+                 title="Thyme Player">
                 play_arrow
               </i>
             </a>
@@ -53,9 +61,12 @@
         <% if medium.manuscript.present? %>
           <div class="mr-2">
             <a href="<%= medium.manuscript_url %>"
-               class="no-deco" target="_blank">
+               class="no-deco"
+               target="_blank">
               <i class="material-icons text-secondary"
-                 data-toggle="tooltip" data-placement="bottom" title="pdf im Browser">
+                 data-toggle="tooltip"
+                 data-placement="bottom"
+                 title="pdf im Browser">
                 library_books
               </i>
             </a>
@@ -64,9 +75,12 @@
         <% if medium.external_reference_link.present? %>
           <div class="mr-2">
             <a href="<%= medium.external_reference_link %>"
-               class="no-deco" target="_blank">
+               class="no-deco"
+               target="_blank">
               <i class="material-icons text-secondary"
-                 data-toggle="tooltip" data-placement="bottom" title="externer Link">
+                 data-toggle="tooltip"
+                 data-placement="bottom"
+                 title="externer Link">
                 link
               </i>
             </a>
@@ -76,7 +90,9 @@
           <a href="<%= medium_path(medium) %>"
              class="no-deco">
             <i class="material-icons text-secondary"
-               data-toggle="tooltip" data-placement="bottom" title="Details">
+               data-toggle="tooltip"
+               data-placement="bottom"
+               title="Details">
               info
             </i>
           </a>
@@ -84,10 +100,11 @@
         <% if medium.video.present? %>
           <div class="download-button mr-2">
             <a href="<%= medium.video_download_url %>"
-               download="<%= medium.title + '.mp4' %>">
+               download="<%= video_download_file(medium) %>">
               <span>
                 <span class="badge badge-secondary"
-                      data-toggle="tooltip" data-placement="bottom"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
                       title="Video speichern">
                   &darr;mp4
                 </span>
@@ -98,10 +115,11 @@
         <% if medium.manuscript.present? %>
           <div class="download-button">
             <a href="<%= medium.manuscript_download_url %>"
-               download="<%= medium.title + '.pdf' %>">
+               download="<%= manuscript_download_file(medium) %>">
               <span>
                 <span class="badge badge-secondary"
-                      data-toggle="tooltip" data-placement="bottom"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
                       title="Manuskript speichern">
                   &darr;pdf
                 </span>
@@ -109,16 +127,17 @@
             </a>
           </div>
         <% end %>
-        <% if current_user.admin ||
-              medium.edited_with_inheritance_by?(current_user) %>
-          <a href="<%= edit_medium_path(medium) %>" class="text-secondary ml-4" 
+        <% if medium_editor?(medium) %>
+          <a href="<%= edit_medium_path(medium) %>"
+             class="text-secondary ml-4"
              data-toggle="tooltip"
-             data-placement="bottom" title="Bearbeiten">
+             data-placement="bottom"
+             title="Bearbeiten">
             <i class="far fa-edit">
             </i>
           </a>
         <% end %>
       </div>
-      </div>
     </div>
   </div>
+</div>

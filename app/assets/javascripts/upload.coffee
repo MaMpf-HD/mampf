@@ -1,3 +1,5 @@
+# converts a given number a of bytes to a humanreadble form with KB/MB etc.,
+# keeping b decimal digits
 formatBytes = (a, b) ->
   if 0 == a
     return '0 Bytes'
@@ -17,6 +19,7 @@ formatBytes = (a, b) ->
   f = Math.floor(Math.log(a) / Math.log(c))
   parseFloat((a / c ** f).toFixed(d)) + ' ' + e[f]
 
+# converts a given time in seconds to a string of the form **h**m**s
 fancyTimeFormat = (time) ->
   hrs = Math.floor(time / 3600)
   mins = Math.floor(time % 3600 / 60)
@@ -28,6 +31,7 @@ fancyTimeFormat = (time) ->
   output
 
 videoUpload = (fileInput) ->
+  # set everything up
   videoPreviewArea = document.getElementById('video-preview-area')
   videoPreview = document.getElementById('video-preview')
   uploadArea = document.getElementById('video-uploadArea')
@@ -40,6 +44,7 @@ videoUpload = (fileInput) ->
   # uppy will add its own file input
   fileInput.style.display = 'none'
 
+  # create uppy istance
   uppy = Uppy.Core(
     id: fileInput.id
     restrictions: allowedFileTypes: [
@@ -53,16 +58,21 @@ videoUpload = (fileInput) ->
     .use(Uppy.Informer, target: informer)
     .use(Uppy.ProgressBar, target: progressBar)
 
+  # target the endpoint for shrine uploader
+  # timeout has been increased from standard value to allow storing of large
+  # files
   uppy.use Uppy.XHRUpload,
     endpoint: '/videos/upload'
     fieldName: 'file'
     timeout: 120 * 1000
 
+  # give the user feedback after upload has started
   uppy.on 'upload', (data) ->
     $('#video-wait').show()
     $('#medium-basics-warning').show()
     return
 
+  # add metadata to video card if upload was successful
   uppy.on 'upload-success', (file, data) ->
     $('#video-wait').hide()
     if data.metadata.mime_type in ['video/mp4']
@@ -75,10 +85,13 @@ videoUpload = (fileInput) ->
       # set hidden field value to the uploaded file data so that it is
       # submitted with the form as the attachment
       hiddenInput.value = uploadedFileData
+
       videoFile = document.getElementById('video-file')
       videoSize = document.getElementById('video-size')
       videoResolution = document.getElementById('video-resolution')
       videoDuration = document.getElementById('video-duration')
+
+      # put metadata into place
       videoFile.innerHTML = data.metadata.filename
       videoSize.innerHTML = formatBytes(data.metadata.size)
       videoResolution.innerHTML = data.metadata.resolution
@@ -88,17 +101,21 @@ videoUpload = (fileInput) ->
       $('#medium_detach_video').val('false')
       $('#medium-basics-warning').show()
     else
+      # display error message if uppy detects wrong mime type
       uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
       uppy.reset()
     return
 
+  # display error message on console if an upload error has ocurred
   uppy.on 'upload-error', (file, error) ->
     console.log('error with file:', file.id)
     console.log('error message:', error)
     return
+
   uppy
 
 manuscriptUpload = (fileInput) ->
+  # set everything up
   uploadArea = document.getElementById('manuscript-uploadArea')
   uploadButton = document.getElementById('manuscript-uploadButton')
   informer = document.getElementById('manuscript-informer')
@@ -109,6 +126,7 @@ manuscriptUpload = (fileInput) ->
   # uppy will add its own file input
   fileInput.style.display = 'none'
 
+  # create uppy instance
   uppy = Uppy.Core(
     id: fileInput.id
     restrictions: allowedFileTypes: [ '.pdf' ])
@@ -118,19 +136,12 @@ manuscriptUpload = (fileInput) ->
     .use(Uppy.Informer, target: informer)
     .use(Uppy.ProgressBar, target: progressBar)
 
+  # target the endpoint for shrine uploader
   uppy.use Uppy.XHRUpload,
     endpoint: '/pdfs/upload'
     fieldName: 'file'
 
-  uppy.on 'complete', (result) ->
-    console.log('successful files:', result.successful)
-    console.log('failed files:', result.failed)
-    return
-
-  uppy.on 'upload-progress', (file, progress) ->
-    console.log(file.id, progress.bytesUploaded, progress.bytesTotal)
-    return
-
+  # add metadata to manuscript card if upload was successful
   uppy.on 'upload-success', (file, data) ->
     if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
       # read uploaded file data from the upload endpoint response
@@ -139,9 +150,12 @@ manuscriptUpload = (fileInput) ->
       # set hidden field value to the uploaded file data so that it is
       # submitted with the form as the attachment
       hiddenInput.value = uploadedFileData
+
       manuscriptFile = document.getElementById('manuscript-file')
       manuscriptSize = document.getElementById('manuscript-size')
       manuscriptPages = document.getElementById('manuscript-pages')
+
+      # put metadata into place
       manuscriptFile.innerHTML = data.metadata.filename
       manuscriptSize.innerHTML = formatBytes(data.metadata.size)
       manuscriptPages.innerHTML = data.metadata.pages + ' S'
@@ -152,12 +166,21 @@ manuscriptUpload = (fileInput) ->
       $('#medium_detach_manuscript').val('false')
       $('#medium-basics-warning').show()
     else if data.metadata.mime_type != 'application/pdf'
+      # display error message if uppy detects wrong mime type
       uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
       uppy.reset()
     else
+      # display error message if uppy detects some other problem
       uppy.info('Die Datei ist beschädigt.', 'error', 5000)
       uppy.reset()
     return
+
+  # display error message on console if an upload error has ocurred
+  uppy.on 'upload-error', (file, error) ->
+    console.log('error with file:', file.id)
+    console.log('error message:', error)
+    return
+
   uppy
 
 
@@ -169,9 +192,11 @@ $(document).on 'turbolinks:load', ->
   $('.uppy').remove()
   $('.uppy-Root').remove()
 
+  # initialize uppy
   videoUpload video if video?
   manuscriptUpload manuscript if manuscript?
 
+  # make uppy upload buttons look like bootstrap
   $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
   .addClass('btn btn-sm btn-outline-secondary')
   return
