@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   get '/administration/profile', to: 'administration#profile',
                                  as: 'elevated_profile'
 
-  resources :chapters, except: [:index]
+  resources :chapters, except: [:index, :show]
   get 'chapters/:id/list_sections/', to: 'chapters#list_sections',
                                      as: 'list_sections'
 

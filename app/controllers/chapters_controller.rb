@@ -1,11 +1,8 @@
 # ChaptersController
 class ChaptersController < ApplicationController
-  before_action :set_chapter, only: [:show, :edit, :update, :destroy, :inspect,
-                                     :list_sections]
+  before_action :set_chapter, except: [:new, :create]
   authorize_resource
-
-  def show
-  end
+  layout 'administration'
 
   def edit
     @section = Section.find_by_id(params[:section_id])

@@ -128,28 +128,9 @@ module ApplicationHelper
     return current_user.courses.first.id unless current_user.courses.empty?
   end
 
-  # returns true for 'media#play' action
-  def thyme?(controller, action)
-    return true if controller == 'media' && action == 'play'
-    false
-  end
-
   # returns true for 'media#enrich' action
   def enrich?(controller, action)
     return true if controller == 'media' && action == 'enrich'
-    false
-  end
-
-  # Determines if the current controller action is an action used
-  # for administration or editing purposes.
-  def administrates?(controller, action)
-    return true if controller.in?(['administration', 'terms', 'lectures'])
-    if controller.in?(['courses', 'tags', 'chapters', 'sections', 'lessons']) &&
-       action != 'show'
-      return true
-    end
-    return true if controller == 'users' && action != 'teacher'
-    return true if controller == 'media' && !action.in?(['show', 'index'])
     false
   end
 

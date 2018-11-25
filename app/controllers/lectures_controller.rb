@@ -4,6 +4,7 @@ class LecturesController < ApplicationController
                                      :update_teacher, :update_editors]
   authorize_resource
   before_action :check_for_consent
+  layout 'administration'
 
   def edit
   end

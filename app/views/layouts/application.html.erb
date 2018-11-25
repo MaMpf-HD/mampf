@@ -1,85 +1,34 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>
-      <%= full_title(yield(:title)) %>
-    </title>
-    <%= csrf_meta_tags %>
-    <%= stylesheet_link_tag 'application',
-                            media: 'all',
-                            'data-turbolinks-track': 'reload' %>
-    <link rel="stylesheet"
-          href="https://use.fontawesome.com/releases/v5.0.11/css/all.css"
-          integrity="sha384-p2jx59pefphTFIpeqCcISO9MdVfIm4pNnsL08A6v5vaQc4owkQqxMV8kg4Yvhaw/"
-          crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet">
-    <link href='https://fonts.googleapis.com/css?family=Roboto'
-          rel='stylesheet'>
-    <%= javascript_include_tag 'application',
-                               'data-turbolinks-track': 'reload' %>
-    <script src="https://unpkg.com/babel-polyfill@6.26.0/dist/polyfill.min.js">
-    </script>
-    <script src="https://transloadit.edgly.net/releases/uppy/v0.25.2/dist/uppy.min.js">
-    </script>
-    <link href="https://transloadit.edgly.net/releases/uppy/v0.25.2/dist/uppy.min.css"
-          rel="stylesheet" />
-    <!--[if lt IE 9]>
-       <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js">
-       </script>
-     <![endif]-->
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <%= render partial: 'layouts/head' %>
   </head>
   <body>
-    <% if thyme?(controller_name, action_name) %>
-      <%= yield %>
-    <% else %>
-      <% unless user_signed_in? &&
-                (current_user.editor? || current_user.admin?) &&
-                administrates?(controller_name, action_name) %>
-      <%= render partial: 'shared/navbar' %>
-      <div class="container-fluid">
-        <div class="row">
-          <%= render partial: 'shared/sidebar',
-                     locals: { course_id: course_id_from_cookie } %>
-          <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
-            <div class="alert alert-danger" id="js-messages" role="alert"
-                 style="display: none;">
-            </div>
-            <% if alert.present? %>
-              <div class="alert alert-danger" role="alert">
-                <%= alert %>
-              </div>
-            <% end %>
-            <% if notice.present? %>
-              <div class="alert alert-secondary" role="alert">
-                <%= notice %>
-              </div>
-            <% end %>
-            <%= yield %>
-          </main>
-        </div>
-      </div>
-      <footer>
-        <%= render partial: 'shared/footer' %>
-      </footer>
-      <% else %>
-        <div id="administrate">
-          <div id="admin-navbar">
-            <%= render partial: 'administration/navbar' %>
+    <%= render partial: 'shared/navbar' %>
+    <div class="container-fluid">
+      <div class="row">
+        <%= render partial: 'shared/sidebar',
+                   locals: { course_id: course_id_from_cookie } %>
+        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+          <div class="alert alert-danger" id="js-messages" role="alert"
+               style="display: none;">
           </div>
-          <% unless enrich?(controller_name, action_name) %>
-            <div class="container-fluid">
+          <% if alert.present? %>
+            <div class="alert alert-danger" role="alert">
+              <%= alert %>
+            </div>
           <% end %>
-          <div id="admin-area">
+          <% if notice.present? %>
+            <div class="alert alert-secondary" role="alert">
+              <%= notice %>
+            </div>
+          <% end %>
           <%= yield %>
-          </div>
-          <% unless enrich?(controller_name, action_name) %>
-            </div>
-          <% end %>
-        </div>
-      <% end %>
-    <% end %>
+        </main>
+      </div>
+    </div>
+    <footer>
+      <%= render partial: 'shared/footer' %>
+    </footer>
   </body>
 </html>

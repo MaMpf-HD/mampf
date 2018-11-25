@@ -1,9 +1,11 @@
 # LessonsController
 class LessonsController < ApplicationController
-  before_action :set_lesson, only: [:show, :edit, :update, :destroy, :inspect]
+  before_action :set_lesson, except: [:new, :create, :list_sections]
   authorize_resource
+  layout 'administration'
 
   def show
+    render layout: 'aplication'
   end
 
   def edit

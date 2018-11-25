@@ -2,6 +2,7 @@
 class TermsController < ApplicationController
   before_action :set_term, only: [:destroy, :edit, :update]
   authorize_resource
+  layout 'administration'
 
   def index
     @terms = Term.order(:year).reverse_order.page params[:page]

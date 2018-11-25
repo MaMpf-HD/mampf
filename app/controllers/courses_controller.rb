@@ -3,6 +3,7 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:show]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   authorize_resource
+  layout 'administration'
 
   def edit
     cookies[:edited_course] = params[:id]
@@ -33,6 +34,7 @@ class CoursesController < ApplicationController
     @lectures = @course.subscribed_lectures_by_date(current_user)
     # determine which lecture gets the top position in the lecture carousel
     @front_lecture = @course.front_lecture(current_user, params[:active].to_i)
+    render layout: 'application'
   end
 
   def inspect

@@ -1,9 +1,11 @@
 # SectionController
 class SectionsController < ApplicationController
-  before_action :set_section, only: [:show, :reset, :update, :destroy, :edit]
+  before_action :set_section, except: [:new, :create]
   authorize_resource
+  layout 'administration'
 
   def show
+    render layout: 'application'
   end
 
   def edit

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= render partial: 'layouts/head' %>
+  </head>
+  <body>
+    <div id="administrate">
+      <div id="admin-navbar">
+        <%= render partial: 'administration/navbar' %>
+      </div>
+      <% unless enrich?(controller_name, action_name) %>
+        <div class="container-fluid">
+      <% end %>
+      <div id="admin-area">
+        <%= yield %>
+      </div>
+      <% unless enrich?(controller_name, action_name) %>
+        </div>
+      <% end %>
+    </div>
+  </body>
+</html>

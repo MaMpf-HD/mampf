@@ -2,6 +2,7 @@
 class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
   authorize_resource
+  layout 'administration'
 
   def index
     @generic_users_count = User.count - @elevated_users.count
@@ -42,7 +43,10 @@ class UsersController < ApplicationController
 
   def teacher
     @teacher = User.find_by_id(params[:teacher_id])
-    return if @teacher.present? && @teacher.teacher?
+    if @teacher.present? && @teacher.teacher?
+      render layout: 'application'
+      return
+    end
     redirect_to :root,
                 alert: 'Ein(e) DozentIn mit der angeforderten id existiert ' \
                        'nicht.'

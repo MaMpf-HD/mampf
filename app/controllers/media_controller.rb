@@ -8,10 +8,12 @@ class MediaController < ApplicationController
   before_action :sanitize_params
   before_action :check_for_consent, except: [:play, :display]
   authorize_resource
+  layout 'administration'
 
   def index
     cookies[:current_course] = params[:course_id]
     @media = paginated_results
+    render layout: 'application'
   end
 
   def catalog
@@ -19,6 +21,7 @@ class MediaController < ApplicationController
   end
 
   def show
+    render layout: 'application'
   end
 
   def new
@@ -84,6 +87,7 @@ class MediaController < ApplicationController
     @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
     @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
     @time = params[:time]
+    render layout: 'thyme'
   end
 
   # show the pdf, optionally at specified page or named destination

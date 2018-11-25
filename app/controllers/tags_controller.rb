@@ -5,6 +5,7 @@ class TagsController < ApplicationController
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]
   authorize_resource
+  layout 'administration'
 
   def index
     @tags = Tag.includes(:courses, :related_tags).order(:title)
@@ -18,6 +19,7 @@ class TagsController < ApplicationController
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: 'KeksQuestion'))
+    render layout: 'application'
   end
 
   def inspect

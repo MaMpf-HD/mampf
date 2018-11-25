@@ -5,6 +5,7 @@ class AdministrationController < ApplicationController
   # tell cancancan there is no model for this controller, but authorize
   # nevertheless
   authorize_resource class: false
+  layout 'administration'
 
   def index
   end
