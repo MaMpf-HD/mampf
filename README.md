@@ -2,14 +2,25 @@
 
 ## About
 
-MaMpf is an innovative E-Learning platform for the mathematical sciences.
+MaMpf is an innovative open source E-Learning platform for the mathematical sciences.
 Central point is the interconnection between different content in the sense
 of a hypermedia system.
 
-MaMpf uses the contextual classification of a course as a visual leitmotiv,
+MaMpf uses the contextual classification of a course as visual leitmotiv,
 instead of organizational aspects.
 
 ![mampf-gui](public/mampf-gui-transparent.png)
+
+MaMpf comes with its own hypermedia player and editor THymE
+(*The hypermedia Experience*). ThymeE uses the internal structure of
+mathematical content (consisting of theorems, remarks, definitions etc.) and allows
+exact navigation between content that is related, but temporally apart.
+References can be created not only to content within the same video, but within
+the whole MaMpf database.
+ThymE is lean and makes use of WebVTT and HTML5 video capabilites
+of modern browsers.
+
+![thyme](public/thyme.png)
 
 ## System background
 
