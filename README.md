@@ -5,11 +5,11 @@
 MaMpf is an innovative E-Learning platform for the mathematical sciences.
 Central point is the interconnection between different content in the sense
 of a hypermedia system.
+
 MaMpf uses the contextual classification of a course as a visual leitmotiv,
 instead of organizational aspects.
 
-![screenshot_1](public/mampf_1.png)
-![screnshot_2](public/mampf_2.png)
+![mampf-gui](public/mampf-gui-transparent.png)
 
 ## System background
 
