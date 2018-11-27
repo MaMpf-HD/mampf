@@ -1,12 +1,27 @@
 # README
 
+## About
+
+MaMpf is an innovative E-Learning platform for the mathematical sciences.
+Central point is the interconnection between different content in the sense
+of a hypermedia system.
+MaMpf uses the contextual classification of a course as a visual leitmotiv,
+instead of organizational aspects.
+
+![screenshot_1](public/mampf_1.png)
+![screnshot_2](public/mampf_2.png)
+
+## System background
+
+MaMpf is implemented in Ruby on Rails.
+
 * Ruby version: 2.5.3
 * Rails Version: 5.2.1
 * Test suite: rspec
 
 ## Installation (with Docker)
 
- 1. Install Database Server (e.g. PostgreSQL) and create Database.  
+ 1. Install Database Server (e.g. PostgreSQL) and create Database.
    (Don't forget to allow access for the docker network)
 ```
 createuser mampf
@@ -46,5 +61,5 @@ docker start mampf
 ```
 Now you can access *mampf* via `http://localhost:$OUTSIDEPORT`.
 
-**Note**  
+**Note**
 Currently the `docker run` line is not working and the encrypted credentials file has to be replaced by hand.
