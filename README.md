@@ -2,7 +2,7 @@
 
 ## About
 
-MaMpf is an innovative open source E-Learning platform for the mathematical sciences.
+MaMpf (*Mathematische Medienplattform*) is an innovative open source E-Learning platform for the mathematical sciences.
 Central point is the interconnection between different content in the sense
 of a hypermedia system.
 
