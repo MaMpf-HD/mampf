@@ -17,10 +17,12 @@ mathematical content (consisting of theorems, remarks, definitions etc.) and all
 exact navigation between content that is related, but temporally apart.
 References can be created not only to content within the same video, but within
 the whole MaMpf database.
-ThymE is lean and makes use of WebVTT and HTML5 video capabilites
-of modern browsers.
 
 ![thyme](public/thyme.png)
+
+ThymE is lean and makes use of WebVTT and HTML5 video capabilites
+of modern browsers. A sample hypervideo can be found
+[here](https://mampf.mathi.uni-heidelberg.de/media/384/play).
 
 ## System background
 
