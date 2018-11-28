@@ -74,5 +74,16 @@ docker start mampf
 ```
 Now you can access *mampf* via `http://localhost:$OUTSIDEPORT`.
 
+Use the GUI to register your future admin user.
+Open a rails console inside the docker container.
+```
+rails c
+```
+Give admin rights to this user:
+```
+User.first.update(admin: true)
+```
+That's it. Alle the rest can be done entirely via the GUI.
+
 **Note**
 Currently the `docker run` line is not working and the encrypted credentials file has to be replaced by hand.
