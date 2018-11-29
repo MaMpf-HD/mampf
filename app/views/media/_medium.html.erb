@@ -23,6 +23,10 @@
       <%= image_tag(medium.screenshot_url,
                     alt: "Card image cap",
                     class: "card-img-top") %>
+    <% elsif medium.manuscript.present? %>
+      <%= image_tag(medium.manuscript_screenshot_url,
+                    alt: "Card image cap",
+                    class: "card-img-top manuscript-thumbnail") %>
     <% end %>
     <div class="card-body">
       <% unless medium.caption.nil? %>

@@ -4,13 +4,18 @@
     <% if user_signed_in? && course.present? %>
       <% lectures = course.subscribed_lectures_by_date(current_user) %>
       <li class="nav-item">
-        <% if course.nil? ||
-              (!lectures.any? { |l| l.kaviar? } && !course.kaviar?) %>
+        <% if course.nil? || !course.kaviar? %>
           <span class="nav-link disabled">
             KaViaR
           </span>
         <% else %>
-          <% if lectures.count == 1 %>
+          <% if lectures.blank? %>
+            <%= link_to 'KaViaR',
+                        course_food_path(course_id: course_id,
+                                         params:
+                                           { project: 'kaviar' }),
+                        class: 'nav-link' %>
+          <% elsif lectures.count == 1 %>
             <%= link_to 'KaViaR',
                         course_food_path(course_id: course_id,
                                          params:
@@ -22,11 +27,48 @@
               KaViaR
             </span>
             <ul id="kaviar-sidebar" class="nav nav-pills flex-column">
-              <% lectures.select { |l| l.kaviar? }.each do |l| %>
+              <% lectures.select { |l| l.kaviar? || (course.kaviar? && l == course.primary_lecture(current_user)) }.each do |l| %>
                 <li class="nav-item">
                   <%= link_to l.term.to_label_short,
                               course_food_path(course_id: course_id,
                                                params: { project: 'kaviar',
+                                                         lecture_id: l.id }),
+                              class: 'nav-link' %>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <% if course.nil? || !course.nuesse? || !current_user.nuesse?(course) %>
+          <span class="nav-link disabled">
+            NÜSsE
+          </span>
+        <% else %>
+          <% if lectures.blank? %>
+            <%= link_to 'NÜSsE',
+                        course_food_path(course_id: course_id,
+                                         params:
+                                           { project: 'nuesse' }),
+                        class: 'nav-link' %>
+          <% elsif lectures.count == 1 %>
+            <%= link_to 'NÜSsE',
+                        course_food_path(course_id: course_id,
+                                         params:
+                                           { project: 'nuesse',
+                                             lecture_id: lectures.first.id }),
+                        class: 'nav-link' %>
+          <% else %>
+            <span class="text-primary nav-link">
+              NÜSsE
+            </span>
+            <ul id="kaviar-sidebar" class="nav nav-pills flex-column">
+              <% lectures.select { |l| l.nuesse? || (course.nuesse? && l == course.primary_lecture(current_user)) }.each do |l| %>
+                <li class="nav-item">
+                  <%= link_to l.term.to_label_short,
+                              course_food_path(course_id: course_id,
+                                               params: { project: 'nuesse',
                                                          lecture_id: l.id }),
                               class: 'nav-link' %>
                 </li>
@@ -54,17 +96,6 @@
         <% else %>
             <%= link_to 'KIWi', course_food_path(course_id: course_id,
                                                   params: { project: 'kiwi'}),
-                        class: 'nav-link' %>
-        <% end %>
-      </li>
-      <li class="nav-item">
-        <% if !current_user.nuesse?(course) %>
-          <span class="nav-link disabled">
-            NÜSsE
-          </span>
-        <% else %>
-            <%= link_to 'NÜSsE', course_food_path(course_id: course_id,
-                                                  params: { project: 'nuesse'}),
                         class: 'nav-link' %>
         <% end %>
       </li>

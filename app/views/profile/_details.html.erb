@@ -1,7 +1,12 @@
 <% if c.lectures.empty?  && c.available_extras.blank? %>
   <div class="row">
     <div class="col-12">
-      Zu diesem Kurs gibt es im Moment noch keine Inhalte.
+      Zu diesem Modul gibt es im Moment noch keine Vorlesungen
+      <% if c.kaviar? %>
+        und ausschließlich Inhalte für KaViaR.
+      <% else %>
+        und auch noch keine Inhalte.
+      <% end %>
     </div>
   </div>
 <% end %>

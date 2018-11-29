@@ -37,6 +37,13 @@
   background: white;
 }
 
+.manuscript-thumbnail {
+  object-fit: cover;
+  max-height: 200px;
+  object-position: 0px 0px;
+  background: white;
+}
+
 #video-edit {
   border: 1px solid gray;
   position: relative;

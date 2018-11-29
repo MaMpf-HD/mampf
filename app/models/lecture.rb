@@ -145,6 +145,16 @@ class Lecture < ApplicationRecord
     end
   end
 
+  # returns whether the lecture has any associated nuesse media
+  # (with inheritance)
+  def nuesse?
+    Rails.cache.fetch("#{cache_key}/nuesse", expires_in: 2.hours) do
+      Medium.where(sort: 'Nuesse').to_a.any? do |m|
+        m.teachable.present? && m.teachable.lecture == self
+      end
+    end
+  end
+
   # the next methods pu together some information on the lecture (teacher, term,
   # title) in various combinations
 
