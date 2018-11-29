@@ -111,8 +111,8 @@ class User < ApplicationRecord
     project?(course, 'kiwi')
   end
 
-  def reste?(course)
-    project?(course, 'reste')
+  def nuesse?(course)
+    project?(course, 'nuesse')
   end
 
   def keks?(course)

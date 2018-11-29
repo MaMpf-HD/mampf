@@ -134,12 +134,12 @@
         <% end %>
       </div>
     <% end %>
-    <% if c.reste? %>
+    <% if c.nuesse? %>
       <div class="col-12">
-        <% reste = 'reste-' + c.id.to_s %>
+        <% nuesse = 'nuesse-' + c.id.to_s %>
         <%= f.form_group do %>
-          <% f.check_box reste, label: 'RestE',
-                         checked: subscribed ? details.reste? != false : true,
+          <% f.check_box nuesse, label: 'NÜSsE',
+                         checked: subscribed ? details.nuesse? != false : true,
                          disabled: !subscribed %>
         <% end %>
       </div>

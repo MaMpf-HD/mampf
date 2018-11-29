@@ -59,19 +59,19 @@ module ApplicationHelper
   def media_types
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
       'keks' => ['KeksQuiz', 'KeksQuestion'], 'kiwi' => ['Kiwi'],
-      'erdbeere' => ['Erdbeere'], 'reste' => ['Reste'] }
+      'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'] }
   end
 
   # media_sorts
   def media_sorts
-    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'reste']
+    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse']
   end
 
   # media_sort -> acronym
   def media_names
     { 'kaviar' => 'KaViaR', 'sesam' => 'SeSAM',
       'keks' => 'KeKs', 'kiwi' => 'KIWi',
-      'erdbeere' => 'ErDBeere', 'reste' => 'RestE' }
+      'erdbeere' => 'ErDBeere', 'nuesse' => 'NÜSsE' }
   end
 
   # Selects all media associated to lectures and lessons from a given list

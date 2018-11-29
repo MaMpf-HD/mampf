@@ -66,14 +66,14 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    %w[Kaviar Erdbeere Sesam Kiwi Reste KeksQuestion KeksQuiz]
+    %w[Kaviar Erdbeere Sesam Kiwi Nuesse KeksQuestion KeksQuiz]
   end
 
-  # media sorts and their german names
+  # media sorts and their german acronyms
   def self.sort_de
     { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',
       'KeksQuestion' => 'Keks-Frage', 'KeksQuiz' => 'Keks-Quiz',
-      'Reste' => 'RestE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }
+      'Nuesse' => 'NÜSsE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }
   end
 
   def self.select_sorts

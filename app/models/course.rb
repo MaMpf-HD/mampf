@@ -101,15 +101,15 @@ class Course < ApplicationRecord
     project?('kiwi')
   end
 
-  def reste?
-    project?('reste')
+  def nuesse?
+    project?('nuesse')
   end
 
   # returns if there are any media (or newsfeeds) associated to this course
   # which are not of type kaviar
   def available_extras
     hash = { 'news' => news.present?, 'sesam' => sesam?, 'keks' => keks?,
-             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'reste' => reste? }
+             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'nuesse' => nuesse? }
     hash.keys.select { |k| hash[k] == true }
   end
 
@@ -145,8 +145,8 @@ class Course < ApplicationRecord
   # Example:
   # course.extras({"name"=>"John Smith", "course-3"=>"1",
   #  "primary_lecture-3"=>"3", "lecture-3"=>"1", "news-3"=>"1", "keks-3"=>"1",
-  #  "kiwi-3"=>"0", "reste-3"=>"1"})
-  # {"news?"=>true, "keks?"=>true, "kiwi?"=>false, "reste?"=>true,
+  #  "kiwi-3"=>"0", "nuesse-3"=>"1"})
+  # {"news?"=>true, "keks?"=>true, "kiwi?"=>false, "nuesse?"=>true,
   #  "primary_lecture_id"=>3}
   def extras(user_params)
     extra_modules = extract_extra_modules(user_params)
@@ -288,7 +288,7 @@ class Course < ApplicationRecord
 
   def sort
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
-      'keks' => ['KeksQuiz'], 'reste' => ['Reste'],
+      'keks' => ['KeksQuiz'], 'nuesse' => ['Nuesse'],
       'erdbeere' => ['Erdbeere'] }
   end
 
