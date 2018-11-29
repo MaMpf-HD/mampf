@@ -241,12 +241,14 @@ class MediaController < ApplicationController
     redirect_to consent_profile_path unless current_user.consents
   end
 
+  # paginate results obtained by the search_results method
   def paginated_results
     return Kaminari.paginate_array(search_results) if params[:all]
     Kaminari.paginate_array(search_results).page(params[:page])
             .per(params[:per])
   end
 
+  # search is done in search class method for Medium
   def search_results
     search_results = Medium.search(@course.primary_lecture(current_user),
                                    params)

@@ -89,15 +89,23 @@ class Medium < ApplicationRecord
     course = Course.find_by_id(params[:course_id])
     return [] if course.nil?
     filtered = Medium.filter_media(course, params[:project])
+    # first case: media sitting at course level (no lecture_id given)
     unless params[:lecture_id].present?
       return search_results(filtered, course, primary_lecture)
     end
+    # second case: media sitting at lecture level
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return [] unless course.lectures.include?(lecture)
-    lecture.lecture_lesson_results(filtered)
+    # add media that are related to the course to the primary lecture's media
+    unless lecture == primary_lecture
+      return lecture.lecture_lesson_results(filtered)
+    end
+    filtered.select { |m| m.teachable == course } +
+      lecture.lecture_lesson_results(filtered)
   end
 
-  # returns the ARel of all media for the given course and project
+  # returns the ARel of all media for the given project, if the given course
+  # has media for this project
   def self.filter_media(course, project)
     return Medium.order(:id) unless project.present?
     return [] unless course.available_food.include?(project)

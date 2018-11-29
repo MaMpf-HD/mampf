@@ -4,14 +4,18 @@
     <% if user_signed_in? && course.present? %>
       <% lectures = course.subscribed_lectures_by_date(current_user) %>
       <li class="nav-item">
-        <% if course.nil? || !lectures.any? { |l| l.kaviar? } %>
+        <% if course.nil? ||
+              (!lectures.any? { |l| l.kaviar? } && !course.kaviar?) %>
           <span class="nav-link disabled">
             KaViaR
           </span>
         <% else %>
           <% if lectures.count == 1 %>
-            <%= link_to 'KaViaR', course_food_path(course_id: course_id,
-                                                 params: { project: 'kaviar'}),
+            <%= link_to 'KaViaR',
+                        course_food_path(course_id: course_id,
+                                         params:
+                                           { project: 'kaviar',
+                                             lecture_id: lectures.first.id }),
                         class: 'nav-link' %>
           <% else %>
             <span class="text-primary nav-link">
