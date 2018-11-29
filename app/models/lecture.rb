@@ -329,7 +329,7 @@ class Lecture < ApplicationRecord
       m.teachable_type == 'Lesson' && m.teachable.present? &&
         m.teachable.lecture == self
     end
-    lecture_results.sort_by(:id) + lesson_results.sort_by { |m| m.teachable.lesson.number }
+    lecture_results + lesson_results.sort_by { |m| m.teachable.lesson.number }
   end
 
   def self.sort_by_date(lectures)
