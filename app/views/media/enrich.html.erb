@@ -1,66 +1,89 @@
 <div id="thyme-edit" data-medium="<%= @medium.id %>">
   <div id="video-area-edit">
-    <video id="video-edit" crossorigin="anonymous">
-      <source src="<%= @medium.video.url(host: host) %>">
+    <video id="video-edit"
+           crossorigin="anonymous">
+      <source src="<%= @medium.video_url %>">
     </video>
     <div id="video-controlBar-edit">
       <div id="video-controls-edit">
         <div id="timeline">
-          <i id="play-pause" class="material-icons clickable">
+          <i id="play-pause"
+             class="material-icons clickable">
             play_arrow
           </i>
           <span id="current-time">
             0:00:00
           </span>
-          <input type="range" id="seek-bar"
-                 min="0" max="100" step="0.1" value="0">
+          <input type="range"
+                 id="seek-bar"
+                 min="0"
+                 max="100"
+                 step="0.1"
+                 value="0">
           <span id="max-time">
             0:00:00
           </span>
         </div>
         <div id="special-buttons">
-          <i id="minus-ten" class="material-icons clickable ">
+          <i id="minus-ten"
+             class="material-icons clickable ">
             replay_10
           </i>
-          <i id="minus-five" class="material-icons clickable">
+          <i id="minus-five"
+             class="material-icons clickable">
             replay_5
           </i>
-          <i id="minus-one" class="material-icons clickable">
+          <i id="minus-one"
+             class="material-icons clickable">
             keyboard_arrow_left
           </i>
-          <i id="plus-one" class="material-icons clickable">
+          <i id="plus-one"
+             class="material-icons clickable">
             keyboard_arrow_right
           </i>
-          <i id="plus-five" class="material-icons clickable">
+          <i id="plus-five"
+             class="material-icons clickable">
             forward_5
           </i>
-          <i id="plus-ten" class="material-icons clickable">
+          <i id="plus-ten"
+             class="material-icons clickable">
             forward_10
           </i>
         </div>
         <div id="add-buttons">
-          <i id="add-item" class="material-icons clickable"
+          <i id="add-item"
+             class="material-icons clickable"
              title="Eintrag zum Inhaltsverzeichnis hinzufügen"
-             data-toggle="tooltip" data-placement="bottom">
+             data-toggle="tooltip"
+             data-placement="bottom">
             playlist_add
           </i>
-          <i id="add-reference" class="material-icons clickable ml-2"
+          <i id="add-reference"
+             class="material-icons clickable ml-2"
              title="Referenz hinzufügen"
-             data-toggle="tooltip" data-placement="bottom">
+             data-toggle="tooltip"
+             data-placement="bottom">
               insert_link
           </i>
-          <i id="add-screenshot" class="material-icons clickable ml-2"
-            title="Screenshot erstellen"
-            data-toggle="tooltip" data-placement="bottom">
+          <i id="add-screenshot"
+             class="material-icons clickable ml-2"
+             title="Screenshot erstellen"
+             data-toggle="tooltip"
+             data-placement="bottom">
             add_a_photo
           </i>
         </div>
         <div id="volume-controls-edit">
-          <i id="mute" class="material-icons clickable">
+          <i id="mute"
+             class="material-icons clickable">
             volume_up
           </i>
-          <input type="range" id="volume-bar"
-                 min="0" max="1" step="0.1" value="1">
+          <input type="range"
+                 id="volume-bar"
+                 min="0"
+                 max="1"
+                 step="0.1"
+                 value="1">
         </div>
       </div>
     </div>
@@ -73,22 +96,22 @@
         </span>
       </div>
       <div>
-        <%= link_to 'Thyme Preview', play_medium_path(@medium),
-                    class: 'btn btn-outline-light btn-sm', target: :blank %>
-        <%= link_to 'zurück zum Medium', edit_medium_path(@medium),
+        <%= link_to 'Thyme Preview',
+                    play_medium_path(@medium),
+                    class: 'btn btn-outline-light btn-sm',
+                    target: :blank %>
+        <%= link_to 'zurück zum Medium',
+                    edit_medium_path(@medium),
                     class: 'btn btn-outline-light btn-sm ml-2' %>
         <% teachable_scope = @medium.teachable.media_scope %>
         <% if teachable_scope.class.to_s == 'Course' %>
-          <%= link_to 'zum Modul', edit_or_inspect_course_path(teachable_scope),
+          <%= link_to 'zum Modul',
+                      edit_or_inspect_course_path(teachable_scope),
                       class: 'btn btn-outline-light btn-sm ml-2' %>
         <% else %>
-          <% if current_user.admin || current_user.in?(teachable_scope.editors_with_inheritance) %>
-            <%= link_to 'zur Vorlesung', edit_lecture_path(teachable_scope),
-                        class: 'btn btn-outline-light btn-sm ml-2' %>
-          <% else %>
-            <%= link_to 'zur Vorlesung', inspect_lecture_path(teachable_scope),
-                        class: 'btn btn-outline-light btn-sm ml-2' %>
-          <% end %>
+          <%= link_to 'zur Vorlesung',
+                      edit_or_inspect_lecture_path(teachable_scope),
+                      class: 'btn btn-outline-light btn-sm ml-2' %>
         <% end %>
       </div>
     </div>
@@ -103,45 +126,65 @@
         </span>
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Der Screenshot dient als kleines Vorschaubild für das Video in den verschiedenen Nutzeransichten für Medien. Ein Screenshot kann durch den 'Screenshot erstellen'-Button angelegt werden.">
+           data-content="Der Screenshot dient als kleines Vorschaubild für
+           das Video in den verschiedenen Nutzeransichten für Medien.
+           Ein Screenshot kann durch den 'Screenshot erstellen'-Button
+           angelegt werden.">
         </i>
       </div>
       <div>
-        <%= link_to 'Entfernen', remove_screenshot_path(@medium), method: :patch,
-                    remote: true, data: { confirm: 'Bist Du sicher?' },
+        <%= link_to 'Entfernen',
+                    remove_screenshot_path(@medium),
+                    method: :patch,
+                    remote: true,
+                    data: { confirm: 'Bist Du sicher?' },
                     id: 'remove-screenshot',
                     class: 'btn btn-sm btn-outline-light',
-                    style: 'display: ' + show_inline(@medium.screenshot.present?) %>
-        <%= link_to 'Exportieren', export_screenshot_path(@medium),
+                    style: 'display: ' +
+                              show_inline(@medium.screenshot.present?) %>
+        <%= link_to 'Exportieren',
+                    export_screenshot_path(@medium),
                     class: 'btn btn-outline-light btn-sm',
                     id: 'export-screenshot',
-                    style: 'display: ' + show_inline(@medium.screenshot.present?) %>
+                    style: 'display: ' +
+                              show_inline(@medium.screenshot.present?) %>
       </div>
     </div>
-    <div id="screenshot-area" class="mt-3">
-      <%= render partial: 'media/screenshot', locals: { medium: @medium } %>
+    <div id="screenshot-area"
+         class="mt-3">
+      <%= render partial: 'media/screenshot',
+                 locals: { medium: @medium } %>
     </div>
   </div>
   <div id="toc-edit">
     <div class="thyme-header bg-teal-darken-2 text-light">
         <span>
-        Inhaltsverzeichnis
+          Inhaltsverzeichnis
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
-             data-content="Das Inhaltsverzeichnis ist die Liste aller Einträge (Sätze, Definitionen etc.) aus diesem Video. Einträge können mit dem 'Item zum Inhaltsverzeichnis hinzufügen'-Button angelegt werden.
-             Im Thyme-Player wird das Inhaltsverzeichnis im oberen Bereich der interactive area angezeigt.">
+             data-content="Das Inhaltsverzeichnis ist die Liste aller
+             Einträge (Sätze, Definitionen etc.) aus diesem Video.
+             Einträge können mit dem 'Item zum Inhaltsverzeichnis hinzufügen'-
+             Button angelegt werden.
+             Im Thyme-Player wird das Inhaltsverzeichnis im oberen Bereich
+             der interactive area angezeigt.">
           </i>
         </span>
-        <%= link_to 'Exportieren', export_toc_path(@medium),
-                    class: 'btn btn-outline-light btn-sm', id: 'export-toc',
+        <%= link_to 'Exportieren',
+                    export_toc_path(@medium),
+                    class: 'btn btn-outline-light btn-sm',
+                    id: 'export-toc',
                     style: 'display: ' + show(@medium.proper_items.present?) %>
     </div>
     <div id="toc-area">
-      <%= render partial: 'media/toc', locals: { medium: @medium } %>
+      <%= render partial: 'media/toc',
+                 locals: { medium: @medium } %>
     </div>
   </div>
   <div id="meta-edit">
@@ -150,19 +193,40 @@
         Referenzen
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Referenzen sind Verweise auf andere Medien, Einträge aus anderen Medien oder externe Einträge, die in diesem Video getätigt werden. Dies können beispielsweise Verweise sein auf <ul><li>Resultate, die in Beweisen von Aussagen aus dem vorliegenden Video verwendet werden</li><li>Quizzes</li><li>SeSAM-Videos</li><li>vorangegangene Vorlesungssitzungen</li></ul>"
+           data-content="Referenzen sind Verweise auf andere Medien,
+           Einträge aus anderen Medien oder externe Einträge,
+           die in diesem Video getätigt werden.
+           Dies können beispielsweise Verweise sein auf
+           <ul>
+           <li>
+           Resultate, die in Beweisen von Aussagen aus dem vorliegenden
+           Video verwendet werden
+           </li>
+           <li>
+           Quizzes
+           </li>
+           <li>
+           SeSAM-Videos
+           </li>
+           <li>
+           vorangegangene Vorlesungssitzungen
+           </li>
+           </ul>"
            data-html="true">
         </i>
       </span>
-      <%= link_to 'Exportieren', export_references_path(@medium),
+      <%= link_to 'Exportieren',
+                  export_references_path(@medium),
                   class: 'btn btn-outline-light btn-sm',
                   id: 'export-references',
                   style: 'display: ' + show(@medium.referrals.present?) %>
     </div>
     <div id="meta-area">
-      <%= render partial: 'media/reference', locals: { medium: @medium } %>
+      <%= render partial: 'media/reference',
+                 locals: { medium: @medium } %>
     </div>
   </div>
 </div>

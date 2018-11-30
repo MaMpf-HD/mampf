@@ -123,6 +123,11 @@ class Lesson < ApplicationRecord
     Tag.all - section_tags
   end
 
+  # a lesson's items are all items that belong to media associated to the lesson
+  def items
+    media.map(&:items).flatten
+  end
+
   # Returns the list of sections of this lesson (by label), together with
   # their ids.
   # Is used in options_for_select in form helpers.

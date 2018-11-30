@@ -69,6 +69,13 @@ class Medium < ApplicationRecord
     %w[Kaviar Erdbeere Sesam Kiwi Nuesse KeksQuestion KeksQuiz]
   end
 
+  # Returns the list of media sorts, together with their index in the
+  # sort_enum array
+  # Is used in options_for_select in form helpers.
+  def self.sort_selection
+    Medium.sort_enum.map.with_index { |s,i| [s, i] }
+  end
+
   # media sorts and their german acronyms
   def self.sort_de
     { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',

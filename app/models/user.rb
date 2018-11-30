@@ -39,7 +39,15 @@ class User < ApplicationRecord
   end
 
   def self.editors
-    User.includes(:edited_courses,:edited_lectures, :edited_media).select(&:editor?)
+    User.includes(:edited_courses,:edited_lectures, :edited_media)
+        .select(&:editor?)
+  end
+
+  # Returns the array of all editors (of courses, lectures, media), together
+  # with their ids
+  # Is used in options_for_select in form helpers.
+  def self.only_editors_selection
+    User.editors.map { |e| [e.info, e.id] }
   end
 
   # returns the ARel of all users that are editors or whose id is among a
