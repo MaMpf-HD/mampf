@@ -1,0 +1,10 @@
+<% if media.present? %>
+  <div class="row">
+    <% media.each do |medium| %>
+      <div class="col-12 col-md-12 col-lg-12 col-xl-6 pb-2">
+        <%= render partial: 'media/medium',
+                   locals: { medium: medium} %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

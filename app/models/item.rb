@@ -242,7 +242,7 @@ class Item < ApplicationRecord
   def sort_long
     hash = { 'definition' => 'Def.', 'theorem' => 'Satz', 'remark' => 'Bem.',
              'lemma' => 'Lemma', 'annotation' => 'Anm.', 'example' => 'Bsp.',
-             'corollary' => 'Folgerung', 'algorithm' => 'Alg.' }
+             'corollary' => 'Folg.', 'algorithm' => 'Alg.' }
     hash[sort]
   end
 

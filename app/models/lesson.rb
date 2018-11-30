@@ -123,9 +123,10 @@ class Lesson < ApplicationRecord
     Tag.all - section_tags
   end
 
-  # a lesson's items are all items that belong to media associated to the lesson
+  # a lesson's items are all proper items (no self items, no pdf destinatins)
+  # that belong to media associated to the lesson
   def items
-    media.map(&:items).flatten
+    media.map(&:proper_items_by_time).flatten
   end
 
   # Returns the list of sections of this lesson (by label), together with
