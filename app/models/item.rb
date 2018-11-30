@@ -164,6 +164,12 @@ class Item < ApplicationRecord
     ''
   end
 
+  # special background for sections
+  def section_background
+    return 'beige;' if sort == 'section'
+    'aliceblue;'
+  end
+
   # if the associated medium contains a video, returns a link to the play
   # action, starting at the correct time
   # result might look like this:

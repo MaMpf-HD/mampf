@@ -8,13 +8,33 @@
     <% if items.present? %>
       <ul class="list-group">
         <% items.each do |i| %>
-          <li class="list-group-item" style="background: aliceblue;">
+          <li class="list-group-item"
+              style="background: <%= i.section_background %>">
             <div class="row" >
-              <div class="col-3" style="background: <%= i.background %>">
+              <div class="col-3"
+                   style="background: <%= i.background %>">
                 <%= i.short_reference %>
               </div>
-              <div class="col-9">
+              <div class="col-7">
                 <%= i.short_description %>
+              </div>
+              <div class="col-2">
+                <a href="<%= i.video_link %>"
+                   class="text-secondary new-in-lecture material-icons"
+                   style="text-decoration:none; font-size: 1em"
+                   data-toggle="tooltip"
+                   title="zum Video"
+                   target="_blank">
+                  video_library
+                </a>
+                <a href="<%= i.manuscript_link %>"
+                   class="text-secondary new-in-lecture material-icons ml-2"
+                   style="text-decoration:none; font-size: 1em;"
+                   data-toggle="tooltip"
+                   title="zum Manuskript"
+                   target="_blank">
+                  library_books
+                </a>
               </div>
             </div>
           </li>
