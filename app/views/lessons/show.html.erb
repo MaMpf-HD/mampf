@@ -19,22 +19,22 @@
   </div>
 </div>
 <div class="row mb-2">
-  <div class="col-12 col-md-12 col-lg-6 pt-3">
+  <div class="col-12 col-xl-6 pt-3">
     <%= render partial: 'items/items',
                locals: { items: @lesson.items } %>
   </div>
-  <div class="col-12 col-md-12 col-lg-6 pt-3">
+  <div class="col-12 col-xl-6 pt-3">
     <% unless @lesson.tags.empty? && @lesson.sections.empty? %>
       <div class="row">
         <% unless @lesson.tags.empty? %>
-          <div class="col-12 col-lg-6">
+          <div class="col-12 col-xl-6">
             <%= render partial: 'tags/tags',
                        locals: { related_tags: @lesson.tags,
                                  tags_description: 'Verknüpfte Begriffe'} %>
           </div>
         <% end %>
         <% unless @lesson.sections.empty? %>
-          <div class="col-12 col-lg-6">
+          <div class="col-12 col-xl-6">
             <%= render partial: 'sections/sections',
                        locals: { sections: @lesson.sections } %>
           </div>
