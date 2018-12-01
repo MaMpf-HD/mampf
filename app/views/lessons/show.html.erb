@@ -19,11 +19,11 @@
   </div>
 </div>
 <div class="row mb-2">
-  <div class="col-12 col-md-8 col-lg-6 pt-3">
+  <div class="col-12 col-md-12 col-lg-6 pt-3">
     <%= render partial: 'items/items',
                locals: { items: @lesson.items } %>
   </div>
-  <div class="col-12 col-md-4 col-lg-6 pt-3">
+  <div class="col-12 col-md-12 col-lg-6 pt-3">
     <% unless @lesson.tags.empty? && @lesson.sections.empty? %>
       <div class="row">
         <% unless @lesson.tags.empty? %>
