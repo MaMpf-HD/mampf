@@ -46,7 +46,7 @@ class Section < ApplicationRecord
   end
 
   def items_by_time
-    lessons.order(:date).map(&:items).flatten
+    lessons.order(:date).map(&:items).flatten.select { |i| i.section == self }
   end
 
   private
