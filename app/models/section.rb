@@ -45,6 +45,32 @@ class Section < ApplicationRecord
     lessons.map(&:media).flatten
   end
 
+  # returns the previous section, taking into account that this is may be
+  # within the previous chapter
+  def previous
+    return higher_item unless first?
+    return if chapter.first?
+    # actual previous chapter may not have any sections
+    previous_chapter = chapter.higher_items.find { |c| c.sections.present? }
+    return unless previous_chapter.present?
+    potential_last = previous_chapter.sections.last
+    return potential_last if potential_last.last?
+    potential_last.lower_items.last
+  end
+
+  # returns the next section, taking into account that this is may be
+  # within the next chapter
+  def next
+    return lower_item unless last?
+    return if chapter.last?
+    # actual next chapter may not have any sections
+    next_chapter = chapter.lower_items.find { |c| c.sections.present? }
+    return unless next_chapter.present?
+    potential_first = next_chapter.sections.first
+    return potential_first if potential_first.first?
+    potential_first.higher_items.first
+  end
+
   def items_by_time
     lessons.order(:date).map(&:items).flatten.select { |i| i.section == self }
   end

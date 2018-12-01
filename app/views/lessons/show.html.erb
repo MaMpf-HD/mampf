@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-12">
+  <div class="col-10">
     <h2>
       <span class="badge badge-secondary mr-3">
         Sitzung
@@ -16,6 +16,26 @@
         </span>
       <% end %>
     </h2>
+  </div>
+  <div class="col-2 text-right ">
+    <% if @lesson.previous.present? %>
+      <a href="<%= lesson_path(@lesson.previous) %>"
+         class="text-secondary material-icons mr-2"
+         style="text-decoration:none; font-size: 3em;"
+         data-toggle="tooltip"
+         title="vorige Sitzung">
+        keyboard_arrow_left
+      </a>
+    <% end %>
+    <% if @lesson.next.present? %>
+      <a href="<%= lesson_path(@lesson.next) %>"
+         class="text-secondary material-icons"
+         style="text-decoration:none; font-size: 3em;"
+         data-toggle="tooltip"
+         title="nächste Sitzung">
+        keyboard_arrow_right
+      </a>
+    <% end %>
   </div>
 </div>
 <div class="row mb-2">

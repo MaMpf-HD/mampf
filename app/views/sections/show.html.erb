@@ -1,11 +1,31 @@
 <div class="row">
-  <div class="col-12">
+  <div class="col-10">
     <h2>
       <span class="badge badge-secondary mr-3">
         Abschnitt
       </span>
       <%= @section.to_label %>
     </h2>
+  </div>
+  <div class="col-2 text-right ">
+    <% if @section.previous.present? %>
+      <a href="<%= section_path(@section.previous) %>"
+         class="text-secondary material-icons mr-2"
+         style="text-decoration:none; font-size: 3em;"
+         data-toggle="tooltip"
+         title="voriger Abschnitt">
+        keyboard_arrow_left
+      </a>
+    <% end %>
+    <% if @section.next.present? %>
+      <a href="<%= section_path(@section.next) %>"
+         class="text-secondary material-icons"
+         style="text-decoration:none; font-size: 3em;"
+         data-toggle="tooltip"
+         title="nächster Abschnitt">
+        keyboard_arrow_right
+      </a>
+    <% end %>
   </div>
 </div>
 <div class="row">

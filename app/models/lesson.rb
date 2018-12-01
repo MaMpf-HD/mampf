@@ -96,6 +96,14 @@ class Lesson < ApplicationRecord
     lecture.term
   end
 
+  def previous
+    lecture.lessons.find { |l| l.number == number - 1 }
+  end
+
+  def next
+    lecture.lessons.find { |l| l.number == number + 1 }
+  end
+
   # the number of a lesson is calculated by its date relative to the other
   # lessons
   def number
