@@ -21,7 +21,9 @@
                     <div class="col-6">
                       <span class="text-dark">
                         <strong>
-                          <%= s.to_label %>
+                          <%= link_to s.to_label,
+                                      section_path(s),
+                                      class: 'text-dark' %>
                         </strong>
                       </span>
                     </div>
