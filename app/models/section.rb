@@ -41,6 +41,14 @@ class Section < ApplicationRecord
     displayed_number + '. ' + title
   end
 
+  def media
+    lessons.map(&:media).flatten
+  end
+
+  def items_by_time
+    lessons.order(:date).map(&:items).flatten
+  end
+
   private
 
   def touch_lecture

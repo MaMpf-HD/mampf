@@ -21,21 +21,42 @@
     <% end %>
   </div>
 </div>
-<% unless @section.tags.empty? && @section.lessons.empty? %>
-  <div class="row pb-3">
-    <% unless @section.tags.empty? %>
-      <div class="col-12 col-md-6 col-lg-4 pt-3">
-        <%= render partial: 'tags/tags',
-                   locals: { related_tags: @section.tags,
-                             tags_description: 'Verknüpfte Begriffe' } %>
+<div class="row mb-2">
+  <div class="col-12 col-xl-6 pt-3">
+    <%= render partial: 'items/items',
+               locals: { items: @section.items_by_time } %>
+  </div>
+  <div class="col-12 col-xl-6 pt-3">
+    <% unless @section.tags.empty? && @section.lessons.empty? %>
+      <div class="row">
+        <% unless @section.tags.empty? %>
+          <div class="col-12 col-xl-6">
+            <%= render partial: 'tags/tags',
+                       locals: { related_tags: @section.tags,
+                                 tags_description: 'Verknüpfte Begriffe'} %>
+          </div>
+        <% end %>
+        <% unless @section.lessons.empty? %>
+          <div class="col-12 col-xl-6">
+            <%= render partial: 'lessons/lessons',
+                       locals: { lessons: @section.lessons,
+                                 lessons_description: 'Verknüpfte Sitzungen' } %>
+          </div>
+        <% end %>
       </div>
     <% end %>
-    <% unless @section.lessons.empty? %>
-      <div class="col-12 col-md-6 col-lg-4 pt-3">
-        <%= render partial: 'lessons/lessons',
-                   locals: { lessons: @section.lessons,
-                             lessons_description: 'Verknüpfte Sitzungen' } %>
+    <% unless @section.media.empty? %>
+      <div class="row pt-3">
+        <div class="col-12">
+          <h5>
+            Verknüpfte Medien
+          </h5>
+        </div>
+        <div class="col-12">
+          <%= render partial: 'lessons/media',
+                     locals: { media: @section.media} %>
+        </div>
       </div>
     <% end %>
   </div>
-<% end %>
+</div>
