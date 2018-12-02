@@ -83,8 +83,7 @@ $(document).on 'turbolinks:load', ->
       ]
       layout:
         name: 'cose'
-        nodeRepulsion: (node) ->
-          100000000
+        nodeRepulsion: 10000000
         nodeDimensionsIncludeLabels: false)
 
   $(document).on 'click', '#new-tag-button', ->
