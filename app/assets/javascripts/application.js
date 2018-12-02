@@ -18,7 +18,5 @@
 //= require js-routes
 //= require selectize
 //= require jquery.fileDownload
-//= require cytoscape/dist/cytoscape
-//= require cytoscape-cose-bilkent/cytoscape-cose-bilkent
 //= require_tree .
 //= require turbolinks
