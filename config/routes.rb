@@ -50,6 +50,7 @@ Rails.application.routes.draw do
   get 'referrals/list_items', to: 'referrals#list_items', as: 'list_items'
   get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
   get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
+  get 'tags/:id/display_cyto/', to: 'tags#display_cyto', as: 'display_cyto_tag'
   resources :tags
   get 'lessons/:id/inspect/', to: 'lessons#inspect', as: 'inspect_lesson'
   resources :lessons, except: [:index]

@@ -59,6 +59,34 @@ $(document).on 'turbolinks:load', ->
     inputCourses.selectize.setValue()
     return
 
+  $cyContainer = $('#cy')
+  if $cyContainer.length > 0
+    cy = cytoscape(
+      container: $cyContainer
+      elements: $cyContainer.data('elements')
+      style: [
+        {
+          selector: 'node'
+          style:
+            'background-color': 'data(background)'
+            'label': 'data(label)'
+            'color': 'data(color)'
+        }
+        {
+          selector: 'edge'
+          style:
+            'width': 3
+            'line-color': '#ccc'
+            'target-arrow-color': '#ccc'
+            'target-arrow-shape': 'triangle'
+        }
+      ]
+      layout:
+        name: 'cose'
+        nodeRepulsion: (node) ->
+          100000000
+        nodeDimensionsIncludeLabels: false)
+
   $(document).on 'click', '#new-tag-button', ->
     $.ajax Routes.tag_modal_path(),
       type: 'GET'
@@ -75,4 +103,5 @@ $(document).on 'turbolinks:load', ->
 
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#new-tag-button'
+  $('#cy').empty()
   return

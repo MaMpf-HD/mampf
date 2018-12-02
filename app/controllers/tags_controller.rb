@@ -1,6 +1,7 @@
 # TagsController
 class TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect]
+  before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect,
+                                 :display_cyto]
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]
@@ -16,10 +17,21 @@ class TagsController < ApplicationController
     @related_tags = current_user.filter_tags(@tag.related_tags)
     @tags_in_neighbourhood = current_user.filter_tags(@tag
                                                         .tags_in_neighbourhood)
+    @graph_elements = Tag.to_cytoscape([@tag] + @related_tags +
+                                         @tags_in_neighbourhood, @tag)
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: 'KeksQuestion'))
     render layout: 'application'
+  end
+
+  def display_cyto
+    @related_tags = current_user.filter_tags(@tag.related_tags)
+    @tags_in_neighbourhood = current_user.filter_tags(@tag
+                                                        .tags_in_neighbourhood)
+    @graph_elements = Tag.to_cytoscape([@tag] + @related_tags +
+                                         @tags_in_neighbourhood, @tag)
+    render layout: 'cytoscape'
   end
 
   def inspect

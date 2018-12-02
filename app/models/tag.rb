@@ -36,6 +36,24 @@ class Tag < ApplicationRecord
     Tag.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
+  def self.to_cytoscape(tags, marked_tag)
+    result = []
+    tags.each do |t|
+      result.push({ data:  { id: t.id.to_s,
+                             label: t.title,
+                             color: t == marked_tag ? '#f00' : '#000',
+                             background: t == marked_tag ? '#f00' : '#666' } })
+    end
+    tags.each do |t|
+      (t.related_tags & tags).each do |r|
+        result.push( { data: { id: "#{t.id}-#{r.id}",
+                               source: t.id,
+                               target: r.id } })
+      end
+    end
+    result
+  end
+
   # returns the ARel of all tags or whose id is among a given array of ids
   # search params is a hash having keys :all_tags, :tag_ids
   def self.search_tags(search_params)
