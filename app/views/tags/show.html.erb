@@ -5,9 +5,33 @@
         Begriff<%= ' #' + @tag.id.to_s %>
       </span>
       <%= @tag.title %></h2>
-      <%= link_to 'Map',
-                  display_cyto_tag_path(@tag),
-                  target: :_blank%>
+  </div>
+</div>
+<div class="row mt-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header bg-green-darken-3">
+        <div class="row">
+          <div class="col-6">
+            <h5 class="text-light">
+              MaMpf-Map
+            </h5>
+          </div>
+          <div class="col-6 text-right">
+            <%= link_to 'in externem Tab rendern',
+                        display_cyto_tag_path(@tag),
+                        class: 'btn btn-outline-light',
+                        target: :_blank%>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="cy"
+             data-elements="<%= @graph_elements.to_json %>"
+             data-tag="<%= @tag.id %>">
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <% unless @related_tags.empty? && @tags_in_neighbourhood.empty? &&
@@ -36,31 +60,6 @@
     <% end %>
   </div>
 <% end %>
-<div class="row mt-2">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header bg-green-darken-3">
-        <div class="row">
-          <div class="col-6">
-            <h5 class="text-light">
-              MaMpf-Map
-            </h5>
-          </div>
-          <div class="col-6 text-right">
-            <%= link_to 'in externem Tab rendern',
-                        display_cyto_tag_path(@tag),
-                        class: 'btn btn-outline-light',
-                        target: :_blank%>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div id="cy" data-elements="<%= @graph_elements.to_json %>">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 <% unless @media.empty? %>
   <div class="row">
     <div class="col-12 pt-5">

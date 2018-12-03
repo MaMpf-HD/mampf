@@ -2,9 +2,6 @@
   "name": "mampf",
   "private": true,
   "dependencies": {
-    "cytoscape": "^3.2.21",
-    "cytoscape-cola": "^2.3.0",
-    "cytoscape-cose-bilkent": "^4.0.0",
-    "cytoscape-spread": "^3.0.0"
+    "cytoscape": "^3.2.21"
   }
 }

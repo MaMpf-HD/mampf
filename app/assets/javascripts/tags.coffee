@@ -80,11 +80,35 @@ $(document).on 'turbolinks:load', ->
             'target-arrow-color': '#ccc'
             'target-arrow-shape': 'triangle'
         }
+        {
+          selector: '.hovering'
+          style:
+            'font-size': '2em'
+            'background-color': 'green'
+            'color': 'green'
+        }
       ]
       layout:
         name: 'cose'
         nodeRepulsion: 10000000
+  #      componentSpacing: 1000000
+  #      nodeOverlap: 10000
+  #      idealEdgeLength: (edge) ->
+  #        10
+  #      nestingFactor: 10
+  #      gravity: 0.5
         nodeDimensionsIncludeLabels: false)
+    cy.on 'mouseover', 'node', (evt) ->
+      node = evt.target;
+      node.addClass('hovering')
+
+    cy.on 'mouseout', 'node', (evt) ->
+      node = evt.target;
+      node.removeClass('hovering')
+
+    cy.on 'tap', 'node', (evt) ->
+      node = evt.target;
+      window.location.href = Routes.tag_path(node.id())
 
   $(document).on 'click', '#new-tag-button', ->
     $.ajax Routes.tag_modal_path(),
