@@ -3,6 +3,11 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 #cy {
-  height: 80vh;
   width: 100%;
+  height: 70vh;
+}
+
+#relatedTagsBody {
+  overflow-y: scroll;
+  height: calc(70vh + 20px);
 }

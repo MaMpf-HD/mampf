@@ -87,6 +87,13 @@ $(document).on 'turbolinks:load', ->
             'background-color': 'green'
             'color': 'green'
         }
+        {
+          selector: '.selected'
+          style:
+            'font-size': '2em'
+            'background-color': 'green'
+            'color': 'green'
+        }
       ]
       layout:
         name: 'cose'
@@ -109,6 +116,36 @@ $(document).on 'turbolinks:load', ->
     cy.on 'tap', 'node', (evt) ->
       node = evt.target;
       window.location.href = Routes.tag_path(node.id())
+
+    # mouseenter over related tag -> colorize cytoscape node
+    $('[id^="related-tag_"]').on 'mouseenter', ->
+      tagId = $(this).data('id')
+      cy.$id(tagId).addClass('selected')
+      return
+
+    # mouseleave over related tag -> restore original color of cytoscape node
+    $('[id^="related-tag_"]').on 'mouseleave', ->
+      tagId = $(this).data('id')
+      cy.$id(tagId).removeClass('selected')
+      return
+
+    # $('#inputRelatedTag').selectize(
+    #   options: $('#inputRelatedTag').data('tags')
+    #   placeholder: 'verwandten Tag suchen'
+    #   plugins: ['remove_button']
+    # )
+
+    # inputRelatedTag = document.getElementById('inputRelatedTag')
+    # if inputRelatedTag?
+    #   inputRelatedTagSel = inputRelatedTag.selectize
+    #   inputRelatedTagSel.on 'item_add', (value) ->
+    #     cy.$id(value).addClass('selected')
+    #     return
+    #   inputRelatedTagSel.on 'item_remove', (value) ->
+    #     cy.$id(value).removeClass('selected')
+    #     return
+    # inputRelatedTagSel.addOption($(inputRelatedTag).data('tags'))
+    # inputRelatedTagSel.refreshOptions
 
   $(document).on 'click', '#new-tag-button', ->
     $.ajax Routes.tag_modal_path(),

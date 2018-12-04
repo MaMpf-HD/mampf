@@ -17,8 +17,8 @@ class TagsController < ApplicationController
     @related_tags = current_user.filter_tags(@tag.related_tags)
     @tags_in_neighbourhood = current_user.filter_tags(@tag
                                                         .tags_in_neighbourhood)
-    @graph_elements = Tag.to_cytoscape([@tag] + @related_tags +
-                                         @tags_in_neighbourhood, @tag)
+    @tags = [@tag] + @related_tags + @tags_in_neighbourhood
+    @graph_elements = Tag.to_cytoscape(@tags, @tag)
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: 'KeksQuestion'))
