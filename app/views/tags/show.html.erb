@@ -34,36 +34,66 @@
     </div>
   </div>
   <div class="col-3">
-    <div class="card mb-2 bg-green-lighten-4" id="relatedTags">
-      <div class="card-header bg-green-darken-3 text-light">
-        <h5>
-          Verwandte Tags
-        </h5>
+    <div class="row">
+      <div class="col-12">
+        <div class="card mb-2 bg-green-lighten-4" id="relatedTags">
+          <div class="card-header bg-green-darken-3 text-light">
+            <h5>
+              Verwandte Tags
+            </h5>
+          </div>
+          <div class="card-body" id="relatedTagsBody">
+            <h6>
+              Verknüpfte Begriffe
+            </h6>
+            <% @related_tags.natural_sort_by(&:title).each do |t| %>
+              <%= link_to t.short_title,
+                          tag_path(t),
+                          class: "badge badge-light",
+                          id: 'related-' + dom_id(t),
+                          data: { toggle: 'tooltip', placement: 'top', id: t.id },
+                          title: t.title %>
+              <br>
+            <% end %>
+            <h6 class="mt-2">
+              Begriffe im weiteren Umfeld
+            </h6>
+            <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
+              <%= link_to t.short_title,
+                          tag_path(t),
+                          class: "badge badge-light",
+                          id: 'related-' + dom_id(t),
+                          data: { toggle: 'tooltip', placement: 'top', id: t.id},
+                          title: t.title %>
+              <br>
+            <% end %>
+          </div>
+        </div>
       </div>
-      <div class="card-body" id="relatedTagsBody">
-        <h6>
-          Verknüpfte Begriffe
-        </h6>
-        <% @related_tags.natural_sort_by(&:title).each do |t| %>
-          <%= link_to t.short_title,
-                      tag_path(t),
-                      class: "badge badge-light",
-                      id: 'related-' + dom_id(t),
-                      data: { toggle: 'tooltip', placement: 'top', id: t.id },
-                      title: t.title %>
-          <br>
-        <% end %>
-        <h6 class="mt-2">
-        Begriffe im weiteren Umfeld
-        </h6>
-        <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
-          <%= link_to t.short_title,
-                      tag_path(t),
-                      class: "badge badge-light",
-                      id: 'related-' + dom_id(t),
-                      data: { toggle: 'tooltip', placement: 'top', id: t.id},
-                      title: t.title %>
-          <br>
+      <div class="col-12">
+        <% unless @lectures.empty? %>
+          <div id="relatedSections">
+            <div class="card bg-brown-lighten-4">
+              <div class="card-header bg-brown-darken-2">
+                <h5 class="text-light">
+                  Abschnitte
+                </h5>
+              </div>
+              <div class="card-body">
+                <ul>
+                  <% @tag.sections.each do |s| %>
+                    <% if current_user.lectures.include?(s.lecture) %>
+                      <li>
+                        <%= s.lecture.short_title + ': ' %>
+                        <%= link_to s.to_label, section_path(s),
+                                    class: 'text-dark' %>
+                      </li>
+                    <% end %>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>
@@ -71,18 +101,11 @@
 </div>
 <% unless @media.empty? %>
   <div class="row mt-2">
-    <div class="col-9">
+    <div class="col-12">
       <h5>
         Verknüpfte Medien
       </h5>
       <%= render partial: 'media/media', locals: { media: @media} %>
-    </div>
-    <div class="col-3">
-      <% unless @lectures.empty? %>
-        <%= render partial: 'lectures/lectures',
-                 locals: { lectures: @lectures,
-                           type: 'lecture_info'} %>
-      <% end %>
     </div>
   </div>
 <% end %>

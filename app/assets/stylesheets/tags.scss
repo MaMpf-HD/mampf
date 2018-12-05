@@ -7,7 +7,12 @@
   height: 70vh;
 }
 
+#relatedSections {
+  height: 20vh;
+}
+
 #relatedTagsBody {
   overflow-y: scroll;
-  height: calc(70vh + 20px);
+  height: calc(50vh + 20px);
 }
+
