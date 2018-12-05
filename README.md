@@ -20,7 +20,7 @@ the whole MaMpf database.
 
 ![thyme](public/thyme.png)
 
-MaMpf is equipeed with a tagging system and rich visualisations.
+MaMpf is equipped with a tagging system and rich visualisations for content relations.
 
 ![tags](public/tag_visualisation.png)
 
