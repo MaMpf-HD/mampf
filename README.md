@@ -20,6 +20,10 @@ the whole MaMpf database.
 
 ![thyme](public/thyme.png)
 
+MaMpf is equipeed with a tagging system and rich visualisations.
+
+![tags](public/tag_visualisation.png)
+
 ThymE is lean and makes use of WebVTT and HTML5 video capabilites
 of modern browsers. A sample hypervideo can be found
 [here](https://mampf.mathi.uni-heidelberg.de/media/384/play).
