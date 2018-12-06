@@ -10,10 +10,10 @@
 <div class="card-body p-2">
   <div class="form-group">
     <%= f.label :title, 'Titel' %>
-    <i class="far fa-question-circle helpdesk" 
-       tabindex="-1"  
-       data-toggle="popover" data-trigger="focus" 
-       title="Info" 
+    <i class="far fa-question-circle helpdesk"
+       tabindex="-1"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
        data-content="Hier kannst Du den Titel des Tags eingeben.">
      </i>
     <%= f.text_field :title, { class: 'form-control',
@@ -22,22 +22,15 @@
     <div class="invalid-feedback" id="tag-title-error-<%= tag.id.to_i %>">
     </div>
   </div>
+  <% if new_tag %>
   <div class="form-group">
     <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
-    <i class="far fa-question-circle helpdesk" 
-               tabindex="-1"  
-               data-toggle="popover" data-trigger="focus" 
-               title="Info" 
+    <i class="far fa-question-circle helpdesk"
+               tabindex="-1"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
                data-content="Die Tags bilden einen Graphen. Verknüpfte Tags sind genau die Nachbarn eines Tags. Diese kannst Du hier auswählen.">
     </i>
-    <% unless new_tag %>
-      <a class="fas fa-plus-circle clickable"
-         id="new-tag-button"
-         data-toggle="tooltip" title="Tag anlegen"
-         data-tag="<%= tag.id %>"
-         data-from="tag">
-      </a>
-    <% end %>
     <%= f.select :related_tag_ids,
                  options_for_select(Tag.where.not(id: tag.id)
                                        .map { |t| [t.title, t.id]},
@@ -49,12 +42,13 @@
          id="tag-related-tags-error-<%= tag.id.to_i %>">
     </div>
   </div>
+  <% end %>
   <div class="form-group">
     <%= f.label :course_ids, 'Module' %>
-    <i class="far fa-question-circle helpdesk" 
-       tabindex="-1"  
-       data-toggle="popover" data-trigger="focus" 
-       title="Info" 
+    <i class="far fa-question-circle helpdesk"
+       tabindex="-1"
+       data-toggle="popover" data-trigger="focus"
+       title="Info"
        data-content="Hier kannst Du auswählen, zu welchen Modulen dieser Tag assoziiert sein soll.">
     </i>
     <%= f.select :course_ids,
@@ -71,11 +65,11 @@
   <div class="row">
     <div class="col-12">
       Zusätzliche Vorlesungen
-      <i class="far fa-question-circle helpdesk" 
-         tabindex="-1"  
-         data-toggle="popover" data-trigger="focus" 
-         title="Info" 
-         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag 
+      <i class="far fa-question-circle helpdesk"
+         tabindex="-1"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag
          nicht zu dem übergeordneten Modul assoziiert ist, jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.">
       </i>
     </div>
@@ -94,11 +88,11 @@
   <div class="row">
     <div class="col-12">
       Fehlende Vorlesungen
-      <i class="far fa-question-circle helpdesk" 
-         tabindex="-1"  
-         data-toggle="popover" data-trigger="focus" 
-         title="Info" 
-         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag 
+      <i class="far fa-question-circle helpdesk"
+         tabindex="-1"
+         data-toggle="popover" data-trigger="focus"
+         title="Info"
+         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag
          zu dem übergeordneten Modul assoziiert ist, jedoch in keinem Abschnitt der entsprechenden Vorlesung auftaucht.">
         </i>
     </div>

@@ -59,6 +59,7 @@ $(document).on 'turbolinks:load', ->
     inputCourses.selectize.setValue()
     return
 
+  # container for cytoscape view for standard users
   $cyContainer = $('#cy')
   if $cyContainer.length > 0
     cy = cytoscape(
@@ -98,13 +99,8 @@ $(document).on 'turbolinks:load', ->
       layout:
         name: 'cose'
         nodeRepulsion: 10000000
-  #      componentSpacing: 1000000
-  #      nodeOverlap: 10000
-  #      idealEdgeLength: (edge) ->
-  #        10
-  #      nestingFactor: 10
-  #      gravity: 0.5
         nodeDimensionsIncludeLabels: false)
+
     cy.on 'mouseover', 'node', (evt) ->
       node = evt.target;
       node.addClass('hovering')
@@ -129,23 +125,55 @@ $(document).on 'turbolinks:load', ->
       cy.$id(tagId).removeClass('selected')
       return
 
-    # $('#inputRelatedTag').selectize(
-    #   options: $('#inputRelatedTag').data('tags')
-    #   placeholder: 'verwandten Tag suchen'
-    #   plugins: ['remove_button']
-    # )
+  # container for cytoscape view for standard users
+  $cyEditContainer = $('#cyEdit')
+  if $cyEditContainer.length > 0
+    cyEdit = cytoscape(
+      container: $cyEditContainer
+      elements: $cyEditContainer.data('elements')
+      style: [
+        {
+          selector: 'node'
+          style:
+            'background-color': 'data(background)'
+            'label': 'data(label)'
+            'color': 'data(color)'
+        }
+        {
+          selector: 'edge'
+          style:
+            'width': 3
+            'line-color': '#ccc'
+            'target-arrow-color': '#ccc'
+            'target-arrow-shape': 'triangle'
+        }
+        {
+          selector: '.hovering'
+          style:
+            'font-size': '2em'
+            'background-color': 'green'
+            'color': 'green'
+        }
+        {
+          selector: '.selected'
+          style:
+            'font-size': '2em'
+            'background-color': 'green'
+            'color': 'green'
+        }
+      ]
+      layout:
+        name: 'cose'
+        nodeRepulsion: 10000000
+        nodeDimensionsIncludeLabels: false)
 
-    # inputRelatedTag = document.getElementById('inputRelatedTag')
-    # if inputRelatedTag?
-    #   inputRelatedTagSel = inputRelatedTag.selectize
-    #   inputRelatedTagSel.on 'item_add', (value) ->
-    #     cy.$id(value).addClass('selected')
-    #     return
-    #   inputRelatedTagSel.on 'item_remove', (value) ->
-    #     cy.$id(value).removeClass('selected')
-    #     return
-    # inputRelatedTagSel.addOption($(inputRelatedTag).data('tags'))
-    # inputRelatedTagSel.refreshOptions
+    cyEdit.on 'mouseover', 'node', (evt) ->
+      node = evt.target;
+      node.addClass('hovering')
+
+    cyEdit.on 'mouseout', 'node', (evt) ->
+      node = evt.target;
+      node.removeClass('hovering')
 
   $(document).on 'click', '#new-tag-button', ->
     $.ajax Routes.tag_modal_path(),

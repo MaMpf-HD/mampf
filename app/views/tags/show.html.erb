@@ -39,13 +39,10 @@
         <div class="card mb-2 bg-green-lighten-4" id="relatedTags">
           <div class="card-header bg-green-darken-3 text-light">
             <h5>
-              Verwandte Tags
+              Verknüpfte Tags
             </h5>
           </div>
           <div class="card-body" id="relatedTagsBody">
-            <h6>
-              Verknüpfte Begriffe
-            </h6>
             <% @related_tags.natural_sort_by(&:title).each do |t| %>
               <%= link_to t.short_title,
                           tag_path(t),
@@ -79,7 +76,8 @@
                   Abschnitte
                 </h5>
               </div>
-              <div class="card-body">
+              <div class="card-body"
+                   id="relatedSectionsBody">
                 <ul>
                   <% @tag.sections.each do |s| %>
                     <% if current_user.lectures.include?(s.lecture) %>

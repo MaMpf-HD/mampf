@@ -7,13 +7,31 @@
   height: 70vh;
 }
 
+#cyEdit {
+  width: 100%;
+  height: 70vh;
+}
+
 #relatedSections {
   height: 20vh;
-    overflow-y: scroll;
 }
+
+#relatedSectionsBody {
+  overflow-y: scroll;
+}
+
 
 #relatedTagsBody {
   overflow-y: scroll;
   height: calc(50vh + 20px);
+}
+
+#relatedTagsBodyEdit {
+  overflow-y: scroll;
+  height: calc(70vh + 30px);
+}
+
+#tagEditActionBody {
+  height: calc(70vh + 30px);
 }
 

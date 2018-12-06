@@ -1,30 +1,147 @@
-<div class="row p-2">
-  <div class="col-<%= new_tag ? '12' : '6'%>">
-    <div class="card bg-light mb-4" id="tag-basics-edit-<%= tag.id.to_i %>">
-      <%= render partial: 'tags/basics',
-                 locals: { tag: tag, f: f, new_tag: new_tag, from: from } %>
+<% if new_tag %>
+  <div class="row p-2">
+    <div class="col-12">
+      <div class="card bg-light mb-4"
+           id="tag-basics-edit-<%= tag.id.to_i %>">
+        <%= render partial: 'tags/basics',
+                   locals: { tag: tag,
+                             f: f,
+                             new_tag: true,
+                             from: from } %>
+      </div>
     </div>
   </div>
-  <% unless new_tag %>
+<% else %>
+  <div class="row p-2">
     <div class="col-6">
-      <div class="row">
-        <div class="col-12 mb-4">
-          <%= render partial: 'media/card',
-                     locals: { media: tag.media, small: false,
-                               collapsible: false,
-                               teachable_type: nil,
-                               teachable_id: nil,
-                               tag_ids: [tag.id],
-                               inspection: false } %>
+      <div class="card">
+        <div class="card-header bg-green-darken-3">
+          <div class="row">
+            <div class="col-3">
+              <h5 class="text-light">
+               MaMpf-Map
+              </h5>
+            </div>
+            <div class="col-9 text-right">
+              <%= link_to 'in externem Tab rendern',
+                          display_cyto_tag_path(tag),
+                          class: 'btn btn-outline-light',
+                          target: :_blank%>
+            </div>
+          </div>
         </div>
-        <div class="col-12">
-          <%= render partial: 'sections/card',
-                     locals: { sections: tag.sections, inspection: false } %>
+        <div class="card-body">
+          <div id="cyEdit"
+               data-elements="<%= @graph_elements.to_json %>"
+               data-tag="<%= tag.id %>">
+          </div>
         </div>
-        <div class="col-12">
-          <%= render partial: 'lessons/card',
-                     locals: { lessons: tag.lessons, inspection: false } %>
-        </div>
+      </div>
     </div>
-  <% end %>
-</div>
+    <div class="col-2">
+      <div class="card mb-2 bg-green-lighten-4" id="relatedTagsEdit">
+        <div class="card-header bg-green-darken-3 text-light">
+          <div class="row">
+            <div class="col-9">
+              <h5>
+                Verknüpfte Tags
+              </h5>
+            </div>
+            <div class="col-3 text-right">
+              <a href="#"
+                 class="text-light new-in-lecture"
+                 data-remote="true"
+                 data-toggle="tooltip" title="Tags hinzufügen/entfernen">
+                <i class="far fa-edit">
+                </i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body" id="relatedTagsBodyEdit">
+          <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
+            <%= link_to t.short_title,
+                        tag_path(t),
+                        class: "badge badge-light",
+                        id: 'related-' + dom_id(t),
+                        data: { toggle: 'tooltip', placement: 'top', id: t.id },
+                        title: t.title %>
+            <br>
+          <% end %>
+        </div>
+      </div>
+    </div>
+        <div class="col-4">
+      <div class="card mb-2"
+           id="tagEditAction">
+        <div class="card-header bg-mdb-color-darken-2 text-light">
+          <h5>
+            Aktion
+          </h5>
+        </div>
+        <div class="card-body"
+             id="tagEditActionBody">
+            <div class="form-group">
+    <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
+    <i class="far fa-question-circle helpdesk"
+               tabindex="-1"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="Die Tags bilden einen Graphen. Verknüpfte Tags sind genau die Nachbarn eines Tags. Diese kannst Du hier auswählen.">
+    </i>
+    <% unless new_tag %>
+      <a class="fas fa-plus-circle clickable"
+         id="new-tag-button"
+         data-toggle="tooltip" title="Tag anlegen"
+         data-tag="<%= tag.id %>"
+         data-from="tag">
+      </a>
+    <% end %>
+    <%= f.select :related_tag_ids,
+                 options_for_select(Tag.where.not(id: tag.id).natural_sort_by(&:title)
+                                       .map { |t| [t.title, t.id]},
+                                    tag.related_tags.natural_sort_by(&:title).map(&:id)),
+                 {}, { multiple: true,
+                       class: 'selectize',
+                       data: { id: tag.id.to_i } } %>
+    <div class="invalid-feedback"
+         id="tag-related-tags-error-<%= tag.id.to_i %>">
+    </div>
+  </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row p-2">
+    <div class="col-6">
+      <div class="card bg-light mb-4"
+           id="tag-basics-edit-<%= tag.id.to_i %>">
+        <%= render partial: 'tags/basics',
+                   locals: { tag: tag,
+                             f: f,
+                             new_tag: false,
+                             from: from } %>
+      </div>
+    </div>
+    <div class="col-6">
+      <%= render partial: 'media/card',
+                 locals: { media: tag.media,
+                           small: false,
+                           collapsible: false,
+                           teachable_type: nil,
+                           teachable_id: nil,
+                           tag_ids: [tag.id],
+                           inspection: false } %>
+    </div>
+    <div class="col-6">
+      <%= render partial: 'sections/card',
+                 locals: { sections: tag.sections,
+                           inspection: false } %>
+    </div>
+    <div class="col-6">
+      <%= render partial: 'lessons/card',
+                 locals: { lessons: tag.lessons,
+                           inspection: false } %>
+    </div>
+  </div>
+<% end %>

@@ -26,9 +26,9 @@ class TagsController < ApplicationController
   end
 
   def display_cyto
-    @related_tags = current_user.filter_tags(@tag.related_tags)
-    @tags_in_neighbourhood = current_user.filter_tags(@tag
-                                                        .tags_in_neighbourhood)
+    user_tags = current_user.lecture_tags
+    @related_tags = @tag.related_tags & current_user.lecture_tags
+    @tags_in_neighbourhood = Tag.related_tags(@related_tags) & user_tags
     @graph_elements = Tag.to_cytoscape([@tag] + @related_tags +
                                          @tags_in_neighbourhood, @tag)
     render layout: 'cytoscape'
@@ -38,6 +38,11 @@ class TagsController < ApplicationController
   end
 
   def edit
+    related_tags = @tag.related_tags
+    tags_in_neighbourhood = Tag.related_tags(related_tags)
+    @graph_elements = Tag.to_cytoscape([@tag] + related_tags +
+                                          tags_in_neighbourhood, @tag)
+
   end
 
   def new
