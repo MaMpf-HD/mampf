@@ -36,7 +36,16 @@ MaMpf is implemented in Ruby on Rails.
 * Rails Version: 5.2.1
 * Test suite: rspec
 
-## Installation (with Docker)
+## Installation (with docker-compose)
+
+To simply try out mampf you can use docker-compose. Simply clone the mampf repository and run docker-compose by executing
+```
+git clone -b master git@github.com:fosterfarrell9/mampf.git
+docker-compose up
+```
+
+
+## Installation in production mode (with Docker)
 
  1. Install Database Server (e.g. PostgreSQL) and create Database.
    (Don't forget to allow access for the docker network)
@@ -62,6 +71,7 @@ KEKS_SERVER = your_keks_server
 ERDBEERE_SERVER = your_erdbeere_server
 MUESLI_SERVER = your_muesli_server
 PROJECT_EMAIL = your_project_email
+MEDIA_FOLDER=mampf
 ```
  3. Execute the following commands to install and run the service:
 ```
