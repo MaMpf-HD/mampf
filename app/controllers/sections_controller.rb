@@ -32,9 +32,9 @@ class SectionsController < ApplicationController
   end
 
   def destroy
-    chapter = @section.chapter
+    @lecture = @section.lecture
     @section.destroy
-    redirect_to edit_chapter_path(chapter)
+    redirect_to edit_lecture_path(@lecture)
   end
 
   def update

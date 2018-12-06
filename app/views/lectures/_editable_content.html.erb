@@ -160,6 +160,7 @@
       <% lecture.orphaned_lessons.each do |l| %>
         <%= link_to  l.date_de,
                      edit_lesson_path(l),
+                     remote: true,
                      class: 'badge badge-light' %>
       <% end %>
     <% end %>

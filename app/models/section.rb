@@ -7,7 +7,7 @@ class Section < ApplicationRecord
   has_many :lesson_section_joins, dependent: :destroy
   has_many :lessons, through: :lesson_section_joins
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
-  has_many :items
+  has_many :items, dependent: :nullify
   after_save :touch_lecture
   after_save :touch_media
   before_destroy :touch_lecture

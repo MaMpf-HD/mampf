@@ -45,7 +45,14 @@ class LessonsController < ApplicationController
 
   def destroy
     lecture = @lesson.lecture
-    @lesson.destroy unless @lesson.media.present?
+    media = @lesson.media
+    # move all of the lessons's media to the level of the lesson's lecture
+    media.each do |m|
+      m.update(teachable: lecture,
+               description: m.description.presence ||
+                              (m.title + ' (Sitzung gelöscht)' ))
+    end
+    @lesson.destroy
     redirect_to edit_lecture_path(lecture)
   end
 
