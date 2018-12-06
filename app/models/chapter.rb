@@ -1,6 +1,6 @@
 # Chapter class
 class Chapter < ApplicationRecord
-  belongs_to :lecture
+  belongs_to :lecture, touch: true
   # the chapters of a lecture form an ordered list
   acts_as_list scope: :lecture
   has_many :sections, -> { order(position: :asc) }, dependent: :destroy

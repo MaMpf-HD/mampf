@@ -1,6 +1,6 @@
 # Section class
 class Section < ApplicationRecord
-  belongs_to :chapter
+  belongs_to :chapter, touch: true
   acts_as_list scope: :chapter
   has_many :section_tag_joins, dependent: :destroy
   has_many :tags, through: :section_tag_joins

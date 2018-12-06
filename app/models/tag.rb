@@ -18,6 +18,8 @@ class Tag < ApplicationRecord
   validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
                                          'werden.' },
                     uniqueness: { message: 'Titel ist bereits vergeben.' }
+  # touch related lectures after saving because lecture tags are cached
+  after_save :touch_lectures
 
   def self.ids_titles_json
     Tag.order(:title).map { |t| { id: t.id, title: t.title } }.to_json
@@ -74,6 +76,11 @@ class Tag < ApplicationRecord
     Tag.where(id: tag_ids)
   end
 
+  # returns the array of all tags related to the tags in the given array
+  def self.related_tags(tags)
+    tags.map(&:related_tags).flatten.uniq
+  end
+
   def extra_lectures
     Lecture.where.not(course: courses).select { |l| self.in?(l.tags) }
   end
@@ -104,5 +111,11 @@ class Tag < ApplicationRecord
 
   def lectures
     Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))
+  end
+
+  private
+
+  def touch_lectures
+    sections.map(&:chapter).flatten.map(&:lecture).each(&:touch)
   end
 end

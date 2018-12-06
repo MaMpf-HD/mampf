@@ -14,9 +14,9 @@ class TagsController < ApplicationController
   end
 
   def show
-    @related_tags = current_user.filter_tags(@tag.related_tags)
-    @tags_in_neighbourhood = current_user.filter_tags(@tag
-                                                        .tags_in_neighbourhood)
+    user_tags = current_user.lecture_tags
+    @related_tags = @tag.related_tags & current_user.lecture_tags
+    @tags_in_neighbourhood = Tag.related_tags(@related_tags) & user_tags
     @tags = [@tag] + @related_tags + @tags_in_neighbourhood
     @graph_elements = Tag.to_cytoscape(@tags, @tag)
     @lectures = current_user.filter_lectures(@tag.lectures)

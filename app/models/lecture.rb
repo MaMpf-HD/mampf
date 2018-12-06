@@ -92,8 +92,10 @@ class Lecture < ApplicationRecord
   # lecture tags are all tags that are associated to sections within chapters
   # associated to the lecture
   def tags
-    chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
-            .flatten.uniq
+    Rails.cache.fetch("#{cache_key}/tags") do
+      chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
+              .flatten.uniq
+    end
   end
 
   # course tags are all tags that are lecture tags as well as tags that are

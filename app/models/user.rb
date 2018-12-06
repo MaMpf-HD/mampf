@@ -102,6 +102,10 @@ class User < ApplicationRecord
     end
   end
 
+  def lecture_tags
+    lectures.map(&:tags).flatten.uniq
+  end
+
   def project?(course, project)
     return false if course.nil?
     return false unless course.public_send(project + '?')
