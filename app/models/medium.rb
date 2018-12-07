@@ -35,6 +35,17 @@ class Medium < ApplicationRecord
   has_many :referrals, dependent: :destroy
   has_many :referenced_items, through: :referrals, source: :item
 
+  # acts_as_notifiable configures the medium model as
+  # ActivityNotification::Notifiable
+  acts_as_notifiable :users,
+    # Notification targets as :targets is a necessary option
+    # Set to notify to author and users commented to the article, except comment owner self
+    targets: ->(medium, key) {
+      medium.users_to_notify
+    },
+    notifiable_path: :medium_notifiable_path,
+    tracked: { only: [:create] }
+
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem
   include VideoUploader[:video]
@@ -578,6 +589,13 @@ class Medium < ApplicationRecord
     end
   end
 
+  # returns the array of all users that have subscribed to courses or lectures
+  # related to this medium
+  def users_to_notify
+    return teachable.users if teachable_type.in?(['Course', 'Lecture'])
+    teachable.lecture.users
+  end
+
   private
 
   # media of type kaviar associated to a lesson, keks question do not require
@@ -646,5 +664,9 @@ class Medium < ApplicationRecord
   def local_items
     return teachable.items - items if teachable_type == 'Course'
     teachable.lecture.items - items
+  end
+
+  def medium_notifiable_path
+    Rails.application.routes.url_helpers.medium_path(self)
   end
 end

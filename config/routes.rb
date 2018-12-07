@@ -76,6 +76,8 @@ Rails.application.routes.draw do
   get 'main/home'
   get 'main/about'
 
+  notify_to :users, with_devise: :users, with_subscription: true
+
   namespace :api do
     namespace :v1 do
       get 'tags', to: 'tags#index'
