@@ -1,8 +1,7 @@
 $('#new-tag-modal-content').empty()
-  .append('<%= j render partial: "tags/form",
+  .append('<%= j render partial: "tags/modal_form",
                         locals: { tag: @tag,
                                   new_tag: true,
-                                  modal: true,
                                   graph_elements: nil,
                                   from: @from }%>')
 $('[data-toggle="popover"]').popover()

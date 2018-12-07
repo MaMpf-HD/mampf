@@ -59,6 +59,12 @@ $(document).on 'turbolinks:load', ->
     inputCourses.selectize.setValue()
     return
 
+  $('#selectRelatedTags').on 'click', ->
+    $('#selectRelatedTagsForm').show()
+    $('#tagActionType').show()
+    $(this).hide()
+    return
+
   # container for cytoscape view for standard users
   $cyContainer = $('#cy')
   if $cyContainer.length > 0
@@ -175,6 +181,22 @@ $(document).on 'turbolinks:load', ->
       node = evt.target;
       node.removeClass('hovering')
 
+    cyEdit.on 'tap', 'node', (evt) ->
+      node = evt.target;
+      window.location.href = Routes.edit_tag_path(node.id())
+
+    # mouseenter over related tag -> colorize cytoscape node
+    $('[id^="related-tag_"]').on 'mouseenter', ->
+      tagId = $(this).data('id')
+      cyEdit.$id(tagId).addClass('selected')
+      return
+
+    # mouseleave over related tag -> restore original color of cytoscape node
+    $('[id^="related-tag_"]').on 'mouseleave', ->
+      tagId = $(this).data('id')
+      cyEdit.$id(tagId).removeClass('selected')
+      return
+
   $(document).on 'click', '#new-tag-button', ->
     $.ajax Routes.tag_modal_path(),
       type: 'GET'
@@ -192,4 +214,5 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#new-tag-button'
   $('#cy').empty()
+  $('#cyEdit').empty()
   return

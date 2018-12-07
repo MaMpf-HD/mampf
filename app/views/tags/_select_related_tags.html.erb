@@ -1,0 +1,32 @@
+<div class="form-group">
+  <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
+  <i class="far fa-question-circle helpdesk"
+     tabindex="-1"
+     data-toggle="popover"
+     data-trigger="focus"
+     title="Info"
+     data-content="Die Tags bilden einen Graphen. Verknüpfte Tags
+     sind genau die Nachbarn eines Tags. Diese kannst Du
+     hier auswählen.">
+  </i>
+  <a class="fas fa-plus-circle clickable"
+       id="new-tag-button"
+       data-toggle="tooltip"
+       title="Tag anlegen"
+       data-tag="<%= tag.id %>"
+       data-from="tag">
+  </a>
+  <%= f.select :related_tag_ids,
+                options_for_select(Tag.where.not(id: tag.id)
+                                      .natural_sort_by(&:title)
+                                      .map { |t| [t.title, t.id]},
+                                   tag.related_tags.natural_sort_by(&:title)
+                                      .map(&:id)),
+                {},
+                { multiple: true,
+                  class: 'selectize',
+                  data: { id: tag.id.to_i } } %>
+  <div class="invalid-feedback"
+       id="tag-related-tags-error-<%= tag.id.to_i %>">
+  </div>
+</div>

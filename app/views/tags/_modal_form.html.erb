@@ -1,0 +1,16 @@
+<div id="tag-area-<%= tag.id.to_i %>">
+  <%= form_with model: tag,
+                html: { id: 'tag-form-'+ tag.id.to_i.to_s,
+                        data: { id: tag.id.to_i } } do |f| %>
+    <%= render partial: 'tags/data',
+               locals: { tag: tag, f: f, new_tag: new_tag, from: from,
+                         graph_elements: graph_elements } %>
+    <%= f.hidden_field :modal, value: true %>
+    <%= f.hidden_field :from, value: from %>
+    <%= f.submit "Speichern", class: "btn btn-primary" %>
+    <button type="button" class="btn btn-secondary"
+            data-dismiss="modal">
+      abbrechen
+    </button>
+  <% end %>
+</div>

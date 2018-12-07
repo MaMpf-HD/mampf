@@ -35,6 +35,10 @@ class TagsController < ApplicationController
   end
 
   def inspect
+    related_tags = @tag.related_tags
+    tags_in_neighbourhood = Tag.related_tags(related_tags)
+    @graph_elements = Tag.to_cytoscape([@tag] + related_tags +
+                                          tags_in_neighbourhood, @tag)
   end
 
   def edit
