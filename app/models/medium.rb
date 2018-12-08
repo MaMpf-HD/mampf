@@ -596,6 +596,13 @@ class Medium < ApplicationRecord
     teachable.lecture.users
   end
 
+  def medium_notifiable_path
+    unless teachable_type == 'Lesson'
+      return Rails.application.routes.url_helpers.medium_path(self)
+    end
+    Rails.application.routes.url_helpers.lesson_path(self.teachable)
+  end
+
   private
 
   # media of type kaviar associated to a lesson, keks question do not require
@@ -664,9 +671,5 @@ class Medium < ApplicationRecord
   def local_items
     return teachable.items - items if teachable_type == 'Course'
     teachable.lecture.items - items
-  end
-
-  def medium_notifiable_path
-    Rails.application.routes.url_helpers.medium_path(self)
   end
 end

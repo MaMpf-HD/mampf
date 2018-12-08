@@ -163,6 +163,12 @@ class Lesson < ApplicationRecord
           .map { |l| [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s] }
   end
 
+  # returns the array of all users that have subscribed to the lecture
+  # related to this lesson
+  def users_to_notify
+    lecture.users
+  end
+
   private
 
   # path for show lesson action

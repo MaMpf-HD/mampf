@@ -37,14 +37,8 @@
                      locals: { courses: current_user.courses } %>
         </ul>
       <% end %>
-      <a href="<%= user_notifications_path(current_user) %>"
-         class="btn btn-primary btn-sm mr-3">
-        <i class="far fa-bell text-light">
-        </i>
-        <span class="badge badge-light">
-          <%= current_user.notifications.unopened_only.count %>
-        </span>
-      </a>
+      <%= render partial: 'shared/dropdown_notifications' %>
+
       <%#= render_notification(current_user.notifications,
                               target: :users) %>
       <%= form_tag(search_index_path, method: 'get',
