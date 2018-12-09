@@ -233,11 +233,13 @@
   </div>
   <div class="col-4">
     <div class="row">
-      <div class="col-12 mb-2">
-        <%= render partial: 'tags/tags',
-                   locals: { related_tags: @medium.tags,
-                             tags_description: 'Verknüpfte Begriffe'} %>
-      </div>
+      <% if @medium.tags.present? %>
+        <div class="col-12 mb-2">
+          <%= render partial: 'tags/tags',
+                     locals: { related_tags: @medium.tags,
+                               tags_description: 'Verknüpfte Begriffe'} %>
+        </div>
+      <% end %>
       <div class="col-12">
         <%= render partial: 'items/items',
                    locals: { items: @medium.proper_items_by_time } %>
