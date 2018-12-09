@@ -1,11 +1,56 @@
 <div class="row">
-  <div class="col-10">
+  <div class="col-6">
     <h2>
       <span class="badge badge-secondary mr-3">
         Medium <%= '#' + @medium.id.to_s %>
       </span>
       <%= @medium.caption %>
     </h2>
+  </div>
+  <div class="col-4 pt-2">
+    <span class="badge badge-info">
+      <%= @medium.sort_de %>
+    </span>
+    <strong>
+      zu:
+    </strong>
+    <% if @medium.teachable_type == 'Course' && @medium.teachable.present? %>
+      <% if current_user.courses.include?(@medium.teachable) %>
+        <%= link_to @medium.teachable.to_label,
+                    @medium.teachable,
+                    class: 'text-dark' %>
+        <% else %>
+          <span>
+            <%= @medium.teachable.to_label %>
+          </span>
+      <% end %>
+    <% end %>
+    <% if @medium.teachable_type == 'Lecture' && @medium.teachable.present? %>
+      <% if current_user.lectures.include?(@medium.teachable) %>
+        <%= link_to @medium.teachable.to_label,
+                    @medium.teachable.path(current_user),
+                    class: 'text-dark' %>
+      <% else %>
+        <span>
+          <%= @medium.teachable.to_label %>
+        </span>
+      <% end %>
+    <% end %>
+    <% if @medium.teachable_type == 'Lesson' && @medium.teachable.present? %>
+      <% if current_user.lectures.include?(@medium.teachable.lecture) %>
+        <%= link_to @medium.teachable.lecture.title_for_viewers,
+                    @medium.teachable.lecture.path(current_user),
+                    class: 'text-dark' %>,
+        <%= link_to @medium.teachable.local_title_for_viewers,
+                    @medium.teachable,
+                    class: 'text-dark' %>
+      <% else %>
+        <%= @medium.teachable.lecture.to_label %>,
+          <span>
+            <%= @medium.teachable.to_label %>
+          </span>
+      <% end %>
+    <% end %>
   </div>
   <div class="col-2 text-right">
     <% if current_user.admin ||
@@ -15,11 +60,101 @@
     <% end %>
   </div>
 </div>
-<div class="row pb-2">
-  <div class="col-12 col-md-6 col-lg-4 pt-3">
-    <%= render partial: 'media/organizational',
-               locals: { medium: @medium } %>
+<div class="row">
+  <div class="col-4">
+    <div class="card bg-light">
+      <div class="card-header">
+        Video
+      </div>
+      <div class="card-body">
+        <% if @medium.screenshot.present? %>
+          <a href="<%= play_medium_path(@medium) %>"
+             target="_blank">
+            <img id="screenshot-preview" class="img-fluid mb-3"
+                 src="<%= @medium.screenshot_url %>">
+          </a>
+        <% end %>
+        <% if @medium.video.present? %>
+          <div class="row p-2">
+            <div id="video-meta" class="col-12 meta rounded">
+              <div class="row">
+                <div class="col-12">
+                  Länge:
+                  <span id="video-duration">
+                    <%= @medium.video_duration_hms_string %>
+                  </span>
+                </div>
+              </div>
+              <div class="row">
+               <div class="col-12">
+                 Auflösung:
+                  <span id="video-resolution">
+                    <%= @medium.video_resolution %>
+                  </span>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  Größe:
+                  <span id="video-size">
+                   <%= number_to_human_size(@medium.video_size) %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          Es ist kein Video vorhanden.
+        <% end %>
+      </div>
+    </div>
   </div>
+  <div class="col-4">
+    <div class="card bg-light">
+    <div class="card-header">
+      <div class="row">
+        <div class="col-12">
+          Manuskript
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <% if @medium.manuscript.present? %>
+        <%= link_to image_tag(@medium.manuscript_screenshot_url, class: 'img-fluid',
+                              id: 'manuscript-preview'),
+                              @medium.manuscript_url, target: :blank %>
+        <div class="row p-2">
+        <div id="manuscript-meta" class="col-12 meta rounded">
+          <div class="row">
+            <div class="col-12">
+              Länge:
+              <span id="manuscript-pages">
+                <%= @medium.manuscript_pages.to_s + ' S' %>
+              </span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              Größe:
+              <span id="manuscript-size">
+                <%= number_to_human_size(@medium.manuscript_size) %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% else %>
+        Es ist kein Manuskript vorhanden.
+      <% end %>
+    </div>
+  </div>
+  </div>
+  <div class="col-4">
+    <%= render partial: 'items/items',
+                 locals: { items: @medium.proper_items_by_time } %>
+  </div>
+</div>
+<div class="row pb-2">
   <div class="col-12 col-md-6 col-lg-4 pt-3">
     <%= render partial: 'media/technical',
                locals: { medium: @medium } %>
