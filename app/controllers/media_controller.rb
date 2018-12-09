@@ -23,9 +23,6 @@ class MediaController < ApplicationController
   end
 
   def show
-    current_user.notifications.unopened_only
-                .where(notifiable_type: 'Medium',
-                       notifiable_id: @medium.id).each(&:open!)
     render layout: 'application'
   end
 

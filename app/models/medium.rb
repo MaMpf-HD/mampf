@@ -597,10 +597,7 @@ class Medium < ApplicationRecord
   end
 
   def medium_notifiable_path
-    unless teachable_type == 'Lesson'
-      return Rails.application.routes.url_helpers.medium_path(self)
-    end
-    Rails.application.routes.url_helpers.lesson_path(self.teachable)
+    Rails.application.routes.url_helpers.medium_path(self)
   end
 
   private

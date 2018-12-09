@@ -1,57 +1,53 @@
 <% relevant_notifications = current_user.notifications.unopened_only
                                         .select { |n| n.notifiable.present? } %>
 <% if relevant_notifications.present? %>
-<ul class="navbar-nav">
-<li class="nav-item">
-  <div class="btn-group">
-    <a href="<%= user_notifications_path(current_user) %>"
-           class="btn btn-primary btn-sm">
-      <i class="far fa-bell text-light">
-      </i>
-      <span class="badge badge-light">
-        <%= relevant_notifications.count %>
-      </span>
-    </a>
-    <button type="button"
-            class="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split mr-3"
-            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-      <span class="sr-only">Toggle Dropdown</span>
-    </button>
-    <div class="dropdown-menu">
-      <% relevant_notifications.each do |n| %>
-        <a class="dropdown-item"
-            href="<%= open_notification_path_for(n, move: true) %>"
-            data-method="post">
-          <span style="font-size: 0.8em;">
-          <% if n.notifiable_type == 'Medium' %>
-            <% medium = n.notifiable %>
-            <% if medium.present? %>
-                Neues Medium in
-                <%= medium.teachable.media_scope.title_for_viewers %>
-                <br>
-                <%= medium.local_title_for_viewers %>
-            <% else %>
-              Neues Medium:
-              <br>
-              Inzwischen wieder gelöscht.
-            <% end %>
-          <% end %>
+  <ul class="navbar-nav">
+    <li class="nav-item">
+      <div class="btn-group">
+        <a href="<%= user_notifications_path(current_user) %>"
+           class="btn btn-primary btn-sm dropdown-toggle mr-3"
+           data-toggle="dropdown">
+          <i class="far fa-bell text-light">
+          </i>
+          <span class="badge badge-light">
+            <%= relevant_notifications.count %>
           </span>
         </a>
-      <% end %>
-      <div class="dropdown-divider">
+        <div class="dropdown-menu">
+          <% relevant_notifications.first(5).each do |n| %>
+            <a class="dropdown-item"
+                href="<%= open_notification_path_for(n, move: true) %>"
+                data-method="post">
+              <span style="font-size: 0.8em;">
+                <% if n.notifiable_type == 'Medium' %>
+                  <% medium = n.notifiable %>
+                  <% if medium.present? %>
+                    Neues Medium in
+                    <%= medium.teachable.media_scope.title_for_viewers %>
+                    <br>
+                    <%= medium.local_title_for_viewers %>
+                  <% else %>
+                    Neues Medium:
+                    <br>
+                    Inzwischen wieder gelöscht.
+                  <% end %>
+                <% end %>
+              </span>
+            </a>
+          <% end %>
+          <div class="dropdown-divider">
+          </div>
+          <a href="<%= user_notifications_path(current_user) %>"
+             class="dropdown-item">
+            alle anzeigen
+          </a>
+          <a href="<%= open_all_notifications_path_for(current_user) %>"
+             data-method="post" data-remote="true"
+             class="dropdown-item">
+            alle erledigen
+          </a>
+        </div>
       </div>
-      <a href="<%= user_notifications_path(current_user) %>"
-         class="dropdown-item">
-        Übersicht
-      </a>
-      <a href="<%= open_all_notifications_path_for(current_user) %>"
-         data-method="post" data-remote="true"
-         class="dropdown-item">
-        alle erledigen
-      </a>
-    </div>
-  </div>
-</li>
-</ul>
+    </li>
+  </ul>
 <% end %>
