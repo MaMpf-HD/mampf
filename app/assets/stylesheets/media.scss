@@ -20,6 +20,11 @@
   justify-content: flex-start;
 }
 
+.media-card-header {
+  display: flex;
+  justify-content: flex-end;
+}
+
 #video-wait {
   display: none;
 }
