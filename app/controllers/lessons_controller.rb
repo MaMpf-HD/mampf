@@ -5,11 +5,6 @@ class LessonsController < ApplicationController
   layout 'administration'
 
   def show
-    # mark notifications for all media related to that lesson for current user
-    # as read
-    current_user.notifications.unopened_only
-                .where(notifiable_type: 'Medium',
-                       notifiable_id: @lesson.medium_ids).each(&:open!)
     render layout: 'application'
   end
 

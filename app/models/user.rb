@@ -25,8 +25,6 @@ class User < ApplicationRecord
             if: :edited_profile?
   before_save :set_defaults
   after_create :set_consented_at
-  # acts_as_target configures the user model as ActivityNotification::Target
-  acts_as_target
 
   def self.select_editors
     User.all.map { |u| [u.info, u.id] }

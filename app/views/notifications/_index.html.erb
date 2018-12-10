@@ -1,0 +1,41 @@
+<% notifications = @notifications.select { |n| n.opened_at.nil? } %>
+<% if notifications.present? %>
+  <div class="row">
+    <div class="col-6">
+      <h3>
+        Neue Benachrichtigungen
+      </h3>
+    </div>
+    <div class="col-6 text-right">
+      <%= link_to 'alle erledigen',
+                  open_all_notifications_path_for(current_user),
+                  method: :post,
+                  remote: true,
+                  class: 'btn btn-sm btn-secondary' %>
+    </div>
+  </div>
+  <ul class="list-group mb-2">
+    <% notifications.each do |n| %>
+      <div class="row">
+        <div class="col-11">
+          <%= render_notification n %>
+        </div>
+        <div class="col-1">
+          <a href="<%= open_notification_path_for(n) %>"
+             class="no-deco mr-2"
+             data-method="post"
+             data-remote="true">
+            <i class="material-icons text-dark mt-2"
+               data-toggle="tooltip"
+               data-placement="bottom"
+               title="erledigen">
+              delete
+            </i>
+          </a>
+        </div>
+      </div>
+    <% end %>
+  </ul>
+<% else %>
+  Es liegen keine neuen Benachrichtigungen für Dich vor.
+<% end %>

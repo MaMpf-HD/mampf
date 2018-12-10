@@ -5,8 +5,6 @@ class MediaController < ApplicationController
   before_action :set_course, only: [:index]
   before_action :check_project, only: [:index]
   before_action :set_teachable, only: [:new]
-  # mark notifications for this medium as read for the current user
-  before_action :open_notifications, only: [:show, :play, :display]
   before_action :sanitize_params
   before_action :check_for_consent, except: [:play, :display]
   authorize_resource
@@ -277,11 +275,5 @@ class MediaController < ApplicationController
                                    teachable_ids: [],
                                    tag_ids: [],
                                    editor_ids: [])
-  end
-
-  def open_notifications
-    current_user.notifications.unopened_only
-                .where(notifiable_type: 'Medium',
-                       notifiable_id: @medium.id).each(&:open!)
   end
 end
