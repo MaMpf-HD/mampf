@@ -76,6 +76,8 @@ Rails.application.routes.draw do
   get 'main/home'
   get 'main/about'
 
+  # disable show action for notifications
+  get 'users/:id/notifications/:notification_id', to: 'main#error'
   notify_to :users, with_devise: :users, with_subscription: true
 
   namespace :api do

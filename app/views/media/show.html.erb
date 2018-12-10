@@ -67,9 +67,9 @@
     <div class="row">
       <div class="col-12">
         <div class="card bg-light">
-          <div class="card-header">
+          <div class="card-header bg-brown">
             <div class="row">
-              <div class="col-6">
+              <div class="col-6 text-light">
                 Video
               </div>
               <div class="col-6">
@@ -78,7 +78,7 @@
                     <a href="<%= play_medium_path(@medium) %>"
                        class="no-deco mr-2"
                        target="_blank">
-                      <i class="material-icons text-secondary"
+                      <i class="material-icons text-light"
                          data-toggle="tooltip"
                          data-placement="bottom"
                          title="Thyme Player">
@@ -89,7 +89,7 @@
                       <a href="<%= @medium.video_download_url %>"
                          download="<%= video_download_file(@medium) %>">
                         <span>
-                          <span class="badge badge-secondary"
+                          <span class="badge badge-light"
                                 data-toggle="tooltip"
                                 data-placement="bottom"
                                 title="Video speichern">
@@ -150,7 +150,7 @@
       <% if @medium.external_reference_link.present? %>
         <div class="col-12 mt-2">
           <div class="card bg-light">
-            <div class="card-header">
+            <div class="card-header bg-brown text-light">
               Externer Link
             </div>
             <div class="card-body text-center">
@@ -166,9 +166,9 @@
   </div>
   <div class="col-6 col-xl-4 mb-2">
     <div class="card bg-light">
-      <div class="card-header">
+      <div class="card-header bg-brown">
         <div class="row">
-          <div class="col-6">
+          <div class="col-6 text-light">
             Manuskript
           </div>
           <div class="col-6">
@@ -177,7 +177,7 @@
                 <a href="<%= @medium.manuscript_url %>"
                    class="no-deco mr-2"
                    target="_blank">
-                  <i class="material-icons text-secondary"
+                  <i class="material-icons text-light"
                      data-toggle="tooltip"
                      data-placement="bottom"
                      title="pdf im Browser">
@@ -188,7 +188,7 @@
                   <a href="<%= @medium.manuscript_download_url %>"
                      download="<%= manuscript_download_file(@medium) %>">
                     <span>
-                      <span class="badge badge-secondary"
+                      <span class="badge badge-light"
                             data-toggle="tooltip"
                             data-placement="bottom"
                             title="Manuskript speichern">

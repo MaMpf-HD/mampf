@@ -218,4 +218,13 @@ module ApplicationHelper
     end
     'far fa-eye'
   end
+
+  # returns the given date in a more human readable form
+  # anything older than today or yesterday gets reduced to the day.month.year
+  # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
+  def human_readable_date(date)
+    return 'heute, ' + date.strftime("%H:%M") if date.to_date == Date.today
+    return 'gestern, ' + date.strftime("%d.%m.%y") if date.to_date == Date.yesterday
+    strftime("%d.%m.%Y")
+  end
 end

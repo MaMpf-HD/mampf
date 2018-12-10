@@ -342,7 +342,7 @@ class Lecture < ApplicationRecord
 
   private
 
-  # a there is no show action for lessons, this is the path to the show action
+  # as there is no show action for lessons, this is the path to the show action
   # for courses, with the lecture on top in the carousel
   def lecture_path
     Rails.application.routes.url_helpers

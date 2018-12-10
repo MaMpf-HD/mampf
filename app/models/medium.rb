@@ -38,8 +38,6 @@ class Medium < ApplicationRecord
   # acts_as_notifiable configures the medium model as
   # ActivityNotification::Notifiable
   acts_as_notifiable :users,
-    # Notification targets as :targets is a necessary option
-    # Set to notify to author and users commented to the article, except comment owner self
     targets: ->(medium, key) {
       medium.users_to_notify
     },

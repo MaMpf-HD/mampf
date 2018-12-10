@@ -1,5 +1,6 @@
 <% relevant_notifications = current_user.notifications.unopened_only
-                                        .select { |n| n.notifiable.present? } %>
+                                        .select { |n| n.notifiable.present? }
+                                        .sort_by(&:created_at).reverse %>
 <% if relevant_notifications.present? %>
   <ul class="navbar-nav">
     <li class="nav-item">
@@ -20,17 +21,8 @@
                 data-method="post">
               <span style="font-size: 0.8em;">
                 <% if n.notifiable_type == 'Medium' %>
-                  <% medium = n.notifiable %>
-                  <% if medium.present? %>
-                    Neues Medium in
-                    <%= medium.teachable.media_scope.title_for_viewers %>
-                    <br>
-                    <%= medium.local_title_for_viewers %>
-                  <% else %>
-                    Neues Medium:
-                    <br>
-                    Inzwischen wieder gelöscht.
-                  <% end %>
+                  <%= render partial: 'activity_notification/notifications/users/medium/menu_item',
+                             locals: { notification: n } %>
                 <% end %>
               </span>
             </a>
