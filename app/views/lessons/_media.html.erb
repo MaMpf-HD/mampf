@@ -3,7 +3,8 @@
     <% media.each do |medium| %>
       <div class="col-12 col-lg-6 pb-2">
         <%= render partial: 'media/medium',
-                   locals: { medium: medium} %>
+                   locals: { medium: medium,
+                             tags: false } %>
       </div>
     <% end %>
   </div>

@@ -22,7 +22,7 @@ class TagsController < ApplicationController
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: 'KeksQuestion'))
-    render layout: 'application'
+    render layout: 'application_no_sidebar'
   end
 
   def display_cyto

@@ -63,16 +63,18 @@
   </div>
 </div>
 <div class="row mb-2">
-  <div class="col-6 col-xl-4">
+  <div class="col-12 col-xl-6">
     <div class="row">
-      <div class="col-12">
-        <div class="card bg-light">
-          <div class="card-header bg-brown">
-            <div class="row">
-              <div class="col-6 text-light">
-                Video
-              </div>
-              <div class="col-6">
+      <div class="col-6">
+        <div class="row">
+          <div class="col-12">
+            <div class="card bg-light">
+              <div class="card-header bg-brown">
+                <div class="row">
+                  <div class="col-6 text-light">
+                    Video
+                  </div>
+                <div class="col-6">
                 <% if @medium.video.present? %>
                   <div class="media-card-header">
                     <a href="<%= play_medium_path(@medium) %>"
@@ -103,35 +105,31 @@
               </div>
             </div>
           </div>
+          <% if @medium.video.present? %>
+            <% if @medium.screenshot.present? %>
+              <a href="<%= play_medium_path(@medium) %>"
+                 target="_blank">
+                <img id="screenshot-preview"
+                     class="card-img-top video-thumbnail"
+                     src="<%= @medium.screenshot_url %>">
+              </a>
+            <% end %>
+          <% end %>
           <div class="card-body">
             <% if @medium.video.present? %>
-              <% if @medium.screenshot.present? %>
-                <a href="<%= play_medium_path(@medium) %>"
-                   target="_blank">
-                  <img id="screenshot-preview"
-                       class="img-fluid mb-3"
-                       src="<%= @medium.screenshot_url %>">
-                </a>
-              <% end %>
-              <div class="row p-2">
-                <div id="video-meta" class="col-12 meta rounded">
-                  <div class="row">
-                    <div class="col-12">
-                      Länge:
-                      <span id="video-duration">
-                        <%= @medium.video_duration_hms_string %>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="row">
+              <div class="row meta">
+                <div class="col-12">
+                  Länge:
+                  <span id="video-duration">
+                    <%= @medium.video_duration_hms_string %>
+                  </span>
+                </div>
                     <div class="col-12">
                       Auflösung:
                       <span id="video-resolution">
                         <%= @medium.video_resolution %>
                       </span>
                     </div>
-                  </div>
-                  <div class="row">
                     <div class="col-12">
                       Größe:
                       <span id="video-size">
@@ -139,8 +137,6 @@
                       </span>
                     </div>
                   </div>
-                </div>
-              </div>
             <% else %>
               Es ist kein Video vorhanden.
             <% end %>
@@ -164,7 +160,7 @@
       <% end %>
     </div>
   </div>
-  <div class="col-6 col-xl-4 mb-2">
+  <div class="col-6 mb-2">
     <div class="card bg-light">
       <div class="card-header bg-brown">
         <div class="row">
@@ -202,14 +198,15 @@
           </div>
         </div>
       </div>
+      <% if @medium.manuscript.present? %>
+        <%= link_to image_tag(@medium.manuscript_screenshot_url,
+                              class: 'card-img-top manuscript-thumbnail'),
+                    @medium.manuscript_url,
+                    target: :blank %>
+      <% end %>
       <div class="card-body">
         <% if @medium.manuscript.present? %>
-          <%= link_to image_tag(@medium.manuscript_screenshot_url,
-                                class: 'img-fluid',
-                                id: 'manuscript-preview'),
-                      @medium.manuscript_url,
-                      target: :blank %>
-          <div class="row p-2">
+          <div class="row">
             <div id="manuscript-meta" class="col-12 meta rounded">
               <div class="row">
                 <div class="col-12">
@@ -235,7 +232,30 @@
       </div>
     </div>
   </div>
-  <div class="col-12 col-xl-4">
+  <div class="col-12">
+    <% linked_media = current_user.filter_media(@medium.linked_media) %>
+    <% unless linked_media.empty? %>
+      <div class="row">
+        <div class="col-12 pt-2">
+          <h5>
+          Verknüpfte Medien
+         </h5>
+        </div>
+      </div>
+      <div class="row">
+        <% linked_media.each do |m| %>
+          <div class="col-12 col-lg-6 pb-2">
+            <%= render partial: 'media/medium',
+                       locals: { medium: m,
+                                 tags: false } %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>
+</div>
+  <div class="col-12 col-xl-6">
     <div class="row">
       <% if @medium.tags.present? %>
         <div class="col-12 mb-2">
@@ -244,22 +264,11 @@
                                tags_description: 'Verknüpfte Begriffe'} %>
         </div>
       <% end %>
-      <div class="col-12">
+      <div class="col-12" style="height: 50%;">
         <%= render partial: 'items/items',
-                   locals: { items: @medium.proper_items_by_time } %>
+                   locals: { items: @medium.proper_items_by_time,
+                             small: true } %>
       </div>
     </div>
   </div>
 </div>
-<% linked_media = current_user.filter_media(@medium.linked_media) %>
-<% unless linked_media.empty? %>
-  <div class="row">
-    <div class="col-12 pt-2">
-      <h5>
-        Verknüpfte Medien
-      </h5>
-    </div>
-  </div>
-  <%= render partial: 'media/media',
-             locals: { media: linked_media} %>
-<% end %>

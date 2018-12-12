@@ -7,33 +7,8 @@
       <%= @tag.title %></h2>
   </div>
 </div>
-<div class="row mt-2">
-  <div class="col-sm-12 col-md-8 col-lg-9">
-    <div class="card">
-      <div class="card-header bg-green-darken-3">
-        <div class="row">
-          <div class="col-3">
-            <h5 class="text-light">
-              MaMpf-Map
-            </h5>
-          </div>
-          <div class="col-9 text-right">
-            <%= link_to 'in externem Tab rendern',
-                        display_cyto_tag_path(@tag),
-                        class: 'btn btn-outline-light',
-                        target: :_blank%>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div id="cy"
-             data-elements="<%= @graph_elements.to_json %>"
-             data-tag="<%= @tag.id %>">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-12 col-md-4 col-lg-3">
+<div class="row mt-2 mb-2">
+  <div class="col-sm-12 col-md-4 col-lg-2">
     <div class="row">
       <div class="col-12">
         <div class="card mb-2 bg-green-lighten-4" id="relatedTags">
@@ -96,14 +71,51 @@
       </div>
     </div>
   </div>
-</div>
-<% unless @media.empty? %>
-  <div class="row mt-2">
-    <div class="col-12">
-      <h5>
-        Verknüpfte Medien
-      </h5>
-      <%= render partial: 'media/media', locals: { media: @media} %>
+  <div class="col-sm-12 col-md-8 col-lg-6">
+    <div class="card">
+      <div class="card-header bg-green-darken-3">
+        <div class="row">
+          <div class="col-3">
+            <h5 class="text-light">
+              MaMpf-Map
+            </h5>
+          </div>
+          <div class="col-9 text-right">
+            <%= link_to 'in externem Tab rendern',
+                        display_cyto_tag_path(@tag),
+                        class: 'btn btn-sm btn-outline-light',
+                        target: :_blank%>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="cy"
+             data-elements="<%= @graph_elements.to_json %>"
+             data-tag="<%= @tag.id %>">
+        </div>
+      </div>
     </div>
   </div>
-<% end %>
+  <div class="col-12 col-lg-4">
+    <div class="card bg-light">
+      <div class="card-header">
+        <h5>
+          Verknüpfte Medien
+        </h5>
+      </div>
+      <div class="card-body" style="max-height: 70vh; overflow-y: scroll;">
+        <div class="row">
+          <% if @media.present? %>
+            <% @media.each do |m| %>
+              <div class="col-12 col-xxxl-6 mb-2">
+                <%= render partial: 'media/medium',
+                           locals: { medium: m,
+                                     tags: false } %>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

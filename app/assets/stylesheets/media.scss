@@ -18,6 +18,7 @@
 #media-box-footer {
   display: flex;
   justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .media-card-header {
@@ -44,6 +45,13 @@
 
 .manuscript-thumbnail {
   object-fit: cover;
+  max-height: 200px;
+  object-position: 0px 0px;
+  background: white;
+}
+
+.video-thumbnail {
+  object-fit: contain;
   max-height: 200px;
   object-position: 0px 0px;
   background: white;

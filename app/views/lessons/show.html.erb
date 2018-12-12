@@ -41,7 +41,8 @@
 <div class="row mb-2">
   <div class="col-12 col-xl-6 pt-3">
     <%= render partial: 'items/items',
-               locals: { items: @lesson.items } %>
+               locals: { items: @lesson.items,
+                         small: false } %>
   </div>
   <div class="col-12 col-xl-6 pt-3">
     <% unless @lesson.tags.empty? && @lesson.sections.empty? %>

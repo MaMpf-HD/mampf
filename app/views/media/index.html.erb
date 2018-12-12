@@ -54,4 +54,6 @@
     <% end %>
   </div>
 </div>
-<%= render partial: 'media', locals: { media: @media } %>
+<%= render partial: 'media/media',
+           locals: { media: @media,
+                     tags: true } %>
