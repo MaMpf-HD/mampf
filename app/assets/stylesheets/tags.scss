@@ -13,10 +13,10 @@
 }
 
 #relatedSections {
-  height: 20vh;
 }
 
 #relatedSectionsBody {
+  max-height: 20vh;
   overflow-y: scroll;
 }
 
