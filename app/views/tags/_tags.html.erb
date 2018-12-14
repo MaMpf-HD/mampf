@@ -4,13 +4,20 @@
       <%= tags_description %>
     </h5>
   </div>
-  <div class="card-body" id="relatedTagsBody">
+  <div class="card-body"
+       id="relatedTagsBody"
+       style="max-height: <%= small ? '20vh' : '50vh' %>">
     <% if related_tags.present? %>
       <% related_tags.natural_sort_by(&:title).each do |t| %>
-        <%= link_to t.short_title, tag_path(t), class: "badge badge-light",
-                    data: { toggle: 'tooltip', placement: 'top'},
+        <%= link_to t.short_title,
+                    tag_path(t),
+                    class: "badge badge-light",
+                    data: { toggle: 'tooltip',
+                            placement: 'top'},
                     title: t.title %>
-        <br>
+        <% unless small %>
+          <br>
+        <% end %>
       <% end %>
     <% else %>
       Es liegen keine verknüpften Tags vor.

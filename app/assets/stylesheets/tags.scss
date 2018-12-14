@@ -12,9 +12,6 @@
   height: 70vh;
 }
 
-#relatedSections {
-}
-
 #relatedSectionsBody {
   max-height: 20vh;
   overflow-y: scroll;
@@ -23,7 +20,7 @@
 
 #relatedTagsBody {
   overflow-y: scroll;
-  max-height: calc(50vh);
+  max-height: 50vh;
 }
 
 #relatedTagsBodyEdit {

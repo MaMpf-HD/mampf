@@ -21,7 +21,7 @@ class MediaController < ApplicationController
   end
 
   def show
-    render layout: 'application'
+    render layout: 'application_no_sidebar'
   end
 
   def new

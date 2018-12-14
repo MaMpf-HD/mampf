@@ -39,41 +39,27 @@
   </div>
 </div>
 <div class="row mb-2">
-  <div class="col-12 col-xl-6 pt-3">
+  <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
+    <div class="row">
+      <div class="col-12">
+        <%= render partial: 'tags/tags',
+                   locals: { related_tags: @lesson.tags,
+                             tags_description: 'Verknüpfte Begriffe',
+                             small: false } %>
+      </div>
+      <div class="col-12 mt-2 mb-2">
+        <%= render partial: 'sections/sections',
+                   locals: { sections: @lesson.sections } %>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-8 col-xl-6 col-xxl-7 mb-2">
     <%= render partial: 'items/items',
                locals: { items: @lesson.items,
                          small: false } %>
   </div>
-  <div class="col-12 col-xl-6 pt-3">
-    <% unless @lesson.tags.empty? && @lesson.sections.empty? %>
-      <div class="row">
-        <% unless @lesson.tags.empty? %>
-          <div class="col-12 col-xl-6">
-            <%= render partial: 'tags/tags',
-                       locals: { related_tags: @lesson.tags,
-                                 tags_description: 'Verknüpfte Begriffe'} %>
-          </div>
-        <% end %>
-        <% unless @lesson.sections.empty? %>
-          <div class="col-12 col-xl-6">
-            <%= render partial: 'sections/sections',
-                       locals: { sections: @lesson.sections } %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-    <% unless @lesson.media.empty? %>
-      <div class="row pt-3">
-        <div class="col-12">
-          <h5>
-            Verknüpfte Medien
-          </h5>
-        </div>
-        <div class="col-12">
-          <%= render partial: 'lessons/media',
-                     locals: { media: @lesson.media} %>
-        </div>
-      </div>
-    <% end %>
+  <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
+    <%= render partial: 'media/related_media',
+                 locals: { media: @lesson.media} %>
   </div>
 </div>

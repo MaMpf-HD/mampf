@@ -1,10 +1,22 @@
 <div class="row">
-  <div class="col-12">
+  <div class="col-10">
     <h2>
       <span class="badge badge-secondary mr-3">
         Begriff<%= ' #' + @tag.id.to_s %>
       </span>
-      <%= @tag.title %></h2>
+      <%= @tag.title %>
+    </h2>
+  </div>
+  <div class="col-2 text-right">
+    <% if current_user.editor? %>
+      <a href="<%= edit_tag_path(@tag) %>"
+         class="far fa-edit fa-lg text-secondary"
+         data-toggle="tooltip"
+         data-placement="bottom"
+         title="Bearbeiten"
+         style="text-decoration: none;">
+      </a>
+    <% end %>
   </div>
 </div>
 <div class="row mt-2 mb-2">
@@ -18,14 +30,20 @@
             </h5>
           </div>
           <div class="card-body" id="relatedTagsBody">
-            <% @related_tags.natural_sort_by(&:title).each do |t| %>
-              <%= link_to t.short_title,
-                          tag_path(t),
-                          class: "badge badge-light",
-                          id: 'related-' + dom_id(t),
-                          data: { toggle: 'tooltip', placement: 'top', id: t.id },
-                          title: t.title %>
-              <br>
+            <% if @related_tags.present? %>
+              <% @related_tags.natural_sort_by(&:title).each do |t| %>
+                <%= link_to t.short_title,
+                            tag_path(t),
+                            class: "badge badge-light",
+                            id: 'related-' + dom_id(t),
+                            data: { toggle: 'tooltip',
+                                    placement: 'top',
+                                    id: t.id },
+                            title: t.title %>
+                <br>
+              <% end %>
+            <% else %>
+              Es liegen keine verknüpften Tags vor.
             <% end %>
             <% if @tags_in_neighbourhood.present? %>
               <h6 class="mt-2">
@@ -52,7 +70,7 @@
       </div>
     </div>
   </div>
-  <div class="col-12 col-lg-8 col-xl-6 col-xxl-7">
+  <div class="col-12 col-lg-8 col-xl-6 col-xxl-7 mb-2">
     <div class="card">
       <div class="card-header bg-green-darken-3">
         <div class="row">

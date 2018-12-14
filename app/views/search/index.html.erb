@@ -14,7 +14,8 @@ hat <%= @filtered_tags.count %> Treffer ergeben.
       <%= render partial: 'tags/tags',
                  locals: { related_tags: @filtered_tags,
                            tags_description: "Suchergebnisse für den " \
-                                             "Begriff \"#{@search_string}\""} %>
+                                             "Begriff \"#{@search_string}\"",
+                           small: true } %>
     </div>
   </div>
 <% end %>
@@ -27,7 +28,8 @@ hat <%= @filtered_tags.count %> Treffer ergeben.
                    locals: { related_tags: @filtered_similar_tags,
                              tags_description: "Zum Suchbegriff " \
                                                "\"#{@search_string}\" ähnliche"\
-                                               " Begriffe"} %>
+                                               " Begriffe",
+                             small: true } %>
       </div>
     </div>
   <% end %>

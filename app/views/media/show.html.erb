@@ -63,88 +63,22 @@
   </div>
 </div>
 <div class="row mb-2">
-  <div class="col-12 col-xl-6">
+  <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
-      <div class="col-6">
-        <div class="row">
-          <div class="col-12">
-            <div class="card bg-light">
-              <div class="card-header bg-brown">
-                <div class="row">
-                  <div class="col-6 text-light">
-                    Video
-                  </div>
-                <div class="col-6">
-                <% if @medium.video.present? %>
-                  <div class="media-card-header">
-                    <a href="<%= play_medium_path(@medium) %>"
-                       class="no-deco mr-2"
-                       target="_blank">
-                      <i class="material-icons text-light"
-                         data-toggle="tooltip"
-                         data-placement="bottom"
-                         title="Thyme Player">
-                        play_arrow
-                      </i>
-                    </a>
-                    <div class="download-button">
-                      <a href="<%= @medium.video_download_url %>"
-                         download="<%= video_download_file(@medium) %>">
-                        <span>
-                          <span class="badge badge-light"
-                                data-toggle="tooltip"
-                                data-placement="bottom"
-                                title="Video speichern">
-                            &darr;mp4
-                          </span>
-                        </span>
-                      </a>
-                    </div>
-                  </div>
-                <% end %>
-              </div>
-            </div>
-          </div>
-          <% if @medium.video.present? %>
-            <% if @medium.screenshot.present? %>
-              <a href="<%= play_medium_path(@medium) %>"
-                 target="_blank">
-                <img id="screenshot-preview"
-                     class="card-img-top video-thumbnail"
-                     src="<%= @medium.screenshot_url %>">
-              </a>
-            <% end %>
-          <% end %>
-          <div class="card-body">
-            <% if @medium.video.present? %>
-              <div class="row meta">
-                <div class="col-12">
-                  Länge:
-                  <span id="video-duration">
-                    <%= @medium.video_duration_hms_string %>
-                  </span>
-                </div>
-                    <div class="col-12">
-                      Auflösung:
-                      <span id="video-resolution">
-                        <%= @medium.video_resolution %>
-                      </span>
-                    </div>
-                    <div class="col-12">
-                      Größe:
-                      <span id="video-size">
-                        <%= number_to_human_size(@medium.video_size) %>
-                      </span>
-                    </div>
-                  </div>
-            <% else %>
-              Es ist kein Video vorhanden.
-            <% end %>
-          </div>
+      <% if @medium.video.present? %>
+        <div class="col-6 col-lg-12 mb-2">
+          <%= render partial: 'media/video_card',
+                     locals: { medium: @medium } %>
         </div>
-      </div>
+      <% end %>
+      <% if @medium.manuscript.present? %>
+        <div class="col-6 col-lg-12 mb-2">
+          <%= render partial: 'media/manuscript_card',
+                     locals: { medium: @medium } %>
+        </div>
+      <% end %>
       <% if @medium.external_reference_link.present? %>
-        <div class="col-12 mt-2">
+        <div class="col-6 col-lg-12 mt-2">
           <div class="card bg-light">
             <div class="card-header bg-brown text-light">
               Externer Link
@@ -160,115 +94,26 @@
       <% end %>
     </div>
   </div>
-  <div class="col-6 mb-2">
-    <div class="card bg-light">
-      <div class="card-header bg-brown">
-        <div class="row">
-          <div class="col-6 text-light">
-            Manuskript
-          </div>
-          <div class="col-6">
-            <% if @medium.manuscript.present? %>
-              <div class="media-card-header">
-                <a href="<%= @medium.manuscript_url %>"
-                   class="no-deco mr-2"
-                   target="_blank">
-                  <i class="material-icons text-light"
-                     data-toggle="tooltip"
-                     data-placement="bottom"
-                     title="pdf im Browser">
-                    library_books
-                  </i>
-                </a>
-                <div class="download-button">
-                  <a href="<%= @medium.manuscript_download_url %>"
-                     download="<%= manuscript_download_file(@medium) %>">
-                    <span>
-                      <span class="badge badge-light"
-                            data-toggle="tooltip"
-                            data-placement="bottom"
-                            title="Manuskript speichern">
-                        &darr;pdf
-                      </span>
-                    </span>
-                  </a>
-                </div>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      </div>
-      <% if @medium.manuscript.present? %>
-        <%= link_to image_tag(@medium.manuscript_screenshot_url,
-                              class: 'card-img-top manuscript-thumbnail'),
-                    @medium.manuscript_url,
-                    target: :blank %>
-      <% end %>
-      <div class="card-body">
-        <% if @medium.manuscript.present? %>
-          <div class="row">
-            <div id="manuscript-meta" class="col-12 meta rounded">
-              <div class="row">
-                <div class="col-12">
-                  Länge:
-                  <span id="manuscript-pages">
-                    <%= @medium.manuscript_pages.to_s + ' S' %>
-                  </span>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12">
-                  Größe:
-                  <span id="manuscript-size">
-                    <%= number_to_human_size(@medium.manuscript_size) %>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        <% else %>
-          Es ist kein Manuskript vorhanden.
-        <% end %>
-      </div>
-    </div>
-  </div>
-  <div class="col-12">
-    <% linked_media = current_user.filter_media(@medium.linked_media) %>
-    <% unless linked_media.empty? %>
-      <div class="row">
-        <div class="col-12 pt-2">
-          <h5>
-          Verknüpfte Medien
-         </h5>
-        </div>
-      </div>
-      <div class="row">
-        <% linked_media.each do |m| %>
-          <div class="col-12 col-lg-6 pb-2">
-            <%= render partial: 'media/medium',
-                       locals: { medium: m,
-                                 tags: false } %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-  </div>
-</div>
-</div>
-  <div class="col-12 col-xl-6">
+  <div class="col-12 col-lg-8 col-xl-6 col-xxl-7 mb-2">
     <div class="row">
       <% if @medium.tags.present? %>
         <div class="col-12 mb-2">
           <%= render partial: 'tags/tags',
                      locals: { related_tags: @medium.tags,
-                               tags_description: 'Verknüpfte Begriffe'} %>
+                               tags_description: 'Verknüpfte Begriffe',
+                               small: true} %>
         </div>
       <% end %>
-      <div class="col-12" style="height: 50%;">
+      <div class="col-12">
         <%= render partial: 'items/items',
                    locals: { items: @medium.proper_items_by_time,
                              small: true } %>
       </div>
     </div>
+  </div>
+  <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
+    <% linked_media = current_user.filter_media(@medium.linked_media) %>
+    <%= render partial: 'media/related_media',
+               locals: { media: linked_media} %>
   </div>
 </div>

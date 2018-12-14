@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-10">
+  <div class="col-12 col-xl-5">
     <h2>
       <span class="badge badge-secondary mr-3">
         Abschnitt
@@ -7,7 +7,19 @@
       <%= @section.to_label %>
     </h2>
   </div>
-  <div class="col-2 text-right ">
+  <div class="col-9 col-xl-5 pt-2">
+    (von
+    <% if current_user.lectures.include?(@section.lecture) %>
+      <%= link_to @section.lecture.to_label,
+                  @section.lecture.path(current_user) %>
+    <% else %>
+      <span>
+        <%= @section.lecture.to_label %>
+      </span>
+    <% end %>
+    )
+  </div>
+  <div class="col-3 col-xl-2 text-right ">
     <% if @section.previous.present? %>
       <a href="<%= section_path(@section.previous) %>"
          class="text-secondary material-icons mr-2"
@@ -29,25 +41,13 @@
   </div>
 </div>
 <div class="row mb-2">
-  <div class="col-12">
-    Vorlesung:
-    <% if current_user.lectures.include?(@section.lecture) %>
-      <%= link_to @section.lecture.to_label,
-                  @section.lecture.path(current_user) %>
-    <% else %>
-      <span>
-        <%= @section.lecture.to_label %>
-      </span>
-    <% end %>
-  </div>
-</div>
-<div class="row mb-2">
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
       <div class="col-12">
         <%= render partial: 'tags/tags',
                    locals: { related_tags: @section.tags,
-                             tags_description: 'Verknüpfte Begriffe'} %>
+                             tags_description: 'Verknüpfte Begriffe',
+                             small: false } %>
       </div>
       <div class="col-12 mt-2 mb-2">
         <%= render partial: 'lessons/lessons',
