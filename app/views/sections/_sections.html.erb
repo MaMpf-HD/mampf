@@ -1,16 +1,32 @@
-<div class="card bg-lime-lighten-4">
-  <div class="card-header bg-lime-darken-3">
+<% user_sections = sections.select { |s| current_user.lectures
+                                                     .include?(s.lecture)} %>
+<div class="card bg-brown-lighten-4">
+  <div class="card-header bg-brown-darken-2">
     <h5 class="text-light">
       Verknüpfte Abschnitte
     </h5>
   </div>
-  <div class="card-body">
-    <ul>
-      <% sections.each do |s| %>
-        <li>
-          <%= link_to s.to_label, s, class: 'text-dark' %>
-        </li>
-      <% end%>
-    </ul>
+  <div class="card-body"
+       id="relatedSectionsBody">
+    <% if user_sections.present? %>
+      <ul>
+        <% user_sections.each do |s| %>
+          <li>
+            <%= s.lecture.short_title + ': ' %>
+            <%= link_to s.to_label,
+                        section_path(s),
+                        class: 'text-dark' %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      Es sind keine verknüpften Abschnitte vorhanden.
+      <% if sections.count > 0 %>
+        Aufgrund Deiner
+        <%= link_to "Profileinstellungen", edit_profile_path %>
+        wurden hierbei <%= sections.count %>
+        Trefer nicht berücksichtigt.
+      <% end %>
+    <% end %>
   </div>
 </div>

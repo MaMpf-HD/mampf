@@ -23,7 +23,7 @@
 
 #relatedTagsBody {
   overflow-y: scroll;
-  height: calc(50vh + 20px);
+  max-height: calc(50vh);
 }
 
 #relatedTagsBodyEdit {

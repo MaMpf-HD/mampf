@@ -27,47 +27,28 @@
                           title: t.title %>
               <br>
             <% end %>
-            <h6 class="mt-2">
-              Begriffe im weiteren Umfeld
-            </h6>
-            <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
-              <%= link_to t.short_title,
-                          tag_path(t),
-                          class: "badge badge-light",
-                          id: 'related-' + dom_id(t),
-                          data: { toggle: 'tooltip', placement: 'top', id: t.id},
-                          title: t.title %>
-              <br>
+            <% if @tags_in_neighbourhood.present? %>
+              <h6 class="mt-2">
+                im weiteren Umfeld
+              </h6>
+              <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
+                <%= link_to t.short_title,
+                            tag_path(t),
+                            class: "badge badge-light",
+                            id: 'related-' + dom_id(t),
+                            data: { toggle: 'tooltip',
+                                    placement: 'top',
+                                    id: t.id},
+                            title: t.title %>
+                <br>
+              <% end %>
             <% end %>
           </div>
         </div>
       </div>
       <div class="col-12">
-        <% unless @lectures.empty? %>
-          <div id="relatedSections">
-            <div class="card bg-brown-lighten-4">
-              <div class="card-header bg-brown-darken-2">
-                <h5 class="text-light">
-                  Abschnitte
-                </h5>
-              </div>
-              <div class="card-body"
-                   id="relatedSectionsBody">
-                <ul>
-                  <% @tag.sections.each do |s| %>
-                    <% if current_user.lectures.include?(s.lecture) %>
-                      <li>
-                        <%= s.lecture.short_title + ': ' %>
-                        <%= link_to s.to_label, section_path(s),
-                                    class: 'text-dark' %>
-                      </li>
-                    <% end %>
-                  <% end %>
-                </ul>
-              </div>
-            </div>
-          </div>
-        <% end %>
+        <%= render partial: 'sections/sections',
+                   locals: { sections: @tag.sections } %>
       </div>
     </div>
   </div>
@@ -97,25 +78,7 @@
     </div>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
-    <div class="card bg-light">
-      <div class="card-header">
-        <h5>
-          Verknüpfte Medien
-        </h5>
-      </div>
-      <div class="card-body" style="max-height: 70vh; overflow-y: scroll;">
-        <div class="row">
-          <% if @media.present? %>
-            <% @media.each do |m| %>
-              <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-2">
-                <%= render partial: 'media/medium',
-                           locals: { medium: m,
-                                     tags: false } %>
-              </div>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-    </div>
+    <%= render partial: 'media/related_media',
+               locals: { media: @media} %>
   </div>
 </div>

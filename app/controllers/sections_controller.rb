@@ -5,7 +5,7 @@ class SectionsController < ApplicationController
   layout 'administration'
 
   def show
-    render layout: 'application'
+    render layout: 'application_no_sidebar'
   end
 
   def edit

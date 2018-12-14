@@ -1,0 +1,25 @@
+<div class="card bg-light">
+  <div class="card-header">
+    <h5>
+      Verknüpfte Medien
+      <span class="badge badge-secondary">
+        <%= media.count %>
+      </span>
+    </h5>
+  </div>
+  <div class="card-body" style="max-height: 70vh; overflow-y: scroll;">
+    <div class="row">
+      <% if media.present? %>
+        <% media.each do |m| %>
+          <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
+            <%= render partial: 'media/medium',
+                       locals: { medium: m,
+                                 tags: false } %>
+          </div>
+        <% end %>
+      <% else %>
+        Es sind keine verknüpften Medien vorhanden.
+      <% end %>
+    </div>
+  </div>
+</div>

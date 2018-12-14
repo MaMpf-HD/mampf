@@ -10,3 +10,8 @@
 .section-basics-warning {
   color: red;
 }
+
+#relatedLessonsBody {
+  max-height: 20vh;
+  overflow-y: scroll;
+}
