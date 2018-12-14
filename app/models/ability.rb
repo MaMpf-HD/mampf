@@ -55,6 +55,7 @@ class Ability
       can [:list_tags, :list_sections], Section
 
       can :manage, Tag
+      can :display_cyto, Tag
 
       cannot :read, Term
 
@@ -68,6 +69,7 @@ class Ability
       cannot :read, [:administration, Term, User]
       can [:play, :display], Medium
       cannot [:index, :update, :create], Tag
+      can :display_cyto, Tag
       can :teacher, User
     end
   end
