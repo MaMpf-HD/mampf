@@ -49,6 +49,11 @@ class Ability
         m.edited_with_inheritance_by?(user)
       end
 
+      can [:index, :destroy_all], Notification
+      can :destroy, Notification do |n|
+        n.recipient == user
+      end
+
       can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
       end
@@ -71,6 +76,10 @@ class Ability
       cannot [:index, :update, :create], Tag
       can :display_cyto, Tag
       can :teacher, User
+      can [:index, :destroy_all], Notification
+      can :destroy, Notification do |n|
+        n.recipient == user
+      end
     end
   end
 end

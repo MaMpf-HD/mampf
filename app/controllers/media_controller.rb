@@ -17,10 +17,12 @@ class MediaController < ApplicationController
   end
 
   def catalog
-    @media = Medium.all
   end
 
   def show
+    # destroy the notifications related to the medium
+    current_user.notifications.where(notifiable_type: 'Medium',
+                                     notifiable_id: @medium.id).each(&:destroy)
     render layout: 'application_no_sidebar'
   end
 
@@ -62,6 +64,8 @@ class MediaController < ApplicationController
     if @medium.valid?
       # convert pdf destinations from extracted metadata to actual items
       @medium.create_pdf_destinations!
+      # create notification about creation of medium to all subscribers
+      create_notifications
       redirect_to edit_medium_path(@medium)
       return
     end
@@ -71,6 +75,8 @@ class MediaController < ApplicationController
 
   def destroy
     @medium.destroy
+    # destroy all notifications related to this medium
+    destroy_notifications
     redirect_to administration_path
   end
 
@@ -276,4 +282,20 @@ class MediaController < ApplicationController
                                    tag_ids: [],
                                    editor_ids: [])
   end
+
+  # create notifications to all users who are subscribed
+  # to the medium's teachable's media_scope
+  def create_notifications
+    @medium.teachable.media_scope.users.each do |u|
+      Notification.create(recipient: u, notifiable_id: @medium.id,
+                          notifiable_type: 'Medium', action: 'create')
+    end
+  end
+
+  # destroy all notifications related to this medium
+  def destroy_notifications
+    Notification.where(notifiable_id: @medium.id, notifiable_type: 'Medium')
+                .each(&:destroy)
+  end
+
 end

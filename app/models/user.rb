@@ -15,6 +15,7 @@ class User < ApplicationRecord
   has_many :edited_media, through: :editable_user_joins,
                           source: :editable, source_type: 'Medium'
   has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
+  has_many :notifications, foreign_key: 'recipient_id'
   validates :courses,
             presence: { message: 'Es muss mindestens ein Modul abonniert ' \
                                  'werden.' },

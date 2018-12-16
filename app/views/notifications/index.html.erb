@@ -1,0 +1,30 @@
+<% if @notifications.present? %>
+  <div class="row mb-2">
+    <div class="col-6">
+      <h3>
+        Neue Benachrichtigungen
+        <span class="badge badge-secondary">
+          <%= @notifications.count %>
+        </span>
+      </h3>
+    </div>
+    <div class="col-4 text-right">
+      <%= paginate @notifications, window: 2 %>
+    </div>
+    <div class="col-2 text-right">
+      <%= link_to 'alle erledigen',
+                  destroy_all_notifications_path,
+                  class: 'btn btn-sm btn-secondary',
+                  method: :post,
+                  remote: true %>
+    </div>
+  </div>
+  <% @notifications.each do |n| %>
+      <div class="row border border-rounded mx-2 pt-2">
+          <%= render partial: 'notifications/notification',
+                     locals: { notification: n } %>
+      </div>
+  <% end %>
+<% else %>
+  Es liegen keine neuen Benachrichtigungen für Dich vor.
+<% end %>

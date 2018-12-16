@@ -67,6 +67,10 @@ $container-max-widths: (
   text-decoration: none;
 }
 
+.smaller-font {
+  font-size: 0.75em;
+}
+
 
 $modal-xl:                    1140px !default;
 $modal-xxl:                   1600px !default;

@@ -1,0 +1,27 @@
+<div class="col-2">
+  <%= human_readable_date(notification.created_at) %>
+</div>
+<div class="col-5">
+  <% medium = notification.notifiable %>
+  Neues Medium in
+  <%= link_to medium.teachable.media_scope.title_for_viewers,
+              polymorphic_path(medium.teachable.media_scope),
+              class: 'text-dark' %>
+</div>
+<div class="col-4">
+  <%= link_to medium.local_title_for_viewers,
+              medium %>
+</div>
+<div class="col-1 text-right">
+  <a href="<%= notification_path(notification) %>"
+     data-method="delete"
+     data-remote="true"
+     class="no-deco mr-2">
+    <i class="material-icons text-dark mt-2"
+       data-toggle="tooltip"
+       data-placement="bottom"
+       title="erledigen">
+      delete
+    </i>
+  </a>
+</div>

@@ -1,41 +1,35 @@
-<% relevant_notifications = current_user.notifications.unopened_only
-                                        .select { |n| n.notifiable.present? }
+<% relevant_notifications = current_user.notifications
                                         .sort_by(&:created_at).reverse %>
 <% if relevant_notifications.present? %>
   <ul class="navbar-nav">
     <li class="nav-item">
       <div class="btn-group">
-        <a href="<%= user_notifications_path(current_user) %>"
-           class="btn btn-primary btn-sm dropdown-toggle mr-3"
-           data-toggle="dropdown">
+        <button class="btn btn-primary btn-sm dropdown-toggle mr-3"
+                type="button"
+                data-toggle="dropdown">
           <i class="far fa-bell text-light">
           </i>
           <span class="badge badge-light">
             <%= relevant_notifications.count %>
           </span>
-        </a>
+        </button>
         <div class="dropdown-menu">
           <% relevant_notifications.first(5).each do |n| %>
-            <a class="dropdown-item"
-                href="<%= open_notification_path_for(n, move: true) %>"
-                data-method="post">
-              <span style="font-size: 0.8em;">
-                <% if n.notifiable_type == 'Medium' %>
-                  <%= render partial: 'activity_notification/notifications/users/medium/menu_item',
-                             locals: { notification: n } %>
-                <% end %>
-              </span>
-            </a>
+            <%= link_to menu_item(n),
+                        n.path,
+                        class: 'dropdown-item',
+                        style: 'font-size: 0.8em;' %>
           <% end %>
           <div class="dropdown-divider">
           </div>
-          <a href="<%= user_notifications_path(current_user) %>"
+          <a href="<%= notifications_path %>"
              class="dropdown-item">
             alle anzeigen
           </a>
-          <a href="<%= open_all_notifications_path_for(current_user) %>"
-             data-method="post" data-remote="true"
-             class="dropdown-item">
+          <a href="<%= destroy_all_notifications_path %>"
+             class="dropdown-item"
+             data-remote="true"
+             data-method="post">
             alle erledigen
           </a>
         </div>
