@@ -15,10 +15,11 @@
         </button>
         <div class="dropdown-menu">
           <% relevant_notifications.first(5).each do |n| %>
-            <%= link_to menu_item(n),
-                        n.path,
-                        class: 'dropdown-item',
-                        style: 'font-size: 0.8em;' %>
+            <a href="<%= n.path %>"
+               class="dropdown-item"
+               style="font-size: 0.8em;">
+              <%= notification_menu_item(n) %>
+            </a>
           <% end %>
           <div class="dropdown-divider">
           </div>

@@ -28,4 +28,13 @@ module LecturesHelper
       (current_user.admin? ||
         lecture.editors_with_inheritance.include?(current_user))
   end
+
+  # create text for notification about new lecture in notification dropdown menu
+  def lecture_notification(lecture)
+    text = 'Neue Vorlesung ' +
+             lecture.title_for_viewers +
+             tag(:br) +
+             'Über Deine Profileinstellungen kannst Du sie abonnieren.'
+    text.html_safe
+  end
 end

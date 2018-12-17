@@ -31,7 +31,8 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new(lecture_params)
     @lecture.save
     if @lecture.valid?
-      # depending on where the destroy action was trriggered from, return
+      create_notifications
+      # depending on where the create action was trriggered from, return
       # to admin index view or edit course view
       unless params[:lecture][:from] == 'course'
         redirect_to administration_path
@@ -45,6 +46,8 @@ class LecturesController < ApplicationController
 
   def destroy
     @lecture.destroy
+    # destroy all notifications related to this lecture
+    destroy_notifications
     redirect_to administration_path
   end
 
@@ -84,5 +87,19 @@ class LecturesController < ApplicationController
                                     :start_chapter, :absolute_numbering,
                                     :start_section,
                                     editor_ids: [])
+  end
+
+  # create notifications to all users about creation of new lecture
+  def create_notifications
+    User.find_each do |u|
+      Notification.create(recipient: u, notifiable_id: @lecture.id,
+                          notifiable_type: 'Lecture', action: 'create')
+    end
+  end
+
+  # destroy all notifications related to this lecture
+  def destroy_notifications
+    Notification.where(notifiable_id: @lecture.id, notifiable_type: 'Lecture')
+                .each(&:destroy)
   end
 end

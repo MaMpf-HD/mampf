@@ -5,6 +5,9 @@ class ProfileController < ApplicationController
 
   def edit
     redirect_to consent_profile_path unless @user.consents
+    # destroy the notifications related to new lectures and courses
+    current_user.notifications.where(notifiable_type: ['Lecture', 'Course'])
+                              .each(&:destroy)
   end
 
   def update

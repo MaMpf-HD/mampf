@@ -21,6 +21,7 @@ class CoursesController < ApplicationController
   def create
     @course = Course.new(course_params)
     @course.save
+    create_notifications
     redirect_to administration_path if @course.valid?
     @errors = @course.errors
   end
@@ -42,6 +43,8 @@ class CoursesController < ApplicationController
 
   def destroy
     @course.destroy
+    # destroy all notifications related to this course
+    destroy_notifications
     redirect_to administration_path
   end
 
@@ -65,5 +68,19 @@ class CoursesController < ApplicationController
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [])
+  end
+
+  # create notifications to all users about creation of new course
+  def create_notifications
+    User.find_each do |u|
+      Notification.create(recipient: u, notifiable_id: @course.id,
+                          notifiable_type: 'Course', action: 'create')
+    end
+  end
+
+  # destroy all notifications related to this course
+  def destroy_notifications
+    Notification.where(notifiable_id: @course.id, notifiable_type: 'Course')
+                .each(&:destroy)
   end
 end

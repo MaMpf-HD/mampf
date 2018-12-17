@@ -24,4 +24,13 @@ module MediaHelper
   def inspect_or_edit_medium_path(medium, inspection)
     inspection ? inspect_medium_path(medium) : edit_medium_path(medium)
   end
+
+  # create text for notification about new medium in notification dropdown menu
+  def medium_notification(medium)
+    text = 'Neues Medium in ' +
+             medium.teachable.media_scope.title_for_viewers +
+             tag(:br) +
+             medium.local_title_for_viewers
+    text.html_safe
+  end
 end
