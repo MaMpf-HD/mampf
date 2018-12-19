@@ -16,7 +16,11 @@ module ApplicationHelper
 
   # Returns the full title on a per-page basis.
   def full_title(page_title = '')
+    return 'THymE' if action_name == 'play'
     base_title = 'MaMpf'
+    if user_signed_in? && current_user.notifications.present?
+      base_title += " (#{current_user.notifications.count})"
+    end
     if page_title.empty?
       base_title
     else

@@ -9,7 +9,7 @@
                 data-toggle="dropdown">
           <i class="far fa-bell text-light">
           </i>
-          <span class="badge badge-light">
+          <span class="badge badge-light notificationCounter">
             <%= relevant_notifications.count %>
           </span>
         </button>
@@ -17,7 +17,8 @@
           <% relevant_notifications.first(5).each do |n| %>
             <a href="<%= n.path %>"
                class="dropdown-item"
-               style="font-size: 0.8em;">
+               style="font-size: 0.8em;"
+               data-notification="<%= n.id %>">
               <%= notification_menu_item(n) %>
             </a>
           <% end %>

@@ -17,19 +17,33 @@ module NotificationsHelper
     text.html_safe
   end
 
+  def notification_header(notification)
+    notifiable = notification.notifiable
+    return unless notifiable.class.to_s
+                            .in?(Notification.allowed_notifiable_types)
+    text = if notifiable.class.to_s == 'Medium'
+             link_to(notifiable.teachable.media_scope.title_for_viewers,
+                     polymorphic_path(notifiable.teachable.media_scope),
+                     class: 'text-dark')
+           else
+             'Kursangebot'
+           end
+    text.html_safe
+  end
+
+
   def notification_text(notification)
     notifiable = notification.notifiable
     return unless notifiable.class.to_s
                             .in?(Notification.allowed_notifiable_types)
     text = if notifiable.class.to_s == 'Medium'
-             'Neues Medium in ' +
-                link_to(notifiable.teachable.media_scope.title_for_viewers,
-                        polymorphic_path(notifiable.teachable.media_scope),
-                        class: 'text-dark')
+             'Neues Medium angelegt:'
            elsif notifiable.class.to_s == 'Course'
-             'Neues Modul ' + notifiable.title
+             'Neues Modul angelegt:' + tag(:br) + notifiable.course.title
            else
-             'Neue Vorlesung ' + notifiable.title_for_viewers
+             'Neue Vorlesung angelegt:' + tag(:br) + notifiable.course.title +
+             ' (' + notifiable.term.to_label + ', ' +
+             notifiable.teacher.name + ')'
            end
     text.html_safe
   end
@@ -39,7 +53,9 @@ module NotificationsHelper
     if notifiable.class.to_s == 'Medium'
       return link_to(notifiable.local_title_for_viewers, notifiable)
     else
-      return link_to('Profileinstellungen', edit_profile_path)
+      return ('Du kannst sie über Deine ' +
+               link_to('Profileinstellungen', edit_profile_path) +
+               ' abonnieren.').html_safe
     end
   end
 end

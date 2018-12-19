@@ -3,7 +3,7 @@
     <div class="col-6">
       <h3>
         Neue Benachrichtigungen
-        <span class="badge badge-secondary">
+        <span class="badge badge-secondary notificationCounter">
           <%= @notifications.count %>
         </span>
       </h3>
@@ -19,12 +19,15 @@
                   remote: true %>
     </div>
   </div>
-  <% @notifications.each do |n| %>
-      <div class="row border border-rounded mx-2 pt-2">
-          <%= render partial: 'notifications/notification',
-                     locals: { notification: n } %>
+  <div class="row mb-2">
+    <% @notifications.each do |n| %>
+      <div class="col-12 col-md-6 col-xl-4 col-xxl-4 mb-2"
+           data-notification="<%= n.id %>">
+        <%= render partial: 'notifications/notification',
+                   locals: { notification: n } %>
       </div>
-  <% end %>
+    <% end %>
+  </div>
 <% else %>
   Es liegen keine neuen Benachrichtigungen für Dich vor.
 <% end %>

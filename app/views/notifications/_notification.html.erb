@@ -1,22 +1,31 @@
-<div class="col-2">
-  <%= human_readable_date(notification.created_at) %>
-</div>
-<div class="col-5">
-  <%= notification_text(notification) %>
-</div>
-<div class="col-4">
-  <%= notification_link(notification) %>
-</div>
-<div class="col-1 text-right">
-  <a href="<%= notification_path(notification) %>"
-     data-method="delete"
-     data-remote="true"
-     class="no-deco mr-2">
-    <i class="material-icons text-dark"
-       data-toggle="tooltip"
-       data-placement="bottom"
-       title="erledigen">
-      delete
-    </i>
-  </a>
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-6">
+        <%= notification_header(notification) %>
+      </div>
+      <div class="col-4 text-right">
+        <span class="smaller-font">
+          <%= human_readable_date(notification.created_at) %>
+        </span>
+      </div>
+      <div class="col-2 text-right">
+        <a href="<%= notification_path(notification) %>"
+           data-method="delete"
+           data-remote="true"
+           class="no-deco">
+          <i class="far fa-times-circle fa-lg text-dark"
+             data-toggle="tooltip"
+             data-placement="bottom"
+             title="erledigen">
+          </i>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <%= notification_text(notification) %>
+    <br>
+    <%= notification_link(notification) %>
+  </div>
 </div>
