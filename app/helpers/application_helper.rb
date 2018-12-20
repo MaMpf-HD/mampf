@@ -228,7 +228,7 @@ module ApplicationHelper
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
     return 'heute, ' + date.strftime("%H:%M") if date.to_date == Date.today
-    return 'gestern, ' + date.strftime("%d.%m.%y") if date.to_date == Date.yesterday
-    strftime("%d.%m.%Y")
+    return 'gestern, ' + date.strftime("%H:%M") if date.to_date == Date.yesterday
+    date.strftime("%d.%m.%Y")
   end
 end
