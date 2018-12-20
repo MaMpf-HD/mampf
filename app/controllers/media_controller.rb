@@ -65,7 +65,7 @@ class MediaController < ApplicationController
       # convert pdf destinations from extracted metadata to actual items
       @medium.create_pdf_destinations!
       # create notification about creation of medium to all subscribers
-      create_notifications
+      create_notifications unless @medium.sort == 'KeksQuestion'
       redirect_to edit_medium_path(@medium)
       return
     end

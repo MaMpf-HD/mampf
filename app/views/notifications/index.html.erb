@@ -1,33 +1,37 @@
-<% if @notifications.present? %>
-  <div class="row mb-2">
-    <div class="col-6">
-      <h3>
-        Neue Benachrichtigungen
-        <span class="badge badge-secondary notificationCounter">
-          <%= @notifications.count %>
-        </span>
-      </h3>
-    </div>
-    <div class="col-4 text-right">
-      <%= paginate @notifications, window: 2 %>
-    </div>
-    <div class="col-2 text-right">
-      <%= link_to 'alle erledigen',
-                  destroy_all_notifications_path,
-                  class: 'btn btn-sm btn-secondary',
-                  method: :post,
-                  remote: true %>
-    </div>
-  </div>
-  <div class="row mb-2">
-    <% @notifications.each do |n| %>
-      <div class="col-12 col-md-6 col-xl-4 col-xxl-4 mb-2"
-           data-notification="<%= n.id %>">
-        <%= render partial: 'notifications/notification',
-                   locals: { notification: n } %>
+<div class="card mb-2">
+  <div class="card-header">
+    <div class="row mb-2">
+      <div class="col-10">
+        <h3>
+          Neue Benachrichtigungen
+          <span class="badge badge-secondary notificationCounter">
+            <%= @notifications.count %>
+          </span>
+        </h3>
       </div>
-    <% end %>
+      <div class="col-2 text-right">
+        <%= link_to 'alle erledigen',
+                    destroy_all_notifications_path,
+                    class: 'btn btn-sm btn-secondary',
+                    method: :post,
+                    remote: true %>
+      </div>
+    </div>
   </div>
-<% else %>
-  Es liegen keine neuen Benachrichtigungen für Dich vor.
-<% end %>
+  <div class="card-body"
+       id="notificationCardBody">
+    <div class="row">
+      <% if @notifications.present? %>
+        <% @notifications.each do |n| %>
+          <div class="col-12 col-md-6 col-xl-4 col-xxl-4 mb-2"
+               data-notification="<%= n.id %>">
+            <%= render partial: 'notifications/notification',
+                       locals: { notification: n } %>
+          </div>
+        <% end %>
+      <% else %>
+        Es liegen keine neuen Benachrichtigungen für Dich vor.
+      <% end %>
+    </div>
+  </div>
+</div>

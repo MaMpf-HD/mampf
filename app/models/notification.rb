@@ -3,7 +3,7 @@ class Notification < ApplicationRecord
   include ActionDispatch::Routing::PolymorphicRoutes
   include Rails.application.routes.url_helpers
   belongs_to :recipient, class_name: 'User'
-  paginates_per 10
+  paginates_per 12
 
   def notifiable
     return unless notifiable_type.in?(Notification.allowed_notifiable_types) &&

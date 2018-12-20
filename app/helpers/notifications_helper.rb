@@ -31,6 +31,19 @@ module NotificationsHelper
     text.html_safe
   end
 
+  def notification_color(notification)
+    notifiable = notification.notifiable
+    if notifiable.class.to_s == 'Medium' && notifiable.sort == 'Sesam'
+      return 'bg-post-it-green'
+    elsif notifiable.class.to_s == 'Medium' && notifiable.sort == 'Nuesse'
+      return 'bg-post-it-pink'
+    elsif notifiable.class.to_s == 'Medium' && notifiable.sort == 'KeksQuiz'
+      return 'bg-post-it-blue'
+    elsif notifiable.class.to_s.in?(['Lecture', 'Course'])
+      return 'bg-post-it-orange'
+    end
+    'bg-post-it-yellow'
+  end
 
   def notification_text(notification)
     notifiable = notification.notifiable
@@ -51,10 +64,12 @@ module NotificationsHelper
   def notification_link(notification)
     notifiable = notification.notifiable
     if notifiable.class.to_s == 'Medium'
-      return link_to(notifiable.local_title_for_viewers, notifiable)
+      return link_to(notifiable.local_title_for_viewers, notifiable,
+                     style: 'color:  #2251dd;')
     else
       return ('Du kannst sie über Deine ' +
-               link_to('Profileinstellungen', edit_profile_path) +
+               link_to('Profileinstellungen', edit_profile_path,
+                       style: 'color:  #2251dd;') +
                ' abonnieren.').html_safe
     end
   end

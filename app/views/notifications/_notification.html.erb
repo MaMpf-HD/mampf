@@ -1,8 +1,10 @@
-<div class="card">
+<div class="card <%= notification_color(notification) %>">
   <div class="card-header">
     <div class="row">
       <div class="col-6">
-        <%= notification_header(notification) %>
+        <h5>
+          <%= notification_header(notification) %>
+        </h5>
       </div>
       <div class="col-4 text-right">
         <span class="smaller-font">

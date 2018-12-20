@@ -5,7 +5,7 @@ class NotificationsController < ApplicationController
 
   def index
     @notifications = current_user.notifications.order(:created_at)
-                                 .reverse_order.page params[:page]
+                                 .reverse_order
   end
 
   def destroy
