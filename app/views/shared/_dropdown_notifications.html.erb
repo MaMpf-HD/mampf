@@ -16,7 +16,7 @@
         <div class="dropdown-menu">
           <% relevant_notifications.first(5).each do |n| %>
             <a href="<%= n.path %>"
-               class="dropdown-item"
+               class="dropdown-item border-top"
                style="font-size: 0.8em;"
                data-notification="<%= n.id %>">
               <%= notification_menu_item(n) %>

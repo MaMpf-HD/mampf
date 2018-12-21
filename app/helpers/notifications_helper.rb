@@ -5,7 +5,7 @@ module NotificationsHelper
     return unless notifiable.class.to_s
                             .in?(Notification.allowed_notifiable_types)
     date_tag = content_tag(:div, human_readable_date(notification.created_at),
-                           class: 'text-right smaller-font')
+                           class: 'smaller-font')
     text = date_tag +
              if notifiable.class.to_s == 'Medium'
                medium_notification(notifiable)

@@ -4,7 +4,9 @@ module CoursesHelper
     text = 'Neues Modul ' +
              course.title +
              tag(:br) +
-             'Über Deine Profileinstellungen kannst Du es abonnieren.'
+             'Über Deine Profileinstellungen' +
+             tag(:br) +
+             'kannst Du es abonnieren.'
     text.html_safe
   end
 end
