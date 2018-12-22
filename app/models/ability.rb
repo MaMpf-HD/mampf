@@ -16,6 +16,7 @@ class Ability
     elsif user.editor?
       # :read is a cancancan alias for index and show actions
       can [:read, :inspect], :all
+      cannot :read, Announcement
       can :manage, [:administration, Item, Referral]
       # :create is a cancancan alias for new and create actions
       can :create, [Chapter, Lecture, Lesson, Medium, Section]
@@ -71,7 +72,7 @@ class Ability
       can :teacher, User
     else
       can :read, :all
-      cannot :read, [:administration, Term, User]
+      cannot :read, [:administration, Term, User, Announcement]
       can [:play, :display], Medium
       cannot [:index, :update, :create], Tag
       can :display_cyto, Tag

@@ -10,7 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_16_120201) do
+ActiveRecord::Schema.define(version: 2018_12_22_165544) do
+
+  create_table "announcements", force: :cascade do |t|
+    t.integer "lecture_id"
+    t.integer "announcer_id"
+    t.text "details"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["announcer_id"], name: "index_announcements_on_announcer_id"
+    t.index ["lecture_id"], name: "index_announcements_on_lecture_id"
+  end
 
   create_table "chapters", force: :cascade do |t|
     t.integer "lecture_id"
@@ -185,6 +195,8 @@ ActiveRecord::Schema.define(version: 2018_12_16_120201) do
     t.text "action"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type"
+    t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
   end
 
   create_table "referrals", force: :cascade do |t|

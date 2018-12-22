@@ -45,7 +45,12 @@
         <li class="nav-item <%= active_controller?('terms') %>">
           <%= link_to "Semester",
                       terms_path,
-                      class: 'nav-link ' %>
+                      class: 'nav-link' %>
+        </li>
+        <li>
+          <%= link_to 'Mitteilungen',
+                      announcements_path,
+                      class: 'nav-link' %>
         </li>
       <% end %>
     </ul>

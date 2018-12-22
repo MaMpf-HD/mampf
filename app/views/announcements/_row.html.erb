@@ -1,0 +1,39 @@
+<div class="col-2">
+  <%= human_readable_date(announcement.created_at) %>
+  <% if announcement.created_at != announcement.updated_at %>
+    <br>
+    (editiert
+    <%= human_readable_date(announcement.updated_at) %>
+    )
+  <% end %>  
+</div>
+<div class="col-2">
+  <%= announcement.announcer.name %>
+</div>
+<div class="col-7">
+  <%= announcement.details %>
+</div>
+<div class="col-1">
+  <a href="<%= edit_announcement_path(announcement) %>"
+     class="text-dark"
+     style="text-decoration: none;"
+     data-remote="true"
+     data-toggle="tooltip"
+     data-placement="bottom"
+     title="Bearbeiten">
+    <i class="far fa-edit">
+    </i>
+  </a>
+  <a href="<%= announcement_path(tag) %>"
+     class="text-dark"
+     style="text-decoration: none;"
+     data-method="delete"
+     data-confirm="Bist Du sicher?"
+     data-remote="true"
+     data-toggle="tooltip"
+     data-placement="bottom"
+     title="Bearbeiten">
+    <i class="fas fa-trash">
+    </i>
+  </a>  
+</div>
