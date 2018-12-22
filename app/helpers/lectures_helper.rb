@@ -30,13 +30,11 @@ module LecturesHelper
   end
 
   # create text for notification about new lecture in notification dropdown menu
-  def lecture_notification(lecture)
-    text = 'Neue Vorlesung ' +
-             lecture.title_for_viewers +
-             tag(:br) +
-             'Über Deine Profileinstellungen' +
-             tag(:br) +
-             'kannst Du sie abonnieren.'
-    text.html_safe
+  def lecture_notification_header(lecture)
+    text = 'Neue Vorlesung ' + lecture.title_for_viewers
+  end
+
+  def lecture_notification_details(lecture)
+    'Über Deine Profileinstellungen kannst Du sie abonnieren.'
   end
 end

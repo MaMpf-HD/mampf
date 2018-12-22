@@ -19,7 +19,9 @@
                class="dropdown-item border-top"
                style="font-size: 0.8em;"
                data-notification="<%= n.id %>">
-              <%= notification_menu_item(n) %>
+              <%= render partial: 'notifications/menu_item',
+                         locals:  { notification: n } %>
+              <%#= notification_menu_item(n) %>
             </a>
           <% end %>
           <div class="dropdown-divider">

@@ -1,0 +1,11 @@
+<div class="row">
+	<div class="col-8">
+		<%= notification_menu_item_header(notification) %>
+	</div>
+	<div class="col-4 text-right smaller-font">
+		<%= human_readable_date(notification.created_at) %>
+	</div>
+	<div class="col-12">
+		<%= notification_menu_item_details(notification) %>
+	</div>
+</div>

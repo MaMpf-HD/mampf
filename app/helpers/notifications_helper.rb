@@ -1,20 +1,25 @@
 # Notifications Helper
 module NotificationsHelper
-  def notification_menu_item(notification)
+  def notification_menu_item_header(notification)
     notifiable = notification.notifiable
-    return unless notifiable.class.to_s
-                            .in?(Notification.allowed_notifiable_types)
-    date_tag = content_tag(:div, human_readable_date(notification.created_at),
-                           class: 'smaller-font')
-    text = date_tag +
-             if notifiable.class.to_s == 'Medium'
-               medium_notification(notifiable)
-             elsif notifiable.class.to_s == 'Course'
-               course_notification(notifiable)
-             else
-               lecture_notification(notifiable)
-             end
-    text.html_safe
+    if notifiable.class.to_s == 'Medium'
+      medium_notification_header(notifiable)
+    elsif notifiable.class.to_s == 'Course'
+      course_notification_header(notifiable)
+    else
+      lecture_notification_header(notifiable)
+    end
+  end
+
+  def notification_menu_item_details(notification)
+    notifiable = notification.notifiable
+    if notifiable.class.to_s == 'Medium'
+      medium_notification_details(notifiable)
+    elsif notifiable.class.to_s == 'Course'
+      course_notification_details(notifiable)
+    else
+      lecture_notification_details(notifiable)
+    end
   end
 
   def notification_header(notification)

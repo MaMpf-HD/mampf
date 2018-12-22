@@ -6,6 +6,7 @@ class NotificationsController < ApplicationController
   def index
     @notifications = current_user.notifications.order(:created_at)
                                  .reverse_order
+    render layout: 'application_no_sidebar'
   end
 
   def destroy
