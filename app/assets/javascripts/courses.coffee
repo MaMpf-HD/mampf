@@ -14,8 +14,9 @@ $(document).on 'turbolinks:load', ->
     teacher = evt.relatedTarget.dataset.teacher
     id = evt.relatedTarget.dataset.id
     lecture = evt.relatedTarget.dataset.lecture
+    lectureTitle = evt.relatedTarget.dataset.title
     editable = evt.relatedTarget.dataset.editable
-    $('#lecture-term').empty().append(term)
+    $('#lecture-title').empty().append(lectureTitle)
     $('#lecture-teacher').text(teacher)
     $('#lecture-teacher').prop('href', Routes.teacher_path(id))
     $('#lecture-edit').prop('href', Routes.edit_lecture_path(lecture))

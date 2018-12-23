@@ -1,30 +1,20 @@
 <%= form_with model: announcement  do |f|%>
-  <div class="form-row py-2">
-    <div class="col-2">
-      <%= human_readable_date(announcement.created_at) %>
-      <% if announcement.created_at != announcement.updated_at %>
-        <br>
-        (editiert
-        <%= human_readable_date(announcement.updated_at) %>
-        )
-      <% end %>
-    </div>
-    <div class="col-2">
-      <%= announcement.announcer.name %>
-    </div>
-    <div class="col-5">
-      <%= f.text_area :details, { class: 'form-control' } %>
-      <div class="invalid-feedback"
-           id="announcement-error">
-      </div>
-    </div>
-    <div class="col-3 text-right">
-      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-      <button type="button" class="btn btn-secondary" 
-              id="cancel-announcement-edit"
-              data-announcement="<%= announcement.id %>">
-        abbrechen
-      </button>
-    </div>
+  <%= f.label :details, 'Text' %>
+  <%= f.text_area :details, { class: 'form-control' } %>
+  <div class="invalid-feedback"
+       id="announcement-error">
+  </div>
+  <%= f.hidden_field :lecture_id, value: @lecture&.id %>
+  <div class="text-center mt-3">
+    <%= f.submit 'Speichern',
+                 class: 'btn btn-primary',
+                 data: 
+                   { confirm: 'Bist Du sicher? Du kannst Die Mitteilung ' \
+                              'nach dem Absenden weder bearbeiten noch ' \
+                              'löschen.' } %>
+    <button type="button"
+            class="btn btn-secondary cancel-new-announcement">
+      abbrechen
+    </button>
   </div>
 <% end %>

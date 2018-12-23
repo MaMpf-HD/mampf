@@ -1,13 +1,15 @@
 <div class="row mt-3 p-2">
-  <div class="col-10">
+  <div class="col-7">
     <h4>
       Mitteilungsübersicht
     </h4>
   </div>
+  <div class="col-3">
+    <%= paginate @announcements, window: 2 %>
+  </div>
   <div class="col-2 text-right">
     <%= link_to 'Mitteilung anlegen', new_announcement_path,
                 class: 'btn btn-secondary',
-                id: 'create-new-term',
                 remote: true %>
   </div>
 </div>
@@ -19,22 +21,17 @@
   </div>
   <div class="col-2 text-light">
     <strong>
-      angelegt von
+      Verfasser
     </strong>
   </div>
-  <div class="col-7 text-light">
+  <div class="col-8 text-light">
     <strong>
-      Details
-    </strong>
-  </div>
-  <div class="col-1 text-light">
-    <strong>
-      Aktionen
+      Text
     </strong>
   </div>
 </div>
 <div id="row-new-announcement" 
-     class="border-bottom"
+     class="border-bottom mx-2 py-2"
      style="display: none;" >
 </div>
 <% @announcements.each do |a| %>
@@ -44,3 +41,4 @@
                locals: { announcement: a }%>
   </div>
 <% end %>
+<%= render partial: 'announcements/modal' %>

@@ -1,0 +1,19 @@
+<div class="bg-light-blue-lighten-5 rounded mb-3">
+<div class="row p-3">
+  <div class="col-12">
+    <h5>
+      Mitteilungen
+    </h5>
+  </div>
+</div>
+<div class="row mx-3 pb-3">  
+  <div class="col-12 white" style="max-height: 10vh; overflow-y: scroll;">
+  	<% lecture.announcements.order(:created_at).reverse.each do |a| %>
+      <div class="row border-bottom mx-4 px-4 py-2">
+        <%= render partial: 'announcements/row',
+                   locals: { announcement: a } %>
+      </div>
+    <% end %> 
+  </div>
+</div>
+</div>

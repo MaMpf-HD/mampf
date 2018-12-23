@@ -7,9 +7,11 @@ class LecturesController < ApplicationController
   layout 'administration'
 
   def edit
+    @announcements = @lecture.announcements.order(:created_at).reverse
   end
 
   def inspect
+    @announcements = @lecture.announcements.order(:created_at).reverse
   end
 
   def update

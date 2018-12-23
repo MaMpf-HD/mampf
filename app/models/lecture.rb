@@ -30,6 +30,10 @@ class Lecture < ApplicationRecord
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
 
+
+  # a lecture has many announcements
+  has_many :announcements
+
   # we do not allow that a teacher gives a certain lecture in a given term twice
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
                                    message: 'Eine Vorlesung mit derselben ' \

@@ -51,6 +51,12 @@
                            inspection: inspection } %>
     </div>
     <div class="col-12">
+      <%= render partial: 'lectures/announcements',
+                 locals: { lecture: lecture,
+                           announcements: announcements,
+                           inspection: inspection } %>
+    </div>
+    <div class="col-12">
       <%= render partial: 'lectures/preferences',
                  locals: { lecture: lecture,
                            inspection: inspection } %>
@@ -60,4 +66,5 @@
 <%= render partial: 'lessons/modal' %>
 <% unless inspection %>
   <%= render partial: 'tags/modal' %>
+  <%= render partial: 'announcements/modal' %>
 <% end %>

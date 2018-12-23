@@ -1,35 +1,38 @@
 # AnnouncementsController
 class AnnouncementsController < ApplicationController
-	before_action :set_announcement, only: [:edit, :update]
   authorize_resource
   layout 'administration'
 
   def index
-  	@announcements = Announcement.where(lecture: nil)
+  	@announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
+  																											 .order(:created_at)
+  															 												 .reverse)
+  													 .page(params[:page]).per(10)
   end
 
-  def edit
+  def new
+  	@lecture = Lecture.find_by_id(params[:lecture])
+  	@announcement = Announcement.new(announcer: current_user, lecture: @lecture)
   end
 
-  def update
-    @announcement.update(announcement_params)
-    unless @announcement.valid?
-	    @errors = @announcement.errors[:details].join(', ')
-	  end
+  def create
+    @announcement = Announcement.new(announcement_params)
+    @announcement.announcer = current_user
+    @announcement.save
+    if @announcement.valid?
+    	unless @announcement.lecture.present?
+	      redirect_to announcements_path
+  	    return
+  	  end
+  	  redirect_to edit_lecture_path(@announcement.lecture)
+  	  return
+    end
+    @errors = @announcement.errors[:details].join(', ')
   end
 
   private
 
-  def set_announcement
-    @id = params[:id]
-    @announcement = Announcement.find_by_id(@id)
-    return if @announcement.present?
-    redirect_to announcements_path, 
-    						alert: 'Ein Semester mit der angeforderten id ' \
-                       'existiert nicht.'
-  end
-
   def announcement_params
-    params.require(:announcement).permit(:details) 	
+    params.require(:announcement).permit(:details, :lecture_id) 	
   end
 end

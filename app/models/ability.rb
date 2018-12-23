@@ -16,11 +16,13 @@ class Ability
     elsif user.editor?
       # :read is a cancancan alias for index and show actions
       can [:read, :inspect], :all
-      cannot :read, Announcement
+      cannot :index, Announcement
       can :manage, [:administration, Item, Referral]
       # :create is a cancancan alias for new and create actions
       can :create, [Chapter, Lecture, Lesson, Medium, Section]
       # :update is a cancancan alias for update and edit actions
+
+      can [:new, :create], Announcement 
 
       # only users who are editors of a chapter's lecture can edit, update
       # or destroy them

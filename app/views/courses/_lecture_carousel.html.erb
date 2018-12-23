@@ -23,11 +23,18 @@
                         current_user.in?(l.editors_with_inheritance) %>
       <div class="carousel-item <%= active(is_active) %>"
            data-term="<%= l.term.to_label %>"
+           data-title="<%= l.title_for_viewers %>"
            data-teacher="<%= l.teacher.name %>"
            data-id="<%= l.teacher.id %>"
            data-editable="<%= privileged %>"
            data-lecture="<%= l.id %>">
         <div class="row">
+          <% unless l.announcements.empty? %>
+            <div class="col-12">
+              <%= render partial: 'lectures/announcements_jumbo',
+                         locals: { lecture: l } %>
+            </div>
+          <% end %>
           <% unless l.chapters.empty? %>
             <div class="col-12">
               <%= render partial: 'lectures/content',
