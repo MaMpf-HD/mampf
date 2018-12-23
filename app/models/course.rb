@@ -105,16 +105,15 @@ class Course < ApplicationRecord
     project?('nuesse')
   end
 
-  # returns if there are any media (or newsfeeds) associated to this course
+  # returns if there are any media associated to this course
   # which are not of type kaviar
   def available_extras
-    hash = { 'news' => news.present?, 'sesam' => sesam?, 'keks' => keks?,
+    hash = { 'sesam' => sesam?, 'keks' => keks?,
              'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'nuesse' => nuesse? }
     hash.keys.select { |k| hash[k] == true }
   end
 
   # returns an array with all types of media that are associated to this course
-  # (including newsfeed)
   def available_food
     kaviar_info = kaviar? ? ['kaviar'] : []
     kaviar_info.concat(available_extras)
@@ -126,16 +125,6 @@ class Course < ApplicationRecord
     end
   end
 
-  # returns if user has subscribed to newsfeed to this course
-  def news_for_user?(user)
-    return false unless news.present?
-    return false unless user.courses.include?(self)
-    if CourseUserJoin.where(course: self, user: user).first.news? == false
-      return false
-    end
-    true
-  end
-
   # extracts hash which describes which modules different from kaviar
   # (i.e. Sesam, Kiwi etc.) the user has subscribed from the user params
   # that are provided to the profile controller, together with the id of
@@ -144,9 +133,9 @@ class Course < ApplicationRecord
   # the course view)
   # Example:
   # course.extras({"name"=>"John Smith", "course-3"=>"1",
-  #  "primary_lecture-3"=>"3", "lecture-3"=>"1", "news-3"=>"1", "keks-3"=>"1",
+  #  "primary_lecture-3"=>"3", "lecture-3"=>"1", keks-3"=>"1",
   #  "kiwi-3"=>"0", "nuesse-3"=>"1"})
-  # {"news?"=>true, "keks?"=>true, "kiwi?"=>false, "nuesse?"=>true,
+  # {keks?"=>true, "kiwi?"=>false, "nuesse?"=>true,
   #  "primary_lecture_id"=>3}
   def extras(user_params)
     extra_modules = extract_extra_modules(user_params)

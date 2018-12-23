@@ -89,16 +89,6 @@
     </div>
   </div>
   <div class="row">
-    <% if c.news.present? %>
-      <div class="col-12">
-        <% news = 'news-' + c.id.to_s %>
-        <%= f.form_group do %>
-          <% f.check_box news, label: 'Newsfeed',
-                         checked: subscribed ? details.news? != false : true,
-                         disabled: !subscribed %>
-        <% end %>
-      </div>
-    <% end %>
     <% if c.sesam? %>
       <div class="col-12">
         <% sesam = 'sesam-' + c.id.to_s %>

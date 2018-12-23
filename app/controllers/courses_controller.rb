@@ -64,7 +64,7 @@ class CoursesController < ApplicationController
   end
 
   def course_params
-    params.require(:course).permit(:title, :short_title, :news,
+    params.require(:course).permit(:title, :short_title,
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [])

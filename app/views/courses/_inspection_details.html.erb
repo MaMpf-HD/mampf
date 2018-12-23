@@ -117,29 +117,6 @@
         </div>
         <div class="row mt-2">
           <div class="col-2">
-            Newsfeed
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover"
-               data-trigger="focus"
-               title="Info"
-               data-content="Falls zu diesem Kurs ein Twitter-Feed existiert,
-               sollte er hier zu sehen sein.">
-            </i>
-          </div>
-          <div class="col-10">
-            <% if course.news? %>
-              <div id="twitter-news"
-                   data-profile="<%= course.news %>"
-                   data-turbolinks-permanent>
-              </div>
-            <% else %>
-              Kein Newsfeed vorhanden.
-            <% end %>
-          </div>
-        </div>
-        <div class="row mt-2">
-          <div class="col-2">
             Abonnentenzahl
             <i class="far fa-question-circle helpdesk"
                tabindex="-1"

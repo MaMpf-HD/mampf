@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_22_165544) do
+ActiveRecord::Schema.define(version: 2018_12_23_190159) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -61,7 +61,6 @@ ActiveRecord::Schema.define(version: 2018_12_22_165544) do
     t.boolean "erdbeere?"
     t.boolean "kiwi?"
     t.boolean "nuesse?"
-    t.boolean "news?"
     t.integer "primary_lecture_id"
     t.index ["course_id"], name: "index_course_user_joins_on_course_id"
     t.index ["user_id"], name: "index_course_user_joins_on_user_id"
