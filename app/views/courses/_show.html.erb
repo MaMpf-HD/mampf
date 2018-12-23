@@ -17,14 +17,8 @@
     </div>
     <div id="lecture-details" class="col-10 text-center">
       <h4>
-        <span class="badge badge-secondary">
-          Vorlesung
-        </span>
-        <span id="lecture-title">
+        <span id="lecture-title" class="mr-3">
           <%= front_lecture.title_for_viewers %>
-        </span>
-        <span class="badge badge-secondary ml-3">
-          DozentIn
         </span>
         <span>
           <%= link_to front_lecture.teacher.name,
