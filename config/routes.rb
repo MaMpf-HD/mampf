@@ -75,9 +75,12 @@ Rails.application.routes.draw do
                               as: 'list_items'
   resources :referrals, only: [:update, :create, :edit, :destroy]
 
-  get 'tags/modal', to: 'tags#modal', as: 'tag_modal'
-  get 'tags/:id/inspect/', to: 'tags#inspect', as: 'inspect_tag'
-  get 'tags/:id/display_cyto/', to: 'tags#display_cyto', as: 'display_cyto_tag'
+  get 'tags/modal', to: 'tags#modal',
+                    as: 'tag_modal'
+  get 'tags/:id/inspect/', to: 'tags#inspect',
+                           as: 'inspect_tag'
+  get 'tags/:id/display_cyto/', to: 'tags#display_cyto',
+                                as: 'display_cyto_tag'
   resources :tags
 
   get 'sections/list_tags/', to: 'sections#list_tags', as: 'list_section_tags'
@@ -101,6 +104,8 @@ Rails.application.routes.draw do
   get 'error', to: 'main#error'
   get 'main/home'
   get 'main/about'
+  get 'main/news', to: 'main#news',
+                   as: 'news'
 
   namespace :api do
     namespace :v1 do

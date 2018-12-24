@@ -6,8 +6,10 @@ module NotificationsHelper
       medium_notification_header(notifiable)
     elsif notifiable.class.to_s == 'Course'
       course_notification_header(notifiable)
-    else
+    elsif notifiable.class.to_s == 'Lecture'
       lecture_notification_header(notifiable)
+    else
+      announcement_notification_header(notifiable)
     end
   end
 
@@ -17,8 +19,10 @@ module NotificationsHelper
       medium_notification_details(notifiable)
     elsif notifiable.class.to_s == 'Course'
       course_notification_details(notifiable)
-    else
+    elsif notifiable.class.to_s == 'Lecture'
       lecture_notification_details(notifiable)
+    else
+      announcement_notification_details(notifiable)
     end
   end
 
@@ -30,8 +34,16 @@ module NotificationsHelper
              link_to(notifiable.teachable.media_scope.title_for_viewers,
                      polymorphic_path(notifiable.teachable.media_scope),
                      class: 'text-dark')
-           else
+           elsif notifiable.class.to_s.in?(['Course', 'Lecture'])
              'Kursangebot'
+           else
+             if notifiable.lecture.present?
+               link_to(notifiable.lecture.title_for_viewers,
+                       notifiable.lecture.path(current_user),
+                       class: 'text-dark')
+             else
+              link_to 'MaMpf-News', news_path, class: 'text-dark'
+             end
            end
     text.html_safe
   end
@@ -44,7 +56,7 @@ module NotificationsHelper
       return 'bg-post-it-pink'
     elsif notifiable.class.to_s == 'Medium' && notifiable.sort == 'KeksQuiz'
       return 'bg-post-it-blue'
-    elsif notifiable.class.to_s.in?(['Lecture', 'Course'])
+    elsif notifiable.class.to_s.in?(['Lecture', 'Course', 'Announcement'])
       return 'bg-post-it-orange'
     end
     'bg-post-it-yellow'
@@ -58,10 +70,12 @@ module NotificationsHelper
              'Neues Medium angelegt:'
            elsif notifiable.class.to_s == 'Course'
              'Neues Modul angelegt:' + tag(:br) + notifiable.course.title
-           else
+           elsif notifiable.class.to_s == 'Lecture'
              'Neue Vorlesung angelegt:' + tag(:br) + notifiable.course.title +
              ' (' + notifiable.term.to_label + ', ' +
              notifiable.teacher.name + ')'
+           else
+             'Neue Mitteilung:'
            end
     text.html_safe
   end
@@ -71,11 +85,19 @@ module NotificationsHelper
     if notifiable.class.to_s == 'Medium'
       return link_to(notifiable.local_title_for_viewers, notifiable,
                      style: 'color:  #2251dd;')
-    else
+    elsif notifiable.class.to_s.in?(['Lecture', 'Course'])
       return ('Du kannst sie über Deine ' +
                link_to('Profileinstellungen', edit_profile_path,
                        style: 'color:  #2251dd;') +
                ' abonnieren.').html_safe
+    else
+      notifiable.details
     end
+  end
+
+  def delete_notification_href(announcement, user)
+    notification = user.matching_notification(announcement)
+    return '' unless notification.present?
+    'href=' + notification_path(notification)
   end
 end

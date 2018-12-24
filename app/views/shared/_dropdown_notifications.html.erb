@@ -1,7 +1,7 @@
 <% relevant_notifications = current_user.notifications
                                         .sort_by(&:created_at).reverse %>
 <% if relevant_notifications.present? %>
-  <ul class="navbar-nav">
+  <ul class="navbar-nav" id="notificationDropdown">
     <li class="nav-item">
       <div class="btn-group">
         <button class="btn btn-primary btn-sm dropdown-toggle mr-3"
@@ -15,7 +15,7 @@
         </button>
         <div class="dropdown-menu">
           <% relevant_notifications.first(5).each do |n| %>
-            <a href="<%= n.path %>"
+            <a href="<%= n.path(current_user) %>"
                class="dropdown-item border-top"
                style="font-size: 0.8em;"
                data-notification="<%= n.id %>">

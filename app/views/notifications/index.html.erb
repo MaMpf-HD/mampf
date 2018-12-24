@@ -20,7 +20,7 @@
   </div>
   <div class="card-body"
        id="notificationCardBody">
-    <div class="row">
+    <div class="row" id="notificationCardRow">
       <% if @notifications.present? %>
         <% @notifications.each do |n| %>
           <div class="col-12 col-md-6 col-xl-4 col-xxl-4 col-xxxl-3 mb-2"
@@ -30,7 +30,9 @@
           </div>
         <% end %>
       <% else %>
-        Es liegen keine neuen Benachrichtigungen für Dich vor.
+        <div class="col-12">
+          Es liegen keine neuen Benachrichtigungen für Dich vor.
+        </div>
       <% end %>
     </div>
   </div>

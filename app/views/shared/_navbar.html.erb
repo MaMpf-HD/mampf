@@ -30,6 +30,14 @@
         </li>
       <% end %>
     </ul>
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <%= link_to "News", news_path, class: 'nav-link' %>
+      </li>
+      <li class="nav-item">
+        <%= link_to "Blog", news_path, class: 'nav-link' %>
+      </li>
+    </ul>
     <% if user_signed_in? %>
       <% unless current_user.courses.empty? %>
         <ul class="navbar-nav mr-auto">

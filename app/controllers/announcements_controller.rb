@@ -20,6 +20,7 @@ class AnnouncementsController < ApplicationController
     @announcement.announcer = current_user
     @announcement.save
     if @announcement.valid?
+    	create_notifications
     	unless @announcement.lecture.present?
 	      redirect_to announcements_path
   	    return
@@ -34,5 +35,17 @@ class AnnouncementsController < ApplicationController
 
   def announcement_params
     params.require(:announcement).permit(:details, :lecture_id) 	
+  end
+
+  def create_notifications
+  	users_to_notify = if @announcement.lecture.present?
+  											@announcement.lecture.users
+  										else
+  											User
+  										end
+  	users_to_notify.find_each do |u|
+      Notification.create(recipient: u, notifiable_id: @announcement.id,
+                          notifiable_type: 'Announcement', action: 'create')
+    end
   end
 end

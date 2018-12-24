@@ -108,6 +108,16 @@ class User < ApplicationRecord
     lectures.map(&:tags).flatten.uniq
   end
 
+  def active_announcements(lecture)
+    notifications.where(notifiable_type: 'Announcement')
+                 .select { |n| n.notifiable.lecture == lecture } 
+  end
+
+  def matching_notification(announcement)
+    notifications.where(notifiable_type: 'Announcement',
+                        notifiable_id: announcement.id)&.first
+  end
+
   def project?(course, project)
     return false if course.nil?
     return false unless course.public_send(project + '?')

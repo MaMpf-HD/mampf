@@ -1,19 +1,23 @@
-<div class="bg-light-blue-lighten-5 rounded mb-3">
-<div class="row p-3">
-  <div class="col-12">
+<div class="card bg-light-blue-lighten-5 mb-3">
+	<div class="card-header">	
     <h5>
       Mitteilungen
+      (<%= current_user.active_announcements(lecture).count %>)
     </h5>
+	</div>
+	<div class="card-body">
+		<div class="list-group" style="max-height: 10vh; overflow-y: scroll;">
+  		<% lecture.announcements.order(:created_at).reverse.each do |a| %>
+  			<a class="list-group-item <%= active_announcement(a, current_user) %>" 
+  				<%= delete_notification_href(a, current_user) %> data-method="delete"
+  				data-remote="true"
+  				data-relatedNotification="<%= current_user.matching_notification(a)&.id %>">
+	      	<div class="row">
+  	      	<%= render partial: 'announcements/row_for_lecture',
+    	               locals: { announcement: a } %>
+      		</div>
+    		</a>
+    	<% end %>
+    </div> 
   </div>
-</div>
-<div class="row mx-3 pb-3">  
-  <div class="col-12 white" style="max-height: 10vh; overflow-y: scroll;">
-  	<% lecture.announcements.order(:created_at).reverse.each do |a| %>
-      <div class="row border-bottom mx-4 px-4 py-2">
-        <%= render partial: 'announcements/row',
-                   locals: { announcement: a } %>
-      </div>
-    <% end %> 
-  </div>
-</div>
 </div>
