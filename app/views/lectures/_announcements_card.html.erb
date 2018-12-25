@@ -2,10 +2,12 @@
 	<div class="card-header">
 		<div class="row">
 			<div class="col-10">
-	 		  <h5 id="activeAnnouncementsCounter">
+	 		  <h5>
    		    Mitteilungen
       		<% if current_user.active_announcements(lecture).present? %>
-	      		<span>
+	      		<span class="activeAnnouncementsCounter"
+	      					data-lecture="<%= lecture.id %>"
+	      					data-count="<%= current_user.active_announcements(lecture).count %>">
   	     		 (<%= current_user.active_announcements(lecture).count %>)
     				</span>
     			<% end %>

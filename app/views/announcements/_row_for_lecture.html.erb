@@ -7,14 +7,16 @@
 <div class="col-7">
   <%= announcement.details %>
 </div>
-<div class="col-1 text-right"
-     data-removeNotification="<%= current_user
-                                    .matching_notification(announcement)&.id %>">
+<div class="col-1 text-right">
   <% if announcement.active?(current_user) %>
     <%= link_to notification_path(current_user
                                     .matching_notification(announcement),
                                   params: { lecture_id: lecture.id}),
-                remote: true, method: :delete do %>
+                class: 'removeLectureNotification',
+                remote: true, method: :delete,
+                data:
+                  { id: current_user.matching_notification(announcement)&.id,
+                    lecture: lecture.id } do %>
       <i class="fas fa-check text-dark"
          data-toggle="tooltip"
          title="als gelesen markieren">

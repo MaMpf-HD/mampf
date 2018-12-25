@@ -15,7 +15,8 @@
         <a href="<%= notification_path(notification) %>"
            data-method="delete"
            data-remote="true"
-           class="no-deco">
+           class="removeNotification no-deco"
+           data-id="<%= notification.id %>">
           <i class="far fa-times-circle fa-lg text-dark"
              data-toggle="tooltip"
              data-placement="bottom"

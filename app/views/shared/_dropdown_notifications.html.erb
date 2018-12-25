@@ -9,7 +9,8 @@
                 data-toggle="dropdown">
           <i class="far fa-bell text-light">
           </i>
-          <span class="badge badge-light notificationCounter">
+          <span class="badge badge-light notificationCounter"
+                data-count="<%= relevant_notifications.count %>">
             <%= relevant_notifications.count %>
           </span>
         </button>
@@ -18,7 +19,8 @@
             <a href="<%= n.path(current_user) %>"
                class="dropdown-item border-top"
                style="font-size: 0.8em;"
-               data-removeNotification="<%= n.id %>">
+               data-removeNotification="<%= n.id %>"
+               data-itemNotification="<%= n.id %>">
               <%= render partial: 'notifications/menu_item',
                          locals:  { notification: n } %>
             </a>

@@ -25,7 +25,7 @@ class MainController < ApplicationController
                          notifiable_type: 'Announcement')
                   .select { |n| n.notifiable.lecture.nil? }
                   .each(&:destroy)
-    end                                             
+    end
     render layout: 'application_no_sidebar'
   end
 

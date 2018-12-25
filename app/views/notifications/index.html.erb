@@ -26,7 +26,7 @@
       <% if @notifications.present? %>
         <% @notifications.each do |n| %>
           <div class="col-12 col-md-6 col-xl-4 col-xxl-4 col-xxxl-3 mb-2"
-               data-notification="<%= n.id %>">
+               data-notificationCard="<%= n.id %>">
             <%= render partial: 'notifications/notification',
                        locals: { notification: n } %>
           </div>
