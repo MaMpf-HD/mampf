@@ -8,12 +8,13 @@
   <div class="text-center mt-3">
     <%= f.submit 'Speichern',
                  class: 'btn btn-primary',
-                 data: 
+                 data:
                    { confirm: 'Bist Du sicher? Du kannst Die Mitteilung ' \
                               'nach dem Absenden weder bearbeiten noch ' \
                               'löschen.' } %>
     <button type="button"
-            class="btn btn-secondary cancel-new-announcement">
+            class="btn btn-secondary"
+            data-dismiss="modal">
       abbrechen
     </button>
   </div>

@@ -24,7 +24,8 @@
       <%= f.submit 'Speichern und zurück',
                    class: 'btn btn-primary' %>
       <button type="button"
-              class="btn btn-secondary cancel-lesson">
+              class="btn btn-secondary"
+              data-dismiss="modal">
         abbrechen
       </button>
       <%= link_to 'löschen', lesson_path(@lesson), method: :delete,

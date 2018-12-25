@@ -11,11 +11,6 @@ $(document).on 'turbolinks:load', ->
     $('#create-new-lesson-medium').addClass('disabled')
     return
 
-  #reload current page if lesson editing is cancelled
-  $(document).on 'click', '.cancel-lesson', ->
-    location.reload()
-    return
-
   # restore page if creation of new lesson is cancelled
   $(document).on 'click', '#cancel-new-lesson', ->
     $('#new-lesson-area').empty().hide()
@@ -64,6 +59,5 @@ $(document).on 'turbolinks:load', ->
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#lesson-form :input'
-  $(document).off 'click', '.cancel-lesson'
   $(document).off 'click', '#cancel-new-lesson'
   return
