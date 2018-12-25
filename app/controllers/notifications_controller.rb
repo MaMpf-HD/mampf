@@ -13,12 +13,18 @@ class NotificationsController < ApplicationController
     if params[:lecture_id].present?
       @lecture = Lecture.find_by_id(params[:lecture_id])
     end
-    # pp @lecture
     @notification.destroy
   end
 
   def destroy_all
     current_user.notifications.each(&:destroy)
+  end
+
+  def destroy_lecture_notifications
+    lecture = Lecture.find_by_id(params[:lecture_id])
+    return unless lecture.present?
+    current_user.active_announcements(lecture).each(&:destroy)
+    render :destroy_all
   end
 
   private

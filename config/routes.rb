@@ -69,6 +69,9 @@ Rails.application.routes.draw do
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
                                     as: 'destroy_all_notifications'
+  post 'notifications/destroy_lecture_notifications',
+       to: 'notifications#destroy_lecture_notifications',
+       as: 'destroy_lecture_notifications'
   resources :notifications, only: [:index, :destroy]
 
   get 'referrals/list_items', to: 'referrals#list_items',
