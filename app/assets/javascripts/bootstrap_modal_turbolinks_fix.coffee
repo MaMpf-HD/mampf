@@ -13,7 +13,7 @@ $(document).on 'turbolinks:before-cache', ->
 	# if some modal is open
 	if $('body').hasClass('modal-open')
 		$('.modal.show').addClass('activeModal')
-		$('.modal.show').modal('dispose')
+		$('.modal.show').modal('hide')
 		# remove the greyed out background
 		$('.modal-backdrop').remove()
 	return

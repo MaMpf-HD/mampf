@@ -18,7 +18,7 @@
             <a href="<%= n.path(current_user) %>"
                class="dropdown-item border-top"
                style="font-size: 0.8em;"
-               data-notification="<%= n.id %>">
+               data-removeNotification="<%= n.id %>">
               <%= render partial: 'notifications/menu_item',
                          locals:  { notification: n } %>
             </a>

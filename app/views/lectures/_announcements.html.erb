@@ -9,6 +9,12 @@
           </h5>
         </div>
         <div class="col-6 text-right">
+          <% unless inspection %>
+            <%= link_to 'Mitteilung anlegen',
+                         new_announcement_path(params: { lecture: lecture.id }),
+                         class: 'btn btn-secondary',
+                         remote: true %>
+          <% end %>
           <a class="btn btn-primary"
              data-toggle="collapse"
              href="#announcements_collapse"
@@ -25,21 +31,13 @@
          aria-labelledby="heading"
          data-parent="#announcements_accordion">
       <div class="card-body">
-        <% unless inspection %>
-          <div class="text-center">
-            <%= link_to 'Mitteilung anlegen', 
-                        new_announcement_path(params: { lecture: lecture.id }),
-                        class: 'btn btn-secondary',
-                        remote: true %>
-          </div>
-        <% end %>
         <% announcements.each do |a| %>
           <div class="row border-bottom mx-2 px-4 py-2"
                id="row-announcement-<%= a.id %>">
             <%= render partial: 'announcements/row',
                        locals: { announcement: a }%>
           </div>
-        <% end %>       
+        <% end %>
       </div>
     </div>
   </div>

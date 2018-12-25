@@ -10,26 +10,14 @@
 	<div class="card-body">
 		<div class="list-group" style="max-height: 10vh; overflow-y: scroll;">
   		<% lecture.announcements.order(:created_at).reverse.each do |a| %>
-  			<% if a.active?(curent_user) %>
-  				<a class="list-group-item list-group-item-action
-  									list-group-item-info"
-  					 href="<% notification_path(current_user.matching_notification(announcement)) %>"
-  					 data-method="delete"
-  					 data-remote="true"
-  					 data-relatedNotification="<%= current_user.matching_notification(a)&.id %>">
-	      		<div class="row">
-  	      		<%= render partial: 'announcements/row_for_lecture',
-    	        		       locals: { announcement: a } %>
-      			</div>
-    			</a>
-    		<% else %>
-    			<div class="list-group-item">
-	      		<div class="row">
-  	      		<%= render partial: 'announcements/row_for_lecture',
-    	        		       locals: { announcement: a } %>
-      			</div>
-    			</div>
-    		<% end %>
+    		<div class="list-group-item
+    								<%= 'list-group-item-info' if a.active?(current_user) %>"
+    				 data-relatedNotification="<%= current_user.matching_notification(a)&.id %>">
+	      	<div class="row">
+  	     		<%= render partial: 'announcements/row_for_lecture',
+    	       		       locals: { announcement: a } %>
+      		</div>
+    		</div>
     	<% end %>
     </div>
   </div>

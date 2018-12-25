@@ -4,6 +4,20 @@
 <div class="col-2">
   <%= announcement.announcer.name %>
 </div>
-<div class="col-8">
+<div class="col-7">
   <%= announcement.details %>
+</div>
+<div class="col-1 text-right"
+     data-removeNotification="<%= current_user
+                                    .matching_notification(announcement)&.id %>">
+  <% if announcement.active?(current_user) %>
+    <%= link_to notification_path(current_user
+                                    .matching_notification(announcement)),
+                remote: true, method: :delete do %>
+      <i class="fas fa-check text-dark"
+         data-toggle="tooltip"
+         title="als gelesen markieren">
+      </i>
+    <% end %>
+  <% end %>
 </div>

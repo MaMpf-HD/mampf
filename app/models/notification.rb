@@ -17,7 +17,7 @@ class Notification < ApplicationRecord
     if notifiable_type == 'Announcement'
       return notifiable.lecture.path(user) if notifiable.lecture.present?
       return news_path
-    end 
+    end
     polymorphic_url(notifiable, only_path: true)
   end
 
