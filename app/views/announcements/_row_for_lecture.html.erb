@@ -12,7 +12,8 @@
                                     .matching_notification(announcement)&.id %>">
   <% if announcement.active?(current_user) %>
     <%= link_to notification_path(current_user
-                                    .matching_notification(announcement)),
+                                    .matching_notification(announcement),
+                                  params: { lecture_id: lecture.id}),
                 remote: true, method: :delete do %>
       <i class="fas fa-check text-dark"
          data-toggle="tooltip"

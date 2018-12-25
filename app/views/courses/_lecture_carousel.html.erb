@@ -31,7 +31,7 @@
         <div class="row">
           <% unless l.announcements.empty? %>
             <div class="col-12">
-              <%= render partial: 'lectures/announcements_jumbo',
+              <%= render partial: 'lectures/announcements_card',
                          locals: { lecture: l } %>
             </div>
           <% end %>

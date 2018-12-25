@@ -10,6 +10,10 @@ class NotificationsController < ApplicationController
   end
 
   def destroy
+    if params[:lecture_id].present?
+      @lecture = Lecture.find_by_id(params[:lecture_id])
+    end
+    # pp @lecture
     @notification.destroy
   end
 

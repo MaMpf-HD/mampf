@@ -21,11 +21,7 @@ module ApplicationHelper
     if user_signed_in? && current_user.notifications.present?
       base_title += " (#{current_user.notifications.count})"
     end
-    if page_title.empty?
-      base_title
-    else
-      base_title + ' | ' + page_title
-    end
+    base_title
   end
 
   # next methods are service methods for the display status of HTML elmements
