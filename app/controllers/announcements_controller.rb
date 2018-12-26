@@ -4,10 +4,8 @@ class AnnouncementsController < ApplicationController
   layout 'administration'
 
   def index
-  	@announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
-  																											 .order(:created_at)
-  															 												 .reverse)
-  													 .page(params[:page]).per(10)
+  	@announcements = Announcement.where(lecture: nil).order(:created_at)
+  															 .reverse)
   end
 
   def new
@@ -34,7 +32,7 @@ class AnnouncementsController < ApplicationController
   private
 
   def announcement_params
-    params.require(:announcement).permit(:details, :lecture_id) 	
+    params.require(:announcement).permit(:details, :lecture_id)
   end
 
   def create_notifications
@@ -43,9 +41,11 @@ class AnnouncementsController < ApplicationController
   										else
   											User
   										end
+  	notifications = []
   	users_to_notify.find_each do |u|
-      Notification.create(recipient: u, notifiable_id: @announcement.id,
+      notifications << Notification.new(recipient: u, notifiable_id: @announcement.id,
                           notifiable_type: 'Announcement', action: 'create')
     end
+    Notification.import notifications
   end
 end

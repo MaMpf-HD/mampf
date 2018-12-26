@@ -21,7 +21,6 @@ class Notification < ApplicationRecord
     polymorphic_url(notifiable, only_path: true)
   end
 
-
   def self.allowed_notifiable_types
     ['Medium','Course', 'Lecture', 'Announcement']
   end

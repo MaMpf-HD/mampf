@@ -61,6 +61,7 @@ gem 'coveralls', require: false
 gem 'kaminari'
 gem "selectize-rails"
 gem 'acts_as_list'
+gem 'activerecord-import'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

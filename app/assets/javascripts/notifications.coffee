@@ -60,7 +60,7 @@ $(document).on 'turbolinks:load', ->
 		$counter.empty()
 		newCount = $counter.data('count') - 1
 		if newCount > 0
-			$counter.append('(' + newCount + ')').data('count', newCount)
+			$counter.append(newCount).data('count', newCount)
 		# adjust other notification counters
 		adjustNotificationCounter(notificationId)
 		return

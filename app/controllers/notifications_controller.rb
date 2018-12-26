@@ -16,18 +16,18 @@ class NotificationsController < ApplicationController
   end
 
   def destroy_all
-    current_user.notifications.each(&:destroy)
+    current_user.notifications.delete_all
   end
 
   def destroy_lecture_notifications
     lecture = Lecture.find_by_id(params[:lecture_id])
     return unless lecture.present?
-    current_user.active_announcements(lecture).each(&:destroy)
+    Notification.delete(current_user.active_announcements(lecture).pluck(:id))
     render :destroy_all
   end
 
   def destroy_news_notifications
-    current_user.active_news.each(&:destroy)
+    Notification.delete(current_user.active_news.pluck(:id))
     render :destroy_all
   end
 

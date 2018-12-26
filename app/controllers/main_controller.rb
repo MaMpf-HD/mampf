@@ -16,10 +16,8 @@ class MainController < ApplicationController
   end
 
   def news
-    @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
-                                                         .order(:created_at)
-                                                         .reverse)
-                             .page(params[:page]).per(10)
+    @announcements = Announcement.where(lecture: nil).order(:created_at)
+                                 .reverse
     render layout: 'application_no_sidebar'
   end
 

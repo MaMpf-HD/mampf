@@ -93,15 +93,19 @@ class LecturesController < ApplicationController
 
   # create notifications to all users about creation of new lecture
   def create_notifications
+    notifications = []
     User.find_each do |u|
-      Notification.create(recipient: u, notifiable_id: @lecture.id,
-                          notifiable_type: 'Lecture', action: 'create')
+      notifications << Notification.new(recipient: u,
+                                        notifiable_id: @lecture.id,
+                                        notifiable_type: 'Lecture',
+                                        action: 'create')
     end
+    Notification.import notifications
   end
 
   # destroy all notifications related to this lecture
   def destroy_notifications
     Notification.where(notifiable_id: @lecture.id, notifiable_type: 'Lecture')
-                .each(&:destroy)
+                .delete_all
   end
 end

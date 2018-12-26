@@ -286,16 +286,20 @@ class MediaController < ApplicationController
   # create notifications to all users who are subscribed
   # to the medium's teachable's media_scope
   def create_notifications
+    notifications = []
     @medium.teachable.media_scope.users.each do |u|
-      Notification.create(recipient: u, notifiable_id: @medium.id,
-                          notifiable_type: 'Medium', action: 'create')
+      notifications << Notification.new(recipient: u,
+                                        notifiable_id: @medium.id,
+                                        notifiable_type: 'Medium',
+                                        action: 'create')
     end
+    Notification.import notifications
   end
 
   # destroy all notifications related to this medium
   def destroy_notifications
     Notification.where(notifiable_id: @medium.id, notifiable_type: 'Medium')
-                .each(&:destroy)
+                .delete_all
   end
 
 end

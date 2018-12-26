@@ -72,15 +72,19 @@ class CoursesController < ApplicationController
 
   # create notifications to all users about creation of new course
   def create_notifications
+    notifications = []
     User.find_each do |u|
-      Notification.create(recipient: u, notifiable_id: @course.id,
-                          notifiable_type: 'Course', action: 'create')
+      notifications << Notification.new(recipient: u,
+                                           notifiable_id: @course.id,
+                                           notifiable_type: 'Course',
+                                           action: 'create')
     end
+    Notification.import notifications
   end
 
   # destroy all notifications related to this course
   def destroy_notifications
     Notification.where(notifiable_id: @course.id, notifiable_type: 'Course')
-                .each(&:destroy)
+                .delete_all
   end
 end
