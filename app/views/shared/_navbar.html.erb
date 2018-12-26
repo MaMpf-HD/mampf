@@ -40,10 +40,6 @@
         <li class="nav-item">
           <%= link_to "Blog", news_path, class: 'nav-link' %>
         </li>
-        <li class="nav-item">
-          <%= link_to "Logout", destroy_user_session_path, class: 'nav-link',
-              method: :delete %>
-        </li>
       <% end %>
     </ul>
     <% if user_signed_in? %>
