@@ -4,8 +4,10 @@ class AnnouncementsController < ApplicationController
   layout 'administration'
 
   def index
-  	@announcements = Announcement.where(lecture: nil).order(:created_at)
-  															 .reverse)
+  	@announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
+  																											 .order(:created_at)
+  															 												 .reverse)
+  													 .page(params[:page]).per(10)
   end
 
   def new
