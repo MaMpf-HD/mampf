@@ -110,7 +110,11 @@ class User < ApplicationRecord
 
   def active_announcements(lecture)
     notifications.where(notifiable_type: 'Announcement')
-                 .select { |n| n.notifiable.lecture == lecture } 
+                 .select { |n| n.notifiable.lecture == lecture }
+  end
+
+  def active_news
+    active_announcements(nil)
   end
 
   def matching_notification(announcement)

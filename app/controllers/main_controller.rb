@@ -20,12 +20,6 @@ class MainController < ApplicationController
                                                          .order(:created_at)
                                                          .reverse)
                              .page(params[:page]).per(10)
-    if user_signed_in?
-      Notification.where(recipient: current_user,
-                         notifiable_type: 'Announcement')
-                  .select { |n| n.notifiable.lecture.nil? }
-                  .each(&:destroy)
-    end
     render layout: 'application_no_sidebar'
   end
 

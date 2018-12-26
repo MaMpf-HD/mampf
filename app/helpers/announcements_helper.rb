@@ -17,4 +17,10 @@ module AnnouncementsHelper
   	return '' unless announcement.active?(current_user)
   	'list-group-item-action list-group-item-info'
   end
+
+  def news_card_color(announcement)
+  	return '' unless user_signed_in?
+  	return 'newsColor' if announcement.active?(current_user)
+  	''
+  end
 end

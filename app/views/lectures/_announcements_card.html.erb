@@ -17,7 +17,7 @@
 			  <% if current_user.active_announcements(lecture).present? %>
 	        <%= link_to 'alle erledigen',
   	                  destroy_lecture_notifications_path(params: { lecture_id: lecture.id }),
-    	                class: 'btn btn-sm btn-secondary',
+    	                class: 'btn btn-sm btn-outline-secondary',
       	              method: :post,
         	            remote: true %>
         <% end %>

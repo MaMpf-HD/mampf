@@ -1,0 +1,28 @@
+<div class="card <%= news_card_color(announcement) %>">
+	<div class="card-header">
+		<div class="row">
+			<div class="col-10">
+				<%= human_readable_date(announcement.created_at) %>
+			</div>
+			<div class="col-2 text-right">
+				<% if user_signed_in? && announcement.active?(current_user) %>
+					<%= link_to notification_path(current_user
+          		                          	.matching_notification(announcement)),
+                			class: 'removeNewsNotification',
+                			remote: true,
+                			method: :delete,
+                			data:
+                  			{ id: current_user.matching_notification(announcement)&.id } do %>
+		      	<i class="fas fa-check text-dark"
+    		    	 data-toggle="tooltip"
+        			 title="als gelesen markieren">
+      			</i>
+    			<% end %>
+				<% end %>
+			</div>
+		</div>
+	</div>
+	<div class="card-body">
+		<%= simple_format(announcement.details) %>
+	</div>
+</div>

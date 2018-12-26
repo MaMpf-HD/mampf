@@ -10,8 +10,7 @@
 <div class="col-1 text-right">
   <% if announcement.active?(current_user) %>
     <%= link_to notification_path(current_user
-                                    .matching_notification(announcement),
-                                  params: { lecture_id: lecture.id}),
+                                    .matching_notification(announcement)),
                 class: 'removeLectureNotification',
                 remote: true, method: :delete,
                 data:

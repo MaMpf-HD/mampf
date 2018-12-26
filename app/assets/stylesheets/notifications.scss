@@ -2,7 +2,7 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
-#notificationCardBody {
+#notificationCardBody, #newsCardBody {
   overflow-y: scroll;
   height: 70 vh;
 }

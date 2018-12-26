@@ -26,6 +26,11 @@ class NotificationsController < ApplicationController
     render :destroy_all
   end
 
+  def destroy_news_notifications
+    current_user.active_news.each(&:destroy)
+    render :destroy_all
+  end
+
   private
 
   def set_notification

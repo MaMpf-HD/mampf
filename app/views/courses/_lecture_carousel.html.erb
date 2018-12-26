@@ -18,7 +18,6 @@
   <% end %>
   <div class="carousel-inner">
     <% lectures.each do |l| %>
-      <% cache l  do %>
       <% is_active = l.active?(current_user, params[:active].to_i) %>
       <% privileged = current_user.admin ||
                         current_user.in?(l.editors_with_inheritance) %>
@@ -37,14 +36,15 @@
             </div>
           <% end %>
           <% unless l.chapters.empty? %>
+          <% cache l do %>
             <div class="col-12">
               <%= render partial: 'lectures/content',
                          locals: { lecture: l } %>
             </div>
           <% end %>
+          <% end %>
         </div>
       </div>
-      <% end %>
     <% end %>
   </div>
 </div>

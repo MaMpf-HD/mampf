@@ -22,7 +22,7 @@ class Ability
       can :create, [Chapter, Lecture, Lesson, Medium, Section]
       # :update is a cancancan alias for update and edit actions
 
-      can [:new, :create], Announcement 
+      can [:new, :create], Announcement
 
       # only users who are editors of a chapter's lecture can edit, update
       # or destroy them
@@ -52,7 +52,8 @@ class Ability
         m.edited_with_inheritance_by?(user)
       end
 
-      can [:index, :destroy_all], Notification
+      can [:index, :destroy_all, :destroy_lecture_notifications,
+           :destroy_news_notifications], Notification
       can :destroy, Notification do |n|
         n.recipient == user
       end
@@ -83,6 +84,8 @@ class Ability
       can :destroy, Notification do |n|
         n.recipient == user
       end
+      can [:index, :destroy_all, :destroy_lecture_notifications,
+           :destroy_news_notifications], Notification
     end
   end
 end
