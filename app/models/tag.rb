@@ -20,6 +20,7 @@ class Tag < ApplicationRecord
                     uniqueness: { message: 'Titel ist bereits vergeben.' }
   # touch related lectures after saving because lecture tags are cached
   after_save :touch_lectures
+  after_save :touch_sections
 
   def self.ids_titles_json
     Tag.order(:title).map { |t| { id: t.id, title: t.title } }.to_json
@@ -117,5 +118,9 @@ class Tag < ApplicationRecord
 
   def touch_lectures
     sections.map(&:chapter).flatten.map(&:lecture).each(&:touch)
+  end
+
+  def touch_sections
+    sections.update_all updated_at: Time.now
   end
 end

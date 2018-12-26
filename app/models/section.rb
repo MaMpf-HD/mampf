@@ -10,6 +10,7 @@ class Section < ApplicationRecord
   has_many :items, dependent: :nullify
   after_save :touch_lecture
   after_save :touch_media
+  after_save :touch_self
   before_destroy :touch_lecture
   before_destroy :touch_media
 
@@ -84,5 +85,10 @@ class Section < ApplicationRecord
 
   def touch_media
     lecture.media_with_inheritance.each(&:touch)
+    self.touch
+  end
+
+  def touch_self
+    touch
   end
 end

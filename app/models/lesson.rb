@@ -1,6 +1,6 @@
 # Lesson class
 class Lesson < ApplicationRecord
-  belongs_to :lecture
+  belongs_to :lecture, touch: true
 
   # a lesson has many tags
   has_many :lesson_tag_joins, dependent: :destroy
@@ -20,8 +20,11 @@ class Lesson < ApplicationRecord
                                             'angegeben werden.' }
 
   # media are cached in several places
-  # lessons are touched in order to find out whether cache is out of date
+  # media are touched in order to find out whether cache is out of date
   after_save :touch_media
+  # same for sections
+  after_save :touch_sections
+  after_save :touch_self
   before_destroy :touch_media
 
   # The next methods coexist for lectures and lessons as well.
@@ -173,5 +176,13 @@ class Lesson < ApplicationRecord
   # used for after save callback
   def touch_media
     lecture.media_with_inheritance.each(&:touch)
+  end
+
+  def touch_sections
+    sections.each(&:touch)
+  end
+
+  def touch_self
+    self.touch
   end
 end

@@ -1,6 +1,7 @@
 # Announcement class
 class Announcement < ApplicationRecord
-  belongs_to :lecture, optional: true
+	# changing an annoncement needs to make the lecture cache key expire
+  belongs_to :lecture, optional: true, touch: true
   belongs_to :announcer, class_name: 'User'
 
 	validates :details,

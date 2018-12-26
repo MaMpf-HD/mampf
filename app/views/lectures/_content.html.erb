@@ -7,6 +7,7 @@
   <div class="card-body">
     <div class="card-columns">
       <% lecture.chapters.includes(:sections, :lecture).each do |c| %>
+        <% cache c do %>
         <div class="card bg-mdb-color-lighten-5">
           <div class="card-header bg-mdb-color-lighten-2">
             <span class="text-light">
@@ -16,6 +17,7 @@
           <div class="card-body">
             <ul class="list-group list-group-flush">
               <% c.sections.includes(:chapter).each do |s| %>
+                <% cache s do %>
                 <li class="list-group-item bg-mdb-color-lighten-5">
                   <div class="row">
                     <div class="col-6">
@@ -48,10 +50,12 @@
                     </div>
                   </div>
                 </li>
+                <% end %>
               <% end%>
             </ul>
           </div>
         </div>
+        <% end %>
       <% end %>
     </div>
   </div>
