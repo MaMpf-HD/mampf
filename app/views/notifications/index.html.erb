@@ -2,14 +2,14 @@
   <div class="card-header">
     <div class="row mb-2">
       <div class="col-10">
-        <h3>
+        <h4>
           Neue Benachrichtigungen
           <% if @notifications.present? %>
             <span class="badge badge-secondary notificationCounter">
               <%= @notifications.count %>
             </span>
           <% end %>
-        </h3>
+        </h4>
       </div>
       <div class="col-2 text-right">
         <%= link_to 'alle erledigen',
