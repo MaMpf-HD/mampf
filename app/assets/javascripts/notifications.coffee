@@ -52,7 +52,7 @@ $(document).on 'turbolinks:load', ->
 		notificationId = $(this).data('id')
 		console.log 'Hi'
 		# remove coloring of list group item
-		$(this).closest('.card').removeClass('newsColor')
+		$(this).closest('.card').removeClass('bg-post-it-blue')
 		# remove link and icon
 		$(this).remove()
 		# adjust news announcement counter
