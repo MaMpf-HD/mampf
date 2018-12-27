@@ -20,7 +20,7 @@ module AnnouncementsHelper
 
   def news_card_color(announcement)
   	return '' unless user_signed_in?
-  	return 'newsColor' if announcement.active?(current_user)
+  	return 'bg-post-it-blue' if announcement.active?(current_user)
   	''
   end
 end

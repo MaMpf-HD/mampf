@@ -55,7 +55,11 @@ module NotificationsHelper
     elsif notifiable.class.to_s == 'Medium' && notifiable.sort == 'Nuesse'
       return 'bg-post-it-pink'
     elsif notifiable.class.to_s == 'Medium' && notifiable.sort == 'KeksQuiz'
+      return 'bg-post-it-light-green'
+    elsif notifiable.class.to_s == 'Announcement' && notifiable.lecture.nil?
       return 'bg-post-it-blue'
+    elsif notifiable.class.to_s == 'Announcement'
+      return 'bg-post-it-red'
     elsif notifiable.class.to_s.in?(['Lecture', 'Course', 'Announcement'])
       return 'bg-post-it-orange'
     end
