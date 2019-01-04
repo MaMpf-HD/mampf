@@ -12,7 +12,8 @@
                 			remote: true,
                 			method: :delete,
                 			data:
-                  			{ id: current_user.matching_notification(announcement)&.id } do %>
+                  			{ id: current_user
+                                .matching_notification(announcement)&.id } do %>
 		      	<i class="fas fa-check text-dark"
     		    	 data-toggle="tooltip"
         			 title="als gelesen markieren">

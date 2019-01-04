@@ -2,48 +2,34 @@
 module NotificationsHelper
   def notification_menu_item_header(notification)
     notifiable = notification.notifiable
-    if notifiable.class.to_s == 'Medium'
-      medium_notification_header(notifiable)
-    elsif notifiable.class.to_s == 'Course'
-      course_notification_header(notifiable)
-    elsif notifiable.class.to_s == 'Lecture'
-      lecture_notification_header(notifiable)
-    else
-      announcement_notification_header(notifiable)
-    end
+    return medium_notification_header(notifiable) if notification.medium?
+    return course_notification_header(notifiable) if notification.course?
+    return lecture_notification_header(notifiable) if notification.lecture?
+    announcement_notification_header(notifiable)
   end
 
   def notification_menu_item_details(notification)
     notifiable = notification.notifiable
-    if notifiable.class.to_s == 'Medium'
-      medium_notification_details(notifiable)
-    elsif notifiable.class.to_s == 'Course'
-      course_notification_details(notifiable)
-    elsif notifiable.class.to_s == 'Lecture'
-      lecture_notification_details(notifiable)
-    else
-      announcement_notification_details(notifiable)
-    end
+    return medium_notification_details(notifiable) if notification.medium?
+    return course_notification_details(notifiable) if notification.course?
+    return lecture_notification_details(notifiable) if notification.lecture?
+    ''
   end
 
   def notification_header(notification)
     notifiable = notification.notifiable
-    return unless notifiable.class.to_s
-                            .in?(Notification.allowed_notifiable_types)
-    text = if notifiable.class.to_s == 'Medium'
+    text = if notification.medium?
              link_to(notifiable.teachable.media_scope.title_for_viewers,
                      polymorphic_path(notifiable.teachable.media_scope),
                      class: 'text-dark')
-           elsif notifiable.class.to_s.in?(['Course', 'Lecture'])
+           elsif notification.course? || notification.lecture?
              'Kursangebot'
+           elsif notifiable.lecture.present?
+             link_to(notifiable.lecture.title_for_viewers,
+                     notifiable.lecture.path(current_user),
+                     class: 'text-dark')
            else
-             if notifiable.lecture.present?
-               link_to(notifiable.lecture.title_for_viewers,
-                       notifiable.lecture.path(current_user),
-                       class: 'text-dark')
-             else
-              link_to 'MaMpf-News', news_path, class: 'text-dark'
-             end
+             link_to 'MaMpf-News', news_path, class: 'text-dark'
            end
     text.html_safe
   end
@@ -76,8 +62,8 @@ module NotificationsHelper
              'Neues Modul angelegt:' + tag(:br) + notifiable.course.title
            elsif notifiable.class.to_s == 'Lecture'
              'Neue Vorlesung angelegt:' + tag(:br) + notifiable.course.title +
-             ' (' + notifiable.term.to_label + ', ' +
-             notifiable.teacher.name + ')'
+               ' (' + notifiable.term.to_label + ', ' +
+               notifiable.teacher.name + ')'
            else
              'Neue Mitteilung:'
            end

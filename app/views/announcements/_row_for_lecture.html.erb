@@ -12,7 +12,8 @@
     <%= link_to notification_path(current_user
                                     .matching_notification(announcement)),
                 class: 'removeLectureNotification',
-                remote: true, method: :delete,
+                remote: true,
+                method: :delete,
                 data:
                   { id: current_user.matching_notification(announcement)&.id,
                     lecture: lecture.id } do %>

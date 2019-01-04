@@ -73,7 +73,7 @@ class Medium < ApplicationRecord
   # sort_enum array
   # Is used in options_for_select in form helpers.
   def self.sort_selection
-    Medium.sort_enum.map.with_index { |s,i| [s, i] }
+    Medium.sort_enum.map.with_index { |s, i| [s, i] }
   end
 
   # media sorts and their german acronyms
@@ -84,7 +84,7 @@ class Medium < ApplicationRecord
   end
 
   def self.select_sorts
-    Medium.sort_de.map { |k,v| [v, k] }
+    Medium.sort_de.map { |k, v| [v, k] }
   end
 
   # returns the array of all media subject to the conditions

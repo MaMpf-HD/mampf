@@ -89,15 +89,22 @@ Rails.application.routes.draw do
                                 as: 'display_cyto_tag'
   resources :tags
 
-  get 'sections/list_tags/', to: 'sections#list_tags', as: 'list_section_tags'
+  get 'sections/list_tags/', to: 'sections#list_tags',
+                             as: 'list_section_tags'
   resources :sections, except: [:index]
+
+  get 'terms/cancel_term_edit', to: 'terms#cancel',
+                                as: 'cancel_term_edit'
   resources :terms, except: [:show]
+
   devise_for :users, controllers: { registrations: 'registrations' }
-  get 'users/elevate', to: 'users#elevate', as: 'elevate_user'
-  get 'users/teacher/:teacher_id', to: 'users#teacher', as: 'teacher'
-  get 'users/list_generic_users', to: 'users#list_generic_users', as: 'list_generic_users'
+  get 'users/elevate', to: 'users#elevate',
+                       as: 'elevate_user'
+  get 'users/teacher/:teacher_id', to: 'users#teacher',
+                                   as: 'teacher'
+  get 'users/list_generic_users', to: 'users#list_generic_users',
+                                  as: 'list_generic_users'
   resources :users, only: [:index, :edit, :update, :destroy]
-  get 'terms/cancel_term_edit', to: 'terms#cancel', as: 'cancel_term_edit'
 
   get 'profile/edit', as: 'edit_profile'
   post 'profile/update'
