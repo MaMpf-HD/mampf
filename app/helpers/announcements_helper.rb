@@ -2,7 +2,7 @@
 module AnnouncementsHelper
   # create text for notification about new announcement in notification dropdown
   # menu
-  def announcement_notification_header(announcement)
+  def announcement_notification_item_header(announcement)
     text = 'Neue Mitteilung '
     if announcement.lecture.present?
       return text + 'in ' + announcement.lecture.title_for_viewers
@@ -15,5 +15,12 @@ module AnnouncementsHelper
     return '' unless user_signed_in?
     return 'bg-post-it-blue' if announcement.active?(current_user)
     ''
+  end
+
+  # create text for lecture announcement in notification card header
+  def announcement_notification_card_header(announcement)
+    link_to(announcement.lecture.title_for_viewers,
+            announcement.lecture.path(current_user),
+            class: 'text-dark')
   end
 end

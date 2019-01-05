@@ -26,11 +26,25 @@ module MediaHelper
   end
 
   # create text for notification about new medium in notification dropdown menu
-  def medium_notification_header(medium)
+  def medium_notification_item_header(medium)
     text = 'Neues Medium in ' + medium.teachable.media_scope.title_for_viewers
   end
 
-  def medium_notification_details(medium)
+  def medium_notification_item_details(medium)
     medium.local_title_for_viewers
+  end
+
+  # create text for notification about new medium in notification card
+  def medium_notification_card_header(medium)
+    link_to(medium.teachable.media_scope.title_for_viewers,
+            polymorphic_path(medium.teachable.media_scope),
+            class: 'text-dark')
+  end
+
+  # create link to medium in notification card
+  def medium_notification_card_link(medium)
+    link_to(medium.local_title_for_viewers,
+            medium,
+            class: 'darkblue')
   end
 end

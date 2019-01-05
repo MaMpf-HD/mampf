@@ -5,6 +5,7 @@ class Notification < ApplicationRecord
   include Rails.application.routes.url_helpers
 
   belongs_to :recipient, class_name: 'User'
+
   paginates_per 12
 
   # retrieve notifiable defined by notifiable_type and notifiable_id
@@ -33,6 +34,8 @@ class Notification < ApplicationRecord
     ['Medium', 'Course', 'Lecture', 'Announcement']
   end
 
+  # the next methods are for the determination which kind of notification it is
+
   def medium?
     return unless notifiable.present?
     notifiable.class.to_s == 'Medium'
@@ -46,5 +49,30 @@ class Notification < ApplicationRecord
   def lecture?
     return unless notifiable.present?
     notifiable.class.to_s == 'Lecture'
+  end
+
+  def announcement?
+    return unless notifiable.present?
+    notifiable.class.to_s == 'Announcement'
+  end
+
+  def sesam?
+    medium? && notifiable.sort == 'Sesam'
+  end
+
+  def nuesse?
+    medium? && notifiable.sort == 'Nuesse'
+  end
+
+  def quiz?
+    medium? && notifiable.sort == 'KeksQuiz'
+  end
+
+  def generic_announcement?
+    announcement? && notifiable.lecture.nil?
+  end
+
+  def lecture_announcement?
+    announcement? && notifiable.lecture.present?
   end
 end

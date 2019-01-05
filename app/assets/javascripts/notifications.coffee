@@ -2,6 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+# adjust generic counters and dropdown menu after notification ist destroyed
 adjustNotificationCounter = (notificationId) ->
 	# remove dropdown item
 	$('[data-itemNotification="'+notificationId+'"]').remove()
@@ -18,11 +19,13 @@ adjustNotificationCounter = (notificationId) ->
 		document.title = 'MaMpf'
 		# this is only relevant for index page
 		$('#notificationCardRow')
-			.append('<div class="col-12">Es liegen keine neuen Benachrichtigungen für Dich vor.</div>')
+			.append('<div class="col-12">Es liegen keine neuen Benachrichtigungen
+				für Dich vor.</div>')
 	return
 
 $(document).on 'turbolinks:load', ->
 
+	# clean up after lecture notification is clicked away
 	$('.removeLectureNotification').on 'click', ->
 		notificationId = $(this).data('id')
 		lectureId = $(this).data('lecture')
@@ -39,6 +42,7 @@ $(document).on 'turbolinks:load', ->
 		adjustNotificationCounter(notificationId)
 		return
 
+	# clean up after notification is clicked away in user's notification overview
 	$('.removeNotification').on 'click', ->
 		notificationId = $(this).data('id')
 		# fade out notification card in notification index
@@ -48,6 +52,7 @@ $(document).on 'turbolinks:load', ->
 		adjustNotificationCounter(notificationId)
 		return
 
+	# clean up after news notification is clicked away
 	$('.removeNewsNotification').on 'click', ->
 		notificationId = $(this).data('id')
 		console.log 'Hi'
