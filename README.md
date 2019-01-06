@@ -32,8 +32,8 @@ MaMpf is equipped with a tagging system and rich visualisations for content rela
 
 MaMpf is implemented in Ruby on Rails.
 
-* Ruby version: 2.5.3
-* Rails Version: 5.2.1
+* Ruby version: 2.6.0
+* Rails Version: 5.2.2
 * Test suite: rspec
 
 ## Installation (with docker-compose)
