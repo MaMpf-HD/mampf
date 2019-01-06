@@ -19,4 +19,12 @@
                          checked: @user.subscription_type == 3 %>
     <% end %>
   </div>
+  <div class="col-12">
+    <%= f.check_box :no_notifications,
+                    label: 'Ich möchte keine Benachrichtigungen über ' \
+                           'neue Medien, neue Vorlesungen oder neue Features ' \
+                           'in MaMpf angezeigt bekommen.',
+                    checked: current_user.no_notifications,
+                    inline: true %>
+  </div>
 </div>

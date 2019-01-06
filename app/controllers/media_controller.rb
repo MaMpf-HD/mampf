@@ -287,7 +287,8 @@ class MediaController < ApplicationController
   # to the medium's teachable's media_scope
   def create_notifications
     notifications = []
-    @medium.teachable.media_scope.users.each do |u|
+    @medium.teachable.media_scope.users.where(no_notifications: false)
+           .each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @medium.id,
                                         notifiable_type: 'Medium',

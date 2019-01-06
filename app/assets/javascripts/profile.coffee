@@ -3,6 +3,9 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'turbolinks:load', ->
+
+  # auto(un)check/disable radio buttons and checkboxes for lectures and extras
+  # when courses are (un)selected
   $(document).on 'change', '[id^="course-"]', ->
     courseId = this.dataset.course
     if courseId?
@@ -18,6 +21,8 @@ $(document).on 'turbolinks:load', ->
         $radios.prop('disabled', true)
     return
 
+  # auto(un)check/disable checkboxes for secondary lectures and extras when
+  # primary lectures are selected
   $('input:radio[name^="user[primary_lecture-"]').on 'change',  ->
     primaryLecture = $(this).val()
     courseId = this.dataset.course

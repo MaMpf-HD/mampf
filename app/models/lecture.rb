@@ -32,7 +32,7 @@ class Lecture < ApplicationRecord
 
 
   # a lecture has many announcements
-  has_many :announcements
+  has_many :announcements, dependent: :destroy
 
   # we do not allow that a teacher gives a certain lecture in a given term twice
   validates :course, uniqueness: { scope: [:teacher_id, :term_id],
@@ -145,7 +145,7 @@ class Lecture < ApplicationRecord
   # (with inheritance)
   def kaviar?
     Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
-      Medium.where(sort: 'Kaviar').to_a.any? do |m|
+      Medium.where(sort: 'Kaviar').any? do |m|
         m.teachable.present? && m.teachable.lecture == self
       end
     end
@@ -155,13 +155,13 @@ class Lecture < ApplicationRecord
   # (with inheritance)
   def nuesse?
     Rails.cache.fetch("#{cache_key}/nuesse", expires_in: 2.hours) do
-      Medium.where(sort: 'Nuesse').to_a.any? do |m|
+      Medium.where(sort: 'Nuesse').any? do |m|
         m.teachable.present? && m.teachable.lecture == self
       end
     end
   end
 
-  # the next methods pu together some information on the lecture (teacher, term,
+  # the next methods put together some information on the lecture (teacher, term,
   # title) in various combinations
 
   def short_title

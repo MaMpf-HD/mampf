@@ -46,7 +46,7 @@ class AnnouncementsController < ApplicationController
                         User
                       end
     notifications = []
-    users_to_notify.find_each do |u|
+    users_to_notify.where(no_notifications: false).find_each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @announcement.id,
                                         notifiable_type: 'Announcement',

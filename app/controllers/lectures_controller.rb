@@ -94,7 +94,7 @@ class LecturesController < ApplicationController
   # create notifications to all users about creation of new lecture
   def create_notifications
     notifications = []
-    User.find_each do |u|
+    User.where(no_notifications: false).find_each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @lecture.id,
                                         notifiable_type: 'Lecture',

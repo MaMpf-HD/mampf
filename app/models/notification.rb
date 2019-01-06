@@ -15,6 +15,16 @@ class Notification < ApplicationRecord
     notifiable_type.constantize.find_by_id(notifiable_id)
   end
 
+  # returns the lecture associated to a notification of type announcement,
+  # and teachable for a notification of type medium, nil otherwise
+  def teachable
+    return unless notifiable.present?
+    return if notifiable_type.in?(['Lecture', 'Course'])
+    return notifiable.lecture if notifiable_type == 'Announcement'
+    # notifiable will be a medium, so return its teachable
+    notifiable.teachable
+  end
+
   # returns the path that the user is sent to when the notification is clicked:
   # profile path for notifications about new courses or lectures
   # lecture path for announcements in lectures

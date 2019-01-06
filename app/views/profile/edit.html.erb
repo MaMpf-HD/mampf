@@ -16,14 +16,17 @@
         </div>
         <div class="card-body">
           <div class="form-group">
-            <%= f.label :name, 'Anzeigename' %>
-            <%= f.text_field_without_bootstrap :name, class: 'form-control' %>
-            <div class="invalid-feedback" id="username-error">
+            <%= f.label :name,
+                        'Anzeigename' %>
+            <%= f.text_field_without_bootstrap :name,
+                                               class: 'form-control' %>
+            <div class="invalid-feedback"
+                 id="username-error">
             </div>
           </div>
-          Zur Info: Das MaMpf-System wird demnächst&trade; mehr Nutzerfeedback erlauben.
-          In dem Kontext wird bei Beiträgen von Dir der obige Name angezeigt
-          werden.
+          Zur Info: Das MaMpf-System wird demnächst&trade; mehr Nutzerfeedback
+          erlauben. In dem Kontext wird bei Beiträgen von Dir der obige Name
+          angezeigt werden.
         </div>
       </div>
     </div>
@@ -41,7 +44,8 @@
           </div>
         </div>
         <div class="card-body">
-          <%= render partial: 'profile/subscriptions', locals: { f: f } %>
+          <%= render partial: 'profile/subscriptions',
+                     locals: { f: f } %>
         </div>
       </div>
     </div>
@@ -59,14 +63,16 @@
           </div>
         </div>
         <div class="card-body">
-          <%= render partial: 'profile/subscription_type', locals: { f: f } %>
+          <%= render partial: 'profile/subscription_type',
+                     locals: { f: f } %>
         </div>
       </div>
     </div>
   </div>
   <div class="row mb-3">
     <div class="col-12 text-center">
-      <%= f.submit "Profil updaten", class: 'btn btn-info' %>
+      <%= f.submit "Profil updaten",
+                   class: 'btn btn-info' %>
     </div>
   </div>
 <% end %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_23_190159) do
+ActiveRecord::Schema.define(version: 2019_01_06_121300) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -267,6 +267,7 @@ ActiveRecord::Schema.define(version: 2018_12_23_190159) do
     t.boolean "edited_profile"
     t.text "name"
     t.text "homepage"
+    t.boolean "no_notifications", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
