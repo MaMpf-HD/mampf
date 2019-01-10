@@ -22,9 +22,6 @@ module NotificationsHelper
 
   # determine the color of a notification card
   def notification_color(notification)
-    return 'bg-post-it-green' if notification.sesam?
-    return 'bg-post-it-pink' if notification.nuesse?
-    return 'bg-post-it-light-green' if notification.quiz?
     return 'bg-post-it-blue' if notification.generic_announcement?
     return 'bg-post-it-red' if notification.announcement?
     return 'bg-post-it-orange' if notification.course? || notification.lecture?

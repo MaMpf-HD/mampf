@@ -104,7 +104,7 @@ class ProfileController < ApplicationController
 
   def clean_up_notifications
     # delete all of the user's notifications if he does not want them
-    @user.notifications.delete_all if @no_notifications
+    # @user.notifications.delete_all if @no_notifications
     # remove all notification related not related to subscribed courses
     # or lectures
     subscribed_teachables = @courses + @lectures
