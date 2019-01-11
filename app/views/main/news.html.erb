@@ -2,7 +2,7 @@
  	<div class="card-header">
  	 	<div class="row mb-2">
      	<div class="col-10">
-       	<h3>
+       	<h4>
          	MaMpf-News
          	<% if user_signed_in? && @current_user.active_news.present? %>
             <span class="badge badge-secondary newsCounter"
@@ -10,7 +10,7 @@
               <%= @current_user.active_news.count %>
             </span>
           <% end %>
-        </h3>
+        </h4>
      	</div>
       <div class="col-2 text-right">
       	<% if user_signed_in? && @current_user.active_news.present? %>
