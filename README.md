@@ -28,8 +28,8 @@ MaMpf is equipped with a tagging system and rich visualisations for content rela
 
 ![tags](public/tag_visualisation.png)
 
-For more information see this [blog](https://mampfdev.blogspot.com).
-There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/gallery/)
+For more information see this [blog](https://mampfdev.wordpress.com).
+There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/gallery/).
 ## System background
 
 MaMpf is implemented in Ruby on Rails.
