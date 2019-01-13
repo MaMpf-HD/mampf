@@ -113,10 +113,8 @@ Rails.application.routes.draw do
   put 'profile/add_consent'
 
   root 'main#home'
-  get 'about', to: 'main#about'
   get 'error', to: 'main#error'
   get 'main/home'
-  get 'main/about'
   get 'main/news', to: 'main#news',
                    as: 'news'
 
