@@ -63,11 +63,6 @@ renderMathInElement(metaArea, delimiters: [
   },
   throwOnError: false
 ])
-# MathJax.Hub.Queue [
-#   'Typeset'
-#   MathJax.Hub
-#   'meta-area'
-# ]
 metaRef = document.getElementById('<%= "metaref-" + @referral.id.to_s %>')
 metaRef.scrollIntoView()
 metaRef.style.background = 'lightcyan'

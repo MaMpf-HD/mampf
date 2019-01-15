@@ -25,9 +25,3 @@ renderMathInElement(mediaResults, delimiters: [
   },
   throwOnError: false
 ])
-
-# MathJax.Hub.Queue [
-#   'Typeset'
-#   MathJax.Hub
-#   'media-search-results'
-# ]

@@ -30,8 +30,3 @@ renderMathInElement(metaArea, delimiters: [
   },
   throwOnError: false
 ])
-# MathJax.Hub.Queue [
-#   'Typeset'
-#   MathJax.Hub
-#   'meta-area'
-# ]

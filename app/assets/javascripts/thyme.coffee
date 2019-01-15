@@ -142,12 +142,6 @@ setupHypervideo = ->
         },
         throwOnError: false
       ])
-
-      # MathJax.Hub.Queue [
-      #   'Typeset'
-      #   MathJax.Hub
-      #   backButton.id
-      # ]
     return
 
   # set up the chapter elements
@@ -158,7 +152,7 @@ setupHypervideo = ->
       i = 0
       times = []
       # read out the chapter track cues and generate html elements for chapters,
-      # run MathJax on them
+      # run katex on them
       while i < chaptersTrack.cues.length
         cue = chaptersTrack.cues[i]
         chapterName = cue.text
@@ -167,7 +161,7 @@ setupHypervideo = ->
         $listItem = $("<li/>")
         $link = $("<a/>", { id: 'c-' + start, text: chapterName })
         $chapterList.append($listItem.append($link))
-        chapterElement = $('#c-' + $.escapeSelector(start)).get(0)
+        chapterElement = $link.get(0)
         renderMathInElement(chapterElement, delimiters: [
           {
             left: '$$'
@@ -191,17 +185,9 @@ setupHypervideo = ->
           },
           throwOnError: false
         ])
-        # if MathJax?
-        #   MathJax.Hub.Queue [
-        #     'Typeset'
-        #     MathJax.Hub
-        #     'c-' + start
-        #   ]
-        # else
-        #   console.log 'MathJax ist noch nicht da.'
-        $('#c-' + $.escapeSelector(start)).data('text', chapterName)
+        $link.data('text', chapterName)
         # if a chapter element is clicked, transport to chapter start time
-        $('#c-' + $.escapeSelector(start)).on 'click', ->
+        $link.on 'click', ->
           displayBackButton()
           video.currentTime = @id.replace('c-', '')
           return
@@ -229,7 +215,7 @@ setupHypervideo = ->
       i = 0
       times = []
       # read out the metadata track cues and generate html elements for
-      # metadata, run MathJax on them
+      # metadata, run katex on them
       while i < metaTrack.cues.length
         cue = metaTrack.cues[i]
         meta = JSON.parse cue.text
@@ -291,7 +277,7 @@ setupHypervideo = ->
           displayBackButton()
           video.currentTime = this.id.replace('l-','')
           return
-        metaElement = $('#m-' + $.escapeSelector(start)).get(0)
+        metaElement = $listItem.get(0)
         renderMathInElement(metaElement, delimiters: [
           {
             left: '$$'
@@ -315,14 +301,6 @@ setupHypervideo = ->
           },
           throwOnError: false
         ])
-        # if MathJax?
-        #   MathJax.Hub.Queue [
-        #     'Typeset'
-        #     MathJax.Hub
-        #     'm-' + start
-        #   ]
-        # else
-        #   console.log 'MathJax ist noch nicht da.'
         ++i
       # store metadata start times as data attribute
       $metaList.get(0).dataset.times = JSON.stringify(times)

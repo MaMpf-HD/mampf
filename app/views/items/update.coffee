@@ -33,11 +33,6 @@ $('#item-description-error').append('<%= @errors[:description].join(' ') %>')
 $('#toc-area').empty()
   .append('<%= j render partial: 'media/toc',
                         locals: { medium: @item.medium } %>')
-# MathJax.Hub.Queue [
-#   'Typeset'
-#   MathJax.Hub
-#   'toc-area'
-# ]
 tocArea = document.getElementById('toc-area')
 renderMathInElement(tocArea, delimiters: [
   {
