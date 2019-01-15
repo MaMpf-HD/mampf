@@ -34,29 +34,30 @@ $('#toc-area').empty()
   .append('<%= j render partial: 'media/toc',
                         locals: { medium: @item.medium } %>')
 tocArea = document.getElementById('toc-area')
-renderMathInElement(tocArea, delimiters: [
-  {
-    left: '$$'
-    right: '$$'
-    display: true
-  }
-  {
-    left: '$'
-    right: '$'
-    display: false
-  }
-  {
-    left: '\\('
-    right: '\\)'
-    display: false
-  }
-  {
-    left: '\\['
-    right: '\\]'
-    display: true
-  },
+renderMathInElement tocArea,
+  delimiters: [
+    {
+      left: '$$'
+      right: '$$'
+      display: true
+    }
+    {
+      left: '$'
+      right: '$'
+      display: false
+    }
+    {
+      left: '\\('
+      right: '\\)'
+      display: false
+    }
+    {
+      left: '\\['
+      right: '\\]'
+      display: true
+    }
+  ]
   throwOnError: false
-])
 
 tocItem = document.getElementById('<%= "tocitem-" + @item.id.to_s %>')
 tocItem.scrollIntoView()

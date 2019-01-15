@@ -119,29 +119,30 @@ setupHypervideo = ->
       else
         backInfo = 'zurück zu ' + backInfo
       $(backButton).empty().append(backInfo).show()
-      renderMathInElement(backButton, delimiters: [
-        {
-          left: '$$'
-          right: '$$'
-          display: true
-        }
-        {
-          left: '$'
-          right: '$'
-          display: false
-        }
-        {
-          left: '\\('
-          right: '\\)'
-          display: false
-        }
-        {
-          left: '\\['
-          right: '\\]'
-          display: true
-        },
+      renderMathInElement backButton,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
         throwOnError: false
-      ])
     return
 
   # set up the chapter elements
@@ -162,29 +163,30 @@ setupHypervideo = ->
         $link = $("<a/>", { id: 'c-' + start, text: chapterName })
         $chapterList.append($listItem.append($link))
         chapterElement = $link.get(0)
-        renderMathInElement(chapterElement, delimiters: [
-          {
-            left: '$$'
-            right: '$$'
-            display: true
-          }
-          {
-            left: '$'
-            right: '$'
-            display: false
-          }
-          {
-            left: '\\('
-            right: '\\)'
-            display: false
-          }
-          {
-            left: '\\['
-            right: '\\]'
-            display: true
-          },
+        renderMathInElement chapterElement,
+          delimiters: [
+            {
+              left: '$$'
+              right: '$$'
+              display: true
+            }
+            {
+              left: '$'
+              right: '$'
+              display: false
+            }
+            {
+              left: '\\('
+              right: '\\)'
+              display: false
+            }
+            {
+              left: '\\['
+              right: '\\]'
+              display: true
+            }
+          ]
           throwOnError: false
-        ])
         $link.data('text', chapterName)
         # if a chapter element is clicked, transport to chapter start time
         $link.on 'click', ->
@@ -278,29 +280,30 @@ setupHypervideo = ->
           video.currentTime = this.id.replace('l-','')
           return
         metaElement = $listItem.get(0)
-        renderMathInElement(metaElement, delimiters: [
-          {
-            left: '$$'
-            right: '$$'
-            display: true
-          }
-          {
-            left: '$'
-            right: '$'
-            display: false
-          }
-          {
-            left: '\\('
-            right: '\\)'
-            display: false
-          }
-          {
-            left: '\\['
-            right: '\\]'
-            display: true
-          },
+        renderMathInElement metaElement,
+          delimiters: [
+            {
+              left: '$$'
+              right: '$$'
+              display: true
+            }
+            {
+              left: '$'
+              right: '$'
+              display: false
+            }
+            {
+              left: '\\('
+              right: '\\)'
+              display: false
+            }
+            {
+              left: '\\['
+              right: '\\]'
+              display: true
+            }
+          ]
           throwOnError: false
-        ])
         ++i
       # store metadata start times as data attribute
       $metaList.get(0).dataset.times = JSON.stringify(times)

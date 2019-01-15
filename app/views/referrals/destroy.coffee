@@ -7,26 +7,27 @@ $('#action-container').empty()
 $('#export-references').hide()
 <% end %>
 metaArea = document.getElementById('meta-area')
-renderMathInElement(metaArea, delimiters: [
-  {
-    left: '$$'
-    right: '$$'
-    display: true
-  }
-  {
-    left: '$'
-    right: '$'
-    display: false
-  }
-  {
-    left: '\\('
-    right: '\\)'
-    display: false
-  }
-  {
-    left: '\\['
-    right: '\\]'
-    display: true
-  },
+renderMathInElement metaArea,
+  delimiters: [
+    {
+      left: '$$'
+      right: '$$'
+      display: true
+    }
+    {
+      left: '$'
+      right: '$'
+      display: false
+    }
+    {
+      left: '\\('
+      right: '\\)'
+      display: false
+    }
+    {
+      left: '\\['
+      right: '\\]'
+      display: true
+    }
+  ]
   throwOnError: false
-])
