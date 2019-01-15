@@ -33,11 +33,36 @@ $('#item-description-error').append('<%= @errors[:description].join(' ') %>')
 $('#toc-area').empty()
   .append('<%= j render partial: 'media/toc',
                         locals: { medium: @item.medium } %>')
-MathJax.Hub.Queue [
-  'Typeset'
-  MathJax.Hub
-  'toc-area'
-]
+# MathJax.Hub.Queue [
+#   'Typeset'
+#   MathJax.Hub
+#   'toc-area'
+# ]
+tocArea = document.getElementById('toc-area')
+renderMathInElement(tocArea, delimiters: [
+  {
+    left: '$$'
+    right: '$$'
+    display: true
+  }
+  {
+    left: '$'
+    right: '$'
+    display: false
+  }
+  {
+    left: '\\('
+    right: '\\)'
+    display: false
+  }
+  {
+    left: '\\['
+    right: '\\]'
+    display: true
+  },
+  throwOnError: false
+])
+
 tocItem = document.getElementById('<%= "tocitem-" + @item.id.to_s %>')
 tocItem.scrollIntoView()
 tocItem.style.background = 'lightcyan'

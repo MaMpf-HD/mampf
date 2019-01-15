@@ -6,8 +6,32 @@ $('#action-container').empty()
 <% if @medium.referrals.empty? %>
 $('#export-references').hide()
 <% end %>
-MathJax.Hub.Queue [
-  'Typeset'
-  MathJax.Hub
-  'meta-area'
-]
+metaArea = document.getElementById('meta-area')
+renderMathInElement(metaArea, delimiters: [
+  {
+    left: '$$'
+    right: '$$'
+    display: true
+  }
+  {
+    left: '$'
+    right: '$'
+    display: false
+  }
+  {
+    left: '\\('
+    right: '\\)'
+    display: false
+  }
+  {
+    left: '\\['
+    right: '\\]'
+    display: true
+  },
+  throwOnError: false
+])
+# MathJax.Hub.Queue [
+#   'Typeset'
+#   MathJax.Hub
+#   'meta-area'
+# ]

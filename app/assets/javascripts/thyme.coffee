@@ -119,11 +119,35 @@ setupHypervideo = ->
       else
         backInfo = 'zurück zu ' + backInfo
       $(backButton).empty().append(backInfo).show()
-      MathJax.Hub.Queue [
-        'Typeset'
-        MathJax.Hub
-        backButton.id
-      ]
+      renderMathInElement(backButton, delimiters: [
+        {
+          left: '$$'
+          right: '$$'
+          display: true
+        }
+        {
+          left: '$'
+          right: '$'
+          display: false
+        }
+        {
+          left: '\\('
+          right: '\\)'
+          display: false
+        }
+        {
+          left: '\\['
+          right: '\\]'
+          display: true
+        },
+        throwOnError: false
+      ])
+
+      # MathJax.Hub.Queue [
+      #   'Typeset'
+      #   MathJax.Hub
+      #   backButton.id
+      # ]
     return
 
   # set up the chapter elements
@@ -143,14 +167,38 @@ setupHypervideo = ->
         $listItem = $("<li/>")
         $link = $("<a/>", { id: 'c-' + start, text: chapterName })
         $chapterList.append($listItem.append($link))
-        if MathJax?
-          MathJax.Hub.Queue [
-            'Typeset'
-            MathJax.Hub
-            'c-' + start
-          ]
-        else
-          console.log 'MathJax ist noch nicht da.'
+        chapterElement = $('#c-' + $.escapeSelector(start)).get(0)
+        renderMathInElement(chapterElement, delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          },
+          throwOnError: false
+        ])
+        # if MathJax?
+        #   MathJax.Hub.Queue [
+        #     'Typeset'
+        #     MathJax.Hub
+        #     'c-' + start
+        #   ]
+        # else
+        #   console.log 'MathJax ist noch nicht da.'
         $('#c-' + $.escapeSelector(start)).data('text', chapterName)
         # if a chapter element is clicked, transport to chapter start time
         $('#c-' + $.escapeSelector(start)).on 'click', ->
@@ -243,14 +291,38 @@ setupHypervideo = ->
           displayBackButton()
           video.currentTime = this.id.replace('l-','')
           return
-        if MathJax?
-          MathJax.Hub.Queue [
-            'Typeset'
-            MathJax.Hub
-            'm-' + start
-          ]
-        else
-          console.log 'MathJax ist noch nicht da.'
+        metaElement = $('#m-' + $.escapeSelector(start)).get(0)
+        renderMathInElement(metaElement, delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          },
+          throwOnError: false
+        ])
+        # if MathJax?
+        #   MathJax.Hub.Queue [
+        #     'Typeset'
+        #     MathJax.Hub
+        #     'm-' + start
+        #   ]
+        # else
+        #   console.log 'MathJax ist noch nicht da.'
         ++i
       # store metadata start times as data attribute
       $metaList.get(0).dataset.times = JSON.stringify(times)
