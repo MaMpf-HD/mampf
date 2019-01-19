@@ -36,17 +36,15 @@
             </h5>
           </div>
         <% end %>
-        <% if tags %>
-          <div>
-            <% medium.tags.each do |t| %>
-              <%= link_to t.short_title(30),
-                          t,
-                          class: "badge badge-light",
-                          title: t.title,
-                          data: { toggle: 'tooltip', placement: 'bottom'} %>
-            <% end %>
-          </div>
-        <% end %>
+        <div>
+          <% medium.tags.each do |t| %>
+            <%= link_to t.short_title(30),
+                        t,
+                        class: "badge badge-light",
+                        title: t.title,
+                        data: { toggle: 'tooltip', placement: 'bottom'} %>
+          <% end %>
+        </div>
       </div>
       <div class="card-footer bg-mdb-color-lighten-7 text-center">
         <div id="media-box-footer">
