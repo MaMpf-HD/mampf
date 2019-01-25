@@ -1,5 +1,6 @@
 <%= form_with model: medium,
-              html: { id: 'medium-form' } do |f| %>
+              html: { id: 'medium-form',
+                      enctype: 'multipart/form-data' } do |f| %>
   <%= render partial: 'media/header',
              locals: { medium: medium,
                        new_medium: new_medium,

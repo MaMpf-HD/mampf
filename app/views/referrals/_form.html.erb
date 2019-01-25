@@ -93,7 +93,7 @@
         </i>
       </div>
     </div>
-    <div id="link_details" style="display: <%= show(referral.show_link) %>">
+    <div id="link_details" style="display: <%= show(show_link(referral)) %>">
       <div id="referral_description_field" class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :description, 'Titel' %>
@@ -161,7 +161,7 @@
         </div>
       </div>
     </div>
-    <div id="item_details" style="display: <%= hide(referral.show_link || referral.new_record?) %>">
+    <div id="item_details" style="display: <%= hide(show_link(referral) || referral.new_record?) %>">
       <div class="form-group form-row">
         <div class="col-2">
         </div>
@@ -220,7 +220,7 @@
       </div>
     </div>
     <div id="explanation_details"
-         style="display: <%= show(referral.show_explanation) %>;">
+         style="display: <%= show(show_explanation(referral)) %>;">
       <div class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :explanation, 'Erläuterung' %>

@@ -47,12 +47,6 @@
     <%= render partial: 'media/upload_video',
                locals: { medium: medium } %>
     <%= f.hidden_field :detach_video, value: false %>
-    <% # without the next lines, the POST request will ignore %>
-    <% # all uploaded file data %>
-    <% # no clue why %>
-    <div class="hidden">
-      <%= f.file_field :bs %>
-    </div>
     <% if medium.screenshot.present? %>
       <div class="my-2">
         Screenshot

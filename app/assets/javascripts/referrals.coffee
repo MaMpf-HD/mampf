@@ -41,7 +41,7 @@ $(document).on 'turbolinks:load', ->
         }
     return
 
-  # react to a preselection of a teachable in th eferferral action box
+  # react to a preselection of a teachable in the referral action box
   # by rendering all of this teachable's items as options in the item dropdown
   # (relevant on media enrich page)
   $(document).on 'change', '#referral_teachable', ->
@@ -81,6 +81,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
+# clean up for turbolinks
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#referral_item_id'
   $(document).off 'change', '#referral_teachable'

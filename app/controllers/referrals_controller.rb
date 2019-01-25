@@ -4,6 +4,9 @@ class ReferralsController < ApplicationController
   before_action :set_basics, only: [:update, :create]
 
   def update
+    # if referral's item is a link, it is updated
+    # this means in particular that *all referrals* that refer to it will
+    # be affected; links are changed *globally*
     update_item if Item.find_by_id(@item_id)&.sort == 'link'
     return if @errors.present?
     @referral.update(updated_params)
@@ -11,13 +14,16 @@ class ReferralsController < ApplicationController
   end
 
   def edit
-    if @referral.item.sort == 'link'
-      @item_selection = Item.where(medium: nil)
+    # if referral's item is a link, load all other links,
+    # otherwise load all items in the referral's item's medium scope
+    # that the user can choose from in the item dropdown menu
+    @item_selection = if @referral.item.sort == 'link'
+                        Item.where(medium: nil)
                             .map { |i| [i.description, i.id] }
-    else
-      @item_selection = @referral.item.medium.teachable.media_scope
+                      else
+                        @referral.item.medium.teachable.media_scope
                                  .media_items_with_inheritance
-    end
+                      end
     @item = Item.new(sort: 'link')
   end
 
@@ -37,6 +43,9 @@ class ReferralsController < ApplicationController
     @referral.destroy
   end
 
+  # load all relevant items after user's choice of a teachable
+  # in the preselection dropdown, they are to populate the item dropdown
+  # renders it in json as it will be called by ajax
   def list_items
     teachable_id = params[:teachable_id].to_s.split('-')
     if teachable_id[0] == 'external'
@@ -59,6 +68,8 @@ class ReferralsController < ApplicationController
   end
 
   def referral_params
+    # clone referral params in order to convert start and end time to proper
+    # TimeStamp instances
     filter = params.require(:referral).permit(:medium_id, :item_id, :start_time,
                                               :end_time, :description, :link,
                                               :explanation, :ref_id).clone
