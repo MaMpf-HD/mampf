@@ -63,8 +63,8 @@ class User < ApplicationRecord
 
   def related_courses
     return if subscription_type.nil?
-    return Course.where(id: preceding_course_ids) if subscription_type == 1
-    return Course.all if subscription_type == 2
+    return Course.where(id: preceding_course_ids).includes(:lectures) if subscription_type == 1
+    return Course.all.includes(:lectures) if subscription_type == 2
     courses
   end
 

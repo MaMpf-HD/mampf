@@ -6,10 +6,16 @@ class SearchController < ApplicationController
 
   def index
     search_down = @search_string.downcase
-    matches = Tag.all.select { |x| x.title.downcase.include?(search_down) }
-    @tags = Tag.where(id: matches.pluck(:id))
+    # determine tags whose title contains the search string
+    matches = Tag.pluck(:id, :title)
+                 .select { |x| x.second.downcase.include?(search_down) }
+                 .map(&:first)
+    @tags = Tag.where(id: matches)
+    # determine which of the found tags can be seen by the user
+    # (taking into account his preferences and subscribed courses)
     @filtered_tags = current_user.filter_tags(@tags)
     return unless @tags.empty?
+    # determine tags whose title is apartial match
     find_similar_tags
   end
 
@@ -23,6 +29,8 @@ class SearchController < ApplicationController
     @search_string = params[:search]
   end
 
+  # make sure the seacrh string is not blank and consists of at least
+  # two letters
   def sanitize_search_string
     if @search_string.nil?
       redirect_back fallback_location: root_path,
