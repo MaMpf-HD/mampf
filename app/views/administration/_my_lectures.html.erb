@@ -39,7 +39,7 @@
          class="bg-green-lighten-4 p-3 mb-3 rounded"
          style="display: none;">
     </div>
-    <% if current_user.given_lectures.present? %>
+    <% if current_user.given_lectures.exists? %>
       als DozentIn
       (<%= current_user.given_lectures.count %>)
       <i class="far fa-question-circle helpdesk ml-2"
@@ -57,7 +57,7 @@
                            inspection: false,
                            teacher: false } %>
     <% end %>
-    <% if current_user.edited_lectures.present? %>
+    <% if current_user.edited_lectures.exists? %>
       als zusätzlicher Vorlesungeditor
       (<%= current_user.edited_lectures.count %>)
       <i class="far fa-question-circle helpdesk ml-2"

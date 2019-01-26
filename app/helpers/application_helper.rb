@@ -18,7 +18,7 @@ module ApplicationHelper
   def full_title(page_title = '')
     return 'THymE' if action_name == 'play'
     base_title = 'MaMpf'
-    if user_signed_in? && current_user.notifications.present?
+    if user_signed_in? && current_user.notifications.exists?
       base_title += " (#{current_user.notifications.count})"
     end
     base_title

@@ -5,7 +5,7 @@ $('#action-container').empty()
                         locals: { item: @item }%>')
 
 # make some modification if the item's sort is 'section':
-# change description label to 'Titel' anbd remove fields for number
+# change description label to 'Titel' and remove fields for number
 # and description
 <% if @item.sort == 'section' %>
 $("label[for='item_description']").empty().append('Titel')

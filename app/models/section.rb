@@ -52,7 +52,7 @@ class Section < ApplicationRecord
     return higher_item unless first?
     return if chapter.first?
     # actual previous chapter may not have any sections
-    previous_chapter = chapter.higher_items.find { |c| c.sections.present? }
+    previous_chapter = chapter.higher_items.find { |c| c.sections.exists? }
     return unless previous_chapter.present?
     potential_last = previous_chapter.sections.last
     return potential_last if potential_last.last?
@@ -65,7 +65,7 @@ class Section < ApplicationRecord
     return lower_item unless last?
     return if chapter.last?
     # actual next chapter may not have any sections
-    next_chapter = chapter.lower_items.find { |c| c.sections.present? }
+    next_chapter = chapter.lower_items.find { |c| c.sections.exists? }
     return unless next_chapter.present?
     potential_first = next_chapter.sections.first
     return potential_first if potential_first.first?

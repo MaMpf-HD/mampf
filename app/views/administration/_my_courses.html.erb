@@ -39,7 +39,7 @@
       <%= render partial: 'courses/new',
                  locals: { course: Course.new } %>
     </div>
-    <% if current_user.edited_courses.present? %>
+    <% if current_user.edited_courses.exists? %>
       <%= render partial: 'administration/courses_card',
                  locals: { courses:
                              current_user.edited_courses

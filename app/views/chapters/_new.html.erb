@@ -22,7 +22,7 @@
            id="new-chapter-title-error">
       </div>
     </div>
-    <% if lecture.chapters.present? %>
+    <% if lecture.chapters.exists? %>
       <div class="col-6 form-group">
         <%= f.label :predecessor,
                     'Einfügen nach Kapitel' %>

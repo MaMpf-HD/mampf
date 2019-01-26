@@ -30,7 +30,7 @@ class MediaController < ApplicationController
     @medium = Medium.new(teachable: @teachable)
     @medium.editors << current_user
     tags = Tag.where(id: params[:tag_ids])
-    @medium.tags << tags if tags.present?
+    @medium.tags << tags if tags.exists?
   end
 
   def edit

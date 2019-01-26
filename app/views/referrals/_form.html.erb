@@ -5,21 +5,32 @@
         Startzeit
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Hier kannst Du die Zeit eingeben, an der die entsprechende Referenz im Video beginnen soll. Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen. Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder manuell eintippen.">
+           data-content="Hier kannst Du die Zeit eingeben, an der die
+           entsprechende Referenz im Video beginnen soll.
+           Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle
+           im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen.
+           Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen'
+           erneut aus dem Video abgreifen oder manuell eintippen.">
         </i>
       </div>
       <div class="col-3">
         <%= f.text_field :start_time,
                          { value: referral.start_time.simple_vtt_string,
-                           size: 12, maxlength: 12, class: 'form-control' } %>
-        <div class="invalid-feedback" id="start-time-error">
+                           size: 12,
+                           maxlength: 12,
+                           class: 'form-control' } %>
+        <div class="invalid-feedback"
+             id="start-time-error">
         </div>
       </div>
       <div class="col-1 col-form-label">
-        <i class="material-icons clickable timer" data-toggle="tooltip"
-           data-placement="right" title="Zeit aus Video übernehmen"
+        <i class="material-icons clickable timer"
+           data-toggle="tooltip"
+           data-placement="right"
+           title="Zeit aus Video übernehmen"
            data-timer="referral_start_time">
           timer
         </i>
@@ -30,81 +41,116 @@
         Endzeit
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Hier kannst Du die Zeit eingeben, an der die entsprechende Referenz im Video enden soll. Im Thyme-Player ist sie danach immer noch sichtbar, wird aber leicht ausgegraut.
-           Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen. Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder manuell eintippen.">
+           data-content="Hier kannst Du die Zeit eingeben, an der die
+           entsprechende Referenz im Video enden soll. Im Thyme-Player ist
+           sie danach immer noch sichtbar, wird aber leicht ausgegraut.
+           Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle
+           im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen.
+           Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen'
+           erneut aus dem Video abgreifen oder manuell eintippen.">
         </i>
       </div>
       <div class="col-3">
         <%= f.text_field :end_time,
                          { value: referral.end_time.simple_vtt_string,
-                           size: 12, maxlength: 12, class: 'form-control' } %>
-        <div class="invalid-feedback" id="end-time-error">
+                           size: 12,
+                           maxlength: 12,
+                           class: 'form-control' } %>
+        <div class="invalid-feedback"
+             id="end-time-error">
         </div>
       </div>
       <div class="col-1 col-form-label">
-        <i class="material-icons clickable timer" data-toggle="tooltip"
-           data-placement="right" title="Zeit aus Video übernehmen"
+        <i class="material-icons clickable timer"
+           data-toggle="tooltip"
+           data-placement="right"
+           title="Zeit aus Video übernehmen"
            data-timer="referral_end_time">
           timer
         </i>
       </div>
     </div>
-    <div id="teachable_selector" class="form-group form-row">
+    <div id="teachable_selector"
+         class="form-group form-row">
       <div class="col-2 col-form-label">
-        <%= f.label :teachable, 'Vorauswahl' %>
+        <%= f.label :teachable,
+                    'Vorauswahl' %>
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Hier kannst Du eine Vorauswahl treffen, aus welchem Modul bzw. welcher Vorlesung der zu referenzierende Eintragt stammen soll, bzw. ob es sich um einen externen Eintrag (typischerweise z.B. eine Webseite) handelt. Ein externer Eintrag kann bei Bedarf auch neu angelegt werden.">
+           data-content="Hier kannst Du eine Vorauswahl treffen, aus welchem
+           Modul bzw. welcher Vorlesung der zu referenzierende Eintrag
+           stammen soll, bzw. ob es sich um einen externen Eintrag
+           (typischerweise z.B. eine Webseite) handelt. Ein externer Eintrag
+           kann bei Bedarf auch neu angelegt werden.">
         </i>
       </div>
       <div class="col-9">
         <%= f.select :teachable,
                      grouped_options_for_select(grouped_teachable_list,
                                                 teachable_selector(referral)),
-                     { prompt: 'auswählen' }, { class: 'selectize' } %>
+                     { prompt: 'auswählen' },
+                     { class: 'selectize' } %>
       </div>
     </div>
     <div id="item_select" class="form-group form-row">
       <div class="col-2 col-form-label">
-        <%= f.label :item_id, 'Eintrag' %>
+        <%= f.label :item_id,
+                    'Eintrag' %>
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
-           data-content="Hier kannst Du den zu referenzierenden Eintrag auswählen.">
+           data-content="Hier kannst Du den zu referenzierenden Eintrag
+           auswählen.">
         </i>
       </div>
       <div class="col-9">
         <%= f.select :item_id,
                      [['auswählen', '']] +
                        item_selection,
-                     {}, { class: 'selectize' } %>
+                     {},
+                     { class: 'selectize' } %>
       </div>
       <div class="col-1 col-form-label">
-        <i id="create_external_link" class="material-icons clickable"
+        <i id="create_external_link"
+           class="material-icons clickable"
            data-toggle="tooltip"
-           data-placement="left" title="externen Eintrag anlegen"
-           style="display: <%= show(referral.item.present? && referral.item.sort == 'link') %>">
+           data-placement="left"
+           title="externen Eintrag anlegen"
+           style="display: <%= show(referral.item&.sort == 'link') %>">
           note_add
         </i>
       </div>
     </div>
     <div id="link_details" style="display: <%= show(show_link(referral)) %>">
-      <div id="referral_description_field" class="form-group form-row">
+      <div id="referral_description_field"
+           class="form-group form-row">
         <div class="col-2 col-form-label">
-          <%= f.label :description, 'Titel' %>
+          <%= f.label :description,
+                      'Titel' %>
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
-             data-content="Hier kannst Du den Titel des externen Eintrages bearbeiten.<br><i>Achtung:</i> Hierbei handelt es sich um
-             eine globale Bearbeitung des externen Eintrages, d.h. der Titel
-             ändert sich dann an allen Stellen, an denen dieser Eintrag referenziert ist. Falls der externe Eintrag noch von woanders
-             referenziert wird, wird dies durch eine Warnmeldung angezeigt."
+             data-content="Hier kannst Du den Titel des externen Eintrages
+             bearbeiten.
+             <br>
+             <i>
+             Achtung:
+             </i>
+             Hierbei handelt es sich um eine globale Bearbeitung des externen
+             Eintrages, d.h. der Titel ändert sich dann an allen Stellen,
+             an denen dieser Eintrag referenziert ist.
+             Falls der externe Eintrag noch von woanders referenziert wird,
+             wird dies durch eine Warnmeldung angezeigt."
              data-html="true">
           </i>
           <i id="link_reappearance_title"
@@ -112,29 +158,42 @@
              style="display: <%= show_inline(referral.reappears) %>"
              data-toggle="tooltip"
              data-placement="left"
-             title="Achtung: Der externe Eintrag ist bereits von woanders referenziert. Wenn Du den Titel bearbeitest, ändert sich dieser
+             title="Achtung: Der externe Eintrag ist bereits von woanders
+             referenziert. Wenn Du den Titel bearbeitest, ändert sich dieser
              an allen Stellen, an denen der Eintrag referenziert ist.">
           </i>
         </div>
         <div class="col-6">
           <%= f.text_field :description,
-                           { value: referral.prefilled_description, size: 50,
+                           { value: referral.prefilled_description,
+                             size: 50,
                              class: 'form-control' } %>
-          <div class="invalid-feedback" id="description-error">
+          <div class="invalid-feedback"
+               id="description-error">
           </div>
         </div>
       </div>
-      <div id="referral_link_field" class="form-group form-row">
+      <div id="referral_link_field"
+           class="form-group form-row">
         <div class="col-2 col-form-label">
-          <%= f.label :link, 'Link' %>
+          <%= f.label :link,
+                      'Link' %>
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
-             data-content="Hier kannst Du einen ggf. vorhandenen Link, auf den der externe Eintrag verweist, bearbeiten.<br><i>Achtung:</i> Hierbei handelt es sich um
-             eine globale Bearbeitung des externen Eintrages, d.h. der Link
-             ändert sich dann an allen Stellen, an denen dieser Eintrag referenziert ist. Falls der externe Eintrag noch von woanders
-             referenziert wird, wird dies durch eine Warnmeldung angezeigt."
+             data-content="Hier kannst Du einen ggf. vorhandenen Link, auf den
+             der externe Eintrag verweist, bearbeiten.
+             <br>
+             <i>
+             Achtung:
+             </i>
+             Hierbei handelt es sich um eine globale Bearbeitung des externen
+             Eintrages, d.h. der Link ändert sich dann an allen Stellen,
+             an denen dieser Eintrag referenziert ist. Falls der externe
+             Eintrag noch von woanders referenziert wird, wird dies durch
+             eine Warnmeldung angezeigt."
              data-html="true">
           </i>
           <i id="link_reappearance_link"
@@ -142,19 +201,23 @@
              style="display: <%= show_inline(referral.reappears) %>"
              data-toggle="tooltip"
              data-placement="left"
-             title="Achtung: Der externe Eintrag ist bereits von woanders referenziert. Wenn Du den Link bearbeitest, ändert sich dieser
+             title="Achtung: Der externe Eintrag ist bereits von woanders
+             referenziert. Wenn Du den Link bearbeitest, ändert sich dieser
              an allen Stellen, an denen der Eintrag referenziert ist.">
           </i>
         </div>
         <div class="col-8">
           <%= f.text_field :link,
-                           { value: referral.prefilled_link, size: 50,
+                           { value: referral.prefilled_link,
+                             size: 50,
                              class: 'form-control' } %>
-          <div class="invalid-feedback" id="link-error">
+          <div class="invalid-feedback"
+               id="link-error">
           </div>
         </div>
         <div class="col-2 col-form-label">
-          <button id="test-link" type="button"
+          <button id="test-link"
+                  type="button"
                   class="btn btn-sm btn-outline-info">
             Test
           </button>
@@ -169,13 +232,15 @@
           verlinkt
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
              data-content="Hier wird Dir angezeigt, in welchen Medienformen
              der zu referenzierende Eintrag vorliegt.">
           </i>
         </div>
-        <div class="col-2 text-right" id="video-ref"
+        <div class="col-2 text-right"
+             id="video-ref"
              style="display: <%= show(referral.video?) %>">
           Video
           <span id="video-test">
@@ -187,7 +252,8 @@
             <% end %>
           </span>
         </div>
-        <div class="col-3 text-right" id="manuscript-ref"
+        <div class="col-3 text-right"
+             id="manuscript-ref"
              style="display: <%= show(referral.manuscript?) %>">
           Manuskript
           <span id='manuscript-test'>
@@ -198,12 +264,14 @@
             <% end %>
           </span>
         </div>
-        <div class="col-3 text-right" id="medium-link-ref"
+        <div class="col-3 text-right"
+             id="medium-link-ref"
              style="display: <%= show(referral.medium_link?) %>">
           externer Link
           <span id='medium-link-test'>
             <% if referral.medium_link? %>
-              <%= link_to 'Test', referral.item.medium_link,
+              <%= link_to 'Test',
+                          referral.item.medium_link,
                           class: 'badge badge-info',
                           target: :blank %>
             <% end %>
@@ -214,7 +282,8 @@
         <div class="col-2">
         </div>
         <div class="col-8">
-          <div class="invalid-feedback" id="ref-error">
+          <div class="invalid-feedback"
+               id="ref-error">
           </div>
         </div>
       </div>
@@ -223,38 +292,59 @@
          style="display: <%= show(show_explanation(referral)) %>;">
       <div class="form-group form-row">
         <div class="col-2 col-form-label">
-          <%= f.label :explanation, 'Erläuterung' %>
+          <%= f.label :explanation,
+                      'Erläuterung' %>
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
+             data-toggle="popover"
+             data-trigger="focus"
              title="Info"
              data-content="Hier kannst Du den zu referenzierenden Eintrag noch
-             mit einer (optionalen) zusätzlichen Beschreibung versehen.<br><br>
-             <i>Achtung:</i>Falls es sich um einen externen Eintrag handelt, ist hier die Erläuterung des externen Eintrags voreingestellt. Du kannst
-             das Feld bearbeiten, die Änderung wirkt sich nur auf die vorliegende Referenzierung, jedoch nicht auf den externen Eintrag aus."
+             mit einer (optionalen) zusätzlichen Beschreibung versehen.
+             <br>
+             <br>
+             <i>
+             Achtung:
+             </i>
+             Falls es sich um einen externen Eintrag handelt, ist hier die
+             Erläuterung des externen Eintrags voreingestellt. Du kannst
+             das Feld bearbeiten, die Änderung wirkt sich nur auf die
+             vorliegende Referenzierung, jedoch nicht auf den externen
+             Eintrag aus."
              data-html="true">
           </i>
         </div>
         <div class="col-8">
           <%= f.text_area :explanation, { value: referral.explain,
-                                          class: 'form-control', escape: true } %>
-          <div class="invalid-feedback" id="explanation-error">
+                                          class: 'form-control',
+                                          escape: true } %>
+          <div class="invalid-feedback"
+               id="explanation-error">
           </div>
         </div>
       </div>
     </div>
-    <%= f.hidden_field :ref_id, value: referral.id %>
-    <%= f.hidden_field :medium_id, value: referral.medium_id %>
-    <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-    <button id="cancel-item" class="btn btn-secondary ml-3" type="button">
+    <%= f.hidden_field :ref_id,
+                       value: referral.id %>
+    <%= f.hidden_field :medium_id,
+                       value: referral.medium_id %>
+    <%= f.submit 'Speichern',
+                 class: 'btn btn-primary' %>
+    <button id="cancel-item"
+            class="btn btn-secondary ml-3"
+            type="button">
       Abbrechen
     </button>
     <% if referral.id.present? %>
-      <%= link_to 'Löschen', referral_path(referral), method: :delete,
-                  remote: true, data: { confirm: 'Bist Du sicher?' },
-                  id: 'delete-item', class: 'btn btn-danger' %>
+      <%= link_to 'Löschen',
+                  referral_path(referral),
+                  method: :delete,
+                  remote: true,
+                  data: { confirm: 'Bist Du sicher?' },
+                  id: 'delete-item',
+                  class: 'btn btn-danger' %>
     <% end %>
   <% end %>
 </div>
 <%= render partial: 'items/modal',
-           locals: { item: item }%>
+           locals: { item: item } %>

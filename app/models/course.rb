@@ -46,6 +46,10 @@ class Course < ApplicationRecord
     self
   end
 
+  def selector_value
+    'Course-' + id.to_s
+  end
+
   def to_label
     title
   end

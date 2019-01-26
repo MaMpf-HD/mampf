@@ -58,6 +58,10 @@ class Lecture < ApplicationRecord
     self
   end
 
+  def selector_value
+    'Lecture-' + id.to_s
+  end
+
   def title
     course.title + ', ' + term.to_label
   end

@@ -13,6 +13,6 @@ class Announcement < ApplicationRecord
   # the given user
   def active?(user)
     user.notifications.where(notifiable_type: 'Announcement',
-                             notifiable_id: id).present?
+                             notifiable_id: id).exists?
   end
 end

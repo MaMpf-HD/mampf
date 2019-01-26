@@ -21,7 +21,7 @@
            id="new-section-title-error">
       </div>
     </div>
-    <% if chapter.sections.present? %>
+    <% if chapter.sections.exists? %>
       <div class="col-6 form-group">
         <%= f.label :predecessor,
                     'Einfügen nach Abschnitt' %>

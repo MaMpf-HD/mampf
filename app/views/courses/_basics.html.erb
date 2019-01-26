@@ -103,7 +103,7 @@
      data-toggle="tooltip"
      title="Vorlesung anlegen">
   </a>
-  <% if course.lectures.present? %>
+  <% if course.lectures.exists? %>
     <ul>
       <% course.lectures_by_date.each do |l| %>
         <li>

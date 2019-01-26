@@ -50,7 +50,7 @@
     </i>
   </div>
   <div class="card-body">
-    <% if current_user.edited_media.present? %>
+    <% if current_user.edited_media.exists? %>
       <ul>
         <% current_user.edited_media.order(:updated_at)
                        .reverse.first(25)

@@ -44,6 +44,10 @@ class Lesson < ApplicationRecord
     lecture
   end
 
+  def selector_value
+    'Lesson-' + id.to_s
+  end
+
   def title
     'Sitzung ' + number.to_s + ', ' + date_de.to_s
   end
