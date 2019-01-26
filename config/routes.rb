@@ -31,6 +31,8 @@ Rails.application.routes.draw do
                                       as: 'update_teacher'
   get 'lectures/:id/update_editors', to: 'lectures#update_editors',
                                       as: 'update_editors'
+  get 'lectures/:id/add_forums', to: 'lectures#add_forums',
+                                      as: 'add_forums'
   resources :lectures, except: [:index, :show]
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',
@@ -128,7 +130,7 @@ Rails.application.routes.draw do
   mount ImageUploader.upload_endpoint(:cache) => "/images/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
-
+  mount Thredded::Engine => '/forum'
   get '*path', to: 'main#error'
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
