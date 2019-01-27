@@ -1,0 +1,48 @@
+<div id="forum_accordion" role="tablist">
+  <div class="card bg-light">
+    <div class="card-header" role="tab" id="forum_heading">
+      <div class="row">
+        <div class="col-6">
+          <h5>
+            Forum
+          </h5>
+        </div>
+        <div class="col-6 text-right">
+          <a class="btn btn-primary"
+             data-toggle="collapse"
+             href="#forum_collapse"
+             id="forum_collapse_button"
+             aria-expanded="false" aria-controls="forum_collapse">
+            Ein-/Ausklappen
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="forum_collapse"
+         class="collapse"
+         role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#forum_accordion">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-4">
+            <% if lecture.forum? %>
+              <% if lecture.forum.locked %>
+                <%= link_to 'Forum entsperren', unlock_forum_path(lecture),
+                            class: 'btn btn-primary' %>
+              <% else %>
+                <%= link_to 'Forum sperren', lock_forum_path(lecture),
+                            class: 'btn btn-primary' %>
+              <% end %>
+              <%= link_to 'Forum löschen', destroy_forum_path(lecture),
+                          class: 'btn btn-danger' %>
+            <% else %>
+              <%= link_to 'Forum anlegen', add_forum_path(lecture),
+                          class: 'btn btn-primary' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -348,6 +348,14 @@ class Lecture < ApplicationRecord
     end
   end
 
+  def forum?
+    Thredded::Messageboard.where(name: title).exists?
+  end
+
+  def forum
+    Thredded::Messageboard.where(name: title)&.first
+  end
+
   private
 
   # as there is no show action for lessons, this is the path to the show action

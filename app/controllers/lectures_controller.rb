@@ -2,7 +2,8 @@
 class LecturesController < ApplicationController
   before_action :set_lecture, only: [:edit, :update, :destroy, :inspect,
                                      :update_teacher, :update_editors,
-                                     :add_forums]
+                                     :add_forum, :lock_forum, :unlock_forum,
+                                     :destroy_forum]
   authorize_resource
   before_action :check_for_consent
   layout 'administration'
@@ -73,11 +74,31 @@ class LecturesController < ApplicationController
   end
 
   # add forum for this lecture
-  def add_forums
-    Thredded::Messageboard.create(name: @lecture.title, description: 'gen')
+  def add_forum
+    unless @lecture.forum?
+      Thredded::Messageboard.create(name: @lecture.title,
+                                    description: 'Vorlesungsforum')
+    end
     redirect_to edit_lecture_path(@lecture)
   end
 
+  # lock forum for this lecture
+  def lock_forum
+    @lecture.forum.update(locked: true) if @lecture.forum?
+    redirect_to edit_lecture_path(@lecture)
+  end
+
+  # unlock forum for this lecture
+  def unlock_forum
+    @lecture.forum.update(locked: false) if @lecture.forum?
+    redirect_to edit_lecture_path(@lecture)
+  end
+
+  # destroy forum for this lecture
+  def destroy_forum
+    @lecture.forum.destroy if @lecture.forum?
+    redirect_to edit_lecture_path(@lecture)
+  end
 
   private
 

@@ -35,7 +35,8 @@ class Ability
         course.edited_by?(user)
       end
 
-      can [:update, :update_teacher, :update_editors, :destroy],
+      can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
+           :lock_forum, :unlock_forum, :destroy_forum],
           Lecture do |lecture|
         lecture.edited_by?(user)
       end

@@ -4,6 +4,8 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
 
   def edit
+    # ensure that users do not have a blank name
+    @user.update(name: @user.name || @user.email.split('@').first)
     redirect_to consent_profile_path unless @user.consents
     # destroy the notifications related to new lectures and courses
     current_user.notifications.where(notifiable_type: ['Lecture', 'Course'])

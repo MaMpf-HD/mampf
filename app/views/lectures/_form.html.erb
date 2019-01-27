@@ -57,6 +57,10 @@
                            inspection: inspection } %>
     </div>
     <div class="col-12">
+      <%= render partial: 'lectures/forum',
+                 locals: { lecture: lecture } %>
+    </div>
+    <div class="col-12">
       <%= render partial: 'lectures/preferences',
                  locals: { lecture: lecture,
                            inspection: inspection } %>

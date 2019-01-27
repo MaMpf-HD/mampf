@@ -191,8 +191,36 @@ class User < ApplicationRecord
     edited_courses.map(&:lectures).flatten - edited_lectures.to_a - given_lectures.to_a
   end
 
+  def teaching_related_lectures
+    (given_lectures + edited_lectures + lectures_as_module_editor).uniq
+  end
+
   def teaching_unrelated_lectures
-    Lecture.all - given_lectures - edited_lectures - lectures_as_module_editor
+    Lecture.all - teaching_related_lectures
+  end
+
+  def thredded_can_read_messageboards
+    return Thredded::Messageboard.all if admin?
+    subscribed_forums = Thredded::Messageboard.where(name: lectures.map(&:title))
+    if teacher? || edited_courses.any? || edited_lectures.any?
+      return Thredded::Messageboard.where(name: teaching_related_lectures
+                                                  .map(&:title))
+                                   .or(subscribed_forums)
+    end
+    subscribed_forums
+  end
+
+  def thredded_can_write_messageboards
+    thredded_can_read_messageboards
+  end
+
+  def thredded_can_moderate_messageboards
+    return Thredded::Messageboard.all if admin?
+    if teacher? || edited_courses.any? || edited_lectures.any?
+      return Thredded::Messageboard.where(name: teaching_related_lectures
+                                                  .map(&:title))
+    end
+    Thredded::Messageboard.none
   end
 
   private

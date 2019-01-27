@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_01_26_161457) do
+ActiveRecord::Schema.define(version: 2019_01_27_121403) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"

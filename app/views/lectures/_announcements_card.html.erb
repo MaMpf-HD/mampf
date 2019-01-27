@@ -25,18 +25,36 @@
     </div>
 	</div>
 	<div class="card-body">
-		<div class="list-group" style="max-height: 10vh; overflow-y: scroll;">
-  		<% lecture.announcements.order(:created_at).reverse.each do |a| %>
-    		<div class="list-group-item
-    								<%= 'list-group-item-info' if a.active?(current_user) %>"
-    				 data-listItemNotification="<%= current_user.matching_notification(a)&.id %>">
-	      	<div class="row">
-  	     		<%= render partial: 'announcements/row_for_lecture',
-    	       		       locals: { announcement: a,
-    	       		       					 lecture: lecture } %>
-      		</div>
-    		</div>
-    	<% end %>
-    </div>
+    <% if lecture.announcements.present? %>
+		  <div class="list-group" style="max-height: 10vh; overflow-y: scroll;">
+  		  <% lecture.announcements.order(:created_at).reverse.each do |a| %>
+    		  <div class="list-group-item
+    			     			 <%= 'list-group-item-info' if a.active?(current_user) %>"
+    				   data-listItemNotification="<%= current_user.matching_notification(a)&.id %>">
+	      	  <div class="row">
+  	     		  <%= render partial: 'announcements/row_for_lecture',
+    	       	   	       locals: { announcement: a,
+    	       		        					 lecture: lecture } %>
+      		  </div>
+    		  </div>
+    	 <% end %>
+      </div>
+    <% else %>
+      <div class="row">
+        <div class="col-12">
+          Es liegen keine Mitteilungen vor.
+        </div>
+      </div>
+    <% end %>
+    <% if lecture.forum? %>
+      <div class="row mt-2">
+        <div class="col-12">
+          Für diese Vorlesung steht auch ein
+          <%= link_to 'Forum', '/forum/' + lecture.forum.slug,
+                      target: :blank %>
+          zur Verfügung.
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>

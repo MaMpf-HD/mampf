@@ -31,8 +31,14 @@ Rails.application.routes.draw do
                                       as: 'update_teacher'
   get 'lectures/:id/update_editors', to: 'lectures#update_editors',
                                       as: 'update_editors'
-  get 'lectures/:id/add_forums', to: 'lectures#add_forums',
-                                      as: 'add_forums'
+  get 'lectures/:id/add_forum', to: 'lectures#add_forum',
+                                as: 'add_forum'
+  get 'lectures/:id/lock_forum', to: 'lectures#lock_forum',
+                                 as: 'lock_forum'
+  get 'lectures/:id/unlock_forum', to: 'lectures#unlock_forum',
+                                 as: 'unlock_forum'
+  get 'lectures/:id/destroy_forum', to: 'lectures#destroy_forum',
+                                 as: 'destroy_forum'
   resources :lectures, except: [:index, :show]
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',
