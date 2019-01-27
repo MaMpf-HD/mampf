@@ -26,6 +26,8 @@ Rails.application.configure do
     config.cache_store = :null_store
   end
 
+  config.i18n.default_locale = :de
+
   # Don't care if the mailer can't send.
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }

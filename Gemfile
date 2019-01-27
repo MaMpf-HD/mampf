@@ -64,6 +64,9 @@ gem 'acts_as_list'
 gem 'activerecord-import'
 gem 'thredded', '~> 0.16.4'
 gem 'kramdown-parser-gfm'
+gem 'thredded-markdown_katex'
+gem 'rails-i18n'
+gem 'kaminari-i18n'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

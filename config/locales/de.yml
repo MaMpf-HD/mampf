@@ -1,2 +1,15 @@
 de:
   send_me_reset_password_instructions: "Schick mir die Anleitung zur Änderung meines Passworts"
+  views:
+    pagination:
+      first: "&laquo; Erste"
+      last: "Letzte &raquo;"
+      previous: "&lsaquo; Vorige"
+      next: "Nächste &rsaquo;"
+  activerecord:
+    errors:
+      models:
+        lecture:
+          attributes:
+            teacher:
+              required: "Es muss ein(e) Dozent(in) angegeben werden."
