@@ -4,6 +4,7 @@ class MainController < ApplicationController
   before_action :check_for_consent
 
   def home
+    render layout: 'application_no_sidebar'
   end
 
   def about

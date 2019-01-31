@@ -13,3 +13,13 @@ de:
           attributes:
             teacher:
               required: "Es muss ein(e) Dozent(in) angegeben werden."
+  categories:
+    kaviar: 'Vorlesung'
+    nuesse: 'Übungen und Skripte'
+    sesam: 'Algorithmen und Methoden'
+    kiwi: 'Wiederholung'
+    keks: 'Quizzes'
+    erdbeere: 'Beispiele (in Entwicklung)'
+    muesli: 'MÜSLI'
+    board: 'Forum'
+    organizational: 'Organisatorisches'

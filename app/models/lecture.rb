@@ -148,8 +148,9 @@ class Lecture < ApplicationRecord
   # returns whether the lecture has any associated kaviar media
   # (with inheritance)
   def kaviar?
-    Rails.cache.fetch("#{cache_key}/kaviar", expires_in: 2.hours) do
-      Medium.where(sort: 'Kaviar').any? do |m|
+    Rails.cache.fetch("#{cache_key}/kaviar") do
+      Medium.where(sort: 'Kaviar').includes(:teachable)
+            .any? do |m|
         m.teachable.present? && m.teachable.lecture == self
       end
     end
@@ -158,8 +159,8 @@ class Lecture < ApplicationRecord
   # returns whether the lecture has any associated nuesse media
   # (with inheritance)
   def nuesse?
-    Rails.cache.fetch("#{cache_key}/nuesse", expires_in: 2.hours) do
-      Medium.where(sort: 'Nuesse').any? do |m|
+    Rails.cache.fetch("#{cache_key}/nuesse") do
+      Medium.where(sort: 'Nuesse').includes(:teachable).any? do |m|
         m.teachable.present? && m.teachable.lecture == self
       end
     end
@@ -354,6 +355,18 @@ class Lecture < ApplicationRecord
 
   def forum
     Thredded::Messageboard.where(name: title)&.first
+  end
+
+  # extract how many posts in the lecture's forum have not been read
+  # by the user
+  def unread_forum_topics_count(user)
+    return unless forum?
+    forum_relation = Thredded::Messageboard.where(name: title)
+    forum_view =
+      Thredded::MessageboardGroupView.grouped(forum_relation,
+                                              user: user,
+                                              with_unread_topics_counts: true)
+    forum_view.first.messageboards.first.unread_topics_count
   end
 
   private

@@ -53,6 +53,9 @@
           <%= link_to 'Forum', '/forum/' + lecture.forum.slug,
                       target: :blank %>
           zur Verfügung.
+          Dort gibt es
+          <%= lecture.unread_forum_topics_count(current_user) %>
+          ungelesene Themen.
         </div>
       </div>
     <% end %>

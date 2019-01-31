@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= render partial: 'layouts/head' %>
+  </head>
+  <body>
+    <%= render partial: 'shared/navbar' %>
+    <div class="container-fluid">
+      <div class="row">
+        <main class="col-12 pt-3" role="main">
+          <div class="alert alert-danger" id="js-messages" role="alert"
+               style="display: none;">
+          </div>
+          <% if alert.present? %>
+            <div class="alert alert-danger" role="alert">
+              <%= alert %>
+            </div>
+          <% end %>
+          <% if notice.present? %>
+            <div class="alert alert-secondary" role="alert">
+              <%= notice %>
+            </div>
+          <% end %>
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+    <footer>
+      <%= render partial: 'shared/footer' %>
+    </footer>
+  </body>
+</html>

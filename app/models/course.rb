@@ -273,8 +273,8 @@ class Course < ApplicationRecord
   # looks in the cache if there are any media associated to this course and
   # a given project (kaviar, semsam etc.)
   def project?(project)
-    Rails.cache.fetch("#{cache_key}/#{project}", expires_in: 2.hours) do
-      Medium.where(sort: sort[project]).to_a
+    Rails.cache.fetch("#{cache_key}/#{project}") do
+      Medium.where(sort: sort[project]).includes(:teachable)
             .any? { |m| m.teachable.present? && m.teachable.course == self }
     end
   end

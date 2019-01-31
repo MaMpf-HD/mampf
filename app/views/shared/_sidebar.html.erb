@@ -6,17 +6,17 @@
       <li class="nav-item">
         <% if course.nil? || !course.kaviar? %>
           <span class="nav-link disabled">
-            KaViaR
+            <%= t('categories.kaviar') %>
           </span>
         <% else %>
           <% if lectures.blank? %>
-            <%= link_to 'KaViaR',
+            <%= link_to t('categories.kaviar'),
                         course_food_path(course_id: course_id,
                                          params:
                                            { project: 'kaviar' }),
                         class: 'nav-link' %>
           <% elsif lectures.count == 1 %>
-            <%= link_to 'KaViaR',
+            <%= link_to t('categories.kaviar'),
                         course_food_path(course_id: course_id,
                                          params:
                                            { project: 'kaviar',
@@ -24,7 +24,7 @@
                         class: 'nav-link' %>
           <% else %>
             <span class="text-primary nav-link">
-              KaViaR
+              <%= t('categories.kaviar') %>
             </span>
             <ul id="kaviar-sidebar" class="nav nav-pills flex-column">
               <% lectures.select { |l| l.kaviar? || (course.kaviar? && l == course.primary_lecture(current_user)) }.each do |l| %>
@@ -43,17 +43,17 @@
       <li class="nav-item">
         <% if course.nil? || !course.nuesse? || !current_user.nuesse?(course) %>
           <span class="nav-link disabled">
-            NÜSsE
+            <%= t('categories.nuesse') %>
           </span>
         <% else %>
           <% if lectures.blank? %>
-            <%= link_to 'NÜSsE',
+            <%= link_to t('categories.nuesse'),
                         course_food_path(course_id: course_id,
                                          params:
                                            { project: 'nuesse' }),
                         class: 'nav-link' %>
           <% elsif lectures.count == 1 %>
-            <%= link_to 'NÜSsE',
+            <%= link_to t('categories.nuesse'),
                         course_food_path(course_id: course_id,
                                          params:
                                            { project: 'nuesse',
@@ -61,7 +61,7 @@
                         class: 'nav-link' %>
           <% else %>
             <span class="text-primary nav-link">
-              NÜSsE
+              <%= t('categories.nuesse') %>
             </span>
             <ul id="kaviar-sidebar" class="nav nav-pills flex-column">
               <% lectures.select { |l| l.nuesse? || (course.nuesse? && l == course.primary_lecture(current_user)) }.each do |l| %>
@@ -80,22 +80,12 @@
       <li class="nav-item">
         <% if !current_user.sesam?(course) %>
           <span class="nav-link disabled">
-            SeSAM
+            <%= t('categories.sesam') %>
           </span>
         <% else %>
-            <%= link_to 'SeSAM', course_food_path(course_id: course_id,
-                                                  params: { project: 'sesam'}),
-                        class: 'nav-link' %>
-        <% end %>
-      </li>
-      <li class="nav-item">
-        <% if !current_user.kiwi?(course) %>
-          <span class="nav-link disabled">
-            KiWi
-          </span>
-        <% else %>
-            <%= link_to 'KIWi', course_food_path(course_id: course_id,
-                                                  params: { project: 'kiwi'}),
+            <%= link_to t('categories.sesam'),
+                        course_food_path(course_id: course_id,
+                                         params: { project: 'sesam'}),
                         class: 'nav-link' %>
         <% end %>
       </li>
@@ -103,60 +93,78 @@
         <% if !current_user.keks?(course) %>
           <a href="<%= DefaultSetting::KEKS_LINK %>"
              class="nav-link" target="_blank">
-            KeKs
+            <%= t('categories.keks') %>
           </a>
         <% else %>
-            <%= link_to 'KeKs', course_food_path(course_id: course_id,
-                                                  params: { project: 'keks'}),
+            <%= link_to t('categories.keks'),
+                        course_food_path(course_id: course_id,
+                                         params: { project: 'keks'}),
+                        class: 'nav-link' %>
+        <% end %>
+      </li>
+      <li class="nav-item">
+        <% if !current_user.kiwi?(course) %>
+          <span class="nav-link disabled">
+            <%= t('categories.kiwi') %>
+          </span>
+        <% else %>
+            <%= link_to t('categories.kiwi'),
+                        course_food_path(course_id: course_id,
+                                         params: { project: 'kiwi'}),
                         class: 'nav-link' %>
         <% end %>
       </li>
       <li class="nav-item">
         <% if !current_user.erdbeere?(course) %>
-          <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
-             class="nav-link" target="_blank">
-            <img src="/erdbeere-16x16.png" width="16" height="16">
-            ErDBeere
-          </a>
+          <%= link_to t('categories.erdbeere'),
+                      DefaultSetting::ERDBEERE_LINK,
+                      class: "nav-link",
+                      target: :blank %>
         <% else %>
-          <a href="<%= course_food_path(course_id: course_id,
-                                        params: { project: 'erdbeere' }) %>"
-             class="nav-link" target="_blank">
-            <img src="/erdbeere-16x16.png" width="16" height="16">
-            ErDBeere
-          </a>
+          <%= link_to t('categories.erdbeere'),
+                      course_food_path(course_id: course_id,
+                                       params: { project: 'erdbeere' }),
+                      class: "nav-link",
+                      target: :blank %>
         <% end %>
       </li>
+      <span class="border-top my-3">
+      </span>
+      <li class="nav-link disabled">
+        <%= t('categories.organizational') %>
+      </li>
+      <li class="nav-link disabled">
+        <%= t('categories.board') %>
+      </li>
       <li class="nav-item">
-        <a href="<%= DefaultSetting::MUESLI_LINK %>"
-           class="nav-link" target="_blank">
-          <img src="/muesli-16x16.png" width="16" height="16">
-          MÜSLI
-        </a>
+        <%= link_to t('categories.muesli'),
+                    DefaultSetting::MUESLI_LINK,
+                    class: "nav-link",
+                    target: :blank %>
       </li>
     <% else %>
       <span class='nav-link disabled'>
-        KaViaR
+        <%= t('categories.kaviar') %>
       </span>
       <span class='nav-link disabled'>
-        SeSAM
+        <%= t('categories.nuesse') %>
       </span>
       <span class='nav-link disabled'>
-        KIWi
+        <%= t('categories.sesam') %>
       </span>
       <span class='nav-link disabled'>
-        NÜSsE
+        <%= t('categories.kiwi') %>
       </span>
       <span class='nav-link disabled'>
-        KeKs
+        <%= t('categories.keks') %>
       </span>
       <span class='nav-link disabled'>
         <img src="/erdbeere-16x16.png" width="16" height="16">
-        ErDBeere
+        <%= t('categories.erdbeere') %>
       </span>
       <span class='nav-link disabled'>
         <img src="/muesli-16x16.png" width="16" height="16">
-        Müsli
+        <%= t('categories.muesli') %>
       </span>
     <% end %>
   </ul>
