@@ -15,15 +15,20 @@ $(document).on 'turbolinks:load', ->
     id = evt.relatedTarget.dataset.id
     lecture = evt.relatedTarget.dataset.lecture
     lectureTitle = evt.relatedTarget.dataset.title
+    course = evt.relatedTarget.dataset.course
     editable = evt.relatedTarget.dataset.editable
     $('#lecture-title').empty().append(lectureTitle)
     $('#lecture-teacher').text(teacher)
     $('#lecture-teacher').prop('href', Routes.teacher_path(id))
     $('#lecture-edit').prop('href', Routes.edit_lecture_path(lecture))
+    $('#current-course-button').prop('href', Routes.course_path(course) + '?active=' + course)
     if editable == 'true'
       $('#lecture-edit').show()
     else
       $('#lecture-edit').hide()
+    $.ajax Routes.render_sidebar_path(lecture),
+      type: 'GET'
+      dataType: 'script'
     return
 
   # if any input is given to the course form, disable other input

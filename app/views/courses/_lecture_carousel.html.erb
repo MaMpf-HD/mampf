@@ -27,7 +27,8 @@
            data-teacher="<%= l.teacher.name %>"
            data-id="<%= l.teacher.id %>"
            data-editable="<%= privileged %>"
-           data-lecture="<%= l.id %>">
+           data-lecture="<%= l.id %>"
+           data-course="<%= l.course.id %>">
         <div class="row">
           <% if l.announcements.exists? || l.forum? %>
             <div class="col-12">

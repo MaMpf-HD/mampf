@@ -34,7 +34,9 @@ class CoursesController < ApplicationController
     cookies[:current_course] = params[:id]
     @lectures = @course.subscribed_lectures_by_date(current_user)
     # determine which lecture gets the top position in the lecture carousel
+    # and update lecture cookie correspondingly
     @front_lecture = @course.front_lecture(current_user, params[:active].to_i)
+    cookies[:current_lecture] = @front_lecture&.id
     render layout: 'application'
   end
 

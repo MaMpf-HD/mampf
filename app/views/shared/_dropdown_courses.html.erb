@@ -1,10 +1,13 @@
 <% current_course = Course.find_by_id(cookies[:current_course]) %>
 <% current_course ||= current_user.courses.first %>
+<% active = cookies[:current_lecture] %>
 <li class="nav-item">
   <% if courses.count > 1 then %>
     <div class="btn-group">
-      <%= link_to current_course.title, current_course,
-          class: 'btn btn-primary text-light' %>
+      <%= link_to current_course.title,
+                  course_path(current_course, active: active),
+                  class: 'btn btn-primary text-light',
+                  id: 'current-course-button' %>
       <button type="button"
               class="btn btn-primary dropdown-toggle dropdown-toggle-split"
               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

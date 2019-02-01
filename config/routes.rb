@@ -39,6 +39,8 @@ Rails.application.routes.draw do
                                  as: 'unlock_forum'
   get 'lectures/:id/destroy_forum', to: 'lectures#destroy_forum',
                                  as: 'destroy_forum'
+  get 'lectures/:id/render_sidebar', to: 'lectures#render_sidebar',
+                                     as: 'render_sidebar'
   resources :lectures, except: [:index, :show]
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',

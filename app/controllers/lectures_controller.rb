@@ -3,7 +3,7 @@ class LecturesController < ApplicationController
   before_action :set_lecture, only: [:edit, :update, :destroy, :inspect,
                                      :update_teacher, :update_editors,
                                      :add_forum, :lock_forum, :unlock_forum,
-                                     :destroy_forum]
+                                     :destroy_forum, :render_sidebar]
   authorize_resource
   before_action :check_for_consent
   layout 'administration'
@@ -53,6 +53,10 @@ class LecturesController < ApplicationController
     # destroy all notifications related to this lecture
     destroy_notifications
     redirect_to administration_path
+  end
+
+  def render_sidebar
+    @course = @lecture.course
   end
 
   # teacher selection is prepared here (in the view, it will be injected

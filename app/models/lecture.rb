@@ -156,6 +156,43 @@ class Lecture < ApplicationRecord
     end
   end
 
+  # returns whether the lecture has any associated sesam media
+  # (with inheritance), or the lecture's course has sesam media
+  # (without inheritance)
+  def sesam?
+    Rails.cache.fetch("#{cache_key}/sesam") do
+      Medium.where(sort: 'Sesam').includes(:teachable)
+            .any? do |m|
+        m.teachable&.lecture == self || m.teachable == course
+      end
+    end
+  end
+
+  # returns whether the lecture has any associated sesam media
+  # (with inheritance), or the lecture's course has sesam media
+  # (without inheritance)
+  def erdbeere?
+    Rails.cache.fetch("#{cache_key}/erdbeere") do
+      Medium.where(sort: 'Erdbeere').includes(:teachable)
+            .any? do |m|
+        m.teachable&.lecture == self || m.teachable == course
+      end
+    end
+  end
+
+  # returns whether the lecture has any associated sesam media
+  # (with inheritance), or the lecture's course has sesam media
+  # (without inheritance)
+  def kiwi?
+    Rails.cache.fetch("#{cache_key}/kiwi") do
+      Medium.where(sort: 'Kiwi').includes(:teachable)
+            .any? do |m|
+        m.teachable&.lecture == self || m.teachable == course
+      end
+    end
+  end
+
+
   # returns whether the lecture has any associated nuesse media
   # (with inheritance)
   def nuesse?
