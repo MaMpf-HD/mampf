@@ -103,12 +103,7 @@ class Medium < ApplicationRecord
     # second case: media sitting at lecture level
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return [] unless course.lectures.include?(lecture)
-    unless lecture == primary_lecture
-      # ignore media at the course level if lecture is secondary
-      return lecture.lecture_lesson_results(filtered)
-    end
-    # for primary lecture, append results at course level to lecture/lesson
-    # level results
+    # append results at course level to lecture/lesson level results
     lecture.lecture_lesson_results(filtered) +
       filtered.select { |m| m.teachable == course }
   end
@@ -127,6 +122,7 @@ class Medium < ApplicationRecord
   # (depending on the given primary lecture) as described a few lines below
   def self.search_results(filtered_media, course, primary_lecture)
     course_results = filtered_media.select { |m| m.teachable == course }
+    return course_results unless primary_lecture
     # media associated to primary lecture and its lessons
     primary_results = Medium.filter_primary(filtered_media, primary_lecture)
     # media associated to the course, all of its lectures and their lessons

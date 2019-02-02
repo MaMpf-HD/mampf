@@ -151,7 +151,7 @@ class Lecture < ApplicationRecord
     Rails.cache.fetch("#{cache_key}/kaviar") do
       Medium.where(sort: 'Kaviar').includes(:teachable)
             .any? do |m|
-        m.teachable.present? && m.teachable.lecture == self
+        m.teachable&.lecture == self || m.teachable == course
       end
     end
   end
@@ -162,6 +162,18 @@ class Lecture < ApplicationRecord
   def sesam?
     Rails.cache.fetch("#{cache_key}/sesam") do
       Medium.where(sort: 'Sesam').includes(:teachable)
+            .any? do |m|
+        m.teachable&.lecture == self || m.teachable == course
+      end
+    end
+  end
+
+  # returns whether the lecture has any associated sesam media
+  # (with inheritance), or the lecture's course has sesam media
+  # (without inheritance)
+  def keks?
+    Rails.cache.fetch("#{cache_key}/keks") do
+      Medium.where(sort: 'KeksQuiz').includes(:teachable)
             .any? do |m|
         m.teachable&.lecture == self || m.teachable == course
       end
@@ -198,7 +210,7 @@ class Lecture < ApplicationRecord
   def nuesse?
     Rails.cache.fetch("#{cache_key}/nuesse") do
       Medium.where(sort: 'Nuesse').includes(:teachable).any? do |m|
-        m.teachable.present? && m.teachable.lecture == self
+        m.teachable&.lecture == self || m.teachable == course
       end
     end
   end

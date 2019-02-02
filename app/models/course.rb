@@ -109,6 +109,30 @@ class Course < ApplicationRecord
     project?('nuesse')
   end
 
+  def strict_kaviar?
+    strict_project?('kaviar')
+  end
+
+  def strict_sesam?
+    strict_project?('sesam')
+  end
+
+  def strict_keks?
+    strict_project?('keks')
+  end
+
+  def strict_erdbeere?
+    strict_project?('erdbeere')
+  end
+
+  def strict_kiwi?
+    strict_project?('kiwi')
+  end
+
+  def strict_nuesse?
+    project?('nuesse')
+  end
+
   # returns if there are any media associated to this course
   # which are not of type kaviar
   def available_extras
@@ -270,12 +294,20 @@ class Course < ApplicationRecord
     extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
   end
 
-  # looks in the cache if there are any media associated to this course and
-  # a given project (kaviar, semsam etc.)
+  # looks in the cache if there are any media associated *with inheritance*
+  # to this course and a given project (kaviar, semsam etc.)
   def project?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
       Medium.where(sort: sort[project]).includes(:teachable)
             .any? { |m| m.teachable.present? && m.teachable.course == self }
+    end
+  end
+
+  # looks in the cache if there are any media associated *without_inheritance*
+  # to this course and a given project (kaviar, semsam etc.)
+  def strict_project?(project)
+    Rails.cache.fetch("#{cache_key}/strict_#{project}") do
+      Medium.where(sort: sort[project], teachable: self)
     end
   end
 
