@@ -103,12 +103,14 @@ class Medium < ApplicationRecord
     # second case: media sitting at lecture level
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return [] unless course.lectures.include?(lecture)
-    # add media that are related to the course to the primary lecture's media
     unless lecture == primary_lecture
+      # ignore media at the course level if lecture is secondary
       return lecture.lecture_lesson_results(filtered)
     end
-    filtered.select { |m| m.teachable == course } +
-      lecture.lecture_lesson_results(filtered)
+    # for primary lecture, append results at course level to lecture/lesson
+    # level results
+    lecture.lecture_lesson_results(filtered) +
+      filtered.select { |m| m.teachable == course }
   end
 
   # returns the ARel of all media for the given project, if the given course

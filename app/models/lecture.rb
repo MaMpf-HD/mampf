@@ -406,8 +406,6 @@ class Lecture < ApplicationRecord
     forum_view.first.messageboards.first.unread_topics_count
   end
 
-  private
-
   # as there is no show action for lessons, this is the path to the show action
   # for courses, with the lecture on top in the carousel
   def lecture_path
@@ -415,6 +413,8 @@ class Lecture < ApplicationRecord
          .course_path(course,
                       params: { active: id })
   end
+
+  private
 
   # used for after save callback
   def remove_teacher_as_editor

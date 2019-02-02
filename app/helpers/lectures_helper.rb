@@ -52,4 +52,18 @@ module LecturesHelper
               class: 'darkblue') +
       ' abonnieren.'
   end
+
+  # add a star to lecture's title if it is a user's primary lecture
+  def starred_title(lecture, user)
+    title = lecture.title_for_viewers
+    return title unless lecture.primary?(user)
+    ('&starf; ' + title).html_safe
+  end
+
+  # add a star to lecture's term if it is a user's primary lecture
+  def starred_term(lecture, user)
+    term = lecture.term.to_label_short
+    return term unless lecture.primary?(user)
+    ('&starf; ' + term).html_safe
+  end
 end

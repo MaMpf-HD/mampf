@@ -2,9 +2,32 @@
 <% lecture ||= Lecture.find_by_id(params[:lecture_id]) %>
 <% lecture ||= Lecture.find_by_id(cookies[:current_lecture]) %>
 <% lecture ||= course.primary_lecture(current_user) %>
+<% if course.subscribed_lectures(current_user) == [lecture] %>
   <%= link_to lecture.title_for_viewers,
-                course_path(course, active: lecture.id),
-                class: 'badge badge-secondary mb-2' %>
+                  lecture.path(current_user),
+                  class: 'btn btn-info btn-sm' %>
+<% else %>
+  <ul class="navbar-nav" id="termDropdown">
+    <li class="nav-item">
+      <div class="btn-group dropright">
+        <%= link_to starred_title(lecture,current_user).html_safe,
+                    lecture.path(current_user),
+                    class: 'btn btn-info btn-sm' %>
+        <button class="btn btn-info btn-sm dropdown-toggle mr-3"
+                type="button"
+                data-toggle="dropdown">
+        </button>
+        <div class="dropdown-menu">
+          <% (course.subscribed_lectures(current_user) - [lecture]).each do |l| %>
+            <%= link_to starred_term(l, current_user),
+                        l.lecture_path,
+                        class: 'dropdown-item' %>
+          <% end %>
+        </div>
+      </div>
+    </li>
+  </ul>
+<% end %>
   <ul class="nav nav-pills flex-column">
     <li class="nav-item">
       <% if !lecture.kaviar? %>
