@@ -122,35 +122,6 @@ class User < ApplicationRecord
                         notifiable_id: announcement.id)&.first
   end
 
-  def project?(course, project)
-    return false if course.nil?
-    return false unless course.public_send(project + '?')
-    join = CourseUserJoin.where(course: course, user: self)
-    return false if join.empty?
-    return false if join.first.public_send(project + '?') == false
-    true
-  end
-
-  def sesam?(course)
-    project?(course, 'sesam')
-  end
-
-  def kiwi?(course)
-    project?(course, 'kiwi')
-  end
-
-  def nuesse?(course)
-    project?(course, 'nuesse')
-  end
-
-  def keks?(course)
-    project?(course, 'keks')
-  end
-
-  def erdbeere?(course)
-    project?(course, 'erdbeere')
-  end
-
   def teacher?
     given_lectures.any?
   end

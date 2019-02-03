@@ -1,12 +1,8 @@
-<% if c.lectures.empty?  && c.available_extras.blank? %>
+<% if c.lectures.empty?  && c.available_food.blank? %>
   <div class="row">
     <div class="col-12">
       Zu diesem Modul gibt es im Moment noch keine Vorlesungen
-      <% if c.kaviar? %>
-        und ausschließlich Inhalte für KaViaR.
-      <% else %>
-        und auch noch keine Inhalte.
-      <% end %>
+      und auch noch keine Inhalte.
     </div>
   </div>
 <% end %>
@@ -89,69 +85,5 @@
         <% end %>
       </div>
     </div>
-  </div>
-<% end %>
-<% if c.available_extras.present? %>
-  <div class="row">
-    <div class="col-12">
-      Weitere Angebote:
-    </div>
-  </div>
-  <div class="row">
-    <% if c.sesam? %>
-      <div class="col-12">
-        <% sesam = 'sesam-' + c.id.to_s %>
-        <%= f.form_group do %>
-          <% f.check_box sesam,
-                         label: 'SeSAM',
-                         checked: subscribed ? details.sesam? != false : true,
-                         disabled: !subscribed %>
-        <% end %>
-      </div>
-    <% end %>
-    <% if c.keks? %>
-      <div class="col-12">
-        <% keks = 'keks-' + c.id.to_s %>
-        <%= f.form_group do %>
-          <% f.check_box keks,
-                         label: 'KeKs',
-                         checked: subscribed ? details.keks? != false : true,
-                         disabled: !subscribed %>
-        <% end %>
-      </div>
-    <% end %>
-    <% if c.erdbeere? %>
-      <div class="col-12">
-        <% erdbeere = 'erdbeere-' + c.id.to_s %>
-        <%= f.form_group do %>
-          <% f.check_box erdbeere,
-                         label: 'ErDBeere',
-                         disabled: !subscribed,
-                         checked: subscribed ? details.erdbeere? != false : true %>
-        <% end %>
-      </div>
-    <% end %>
-    <% if c.kiwi? %>
-      <div class="col-12">
-        <% kiwi = 'kiwi-' + c.id.to_s %>
-        <%= f.form_group do %>
-          <% f.check_box kiwi,
-                         label: 'KIWi',
-                         checked: subscribed ? details.kiwi? != false : true,
-                         disabled: !subscribed %>
-        <% end %>
-      </div>
-    <% end %>
-    <% if c.nuesse? %>
-      <div class="col-12">
-        <% nuesse = 'nuesse-' + c.id.to_s %>
-        <%= f.form_group do %>
-          <% f.check_box nuesse,
-                         label: 'NÜSsE',
-                         checked: subscribed ? details.nuesse? != false : true,
-                         disabled: !subscribed %>
-        <% end %>
-      </div>
-    <% end %>
   </div>
 <% end %>

@@ -1,4 +1,4 @@
-<% if lectures.present? %>
+<% if lectures.any? %>
   <div class="row mt-2 mb-2">
     <div class="col-1">
       <a id="lecture-prev" class="carousel-control-prev"
@@ -59,4 +59,17 @@
   </div>
   <%= render partial: 'courses/lecture_carousel',
              locals: { lectures: lectures } %>
+<% else %>
+  <div class="jumbotron bg-light-blue-lighten-5">
+    <% if course.lectures.any? %>
+      Du hast keine zu diesem Modul gehörige Vorlesung
+      <%= link_to 'abonniert',
+                  edit_profile_path %>
+      .
+    <% else %>
+      Zu diesem Modul existieren noch keine Vorlesungen.
+    <% end %>
+    Du bekommst deswegen nur Medien angezeigt, die auf der Ebene des Moduls
+    angesiedelt sind.
+  </div>
 <% end %>

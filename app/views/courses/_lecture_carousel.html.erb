@@ -36,13 +36,11 @@
                          locals: { lecture: l } %>
             </div>
           <% end %>
-          <% unless l.chapters.empty? %>
           <% cache l do %>
             <div class="col-12">
               <%= render partial: 'lectures/content',
                          locals: { lecture: l } %>
             </div>
-          <% end %>
           <% end %>
         </div>
       </div>

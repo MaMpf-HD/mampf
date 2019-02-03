@@ -22,11 +22,9 @@ class ProfileController < ApplicationController
       clean_up_notifications
       # add details about users's subscribed courses to CourseUserJoin
       add_details
-      # update current course cookie if current cookie refers to a
-      # course that was unsubscribed
-      unless @user.courses.map(&:id).include?(cookies[:current_course].to_i)
-        cookies[:current_course] = @courses.first.id
-      end
+      # update course and lecture cookies
+      update_course_cookie
+      update_lecture_cookie
       redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
     else
       @errors = @user.errors
@@ -115,5 +113,23 @@ class ProfileController < ApplicationController
       n.teachable.present? && !n.teachable.in?(subscribed_teachables)
     end
     Notification.where(id: irrelevant_notifications.map(&:id)).delete_all
+  end
+
+  # if user unsubscribed the course to which the course cookie refers to,
+  # update the course cookie to contain the first of the user's courses
+  def update_course_cookie
+    unless @user.courses.map(&:id).include?(cookies[:current_course].to_i)
+      cookies[:current_course] = @courses&.first&.id
+    end
+  end
+
+  # if user unsubscribed the lecture the current lecture cookie refers to,
+  # update the lecture cookie to contain the courses primary lecture id
+  def update_lecture_cookie
+    @course = Course.find_by_id(cookies[:current_course])
+    @current_lecture = Lecture.find_by_id(cookies[:current_lecture])
+    if !@current_lecture.in?(@user.lectures)
+      cookies[:current_lecture] = @course&.primary_lecture(@user)&.id
+    end
   end
 end

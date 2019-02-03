@@ -6,6 +6,9 @@
   </div>
   <div class="card-body">
     <div class="card-columns">
+      <% if !lecture.chapters.any? %>
+        Es liegen noch keine Inhaltsangaben vor.
+      <% end %>
       <% lecture.chapters.includes(:sections, :lecture).each do |c| %>
         <% cache c do %>
         <div class="card bg-mdb-color-lighten-5">

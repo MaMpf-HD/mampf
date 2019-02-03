@@ -81,8 +81,7 @@ class Course < ApplicationRecord
   end
 
   # The next methods return if there are any media in the Kaviar, Sesam etc.
-  # projects that are associated to this course (directly or by inheritance
-  # via lecture/lesson).
+  # projects that are associated to this course *with inheritance*
   # These methods make use of caching.
 
   def kaviar?
@@ -109,6 +108,10 @@ class Course < ApplicationRecord
     project?('nuesse')
   end
 
+  # The next methods return if there are any media in the Kaviar, Sesam etc.
+  # projects that are associated to this course *without inheritance*
+  # These methods make use of caching.
+
   def strict_kaviar?
     strict_project?('kaviar')
   end
@@ -134,7 +137,7 @@ class Course < ApplicationRecord
   end
 
   # returns if there are any media associated to this course
-  # which are not of type kaviar
+  # which are not of type kaviar *with inheritance*
   def available_extras
     hash = { 'sesam' => sesam?, 'keks' => keks?,
              'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'nuesse' => nuesse? }
@@ -142,6 +145,7 @@ class Course < ApplicationRecord
   end
 
   # returns an array with all types of media that are associated to this course
+  # *with inheritance*
   def available_food
     kaviar_info = kaviar? ? ['kaviar'] : []
     kaviar_info.concat(available_extras)
@@ -153,23 +157,16 @@ class Course < ApplicationRecord
     end
   end
 
-  # extracts hash which describes which modules different from kaviar
-  # (i.e. Sesam, Kiwi etc.) the user has subscribed from the user params
-  # that are provided to the profile controller, together with the id of
-  # the lecture that the user has chosen as primary lecture for this module
+  # extracts  the id of the lecture that the user has chosen as
+  # primary lecture for this module
   # (that is the one that has the first position in the lectures carousel in
   # the course view)
   # Example:
   # course.extras({"name"=>"John Smith", "course-3"=>"1",
-  #  "primary_lecture-3"=>"3", "lecture-3"=>"1", keks-3"=>"1",
-  #  "kiwi-3"=>"0", "nuesse-3"=>"1"})
-  # {keks?"=>true, "kiwi?"=>false, "nuesse?"=>true,
-  #  "primary_lecture_id"=>3}
+  #  "primary_lecture-3"=>"3", "lecture-3"=>"1"})
+  # {"primary_lecture_id"=>3}
   def extras(user_params)
-    extra_modules = extract_extra_modules(user_params)
     modules = {}
-    available_extras.each { |e| modules[e + '?'] = false }
-    extra_modules.each { |e| modules[e] = true }
     primary_id = user_params['primary_lecture-' + id.to_s]
     modules['primary_lecture_id'] = primary_id == '0' ? nil : primary_id.to_i
     modules
@@ -279,21 +276,6 @@ class Course < ApplicationRecord
 
   private
 
-  # the next two methods are auxiliary methods used in the extras method
-  # in order to extract the information on modules subscribed by the user,
-  # see the example there
-  def filter_keys(user_params)
-    user_params.keys.select do |k|
-      k.end_with?('-' + id.to_s) && !k.include?('lecture-') &&
-        !k.start_with?('course-') && user_params[k] == '1'
-    end
-  end
-
-  def extract_extra_modules(user_params)
-    extra_keys = filter_keys(user_params)
-    extra_keys.map { |e| e.remove('-' + id.to_s).concat('?') }
-  end
-
   # looks in the cache if there are any media associated *with inheritance*
   # to this course and a given project (kaviar, semsam etc.)
   def project?(project)
@@ -307,7 +289,7 @@ class Course < ApplicationRecord
   # to this course and a given project (kaviar, semsam etc.)
   def strict_project?(project)
     Rails.cache.fetch("#{cache_key}/strict_#{project}") do
-      Medium.where(sort: sort[project], teachable: self)
+      Medium.where(sort: sort[project], teachable: self).any?
     end
   end
 
