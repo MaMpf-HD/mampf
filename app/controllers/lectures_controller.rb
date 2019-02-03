@@ -108,10 +108,7 @@ class LecturesController < ApplicationController
 
   # show all announcements for this lecture
   def show_announcements
-    @announcements = Kaminari.paginate_array(@lecture.announcements
-                                                     .order(:created_at)
-                                                     .reverse)
-                             .page(params[:page]).per(10)
+    @announcements = @lecture.announcements.order(:created_at).reverse
     render layout: 'application'
   end
 
