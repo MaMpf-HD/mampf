@@ -1,0 +1,61 @@
+<div class="card bg-light-blue-lighten-5 mb-3" id="newsCard">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-10">
+        <h5>
+          Aktuelles
+        </h5>
+      </div>
+      <div class="col-2 text-right">
+        <% if announcements.any? %>
+          <%= link_to 'alle abhaken',
+                      destroy_lecture_notifications_path(params: { lecture_id: lecture.id }),
+                      class: 'btn btn-sm btn-outline-secondary',
+                      method: :post,
+                      remote: true %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if announcements.any? %>
+      <div class="mb-2 activeAnnouncementsCounter"
+           data-lecture="<%= lecture.id %>"
+           data-count="<%= announcements.count %>">
+        Es gibt
+        <% if announcements.count == 1 %>
+          eine neue Mitteilung:
+        <% else %>
+          <%= announcements.count %> neue Mitteilungen:
+        <% end %>
+      </div>
+      <div class="list-group mb-2" style="max-height: 10vh; overflow-y: scroll;">
+        <% announcements.sort_by(&:created_at).reverse.each do |a| %>
+          <div class="list-group-item
+                     <%= 'list-group-item-info' if a.active?(current_user) %>"
+               data-listItemNotification="<%= current_user.matching_notification(a)&.id %>">
+            <div class="row">
+              <%= render partial: 'announcements/row_for_lecture',
+                         locals: { announcement: a,
+                                   lecture: lecture } %>
+            </div>
+          </div>
+       <% end %>
+      </div>
+    <% end %>
+    <% if lecture.forum? && posts_count&.positive? %>
+      <div id="unreadPosts">
+        Im
+        <%= link_to 'Forum', '/forum/' + lecture.forum.slug,
+                    target: :blank %>
+        gibt es
+        <% if posts_count == 1 %>
+          ein ungelesenes Thema.
+        <% else %>
+          <%= posts_count %>
+          ungelesene Themen.
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

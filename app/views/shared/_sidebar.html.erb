@@ -134,6 +134,15 @@
     <li class="nav-link disabled">
       <%= t('categories.organizational') %>
     </li>
+    <% if lecture.announcements.exists? %>
+      <%= link_to t('categories.announcements'),
+                  show_announcements_path(lecture),
+                  class: 'nav-link' %>
+    <% else %>
+      <li class="nav-link disabled">
+        <%= t('categories.announcements') %>
+      </li>
+    <% end %>
     <li class="nav-item">
       <% if !lecture.forum? %>
         <span class="nav-link disabled">

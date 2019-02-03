@@ -426,6 +426,10 @@ class Lecture < ApplicationRecord
                       params: { active: id })
   end
 
+  def active_announcements(user)
+    user.active_announcements(lecture).map(&:notifiable)
+  end
+
   private
 
   # used for after save callback

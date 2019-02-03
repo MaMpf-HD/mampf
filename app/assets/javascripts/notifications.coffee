@@ -29,16 +29,29 @@ $(document).on 'turbolinks:load', ->
 	$('.removeLectureNotification').on 'click', ->
 		notificationId = $(this).data('id')
 		lectureId = $(this).data('lecture')
-		# remove coloring of list group item
-		$(this).closest('.list-group-item').removeClass('list-group-item-info')
-		# remove link and icon
-		$(this).remove()
-		# adjust lecture announcement counter
-		$counter = $('.activeAnnouncementsCounter[data-lecture="'+lectureId+'"]')
-		$counter.empty()
-		newCount = $counter.data('count') - 1
-		if newCount > 0
-			$counter.append('(' + newCount + ')').data('count', newCount)
+		if $(this).closest('.list-group-item').data('index')
+			# if the notification is clicked away in the show_announcements view for
+			# a lecture, just remove the icon and the coloring
+			console.log 'Index!'
+			$(this).closest('.list-group-item').removeClass('list-group-item-info')
+			$(this).remove()
+		else
+			console.log 'Vorlesung'
+			# remove corresponding list group item
+			$(this).closest('.list-group-item').remove()
+
+			# adjust lecture announcement counter
+			$counter = $('.activeAnnouncementsCounter[data-lecture="'+lectureId+'"]')
+			$counter.empty()
+			newCount = $counter.data('count') - 1
+			if newCount == 0
+				if $('#unreadPosts').length == 0
+					$('#newsCard').remove()
+			else if newCount == 1
+				$counter.append('Es gibt eine neue Mitteilung:').data('count', 1)
+			else
+				$counter.append('Es gibt ' + newCount + ' neue Mitteilungen:')
+					.data('count', newCount)
 		adjustNotificationCounter(notificationId)
 		return
 

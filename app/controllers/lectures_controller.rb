@@ -3,7 +3,8 @@ class LecturesController < ApplicationController
   before_action :set_lecture, only: [:edit, :update, :destroy, :inspect,
                                      :update_teacher, :update_editors,
                                      :add_forum, :lock_forum, :unlock_forum,
-                                     :destroy_forum, :render_sidebar]
+                                     :destroy_forum, :render_sidebar,
+                                     :show_announcements]
   authorize_resource
   before_action :check_for_consent
   layout 'administration'
@@ -30,6 +31,8 @@ class LecturesController < ApplicationController
     # info to the lecture
     @lecture.course = Course.find_by_id(params[:course])
   end
+
+
 
   def create
     @lecture = Lecture.new(lecture_params)
@@ -101,6 +104,15 @@ class LecturesController < ApplicationController
   def destroy_forum
     @lecture.forum.destroy if @lecture.forum?
     redirect_to edit_lecture_path(@lecture)
+  end
+
+  # show all announcements for this lecture
+  def show_announcements
+    @announcements = Kaminari.paginate_array(@lecture.announcements
+                                                     .order(:created_at)
+                                                     .reverse)
+                             .page(params[:page]).per(10)
+    render layout: 'application'
   end
 
   private

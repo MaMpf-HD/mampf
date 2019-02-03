@@ -30,8 +30,8 @@ class Ability
         chapter.lecture.edited_by?(user)
       end
 
-      # anyone should be able to get a sidebar
-      can :render_sidebar, Lecture
+      # anyone should be able to get a sidebar and see the announcements
+      can [:render_sidebar, :show_announcements], Lecture
 
       # editors are only allowed to edit, not to destroy courses
       can :update, Course do |course|
@@ -84,8 +84,8 @@ class Ability
       cannot [:index, :update, :create], Tag
       can :display_cyto, Tag
       can :teacher, User
-      # anyone should be able to get a sidebar
-      can :render_sidebar, Lecture
+      # anyone should be able to get a sidebar and see the announcements
+      can [:render_sidebar, :show_announcements], Lecture
       can [:index, :destroy_all], Notification
       can :destroy, Notification do |n|
         n.recipient == user

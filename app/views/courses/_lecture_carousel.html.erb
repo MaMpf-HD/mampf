@@ -30,10 +30,13 @@
            data-lecture="<%= l.id %>"
            data-course="<%= l.course.id %>">
         <div class="row">
-          <% if l.announcements.exists? || l.forum? %>
-            <div class="col-12">
-              <%= render partial: 'lectures/announcements_card',
-                         locals: { lecture: l } %>
+          <% if current_user.active_announcements(l).any? ||
+                  l.unread_forum_topics_count(current_user)&.positive? %>
+                        <div class="col-12">
+              <%= render partial: 'lectures/news_card',
+                         locals: { lecture: l,
+                                   announcements: l.active_announcements(current_user),
+                                   posts_count:  l.unread_forum_topics_count(current_user) } %>
             </div>
           <% end %>
           <% cache l do %>
