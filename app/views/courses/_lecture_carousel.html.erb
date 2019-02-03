@@ -32,7 +32,7 @@
         <div class="row">
           <% if current_user.active_announcements(l).any? ||
                   l.unread_forum_topics_count(current_user)&.positive? %>
-                        <div class="col-12">
+            <div class="col-12">
               <%= render partial: 'lectures/news_card',
                          locals: { lecture: l,
                                    announcements: l.active_announcements(current_user),
