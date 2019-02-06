@@ -13,6 +13,7 @@
             <%= link_to 'Mitteilung anlegen',
                          new_announcement_path(params: { lecture: lecture.id }),
                          class: 'btn btn-secondary',
+                         id: 'new-announcement-button',
                          remote: true %>
           <% end %>
           <a class="btn btn-primary"

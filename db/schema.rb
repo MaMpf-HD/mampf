@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_03_110121) do
+ActiveRecord::Schema.define(version: 2019_02_04_161127) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -125,6 +125,8 @@ ActiveRecord::Schema.define(version: 2019_02_03_110121) do
     t.integer "start_chapter"
     t.boolean "absolute_numbering"
     t.integer "start_section"
+    t.text "organizational_concept"
+    t.boolean "organizational"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end

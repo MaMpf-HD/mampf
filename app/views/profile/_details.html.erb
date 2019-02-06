@@ -24,15 +24,6 @@
                              checked: l.checked_as_primary_by?(current_user),
                              disabled: !subscribed,
                              inline: true %>
-          <% if l.kaviar? %>
-            <span class="mr-5 lecture-video-info">
-              <i class="fas fa-video"
-                 data-toggle="tooltip"
-                 data-placement="top"
-                 title="Vorlesungsvideos vorhanden">
-              </i>
-            </span>
-          <% end %>
         <% end %>
         <%= f.radio_button primary_lecture,
                            0,
@@ -71,15 +62,6 @@
                               checked: l.checked_as_secondary_by?(current_user),
                               disabled: !subscribed,
                               inline: true %>
-              <% if l.kaviar? %>
-                <span class="mr-5 lecture-video-info">
-                  <i class="fas fa-video"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="Vorlesungsvideos vorhanden">
-                  </i>
-                </span>
-              <% end %>
             </div>
           <% end %>
         <% end %>

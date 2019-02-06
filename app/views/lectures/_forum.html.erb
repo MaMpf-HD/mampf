@@ -25,7 +25,7 @@
          data-parent="#forum_accordion">
       <div class="card-body">
         <div class="row">
-          <div class="col-4">
+          <div class="col-4" id="forum-buttons">
             <% if lecture.forum? %>
               <% if lecture.forum.locked %>
                 <%= link_to 'Forum entsperren', unlock_forum_path(lecture),

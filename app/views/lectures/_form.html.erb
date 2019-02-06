@@ -51,6 +51,11 @@
                            inspection: inspection } %>
     </div>
     <div class="col-12">
+      <%= render partial: 'lectures/organizational_concept',
+                 locals: { lecture: lecture,
+                           inspection: inspection } %>
+    </div>
+    <div class="col-12">
       <%= render partial: 'lectures/announcements',
                  locals: { lecture: lecture,
                            announcements: announcements,

@@ -108,6 +108,10 @@ class Course < ApplicationRecord
     project?('nuesse')
   end
 
+  def script?
+    project?('script')
+  end
+
   # The next methods return if there are any media in the Kaviar, Sesam etc.
   # projects that are associated to this course *without inheritance*
   # These methods make use of caching.
@@ -133,14 +137,19 @@ class Course < ApplicationRecord
   end
 
   def strict_nuesse?
-    project?('nuesse')
+    strict_project?('nuesse')
+  end
+
+  def strict_script?
+    strict_project?('script')
   end
 
   # returns if there are any media associated to this course
   # which are not of type kaviar *with inheritance*
   def available_extras
     hash = { 'sesam' => sesam?, 'keks' => keks?,
-             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'nuesse' => nuesse? }
+             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'nuesse' => nuesse?,
+             'script' => script? }
     hash.keys.select { |k| hash[k] == true }
   end
 
@@ -296,7 +305,7 @@ class Course < ApplicationRecord
   def sort
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
       'keks' => ['KeksQuiz'], 'nuesse' => ['Nuesse'],
-      'erdbeere' => ['Erdbeere'] }
+      'erdbeere' => ['Erdbeere'], 'script' => ['Script'] }
   end
 
   def course_path

@@ -2,17 +2,38 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+disableExceptOrganizational = ->
+  $('#lecture-organizational-warning').show()
+  $('#organizational_collapse_button').hide()
+  $('#forum-buttons .btn').addClass('disabled')
+  $('#new-announcement-button').addClass('disabled')
+  $('#lecture-preferences-form input').prop('disabled', true)
+  $('#lecture-preferences-form select').prop('disabled', true)
+  $('#lecture-form input').prop('disabled', true)
+  $('#lecture-form .selectized').each ->
+    this.selectize.disable()
+    return
+  $('.fa-edit').hide()
+  $('.new-in-lecture').hide()
+  return
+
 $(document).on 'turbolinks:load', ->
 
   # activate all popovers
   $('[data-toggle="popover"]').popover()
 
-  # if any input is given to the lecture form, disable other input
+  # if any input is given to the lecture form (for people in lecture),
+  # disable other input
   $('#lecture-form :input').on 'change', ->
     $('#lecture-basics-warning').show()
     $('#people_collapse_button').hide()
     $('.fa-edit:not(#update-teacher-button,#update-editors-button)').hide()
     $('.new-in-lecture').hide()
+    $('#forum-buttons .btn').addClass('disabled')
+    $('#new-announcement-button').addClass('disabled')
+    $('#lecture-organizational-form input').prop('disabled', true)
+    $('#lecture-preferences-form input').prop('disabled', true)
+    $('#lecture-preferences-form select').prop('disabled', true)
     return
 
   # if any input is given to the preferences form, disable other input
@@ -20,13 +41,27 @@ $(document).on 'turbolinks:load', ->
     $('#lecture-preferences-warning').show()
     $('#preferences_collapse_button').hide()
     $('#lecture-form input').prop('disabled', true)
+    $('#lecture-organizational-form input').prop('disabled', true)
+    $('#forum-buttons .btn').addClass('disabled')
+    $('#new-announcement-button').addClass('disabled')
     $('#lecture-form .selectized').each ->
       this.selectize.disable()
       return
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()
 
-  # if absolute numbering box is chekced/unchecked, enable/disable selection of
+  # if any input is given to the organizational form, disable other input
+  $('#lecture-organizational-form :input').on 'change', ->
+    disableExceptOrganizational()
+    return
+
+  trixElement = document.querySelector('trix-editor')
+  if trixElement?
+    trixElement.addEventListener 'trix-change', ->
+      disableExceptOrganizational()
+      return
+
+  # if absolute numbering box is checked/unchecked, enable/disable selection of
   # start section
   $('#lecture_absolute_numbering').on 'change', ->
     if $(this).prop('checked')
@@ -42,6 +77,11 @@ $(document).on 'turbolinks:load', ->
 
   # rewload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-preferences').on 'click', ->
+    location.reload()
+    return
+
+   # rewload current page if lecture preferences editing is cancelled
+  $('#cancel-lecture-organizational').on 'click', ->
     location.reload()
     return
 

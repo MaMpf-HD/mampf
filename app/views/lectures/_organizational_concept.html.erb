@@ -1,0 +1,75 @@
+<div id="organizational_accordion"
+     role="tablist">
+  <div class="card bg-light">
+    <div class="card-header"
+         role="tab"
+         id="organizational_heading">
+      <div class="row">
+        <div class="col-6">
+          <h5>
+            Organisatorisches
+          </h5>
+        </div>
+        <div class="col-6 text-right">
+          <a class="btn btn-primary"
+             data-toggle="collapse"
+             href="#organizational_collapse"
+             id="organizational_collapse_button"
+             aria-expanded="false" aria-controls="organizational_collapse">
+            Ein-/Ausklappen
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="organizational_collapse"
+         class="collapse"
+         role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#organizational_accordion">
+      <div class="card-body">
+        <%= form_with model: lecture,
+                      html: { id: 'lecture-organizational-form' } do |f| %>
+          <div class="form-row mb-3">
+            <div class="col-12">
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :organizational,
+                                class: 'custom-control-input',
+                                disabled: inspection %>
+                <%= f.label :organizational,
+                            'Organisatorisches für alle sichtbar',
+                            { class: 'custom-control-label' } %>
+                <i class="far fa-question-circle helpdesk"
+                   tabindex="-1"
+                   data-toggle="popover"
+                   data-trigger="focus"
+                   title="Info"
+                   data-content="Wenn Du diesen Haken setzt, wird in der
+                   Sidebar der Punkt Organisatorisches für alle Studierenden
+                   auf sichtbar gestellt.">
+                </i>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <%= f.trix_editor :organizational_concept %>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12 text-center">
+              <div id="lecture-organizational-warning">
+                Achtung, es gibt ungespeicherte Änderungen!
+                <%= f.submit "Speichern und zurück",
+                             class: "btn btn-primary" %>
+                <button type="button" id="cancel-lecture-organizational"
+                        class="btn btn-secondary">
+                  abbrechen
+                </button>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

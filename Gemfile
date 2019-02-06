@@ -67,6 +67,7 @@ gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
 gem 'rails-i18n'
 gem 'kaminari-i18n'
+gem 'trix-rails', require: 'trix'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -74,6 +74,10 @@ class Notification < ApplicationRecord
     medium? && notifiable.sort == 'Nuesse'
   end
 
+  def script?
+    medium? && notifiable.sort == 'Script'
+  end
+
   def quiz?
     medium? && notifiable.sort == 'KeksQuiz'
   end

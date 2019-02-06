@@ -66,4 +66,8 @@ module LecturesHelper
     return term unless lecture.primary?(user)
     ('&starf; ' + term).html_safe
   end
+
+  def days_short
+    [ 'Mo', 'Di', 'Mi', 'Do', 'Fr']
+  end
 end

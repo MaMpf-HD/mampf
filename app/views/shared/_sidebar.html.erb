@@ -32,10 +32,10 @@
     <li class="nav-item">
       <% if (lecture && !lecture.kaviar?) || (!lecture && !course.strict_kaviar?) %>
         <span class="nav-link disabled">
-          <%= t('categories.kaviar') %>
+          <%= t('categories.kaviar.plural') %>
         </span>
       <% else %>
-        <%= link_to t('categories.kaviar'),
+        <%= link_to t('categories.kaviar.plural'),
                     course_food_path(course_id: course.id,
                                      params:
                                        { project: 'kaviar',
@@ -44,14 +44,14 @@
       <% end %>
     </li>
     <li class="nav-item">
-      <% if (lecture && !lecture.nuesse?) || (!lecture && !course.strict_nuesse?) %>
+      <% if (lecture && !lecture.script?) || (!lecture && !course.strict_script?) %>
         <span class="nav-link disabled">
-          <%= t('categories.manuscript') %>
+          <%= t('categories.script') %>
         </span>
       <% else %>
-        <%= link_to t('categories.manuscript'),
+        <%= link_to t('categories.script'),
                     course_food_path(course_id: course.id,
-                                     params: { project: 'nuesse',
+                                     params: { project: 'script',
                                                lecture_id: lecture&.id }),
                     class: 'nav-link' %>
       <% end %>
@@ -59,10 +59,10 @@
     <li class="nav-item">
       <% if (lecture && !lecture.nuesse?) || (!lecture && !course.strict_nuesse?) %>
         <span class="nav-link disabled">
-          <%= t('categories.exercises') %>
+          <%= t('categories.exercises.plural') %>
         </span>
       <% else %>
-        <%= link_to t('categories.exercises'),
+        <%= link_to t('categories.exercises.plural'),
                           course_food_path(course_id: course.id,
                                            params:
                                              { project: 'nuesse',
@@ -74,11 +74,11 @@
       <% if (lecture && !lecture.keks?) || (!lecture && !course.strict_keks?) %>
         <a href="<%= DefaultSetting::KEKS_LINK %>"
            class="nav-link" target="_blank">
-           <%= t('categories.keks') %>
+           <%= t('categories.quiz.plural') %>
            <i class="fas fa-external-link-alt fa-xs"></i>
         </a>
       <% else %>
-        <%= link_to t('categories.keks'),
+        <%= link_to t('categories.quiz.plural'),
                       course_food_path(course_id: course.id,
                                        params: { project: 'keks',
                                                  lecture_id: lecture&.id }),
@@ -88,10 +88,10 @@
     <li class="nav-item">
       <% if (lecture && !lecture.sesam?) || (!lecture && !course.strict_sesam?) %>
         <span class="nav-link disabled">
-          <%= t('categories.sesam') %>
+          <%= t('categories.sesam.plural') %>
         </span>
       <% else %>
-        <%= link_to t('categories.sesam'),
+        <%= link_to t('categories.sesam.plural'),
                     course_food_path(course_id: course.id,
                                      params: { project: 'sesam',
                                                lecture_id: lecture&.id }),
@@ -128,11 +128,19 @@
                     class: 'nav-link' %>
       <% end %>
     </li>
-    <% if lecture %>
+  <% if lecture %>
     <span class="border-top my-3">
     </span>
-    <li class="nav-link disabled">
-      <%= t('categories.organizational') %>
+    <li class="nav-item">
+      <% if lecture.organizational %>
+        <%= link_to t('categories.organizational'),
+                    organizational_path(lecture),
+                    class: 'nav-link' %>
+      <% else %>
+        <span class="nav-link disabled">
+          <%= t('categories.organizational') %>
+        </span>
+      <% end %>
     </li>
     <% if lecture.announcements.exists? %>
       <%= link_to t('categories.announcements'),

@@ -14,14 +14,25 @@ de:
             teacher:
               required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
-    kaviar: 'Lektionen'
-    exercises: 'Übungen'
+    kaviar:
+      singular: 'Lektion'
+      plural: 'Lektionen'
+    exercises:
+      singular: 'Übung'
+      plural: 'Übungen'
     examples: 'Beispiele'
-    manuscript: 'Skript'
+    script: 'Skript'
     nuesse: 'Blätter'
-    sesam: 'Worked Examples'
+    sesam:
+      singular: 'Worked Example'
+      plural: 'Worked Examples'
     kiwi: 'Wiederholung'
-    keks: 'Quizzes'
+    quiz:
+      singular: 'Quiz'
+      plural: 'Quizzes'
+    question:
+      singular: 'Quiz-Frage'
+      plural: 'Quiz-Fragen'
     erdbeere: 'Beispiel-Datenbank'
     muesli: 'MÜSLI'
     board: 'Forum'

@@ -4,7 +4,7 @@ class LecturesController < ApplicationController
                                      :update_teacher, :update_editors,
                                      :add_forum, :lock_forum, :unlock_forum,
                                      :destroy_forum, :render_sidebar,
-                                     :show_announcements]
+                                     :organizational, :show_announcements]
   authorize_resource
   before_action :check_for_consent
   layout 'administration'
@@ -112,6 +112,13 @@ class LecturesController < ApplicationController
     render layout: 'application'
   end
 
+  def organizational
+    render layout: 'application'
+  end
+
+  def edit_organizational_concept
+  end
+
   private
 
   def set_lecture
@@ -128,7 +135,8 @@ class LecturesController < ApplicationController
   def lecture_params
     params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
                                     :start_chapter, :absolute_numbering,
-                                    :start_section,
+                                    :start_section, :organizational,
+                                    :organizational_concept,
                                     editor_ids: [])
   end
 

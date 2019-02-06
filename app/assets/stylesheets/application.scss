@@ -46,6 +46,7 @@ $container-max-widths: (
 @import "*";
 @import 'selectize';
 @import 'selectize.default';
+@import "trix";
 
 .kaviar-sidebar {
   padding-left: 1rem;

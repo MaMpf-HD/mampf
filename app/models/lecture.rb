@@ -30,7 +30,6 @@ class Lecture < ApplicationRecord
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
 
-
   # a lecture has many announcements
   has_many :announcements, dependent: :destroy
 
@@ -162,6 +161,18 @@ class Lecture < ApplicationRecord
   def sesam?
     Rails.cache.fetch("#{cache_key}/sesam") do
       Medium.where(sort: 'Sesam').includes(:teachable)
+            .any? do |m|
+        m.teachable&.lecture == self || m.teachable == course
+      end
+    end
+  end
+
+  # returns whether the lecture has any associated sesam media
+  # (with inheritance), or the lecture's course has sesam media
+  # (without inheritance)
+  def script?
+    Rails.cache.fetch("#{cache_key}/script") do
+      Medium.where(sort: 'Script').includes(:teachable)
             .any? do |m|
         m.teachable&.lecture == self || m.teachable == course
       end

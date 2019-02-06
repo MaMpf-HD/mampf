@@ -43,6 +43,11 @@ Rails.application.routes.draw do
                                      as: 'render_sidebar'
   get 'lectures/:id/show_announcements', to: 'lectures#show_announcements',
                                          as: 'show_announcements'
+  get 'lectures/:id/organizational', to: 'lectures#organizational',
+                                         as: 'organizational'
+  get 'lectures/:id/edit_organizational_concept',
+      to: 'lectures#edit_organizational_concept',
+      as: 'edit_organizational_concept'
   resources :lectures, except: [:index, :show]
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',

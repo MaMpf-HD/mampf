@@ -66,7 +66,7 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    %w[Kaviar Erdbeere Sesam Kiwi Nuesse KeksQuestion KeksQuiz]
+    %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script KeksQuestion KeksQuiz]
   end
 
   # Returns the list of media sorts, together with their index in the
@@ -76,11 +76,16 @@ class Medium < ApplicationRecord
     Medium.sort_enum.map.with_index { |s, i| [s, i] }
   end
 
-  # media sorts and their german acronyms
+  # media sorts and their german descriptions
   def self.sort_de
-    { 'Kaviar' => 'KaViaR', 'Sesam' => 'SeSAM',
-      'KeksQuestion' => 'Keks-Frage', 'KeksQuiz' => 'Keks-Quiz',
-      'Nuesse' => 'NÜSsE', 'Erdbeere' => 'ErDBeere', 'Kiwi' => 'KIWi' }
+    { 'Kaviar' => I18n.t('categories.kaviar.singular'),
+      'Sesam' => I18n.t('categories.sesam.singular'),
+      'KeksQuestion' => I18n.t('categories.question.singular'),
+      'KeksQuiz' => I18n.t('categories.quiz.singular'),
+      'Nuesse' => I18n.t('categories.exercises.singular'),
+      'Erdbeere' => I18n.t('categories.erdbeere'),
+      'Kiwi' => I18n.t('categories.kiwi'),
+      'Script' => I18n.t('categories.script') }
   end
 
   def self.select_sorts
