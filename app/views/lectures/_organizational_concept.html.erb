@@ -30,7 +30,7 @@
         <%= form_with model: lecture,
                       html: { id: 'lecture-organizational-form' } do |f| %>
           <div class="form-row mb-3">
-            <div class="col-12">
+            <div class="col-6">
               <div class="custom-control custom-checkbox">
                 <%= f.check_box :organizational,
                                 class: 'custom-control-input',
@@ -45,7 +45,28 @@
                    title="Info"
                    data-content="Wenn Du diesen Haken setzt, wird in der
                    Sidebar der Punkt Organisatorisches für alle Studierenden
-                   auf sichtbar gestellt.">
+                   auf sichtbar gestellt. Als Text erscheint dabei der unten
+                   stehende Text. Als Vorschlag gibt es von uns einen
+                   Mustertext, den Du beliebig editieren kannst
+                   (und solltest).">
+                </i>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :muesli,
+                                class: 'custom-control-input',
+                                disabled: inspection %>
+                <%= f.label :muesli,
+                            'Vorlesung verwendet MÜSLI',
+                            { class: 'custom-control-label' } %>
+                <i class="far fa-question-circle helpdesk"
+                   tabindex="-1"
+                   data-toggle="popover"
+                   data-trigger="focus"
+                   title="Info"
+                   data-content="Wenn Du diesen Haken setzt, wird in der
+                   Sidebar für diese Vorlesung der Link zu MUESLI aktiviert.">
                 </i>
               </div>
             </div>

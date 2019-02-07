@@ -1,4 +1,14 @@
-<h4>
-  Organisatorisches
-</h4>
-<%= @lecture.organizational_concept.html_safe %>
+<div class="row mb-2">
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header">
+        <h4>
+          Organisatorisches
+        </h4>
+      </div>
+      <div class="card-body" id="organizationalCardBody">
+        <%= @lecture.organizational_concept.html_safe %>
+      </div>
+    </div>
+  </div>
+</div>

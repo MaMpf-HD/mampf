@@ -166,12 +166,18 @@
       <% end %>
     </li>
     <li class="nav-item">
-      <a href="<%= DefaultSetting::MUESLI_LINK %>"
-         class="nav-link"
-         target="_blank" %>
-        <%= t('categories.muesli') %>
-        <i class="fas fa-external-link-alt fa-xs"></i>
-      </a>
+      <% if lecture.muesli %>
+        <a href="<%= DefaultSetting::MUESLI_LINK %>"
+           class="nav-link"
+           target="_blank" %>
+          <%= t('categories.muesli') %>
+          <i class="fas fa-external-link-alt fa-xs"></i>
+        </a>
+      <% else %>
+        <span class="nav-link disabled">
+          <%= t('categories.muesli') %>
+        </span>
+      <% end %>
     </li>
     <% end %>
   </ul>

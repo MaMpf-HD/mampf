@@ -47,3 +47,8 @@
   user-select: none;
   outline: none;
 }
+
+#organizationalCardBody {
+  overflow-y: scroll;
+  height: 70vh;
+}

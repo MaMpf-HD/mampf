@@ -38,6 +38,9 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new(lecture_params)
     @lecture.save
     if @lecture.valid?
+      # set organizational_concept to default
+      set_organizational_defaults
+      # create notifications about creation od this lecture
       create_notifications
       # depending on where the create action was trriggered from, return
       # to admin index view or edit course view
@@ -136,7 +139,7 @@ class LecturesController < ApplicationController
     params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
                                     :start_chapter, :absolute_numbering,
                                     :start_section, :organizational,
-                                    :organizational_concept,
+                                    :organizational_concept, :muesli,
                                     editor_ids: [])
   end
 
@@ -156,5 +159,13 @@ class LecturesController < ApplicationController
   def destroy_notifications
     Notification.where(notifiable_id: @lecture.id, notifiable_type: 'Lecture')
                 .delete_all
+  end
+
+  # fill organizational_concept with default view
+  def set_organizational_defaults
+    @lecture.update(organizational_concept:
+                      render_to_string(partial: 'lectures/organizational_default',
+                                       formats: :html,
+                                       layout: false))
   end
 end
