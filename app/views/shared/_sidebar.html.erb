@@ -5,7 +5,7 @@
   <% if course.subscribed_lectures(current_user) == [lecture] %>
     <%= link_to lecture.title_for_viewers,
                 lecture.path(current_user),
-                class: 'btn btn-info btn-sm' %>
+                class: 'btn btn-primary btn-sm' %>
   <% elsif lecture %>
     <ul class="navbar-nav" id="termDropdown">
       <li class="nav-item">
