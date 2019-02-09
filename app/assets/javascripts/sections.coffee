@@ -4,10 +4,12 @@
 
 $(document).on 'turbolinks:load', ->
 
+  # if any input is given to the lesson form, issue a warning
   $(document).on 'change', '#section-form :input', ->
     $('#section-basics-warning').show()
     return
 
+  # update the content of the sections dropdown if chapter selector is changed
   $(document).on 'change', '#section_chapter_id', ->
     chapterId = $(this).val()
     $.ajax Routes.list_sections_path(chapterId),
@@ -21,6 +23,7 @@ $(document).on 'turbolinks:load', ->
         return
     return
 
+  # restore everything if creation of new section is cancelled
   $(document).on 'click', '#cancel-new-section', ->
     chapterId = this.dataset.chapter
     $('#new-section-area-' + chapterId).empty().hide()
@@ -33,12 +36,14 @@ $(document).on 'turbolinks:load', ->
       return
     return
 
+  # reload page if editing of section is cancelled
   $(document).on 'click', '#cancel-section', ->
     location.reload()
     return
 
   return
 
+# clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#section-form :input'
   $(document).off 'change', '#section_chapter_id'

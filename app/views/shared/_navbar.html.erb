@@ -1,24 +1,35 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-  <%= image_tag '/MaMpf-Logo_32x32.png', class: 'img-fluid mr-2' %>
-  <%= link_to "MaMpf", root_path, class: 'navbar-brand' %>
-  <button class="navbar-toggler" type="button"
-          data-toggle="collapse" data-target="#collapsingNavbarLg">
+  <%= image_tag '/MaMpf-Logo_32x32.png',
+                class: 'img-fluid mr-2' %>
+  <%= link_to "MaMpf", root_path,
+              class: 'navbar-brand' %>
+  <button class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#collapsingNavbarLg">
     <span class="navbar-toggler-icon">
     </span>
   </button>
-  <div class="navbar-collapse collapse" id="collapsingNavbarLg">
+  <div class="navbar-collapse collapse"
+       id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>
         <li class="nav-item">
-          <%= link_to "Profil", edit_profile_path, class: 'nav-link' %>
+          <%= link_to "Profil",
+                      edit_profile_path,
+                      class: 'nav-link' %>
         </li>
         <% if current_user.admin || current_user.editor? %>
           <li class="nav-item">
-            <%= link_to "Administration", administration_path, class: 'nav-link' %>
+            <%= link_to "Administration",
+                        administration_path,
+                        class: 'nav-link' %>
           </li>
         <% end %>
         <li class="nav-item">
-          <%= link_to "News", news_path, class: 'nav-link' %>
+          <%= link_to "News",
+                      news_path,
+                      class: 'nav-link' %>
         </li>
         <li class="nav-item">
           <%= link_to "Blog",
@@ -28,19 +39,26 @@
                       target: :blank %>
         </li>
         <li class="nav-item">
-          <%= link_to "Logout", destroy_user_session_path, class: 'nav-link',
-              method: :delete %>
+          <%= link_to "Logout",
+                      destroy_user_session_path,
+                      class: 'nav-link',
+                      method: :delete %>
         </li>
       <% else %>
         <li class="nav-item">
-          <%= link_to "Login", new_user_session_path, class: 'nav-link' %>
+          <%= link_to "Login",
+                      new_user_session_path,
+                      class: 'nav-link' %>
         </li>
         <li class="nav-item">
-          <%= link_to "Registrieren", new_user_registration_path,
-              class: 'nav-link' %>
+          <%= link_to "Registrieren",
+                      new_user_registration_path,
+                      class: 'nav-link' %>
         </li>
         <li class="nav-item">
-          <%= link_to "News", news_path, class: 'nav-link' %>
+          <%= link_to "News",
+                      news_path,
+                      class: 'nav-link' %>
         </li>
         <li class="nav-item">
           <%= link_to "Blog",
@@ -61,11 +79,15 @@
       <% unless current_user.no_notifications %>
         <%= render partial: 'shared/dropdown_notifications' %>
       <% end %>
-      <%= form_tag(search_index_path, method: 'get',
+      <%= form_tag(search_index_path,
+                   method: 'get',
                    class: 'form-inline mt-2 mt-md-0') do %>
-        <%= search_field_tag 'search', nil, class: 'form-control mr-sm-2',
+        <%= search_field_tag 'search',
+                             nil,
+                             class: 'form-control mr-sm-2',
                              placeholder: 'Begriff eingeben'  %>
-        <%= submit_tag "Suche", class: 'btn btn-outline-success my-2 my-sm-0' %>
+        <%= submit_tag "Suche",
+                       class: 'btn btn-outline-success my-2 my-sm-0' %>
       <% end %>
     <% end %>
   </div>

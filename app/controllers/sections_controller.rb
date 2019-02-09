@@ -18,12 +18,7 @@ class SectionsController < ApplicationController
 
   def create
     @section = Section.new(section_params)
-    position = params[:section][:predecessor]
-    if position.present?
-      @section.insert_at(position.to_i + 1)
-    else
-      @section.save
-    end
+    insert_or_save
     if @section.valid?
       redirect_to edit_lecture_path(@section.lecture)
       return
@@ -38,15 +33,10 @@ class SectionsController < ApplicationController
   end
 
   def update
-    old_chapter = @section.chapter
+    @old_chapter = @section.chapter
     @section.update(section_params)
     if @section.valid?
-      predecessor = params[:section][:predecessor]
-      if predecessor.present?
-        position = predecessor.to_i
-        position -= 1 if position > @section.position && old_chapter == @section.chapter
-        @section.insert_at(position + 1)
-      end
+      update_position
       if params[:commit] == 'Speichern'
         render :edit
       else
@@ -62,12 +52,34 @@ class SectionsController < ApplicationController
   def set_section
     @section = Section.find_by_id(params[:id])
     return if @section.present?
-    redirect_to :root, alert: 'Ein Abschnitt mit der angeforderten id existiert
-                               nicht.'
+    redirect_to :root, alert: 'Ein Abschnitt mit der angeforderten id ' \
+                              'existiert nicht.'
   end
 
   def section_params
     params.require(:section).permit(:title, :display_number, :chapter_id,
                                     tag_ids: [], lesson_ids: [])
+  end
+
+  # inserts the section in the correct position if predecessor is given,
+  # otherwise just saves
+  def insert_or_save
+    position = params[:section][:predecessor]
+    if position.present?
+      @section.insert_at(position.to_i + 1)
+    else
+      @section.save
+    end
+  end
+
+  # updates the position of the section if predecessor is given
+  def update_position
+    predecessor = params[:section][:predecessor]
+    return unless predecessor.present?
+    position = predecessor.to_i
+    if position > @section.position && @old_chapter == @section.chapter
+      position -= 1
+    end
+    @section.insert_at(position + 1)
   end
 end

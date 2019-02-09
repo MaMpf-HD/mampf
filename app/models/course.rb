@@ -220,6 +220,17 @@ class Course < ApplicationRecord
     false
   end
 
+  # a course is addable by the user if the user is an editor or teacher of
+  # this course or a lecture of this course
+  def addable_by?(user)
+    in?(user.edited_or_given_courses_with_inheritance)
+  end
+
+  # a course is removable by the user if the user is an editor of this course
+  def removable_by?(user)
+    in?(user.edited_courses)
+  end
+
   # returns the ARel of all media that are associated to the course
   # by inheritance (i.e. directly and media which are associated to lectures or
   # lessons associated to this course)

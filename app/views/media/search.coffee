@@ -1,6 +1,9 @@
+# render media reults partial
 $('#media-search-results').empty()
   .append('<%= j render partial: "media/results",
                         locals: { media: @media } %>')
+
+# run katex on search results
 mediaResults = document.getElementById('media-search-results')
 renderMathInElement mediaResults,
   delimiters: [

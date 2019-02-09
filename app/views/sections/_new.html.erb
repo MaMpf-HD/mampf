@@ -8,15 +8,18 @@
 <%= form_with model: section do |f| %>
   <div class="form-row">
     <div class="col-6 form-group">
-      <%= f.label :title, 'Titel' %>
+      <%= f.label :title,
+                  'Titel' %>
       <i class="far fa-question-circle helpdesk"
          tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
+         data-toggle="popover"
+         data-trigger="focus"
          title="Info"
          data-content="Hier kannst Du den Titel des Abschnitts angeben.">
       </i>
-      <%= f.text_field :title, { class: 'form-control',
-                                 id: 'new_section_title' } %>
+      <%= f.text_field :title,
+                       { class: 'form-control',
+                         id: 'new_section_title' } %>
       <div class="invalid-feedback"
            id="new-section-title-error">
       </div>
@@ -27,25 +30,31 @@
                     'Einfügen nach Abschnitt' %>
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
            data-content="Hier kannst Du auswählen, an welcher Stelle der
            Abschnitt eingefügt werden soll, indem Du den Vorgängerabschnitt
            auswählst.">
         </i>
         <%= f.select :predecessor,
-                     options_for_select([['am Anfang des Kapitels', 0]] + chapter.select_sections,
-                                        chapter.last_section_by_position.position) ,
-                                 {}, { class: 'form-control' } %>
+                     options_for_select(new_section_position_for_select(chapter),
+                                        chapter.last_section_by_position
+                                               .position),
+                     {},
+                     { class: 'form-control' } %>
       </div>
     <% end %>
   </div>
-  <%= f.hidden_field :chapter_id, value: chapter.id %>
+  <%= f.hidden_field :chapter_id,
+                     value: chapter.id %>
   <%= f.hidden_field :from %>
   <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-      <button type="button" id="cancel-new-section"
+      <%= f.submit 'Speichern',
+                   class: 'btn btn-primary' %>
+      <button type="button"
+              id="cancel-new-section"
               data-chapter="<%= chapter.id %>"
               class="btn btn-secondary">
         abbrechen

@@ -27,12 +27,12 @@
     </div>
   </div>
   <div class="row px-4 py-2">
-    <div id="lecture-content-card" class="col-9">
+    <div id="lecture-content-card" class="col-12 col-xxxl-9 mb-1">
       <%= render partial: 'lectures/editable_content',
                  locals: { lecture: lecture,
                            inspection: inspection } %>
     </div>
-    <div id="lecture-media-card" class="col-3">
+    <div id="lecture-media-card" class="col-12 col-xxxl-3 mb-1">
       <%= render partial: 'lectures/media',
                  locals: { media: lecture.media_with_inheritance,
                            inspection: inspection,

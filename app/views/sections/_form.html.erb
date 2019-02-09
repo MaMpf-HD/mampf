@@ -3,7 +3,7 @@
     <h6>
       Abschnitt
       <span class="redtext">
-      <%= section.to_label %>
+        <%= section.to_label %>
       </span>
       bearbeiten
     </h6>
@@ -24,7 +24,8 @@
       <%= f.label :title, 'Titel' %>
       <i class="far fa-question-circle helpdesk"
          tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
+         data-toggle="popover"
+         data-trigger="focus"
          title="Info"
          data-content="Hier kannst Du den Titel des Abschnitts angeben.">
       </i
@@ -43,14 +44,14 @@
                   'Kapitel' %>
       <i class="far fa-question-circle helpdesk"
          tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
+         data-toggle="popover"
+         data-trigger="focus"
          title="Info"
          data-content="Hier kannst Du auswählen, in welchem Kapitel sich der
          Abschnitt befinden soll.">
       </i>
       <%= f.select :chapter_id,
-                   options_for_select(section.chapter.lecture.chapters
-                                             .map { |c| [c.to_label, c.id] },
+                   options_for_select(lecture_chapters_for_select(section),
                                       section.chapter.id), {},
                    { class: 'form-control'} %>
     </div>
@@ -59,18 +60,18 @@
                   'Positionierung nach Abschnitt' %>
       <i class="far fa-question-circle helpdesk"
          tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
+         data-toggle="popover"
+         data-trigger="focus"
          title="Info"
          data-content="Hier kannst Du auswählen, an welcher Stelle der
          Abschnitt positioniert werden soll, indem Du den Vorgängerabschnitt
          auswählst.">
       </i>
       <%= f.select :predecessor,
-                   options_for_select([['am Anfang', 0]] +
-                                      section.chapter.select_sections -
-                                      [[section.to_label, section.position]],
+                   options_for_select(section_positions_for_select(section),
                                       section.position - 1) ,
-                                      {}, { class: 'form-control' } %>
+                                      {},
+                                      { class: 'form-control' } %>
     </div>
     <div class="col-4 form-group">
       <%= f.label :display_number,
@@ -79,8 +80,10 @@
          tabindex="-1"
          data-toggle="popover" data-trigger="focus"
          title="Info"
-         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
-         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel haben möchte.">
+         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese
+         die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
+         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt'
+         als Titel haben möchte.">
       </i>
       <%= f.text_field :display_number,
                        { class: 'form-control',
@@ -93,25 +96,28 @@
     <%= f.label :tag_ids, 'Verknüpfte Tags' %>
     <i class="far fa-question-circle helpdesk"
        tabindex="-1"
-       data-toggle="popover" data-trigger="focus"
+       data-toggle="popover"
+       data-trigger="focus"
        title="Info"
-       data-content="Hier kannst Du die Tags auswählen, die zu diesem Abschnitts
+       data-content="Hier kannst Du die Tags auswählen, die zu diesem Abschnitt
        assoziiert sein sollen und ggf. neue Tags erstellen.">
     </i>
     <a class="fas fa-plus-circle clickable"
        id="new-tag-button"
-       data-toggle="tooltip" title="Tag anlegen"
+       data-toggle="tooltip"
+       title="Tag anlegen"
        data-course="<%= section.chapter.lecture.course.id %>"
        data-section="<%= section.id %>"
        data-from="section">
     </a>
     <%= f.select :tag_ids,
                  options_for_select(Tag.select_by_title,section.tag_ids),
-                 {}, { multiple: true,
-                       class: 'selectize mt-2',
-                       data: { id: section.id,
-                               chapter: section.chapter.id },
-                       id: 'section_tag_ids_' + section.id.to_s } %>
+                 {},
+                 { multiple: true,
+                   class: 'selectize mt-2',
+                   data: { id: section.id,
+                           chapter: section.chapter.id },
+                   id: 'section_tag_ids_' + section.id.to_s } %>
     <div class="invalid-feedback"
          id="section-tags-error-<%= section.id %>">
     </div>
@@ -120,13 +126,15 @@
     <%= f.label :lesson_ids, 'Sitzungen' %>
     <i class="far fa-question-circle helpdesk"
        tabindex="-1"
-       data-toggle="popover" data-trigger="focus"
+       data-toggle="popover"
+       data-trigger="focus"
        title="Info"
        data-content="Hier kannst Du die Sitzungen auswählen, in denen Inhalte
        aus diesem Abschnitt behandelt werden bzw. wurden.">
     </i>
     <%= f.select :lesson_ids,
-                 options_for_select(Lesson.select { |l| l.lecture == section.lecture }.sort_by(&:date).map { |l| [l.to_label, l.id] }, section.lesson_ids),
+                 options_for_select(section_lessons_for_select(section),
+                                    section.lesson_ids),
                  {}, { multiple: true,
                        class: 'selectize mt-2',
                        data: { id: section.id,
@@ -138,14 +146,20 @@
   </div>
   <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit "Speichern", class: "btn btn-primary mr-2 mb-2" %>
-      <%= f.submit "Speichern und zurück", class: "btn btn-primary mr-2 mb-2" %>
-      <button type="button" class="btn btn-secondary mb-2" id="cancel-section">
+      <%= f.submit "Speichern",
+                   class: "btn btn-primary mr-2 mb-2" %>
+      <%= f.submit "Speichern und zurück",
+                   class: "btn btn-primary mr-2 mb-2" %>
+      <button type="button"
+              class="btn btn-secondary mb-2"
+              id="cancel-section">
         abbrechen
       </button>
-      <%= link_to 'löschen', section_path, method: :delete,
+      <%= link_to 'löschen',
+                  section_path,
+                  method: :delete,
                   data: { confirm: 'Bist Du sicher?' },
-                  class: 'btn btn-danger' %>
+                  class: 'btn btn-danger mb-2' %>
     </div>
   </div>
 <% end %>

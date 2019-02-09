@@ -88,13 +88,13 @@ $(document).on 'turbolinks:load', ->
   # hide the media tab if hide media button is clicked
   $('#hide-media-button').on 'click', ->
     $('#lecture-media-card').hide()
-    $('#lecture-content-card').removeClass('col-9').addClass('col-12')
+    $('#lecture-content-card').removeClass('col-xxxl-9')
     $('#show-media-button').show()
     return
 
   # display the media tab if show media button is clicked
   $('#show-media-button').on 'click', ->
-    $('#lecture-content-card').removeClass('col-12').addClass('col-9')
+    $('#lecture-content-card').addClass('col-xxxl-9')
     $('#lecture-media-card').show()
     $('#show-media-button').hide()
     return

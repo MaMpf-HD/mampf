@@ -92,6 +92,10 @@ class User < ApplicationRecord
                       .map(&:id))
   end
 
+  def filter_sections(sections)
+    sections.includes(:chapter).select { |s| s.lecture&.id&.in?(lecture_ids) }
+  end
+
   def lectures_by_date
     lectures.to_a.sort do |i, j|
       j.term.begin_date <=> i.term.begin_date
@@ -152,6 +156,10 @@ class User < ApplicationRecord
 
   def edited_courses_with_inheritance
     (edited_courses + edited_lectures.map(&:course)).uniq
+  end
+
+  def edited_or_given_courses_with_inheritance
+    (edited_courses + edited_lectures.map(&:course) + given_lectures.map(&:course)).uniq
   end
 
   def editable_courses_with_inheritance

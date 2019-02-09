@@ -128,7 +128,7 @@ class Lecture < ApplicationRecord
             .flatten.collect(&:items).flatten
   end
 
-  # returns an ARel of all media whose teachable's lecture is the given lecture
+  # returns the ARel of all media whose teachable's lecture is the given lecture
   def media_with_inheritance
     Medium.where(id: Medium.includes(:teachable)
                            .select { |m| m.teachable.lecture == self }
@@ -144,86 +144,36 @@ class Lecture < ApplicationRecord
                           .reduce(:concat)
   end
 
-  # returns whether the lecture has any associated kaviar media
-  # (with inheritance)
+  # The next methods return if there are any media in the Kaviar, Sesam etc.
+  # projects that are associated to this lecture *with inheritance*
+  # These methods make use of caching.
+
   def kaviar?
-    Rails.cache.fetch("#{cache_key}/kaviar") do
-      Medium.where(sort: 'Kaviar').includes(:teachable)
-            .any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
-    end
+    project?('kaviar')
   end
 
-  # returns whether the lecture has any associated sesam media
-  # (with inheritance), or the lecture's course has sesam media
-  # (without inheritance)
   def sesam?
-    Rails.cache.fetch("#{cache_key}/sesam") do
-      Medium.where(sort: 'Sesam').includes(:teachable)
-            .any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
-    end
+    project?('sesam')
   end
 
-  # returns whether the lecture has any associated sesam media
-  # (with inheritance), or the lecture's course has sesam media
-  # (without inheritance)
-  def script?
-    Rails.cache.fetch("#{cache_key}/script") do
-      Medium.where(sort: 'Script').includes(:teachable)
-            .any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
-    end
-  end
-
-  # returns whether the lecture has any associated sesam media
-  # (with inheritance), or the lecture's course has sesam media
-  # (without inheritance)
   def keks?
-    Rails.cache.fetch("#{cache_key}/keks") do
-      Medium.where(sort: 'KeksQuiz').includes(:teachable)
-            .any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
-    end
+    project?('keks')
   end
 
-  # returns whether the lecture has any associated sesam media
-  # (with inheritance), or the lecture's course has sesam media
-  # (without inheritance)
   def erdbeere?
-    Rails.cache.fetch("#{cache_key}/erdbeere") do
-      Medium.where(sort: 'Erdbeere').includes(:teachable)
-            .any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
-    end
+    project?('erdbeere')
   end
 
-  # returns whether the lecture has any associated sesam media
-  # (with inheritance), or the lecture's course has sesam media
-  # (without inheritance)
   def kiwi?
-    Rails.cache.fetch("#{cache_key}/kiwi") do
-      Medium.where(sort: 'Kiwi').includes(:teachable)
-            .any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
-    end
+    project?('kiwi')
   end
 
-
-  # returns whether the lecture has any associated nuesse media
-  # (with inheritance)
   def nuesse?
-    Rails.cache.fetch("#{cache_key}/nuesse") do
-      Medium.where(sort: 'Nuesse').includes(:teachable).any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
-    end
+    project?('nuesse')
+  end
+
+  def script?
+    project?('script')
   end
 
   # the next methods put together some information on the lecture (teacher, term,
@@ -446,5 +396,22 @@ class Lecture < ApplicationRecord
   # used for after save callback
   def remove_teacher_as_editor
     editors.delete(teacher)
+  end
+
+  # looks in the cache if there are any media associated *with inheritance*
+  # to this lecture and a given project (kaviar, semsam etc.)
+  def project?(project)
+    Rails.cache.fetch("#{cache_key}/#{project}") do
+      Medium.where(sort: sort[project]).includes(:teachable)
+            .any? do |m|
+        m.teachable&.lecture == self || m.teachable == course
+      end
+    end
+  end
+
+  def sort
+    { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
+      'keks' => ['KeksQuiz'], 'nuesse' => ['Nuesse'],
+      'erdbeere' => ['Erdbeere'], 'script' => ['Script'] }
   end
 end

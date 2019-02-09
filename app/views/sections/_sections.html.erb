@@ -1,5 +1,4 @@
-<% user_sections = sections.select { |s| current_user.lectures
-                                                     .include?(s.lecture)} %>
+<% user_sections = current_user.filter_sections(sections) %>
 <div class="card bg-brown-lighten-4">
   <div class="card-header bg-brown-darken-2">
     <h5 class="text-light">
@@ -23,9 +22,10 @@
       Es sind keine verknüpften Abschnitte vorhanden.
       <% if sections.count > 0 %>
         Aufgrund Deiner
-        <%= link_to "Profileinstellungen", edit_profile_path %>
+        <%= link_to "Profileinstellungen",
+                    edit_profile_path %>
         wurden hierbei <%= sections.count %>
-        Trefer nicht berücksichtigt.
+        Treffer nicht berücksichtigt.
       <% end %>
     <% end %>
   </div>

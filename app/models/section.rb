@@ -1,13 +1,26 @@
 # Section class
 class Section < ApplicationRecord
+  # a section belongs to a chapter (of a lecture)
   belongs_to :chapter, touch: true
+
+  # sections are ordered within a chapter
   acts_as_list scope: :chapter
+
+  # a section has many tags
   has_many :section_tag_joins, dependent: :destroy
   has_many :tags, through: :section_tag_joins
+
+  # a section has many lessons
   has_many :lesson_section_joins, dependent: :destroy
   has_many :lessons, through: :lesson_section_joins
+
+  # a section needs to have a title
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
+
+  # a section has many items, do not execute callbacks when section is destroyed
   has_many :items, dependent: :nullify
+
+  # after saving or updating, touch lecture/media/self to keep cache up to date
   after_save :touch_lecture
   after_save :touch_media
   after_save :touch_self
@@ -25,15 +38,14 @@ class Section < ApplicationRecord
   end
 
   def displayed_number
-    return '§' + reference_number
+    '§' + reference_number
   end
 
+  # calculate the number of the section depending on whether the lecture has
+  # absolute section numbering or relative numbering with respect to the
+  # chapters
   def calculated_number
-    unless lecture.absolute_numbering
-      return chapter.displayed_number + '.' + position.to_s
-    end
-    absolute_position = chapter.higher_items.includes(:sections).map(&:sections).flatten
-                               .count + position
+    return relative_position unless lecture.absolute_numbering
     return absolute_position.to_s unless lecture.start_section.present?
     (absolute_position + lecture.start_section - 1).to_s
   end
@@ -51,9 +63,7 @@ class Section < ApplicationRecord
   def previous
     return higher_item unless first?
     return if chapter.first?
-    # actual previous chapter may not have any sections
-    previous_chapter = chapter.higher_items.find { |c| c.sections.exists? }
-    return unless previous_chapter.present?
+    return unless previous_chapter
     potential_last = previous_chapter.sections.last
     return potential_last if potential_last.last?
     potential_last.lower_items.last
@@ -64,9 +74,7 @@ class Section < ApplicationRecord
   def next
     return lower_item unless last?
     return if chapter.last?
-    # actual next chapter may not have any sections
-    next_chapter = chapter.lower_items.find { |c| c.sections.exists? }
-    return unless next_chapter.present?
+    return unless next_chapter
     potential_first = next_chapter.sections.first
     return potential_first if potential_first.first?
     potential_first.higher_items.first
@@ -84,11 +92,30 @@ class Section < ApplicationRecord
   end
 
   def touch_media
-    lecture.media_with_inheritance.each(&:touch)
-    self.touch
+    lecture.media_with_inheritance.update_all(updated_at: Time.current)
+    touch
   end
 
   def touch_self
     touch
+  end
+
+  def relative_position
+    chapter.displayed_number + '.' + position.to_s
+  end
+
+  def absolute_position
+    chapter.higher_items.includes(:sections).map(&:sections).flatten.count +
+      position
+  end
+
+  def next_chapter
+    # actual next chapter may not have any sections
+    chapter.lower_items.find { |c| c.sections.exists? }
+  end
+
+  def previous_chapter
+    # actual previous chapter may not have any sections
+    chapter.higher_items.find { |c| c.sections.exists? }
   end
 end

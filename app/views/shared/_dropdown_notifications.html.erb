@@ -1,7 +1,8 @@
 <% relevant_notifications = current_user.notifications
                                         .sort_by(&:created_at).reverse %>
 <% if relevant_notifications.present? %>
-  <ul class="navbar-nav mr-3" id="notificationDropdown">
+  <ul class="navbar-nav mr-3"
+      id="notificationDropdown">
     <li class="nav-item">
       <div class="btn-group">
         <a class="btn btn-primary btn-sm"

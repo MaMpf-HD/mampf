@@ -42,6 +42,6 @@ class Chapter < ApplicationRecord
   # their ids.
   # Is used in options_for_select in form helpers.
   def select_sections
-    sections.order(:position).map { |s| [s.to_label, s.position] }
+    sections.includes(:chapter).order(:position).map { |s| [s.to_label, s.position] }
   end
 end
