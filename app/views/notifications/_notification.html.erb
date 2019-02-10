@@ -27,8 +27,7 @@
     </div>
   </div>
   <div class="card-body">
-    <%= notification_text(notification) %>
-    <br>
-    <%= notification_link(notification) %>
+    <%= simple_format(notification_text(notification)) %>
+    <%= simple_format(notification_link(notification)) %>
   </div>
 </div>
