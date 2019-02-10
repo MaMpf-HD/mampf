@@ -232,7 +232,7 @@ class Lecture < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def section_selection
     Rails.cache.fetch("#{cache_key}/section_selection") do
-      sections.sort_by(&:calculated_number).map { |s| [s.to_label, s.id] }
+      sections.natural_sort_by(&:calculated_number).map { |s| [s.to_label, s.id] }
     end
   end
 

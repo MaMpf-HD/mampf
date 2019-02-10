@@ -1,7 +1,9 @@
 $(document).on 'turbolinks:load', ->
 
+  # restore site after editing of term was cancelled (via ajax)
   $(document).on 'click', '#cancel-term-edit', ->
     term = this.dataset.term
+    console.log 'Hig'
     new_action = this.dataset.new
     $.ajax Routes.cancel_term_edit_path(),
       type: 'GET'
@@ -11,4 +13,9 @@ $(document).on 'turbolinks:load', ->
         new: new_action
       }
     return
+  return
+
+# clean up before turbolinks caches
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'click', '#cancel-term-edit'
   return

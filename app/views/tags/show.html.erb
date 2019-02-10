@@ -23,13 +23,15 @@
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
       <div class="col-12">
-        <div class="card mb-2 bg-green-lighten-4" id="relatedTags">
+        <div class="card mb-2 bg-green-lighten-4"
+             id="relatedTags">
           <div class="card-header bg-green-darken-3 text-light">
             <h5>
               Verknüpfte Tags
             </h5>
           </div>
-          <div class="card-body" id="relatedTagsBody">
+          <div class="card-body"
+               id="relatedTagsBody">
             <% if @related_tags.present? %>
               <% @related_tags.natural_sort_by(&:title).each do |t| %>
                 <%= link_to t.short_title,

@@ -1,36 +1,45 @@
-<div id="tags_accordion<%= id %>" role="tablist">
-  <div class="card <%= inspection ? 'bg-mdb-color-lighten-6' : 'bg-green-lighten-4' %>">
-    <div class="card-header <%= inspection ? '' : 'bg-green-darken-3' %>"
-         role="tab" id="tags_heading<%= id %>">
-      <h5 class="<%= inspection ? 'text-dark' : 'text-light' %>">
+<div id="tags_accordion<%= id %>"
+     role="tablist">
+  <div class="card bg-mdb-color-lighten-6">
+    <div class="card-header"
+         role="tab"
+         id="tags_heading<%= id %>">
+      <h5 class="text-dark">
         <%= tags_description + ' (' + tags.count.to_s + ') '%>
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
            data-content="Das ist die Liste aller assoziierten Tags.">
         </i>
-        <a class="btn <%= inspection ? 'btn-primary' : 'btn-success' %> float-right"
-           data-toggle="collapse" href="#tags_collapse<%= id %>"
-           aria-expanded="false" aria-controls="tags_collapse<%= id %>">
+        <a class="btn btn-primary float-right"
+           data-toggle="collapse"
+           href="#tags_collapse<%= id %>"
+           aria-expanded="false"
+           aria-controls="tags_collapse<%= id %>">
           Ein-/Ausklappen
         </a>
       </h5>
     </div>
-    <div id="tags_collapse<%= id %>" class="collapse" role="tabpanel"
+    <div id="tags_collapse<%= id %>"
+         class="collapse"
+         role="tabpanel"
          aria-labelledby="heading<%= id%>"
          data-parent="#tags_accordion<%= id %>">
       <div class="card-body">
         <div class="row">
           <div class="col-12">
-            <% if tags.present? %>
+            <% if tags.any? %>
               <% tags.natural_sort_by(&:title).each do |t| %>
                 <% unless t.nil? %>
                   <% if inspection %>
-                    <%= link_to t.title, inspect_tag_path(t),
+                    <%= link_to t.title,
+                                inspect_tag_path(t),
                                 class: "badge badge-light" %>
                   <% else %>
-                    <%= link_to t.title, tag_path(t),
+                    <%= link_to t.title,
+                                tag_path(t),
                                 class: "badge badge-light" %>
                   <% end %>
                 <% end %>

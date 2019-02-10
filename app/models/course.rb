@@ -294,6 +294,12 @@ class Course < ApplicationRecord
           .map { |c| [c.short_title, 'Course-' + c.id.to_s] }
   end
 
+  # returns the array of all tags (sorted by title) together with
+  # their ids
+  def self.select_by_title
+    Course.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
+  end
+
   private
 
   # looks in the cache if there are any media associated *with inheritance*

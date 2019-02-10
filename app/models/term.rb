@@ -32,6 +32,10 @@ class Term < ApplicationRecord
     season + year_corrected_short
   end
 
+  def self.select_terms
+    Term.all.map { |t| [t.to_label, t.id] }
+  end
+
   private
 
   def year_corrected
@@ -42,9 +46,5 @@ class Term < ApplicationRecord
   def year_corrected_short
     return (year % 100).to_s unless season == 'WS'
     (year % 100).to_s + '/' + ((year % 100) + 1).to_s
-  end
-
-  def self.select_terms
-    Term.all.map { |t| [t.to_label, t.id] }
   end
 end

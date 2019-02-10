@@ -47,7 +47,7 @@ class TermsController < ApplicationController
   def set_term
     @id = params[:id]
     @term = Term.find_by_id(@id)
-    return if @term.present?
+    return if @term
     redirect_to terms_path, alert: 'Ein Semester mit der angeforderten id '\
                                    'existiert nicht.'
   end

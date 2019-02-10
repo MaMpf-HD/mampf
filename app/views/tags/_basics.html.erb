@@ -12,120 +12,131 @@
     <%= f.label :title, 'Titel' %>
     <i class="far fa-question-circle helpdesk"
        tabindex="-1"
-       data-toggle="popover" data-trigger="focus"
+       data-toggle="popover"
+       data-trigger="focus"
        title="Info"
        data-content="Hier kannst Du den Titel des Tags eingeben.">
      </i>
     <%= f.text_field :title, { class: 'form-control',
                                data: { id: tag.id.to_i },
                                id: 'tag_title_' + tag.id.to_i.to_s } %>
-    <div class="invalid-feedback" id="tag-title-error-<%= tag.id.to_i %>">
+    <div class="invalid-feedback"
+         id="tag-title-error-<%= tag.id.to_i %>">
     </div>
   </div>
   <% if new_tag %>
-  <div class="form-group">
-    <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
-    <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Die Tags bilden einen Graphen. Verknüpfte Tags sind genau die Nachbarn eines Tags. Diese kannst Du hier auswählen.">
-    </i>
-    <%= f.select :related_tag_ids,
-                 options_for_select(Tag.where.not(id: tag.id)
-                                       .map { |t| [t.title, t.id]},
-                                    tag.related_tag_ids),
-                 {}, { multiple: true,
-                       class: 'selectize',
-                       data: { id: tag.id.to_i } } %>
-    <div class="invalid-feedback"
-         id="tag-related-tags-error-<%= tag.id.to_i %>">
+    <div class="form-group">
+      <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="-1"
+         data-toggle="popover"
+         data-trigger="focus"
+         title="Info"
+         data-content="Die Tags bilden einen Graphen. Verknüpfte Tags sind
+         genau die Nachbarn eines Tags. Diese kannst Du hier auswählen.">
+      </i>
+      <%= f.select :related_tag_ids,
+                   options_for_select(Tag.select_by_title),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     data: { id: tag.id.to_i } } %>
+      <div class="invalid-feedback"
+           id="tag-related-tags-error-<%= tag.id.to_i %>">
+      </div>
     </div>
-  </div>
   <% end %>
   <div class="form-group">
-    <%= f.label :course_ids, 'Module' %>
+    <%= f.label :course_ids,
+                'Module' %>
     <i class="far fa-question-circle helpdesk"
        tabindex="-1"
-       data-toggle="popover" data-trigger="focus"
+       data-toggle="popover"
+       data-trigger="focus"
        title="Info"
-       data-content="Hier kannst Du auswählen, zu welchen Modulen dieser Tag assoziiert sein soll.">
+       data-content="Hier kannst Du auswählen, zu welchen Modulen dieser Tag
+       assoziiert sein soll.">
     </i>
     <%= f.select :course_ids,
-                 options_for_select(Course.all.map { |t| [t.title, t.id ]},
+                 options_for_select(Course.select_by_title,
                                     tag.course_ids),
-                 {}, { multiple: true,
-                       class: 'selectize',
-                       data: { id: tag.id.to_i } } %>
-    <div class="invalid-feedback" id="tag-courses-error-<%= tag.id.to_i %>">
+                 {},
+                 { multiple: true,
+                   class: 'selectize',
+                   data: { id: tag.id.to_i } } %>
+    <div class="invalid-feedback"
+         id="tag-courses-error-<%= tag.id.to_i %>">
     </div>
   </div>
   <% unless new_tag %>
-  <% if tag.extra_lectures.present? %>
-  <div class="row">
-    <div class="col-12">
-      Zusätzliche Vorlesungen
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
-         title="Info"
-         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag
-         nicht zu dem übergeordneten Modul assoziiert ist, jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.">
-      </i>
-    </div>
-    <div class="col-12">
-      <ul>
-        <% tag.extra_lectures.each do |l| %>
-          <li>
-            <%= link_to l.title, inspect_lecture_path(l) %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-  <% end %>
-  <% if tag.missing_lectures.present? %>
-  <div class="row">
-    <div class="col-12">
-      Fehlende Vorlesungen
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
-         title="Info"
-         data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag
-         zu dem übergeordneten Modul assoziiert ist, jedoch in keinem Abschnitt der entsprechenden Vorlesung auftaucht.">
-        </i>
-    </div>
-    <div class="col-12">
-      <ul>
-        <% tag.missing_lectures.each do |l| %>
-          <li>
-            <%= link_to l.title, inspect_lecture_path(l) %>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-  </div>
-  <% end %>
+    <% if tag.extra_lectures.present? %>
+      <div class="row">
+        <div class="col-12">
+          Zusätzliche Vorlesungen
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover"
+             data-trigger="focus"
+             title="Info"
+             data-content="Dies ist eine Liste aller Vorlesungen, für welche
+             dieser Tag nicht zu dem übergeordneten Modul assoziiert ist,
+             jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.">
+          </i>
+        </div>
+        <div class="col-12">
+          <ul>
+            <% tag.extra_lectures.each do |l| %>
+              <li>
+                <%= link_to l.title, inspect_lecture_path(l) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
+    <% if tag.missing_lectures.present? %>
+      <div class="row">
+        <div class="col-12">
+          Fehlende Vorlesungen
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover"
+             data-trigger="focus"
+             title="Info"
+             data-content="Dies ist eine Liste aller Vorlesungen, für welche
+             dieser Tag zu dem übergeordneten Modul assoziiert ist, jedoch in
+             keinem Abschnitt der entsprechenden Vorlesung auftaucht.">
+          </i>
+        </div>
+        <div class="col-12">
+          <ul>
+            <% tag.missing_lectures.each do |l| %>
+              <li>
+                <%= link_to l.title, inspect_lecture_path(l) %>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+      </div>
+    <% end %>
   <% end %>
   <% if from == 'section' %>
-    <%= f.hidden_field :section_id, value: tag.section_ids.first %>
+    <%= f.hidden_field :section_id,
+                       value: tag.section_ids.first %>
   <% end %>
   <% if from == 'medium' %>
-    <%= f.hidden_field :medium_id, value: tag.medium_ids.first %>
+    <%= f.hidden_field :medium_id,
+                       value: tag.medium_ids.first %>
     <% medium = Medium.find_by_id(tag.medium_ids.first) %>
-    <% if medium.present? && medium.teachable.class.to_s != 'Course' %>
-      <% section_selection = medium.teachable.lecture.section_selection %>
-      <% if medium.teachable.class.to_s == 'Lecture' %>
-        <% preselected_sections = [] %>
-      <% else %>
-        <% preselected_sections = medium.teachable.sections.map(&:id) %>
-      <% end %>
+    <% if medium&.teachable&.class.to_s.in?(['Lesson', 'Lecture']) %>
       <div class="form-group">
-        <%= f.label :section_ids, 'Abschnitte' %>
+        <%= f.label :section_ids,
+                    'Abschnitte' %>
         <%= f.select :section_ids,
-                 options_for_select(section_selection, preselected_sections),
-                 {}, { multiple: true,
+                     options_for_select(section_selection(medium),
+                                        preselected_sections(medium)),
+                     {},
+                     { multiple: true,
                        class: 'selectize'} %>
       </div>
     <% end %>

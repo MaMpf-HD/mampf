@@ -1,5 +1,6 @@
 <div class="form-group">
-  <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
+  <%= f.label :related_tag_ids,
+              'Verknüpfte Tags' %>
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"
      data-toggle="popover"
@@ -17,11 +18,8 @@
        data-from="tag">
   </a>
   <%= f.select :related_tag_ids,
-                options_for_select(Tag.where.not(id: tag.id)
-                                      .natural_sort_by(&:title)
-                                      .map { |t| [t.title, t.id]},
-                                   tag.related_tags.natural_sort_by(&:title)
-                                      .map(&:id)),
+                options_for_select(tags_except_self_for_selector(tag),
+                                   related_tag_ids_selection(tag)),
                 {},
                 { multiple: true,
                   class: 'selectize',

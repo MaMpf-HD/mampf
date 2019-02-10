@@ -9,9 +9,11 @@
       </h4>
     </div>
     <div class="col-4 text-center">
-      <%= link_to 'Bearbeiten', edit_tag_path(@tag),
+      <%= link_to 'Bearbeiten',
+                  edit_tag_path(@tag),
                   class: 'btn btn-primary' %>
-      <%= link_to 'zur Tagübersicht', tags_path,
+      <%= link_to 'zur Tagübersicht',
+                  tags_path,
                   class: 'btn btn-primary' %>
     </div>
   </div>
@@ -33,16 +35,19 @@
               Module
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Die ist die Liste aller Module, zu denen dieser Tag assoziiert ist.">
+                 data-content="Die ist die Liste aller Module, zu denen dieser
+                 Tag assoziiert ist.">
               </i>
             </div>
             <div class="col-8">
               <ul>
                 <% @tag.courses.each do |c| %>
                   <li>
-                    <%= link_to c.title, inspect_course_path(c) %>
+                    <%= link_to c.title,
+                                inspect_course_path(c) %>
                   </li>
                 <% end %>
               </ul>
@@ -54,16 +59,21 @@
                 Zusätzliche Vorlesungen
                 <i class="far fa-question-circle helpdesk"
                    tabindex="-1"
-                   data-toggle="popover" data-trigger="focus"
+                   data-toggle="popover"
+                   data-trigger="focus"
                    title="Info"
-                   data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag nicht zu dem übergeordneten Modul assoziiert ist, jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.">
+                   data-content="Dies ist eine Liste aller Vorlesungen, für
+                   welche dieser Tag nicht zu dem übergeordneten Modul
+                   assoziiert ist, jedoch in einem Abschnitt der entsprechenden
+                   Vorlesung auftaucht.">
                 </i>
               </div>
               <div class="col-8">
                 <ul>
                   <% @tag.extra_lectures.each do |l| %>
                     <li>
-                      <%= link_to l.title, inspect_lecture_path(l) %>
+                      <%= link_to l.title,
+                                  inspect_lecture_path(l) %>
                     </li>
                   <% end %>
                 </ul>
@@ -76,16 +86,21 @@
                 Fehlende Vorlesungen
                 <i class="far fa-question-circle helpdesk"
                    tabindex="-1"
-                   data-toggle="popover" data-trigger="focus"
+                   data-toggle="popover"
+                   data-trigger="focus"
                    title="Info"
-                   data-content="Dies ist eine Liste aller Vorlesungen, für welche dieser Tag zu dem übergeordneten Modul assoziiert ist, jedoch in keinem Abschnitt der entsprechenden Vorlesung auftaucht.">
+                   data-content="Dies ist eine Liste aller Vorlesungen, für
+                   welche dieser Tag zu dem übergeordneten Modul assoziiert
+                   ist, jedoch in keinem Abschnitt der entsprechenden Vorlesung
+                   auftaucht.">
                 </i>
               </div>
               <div class="col-8">
                 <ul>
                   <% @tag.missing_lectures.each do |l| %>
                     <li>
-                      <%= link_to l.title, inspect_lecture_path(l) %>
+                      <%= link_to l.title,
+                                  inspect_lecture_path(l) %>
                     </li>
                   <% end %>
                 </ul>
@@ -97,9 +112,11 @@
               Verknüpfte Tags
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
+                 data-toggle="popover"
+                 data-trigger="focus"
                  title="Info"
-                 data-content="Die Tags bilden einen Graphen. Verknüpfte Tags sind genau die Nachbarn eines Tags.">
+                 data-content="Die Tags bilden einen Graphen. Verknüpfte Tags
+                 sind genau die Nachbarn eines Tags.">
               </i>
             </div>
             <div class="col-8">
@@ -107,8 +124,9 @@
                 keine
               <% end %>
               <% @tag.related_tags.each do |t| %>
-                  <%= link_to t.title, inspect_tag_path(t),
-                  class:'badge badge-light' %>
+                  <%= link_to t.title,
+                              inspect_tag_path(t),
+                              class:'badge badge-light' %>
               <% end %>
             </div>
           </div>
@@ -119,7 +137,10 @@
                  tabindex="-1"
                  data-toggle="popover" data-trigger="focus"
                  title="Info"
-                 data-content="Die Tags bilden einen Graphen. Tags mit Abstand 2 sind diejenigen Nachbarn von Nachbarn dieses Tags, die selbst keine Nachbarn des Tags sind und vom Tag verschieden sind.">
+                 data-content="Die Tags bilden einen Graphen. Tags mit
+                 Abstand 2 sind diejenigen Nachbarn von Nachbarn dieses
+                 Tags, die selbst keine Nachbarn des Tags sind und vom
+                 Tag verschieden sind.">
               </i>
             </div>
             <div class="col-8">
@@ -127,7 +148,8 @@
                 keine
               <% end %>
               <% @tag.tags_in_neighbourhood.each do |t| %>
-                <%= link_to t.title, inspect_tag_path(t),
+                <%= link_to t.title,
+                            inspect_tag_path(t),
                             class:'badge badge-light' %>
               <% end %>
             </div>
@@ -153,9 +175,10 @@
           </div>
         </div>
         <div class="card-body">
-          <div id="cyEdit"
+          <div id="cy"
                data-elements="<%= @graph_elements.to_json %>"
-               data-tag="<%= @tag.id %>">
+               data-tag="<%= @tag.id %>"
+               data-action="inspect">
          </div>
         </div>
       </div>
@@ -164,16 +187,20 @@
       <div class="row">
         <div class="col-12 mb-4">
           <%= render partial: 'media/card',
-                     locals: { media: @tag.media, small: false,
-                               collapsible: false, inspection: true } %>
+                     locals: { media: @tag.media,
+                               small: false,
+                               collapsible: false,
+                               inspection: true } %>
         </div>
         <div class="col-12">
           <%= render partial: 'sections/card',
-                     locals: { sections: @tag.sections, inspection: true } %>
+                     locals: { sections: @tag.sections,
+                               inspection: true } %>
         </div>
         <div class="col-12">
           <%= render partial: 'lessons/card',
-                     locals: { lessons: @tag.lessons, inspection: true } %>
+                     locals: { lessons: @tag.lessons,
+                               inspection: true } %>
         </div>
       </div>
     </div>

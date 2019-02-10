@@ -41,7 +41,7 @@ class TagsController < ApplicationController
   end
 
   def update
-    # first, check if errors from check_permission callback are presente
+    # first, check if errors from check_permission callback are present
     return if @errors.present?
     @tag.update(tag_params)
     if @tag.valid?
@@ -125,7 +125,7 @@ class TagsController < ApplicationController
     @tag.sections << section if section.present?
   end
 
-  def add_media
+  def add_medium
     medium = Medium.find_by_id(params[:medium])
     @tag.media << medium if medium.present?
   end

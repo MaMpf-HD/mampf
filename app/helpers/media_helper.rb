@@ -53,4 +53,13 @@ module MediaHelper
             medium,
             class: 'darkblue')
   end
+
+  def section_selection(medium)
+    medium.teachable.lecture&.section_selection
+  end
+
+  def preselected_sections(medium)
+    return [] unless medium.teachable.class.to_s == 'Lesson'
+    medium.teachable.sections.map(&:id)
+  end
 end

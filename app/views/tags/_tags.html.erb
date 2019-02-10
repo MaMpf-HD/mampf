@@ -7,7 +7,7 @@
   <div class="card-body"
        id="relatedTagsBody"
        style="max-height: <%= small ? '20vh' : '50vh' %>">
-    <% if related_tags.present? %>
+    <% if related_tags.any? %>
       <% related_tags.natural_sort_by(&:title).each do |t| %>
         <%= link_to t.short_title,
                     tag_path(t),

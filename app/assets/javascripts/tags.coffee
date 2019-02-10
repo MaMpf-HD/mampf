@@ -3,6 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'turbolinks:load', ->
+  # set up tag search in administration mode using Sifter plugin
   tagTable = document.getElementById('tagTable')
   inputCourses = document.getElementById('inputCourses')
   inputTag = document.getElementById('inputTag')
@@ -11,6 +12,7 @@ $(document).on 'turbolinks:load', ->
     ids = tagsWithId.map (item) -> item.id
     sifter = new Sifter(tagsWithId)
 
+  # hide non-matching tag rows in tag indexx table in administration mode
   displayResults = ->
     searchString = $('#inputTag').val()
     selectedCourses = $('#inputCourses').val().map (item) -> parseInt(item)
@@ -30,42 +32,50 @@ $(document).on 'turbolinks:load', ->
         $(row).hide()
     return
 
+  # refine tag search results on keyup in tag input field
   $('#inputTag').on 'keyup', ->
     displayResults()
     return
 
+  # refine tag search results upon changing of courses
   $('#inputCourses').on 'change', ->
     displayResults()
     return
 
+  # fill courses selector in admin tag search with user's edited courses
+  $('#tags-edited-courses').on 'click', ->
+    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
+    return
+
+ # fill courses selector in admin tag search with all courses
+  $('#tags-all-courses').on 'click', ->
+    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
+    return
+
+  # fill courses selector in admin tag with no courses at all
+  $('#tags-no-courses').on 'click', ->
+    inputCourses.selectize.setValue()
+    return
+
+  # issue a warning if tag form has changed
   $('[id^="tag-form-"] :input').on 'change', ->
     id = this.dataset.id
     $('#tag-basics-warning-' + id).show()
     return
 
+  # reload page if tag editing is cancelled
   $('[id^="tag-basics-cancel-"]').on 'click', ->
     location.reload()
     return
 
-  $('#tags-edited-courses').on 'click', ->
-    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
-    return
-
-  $('#tags-all-courses').on 'click', ->
-    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
-    return
-
-  $('#tags-no-courses').on 'click', ->
-    inputCourses.selectize.setValue()
-    return
-
+  # prepare action box when related tags are edited
   $('#selectRelatedTags').on 'click', ->
     $('#selectRelatedTagsForm').show()
     $('#tagActionType').show()
     $(this).hide()
     return
 
-  # container for cytoscape view for standard users
+  # container for cytoscape view
   $cyContainer = $('#cy')
   if $cyContainer.length > 0
     cy = cytoscape(
@@ -108,16 +118,25 @@ $(document).on 'turbolinks:load', ->
         nodeDimensionsIncludeLabels: false)
 
     cy.on 'mouseover', 'node', (evt) ->
-      node = evt.target;
+      node = evt.target
       node.addClass('hovering')
+      return
 
     cy.on 'mouseout', 'node', (evt) ->
-      node = evt.target;
+      node = evt.target
       node.removeClass('hovering')
+      return
 
     cy.on 'tap', 'node', (evt) ->
-      node = evt.target;
-      window.location.href = Routes.tag_path(node.id())
+      node = evt.target
+      action = $cyContainer.data('action')
+      if action == 'edit'
+        window.location.href = Routes.edit_tag_path(node.id())
+      else if action == 'inspect'
+        window.location.href = Routes.inspect_tag_path(node.id())
+      else
+        window.location.href = Routes.tag_path(node.id())
+      return
 
     # mouseenter over related tag -> colorize cytoscape node
     $('[id^="related-tag_"]').on 'mouseenter', ->
@@ -131,72 +150,7 @@ $(document).on 'turbolinks:load', ->
       cy.$id(tagId).removeClass('selected')
       return
 
-  # container for cytoscape view for standard users
-  $cyEditContainer = $('#cyEdit')
-  if $cyEditContainer.length > 0
-    cyEdit = cytoscape(
-      container: $cyEditContainer
-      elements: $cyEditContainer.data('elements')
-      style: [
-        {
-          selector: 'node'
-          style:
-            'background-color': 'data(background)'
-            'label': 'data(label)'
-            'color': 'data(color)'
-        }
-        {
-          selector: 'edge'
-          style:
-            'width': 3
-            'line-color': '#ccc'
-            'target-arrow-color': '#ccc'
-            'target-arrow-shape': 'triangle'
-        }
-        {
-          selector: '.hovering'
-          style:
-            'font-size': '2em'
-            'background-color': 'green'
-            'color': 'green'
-        }
-        {
-          selector: '.selected'
-          style:
-            'font-size': '2em'
-            'background-color': 'green'
-            'color': 'green'
-        }
-      ]
-      layout:
-        name: 'cose'
-        nodeRepulsion: 10000000
-        nodeDimensionsIncludeLabels: false)
-
-    cyEdit.on 'mouseover', 'node', (evt) ->
-      node = evt.target;
-      node.addClass('hovering')
-
-    cyEdit.on 'mouseout', 'node', (evt) ->
-      node = evt.target;
-      node.removeClass('hovering')
-
-    cyEdit.on 'tap', 'node', (evt) ->
-      node = evt.target;
-      window.location.href = Routes.edit_tag_path(node.id())
-
-    # mouseenter over related tag -> colorize cytoscape node
-    $('[id^="related-tag_"]').on 'mouseenter', ->
-      tagId = $(this).data('id')
-      cyEdit.$id(tagId).addClass('selected')
-      return
-
-    # mouseleave over related tag -> restore original color of cytoscape node
-    $('[id^="related-tag_"]').on 'mouseleave', ->
-      tagId = $(this).data('id')
-      cyEdit.$id(tagId).removeClass('selected')
-      return
-
+  # trigger modal for new tag
   $(document).on 'click', '#new-tag-button', ->
     $.ajax Routes.tag_modal_path(),
       type: 'GET'
@@ -211,8 +165,8 @@ $(document).on 'turbolinks:load', ->
     return
   return
 
+# clean up before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#new-tag-button'
   $('#cy').empty()
-  $('#cyEdit').empty()
   return
