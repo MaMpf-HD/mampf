@@ -12,29 +12,37 @@
   </div>
 </div>
 <div class="form-group">
-  <%= f.label :email, 'Email (Achtung: Mit dieser erfolgt auch die Nutzeranmeldung.)' %>
+  <%= f.label :email,
+              'Email (Achtung: Mit dieser erfolgt auch die Nutzeranmeldung.)' %>
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"
-     data-toggle="popover" data-trigger="focus"
+     data-toggle="popover"
+     data-trigger="focus"
      title="Info"
      data-content="Hier kannst Du die Emailadresse eingeben. Mit dieser erfolgt
      dann auch die Nutzeranmeldung, außerdem werden Emails bezüglich
      Passwortzurücksetzung dorthin geschickt.">
   </i>
-  <%= f.text_field :email, { class: 'form-control' } %>
-  <div class="invalid-feedback" id="user-email-error">
+  <%= f.text_field :email,
+                   { class: 'form-control' } %>
+  <div class="invalid-feedback"
+       id="user-email-error">
   </div>
 </div>
-  <div class="form-group form-row" style="display: <%= hide(profile) %>">
+  <div class="form-group form-row"
+       style="display: <%= hide(profile) %>">
     <div class="col-12">
       <div class="custom-control custom-checkbox">
-        <%= f.check_box :admin, class: 'custom-control-input',
+        <%= f.check_box :admin,
+                        class: 'custom-control-input',
                         disabled: user == current_user %>
-        <%= f.label :admin, 'Administrator',
+        <%= f.label :admin,
+                    'Administrator',
                     { class: 'custom-control-label' } %>
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
+           data-toggle="popover"
+           data-trigger="focus"
            title="Info"
            data-content="Hier kannst Du anklicken, ob die NutzerIn
            Administratorenrechte haben soll oder nicht. Dir selbst kannst Du
@@ -48,19 +56,23 @@
   <%= f.label :homepage %>
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"
-     data-toggle="popover" data-trigger="focus"
+     data-toggle="popover"
+     data-trigger="focus"
      title="Info"
      data-content="Hier kannst Du die Adresse einer Homepage eingeben. Das
      macht z.B. bei DozentInnen Sinn.">
   </i>
   <div class="row">
     <div class="col-10">
-      <%= f.text_field :homepage, { class: 'form-control' } %>
-      <div class="invalid-feedback" id="user-homepage-error">
+      <%= f.text_field :homepage,
+                       { class: 'form-control' } %>
+      <div class="invalid-feedback"
+           id="user-homepage-error">
       </div>
     </div>
     <div class="col-2">
-      <button id="test-link" type="button"
+      <button id="test-link"
+              type="button"
               class="btn btn-sm btn-outline-info">
         Test
       </button>
@@ -70,7 +82,8 @@
 Profilbild(kommt noch...)
 <i class="far fa-question-circle helpdesk"
    tabindex="-1"
-   data-toggle="popover" data-trigger="focus"
+   data-toggle="popover"
+   data-trigger="focus"
    title="Info"
    data-content="Hier wirst Du demnächst die Möglichkeit haben, ein
    Profilbild hochzuladen.">

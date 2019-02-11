@@ -50,7 +50,7 @@ class LessonsController < ApplicationController
     media.each do |m|
       m.update(teachable: lecture,
                description: m.description.presence ||
-                              (m.title + ' (Sitzung gelöscht)' ))
+                              (m.title + ' (Sitzung gelöscht)'))
     end
     @lesson.destroy
     redirect_to edit_lecture_path(lecture)

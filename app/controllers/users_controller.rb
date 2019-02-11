@@ -18,11 +18,13 @@ class UsersController < ApplicationController
     @errors = @user.errors
   end
 
+  # promote a generic user to admin status
   def elevate
     @errors = {}
     @user = User.find(elevate_params[:id])
     admin = elevate_params[:admin] == '1'
     return unless admin
+    # enforce a name
     if @user.name.blank?
       name = @user.email.split('@')[0]
       @user.update(admin: true, name: name)

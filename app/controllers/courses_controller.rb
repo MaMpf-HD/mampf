@@ -77,9 +77,9 @@ class CoursesController < ApplicationController
     notifications = []
     User.where(no_notifications: false).find_each do |u|
       notifications << Notification.new(recipient: u,
-                                           notifiable_id: @course.id,
-                                           notifiable_type: 'Course',
-                                           action: 'create')
+                                        notifiable_id: @course.id,
+                                        notifiable_type: 'Course',
+                                        action: 'create')
     end
     Notification.import notifications
   end

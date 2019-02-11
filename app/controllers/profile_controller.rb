@@ -118,17 +118,16 @@ class ProfileController < ApplicationController
   # if user unsubscribed the course to which the course cookie refers to,
   # update the course cookie to contain the first of the user's courses
   def update_course_cookie
-    unless @user.courses.map(&:id).include?(cookies[:current_course].to_i)
-      cookies[:current_course] = @courses&.first&.id
-    end
+    return if @user.courses.map(&:id).include?(cookies[:current_course].to_i)
+    cookies[:current_course] = @courses&.first&.id
   end
 
   # if user unsubscribed the lecture the current lecture cookie refers to,
-  # update the lecture cookie to contain the courses primary lecture id
+  # update the lecture cookie to contain the course's primary lecture id
   def update_lecture_cookie
     @course = Course.find_by_id(cookies[:current_course])
     @current_lecture = Lecture.find_by_id(cookies[:current_lecture])
-    if !@current_lecture.in?(@user.lectures)
+    unless @current_lecture.in?(@user.lectures)
       cookies[:current_lecture] = @course&.primary_lecture(@user)&.id
     end
   end

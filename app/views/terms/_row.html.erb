@@ -8,17 +8,21 @@
   <ul class="list-unstyled">
     <% term.lectures.each do |l| %>
       <li>
-        <%= link_to l.title_teacher_info, inspect_lecture_path(l)  %>
+        <%= link_to l.title_teacher_info,
+                    inspect_lecture_path(l)  %>
       </li>
     <% end %>
   </ul>
 </div>
 <div class="col-4">
-  <%= link_to 'Bearbeiten', edit_term_path(term),
+  <%= link_to 'Bearbeiten',
+              edit_term_path(term),
               class: 'btn btn-outline-primary my-1',
               remote: true %>
   <% if term.lectures.empty? %>
-    <%= link_to 'Löschen', term_path(term), method: :delete,
+    <%= link_to 'Löschen',
+                term_path(term),
+                method: :delete,
                 data: { confirm: 'Bist Du sicher?' },
                 remote: true,
                 class: 'btn btn-outline-danger my-1' %>

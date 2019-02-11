@@ -225,8 +225,10 @@ module ApplicationHelper
   # anything older than today or yesterday gets reduced to the day.month.year
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
-    return 'heute, ' + date.strftime("%H:%M") if date.to_date == Date.today
-    return 'gestern, ' + date.strftime("%H:%M") if date.to_date == Date.yesterday
-    date.strftime("%d.%m.%Y")
+    return 'heute, ' + date.strftime('%H:%M') if date.to_date == Date.today
+    if date.to_date == Date.yesterday
+      return 'gestern, ' + date.strftime('%H:%M')
+    end
+    date.strftime('%d.%m.%Y')
   end
 end

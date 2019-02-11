@@ -8,7 +8,8 @@
     <div class="col-1">
       <%= f.select :season,
                    ['WS', 'SS'],
-                   {}, { class: 'form-control' } %>
+                   {},
+                   { class: 'form-control' } %>
     </div>
     <div class="col-6">
       <ul>
@@ -20,16 +21,21 @@
       </ul>
     </div>
     <div class="col-4">
-      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
-        <button type="button" class="btn btn-secondary" id="cancel-term-edit"
-                data-term="<%= term.id %>" data-new="<%= new_action %>">
+      <%= f.submit 'Speichern',
+                   class: 'btn btn-primary' %>
+        <button type="button"
+                class="btn btn-secondary"
+                id="cancel-term-edit"
+                data-term="<%= term.id %>"
+                data-new="<%= new_action %>">
           abbrechen
         </button>
       </div>
     </div>
     <div class="row">
       <div class="col-2">
-        <div class="invalid-feedback" id="term-error">
+        <div class="invalid-feedback"
+             id="term-error">
         </div>
       </div>
     </div>

@@ -187,6 +187,6 @@ class Lesson < ApplicationRecord
   end
 
   def touch_self
-    self.touch
+    touch
   end
 end

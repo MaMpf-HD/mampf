@@ -2,7 +2,8 @@
   Gehaltene Vorlesungen (<%= user.given_lectures.count %>)
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"
-     data-toggle="popover" data-trigger="focus"
+     data-toggle="popover"
+     data-trigger="focus"
      title="Info"
      data-content="Dies ist die Liste aller Vorlesungen, die als DozentIn
      verantwortet wurden bzw. werden.">
@@ -10,7 +11,8 @@
   <ul>
     <% user.given_lectures.each do |l| %>
       <li>
-        <%= link_to l.title_term_info, edit_lecture_path(l) %>
+        <%= link_to l.title_term_info,
+                    edit_lecture_path(l) %>
       </li>
     <% end %>
   </ul>
@@ -19,7 +21,8 @@
   Editierte Module (<%= user.edited_courses.count %>)
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"
-     data-toggle="popover" data-trigger="focus"
+     data-toggle="popover"
+     data-trigger="focus"
      title="Info"
      data-content="Dies ist die Liste aller Module, für die
      Moduleditorenrechte bestehen.">
@@ -27,16 +30,19 @@
   <ul>
     <% user.edited_courses.each do |c| %>
       <li>
-        <%= link_to c.title, edit_course_path(c) %>
+        <%= link_to c.title,
+                    edit_course_path(c) %>
       </li>
     <% end %>
   </ul>
 <% end %>
 <% if user.edited_lectures.any? %>
-  Zusätzlich editierte Vorlesungen (<%= user.edited_lectures.count %>)
+  Zusätzlich editierte Vorlesungen
+  (<%= user.edited_lectures.count %>)
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"
-     data-toggle="popover" data-trigger="focus"
+     data-toggle="popover"
+     data-trigger="focus"
      title="Info"
      data-content="Dies ist die Liste aller Vorlesungen, für die
      zusätzliche Editorenrechte bestehen.">
@@ -44,16 +50,19 @@
   <ul>
     <% user.edited_lectures.each do |l| %>
       <li>
-        <%= link_to l.title_term_info, edit_lecture_path(l) %>
+        <%= link_to l.title_term_info,
+                    edit_lecture_path(l) %>
       </li>
     <% end %>
   </ul>
 <% end %>
 <% if user.edited_media.any? %>
-  Editierte Medien (<%= user.edited_media.count %>)
+  Editierte Medien
+  (<%= user.edited_media.count %>)
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"
-     data-toggle="popover" data-trigger="focus"
+     data-toggle="popover"
+     data-trigger="focus"
      title="Info"
      data-content="Dies ist die Liste aller Medien, für die
      Medieneditorenrechte bestehen.">

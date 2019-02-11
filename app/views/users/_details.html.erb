@@ -12,16 +12,20 @@
       <div class="col-6">
         <div id="user-basics-warning">
           Achtung, es gibt ungespeicherte Änderungen!
-          <%= f.submit "Speichern", class: "btn btn-primary" %>
-          <button type="button" class="btn btn-secondary ml-2"
-                  id="user-basics-cancel" data-id="<%= user.id %>">
+          <%= f.submit "Speichern",
+                       class: "btn btn-primary" %>
+          <button type="button"
+                  class="btn btn-secondary ml-2"
+                  id="user-basics-cancel"
+                  data-id="<%= user.id %>">
             verwerfen
           </button>
         </div>
       </div>
       <div class="col-3 text-center">
         <% unless profile %>
-          <%= link_to 'zur NutzerInnenübersicht', users_path,
+          <%= link_to 'zur NutzerInnenübersicht',
+                      users_path,
                       class: 'btn btn-primary' %>
         <% end %>
       </div>

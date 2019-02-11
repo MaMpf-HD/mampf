@@ -8,7 +8,8 @@
         </h5>
       </div>
       <div class="col-6 text-right">
-        <button id="open-generic-users-modal" type="button"
+        <button id="open-generic-users-modal"
+                type="button"
                 class="btn btn-outline-primary">
           Sonstige NutzerInnen (<%= generic_users_count %>) bearbeiten
         </button>
@@ -44,8 +45,10 @@
       </div>
     </div>
     <% elevated_users.each do |u| %>
-      <div class="row border-bottom" id="row-user-<%= u.id %>">
-        <%= render partial: 'users/row', locals: { user: u }%>
+      <div class="row border-bottom"
+           id="row-user-<%= u.id %>">
+        <%= render partial: 'users/row',
+                   locals: { user: u }%>
       </div>
     <% end %>
   </div>

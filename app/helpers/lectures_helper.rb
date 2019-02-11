@@ -68,6 +68,6 @@ module LecturesHelper
   end
 
   def days_short
-    [ 'Mo', 'Di', 'Mi', 'Do', 'Fr']
+    ['Mo', 'Di', 'Mi', 'Do', 'Fr']
   end
 end

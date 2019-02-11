@@ -32,8 +32,6 @@ class LecturesController < ApplicationController
     @lecture.course = Course.find_by_id(params[:course])
   end
 
-
-
   def create
     @lecture = Lecture.new(lecture_params)
     @lecture.save
@@ -85,9 +83,7 @@ class LecturesController < ApplicationController
 
   # add forum for this lecture
   def add_forum
-    unless @lecture.forum?
-      Thredded::Messageboard.create(name: @lecture.title)
-    end
+    Thredded::Messageboard.create(name: @lecture.title) unless @lecture.forum?
     redirect_to edit_lecture_path(@lecture)
   end
 
@@ -164,7 +160,8 @@ class LecturesController < ApplicationController
   # fill organizational_concept with default view
   def set_organizational_defaults
     @lecture.update(organizational_concept:
-                      render_to_string(partial: 'lectures/organizational_default',
+                      render_to_string(partial: 'lectures/' \
+                                                'organizational_default',
                                        formats: :html,
                                        layout: false))
   end

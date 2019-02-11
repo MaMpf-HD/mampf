@@ -1,3 +1,4 @@
+# Courses Helper
 module CoursesHelper
   # create text for notification about new course in notification dropdown menu
   def course_notification_item_header(course)
@@ -6,7 +7,7 @@ module CoursesHelper
 
   # create text for notification card
   def course_notification_item_details(course)
-  	'Über Deine Profileinstellungen kannst Du es abonnieren.'
+    'Über Deine Profileinstellungen kannst Du es abonnieren.'
   end
 
   # create text for notification about new course in notification card

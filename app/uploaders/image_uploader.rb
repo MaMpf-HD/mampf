@@ -1,6 +1,8 @@
 require 'image_processing/mini_magick'
-
+# ImageUploader class
+# used for storing video thumbnails
 class ImageUploader < Shrine
+  # shrine plugins
   plugin :store_dimensions
   plugin :determine_mime_type
   plugin :validation_helpers
@@ -9,14 +11,16 @@ class ImageUploader < Shrine
   plugin :pretty_location
 
   Attacher.validate do
-    validate_mime_type_inclusion %w[image/jpeg image/png image/gif], message: "falscher MIME-Typ"
+    validate_mime_type_inclusion %w[image/jpeg image/png image/gif],
+                                 message: 'falscher MIME-Typ'
   end
 
+  # store a resized version of the image
   process(:store) do |io, context|
     original = io.download
     pipeline = ImageProcessing::MiniMagick.source(original)
-    size_405 = pipeline.resize_to_limit!(405,270)
+    size405 = pipeline.resize_to_limit!(405, 270)
     original.close!
-    File.open(size_405, "rb")
+    File.open(size405, 'rb')
   end
 end

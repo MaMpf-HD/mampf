@@ -1,11 +1,15 @@
 # Term class
 class Term < ApplicationRecord
+  # in a term, many lectures take place
   has_many :lectures
+
+  # season can only be SS/WS, and there can be only one of this type each year
   validates :season, presence: true,
                      inclusion: { in: %w[SS WS],
                                   message: 'not a valid type' },
                      uniqueness: { scope: :year,
                                    message: 'Semester existiert bereits.' }
+  # a year >=2000 needs to be present
   validates :year, presence: true,
                    numericality: { only_integer: true,
                                    greater_than_or_equal_to: 2000 }
@@ -19,11 +23,13 @@ class Term < ApplicationRecord
     season == 'SS' ? Date.new(year, 9, 30) : Date.new(year + 1, 3, 31)
   end
 
+  # label contains season and year(s) with all digits
   def to_label
     return unless season.present?
     season + ' ' + year_corrected
   end
 
+  # short label contains season and year(s) with two digits
   def to_label_short
     season + ' ' + year_corrected_short
   end
@@ -32,6 +38,7 @@ class Term < ApplicationRecord
     season + year_corrected_short
   end
 
+  # array of all terms togther with their ids for use in options_for_select
   def self.select_terms
     Term.all.map { |t| [t.to_label, t.id] }
   end

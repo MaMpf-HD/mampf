@@ -120,8 +120,7 @@ class Item < ApplicationRecord
   # result might look like this:   "Bem. 29.13 zu freien Moduln"
   # in the other cases, it might look like that:
   # "KaViaR, Sitzung 27 vom 17.8.2017"  (self)
-  #  "extern Spiegel" (link)
-  #  "NÜSsE, Skript (pdf) # Nakayama-Lemma" (pdf_destination)
+  # "extern Spiegel" (link)
   def local_reference
     unless sort.in?(['self', 'link', 'pdf_destination'])
       return short_ref_with_description

@@ -305,5 +305,4 @@ class MediaController < ApplicationController
     Notification.where(notifiable_id: @medium.id, notifiable_type: 'Medium')
                 .delete_all
   end
-
 end

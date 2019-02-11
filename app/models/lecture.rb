@@ -176,8 +176,8 @@ class Lecture < ApplicationRecord
     project?('script')
   end
 
-  # the next methods put together some information on the lecture (teacher, term,
-  # title) in various combinations
+  # the next methods put together some information on the lecture (teacher,
+  # term, title) in various combinations
 
   def short_title
     course.short_title + ' ' + term.to_label_short
@@ -232,7 +232,8 @@ class Lecture < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def section_selection
     Rails.cache.fetch("#{cache_key}/section_selection") do
-      sections.natural_sort_by(&:calculated_number).map { |s| [s.to_label, s.id] }
+      sections.natural_sort_by(&:calculated_number)
+              .map { |s| [s.to_label, s.id] }
     end
   end
 

@@ -5,7 +5,8 @@
     </h4>
   </div>
   <div class="col-2">
-    <%= link_to 'Semester anlegen', new_term_path,
+    <%= link_to 'Semester anlegen',
+                new_term_path,
                 class: 'btn btn-secondary',
                 id: 'create-new-term',
                 remote: true %>
@@ -45,7 +46,9 @@
      style="display: none;">
 </div>
 <% @terms.each do |t| %>
-  <div class="row border-bottom mx-2 px-4" id="row-term-<%= t.id %>">
-    <%= render partial: 'terms/row', locals: { term: t }%>
+  <div class="row border-bottom mx-2 px-4"
+       id="row-term-<%= t.id %>">
+    <%= render partial: 'terms/row',
+               locals: { term: t }%>
   </div>
 <% end %>
