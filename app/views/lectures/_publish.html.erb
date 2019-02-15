@@ -42,7 +42,10 @@
           <div class="row mt-3">
             <div class="col-12 text-center">
               <%= f.submit 'Veröffentlichen',
-                           class: 'btn btn-danger' %>
+                           class: 'btn btn-danger',
+                           data: { confirm: 'Bist Du sicher? ' \
+                                            'Das Veröffentlichen lässt sich' \
+                                            'nicht rückgängig machen.' } %>
               <button type="button"
                       class="btn btn-secondary"
                       data-dismiss="modal">
