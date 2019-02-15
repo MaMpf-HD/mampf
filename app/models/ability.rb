@@ -13,6 +13,9 @@ class Ability
     user ||= User.new
     if user.admin?
       can :manage, :all
+      cannot [:show_announcements, :organizational], Lecture do |lecture|
+        !lecture.in?(user.lectures)
+      end
     elsif user.editor?
       # :read is a cancancan alias for index and show actions
       can [:read, :inspect], :all
@@ -42,6 +45,9 @@ class Ability
            :lock_forum, :unlock_forum, :destroy_forum],
           Lecture do |lecture|
         lecture.edited_by?(user)
+      end
+      cannot [:show_announcements, :organizational], Lecture do |lecture|
+        !lecture.in?(user.lectures)
       end
 
       can [:update, :destroy], Lesson do |lesson|
@@ -96,6 +102,9 @@ class Ability
       can :teacher, User
       # anyone should be able to get a sidebar and see the announcements
       can [:render_sidebar, :show_announcements, :organizational], Lecture
+      cannot [:show_announcements, :organizational], Lecture do |lecture|
+        !lecture.in?(user.lectures)
+      end
       can [:index, :destroy_all], Notification
       can :destroy, Notification do |n|
         n.recipient == user

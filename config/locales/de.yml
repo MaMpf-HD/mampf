@@ -39,4 +39,4 @@ de:
     organizational: 'Organisatorisches'
     announcements: 'Mitteilungen'
   unauthorized:
-    default: "Du bist nicht berechtigt, auf diese Seite zuzugreifen."
+    default: "Du bist nicht berechtigt, auf diese Seite zuzugreifen. Gegebenenfalls kannst Du durch Anpassungen Deiner Einstellungen auf Deiner Profilseite Zugriff erhalten."
