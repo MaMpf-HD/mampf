@@ -29,8 +29,7 @@ module ReferralsHelper
   end
 
   def item_status_color(referral)
-    return 'bg-post-it-pink' if !referral.item_released?
-    return 'bg-yellow-lighten-4' if referral.item_locked?
+    return 'bg-post-it-pink' if !referral.item_released? || referral.item_locked?
     ''
   end
 
@@ -39,8 +38,7 @@ module ReferralsHelper
   end
 
   def item_status_color_value(referral)
-    return '#fad1df' if !referral.item_released?
-    return '#fff9c4' if referral.item_locked?
+    return '#fad1df' if !referral.item_released? || referral.item_locked?
     'white'
   end
 end

@@ -80,15 +80,15 @@
     </i>
   </div>
   <div class="col-3 text-right">
-    <% if medium.teachable.released && !medium.released_with_inheritance? %>
-      <%= link_to 'Veröffentlichen',
-                  publish_medium_path(medium),
-                  method: :post,
-                  class: 'btn btn-danger my-1',
-                  data: { confirm: 'Bist Du sicher? Die Veröffentlichung ' \
-                                   'kann nicht rückgängig gemacht werden.' } %>
-    <% end %>
     <% unless new_medium %>
+      <% if medium.teachable.released && !medium.released_with_inheritance? %>
+        <%= link_to 'Veröffentlichen',
+                    publish_medium_path(medium),
+                    method: :post,
+                    class: 'btn btn-danger my-1',
+                    data: { confirm: 'Bist Du sicher? Die Veröffentlichung ' \
+                                     'kann nicht rückgängig gemacht werden.' } %>
+      <% end %>
       <%= link_to 'Ansehen',
                   inspect_medium_path(medium),
                   class: 'btn btn-primary my-1' %>
