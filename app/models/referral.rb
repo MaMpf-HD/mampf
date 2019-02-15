@@ -74,6 +74,16 @@ class Referral < ApplicationRecord
     false
   end
 
+  def item_released?
+    return true unless item && item.medium
+    item.medium.released_with_inheritance?
+  end
+
+  def item_locked?
+    return true unless item && item.medium
+    item.medium.locked?
+  end
+
   private
 
   # explanation provided to the vtt file

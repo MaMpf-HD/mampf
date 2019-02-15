@@ -1,4 +1,5 @@
 <%= render partial: 'media_alerts' %>
+<% if @media.any? %>
 <div class="row pb-2">
   <div class="col-sm-12 col-md-12 col-lg-6">
     <ul class="nav">
@@ -57,3 +58,8 @@
 <%= render partial: 'media/media',
            locals: { media: @media,
                      tags: true } %>
+<% else %>
+  <div class="jumbotron bg-light-blue-lighten-5">
+    Es konnten leider keine Medien gefunden werden.
+  </div>
+<% end %>

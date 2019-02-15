@@ -11,6 +11,18 @@
   color: #2251dd;
 }
 
+.grey {
+  color: grey;
+}
+
+.unreleased {
+  color: IndianRed;
+}
+
+.locked {
+  color: Indigo;
+}
+
 .white
 {
   background-color: white;
@@ -328,6 +340,11 @@
 .bg-mdb-color-lighten-2
 {
   background-color: #7283A7;
+}
+
+.bg-cold-brown
+{
+  background-color: #835c63;
 }
 
 .bg-mdb-color-lighten-1

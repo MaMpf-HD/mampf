@@ -54,8 +54,14 @@ class Section < ApplicationRecord
     displayed_number + '. ' + title
   end
 
+  # section's media are media that are contained in one of the
+  # lessons of the section
   def media
     lessons.map(&:media).flatten
+  end
+
+  def released_media
+    media.select { |m| m.released? && !m.locked? }
   end
 
   # returns the previous section, taking into account that this is may be

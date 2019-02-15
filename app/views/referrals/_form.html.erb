@@ -224,12 +224,12 @@
         </div>
       </div>
     </div>
-    <div id="item_details" style="display: <%= hide(show_link(referral) || referral.new_record?) %>">
+    <div id="item_details"
+         style="display: <%= hide(show_link(referral) || referral.new_record?) %>">
       <div class="form-group form-row">
         <div class="col-2">
         </div>
         <div class="col-2">
-          verlinkt
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
              data-toggle="popover"
@@ -237,6 +237,29 @@
              title="Info"
              data-content="Hier wird Dir angezeigt, in welchen Medienformen
              der zu referenzierende Eintrag vorliegt.">
+          </i>
+          Medien:
+          <i class="fas fa-eye-slash fa-lg redtext ml-2"
+             id="unreleased_medium_item"
+             style="display: <%= show_no_block(!referral.item_released?) %>"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="Das referenzierte Medium ist nicht veröfffentlicht.
+             D.h.: Du kannst diese Referenz anlegen; solange aber der
+             Veröffentlichungsstatus des zu referenzierenden Mediums auf
+             unveöffentlicht bleibt, ist die Referenz für NutzerInnen bei Aufruf
+             des THymE-Players nicht sichtbar.">
+          </i>
+          <i class="fas fa-lock fa-lg redtext ml-2"
+             id="locked_medium_item"
+             style="display: <%= show_no_block(referral.item_locked?) %>"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="Das referenzierte Medium ist gesperrt.
+             D.h.: Du kannst diese Referenz anlegen; solange aber der
+             Veröffentlichungsstatus des zu referenzierenden Mediums auf
+             gesperrt bleibt, ist die Referenz für NutzerInnen bei Aufruf
+             des THymE-Players nicht sichtbar.">
           </i>
         </div>
         <div class="col-2 text-right"

@@ -70,6 +70,10 @@ class Course < ApplicationRecord
     title
   end
 
+  def released
+    'all'
+  end
+
   def card_header_path(user)
     return unless user.courses.include?(self)
     course_path
@@ -78,6 +82,10 @@ class Course < ApplicationRecord
   # only irrelevant courses can be deleted
   def irrelevant?
     lectures.empty? && media.empty? && id.present?
+  end
+
+  def released_lectures
+    lectures.released
   end
 
   # The next methods return if there are any media in the Kaviar, Sesam etc.
@@ -166,6 +174,12 @@ class Course < ApplicationRecord
     end
   end
 
+  def released_lectures_by_date
+    released_lectures.to_a.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
+
   # extracts  the id of the lecture that the user has chosen as
   # primary lecture for this module
   # (that is the one that has the first position in the lectures carousel in
@@ -186,9 +200,10 @@ class Course < ApplicationRecord
     lectures.collect(&:items).flatten
   end
 
-  # returns the lecture which gets to sits on top in the lecture carousel in the
+  # returns the lecture which gets to sit on top in the lecture carousel in the
   # lecture view
   def front_lecture(user, active_lecture_id)
+    # make sure the front lecture is subscribed by the user
     if subscribed_lectures(user).map(&:id).include?(active_lecture_id)
       return Lecture.find(active_lecture_id)
     end

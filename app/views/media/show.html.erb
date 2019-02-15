@@ -4,6 +4,16 @@
       <span class="badge badge-secondary">
         <%= @medium.sort_de %>
       </span>
+      <% unless @medium.released_with_inheritance? %>
+        <span class="badge badge-warning">
+          unveröffentlicht
+        </span>
+      <% end %>
+      <% if @medium.released_with_inheritance? && @medium.locked? %>
+        <span class="badge badge-warning">
+          gesperrt
+        </span>
+      <% end %>
       <%= @medium.caption %>
     </h2>
   </div>
@@ -112,7 +122,9 @@
     </div>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
-    <% linked_media = current_user.filter_media(@medium.linked_media) %>
+    <% linked_media = current_user.filter_media(@medium.linked_media)
+                                  .select { |m| m.released_with_inheritance? &&
+                                                  !m.locked?} %>
     <%= render partial: 'media/related_media',
                locals: { media: linked_media} %>
   </div>

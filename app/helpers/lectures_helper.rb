@@ -70,4 +70,9 @@ module LecturesHelper
   def days_short
     ['Mo', 'Di', 'Mi', 'Do', 'Fr']
   end
+
+  def lectures_color(lecture)
+    return '' if lecture.released?
+    'unreleased'
+  end
 end

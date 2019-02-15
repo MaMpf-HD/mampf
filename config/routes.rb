@@ -45,9 +45,8 @@ Rails.application.routes.draw do
                                          as: 'show_announcements'
   get 'lectures/:id/organizational', to: 'lectures#organizational',
                                          as: 'organizational'
-  get 'lectures/:id/edit_organizational_concept',
-      to: 'lectures#edit_organizational_concept',
-      as: 'edit_organizational_concept'
+  post 'lecture/:id/publish', to: 'lectures#publish',
+                            as: 'publish_lecture'
   resources :lectures, except: [:index, :show]
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',
@@ -82,6 +81,8 @@ Rails.application.routes.draw do
                                        as: 'remove_screenshot'
   post 'media/:id/add_screenshot', to: 'media#add_screenshot',
                                    as: 'add_screenshot'
+  post 'media/:id/publish', to: 'media#publish',
+                            as: 'publish_medium'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',

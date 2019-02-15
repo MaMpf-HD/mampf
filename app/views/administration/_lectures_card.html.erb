@@ -22,7 +22,9 @@
           <%= l.term.to_label_short %>
         </div>
         <div class="col-6">
+          <span class="<%= l.released? ? '' : 'unreleased' %>">
           <%= l.course.title %>
+          </span>
         </div>
         <% if teacher %>
           <div class="col-4">

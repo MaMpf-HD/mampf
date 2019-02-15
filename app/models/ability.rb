@@ -52,7 +52,7 @@ class Ability
       can [:catalog, :search, :play, :display], Medium
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
-           :export_screenshot, :destroy], Medium do |m|
+           :export_screenshot, :publish, :destroy], Medium do |m|
         m.edited_with_inheritance_by?(user)
       end
 
@@ -65,6 +65,7 @@ class Ability
       can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
       end
+
       can [:list_tags, :list_sections], Section
 
       can :manage, Tag
@@ -80,7 +81,16 @@ class Ability
     else
       can :read, :all
       cannot :read, [:administration, Term, User, Announcement]
-      can [:play, :display], Medium
+      # guest users can play/display media only when their release status
+      # is 'all', logged in users can do that unless the release status is
+      # 'locked'
+      can [:play, :display], Medium do |medium|
+        if !user.new_record?
+          medium.released_with_inheritance? && !medium.locked?
+        else
+          medium.released_with_inheritance? && medium.free?
+        end
+      end
       cannot [:index, :update, :create], Tag
       can :display_cyto, Tag
       can :teacher, User
@@ -89,6 +99,15 @@ class Ability
       can [:index, :destroy_all], Notification
       can :destroy, Notification do |n|
         n.recipient == user
+      end
+      cannot :show, Medium do |medium|
+        !medium.released_with_inheritance? || medium.locked?
+      end
+      cannot :show, Section do |section|
+        !section.lecture.released?
+      end
+      cannot :show, Lesson do |lesson|
+        !lesson.lecture.released?
       end
       can [:index, :destroy_all, :destroy_lecture_notifications,
            :destroy_news_notifications], Notification

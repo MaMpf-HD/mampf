@@ -158,7 +158,7 @@ module ApplicationHelper
     Course.all.each do |c|
       lectures = [[c.short_title + ' alle', 'Course-' + c.id.to_s]]
       c.lectures.includes(:term).each do |l|
-        lectures.push [l.short_title, 'Lecture-' + l.id.to_s]
+        lectures.push [l.short_title_release, 'Lecture-' + l.id.to_s]
       end
       list.push [c.title, lectures]
     end

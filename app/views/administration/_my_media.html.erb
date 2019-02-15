@@ -11,7 +11,8 @@
        <i>Medien</i>,
        für die Du als BearbeiterIn eingetragen bist. Medien, für Die Du
        Bearbeitungsrechte erbst (beispielsweise als ModuleditorIn), sind in
-       dieser Liste nicht aufgeführt.
+       dieser Liste nicht aufgeführt. Unveröffentlichte Medien sind in rötlicher
+       Farbe gekennzeichnet.
        <br>
        <br>
        Ein
@@ -56,7 +57,9 @@
                        .reverse.first(25)
                        .each do |m| %>
           <li>
-            <%= link_to m.title, edit_medium_path(m) %>
+            <%= link_to m.title,
+                        edit_medium_path(m),
+                        class: textcolor(m) %>
           </li>
         <% end %>
       </ul>

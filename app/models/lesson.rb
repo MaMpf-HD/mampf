@@ -78,6 +78,10 @@ class Lesson < ApplicationRecord
     lesson_path
   end
 
+  def released
+    lecture.released
+  end
+
   # some more methods dealing with the title
 
   def short_title_with_lecture
@@ -109,6 +113,14 @@ class Lesson < ApplicationRecord
 
   def next
     lecture.lessons.find { |l| l.number == number + 1 }
+  end
+
+  def released_media
+    media.released
+  end
+
+  def unlocked_media
+    media.unlocked
   end
 
   # the number of a lesson is calculated by its date relative to the other
@@ -160,12 +172,12 @@ class Lesson < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def self.editable_selection(user)
     if user.admin?
-      return Lesson.order_reverse
+      return Lesson.includes(:lecture).order_reverse
                    .map do |l|
                      [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s]
                    end
     end
-    Lesson.order_reverse
+    Lesson.includes(:lecture).order_reverse
           .select { |l| l.edited_by?(user) }
           .map { |l| [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s] }
   end

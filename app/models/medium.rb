@@ -64,6 +64,11 @@ class Medium < ApplicationRecord
   # as an item as well
   after_create :create_self_item
 
+  # scopes for released/unreleased media
+  scope :released, -> { where.not(released: nil) }
+  scope :unreleased, -> { where(released: nil) }
+  scope :unlocked, -> { where(released: ['all', 'users'])}
+
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script KeksQuestion KeksQuiz]
@@ -113,8 +118,8 @@ class Medium < ApplicationRecord
       filtered.select { |m| m.teachable == course }
   end
 
-  # returns the ARel of all media for the given project, if the given course
-  # has media for this project
+  # returns the ARel of all media for the given project, if the
+  # given course has media for this project
   def self.filter_media(course, project)
     return Medium.order(:id) unless project.present?
     return [] unless course.available_food.include?(project)
@@ -175,7 +180,7 @@ class Medium < ApplicationRecord
   # returns the array of all media (by title), together with their ids
   # is used in options_for_select in form helpers.
   def self.select_by_name
-    Medium.includes(:teachable).all.map { |m| [m.title, m.id] }
+    Medium.includes(:teachable).all.map { |m| [m.title_for_viewers, m.id] }
   end
 
   # returns the array of media sorts specified by the search params
@@ -292,11 +297,13 @@ class Medium < ApplicationRecord
 
   # creates a .vtt file (and returns its path), which contains
   # all data needed by the thyme player to realize references
+  # Note: Only references to released media will be incorporated.
   def references_to_vtt
     path = references_path
     File.open(path, 'w+:UTF-8') do |f|
       f.write vtt_start
-      referrals_by_time.each do |r|
+      referrals_by_time.select { |r| r.item_released? && !r.item_locked? }
+                       .each do |r|
         f.write r.vtt_time_span
         f.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
       end
@@ -448,6 +455,25 @@ class Medium < ApplicationRecord
 
   def sort_de
     Medium.sort_de[sort]
+  end
+
+  # returns the mediums release state *with inheritance*, i.e. it is true iff
+  # - the medium itself is released
+  # AND
+  # - the medium's teachable is acourse OR it is a lecture that has been
+  #   released OR it it is a lesson belonging to a released lecture
+  def released_with_inheritance?
+    return false if released.nil?
+    return true if teachable_type == 'Course'
+    teachable.lecture.released.present?
+  end
+
+  def locked?
+    released == 'locked'
+  end
+
+  def free?
+    released == 'all'
   end
 
   # returns true if the medium's teachable if one of the following:

@@ -151,6 +151,10 @@ class Tag < ApplicationRecord
       target: related_tag.id }
   end
 
+  def released_sections
+    sections.where(id: sections.select { |s| s.lecture.released? }.map(&:id))
+  end
+
   private
 
   def touch_lectures

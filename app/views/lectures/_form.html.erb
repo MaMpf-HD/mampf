@@ -5,10 +5,21 @@
         <span class="badge badge-secondary">
           Vorlesung
         </span>
+        <% unless lecture.released? %>
+          <span class="badge badge-warning">
+            unveröffentlicht
+          </span>
+        <% end %>
         <%= lecture.title_with_teacher %>
       </h4>
     </div>
     <div class="col-5 text-right">
+      <% if !inspection && !lecture.released? %>
+        <button type="button" class="btn btn-danger"
+                data-toggle="modal" data-target="#publishLectureModal">
+          Veröffentlichen
+        </button>
+      <% end %>
       <% if inspection_and_editor?(inspection, lecture) %>
         <%= link_to 'Bearbeiten', edit_lecture_path(lecture),
                      class: 'btn btn-primary my-1' %>
@@ -76,4 +87,5 @@
 <% unless inspection %>
   <%= render partial: 'tags/modal' %>
   <%= render partial: 'announcements/modal' %>
+  <%= render partial: 'lectures/publish' %>
 <% end %>

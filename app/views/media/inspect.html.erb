@@ -9,15 +9,18 @@
   </div>
   <div class="col-3 text-right">
     <% if current_user.admin || @medium.edited_with_inheritance_by?(current_user)%>
-      <%= link_to 'Bearbeiten', edit_medium_path(@medium),
+      <%= link_to 'Bearbeiten',
+                  edit_medium_path(@medium),
                   class: 'btn btn-primary my-1' %>
     <% end %>
     <% teachable_scope = @medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-      <%= link_to 'zum Modul', inspect_course_path(teachable_scope),
+      <%= link_to 'zum Modul',
+                  inspect_course_path(teachable_scope),
                   class: 'btn btn-primary' %>
     <% else %>
-      <%= link_to 'zur Vorlesung', inspect_lecture_path(teachable_scope),
+      <%= link_to 'zur Vorlesung',
+                  inspect_lecture_path(teachable_scope),
                   class: 'btn btn-primary' %>
     <% end %>
   </div>
@@ -36,7 +39,9 @@
                tabindex="-1"
                data-toggle="popover" data-trigger="focus"
                title="Info"
-               data-content="Jedes Medium hat genau einen Typ. Die folgenden Typen mit stehen zur Auswahl: <ul><li>KaViaR: Vorlesungsvideos</li><li>SeSAM: Worked-Example-Videos</li><li>KIWi: Wiederholungsvideos</li><li>KeKs-Quiz: Quiz auf der KeKs-Plattform</li><li>KeKs-Frage: Frage auf der KeKs-Plattform</li>
+               data-content="Jedes Medium hat genau einen Typ. Die folgenden
+               Typen mit stehen zur Auswahl:
+               <ul><li>KaViaR: Vorlesungsvideos</li><li>SeSAM: Worked-Example-Videos</li><li>KIWi: Wiederholungsvideos</li><li>KeKs-Quiz: Quiz auf der KeKs-Plattform</li><li>KeKs-Frage: Frage auf der KeKs-Plattform</li>
                <li>ErDBeere: Medium auf der ErDBeere-Plattform</li>
                <li>NÜSsE: Übungsblätter, Skripte und alles, was in keine der anderen Kategorien passt</li></ul>"
                data-html="true">
@@ -59,8 +64,7 @@
             </i>
           </div>
           <div class="col-8">
-            <%= link_to @medium.teachable.long_title,
-                        inspect_teachable_path(@medium.teachable) %>
+            <%= @medium.teachable.long_title %>
           </div>
         </div>
         <div class="row mb-2">

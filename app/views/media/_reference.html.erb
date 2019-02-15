@@ -1,7 +1,7 @@
 <% if medium.referrals.present? %>
   <ol id="meta-list">
     <% medium.referrals_by_time.each do |r| %>
-      <li>
+      <li class="<%= item_status_color(r) %>">
         <a id="<%='metaref-' + r.id.to_s %>"
            data-time="<%= r.start_time.total_seconds %>"
            data-referral="<%= r.id %>">

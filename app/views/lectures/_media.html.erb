@@ -11,7 +11,8 @@
              title="Info"
              data-content="Hier werden alle Medien angezeigt, die direkt zu
              dieser Vorlesung oder zu Sitzungen dieser Vorlesung assoziiert
-             sind.
+             sind. Medien in Rot sind noch nicht veröffentlicht, Medien in
+             Indigo sind gesperrt.
              Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
              angesiedelt sind, so wird darauf hingeweisen.">
           </i>
@@ -73,6 +74,7 @@
                     <%= link_to m.local_info,
                                 inspect_or_edit_medium_path(m, inspection),
                                 id: "lecture-#{dom_id(m)}",
+                                class: textcolor(m),
                                 data: { type: m.teachable.class.to_s,
                                         id: m.teachable.id,
                                         tags: m.tags.map(&:id) } %>

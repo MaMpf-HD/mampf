@@ -1,6 +1,6 @@
 # CoursesController
 class CoursesController < ApplicationController
-  before_action :set_course, only: [:show]
+  before_action :check_for_course, only: [:show]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   authorize_resource
   layout 'administration'
@@ -29,6 +29,12 @@ class CoursesController < ApplicationController
   def show
     @course = Course.includes(lectures: [:teacher, :term, :chapters])
                     .find_by_id(params[:id])
+    # if active_id is corresponds to an untreleased lecture, redirect to
+    # course page without active_id parameter
+    if !params[:active].to_i.in?(@course.released_lectures.map(&:id) + [0])
+      redirect_to course_path(@course)
+      return
+    end
     # id of the current course is stored in a cookie
     # the cookie is used to keep track of the course in the course dropdown
     cookies[:current_course] = params[:id]
@@ -52,9 +58,8 @@ class CoursesController < ApplicationController
 
   private
 
-  def set_course
-    @course = Course.find_by_id(params[:id])
-    return if @course.present?
+  def check_for_course
+    return if Course.exists?(params[:id])
     redirect_to :root, alert: 'Ein Kurs mit der angeforderten id existiert ' \
                               'nicht.'
   end

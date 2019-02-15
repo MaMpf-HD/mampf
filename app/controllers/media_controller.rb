@@ -67,13 +67,18 @@ class MediaController < ApplicationController
     if @medium.valid?
       # convert pdf destinations from extracted metadata to actual items
       @medium.create_pdf_destinations!
-      # create notification about creation of medium to all subscribers
-      create_notifications unless @medium.sort == 'KeksQuestion'
       redirect_to edit_medium_path(@medium)
       return
     end
     @errors = @medium.errors
     render :update
+  end
+
+  def publish
+    @medium.update(released: 'all')
+    # create notification about creation of medium to all subscribers
+    create_notifications unless @medium.sort == 'KeksQuestion'
+    redirect_to edit_medium_path(@medium)
   end
 
   def destroy
@@ -93,6 +98,10 @@ class MediaController < ApplicationController
 
   # play the video using thyme player
   def play
+    if @medium.video.nil?
+      redirect_to :root, alert: 'Zu diesem Medium existiert kein Video.'
+      return
+    end
     @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
     @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
     @time = params[:time]
@@ -101,6 +110,10 @@ class MediaController < ApplicationController
 
   # show the pdf, optionally at specified page or named destination
   def display
+    if @medium.manuscript.nil?
+      redirect_to :root, alert: 'Zu diesem Medium existiert kein Manuskript.'
+      return
+    end
     unless params[:destination].present?
       redirect_to @medium.manuscript_url unless params[:destination].present?
       return
@@ -195,7 +208,7 @@ class MediaController < ApplicationController
   def medium_params
     params.require(:medium).permit(:sort, :description, :video, :manuscript,
                                    :external_reference_link, :teachable_type,
-                                   :teachable_id,
+                                   :teachable_id, :released,
                                    editor_ids: [],
                                    tag_ids: [],
                                    linked_medium_ids: [])
@@ -261,6 +274,7 @@ class MediaController < ApplicationController
   def search_results
     search_results = Medium.search(@course.primary_lecture(current_user),
                                    params)
+                           .select { |m| m.released? && !m.locked? }
     return search_results unless params[:reverse]
     search_results.reverse
   end

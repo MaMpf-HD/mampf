@@ -31,8 +31,9 @@
           <ul>
             <li>
               <% lesson.media.each do |m| %>
-                <%= link_to m.sort + ', ' + m.local_info,
-                            inspect_medium_path(m) %>
+                <%= link_to m.sort_de + ', ' + m.local_info,
+                            inspect_medium_path(m),
+                            class: textcolor(m) %>
               <% end %>
             </li>
           </ul>
@@ -81,8 +82,9 @@
           <ul>
             <li>
               <% lesson.media.each do |m| %>
-                <%= link_to m.sort + ', ' + m.local_info,
-                            edit_medium_path(m) %>
+                <%= link_to m.sort_de + ', ' + m.local_info,
+                            edit_medium_path(m),
+                            class: text_color(m) %>
               <% end %>
             </li>
           </ul>

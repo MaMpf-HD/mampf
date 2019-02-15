@@ -13,6 +13,9 @@
       <li>
         <%= link_to l.title_term_info,
                     edit_lecture_path(l) %>
+        <% unless l.released? %>
+          (unveröffentlicht)
+        <% end %>
       </li>
     <% end %>
   </ul>
@@ -52,6 +55,9 @@
       <li>
         <%= link_to l.title_term_info,
                     edit_lecture_path(l) %>
+        <% unless l.released? %>
+          (unveröffentlicht)
+        <% end %>
       </li>
     <% end %>
   </ul>

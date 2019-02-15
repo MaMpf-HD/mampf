@@ -1,10 +1,6 @@
 # LecturesController
 class LecturesController < ApplicationController
-  before_action :set_lecture, only: [:edit, :update, :destroy, :inspect,
-                                     :update_teacher, :update_editors,
-                                     :add_forum, :lock_forum, :unlock_forum,
-                                     :destroy_forum, :render_sidebar,
-                                     :organizational, :show_announcements]
+  before_action :set_lecture, except: [:new, :create]
   authorize_resource
   before_action :check_for_consent
   layout 'administration'
@@ -38,8 +34,6 @@ class LecturesController < ApplicationController
     if @lecture.valid?
       # set organizational_concept to default
       set_organizational_defaults
-      # create notifications about creation od this lecture
-      create_notifications
       # depending on where the create action was trriggered from, return
       # to admin index view or edit course view
       unless params[:lecture][:from] == 'course'
@@ -50,6 +44,16 @@ class LecturesController < ApplicationController
       return
     end
     @errors = @lecture.errors
+  end
+
+  def publish
+    @lecture.update(released: 'all')
+    if params[:publish_media] == '1'
+      @lecture.media_with_inheritance.update_all(released: 'all')
+    end
+    # create notifications about creation od this lecture
+    create_notifications
+    redirect_to edit_lecture_path(@lecture)
   end
 
   def destroy
@@ -113,9 +117,6 @@ class LecturesController < ApplicationController
 
   def organizational
     render layout: 'application'
-  end
-
-  def edit_organizational_concept
   end
 
   private

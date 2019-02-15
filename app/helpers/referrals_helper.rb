@@ -21,4 +21,26 @@ module ReferralsHelper
     return false if referral.item.nil?
     true
   end
+
+  # returns the color in which the rferral is presented in the refrences box
+  # (pink if the item belongs to a non-released medium, white otherwise)
+  def item_released_color(referral)
+    referral.item_released? ? '' : 'bg-post-it-pink'
+  end
+
+  def item_status_color(referral)
+    return 'bg-post-it-pink' if !referral.item_released?
+    return 'bg-yellow-lighten-4' if referral.item_locked?
+    ''
+  end
+
+  def item_released_color_value(referral)
+    referral.item_released? ? 'white' : '#fad1df'
+  end
+
+  def item_status_color_value(referral)
+    return '#fad1df' if !referral.item_released?
+    return '#fff9c4' if referral.item_locked?
+    'white'
+  end
 end

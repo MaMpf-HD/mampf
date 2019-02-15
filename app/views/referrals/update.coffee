@@ -87,7 +87,7 @@ $('#action-container').empty()
 
 # make a nice little fading effect for the item in the references box
 setTimeout (->
-  metaRef.style.background = 'white'
+  metaRef.style.background = '<%= item_status_color_value(@referral) %>'
   return
 ), 3000
 <% end %>

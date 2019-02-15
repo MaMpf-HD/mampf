@@ -93,7 +93,8 @@
      data-toggle="popover"
      data-trigger="focus"
      title="Info"
-     data-content="Dies ist die Liste aller Vorlesungen zu diesem Modul.">
+     data-content="Dies ist die Liste aller Vorlesungen zu diesem Modul.
+     Unveröffentlichte Vorlesungen sind in rötlicher Farbe gekennzeichnet.">
   </i>
   <a href="<%= new_lecture_path(params: { from: 'course',
                                           course: course.id }) %>"
@@ -107,7 +108,9 @@
     <ul>
       <% course.lectures_by_date.each do |l| %>
         <li>
-          <%= link_to l.term_teacher_info, edit_or_inspect_lecture_path(l)  %>
+          <%= link_to l.term_teacher_info,
+                      edit_or_inspect_lecture_path(l),
+                      class: lectures_color(l)  %>
         </li>
       <% end %>
     </ul>

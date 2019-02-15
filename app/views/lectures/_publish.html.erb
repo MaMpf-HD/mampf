@@ -1,0 +1,57 @@
+<div class="modal fade"
+     id="publishLectureModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="publishLectureModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="publishLectureModalLabel">
+          Vorlesung veröffentlichen
+        </h5>
+        <button type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+      </div>
+      <%= bootstrap_form_with url: publish_lecture_path,
+                               remote: true,
+                               method: 'post' do |f| %>
+        <div class="modal-body">
+          Beim Veröffentlichen der Vorlesung sollen
+          <div class="row mt-2 mb-2">
+            <div class="col-12">
+              <%= f.radio_button :publish_media, 1,
+                                 label: 'sämtliche verknüpfte Medien ebenfalls ' \
+                                        'veröffentlicht werden.',
+                                 checked: true %>
+              <%= f.radio_button :publish_media, 0,
+                                 label: 'unveröffentlichte verknüpfte Medien '\
+                                        'weiterhin unveröffentlicht bleiben.',
+                                 checked: false %>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="row mt-3">
+            <div class="col-12 text-center">
+              <%= f.submit 'Veröffentlichen',
+                           class: 'btn btn-danger' %>
+              <button type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal">
+                abbrechen
+              </button>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

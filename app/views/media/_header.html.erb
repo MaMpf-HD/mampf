@@ -4,6 +4,22 @@
       <span class="badge badge-secondary">
         Medium
       </span>
+      <% unless medium.released_with_inheritance? %>
+        <span class="badge badge-warning"
+              data-toggle="tooltip"
+              title="<%= if medium.teachable.released.nil?
+                           'in unveröffentlichter Vorlesung'
+                         end %>">
+          unveröffentlicht
+        </span>
+      <% end %>
+      <% if medium.released_with_inheritance? && medium.locked? %>
+        <span class="badge badge-warning"
+              data-toggle="tooltip"
+              title="Dieses Medium wurde gesperrt. Du kannst es unter Basisdaten->Zugriffsrechte entsperren.">
+          gesperrt
+        </span>
+      <% end %>
       <% unless new_medium %>
         <%= medium.local_info %>
       <% end %>
@@ -64,6 +80,14 @@
     </i>
   </div>
   <div class="col-3 text-right">
+    <% if medium.teachable.released && !medium.released_with_inheritance? %>
+      <%= link_to 'Veröffentlichen',
+                  publish_medium_path(medium),
+                  method: :post,
+                  class: 'btn btn-danger my-1',
+                  data: { confirm: 'Bist Du sicher? Die Veröffentlichung ' \
+                                   'kann nicht rückgängig gemacht werden.' } %>
+    <% end %>
     <% unless new_medium %>
       <%= link_to 'Ansehen',
                   inspect_medium_path(medium),
@@ -79,7 +103,8 @@
                     class: 'btn btn-primary' %>
     <% end %>
     <% if !new_medium && medium.irrelevant? %>
-      <%= link_to 'Medium löschen', medium_path, method: :delete,
+      <%= link_to 'Löschen', medium_path,
+                  method: :delete,
                   data: { confirm: 'Bist Du sicher?' },
                   class: 'btn btn-danger' %>
     <% end %>

@@ -20,9 +20,13 @@
         <li>
           <% if !inspection && (current_user.admin ||
                 current_user.in?(s.lecture.editors_with_inheritance)) %>
-            <%= link_to s.lecture.title, edit_lecture_path(s.lecture) %>
+            <%= link_to s.lecture.title,
+                        edit_lecture_path(s.lecture),
+                        class: lectures_color(s.lecture) %>
           <% else %>
-            <%= link_to s.lecture.title, inspect_lecture_path(s.lecture) %>
+            <%= link_to s.lecture.title,
+                        inspect_lecture_path(s.lecture),
+                        class: lectures_color(s.lecture) %>
           <% end %>
           :
           <%= s.to_label %>

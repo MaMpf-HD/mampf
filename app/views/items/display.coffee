@@ -63,10 +63,21 @@ $('#medium-link-test')
 $('#medium-link-ref').hide()
 <% end %>
 
+<% if @item.medium.released_with_inheritance? && !@item.medium.locked? %>
+$('#unreleased_medium_item').hide()
+$('#locked_medium_item').hide()
+<% elsif !@item.medium.released_with_inheritance? %>
+$('#unreleased_medium_item').show()
+$('#locked_medium_item').hide()
+<% else %>
+$('#unreleased_medium_item').hide()
+$('#locked_medium_item').show()
+<% end %>
+
 # end of the case where the item is associated to a medium
 <% end %>
 $('#item_details').show()
-# end of the cas where the sort of the item is not 'link'
+# end of the case where the sort of the item is not 'link'
 <% else %>
 # item' sort is 'link'
 # clean up from previous items and inject information from the present one

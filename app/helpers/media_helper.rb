@@ -62,4 +62,11 @@ module MediaHelper
     return [] unless medium.teachable.class.to_s == 'Lesson'
     medium.teachable.sections.map(&:id)
   end
+
+
+  def textcolor(medium)
+    return '' if medium.released_with_inheritance? && !medium.locked?
+    return 'locked' if medium.locked?
+    'unreleased'
+  end
 end

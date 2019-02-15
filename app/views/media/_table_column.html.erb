@@ -4,7 +4,8 @@
       <% media.each do |m| %>
         <li>
           <%= link_to m.local_info,
-                      inspect_or_edit_medium_path(m, inspection) %>
+                      inspect_or_edit_medium_path(m, inspection),
+                      class: textcolor(m) %>
         </li>
       <% end %>
     </ul>
@@ -44,7 +45,8 @@
                           <% unless m.nil? %>
                             <li>
                               <%= link_to m.local_info,
-                                  inspect_or_edit_medium_path(m, inspection) %>
+                                  inspect_or_edit_medium_path(m, inspection),
+                                  class: textcolor(m) %>
                             </li>
                           <% end %>
                         <% end %>

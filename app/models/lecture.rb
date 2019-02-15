@@ -43,6 +43,10 @@ class Lecture < ApplicationRecord
   # list of editors
   after_save :remove_teacher_as_editor
 
+  # scopes for released/unreleased lectures
+  scope :released, -> { where.not(released: nil) }
+  scope :unreleased, -> { where(released: nil) }
+
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
 
@@ -183,6 +187,11 @@ class Lecture < ApplicationRecord
     course.short_title + ' ' + term.to_label_short
   end
 
+  def short_title_release
+    return short_title if released?
+    short_title + ' (unveröffentlicht)'
+  end
+
   def short_title_brackets
     course.short_title + ' (' + term.to_label_short + ')'
   end
@@ -196,6 +205,11 @@ class Lecture < ApplicationRecord
     return term.to_label unless teacher.present?
     return term.to_label unless teacher.name.present?
     term.to_label + ', ' + teacher.name
+  end
+
+  def term_teacher_released_info
+    return term_teacher_info if released?
+    term_teacher_info + ' (unveröffentlicht)'
   end
 
   def title_term_info
@@ -263,7 +277,7 @@ class Lecture < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def self.editable_selection(user)
     if user.admin?
-      return Lecture.sort_by_date(Lecture.includes(:course).all)
+      return Lecture.sort_by_date(Lecture.includes(:course, :term).all)
                     .map { |l| [l.short_title, 'Lecture-' + l.id.to_s] }
     end
     Lecture.sort_by_date(Lecture.includes(:course, :editors).all)
@@ -403,7 +417,7 @@ class Lecture < ApplicationRecord
   # to this lecture and a given project (kaviar, semsam etc.)
   def project?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
-      Medium.where(sort: sort[project]).includes(:teachable)
+      Medium.where(sort: sort[project]).unlocked.includes(:teachable)
             .any? do |m|
         m.teachable&.lecture == self || m.teachable == course
       end

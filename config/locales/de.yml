@@ -38,3 +38,5 @@ de:
     board: 'Forum'
     organizational: 'Organisatorisches'
     announcements: 'Mitteilungen'
+  unauthorized:
+    default: "Du bist nicht berechtigt, auf diese Seite zuzugreifen."
