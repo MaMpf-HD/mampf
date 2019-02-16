@@ -92,9 +92,9 @@ class Ability
       # 'locked'
       can [:play, :display], Medium do |medium|
         if !user.new_record?
-          medium.released_with_inheritance? && !medium.locked?
+          medium.visible?
         else
-          medium.released_with_inheritance? && medium.free?
+          medium.published_with_inheritance? && medium.free?
         end
       end
       cannot [:index, :update, :create], Tag
@@ -110,13 +110,13 @@ class Ability
         n.recipient == user
       end
       cannot :show, Medium do |medium|
-        !medium.released_with_inheritance? || medium.locked?
+        !medium.published_with_inheritance? || medium.locked?
       end
       cannot :show, Section do |section|
-        !section.lecture.released?
+        !section.lecture.published?
       end
       cannot :show, Lesson do |lesson|
-        !lesson.lecture.released?
+        !lesson.lecture.published?
       end
       can [:index, :destroy_all, :destroy_lecture_notifications,
            :destroy_news_notifications], Notification

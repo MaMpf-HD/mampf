@@ -43,9 +43,8 @@ class Lecture < ApplicationRecord
   # list of editors
   after_save :remove_teacher_as_editor
 
-  # scopes for released/unreleased lectures
-  scope :released, -> { where.not(released: nil) }
-  scope :unreleased, -> { where(released: nil) }
+  # scopes for published lectures
+  scope :published, -> { where.not(released: nil) }
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
@@ -148,6 +147,10 @@ class Lecture < ApplicationRecord
                           .reduce(:concat)
   end
 
+  def published?
+    !released.nil?
+  end
+
   # The next methods return if there are any media in the Kaviar, Sesam etc.
   # projects that are associated to this lecture *with inheritance*
   # These methods make use of caching.
@@ -188,7 +191,7 @@ class Lecture < ApplicationRecord
   end
 
   def short_title_release
-    return short_title if released?
+    return short_title if published?
     short_title + ' (unveröffentlicht)'
   end
 
@@ -207,8 +210,8 @@ class Lecture < ApplicationRecord
     term.to_label + ', ' + teacher.name
   end
 
-  def term_teacher_released_info
-    return term_teacher_info if released?
+  def term_teacher_published_info
+    return term_teacher_info if published?
     term_teacher_info + ' (unveröffentlicht)'
   end
 
@@ -417,7 +420,7 @@ class Lecture < ApplicationRecord
   # to this lecture and a given project (kaviar, semsam etc.)
   def project?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
-      Medium.where(sort: sort[project]).unlocked.includes(:teachable)
+      Medium.where(sort: sort[project]).locally_visible.includes(:teachable)
             .any? do |m|
         m.teachable&.lecture == self || m.teachable == course
       end

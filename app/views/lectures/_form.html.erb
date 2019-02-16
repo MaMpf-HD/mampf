@@ -5,7 +5,7 @@
         <span class="badge badge-secondary">
           Vorlesung
         </span>
-        <% unless lecture.released? %>
+        <% unless lecture.published? %>
           <span class="badge badge-warning">
             unveröffentlicht
           </span>
@@ -14,7 +14,7 @@
       </h4>
     </div>
     <div class="col-5 text-right">
-      <% if !inspection && !lecture.released? %>
+      <% if !inspection && !lecture.published? %>
         <button type="button" class="btn btn-danger"
                 data-toggle="modal" data-target="#publishLectureModal">
           Veröffentlichen

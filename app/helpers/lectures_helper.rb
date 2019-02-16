@@ -71,8 +71,9 @@ module LecturesHelper
     ['Mo', 'Di', 'Mi', 'Do', 'Fr']
   end
 
+  # unpublished lecture get a different link color
   def lectures_color(lecture)
-    return '' if lecture.released?
-    'unreleased'
+    return '' if lecture.published?
+    'unpublished'
   end
 end

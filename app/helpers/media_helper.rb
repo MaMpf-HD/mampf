@@ -65,8 +65,8 @@ module MediaHelper
 
 
   def textcolor(medium)
-    return '' if medium.released_with_inheritance? && !medium.locked?
+    return '' if medium.visible?
     return 'locked' if medium.locked?
-    'unreleased'
+    'unpublished'
   end
 end

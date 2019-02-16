@@ -20,8 +20,7 @@ class TagsController < ApplicationController
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: 'KeksQuestion'))
-                         .select { |m| m.released_with_inheritance? &&
-                                         !m.locked? }
+                         .select(&:visible?)
     render layout: 'application_no_sidebar'
   end
 

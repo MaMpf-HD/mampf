@@ -64,10 +64,11 @@ class Medium < ApplicationRecord
   # as an item as well
   after_create :create_self_item
 
-  # scopes for released/unreleased media
-  scope :released, -> { where.not(released: nil) }
-  scope :unreleased, -> { where(released: nil) }
-  scope :unlocked, -> { where(released: ['all', 'users'])}
+  # scope for published/locally visible media
+  # locally visible media are published (without inheritance) and unlocked
+  # (they may not be globally visible as their lecture may be unpublished)
+  scope :published, -> { where.not(released: nil) }
+  scope :locally_visible, -> { where(released: ['all', 'users'])}
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
@@ -297,12 +298,12 @@ class Medium < ApplicationRecord
 
   # creates a .vtt file (and returns its path), which contains
   # all data needed by the thyme player to realize references
-  # Note: Only references to released media will be incorporated.
+  # Note: Only references to unlocked media will be incorporated.
   def references_to_vtt
     path = references_path
     File.open(path, 'w+:UTF-8') do |f|
       f.write vtt_start
-      referrals_by_time.select { |r| r.item_released? && !r.item_locked? }
+      referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
                        .each do |r|
         f.write r.vtt_time_span
         f.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
@@ -457,15 +458,19 @@ class Medium < ApplicationRecord
     Medium.sort_de[sort]
   end
 
-  # returns the mediums release state *with inheritance*, i.e. it is true iff
-  # - the medium itself is released
+  # returns the mediums publish state *with inheritance*, i.e. it is true iff
+  # - the medium itself has been published
   # AND
-  # - the medium's teachable is acourse OR it is a lecture that has been
-  #   released OR it it is a lesson belonging to a released lecture
-  def released_with_inheritance?
-    return false if released.nil?
+  # - the medium's teachable is a course OR it is a lecture that has been
+  #   published OR it it is a lesson belonging to a published lecture
+  def published_with_inheritance?
+    return false unless published?
     return true if teachable_type == 'Course'
-    teachable.lecture.released.present?
+    teachable.lecture.published?
+  end
+
+  def published?
+    !released.nil?
   end
 
   def locked?
@@ -474,6 +479,10 @@ class Medium < ApplicationRecord
 
   def free?
     released == 'all'
+  end
+
+  def visible?
+    published_with_inheritance? && !locked?
   end
 
   # returns true if the medium's teachable if one of the following:

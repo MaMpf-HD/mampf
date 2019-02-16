@@ -63,14 +63,14 @@ $('#medium-link-test')
 $('#medium-link-ref').hide()
 <% end %>
 
-<% if @item.medium.released_with_inheritance? && !@item.medium.locked? %>
-$('#unreleased_medium_item').hide()
+<% if @item.medium.visible? %>
+$('#unpublished_medium_item').hide()
 $('#locked_medium_item').hide()
-<% elsif !@item.medium.released_with_inheritance? %>
-$('#unreleased_medium_item').show()
+<% elsif !@item.medium.published_with_inheritance? %>
+$('#unpublished_medium_item').show()
 $('#locked_medium_item').hide()
 <% else %>
-$('#unreleased_medium_item').hide()
+$('#unpublished_medium_item').hide()
 $('#locked_medium_item').show()
 <% end %>
 

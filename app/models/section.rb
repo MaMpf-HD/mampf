@@ -60,8 +60,9 @@ class Section < ApplicationRecord
     lessons.map(&:media).flatten
   end
 
-  def released_media
-    media.select { |m| m.released? && !m.locked? }
+  # visible media are published with inheritance and unlocked
+  def visible_media
+    media.select(&:visible?)
   end
 
   # returns the previous section, taking into account that this is may be
@@ -88,6 +89,11 @@ class Section < ApplicationRecord
 
   def items_by_time
     lessons.order(:date).map(&:items).flatten.select { |i| i.section == self }
+  end
+
+  def visible_items_by_time
+    lessons.order(:date).map { |l| l.visible_items }.flatten
+           .select { |i| i.section == self }
   end
 
   private

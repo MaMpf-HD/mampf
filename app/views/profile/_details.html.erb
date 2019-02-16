@@ -1,11 +1,11 @@
-<% if c.released_lectures.empty? %>
+<% if c.published_lectures.empty? %>
   <div class="row">
     <div class="col-12">
       Zu diesem Modul gibt es im Moment noch keine Vorlesungen.
     </div>
   </div>
 <% end %>
-<% if c.released_lectures.any? %>
+<% if c.published_lectures.any? %>
   <div class="row">
     <div class="col-12">
       Primäre Vorlesung:
@@ -15,7 +15,7 @@
     <div class="col-12">
       <% primary_lecture = 'primary_lecture-' + c.id.to_s %>
       <%= f.form_group primary_lecture do %>
-        <% c.released_lectures_by_date.each do |l| %>
+        <% c.published_lectures_by_date.each do |l| %>
           <%= f.radio_button primary_lecture,
                              l.id,
                              label: l.term_teacher_info,
@@ -35,7 +35,7 @@
     </div>
   </div>
 <% end %>
-<% if c.released_lectures.count > 1 %>
+<% if c.published_lectures.count > 1 %>
   <div id="secondaries-course-<%= c.id %>"
        style="display: <%= show(c.primary_lecture(current_user).present?) %>">
     <div class="row">
@@ -47,7 +47,7 @@
       <div class="col-12"
            id="secondaries-course-<%= c.id %>">
         <%= f.form_group do %>
-          <% c.released_lectures_by_date.each do |l| %>
+          <% c.published_lectures_by_date.each do |l| %>
             <% lecture = 'lecture-' + l.id.to_s %>
             <% if subscribed %>
               <% show_box = hide(l.primary?(current_user)) %>

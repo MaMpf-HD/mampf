@@ -265,7 +265,13 @@ class MediaController < ApplicationController
 
   # paginate results obtained by the search_results method
   def paginated_results
-    return Kaminari.paginate_array(search_results) if params[:all]
+    if params[:all]
+      total_count = search_results.count
+      # without the total count parameter, kaminary will consider only only the
+      # first 25 entries
+      return Kaminari.paginate_array(search_results,
+                                     total_count: total_count + 1)
+    end
     Kaminari.paginate_array(search_results).page(params[:page])
             .per(params[:per])
   end
@@ -274,7 +280,7 @@ class MediaController < ApplicationController
   def search_results
     search_results = Medium.search(@course.primary_lecture(current_user),
                                    params)
-                           .select { |m| m.released? && !m.locked? }
+                           .select { |m| m.published? && !m.locked? }
     return search_results unless params[:reverse]
     search_results.reverse
   end

@@ -70,8 +70,8 @@ class Course < ApplicationRecord
     title
   end
 
-  def released
-    'all'
+  def published?
+    true
   end
 
   def card_header_path(user)
@@ -84,8 +84,8 @@ class Course < ApplicationRecord
     lectures.empty? && media.empty? && id.present?
   end
 
-  def released_lectures
-    lectures.released
+  def published_lectures
+    lectures.published
   end
 
   # The next methods return if there are any media in the Kaviar, Sesam etc.
@@ -174,8 +174,8 @@ class Course < ApplicationRecord
     end
   end
 
-  def released_lectures_by_date
-    released_lectures.to_a.sort do |i, j|
+  def published_lectures_by_date
+    published_lectures.to_a.sort do |i, j|
       j.term.begin_date <=> i.term.begin_date
     end
   end

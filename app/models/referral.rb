@@ -74,9 +74,9 @@ class Referral < ApplicationRecord
     false
   end
 
-  def item_released?
+  def item_published?
     return true unless item && item.medium
-    item.medium.released_with_inheritance?
+    item.medium.published_with_inheritance?
   end
 
   def item_locked?

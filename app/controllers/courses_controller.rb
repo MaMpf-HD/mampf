@@ -29,9 +29,9 @@ class CoursesController < ApplicationController
   def show
     @course = Course.includes(lectures: [:teacher, :term, :chapters])
                     .find_by_id(params[:id])
-    # if active_id is corresponds to an untreleased lecture, redirect to
+    # if active_id is corresponds to an unpublished lecture, redirect to
     # course page without active_id parameter
-    if !params[:active].to_i.in?(@course.released_lectures.map(&:id) + [0])
+    if !params[:active].to_i.in?(@course.published_lectures.map(&:id) + [0])
       redirect_to course_path(@course)
       return
     end

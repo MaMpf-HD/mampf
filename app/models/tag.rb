@@ -151,8 +151,9 @@ class Tag < ApplicationRecord
       target: related_tag.id }
   end
 
-  def released_sections
-    sections.where(id: sections.select { |s| s.lecture.released? }.map(&:id))
+  # publsihed sections are sections that belong to a published lecture
+  def published_sections
+    sections.where(id: sections.select { |s| s.lecture.published? }.map(&:id))
   end
 
   private

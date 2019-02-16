@@ -13,7 +13,7 @@
       <li>
         <%= link_to l.title_term_info,
                     edit_lecture_path(l) %>
-        <% unless l.released? %>
+        <% unless l.published? %>
           (unveröffentlicht)
         <% end %>
       </li>
@@ -55,7 +55,7 @@
       <li>
         <%= link_to l.title_term_info,
                     edit_lecture_path(l) %>
-        <% unless l.released? %>
+        <% unless l.published? %>
           (unveröffentlicht)
         <% end %>
       </li>

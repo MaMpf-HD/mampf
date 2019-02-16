@@ -78,8 +78,8 @@ class Lesson < ApplicationRecord
     lesson_path
   end
 
-  def released
-    lecture.released
+  def published?
+    lecture.published?
   end
 
   # some more methods dealing with the title
@@ -115,12 +115,13 @@ class Lesson < ApplicationRecord
     lecture.lessons.find { |l| l.number == number + 1 }
   end
 
-  def released_media
-    media.released
+  def published_media
+    media.published
   end
 
-  def unlocked_media
-    media.unlocked
+  # visible media are published with inheritance and not locked
+  def visible_media
+    media.select(&:visible?)
   end
 
   # the number of a lesson is calculated by its date relative to the other
@@ -154,6 +155,11 @@ class Lesson < ApplicationRecord
   # that belong to media associated to the lesson
   def items
     media.map(&:proper_items_by_time).flatten
+  end
+
+  def visible_items
+    media.select(&:visible?)
+         .map(&:proper_items_by_time).flatten
   end
 
   # Returns the list of sections of this lesson (by label), together with
