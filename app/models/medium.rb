@@ -414,6 +414,18 @@ class Medium < ApplicationRecord
     manuscript[:original].metadata['destinations'] || []
   end
 
+  def manuscript_bookmarks
+    return unless manuscript.present?
+    pdf_file = manuscript[:original].download
+    temp_file = Tempfile.new
+    cmd = 'pdftk ' + pdf_file.path + ' dump_data_utf8 output ' + temp_file.path
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+      exit_status = wait_thr.value
+      return unless exit_status.success?
+    end
+    File.read(temp_file)
+  end
+
   def video_width
     return unless video.present?
     video_resolution.split('x')[0].to_i

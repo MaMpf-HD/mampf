@@ -12,7 +12,7 @@ CMD ["bash", "-c", "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
 
-RUN apt-get update && apt-get install -y nodejs ffmpeg imagemagick ghostscript graphviz sqlite3 cron --no-install-recommends && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y nodejs ffmpeg imagemagick pdftk ghostscript graphviz sqlite3 cron --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 COPY ./.delete_upload_caches.sh /etc/cron.weekly/delete_upload_caches.sh
 RUN chmod 555 /etc/cron.weekly/delete_upload_caches.sh
