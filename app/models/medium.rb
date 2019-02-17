@@ -414,16 +414,19 @@ class Medium < ApplicationRecord
     manuscript[:original].metadata['destinations'] || []
   end
 
+  # extract bookmarks from manuscript pdf metadata
   def manuscript_bookmarks
-    return unless manuscript.present?
-    pdf_file = manuscript[:original].download
-    temp_file = Tempfile.new
-    cmd = 'pdftk ' + pdf_file.path + ' dump_data_utf8 output ' + temp_file.path
-    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
-      exit_status = wait_thr.value
-      return unless exit_status.success?
+    meta = manuscript_metadata
+    return {} unless meta
+    bookmarks = meta.scan(/BookmarkTitle: MaMpf-Label\|(.*?)\n/).flatten
+    result = []
+    bookmarks.each do |b|
+      data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)/.match(b)
+      result.push({ "destination" => data[1], "sort" => data[2],
+                    "label" => data[3], "description" => data[4],
+                    "page" => data[5] })
     end
-    File.read(temp_file)
+    result
   end
 
   def video_width
@@ -696,5 +699,18 @@ class Medium < ApplicationRecord
   def local_items
     return teachable.items - items if teachable_type == 'Course'
     teachable.lecture.items - items
+  end
+
+  def manuscript_metadata
+    return unless manuscript.present?
+    pdf_file = manuscript[:original].download
+    return unless pdf_file.present?
+    temp_file = Tempfile.new
+    cmd = "pdftk #{pdf_file.path} dump_data_utf8 output #{temp_file.path}"
+    Open3.popen3(cmd) do |stdin, stdout, stderr, wait_thr|
+      exit_status = wait_thr.value
+      return unless exit_status.success?
+    end
+    File.read(temp_file)
   end
 end
