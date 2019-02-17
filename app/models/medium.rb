@@ -414,6 +414,12 @@ class Medium < ApplicationRecord
     manuscript[:original].metadata['destinations'] || []
   end
 
+  # returns all metadata for the named destination with the given title
+  def manuscript_destination(title)
+    manuscript[:original].metadata['bookmarks']
+                         .find { |b| b['destination'] == title } || {}
+  end
+
   # extract bookmarks from manuscript pdf metadata
   def manuscript_bookmarks
     meta = manuscript_metadata

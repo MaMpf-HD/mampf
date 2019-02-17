@@ -35,6 +35,11 @@
   width: 75%;
 }
 
+#destinationsCardBody {
+  max-height: 50vh;
+  overflow-y: scroll;
+}
+
 #manuscript-informer, #video-informer {
   height: 1em;
 }

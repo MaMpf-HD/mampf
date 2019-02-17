@@ -34,15 +34,59 @@
          role="tabpanel"
          aria-labelledby="heading"
          data-parent="#destinations_accordion">
-      <div class="card-body">
+      <div class="card-body" id="destinationsCardBody">
         <div class="row">
           <div class="col-12">
+            <div class="row mx-2 px-4 py-3">
+              <div class="col-2">
+                <strong>
+                  Titel
+                </strong>
+              </div>
+              <div class="col-2">
+                <strong>
+                  Label
+                </strong>
+              </div>
+              <div class="col-2">
+                <strong>
+                  Typ
+                </strong>
+              </div>
+              <div class="col-4">
+                <strong>
+                  Beschreibung
+                </strong>
+              </div>
+              <div class="col-2">
+                <strong>
+                  Seite
+                </strong>
+              </div>
+            </div>
             <% medium.manuscript_destinations.each do |d| %>
-              <%= link_to d,
-                          display_medium_path(medium,
-                                              params: { destination: d }),
-                          target: :blank,
-                          class: "badge badge-light" %>
+              <div class="row border-bottom mx-2 px-4 py-2">
+                <% data = medium.manuscript_destination(d) %>
+                <div class="col-2">
+                  <%= link_to d,
+                              display_medium_path(medium,
+                                                  params: { destination: d }),
+                              target: :blank,
+                              class: "badge badge-light" %>
+                </div>
+                <div class="col-2">
+                  <%= data['label'] %>
+                </div>
+                <div class="col-2">
+                  <%= data['sort'] %>
+                </div>
+                <div class="col-4">
+                  <%= data['description'] %>
+                </div>
+                <div class="col-2">
+                  <%= data['page'] %>
+                </div>
+              </div>
             <% end %>
           </div>
         </div>
