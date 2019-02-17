@@ -68,7 +68,7 @@
               <div class="row border-bottom mx-2 px-4 py-2">
                 <% data = medium.manuscript_destination(d) %>
                 <div class="col-2">
-                  <%= link_to d,
+                  <%= link_to shorten(d, 30),
                               display_medium_path(medium,
                                                   params: { destination: d }),
                               target: :blank,
