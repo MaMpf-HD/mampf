@@ -33,7 +33,6 @@ gem 'shrine'
 gem 'fastimage'
 gem 'streamio-ffmpeg'
 gem 'pdf-reader'
-gem 'origami'
 gem 'mini_magick', '~> 4.8'
 gem 'image_processing', '~> 1.0'
 # Use ActiveModel has_secure_password

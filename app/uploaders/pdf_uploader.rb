@@ -23,46 +23,31 @@ class PdfUploader < Shrine
         temp_file = Tempfile.new
         cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path}"
         exit_status = system(cmd)
-        unless exit_status
-          return { 'pages' => nil, 'destinations' => nil, 'bookmarks' => nil }
-        end
-        meta = File.read(temp_file)
-        # extract number of pages from pdftk output
-        pages = /NumberOfPages: (\d*)/.match(meta)[1].to_i
-        # extract lines that correspond to MaMpf-Label entries from LaTEX
-        # package mampf.sty
-        bookmarks = meta.scan(/BookmarkTitle: MaMpf-Label\|(.*?)\n/).flatten
-        result = []
-        bookmarks.each do |b|
-          # extract bookmark data
-          # line may look like this:
-          # defn:erster-Tag-der-Schoepfung|Definition|1.1|Erster Tag|1
-          data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)/.match(b)
-          result.push('destination' => data[1], 'sort' => data[2],
-                      'label' => data[3], 'description' => data[4],
-                      'page' => data[5])
-        end
-        # extract named destinations using the origami gem
-        # (there may be named destinations not created by the mampf LATeX
-        # which would overlooked if we were to take
-        # result.map { |b| b.destination }
-        # instead
-        pdf = Origami::PDF.read(file.path)
-        if pdf.present?
-          destinations = []
-          pdf.each_named_dest do |d|
-            # enforce UTF-8, otherwise there are problems
-            destinations.push(d.value.force_encoding('UTF-8'))
+        if exit_status
+          meta = File.read(temp_file)
+          # extract number of pages from pdftk output
+          pages = /NumberOfPages: (\d*)/.match(meta)[1].to_i
+          # extract lines that correspond to MaMpf-Label entries from LaTEX
+          # package mampf.sty
+          bookmarks = meta.scan(/BookmarkTitle: MaMpf-Label\|(.*?)\n/).flatten
+          result = []
+          bookmarks.each_with_index do |b,i|
+            # extract bookmark data
+            # line may look like this:
+            # defn:erster-Tag|Definition|1.1|Erster Tag|1
+            data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)\|(.*)\|(.*)\|(.*)/.match(b)
+            result.push('destination' => data[1], 'sort' => data[2],
+                        'label' => data[3], 'description' => data[4],
+                        'chapter' => data[5], 'section' => data[6],
+                        'subsection' => data[7], 'page' => data[8],
+                        'counter' => i)
           end
-          # reject named destinations including spaces or "."
-          # or the generic "Doc-Start" destination
-          destinations.reject! do |d|
-            d.include?(' ') || d.include?('.') || d == 'Doc-Start'
-          end
+          { 'pages' => pages,
+            'destinations' => result.map { |b| b['destination'] },
+            'bookmarks' => result }
+        else
+          { 'pages' => nil, 'destinations' => nil, 'bookmarks' => nil }
         end
-        { 'pages' => pages,
-          'destinations' => destinations,
-          'bookmarks' => result }
       end
     end
   end
