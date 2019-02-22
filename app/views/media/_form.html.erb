@@ -24,11 +24,12 @@
   </div>
 <% end %>
 <div id="medium-manuscript-destinations">
-  <% if medium.manuscript_destinations.present? %>
+  <% if @manuscript %>
     <div class="row mt-2 p-2">
       <div class="col-12">
         <%= render partial: 'media/destinations',
-                   locals: { medium: medium } %>
+                   locals: { medium: medium,
+                             manuscript: @manuscript } %>
       </div>
     </div>
   <% end %>

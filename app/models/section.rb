@@ -41,6 +41,10 @@ class Section < ApplicationRecord
     '§' + reference_number
   end
 
+  def reference
+    reference_number
+  end
+
   # calculate the number of the section depending on whether the lecture has
   # absolute section numbering or relative numbering with respect to the
   # chapters

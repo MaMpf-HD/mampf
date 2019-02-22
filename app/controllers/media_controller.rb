@@ -37,6 +37,7 @@ class MediaController < ApplicationController
   end
 
   def edit
+    @manuscript = Manuscript.new(@medium)
   end
 
   def update

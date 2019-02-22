@@ -36,11 +36,13 @@ class PdfUploader < Shrine
             # line may look like this:
             # defn:erster-Tag|Definition|1.1|Erster Tag|1
             data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)\|(.*)\|(.*)\|(.*)/.match(b)
-            result.push('destination' => data[1], 'sort' => data[2],
+            details = { 'destination' => data[1], 'sort' => data[2],
                         'label' => data[3], 'description' => data[4],
                         'chapter' => data[5], 'section' => data[6],
                         'subsection' => data[7], 'page' => data[8],
-                        'counter' => i)
+                        'counter' => i }
+            details['sort'] = 'Markierung' if details['sort'].blank?
+            result.push(details)
           end
           { 'pages' => pages,
             'destinations' => result.map { |b| b['destination'] },

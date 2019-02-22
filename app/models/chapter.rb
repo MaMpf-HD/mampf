@@ -17,6 +17,10 @@ class Chapter < ApplicationRecord
     display_number
   end
 
+  def reference
+    displayed_number
+  end
+
   # Returns the chapter number based on the position in the chapters list.
   def calculated_number
     return position.to_s unless lecture.start_chapter.present?
