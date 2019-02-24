@@ -29,7 +29,10 @@ class Item < ApplicationRecord
   validates :sort, inclusion: { in: ['remark', 'theorem', 'lemma', 'definition',
                                      'annotation', 'example', 'section',
                                      'algorithm', 'label', 'corollary',
-                                     'link', 'pdf_destination', 'self'],
+                                     'link', 'pdf_destination', 'self',
+                                     'proposition', 'Lemma', 'Theorem',
+                                     'subsection', 'Corollary', 'figure',
+                                     'chapter'],
                                 message: 'Unzulässiger Typ' }
   validates :link, http_url: true, if: :proper_link?
   validates :description,
@@ -157,8 +160,10 @@ class Item < ApplicationRecord
   # background color of different item sorts within thyme editor
   def background
     return '#0c0;' if ['remark', 'theorem', 'lemma', 'corollary',
-                       'algorithm'].include?(sort)
-    return '#1ad1ff;' if ['definition', 'annotation', 'example'].include?(sort)
+                       'algorithm', 'Theorem', 'Corollary', 'Lemma',
+                       'proposition'].include?(sort)
+    return '#1ad1ff;' if ['definition', 'annotation', 'example',
+                          'figure'].include?(sort)
     return 'lightgray;' if sort == 'link' || sort == 'self'
     ''
   end
@@ -204,7 +209,14 @@ class Item < ApplicationRecord
     [['Definition', 'definition'], ['Bemerkung', 'remark'], ['Lemma', 'lemma'],
      ['Satz', 'theorem'], ['Beispiel', 'example'], ['Anmerkung', 'annotation'],
      ['Algorithmus', 'algorithm'], ['Folgerung', 'corollary'],
-     ['Abschnitt', 'section'], ['Markierung', 'label']]
+     ['Abschnitt', 'section'], ['Markierung', 'label'],
+     ['Unterabschnitt', 'subsection'], ['Theorem', 'Theorem'],
+     ['Proposition', 'proposition'], ['Hilfssatz', 'Lemma'],
+     ['Korollar', 'Corollary'], ['Abbildung', 'figure'], ['Kapitel', 'chapter']]
+  end
+
+  def self.internal_sort(sort)
+    Item.internal_sorts.select { |s| s.first == sort }&.map(&:second)&.first
   end
 
   def video?
@@ -227,11 +239,12 @@ class Item < ApplicationRecord
 
   def math_items
     ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
-     'corollary', 'algorithm']
+     'corollary', 'algorithm', 'Theorem', 'proposition', 'Lemma', 'Corollary',
+     'figure', 'subsection']
   end
 
   def other_items
-    ['section', 'self', 'link', 'label', 'pdf_destination']
+    ['section', 'self', 'link', 'label', 'pdf_destination', 'chapter']
   end
 
   def proper_link?
@@ -247,7 +260,11 @@ class Item < ApplicationRecord
   def sort_long
     hash = { 'definition' => 'Def.', 'theorem' => 'Satz', 'remark' => 'Bem.',
              'lemma' => 'Lemma', 'annotation' => 'Anm.', 'example' => 'Bsp.',
-             'corollary' => 'Folg.', 'algorithm' => 'Alg.' }
+             'corollary' => 'Folg.', 'algorithm' => 'Alg.',
+             'Theorem' => 'Thm.', 'proposition' => 'Prop.',
+             'Lemma' => 'Hilfssatz',
+             'Corollary' => 'Kor.', 'figure' => 'Abb.',
+             'subsection' => 'Unterabschnitt' }
     hash[sort]
   end
 
@@ -273,8 +290,14 @@ class Item < ApplicationRecord
     ''
   end
 
+  def chapter_reference
+    return 'Kap. ' + ref_number if ref_number.present?
+    'Kap.'
+  end
+
   def toc_reference
     return section_reference if sort == 'section'
+    return chapter_reference if sort == 'chapter'
     return '' if sort == 'label'
     special_reference
   end
@@ -334,8 +357,8 @@ class Item < ApplicationRecord
   end
 
   def start_time_not_required
-    medium.nil? || sort == 'self' || sort == 'pdf_destination' ||
-      !start_time.valid?
+    medium.nil? || medium.sort == 'Script' || sort == 'self' ||
+      sort == 'pdf_destination' || !start_time.valid?
   end
 
   def start_time_not_too_late

@@ -13,6 +13,9 @@ $(document).on 'turbolinks:load', ->
     if $(this).val() == 'section'
       $('#item_section_id').trigger('change')
       $("label[for='item_description']").empty().append('Titel')
+    else if $(this).val() == 'chapter'
+      $('#item_section_select').hide()
+      $("label[for='item_description']").empty().append('Titel')
     else
       $('#item_section_select').show()
       $('#item_number_field').hide() if $(this).val() == 'label'

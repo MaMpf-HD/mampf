@@ -51,14 +51,14 @@ class MediaController < ApplicationController
     # whether named destination items are affected by the
     # changes. If this is the case, the user gets a warning
     # and can then decide whether to keep old items or to delete them
-    if @medium.saved_change_to_manuscript_data?
-      @protected_destinations = @medium.protected_destinations
-      @medium.update_pdf_destinations!
-      if @protected_destinations.present?
-        render :destination_warning
-        return
-      end
-    end
+#    if @medium.saved_change_to_manuscript_data?
+#      @protected_destinations = @medium.protected_destinations
+#      @medium.update_pdf_destinations!
+#      if @protected_destinations.present?
+#        render :destination_warning
+#        return
+#      end
+#    end
     redirect_to edit_medium_path(@medium)
   end
 
@@ -67,7 +67,7 @@ class MediaController < ApplicationController
     @medium.save
     if @medium.valid?
       # convert pdf destinations from extracted metadata to actual items
-      @medium.create_pdf_destinations!
+#     @medium.create_pdf_destinations!
       redirect_to edit_medium_path(@medium)
       return
     end
@@ -202,6 +202,13 @@ class MediaController < ApplicationController
   # delete the items associated to the manuscript's pdf_destinations
   def delete_destinations
     @medium.destroy_pdf_destinations!(params[:destinations].to_a)
+  end
+
+  # imports all of manuscript destinations, bookmarks as chpters, sections etc.
+  def import_manuscript
+    manuscript = Manuscript.new(@medium)
+    manuscript.export_to_db!
+    redirect_to edit_medium_path(@medium)
   end
 
   private

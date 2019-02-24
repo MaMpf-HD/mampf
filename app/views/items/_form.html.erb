@@ -51,7 +51,9 @@
     </div>
     <% if item.medium.sort == 'Kaviar' &&
           item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
-      <div id="item_section_select" class="form-group form-row">
+      <div id="item_section_select"
+           class="form-group form-row"
+           style="display: <%= show_no_block(item.sort != 'chapter') %>">
         <div class="col-2 col-form-label">
           <%= f.label :section_id, 'Abschnitt' %>
           <i class="far fa-question-circle helpdesk"

@@ -7,7 +7,8 @@ class Manuscript
               :contradictions, :contradiction_count
 
   def initialize(medium)
-    unless medium.sort == 'Script' && medium&.teachable_type == 'Lecture' &&
+    unless medium && medium.sort == 'Script' &&
+             medium&.teachable_type == 'Lecture' &&
              medium.manuscript && medium.manuscript[:original]
       return
     end
@@ -23,7 +24,12 @@ class Manuscript
     @contradictions = get_contradictions
     @contradiction_count = @contradictions['chapters'].size +
                              @contradictions['sections'].size +
-                             @contradictions['content'].size
+                             @contradictions['content'].size +
+                             @contradictions['multiplicities'].size
+  end
+
+  def empty?
+    @medium.nil?
   end
 
   def sections_in_chapter(chapter)
@@ -33,6 +39,7 @@ class Manuscript
 
   def content_in_section(section)
     @content.select { |c| c['section'] == section['section'] }
+            .sort_by { |c| c['counter'] }
   end
 
   # returns those content bookmarks who have a chapter or section counter
@@ -71,6 +78,14 @@ class Manuscript
 
   def export_to_db!
     return unless @contradiction_count.zero?
+    create_new_chapters!
+    @chapters.each do |c|
+      create_new_sections!(c)
+      c['mampf_chapter'] = c['mampf_chapter'].reload
+    end
+    create_chapter_items!
+    create_section_items!
+    create_content_items!
   end
 
   def unmatched_mampf_chapters
@@ -83,25 +98,162 @@ class Manuscript
     @lecture.sections - sections_in_mampf
   end
 
+  def new_chapters
+    @chapters.select { |c| c['mampf_chapter'].nil? }
+             .map { |c| [c['new_position'], c['description'], c['counter']] }
+  end
+
+  def create_new_chapters!
+    new_chapters.each do |c|
+      chap = Chapter.new(lecture_id: @lecture.id, title: c.second)
+      chap.insert_at(c.first)
+      corresponding = @chapters.find { |d| d['counter'] == c.third }
+      corresponding['mampf_chapter'] = chap
+    end
+    @lecture = @lecture.reload
+  end
+
+  def new_sections_in_chapter(chapter)
+    sections = sections_in_chapter(chapter)
+    sections.each_with_index
+            .map { |s,i| [s['mampf_section'], i+1, s['description'], s['counter']] }
+            .select { |s| s.first.nil? }
+            .map { |s| [s.second, s.third, s.fourth] }
+  end
+
+  def create_new_sections!(chapter)
+    return if chapter['mampf_chapter'].nil?
+    mampf_chapter = chapter['mampf_chapter']
+    new_sections_in_chapter(chapter).each do |s|
+      sect = Section.new(chapter_id: mampf_chapter.id, title: s.second)
+      sect.insert_at(s.first)
+      corresponding = @sections.find { |d| d['counter'] == s.third }
+      corresponding['mampf_section'] = sect
+    end
+  end
+
+  def sections_with_content
+    @sections.select { |s| content_in_section(s).present? }
+  end
+
+  def sections_without_content
+    @lecture.sections - sections_with_content
+  end
+
+  def create_chapter_items!
+    @chapters.each do |c|
+      # check if there exists an item with this destination in this medium
+      # if so, only update
+      item = Item.where(medium: @medium,
+                        pdf_destination: c['destination'])
+                  &.first
+      if item
+        item.update(sort: 'chapter',
+                    page: c['page'],
+                    description: c['description'],
+                    ref_number: c['label'],
+                    position: nil,
+                    section_id: nil,
+                    start_time: nil)
+        next
+      end
+      Item.create(medium_id: @medium.id,
+                  section_id: nil,
+                  sort: 'chapter',
+                  page: c['page'],
+                  description: c['description'],
+                  ref_number: c['label'],
+                  pdf_destination: c['destination'])
+    end
+  end
+
+  def create_section_items!
+    @sections.each do |s|
+      # check if there exists an item with this destination in this medium
+      # if so, only update
+      item = Item.where(medium: @medium,
+                        pdf_destination: s['destination'])
+                  &.first
+      if item
+        item.update(section_id: s['mampf_section'].id,
+                    sort: 'section',
+                    page: s['page'],
+                    description: s['description'],
+                    ref_number: s['label'],
+                    position: nil,
+                    section_id: s['mampf_section'].id,
+                    start_time: nil)
+        next
+      end
+      Item.create(medium_id: @medium.id,
+                  section_id: s['mampf_section'].id,
+                  sort: 'section',
+                  page: s['page'],
+                  description: s['description'],
+                  ref_number: s['label'],
+                  pdf_destination: s['destination'])
+    end
+  end
+
+  def create_content_items!
+    sections_with_content.each do |s|
+      content_in_section(s).each do |c|
+        # check if there exists an item with this destination in this medium
+        # if so, only update
+        item = Item.where(medium: @medium,
+                          pdf_destination: c['destination'])
+                  &.first
+        if item
+          item.update(section_id: s['mampf_section'].id,
+                      sort: Item.internal_sort(c['sort']),
+                      page: c['page'], description: c['description'],
+                      ref_number: c['label'], position: c['counter'],
+                      start_time: nil)
+          next
+        end
+        Item.create(medium_id: @medium.id, section_id: s['mampf_section'].id,
+                    sort: Item.internal_sort(c['sort']),
+                    page: c['page'],
+                    description: c['description'], ref_number: c['label'],
+                    position: c['counter'], pdf_destination: c['destination'])
+      end
+    end
+  end
+
+  def destinations_with_multiplicities
+    bookmarks = @medium.manuscript[:original].metadata['bookmarks'] || []
+    destinations = bookmarks.map { |b| b['destination'] }
+    destinations.each_with_object(Hash.new(0)) do |word,counts|
+      counts[word] += 1
+    end
+  end
+
+  def destinations_with_higher_multiplicities
+    destinations_with_multiplicities.select { |k,v| v > 1 }.keys
+  end
+
   private
 
   def get_chapters(bookmarks)
     bookmarks.select { |b| b['sort'] == 'Kapitel' }
-             .map { |c| c.slice('label', 'chapter', 'description', 'counter') }
+             .map { |c| c.slice('label', 'chapter', 'description', 'counter',
+                                'destination', 'page') }
              .sort_by { |c| c['counter'] }
+             .each_with_index { |c,i| c['new_position'] = i + 1 }
   end
 
   def get_sections(bookmarks)
     bookmarks.select { |b| b['sort'] == 'Abschnitt' }
               .map { |s| s.slice('label', 'section', 'description', 'chapter',
-                                 'counter') }
+                                 'counter', 'destination', 'page') }
               .sort_by { |s| s['counter'] }
   end
 
   def get_content(bookmarks)
     bookmarks.select { |b| !b['sort'].in?(['Kapitel', 'Abschnitt']) }
              .map { |c| c.slice('sort','label', 'description',
-                                'chapter', 'section', 'counter') }
+                                'chapter', 'section', 'counter', 'destination',
+                                'page') }
              .sort_by { |c| c['counter'] }
   end
 
@@ -152,6 +304,7 @@ class Manuscript
   def get_contradictions
     { 'chapters' => @chapters.select { |c| c['contradiction'] },
       'sections' => @sections.select { |s| s['contradiction'] },
-      'content' => @content.select { |c| c['contradiction'] } }
+      'content' => @content.select { |c| c['contradiction'] },
+      'multiplicities' => destinations_with_higher_multiplicities }
   end
 end

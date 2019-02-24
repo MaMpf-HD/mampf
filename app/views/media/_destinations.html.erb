@@ -20,6 +20,13 @@
           </h5>
         </div>
         <div class="col-6 text-right">
+          <% unless manuscript.contradiction_count.positive? %>
+            <%= link_to 'Importieren',
+                        import_manuscript_path(medium),
+                        method: :post,
+                        class: 'btn btn-danger',
+                        data: { confirm: 'Bist Du sicher?' } %>
+          <% end %>
           <a class="btn btn-primary"
              data-toggle="collapse"
              href="#destinations_collapse"
@@ -67,7 +74,7 @@
           <div class="card-header bg-mdb-color-lighten-2">
             <div class="row">
               <% if c['mampf_chapter'].nil? %>
-                <span class="badge badge-secondary">
+                <span class="badge badge-secondary mr-2">
                   neu
                 </span>
               <% end %>
@@ -119,6 +126,9 @@
                        class="collapse"
                        data-parent="#manuscriptAccordion">
                     <div class="card-body">
+                      <% if manuscript.content_in_section(s).blank? %>
+                        In diesem Abschnitt sind keine Inhalte gelabelt.
+                      <% end %>
                       <% manuscript.content_in_section(s).each do |content| %>
                         <div class="row">
                           <div class="col-3 mt-2">
@@ -183,13 +193,27 @@
       </div>
       </li>
     <% end %>
+    <% if manuscript.destinations_with_higher_multiplicities.present? %>
+      <li>
+        Die folgenden named destinations tauchen im pdf-File mehrfach auf:
+        <div class="row mt-2 mb-3">
+          <% manuscript.destinations_with_higher_multiplicities.each do |d| %>
+            <div class="col-12">
+              &#x26a1;
+              <%= d %>
+            </div>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
     <% if manuscript.unmatched_mampf_chapters.any? %>
       <li>
       <span class="badge badge-info">
         Hinweis
       </span>
       Es gibt Kapitel in MaMpf, die in diesem Skript nicht vorkommen.
-      Bei Import des Manuskripts werden diese beibehalten:
+      Bei Import des Manuskripts werden diese beibehalten und nach ggf.
+      im Import vorhandenen Kapiteln einsortiert:
       <div class="row mb-3">
         <% manuscript.unmatched_mampf_chapters.each do |c| %>
           <div class="col-12 ml-3">
@@ -205,7 +229,8 @@
         Hinweis
       </span>
       Es gibt Abschnitte in MaMpf, die in diesem Skript nicht vorkommen.
-      Bei Import des Manuskripts werden diese beibehalten:
+      Bei Import des Manuskripts werden diese beibehalten und nach ggf.
+      im Import vorhandenen Abschnitten einsortiert:
       <div class="row">
         <% manuscript.unmatched_mampf_sections.each do |s| %>
           <div class="col-12 ml-3">

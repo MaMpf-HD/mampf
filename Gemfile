@@ -9,7 +9,7 @@ end
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.2'
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3'
+gem 'sqlite3', '~> 1.3.6'
 # Use Puma as the app server
 gem 'puma'
 # Use SCSS for stylesheets
@@ -50,7 +50,7 @@ gem 'cancancan'
 gem 'jquery-rails'
 gem 'jquery_file_download-rails'
 gem 'js-routes'
-gem 'bootstrap', '~> 4.1.3'
+gem 'bootstrap'
 gem "bootstrap_form",
     git: "https://github.com/bootstrap-ruby/bootstrap_form.git",
     branch: "master"

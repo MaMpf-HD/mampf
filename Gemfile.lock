@@ -1,10 +1,11 @@
 GIT
   remote: https://github.com/bootstrap-ruby/bootstrap_form.git
-  revision: b26c2cb0487489a12e68c6c34270e118e7e33e84
+  revision: 3ca0e1b5883f5dab504dd74d3c0387be2a4c0ddb
   branch: master
   specs:
     bootstrap_form (4.1.0)
-      rails (>= 5.0)
+      actionpack (>= 5.0)
+      activemodel (>= 5.0)
 
 GEM
   remote: https://rubygems.org/
@@ -36,7 +37,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
-    active_model_serializers (0.10.8)
+    active_model_serializers (0.10.9)
       actionpack (>= 4.1, < 6)
       activemodel (>= 4.1, < 6)
       case_transform (>= 0.2)
@@ -52,7 +53,7 @@ GEM
       activemodel (= 5.2.2)
       activesupport (= 5.2.2)
       arel (>= 9.0)
-    activerecord-import (0.28.1)
+    activerecord-import (1.0.0)
       activerecord (>= 3.2)
     activestorage (5.2.2)
       actionpack (= 5.2.2)
@@ -70,7 +71,7 @@ GEM
     afm (0.2.2)
     arel (9.0.0)
     ast (2.4.0)
-    autoprefixer-rails (9.4.6)
+    autoprefixer-rails (9.4.8)
       execjs
     babel-source (5.8.35)
     babel-transpiler (0.7.0)
@@ -78,17 +79,17 @@ GEM
       execjs (~> 2.0)
     bcrypt (3.1.12)
     bindex (0.5.0)
-    bootsnap (1.3.2)
+    bootsnap (1.4.0)
       msgpack (~> 1.0)
-    bootstrap (4.1.3)
-      autoprefixer-rails (>= 6.0.3)
-      popper_js (>= 1.12.9, < 2)
-      sass (>= 3.5.2)
+    bootstrap (4.3.1)
+      autoprefixer-rails (>= 9.1.0)
+      popper_js (>= 1.14.3, < 2)
+      sassc-rails (>= 2.0.0)
     builder (3.2.3)
     bullet (5.9.0)
       activesupport (>= 3.0.0)
       uniform_notifier (~> 1.11)
-    byebug (10.0.2)
+    byebug (11.0.0)
     cancancan (2.3.0)
     capybara (2.18.0)
       addressable
@@ -109,7 +110,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    colorize (0.8.1)
     concurrent-ruby (1.1.4)
     content_disposition (1.0.0)
     coveralls (0.8.22)
@@ -122,7 +122,7 @@ GEM
     database_cleaner (1.7.0)
     db_text_search (0.3.0)
       activerecord (>= 4.1.15, < 6.0)
-    devise (4.5.0)
+    devise (4.6.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0, < 6.0)
@@ -136,12 +136,12 @@ GEM
     erubi (1.8.0)
     erubis (2.7.0)
     execjs (2.7.0)
-    factory_bot (4.11.1)
-      activesupport (>= 3.0.0)
-    factory_bot_rails (4.11.1)
-      factory_bot (~> 4.11.1)
-      railties (>= 3.0.0)
-    faker (1.9.1)
+    factory_bot (5.0.2)
+      activesupport (>= 4.2.0)
+    factory_bot_rails (5.0.1)
+      factory_bot (~> 5.0.0)
+      railties (>= 4.2.0)
+    faker (1.9.3)
       i18n (>= 0.7)
     fastimage (2.1.5)
     ffi (1.9.25)
@@ -177,7 +177,7 @@ GEM
     js-routes (1.4.4)
       railties (>= 3.2)
       sprockets-rails
-    json (2.1.0)
+    json (2.2.0)
     jsonapi-renderer (0.2.0)
     kaminari (1.1.1)
       activesupport (>= 4.1.0)
@@ -194,11 +194,11 @@ GEM
     kaminari-i18n (0.5.0)
       kaminari
       rails
-    katex (0.4.3)
+    katex (0.5.0)
       execjs (~> 2.7)
-    kramdown (2.0.0)
-    kramdown-math-katex (1.0.0)
-      katex (~> 0.4.3)
+    kramdown (2.1.0)
+    kramdown-math-katex (1.0.1)
+      katex (~> 0.4)
       kramdown (~> 2.0)
     kramdown-parser-gfm (1.0.1)
       kramdown (~> 2.0)
@@ -231,15 +231,13 @@ GEM
       mini_portile2 (~> 2.4.0)
     nokogumbo (2.0.1)
       nokogiri (~> 1.8, >= 1.8.4)
-    onebox (1.8.76)
+    onebox (1.8.78)
       htmlentities (~> 4.3)
       moneta (~> 1.0)
       multi_json (~> 1.11)
       mustache
       nokogiri (~> 1.7)
       sanitize
-    origami (2.1.0)
-      colorize (~> 0.7)
     orm_adapter (0.5.0)
     parallel (1.13.0)
     parser (2.6.0.0)
@@ -283,7 +281,7 @@ GEM
       ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
-    rails-i18n (5.1.2)
+    rails-i18n (5.1.3)
       i18n (>= 0.7, < 2)
       railties (>= 5.0, < 6)
     railties (5.2.2)
@@ -301,10 +299,10 @@ GEM
     responders (2.4.1)
       actionpack (>= 4.2.0, < 6.0)
       railties (>= 4.2.0, < 6.0)
-    rgl (0.5.3)
+    rgl (0.5.4)
       lazy_priority_queue (~> 0.1.0)
-      stream (~> 0.5.0)
-    rinku (2.0.4)
+      stream (~> 0.5.2)
+    rinku (2.0.5)
     rspec-core (3.8.0)
       rspec-support (~> 3.8.0)
     rspec-expectations (3.8.2)
@@ -364,7 +362,7 @@ GEM
     selenium-webdriver (3.141.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2, >= 1.2.2)
-    shrine (2.14.0)
+    shrine (2.16.0)
       content_disposition (~> 1.0)
       down (~> 4.1)
     simplecov (0.16.1)
@@ -396,7 +394,7 @@ GEM
       tins (~> 1.0)
     thor (0.19.4)
     thread_safe (0.3.6)
-    thredded (0.16.4)
+    thredded (0.16.8)
       active_record_union (>= 1.3.0)
       autoprefixer-rails
       db_text_search (~> 0.3.0)
@@ -405,7 +403,8 @@ GEM
       htmlentities
       inline_svg
       kaminari
-      kramdown (>= 1.17.0)
+      kramdown (>= 2.0.0)
+      kramdown-parser-gfm
       nokogiri
       onebox (~> 1.8, >= 1.8.48)
       pundit (>= 1.1.0)
@@ -455,7 +454,7 @@ DEPENDENCIES
   activerecord-import
   acts_as_list
   bootsnap (>= 1.1.0)
-  bootstrap (~> 4.1.3)
+  bootstrap
   bootstrap_form!
   bullet
   byebug
@@ -483,7 +482,6 @@ DEPENDENCIES
   launchy
   listen (>= 3.0.5, < 3.2)
   mini_magick (~> 4.8)
-  origami
   pdf-reader
   pg
   puma
@@ -500,7 +498,7 @@ DEPENDENCIES
   shrine
   spring
   spring-watcher-listen (~> 2.0.1)
-  sqlite3
+  sqlite3 (~> 1.3.6)
   streamio-ffmpeg
   thredded (~> 0.16.4)
   thredded-markdown_katex

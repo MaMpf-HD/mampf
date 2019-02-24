@@ -83,6 +83,8 @@ Rails.application.routes.draw do
                                    as: 'add_screenshot'
   post 'media/:id/publish', to: 'media#publish',
                             as: 'publish_medium'
+  post 'media/:id/import_manuscript', to: 'media#import_manuscript',
+                                      as: 'import_manuscript'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
