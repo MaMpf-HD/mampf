@@ -126,7 +126,8 @@ class Item < ApplicationRecord
   # "extern Spiegel" (link)
   def local_reference
     unless sort.in?(['self', 'link', 'pdf_destination'])
-      return short_ref_with_description
+      return short_ref_with_description unless medium&.sort == 'Script'
+      return 'Skript, ' + short_ref_with_description
     end
     local_non_math_reference
   end
@@ -185,7 +186,7 @@ class Item < ApplicationRecord
     video_link_timed
   end
 
-  # if the associated medium contains a maanuscript, returns a link to the
+  # if the associated medium contains a manuscript, returns a link to the
   # pdf file, together with a page or a named destination if that exists
   # results might look like this:
   # "/uploads/store/medium/22/manuscript/original-0a49544a.pdf"
@@ -193,10 +194,9 @@ class Item < ApplicationRecord
   # "/uploads/store/medium/22/manuscript/original-0a49544a.pdf#big_theorem"
   def manuscript_link
     return unless manuscript?
-    link = medium.manuscript[:original].url(host: host)
-    return link + '#' + pdf_destination if pdf_destination.present?
-    return link + '#page=' + page.to_s if page.present?
-    link
+    return manuscript_link_destination if pdf_destination.present?
+    return manuscript_link_page if page.present?
+    manuscript_link_generic
   end
 
   # if the associated medium contains an external link, it is returned
@@ -298,7 +298,10 @@ class Item < ApplicationRecord
   def toc_reference
     return section_reference if sort == 'section'
     return chapter_reference if sort == 'chapter'
-    return '' if sort == 'label'
+    if sort == 'label'
+      return '' if description.present?
+      return 'destination: ' + pdf_destination.to_s
+    end
     special_reference
   end
 
@@ -346,6 +349,21 @@ class Item < ApplicationRecord
     Rails.application.routes.url_helpers
          .play_medium_path(medium.id, time: start_time.total_seconds)
   end
+
+  def manuscript_link_generic
+    Rails.application.routes.url_helpers.display_medium_path(medium.id)
+  end
+
+  def manuscript_link_destination
+    Rails.application.routes.url_helpers
+         .display_medium_path(medium.id, destination: pdf_destination)
+  end
+
+  def manuscript_link_page
+    Rails.application.routes.url_helpers
+         .display_medium_path(medium.id, page: page)
+  end
+
 
   # the next methods are used for validations
 

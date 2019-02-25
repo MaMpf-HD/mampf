@@ -107,6 +107,47 @@
               </div>
             </div>
           </div>
+          <div class="form-group">
+          Inhaltserstellung
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover"
+             data-trigger="focus"
+             title="Info"
+             data-content="Hier kannst Du festlegen, wie der Inhalt der
+             Abschnitte und Sitzungen generiert wird:
+             <ul>
+             <li>
+             videobasiert(Standardeinstellung): der Inhalt der Abschnitte und
+             Sitzungen wird aus den Items der zugehörigen Vorlesungsvideos
+             generiert
+             </li>
+             <li>
+             skriptbasiert: der Inhalt der Abschnitte und
+             Sitzungen wird aus denjenigen MaMpf-Labels im Manuskript generiert,
+             die mit Hilfe des MaMpf-LaTEX-Paketes erzeugt wurden.
+             </li>
+             </ul>"
+            data-html="true">
+          </i>
+          <div class="custom-control custom-radio">
+            <%= f.radio_button :content_mode,
+                               'video',
+                               class: 'custom-control-input' %>
+            <%= f.label :content_mode,
+                        'videobasiert',
+                        value: 'video',
+                        class: 'custom-control-label' %>
+          </div>
+          <div class="custom-control custom-radio">
+            <%= f.radio_button :content_mode,
+                               'manuscript',
+                               class: 'custom-control-input' %>
+            <%= f.label :content_mode,
+                        'skriptbasiert',
+                        value: 'manuscript',
+                        class: 'custom-control-label' %>
+          </div>
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">

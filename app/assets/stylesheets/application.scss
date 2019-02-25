@@ -40,6 +40,7 @@ $container-max-widths: (
   xxxl: 1600px
 );
 
+
 /* override the !default vars with the values we set above */
 @import "bootstrap";
 @import "rails_bootstrap_forms";
@@ -47,6 +48,10 @@ $container-max-widths: (
 @import 'selectize';
 @import 'selectize.default';
 @import "trix";
+
+.card-columns {
+  column-count: 2;
+}
 
 .kaviar-sidebar {
   padding-left: 1rem;

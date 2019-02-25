@@ -46,6 +46,9 @@
                    options_for_select(Medium.select_sorts, medium.sort),
                    {},
                    { class: 'form-control' }%>
+      <div class="invalid-feedback"
+           id="medium-sort-error">
+      </div>
     </div>
     <div class="form-group">
       <%= f.label :teachable, 'assoziiert zu' %>

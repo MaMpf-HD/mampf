@@ -131,6 +131,10 @@ class Lecture < ApplicationRecord
             .flatten.collect(&:items).flatten
   end
 
+  def manuscript
+    Medium.where(sort: 'Script', teachable: lecture)&.first
+  end
+
   # returns the ARel of all media whose teachable's lecture is the given lecture
   def media_with_inheritance
     Medium.where(id: Medium.includes(:teachable)

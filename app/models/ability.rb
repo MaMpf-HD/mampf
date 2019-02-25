@@ -58,7 +58,8 @@ class Ability
       can [:catalog, :search, :play, :display], Medium
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
-           :export_screenshot, :publish, :destroy], Medium do |m|
+           :export_screenshot, :publish, :destroy,
+           :import_manuscript], Medium do |m|
         m.edited_with_inheritance_by?(user)
       end
 
@@ -72,7 +73,7 @@ class Ability
         section.lecture.edited_by?(user)
       end
 
-      can [:list_tags, :list_sections], Section
+      can [:list_tags, :list_sections, :display], Section
 
       can :manage, Tag
       can :display_cyto, Tag

@@ -115,11 +115,21 @@
                                data-toggle="tooltip"
                                data-placement="bottom"
                                title="Bearbeiten"
-                               data-remote="true">
+                               data-remote="true"
+                               style="text-decoration: none;">
                               <i class="far fa-edit">
                               </i>
                             </a>
                           <% end %>
+                          <a href="<%= display_section_path(s) %>"
+                               class="text-dark"
+                               data-toggle="tooltip"
+                               data-placement="bottom"
+                               title="Inhalt"
+                               data-remote="true">
+                              <i class="fas fa-list-ol">
+                              </i>
+                            </a>
                         </strong>
                       </div>
                       <div class="col-6">

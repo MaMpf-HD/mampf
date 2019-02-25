@@ -47,6 +47,9 @@ class SectionsController < ApplicationController
     @errors = @section.errors
   end
 
+  def display
+  end
+
   private
 
   def set_section

@@ -1,7 +1,9 @@
 # clean up from previous error messages
 $('#medium_description').removeClass('is-invalid')
 $('#medium_external_reference_link').removeClass('is-invalid')
+$('#medium_sort').removeClass('is-invalid')
 $('#medium-teachable-error').empty()
+$('#medium-sort-error').empty()
 $('#medium-editors-error').empty()
 $('#medium-description-error').empty()
 $('#medium-external-reference-error').empty()
@@ -11,6 +13,11 @@ $('#medium-external-reference-error').empty()
 <% if @errors[:description].present? %>
 $('#medium-description-error').append('<%= @errors[:description].join(" ") %>').show()
 $('#medium_description').addClass('is-invalid')
+<% end %>
+
+<% if @errors[:sort].present? %>
+$('#medium-sort-error').append('<%= @errors[:sort].join(" ") %>').show()
+$('#medium_sort').addClass('is-invalid')
 <% end %>
 
 <% if @errors[:external_reference_link].present? %>

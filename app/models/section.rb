@@ -95,9 +95,24 @@ class Section < ApplicationRecord
     lessons.order(:date).map(&:items).flatten.select { |i| i.section == self }
   end
 
+  def script_items_by_position
+    ((Item.where(medium: lecture.manuscript, section: self,
+                 quarantine: [nil, false])
+          .where.not(sort: 'label'))
+          .or(Item.where(medium: lecture.manuscript, section:self,
+                         sort: 'label', quarantine: [nil, false])
+                  .where.not(description: ['', nil])))
+      .order(:position)
+  end
+
   def visible_items_by_time
     lessons.order(:date).map { |l| l.visible_items }.flatten
            .select { |i| i.section == self }
+  end
+
+  def visible_items
+    return visible_items_by_time if lecture.content_mode == 'video'
+    script_items_by_position
   end
 
   private

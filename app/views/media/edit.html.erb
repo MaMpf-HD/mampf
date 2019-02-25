@@ -14,5 +14,16 @@
     </div>
   <% end %>
 </div>
+<div id="medium-manuscript-quarantine">
+  <% if @medium.quarantine.any? %>
+    <div class="row mt-2 p-2">
+      <div class="col-12">
+        <%= render partial: 'media/quarantine',
+                   locals: { medium: @medium,
+                             quarantine: @medium.quarantine } %>
+      </div>
+    </div>
+  <% end %>
+</div>
 <%= render partial: 'media/destinations_warning' %>
 <%= render partial: 'tags/modal' %>

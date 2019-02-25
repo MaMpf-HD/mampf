@@ -111,11 +111,14 @@ class MediaController < ApplicationController
       redirect_to :root, alert: 'Zu diesem Medium existiert kein Manuskript.'
       return
     end
-    unless params[:destination].present?
-      redirect_to @medium.manuscript_url unless params[:destination].present?
+    if params[:destination].present?
+      redirect_to @medium.manuscript_url + '#' + params[:destination].to_s
+      return
+    elsif params[:page].present?
+      redirect_to @medium.manuscript_url + '#page=' + params[:page].to_s
       return
     end
-    redirect_to @medium.manuscript_url + '#' + params[:destination]
+    redirect_to @medium.manuscript_url
   end
 
   # add a toc item for the video

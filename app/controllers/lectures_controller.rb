@@ -139,6 +139,7 @@ class LecturesController < ApplicationController
                                     :start_chapter, :absolute_numbering,
                                     :start_section, :organizational,
                                     :organizational_concept, :muesli,
+                                    :content_mode,
                                     editor_ids: [])
   end
 
@@ -166,6 +167,7 @@ class LecturesController < ApplicationController
                       render_to_string(partial: 'lectures/' \
                                                 'organizational_default',
                                        formats: :html,
-                                       layout: false))
+                                       layout: false),
+                    content_mode: 'media')
   end
 end

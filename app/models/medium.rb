@@ -54,6 +54,13 @@ class Medium < ApplicationRecord
                           unless: :undescribable?
   validates :editors, presence: { message: 'Es muss ein Editor ' \
                                            'angegeben werden.' }
+  # make sure that a lecture cannot have two or more media of type 'Script'
+  validate :at_most_one_manuscript
+  # media of type 'Script' can only be associated to lectures
+  validate :script_only_for_lectures
+  # media of type 'Script' do not contain videos
+  validate :no_video_for_script
+
 
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
@@ -225,6 +232,10 @@ class Medium < ApplicationRecord
   def missing_items_outside_quarantine
     Item.where(medium: self, pdf_destination: missing_destinations)
         .where.not(quarantine: true)
+  end
+
+  def quarantine
+    Item.where(medium: self, quarantine: true)
   end
 
   # update the items of type 'pdf_destination' associated to this medium:
@@ -546,14 +557,16 @@ class Medium < ApplicationRecord
   end
 
   # returns description unless medium is Kaviar associated to a lesson or a
-  # keks question, in which case details about the lesson/the quesiton are
-  # returned
+  # keks question, in which case details about the lesson/the question are
+  # returned, or a Script
   def local_info
     return description if description.present?
     return 'ohne Titel' unless undescribable?
     if sort == 'Kaviar'
       return "zu Sitzung #{teachable.lesson&.number}, " \
              "#{teachable.lesson&.date_de}"
+    elsif sort == 'Script'
+      return 'Skript'
     end
     'KeksFrage ' + position.to_s + '/' + siblings.count.to_s
   end
@@ -605,7 +618,7 @@ class Medium < ApplicationRecord
   # a description
   def undescribable?
     (sort == 'Kaviar' && teachable.class.to_s == 'Lesson') ||
-      sort == 'KeksQuestion'
+      sort == 'KeksQuestion' || sort == 'Script'
   end
 
   def touch_teachable
@@ -667,5 +680,31 @@ class Medium < ApplicationRecord
   def local_items
     return teachable.items - items if teachable_type == 'Course'
     teachable.lecture.items - items
+  end
+
+  def at_most_one_manuscript
+    return true unless teachable_type == 'Lecture'
+    return true unless sort == 'Script'
+    if (Medium.where(sort: 'Script',
+                     teachable: teachable).to_a - [self]).size.positive?
+      errors.add(:sort, 'Diese Vorlesung hat schon ein Skript.')
+      return false
+    end
+    true
+  end
+
+  def script_only_for_lectures
+    return true if teachable_type == 'Lecture'
+    return true unless sort == 'Script'
+    errors.add(:sort, 'Der Medientyp "Skript" kann nur zu Vorlesungen
+                       assoziiert werden.')
+    return false
+  end
+
+  def no_video_for_script
+    return true unless sort == 'Script'
+    return true unless video.present?
+    errors.add(:sort, 'Medien vom Typ "Skript" beinhalten kein Video.')
+    return false
   end
 end
