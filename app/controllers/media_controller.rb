@@ -41,24 +41,22 @@ class MediaController < ApplicationController
   end
 
   def update
-    @old_manuscript_destinations = @medium.manuscript_destinations
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript
-    # if changes to the manuscript have been made, find out
-    # whether named destination items are affected by the
-    # changes. If this is the case, the user gets a warning
-    # and can then decide whether to keep old items or to delete them
-#    if @medium.saved_change_to_manuscript_data?
-#      @protected_destinations = @medium.protected_destinations
-#      @medium.update_pdf_destinations!
-#      if @protected_destinations.present?
-#        render :destination_warning
-#        return
-#      end
-#    end
+    # if changes to the manuscript have been made,
+    # remove items that correspond to named destinations that no longer
+    # exist in the manuscript, but keep those that are referenced
+    # from other places
+    if @medium.sort == 'Script' && @medium.saved_change_to_manuscript_data?
+      @quarantine_added = @medium.update_pdf_destinations!
+      if @quarantine_added.any?
+        render :destination_warning
+        return
+      end
+    end
     redirect_to edit_medium_path(@medium)
   end
 
@@ -66,8 +64,6 @@ class MediaController < ApplicationController
     @medium = Medium.new(medium_params)
     @medium.save
     if @medium.valid?
-      # convert pdf destinations from extracted metadata to actual items
-#     @medium.create_pdf_destinations!
       redirect_to edit_medium_path(@medium)
       return
     end
@@ -197,11 +193,6 @@ class MediaController < ApplicationController
               filename: 'screenshot-' + @medium.title + '.png',
               type: 'content-type',
               x_sendfile: true
-  end
-
-  # delete the items associated to the manuscript's pdf_destinations
-  def delete_destinations
-    @medium.destroy_pdf_destinations!(params[:destinations].to_a)
   end
 
   # imports all of manuscript destinations, bookmarks as chpters, sections etc.

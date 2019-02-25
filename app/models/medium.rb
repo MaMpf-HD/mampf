@@ -212,58 +212,35 @@ class Medium < ApplicationRecord
   # the user insists (this way they are protected for example in the situation
   # where the user temporarily commented out some part of the manuscript)
   def protected_items
-    pdf_items = Item.where(medium: self, sort: 'pdf_destination')
-    referred_items = Referral.where(item: pdf_items).map(&:item)
-    referencing_items = proper_items.select do |i|
-      i.pdf_destination.in?(pdf_items.map(&:pdf_destination))
-    end
-    destination_items = Item.where(medium: self, sort: 'pdf_destination',
-                                   pdf_destination: referencing_items
-                                                      .map(&:pdf_destination))
-    (referred_items + destination_items).to_a.uniq
+    return [] unless sort == 'Script'
+    pdf_items = Item.where(medium: self).where.not(pdf_destination: nil)
+    Referral.where(item: pdf_items).map(&:item).uniq
   end
 
   # this is used by the controller for before/after comparison
-  def protected_destinations
+  def missing_destinations
     protected_items.map(&:pdf_destination) - manuscript_destinations
   end
 
-  # create items of type 'pdf_destination' out of the extracted named
-  # destinations of the manuscript
-  def create_pdf_destinations!
-    manuscript_destinations.each do |d|
-      next if Item.exists?(medium: self, sort: 'pdf_destination',
-                           description: d, pdf_destination: d)
-      Item.create(medium: self, sort: 'pdf_destination', description: d,
-                  pdf_destination: d)
-    end
+  def missing_items_outside_quarantine
+    Item.where(medium: self, pdf_destination: missing_destinations)
+        .where.not(quarantine: true)
   end
 
   # update the items of type 'pdf_destination' associated to this medium:
-  # - destroy those that do no longer appear in the pdf's metadata,
-  #   but preserve the protected items
-  # - create new items for new destination entries in the pdf's metadata
+  # - preserve only the protected items, destroy all others
+  # - put items that correspond to missing destination in quarantine (and
+  #   return these)
   def update_pdf_destinations!
-    items_to_conserve = protected_items
-    create_pdf_destinations!
-    items_to_destroy = Item.where(medium: self, sort: 'pdf_destination')
-                           .reject do |i|
-      i.pdf_destination.in?(manuscript_destinations) ||
-        i.in?(items_to_conserve)
+    return unless sort == 'Script'
+    Item.where(medium: self).where.not(sort: 'self')
+        .where.not(id: protected_items.pluck(:id)).destroy_all
+    quarantine_added = []
+    missing_items_outside_quarantine.each do |i|
+      quarantine_added.push(i.pdf_destination)
+      i.update(quarantine: true)
     end
-    items_to_destroy.each(&:destroy)
-  end
-
-  # destroy all items of type 'pdf_destination' associated to this medium
-  # (even protected ones) and remove all references to the corresponding
-  # pdf_destinations from this medium's associated toc entries
-  def destroy_pdf_destinations!(destinations)
-    Item.where(medium: self, sort: 'pdf_destination',
-               pdf_destination: destinations).each(&:destroy)
-    proper_items.where(pdf_destination: destinations)
-                .each do |i|
-      i.update(pdf_destination: nil)
-    end
+    quarantine_added
   end
 
   # is the given user an editor of this medium?

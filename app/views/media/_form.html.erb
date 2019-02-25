@@ -23,14 +23,4 @@
     </div>
   </div>
 <% end %>
-<div id="medium-manuscript-destinations">
-  <% if !new_medium && !@manuscript.empty? %>
-    <div class="row mt-2 p-2">
-      <div class="col-12">
-        <%= render partial: 'media/destinations',
-                   locals: { medium: medium,
-                             manuscript: @manuscript } %>
-      </div>
-    </div>
-  <% end %>
-</div>
+

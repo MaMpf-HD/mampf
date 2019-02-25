@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_24_133946) do
+ActiveRecord::Schema.define(version: 2019_02_25_103346) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -104,6 +104,7 @@ ActiveRecord::Schema.define(version: 2019_02_24_133946) do
     t.text "ref_number"
     t.text "pdf_destination"
     t.integer "position"
+    t.boolean "quarantine"
     t.index ["medium_id"], name: "index_items_on_medium_id"
     t.index ["section_id"], name: "index_items_on_section_id"
   end

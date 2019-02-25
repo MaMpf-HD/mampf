@@ -83,6 +83,7 @@ class Manuscript
       create_new_sections!(c)
       c['mampf_chapter'] = c['mampf_chapter'].reload
     end
+    # destroy_missing_destinations!
     create_chapter_items!
     create_section_items!
     create_content_items!
@@ -154,7 +155,8 @@ class Manuscript
                     ref_number: c['label'],
                     position: nil,
                     section_id: nil,
-                    start_time: nil)
+                    start_time: nil,
+                    quarantine: false)
         next
       end
       Item.create(medium_id: @medium.id,
@@ -182,7 +184,8 @@ class Manuscript
                     ref_number: s['label'],
                     position: nil,
                     section_id: s['mampf_section'].id,
-                    start_time: nil)
+                    start_time: nil,
+                    quarantine: false)
         next
       end
       Item.create(medium_id: @medium.id,
@@ -208,7 +211,8 @@ class Manuscript
                       sort: Item.internal_sort(c['sort']),
                       page: c['page'], description: c['description'],
                       ref_number: c['label'], position: c['counter'],
-                      start_time: nil)
+                      start_time: nil,
+                      quarantine: false)
           next
         end
         Item.create(medium_id: @medium.id, section_id: s['mampf_section'].id,
@@ -220,9 +224,12 @@ class Manuscript
     end
   end
 
-  def destinations_with_multiplicities
+  def destinations
     bookmarks = @medium.manuscript[:original].metadata['bookmarks'] || []
-    destinations = bookmarks.map { |b| b['destination'] }
+    bookmarks.map { |b| b['destination'] }
+  end
+
+  def destinations_with_multiplicities
     destinations.each_with_object(Hash.new(0)) do |word,counts|
       counts[word] += 1
     end
@@ -307,4 +314,13 @@ class Manuscript
       'content' => @content.select { |c| c['contradiction'] },
       'multiplicities' => destinations_with_higher_multiplicities }
   end
+
+  def destroy_missing_destinations!
+    old_destinations = Item.where(medium: @medium).map(&:pdf_destination)
+                           .compact
+    missing_destinations = destinations - old_destinations
+    Item.where(medium: medium, pdf_destination: missing_destinations)
+        .destroy_all
+  end
+
 end

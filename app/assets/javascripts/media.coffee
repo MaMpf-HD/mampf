@@ -60,10 +60,10 @@ $(document).on 'turbolinks:load', ->
   # trigger deletion of named destination that no longer point to existing
   # pdf destinations
   # (relevant on media edit page)
-  $('#delete-old-destinations').on 'click', ->
+  $('#quarantine-old-destinations').on 'click', ->
     mediumId = $(this).data('mediumId')
     destinations = $(this).data('destinations')
-    $.ajax Routes.delete_destinations_path(mediumId),
+    $.ajax Routes.quarantine_destinations_path(mediumId),
       type: 'GET'
       dataType: 'script'
       data: {
