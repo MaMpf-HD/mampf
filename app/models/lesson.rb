@@ -162,6 +162,23 @@ class Lesson < ApplicationRecord
          .map(&:proper_items_by_time).flatten
   end
 
+  def content_items
+    return visible_items if lecture.content_mode == 'video'
+    script_items
+  end
+
+  def script_items
+    return [] unless lecture.manuscript && start_destination && end_destination
+    start_item = Item.where(medium: lecture.manuscript,
+                            pdf_destination: start_destination)&.first
+    end_item = Item.where(medium: lecture.manuscript,
+                            pdf_destination: end_destination)&.first
+    return [] unless start_item && end_item
+    range = (start_item.position..end_item.position).to_a
+    return [] unless range.present?
+    Item.where(medium: lecture.manuscript, position: range).order(:position)
+  end
+
   # Returns the list of sections of this lesson (by label), together with
   # their ids.
   # Is used in options_for_select in form helpers.

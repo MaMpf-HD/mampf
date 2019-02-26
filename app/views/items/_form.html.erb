@@ -45,7 +45,9 @@
         </i>
       </div>
       <div class="col-auto">
-        <%= f.select :sort, Item.internal_sorts, {},
+        <%= f.select :sort,
+                     Item.internal_sorts.natural_sort_by { |s| s.first },
+                     {},
                      { class: 'form-control' } %>
       </div>
     </div>

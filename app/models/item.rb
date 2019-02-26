@@ -32,7 +32,7 @@ class Item < ApplicationRecord
                                      'link', 'pdf_destination', 'self',
                                      'proposition', 'Lemma', 'Theorem',
                                      'subsection', 'Corollary', 'figure',
-                                     'chapter'],
+                                     'chapter', 'exercise', 'equation'],
                                 message: 'Unzulässiger Typ' }
   validates :link, http_url: true, if: :proper_link?
   validates :description,
@@ -164,7 +164,7 @@ class Item < ApplicationRecord
                        'algorithm', 'Theorem', 'Corollary', 'Lemma',
                        'proposition'].include?(sort)
     return '#1ad1ff;' if ['definition', 'annotation', 'example',
-                          'figure'].include?(sort)
+                          'figure', 'exercise', 'equation'].include?(sort)
     return 'lightgray;' if sort == 'link' || sort == 'self'
     ''
   end
@@ -212,7 +212,8 @@ class Item < ApplicationRecord
      ['Abschnitt', 'section'], ['Markierung', 'label'],
      ['Unterabschnitt', 'subsection'], ['Theorem', 'Theorem'],
      ['Proposition', 'proposition'], ['Hilfssatz', 'Lemma'],
-     ['Korollar', 'Corollary'], ['Abbildung', 'figure'], ['Kapitel', 'chapter']]
+     ['Korollar', 'Corollary'], ['Abbildung', 'figure'],
+     ['Kapitel', 'chapter'], ['Aufgabe', 'exercise'], ['Gleichung', 'equation']]
   end
 
   def self.internal_sort(sort)
@@ -240,7 +241,7 @@ class Item < ApplicationRecord
   def math_items
     ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
      'corollary', 'algorithm', 'Theorem', 'proposition', 'Lemma', 'Corollary',
-     'figure', 'subsection']
+     'figure', 'subsection', 'exercise', 'equation']
   end
 
   def other_items
@@ -264,7 +265,8 @@ class Item < ApplicationRecord
              'Theorem' => 'Thm.', 'proposition' => 'Prop.',
              'Lemma' => 'Hilfssatz',
              'Corollary' => 'Kor.', 'figure' => 'Abb.',
-             'subsection' => 'Unterabschnitt' }
+             'subsection' => 'Unterabschnitt', 'exercise' => 'Aufg.',
+             'equation' => 'Gl.' }
     hash[sort]
   end
 

@@ -131,6 +131,22 @@ class Lecture < ApplicationRecord
             .flatten.collect(&:items).flatten
   end
 
+  # returns items as provided by Script
+  # (relevant if content mode is set to manuscript):
+  # - disregards equations, exercises and labels without description
+  #   and items in quarantine
+  def script_items_by_position
+    return unless manuscript
+    ((Item.where(medium: lecture.manuscript,
+                 quarantine: [nil, false])
+          .where.not(sort: ['label', 'equation', 'exercise', 'self',
+                            'chapter', 'section']))
+          .or(Item.where(medium: lecture.manuscript,
+                         sort: 'label', quarantine: [nil, false])
+                  .where.not(description: ['', nil])))
+      .order(:position)
+  end
+
   def manuscript
     Medium.where(sort: 'Script', teachable: lecture)&.first
   end

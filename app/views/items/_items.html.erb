@@ -1,10 +1,13 @@
 <div class="card bg-teal-lighten-4">
-  <div class="card-header bg-teal-darken-3">
-    <h5 class="text-light">
-      Inhalt
-    </h5>
-  </div>
-  <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>; overflow-y: scroll;">
+  <% unless embedded %>
+    <div class="card-header bg-teal-darken-3">
+      <h5 class="text-light">
+        Inhalt
+      </h5>
+    </div>
+  <% end %>
+  <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>;
+                                overflow-y: <%= embedded ? '' : 'scroll;' %>">
     <% if items.present? %>
       <ul class="list-group">
         <% items.each do |i| %>

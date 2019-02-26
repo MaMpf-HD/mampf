@@ -168,6 +168,6 @@ class LecturesController < ApplicationController
                                                 'organizational_default',
                                        formats: :html,
                                        layout: false),
-                    content_mode: 'media')
+                    content_mode: 'video')
   end
 end

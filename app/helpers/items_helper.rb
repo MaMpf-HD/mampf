@@ -14,4 +14,12 @@ module ItemsHelper
     [['kein zugeordneter Abschnitt aus der Datenbank', '']] +
       item.medium.teachable.section_selection
   end
+
+  # returns the list of script_items for the given item,
+  # as is used in options_for_select
+  def select_script_items(lecture)
+    lecture.script_items_by_position.map do |i|
+      [i.title_within_lecture, i.pdf_destination]
+    end
+  end
 end

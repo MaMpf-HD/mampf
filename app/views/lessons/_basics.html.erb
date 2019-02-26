@@ -191,3 +191,33 @@
     </div>
   <% end %>
 </div>
+<% if lesson.lecture.content_mode == 'manuscript' %>
+  <% unless inspection %>
+    <div class="form-group">
+      <div class="form-row">
+        <div class="col-6">
+      <%= f.label :start_destination, 'Anfangs-Item' %>
+      <%= f.select :start_destination,
+                   options_for_select(select_script_items(lesson.lecture),
+                                      lesson.start_destination),
+                   {},
+                   { class: 'selectize' } %>
+        </div>
+        <div class="col-6">
+      <%= f.label :end_destination, 'End-Item' %>
+      <%= f.select :end_destination,
+                   options_for_select(select_script_items(lesson.lecture),
+                                      lesson.end_destination),
+                   {},
+                   { class: 'selectize' } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+<div style="max-height: 20vh; overflow-y: scroll;">
+  <%= render partial: 'items/items',
+             locals: { items: lesson.content_items,
+                       small: true,
+                       embedded: true } %>
+</div>

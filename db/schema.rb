@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_25_151323) do
+ActiveRecord::Schema.define(version: 2019_02_26_102954) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -159,6 +159,8 @@ ActiveRecord::Schema.define(version: 2019_02_25_151323) do
     t.integer "lecture_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "start_destination"
+    t.text "end_destination"
     t.index ["lecture_id"], name: "index_lessons_on_lecture_id"
   end
 

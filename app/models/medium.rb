@@ -224,6 +224,17 @@ class Medium < ApplicationRecord
     Referral.where(item: pdf_items).map(&:item).uniq
   end
 
+  def vanished_items
+    return [] unless sort == 'Script'
+    Item.where(medium: self)
+        .where.not(pdf_destination: manuscript_destinations)
+  end
+
+  def irrelevant_items
+    Item.where(id: vanished_items.pluck(:id))
+        .where.not(id: protected_items.pluck(:id))
+  end
+
   # this is used by the controller for before/after comparison
   def missing_destinations
     protected_items.map(&:pdf_destination) - manuscript_destinations
@@ -244,8 +255,7 @@ class Medium < ApplicationRecord
   #   return these)
   def update_pdf_destinations!
     return unless sort == 'Script'
-    Item.where(medium: self).where.not(sort: 'self')
-        .where.not(id: protected_items.pluck(:id)).destroy_all
+    irrelevant_items.destroy_all
     quarantine_added = []
     missing_items_outside_quarantine.each do |i|
       quarantine_added.push(i.pdf_destination)
