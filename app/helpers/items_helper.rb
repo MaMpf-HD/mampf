@@ -22,4 +22,17 @@ module ItemsHelper
       [i.title_within_lecture, i.pdf_destination]
     end
   end
+
+  def check_unless_hidden(item_id)
+    return 'checked' unless Item.find_by_id(item_id)&.hidden
+    ''
+  end
+
+  def check_status(content)
+    checked = content['hidden'] ? '' : 'checked '
+    disabled = Item.internal_sort(content['sort'])
+                   .in?(Item.non_structuring_sorts)
+    return checked unless disabled
+    checked + 'disabled '
+  end
 end

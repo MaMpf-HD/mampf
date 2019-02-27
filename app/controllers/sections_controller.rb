@@ -61,7 +61,7 @@ class SectionsController < ApplicationController
 
   def section_params
     params.require(:section).permit(:title, :display_number, :chapter_id,
-                                    tag_ids: [], lesson_ids: [])
+                                    :hidden, tag_ids: [], lesson_ids: [])
   end
 
   # inserts the section in the correct position if predecessor is given,

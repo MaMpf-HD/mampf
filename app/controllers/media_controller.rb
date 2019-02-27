@@ -201,8 +201,8 @@ class MediaController < ApplicationController
   # imports all of manuscript destinations, bookmarks as chpters, sections etc.
   def import_manuscript
     manuscript = Manuscript.new(@medium)
-    manuscript.export_to_db!
-    redirect_to edit_medium_path(@medium)
+    filter_boxes = JSON.parse(params[:filter_boxes])
+    manuscript.export_to_db!(filter_boxes)
   end
 
   private

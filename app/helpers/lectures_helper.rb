@@ -76,4 +76,30 @@ module LecturesHelper
     return '' if lecture.published?
     'unpublished'
   end
+
+  # hidden chapters get a different color
+  def chapter_card_color(chapter)
+    return 'bg-mdb-color-lighten-5' unless chapter.hidden
+    'greyed_out bg-grey'
+  end
+
+  # hidden chapters get a different header color
+  def chapter_header_color(chapter)
+    return 'bg-mdb-color-lighten-2' unless chapter.hidden
+    ''
+  end
+
+  # hidden sections get a different color
+  def section_color(section)
+    return '' unless section.hidden
+    'greyed_out'
+  end
+
+  # hidden sections get a different background color
+  def section_background_color(section)
+    unless !section.chapter.hidden && section.hidden
+      return 'bg-mdb-color-lighten-6'
+    end
+    'bg-grey'
+  end
 end

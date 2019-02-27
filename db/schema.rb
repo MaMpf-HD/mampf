@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_26_102954) do
+ActiveRecord::Schema.define(version: 2019_02_27_173517) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 2019_02_26_102954) do
     t.datetime "updated_at", null: false
     t.integer "position"
     t.text "display_number"
+    t.boolean "hidden"
     t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
   end
 
@@ -105,6 +106,7 @@ ActiveRecord::Schema.define(version: 2019_02_26_102954) do
     t.text "pdf_destination"
     t.integer "position"
     t.boolean "quarantine"
+    t.boolean "hidden"
     t.index ["medium_id"], name: "index_items_on_medium_id"
     t.index ["section_id"], name: "index_items_on_section_id"
   end
@@ -253,6 +255,7 @@ ActiveRecord::Schema.define(version: 2019_02_26_102954) do
     t.datetime "updated_at", null: false
     t.integer "position"
     t.text "display_number"
+    t.boolean "hidden"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 

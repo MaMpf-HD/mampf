@@ -216,6 +216,11 @@ class Item < ApplicationRecord
      ['Kapitel', 'chapter'], ['Aufgabe', 'exercise'], ['Gleichung', 'equation']]
   end
 
+  # items of these sorts will not be displayed in section/lesson view
+  def self.non_structuring_sorts
+    ['equation', 'exercise', 'self']
+  end
+
   def self.internal_sort(sort)
     Item.internal_sorts.select { |s| s.first == sort }&.map(&:second)&.first
   end

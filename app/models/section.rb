@@ -55,7 +55,8 @@ class Section < ApplicationRecord
   end
 
   def to_label
-    displayed_number + '. ' + title
+    return displayed_number + '. ' + title unless hidden_with_inheritance?
+    '*' + displayed_number + '. ' + title
   end
 
   # section's media are media that are contained in one of the
@@ -69,9 +70,7 @@ class Section < ApplicationRecord
     media.select(&:visible?)
   end
 
-  # returns the previous section, taking into account that this is may be
-  # within the previous chapter
-  def previous
+  def previous_preliminary
     return higher_item unless first?
     return if chapter.first?
     return unless previous_chapter
@@ -80,15 +79,35 @@ class Section < ApplicationRecord
     potential_last.lower_items.last
   end
 
-  # returns the next section, taking into account that this is may be
-  # within the next chapter
-  def next
+  # returns the previous section, taking into account that this is may be
+  # within the previous chapter, and that the actual previous section may be
+  # hidden (and therefore does not count)
+  def previous
+    possible_previous = previous_preliminary
+    until possible_previous.nil? || !possible_previous.hidden_with_inheritance?
+      possible_previous = possible_previous.previous_preliminary
+    end
+    possible_previous
+  end
+
+  def next_preliminary
     return lower_item unless last?
     return if chapter.last?
     return unless next_chapter
     potential_first = next_chapter.sections.first
     return potential_first if potential_first.first?
     potential_first.higher_items.first
+  end
+
+  # returns the next section, taking into account that this is may be
+  # within the next chapter, and that the actual next section may be
+  # hidden (and therefore does not count)
+  def next
+    possible_next = next_preliminary
+    until possible_next.nil? || !possible_next.hidden_with_inheritance?
+      possible_next = possible_next.next_preliminary
+    end
+    possible_next
   end
 
   def items_by_time
@@ -117,6 +136,10 @@ class Section < ApplicationRecord
   def visible_items
     return visible_items_by_time if lecture.content_mode == 'video'
     script_items_by_position
+  end
+
+  def hidden_with_inheritance?
+    chapter.hidden || hidden
   end
 
   private

@@ -150,6 +150,25 @@ $(document).on 'turbolinks:load', ->
         return
     return
 
+  $('#import-from-manuscript').on 'click', ->
+    mediumId = $(this).data('mediumid')
+    okay = confirm('Bist Du sicher?')
+    return unless okay
+    count = $(this).data('count') - 1
+    filter_boxes = []
+    for c in [0..count]
+      tag_checked = $('#tag-' + c).prop('checked')
+      shown_checked = $('#visible-' + c).prop('checked')
+      filter_boxes.push [c, tag_checked, shown_checked]
+    $.ajax Routes.import_manuscript_path(mediumId),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        id: mediumId
+        filter_boxes: JSON.stringify(filter_boxes)
+      }
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->

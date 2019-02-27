@@ -167,6 +167,8 @@ class Lesson < ApplicationRecord
     script_items
   end
 
+  # script items are items in the manuscript between start end end destination
+  # (relevant if lecture content mode is manuscript)
   def script_items
     return [] unless lecture.manuscript && start_destination && end_destination
     start_item = Item.where(medium: lecture.manuscript,

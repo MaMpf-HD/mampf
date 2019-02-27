@@ -7,7 +7,8 @@ class Chapter < ApplicationRecord
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
 
   def to_label
-    'Kapitel ' + displayed_number + '. ' + title
+    return 'Kapitel ' + displayed_number + '. ' + title unless hidden
+    '*Kapitel ' + displayed_number + '. ' + title
   end
 
   # Returns the number of the chapter. Unless the user explicitly specified

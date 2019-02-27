@@ -20,7 +20,7 @@
     )
   </div>
   <div class="col-3 col-xl-2 text-right ">
-    <% if @section.previous.present? %>
+    <% if !@section.hidden_with_inheritance? && @section.previous %>
       <a href="<%= section_path(@section.previous) %>"
          class="text-secondary material-icons mr-2"
          style="text-decoration:none; font-size: 3em;"
@@ -29,7 +29,7 @@
         keyboard_arrow_left
       </a>
     <% end %>
-    <% if @section.next.present? %>
+    <% if !@section.hidden_with_inheritance? && @section.next %>
       <a href="<%= section_path(@section.next) %>"
          class="text-secondary material-icons"
          style="text-decoration:none; font-size: 3em;"

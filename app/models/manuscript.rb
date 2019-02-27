@@ -4,7 +4,8 @@ class Manuscript
   include ActiveModel::Model
 
   attr_reader :medium, :lecture, :chapters, :sections, :content,
-              :contradictions, :contradiction_count
+              :contradictions, :contradiction_count, :count,
+              :content_descriptions
 
   def initialize(medium)
     unless medium && medium.sort == 'Script' &&
@@ -21,11 +22,15 @@ class Manuscript
     match_mampf_sections
     @content = get_content(bookmarks)
     check_content
+    @content_descriptions = @content.map { |c| c['description'] } - ['']
+    update_tag_info
+    update_item_info
     @contradictions = get_contradictions
     @contradiction_count = @contradictions['chapters'].size +
                              @contradictions['sections'].size +
                              @contradictions['content'].size +
                              @contradictions['multiplicities'].size
+    @count = bookmarks.count
   end
 
   def empty?
@@ -76,7 +81,7 @@ class Manuscript
     chapter_in_mampf(chapter)&.title != chapter['description']
   end
 
-  def export_to_db!
+  def export_to_db!(filter_boxes)
     return unless @contradiction_count.zero?
     create_new_chapters!
     @chapters.each do |c|
@@ -86,7 +91,9 @@ class Manuscript
     # destroy_missing_destinations!
     create_chapter_items!
     create_section_items!
-    create_content_items!
+    create_content_items!(filter_boxes)
+    update_tags!(filter_boxes)
+    pp filter_boxes
   end
 
   def unmatched_mampf_chapters
@@ -198,28 +205,60 @@ class Manuscript
     end
   end
 
-  def create_content_items!
+  def create_content_items!(filter_boxes)
     sections_with_content.each do |s|
       content_in_section(s).each do |c|
         # check if there exists an item with this destination in this medium
         # if so, only update
+        hidden = filter_boxes[c['counter']].third == false
         item = Item.where(medium: @medium,
                           pdf_destination: c['destination'])
                   &.first
         if item
+          #if s['mampf_section'].id == item.section_id &&
+          #     Item.internal_sort(c['sort']) == item.sort &&
+          #     c['page'] == item.page && c['description'] == item.description &&
+          #     c['label'] == item.ref_number && c['counter'] == item.position &&
+          #     item.start_time == nil && item.quarantine == false
+          #  next
+          #end
           item.update(section_id: s['mampf_section'].id,
                       sort: Item.internal_sort(c['sort']),
                       page: c['page'], description: c['description'],
                       ref_number: c['label'], position: c['counter'],
                       start_time: nil,
-                      quarantine: false)
+                      quarantine: false,
+                      hidden: hidden)
           next
         end
         Item.create(medium_id: @medium.id, section_id: s['mampf_section'].id,
                     sort: Item.internal_sort(c['sort']),
                     page: c['page'],
                     description: c['description'], ref_number: c['label'],
-                    position: c['counter'], pdf_destination: c['destination'])
+                    position: c['counter'], pdf_destination: c['destination'],
+                    hidden: hidden)
+      end
+    end
+  end
+
+  def update_tags!(filter_boxes)
+    sections_with_content.each do |s|
+      content_in_section(s).each do |c|
+        # if tag for content already exists, add tag to the section and course
+        if c['tag_id']
+          tag = Tag.find_by_id(c['tag_id'])
+          next unless tag
+          section = s['mampf_section']
+          next unless section
+          tag.sections |= [s['mampf_section']]
+          tag.courses |= [@lecture.course]
+          next
+        end
+        next unless filter_boxes[c['counter']].second
+        # if checkbox for tag creation is checked, create the tag,
+        # associate it with course and section
+        Tag.create(title: c['description'], courses: [@lecture.course],
+                   sections: [s['mampf_section']])
       end
     end
   end
@@ -237,6 +276,38 @@ class Manuscript
 
   def destinations_with_higher_multiplicities
     destinations_with_multiplicities.select { |k,v| v > 1 }.keys
+  end
+
+  def existing_tags
+    Tag.pluck('title') & @content_descriptions
+  end
+
+  def update_tag_info
+    tags = existing_tags
+    @content.each do |c|
+      if c['description'].in?(tags)
+        c['tag_id'] = Tag.where(title: c['description'])&.first&.id
+      else
+        c['tag_id'] = nil
+      end
+    end
+  end
+
+  def update_item_info
+    @content.each do |c|
+      item = Item.where(medium: @medium,
+                        pdf_destination: c['destination'])&.first
+      item_id = item&.id
+      c['item_id'] = item_id
+      c['hidden'] = if item
+                      item.hidden
+                    elsif Item.internal_sort(c['sort'])
+                              .in?(Item.non_structuring_sorts)
+                      true
+                    else
+                      false
+                    end
+    end
   end
 
   private

@@ -64,6 +64,26 @@
       <%= f.text_field :display_number, { class: 'form-control' } %>
     </div>
   </div>
+  <div class="form-row">
+    <div class="col-12">
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :hidden,
+                        class: 'custom-control-input' %>
+        <%= f.label :hidden,
+                    'von Gliederung ausgenommen',
+                    { class: 'custom-control-label' } %>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Wenn Du dieses Feld anklickst, wird dieses Kapitel
+           nicht in der Vorlesungsgliederung als Kapitel auftreten. Trotzdem
+           sind das Kapitel und seine Inhalte für Nutzer auffindbar.">
+        </i>
+      </div>
+    </div>
+  </div>
   <%= f.hidden_field :lecture_id, value: lecture.id %>
   <div class="row">
     <div class="col-12 text-center">
