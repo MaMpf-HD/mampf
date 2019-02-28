@@ -48,6 +48,10 @@ class Item < ApplicationRecord
   after_save :touch_medium
   before_destroy :touch_medium
 
+  scope :unquarantined, -> { where(quarantine: [nil, false]) }
+  scope :content, -> { where(sort: Item.content_sorts) }
+  scope :unhidden, -> { where(hidden: [nil, false]) }
+
   # returns one millisecond before the start time of the next item if there
   # is a next item, otherwise the end time of the video
   def end_time
@@ -216,9 +220,18 @@ class Item < ApplicationRecord
      ['Kapitel', 'chapter'], ['Aufgabe', 'exercise'], ['Gleichung', 'equation']]
   end
 
-  # items of these sorts will not be displayed in section/lesson view
-  def self.non_structuring_sorts
-    ['equation', 'exercise', 'self']
+  def self.content_sorts
+    ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
+     'algorithm', 'label', 'corollary', 'proposition', 'Lemma', 'Theorem',
+     'subsection', 'Corollary', 'equation', 'exercise', 'figure', 'self']
+  end
+
+  def self.toc_sorts
+    ['chapter', 'section']
+  end
+
+  def self.external_sorts
+    ['link', 'pdf_destination']
   end
 
   def self.internal_sort(sort)
@@ -239,6 +252,10 @@ class Item < ApplicationRecord
 
   def link?
     sort == 'link'
+  end
+
+  def referencing_media
+    Referral.where(item: self).map(&:medium)
   end
 
   private

@@ -116,16 +116,13 @@ class Section < ApplicationRecord
 
   # returns items as provided by Script
   # (relevant if content mode is set to manuscript):
-  # - disregards equations, exercises and labels without description
-  #   and items in quarantine
+  # - disregards hidden items and items in quarantine
   def script_items_by_position
-    ((Item.where(medium: lecture.manuscript, section: self,
-                 quarantine: [nil, false])
-          .where.not(sort: ['label', 'equation', 'exercise']))
-          .or(Item.where(medium: lecture.manuscript, section:self,
-                         sort: 'label', quarantine: [nil, false])
-                  .where.not(description: ['', nil])))
-      .order(:position)
+    Item.where(medium: lecture.manuscript,
+               section: self)
+        .unquarantined
+        .unhidden
+        .order(:position)
   end
 
   def visible_items_by_time

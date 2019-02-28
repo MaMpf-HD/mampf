@@ -14,7 +14,9 @@
                data-trigger="focus"
                title="Info"
                data-content="Dies ist eine Liste aller Items, die in Quarantäne
-               sind.">
+               sind. Es handelt sich hierbei um Items, die an anderen Stellen
+               referenziert werden und zu diesem Manuskript gehören, aber in der
+               vorliegenden pdf-Datei nicht mehr vorkommen.">
             </i>
           </h5>
         </div>
@@ -35,7 +37,7 @@
          data-parent="#quarantine_accordion">
       <div class="card-body" id="quarantineCardBody">
          <%= render partial: 'media/destinations_in_quarantine',
-                    locals: { destinations: quarantine.map(&:pdf_destination) } %>
+                    locals: { quarantine: quarantine } %>
       </div>
     </div>
   </div>

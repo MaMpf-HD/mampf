@@ -1,3 +1,5 @@
+location.reload() unless $('#toc-area').length > 0
+
 # rerender the toc box and the references box
 $('#toc-area').empty()
   .append('<%= j render partial: 'media/toc',

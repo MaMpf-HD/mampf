@@ -22,25 +22,27 @@
                 <%= i.short_description %>
               </div>
               <div class="col-2">
-                <% if i.video_link %>
-                  <a href="<%= i.video_link %>"
-                     class="text-secondary new-in-lecture material-icons mr-2"
-                     style="text-decoration:none; font-size: 1em"
-                     data-toggle="tooltip"
-                     title="zum Video"
-                     target="_blank">
-                    video_library
-                  </a>
-                <% end %>
-                <% if i.manuscript_link %>
-                  <a href="<%= i.manuscript_link %>"
-                     class="text-secondary new-in-lecture material-icons"
-                     style="text-decoration:none; font-size: 1em;"
-                     data-toggle="tooltip"
-                     title="zum Manuskript"
-                     target="_blank">
-                    library_books
-                  </a>
+                <% if i.medium.published_with_inheritance? %>
+                  <% if i.video_link %>
+                    <a href="<%= i.video_link %>"
+                       class="text-secondary new-in-lecture material-icons mr-2"
+                       style="text-decoration:none; font-size: 1em"
+                       data-toggle="tooltip"
+                       title="zum Video"
+                       target="_blank">
+                      video_library
+                    </a>
+                  <% end %>
+                  <% if i.manuscript_link %>
+                    <a href="<%= i.manuscript_link %>"
+                       class="text-secondary new-in-lecture material-icons"
+                       style="text-decoration:none; font-size: 1em;"
+                       data-toggle="tooltip"
+                       title="zum Manuskript"
+                       target="_blank">
+                      library_books
+                    </a>
+                  <% end %>
                 <% end %>
               </div>
             </div>

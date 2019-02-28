@@ -299,14 +299,7 @@ class Manuscript
                         pdf_destination: c['destination'])&.first
       item_id = item&.id
       c['item_id'] = item_id
-      c['hidden'] = if item
-                      item.hidden
-                    elsif Item.internal_sort(c['sort'])
-                              .in?(Item.non_structuring_sorts)
-                      true
-                    else
-                      false
-                    end
+      c['hidden'] = item ? item.hidden : nil
     end
   end
 

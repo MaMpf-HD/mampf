@@ -53,7 +53,7 @@ class ItemsController < ApplicationController
     filter = params.require(:item).permit(:sort, :start_time, :section_id,
                                           :medium_id, :ref_number, :description,
                                           :link, :page, :pdf_destination,
-                                          :explanation).clone
+                                          :explanation, :hidden).clone
     if filter[:medium_id].present?
       filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
     end

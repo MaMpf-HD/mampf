@@ -159,7 +159,7 @@ class Lesson < ApplicationRecord
 
   def visible_items
     media.select(&:visible?)
-         .map(&:proper_items_by_time).flatten
+         .map(&:proper_items_by_time).flatten.reject(&:hidden)
   end
 
   def content_items

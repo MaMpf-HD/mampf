@@ -108,8 +108,26 @@
            so etwas wie '7.4' oder '7.1.3'.">
         </i>
       </div>
-      <div class="col-auto">
+      <div class="col-4">
         <%= f.text_field :ref_number, class: 'form-control' %>
+      </div>
+      <div class="col-6 col-form-label text-right">
+        <div class="custom-control custom-checkbox">
+          <%= f.check_box :hidden,
+                          class: 'custom-control-input' %>
+          <%= f.label :hidden,
+                      'verstecken',
+                      { class: 'custom-control-label' } %>
+          <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover"
+             data-trigger="focus"
+             title="Info"
+             data-content="Wenn Du diesen Haken setzt, wird der Eintrag
+             den Nutzerinnen im Inhaltsverzeichnis nicht angezeigt,
+             Du kanst ihn aber trotzdem von woanders referenzieren.">
+          </i>
+        </div>
       </div>
     </div>
     <div id="item_description_field" class="form-group form-row">

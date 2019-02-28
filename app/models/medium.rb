@@ -280,13 +280,18 @@ class Medium < ApplicationRecord
     false
   end
 
+  def editors_with_inheritance
+    (editors.to_a + teachable.lecture&.editors&.to_a +
+      teachable.course.editors&.to_a).uniq
+  end
+
   # creates a .vtt file (and returns its path), which contains
   # all data needed by the thyme player to realize the toc
   def toc_to_vtt
     path = toc_path
     File.open(path, 'w+:UTF-8') do |f|
       f.write vtt_start
-      proper_items_by_time.each do |i|
+      proper_items_by_time.reject(&:hidden).each do |i|
         f.write i.vtt_time_span
         f.write i.vtt_reference
       end

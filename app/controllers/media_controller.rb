@@ -82,7 +82,11 @@ class MediaController < ApplicationController
     @medium.destroy
     # destroy all notifications related to this medium
     destroy_notifications
-    redirect_to administration_path
+    if @medium.teachable_type.in?(['Lecture', 'Lesson'])
+      redirect_to edit_lecture_path(@medium.teachable.media_scope)
+      return
+    end
+    redirect_to edit_course_path(@medium.teachable)
   end
 
   def inspect
@@ -203,6 +207,7 @@ class MediaController < ApplicationController
     manuscript = Manuscript.new(@medium)
     filter_boxes = JSON.parse(params[:filter_boxes])
     manuscript.export_to_db!(filter_boxes)
+    redirect_to edit_medium_path(@medium)
   end
 
   private

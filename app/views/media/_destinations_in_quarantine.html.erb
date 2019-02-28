@@ -1,7 +1,63 @@
-<ul>
-  <% destinations.each do |d| %>
-    <li>
-      <%= d %>
-    </li>
-  <% end %>
-</ul>
+<div class="row">
+  <div class="col-3">
+    <strong>
+      Titel
+    </strong>
+  </div>
+  <div class="col-7">
+    <strong>
+      referenziert in
+    </strong>
+  </div>
+  <div class="col-2">
+    <strong>
+      Aktion
+    </strong>
+    <i class="far fa-question-circle helpdesk"
+       tabindex="-1"
+       data-toggle="popover"
+       data-trigger="focus"
+       title="Info"
+       data-content="Wenn Du den Eintrag löschst, werden alle Referenzen auf
+       ihn ebenfalls gelöscht (auch in Videos anderer EditorInnen).">
+     </i>
+  </div>
+</div>
+<% quarantine.each do |d| %>
+  <div class="row">
+    <div class="col-3">
+      <%= d.local_reference %>
+      (<%= d.pdf_destination %>)
+    </div>
+    <div class="col-7">
+      <ul>
+        <% unless d.referencing_media.any? %>
+          Der Eintrag wird von nirgendwo referenziert. Du kannst ihn also
+          löschen, ohne dass irgendein anderes Medium davon beeinträchtigt wird.
+        <% end %>
+        <% d.referencing_media.each do |m| %>
+          <li>
+            <% if m.edited_with_inheritance_by?(current_user) %>
+              <%= link_to m.title_for_viewers,
+                          enrich_medium_path(m) %>
+            <% else %>
+              <%= link_to m.title_for_viewers,
+                          play_medium_path(m) %>
+            <% end %>
+            (editiert von
+            <%= m.editors_with_inheritance.map(&:name).join(', ') %>
+            )
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="col-2">
+      <%= link_to 'Löschen',
+                  item_path(d),
+                  class: 'btn btn-danger btn-sm',
+                  method: :delete,
+                  data: { confirm: 'Bist Du sicher?' },
+                  remote: true %>
+    </div>
+  </div>
+<% end %>

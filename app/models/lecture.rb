@@ -39,6 +39,9 @@ class Lecture < ApplicationRecord
                                             'Kombination aus Modul, Semester ' \
                                             'und DozentIn existiert bereits.' }
 
+  validates :content_mode, inclusion: { in: ['video', 'manuscript'] ,
+                                        message: 'Ungültiger Modus.'}
+
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
   after_save :remove_teacher_as_editor
@@ -131,20 +134,17 @@ class Lecture < ApplicationRecord
             .flatten.collect(&:items).flatten
   end
 
-  # returns items as provided by Script
+  # returns content items as provided by Script
   # (relevant if content mode is set to manuscript):
   # - disregards equations, exercises and labels without description
   #   and items in quarantine
   def script_items_by_position
-    return unless manuscript
-    ((Item.where(medium: lecture.manuscript,
-                 quarantine: [nil, false])
-          .where.not(sort: ['label', 'equation', 'exercise', 'self',
-                            'chapter', 'section']))
-          .or(Item.where(medium: lecture.manuscript,
-                         sort: 'label', quarantine: [nil, false])
-                  .where.not(description: ['', nil])))
-      .order(:position)
+    return [] unless manuscript
+    Item.where(medium: lecture.manuscript)
+        .content
+        .unquarantined
+        .unhidden
+        .order(:position)
   end
 
   def manuscript

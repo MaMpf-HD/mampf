@@ -29,10 +29,6 @@ module ItemsHelper
   end
 
   def check_status(content)
-    checked = content['hidden'] ? '' : 'checked '
-    disabled = Item.internal_sort(content['sort'])
-                   .in?(Item.non_structuring_sorts)
-    return checked unless disabled
-    checked + 'disabled '
+    content['hidden'] ? '' : 'checked '
   end
 end

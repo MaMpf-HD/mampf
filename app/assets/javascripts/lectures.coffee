@@ -155,6 +155,19 @@ $(document).on 'turbolinks:load', ->
       $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-info')
         .addClass('badge-secondary')
     return
+
+  $('.content-mode').on 'change', ->
+    console.log 'Hi!'
+    mode = if this.id == 'video-based' then 'video' else 'manuscript'
+    lectureId = $(this).data('lecture')
+    console.log mode
+    $.ajax Routes.update_content_mode_path(lectureId),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        mode: mode
+      }
+    return
   return
 
 # clean up everything before turbolinks caches

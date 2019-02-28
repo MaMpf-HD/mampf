@@ -8,6 +8,13 @@
           <div class="row">
             <div class="col-2">
               <%= i.start_time.hms_colon_string %>
+              <% if i.hidden %>
+                <i class="fas fa-eye-slash"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="wird den NutzerInnen nicht angezeigt">
+                </i>
+              <% end %>
             </div>
             <div class="col-2" style="background: <%= i.background %>">
               <%= i.short_reference %>

@@ -18,11 +18,38 @@
              tabindex="-1"
              data-toggle="popover" data-trigger="focus"
              title="Info"
-             data-content="Der ideale Workflow sieht so aus, dass man zunächst
-             Kapitel und Abschnitte anlegt und diese tagged. Danach werden
-             Sitzungen und zugeordnete Medien angelegt, diese erben dann
-             die entsprechenden Tags. Andersherum geht es natürlich auch,
-             dann ist jedoch ein höherer Aufwand beim Tagging erforderlich.">
+             data-content="Wir beschreiben im Folgenden einen sinnvollen
+             Workflow. Hierbei sollte man unterscheiden, ob die Vorlesung
+             <i>videobasiert</i> oder <i>skriptbasiert</i> ist.
+             <ul>
+             <li>
+             <i>
+             videobasiert:
+             </i>
+             Zunächst legt man die Kapitel und Abschnitte an und tagged diese.
+             Danach werden Sitzungen und zugeordnete Medien angelegt, diese
+             erben dann die entsprechenden Tags. Andersherum geht es natürlich
+             auch, dann ist jedoch ein höherer Aufwand beim Tagging
+             erforderlich.
+             </li>
+             <li>
+             <i>
+             skriptbasiert:
+             </i>
+             Es empfiehlt sich, in der .tex-Datei das MaMpf-Paket einzubinden
+             und alles, was gelabelt werden soll, mit \mampflabels zu versehen.
+             Das so entstandene Skript wird in Mampf hochgeladen und die
+             Gliederung in MaMpf importiert. Dabei ist es möglich, dass
+             in MaMpf automatisch zugehörige Tags angelegt werden. Danach kann
+             man Sitzungen anlegen, bei denen man jeweils die Einträge aus dem
+             Skript auswählt, die die Sitzung begrenzen.
+             </li>
+             </ul>
+             In gewissem Umfang kann man auch versuchen, die Vorteile beider
+             Varianten zu kombinieren. Hat man eine videobasierte Vorlesung,
+             kann man natürlich trotzdem ein Skript hochladen und daraus die
+             grobe Gliederung importieren."
+             data-html="true">
           </i>
         <% end %>
       </div>
@@ -46,6 +73,64 @@
         </div>
       <% end %>
     </div>
+    <% unless inspection %>
+    <div class="row">
+      <div class="col-12">
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio"
+                 id="video-based"
+                 name="content_mode"
+                 <%= lecture.content_mode == 'video' ? 'checked ' : '' %>
+                 class="custom-control-input content-mode"
+                 data-lecture="<%= lecture.id %>">
+          <label class="custom-control-label"
+                 for="video-based">
+            videobasiert</label>
+        </div>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio"
+                 id="manuscript-based"
+                 name="content_mode"
+                 <%= lecture.content_mode == 'manuscript' ? 'checked ' : '' %>
+                 class="custom-control-input content-mode"
+                 data-lecture="<%= lecture.id %>">
+          <label class="custom-control-label"
+                 for="manuscript-based">
+            skriptbasiert</label>
+        </div>
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover" data-trigger="focus"
+           title="Info"
+           data-content="Damit legst Du fest, wie MaMpf die detaillierten
+           Inhalte von Abschnitten bzw. Sitzungen ermittelt:
+           <ul>
+           <li>
+           <i>
+           videobasiert:
+           </i>
+           MaMpf legt für den Inhalt alle Items zugrunde, die im THymE-Editor
+           für den entsprechenden Abschnitt angelegt wurden bzw. zu denjenigen
+           Videos gehören, die zu der Sitzung assoziiert sind.
+           Diese werden nach der Zeit ihres Auftretens im Video sortiert.
+           </li>
+           <li>
+           <i>
+           skriptbasiert:
+           </i>
+           MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
+           denjenigen Abschnitt mit einem MaMpf-Label versehen wurden,
+           bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
+           wurden. Damit dass funktioniert, müssen die MaMpf-Labels im
+           LaTEX-File für das Manuskript mit dem mampf-Paket erzeugt werden
+           und nach dem Hochladen des Skriptes in MaMpf übernommen werden.
+           </li>
+           </ul>"
+           data-html="true">
+        </i>
+      </div>
+    </div>
+    <% end %>
   </div>
   <div class="card-body">
     <div id="new-chapter-area"

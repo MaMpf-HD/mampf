@@ -121,6 +121,11 @@ class LecturesController < ApplicationController
     render layout: 'application'
   end
 
+  def update_content_mode
+    @lecture.update(content_mode: params[:mode])
+    head :ok, content_type: "text/html"
+  end
+
   private
 
   def set_lecture
@@ -167,7 +172,6 @@ class LecturesController < ApplicationController
                       render_to_string(partial: 'lectures/' \
                                                 'organizational_default',
                                        formats: :html,
-                                       layout: false),
-                    content_mode: 'video')
+                                       layout: false))
   end
 end
