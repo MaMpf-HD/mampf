@@ -124,7 +124,8 @@ class Manuscript
   def new_sections_in_chapter(chapter)
     sections = sections_in_chapter(chapter)
     sections.each_with_index
-            .map { |s,i| [s['mampf_section'], i+1, s['description'], s['counter']] }
+            .map { |s,i| [s['mampf_section'], i+1, s['description'],
+                          s['counter']] }
             .select { |s| s.first.nil? }
             .map { |s| [s.second, s.third, s.fourth] }
   end
@@ -222,8 +223,6 @@ class Manuscript
           #     item.start_time == nil && item.quarantine == false
           #  next
           #end
-          pp 'vorher'
-          pp item
           item.update(section_id: s['mampf_section'].id,
                       sort: Item.internal_sort(c['sort']),
                       page: c['page'], description: c['description'],
@@ -231,8 +230,6 @@ class Manuscript
                       start_time: nil,
                       quarantine: false,
                       hidden: hidden)
-          pp 'nachher'
-          pp item
           next
         end
         Item.create(medium_id: @medium.id, section_id: s['mampf_section'].id,
@@ -336,7 +333,8 @@ class Manuscript
     @chapters.each do |c|
       mampf_chapter = chapter_in_mampf(c)
       c['mampf_chapter'] = mampf_chapter
-      c['contradiction'] = if mampf_chapter.nil? || mampf_chapter.title == c['description']
+      c['contradiction'] = if mampf_chapter.nil? ||
+                                mampf_chapter.title == c['description']
                              false
                            else
                              :different_title
@@ -354,7 +352,8 @@ class Manuscript
       end
       mampf_section = section_in_mampf(s)
       s['mampf_section'] = mampf_section
-      s['contradiction'] = if mampf_section.nil? || mampf_section.title == s['description']
+      s['contradiction'] = if mampf_section.nil? ||
+                                mampf_section.title == s['description']
                              false
                            else
                              :different_title

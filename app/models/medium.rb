@@ -61,7 +61,6 @@ class Medium < ApplicationRecord
   # media of type 'Script' do not contain videos
   validate :no_video_for_script
 
-
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_teachable
@@ -406,7 +405,7 @@ class Medium < ApplicationRecord
   end
 
   def manuscript_destinations
-    return [] unless manuscript.present?
+    return [] unless manuscript.present? && sort == 'Script'
     # if for some reason, screenshot extraction fro manuscript did not work,
     # there will be only one file in manuscript (the pdf)
     if manuscript.class.to_s == 'PdfUploader::UploadedFile'
@@ -715,13 +714,13 @@ class Medium < ApplicationRecord
     return true unless sort == 'Script'
     errors.add(:sort, 'Der Medientyp "Skript" kann nur zu Vorlesungen
                        assoziiert werden.')
-    return false
+    false
   end
 
   def no_video_for_script
     return true unless sort == 'Script'
     return true unless video.present?
     errors.add(:sort, 'Medien vom Typ "Skript" beinhalten kein Video.')
-    return false
+    false
   end
 end
