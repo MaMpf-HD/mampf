@@ -51,6 +51,7 @@ class MediaController < ApplicationController
     # exist in the manuscript, but keep those that are referenced
     # from other places
     if @medium.sort == 'Script' && @medium.saved_change_to_manuscript_data?
+      @medium.update(imported_manuscript: false)
       @quarantine_added = @medium.update_pdf_destinations!
       if @quarantine_added.any?
         render :destination_warning
@@ -207,6 +208,7 @@ class MediaController < ApplicationController
     manuscript = Manuscript.new(@medium)
     filter_boxes = JSON.parse(params[:filter_boxes])
     manuscript.export_to_db!(filter_boxes)
+    @medium.update(imported_manuscript: true)
     redirect_to edit_medium_path(@medium)
   end
 

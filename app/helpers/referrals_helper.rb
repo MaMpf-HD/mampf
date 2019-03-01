@@ -26,7 +26,8 @@ module ReferralsHelper
   # (pink if the item belongs to a unpublished or locked medium, white otherwise)
 
   def item_status_color(referral)
-    if !referral.item_published? || referral.item_locked?
+    if !referral.item_published? || referral.item_locked? ||
+         referral.item.quarantine
       return 'bg-post-it-pink'
     end
     ''

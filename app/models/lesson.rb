@@ -178,7 +178,8 @@ class Lesson < ApplicationRecord
     return [] unless start_item && end_item
     range = (start_item.position..end_item.position).to_a
     return [] unless range.present?
-    Item.where(medium: lecture.manuscript, position: range).order(:position)
+    Item.where(medium: lecture.manuscript, position: range)
+        .unquarantined.order(:position)
   end
 
   # Returns the list of sections of this lesson (by label), together with

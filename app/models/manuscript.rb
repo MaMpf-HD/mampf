@@ -222,6 +222,8 @@ class Manuscript
           #     item.start_time == nil && item.quarantine == false
           #  next
           #end
+          pp 'vorher'
+          pp item
           item.update(section_id: s['mampf_section'].id,
                       sort: Item.internal_sort(c['sort']),
                       page: c['page'], description: c['description'],
@@ -229,6 +231,8 @@ class Manuscript
                       start_time: nil,
                       quarantine: false,
                       hidden: hidden)
+          pp 'nachher'
+          pp item
           next
         end
         Item.create(medium_id: @medium.id, section_id: s['mampf_section'].id,

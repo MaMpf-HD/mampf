@@ -242,7 +242,7 @@ class Medium < ApplicationRecord
 
   def missing_items_outside_quarantine
     Item.where(medium: self, pdf_destination: missing_destinations)
-        .where.not(quarantine: true)
+        .unquarantined
   end
 
   def quarantine
@@ -257,6 +257,8 @@ class Medium < ApplicationRecord
     return unless sort == 'Script'
     irrelevant_items.destroy_all
     quarantine_added = []
+    # not very elegant, but other attempts at it failed due to
+    # Rails caching of SQL queries
     missing_items_outside_quarantine.each do |i|
       quarantine_added.push(i.pdf_destination)
       i.update(quarantine: true)

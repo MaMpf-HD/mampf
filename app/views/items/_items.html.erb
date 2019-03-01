@@ -22,7 +22,7 @@
                 <%= i.short_description %>
               </div>
               <div class="col-2">
-                <% if i.medium.published_with_inheritance? %>
+                <% if i.medium.visible? %>
                   <% if i.video_link %>
                     <a href="<%= i.video_link %>"
                        class="text-secondary new-in-lecture material-icons mr-2"

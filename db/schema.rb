@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_27_173517) do
+ActiveRecord::Schema.define(version: 2019_03_01_121741) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -194,6 +194,7 @@ ActiveRecord::Schema.define(version: 2019_02_27_173517) do
     t.text "screenshot_data"
     t.text "manuscript_data"
     t.text "released"
+    t.boolean "imported_manuscript"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
 

@@ -84,6 +84,11 @@ class Referral < ApplicationRecord
     item.medium.locked?
   end
 
+  def item_in_quarantine?
+    return false unless item && item.quarantine
+    true
+  end
+
   private
 
   # explanation provided to the vtt file

@@ -37,6 +37,13 @@
           </a>
         </div>
       </div>
+      <% unless medium.imported_manuscript %>
+        <div class="row">
+          <div class="col-12 redtext">
+            Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
+          </div>
+        </div>
+      <% end %>
       <div class="row mt-2">
         <div class="col-12">
           <% if manuscript.contradiction_count.positive? %>

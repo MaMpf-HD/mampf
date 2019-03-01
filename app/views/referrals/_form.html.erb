@@ -261,6 +261,17 @@
              gesperrt bleibt, ist die Referenz für NutzerInnen bei Aufruf
              des THymE-Players nicht sichtbar.">
           </i>
+          <i class="fas fa-notes-medical fa-lg redtext ml-2"
+             id="locked_medium_item"
+             style="display: <%= show_no_block(referral.item_in_quarantine?) %>"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="Das referenzierte Item ist in Quarantäne.
+             D.h.: Die named destination im pdf zu diesem Item existiert nicht
+             mehr. Du kannst diese Referenz trotzdem anlegen oder beibehalten;
+             solange sich in dem pdf nichts ändert, wird die Referenz aber
+             nichts bewirken, d.h. auf die erste Seite zeigen.">
+          </i>
         </div>
         <div class="col-2 text-right"
              id="video-ref"

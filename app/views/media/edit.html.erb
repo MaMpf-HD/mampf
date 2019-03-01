@@ -4,7 +4,7 @@
                        new_medium: false } %>
 </div>
 <div id="medium-manuscript-destinations">
-  <% if !@manuscript.empty? %>
+  <% if !@manuscript.empty? && @medium.sort == 'Script' %>
     <div class="row mt-2 p-2">
       <div class="col-12">
         <%= render partial: 'media/destinations',

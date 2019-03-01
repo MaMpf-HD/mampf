@@ -25,6 +25,7 @@ class ItemsController < ApplicationController
   def destroy
     @medium = @item.medium
     @item.destroy
+    redirect_to edit_medium_path(@medium) if params[:from] == 'quarantine'
   end
 
   # if an item is selected form within the reference editor in thyme,
