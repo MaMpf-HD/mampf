@@ -11,11 +11,13 @@
                  locals: { medium: medium,
                            f: f } %>
     </div>
-    <div class="col-4">
-      <%= render partial: 'media/video',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
+    <% unless medium.sort == 'Script' %>
+      <div class="col-4">
+        <%= render partial: 'media/video',
+                   locals: { medium: medium,
+                             f: f } %>
+      </div>
+    <% end %>
     <div class="col-4">
             <%= render partial: 'media/manuscript',
                  locals: { medium: medium,

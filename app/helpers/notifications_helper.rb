@@ -3,6 +3,7 @@ module NotificationsHelper
   # create text for notification in notification dropdown menu
   def notification_menu_item_header(notification)
     notifiable = notification.notifiable
+    return '' unless notifiable
     return medium_notification_item_header(notifiable) if notification.medium?
     return course_notification_item_header(notifiable) if notification.course?
     return lecture_notification_item_header(notifiable) if notification.lecture?
@@ -61,6 +62,7 @@ module NotificationsHelper
   # provide link for body of notification card
   def notification_link(notification)
     notifiable = notification.notifiable
+    return '' unless notifiable
     text = if notification.medium?
              medium_notification_card_link(notifiable)
            elsif notification.course?

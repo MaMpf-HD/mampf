@@ -60,12 +60,12 @@ module ApplicationHelper
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
       'keks' => ['KeksQuiz', 'KeksQuestion'], 'kiwi' => ['Kiwi'],
       'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'],
-      'script' => ['Script'] }
+      'script' => ['Script'], 'reste' => ['Reste'] }
   end
 
   # media_sorts
   def media_sorts
-    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse', 'script']
+    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse', 'script', 'reste']
   end
 
   # media_sort -> acronym
@@ -73,7 +73,7 @@ module ApplicationHelper
     { 'kaviar' => 'Lektionen', 'sesam' => 'Worked Examples',
       'keks' => 'Quizzes', 'kiwi' => 'Wiederholung',
       'erdbeere' => 'Beispiel-Datenbank', 'nuesse' => 'Übungen',
-      'script' => 'Skript' }
+      'script' => 'Skript', 'reste' => 'Sonstiges' }
   end
 
   # Selects all media associated to lectures and lessons from a given list

@@ -38,5 +38,6 @@ de:
     board: 'Forum'
     organizational: 'Organisatorisches'
     announcements: 'Mitteilungen'
+    reste: 'Sonstiges'
   unauthorized:
     default: "Du bist nicht berechtigt, auf diese Seite zuzugreifen. Gegebenenfalls kannst Du durch Anpassungen Deiner Einstellungen auf Deiner Profilseite Zugriff erhalten."

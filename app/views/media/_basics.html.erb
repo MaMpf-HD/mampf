@@ -37,7 +37,11 @@
          Wiederholung: Materialien, die Vorwissen auffrischen.
          </li>
          <li>
-         Skript: Vorlesungsmanuskript
+         Skript: Vorlesungsmanuskript (dies ist ein spezieller Typ, der es
+         erlaubt, aus dem pdf extrahierte Informationen in MaMpf zu importieren.
+         Pro Vorlesung kann es höchstens ein Skript geben. Skripte können nicht
+         in andere Medientypen umgewandelt werden, dasselbe gilt auch)
+         andersherum.
          </li>
          </ul>"
          data-html="true">
@@ -45,7 +49,8 @@
       <%= f.select :sort,
                    options_for_select(Medium.select_sorts, medium.sort),
                    {},
-                   { class: 'form-control' }%>
+                   { class: 'form-control',
+                     disabled: medium.sort == 'Script' }%>
       <div class="invalid-feedback"
            id="medium-sort-error">
       </div>
@@ -91,7 +96,8 @@
                                         all_teachables_selection(current_user),
                                       medium.teachable_select),
                    {},
-                   { class: 'selectize' } %>
+                   { class: 'selectize',
+                     disabled: medium.sort == 'Script' } %>
       <div class="invalid-feedback"
            id="medium-teachable-error">
       </div>

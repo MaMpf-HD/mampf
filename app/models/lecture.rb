@@ -203,6 +203,11 @@ class Lecture < ApplicationRecord
     project?('script')
   end
 
+  def reste?
+    project?('reste')
+  end
+
+
   # the next methods put together some information on the lecture (teacher,
   # term, title) in various combinations
 
@@ -450,6 +455,6 @@ class Lecture < ApplicationRecord
   def sort
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
       'keks' => ['KeksQuiz'], 'nuesse' => ['Nuesse'],
-      'erdbeere' => ['Erdbeere'], 'script' => ['Script'] }
+      'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste']}
   end
 end

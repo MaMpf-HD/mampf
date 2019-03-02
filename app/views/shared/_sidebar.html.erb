@@ -31,7 +31,8 @@
 <% end %>
 <ul class="nav nav-pills flex-column">
   <li class="nav-item">
-    <% if (lecture && !lecture.kaviar?) || (!lecture && !course.strict_kaviar?) %>
+    <% if (lecture && !lecture.kaviar?) ||
+          (!lecture && !course.strict_kaviar?) %>
       <span class="nav-link disabled">
         <%= t('categories.kaviar.plural') %>
       </span>
@@ -45,7 +46,8 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.script?) || (!lecture && !course.strict_script?) %>
+    <% if (lecture && !lecture.script?) ||
+          (!lecture && !course.strict_script?) %>
       <span class="nav-link disabled">
         <%= t('categories.script') %>
       </span>
@@ -58,7 +60,8 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.nuesse?) || (!lecture && !course.strict_nuesse?) %>
+    <% if (lecture && !lecture.nuesse?) ||
+          (!lecture && !course.strict_nuesse?) %>
       <span class="nav-link disabled">
         <%= t('categories.exercises.plural') %>
       </span>
@@ -101,7 +104,8 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.erdbeere?) || (!lecture && !course.strict_erdbeere?) %>
+    <% if (lecture && !lecture.erdbeere?) ||
+          (!lecture && !course.strict_erdbeere?) %>
       <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
          class="nav-link"
          target="_blank" %>
@@ -126,6 +130,19 @@
       <%= link_to t('categories.kiwi'),
                   course_food_path(course_id: course.id,
                                    params: { project: 'kiwi',
+                                             lecture_id: lecture&.id }),
+                  class: 'nav-link' %>
+    <% end %>
+  </li>
+  <li class="nav-item">
+    <% if (lecture && !lecture.reste?) || (!lecture && !course.strict_reste?) %>
+      <span class="nav-link disabled">
+        <%= t('categories.reste') %>
+      </span>
+    <% else %>
+      <%= link_to t('categories.reste'),
+                  course_food_path(course_id: course.id,
+                                   params: { project: 'reste',
                                              lecture_id: lecture&.id }),
                   class: 'nav-link' %>
     <% end %>

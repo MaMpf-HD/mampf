@@ -1,6 +1,7 @@
 # Medium class
 class Medium < ApplicationRecord
   include ApplicationHelper
+  include ActiveModel::Dirty
 
   # a teachable is a course/lecture/lesson
   belongs_to :teachable, polymorphic: true
@@ -60,7 +61,9 @@ class Medium < ApplicationRecord
   validate :script_only_for_lectures
   # media of type 'Script' do not contain videos
   validate :no_video_for_script
-
+  # media of type 'Script' shall not be changed to a different sort if they
+  # contain nontrivial items, and other media shall not be changed to a Script
+  validate :no_changing_sort_to_or_from_script
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_teachable
@@ -78,7 +81,8 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script KeksQuestion KeksQuiz]
+    %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script KeksQuestion KeksQuiz
+       Reste]
   end
 
   # Returns the list of media sorts, together with their index in the
@@ -97,7 +101,8 @@ class Medium < ApplicationRecord
       'Nuesse' => I18n.t('categories.exercises.singular'),
       'Erdbeere' => I18n.t('categories.erdbeere'),
       'Kiwi' => I18n.t('categories.kiwi'),
-      'Script' => I18n.t('categories.script') }
+      'Script' => I18n.t('categories.script'),
+      'Reste' => I18n.t('categories.reste') }
   end
 
   def self.select_sorts
@@ -320,6 +325,7 @@ class Medium < ApplicationRecord
 
   def proper_items
     items.where.not(sort: ['self', 'pdf_destination'])
+         .where.not(start_time: nil)
   end
 
   def proper_items_by_time
@@ -722,5 +728,19 @@ class Medium < ApplicationRecord
     return true unless video.present?
     errors.add(:sort, 'Medien vom Typ "Skript" beinhalten kein Video.')
     false
+  end
+
+  def no_changing_sort_to_or_from_script
+    if sort_was == 'Script' && sort != 'Script'
+      errors.add(:sort, 'Ein Skript kann nicht in einen anderen Medientyp ' \
+                        'umgewandelt werden.')
+      return false
+    end
+    if persisted? && sort_was != 'Script' && sort == 'Script'
+      errors.add(:sort, 'Medien, die keine Skripte sind, können nicht in ' \
+                        'ein Skript umgewandelt werden.')
+      return false
+    end
+    true
   end
 end
