@@ -25,7 +25,8 @@ $grid-breakpoints: (
   lg: 992px,
   xl: 1200px,
   xxl: 1440px,
-  xxxl: 1600px
+  xxxl: 1600px,
+  xxxxl: 1920px
 );
 
 $container-max-widths: (
@@ -37,7 +38,8 @@ $container-max-widths: (
   lg: 992px,
   xl: 1200px,
   xxl: 1440px,
-  xxxl: 1600px
+  xxxl: 1600px,
+  xxxxl: 1920px
 );
 
 
@@ -102,5 +104,27 @@ $modal-xxl:                   1600px !default;
   top: 0;
   left: 100%;
   margin-top: -1px;
+}
+
+
+.card-columns {
+  @include media-breakpoint-only(xxxl) {
+    column-count: 2;
+  }
+  @include media-breakpoint-only(xxl) {
+    column-count: 2;
+  }
+  @include media-breakpoint-only(xl) {
+    column-count: 1;
+  }
+  @include media-breakpoint-only(lg) {
+    column-count: 1;
+  }
+  @include media-breakpoint-only(md) {
+    column-count: 1;
+  }
+  @include media-breakpoint-only(sm) {
+    column-count: 1;
+  }
 }
 
