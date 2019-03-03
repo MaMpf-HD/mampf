@@ -288,10 +288,15 @@ figure {
   height: 6em;
   background: lightgray;
   color: black;
+  overflow-y: scroll;
   padding: 3px;
   border-left: 1px solid darkgray;
   border-right: 1px solid darkgray;
   border-top: 1px solid darkgray;
+}
+
+#ia-close {
+  padding-right: 20px;
 }
 
 #separator {
