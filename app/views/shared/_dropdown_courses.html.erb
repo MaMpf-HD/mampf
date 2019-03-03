@@ -6,8 +6,13 @@
     <div class="btn-group">
       <%= link_to current_course.title,
                   course_path(current_course, active: active),
-                  class: 'btn btn-primary text-light',
+                  class: 'btn btn-primary text-light courseMenuItem',
                   id: 'current-course-button' %>
+      <%= link_to current_course.short_title,
+                  course_path(current_course, active: active),
+                  class: 'btn btn-primary text-light courseMenuItemShort',
+                  id: 'current-course-button',
+                  style: 'display: none;' %>
       <button type="button"
               class="btn btn-primary dropdown-toggle dropdown-toggle-split"
               data-toggle="dropdown"
@@ -22,7 +27,11 @@
           <% unless c == current_course %>
             <%= link_to c.title,
                         c,
-                        class: 'dropdown-item' %>
+                        class: 'dropdown-item courseMenuItem' %>
+            <%= link_to c.short_title,
+                        c,
+                        class: 'dropdown-item courseMenuItemShort',
+                        style: 'display: none;' %>
           <% end %>
         <% end %>
       </div>

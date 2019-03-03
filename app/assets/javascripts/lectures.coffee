@@ -169,16 +169,21 @@ $(document).on 'turbolinks:load', ->
       }
     return
 
-  # on small mobile display, highlight tagbadges
+  # on small mobile display, use shortened tag badges and
+  # shortened course titles
   mobileDisplay = ->
     $('.tagbadge').hide()
+    $('.courseMenuItem').hide()
     $('.tagbadgeshort').show()
+    $('.courseMenuItemShort').show()
     return
 
-    # on large display, use anything thyme has to offer, disable native player
+    # on large display, use normal tag badges and course titles
   largeDisplay = ->
     $('.tagbadge').show()
+    $('.courseMenuItem').show()
     $('.tagbadgeshort').hide()
+    $('.courseMenuItemShort').hide()
     return
 
     # highlight tagbadges if screen is very small
