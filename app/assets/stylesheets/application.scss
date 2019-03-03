@@ -50,29 +50,7 @@ $container-max-widths: (
 @import "trix";
 
 
-@media (min-width: 576px) {
-    .card-columns {
-        column-count: 1;
-    }
-}
 
-@media (min-width: 768px) {
-    .card-columns {
-        column-count: 1;
-    }
-}
-
-@media (min-width: 992px) {
-    .card-columns {
-        column-count: 1;
-    }
-}
-
-@media (min-width: 1200px) {
-    .card-columns {
-        column-count: 2;
-    }
-}
 
 .kaviar-sidebar {
   padding-left: 1rem;
@@ -109,6 +87,7 @@ $modal-xxl:                   1600px !default;
 @include media-breakpoint-up(xxl) {
   .modal-xxl { max-width: $modal-xxl; }
 }
+
 
 .dropdown-menu a {
   text-decoration: none;
