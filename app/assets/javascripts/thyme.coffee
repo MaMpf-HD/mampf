@@ -413,7 +413,7 @@ $(document).on 'turbolinks:load', ->
     video.style.width = '100%'
     return
 
-  # on lareg display, use anything thyme has to offer, disable native player
+  # on large display, use anything thyme has to offer, disable native player
   largeDisplay = ->
     video.controls = false
     $('#caption').show()

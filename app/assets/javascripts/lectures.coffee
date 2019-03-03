@@ -168,6 +168,52 @@ $(document).on 'turbolinks:load', ->
         mode: mode
       }
     return
+
+  # on small mobile display, highlight tagbadges
+  mobileDisplay = ->
+    $('.tagbadge').hide()
+    $('.tagbadgeshort').show()
+    return
+
+    # on large display, use anything thyme has to offer, disable native player
+  largeDisplay = ->
+    $('.tagbadge').show()
+    $('.tagbadgeshort').hide()
+    return
+
+    # highlight tagbadges if screen is very small
+  if window.matchMedia("screen and (max-width: 767px)").matches
+    mobileDisplay()
+
+  if window.matchMedia("screen and (max-device-width: 767px)").matches
+    mobileDisplay()
+
+  # mediaQuery listener for very small screens
+  match_verysmall = window.matchMedia("screen and (max-width: 767px)")
+  match_verysmall.addListener (result) ->
+    if result.matches
+      mobileDisplay()
+    return
+
+  match_verysmalldevice = window.matchMedia("screen and (max-device-width: 767px)")
+  match_verysmalldevice.addListener (result) ->
+    if result.matches
+      mobileDisplay()
+    return
+
+  # mediaQuery listener for normal screens
+  match_normal = window.matchMedia("screen and (min-width: 768px)")
+  match_normal.addListener (result) ->
+    if result.matches
+      largeDisplay()
+    return
+
+  match_normal = window.matchMedia("screen and (min-device-width: 768px)")
+  match_normal.addListener (result) ->
+    if result.matches
+      largeDisplay()
+    return
+
   return
 
 # clean up everything before turbolinks caches
