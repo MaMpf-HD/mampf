@@ -1,12 +1,12 @@
 <div class="card bg-light-blue-lighten-5 mb-3" id="newsCard">
   <div class="card-header">
     <div class="row">
-      <div class="col-10">
+      <div class="col-12 col-sm-10">
         <h5>
           Aktuelles
         </h5>
       </div>
-      <div class="col-2 text-right">
+      <div class="col-12 col-sm-2 text-right">
         <% if announcements.any? %>
           <%= link_to 'alle abhaken',
                       destroy_lecture_notifications_path(params: { lecture_id: lecture.id }),

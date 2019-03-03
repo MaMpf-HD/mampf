@@ -1,7 +1,7 @@
 <div class="card mb-2 bg-light-blue-lighten-5">
  	<div class="card-header">
  	 	<div class="row mb-2">
-     	<div class="col-10">
+     	<div class="col-12 col-sm-10">
        	<h4>
          	MaMpf-News
          	<% if user_signed_in? && current_user.active_news.present? %>
@@ -12,7 +12,7 @@
           <% end %>
         </h4>
      	</div>
-      <div class="col-2 text-right">
+      <div class="col-12 col-sm-2 text-right">
       	<% if user_signed_in? && current_user.active_news.present? %>
         	<%= link_to 'alle erledigen',
           		        destroy_news_notifications_path,
