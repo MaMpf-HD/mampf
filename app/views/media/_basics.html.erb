@@ -148,6 +148,7 @@
            id="medium-description-error">
       </div>
     </div>
+    <% unless medium.sort == 'Script' %>
     <div class="form-group">
       <%= f.label :tag_ids,
                   'Verknüpfte Begriffe' %>
@@ -175,6 +176,7 @@
                    {},
                    { multiple: true, class: 'selectize' } %>
     </div>
+    <% end %>
     <div class="form-group">
       <%= f.label :linked_medium_ids,
                   'Verknüpfte Medien' %>

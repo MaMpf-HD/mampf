@@ -164,6 +164,7 @@
       </div>
     </div>
   </div>
+  <% unless @medium.sort == 'Script' %>
   <div class="col-4">
     <div class="card bg-light">
       <div class="card-header">
@@ -239,6 +240,7 @@
     </div>
   </div>
 </div>
+<% end %>
 <div class="col-4">
   <div class="card bg-light">
     <div class="card-header">
@@ -291,11 +293,3 @@
   </div>
 </div>
 </div>
-<% if @medium.manuscript_destinations.present? %>
-  <div class="row mt-2 p-2">
-    <div class="col-12">
-      <%= render partial: 'media/destinations',
-                 locals: { medium: @medium } %>
-    </div>
-  </div>
-<% end %>

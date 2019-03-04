@@ -42,7 +42,8 @@ class Ability
       end
 
       can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
-           :publish, :lock_forum, :unlock_forum, :destroy_forum],
+           :publish, :lock_forum, :unlock_forum, :destroy_forum,
+           :update_content_mode],
           Lecture do |lecture|
         lecture.edited_by?(user)
       end
