@@ -44,6 +44,10 @@ class MediaController < ApplicationController
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
+    # make sure the medium is touched
+    # (it will not be touched automatically in some cases (e.g. if you only
+    # update the associated tags), causing trouble for caching)
+    @medium.touch
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript
     # if changes to the manuscript have been made,

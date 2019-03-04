@@ -215,7 +215,7 @@
     </div>
   <% end %>
 <% end %>
-<div style="max-height: 20vh; overflow-y: scroll;">
+<div id="lessonItems" style="max-height: 20vh; overflow-y: scroll;">
   <%= render partial: 'items/items',
              locals: { items: lesson.content_items,
                        small: true,

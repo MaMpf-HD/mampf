@@ -43,3 +43,30 @@ else
       tagSelectize.addItem(i[0])
     tagSelectize.refreshItems()
     tagSelectize.refreshOptions(false)
+
+  lessonItems = document.getElementById('lessonItems')
+  if lessonItems
+    renderMathInElement lessonItems,
+      delimiters: [
+        {
+          left: '$$'
+          right: '$$'
+          display: true
+        }
+        {
+          left: '$'
+          right: '$'
+          display: false
+        }
+        {
+          left: '\\('
+          right: '\\)'
+          display: false
+        }
+        {
+          left: '\\['
+          right: '\\]'
+          display: true
+        }
+      ]
+      throwOnError: false
