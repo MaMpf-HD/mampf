@@ -63,6 +63,19 @@
       <div class="invalid-feedback"
            id="medium-sort-error">
       </div>
+      <div id="mampfStyInfo" class="mt-2"
+           style="display: <%= show(medium.sort == 'Script') %>">
+        <i>
+          Beachte:
+        </i>
+        Für Skripte steht
+        <a href="/mampf.sty" download="mampf.sty">
+          hier
+        </a>
+        das MaMpf-Paket für LaTEX zur Verfügung. Es erlaubt, Inhalte aus dem
+        Manuskript-pdf zu extrahieren und in MaMpf zur Verfügung zu stellen
+        sowie Medien aus MaMpf über QR-Codes im Manuskript verfügbar zu machen.
+      </div>
     </div>
     <div class="form-group">
       <%= f.label :teachable, 'assoziiert zu' %>

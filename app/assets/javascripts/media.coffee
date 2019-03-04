@@ -44,6 +44,13 @@ $(document).on 'turbolinks:load', ->
       $('#medium_teachable_type').val('')
     return
 
+  $('#medium_sort').on 'change', ->
+    if $(this).val() == 'Script'
+      $('#mampfStyInfo').show()
+    else
+      $('#mampfStyInfo').hide()
+    return
+
   # reload page if editing of medium is cancelled
   # (relevant on media edit page)
   $('#medium-basics-cancel').on 'click', ->
