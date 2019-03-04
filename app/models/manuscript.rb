@@ -179,7 +179,7 @@ class Manuscript
                               page: s['page'],
                               description: s['description'],
                               ref_number: s['label'],
-                              position: nil,
+                              position: -1,
                               start_time: nil,
                               quarantine: false)
         items.first.update(section_id: s['mampf_section'].id,
@@ -187,18 +187,21 @@ class Manuscript
                            page: s['page'],
                            description: s['description'],
                            ref_number: s['label'],
-                           position: nil,
+                           position: -1,
                            start_time: nil,
                            quarantine: false)
         next
       end
+      # note that sections get a position -1 in order to place them ahead
+      # of all content items within themseleves in #script_items_by_position
       Item.create(medium_id: @medium.id,
                   section_id: s['mampf_section'].id,
                   sort: 'section',
                   page: s['page'],
                   description: s['description'],
                   ref_number: s['label'],
-                  pdf_destination: s['destination'])
+                  pdf_destination: s['destination'],
+                  position: -1)
     end
   end
 
