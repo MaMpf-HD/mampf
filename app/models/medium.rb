@@ -64,6 +64,9 @@ class Medium < ApplicationRecord
   # media of type 'Script' shall not be changed to a different sort if they
   # contain nontrivial items, and other media shall not be changed to a Script
   validate :no_changing_sort_to_or_from_script
+  # a medium of type Script is not allowed to have tags
+  # (Reason: A typical script will have *a lot of* tags)
+  validate :no_tags_for_scripts
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_teachable
@@ -742,5 +745,11 @@ class Medium < ApplicationRecord
       return false
     end
     true
+  end
+
+  def no_tags_for_scripts
+    return true unless sort == 'Script' && tags.any?
+    errors.add(:tags, 'Ein Skript darf keine Tags haben.')
+    false
   end
 end

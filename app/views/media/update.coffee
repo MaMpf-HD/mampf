@@ -2,8 +2,10 @@
 $('#medium_description').removeClass('is-invalid')
 $('#medium_external_reference_link').removeClass('is-invalid')
 $('#medium_sort').removeClass('is-invalid')
+$('#medium_tag_ids').removeClass('is-invalid')
 $('#medium-teachable-error').empty()
 $('#medium-sort-error').empty()
+$('#medium-tags-error').empty()
 $('#medium-editors-error').empty()
 $('#medium-description-error').empty()
 $('#medium-external-reference-error').empty()
@@ -18,6 +20,11 @@ $('#medium_description').addClass('is-invalid')
 <% if @errors[:sort].present? %>
 $('#medium-sort-error').append('<%= @errors[:sort].join(" ") %>').show()
 $('#medium_sort').addClass('is-invalid')
+<% end %>
+
+<% if @errors[:tags].present? %>
+$('#medium-tags-error').append('<%= @errors[:tags].join(" ") %>').show()
+$('#medium_tag_ids').addClass('is-invalid')
 <% end %>
 
 <% if @errors[:external_reference_link].present? %>

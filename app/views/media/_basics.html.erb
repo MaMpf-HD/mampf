@@ -175,6 +175,9 @@
                                       medium.tags.map(&:id)),
                    {},
                    { multiple: true, class: 'selectize' } %>
+      <div class="invalid-feedback"
+           id="medium-tags-error">
+      </div>
     </div>
     <% end %>
     <div class="form-group">
