@@ -571,7 +571,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   document.onfullscreenchange = ->
-    if document.FullscreenElement != null
+    if document.fullscreenElement != null
       fullScreenButton.innerHTML = 'fullscreen_exit'
       fullScreenButton.dataset.status = 'true'
     else
