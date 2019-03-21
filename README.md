@@ -34,7 +34,7 @@ There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/ga
 
 MaMpf is implemented in Ruby on Rails.
 
-* Ruby version: 2.6.0
+* Ruby version: 2.6.1
 * Rails Version: 5.2.2
 * Test suite: rspec
 
@@ -100,6 +100,3 @@ Give admin rights to this user:
 User.first.update(admin: true)
 ```
 That's it. Alle the rest can be done entirely via the GUI.
-
-**Note**
-Currently the `docker run` line is not working and the encrypted credentials file has to be replaced by hand.

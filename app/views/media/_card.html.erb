@@ -16,7 +16,7 @@
           </h5>
         </div>
         <div class="col-6 text-right">
-          <% unless inspection %>
+          <% if teachable_id && teachable_type && !inspection %>
             <a href="<%= new_medium_path(params:
                                           { teachable_id: teachable_id,
                                             teachable_type: teachable_type,
