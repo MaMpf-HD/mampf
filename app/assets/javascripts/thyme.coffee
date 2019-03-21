@@ -552,15 +552,44 @@ $(document).on 'turbolinks:load', ->
     return
 
   # Event listener for the full-screen button
+  # unfortunately, lots of brwoser specific code
   fullScreenButton.addEventListener 'click', ->
     if fullScreenButton.dataset.status == 'true'
-      document.exitFullscreen() if document.exitFullscreen
+      if document.exitFullscreen
+        document.exitFullscreen()
+      else if document.mozCancelFullScreen
+        document.mozCancelFullScreen()
+      else if document.webkitExitFullscreen
+        document.webkitExitFullscreen()
     else
-      thymeContainer.requestFullscreen() if thymeContainer.requestFullscreen
+      if thymeContainer.requestFullscreen
+        thymeContainer.requestFullscreen()
+      else if thymeContainer.mozRequestFullScreen
+        thymeContainer.mozRequestFullScreen()
+      else if thymeContainer.webkitRequestFullscreen
+        thymeContainer.webkitRequestFullscreen()
     return
 
   document.onfullscreenchange = ->
     if document.fullscreenElement != null
+      fullScreenButton.innerHTML = 'fullscreen_exit'
+      fullScreenButton.dataset.status = 'true'
+    else
+      fullScreenButton.innerHTML = 'fullscreen'
+      fullScreenButton.dataset.status = 'false'
+    return
+
+  document.onwebkitfullscreenchange = ->
+    if document.webkitFullscreenElement != null
+      fullScreenButton.innerHTML = 'fullscreen_exit'
+      fullScreenButton.dataset.status = 'true'
+    else
+      fullScreenButton.innerHTML = 'fullscreen'
+      fullScreenButton.dataset.status = 'false'
+    return
+
+  document.onmozfullscreenchange = ->
+    if document.mozFullScreenElement != null
       fullScreenButton.innerHTML = 'fullscreen_exit'
       fullScreenButton.dataset.status = 'true'
     else
