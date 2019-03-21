@@ -18,7 +18,10 @@ class Tag < ApplicationRecord
 
   # a tag has many related tags
   has_many :relations, dependent: :destroy
-  has_many :related_tags, through: :relations
+  # an update of the related tags only triggers a deletion of the relation
+  # join table entry, but we need it to be destroyed as there is
+  # the symmetrization callback on relations
+  has_many :related_tags, through: :relations, after_remove: :destroy_relations
 
   # a tag needs to have a unique title
   validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
@@ -151,7 +154,7 @@ class Tag < ApplicationRecord
       target: related_tag.id }
   end
 
-  # publsihed sections are sections that belong to a published lecture
+  # published sections are sections that belong to a published lecture
   def published_sections
     sections.where(id: sections.select { |s| s.lecture.published? }.map(&:id))
   end
@@ -164,5 +167,11 @@ class Tag < ApplicationRecord
 
   def touch_sections
     sections.update_all updated_at: Time.now
+  end
+
+  # simulates the after_destroy callback for relations
+  def destroy_relations(related_tag)
+    Relation.where(tag: [self, related_tag],
+                   related_tag: [self, related_tag]).delete_all
   end
 end
