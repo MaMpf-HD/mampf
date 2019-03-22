@@ -374,13 +374,11 @@ $(document).on 'turbolinks:load', ->
   # whether the interactive area is displayed or hidden
   resizeContainer = ->
     height = $(window).height()
-    console.log 'height: ' + height
     factor = if $('#caption').is(':hidden') then 1 else 1 / 0.82
     width = Math.floor((video.videoWidth * $(window).height() /
     video.videoHeight) * factor)
     if width > $(window).width()
       shrink = $(window).width() / width
-      console.log 'shrink: ' + shrink
       height = Math.floor(height * shrink)
       width = $(window).width()
     top = Math.floor(0.5*($(window).height() - height))
