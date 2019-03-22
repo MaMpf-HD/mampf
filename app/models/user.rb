@@ -201,8 +201,10 @@ class User < ApplicationRecord
   # email and name
 
   def info
-    return email unless name.present?
-    name + ' (' + email + ')'
+    Rails.cache.fetch("#{cache_key}/user_info") do
+      return email unless name.present?
+      name + ' (' + email + ')'
+    end
   end
 
   def name_or_email

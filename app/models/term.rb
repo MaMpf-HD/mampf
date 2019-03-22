@@ -13,6 +13,12 @@ class Term < ApplicationRecord
   validates :year, presence: true,
                    numericality: { only_integer: true,
                                    greater_than_or_equal_to: 2000 }
+
+  # some information about lectures, lessons and media are cached
+  # to find out whether the cache is out of date, always touch'em after saving
+  after_save :touch_lectures_and_lessons
+  after_save :touch_media
+
   paginates_per 8
 
   def begin_date
@@ -53,5 +59,16 @@ class Term < ApplicationRecord
   def year_corrected_short
     return (year % 100).to_s unless season == 'WS'
     (year % 100).to_s + '/' + ((year % 100) + 1).to_s
+  end
+
+  def touch_lectures_and_lessons
+    lectures.update_all(updated_at: Time.now)
+    Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+  end
+
+  def touch_media
+    Medium.where(teachable: lectures).update_all(updated_at: Time.now)
+    Medium.where(teachable: Lesson.where(lecture: lectures))
+          .update_all(updated_at: Time.now)
   end
 end

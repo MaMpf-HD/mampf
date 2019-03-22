@@ -14,7 +14,9 @@ class Lecture < ApplicationRecord
   has_many :chapters, -> { order(position: :asc) }, dependent: :destroy
 
   # during the term, a lot of lessons take place for this lecture
-  has_many :lessons, dependent: :destroy
+  has_many :lessons, dependent: :destroy,
+                     after_add: :touch_siblings,
+                     after_remove: :touch_siblings
 
   # being a teachable (course/lecture/lesson), a lecture has associated media
   has_many :media, as: :teachable
@@ -45,6 +47,11 @@ class Lecture < ApplicationRecord
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
   after_save :remove_teacher_as_editor
+
+  # some information about media and lessons are cached
+  # to find out whether the cache is out of date, always touch'em after saving
+  after_save :touch_media
+  after_save :touch_lessons
 
   # scopes for published lectures
   scope :published, -> { where.not(released: nil) }
@@ -80,7 +87,9 @@ class Lecture < ApplicationRecord
   end
 
   def title_for_viewers
-    short_title
+    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+      short_title
+    end
   end
 
   def long_title
@@ -305,12 +314,12 @@ class Lecture < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def self.editable_selection(user)
     if user.admin?
-      return Lecture.sort_by_date(Lecture.includes(:course, :term).all)
-                    .map { |l| [l.short_title, 'Lecture-' + l.id.to_s] }
+      return Lecture.sort_by_date(Lecture.includes(:term).all)
+                    .map { |l| [l.title_for_viewers, 'Lecture-' + l.id.to_s] }
     end
     Lecture.sort_by_date(Lecture.includes(:course, :editors).all)
            .select { |l| l.edited_by?(user) }
-           .map { |l| [l.short_title, 'Lecture-' + l.id.to_s] }
+           .map { |l| [l.title_for_viewers, 'Lecture-' + l.id.to_s] }
   end
 
   # the next methods provide infos on editors and teacher
@@ -456,5 +465,18 @@ class Lecture < ApplicationRecord
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
       'keks' => ['KeksQuiz'], 'nuesse' => ['Nuesse'],
       'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste']}
+  end
+
+  def touch_media
+    media_with_inheritance.update_all(updated_at: Time.now)
+  end
+
+  def touch_lessons
+    lessons.update_all(updated_at: Time.now)
+  end
+
+  def touch_siblings(lesson)
+    lessons.update_all(updated_at: Time.now)
+    Medium.where(teachable: lessons).update_all(updated_at: Time.now)
   end
 end

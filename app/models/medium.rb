@@ -611,8 +611,10 @@ class Medium < ApplicationRecord
 
   # returns info made from sort, teachable title and description
   def title_for_viewers
-    sort_de + ', ' + teachable.title_for_viewers +
-      (description.present? ? ', ' + description : '')
+    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+      sort_de + ', ' + teachable.title_for_viewers +
+        (description.present? ? ', ' + description : '')
+    end
   end
 
   # returns info made from sort and description

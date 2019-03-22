@@ -22,10 +22,12 @@ class Lesson < ApplicationRecord
   # media are cached in several places
   # media are touched in order to find out whether cache is out of date
   after_save :touch_media
-  # same for sections
+  # same for sections and lessons in the same lecture (their numbering changes)
   after_save :touch_sections
+  after_save :touch_siblings
   after_save :touch_self
   before_destroy :touch_media
+  before_destroy :touch_siblings
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
@@ -61,8 +63,10 @@ class Lesson < ApplicationRecord
   end
 
   def title_for_viewers
-    lecture.title_for_viewers + ', Sitzung ' + number.to_s + ' vom ' +
-      date_de
+    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+      lecture.title_for_viewers + ', Sitzung ' + number.to_s + ' vom ' +
+        date_de
+    end
   end
 
   def long_title
@@ -198,14 +202,14 @@ class Lesson < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def self.editable_selection(user)
     if user.admin?
-      return Lesson.includes(:lecture).order_reverse
+      return Lesson.order_reverse
                    .map do |l|
-                     [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s]
+                     [l.title_for_viewers, 'Lesson-' + l.id.to_s]
                    end
     end
     Lesson.includes(:lecture).order_reverse
           .select { |l| l.edited_by?(user) }
-          .map { |l| [l.short_title_with_lecture_date, 'Lesson-' + l.id.to_s] }
+          .map { |l| [l.title_for_viewers, 'Lesson-' + l.id.to_s] }
   end
 
   private
@@ -218,6 +222,10 @@ class Lesson < ApplicationRecord
   # used for after save callback
   def touch_media
     lecture.media_with_inheritance.each(&:touch)
+  end
+
+  def touch_siblings
+    lecture.lessons.update_all(updated_at: Time.now)
   end
 
   def touch_sections

@@ -51,7 +51,8 @@ class Tag < ApplicationRecord
   # returns the array of all tags (sorted by title) together with
   # their ids
   def self.select_by_title
-    Tag.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
+    Tag.pluck(:title,:id).map { |title, id| { title: title, id: id } }
+       .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
   # converts the subgraph of all tags of distance <= 2 to the given marked tag

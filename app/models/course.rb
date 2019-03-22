@@ -29,6 +29,11 @@ class Course < ApplicationRecord
             presence: { message: 'Kurztitel muss vorhanden sein.' },
             uniqueness: { message: 'Kurztitel ist bereits vergeben.' }
 
+  # some information about media and lectures are cached
+  # to find out whether the cache is out of date, always touch'em after saving
+  after_save :touch_media
+  after_save :touch_lectures_and_lessons
+
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
 
@@ -59,7 +64,9 @@ class Course < ApplicationRecord
   end
 
   def title_for_viewers
-    short_title
+    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+      short_title
+    end
   end
 
   def long_title
@@ -310,11 +317,11 @@ class Course < ApplicationRecord
   def self.editable_selection(user)
     if user.admin?
       return Course.order(:title)
-                   .map { |c| [c.short_title, 'Course-' + c.id.to_s] }
+                   .map { |c| [c.title_for_viewers, 'Course-' + c.id.to_s] }
     end
     Course.includes(:editors, :editable_user_joins)
           .order(:title).select { |c| c.edited_by?(user) }
-          .map { |c| [c.short_title, 'Course-' + c.id.to_s] }
+          .map { |c| [c.title_for_viewers, 'Course-' + c.id.to_s] }
   end
 
   # returns the array of all tags (sorted by title) together with
@@ -350,5 +357,14 @@ class Course < ApplicationRecord
 
   def course_path
     Rails.application.routes.url_helpers.course_path(self)
+  end
+
+  def touch_media
+    media_with_inheritance.update_all(updated_at: Time.now)
+  end
+
+  def touch_lectures_and_lessons
+    lectures.update_all(updated_at: Time.now)
+    Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
   end
 end
