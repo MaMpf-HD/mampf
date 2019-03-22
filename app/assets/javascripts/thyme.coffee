@@ -374,11 +374,13 @@ $(document).on 'turbolinks:load', ->
   # whether the interactive area is displayed or hidden
   resizeContainer = ->
     height = $(window).height()
+    console.log 'height: ' + height
     factor = if $('#caption').is(':hidden') then 1 else 1 / 0.82
     width = Math.floor((video.videoWidth * $(window).height() /
     video.videoHeight) * factor)
     if width > $(window).width()
       shrink = $(window).width() / width
+      console.log 'shrink: ' + shrink
       height = Math.floor(height * shrink)
       width = $(window).width()
     top = Math.floor(0.5*($(window).height() - height))
@@ -577,6 +579,11 @@ $(document).on 'turbolinks:load', ->
     else
       fullScreenButton.innerHTML = 'fullscreen'
       fullScreenButton.dataset.status = 'false'
+      # brute force patch: apparently, after exiting fullscreen mode,
+      # window.onresize is triggered twice(!), the second time with incorrect
+      # window height data, which results in a video area not quite filling
+      # the whole window. The next line resizes the container again.
+      setTimeout(resizeContainer, 10)
     return
 
   document.onwebkitfullscreenchange = ->
@@ -586,6 +593,7 @@ $(document).on 'turbolinks:load', ->
     else
       fullScreenButton.innerHTML = 'fullscreen'
       fullScreenButton.dataset.status = 'false'
+      setTimeout(resizeContainer, 10)
     return
 
   document.onmozfullscreenchange = ->
@@ -595,6 +603,7 @@ $(document).on 'turbolinks:load', ->
     else
       fullScreenButton.innerHTML = 'fullscreen'
       fullScreenButton.dataset.status = 'false'
+      setTimeout(resizeContainer, 10)
     return
 
   # Event listeners for the seek bar
