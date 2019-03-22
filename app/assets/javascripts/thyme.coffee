@@ -581,7 +581,7 @@ $(document).on 'turbolinks:load', ->
       # window.onresize is triggered twice(!), the second time with incorrect
       # window height data, which results in a video area not quite filling
       # the whole window. The next line resizes the container again.
-      setTimeout(resizeContainer, 10)
+      setTimeout(resizeContainer, 20)
     return
 
   document.onwebkitfullscreenchange = ->
@@ -591,7 +591,7 @@ $(document).on 'turbolinks:load', ->
     else
       fullScreenButton.innerHTML = 'fullscreen'
       fullScreenButton.dataset.status = 'false'
-      setTimeout(resizeContainer, 10)
+      setTimeout(resizeContainer, 20)
     return
 
   document.onmozfullscreenchange = ->
@@ -601,7 +601,7 @@ $(document).on 'turbolinks:load', ->
     else
       fullScreenButton.innerHTML = 'fullscreen'
       fullScreenButton.dataset.status = 'false'
-      setTimeout(resizeContainer, 10)
+      setTimeout(resizeContainer, 20)
     return
 
   # Event listeners for the seek bar
