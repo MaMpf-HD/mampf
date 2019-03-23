@@ -60,6 +60,7 @@ gem 'coveralls', require: false
 gem 'kaminari'
 gem "selectize-rails"
 gem 'acts_as_list'
+gem 'acts_as_tree'
 gem 'activerecord-import'
 gem 'thredded', '~> 0.16.4'
 gem 'kramdown-parser-gfm'
