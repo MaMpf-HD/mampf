@@ -101,7 +101,7 @@ displayWithoutAnswers = ->
 revealAnswers = (answers) ->
   $('#results-<%= @quiz_round.round_id_old %>').empty()
     .append answers
-  quizRoundBody = document.getElementById('body-<%= @quiz_round.round_id %>')
+  quizRoundBody = document.getElementById('results-<%= @quiz_round.round_id_old %>')
   renderMathInElement quizRoundBody,
     delimiters: [
       {

@@ -10,7 +10,7 @@ $('#quizzable-data').empty()
   .append '<%= j render partial: "remarks/data",
                         locals: { remark: @quizzable }%>'
 <% end %>
-quizzableData = document.getElementById('quizzable_data')
+quizzableData = document.getElementById('quizzable-data')
 renderMathInElement quizzableData,
   delimiters: [
     {
