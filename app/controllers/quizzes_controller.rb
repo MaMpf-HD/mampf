@@ -1,7 +1,5 @@
 # Quizzes controller
 class QuizzesController < ApplicationController
-  before_action :authenticate_admin!, except: [:index, :play, :proceed,
-                                               :preview]
   before_action :init_values, only: [:play, :proceed]
   before_action :set_quiz, only: [:show, :edit, :update, :destroy, :preview]
 

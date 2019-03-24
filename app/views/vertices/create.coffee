@@ -11,11 +11,31 @@ $('#quizzable-data').empty()
                         locals: { remark: @quizzable } %>'
 <% end %>
 $('#quizzableModal').modal 'show'
-MathJax.Hub.Queue [
-  "Typeset"
-  MathJax.Hub
-  "quizzable_data"
-]
+quizzableData = document.getElementById('quizzable_data')
+renderMathInElement quizzableData,
+  delimiters: [
+    {
+      left: '$$'
+      right: '$$'
+      display: true
+    }
+    {
+      left: '$'
+      right: '$'
+      display: false
+    }
+    {
+      left: '\\('
+      right: '\\)'
+      display: false
+    }
+    {
+      left: '\\['
+      right: '\\]'
+      display: true
+    }
+  ]
+  throwOnError: false
 <% else %>
 alert 'Fehler beim Abspeichern der Ecke'
 <% end %>

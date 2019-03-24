@@ -9,8 +9,28 @@ $('#reassign-data').empty()
                  locals: { question: @quizzable, in_quiz: @in_quiz,
                            quiz_id: @quiz_id } %>'
 <% end %>
-MathJax.Hub.Queue [
-  "Typeset"
-  MathJax.Hub
-  "reassign-data"
-]
+reassignData = document.getElementById('reassign-data')
+renderMathInElement reassignData,
+  delimiters: [
+    {
+      left: '$$'
+      right: '$$'
+      display: true
+    }
+    {
+      left: '$'
+      right: '$'
+      display: false
+    }
+    {
+      left: '\\('
+      right: '\\)'
+      display: false
+    }
+    {
+      left: '\\['
+      right: '\\]'
+      display: true
+    }
+  ]
+  throwOnError: false

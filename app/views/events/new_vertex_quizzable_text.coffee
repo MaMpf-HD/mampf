@@ -1,6 +1,26 @@
 $('#new_vertex_text').empty().append '<%= j @text %>'
-MathJax.Hub.Queue [
-  "Typeset"
-  MathJax.Hub
-  "new_vertex_text"
-]
+newVertex = document.getElementById('new_vertex_text')
+renderMathInElement newVertex,
+  delimiters: [
+    {
+      left: '$$'
+      right: '$$'
+      display: true
+    }
+    {
+      left: '$'
+      right: '$'
+      display: false
+    }
+    {
+      left: '\\('
+      right: '\\)'
+      display: false
+    }
+    {
+      left: '\\['
+      right: '\\]'
+      display: true
+    }
+  ]
+  throwOnError: false

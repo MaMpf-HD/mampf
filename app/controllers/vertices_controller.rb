@@ -1,6 +1,6 @@
 # VerticesController
 class VerticesController < ApplicationController
-  before_action :authenticate_admin!
+  authorize_resource class: false
   before_action :set_values
   before_action :set_update_vertex_params, only: [:update]
   before_action :set_create_vertex_params, only: [:create]

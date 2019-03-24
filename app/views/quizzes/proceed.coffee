@@ -35,11 +35,32 @@ renderNext = (round) ->
     return
   $('html, body').delay(500)
     .animate { scrollTop: document.body.scrollHeight }, 2000
-  MathJax.Hub.Queue [
-    'Typeset'
-    MathJax.Hub
-    '<%= @quiz_round.round_id %>'
-  ]
+  quizRound = document.getElementById('<%= @quiz_round.round_id %>')
+  renderMathInElement quizRound,
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+  return
 
 displayNext = ->
   <% if @quiz_round.progress == -1 %>
@@ -75,15 +96,37 @@ acceptedResults = (info, $previous_round) ->
 displayWithoutAnswers = ->
   $('#footer-<%= @quiz_round.round_id_old %>').removeClass 'no_display'
   displayNext()
+  return
 
 revealAnswers = (answers) ->
   $('#results-<%= @quiz_round.round_id_old %>').empty()
     .append answers
-  MathJax.Hub.Queue [
-    'Typeset'
-    MathJax.Hub
-    'body-<%= @quiz_round.round_id %>'
-  ]
+  quizRoundBody = document.getElementById('body-<%= @quiz_round.round_id %>')
+  renderMathInElement quizRoundBody,
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+  return
 
 revealSuccess = (success) ->
   $('#footer-<%= @quiz_round.round_id_old %>').removeClass('no_display')

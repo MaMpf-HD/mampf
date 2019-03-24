@@ -1,6 +1,5 @@
 # AnswersController
 class AnswersController < ApplicationController
-  before_action :authenticate_admin!
   before_action :set_answer, only: [:show, :edit, :update, :destroy]
 
   def new
