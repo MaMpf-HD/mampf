@@ -21,6 +21,22 @@ Rails.application.routes.draw do
                              as: 'inspect_course'
   resources :courses, except: [:index]
 
+  get 'events/update_vertex_default', as: 'update_vertex_default'
+  get 'events/update_branching', as: 'update_branching'
+  get 'events/new_vertex_quizzables', as: 'new_vertex_quizzables'
+  get 'events/new_vertex_quizzable_text', as: 'new_vertex_quizzable_text'
+  get 'events/update_vertex_header', as: 'update_vertex_header'
+  get 'events/update_vertex_body', as: 'update_vertex_body'
+  get 'events/update_answer_body', as: 'update_answer_body'
+  get 'events/update_answer_box', as: 'update_answer_box'
+  get 'events/toggle_results', as: 'toggle_results'
+  get 'events/cancel_question_basics', as: 'cancel_question_basics'
+  get 'events/cancel_remark_basics', as: 'cancel_remark_basics'
+  get 'events/cancel_quiz_basics', as: 'cancel_quiz_basics'
+  get 'events/fill_quizzable_modal', as: 'fill_quizzable_modal'
+  get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
+  get 'remarks/remove_image', as: 'remove_remark_image'
+
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'
   resources :items, only: [:update, :create, :edit, :destroy]
@@ -129,6 +145,26 @@ Rails.application.routes.draw do
   get 'users/list_generic_users', to: 'users#list_generic_users',
                                   as: 'list_generic_users'
   resources :users, only: [:index, :edit, :update, :destroy]
+
+  patch 'remarks/:id/reassign', to: 'remarks#reassign',
+                                as: 'reassign_remark'
+  patch 'questions/:id/reassign', to: 'questions#reassign',
+                                  as: 'reassign_question'
+  get 'quizzes/:id/play', to: 'quizzes#play',
+                          as: 'play_quiz'
+  patch 'quizzes/:id/play', to: 'quizzes#proceed'
+  put 'quizzes/:id/play', to: 'quizzes#proceed'
+  get 'quizzes/:id/preview', to: 'quizzes#preview',
+                             as: 'preview_quiz'
+
+  resources :questions, except: [:edit]
+  resources :remarks, except: [:edit]
+  resources :answers, except: [:index, :show, :edit]
+  resources :quizzes, except: [:show]  do
+    resources :vertices, except: [:index, :show, :edit]
+  end
+
+
 
   get 'profile/edit', as: 'edit_profile'
   post 'profile/update'

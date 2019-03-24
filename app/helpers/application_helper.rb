@@ -231,4 +231,32 @@ module ApplicationHelper
     end
     date.strftime('%d.%m.%Y')
   end
+
+  def quizzable_color(type)
+    'bg-' + type.downcase
+  end
+
+  def questioncolor(value)
+    value ? 'bg-question' : ''
+  end
+
+  def vertex_label(quiz, vertex_id)
+    vertex_id.to_s + ' ' + quiz.quizzable(vertex_id).label
+  end
+
+  def ballot_box(correctness)
+    raw(correctness ? '&#x2612;' : '&#x2610;')
+  end
+
+  def boxcolor(correctness)
+    correctness ? 'correct' : 'incorrect'
+  end
+
+  def bgcolor(correctness)
+    correctness ? 'bg-correct' : 'bg-incorrect'
+  end
+
+  def hide_as_class(value)
+    value ? 'no_display' : ''
+  end
 end
