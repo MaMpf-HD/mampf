@@ -34,6 +34,44 @@
   background-color: #BCE4EA;
 }
 
+.bg-edit-answer
+{
+  background-color: #e3d6c1;
+}
+
+.bg-edit-question
+{
+  background-color: #e1f5fe;
+}
+
+.bg-question
+{
+  background: linear-gradient(#e1f5fe, white);
+}
+
+.bg-remark
+{
+  background-color: #f9fbe7;
+}
+
+.bg-incorrect
+{
+  background-color: #ffe4e3;
+  // background: linear-gradient(#ffe4e3, white);
+}
+
+.bg-incorrect-message
+{
+  background-color: #ffe6e6;
+  // background: linear-gradient(#ffe4e3, white);
+}
+
+.bg-correct
+{
+  background-color: #e6ffe9;
+  // background: linear-gradient(#e6ffe9, white);
+}
+
 .bg-lime-lighten-5
 {
    background-color: #f9fbe7;
@@ -382,6 +420,11 @@
 .bg-orange-darken-2
 {
   background-color: #f57c00;
+}
+
+.bg-orange
+{
+  background-color: #ff9800;
 }
 
 .bg-orange-lighten-4
