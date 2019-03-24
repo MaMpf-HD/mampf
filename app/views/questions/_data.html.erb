@@ -1,0 +1,30 @@
+<div class="row">
+  <div class="col-6">
+    <div class="card bg-light mb-4" id="question-basics-edit">
+      <%= render partial: 'questions/basics', locals: { question: question } %>
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="card bg-light">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-8">
+            <h5>Antworten</h5>
+          </div>
+          <div class="col-4">
+            <%= link_to 'Antwort hinzufügen',
+                        new_answer_path(question_id: question.id),
+                        id: 'new-answer',
+                        class: 'btn btn-primary btn-sm',
+                        remote: true %>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div id="new-answer-field"></div>
+        <%= render partial: 'questions/answers_accordion',
+                   locals: { question: question } %>
+      </div>
+    </div>
+  </div>
+</div>

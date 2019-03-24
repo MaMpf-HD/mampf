@@ -1,0 +1,42 @@
+<%= bootstrap_form_with model: question do |f| %>
+  <div class="card-header">
+    <div class="row">
+      <div class="col-3">
+        <h5>
+          Basisdaten
+        </h5>
+      </div>
+      <div class="col-5">
+        <span class="no_display incorrect" id="question-basics-warning">
+          Achtung, es gibt ungespeicherte Änderungen!
+        </span>
+      </div>
+      <div class="col-4">
+        <span class="no_display", id="question-basics-options">
+          <%= f.submit "Speichern", class: "btn btn-primary btn-sm",
+                                    id: "question-basics-save" %>
+          <button type="button" class="btn btn-secondary btn-sm"
+                  id="question-basics-cancel" data-id="<%= question.id %>">
+            verwerfen
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-2">
+    <div id="tex-preview-question-<%= question.id %>"
+         class="bg-edit-question p-2 mb-3">
+      <%= question.text %>
+    </div>
+    <%= f.text_area :text, id: 'tex-area-question-' + question.id.to_s,
+                    label: 'LaTeX' %>
+    <%= f.text_field :label %>
+    <%= render partial: 'questions/options', locals: { question: question } %>
+    <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
+                    label: 'Lösungshinweis' %>
+    <div id="tex-preview-hint-<%= question.id %>"
+         class="p-2 mb-3">
+      <%= question.hint %>
+    </div>
+  </div>
+<% end %>

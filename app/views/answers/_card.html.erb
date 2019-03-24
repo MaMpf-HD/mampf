@@ -1,0 +1,48 @@
+<div class="card bg-mdb-color-lighten-6 mb-2" id="answer-card-<%= answer.id %>">
+  <div class="card-header" id="answer-heading-<%= answer.id %>">
+    <div class="row">
+      <div class="col-8 py-2 <%= bgcolor(answer.value) %> %>
+                  border border-secondary rounded"
+           id="answer-header-<%= answer.id %>">
+        <span id="answer-box-<%= answer.id %>" class="mr-2">
+          <%= ballot_box(answer.value) %>
+        </span>
+        <span id="tex-preview-answer-<%= answer.id %>">
+          <%= answer.text %>
+        </span>
+      </div>
+      <div class="col-4">
+        <button id="targets-answer-<%= answer.id %>"
+                class="btn btn-sm btn-primary collapsed m-1"
+                data-toggle="collapse"
+                data-target="#collapse-answer-<%= answer.id %>"
+                aria-expanded="true"
+                aria-controls="collapse-answer-<%= answer.id %>">
+          Bearbeiten
+        </button>
+        <%= link_to 'Löschen', answer_path(answer), method: :delete,
+                    data: { confirm: 'Bist Du sicher?' },
+                    class: 'btn btn-sm btn-danger',
+                    remote: true %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8 py-2">
+        <span id="tex-preview-explanation-<%= answer.id %>">
+          <%= answer.explanation %>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div id="collapse-answer-<%= answer.id %>"
+       class="collapse"
+       aria-labelledby="answer-heading-<%= answer.id %>"
+       data-parent="#answers-accordion"
+       data-id="<%= answer.id %>">
+    <div class="card-body bg-mdb-color-lighten-6"
+         id="answer-body-<%= answer.id %>">
+      <%= render partial: 'answers/form.html',
+                 locals: { answer: answer, question_id: answer.question.id } %>
+    </div>
+  </div>
+</div>

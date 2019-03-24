@@ -1,0 +1,6 @@
+<% if @quiz.quiz_graph.find_errors.present? %>
+  <div class="alert alert-danger" role="alert">
+    Achtung, das Quiz enthält noch Fehler:
+    <%= quiz.quiz_graph.find_errors.join('. ') + '.' %>
+  </div>
+<% end %>

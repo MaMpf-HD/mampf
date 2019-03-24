@@ -1,0 +1,5 @@
+<% if quizzable.class.to_s == "Remark" %>
+  <%= render partial: 'remarks/remark', locals: { remark: quizzable } %>
+<% else %>
+  <%= render partial: 'questions/question', locals: { question: quizzable } %>
+<% end %>

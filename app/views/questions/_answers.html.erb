@@ -1,0 +1,12 @@
+<% answers.each do |a|%>
+  <div>
+    <span>
+      <% if !defined? crosses %>
+        <%= ballot_box(a.value) %>
+      <% else %>
+        <%= ballot_box(crosses[a.id]) %>
+      <% end%>
+    </span>
+    <%= a.text %>
+  </div>
+<% end %>

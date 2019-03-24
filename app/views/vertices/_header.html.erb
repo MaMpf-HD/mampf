@@ -1,0 +1,64 @@
+<div class="row">
+  <div class="col-8">
+    <div>
+      <span class="badge badge-info">
+        <%= vertex_id.to_s %>
+      </span>
+      <strong>
+        <%= quiz.quizzable(vertex_id).label %>
+      </strong>
+    </div>
+    <%= quiz.quizzable(vertex_id).text %>
+  </div>
+  <div class="col-1">
+    <span id="neighbours-<%= vertex_id %>"
+          data-neighbours="<%= quiz.quiz_graph
+                                   .fallback_neighbours_with_status(vertex_id) %>"
+          data-id="<%= vertex_id %>">
+      <span class="mr-1">
+        <i class="fas fa-angle-double-right">
+        </i>
+      </span>
+      <% quiz.quiz_graph
+             .fallback_neighbours_with_status(vertex_id).each do |n| %>
+        <% if !n[0].in?([0,-1]) %>
+          <span class="badge badge-<%= n[1] ? 'success' : 'danger'%>">
+            <%= n[0] %>
+          </span>
+        <% elsif n[0] == 0 %>
+          <span class="badge badge-primary">
+            undefined
+          </span>
+        <% elsif n[0] == -1 %>
+          <span class="badge badge-warning">
+            Ende
+          </span>
+        <% end %>
+      <% end %>
+    </span>
+  </div>
+  <div class="col-3 text-right">
+    <div class='btn-group'>
+      <button class="btn btn-sm btn-outline-primary rounded m-1"
+              id="edit-vertex-content-<%= vertex_id %>"
+              data-toggle="modal" data-target="#quizzableModal"
+              data-type="<%= quiz.quiz_graph.vertices[vertex_id][:type] %>"
+              data-id="<%= quiz.quiz_graph.vertices[vertex_id][:id] %>">
+        Bearbeiten
+      </button>
+      <button id="targets-vertex-<%= vertex_id %>"
+              class="btn btn-sm btn-outline-primary rounded collapsed m-1"
+              data-toggle="collapse"
+              data-target="#collapse-vertex-<%= vertex_id %>"
+              aria-expanded="true"
+              aria-controls="collapse-vertex-<%= vertex_id %>">
+        Ziele ändern
+      </button>
+      <%= link_to 'Löschen', quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
+                  method: :delete,
+                  data: { confirm: 'Bist Du sicher? Damit werden auch die'\
+                                    'zugehörigen Kanten gelöscht.' },
+                  class: 'btn btn-outline-danger rounded btn-sm m-1' %>
+    </div>
+  </div>
+</div>

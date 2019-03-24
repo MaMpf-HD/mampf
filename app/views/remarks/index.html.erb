@@ -1,0 +1,34 @@
+<div class="row bg-lime-lighten-4 p-2 mb-3">
+  <div class="col-3">
+    <h4 class="bg-lime-lighten-4 p-2">
+      <span class="badge badge-secondary">Bemerkungsübersicht</span>
+    </h4>
+  </div>
+  <div class="col-4">
+    <%= paginate @remarks %>
+  </div>
+  <div class="col-5">
+    <%= link_to 'zur Quiz-Übersicht', quizzes_path, class: 'btn btn-primary' %>
+    <%= link_to 'zur Fragen-Übersicht', questions_path,
+                class: 'btn btn-primary' %>
+  </div>
+</div>
+<%= link_to 'Neue Bemerkung', new_remark_path, class: 'btn btn-primary m-4',
+            id: 'new_remark_button', remote: true %>
+<%= render partial: 'remarks/new', locals: { remark: @remark } %>
+<div class="card">
+  <div class="card-body">
+    <% @remarks.each do |r| %>
+      <div class="row border border-secondary mb-1">
+        <div class="col-3">
+          <span class="pl-4">
+            <%= link_to r.label, remark_path(r) %>
+          </span>
+        </div>
+        <div class="col-9 bg-remark">
+          <%= r.text %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

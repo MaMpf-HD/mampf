@@ -1,0 +1,19 @@
+<% question = Question.find(quiz_round.vertex[:id]) %>
+<% answers = question.answers %>
+<%= bootstrap_form_with model: quiz_round.quiz,
+                        url: {action: "proceed"} do |f| %>
+  <% answers.each do |a| %>
+    <div class="row p-2 mb-2 border-bottom">
+      <div class="col-12">
+        <%= f.check_box :crosses, { multiple: true, id: answer_id(a.id),
+                                    class: "click-it", label: a.text },
+                        a.id, false %>
+      </div>
+    </div>
+  <% end %>
+  <%= f.hidden_field :progress, value: quiz_round.progress %>
+  <%= f.hidden_field :counter, value: quiz_round.counter %>
+  <div class="text-center">
+    <%= f.submit "Fertig", class: "send-it btn btn-secondary mt-2"  %>
+  </div>
+<% end %>

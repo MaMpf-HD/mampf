@@ -1,0 +1,96 @@
+<div class="jumbotron bg-lime-lighten-4">
+  <h1>
+    BananE
+  </h1>
+  <hr>
+  <p>
+    Beweise angeleitet ausführen und nachvollziehen zur Erkenntnisvertiefung
+  </p>
+</div>
+<div class="row">
+  <div class="col-12">
+    <% if admin_signed_in? %>
+      <%= link_to 'zur Fragenübersicht', questions_path,
+                  class: 'btn btn-primary m-4' %>
+      <%= link_to 'zur Bemerkungsübersicht', remarks_path,
+                  class: 'btn btn-primary m-4' %>
+      <%= link_to 'Neues Quiz anlegen', new_quiz_path,
+                  class: 'btn btn-primary m-4', id: 'new_quiz_button',
+                  remote: true %>
+      <%= link_to "Logout", destroy_admin_session_path,
+                  class: 'btn btn-secondary m-4', method: :delete %>
+    <% else %>
+      <%= link_to "Administrator-Login", new_admin_session_path,
+                  class: 'btn btn-secondary m-4' %>
+    <%end %>
+  </div>
+</div>
+<% if admin_signed_in? %>
+  <div id='new_quiz' class='no_display'>
+    <div class='row'>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card m-3">
+          <div class='card-header'>
+            Quiz anlegen
+          </div>
+          <div class='card-body'>
+            <%= bootstrap_form_with model: @quiz do |f| %>
+              <%= f.text_field :label %>
+              <div class='text-center'>
+                <%= f.submit 'Speichern' %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+<div class="row bg-light px-2 py-3">
+  <div class="col-6 col-xl-7">
+    <strong>
+      Titel
+    </strong>
+  </div>
+  <div class="col-3 col-xl-1">
+    <strong>
+      Niveau
+    </strong>
+  </div>
+  <div class="col-3 col-xl-4">
+    <strong>
+      Aktionen
+    </strong>
+  </div>
+</div>
+<% @quizzes.each do |q| %>
+  <div class="row border-bottom px-2 py-3">
+    <div class="col-6 col-xl-7">
+      <%= q.label %>
+    </div>
+    <div class="col-3 col-xl-1">
+      <% unless q.level.nil? %>
+        <span data-toggle="tooltip"
+              data-placement="right"
+              title=<%= ['leicht', 'mittel', 'schwer'][q.level] %>>
+          <% (q.level + 1).times do %>
+            <i class="fas fa-plus-circle"></i>
+          <% end %>
+        </span>
+      <% end %>
+    </div>
+    <div class="col-3 col-xl-4">
+      <%= link_to 'Spielen', play_quiz_path(q),
+                  class: 'btn btn-primary my-1' %>
+        <% if admin_signed_in? %>
+          <%= link_to 'Vorschau', preview_quiz_path(q),
+                      class: 'btn btn-primary my-1', target: :_blank %>
+          <%= link_to 'Bearbeiten', edit_quiz_path(q),
+                      class: 'btn btn-primary my-1' %>
+          <%= link_to 'Löschen', quiz_path(q), method: :delete,
+                      data: { confirm: 'Bist Du sicher?' },
+                      class: 'btn btn-danger my-1' %>
+        <% end %>
+      </div>
+  </div>
+<% end %>

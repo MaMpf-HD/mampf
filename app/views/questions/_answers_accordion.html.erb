@@ -1,0 +1,5 @@
+<div id="answers-accordion">
+  <% question.answers.each do |a| %>
+    <%= render partial: 'answers/card', locals: { answer: a } %>
+  <% end %>
+</div>

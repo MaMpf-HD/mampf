@@ -1,0 +1,12 @@
+<% correct_answers = answers.where(value:true) %>
+<% if correct_answers.present? %>
+  <ul>
+    <% correct_answers.each do |a| %>
+      <li class="p-2">
+        <%= a.text %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  Keine der angegebenen Optionen war korrekt.
+<% end %>

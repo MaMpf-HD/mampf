@@ -1,0 +1,62 @@
+<% question = Question.find(vertex[:id]) %>
+<% answers = question.answers %>
+<% answers.each do |a| %>
+  <div class="row p-2 mb-2 border border-secondary rounded
+              <%= questioncolor(a.value) %>">
+    <div class="col-<%= input == question.answer_scheme ? 11 : 12 %>">
+      <span id="<%= cross_id(a.id, progress, vertex) %>"
+            class="<%= boxcolor(input[a.id] == a.value) %>"
+            style="font-size: x-large;">
+        <%= ballot_box(input[a.id]) %>
+      </span>
+      <%= a.text %>
+    </div>
+    <% if input == question.answer_scheme %>
+      <div class="col-1 text-right">
+        <% unless a.explanation.blank? %>
+          <span class="text-right">
+            <i class="far fa-question-circle"
+               id="reveal-explanation-<%= old_id %>-<%= a.id %>"
+               style="cursor: pointer;" data-toggle="tooltip"
+               data-placement="right" title="Warum war das richtig?">
+            </i>
+          </span>
+        <% end %>
+      </div>
+    <% end %>
+    <div class="col-12 <%= hide_as_class(input == question.answer_scheme) %>"
+         id="feedback-<%= old_id %>-<%= a.id %>">
+      <% if input[a.id] != a.value %>
+        <span class="badge badge-danger">
+          <% if input[a.id] %>
+            Das hast Du angekreuzt. Die Aussage ist aber falsch.
+          <% else %>
+            Das hast Du nicht angekreuzt. Die Aussage ist aber richtig.
+          <% end %>
+        </span>
+      <% else %>
+        <span class="badge badge-success">
+          Das hast Du richtig gemacht, die Aussage ist
+          <%= a.value ? 'wahr' :'falsch' %>.
+        </span>
+        <% if a.explanation.present? &&  input != question.answer_scheme %>
+          <i class="far fa-question-circle"
+             id="reveal-explanation-<%= old_id %>-<%= a.id %>"
+             style="cursor: pointer;" data-toggle="tooltip"
+             data-placement="right" title="Warum war das richtig?">
+          </i>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="col-12
+                <%= hide_as_class(input == question.answer_scheme || input[a.id] == a.value) %>"
+         id="explanation-<%= old_id %>-<%= a.id %>">
+      <% unless a.explanation.blank? %>
+        <span class="badge badge-secondary">
+          Denn:
+        </span>
+        <%= a.conditional_explanation(input[a.id] == a.value) %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

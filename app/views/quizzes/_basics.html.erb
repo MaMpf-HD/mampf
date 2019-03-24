@@ -1,0 +1,43 @@
+<%= bootstrap_form_with model: quiz do |f| %>
+  <div class="card-header">
+    <div class="row">
+      <div class="col-3">
+        <h5>
+          Basisdaten
+        </h5>
+      </div>
+      <div class="col-5">
+        <span class="no_display incorrect" id="quiz-basics-warning">
+          Achtung, es gibt ungespeicherte Änderungen!
+        </span>
+      </div>
+      <div class="col-4">
+        <span class="no_display", id="quiz-basics-options">
+          <%= f.submit "Speichern", class: "btn btn-primary btn-sm" %>
+          <button type="button" class="btn btn-secondary btn-sm"
+                  id="quiz-basics-cancel" data-id="<%= quiz.id %>">
+            verwerfen
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <%= f.text_field :label, id: 'quiz-label-edit' %>
+    <%= f.select :root,
+                 options_for_select(vertices_labels_no_end(quiz),quiz.root),
+                 { label: 'Start-Ecke' },
+                 { id: 'quiz-top-select' } %>
+    <%= f.hidden_field :id_js, value: quiz.id %>
+    <%= f.form_group :level, label: { text: "Schwierigkeitsgrad" } do %>
+      <div id="level">
+        <%= f.radio_button :level, 0, label: "leicht", inline: true %>
+        <%= f.radio_button :level, 1, label: "mittel", inline: true %>
+        <%= f.radio_button :level, 2, label: "schwer", inline: true %>
+      </div>
+    <% end %>
+    <div id="quiz-error-messages">
+      <%= render partial: 'quizzes/errors_in_editing', locals: { quiz: quiz } %>
+    </div>
+  </div>
+<% end %>

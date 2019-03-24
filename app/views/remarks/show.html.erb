@@ -1,0 +1,18 @@
+<div class="row bg-lime-lighten-4 p-2 mb-3">
+  <div class="col-8">
+    <h4 class="bg-lime-lighten-4 p-2">
+      <span class="badge badge-secondary">
+        Bemerkung
+      </span>
+      <%= @remark.label %>
+    </h4>
+  </div>
+  <div class="col-4">
+    <%= link_to 'zur Bemerkungsübersicht', remarks_path,
+                class: 'btn btn-primary' %>
+    <%= link_to 'Bemerkung Löschen', remark_path, method: :delete,
+        data: { confirm: 'Bist Du sicher?' }, class: 'btn btn-danger' %>
+  </div>
+</div>
+<%= render partial: 'remarks/data', locals: { remark: @remark } %>
+<%= render partial: 'quizzes/reassign_modal' %>
