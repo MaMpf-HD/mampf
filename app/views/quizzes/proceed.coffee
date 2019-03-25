@@ -1,6 +1,6 @@
 removeResidues = ->
-  $('form').find('input:hidden').remove()
-  $('form').children().unwrap()
+  $('main form').find('input:hidden').remove()
+  $('main form').children().unwrap()
   $('.send-it').prop 'disabled', true
   $('.send-it').addClass 'no_display'
   $('.click-it').prop 'disabled', true

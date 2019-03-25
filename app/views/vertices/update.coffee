@@ -34,7 +34,7 @@ renderMathInElement vertexHeading,
 $('#vertex-body-<%= @id %>').empty()
   .append '<%= j render partial: "vertices/form",
                         locals: { quiz: @quiz,vertex_id: @id } %>'
-vertexBody = document.getElementById('vertex_body-<%= @id %>')
+vertexBody = document.getElementById('vertex-body-<%= @id %>')
 renderMathInElement vertexBody,
   delimiters: [
     {

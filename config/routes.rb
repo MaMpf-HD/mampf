@@ -183,7 +183,7 @@ Rails.application.routes.draw do
       get 'keks_questions/:id', to: 'media#keks_question'
     end
   end
-  mount ImageUploader.upload_endpoint(:cache) => "/images/upload"
+  mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
   mount Thredded::Engine => '/forum'

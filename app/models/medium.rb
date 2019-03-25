@@ -39,7 +39,7 @@ class Medium < ApplicationRecord
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem
   include VideoUploader[:video]
-  include ImageUploader[:screenshot]
+  include ScreenshotUploader[:screenshot]
   include PdfUploader[:manuscript]
 
   # if an external reference is given, checkif it is (at least syntactically)

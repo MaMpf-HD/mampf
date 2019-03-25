@@ -59,7 +59,6 @@ $(document).on 'change', '#new_vertex_quizzable_select', ->
 
 $(document).on 'shown.bs.collapse', '[id^="collapse-vertex-"]', ->
   $('#targets-vertex-' + $(this).data('vertex')).empty().append('verwerfen')
-    .removeClass('btn-primary').addClass 'btn-secondary'
 
 # change button 'verwerfen' back to 'Ziele ändern' and rerender vertex body
 # after vertex body is hidden
