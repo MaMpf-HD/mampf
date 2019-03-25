@@ -24,13 +24,3 @@ $(document).on 'click', '#remark-basics-cancel', ->
       }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
-
-$(document).on 'click', '#button-remark-remove-image', ->
-    $.ajax Routes.remove_remark_image_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        id: $(this).data('id')
-      }
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log("AJAX Error: #{textStatus}")

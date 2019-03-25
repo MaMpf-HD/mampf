@@ -39,10 +39,6 @@ class RemarksController < ApplicationController
     redirect_to remark_path(@remark) if remark_params[:type] == 'edit'
   end
 
-  def remove_image
-    @remark.image.purge
-  end
-
   private
 
   def set_remark
@@ -58,6 +54,6 @@ class RemarksController < ApplicationController
   end
 
   def remark_params
-    params.require(:remark).permit(:label, :text, :type, :image)
+    params.require(:remark).permit(:label, :text, :type)
   end
 end

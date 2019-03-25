@@ -29,9 +29,5 @@
                            label: 'LaTeX' %>
     <%= f.text_field :label %>
     <%= render partial: 'remarks/options', locals: { remark: remark } %>
-    <%= f.file_field :image, id: 'remark_upload', label: 'Bild' %>
-    <div id="remark-image-preview">
-      <%#= render partial: 'remarks/image_preview', locals: {remark: remark} %>
-    </div>
   </div>
 <% end %>
