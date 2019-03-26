@@ -8,7 +8,8 @@
          data-toggle="tab"
          href="#<%= s %>-media"
          role="tab"
-         aria-controls="<%= s%>-media" aria-selected="true">
+         aria-controls="<%= s%>-media" aria-selected="true"
+         data-sort="<%= media_types[s].first %>">
         <%= media_names[s] %>
         (<%= media.where(sort: media_types[s]).count %>)
       </a>

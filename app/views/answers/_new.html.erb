@@ -1,0 +1,9 @@
+<div class="card bg-mdb-color-lighten-6 my-2">
+  <div class="card-header">
+    <h5>Neue Antwort</h5>
+  </div>
+  <div class="card-body">
+    <%= render partial: 'answers/form',
+               locals: { answer: answer, question_id: question_id } %>
+  </div>
+</div>

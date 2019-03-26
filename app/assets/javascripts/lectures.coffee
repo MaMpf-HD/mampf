@@ -157,10 +157,8 @@ $(document).on 'turbolinks:load', ->
     return
 
   $('.content-mode').on 'change', ->
-    console.log 'Hi!'
     mode = if this.id == 'video-based' then 'video' else 'manuscript'
     lectureId = $(this).data('lecture')
-    console.log mode
     $.ajax Routes.update_content_mode_path(lectureId),
       type: 'POST'
       dataType: 'script'
@@ -168,6 +166,14 @@ $(document).on 'turbolinks:load', ->
         mode: mode
       }
     return
+
+  $('#edited-media-tab a[data-toggle="tab"]').on 'shown.bs.tab', (e) ->
+    sort = e.target.dataset.sort # newly activated tab
+    path = $('#create-new-medium').prop('href')
+    new_path = path.replace(/\?sort=.+?&/, '?sort=' + sort + '&')
+    $('#create-new-medium').prop('href', new_path)
+    return
+
 
   # on small mobile display, use shortened tag badges and
   # shortened course titles

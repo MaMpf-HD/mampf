@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_04_115617) do
+ActiveRecord::Schema.define(version: 2019_03_25_131507) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -20,6 +20,16 @@ ActiveRecord::Schema.define(version: 2019_03_04_115617) do
     t.datetime "updated_at", null: false
     t.index ["announcer_id"], name: "index_announcements_on_announcer_id"
     t.index ["lecture_id"], name: "index_announcements_on_lecture_id"
+  end
+
+  create_table "answers", force: :cascade do |t|
+    t.text "text"
+    t.boolean "value"
+    t.text "explanation"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "question_id"
+    t.index ["question_id"], name: "index_answers_on_question_id"
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -195,6 +205,9 @@ ActiveRecord::Schema.define(version: 2019_03_04_115617) do
     t.text "manuscript_data"
     t.text "released"
     t.boolean "imported_manuscript"
+    t.string "quizzable_type"
+    t.integer "quizzable_id"
+    t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
 
@@ -218,6 +231,23 @@ ActiveRecord::Schema.define(version: 2019_03_04_115617) do
     t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.text "text"
+    t.text "label"
+    t.text "hint"
+    t.integer "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "quizzes", force: :cascade do |t|
+    t.text "quiz_graph"
+    t.text "label"
+    t.integer "level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "referrals", force: :cascade do |t|
     t.text "start_time"
     t.text "end_time"
@@ -238,6 +268,14 @@ ActiveRecord::Schema.define(version: 2019_03_04_115617) do
     t.index ["related_tag_id"], name: "index_relations_on_related_tag_id"
     t.index ["tag_id", "related_tag_id"], name: "index_relations_on_tag_id_and_related_tag_id", unique: true
     t.index ["tag_id"], name: "index_relations_on_tag_id"
+  end
+
+  create_table "remarks", force: :cascade do |t|
+    t.text "text"
+    t.text "label"
+    t.integer "parent_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "section_tag_joins", force: :cascade do |t|

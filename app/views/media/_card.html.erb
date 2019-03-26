@@ -18,7 +18,8 @@
         <div class="col-6 text-right">
           <% if teachable_id && teachable_type && !inspection %>
             <a href="<%= new_medium_path(params:
-                                          { teachable_id: teachable_id,
+                                          { sort: 'Kaviar',
+                                            teachable_id: teachable_id,
                                             teachable_type: teachable_type,
                                             tag_ids: tag_ids }) %>"
                class="fas fa-plus-circle fa-lg new-in-lecture text-dark"

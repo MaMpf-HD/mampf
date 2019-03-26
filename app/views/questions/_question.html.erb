@@ -1,0 +1,9 @@
+<div class="card bg-question m-2">
+  <div class="card-body">
+    <%= question.text %>
+    <div>
+      <%= render partial: 'questions/answers',
+                 locals: { answers: question.answers } %>
+    </div>
+  </div>
+</div>

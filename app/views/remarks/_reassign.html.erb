@@ -1,0 +1,31 @@
+<% quiz_ids = remark.quiz_ids %>
+<% quiz_ids -= [quiz_id] if in_quiz %>
+<div id="reassign-remark-<%= remark.id %>">
+  <%= bootstrap_form_with model: remark,
+                          url: { action: "reassign",
+                                 controller: "remarks",
+                                 id: remark.id } do |f| %>
+    <% if in_quiz %>
+      <%= f.hidden_field 'quiz-' + quiz_id.to_s, value: '1' %>
+      Es wird eine Kopie der Bemerkung erstellt.
+      Diese wird <strong>nur im aktuell bearbeiteten Quiz</strong>
+      <% if quiz_ids.present? %>
+        sowie in den <strong>angekreuzten Quizzes</strong>
+      <% end %>
+      referenziert.
+    <% else %>
+        Es wird eine Kopie der Bemerkung erstellt.
+        Diese wird <strong>nur in den angekreuzten Quizzes</strong>
+        referenziert.
+    <% end %>
+    <% quiz_ids.each do |q| %>
+      <%= f.check_box 'quiz-' + q.to_s, label: Quiz.find_by_id(q).label %>
+    <% end %>
+    <%= f.hidden_field :type, id: 'reassign_type',
+                              value: in_quiz ? 'quiz' : 'edit' %>
+    <div class="text-center">
+      <%= f.submit 'Kopie erstellen und bearbeiten',
+                   class: 'btn btn-sm btn-primary mt-3'%>
+    </div>
+  <% end %>
+</div>

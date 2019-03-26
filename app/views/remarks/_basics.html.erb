@@ -1,0 +1,33 @@
+<%= bootstrap_form_with model: remark do |f| %>
+  <div class="card-header">
+    <div class="row">
+      <div class="col-3">
+        <h5>Basisdaten<h5>
+      </div>
+      <div class="col-5">
+        <span class="no_display incorrect" id="remark-basics-warning">
+          Achtung, es gibt ungespeicherte Änderungen!
+        </span>
+      </div>
+      <div class="col-4">
+        <span class="no_display" id="remark-basics-options">
+          <%= f.submit "Speichern", class: "btn btn-primary btn-sm" %>
+          <button type="button" class="btn btn-secondary btn-sm"
+                  id="remark-basics-cancel" data-id="<%= remark.id %>">
+            verwerfen
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-2">
+    <div id="tex-preview-remark-<%= remark.id %>"
+         class="bg-remark border p-2 mb-3">
+      <%= remark.text %>
+    </div>
+    <%= f.text_area :text, id: 'tex-area-remark-' + remark.id.to_s,
+                           label: 'LaTeX' %>
+    <%= f.text_field :label %>
+    <%= render partial: 'remarks/options', locals: { remark: remark } %>
+  </div>
+<% end %>

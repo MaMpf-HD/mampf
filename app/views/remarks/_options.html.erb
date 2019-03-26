@@ -1,0 +1,50 @@
+<div class="border rounded border-info p-2">
+  Referenzierende Quizzes:
+  <% if remark.quiz_ids.blank? %>
+    keine
+  <% else %>
+    <ul>
+      <% remark.quiz_ids.each do |q| %>
+        <li>
+          <%= Quiz.find_by_id(q).label %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <div>
+    Änderungen an dieser Bemerkung sind <strong>globale Änderungen</strong>.
+    <% if remark.quiz_ids.present? %>
+      Insbesondere werden Änderungen an dieser
+      Bemerkung in <strong>allen Quizzes</strong>, in denen diese Bemerkung
+      vorkommt, übernommen.
+      <div class="text-center">
+        <button id="button-reassign" type="button"
+                class="btn btn-sm btn-secondary"
+                data-toggle="modal" data-target="#reassignModal"
+                data-id="<%= remark.id %>" data-type="Remark">
+          Kopie erstellen
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>
+<div class="mt-3">
+  <% if remark.parent.present? %>
+    Diese Bemerkung wurde als Kopie von
+    <%= link_to remark.parent.label, remark_path(remark.parent),
+                target: :_blank %>
+    angelegt.
+  <% end %>
+</div>
+<% if remark.children.present? %>
+  <div class="mt-3">
+    Bemerkungen, die als Kopie dieser Bemerkung angelegt wurden:
+    <ul>
+      <% remark.children.each do |c| %>
+        <li>
+          <%= link_to c.label, remark_path(c), target: :_blank %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

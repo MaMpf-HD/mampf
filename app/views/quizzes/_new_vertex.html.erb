@@ -1,0 +1,101 @@
+<div id='new_vertex' class='no_display' >
+  <div class='row'>
+    <div class="col-12 col-md-6 col-lg-6">
+      <div id='new_vertex_card' class="card bg-light m-3">
+        <div class='card-header'>
+          <div class="row">
+            <div class="col-8">
+              Ecke anlegen
+            </div>
+            <div class="col-4 text-right">
+              <%= link_to 'abbrechen', edit_quiz_path(@quiz),
+                          class: 'btn btn-sm btn-secondary' %>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul class="nav nav-pills mb-3" id="new-edge-tab" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="import-vertex-tab"
+                 data-toggle="pill" href="#import-vertex" role="tab"
+                 aria-controls="import-vertex" aria-selected="true">
+                Inhalt importieren
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="create-question-tab"
+                 data-toggle="pill" href="#create-question" role="tab"
+                 aria-controls="create-question" aria-selected="false">
+                Frage erstellen
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="create-remark-tab"
+                 data-toggle="pill" href="#create-remark" role="tab"
+                 aria-controls="create-remark" aria-selected="false">
+                Bemerkung erstellen
+              </a>
+            </li>
+          </ul>
+          <div class="tab-content" id="new-edge-tabContent">
+            <div class="tab-pane fade show active" id="import-vertex"
+                 role="tabpanel" aria-labelledby="import-vertex-tab">
+              <div id="import-vertex">
+                <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: @quiz.id),
+                                        scope: 'vertex',
+                                        method: 'post' do |f| %>
+                  <%= f.hidden_field :sort, value: 'import' %>
+                  <div id='new_vertex_type'>
+                    <%= f.select :type,
+                                 options_for_select(['Remark', 'Question'],
+                                                    'Remark'),
+                                 { hide_label: true },
+                                 { id: 'new_vertex_type_select' } %>
+                  </div>
+                  <div id='new_vertex_quizzable'>
+                    <%= f.select :quizzable,
+                                options_for_select(Remark.selection,
+                                                   Remark.first.id),
+                                { hide_label: true },
+                                { id: 'new_vertex_quizzable_select'} %>
+                  </div>
+                  <div id='new_vertex_text'>
+                    <%= Remark.first.text %>
+                  </div>
+                  <div class='text-center'>
+                    <%= f.submit 'Ecke speichern',
+                                 class: 'btn btn-secondary m-2' %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="create-question"
+                 role="tabpanel" aria-labelledby="create-question-tab">
+              <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: @quiz.id),
+                                      scope: 'vertex', method: 'post' do |f| %>
+                <%= f.hidden_field :sort, value: 'Question',
+                                          id: 'vertex_sort_question' %>
+                <%= f.text_field :label, label: 'Fragen-Label' %>
+                <div class='text-center'>
+                  <%= f.submit 'Speichern' %>
+                </div>
+              <% end %>
+            </div>
+            <div class="tab-pane fade" id="create-remark" role="tabpanel"
+                 aria-labelledby="create-remark-tab">
+              <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: @quiz.id),
+                                      scope: 'vertex', method: 'post' do |f| %>
+                <%= f.hidden_field :sort, value: 'Remark',
+                                          id: 'vertex_sort_remark' %>
+                <%= f.text_field :label, label: 'Bemerkungs-Label' %>
+                <div class='text-center'>
+                  <%= f.submit 'Speichern' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

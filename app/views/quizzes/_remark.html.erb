@@ -1,0 +1,18 @@
+<% remark = Remark.find(@quiz_round.vertex[:id]) %>
+<div class="card bg-remark mt-2 border-secondary">
+  <div class="card-body">
+    <%= bootstrap_form_with model: @quiz_round.quiz,
+                            url: {action: "proceed"} do |f| %>
+      <div class="row p-2 mb-2">
+        <div class="col-12">
+          <%= remark.text %>
+          <%= f.hidden_field :progress, value: @quiz_round.progress %>
+          <%= f.hidden_field :counter, value: @quiz_round.counter %>
+        </div>
+      </div>
+      <div class="text-center">
+        <%= f.submit "Alles klar!", class: "send-it btn btn-secondary ml-2"  %>
+      </div>
+    <% end %>
+  </div>
+</div>

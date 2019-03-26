@@ -1,0 +1,19 @@
+<div id='new_question' class='no_display'>
+  <div class='row'>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card m-3">
+        <div class='card-header'>Frage anlegen</div>
+        <div class='card-body'>
+          <%= bootstrap_form_with model: question do |f| %>
+            <%= f.text_field :label %>
+            <div class='text-center'>
+              <%= f.submit 'Speichern' %>
+              <%= link_to 'abbrechen', questions_path,
+                          class: 'btn btn-secondary' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

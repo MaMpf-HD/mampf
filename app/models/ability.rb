@@ -86,6 +86,8 @@ class Ability
         user == u
       end
       can :teacher, User
+      can :toggle_results, :events
+      can [:index, :play, :proceed, :preview], Quiz
     else
       can :read, :all
       cannot :read, [:administration, Term, User, Announcement]

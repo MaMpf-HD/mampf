@@ -15,57 +15,72 @@
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>
         <li class="nav-item">
-          <%= link_to "Profil",
-                      edit_profile_path,
-                      class: 'nav-link' %>
+          <a href="<%= edit_profile_path %>"
+             class="fas fa-user-cog fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Profil">
+          </a>
         </li>
         <% if current_user.admin || current_user.editor? %>
           <li class="nav-item">
-            <%= link_to "Administration",
-                        administration_path,
-                        class: 'nav-link' %>
+            <a href="<%= administration_path %>"
+               class="fas fa-tools fa-lg text-light nav-link"
+               style="text-decoration: none; "
+               data-toggle="tooltip"
+               title="Administration">
+            </a>
           </li>
         <% end %>
         <li class="nav-item">
-          <%= link_to "News",
-                      news_path,
-                      class: 'nav-link' %>
+          <a href="<%= news_path %>"
+             class="far fa-newspaper fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="News">
+          </a>
         </li>
         <li class="nav-item">
-          <%= link_to "Blog",
-                      DefaultSetting::BLOG_LINK,
-                      class: 'nav-link',
-                      id: 'blog',
-                      target: :blank %>
+          <a href="<%= DefaultSetting::BLOG_LINK %>"
+             class="fas fa-blog fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Blog">
+          </a>
         </li>
         <li class="nav-item">
-          <%= link_to "Logout",
-                      destroy_user_session_path,
-                      class: 'nav-link',
-                      method: :delete %>
+          <a href="<%= destroy_user_session_path %>"
+             class="fas fa-sign-out-alt fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             data-method="delete"
+             title="Logout">
+          </a>
         </li>
       <% else %>
         <li class="nav-item">
-          <%= link_to "Login",
-                      new_user_session_path,
-                      class: 'nav-link' %>
+          <a href="<%= new_user_session_path %>"
+             class="fas fa-sign-in-alt fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Login">
+          </a>
         </li>
         <li class="nav-item">
-          <%= link_to "Registrieren",
-                      new_user_registration_path,
-                      class: 'nav-link' %>
+          <a href="<%= news_path %>"
+             class="far fa-newspaper fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="News">
+          </a>
         </li>
         <li class="nav-item">
-          <%= link_to "News",
-                      news_path,
-                      class: 'nav-link' %>
-        </li>
-        <li class="nav-item">
-          <%= link_to "Blog",
-                      DefaultSetting::BLOG_LINK,
-                      class: 'nav-link',
-                      id: 'blog',
-                      target: :blank %>
+          <a href="<%= DefaultSetting::BLOG_LINK %>"
+             class="fas fa-blog fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Blog">
+          </a>
         </li>
       <% end %>
     </ul>
@@ -85,8 +100,8 @@
         <%= search_field_tag 'search',
                              nil,
                              class: 'form-control mr-sm-2',
-                             placeholder: 'Begriff eingeben'  %>
-        <%= submit_tag "Suche",
+                             placeholder: 'Suche'  %>
+        <%#= submit_tag "Suche",
                        class: 'btn btn-outline-success my-2 my-sm-0' %>
       <% end %>
     <% end %>

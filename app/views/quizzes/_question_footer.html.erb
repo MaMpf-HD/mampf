@@ -1,0 +1,15 @@
+<% question = Question.find(vertex[:id]) %>
+<div class="text-center">
+  <div class="col-12">
+  <% if input == question.answer_scheme %>
+    Super, das war richtig!
+  <% else %>
+    Das war leider nicht ganz richtig.
+  <% end %>
+  </div>
+  <div class="col-12">
+    <button id="accept_results" type="button" class="btn btn-secondary">
+      Alles klar!
+    </button>
+  </div>
+</div>

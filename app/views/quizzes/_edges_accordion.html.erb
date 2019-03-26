@@ -1,0 +1,45 @@
+<div class="row m-2">
+  <div class="col-12">
+    <div class="card bg-light" id="accordion">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-1">
+            <h5>
+              Ecken
+            </h5>
+          </div>
+          <div class="col-11 text-left">
+            <div id="new_vertex_button">
+              <%= link_to 'Neue Ecke anlegen',
+                          new_quiz_vertex_path(quiz_id: @quiz.id),
+                          remote: true, class: 'btn btn-secondary' %>
+            </div>
+          </div>
+        </div>
+        <%= render partial: 'quizzes/new_vertex' %>
+      </div>
+      <div class="card-body">
+        <% @quiz.vertices.keys.each do |v| %>
+          <div class="card">
+            <div class="card-header <%= quizzable_color(@quiz.vertices[v][:type]) %>"
+                 id="vertex-heading-<%= v %>"
+                 data-color="<%= quizzable_color(@quiz.vertices[v][:type]) %>">
+              <%= render partial: 'vertices/header',
+                         locals: { quiz: @quiz, vertex_id: v} %>
+            </div>
+            <div id="collapse-vertex-<%= v%>" class="collapse"
+                 aria-labelledby="vertex-heading-<%= v %>"
+                 data-parent="#accordion"
+                 data-vertex="<%= v %>"
+                 data-quiz="<%= @quiz.id %>">
+              <div class="card-body" id="vertex-body-<%= v%>">
+                <%= render partial: 'vertices/form',
+                           locals: { quiz: @quiz, vertex_id: v } %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

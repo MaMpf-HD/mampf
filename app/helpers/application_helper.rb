@@ -16,7 +16,9 @@ module ApplicationHelper
 
   # Returns the full title on a per-page basis.
   def full_title(page_title = '')
-    return 'THymE' if action_name == 'play'
+    pp controller_name
+    return 'THymE' if action_name == 'play' && controller_name == 'media'
+    return 'Quiz' if action_name == 'play' && controller_name == 'quizzes'
     base_title = 'MaMpf'
     if user_signed_in? && current_user.notifications.exists?
       base_title += " (#{current_user.notifications.count})"
@@ -58,7 +60,8 @@ module ApplicationHelper
   # media_sort -> database fields
   def media_types
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
-      'keks' => ['KeksQuiz', 'KeksQuestion'], 'kiwi' => ['Kiwi'],
+      'keks' => ['KeksQuiz', 'KeksQuestion', 'KeksRemark'],
+      'kiwi' => ['Kiwi'],
       'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'],
       'script' => ['Script'], 'reste' => ['Reste'] }
   end
@@ -230,5 +233,33 @@ module ApplicationHelper
       return 'gestern, ' + date.strftime('%H:%M')
     end
     date.strftime('%d.%m.%Y')
+  end
+
+  def quizzable_color(type)
+    'bg-' + type.downcase
+  end
+
+  def questioncolor(value)
+    value ? 'bg-question' : ''
+  end
+
+  def vertex_label(quiz, vertex_id)
+    vertex_id.to_s + ' ' + quiz.quizzable(vertex_id).label
+  end
+
+  def ballot_box(correctness)
+    raw(correctness ? '&#x2612;' : '&#x2610;')
+  end
+
+  def boxcolor(correctness)
+    correctness ? 'correct' : 'incorrect'
+  end
+
+  def bgcolor(correctness)
+    correctness ? 'bg-correct' : 'bg-incorrect'
+  end
+
+  def hide_as_class(value)
+    value ? 'no_display' : ''
   end
 end

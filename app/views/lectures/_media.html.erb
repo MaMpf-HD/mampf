@@ -21,7 +21,8 @@
       <div class="col-3">
         <% unless inspection %>
           <a href="<%= new_medium_path(params:
-                                         { teachable_id: lecture.id,
+                                         { sort: 'Kaviar',
+                                           teachable_id: lecture.id,
                                            teachable_type: 'Lecture' }) %>"
              class="fas fa-plus-circle fa-lg new-in-lecture text-dark"
              style="text-decoration: none; "
@@ -51,7 +52,8 @@
               <a class="nav-link <%= active(s == 'kaviar') %>"
                  id="<%= s %>-tab"
                  data-toggle="tab" href="#<%= s %>-media" role="tab"
-                 aria-controls="<%= s%>-media" aria-selected="true">
+                 aria-controls="<%= s%>-media" aria-selected="true"
+                 data-sort="<%= media_types[s].first %>">
                 <%= media_names[s] %>
                 (<%= media.where(sort: media_types[s]).count %>)
               </a>
