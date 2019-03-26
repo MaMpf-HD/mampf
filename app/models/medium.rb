@@ -6,6 +6,9 @@ class Medium < ApplicationRecord
   # a teachable is a course/lecture/lesson
   belongs_to :teachable, polymorphic: true
 
+  # a teachable may belong to a quizzable (quiz/question/remark)
+  belongs_to :quizzable, polymorphic: true, optional: true
+
   # a medium has many tags
   has_many :medium_tag_joins, dependent: :destroy
   has_many :tags, through: :medium_tag_joins
@@ -85,7 +88,7 @@ class Medium < ApplicationRecord
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script KeksQuestion KeksQuiz
-       Reste]
+       Reste KeksRemark]
   end
 
   # Returns the list of media sorts, together with their index in the
@@ -101,6 +104,7 @@ class Medium < ApplicationRecord
       'Sesam' => I18n.t('categories.sesam.singular'),
       'KeksQuestion' => I18n.t('categories.question.singular'),
       'KeksQuiz' => I18n.t('categories.quiz.singular'),
+      'KeksRemark' => I18n.t('categories.remark.singular'),
       'Nuesse' => I18n.t('categories.exercises.singular'),
       'Erdbeere' => I18n.t('categories.erdbeere'),
       'Kiwi' => I18n.t('categories.kiwi'),
@@ -645,7 +649,7 @@ class Medium < ApplicationRecord
   # a description
   def undescribable?
     (sort == 'Kaviar' && teachable.class.to_s == 'Lesson') ||
-      sort == 'KeksQuestion' || sort == 'Script'
+      sort == 'KeksQuestion' || sort == 'KeksRemark' || sort == 'Script'
   end
 
   def touch_teachable

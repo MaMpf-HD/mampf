@@ -33,6 +33,9 @@ de:
     question:
       singular: 'Quiz-Frage'
       plural: 'Quiz-Fragen'
+    remark:
+      singular: 'Quiz-Erläuterung'
+      plural: 'Quiz-Erläuterungen'
     erdbeere: 'Beispiel-Datenbank'
     muesli: 'MÜSLI'
     board: 'Forum'

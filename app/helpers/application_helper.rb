@@ -16,7 +16,9 @@ module ApplicationHelper
 
   # Returns the full title on a per-page basis.
   def full_title(page_title = '')
-    return 'THymE' if action_name == 'play'
+    pp controller_name
+    return 'THymE' if action_name == 'play' && controller_name == 'media'
+    return 'Quiz' if action_name == 'play' && controller_name == 'quizzes'
     base_title = 'MaMpf'
     if user_signed_in? && current_user.notifications.exists?
       base_title += " (#{current_user.notifications.count})"
@@ -58,7 +60,8 @@ module ApplicationHelper
   # media_sort -> database fields
   def media_types
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
-      'keks' => ['KeksQuiz', 'KeksQuestion'], 'kiwi' => ['Kiwi'],
+      'keks' => ['KeksQuiz', 'KeksQuestion', 'KeksRemark'],
+      'kiwi' => ['Kiwi'],
       'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'],
       'script' => ['Script'], 'reste' => ['Reste'] }
   end

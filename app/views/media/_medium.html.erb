@@ -90,6 +90,20 @@
               </a>
             </div>
           <% end %>
+          <% if medium.sort == 'KeksQuiz' && medium.quizzable %>
+            <div class="mr-2">
+              <a href="<%= play_quiz_path(medium.quizzable) %>"
+                 class="no-deco"
+                 target="_blank">
+                <i class="material-icons text-secondary"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="Quiz beginnen">
+                  casino
+                </i>
+              </a>
+            </div>
+          <% end %>
           <div class="mr-2">
             <a href="<%= medium_path(medium) %>"
                class="no-deco">

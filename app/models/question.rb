@@ -1,5 +1,6 @@
 class Question < ApplicationRecord
   acts_as_tree
+  has_one :medium, as: :quizzable
   has_many :answers, dependent: :delete_all
   before_destroy :delete_vertices
   validates :label, presence: true

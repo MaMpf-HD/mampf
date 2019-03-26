@@ -1,4 +1,5 @@
 class Quiz < ApplicationRecord
+  has_one :medium, as: :quizzable
   serialize :quiz_graph, QuizGraph
 
   def self.create_prefilled(label)

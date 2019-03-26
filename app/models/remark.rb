@@ -1,9 +1,11 @@
 class Remark < ApplicationRecord
   acts_as_tree
-  before_destroy :delete_vertices
+  has_one :medium, as: :quizzable
+  validates_presence_of :medium
   validates :label, presence: true
   validates :label, uniqueness: true
   has_one_attached :image
+  before_destroy :delete_vertices
   paginates_per 15
 
   def answer_table

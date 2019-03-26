@@ -34,6 +34,7 @@ class MediaController < ApplicationController
     @medium.editors << current_user
     tags = Tag.where(id: params[:tag_ids])
     @medium.tags << tags if tags.exists?
+    @medium.sort = params[:sort] ? params[:sort] : 'Kaviar'
   end
 
   def edit

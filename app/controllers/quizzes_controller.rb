@@ -42,6 +42,7 @@ class QuizzesController < ApplicationController
   end
 
   def play
+    render layout: 'quiz'
   end
 
   def proceed
