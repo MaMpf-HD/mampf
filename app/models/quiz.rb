@@ -1,11 +1,23 @@
 class Quiz < ApplicationRecord
   has_one :medium, as: :quizzable
+  validates_presence_of :medium
   serialize :quiz_graph, QuizGraph
+  after_create :save_png!
+
+  def self.new_prefilled
+    Quiz.new(label: 'Test', level: 1,
+             quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
+                                       default_table: {}, hide_solution: []))
+  end
 
   def self.create_prefilled(label)
     Quiz.create(label: label, level: 1,
                 quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
                                           default_table: {}, hide_solution: []))
+  end
+
+  def label
+    medium.description
   end
 
   def next_vertex(progress, fallback, input = {})

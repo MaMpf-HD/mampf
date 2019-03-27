@@ -18,12 +18,14 @@ class EventsController < ApplicationController
   def new_vertex_quizzables
     @type = params[:type]
     @quizzables = @type.constantize.all
+                       .map { |q| { value: q.id, text: q.label }}.to_json
+    pp @quizzables
   end
 
   def new_vertex_quizzable_text
     @type = params[:type]
     @id = params[:id]
-    @text = @type.constantize.find_by_id(@id).text
+    @text = @type.constantize.find_by_id(@id)&.text
   end
 
   def update_vertex_body

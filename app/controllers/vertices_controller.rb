@@ -53,7 +53,9 @@ class VerticesController < ApplicationController
                                    .find_by_id(@params_v[:quizzable])
       @success = @quizzable.present?
     else
-      @quizzable = @sort.constantize.create_prefilled(@params_v[:label])
+      @quizzable = @sort.constantize.create_prefilled(@params_v[:label],
+                                                      @quiz.medium.teachable,
+                                                      @quiz.medium.editors)
       @success = @quizzable.valid?
     end
   end

@@ -33,24 +33,32 @@ $(document).on 'change', '[id^="branching_select-"]', ->
 # update quizzable list after quizzable type is selected in new vertex import
 
 $(document).on 'change', '#new_vertex_type_select', ->
+  type = $('input[name="vertex[type]"]:checked').val()
+  $('#new_vertex_quizzable').show()
   $.ajax Routes.new_vertex_quizzables_path(),
     type: 'GET'
     dataType: 'script'
     data: {
-      type: $("#new_vertex_type_select option:selected").val()
+      type: type
     }
     error: (jqXHR, textStatus, errorThrown) ->
       console.log("AJAX Error: #{textStatus}")
+  return
 
 # update quizzable text after quizzable is selected in new vertex creation
 
 $(document).on 'change', '#new_vertex_quizzable_select', ->
+  id = $("#new_vertex_quizzable_select option:selected").val()
+  if id != ''
+    $('#submit-vertex').show()
+  else
+    $('#submit-vertex').hide()
   $.ajax Routes.new_vertex_quizzable_text_path(),
     type: 'GET'
     dataType: 'script'
     data: {
-      type: $("#new_vertex_type_select option:selected").val()
-      id: $("#new_vertex_quizzable_select option:selected").val()
+      type: $('input[name="vertex[type]"]:checked').val()
+      id: id
     }
     error: (jqXHR, textStatus, errorThrown) ->
       console.log("AJAX Error: #{textStatus}")

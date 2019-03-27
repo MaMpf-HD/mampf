@@ -1,0 +1,62 @@
+<div class="card bg-light">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-8">
+        Quiz
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Das Manuskript sollte im pdf-Format vorliegen.
+           MaMpf ist in der Lage,
+           <i>
+           named destinations
+           </i>
+           aus dem pdf zu extrahieren, um diese später als Sprungmarken
+           zu verwenden. Named destinations können in Latex bei
+           Verwendung des hyperref-Pakets durch den
+           <code>
+           \hypertarget
+           </code>
+           Befehl erzeugt werden. Auch Adobe Acrobat (nicht der Reader)
+           kann named destinations anlegen."
+           data-html="true">
+        </i>
+      </div>
+      <div class="col-4 text-right">
+        <% if medium.quizzable %>
+          <%= link_to 'Bearbeiten',
+                      edit_quiz_path(medium.quizzable),
+                      class: 'btn btn-primary' %>
+          <%= link_to 'Spielen',
+                      play_quiz_path(medium.quizzable),
+                      class: 'btn btn-primary', target: :_blank %>
+          <%= link_to 'Löschen', quiz_path(medium.quizzable),
+                      method: :delete,
+                      data: { confirm: 'Bist Du sicher?' },
+                      class: 'btn btn-danger' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if medium.quizzable %>
+      Vorschau:
+      <%= image_tag(medium.quizzable.image_path.remove('public'),
+                    class: "img-fluid",
+                    id: "quiz-preview-image",
+                    data: { id: medium.quizzable.id }) %>
+    <% else %>
+      Es liegt noch kein Quiz vor.
+      <div class="custom-control custom-radio">
+        <%= f.check_box :internal_quiz,
+                        checked: medium.new_record?,
+                        class: 'custom-control-input' %>
+        <%= f.label :internal_quiz,
+                    'Quiz anlegen',
+                    class: 'custom-control-label' %>
+      </div>
+    <% end %>
+  </div>
+</div>

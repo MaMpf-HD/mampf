@@ -41,30 +41,47 @@
             <div class="tab-pane fade show active" id="import-vertex"
                  role="tabpanel" aria-labelledby="import-vertex-tab">
               <div id="import-vertex">
-                <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: @quiz.id),
+                <%= form_with url: quiz_vertices_path(quiz_id: @quiz.id),
                                         scope: 'vertex',
                                         method: 'post' do |f| %>
                   <%= f.hidden_field :sort, value: 'import' %>
                   <div id='new_vertex_type'>
-                    <%= f.select :type,
-                                 options_for_select(['Remark', 'Question'],
-                                                    'Remark'),
-                                 { hide_label: true },
-                                 { id: 'new_vertex_type_select' } %>
+                    <div class="form-group" id="new_vertex_type_select">
+                      <div class="custom-control custom-radio custom-control-inline">
+                        <%= f.radio_button :type,
+                                           'Question',
+                                           class: 'custom-control-input' %>
+                        <%= f.label :type,
+                                    'Frage',
+                                    value: 'Question',
+                                    class: 'custom-control-label' %>
+                      </div>
+                      <div class="custom-control custom-radio custom-control-inline">
+                        <%= f.radio_button :type,
+                                           'Remark',
+                                           class: 'custom-control-input' %>
+                        <%= f.label :type,
+                                    'Bemerkung',
+                                     value: 'Remark',
+                                     class: 'custom-control-label' %>
+                      </div>
+                    </div>
                   </div>
-                  <div id='new_vertex_quizzable'>
+                  <div id='new_vertex_quizzable'
+                       style="display: none;">
                     <%= f.select :quizzable,
-                                options_for_select(Remark.selection,
-                                                   Remark.first.id),
-                                { hide_label: true },
-                                { id: 'new_vertex_quizzable_select'} %>
+                                options_for_select([[]]),
+                                { hide_label: true, include_blank: 'Suche' },
+                                { id: 'new_vertex_quizzable_select',
+                                  class: 'selectize' } %>
                   </div>
                   <div id='new_vertex_text'>
-                    <%= Remark.first.text %>
                   </div>
                   <div class='text-center'>
                     <%= f.submit 'Ecke speichern',
-                                 class: 'btn btn-secondary m-2' %>
+                                 class: 'btn btn-secondary m-2',
+                                 style: 'display: none;',
+                                 id: 'submit-vertex' %>
                   </div>
                 <% end %>
               </div>

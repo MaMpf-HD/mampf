@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_25_131507) do
+ActiveRecord::Schema.define(version: 2019_03_27_133213) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -242,7 +242,6 @@ ActiveRecord::Schema.define(version: 2019_03_25_131507) do
 
   create_table "quizzes", force: :cascade do |t|
     t.text "quiz_graph"
-    t.text "label"
     t.integer "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

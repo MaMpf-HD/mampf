@@ -70,6 +70,9 @@ class Medium < ApplicationRecord
   # a medium of type Script is not allowed to have tags
   # (Reason: A typical script will have *a lot of* tags)
   validate :no_tags_for_scripts
+  # if sort is 'KeksQuiz', either an external link or a quizzable should
+  # be present
+  validate :quiz_has_quizzable
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_teachable
@@ -757,5 +760,13 @@ class Medium < ApplicationRecord
     return true unless sort == 'Script' && tags.any?
     errors.add(:tags, 'Ein Skript darf keine Tags haben.')
     false
+  end
+
+  def quiz_has_quizzable
+    return true unless sort == 'KeksQuiz'
+    return true if quizzable
+    return true if external_reference_link.present?
+    errors.add(:sort, 'Ein KeksQuiz muss entweder einen externen Link oder ' \
+                      'oder ein internes Quiz beinhalten.')
   end
 end

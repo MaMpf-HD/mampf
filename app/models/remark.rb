@@ -16,8 +16,14 @@ class Remark < ApplicationRecord
     Quiz.all.select { |q| id.in?(q.remark_ids) }.map(&:id)
   end
 
-  def self.create_prefilled(label)
-    Remark.create(label: label, text: 'Dummytext')
+  def self.create_prefilled(label, teachable, editors)
+    medium = Medium.new(sort: 'KeksRemark', description: label,
+                        teachable: teachable, editors: editors)
+    remark = Remark.new(label: label, text: 'Dummytext')
+    medium.quizzable = remark
+    remark.medium = medium
+    remark.save
+    remark
   end
 
   def duplicate

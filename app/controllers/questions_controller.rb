@@ -2,6 +2,7 @@
 class QuestionsController < ApplicationController
   before_action :set_question, only: [:show, :edit, :update, :destroy]
   before_action :set_quizzes, only: [:reassign]
+  layout 'administration'
 
   def index
     @questions = Question.order(:id).page params[:page]

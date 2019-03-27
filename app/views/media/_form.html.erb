@@ -6,23 +6,32 @@
                        new_medium: new_medium,
                        f: f } %>
   <div class="row mt-3 p-2">
-    <div class="col-4">
+    <div class="col-4 mb-3">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
                            f: f } %>
     </div>
-    <% unless medium.sort == 'Script' %>
+    <% if medium.sort == 'KeksQuiz' %>
+      <div class="col-8 mb-3">
+        <%= render partial: 'media/quiz',
+                 locals: { medium: medium,
+                           f: f } %>
+      </div>
+    <% end %>
+    <% unless medium.sort.in?(['Script', 'KeksQuiz']) %>
       <div class="col-4">
         <%= render partial: 'media/video',
                    locals: { medium: medium,
                              f: f } %>
       </div>
     <% end %>
-    <div class="col-4">
-            <%= render partial: 'media/manuscript',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
+    <% unless medium.sort == 'KeksQuiz' %>
+      <div class="col-4">
+        <%= render partial: 'media/manuscript',
+                   locals: { medium: medium,
+                             f: f } %>
+      </div>
+    <% end %>
   </div>
 <% end %>
 

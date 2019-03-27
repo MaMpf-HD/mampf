@@ -1,6 +1,7 @@
 class Question < ApplicationRecord
   acts_as_tree
   has_one :medium, as: :quizzable
+  validates_presence_of :medium
   has_many :answers, dependent: :delete_all
   before_destroy :delete_vertices
   validates :label, presence: true
@@ -36,11 +37,20 @@ class Question < ApplicationRecord
     [copy, answer_map]
   end
 
-  def self.create_prefilled(label)
-    question = Question.create(label: label, text: 'Dummytext')
+  def self.create_prefilled(label, teachable, editors)
+    medium = Medium.new(sort: 'KeksQuestion', description: label,
+                        teachable: teachable, editors: editors)
+    question = Question.new(label: label, text: 'Dummytext')
+    medium.quizzable = question
+    question.medium = medium
+    question.save
     return question if question.invalid?
     Answer.create(question: question, text: 'Dummyantwort', value: true)
     question
+  end
+
+  def self. selection
+    Question.all.map { |r| [r.label, r.id] }
   end
 
   private

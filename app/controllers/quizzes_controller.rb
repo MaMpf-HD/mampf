@@ -2,6 +2,7 @@
 class QuizzesController < ApplicationController
   before_action :init_values, only: [:play, :proceed]
   before_action :set_quiz, only: [:show, :edit, :update, :destroy, :preview]
+  layout 'administration'
 
   def index
     @quizzes = Quiz.order(:id).all

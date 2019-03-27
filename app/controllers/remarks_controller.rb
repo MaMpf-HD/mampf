@@ -3,6 +3,7 @@ class RemarksController < ApplicationController
   before_action :set_remark, only: [:show, :edit, :update, :destroy,
                                     :remove_image]
   before_action :set_quizzes, only: [:reassign]
+  layout 'administration'
 
   def index
     @remarks = Remark.order(:id).page params[:page]
