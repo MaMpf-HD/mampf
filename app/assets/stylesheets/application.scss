@@ -93,6 +93,11 @@ $container-max-widths: (
   color: red;
 }
 
+.card-compact
+{
+  max-height: 50vh;
+  overflow-y: scroll;
+}
 
 
 $modal-xl:                    1140px !default;

@@ -12,7 +12,7 @@ class VerticesController < ApplicationController
     if @success
       @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(@quizzable))
     end
-    redirect_to edit_quiz_path(@quiz) if @sort == 'import'
+    redirect_to edit_medium_path(@quiz.medium) if @sort == 'import'
   end
 
   def update
@@ -27,7 +27,7 @@ class VerticesController < ApplicationController
     @id = params[:id].to_i
     quiz_graph = @quiz.quiz_graph
     @quiz.update(quiz_graph: quiz_graph.destroy_vertex(@id))
-    redirect_to edit_quiz_path(@quiz)
+    redirect_to edit_medium_path(@quiz.medium)
   end
 
   private

@@ -5,13 +5,13 @@ class Quiz < ApplicationRecord
   after_create :save_png!
 
   def self.new_prefilled
-    Quiz.new(label: 'Test', level: 1,
+    Quiz.new(level: 1,
              quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
                                        default_table: {}, hide_solution: []))
   end
 
   def self.create_prefilled(label)
-    Quiz.create(label: label, level: 1,
+    Quiz.create(level: 1,
                 quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
                                           default_table: {}, hide_solution: []))
   end

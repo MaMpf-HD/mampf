@@ -2,7 +2,7 @@ $("#vertex_default_target_<%= @vertex_id %>").empty()
 <% unless @quizzable.nil? %>
   .append '<%= j render partial: "vertices/quizzable",
                         locals: { quizzable: @quizzable } %>'
-defaultTarget = document.getElementById('default_target')
+defaultTarget = document.getElementById('vertex_default_target_<%= @vertex_id %>')
 renderMathInElement defaultTarget,
   delimiters: [
     {

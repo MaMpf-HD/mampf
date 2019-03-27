@@ -43,7 +43,9 @@ class MediaController < ApplicationController
 
   def update
     if @medium.sort == 'KeksQuiz' && params[:medium][:internal_quiz] == '1'
-      @medium.quizzable = Quiz.new_prefilled
+      quiz = Quiz.new_prefilled
+      @medium.quizzable = quiz
+      quiz.medium = @medium
     end
     @medium.update(medium_params)
     @errors = @medium.errors
@@ -72,11 +74,12 @@ class MediaController < ApplicationController
   def create
     @medium = Medium.new(medium_params)
     if @medium.sort == 'KeksQuiz' && params[:medium][:internal_quiz] == '1'
-      @medium.quizzable = Quiz.new_prefilled
+      quiz = Quiz.new_prefilled
+      @medium.quizzable = quiz
+      quiz.medium = @medium
     end
     @medium.save
     if @medium.valid?
-      @medium.quizzable.save_png! if @medium.quizzable && @medium.sort == 'KeksQuiz'
       redirect_to edit_medium_path(@medium)
       return
     end

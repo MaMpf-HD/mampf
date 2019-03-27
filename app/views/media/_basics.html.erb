@@ -2,7 +2,7 @@
   <div class="card-header bg-mdb-color-lighten-3">
     Basisdaten
   </div>
-  <div class="card-body">
+  <div class="card-body <%= medium.sort == 'KeksQuiz' ? 'card-compact' : '' %>">
     <div class="form-group">
       <%= f.label :sort, 'Typ' %>
       <i class="far fa-question-circle helpdesk"

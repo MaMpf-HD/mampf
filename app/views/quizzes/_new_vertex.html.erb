@@ -8,7 +8,7 @@
               Ecke anlegen
             </div>
             <div class="col-4 text-right">
-              <%= link_to 'abbrechen', edit_quiz_path(@quiz),
+              <%= link_to 'abbrechen', edit_quiz_path(quiz),
                           class: 'btn btn-sm btn-secondary' %>
             </div>
           </div>
@@ -41,7 +41,7 @@
             <div class="tab-pane fade show active" id="import-vertex"
                  role="tabpanel" aria-labelledby="import-vertex-tab">
               <div id="import-vertex">
-                <%= form_with url: quiz_vertices_path(quiz_id: @quiz.id),
+                <%= form_with url: quiz_vertices_path(quiz_id: quiz.id),
                                         scope: 'vertex',
                                         method: 'post' do |f| %>
                   <%= f.hidden_field :sort, value: 'import' %>
@@ -88,7 +88,7 @@
             </div>
             <div class="tab-pane fade" id="create-question"
                  role="tabpanel" aria-labelledby="create-question-tab">
-              <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: @quiz.id),
+              <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: quiz.id),
                                       scope: 'vertex', method: 'post' do |f| %>
                 <%= f.hidden_field :sort, value: 'Question',
                                           id: 'vertex_sort_question' %>
@@ -100,7 +100,7 @@
             </div>
             <div class="tab-pane fade" id="create-remark" role="tabpanel"
                  aria-labelledby="create-remark-tab">
-              <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: @quiz.id),
+              <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: quiz.id),
                                       scope: 'vertex', method: 'post' do |f| %>
                 <%= f.hidden_field :sort, value: 'Remark',
                                           id: 'vertex_sort_remark' %>
