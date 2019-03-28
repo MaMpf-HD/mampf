@@ -767,6 +767,6 @@ class Medium < ApplicationRecord
     return true if quizzable
     return true if external_reference_link.present?
     errors.add(:sort, 'Ein KeksQuiz muss entweder einen externen Link oder ' \
-                      'oder ein internes Quiz beinhalten.')
+                      'oder einen Quiz-Graph beinhalten.')
   end
 end

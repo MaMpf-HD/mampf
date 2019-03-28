@@ -1,0 +1,49 @@
+<div class="card bg-light">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-8">
+        Frage
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Der Quiz-Graph ist der gerichtete Graph, der zu dem
+           Quiz korrespondiert."
+           data-html="true">
+        </i>
+      </div>
+      <div class="col-4 text-right">
+        <% if question %>
+          <a href="<%= question_path(question) %>"
+             class="fas fa-edit fa-lg text-dark"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Bearbeiten">
+          </a>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if question %>
+      <div class="row mb-3">
+        <div class="col-12">
+          <%= question.text %>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <%= render partial: 'questions/answers',
+                     locals: { answers: question.answers } %>
+        </div>
+      </div>
+      <% if question.hint.present? %>
+        <i>Hinweis:</i>
+        <%= question.hint %>
+      <% end %>
+    <% else %>
+      Es liegt noch keine Frage vor.
+    <% end %>
+  </div>
+</div>

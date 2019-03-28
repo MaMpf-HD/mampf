@@ -1,5 +1,5 @@
 <div class="row px-2 py-2 mt-2">
-  <div class="col-3">
+  <div class="col-4">
     <h4 class="pl-2">
       <span class="badge badge-secondary">
         Medium
@@ -79,34 +79,50 @@
        data-html="true">
     </i>
   </div>
-  <div class="col-3 text-right">
+  <div class="col-2 text-right">
     <% unless new_medium %>
       <% if medium.teachable.published? && !medium.published_with_inheritance? %>
-        <%= link_to 'Veröffentlichen',
-                    publish_medium_path(medium),
-                    method: :post,
-                    class: 'btn btn-danger my-1',
-                    data: { confirm: 'Bist Du sicher? Die Veröffentlichung ' \
-                                     'kann nicht rückgängig gemacht werden.' } %>
+        <a href="<%= publish_medium_path(medium) %>"
+           class="fas fa-globe-europe text-dark fa-lg mr-3"
+           style="text-decoration: none; "
+           data-toggle="tooltip"
+           title="veröffentlichen"
+           data-confirm="Bist Du sicher? Die Veröffentlichung
+           kann nicht rückgängig gemacht werden.">
+        </a>
       <% end %>
-      <%= link_to 'Ansehen',
-                  inspect_medium_path(medium),
-                  class: 'btn btn-primary my-1' %>
+      <a href="<%= inspect_medium_path(medium) %>"
+         class="far fa-eye fa-lg text-dark mr-3"
+         style="text-decoration: none; "
+         data-toggle="tooltip"
+         title="Ansehen">
+      </a>
     <% end %>
     <% teachable_scope = medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-      <%= link_to 'zum Modul', edit_or_inspect_course_path(teachable_scope),
-                  class: 'btn btn-primary' %>
+      <a href="<%= edit_or_inspect_course_path(teachable_scope) %>"
+         class="fas fa-chalkboard-teacher fa-lg mr-3 text-dark"
+         style="text-decoration: none; "
+         data-toggle="tooltip"
+         title="zum Modul">
+      </a>
     <% else %>
-        <%= link_to 'zur Vorlesung',
-                    edit_or_inspect_lecture_path(teachable_scope),
-                    class: 'btn btn-primary' %>
+      <a href="<%= edit_or_inspect_lecture_path(teachable_scope) %>"
+         class="fas fa-chalkboard-teacher fa-lg mr-3 text-dark"
+         style="text-decoration: none; "
+         data-toggle="tooltip"
+         title="zur Vorlesung">
+      </a>
     <% end %>
     <% if !new_medium && medium.irrelevant? %>
-      <%= link_to 'Löschen', medium_path,
-                  method: :delete,
-                  data: { confirm: 'Bist Du sicher?' },
-                  class: 'btn btn-danger' %>
+      <a href="<%= medium_path %>"
+         class="fas fa-trash-alt fa-lg text-dark"
+         style="text-decoration: none; "
+         data-toggle="tooltip"
+         data-method="delete"
+         data-confirm="Bist Du sicher?"
+         title="Löschen">
+      </a>
     <% end %>
   </div>
 </div>

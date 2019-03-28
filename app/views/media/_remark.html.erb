@@ -1,0 +1,40 @@
+<div class="card bg-light">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-8">
+        Bemerkung
+        <i class="far fa-question-circle helpdesk"
+           tabindex="-1"
+           data-toggle="popover"
+           data-trigger="focus"
+           title="Info"
+           data-content="Eine Bemerkung korrespondiert zu einem Passus im Quiz,
+           in dem man der NutzerIn Dinge erklärt, Sachverhalte einordnet oder
+           den weiteren Beweisgang vorantreibt."
+           data-html="true">
+        </i>
+      </div>
+      <div class="col-4 text-right">
+        <% if remark %>
+          <a href="<%= remark_path(remark) %>"
+             class="fas fa-edit fa-lg text-dark"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Bearbeiten">
+          </a>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if remark %>
+      <div class="row mb-3">
+        <div class="col-12">
+          <%= remark.text %>
+        </div>
+      </div>
+    <% else %>
+      Es liegt noch keine Bemerkung vor.
+    <% end %>
+  </div>
+</div>

@@ -23,7 +23,6 @@
     </div>
   </div>
   <div class="card-body">
-    <%= f.text_field :label, id: 'quiz-label-edit' %>
     <%= f.select :root,
                  options_for_select(vertices_labels_no_end(quiz),quiz.root),
                  { label: 'Start-Ecke' },

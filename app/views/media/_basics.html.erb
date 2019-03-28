@@ -2,7 +2,7 @@
   <div class="card-header bg-mdb-color-lighten-3">
     Basisdaten
   </div>
-  <div class="card-body <%= medium.sort == 'KeksQuiz' ? 'card-compact' : '' %>">
+  <div class="card-body">
     <div class="form-group">
       <%= f.label :sort, 'Typ' %>
       <i class="far fa-question-circle helpdesk"
@@ -59,7 +59,8 @@
                    options_for_select(Medium.select_sorts, medium.sort),
                    {},
                    { class: 'form-control',
-                     disabled: medium.sort.in?(['Script', 'KeksQuiz']) }%>
+                     disabled: medium.sort.in?(['Script', 'KeksQuiz',
+                                                'KeksQuestion', 'KeksRemark']) }%>
       <div class="invalid-feedback"
            id="medium-sort-error">
       </div>
@@ -77,7 +78,7 @@
         sowie Medien aus MaMpf über QR-Codes im Manuskript verfügbar zu machen.
       </div>
     </div>
-    <% if medium.sort.in?(['Script', 'KeksQuiz']) %>
+    <% if medium.sort.in?(['Script', 'KeksQuiz', 'KeksQuestion', 'KeksRemark']) %>
       <%= f.hidden_field :sort, value: medium.sort %>
     <% end %>
     <div class="form-group">

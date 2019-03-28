@@ -7,13 +7,10 @@
       <%= @question.label %>
     </h4>
   </div>
-  <div class="col-3">
-    <%= link_to 'zur Fragenübersicht', questions_path,
+  <div class="col-3 text-right">
+    <%= link_to 'zum Medium',
+                edit_medium_path(@question.medium),
                 class: 'btn btn-primary' %>
-    <%= link_to 'Frage Löschen', question_path, method: :delete,
-        data: { confirm: 'Bist Du sicher? Die Antworten werden dann auch'\
-                         'gelöscht.' },
-        class: 'btn btn-danger' %>
   </div>
 </div>
 <%= render partial: 'questions/data', locals: { question: @question } %>

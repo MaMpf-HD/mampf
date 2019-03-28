@@ -7,11 +7,10 @@
       <%= @remark.label %>
     </h4>
   </div>
-  <div class="col-4">
-    <%= link_to 'zur Bemerkungsübersicht', remarks_path,
+  <div class="col-4 text-right">
+    <%= link_to 'zum Medium',
+                edit_medium_path(@remark.medium),
                 class: 'btn btn-primary' %>
-    <%= link_to 'Bemerkung Löschen', remark_path, method: :delete,
-        data: { confirm: 'Bist Du sicher?' }, class: 'btn btn-danger' %>
   </div>
 </div>
 <%= render partial: 'remarks/data', locals: { remark: @remark } %>

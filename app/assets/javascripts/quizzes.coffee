@@ -32,12 +32,6 @@ $(document).on 'click', '[id^="toggle_results-"]', ->
 
 $(document).on 'turbolinks:load', reload_quiz_image
 
-# highlight 'Ungespeicherte Änderungen' if something is entered in quiz label
-
-$(document).on 'keyup', '#quiz-label-edit', ->
-  $('#quiz-basics-options').removeClass("no_display")
-  $('#quiz-basics-warning').removeClass("no_display")
-
 # highlight 'Ungespeicherte Änderungen' if quiz top is selected
 
 $(document).on 'change', '#quiz-top-select', ->

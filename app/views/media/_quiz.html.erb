@@ -2,25 +2,14 @@
   <div class="card-header">
     <div class="row">
       <div class="col-8">
-        Quiz
+        Quiz-Graph
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
            data-toggle="popover"
            data-trigger="focus"
            title="Info"
-           data-content="Das Manuskript sollte im pdf-Format vorliegen.
-           MaMpf ist in der Lage,
-           <i>
-           named destinations
-           </i>
-           aus dem pdf zu extrahieren, um diese später als Sprungmarken
-           zu verwenden. Named destinations können in Latex bei
-           Verwendung des hyperref-Pakets durch den
-           <code>
-           \hypertarget
-           </code>
-           Befehl erzeugt werden. Auch Adobe Acrobat (nicht der Reader)
-           kann named destinations anlegen."
+           data-content="Der Quiz-Graph ist der gerichtete Graph, der zu dem
+           Quiz korrespondiert."
            data-html="true">
         </i>
       </div>
@@ -42,7 +31,6 @@
   </div>
   <div class="card-body">
     <% if medium.quizzable %>
-      Vorschau:
       <%= image_tag(medium.quizzable.image_path.remove('public'),
                     class: "img-fluid",
                     id: "quiz-preview-image",
@@ -50,10 +38,10 @@
     <% else %>
       Es liegt noch kein Quiz vor.
       <div class="custom-control custom-radio">
-        <%= f.check_box :internal_quiz,
+        <%= f.check_box :create_quiz_graph,
                         checked: medium.new_record?,
                         class: 'custom-control-input' %>
-        <%= f.label :internal_quiz,
+        <%= f.label :create_quiz_graph,
                     'Quiz anlegen',
                     class: 'custom-control-label' %>
       </div>

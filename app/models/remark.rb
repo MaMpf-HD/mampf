@@ -4,7 +4,6 @@ class Remark < ApplicationRecord
   validates_presence_of :medium
   validates :label, presence: true
   validates :label, uniqueness: true
-  has_one_attached :image
   before_destroy :delete_vertices
   paginates_per 15
 
@@ -27,10 +26,19 @@ class Remark < ApplicationRecord
   end
 
   def duplicate
-    copy = Remark.create(text: text,
-                         label: SecureRandom.uuid,
-                         parent: self)
+    medium_copy = medium.dup
+    medium_copy.editors = medium.editors
+    medium_copy.video_data = nil
+    medium_copy.manuscript_data = nil
+    medium_copy.screenshot_data = nil
+    copy = Remark.new(text: text,
+                      label: SecureRandom.uuid,
+                      parent: self,
+                      medium: medium_copy)
+    copy.save
     copy.update(label: label + '-KOPIE-' + copy.id.to_s)
+    medium_copy.update(description: medium_copy.description + '-KOPIE-' +
+                                      copy.id.to_s)
     copy
   end
 

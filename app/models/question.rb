@@ -28,10 +28,18 @@ class Question < ApplicationRecord
   end
 
   def duplicate
+    medium_copy = medium.dup
+    medium_copy.editors = medium.editors
+    medium_copy.video_data = nil
+    medium_copy.manuscript_data = nil
+    medium_copy.screenshot_data = nil
     copy = Question.create(text: text,
                            label: SecureRandom.uuid,
-                           parent: self)
+                           parent: self,
+                           medium: medium_copy)
     copy.update(label: label + '-KOPIE-' + copy.id.to_s)
+    medium_copy.update(description: medium_copy.description + '-KOPIE-' +
+                                    copy.id.to_s)
     answer_map = {}
     answers.each { |a| answer_map[a.id] = a.duplicate(copy).id }
     [copy, answer_map]

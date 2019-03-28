@@ -42,7 +42,7 @@ class MediaController < ApplicationController
   end
 
   def update
-    if @medium.sort == 'KeksQuiz' && params[:medium][:internal_quiz] == '1'
+    if @medium.sort == 'KeksQuiz' && params[:medium][:create_quiz_graph] == '1'
       quiz = Quiz.new_prefilled
       @medium.quizzable = quiz
       quiz.medium = @medium
@@ -73,7 +73,7 @@ class MediaController < ApplicationController
 
   def create
     @medium = Medium.new(medium_params)
-    if @medium.sort == 'KeksQuiz' && params[:medium][:internal_quiz] == '1'
+    if @medium.sort == 'KeksQuiz' && params[:medium][:create_quiz_graph] == '1'
       quiz = Quiz.new_prefilled
       @medium.quizzable = quiz
       quiz.medium = @medium

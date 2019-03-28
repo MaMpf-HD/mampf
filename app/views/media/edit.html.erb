@@ -25,12 +25,5 @@
     </div>
   <% end %>
 </div>
-<% if @medium.sort == 'KeksQuiz' && @medium.quizzable %>
-  <%= render partial: 'quizzes/edges_accordion',
-             locals: { quiz: @medium.quizzable } %>
-  <%= render partial: 'quizzes/quizzable_modal' %>
-  <%= render partial: 'quizzes/reassign_modal',
-             locals: { content: false } %>
-<% end %>
 <%= render partial: 'media/destinations_warning' %>
 <%= render partial: 'tags/modal' %>

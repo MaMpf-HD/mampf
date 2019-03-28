@@ -7,16 +7,11 @@
       <%= @quiz.medium.description %>
     </h4>
   </div>
-  <div class="col-5">
+  <div class="col-5 text-right">
     <%= link_to 'zum Medium', edit_medium_path(@quiz.medium),
-                class: 'btn btn-primary m-2' %>
-    <%= link_to 'zur Quiz-Übersicht', quizzes_path,
                 class: 'btn btn-primary m-2' %>
     <%= link_to 'Spielen', play_quiz_path(@quiz),
                 class: 'btn btn-primary m-2', target: :_blank %>
-    <%= link_to 'Löschen', quiz_path(@quiz), method: :delete,
-                data: { confirm: 'Bist Du sicher?' },
-                class: 'btn btn-danger' %>
   </div>
 </div>
 <div class="row mx-2 mt-2 mb-4">
