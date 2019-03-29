@@ -55,6 +55,6 @@ class RemarksController < ApplicationController
   end
 
   def remark_params
-    params.require(:remark).permit(:label, :text, :type)
+    params.require(:remark).permit(:text, :type, :label)
   end
 end

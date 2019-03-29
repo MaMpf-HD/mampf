@@ -30,13 +30,12 @@
     </div>
     <%= f.text_area :text, id: 'tex-area-question-' + question.id.to_s,
                     label: 'LaTeX' %>
-    <%= f.text_field :label %>
-    <%= render partial: 'questions/options', locals: { question: question } %>
     <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
                     label: 'Lösungshinweis' %>
     <div id="tex-preview-hint-<%= question.id %>"
          class="p-2 mb-3">
       <%= question.hint %>
     </div>
+    <%= render partial: 'questions/options', locals: { question: question } %>
   </div>
 <% end %>

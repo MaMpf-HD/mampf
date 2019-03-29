@@ -26,8 +26,8 @@
       <%= remark.text %>
     </div>
     <%= f.text_area :text, id: 'tex-area-remark-' + remark.id.to_s,
-                           label: 'LaTeX' %>
-    <%= f.text_field :label %>
+                           label: 'LaTeX',
+                           rows: 5 %>
     <%= render partial: 'remarks/options', locals: { remark: remark } %>
   </div>
 <% end %>

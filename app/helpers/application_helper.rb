@@ -60,15 +60,17 @@ module ApplicationHelper
   # media_sort -> database fields
   def media_types
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
-      'keks' => ['KeksQuiz', 'KeksQuestion', 'KeksRemark'],
+      'keks' => ['KeksQuiz'],
       'kiwi' => ['Kiwi'],
       'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'],
-      'script' => ['Script'], 'reste' => ['Reste'] }
+      'script' => ['Script'], 'questions' => ['KeksQuestion'],
+      'remarks' => ['KeksRemark'], 'reste' => ['Reste'] }
   end
 
   # media_sorts
   def media_sorts
-    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse', 'script', 'reste']
+    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse', 'script',
+     'questions', 'remarks', 'reste']
   end
 
   # media_sort -> acronym
@@ -76,7 +78,8 @@ module ApplicationHelper
     { 'kaviar' => 'Lektionen', 'sesam' => 'Worked Examples',
       'keks' => 'Quizzes', 'kiwi' => 'Wiederholung',
       'erdbeere' => 'Beispiel-Datenbank', 'nuesse' => 'Übungen',
-      'script' => 'Skript', 'reste' => 'Sonstiges' }
+      'script' => 'Skript', 'questions' => 'Quiz-Fragen',
+      'remarks' => 'Quiz-Erläuterungen', 'reste' => 'Sonstiges' }
   end
 
   # Selects all media associated to lectures and lessons from a given list

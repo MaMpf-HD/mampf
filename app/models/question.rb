@@ -4,9 +4,11 @@ class Question < ApplicationRecord
   validates_presence_of :medium
   has_many :answers, dependent: :delete_all
   before_destroy :delete_vertices
-  validates :label, presence: true
-  validates :label, uniqueness: true
   paginates_per 15
+
+  def label
+    medium.description
+  end
 
   def answer_scheme
     scheme = {}
@@ -34,12 +36,10 @@ class Question < ApplicationRecord
     medium_copy.manuscript_data = nil
     medium_copy.screenshot_data = nil
     copy = Question.create(text: text,
-                           label: SecureRandom.uuid,
                            parent: self,
                            medium: medium_copy)
-    copy.update(label: label + '-KOPIE-' + copy.id.to_s)
     medium_copy.update(description: medium_copy.description + '-KOPIE-' +
-                                    copy.id.to_s)
+                                    medium.id.to_s)
     answer_map = {}
     answers.each { |a| answer_map[a.id] = a.duplicate(copy).id }
     [copy, answer_map]
@@ -48,7 +48,7 @@ class Question < ApplicationRecord
   def self.create_prefilled(label, teachable, editors)
     medium = Medium.new(sort: 'KeksQuestion', description: label,
                         teachable: teachable, editors: editors)
-    question = Question.new(label: label, text: 'Dummytext')
+    question = Question.new(text: 'Dummytext')
     medium.quizzable = question
     question.medium = medium
     question.save

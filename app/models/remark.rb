@@ -2,13 +2,15 @@ class Remark < ApplicationRecord
   acts_as_tree
   has_one :medium, as: :quizzable
   validates_presence_of :medium
-  validates :label, presence: true
-  validates :label, uniqueness: true
   before_destroy :delete_vertices
   paginates_per 15
 
   def answer_table
     []
+  end
+
+  def label
+    medium&.description
   end
 
   def quiz_ids
@@ -18,7 +20,7 @@ class Remark < ApplicationRecord
   def self.create_prefilled(label, teachable, editors)
     medium = Medium.new(sort: 'KeksRemark', description: label,
                         teachable: teachable, editors: editors)
-    remark = Remark.new(label: label, text: 'Dummytext')
+    remark = Remark.new(text: 'Dummytext')
     medium.quizzable = remark
     remark.medium = medium
     remark.save
@@ -32,11 +34,10 @@ class Remark < ApplicationRecord
     medium_copy.manuscript_data = nil
     medium_copy.screenshot_data = nil
     copy = Remark.new(text: text,
-                      label: SecureRandom.uuid,
                       parent: self,
                       medium: medium_copy)
     copy.save
-    copy.update(label: label + '-KOPIE-' + copy.id.to_s)
+    pp copy.errors
     medium_copy.update(description: medium_copy.description + '-KOPIE-' +
                                       copy.id.to_s)
     copy

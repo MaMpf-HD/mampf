@@ -37,7 +37,7 @@
                     data: { id: medium.quizzable.id }) %>
     <% else %>
       Es liegt noch kein Quiz vor.
-      <div class="custom-control custom-radio">
+      <div class="custom-control custom-checkbox">
         <%= f.check_box :create_quiz_graph,
                         checked: medium.new_record?,
                         class: 'custom-control-input' %>

@@ -80,6 +80,13 @@ class MediaController < ApplicationController
     end
     @medium.save
     if @medium.valid?
+      if @medium.sort == 'KeksQuestion'
+        question = Question.create(text: 'Dummytext', medium: @medium)
+        Answer.create(question: question, text: 'Dummyantwort', value: true)
+      end
+      if @medium.sort == 'KeksRemark'
+        Remark.create(text: 'Dummytext', medium: @medium)
+      end
       redirect_to edit_medium_path(@medium)
       return
     end
