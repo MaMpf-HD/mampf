@@ -35,7 +35,7 @@ There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/ga
 MaMpf is implemented in Ruby on Rails.
 
 * Ruby version: 2.6.1
-* Rails Version: 5.2.2.1
+* Rails Version: 5.2.3
 * Test suite: rspec
 
 ## Installation (with docker-compose)
