@@ -43,8 +43,11 @@
         <%= question.hint %>
       <% end %>
     <% else %>
-      Es liegt noch keine Frage vor. Nach erfolgreichem Abspeichern des Mediums
-      wird automatisch eine angelegt.
+      Es liegt noch keine Frage vor.
+      <% if question.new_record? %>
+        Nach erfolgreichem Abspeichern des Mediums
+        wird automatisch eine angelegt.
+      <% end %>
     <% end %>
   </div>
 </div>

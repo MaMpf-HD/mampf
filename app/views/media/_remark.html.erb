@@ -34,8 +34,11 @@
         </div>
       </div>
     <% else %>
-      Es liegt noch keine Erläuterung vor. Nach erfolgreichem Abspeichern des
-      Mediums wird automatisch eine angelegt.
+      Es liegt noch keine Erläuterung vor.
+        <% if remark.new_record? %>
+          Nach erfolgreichem Abspeichern des Mediums
+          wird automatisch eine angelegt.
+        <% end %>
       </div>
     <% end %>
   </div>
