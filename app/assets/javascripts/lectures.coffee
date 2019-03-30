@@ -182,6 +182,10 @@ $(document).on 'turbolinks:load', ->
     $('.courseMenuItem').hide()
     $('.tagbadgeshort').show()
     $('.courseMenuItemShort').show()
+    $('#secondnav').show()
+    $('#coursesDrop').appendTo($('#secondnav'))
+    $('#notificationDropdown').appendTo($('#secondnav'))
+    $('#searchField').appendTo($('#secondnav'))
     return
 
     # on large display, use normal tag badges and course titles
@@ -190,6 +194,10 @@ $(document).on 'turbolinks:load', ->
     $('.courseMenuItem').show()
     $('.tagbadgeshort').hide()
     $('.courseMenuItemShort').hide()
+    $('#secondnav').hide()
+    $('#coursesDrop').appendTo($('#firstnav'))
+    $('#notificationDropdown').appendTo($('#firstnav'))
+    $('#searchField').appendTo($('#firstnav'))
     return
 
     # highlight tagbadges if screen is very small

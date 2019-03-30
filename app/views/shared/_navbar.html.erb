@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand navbar-dark bg-dark">
+<nav class="navbar navbar-expand navbar-dark bg-dark" id="firstnav">
   <%= image_tag '/MaMpf-Logo_32x32.png',
                 class: 'img-fluid mr-2' %>
   <%= link_to "MaMpf", root_path,
@@ -84,23 +84,26 @@
     </ul>
     <% if user_signed_in? %>
       <% unless current_user.courses.empty? %>
-        <ul class="navbar-nav mr-auto">
+        <ul class="navbar-nav mr-auto" id="coursesDrop">
           <%= render partial: 'shared/dropdown_courses',
                      locals: { courses: current_user.courses } %>
         </ul>
       <% end %>
       <% unless current_user.no_notifications %>
-        <%= render partial: 'shared/dropdown_notifications' %>
+        <%= render partial: 'shared/dropdown_notifications'%>
       <% end %>
       <%= form_tag(search_index_path,
                    method: 'get',
-                   class: 'form-inline mt-2 mt-md-0') do %>
+                   class: 'form-inline mt-2 mt-md-0',
+                   id: 'searchField') do %>
         <%= search_field_tag 'search',
                              nil,
                              class: 'form-control mr-sm-2',
                              placeholder: 'Suche'  %>
-        <%#= submit_tag "Suche",
-                       class: 'btn btn-outline-success my-2 my-sm-0' %>
       <% end %>
     <% end %>
+  </div>
+</nav>
+<nav class="navbar navbar-expand navbar-dark bg-dark" id="secondnav"
+     style="display: none;">
 </nav>
