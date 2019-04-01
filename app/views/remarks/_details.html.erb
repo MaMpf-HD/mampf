@@ -1,0 +1,32 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-12">
+        <h5>Details</h5>
+      </div>
+      <div class="col-4">
+        <span class="no_display" id="remark-basics-options">
+          <%= f.submit "Speichern", class: "btn btn-primary btn-sm" %>
+          <button type="button" class="btn btn-secondary btn-sm"
+                  id="remark-basics-cancel" data-id="<%= remark.id %>">
+            verwerfen
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-2">
+    Anzeige
+    <div id="tex-preview-remark-<%= remark.id %>"
+         class="bg-remark border p-2 mb-3">
+      <%= remark.text %>
+    </div>
+    <div class="form-group">
+      <%= f.label :text, 'LaTeX' %>
+      <%= f.text_area :text, id: 'tex-area-remark-' + remark.id.to_s,
+                             rows: 6,
+                             class: 'form-control' %>
+    </div>
+    <%= render partial: 'remarks/options', locals: { remark: remark } %>
+  </div>
+</div>

@@ -158,7 +158,7 @@ Rails.application.routes.draw do
                              as: 'preview_quiz'
 
   resources :questions, except: [:edit]
-  resources :remarks, except: [:edit]
+  # resources :remarks
   resources :answers, except: [:index, :show, :edit]
   resources :quizzes, except: [:show]  do
     resources :vertices, except: [:index, :show, :edit]

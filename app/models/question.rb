@@ -1,10 +1,6 @@
-class Question < ApplicationRecord
-  acts_as_tree
-  has_one :medium, as: :quizzable
-  validates_presence_of :medium
+class Question < Medium
   has_many :answers, dependent: :delete_all
   before_destroy :delete_vertices
-  paginates_per 15
 
   def label
     medium.description

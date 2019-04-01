@@ -10,6 +10,7 @@
     <div class="col-4">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
+                           compact: false,
                            f: f } %>
     </div>
     <div class="col-4">
@@ -26,6 +27,7 @@
     <div class="col-4">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
+                           compact: false,
                            f: f } %>
     </div>
     <div class="col-4">
@@ -42,6 +44,7 @@
     <div class="col-4">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
+                           compact: false,
                            f: f } %>
     </div>
     <div class="col-8 mb-3">
@@ -50,47 +53,60 @@
                            f: f } %>
     </div>
   <% elsif medium.sort == 'KeksQuestion' %>
-    <div class="col-3">
-      <%= render partial: 'media/basics',
-                 locals: { medium: medium,
-                           f: f } %>
+    <div class="col-6">
+      <div class="row">
+        <div class="col-6">
+          <%= render partial: 'media/basics',
+                     locals: { medium: medium,
+                               compact: true,
+                               f: f } %>
+        </div>
+        <div class="col-6">
+          <%= render partial: 'questions/details',
+                     locals: { question: medium.becomes(Question),
+                               f: f } %>
+        </div>
+        <div class="col-6">
+          <%= render partial: 'media/video',
+                     locals: { medium: medium,
+                             f: f } %>
+        </div>
+        <div class="col-6">
+          <%= render partial: 'media/manuscript',
+                     locals: { medium: medium,
+                               f: f } %>
+        </div>
+      </div>
     </div>
-    <div class="col-3 mb-3">
-      <%= render partial: 'media/question',
-                 locals: { medium: medium,
-                           question: medium.quizzable,
-                           f: f } %>
-    </div>
-    <div class="col-3">
-      <%= render partial: 'media/video',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
-    <div class="col-3">
-      <%= render partial: 'media/manuscript',
-                 locals: { medium: medium,
+    <div class="col-6">
+      <%= render partial: 'questions/answer_details',
+                 locals: { question: medium.becomes(Question),
                            f: f } %>
     </div>
   <% elsif medium.sort == 'KeksRemark' %>
-    <div class="col-3">
-      <%= render partial: 'media/basics',
-                 locals: { medium: medium,
-                           f: f } %>
+    <div class="col-4">
+      <div class="row">
+        <div class="col-12 mb-3">
+          <%= render partial: 'media/basics',
+                     locals: { medium: medium,
+                               f: f,
+                               compact: true } %>
+        </div>
+        <div class="col-12 mb-3">
+          <%= render partial: 'media/video',
+                     locals: { medium: medium,
+                               f: f } %>
+        </div>
+        <div class="col-12">
+          <%= render partial: 'media/manuscript',
+                     locals: { medium: medium,
+                               f: f } %>
+        </div>
+      </div>
     </div>
-    <div class="col-3 mb-3">
-      <%= render partial: 'media/remark',
-                 locals: { medium: medium,
-                           remark: medium.quizzable,
-                           f: f } %>
-    </div>
-    <div class="col-3">
-      <%= render partial: 'media/video',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
-    <div class="col-3">
-      <%= render partial: 'media/manuscript',
-                 locals: { medium: medium,
+    <div class="col-8 mb-3">
+      <%= render partial: 'remarks/details',
+                 locals: { remark: medium.becomes(Remark),
                            f: f } %>
     </div>
   <% end %>

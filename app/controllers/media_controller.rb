@@ -35,6 +35,7 @@ class MediaController < ApplicationController
     tags = Tag.where(id: params[:tag_ids])
     @medium.tags << tags if tags.exists?
     @medium.sort = params[:sort] ? params[:sort] : 'Kaviar'
+    @medium.text = 'Dummytext' if params[:sort] == 'KeksRemark'
   end
 
   def edit
@@ -42,11 +43,6 @@ class MediaController < ApplicationController
   end
 
   def update
-    if @medium.sort == 'KeksQuiz' && params[:medium][:create_quiz_graph] == '1'
-      quiz = Quiz.new_prefilled
-      @medium.quizzable = quiz
-      quiz.medium = @medium
-    end
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
@@ -83,9 +79,6 @@ class MediaController < ApplicationController
       if @medium.sort == 'KeksQuestion'
         question = Question.create(text: 'Dummytext', medium: @medium)
         Answer.create(question: question, text: 'Dummyantwort', value: true)
-      end
-      if @medium.sort == 'KeksRemark'
-        Remark.create(text: 'Dummytext', medium: @medium)
       end
       redirect_to edit_medium_path(@medium)
       return
@@ -237,16 +230,23 @@ class MediaController < ApplicationController
   private
 
   def medium_params
-    params.require(:medium).permit(:sort, :description, :video, :manuscript,
-                                   :external_reference_link, :teachable_type,
-                                   :teachable_id, :released,
-                                   editor_ids: [],
-                                   tag_ids: [],
-                                   linked_medium_ids: [])
+    type = if params['remark']
+             :remark
+           elsif params['question']
+             :question
+           else
+             :medium
+          end
+    params.require(type).permit(:sort, :description, :video, :manuscript,
+                                :external_reference_link, :teachable_type,
+                                :teachable_id, :released, :text,
+                                editor_ids: [],
+                                tag_ids: [],
+                                linked_medium_ids: [])
   end
 
   def set_medium
-    @medium = Medium.find_by_id(params[:id])
+    @medium = Medium.find_by_id(params[:id])&.becomes(Medium)
     return if @medium.present?
     redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert ' \
                               'nicht.'

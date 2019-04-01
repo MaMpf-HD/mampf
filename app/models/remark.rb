@@ -1,9 +1,5 @@
-class Remark < ApplicationRecord
-  acts_as_tree
-  has_one :medium, as: :quizzable
-  validates_presence_of :medium
+class Remark < Medium
   before_destroy :delete_vertices
-  paginates_per 15
 
   def answer_table
     []

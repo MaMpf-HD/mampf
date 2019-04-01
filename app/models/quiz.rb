@@ -1,6 +1,4 @@
-class Quiz < ApplicationRecord
-  has_one :medium, as: :quizzable
-  validates_presence_of :medium
+class Quiz < Medium
   serialize :quiz_graph, QuizGraph
   after_create :save_png!
 

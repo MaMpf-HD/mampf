@@ -82,6 +82,9 @@ class Medium < ApplicationRecord
   # as an item as well
   after_create :create_self_item
 
+  # keep track of copies (in particular for Questions, Remarks)
+  acts_as_tree
+
   # scope for published/locally visible media
   # locally visible media are published (without inheritance) and unlocked
   # (they may not be globally visible as their lecture may be unpublished)

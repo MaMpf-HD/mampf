@@ -2,10 +2,10 @@
   <div class="card-header bg-mdb-color-lighten-3">
     Basisdaten
   </div>
-  <div class="card-body">
+  <div class="card-body <%= compact ? 'card-compact' : '' %>">
     <div class="form-group">
       <%= f.label :sort, 'Typ' %>
-      <i class="far fa-question-circle helpdesk"
+      <i class="far fa-question-circle helpdesk>"
          tabindex="-1"
          data-toggle="popover"
          data-trigger="focus"
