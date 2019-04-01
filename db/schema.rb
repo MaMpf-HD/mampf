@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_29_135055) do
+ActiveRecord::Schema.define(version: 2019_04_01_132839) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -207,6 +207,11 @@ ActiveRecord::Schema.define(version: 2019_03_29_135055) do
     t.boolean "imported_manuscript"
     t.string "quizzable_type"
     t.integer "quizzable_id"
+    t.text "hint"
+    t.integer "parent_id"
+    t.text "quiz_graph"
+    t.integer "level"
+    t.text "type"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
@@ -231,22 +236,6 @@ ActiveRecord::Schema.define(version: 2019_03_29_135055) do
     t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
   end
 
-  create_table "questions", force: :cascade do |t|
-    t.text "text"
-    t.text "label"
-    t.text "hint"
-    t.integer "parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "quizzes", force: :cascade do |t|
-    t.text "quiz_graph"
-    t.integer "level"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "referrals", force: :cascade do |t|
     t.text "start_time"
     t.text "end_time"
@@ -267,13 +256,6 @@ ActiveRecord::Schema.define(version: 2019_03_29_135055) do
     t.index ["related_tag_id"], name: "index_relations_on_related_tag_id"
     t.index ["tag_id", "related_tag_id"], name: "index_relations_on_tag_id_and_related_tag_id", unique: true
     t.index ["tag_id"], name: "index_relations_on_tag_id"
-  end
-
-  create_table "remarks", force: :cascade do |t|
-    t.text "text"
-    t.integer "parent_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "section_tag_joins", force: :cascade do |t|
