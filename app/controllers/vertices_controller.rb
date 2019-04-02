@@ -12,7 +12,7 @@ class VerticesController < ApplicationController
     if @success
       @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(@quizzable))
     end
-    redirect_to edit_medium_path(@quiz.medium) if @sort == 'import'
+    redirect_to edit_quiz_path(@quiz) if @sort == 'import'
   end
 
   def update
@@ -54,8 +54,8 @@ class VerticesController < ApplicationController
       @success = @quizzable.present?
     else
       @quizzable = @sort.constantize.create_prefilled(@params_v[:label],
-                                                      @quiz.medium.teachable,
-                                                      @quiz.medium.editors)
+                                                      @quiz.teachable,
+                                                      @quiz.editors)
       @success = @quizzable.valid?
     end
   end

@@ -92,7 +92,7 @@
                                       scope: 'vertex', method: 'post' do |f| %>
                 <%= f.hidden_field :sort, value: 'Question',
                                           id: 'vertex_sort_question' %>
-                <%= f.text_field :label, label: 'Fragen-Label' %>
+                <%= f.text_field :label, label: 'Fragen-Titel' %>
                 <div class='text-center'>
                   <%= f.submit 'Speichern' %>
                 </div>
@@ -104,7 +104,7 @@
                                       scope: 'vertex', method: 'post' do |f| %>
                 <%= f.hidden_field :sort, value: 'Remark',
                                           id: 'vertex_sort_remark' %>
-                <%= f.text_field :label, label: 'Bemerkungs-Label' %>
+                <%= f.text_field :label, label: 'Bemerkungs-Titel' %>
                 <div class='text-center'>
                   <%= f.submit 'Speichern' %>
                 </div>

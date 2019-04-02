@@ -2,7 +2,7 @@
   <div class="card-header">
     <div class="row">
       <div class="col-8">
-        Erläuterung
+        Details
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
            data-toggle="popover"
@@ -15,8 +15,8 @@
         </i>
       </div>
       <div class="col-4 text-right">
-        <% if remark %>
-          <a href="<%= remark_path(remark) %>"
+        <% unless remark.new_record? %>
+          <a href="<%= edit_remark_path(remark) %>"
              class="fas fa-edit fa-lg text-dark"
              style="text-decoration: none; "
              data-toggle="tooltip"
@@ -27,18 +27,13 @@
     </div>
   </div>
   <div class="card-body">
-    <% if remark %>
-      <div class="row mb-3">
-        <div class="col-12">
-          <%= remark.text %>
-        </div>
-      </div>
+    <% if remark.new_record? %>
+        Ein editierbarer Text wird erzeugt, nachdem Du
+        die Quiz-Erläuterung erstmalig abgespeichert hast.
     <% else %>
-      Es liegt noch keine Erläuterung vor.
-        <% if remark.new_record? %>
-          Nach erfolgreichem Abspeichern des Mediums
-          wird automatisch eine angelegt.
-        <% end %>
+      Anzeige
+      <div class="bg-remark border p-2 mb-3">
+        <%= remark.text %>
       </div>
     <% end %>
   </div>

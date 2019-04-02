@@ -27,6 +27,10 @@ class Ability
 
       can [:new, :create], Announcement
 
+      can [:create, :update, :destroy], Answer do |answer|
+        answer.question.edited_with_inheritance_by?(user)
+      end
+
       # only users who are editors of a chapter's lecture can edit, update
       # or destroy them
       can [:update, :destroy], Chapter do |chapter|
@@ -70,6 +74,8 @@ class Ability
         n.recipient == user
       end
 
+      can :reassign, [Question, Remark]
+
       can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
       end
@@ -86,8 +92,8 @@ class Ability
         user == u
       end
       can :teacher, User
-      can :toggle_results, :events
-      can [:index, :play, :proceed, :preview], Quiz
+      can :manage, [:event, :vertex]
+      can [:take, :proceed, :preview], Quiz
     else
       can :read, :all
       cannot :read, [:administration, Term, User, Announcement]
@@ -101,6 +107,15 @@ class Ability
           medium.published_with_inheritance? && medium.free?
         end
       end
+
+      can [:take, :proceed], Quiz do |quiz|
+        if !user.new_record?
+          quiz.visible?
+        else
+          quiz.published_with_inheritance? && quiz.free?
+        end
+      end
+
       cannot [:index, :update, :create], Tag
       can :display_cyto, Tag
       can :teacher, User

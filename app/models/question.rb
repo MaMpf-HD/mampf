@@ -3,7 +3,7 @@ class Question < Medium
   before_destroy :delete_vertices
 
   def label
-    medium.description
+    description
   end
 
   def answer_scheme
@@ -26,28 +26,23 @@ class Question < Medium
   end
 
   def duplicate
-    medium_copy = medium.dup
-    medium_copy.editors = medium.editors
-    medium_copy.video_data = nil
-    medium_copy.manuscript_data = nil
-    medium_copy.screenshot_data = nil
-    copy = Question.create(text: text,
-                           parent: self,
-                           medium: medium_copy)
-    medium_copy.update(description: medium_copy.description + '-KOPIE-' +
-                                    medium.id.to_s)
+    copy = self.dup
+    copy.video_data = nil
+    copy.manuscript_data = nil
+    copy.screenshot_data = nil
+    copy.editors = editors
+    copy.parent_id = id
+    copy.save
+    copy.update(description: copy.description + '-KOPIE-' + copy.id.to_s)
     answer_map = {}
     answers.each { |a| answer_map[a.id] = a.duplicate(copy).id }
     [copy, answer_map]
   end
 
   def self.create_prefilled(label, teachable, editors)
-    medium = Medium.new(sort: 'KeksQuestion', description: label,
-                        teachable: teachable, editors: editors)
-    question = Question.new(text: 'Dummytext')
-    medium.quizzable = question
-    question.medium = medium
-    question.save
+    question = Question.new(sort: 'KeksQuestion', description: label,
+                            teachable: teachable, editors: editors,
+                            text: 'Dummytext')
     return question if question.invalid?
     Answer.create(question: question, text: 'Dummyantwort', value: true)
     question

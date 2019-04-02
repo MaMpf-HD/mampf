@@ -1,33 +1,15 @@
 # Questions Controller
 class QuestionsController < ApplicationController
-  before_action :set_question, only: [:show, :edit, :update, :destroy]
+  before_action :set_question, except: [:reassign]
   before_action :set_quizzes, only: [:reassign]
+  authorize_resource
   layout 'administration'
 
-  def index
-    @questions = Question.order(:id).page params[:page]
-    @question = Question.new
-  end
-
-  def new
-    @question = Question.new
-  end
-
-  def create
-    @question = Question.create_prefilled(question_params[:label])
-    redirect_to question_path(@question) if @question.valid?
-  end
-
-  def show
+  def edit
   end
 
   def update
     @success = true if @question.update(question_params)
-  end
-
-  def destroy
-    flash[:alert] = 'Fehler beim Löschen der Frage!' unless @question.destroy
-    redirect_to questions_path
   end
 
   def reassign
@@ -36,7 +18,7 @@ class QuestionsController < ApplicationController
     @quizzes.each do |q|
       Quiz.find_by_id(q).replace_reference!(question_old, @question, answer_map)
     end
-    redirect_to question_path(@question) if question_params[:type] == 'edit'
+    redirect_to edit_question_path(@question) if question_params[:type] == 'edit'
   end
 
   private

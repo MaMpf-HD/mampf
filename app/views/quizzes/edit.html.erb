@@ -4,13 +4,13 @@
       <span class="badge badge-secondary">
         Quiz
       </span>
-      <%= @quiz.medium.description %>
+      <%= @quiz.description %>
     </h4>
   </div>
   <div class="col-5 text-right">
-    <%= link_to 'zum Medium', edit_medium_path(@quiz.medium),
+    <%= link_to 'zum Medium', edit_medium_path(@quiz),
                 class: 'btn btn-primary m-2' %>
-    <%= link_to 'Spielen', play_quiz_path(@quiz),
+    <%= link_to 'Spielen', take_quiz_path(@quiz),
                 class: 'btn btn-primary m-2', target: :_blank %>
   </div>
 </div>

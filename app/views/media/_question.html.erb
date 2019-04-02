@@ -2,7 +2,7 @@
   <div class="card-header">
     <div class="row">
       <div class="col-8">
-        Frage
+        Details
         <i class="far fa-question-circle helpdesk"
            tabindex="-1"
            data-toggle="popover"
@@ -14,8 +14,8 @@
         </i>
       </div>
       <div class="col-4 text-right">
-        <% if question %>
-          <a href="<%= question_path(question) %>"
+        <% unless question.new_record? %>
+          <a href="<%= edit_question_path(question) %>"
              class="fas fa-edit fa-lg text-dark"
              style="text-decoration: none; "
              data-toggle="tooltip"
@@ -26,7 +26,11 @@
     </div>
   </div>
   <div class="card-body">
-    <% if question %>
+      <% if question.new_record? %>
+        Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
+        die Frage erstmalig abgespeichert hast.
+      <% else %>
+      <div class="bg-question p-2 border">
       <div class="row mb-3">
         <div class="col-12">
           <%= question.text %>
@@ -42,12 +46,7 @@
         <i>Hinweis:</i>
         <%= question.hint %>
       <% end %>
-    <% else %>
-      Es liegt noch keine Frage vor.
-      <% if question.new_record? %>
-        Nach erfolgreichem Abspeichern des Mediums
-        wird automatisch eine angelegt.
+      </div>
       <% end %>
-    <% end %>
   </div>
 </div>

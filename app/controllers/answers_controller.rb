@@ -1,6 +1,7 @@
 # AnswersController
 class AnswersController < ApplicationController
   before_action :set_answer, only: [:show, :edit, :update, :destroy]
+  authorize_resource
 
   def new
     @answer = Answer.new(value: true)

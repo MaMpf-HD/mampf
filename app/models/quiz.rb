@@ -1,7 +1,4 @@
 class Quiz < Medium
-  serialize :quiz_graph, QuizGraph
-  after_create :save_png!
-
   def self.new_prefilled
     Quiz.new(level: 1,
              quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
@@ -15,7 +12,7 @@ class Quiz < Medium
   end
 
   def label
-    medium.description
+    description
   end
 
   def next_vertex(progress, fallback, input = {})

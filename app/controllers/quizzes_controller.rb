@@ -1,13 +1,9 @@
 # Quizzes controller
 class QuizzesController < ApplicationController
-  before_action :init_values, only: [:play, :proceed]
+  before_action :init_values, only: [:take, :proceed]
   before_action :set_quiz, only: [:show, :edit, :update, :destroy, :preview]
+  authorize_resource
   layout 'administration'
-
-  def index
-    @quizzes = Quiz.order(:id).all
-    @quiz = Quiz.new
-  end
 
   def new
   end
@@ -28,21 +24,21 @@ class QuizzesController < ApplicationController
   end
 
   def update
-    label = quiz_params[:label]
     root = quiz_params[:root].to_i
     level = quiz_params[:level].to_i
     quiz_graph = @quiz.quiz_graph
     quiz_graph.root = root
-    @success = true if @quiz.update(label: label, quiz_graph: quiz_graph,
+    @success = true if @quiz.update(quiz_graph: quiz_graph,
                                     level: level)
   end
 
   def destroy
-    flash[:error] = 'Fehler beim Löschen des Quizzes!' unless @quiz.destroy
-    redirect_to quizzes_path
+    @quiz.update(level: nil,
+                 quiz_graph: nil)
+    redirect_to edit_medium_path(@quiz)
   end
 
-  def play
+  def take
     render layout: 'quiz'
   end
 

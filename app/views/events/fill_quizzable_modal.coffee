@@ -1,6 +1,8 @@
 $('#quizzableModalLabel').empty()
-  .append "<%= @type == 'Question' ? 'Frage bearbeiten' :
-                                     'Bemerkung bearbeiten' %>"
+  .append "<%= @type == 'Question' ? 'Frage ' + @quizzable.description +
+                                     ' bearbeiten' :
+                                     'Bemerkung ' + @quizzable.description +
+                                     ' bearbeiten' %>"
 <% if @type == 'Question' %>
 $('#quizzable-data').empty()
   .append '<%= j render partial: "questions/data",

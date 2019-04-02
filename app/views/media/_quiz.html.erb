@@ -14,37 +14,48 @@
         </i>
       </div>
       <div class="col-4 text-right">
-        <% if medium.quizzable %>
-          <%= link_to 'Bearbeiten',
-                      edit_quiz_path(medium.quizzable),
-                      class: 'btn btn-primary' %>
-          <%= link_to 'Spielen',
-                      play_quiz_path(medium.quizzable),
-                      class: 'btn btn-primary', target: :_blank %>
-          <%= link_to 'Löschen', quiz_path(medium.quizzable),
-                      method: :delete,
-                      data: { confirm: 'Bist Du sicher?' },
-                      class: 'btn btn-danger' %>
+        <% if quiz.quiz_graph %>
+          <a href="<%= edit_quiz_path(quiz) %>"
+             class="fas fa-edit fa-lg text-dark mr-3"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Bearbeiten">
+          </a>
+          <a href="<%= take_quiz_path(quiz) %>"
+             class="fas fa-gamepad fa-lg text-dark mr-3"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Spielen"
+             target="_blank">
+          </a>
+          <a href="<%= quiz_path(quiz) %>"
+             class="fas fa-trash-alt fa-lg text-dark"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="Löschen"
+             target="_blank"
+             data-method="delete"
+             data-confirm="Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
+             nicht das Medium.">
+          </a>
         <% end %>
       </div>
     </div>
   </div>
   <div class="card-body">
-    <% if medium.quizzable %>
-      <%= image_tag(medium.quizzable.image_path.remove('public'),
+    <% if quiz.quiz_graph %>
+      <%= image_tag(quiz.image_path.remove('public'),
                     class: "img-fluid",
                     id: "quiz-preview-image",
-                    data: { id: medium.quizzable.id }) %>
+                    data: { id: quiz.id }) %>
     <% else %>
-      Es liegt noch kein Quiz vor.
       <div class="custom-control custom-checkbox">
         <%= f.check_box :create_quiz_graph,
-                        checked: medium.new_record?,
+                        checked: quiz.new_record?,
                         class: 'custom-control-input' %>
         <%= f.label :create_quiz_graph,
-                    'Quiz anlegen',
+                    'Quiz-Graph anlegen',
                     class: 'custom-control-label' %>
-      </div>
     <% end %>
   </div>
 </div>

@@ -39,6 +39,8 @@ class Medium < ApplicationRecord
   has_many :referrals, dependent: :destroy
   has_many :referenced_items, through: :referrals, source: :item
 
+  serialize :quiz_graph, QuizGraph
+
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem
   include VideoUploader[:video]
@@ -70,9 +72,6 @@ class Medium < ApplicationRecord
   # a medium of type Script is not allowed to have tags
   # (Reason: A typical script will have *a lot of* tags)
   validate :no_tags_for_scripts
-  # if sort is 'KeksQuiz', either an external link or a quizzable should
-  # be present
-  validate :quiz_has_quizzable
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_teachable
@@ -557,13 +556,13 @@ class Medium < ApplicationRecord
   end
 
   # extracts question id if medium is a keks question
-  def question_id
+  def keks_question_id
     return unless sort == 'KeksQuestion'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK).to_i
   end
 
   # extracts array of question ids if medium is a keks quiz
-  def question_ids
+  def keks_question_ids
     return unless sort == 'KeksQuiz'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK)
                            .split(',').map(&:to_i)
@@ -572,7 +571,7 @@ class Medium < ApplicationRecord
   # returns the position of this medium among all media of the same sort
   # associated to the same teachable (by id)
   def position
-    teachable.media.where(sort: sort).order(:id).index(self) + 1
+    teachable.media.where(sort: sort).order(:id).pluck(:id).index(id) + 1
   end
 
   # media associated to the same teachable and of the same sort
@@ -602,15 +601,17 @@ class Medium < ApplicationRecord
              "#{teachable.lesson&.date_de}"
     elsif sort == 'Script'
       return 'Skript'
+    elsif sort == 'KeksQuestion'
+      'KeksFrage ' + position.to_s + '/' + siblings.count.to_s
     end
-    'KeksFrage ' + position.to_s + '/' + siblings.count.to_s
+    'KeksErläuterung ' + position.to_s + '/' + siblings.count.to_s
   end
 
   # returns description if present or question(s) id(s) for KeksQestion/Quiz
   def details
     return description if description.present?
-    return 'Frage ' + question_id.to_s if sort == 'KeksQuestion'
-    return 'Fragen ' + question_ids.join(', ') if sort == 'KeksQuiz'
+    return 'Frage ' + keks_question_id.to_s if sort == 'KeksQuestion'
+    return 'Fragen ' + keks_question_ids.join(', ') if sort == 'KeksQuiz'
     ''
   end
 
@@ -763,13 +764,5 @@ class Medium < ApplicationRecord
     return true unless sort == 'Script' && tags.any?
     errors.add(:tags, 'Ein Skript darf keine Tags haben.')
     false
-  end
-
-  def quiz_has_quizzable
-    return true unless sort == 'KeksQuiz'
-    return true if quizzable
-    return true if external_reference_link.present?
-    errors.add(:sort, 'Ein KeksQuiz muss entweder einen externen Link oder ' \
-                      'oder einen Quiz-Graph beinhalten.')
   end
 end

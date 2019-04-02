@@ -6,7 +6,7 @@ class Remark < Medium
   end
 
   def label
-    medium&.description
+    description
   end
 
   def quiz_ids
@@ -14,28 +14,22 @@ class Remark < Medium
   end
 
   def self.create_prefilled(label, teachable, editors)
-    medium = Medium.new(sort: 'KeksRemark', description: label,
-                        teachable: teachable, editors: editors)
-    remark = Remark.new(text: 'Dummytext')
-    medium.quizzable = remark
-    remark.medium = medium
+    remark = Remark.new(sort: 'KeksRemark', description: label,
+                        teachable: teachable, editors: editors,
+                        text: 'Dummytext')
     remark.save
     remark
   end
 
   def duplicate
-    medium_copy = medium.dup
-    medium_copy.editors = medium.editors
-    medium_copy.video_data = nil
-    medium_copy.manuscript_data = nil
-    medium_copy.screenshot_data = nil
-    copy = Remark.new(text: text,
-                      parent: self,
-                      medium: medium_copy)
+    copy = self.dup
+    copy.video_data = nil
+    copy.manuscript_data = nil
+    copy.screenshot_data = nil
+    copy.editors = editors
+    copy.parent_id = id
     copy.save
-    pp copy.errors
-    medium_copy.update(description: medium_copy.description + '-KOPIE-' +
-                                      copy.id.to_s)
+    copy.update(description: copy.description + '-KOPIE-' + copy.id.to_s)
     copy
   end
 

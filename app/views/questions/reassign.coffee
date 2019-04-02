@@ -1,8 +1,10 @@
 $('#reassignModal').modal 'hide'
+$('#quizzableModalLabel').empty()
+  .append('Frage <%= @question.description %> bearbeiten')
 $('#quizzable-data').empty()
   .append '<%= j render partial: "questions/data",
                         locals: { question: @question } %>'
-quizzableData = document.getElementById('quizzable_data')
+quizzableData = document.getElementById('quizzable-data')
 renderMathInElement quizzableData,
   delimiters: [
     {

@@ -29,7 +29,8 @@
       <%= question.text %>
     </div>
     <%= f.text_area :text, id: 'tex-area-question-' + question.id.to_s,
-                    label: 'LaTeX' %>
+                    label: 'LaTeX',
+                    rows: 5 %>
     <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
                     label: 'Lösungshinweis' %>
     <div id="tex-preview-hint-<%= question.id %>"

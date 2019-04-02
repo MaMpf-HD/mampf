@@ -1,7 +1,7 @@
 # Events controller
 # Deals with all AJAX actions in Quizzes
 class EventsController < ApplicationController
-  authorize_resource class: false
+#  authorize_resource class: false
 
   def update_vertex_default
     @quizzable = Quiz.find_by_id(params[:quiz_id]).quizzable(params[:id].to_i)
