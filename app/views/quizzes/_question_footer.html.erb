@@ -12,4 +12,16 @@
       Alles klar!
     </button>
   </div>
+  <% if question.video %>
+    <div class="col-12 my-3">
+      Es gibt ein Video zu dieser Frage:
+    </div>
+    <div class="col-12">
+      <%= link_to image_tag(question.screenshot_url,
+                            class: 'img-fluid',
+                            id: 'manuscript-preview'),
+                  play_medium_path(question),
+                  target: :blank %>
+    </div>
+  <% end %>
 </div>

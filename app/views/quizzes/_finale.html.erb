@@ -6,7 +6,7 @@
           Du hast es geschafft! Zur Belohnung gibt es ein
           <%= link_to 'XKCD', 'https://xkcd.com', target: :_blank %>-Comic:
           <div>
-            <% xkcd_comic = XKCD.img.split(": ",2)[1] %>
+            <% xkcd_comic = URI.extract(XKCD.img, ['https'])&.first %>
             <%= link_to image_tag(xkcd_comic, class: "img-fluid"), xkcd_comic,
                         target: :_blank %>
           </div>

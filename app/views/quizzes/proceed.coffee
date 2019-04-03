@@ -154,7 +154,8 @@ nextRound = ->
   revealSuccess(success)
   scrollDown()
   info = '<%= j render partial: "footer_info",
-                        locals: { round_id: @quiz_round.round_id_old } %>'
+                        locals: { round_id: @quiz_round.round_id_old,
+                                  question_id: @quiz_round.question_id } %>'
   $('#accept_results').click ->
     acceptedResults(info, $previous_round)
     return

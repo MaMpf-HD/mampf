@@ -6,7 +6,7 @@ $('#quiz-preview-image').attr('src',
 $('#vertex-heading-<%= @id %>').empty()
   .append '<%= j render partial: "vertices/header",
                  locals: { quiz: @quiz, vertex_id: @id } %>'
-vertexHeading = document.getElementById('vertex_heading-<%= @id %>')
+vertexHeading = document.getElementById('vertex-heading-<%= @id %>')
 renderMathInElement vertexHeading,
   delimiters: [
     {

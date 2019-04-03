@@ -10,5 +10,16 @@
         Details
       </div>
     </button>
+    <% question = Question.find_by_id(question_id) %>
+    <% if question&.video %>
+        <a href="<%= play_medium_path(question) %>"
+           class="no-deco ml-3 fas fa-play fa-2x text-info"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           title="Erklärvideo im THymE Player"
+           style="position: relative; top: 6px;"
+           target="_blank">
+        </a>
+    <% end %>
   </div>
 </div>

@@ -27,7 +27,7 @@ class VerticesController < ApplicationController
     @id = params[:id].to_i
     quiz_graph = @quiz.quiz_graph
     @quiz.update(quiz_graph: quiz_graph.destroy_vertex(@id))
-    redirect_to edit_medium_path(@quiz.medium)
+    redirect_to edit_quiz_path(@quiz)
   end
 
   private
