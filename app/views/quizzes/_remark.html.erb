@@ -14,5 +14,34 @@
         <%= f.submit "Alles klar!", class: "send-it btn btn-secondary ml-2"  %>
       </div>
     <% end %>
+    <div class="text-center">
+    <% if remark.video || remark.manuscript %>
+      <div class="col-12 my-3">
+        <span class="remark-infotainment-text">
+          Es gibt <%= infotainment(remark) %> zu dieser Erläuterung:
+        </span>
+        <% if remark.video %>
+          <a href="<%= play_medium_path(remark) %>"
+             class="no-deco ml-3 fas fa-play fa-2x text-info"
+             data-toggle="tooltip"
+             data-placement="bottom"
+             title="Erklärvideo im THymE Player"
+             style="position: relative; top: 6px;"
+            target="_blank">
+          </a>
+        <% end %>
+        <% if remark.manuscript %>
+          <a href="<%= display_medium_path(remark) %>"
+             class="no-deco ml-3 far fa-file-pdf fa-2x text-info"
+             data-toggle="tooltip"
+             data-placement="bottom"
+             title="Manuskript als pdf"
+             style="position: relative; top: 6px;"
+             target="_blank">
+          </a>
+        <% end %>
+      </div>
+    </div>
+    <% end %>
   </div>
 </div>

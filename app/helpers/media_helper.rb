@@ -69,4 +69,11 @@ module MediaHelper
     return 'locked' if medium.locked?
     'unpublished'
   end
+
+  def infotainment(medium)
+    return 'nichts' unless medium.video || medium.manuscript
+    return 'ein Video' unless medium.manuscript
+    return 'ein Manuskript' unless medium.video
+    'ein Video und ein Manuskript'
+  end
 end

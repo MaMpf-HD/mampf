@@ -12,12 +12,32 @@
       Alles klar!
     </button>
   </div>
-  <% if question.video %>
+  <% if question.video || question.manuscript %>
     <div class="col-12 my-3">
-      Es gibt ein Video zu dieser Frage:
+      Es gibt <%= infotainment(question) %> zu dieser Frage:
+      <% if question.video %>
+        <a href="<%= play_medium_path(question) %>"
+           class="no-deco ml-3 fas fa-play fa-2x text-info"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           title="Erklärvideo im THymE Player"
+           style="position: relative; top: 6px;"
+           target="_blank">
+        </a>
+      <% end %>
+      <% if question.manuscript %>
+        <a href="<%= display_medium_path(question) %>"
+           class="no-deco ml-3 far fa-file-pdf fa-2x text-info"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           title="Manuskript als pdf"
+           style="position: relative; top: 6px;"
+           target="_blank">
+        </a>
+      <% end %>
     </div>
     <div class="col-12">
-      <%= link_to image_tag(question.screenshot_url,
+      <%#= link_to image_tag(question.screenshot_url,
                             class: 'img-fluid',
                             id: 'manuscript-preview'),
                   play_medium_path(question),
