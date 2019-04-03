@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-8">
+  <div class="col-7">
     <div>
       <span class="badge badge-info">
         <%= vertex_id.to_s %>
@@ -37,7 +37,7 @@
       <% end %>
     </span>
   </div>
-  <div class="col-3 text-right">
+  <div class="col-4 text-right">
     <div class='btn-group'>
       <button class="btn btn-sm btn-outline-primary rounded m-1"
               id="edit-vertex-content-<%= vertex_id %>"
@@ -46,6 +46,9 @@
               data-id="<%= quiz.quiz_graph.vertices[vertex_id][:id] %>">
         Bearbeiten
       </button>
+      <%= link_to 'Medium',
+                  edit_medium_path(quiz.quizzable(vertex_id)),
+                  class: 'btn btn-sm btn-outline-primary rounded m-1' %>
       <button id="targets-vertex-<%= vertex_id %>"
               class="btn btn-sm btn-outline-primary rounded collapsed m-1"
               data-toggle="collapse"

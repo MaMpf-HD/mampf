@@ -5,6 +5,7 @@ removeResidues = ->
   $('.send-it').addClass 'no_display'
   $('.click-it').prop 'disabled', true
   $('.remark-infotainment-text').remove()
+  $('.remark-infotainment-icons').show()
   return
 
 detectLoop = ->

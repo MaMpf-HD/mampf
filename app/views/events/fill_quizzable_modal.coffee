@@ -12,8 +12,8 @@ $('#quizzable-data').empty()
   .append '<%= j render partial: "remarks/data",
                         locals: { remark: @quizzable }%>'
 <% end %>
-quizzableData = document.getElementById('quizzable-data')
-renderMathInElement quizzableData,
+quizzableModal = document.getElementById('quizzableModal')
+renderMathInElement quizzableModal,
   delimiters: [
     {
       left: '$$'
