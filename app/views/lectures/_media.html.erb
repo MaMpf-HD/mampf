@@ -71,6 +71,7 @@
               <ul>
                 <% media.includes(:tags).where(sort: media_types[s])
                                         .order(created_at: :desc)
+                                        .first(50)
                                         .each do |m| %>
                   <li>
                     <%= link_to m.local_info,
@@ -83,6 +84,13 @@
                   </li>
                 <% end %>
               </ul>
+              <% if media.includes(:tags).where(sort: media_types[s])
+                         .count > 50 %>
+                Es werden nur die 50 zuletzt anglegten Medien angezeigt.
+                Mehr findest Du über die
+                <%= link_to 'Mediensuche',
+                            media_catalog_path %>.
+              <% end %>
               <% course_material = Medium.where(teachable: lecture.course,
                                                 sort: media_types[s]) %>
               <% if course_material.present? %>

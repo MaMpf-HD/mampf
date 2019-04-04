@@ -35,7 +35,9 @@
             <div class="tab-pane fade <%= show_tab(i == 0) %>"
                  id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
                  role="tabpanel">
-              <% relevant = relevant_media(t, media)&.natural_sort_by(&:local_info) %>
+              <% relevant = relevant_media(t, media)&.sort_by(&:created_at)
+                                                    &.first(50)
+                                                    &.natural_sort_by(&:local_info) %>
               <% if relevant.present? %>
                 <div class="row">
                   <% split_list(relevant, 2).each do |media_list| %>
@@ -54,6 +56,12 @@
                     </div>
                   <% end %>
                 </div>
+              <% end %>
+              <% if relevant_media(t, media).size > 50 %>
+                Es werden nur die 50 zuletzt anglegten Medien angezeigt.
+                Mehr findest Du über die
+                <%= link_to 'Mediensuche',
+                            media_catalog_path %>.
               <% end %>
             </div>
           <% end %>
