@@ -558,6 +558,7 @@ class Medium < ApplicationRecord
   # extracts question id if medium is a keks question
   def keks_question_id
     return unless sort == 'KeksQuestion'
+    return unless external_reference_link.present?
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK).to_i
   end
 

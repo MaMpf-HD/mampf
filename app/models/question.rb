@@ -42,7 +42,7 @@ class Question < Medium
   def self.create_prefilled(label, teachable, editors)
     question = Question.new(sort: 'KeksQuestion', description: label,
                             teachable: teachable, editors: editors,
-                            text: 'Dummytext')
+                            text: 'Dummytext', level: 1, independent: false)
     return question if question.invalid?
     Answer.create(question: question, text: 'Dummyantwort', value: true)
     question

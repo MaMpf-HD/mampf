@@ -48,5 +48,14 @@
       <% end %>
       </div>
       <% end %>
+      <div class="row mt-3">
+        <div class="col-12">
+          Schwierigkeitsgrad:
+          <%= level_to_word(question) %>
+        </div>
+        <div class="col-12">
+          unabhängig: <%= independent_to_word(question) %>
+        </div>
+      </div>
   </div>
 </div>

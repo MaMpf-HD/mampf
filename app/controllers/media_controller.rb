@@ -30,7 +30,7 @@ class MediaController < ApplicationController
   end
 
   def new
-    @medium = Medium.new(teachable: @teachable)
+    @medium = Medium.new(teachable: @teachable, level: 1)
     @medium.editors << current_user
     tags = Tag.where(id: params[:tag_ids])
     @medium.tags << tags if tags.exists?
@@ -83,7 +83,8 @@ class MediaController < ApplicationController
         @medium.update(type: 'Remark', text: 'Dummytext')
       end
       if @medium.sort == 'KeksQuestion'
-        @medium.update(type: 'Question', text: 'Dummytext')
+        @medium.update(type: 'Question', text: 'Dummytext', level: 1,
+                       independent: false)
         Answer.create(question: @medium.becomes(Question),
                       text: 'Dummyantwort',
                       value: true)

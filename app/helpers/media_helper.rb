@@ -76,4 +76,15 @@ module MediaHelper
     return 'ein Manuskript' unless medium.video
     'ein Video und ein Manuskript'
   end
+
+  def level_to_word(medium)
+    return 'leicht' if medium.level == 0
+    return 'mittel' if medium.level == 1
+    'schwer'
+  end
+
+  def independent_to_word(medium)
+    return 'nein' unless medium.independent
+    'ja'
+  end
 end

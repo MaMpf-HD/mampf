@@ -31,6 +31,16 @@
     <%= f.text_area :text, id: 'tex-area-question-' + question.id.to_s,
                     label: 'LaTeX',
                     rows: 5 %>
+    <%= f.form_group :level, label: { text: "Schwierigkeitsgrad" } do %>
+      <div id="level">
+        <%= f.radio_button :level, 0, label: "leicht", inline: true %>
+        <%= f.radio_button :level, 1, label: "mittel", inline: true %>
+        <%= f.radio_button :level, 2, label: "schwer", inline: true %>
+      </div>
+    <% end %>
+    <%= f.form_group :independent do %>
+      <%= f.check_box :independent, label: 'Frage ist unabhängig' %>
+    <% end %>
     <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
                     label: 'Lösungshinweis' %>
     <div id="tex-preview-hint-<%= question.id %>"
