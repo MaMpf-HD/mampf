@@ -17,6 +17,10 @@
        data-tag="<%= tag.id %>"
        data-from="tag">
   </a>
+  <i class="fas fa-plus-circle text-secondary"
+     id="new-tag-defunct"
+     style="display: none;">
+  </i>
   <%= f.select :related_tag_ids,
                 options_for_select(tags_except_self_for_selector(tag),
                                    related_tag_ids_selection(tag)),
