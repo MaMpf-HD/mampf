@@ -1,6 +1,7 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :check_for_course, only: [:show]
+  before_action :set_course, only: [:display]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   authorize_resource
   layout 'administration'
@@ -21,8 +22,13 @@ class CoursesController < ApplicationController
   def create
     @course = Course.new(course_params)
     @course.save
-    create_notifications
-    redirect_to administration_path if @course.valid?
+    if @course.valid?
+      # set organizational_concept to default
+      set_organizational_defaults
+      create_notifications
+      redirect_to administration_path
+      return
+    end
     @errors = @course.errors
   end
 
@@ -56,12 +62,23 @@ class CoursesController < ApplicationController
     redirect_to administration_path
   end
 
+  def display
+    render layout: 'application'
+  end
+
   private
 
   def check_for_course
     return if Course.exists?(params[:id])
     redirect_to :root, alert: 'Ein Kurs mit der angeforderten id existiert ' \
                               'nicht.'
+  end
+
+  def set_course
+    @course = Course.find_by_id(params[:id])
+    return if @course.present?
+    redirect_to :root, alert: 'Eine Vorlesung mit der angeforderten id ' \
+                              'existiert nicht.'
   end
 
   def set_course_admin
@@ -71,7 +88,8 @@ class CoursesController < ApplicationController
   end
 
   def course_params
-    params.require(:course).permit(:title, :short_title,
+    params.require(:course).permit(:title, :short_title, :organizational,
+                                   :organizational_concept,
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [])
@@ -93,5 +111,14 @@ class CoursesController < ApplicationController
   def destroy_notifications
     Notification.where(notifiable_id: @course.id, notifiable_type: 'Course')
                 .delete_all
+  end
+
+  # fill organizational_concept with default view
+  def set_organizational_defaults
+    @course.update(organizational_concept:
+                     render_to_string(partial: 'courses/' \
+                                               'organizational_default',
+                                      formats: :html,
+                                      layout: false))
   end
 end

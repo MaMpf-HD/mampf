@@ -21,6 +21,8 @@ Rails.application.routes.draw do
                                  as: 'course_food'
   get 'courses/:id/inspect', to: 'courses#inspect',
                              as: 'inspect_course'
+  get 'courses/:id/display', to: 'courses#display',
+                             as: 'display_course'
   resources :courses, except: [:index]
 
   get 'events/update_vertex_default', as: 'update_vertex_default'

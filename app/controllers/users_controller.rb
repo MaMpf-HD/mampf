@@ -45,7 +45,7 @@ class UsersController < ApplicationController
 
   def teacher
     @teacher = User.find_by_id(params[:teacher_id])
-    if @teacher.present? && @teacher.teacher?
+    if @teacher.present? && @teacher.editor?
       render layout: 'application'
       return
     end

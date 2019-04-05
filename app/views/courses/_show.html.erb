@@ -60,7 +60,7 @@
   <%= render partial: 'courses/lecture_carousel',
              locals: { lectures: lectures } %>
 <% else %>
-  <div class="jumbotron bg-light-blue-lighten-5">
+  <div class="alert alert-primary">
     <% if course.lectures.any? %>
       Du hast keine zu diesem Modul gehörige Vorlesung
       <%= link_to 'abonniert',
@@ -69,7 +69,9 @@
     <% else %>
       Zu diesem Modul existieren noch keine Vorlesungen.
     <% end %>
-    Du bekommst deswegen nur Medien angezeigt, die auf der Ebene des Moduls
+    Du bekommst deswegen nur Medien und Informationen angezeigt, die auf der Ebene des Moduls
     angesiedelt sind.
   </div>
+  <%= render partial: 'courses/infos',
+             locals: { course: course } %>
 <% end %>

@@ -55,7 +55,7 @@ $(document).on 'turbolinks:load', ->
     disableExceptOrganizational()
     return
 
-  trixElement = document.querySelector('trix-editor')
+  trixElement = document.querySelector('#lecture-concept-trix')
   if trixElement?
     trixElement.addEventListener 'trix-change', ->
       disableExceptOrganizational()

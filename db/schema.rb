@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_04_132603) do
+ActiveRecord::Schema.define(version: 2019_04_05_110252) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -78,6 +78,8 @@ ActiveRecord::Schema.define(version: 2019_04_04_132603) do
     t.datetime "updated_at", null: false
     t.string "short_title"
     t.text "news"
+    t.boolean "organizational"
+    t.text "organizational_concept"
   end
 
   create_table "editable_user_joins", force: :cascade do |t|

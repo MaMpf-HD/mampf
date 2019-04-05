@@ -137,6 +137,11 @@
 </div>
 <% unless course.tags.empty? %>
   <div class="row p-2">
+    <div class="col-12 mb-3">
+        <%= render partial: 'courses/organizational',
+                   locals: { course: course,
+                             inspection: true } %>
+    </div>
     <div class="col-12">
       <%= render partial: 'tags/tags_toggle',
                  locals: { tags: course.tags,

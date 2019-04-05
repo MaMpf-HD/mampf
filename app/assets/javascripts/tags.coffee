@@ -61,7 +61,6 @@ $(document).on 'turbolinks:load', ->
   $('[id^="tag-form-"] :input').on 'change', ->
     id = this.dataset.id
     $('#tag-basics-warning-' + id).show()
-    console.log 'Hi'
     $('#new-tag-button').remove()
     $('#new-tag-defunct').show()
     return

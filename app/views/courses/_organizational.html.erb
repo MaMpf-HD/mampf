@@ -1,0 +1,60 @@
+<div id="organizational_accordion"
+     role="tablist">
+  <div class="card bg-light">
+    <div class="card-header"
+         role="tab"
+         id="organizational_heading">
+      <div class="row">
+        <div class="col-6">
+          <h5>
+            Weitere Informationen
+          </h5>
+        </div>
+        <div class="col-6 text-right">
+          <a class="btn btn-primary"
+             data-toggle="collapse"
+             href="#organizational_collapse"
+             id="organizational_collapse_button"
+             aria-expanded="false" aria-controls="organizational_collapse">
+            Ein-/Ausklappen
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="organizational_collapse"
+         class="collapse"
+         role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#organizational_accordion">
+      <div class="card-body">
+          <div class="form-row mb-3">
+            <div class="col-6">
+              <% if inspection %>
+                weitere Informationen sichtbar:
+                <%= course.organizational ? 'Ja' : 'Nein' %>
+              <% else %>
+                <div class="custom-control custom-checkbox">
+                  <%= f.check_box :organizational,
+                                  class: 'custom-control-input',
+                                  disabled: inspection %>
+                  <%= f.label :organizational,
+                              'weitere Informationen sichtbar',
+                              { class: 'custom-control-label' } %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <% if inspection %>
+                <%= course.organizational_concept&.html_safe %>
+              <% else %>
+                <%= f.trix_editor :organizational_concept,
+                                  id: 'course-concept-trix' %>
+              <% end %>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>

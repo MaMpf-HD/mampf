@@ -2,6 +2,13 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+showWarning = ->
+  $('#course-basics-warning').show()
+  $('#new-lecture-button').hide()
+  $('#create-new-medium').hide()
+  $('#new-tag-button').hide()
+  return
+
 $(document).on 'turbolinks:load', ->
 
   # hide download button for media on mobile devices
@@ -33,11 +40,15 @@ $(document).on 'turbolinks:load', ->
 
   # if any input is given to the course form, disable other input
   $('#course-form :input').on 'change', ->
-    $('#course-basics-warning').show()
-    $('#new-lecture-button').hide()
-    $('#create-new-medium').hide()
-    $('#new-tag-button').hide()
+    showWarning()
     return
+
+  trixElement = document.querySelector('#course-concept-trix')
+  if trixElement?
+    trixElement.addEventListener 'trix-change', ->
+      showWarning()
+      return
+
 
   # rewload current page if course editing is cancelled
   $('#course-basics-cancel').on 'click', ->

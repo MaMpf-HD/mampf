@@ -73,7 +73,12 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <%= f.trix_editor :organizational_concept %>
+              <% if inspection %>
+                <%= lecture.organizational_concept&.html_safe %>
+              <% else %>
+                <%= f.trix_editor :organizational_concept,
+                                id: 'lecture-concept-trix' %>
+              <% end %>
             </div>
           </div>
           <div class="row mt-3">
