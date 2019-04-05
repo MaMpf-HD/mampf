@@ -13,7 +13,11 @@
         <ul>
           <% course.editors.each do |e| %>
             <li>
-              <%= link_to e.name, teacher_path(e) %>
+              <% if e.teacher? %>
+                <%= link_to e.name, teacher_path(e) %>
+              <% else %>
+                <%= e.name %>
+              <% end %>
             </li>
           <% end %>
         </ul>
