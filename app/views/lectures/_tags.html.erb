@@ -30,7 +30,7 @@
             <h6>
               (Bisher) behandelte Begriffe aus dem zugehörigen Modul
               <%= link_to lecture.course.title,
-                          inspect_course_path(lecture.course) %>
+                          edit_or_inspect_course_path(lecture.course) %>
               <%= ' (' + lecture.course_tags.count.to_s + ')' %>
               <i class="far fa-question-circle helpdesk"
                  tabindex="-1"
@@ -45,8 +45,7 @@
             <% if lecture.course_tags.present? %>
               <%= render partial: "tags/list",
                          locals: { tags: lecture.course_tags
-                                                .natural_sort_by(&:title),
-                                   inspection: inspection } %>
+                                                .natural_sort_by(&:title) } %>
             <% else %>
               Es sind noch keine Begriffe vorhanden.
             <% end %>
@@ -67,8 +66,7 @@
             </h6>
             <%= render partial: "tags/list",
                          locals: { tags: lecture.extra_tags
-                                                .natural_sort_by(&:title),
-                                   inspection: inspection } %>
+                                                .natural_sort_by(&:title) } %>
           </li>
           <li>
             <h6>
@@ -86,8 +84,7 @@
             </h6>
             <%= render partial: "tags/list",
                        locals: { tags: lecture.deferred_tags
-                                              .natural_sort_by(&:title),
-                                 inspection: inspection } %>
+                                              .natural_sort_by(&:title) } %>
           </li>
         </ul>
       </div>

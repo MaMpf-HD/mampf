@@ -9,7 +9,7 @@
     <% term.lectures.each do |l| %>
       <li>
         <%= link_to l.title_teacher_info,
-                    inspect_lecture_path(l)  %>
+                    edit_or_inspect_lecture_path(l)  %>
       </li>
     <% end %>
   </ul>

@@ -6,7 +6,7 @@
     <% tag.courses.each do |c| %>
       <li>
         <%= link_to c.title,
-                    inspect_course_path(c)  %>
+                    edit_or_inspect_course_path(c)  %>
       </li>
     <% end %>
   </ul>
@@ -14,7 +14,7 @@
 <div class="col-6">
   <% tag.related_tags.each do |t| %>
     <%= link_to t.title,
-                inspect_tag_path(t),
+                edit_tag_path(t),
                 class:'badge badge-light' %>
   <% end %>
 </div>
@@ -26,15 +26,6 @@
      data-placement="bottom"
      title="Bearbeiten">
     <i class="far fa-edit">
-    </i>
-  </a>
-  <a href="<%= inspect_tag_path(tag) %>"
-     class="text-dark"
-     data-toggle="tooltip"
-     style="text-decoration: none;"
-     data-placement="bottom"
-     title="Ansehen">
-    <i class="far fa-eye">
     </i>
   </a>
 </div>

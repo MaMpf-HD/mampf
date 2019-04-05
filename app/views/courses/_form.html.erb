@@ -21,8 +21,6 @@
       </div>
     </div>
     <div class="col-3 text-center">
-      <%= link_to 'Ansehen', inspect_course_path(course),
-                  class: 'btn btn-primary my-1' %>
       <% if course.irrelevant? && current_user.admin %>
         <%= link_to 'Modul löschen', course_path, method: :delete,
                     data: { confirm: 'Bist Du sicher?' },

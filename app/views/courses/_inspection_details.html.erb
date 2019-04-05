@@ -83,7 +83,7 @@
               <% course.lectures_by_date.each do |l| %>
                 <li>
                   <%= link_to l.term_teacher_published_info,
-                              inspect_lecture_path(l) %>
+                              edit_or_inspect_lecture_path(l) %>
                 </li>
               <% end %>
             </ul>
@@ -110,7 +110,7 @@
             <ul  class="list-unstyled">
               <% course.preceding_courses.each do |c| %>
                 <li>
-                  <%= link_to c.title, inspect_course_path(c) %>
+                  <%= link_to c.title, edit_or_inspect_course_path(c) %>
                 </li>
               <% end %>
             </ul>

@@ -236,7 +236,7 @@
                       <div class="col-12 mt-2">
                         <% s.tags.includes(:lessons).each do |t| %>
                           <%= link_to shorten(t.title, 45),
-                                      tag_link(t, inspection),
+                                      edit_tag_path(t),
                                       id: 'lecture-' + dom_id(t),
                                       class: 'badge badge-light lecture-tag',
                                       title: (t.title if t.title.length > 45),

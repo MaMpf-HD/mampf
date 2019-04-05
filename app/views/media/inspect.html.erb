@@ -8,20 +8,21 @@
     </h4>
   </div>
   <div class="col-3 text-right">
-    <% if current_user.admin || @medium.edited_with_inheritance_by?(current_user)%>
-      <%= link_to 'Bearbeiten',
-                  edit_medium_path(@medium),
-                  class: 'btn btn-primary my-1' %>
-    <% end %>
     <% teachable_scope = @medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-      <%= link_to 'zum Modul',
-                  inspect_course_path(teachable_scope),
-                  class: 'btn btn-primary' %>
+      <a href="<%= edit_or_inspect_course_path(teachable_scope) %>"
+         class="fas fa-chalkboard-teacher fa-lg mr-3 text-dark"
+         style="text-decoration: none; "
+         data-toggle="tooltip"
+         title="zum Modul">
+      </a>
     <% else %>
-      <%= link_to 'zur Vorlesung',
-                  inspect_lecture_path(teachable_scope),
-                  class: 'btn btn-primary' %>
+      <a href="<%= edit_or_inspect_lecture_path(teachable_scope) %>"
+         class="fas fa-chalkboard-teacher fa-lg mr-3 text-dark"
+         style="text-decoration: none; "
+         data-toggle="tooltip"
+         title="zur Vorlesung">
+      </a>
     <% end %>
   </div>
 </div>
@@ -117,7 +118,7 @@
           </div>
           <div class="col-8">
             <%= render partial: 'tags/list',
-                       locals: { tags: @medium.tags, inspection: true} %>
+                       locals: { tags: @medium.tags } %>
           </div>
         </div>
         <% end %>

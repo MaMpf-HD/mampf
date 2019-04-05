@@ -134,8 +134,6 @@ $(document).on 'turbolinks:load', ->
       action = $cyContainer.data('action')
       if action == 'edit'
         window.location.href = Routes.edit_tag_path(node.id())
-      else if action == 'inspect'
-        window.location.href = Routes.inspect_tag_path(node.id())
       else
         window.location.href = Routes.tag_path(node.id())
       return

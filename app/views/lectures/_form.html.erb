@@ -20,15 +20,8 @@
           Veröffentlichen
         </button>
       <% end %>
-      <% if inspection_and_editor?(inspection, lecture) %>
-        <%= link_to 'Bearbeiten', edit_lecture_path(lecture),
-                     class: 'btn btn-primary my-1' %>
-      <% elsif !inspection %>
-        <%= link_to 'Ansehen', inspect_lecture_path(lecture),
-                    class: 'btn btn-primary my-1' %>
-      <% end %>
       <%= link_to 'zum Modul',
-                  inspect_or_edit_course_from_lecture(inspection, lecture),
+                  edit_or_inspect_course_path(lecture.course),
                   class: 'btn btn-primary' %>
       <% if lecture_deletable?(lecture, inspection) %>
         <%= link_to 'Vorlesung löschen', lecture_path, method: :delete,
@@ -74,7 +67,8 @@
     </div>
     <div class="col-12">
       <%= render partial: 'lectures/forum',
-                 locals: { lecture: lecture } %>
+                 locals: { lecture: lecture,
+                           inspection: inspection } %>
     </div>
     <div class="col-12">
       <%= render partial: 'lectures/preferences',

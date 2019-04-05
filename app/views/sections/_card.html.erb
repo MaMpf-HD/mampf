@@ -18,16 +18,9 @@
     <ul>
       <% sections.each do |s| %>
         <li>
-          <% if !inspection && (current_user.admin ||
-                current_user.in?(s.lecture.editors_with_inheritance)) %>
-            <%= link_to s.lecture.title,
-                        edit_lecture_path(s.lecture),
-                        class: lectures_color(s.lecture) %>
-          <% else %>
-            <%= link_to s.lecture.title,
-                        inspect_lecture_path(s.lecture),
-                        class: lectures_color(s.lecture) %>
-          <% end %>
+          <%= link_to s.lecture.title,
+                      edit_or_inspect_lecture_path(s.lecture),
+                      class: lectures_color(s.lecture) %>
           :
           <%= s.to_label %>
         </li>

@@ -26,6 +26,9 @@
       <div class="card-body">
         <div class="row">
           <div class="col-4" id="forum-buttons">
+            <% if inspection %>
+              Forum: <%= lecture.forum? ? 'Ja' : 'Nein' %>
+            <% else %>
             <% if lecture.forum? %>
               <% if lecture.forum.locked %>
                 <%= link_to 'Forum entsperren', unlock_forum_path(lecture),
@@ -39,6 +42,7 @@
             <% else %>
               <%= link_to 'Forum anlegen', add_forum_path(lecture),
                           class: 'btn btn-primary' %>
+            <% end %>
             <% end %>
           </div>
         </div>

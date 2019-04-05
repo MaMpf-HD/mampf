@@ -92,12 +92,6 @@
            kann nicht rückgängig gemacht werden.">
         </a>
       <% end %>
-      <a href="<%= inspect_medium_path(medium) %>"
-         class="far fa-eye fa-lg text-dark mr-3"
-         style="text-decoration: none; "
-         data-toggle="tooltip"
-         title="Ansehen">
-      </a>
     <% end %>
     <% teachable_scope = medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>

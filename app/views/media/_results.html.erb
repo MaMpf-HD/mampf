@@ -26,7 +26,7 @@
   </div>
   <div class="col-1 text-light">
     <strong>
-      Aktionen
+      Aktion
     </strong>
   </div>
 </div>
@@ -40,19 +40,19 @@
       <div class="col-2">
         <% if m.teachable_type == 'Course' %>
           <%= link_to m.teachable.short_title,
-                      inspect_course_path(m.teachable) %>
+                      edit_or_inspect_course_path(m.teachable) %>
         <% elsif m.teachable_type == 'Lecture' %>
           <%= link_to m.teachable.short_title,
-                      inspect_lecture_path(m.teachable) %>
+                      edit_or_inspect_lecture_path(m.teachable) %>
         <% else %>
           <%= link_to m.teachable.short_title_with_lecture_date,
-                      inspect_lesson_path(m.teachable) %>
+                      edit_or_inspect_lecture_path(m.teachable.lecture) %>
         <% end %>
       </div>
       <div class="col-4">
         <% m.tags.each do |t| %>
           <%= link_to t.short_title,
-                      inspect_tag_path(t),
+                      edit_tag_path(t),
                       class:'badge badge-light',
                       data: { toggle: 'tooltip', placement: 'top'},
                       title: t.title %>
@@ -81,16 +81,17 @@
             <i class="far fa-edit">
             </i>
           </a>
+        <% else %>
+          <a href="<%= inspect_medium_path(m) %>"
+             class="text-dark"
+             data-toggle="tooltip"
+             style="text-decoration: none;"
+             data-placement="bottom"
+             title="Ansehen">
+            <i class="far fa-eye">
+            </i>
+          </a>
         <% end %>
-        <a href="<%= inspect_medium_path(m) %>"
-           class="text-dark"
-           data-toggle="tooltip"
-           style="text-decoration: none;"
-           data-placement="bottom"
-           title="Ansehen">
-          <i class="far fa-eye">
-          </i>
-        </a>
       </div>
     </div>
   <% end %>

@@ -32,7 +32,7 @@
             <li>
               <% lesson.media.each do |m| %>
                 <%= link_to m.sort_de + ', ' + m.local_info,
-                            inspect_medium_path(m),
+                            edit_or_inspect_medium_path(m),
                             class: textcolor(m) %>
               <% end %>
             </li>
@@ -163,8 +163,7 @@
       </div>
       <div class="col-12">
         <%= render partial: 'tags/list',
-                   locals: { tags: lesson.tags,
-                             inspection: true } %>
+                   locals: { tags: lesson.tags } %>
       </div>
     </div>
   <% else %>
