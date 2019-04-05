@@ -40,7 +40,7 @@ class Ability
       # anyone should be able to get a sidebar and see the announcements
       can [:render_sidebar, :organizational, :show_announcements], Lecture
 
-      can :update, Course
+      can :display, Course
 
       # editors are only allowed to edit, not to destroy courses
       can :update, Course do |course|
