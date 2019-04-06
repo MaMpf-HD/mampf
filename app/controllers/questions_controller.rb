@@ -26,7 +26,7 @@ class QuestionsController < ApplicationController
   def set_question
     @question = Question.find_by_id(params[:id])
     return if @question.present?
-    redirect_to questions_path, alert: 'Eine Frage mit der angeforderten id '\
+    redirect_to :root, alert: 'Eine Frage mit der angeforderten id '\
                                        'existiert nicht.'
   end
 
