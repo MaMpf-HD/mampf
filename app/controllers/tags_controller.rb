@@ -19,7 +19,8 @@ class TagsController < ApplicationController
     set_related_tags_for_user
     @lectures = current_user.filter_lectures(@tag.lectures)
     @media = current_user.filter_media(@tag.media
-                                           .where.not(sort: 'KeksQuestion'))
+                                           .where.not(sort: ['KeksQuestion',
+                                                             'KeksRemark']))
                          .select(&:visible?)
     render layout: 'application_no_sidebar'
   end

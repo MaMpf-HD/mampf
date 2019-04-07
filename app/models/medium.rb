@@ -204,7 +204,8 @@ class Medium < ApplicationRecord
   # returns the array of all media (by title), together with their ids
   # is used in options_for_select in form helpers.
   def self.select_by_name
-    Medium.includes(:teachable).all.map { |m| [m.title_for_viewers, m.id] }
+    Medium.where.not(sort: ['KeksQuestion', 'KeksRemark'])
+          .includes(:teachable).all.map { |m| [m.title_for_viewers, m.id] }
   end
 
   # returns the array of media sorts specified by the search params
@@ -713,6 +714,7 @@ class Medium < ApplicationRecord
   end
 
   def create_self_item
+    return if sort.in?(['KeksQuestion', 'KeksRemark'])
     Item.create(sort: 'self', medium: self)
   end
 
