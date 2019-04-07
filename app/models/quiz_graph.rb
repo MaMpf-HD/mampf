@@ -258,4 +258,22 @@ class QuizGraph
     end
     add_colored_edge(graph, nodes[edge[0]], qed, color)
   end
+
+  def self.build_from_questions(question_ids)
+    vertices = {}
+    edges = {}
+    default_table = {}
+    size = question_ids.size
+    question_ids.each_with_index do |q,i|
+      j = i + 1
+      k =   j < size ? j + 1 : -1
+      question = Question.find_by_id(q)
+      vertices[j] = { type: 'Question', id: q }
+      edges[[j, k]] = [question.answer_scheme]
+      edges[[j, 0]] = question.answer_table - [question.answer_scheme]
+      default_table[j] = k
+    end
+    QuizGraph.new(vertices: vertices, edges: edges, root: 1,
+                  default_table: default_table, hide_solution: [])
+  end
 end
