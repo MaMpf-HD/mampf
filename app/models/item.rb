@@ -203,6 +203,12 @@ class Item < ApplicationRecord
     manuscript_link_generic
   end
 
+  def quiz_link
+    return unless quiz?
+    return quiz_link_generic
+  end
+
+
   # if the associated medium contains an external link, it is returned
   def medium_link
     return unless medium_link?
@@ -244,6 +250,10 @@ class Item < ApplicationRecord
 
   def manuscript?
     medium.present? && medium.manuscript.present?
+  end
+
+  def quiz?
+    medium.present? && medium.type == 'Quiz' && medium.quiz_graph.present?
   end
 
   def medium_link?
@@ -386,6 +396,10 @@ class Item < ApplicationRecord
   def manuscript_link_page
     Rails.application.routes.url_helpers
          .display_medium_path(medium.id, page: page)
+  end
+
+  def quiz_link_generic
+    Rails.application.routes.url_helpers.take_quiz_path(medium.id)
   end
 
 

@@ -299,6 +299,19 @@
           </span>
         </div>
         <div class="col-3 text-right"
+             id="quiz-ref"
+             style="display: <%= show(referral.quiz?) %>">
+          Quiz
+          <span id='quiz-test'>
+            <% if referral.quiz? %>
+              <%= link_to 'Test',
+                          referral.item.quiz_link,
+                          class: 'badge badge-info',
+                          target: :blank %>
+            <% end %>
+          </span>
+        </div>
+        <div class="col-3 text-right"
              id="medium-link-ref"
              style="display: <%= show(referral.medium_link?) %>">
           externer Link

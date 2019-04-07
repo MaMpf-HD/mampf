@@ -245,6 +245,14 @@ setupHypervideo = ->
           target: '_blank')
         $manRef.append($manIcon)
         $manRef.hide() unless meta.manuscript?
+        $quizIcon = $('<i/>',
+          text: 'videogame_asset'
+          class: 'material-icons')
+        $quizRef = $('<a/>',
+          href: meta.quiz
+          target: '_blank')
+        $quizRef.append($quizIcon)
+        $quizRef.hide() unless meta.quiz?
         $extIcon = $('<i/>',
           text: 'link'
           class: 'material-icons')
@@ -263,7 +271,7 @@ setupHypervideo = ->
         $details.append($link).append($description).append($explanation)
         $icons = $('<div/>',
           style: 'flex-shrink: 3; display: flex; flex-direction: column;')
-        $icons.append($videoRef).append($manRef).append($extRef)
+        $icons.append($videoRef).append($manRef).append($quizRef).append($extRef)
         $listItem.append($details).append($icons)
         $metaList.append($listItem)
         $videoRef.on 'click', ->

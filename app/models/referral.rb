@@ -34,7 +34,8 @@ class Referral < ApplicationRecord
   def vtt_properties
     link = item.link.present? ? item.link : item.medium_link
     { 'video' => item.video_link, 'manuscript' => item.manuscript_link,
-      'link' => link, 'reference' => item.vtt_meta_reference(medium),
+      'link' => link, 'quiz' => item.quiz_link,
+      'reference' => item.vtt_meta_reference(medium),
       'text' => item.vtt_text, 'explanation' => vtt_explanation }.compact
   end
 
@@ -66,6 +67,11 @@ class Referral < ApplicationRecord
 
   def manuscript?
     return true if item.present? && item.manuscript?
+    false
+  end
+
+  def quiz?
+    return true if item.present? && item.quiz?
     false
   end
 

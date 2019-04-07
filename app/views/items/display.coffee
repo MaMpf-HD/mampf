@@ -11,6 +11,7 @@ $('#referral_explanation').removeClass('is-invalid')
 $('#explanation-error').empty()
 $('#video-test').empty()
 $('#manuscript-test').empty()
+$('#quiz-test').empty()
 $('#medium-link-test').empty()
 
 # fill explanation text area
@@ -47,6 +48,19 @@ $('#manuscript-test')
                        target: :blank %>')
 <% else %>
 $('#manuscript-ref').hide()
+<% end %>
+
+# if item belongs to a medium with quiz, show this and provide link
+# to a button that provides a test for the quiz link
+<% if @item.medium.quiz_graph.present? %>
+$('#quiz-ref').show()
+$('#quiz-test')
+  .append('<%= link_to "Test",
+                       @item.quiz_link,
+                       class: "badge badge-info",
+                       target: :blank %>')
+<% else %>
+$('#quiz-ref').hide()
 <% end %>
 
 # if item belongs to a medium with an external link, show this and provide link
