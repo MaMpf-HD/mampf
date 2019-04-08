@@ -92,7 +92,7 @@ class Medium < ApplicationRecord
   scope :published, -> { where.not(released: nil) }
   scope :locally_visible, -> { where(released: ['all', 'users']) }
   scope :proper, -> { where.not(sort: 'RandomQuiz') }
-  scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 10.minutes.ago) }
+  scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 1.day.ago) }
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum

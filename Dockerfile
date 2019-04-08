@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y nodejs ffmpeg imagemagick pdftk ghostsc
 
 COPY ./.delete_upload_caches.sh /etc/cron.weekly/delete_upload_caches.sh
 RUN chmod 555 /etc/cron.weekly/delete_upload_caches.sh
+COPY ./.destroy_expired_quizzes.sh /etc/cron.daily/destroy_expired_quizzes.sh
+RUN chmod 555 /etc/cron.daily/destroy_expired_quizzes.sh
 COPY ./Gemfile /usr/src/app
 COPY ./Gemfile.lock /usr/src/app
 RUN bundle install
