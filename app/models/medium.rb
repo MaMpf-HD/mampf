@@ -4,7 +4,7 @@ class Medium < ApplicationRecord
   include ActiveModel::Dirty
 
   # a teachable is a course/lecture/lesson
-  belongs_to :teachable, polymorphic: true
+  belongs_to :teachable, polymorphic: true, optional: true
 
   # a teachable may belong to a quizzable (quiz/question/remark)
   belongs_to :quizzable, polymorphic: true, optional: true
@@ -47,19 +47,21 @@ class Medium < ApplicationRecord
   include ScreenshotUploader[:screenshot]
   include PdfUploader[:manuscript]
 
-  # if an external reference is given, checkif it is (at least syntactically)
+  # if an external reference is given, check if it is (at least syntactically)
   # a valid http(s) adress
   validates :external_reference_link, http_url: true,
                                       if: :external_reference_link?
   # the other validations are pretty straightforward
   validates :sort, presence: { message: 'Es muss ein Typ angegeben werden.' }
   validates :teachable, presence: { message: 'Es muss eine Assoziation ' \
-                                             'angegeben werden.' }
+                                             'angegeben werden.' },
+            if: :proper_medium?
   validates :description, presence: { message: 'Es muss eine Beschreibung' \
                                                'angegeben werden.' },
                           unless: :undescribable?
   validates :editors, presence: { message: 'Es muss ein Editor ' \
-                                           'angegeben werden.' }
+                                           'angegeben werden.' },
+                      if: :proper_medium?
   # make sure that a lecture cannot have two or more media of type 'Script'
   validate :at_most_one_manuscript
   # media of type 'Script' can only be associated to lectures
@@ -89,6 +91,8 @@ class Medium < ApplicationRecord
   # (they may not be globally visible as their lecture may be unpublished)
   scope :published, -> { where.not(released: nil) }
   scope :locally_visible, -> { where(released: ['all', 'users']) }
+  scope :proper, -> { where.not(sort: 'RandomQuiz') }
+  scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 10.minutes.ago) }
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
@@ -775,6 +779,11 @@ class Medium < ApplicationRecord
   def no_tags_for_scripts
     return true unless sort == 'Script' && tags.any?
     errors.add(:tags, 'Ein Skript darf keine Tags haben.')
+    false
+  end
+
+  def proper_medium?
+    return unless sort == 'RandomQuiz'
     false
   end
 end

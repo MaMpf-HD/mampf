@@ -261,7 +261,7 @@ class MediaController < ApplicationController
 
   def set_medium
     @medium = Medium.find_by_id(params[:id])&.becomes(Medium)
-    return if @medium.present?
+    return if @medium.present? && @medium.sort != 'RandomQuiz'
     redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert ' \
                               'nicht.'
   end

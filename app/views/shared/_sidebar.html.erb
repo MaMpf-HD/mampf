@@ -76,12 +76,9 @@
   </li>
   <li class="nav-item">
     <% if (lecture && !lecture.keks?) || (!lecture && !course.strict_keks?) %>
-      <a href="<%= DefaultSetting::KEKS_LINK %>"
-         class="nav-link"
-         target="_blank">
-         <%= t('categories.quiz.plural') %>
-         <i class="fas fa-external-link-alt fa-xs"></i>
-      </a>
+      <span class="nav-link disabled">
+        <%= t('categories.quiz.plural') %>
+      </span>
     <% else %>
       <%= link_to t('categories.quiz.plural'),
                     course_food_path(course_id: course.id,

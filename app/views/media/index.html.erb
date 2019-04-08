@@ -1,4 +1,5 @@
-<%= render partial: 'media_alerts' %>
+<%= render partial: 'media/media_alerts',
+           locals: { course: @course}  %>
 <% if @media.any? %>
 <div class="row pb-2">
   <div class="col-sm-12 col-md-12 col-lg-6">

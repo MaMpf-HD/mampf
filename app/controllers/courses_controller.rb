@@ -1,7 +1,7 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :check_for_course, only: [:show]
-  before_action :set_course, only: [:display]
+  before_action :set_course, only: [:display, :take_random_quiz]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   authorize_resource
   layout 'administration'
@@ -64,6 +64,11 @@ class CoursesController < ApplicationController
 
   def display
     render layout: 'application'
+  end
+
+  def take_random_quiz
+    random_quiz = @course.create_random_quiz!
+    redirect_to take_quiz_path(random_quiz)
   end
 
   private

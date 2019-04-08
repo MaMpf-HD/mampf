@@ -8,17 +8,6 @@ class QuizzesController < ApplicationController
   def new
   end
 
-  def create
-    label = params[:quiz][:label]
-    quiz = Quiz.create_prefilled(label)
-    if quiz
-      redirect_to edit_quiz_path(quiz)
-      return
-    end
-    flash[:error] = 'Fehler beim Anlegen des Quizzes!'
-    redirect_to quizzes_path
-  end
-
   def edit
     @quiz.save_png!
   end
