@@ -1,7 +1,7 @@
 <div class="row bg-mdb-color-lighten-2 mx-2 py-3">
-  <div class="col-2 text-light">
+  <div class="col-4 text-light">
     <strong>
-      Ident
+      Beschreibung
     </strong>
   </div>
   <div class="col-2 text-light">
@@ -19,11 +19,6 @@
       Editoren
     </strong>
   </div>
-  <div class="col-2 text-light">
-    <strong>
-      Details
-    </strong>
-  </div>
   <div class="col-1 text-light">
     <strong>
       Aktion
@@ -32,10 +27,11 @@
 </div>
 <div id="mediaTable">
   <% @media.each do |m| %>
+    <% cache m do %>
     <div class="row border-bottom mx-2"
          id="row-medium-<%= m.id %>">
-      <div class="col-2">
-        <%= m.compact_info %>
+      <div class="col-4">
+        <%= m.title_for_viewers %>
       </div>
       <div class="col-2">
         <% if m.teachable_type == 'Course' %>
@@ -67,9 +63,6 @@
           <% end %>
         </ul>
       </div>
-      <div class="col-2">
-        <%= m.details %>
-      </div>
       <div class="col-1">
         <% if medium_editor?(m) %>
           <a href="<%= edit_medium_path(m) %>"
@@ -94,5 +87,6 @@
         <% end %>
       </div>
     </div>
+  <% end %>
   <% end %>
 </div>

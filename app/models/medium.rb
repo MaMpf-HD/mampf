@@ -224,9 +224,18 @@ class Medium < ApplicationRecord
     media = Medium.where(sort: Medium.search_sorts(search_params),
                          teachable: Course.search_teachables(search_params))
     tags = Tag.search_tags(search_params)
-    editors = User.search_editors(search_params)
-    media.select { |m| m.tags.empty? || (m.tags & tags).present? }
-         .select { |m| (m.editors & editors).present? }
+    editors = User.search_editors(search_params).pluck(:id)
+    tagged_media = MediumTagJoin.where(medium: media, tag: tags)
+                                .pluck(:medium_id).uniq
+    if search_params[:all_tags] == '1'
+      untagged_media = media.pluck(:id) - MediumTagJoin.pluck(:medium_id).uniq
+      tagged_media += untagged_media
+    end
+    edited_media = EditableUserJoin.where(editable_id: tagged_media,
+                                          editable_type: 'Medium',
+                                          user_id: editors)
+                                   .pluck(:editable_id).uniq
+    Medium.where(id: edited_media)
   end
 
   # protected items are items of type 'pdf_destination' inside associated to
