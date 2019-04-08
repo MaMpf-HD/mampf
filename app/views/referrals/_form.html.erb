@@ -229,7 +229,7 @@
       <div class="form-group form-row">
         <div class="col-2">
         </div>
-        <div class="col-2">
+        <div class="col-10">
           <i class="far fa-question-circle helpdesk"
              tabindex="-1"
              data-toggle="popover"
@@ -272,57 +272,42 @@
              solange sich in dem pdf nichts ändert, wird die Referenz aber
              nichts bewirken, d.h. auf die erste Seite zeigen.">
           </i>
-        </div>
-        <div class="col-2 text-right"
-             id="video-ref"
-             style="display: <%= show(referral.video?) %>">
-          Video
-          <span id="video-test">
-            <% if referral.video? %>
-              <%= link_to 'Test',
-                          referral.item.video_link,
-                          class: 'badge badge-info',
-                          target: :blank %>
-            <% end %>
-          </span>
-        </div>
-        <div class="col-3 text-right"
-             id="manuscript-ref"
-             style="display: <%= show(referral.manuscript?) %>">
-          Manuskript
-          <span id='manuscript-test'>
-            <% if referral.manuscript? %>
-              <%= link_to 'Test', referral.item.manuscript_link,
-                          class: 'badge badge-info',
-                          target: :blank %>
-            <% end %>
-          </span>
-        </div>
-        <div class="col-3 text-right"
-             id="quiz-ref"
-             style="display: <%= show(referral.quiz?) %>">
-          Quiz
-          <span id='quiz-test'>
-            <% if referral.quiz? %>
-              <%= link_to 'Test',
-                          referral.item.quiz_link,
-                          class: 'badge badge-info',
-                          target: :blank %>
-            <% end %>
-          </span>
-        </div>
-        <div class="col-3 text-right"
-             id="medium-link-ref"
-             style="display: <%= show(referral.medium_link?) %>">
-          externer Link
-          <span id='medium-link-test'>
-            <% if referral.medium_link? %>
-              <%= link_to 'Test',
-                          referral.item.medium_link,
-                          class: 'badge badge-info',
-                          target: :blank %>
-            <% end %>
-          </span>
+          <a id="video-ref"
+             href="<%= referral.item.video_link %>"
+             class="fas fa-film fa-lg mx-2 text-dark"
+             style="text-decoration: none;
+                    display: <%= show_no_block(referral.video?) %>"
+             data-toggle="tooltip"
+             title="Video"
+             target="_blank">
+          </a>
+          <a id="manuscript-ref"
+             href="<%= referral.item.manuscript_link %>"
+             class="far fa-file-pdf fa-lg mx-2 text-dark"
+             style="text-decoration: none;
+                    display: <%= show_no_block(referral.manuscript?) %>"
+             data-toggle="tooltip"
+             title="Manuskript"
+             target="_blank">
+          </a>
+          <a id="quiz-ref"
+             href="<%= referral.item.quiz_link %>"
+             class="fas fa-gamepad fa-lg mx-2 text-dark"
+             style="text-decoration: none;
+                    display: <%= show_no_block(referral.quiz?) %>"
+             data-toggle="tooltip"
+             title="Quiz"
+             target="_blank">
+          </a>
+          <a id="medium-link-ref"
+             href="<%= referral.item.medium_link %>"
+             class="fas fa-link fa-lg mx-2 text-dark"
+             style="text-decoration: none;
+                    display: <%= show_no_block(referral.medium_link?) %>"
+             data-toggle="tooltip"
+             title="externer Link"
+             target="_blank">
+          </a>
         </div>
       </div>
       <div class="row mb-3">
