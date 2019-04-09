@@ -140,7 +140,7 @@ class Item < ApplicationRecord
   # Result might look like this:
   # "SS 17, Bem. 29.13 zu freien Moduln"
   def title_within_course
-    return '' unless medium.present?
+    return '' unless medium.present? && medium.proper?
     return local_reference if medium.teachable_type == 'Course'
     medium.teachable.media_scope.term.to_label_short + ', ' + local_reference
   end

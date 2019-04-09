@@ -55,13 +55,13 @@ class Medium < ApplicationRecord
   validates :sort, presence: { message: 'Es muss ein Typ angegeben werden.' }
   validates :teachable, presence: { message: 'Es muss eine Assoziation ' \
                                              'angegeben werden.' },
-            if: :proper_medium?
+            if: :proper?
   validates :description, presence: { message: 'Es muss eine Beschreibung' \
                                                'angegeben werden.' },
                           unless: :undescribable?
   validates :editors, presence: { message: 'Es muss ein Editor ' \
                                            'angegeben werden.' },
-                      if: :proper_medium?
+                      if: :proper?
   # make sure that a lecture cannot have two or more media of type 'Script'
   validate :at_most_one_manuscript
   # media of type 'Script' can only be associated to lectures
@@ -113,6 +113,7 @@ class Medium < ApplicationRecord
       'Sesam' => I18n.t('categories.sesam.singular'),
       'KeksQuestion' => I18n.t('categories.question.singular'),
       'KeksQuiz' => I18n.t('categories.quiz.singular'),
+      'RandomQuiz' => I18n.t('categories.randomquiz.singular'),
       'KeksRemark' => I18n.t('categories.remark.singular'),
       'Nuesse' => I18n.t('categories.exercises.singular'),
       'Erdbeere' => I18n.t('categories.erdbeere'),
@@ -193,7 +194,7 @@ class Medium < ApplicationRecord
   def self.filter_primary(filtered_media, primary_lecture)
     return [] unless primary_lecture.present?
     filtered_media.select do |m|
-      m.teachable.present? && m.teachable.lecture == primary_lecture
+      m.teachable && m.teachable.lecture == primary_lecture
     end
   end
 
@@ -201,14 +202,14 @@ class Medium < ApplicationRecord
   # to a given course, its lectures their lessons
   def self.filter_secondary(filtered_media, course)
     filtered_media.select do |m|
-      m.teachable.present? && m.teachable.course == course
+      m.teachable && m.teachable.course == course
     end
   end
 
   # returns the array of all media (by title), together with their ids
   # is used in options_for_select in form helpers.
   def self.select_by_name
-    Medium.where.not(sort: ['KeksQuestion', 'KeksRemark'])
+    Medium.where.not(sort: ['KeksQuestion', 'KeksRemark', 'RandomQuiz'])
           .includes(:teachable).all.map { |m| [m.title_for_viewers, m.id] }
   end
 
@@ -225,8 +226,8 @@ class Medium < ApplicationRecord
   # returns search results for the media search with search_params provided
   # by the controller
   def self.search_by_attributes(search_params)
-    media = Medium.where(sort: Medium.search_sorts(search_params),
-                         teachable: Course.search_teachables(search_params))
+    media = Medium.proper.where(sort: Medium.search_sorts(search_params),
+                                teachable: Course.search_teachables(search_params))
     tags = Tag.search_tags(search_params)
     editors = User.search_editors(search_params).pluck(:id)
     tagged_media = MediumTagJoin.where(medium: media, tag: tags)
@@ -638,7 +639,7 @@ class Medium < ApplicationRecord
   # returns info made from sort, teachable title and description
   def title_for_viewers
     Rails.cache.fetch("#{cache_key}/title_for_viewers") do
-      sort_de + ', ' + teachable.title_for_viewers +
+      sort_de + ', ' + teachable&.title_for_viewers.to_s +
         (description.present? ? ', ' + description : '')
     end
   end
@@ -663,6 +664,11 @@ class Medium < ApplicationRecord
         }
       end
     end
+  end
+
+  def proper?
+    return true unless sort == 'RandomQuiz'
+    false
   end
 
   private
@@ -716,13 +722,13 @@ class Medium < ApplicationRecord
 
   def filter_primary(filtered_media, primary_lecture)
     filtered_media.select do |m|
-      m.teachable.present? && m.teachable.lecture == primary_lecture
+      m.teachable && m.teachable.lecture == primary_lecture
     end
   end
 
   def filter_secondary(filtered_media, course)
     filtered_media.select do |m|
-      m.teachable.present? && m.teachable.course == course
+      m.teachable && m.teachable.course == course
     end
   end
 
@@ -779,11 +785,6 @@ class Medium < ApplicationRecord
   def no_tags_for_scripts
     return true unless sort == 'Script' && tags.any?
     errors.add(:tags, 'Ein Skript darf keine Tags haben.')
-    false
-  end
-
-  def proper_medium?
-    return unless sort == 'RandomQuiz'
     false
   end
 end

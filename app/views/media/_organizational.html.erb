@@ -21,7 +21,7 @@
           <%= medium.description %>
         </li>
       <% end %>
-      <% if medium.teachable_type == 'Course' && medium.teachable.present? %>
+      <% if medium.teachable_type == 'Course' && medium.teachable %>
         <li>
           Kurs:
           <% if current_user.courses.include?(medium.teachable) %>
@@ -35,7 +35,7 @@
           <% end %>
         </li>
       <% end %>
-      <% if medium.teachable_type == 'Lecture' && medium.teachable.present? %>
+      <% if medium.teachable_type == 'Lecture' && medium.teachable %>
         <li>
           Vorlesung:
           <% if current_user.lectures.include?(medium.teachable) %>
@@ -49,7 +49,7 @@
           <% end %>
         </li>
       <% end %>
-      <% if medium.teachable_type == 'Lesson' && medium.teachable.present? %>
+      <% if medium.teachable_type == 'Lesson' && medium.teachable %>
         <% if current_user.lectures.include?(medium.teachable.lecture) %>
           <li>
             Vorlesung:

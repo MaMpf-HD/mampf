@@ -265,9 +265,9 @@ class Course < ApplicationRecord
   # by inheritance (i.e. directly and media which are associated to lectures or
   # lessons associated to this course)
   def media_with_inheritance
-    Medium.proper.where(id: Medium.proper.includes(:teachable)
-                                  .select { |m| m.teachable.course == self }
-                                  .map(&:id))
+    Medium.where(id: Medium.proper.includes(:teachable)
+                           .select { |m| m.teachable.course == self }
+                           .map(&:id))
   end
 
   def media_items_with_inheritance
@@ -331,7 +331,8 @@ class Course < ApplicationRecord
   end
 
   def create_random_quiz!
-    question_ids = Question.where(teachable: [self] + [lectures.published])
+    question_ids = Question.where(teachable: [self] + [lectures.published],
+                                  independent: true)
                            .select { |q| q.answers.count > 1 }
                            .sample(5).map(&:id)
     quiz_graph = QuizGraph.build_from_questions(question_ids)

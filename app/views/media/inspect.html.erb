@@ -8,7 +8,7 @@
     </h4>
   </div>
   <div class="col-3 text-right">
-    <% teachable_scope = @medium.teachable.media_scope %>
+    <% teachable_scope = @medium.teachable&.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
       <a href="<%= edit_or_inspect_course_path(teachable_scope) %>"
          class="fas fa-chalkboard-teacher fa-lg mr-3 text-dark"

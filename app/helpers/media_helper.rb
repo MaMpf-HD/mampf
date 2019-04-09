@@ -27,6 +27,7 @@ module MediaHelper
 
   # create text for notification about new medium in notification dropdown menu
   def medium_notification_item_header(medium)
+    return unless medium.proper?
     'Neues Medium in ' + medium.teachable.media_scope.title_for_viewers
   end
 
@@ -55,7 +56,7 @@ module MediaHelper
   end
 
   def section_selection(medium)
-    medium.teachable.lecture&.section_selection
+    medium.teachable.&lecture&.section_selection
   end
 
   def preselected_sections(medium)

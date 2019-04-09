@@ -111,7 +111,8 @@ class MediaController < ApplicationController
   def publish
     @medium.update(released: 'all')
     # create notification about creation of medium to all subscribers
-    create_notifications unless @medium.sort.in?(['KeksQuestion', 'KeksRemark'])
+    create_notifications unless @medium.sort.in?(['KeksQuestion', 'KeksRemark',
+                                                  'RandomQuiz'])
     redirect_to edit_medium_path(@medium)
   end
 

@@ -12,7 +12,7 @@ module ItemsHelper
   # as is used in options_for_select
   def select_sections(item)
     [['kein zugeordneter Abschnitt aus der Datenbank', '']] +
-      item.medium.teachable.section_selection
+      item.medium.teachable&.section_selection
   end
 
   # returns the list of script_items for the given item,

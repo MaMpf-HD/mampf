@@ -273,7 +273,7 @@
              nichts bewirken, d.h. auf die erste Seite zeigen.">
           </i>
           <a id="video-ref"
-             href="<%= referral.item.video_link %>"
+             href="<%= referral.item&.video_link %>"
              class="fas fa-film fa-lg mx-2 text-dark"
              style="text-decoration: none;
                     display: <%= show_no_block(referral.video?) %>"
@@ -282,7 +282,7 @@
              target="_blank">
           </a>
           <a id="manuscript-ref"
-             href="<%= referral.item.manuscript_link %>"
+             href="<%= referral.item&.manuscript_link %>"
              class="far fa-file-pdf fa-lg mx-2 text-dark"
              style="text-decoration: none;
                     display: <%= show_no_block(referral.manuscript?) %>"
@@ -291,7 +291,7 @@
              target="_blank">
           </a>
           <a id="quiz-ref"
-             href="<%= referral.item.quiz_link %>"
+             href="<%= referral.item&.quiz_link %>"
              class="fas fa-gamepad fa-lg mx-2 text-dark"
              style="text-decoration: none;
                     display: <%= show_no_block(referral.quiz?) %>"
@@ -300,7 +300,7 @@
              target="_blank">
           </a>
           <a id="medium-link-ref"
-             href="<%= referral.item.medium_link %>"
+             href="<%= referral.item&.medium_link %>"
              class="fas fa-link fa-lg mx-2 text-dark"
              style="text-decoration: none;
                     display: <%= show_no_block(referral.medium_link?) %>"

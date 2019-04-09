@@ -163,7 +163,7 @@ class Lecture < ApplicationRecord
   # returns the ARel of all media whose teachable's lecture is the given lecture
   def media_with_inheritance
     Medium.where(id: Medium.includes(:teachable)
-                           .select { |m| m.teachable.lecture == self }
+                           .select { |m| m.teachable&.lecture == self }
                            .map(&:id))
   end
 
@@ -399,7 +399,7 @@ class Lecture < ApplicationRecord
   def lecture_lesson_results(filtered_media)
     lecture_results = filtered_media.select { |m| m.teachable == self }
     lesson_results = filtered_media.select do |m|
-      m.teachable_type == 'Lesson' && m.teachable.present? &&
+      m.teachable_type == 'Lesson' && m.teachable &&
         m.teachable.lecture == self
     end
     lecture_results + lesson_results.sort_by { |m| m.teachable.lesson.number }
