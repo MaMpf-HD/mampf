@@ -144,7 +144,7 @@ class LecturesController < ApplicationController
                                     :start_chapter, :absolute_numbering,
                                     :start_section, :organizational,
                                     :organizational_concept, :muesli,
-                                    :content_mode,
+                                    :content_mode, :passphrase,
                                     editor_ids: [])
   end
 

@@ -85,21 +85,22 @@ module ApplicationHelper
   # Selects all media associated to lectures and lessons from a given list
   # of media
   def lecture_media(media)
-    media.select { |m| m.teachable_type.in?(['Lecture', 'Lesson']) }
+    media.where(teachable_type: ['Lecture', 'Lesson'] )
   end
 
   # Selects all media associated to courses from a given list of media
   def course_media(media)
-    media.select { |m| m.teachable_type == 'Course' }
+    media.where(teachable_type: 'Course')
   end
 
   # For a given list of media, returns the array of courses and lectures
   # the given media are associated to.
   def lecture_course_teachables(media)
-    lecture_ids =  lecture_media(media).map { |m| m.teachable.lecture }
-                                       .map(&:id).uniq
-    course_ids = course_media(media).map { |m| m.teachable.course }
-                                    .map(&:id).uniq
+    lecture_ids = Lecture.select do |l|
+      (l.media_with_inheritance.pluck(:id) & media.pluck(:id)).present?
+    end
+                         .uniq
+    course_ids = course_media(media).pluck(:teachable_id).uniq
     lectures = Lecture.where(id: lecture_ids)
     courses = Course.where(id: course_ids)
     courses + lectures
@@ -110,11 +111,16 @@ module ApplicationHelper
   # (a) associated to the same given course
   # (b) associated to the given lecture or a lesson associated to the given
   # lecture
-  def relevant_media(teachable, media)
+  def relevant_media(teachable, media, limit)
+    result = []
     if teachable.class == Course
-      return course_media(media).select { |m| m.course == teachable }
+      return media.where(teachable: teachable).order(:created_at)
+                                              .reverse_order
+                                              .first(limit)
     end
-    lecture_media(media).select { |m| m.teachable.lecture == teachable }
+    media_ids = (teachable.media_with_inheritance.pluck(:id) & media.pluck(:id))
+                  .first(limit)
+    Medium.where(id: media_ids)
   end
 
   # splits an array into smaller parts

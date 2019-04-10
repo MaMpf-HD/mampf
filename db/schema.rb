@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_06_151823) do
+ActiveRecord::Schema.define(version: 2019_04_10_105555) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -146,6 +146,7 @@ ActiveRecord::Schema.define(version: 2019_04_06_151823) do
     t.boolean "muesli"
     t.text "released"
     t.text "content_mode"
+    t.text "passphrase"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end

@@ -104,6 +104,10 @@ class Lesson < ApplicationRecord
     'Sitzung ' + number.to_s + ' vom ' + date_de
   end
 
+  def restricted?
+    lecture.restricted?
+  end
+
   # more infos that can be extracted
 
   def term

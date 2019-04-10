@@ -243,6 +243,11 @@ class Medium < ApplicationRecord
     Medium.where(id: edited_media)
   end
 
+  def restricted?
+    return false unless teachable
+    teachable.restricted?
+  end
+
   # protected items are items of type 'pdf_destination' inside associated to
   # this medium that are referred to from other media or from an entry
   # within the table of contents of the video associated to this medium.

@@ -95,6 +95,10 @@ class Course < ApplicationRecord
     lectures.published
   end
 
+  def restricted?
+    false
+  end
+
   # The next methods return if there are any media in the Kaviar, Sesam etc.
   # projects that are associated to this course *with inheritance*
   # These methods make use of caching.
@@ -265,9 +269,11 @@ class Course < ApplicationRecord
   # by inheritance (i.e. directly and media which are associated to lectures or
   # lessons associated to this course)
   def media_with_inheritance
-    Medium.where(id: Medium.proper.includes(:teachable)
-                           .select { |m| m.teachable.course == self }
-                           .map(&:id))
+    Rails.cache.fetch("#{cache_key}/media_with_inheritance") do
+      Medium.where(id: Medium.proper.includes(:teachable)
+                             .select { |m| m.teachable.course == self }
+                             .map(&:id))
+    end
   end
 
   def media_items_with_inheritance

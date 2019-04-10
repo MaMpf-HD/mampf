@@ -105,6 +105,10 @@ class Lecture < ApplicationRecord
     lecture_path
   end
 
+  def restricted?
+    passphrase.present?
+  end
+
   # the next methods deal with the lecture's tags
   # tags are associated to courses, sections, media and lessons
   # in this context, tags associated to courses and to sections are relevant
@@ -162,9 +166,11 @@ class Lecture < ApplicationRecord
 
   # returns the ARel of all media whose teachable's lecture is the given lecture
   def media_with_inheritance
-    Medium.where(id: Medium.includes(:teachable)
-                           .select { |m| m.teachable&.lecture == self }
-                           .map(&:id))
+    Rails.cache.fetch("#{cache_key}/media_with_inheritance") do
+      Medium.where(id: Medium.includes(:teachable)
+                             .select { |m| m.teachable&.lecture == self }
+                             .map(&:id))
+    end
   end
 
   # returns the array of all items (described by their title and id) which
