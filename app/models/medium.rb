@@ -733,7 +733,7 @@ class Medium < ApplicationRecord
   end
 
   def create_self_item
-    return if sort.in?(['KeksQuestion', 'KeksRemark'])
+    return if sort.in?(['KeksQuestion', 'KeksRemark', 'RandomQuiz'])
     Item.create(sort: 'self', medium: self)
   end
 
