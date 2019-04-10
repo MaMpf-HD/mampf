@@ -23,6 +23,8 @@ Rails.application.routes.draw do
                              as: 'inspect_course'
   get 'courses/:id/display', to: 'courses#display',
                              as: 'display_course'
+  get 'courses/:id/show_random_quizzes', to: 'courses#show_random_quizzes',
+                                         as: 'show_random_quizzes'
   get 'courses/:id/take_random_quiz', to: 'courses#take_random_quiz',
                                       as: 'random_quiz'
   resources :courses, except: [:index]

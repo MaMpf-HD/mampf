@@ -330,6 +330,15 @@ class Course < ApplicationRecord
     Course.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
+  def mc_questions_count
+    Rails.cache.fetch("#{cache_key}/mc_questions_count") do
+      Question.where(teachable: [self] + [lectures.published],
+                     independent: true)
+              .select { |q| q.answers.count > 1 }
+              .count
+    end
+  end
+
   def create_random_quiz!
     question_ids = Question.where(teachable: [self] + [lectures.published],
                                   independent: true)

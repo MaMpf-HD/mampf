@@ -1,0 +1,40 @@
+<div class="card">
+  <div class="card-header">
+    Test
+  </div>
+  <div class="card-body">
+    Auf Modulebene liegen <%= @course.mc_questions_count %>
+    Multiple-Choice-Fragen vor. MaMpf erstellt Dir daraus gerne einen
+    zufälligen Test aus 5 Fragen:
+    <div class="row">
+      <div class="col-12 text-center">
+        <%= link_to 'Test beginnen',
+                    random_quiz_path(@course),
+                    class: 'btn btn-primary my-4',
+                    target: :_blank %>
+      </div>
+    </div>
+    <span class="badge badge-secondary">
+      Hinweis.
+    </span>
+    Die Notationen und Begrifflichkeiten in den einzelnen Fragen und Antworten
+    können eventuell leicht von denen abweichen, die Deine DozentIn
+    verwendet.
+    <i class="far fa-question-circle helpdesk"
+       tabindex="-1"
+       data-toggle="popover"
+       data-trigger="focus"
+       title="Typische Beispiele für Unterschiede"
+       data-content="<ul><li>Die natürlichen Zahlen beginnen je nach DozentIn
+       mal bei 0, mal bei 1.</li><li>Basen werden als Mengen (in Mengenklammern)
+       oder als Familien (in runden klammern) geschrieben.</li>
+       <li>Das Erzeugnis einer Menge/Familie von Vektoren wird verschieden
+        notiert: span(...), Lin(...), <...></li>"
+       data-html="true">
+      </i>
+    <div class="row my-4">
+    </div>
+    In Zukunft wirst Du an dieser Stelle den Inhalt und Umfang des Tests
+    genauer spezifizieren können.
+  </div>
+</div>

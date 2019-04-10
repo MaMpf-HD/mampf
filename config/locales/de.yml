@@ -32,6 +32,8 @@ de:
       plural: 'Quizzes'
     randomquiz:
       singular: 'Zufallsquiz'
+    test:
+      singular: 'Test'
     question:
       singular: 'Quiz-Frage'
       plural: 'Quiz-Fragen'

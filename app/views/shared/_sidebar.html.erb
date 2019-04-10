@@ -88,6 +88,17 @@
     <% end %>
   </li>
   <li class="nav-item">
+    <% if course.mc_questions_count < 10 %>
+      <span class="nav-link disabled">
+        <%= t('categories.test.singular') %>
+      </span>
+    <% else %>
+      <%= link_to t('categories.test.singular'),
+                  show_random_quizzes_path(course),
+                  class: 'nav-link' %>
+    <% end %>
+  </li>
+  <li class="nav-item">
     <% if (lecture && !lecture.sesam?) || (!lecture && !course.strict_sesam?) %>
       <span class="nav-link disabled">
         <%= t('categories.sesam.plural') %>

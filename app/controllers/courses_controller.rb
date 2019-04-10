@@ -1,7 +1,8 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :check_for_course, only: [:show]
-  before_action :set_course, only: [:display, :take_random_quiz]
+  before_action :set_course, only: [:display, :take_random_quiz,
+                                    :show_random_quizzes]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   authorize_resource
   layout 'administration'
@@ -63,6 +64,10 @@ class CoursesController < ApplicationController
   end
 
   def display
+    render layout: 'application'
+  end
+
+  def show_random_quizzes
     render layout: 'application'
   end
 
