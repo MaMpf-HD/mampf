@@ -239,6 +239,11 @@ class Course < ApplicationRecord
     course.lectures & user.lectures
   end
 
+  def to_be_authorized_lectures(user)
+    published_lectures.select(&:restricted?) -
+      subscribed_lectures(user)
+  end
+
   def subscribed_lectures_by_date(user)
     subscribed_lectures(user).to_a.sort do |i, j|
       j.term.begin_date <=> i.term.begin_date

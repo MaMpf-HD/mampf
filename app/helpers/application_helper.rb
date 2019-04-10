@@ -119,8 +119,7 @@ module ApplicationHelper
                                               .first(limit)
     end
     media_ids = (teachable.media_with_inheritance.pluck(:id) & media.pluck(:id))
-                  .first(limit)
-    Medium.where(id: media_ids)
+    Medium.where(id: media_ids).order(:created_at).reverse_order.first(limit)
   end
 
   # splits an array into smaller parts

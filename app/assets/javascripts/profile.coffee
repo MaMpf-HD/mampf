@@ -21,22 +21,38 @@ $(document).on 'turbolinks:load', ->
         $radios.prop('disabled', true)
     return
 
-  # auto(un)check/disable checkboxes for secondary lectures and extras when
+  # auto(un)check/disable checkboxes for secondary lectures when
   # primary lectures are selected
   $('input:radio[name^="user[primary_lecture-"]').on 'change',  ->
     primaryLecture = $(this).val()
     courseId = this.dataset.course
+    authRequiredLectureIds = $('#pass-primary-' + courseId).data('authorize')
     course = 'course-' + courseId + '-'
     secondaries = '#secondaries-course-' + courseId
     if primaryLecture == '0'
       $(secondaries).hide()
       $(secondaries + ' .form-check-input').prop('checked', false)
         .prop('disabled', true)
+      $('#pass-primary-' + courseId).hide()
     else
       $(secondaries + ' .form-check-input').prop('checked', false)
-        .prop('disabled', false)
+        .prop('disabled', false).trigger('change')
       $(secondaries).show()
       $('[id^="' + course + '"]').show()
       $('#' + course + primaryLecture).hide()
+      if parseInt(primaryLecture) in authRequiredLectureIds
+        $('#pass-primary-' + courseId).show()
+      else
+        $('#pass-primary-' + courseId).hide()
     return
+
+   $('input:checkbox[name^="user[lecture-"]').on 'change',  ->
+     courseId = this.dataset.course
+     lectureId = this.dataset.lecture
+     authRequiredLectureIds = $('#pass-primary-' + courseId).data('authorize')
+     if $(this).prop('checked') and parseInt(lectureId) in authRequiredLectureIds
+       $('#pass-lecture-' + lectureId).show()
+     else
+       $('#pass-lecture-' + lectureId).hide()
+     return
   return

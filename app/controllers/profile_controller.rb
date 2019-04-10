@@ -14,6 +14,8 @@ class ProfileController < ApplicationController
   end
 
   def update
+    check_passphrases
+    return if @errors.present?
     if @user.update(lectures: @lectures, courses: @courses, name: @name,
                     subscription_type: @subscription_type,
                     no_notifications: @no_notifications,
@@ -129,6 +131,36 @@ class ProfileController < ApplicationController
     @current_lecture = Lecture.find_by_id(cookies[:current_lecture])
     unless @current_lecture.in?(@user.lectures)
       cookies[:current_lecture] = @course&.primary_lecture(@user)&.id
+    end
+  end
+
+  # stop the update if any of passphrases for newly subscribed primary/secondary
+  # lectures is incorrect
+  def check_passphrases
+    @errors = {}
+    restricted_primaries = Lecture.where(id: primary)
+                                  .select do |l|
+                                    l.in?(l.course
+                                           .to_be_authorized_lectures(current_user))
+                                  end
+    restricted_primaries.each do |l|
+      given_passphrase = params[:user]['pass_primary_' + l.course.id.to_s]
+      unless given_passphrase == l.passphrase
+        @errors[:primary_pass] ||= []
+        @errors[:primary_pass].push l.course.id
+      end
+    end
+    restricted_secondaries = Lecture.where(id: secondary)
+                                    .select do |l|
+                                      l.in?(l.course
+                                             .to_be_authorized_lectures(current_user))
+                                    end
+    restricted_secondaries.each do |l|
+      given_passphrase = params[:user]['pass_lecture-' + l.id.to_s]
+      unless given_passphrase == l.passphrase
+        @errors[:secondary_pass] ||= []
+        @errors[:secondary_pass].push l.id
+      end
     end
   end
 end
