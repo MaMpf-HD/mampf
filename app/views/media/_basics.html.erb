@@ -262,77 +262,9 @@
       </div>
     </div>
     <% if medium.published_with_inheritance? %>
-      <div class="form-group">
-        Zugriffsrechte
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Die Varianten von Zugriffsrechten sind möglich:
-           <ul>
-           <li>
-           alle (Standardeinstellung): Registrierte MaMpf-NutzerInnen können das
-           Medium sehen. Nicht registrierte BenutzerInnen können über die Pfade
-           <%= play_medium_path(medium) %> den Thyme-Player bzw. über
-           <%= display_medium_path(medium) %> das Manuskript aufrufen, falls
-           vorhanden.
-           </li>
-           <li>
-           nur MaMpf-NutzerInnen: Registrierte MaMpf-NutzerInnen können das
-           Medium sehen. Nicht registrierte NutzerInnen haben keinen Zugriff.
-           </li>
-           <li>
-           nur AbonenntInnen: Registrierte MaMpf-NutzerInnen, die das
-           assoziierte Modul/die assoziierte Vorlesung/die zur assoziierten
-           Sitzung gehörige Vorlesung abonniert haben,
-           können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
-           das Medium nicht sehen.
-           </li>
-           <li>
-           gesperrt: Generische MaMpf-NutzerInnen können das Medium nicht mehr
-           sehen.
-           </li>
-           </ul>"
-           data-html="true">
-        </i>
-        <div class="custom-control custom-radio">
-          <%= f.radio_button :released,
-                             'all',
-                             class: 'custom-control-input' %>
-          <%= f.label :released,
-                      'frei',
-                      value: 'all',
-                      class: 'custom-control-label' %>
-        </div>
-        <div class="custom-control custom-radio">
-          <%= f.radio_button :released,
-                             'users',
-                             class: 'custom-control-input' %>
-          <%= f.label :released,
-                      'nur MaMpf-NutzerInnen',
-                      value: 'users',
-                      class: 'custom-control-label' %>
-        </div>
-        <div class="custom-control custom-radio">
-          <%= f.radio_button :released,
-                             'subscribers',
-                             class: 'custom-control-input' %>
-          <%= f.label :released,
-                      'nur AbonenntInnen',
-                      value: 'subscribers',
-                      class: 'custom-control-label' %>
-        </div>
-        <div class="custom-control custom-radio">
-          <%= f.radio_button :released,
-                             'locked',
-                             class: 'custom-control-input' %>
-          <%= f.label :released,
-                      'gesperrt',
-                      value: 'locked',
-                      class: 'custom-control-label' %>
-        </div>
-      </div>
+      <%= render partial: 'media/access_rights',
+                 locals: { f: f,
+                 medium: medium } %>
     <% end %>
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
     <%= f.hidden_field :teachable_type, value: medium.teachable_type %>

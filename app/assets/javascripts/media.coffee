@@ -34,6 +34,7 @@ $(document).on 'turbolinks:load', ->
   # (relevant on media edit page)
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
+    $('#publish-medium-button').hide()
     teachableSelector = document.getElementById('medium_teachable').selectize
     value = teachableSelector.getValue()
     if value != ''
@@ -80,6 +81,11 @@ $(document).on 'turbolinks:load', ->
       success: ->
         location.reload()
         return
+    return
+
+  $('#publish-medium-button').on 'click', ->
+    console.log 'Hi'
+    $('#publishMediumModal').modal('show')
     return
 
   # if user detaches video, adjust hidden values

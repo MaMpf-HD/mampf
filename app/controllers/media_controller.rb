@@ -110,7 +110,8 @@ class MediaController < ApplicationController
   end
 
   def publish
-    @medium.update(released: 'all')
+    release_state = params[:medium][:released]
+    @medium.update(released: release_state)
     # create notification about creation of medium to all subscribers
     create_notifications unless @medium.sort.in?(['KeksQuestion', 'KeksRemark',
                                                   'RandomQuiz'])

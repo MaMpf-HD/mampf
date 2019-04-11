@@ -1,0 +1,40 @@
+<div class="modal fade"
+     id="publishMediumModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="publishMediumModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="publishMediumModalLabel">
+          Medium veröffentlichen
+        </h5>
+        <button type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= form_with model: Medium.new(released: 'all'),
+                      url: publish_medium_path(medium),
+                      method: 'post' do |f| %>
+          <%= render partial: 'media/access_rights',
+                     locals: { f: f,
+                               medium: medium } %>
+          <div class="row mt-3">
+            <div class="col-12 text-center">
+              <%= f.submit 'Veröffentlichen',
+                           class: 'btn btn-primary' %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

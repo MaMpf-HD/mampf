@@ -48,8 +48,9 @@ class LecturesController < ApplicationController
 
   def publish
     @lecture.update(released: 'all')
-    if params[:publish_media] == '1'
-      @lecture.media_with_inheritance.update_all(released: 'all')
+    if params[:medium][:publish_media] == '1'
+      @lecture.media_with_inheritance
+              .update_all(released: params[:medium][:released])
     end
     # create notifications about creation od this lecture
     create_notifications

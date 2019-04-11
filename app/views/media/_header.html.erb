@@ -82,15 +82,12 @@
   <div class="col-2 text-right">
     <% unless new_medium %>
       <% if medium.teachable.published? && !medium.published_with_inheritance? %>
-        <a href="<%= publish_medium_path(medium) %>"
-           class="fas fa-globe-europe text-dark fa-lg mr-3"
-           style="text-decoration: none; "
+        <i class="fas fa-globe-europe text-dark fa-lg mr-3 clickable"
            data-toggle="tooltip"
-           data-method="post"
+           data-method="get"
            title="veröffentlichen"
-           data-confirm="Bist Du sicher? Die Veröffentlichung
-           kann nicht rückgängig gemacht werden.">
-        </a>
+           id="publish-medium-button">
+        </i>
       <% end %>
     <% end %>
     <% teachable_scope = medium.teachable.media_scope %>

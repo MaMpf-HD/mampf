@@ -20,21 +20,40 @@
           </span>
         </button>
       </div>
-      <%= bootstrap_form_with url: publish_lecture_path,
-                               remote: true,
-                               method: 'post' do |f| %>
+      <%= form_with model: Medium.new(released: lecture.restricted? ? 'subscribers' : 'all'),
+                    url: publish_lecture_path,
+                    remote: true,
+                    method: 'post' do |f| %>
         <div class="modal-body">
           Beim Veröffentlichen der Vorlesung sollen
           <div class="row mt-2 mb-2">
             <div class="col-12">
-              <%= f.radio_button :publish_media, 1,
-                                 label: 'sämtliche verknüpfte Medien ebenfalls ' \
-                                        'veröffentlicht werden.',
-                                 checked: true %>
-              <%= f.radio_button :publish_media, 0,
-                                 label: 'unveröffentlichte verknüpfte Medien '\
-                                        'weiterhin unveröffentlicht bleiben.',
-                                 checked: false %>
+              <div class="custom-control custom-radio">
+                <%= f.radio_button :publish_media,
+                                   1,
+                                   class: 'custom-control-input',
+                                   checked: true %>
+                <%= f.label :publish_media,
+                            'sämtliche verknüpfte Medien ebenfalls ' \
+                            'veröffentlicht werden.',
+                            value: 1,
+                            class: 'custom-control-label' %>
+              </div>
+              In diesem Fall gelten für die Medien die folgenden Zugriffsrechte:
+              <%= render partial: 'media/access_rights',
+                         locals: { f: f,
+                                   medium: nil } %>
+              <div class="custom-control custom-radio">
+                <%= f.radio_button :publish_media,
+                                    0,
+                                    class: 'custom-control-input',
+                                    checked: false %>
+                <%= f.label :publish_media,
+                            'unveröffentlichte verknüpfte Medien '\
+                            'weiterhin unveröffentlicht bleiben.',
+                            value: 0,
+                            class: 'custom-control-label' %>
+              </div>
             </div>
           </div>
         </div>

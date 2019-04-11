@@ -27,3 +27,7 @@
 </div>
 <%= render partial: 'media/destinations_warning' %>
 <%= render partial: 'tags/modal' %>
+<% unless @medium.new_record? %>
+  <%= render partial: 'media/publish_modal',
+             locals: { medium: @medium } %>
+<% end %>

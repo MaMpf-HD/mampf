@@ -82,5 +82,6 @@
 <% unless inspection %>
   <%= render partial: 'tags/modal' %>
   <%= render partial: 'announcements/modal' %>
-  <%= render partial: 'lectures/publish' %>
+  <%= render partial: 'lectures/publish',
+             locals: { lecture: lecture } %>
 <% end %>

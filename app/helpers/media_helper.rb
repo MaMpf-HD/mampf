@@ -51,7 +51,7 @@ module MediaHelper
   # create link to medium in notification card
   def medium_notification_card_link(medium)
     link_to(medium.local_title_for_viewers,
-            medium,
+            medium.becomes(Medium),
             class: 'darkblue')
   end
 

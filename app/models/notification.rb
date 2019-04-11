@@ -37,6 +37,9 @@ class Notification < ApplicationRecord
       return notifiable.lecture.path(user) if notifiable.lecture.present?
       return news_path
     end
+    if notifiable_type == 'Medium' && notifiable.sort == 'KeksQuiz'
+      return medium_path(notifiable)
+    end
     polymorphic_url(notifiable, only_path: true)
   end
 
@@ -48,7 +51,7 @@ class Notification < ApplicationRecord
 
   def medium?
     return unless notifiable.present?
-    notifiable.class.to_s == 'Medium'
+    notifiable_type == 'Medium'
   end
 
   def course?
