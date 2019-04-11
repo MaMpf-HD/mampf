@@ -1,4 +1,3 @@
-<% user_sections = current_user.filter_sections(sections) %>
 <div class="card bg-brown-lighten-4">
   <div class="card-header bg-brown-darken-2">
     <h5 class="text-light">
@@ -7,9 +6,9 @@
   </div>
   <div class="card-body"
        id="relatedSectionsBody">
-    <% if user_sections.present? %>
+    <% if sections.present? %>
       <ul>
-        <% user_sections.each do |s| %>
+        <% sections.each do |s| %>
           <li>
             <%= s.lecture.short_title + ': ' %>
             <%= link_to s.to_label,
@@ -20,13 +19,6 @@
       </ul>
     <% else %>
       Es sind keine verknüpften Abschnitte vorhanden.
-      <% if sections.count > 0 %>
-        Aufgrund Deiner
-        <%= link_to "Profileinstellungen",
-                    edit_profile_path %>
-        wurden hierbei <%= sections.count %>
-        Treffer nicht berücksichtigt.
-      <% end %>
     <% end %>
   </div>
 </div>

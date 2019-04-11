@@ -68,7 +68,7 @@
       </div>
       <div class="col-12">
         <%= render partial: 'sections/sections',
-                   locals: { sections: @tag.published_sections } %>
+                   locals: { sections: @tag.visible_sections(current_user) } %>
       </div>
     </div>
   </div>

@@ -144,7 +144,7 @@ class User < ApplicationRecord
   # returns array of all those sections from the given sections that belon to
   # the user's subscribed lectures
   def filter_sections(sections)
-    sections.includes(:chapter).select { |s| s.lecture&.id&.in?(lecture_ids) }
+    sections.includes(:chapter).select { |s| s.lecture&.in?(related_lectures) }
   end
 
   # array of the user's subscribed lectures sorted by date

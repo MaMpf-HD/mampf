@@ -156,8 +156,8 @@ class Tag < ApplicationRecord
   end
 
   # published sections are sections that belong to a published lecture
-  def published_sections
-    sections.where(id: sections.select { |s| s.lecture.published? }.map(&:id))
+  def visible_sections(user)
+    user.filter_sections(sections).select { |s| s.lecture.visible_for_user?(user) }
   end
 
   private
