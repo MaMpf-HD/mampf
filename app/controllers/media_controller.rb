@@ -336,7 +336,7 @@ class MediaController < ApplicationController
 
   def reveal_contradictions
     return unless params[:lecture_id].present?
-    return if params[:lecture_id].in?(@course.lecture_ids)
+    return if params[:lecture_id].to_i.in?(@course.lecture_ids)
     redirect_to :root, alert: 'Wiedersprüchliche Suchanfrage.'
   end
 
