@@ -93,12 +93,12 @@ class TagsController < ApplicationController
   end
 
   # set up cytoscape graph data for neighbourhood subgraph of @tag,
-  # using only neighbourhood tags that are related to lectures subscribed by
-  # the user
+  # using only neighbourhood tags that are allowd by the user's
+  # profile settings
   def set_related_tags_for_user
-    @user_tags = current_user.lecture_tags
-    @related_tags = @tag.related_tags & current_user.lecture_tags
-    @tags_in_neighbourhood = Tag.related_tags(@related_tags) & @user_tags
+    user_tags = current_user.visible_tags
+    @related_tags = @tag.related_tags & user_tags
+    @tags_in_neighbourhood = Tag.related_tags(@related_tags) & user_tags
     @tags = [@tag] + @related_tags + @tags_in_neighbourhood
     @graph_elements = Tag.to_cytoscape(@tags, @tag)
   end

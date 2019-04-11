@@ -166,6 +166,10 @@ class User < ApplicationRecord
     lectures.map(&:tags).flatten.uniq
   end
 
+  def visible_tags
+    related_courses.map(&:lectures).flatten.map(&:tags).flatten.uniq
+  end
+
   # returns the array of those notifications of the user that are announcements
   # in the given lecture
   def active_announcements(lecture)
