@@ -21,7 +21,7 @@ class TagsController < ApplicationController
     @media = current_user.filter_media(@tag.media
                                            .where.not(sort: ['KeksQuestion',
                                                              'KeksRemark']))
-                         .select(&:visible?)
+                         .select { |m| m.visible_for_user?(current_user) }
     render layout: 'application_no_sidebar'
   end
 

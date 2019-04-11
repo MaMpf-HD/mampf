@@ -61,6 +61,6 @@
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <%= render partial: 'media/related_media',
-                 locals: { media: @lesson.visible_media} %>
+                 locals: { media: @lesson.visible_media_for_user(current_user) } %>
   </div>
 </div>

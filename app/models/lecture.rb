@@ -109,6 +109,12 @@ class Lecture < ApplicationRecord
     passphrase.present?
   end
 
+  def visible_for_user?(user)
+    return false unless published?
+    return false if restricted? && !self.in?(user.lectures)
+    true
+  end
+
   # the next methods deal with the lecture's tags
   # tags are associated to courses, sections, media and lessons
   # in this context, tags associated to courses and to sections are relevant

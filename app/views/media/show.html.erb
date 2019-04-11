@@ -130,7 +130,7 @@
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <% linked_media = current_user.filter_media(@medium.linked_media)
-                                  .select(&:visible?) %>
+                                  .select { |m| m.visible_for_user?(current_user) } %>
     <%= render partial: 'media/related_media',
                locals: { media: linked_media} %>
   </div>

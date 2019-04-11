@@ -12,7 +12,8 @@ class MediaController < ApplicationController
 
   def index
     cookies[:current_course] = params[:course_id]
-    if params[:lecture_id].present?
+    if params[:lecture_id].present? &&
+      params[:current_lecture].in?(current_user.lecture_ids)
       cookies[:current_lecture] = params[:lecture_id]
     end
     @media = paginated_results
@@ -299,6 +300,7 @@ class MediaController < ApplicationController
   end
 
   def sanitize_params
+    reveal_contradictions
     sanitize_page!
     sanitize_per!
     params[:all] = params[:all] == 'true'
@@ -326,9 +328,15 @@ class MediaController < ApplicationController
   def search_results
     search_results = Medium.search(@course.primary_lecture(current_user),
                                    params)
-                           .select { |m| m.published? && !m.locked? }
+                           .select { |m| m.visible_for_user?(current_user) }
     return search_results unless params[:reverse]
     search_results.reverse
+  end
+
+  def reveal_contradictions
+    return unless params[:lecture_id].present?
+    return if params[:lecture_id].in?(@course.lecture_ids)
+    redirect_to :root, alert: 'Wiedersprüchliche Suchanfrage.'
   end
 
   def sanitize_page!

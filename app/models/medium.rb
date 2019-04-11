@@ -525,12 +525,29 @@ class Medium < ApplicationRecord
     released == 'locked'
   end
 
+  def restricted?
+    released == 'subscribers'
+  end
+
   def free?
     released == 'all'
   end
 
   def visible?
     published_with_inheritance? && !locked?
+  end
+
+  def visible_for_user?(user)
+    return false unless published?
+    return false unless published_with_inheritance?
+    return false if locked?
+    if teachable_type == 'Course'
+      return false if restricted? && !teachable.in?(user.courses)
+    end
+    if teachable_type.in?(['Lecture', 'Lesson'])
+      return false if restricted? && !teachable.lecture.in?(user.lectures)
+    end
+    true
   end
 
   # returns true if the medium's teachable if one of the following:

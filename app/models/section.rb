@@ -70,6 +70,17 @@ class Section < ApplicationRecord
     media.select(&:visible?)
   end
 
+   # visible media are published with inheritance and unlocked
+  def visible_media_for_user(user)
+    media.select { |m| m.visible_for_user?(user) }
+  end
+
+  def visible_for_user?(user)
+    return false unless lecture.published?
+    return false unless lecture.visible_for_user?(user)
+    true
+  end
+
   def previous_preliminary
     return higher_item unless first?
     return if chapter.first?

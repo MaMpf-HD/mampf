@@ -283,6 +283,13 @@
            Medium sehen. Nicht registrierte NutzerInnen haben keinen Zugriff.
            </li>
            <li>
+           nur AbonenntInnen: Registrierte MaMpf-NutzerInnen, die das
+           assoziierte Modul/die assoziierte Vorlesung/die zur assoziierten
+           Sitzung gehörige Vorlesung abonniert haben,
+           können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
+           das Medium nicht sehen.
+           </li>
+           <li>
            gesperrt: Generische MaMpf-NutzerInnen können das Medium nicht mehr
            sehen.
            </li>
@@ -305,6 +312,15 @@
           <%= f.label :released,
                       'nur MaMpf-NutzerInnen',
                       value: 'users',
+                      class: 'custom-control-label' %>
+        </div>
+        <div class="custom-control custom-radio">
+          <%= f.radio_button :released,
+                             'subscribers',
+                             class: 'custom-control-input' %>
+          <%= f.label :released,
+                      'nur AbonenntInnen',
+                      value: 'subscribers',
                       class: 'custom-control-label' %>
         </div>
         <div class="custom-control custom-radio">

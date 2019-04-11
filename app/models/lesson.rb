@@ -132,6 +132,15 @@ class Lesson < ApplicationRecord
     media.select(&:visible?)
   end
 
+   # visible media are published with inheritance and unlocked
+  def visible_media_for_user(user)
+    media.select { |m| m.visible_for_user?(user) }
+  end
+
+  def visible_for_user?(user)
+    lecture.visible_for_user?(user)
+  end
+
   # the number of a lesson is calculated by its date relative to the other
   # lessons
   def number

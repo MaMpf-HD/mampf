@@ -108,6 +108,7 @@
               </div>
             </div>
           </div>
+          <% unless inspection %>
           <div class="form-row">
             <div class="col-auto form-group">
               <%= f.label :passphrase, 'Zugangsschlüssel' %>
@@ -127,6 +128,7 @@
                                  size: 50 } %>
             </div>
           </div>
+          <% end %>
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">
