@@ -10,5 +10,8 @@ $('#new-tag-modal-content').empty()
 $('[data-toggle="popover"]').popover()
 $('#new-tag-modal-content .selectize').selectize({ plugins: ['remove_button'] })
 
+# bugfix for selectize (which sometimes renders the prompt with a zero width)
+$('input[id$="-selectized"]').css('width', '100%')
+
 # store from where the modal was called
 $('#newTagModal').modal('show').data('from','<%= @from %>')
