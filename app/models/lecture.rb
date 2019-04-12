@@ -466,7 +466,8 @@ class Lecture < ApplicationRecord
   # to this lecture and a given project (kaviar, semsam etc.)
   def project?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
-      Medium.where(sort: sort[project]).locally_visible.includes(:teachable)
+      Medium.where(sort: sort[project], released: ['all', 'users', 'subscribers'])
+            .includes(:teachable)
             .any? do |m|
         m.teachable&.lecture == self || m.teachable == course
       end
