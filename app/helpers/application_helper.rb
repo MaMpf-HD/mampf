@@ -213,6 +213,18 @@ module ApplicationHelper
     inspect_lecture_path(lecture)
   end
 
+  # Returns the path for the inspect or edit action of a given medium,
+  # depending on  whether the current user has editor rights for the course.
+  # Editor rights are determined by inheritance
+  def edit_or_inspect_medium_path(medium)
+    if current_user.admin ||
+       medium.editors_with_inheritance.include?(current_user)
+      return edit_medium_path(medium)
+    end
+    inspect_medium_path(medium)
+  end
+
+
   # Returns the fontawesome icon name for inspecting or editing a given lecture,
   # depending on  whether the current user has editor rights for the course.
   # Editor rights are determnined by inheritance, e.g. module editors

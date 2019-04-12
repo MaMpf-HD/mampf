@@ -52,7 +52,8 @@
     <div class="col-12">
       <%= render partial: 'lectures/people',
                  locals: { lecture: lecture,
-                           inspection: inspection } %>
+                           inspection: inspection,
+                           users: lecture.users } %>
     </div>
     <div class="col-12">
       <%= render partial: 'lectures/organizational_concept',

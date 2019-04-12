@@ -11,7 +11,7 @@
              class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
           <%= render partial: 'shared/sidebar',
                      locals: { course:
-                                 Course.find_by_id(course_id_from_cookie) } %>
+                                 Course.find_by_id(course_id_from_cookie) || Course.first } %>
         </nav>
         <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
           <div class="alert alert-danger" id="js-messages" role="alert"

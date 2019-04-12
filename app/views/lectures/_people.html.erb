@@ -142,7 +142,7 @@
               </div>
             </div>
           </div>
-          <div class="row">
+          <div class="row mb-3">
             <div class="col-12">
               Abonnentenzahl:
               <%= lecture.users&.count %>
@@ -156,6 +156,30 @@
               </i>
             </div>
           </div>
+          <% unless inspection %>
+            <div class="row border bg-mdb-color-lighten-5 mx-2">
+              <div class="col-6">
+                Anzeigename
+              </div>
+              <div class="col-6">
+                E-Mail-Adresse
+              </div>
+            </div>
+            <div style="max-height: 30vh; overflow-y: scroll;">
+              <% lecture.users.find_each do |u| %>
+                <% cache u do %>
+                  <div class="row mx-2 border-left border-right border-bottom">
+                    <div class="col-6">
+                      <%= u.name %>
+                    </div>
+                    <div class="col-6">
+                      <%= u.email %>
+                    </div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-basics-warning">
