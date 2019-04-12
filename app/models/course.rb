@@ -210,7 +210,7 @@ class Course < ApplicationRecord
   def extras(user_params)
     modules = {}
     primary_id = user_params['primary_lecture-' + id.to_s]
-    modules['primary_lecture_id'] = primary_id == '0' ? nil : primary_id.to_i
+    modules['primary_lecture_id'] = primary_id.to_i.zero? ? nil : primary_id.to_i
     modules
   end
 
@@ -224,7 +224,7 @@ class Course < ApplicationRecord
   def front_lecture(user, active_lecture_id)
     # make sure the front lecture is subscribed by the user
     if subscribed_lectures(user).map(&:id).include?(active_lecture_id)
-      return Lecture.find(active_lecture_id)
+      return Lecture.find_by_id(active_lecture_id)
     end
     primary_lecture(user)
   end
