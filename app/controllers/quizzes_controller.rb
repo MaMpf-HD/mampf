@@ -1,5 +1,6 @@
 # Quizzes controller
 class QuizzesController < ApplicationController
+  skip_before_action :authenticate_user!, only: [:take, :proceed]
   before_action :init_values, only: [:take, :proceed]
   before_action :set_quiz, only: [:show, :edit, :update, :destroy, :preview]
   authorize_resource

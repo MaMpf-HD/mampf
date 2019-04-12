@@ -40,7 +40,7 @@ class Ability
       # anyone should be able to get a sidebar and see the announcements
       can [:render_sidebar, :organizational, :show_announcements], Lecture
 
-      can :display, Course
+      can [:display, :show_random_quizzes, :take_random_quiz], Course
 
       # editors are only allowed to edit, not to destroy courses
       can :update, Course do |course|
@@ -119,6 +119,10 @@ class Ability
       end
 
       can :display, Course
+
+      can [:show_random_quizzes, :take_random_quiz], Course do |course|
+        course.subscribed_by?(user)
+      end
 
       cannot [:index, :update, :create], Tag
       can :display_cyto, Tag
