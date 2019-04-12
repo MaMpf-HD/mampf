@@ -271,12 +271,18 @@ class User < ApplicationRecord
   # - all boards if the user is an admin
   # - all boards that belong to teaching related lectures (see above)
   #   together with all boards belonging to subscribed lectures if the user
-  #   is course or lecture editor or teacher
-  # - all boards that belong to subscribed lectures otherwise
+  #   is course or lecture editor or teacher and all boards not belonging
+  #   to lectures
+  # - all boards that belong to subscribed lectures otherwise and all
+  #    boards not belonging
+  #   to lectures
   def thredded_can_read_messageboards
     return Thredded::Messageboard.all if admin?
     subscribed_forums =
       Thredded::Messageboard.where(name: lectures.map(&:title))
+                            .or(Thredded::Messageboard.where
+                                                      .not(name: Lecture.all
+                                                                        .map(&:title)))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(name: teaching_related_lectures
                                                   .map(&:title))
@@ -288,7 +294,15 @@ class User < ApplicationRecord
   # defines which messageboards a user can write to:
   # - all those that he/she can read
   def thredded_can_write_messageboards
-    thredded_can_read_messageboards
+    return Thredded::Messageboard.all if admin?
+    subscribed_forums =
+      Thredded::Messageboard.where(name: lectures.map(&:title))
+    if teacher? || edited_courses.any? || edited_lectures.any?
+      return Thredded::Messageboard.where(name: teaching_related_lectures
+                                                  .map(&:title))
+                                   .or(subscribed_forums)
+    end
+    subscribed_forums
   end
 
   # defines which messageboards a user can moderate:
