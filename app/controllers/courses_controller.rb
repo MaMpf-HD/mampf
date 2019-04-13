@@ -4,6 +4,8 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:display, :take_random_quiz,
                                     :show_random_quizzes]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
+  before_action :check_if_enough_questions, only: [:show_random_quizzes,
+                                                   :take_random_quiz]
   authorize_resource
   layout 'administration'
 
@@ -80,7 +82,7 @@ class CoursesController < ApplicationController
 
   def check_for_course
     return if Course.exists?(params[:id])
-    redirect_to :root, alert: 'Ein Kurs mit der angeforderten id existiert ' \
+    redirect_to :root, alert: 'Ein Modul mit der angeforderten id existiert ' \
                               'nicht.'
   end
 
@@ -130,5 +132,10 @@ class CoursesController < ApplicationController
                                                'organizational_default',
                                       formats: :html,
                                       layout: false))
+  end
+
+  def check_if_enough_questions
+    return if @course.enough_questions?
+    redirect_to :root, alert: 'Für dieses Modul gibt es keinen Test.'
   end
 end

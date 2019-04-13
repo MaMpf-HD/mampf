@@ -112,7 +112,7 @@ class Ability
 
       can [:take, :proceed], Quiz do |quiz|
         if !user.new_record?
-          quiz.visible?
+          quiz.visible_for_user?(user)
         else
           quiz.published_with_inheritance? && quiz.free?
         end

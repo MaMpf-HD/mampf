@@ -344,15 +344,21 @@ class Course < ApplicationRecord
   def mc_questions_count
     Rails.cache.fetch("#{cache_key}/mc_questions_count") do
       Question.where(teachable: [self] + [lectures.published],
-                     independent: true)
+                     independent: true,
+                     released: ['all', 'users'])
               .select { |q| q.answers.count > 1 }
               .count
     end
   end
 
+  def enough_questions?
+    mc_questions_count >= 10
+  end
+
   def create_random_quiz!
     question_ids = Question.where(teachable: [self] + [lectures.published],
-                                  independent: true)
+                                  independent: true,
+                                  released: ['all', 'users'])
                            .select { |q| q.answers.count > 1 }
                            .sample(5).map(&:id)
     quiz_graph = QuizGraph.build_from_questions(question_ids)

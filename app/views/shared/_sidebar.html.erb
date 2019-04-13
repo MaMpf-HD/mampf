@@ -88,7 +88,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if course.mc_questions_count < 10 %>
+    <% if !course.enough_questions? %>
       <span class="nav-link disabled">
         <%= t('categories.test.singular') %>
       </span>
