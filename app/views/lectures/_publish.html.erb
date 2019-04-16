@@ -21,7 +21,7 @@
         </button>
       </div>
       <%= form_with model: Medium.new(released: lecture.restricted? ? 'subscribers' : 'all'),
-                    url: publish_lecture_path,
+                    url: publish_lecture_path(lecture),
                     remote: true,
                     method: 'post' do |f| %>
         <div class="modal-body">
@@ -68,7 +68,7 @@
               <button type="button"
                       class="btn btn-secondary"
                       data-dismiss="modal">
-                abbrechen
+                Abbrechen
               </button>
             </div>
           </div>

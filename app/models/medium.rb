@@ -669,7 +669,7 @@ class Medium < ApplicationRecord
   # returns info made from sort and description
   def local_title_for_viewers
     if sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
-      return 'KaViaR, ' + teachable.local_title_for_viewers
+      return 'Lektion, ' + teachable.local_title_for_viewers
     end
     sort_de + (description.present? ? ', ' + description : ', ohne Titel')
   end
