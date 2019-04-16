@@ -25,6 +25,10 @@ class Question < Medium
     Quiz.all.select { |q| id.in?(q.question_ids) }.map(&:id)
   end
 
+  def proper_quiz_ids
+    Quiz.where(id: quiz_ids, sort: 'KeksQuiz').pluck(:id)
+  end
+
   def duplicate
     copy = self.dup
     copy.video_data = nil

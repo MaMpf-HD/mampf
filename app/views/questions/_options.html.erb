@@ -1,10 +1,10 @@
 <div class="border rounded border-info p-2">
   Referenzierende Quizzes:
-  <% if question.quiz_ids.blank? %>
+  <% if question.proper_quiz_ids.blank? %>
     keine
   <% else %>
     <ul>
-      <% question.quiz_ids.each do |q| %>
+      <% question.proper_quiz_ids.each do |q| %>
         <li>
           <%= Quiz.find_by_id(q).label %>
         </li>
@@ -16,7 +16,7 @@
     <strong>
       globale Änderungen
     </strong>.
-    <% if question.quiz_ids.present? %>
+    <% if question.proper_quiz_ids.present? %>
       Insbesondere werden Änderungen an dieser
       Frage und ihren Antworten in
       <strong>
