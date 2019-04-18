@@ -14,7 +14,7 @@ class Remark < Medium
   end
 
   def self.create_prefilled(label, teachable, editors)
-    remark = Remark.new(sort: 'KeksRemark', description: label,
+    remark = Remark.new(sort: 'Remark', description: label,
                         teachable: teachable, editors: editors,
                         text: 'Dummytext')
     remark.save

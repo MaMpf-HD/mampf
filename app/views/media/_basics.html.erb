@@ -59,8 +59,8 @@
                    options_for_select(Medium.select_sorts, medium.sort),
                    {},
                    { class: 'form-control',
-                     disabled: medium.sort.in?(['Script', 'KeksQuiz',
-                                                'KeksQuestion', 'KeksRemark']) }%>
+                     disabled: medium.sort.in?(['Script', 'Quiz',
+                                                'Question', 'Remark']) }%>
       <div class="invalid-feedback"
            id="medium-sort-error">
       </div>
@@ -78,7 +78,7 @@
         sowie Medien aus MaMpf über QR-Codes im Manuskript verfügbar zu machen.
       </div>
     </div>
-    <% if medium.sort.in?(['Script', 'KeksQuiz', 'KeksQuestion', 'KeksRemark']) %>
+    <% if medium.sort.in?(['Script', 'Quiz', 'Question', 'Remark']) %>
       <%= f.hidden_field :sort, value: medium.sort %>
     <% end %>
     <div class="form-group">

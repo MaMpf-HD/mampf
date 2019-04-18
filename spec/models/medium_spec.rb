@@ -18,15 +18,15 @@ RSpec.describe Medium, type: :model do
     medium = FactoryBot.build(:medium, sort: 'Test')
     expect(medium).to be_invalid
   end
-  context 'KeksQuestion' do
+  context 'Question' do
     it 'is invalid if no question_id is given ' do
-      medium = FactoryBot.build(:medium, sort: 'KeksQuestion',
+      medium = FactoryBot.build(:medium, sort: 'Question',
                                           question_id: nil)
       expect(medium).to be_invalid
     end
     it 'is invalid if question_id is duplicate' do
-      FactoryBot.create(:medium, sort: 'KeksQuestion', question_id: 123)
-      medium = FactoryBot.build(:medium, sort: 'KeksQuestion',
+      FactoryBot.create(:medium, sort: 'Question', question_id: 123)
+      medium = FactoryBot.build(:medium, sort: 'Question',
                                           question_id: 123)
       expect(medium).to be_invalid
     end
@@ -152,16 +152,16 @@ RSpec.describe Medium, type: :model do
     medium = FactoryBot.build(:medium, extras_link: 'http://www.bs.de', extras_description: nil)
     expect(medium).to be_invalid
   end
-  it 'is invalid without question_list if sort is KeksQuiz' do
-    medium = FactoryBot.build(:medium, sort: 'KeksQuiz', question_list: nil)
+  it 'is invalid without question_list if sort is Quiz' do
+    medium = FactoryBot.build(:medium, sort: 'Quiz', question_list: nil)
     expect(medium).to be_invalid
   end
-  it 'is valid if a valid question_list is given and sort is KeksQuiz' do
-    medium = FactoryBot.build(:medium, sort: 'KeksQuiz', question_list: '33&775&4')
+  it 'is valid if a valid question_list is given and sort is Quiz' do
+    medium = FactoryBot.build(:medium, sort: 'Quiz', question_list: '33&775&4')
     expect(medium).to be_valid
   end
-  it 'is invalid if an invalid question_list is given and sort is KeksQuiz' do
-    medium = FactoryBot.build(:medium, sort: 'KeksQuiz', question_list: 'abc')
+  it 'is invalid if an invalid question_list is given and sort is Quiz' do
+    medium = FactoryBot.build(:medium, sort: 'Quiz', question_list: 'abc')
     expect(medium).to be_invalid
   end
   it 'is invalid if video_file_link is not a valid http link' do
@@ -194,7 +194,7 @@ RSpec.describe Medium, type: :model do
       expect(medium.sort).to eq('Kaviar')
     end
     it 'adds the keks link if question id is given but not the link' do
-      medium = FactoryBot.create(:medium, sort: 'KeksQuestion', question_id: 1234, external_reference_link: nil)
+      medium = FactoryBot.create(:medium, sort: 'Question', question_id: 1234, external_reference_link: nil)
       expect(medium.external_reference_link). to eq(DefaultSetting::KEKS_QUESTION_LINK + '1234')
     end
     it 'gets assigned default width if video_file_link is given but no width' do
@@ -324,7 +324,7 @@ RSpec.describe Medium, type: :model do
   end
   describe '#sort_de' do
     it 'returns the correct sort in german spelling' do
-      medium = FactoryBot.build(:medium, sort: 'KeksQuestion')
+      medium = FactoryBot.build(:medium, sort: 'Question')
       expect(medium.sort_de).to eq('Keks-Frage')
     end
   end

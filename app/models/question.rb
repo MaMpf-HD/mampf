@@ -26,7 +26,7 @@ class Question < Medium
   end
 
   def proper_quiz_ids
-    Quiz.where(id: quiz_ids, sort: 'KeksQuiz').pluck(:id)
+    Quiz.where(id: quiz_ids, sort: 'Quiz').pluck(:id)
   end
 
   def duplicate
@@ -44,7 +44,7 @@ class Question < Medium
   end
 
   def self.create_prefilled(label, teachable, editors)
-    question = Question.new(sort: 'KeksQuestion', description: label,
+    question = Question.new(sort: 'Question', description: label,
                             teachable: teachable, editors: editors,
                             text: 'Dummytext', level: 1, independent: false)
     return question if question.invalid?

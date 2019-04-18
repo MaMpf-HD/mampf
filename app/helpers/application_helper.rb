@@ -60,11 +60,11 @@ module ApplicationHelper
   # media_sort -> database fields
   def media_types
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
-      'keks' => ['KeksQuiz'],
+      'keks' => ['Quiz'],
       'kiwi' => ['Kiwi'],
       'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'],
-      'script' => ['Script'], 'questions' => ['KeksQuestion'],
-      'remarks' => ['KeksRemark'], 'reste' => ['Reste'] }
+      'script' => ['Script'], 'questions' => ['Question'],
+      'remarks' => ['Remark'], 'reste' => ['Reste'] }
   end
 
   # media_sorts

@@ -37,7 +37,7 @@ class Notification < ApplicationRecord
       return notifiable.lecture.path(user) if notifiable.lecture.present?
       return news_path
     end
-    if notifiable_type == 'Medium' && notifiable.sort == 'KeksQuiz'
+    if notifiable_type == 'Medium' && notifiable.sort == 'Quiz'
       return medium_path(notifiable)
     end
     polymorphic_url(notifiable, only_path: true)
@@ -82,7 +82,7 @@ class Notification < ApplicationRecord
   end
 
   def quiz?
-    medium? && notifiable.sort == 'KeksQuiz'
+    medium? && notifiable.sort == 'Quiz'
   end
 
   def generic_announcement?

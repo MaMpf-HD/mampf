@@ -96,8 +96,8 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script KeksQuestion KeksQuiz
-       Reste KeksRemark]
+    %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script Question Quiz
+       Reste Remark]
   end
 
   # Returns the list of media sorts, together with their index in the
@@ -111,10 +111,10 @@ class Medium < ApplicationRecord
   def self.sort_de
     { 'Kaviar' => I18n.t('categories.kaviar.singular'),
       'Sesam' => I18n.t('categories.sesam.singular'),
-      'KeksQuestion' => I18n.t('categories.question.singular'),
-      'KeksQuiz' => I18n.t('categories.quiz.singular'),
+      'Question' => I18n.t('categories.question.singular'),
+      'Quiz' => I18n.t('categories.quiz.singular'),
       'RandomQuiz' => I18n.t('categories.randomquiz.singular'),
-      'KeksRemark' => I18n.t('categories.remark.singular'),
+      'Remark' => I18n.t('categories.remark.singular'),
       'Nuesse' => I18n.t('categories.exercises.singular'),
       'Erdbeere' => I18n.t('categories.erdbeere'),
       'Kiwi' => I18n.t('categories.kiwi'),
@@ -152,7 +152,7 @@ class Medium < ApplicationRecord
   def self.filter_media(course, project)
     return Medium.order(:id) unless project.present?
     return [] unless course.available_food.include?(project)
-    sort = project == 'keks' ? 'KeksQuiz' : project.capitalize
+    sort = project == 'keks' ? 'Quiz' : project.capitalize
     Medium.where(sort: sort).order(:id)
   end
 
@@ -209,7 +209,7 @@ class Medium < ApplicationRecord
   # returns the array of all media (by title), together with their ids
   # is used in options_for_select in form helpers.
   def self.select_by_name
-    Medium.where.not(sort: ['KeksQuestion', 'KeksRemark', 'RandomQuiz'])
+    Medium.where.not(sort: ['Question', 'Remark', 'RandomQuiz'])
           .includes(:teachable).all.map { |m| [m.title_for_viewers, m.id] }
   end
 
@@ -594,14 +594,14 @@ class Medium < ApplicationRecord
 
   # extracts question id if medium is a keks question
   def keks_question_id
-    return unless sort == 'KeksQuestion'
+    return unless sort == 'Question'
     return unless external_reference_link.present?
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK).to_i
   end
 
   # extracts array of question ids if medium is a keks quiz
   def keks_question_ids
-    return unless sort == 'KeksQuiz'
+    return unless sort == 'Quiz'
     external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK)
                            .split(',').map(&:to_i)
   end
@@ -639,7 +639,7 @@ class Medium < ApplicationRecord
              "#{teachable.lesson&.date_de}"
     elsif sort == 'Script'
       return 'Skript'
-    elsif sort == 'KeksQuestion'
+    elsif sort == 'Question'
       'KeksFrage ' + position.to_s + '/' + siblings.count.to_s
     end
     'KeksErläuterung ' + position.to_s + '/' + siblings.count.to_s
@@ -648,8 +648,8 @@ class Medium < ApplicationRecord
   # returns description if present or question(s) id(s) for KeksQestion/Quiz
   def details
     return description if description.present?
-    return 'Frage ' + keks_question_id.to_s if sort == 'KeksQuestion'
-    return 'Fragen ' + keks_question_ids.join(', ') if sort == 'KeksQuiz'
+    return 'Frage ' + keks_question_id.to_s if sort == 'Question'
+    return 'Fragen ' + keks_question_ids.join(', ') if sort == 'Quiz'
     ''
   end
 
@@ -699,7 +699,7 @@ class Medium < ApplicationRecord
   # a description
   def undescribable?
     (sort == 'Kaviar' && teachable.class.to_s == 'Lesson') ||
-      sort == 'KeksQuestion' || sort == 'KeksRemark' || sort == 'Script'
+      sort == 'Question' || sort == 'Remark' || sort == 'Script'
   end
 
   def touch_teachable
@@ -755,7 +755,7 @@ class Medium < ApplicationRecord
   end
 
   def create_self_item
-    return if sort.in?(['KeksQuestion', 'KeksRemark', 'RandomQuiz'])
+    return if sort.in?(['Question', 'Remark', 'RandomQuiz'])
     Item.create(sort: 'self', medium: self)
   end
 

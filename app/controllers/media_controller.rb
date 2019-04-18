@@ -52,7 +52,7 @@ class MediaController < ApplicationController
     @medium.touch
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript
-    if @medium.sort == 'KeksQuiz' &&params[:medium][:create_quiz_graph] == '1'
+    if @medium.sort == 'Quiz' &&params[:medium][:create_quiz_graph] == '1'
       @medium.becomes(Quiz).update(level: 1,
                                    quiz_graph: QuizGraph.new(vertices: {},
                                                edges: {},
@@ -80,17 +80,17 @@ class MediaController < ApplicationController
     @medium = Medium.new(medium_params)
     @medium.save
     if @medium.valid?
-      if @medium.sort == 'KeksRemark'
+      if @medium.sort == 'Remark'
         @medium.update(type: 'Remark', text: 'Dummytext')
       end
-      if @medium.sort == 'KeksQuestion'
+      if @medium.sort == 'Question'
         @medium.update(type: 'Question', text: 'Dummytext', level: 1,
                        independent: false)
         Answer.create(question: @medium.becomes(Question),
                       text: 'Dummyantwort',
                       value: true)
       end
-      if @medium.sort == 'KeksQuiz'
+      if @medium.sort == 'Quiz'
         @medium.update(type: 'Quiz')
         if params[:medium][:create_quiz_graph] == '1'
           @medium.update(quiz_graph:QuizGraph.new(vertices: {},
@@ -113,7 +113,7 @@ class MediaController < ApplicationController
     release_state = params[:medium][:released]
     @medium.update(released: release_state)
     # create notification about creation of medium to all subscribers
-    create_notifications unless @medium.sort.in?(['KeksQuestion', 'KeksRemark',
+    create_notifications unless @medium.sort.in?(['Question', 'Remark',
                                                   'RandomQuiz'])
     redirect_to edit_medium_path(@medium)
   end

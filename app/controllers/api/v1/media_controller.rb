@@ -8,7 +8,7 @@ class Api::V1::MediaController < ApplicationController
   def keks_question
     # find medium of sort keks question, whose question id is the one given
     # as parameter
-    @medium = Medium.where(sort: 'KeksQuestion')
+    @medium = Medium.where(sort: 'Question')
                     .find { |m| m.keks_question_id == params[:id].to_i }
     width = params[:width].to_i
     if @medium.present?

@@ -6,7 +6,7 @@
                        new_medium: new_medium,
                        f: f } %>
   <div class="row mt-3 p-2">
-  <% if !medium.sort.in?(['Script', 'KeksQuiz', 'KeksQuestion', 'KeksRemark']) %>
+  <% if !medium.sort.in?(['Script', 'Quiz', 'Question', 'Remark']) %>
     <div class="col-4">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
@@ -40,7 +40,7 @@
                  locals: { medium: medium,
                            f: f } %>
     </div>
-  <% elsif medium.sort == 'KeksQuiz' %>
+  <% elsif medium.sort == 'Quiz' %>
     <div class="col-4">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
@@ -52,7 +52,7 @@
                  locals: { quiz: medium.becomes(Quiz),
                            f: f } %>
     </div>
-  <% elsif medium.sort == 'KeksQuestion' %>
+  <% elsif medium.sort == 'Question' %>
     <div class="col-3">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
@@ -74,7 +74,7 @@
                  locals: { medium: medium,
                            f: f } %>
     </div>
-  <% elsif medium.sort == 'KeksRemark' %>
+  <% elsif medium.sort == 'Remark' %>
     <div class="col-3">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,

@@ -476,7 +476,7 @@ class Lecture < ApplicationRecord
 
   def sort
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
-      'keks' => ['KeksQuiz'], 'nuesse' => ['Nuesse'],
+      'keks' => ['Quiz'], 'nuesse' => ['Nuesse'],
       'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste']}
   end
 

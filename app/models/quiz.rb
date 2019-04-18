@@ -13,7 +13,7 @@ class Quiz < Medium
 
   def self.create_randomized(course)
     question_ids = course.media_with_inheritance.locally_visible
-                         .where(sort: 'KeksQuestion')
+                         .where(sort: 'Question')
                          .select { |q| q.answers.count > 1 }
                          .sample(5).map(&:id)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
