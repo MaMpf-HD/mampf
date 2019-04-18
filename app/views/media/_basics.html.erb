@@ -23,18 +23,7 @@
          als Video produziert oder aus der Plenarübung
          </li>
          <li>
-         Quiz-Frage: einzelne Quiz-Frage, z.B. aus der KeKs-Plattform
-         passt.
-         </li>
-         <li>
          Übung: Übungsblätter
-         </li>
-         <li>
-         Beispiel-Datenbank: Beispiel aus der ErDBeere-Datenbank
-         (z.Zt. nur Prototyp)
-         </li>
-         <li>
-         Wiederholung: Materialien, die Vorwissen auffrischen.
          </li>
          <li>
          Skript: Vorlesungsmanuskript
@@ -47,6 +36,24 @@
          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
          für LaTEX, kann MaMpf aus dem pdf zusätzliche Informationen
          extrahieren.
+         </li>
+         <li>
+         Wiederholung: Materialien, die Vorwissen auffrischen.
+         </li>
+         <li>
+         Quiz: einzelnes Quiz
+         </li>
+         <li>
+         Quiz-Frage: einzelne Quiz-Frage
+         </li>
+         <li>
+         Quiz-Erläuterung: einzelne Quiz-Erläuterung. Quiz-Erläuterungen
+         dienen als Bindeglied zwischen Quiz-Fragen in komplexreren Quizzes
+         (z.B. angeleiteten Beweisen)
+         </li>
+         <li>
+         Beispiel-Datenbank: Beispiel aus der ErDBeere-Datenbank
+         (z.Zt. nur Prototyp)
          </li>
          <li>
          Sonstiges: Hier kannst Du alles unterbringen, was in keine andere
@@ -166,7 +173,7 @@
          data-content="Die Beschreibung wird in Verweisen auf das Medium
          verwendet. Die Angabe einer Beschreibung ist obligatorisch,
          außer im Falle eines KaViar-Mediums, das zu einer Sitzung assoziiert
-         ist oder im Falle einer KeKs-Frage.">
+         ist oder im Falle eines Manuskripts.">
       </i>
       <%= f.text_field :description,
                        class: 'form-control' %>
@@ -216,8 +223,6 @@
          title="Info"
          data-content="Dies ist eine Liste aller Medien, die mit diesem Medium
          verknüpft sind bzw. die von diesem Medium aus referenziert werden.
-         Typisches Anwendungsbeispiel ist etwa die Liste aller zuheörigen
-         KeKs-Fragen aus einem KeKs-Quiz heraus.
          <br>
          <b>
          Achtung:
@@ -242,7 +247,7 @@
          data-trigger="focus"
          title="Info"
          data-content="Externer Link, der einen Teil diese Mediums ausmacht.
-         Typisches Anwendungsbeispiel im Moment: KeKs-Quiz, KeKs-Frage.">
+         Könnte z.B. ein Link auf das Stacks-Project sein.">
       </i>
       <div class="row">
         <div class="col-10">

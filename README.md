@@ -69,7 +69,6 @@ MAILSERVER=localhost
 FROM_ADDRESS=mampf@localhost
 URL_HOST=localhost
 RAILS_MASTER_KEY=$MASTER_KEY
-KEKS_SERVER = your_keks_server
 ERDBEERE_SERVER = your_erdbeere_server
 MUESLI_SERVER = your_muesli_server
 PROJECT_EMAIL = your_project_email

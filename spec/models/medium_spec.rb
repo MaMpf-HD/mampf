@@ -193,10 +193,6 @@ RSpec.describe Medium, type: :model do
       medium = Medium.new
       expect(medium.sort).to eq('Kaviar')
     end
-    it 'adds the keks link if question id is given but not the link' do
-      medium = FactoryBot.create(:medium, sort: 'Question', question_id: 1234, external_reference_link: nil)
-      expect(medium.external_reference_link). to eq(DefaultSetting::KEKS_QUESTION_LINK + '1234')
-    end
     it 'gets assigned default width if video_file_link is given but no width' do
       medium = FactoryBot.create(:medium, video_file_link: 'http://www.test.de/test.mp4',
                                           width: nil)
@@ -325,7 +321,7 @@ RSpec.describe Medium, type: :model do
   describe '#sort_de' do
     it 'returns the correct sort in german spelling' do
       medium = FactoryBot.build(:medium, sort: 'Question')
-      expect(medium.sort_de).to eq('Keks-Frage')
+      expect(medium.sort_de).to eq('Quiz-Frage')
     end
   end
   describe '#question_ids' do

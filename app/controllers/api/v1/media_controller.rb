@@ -1,4 +1,5 @@
 # MediaController for API
+# 2019-04-18: API is deprecated
 class Api::V1::MediaController < ApplicationController
   skip_before_action :authenticate_user!
 
@@ -6,27 +7,7 @@ class Api::V1::MediaController < ApplicationController
 
   # example call: /api/v1/keks_questions/310
   def keks_question
-    # find medium of sort keks question, whose question id is the one given
-    # as parameter
-    @medium = Medium.where(sort: 'Question')
-                    .find { |m| m.keks_question_id == params[:id].to_i }
-    width = params[:width].to_i
-    if @medium.present?
-      render json:
-        {
-          medium: MediumSerializer.new(@medium),
-          embedded_video:
-            render_to_string(partial: 'api/v1/medium/video',
-                             formats: :html,
-                             layout: false,
-                             locals:
-                               { medium: @medium,
-                                 width: width,
-                                 height: @medium.video_scaled_height(width) })
-        }
-    else
-      # render trivial json
-      render json: { medium: {}, embedded_video: '' }
-    end
+    # render trivial json
+    render json: { medium: {}, embedded_video: '' }
   end
 end

@@ -111,19 +111,19 @@ class Medium < ApplicationRecord
   def self.sort_de
     { 'Kaviar' => I18n.t('categories.kaviar.singular'),
       'Sesam' => I18n.t('categories.sesam.singular'),
-      'Question' => I18n.t('categories.question.singular'),
-      'Quiz' => I18n.t('categories.quiz.singular'),
-      'RandomQuiz' => I18n.t('categories.randomquiz.singular'),
-      'Remark' => I18n.t('categories.remark.singular'),
       'Nuesse' => I18n.t('categories.exercises.singular'),
-      'Erdbeere' => I18n.t('categories.erdbeere'),
-      'Kiwi' => I18n.t('categories.kiwi'),
       'Script' => I18n.t('categories.script'),
+      'Kiwi' => I18n.t('categories.kiwi'),
+      'Quiz' => I18n.t('categories.quiz.singular'),
+      'Question' => I18n.t('categories.question.singular'),
+      'Remark' => I18n.t('categories.remark.singular'),
+      'RandomQuiz' => I18n.t('categories.randomquiz.singular'),
+      'Erdbeere' => I18n.t('categories.erdbeere'),
       'Reste' => I18n.t('categories.reste') }
   end
 
   def self.select_sorts
-    Medium.sort_de.map { |k, v| [v, k] }
+    Medium.sort_de.except('RandomQuiz').map { |k, v| [v, k] }
   end
 
   # returns the array of all media subject to the conditions
@@ -592,20 +592,6 @@ class Medium < ApplicationRecord
     teachable_type + '-' + teachable_id.to_s
   end
 
-  # extracts question id if medium is a keks question
-  def keks_question_id
-    return unless sort == 'Question'
-    return unless external_reference_link.present?
-    external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK).to_i
-  end
-
-  # extracts array of question ids if medium is a keks quiz
-  def keks_question_ids
-    return unless sort == 'Quiz'
-    external_reference_link.remove(DefaultSetting::KEKS_QUESTION_LINK)
-                           .split(',').map(&:to_i)
-  end
-
   # returns the position of this medium among all media of the same sort
   # associated to the same teachable (by id)
   def position
@@ -629,7 +615,7 @@ class Medium < ApplicationRecord
   end
 
   # returns description unless medium is Kaviar associated to a lesson or a
-  # keks question, in which case details about the lesson/the question are
+  # question, in which case details about the lesson/the question are
   # returned, or a Script
   def local_info
     return description if description.present?
@@ -640,17 +626,14 @@ class Medium < ApplicationRecord
     elsif sort == 'Script'
       return 'Skript'
     elsif sort == 'Question'
-      'KeksFrage ' + position.to_s + '/' + siblings.count.to_s
+      'Frage ' + position.to_s + '/' + siblings.count.to_s
     end
-    'KeksErläuterung ' + position.to_s + '/' + siblings.count.to_s
+    'Erläuterung ' + position.to_s + '/' + siblings.count.to_s
   end
 
-  # returns description if present or question(s) id(s) for KeksQestion/Quiz
+  # returns description if present, otherwise ''
   def details
-    return description if description.present?
-    return 'Frage ' + keks_question_id.to_s if sort == 'Question'
-    return 'Fragen ' + keks_question_ids.join(', ') if sort == 'Quiz'
-    ''
+    description.to_s
   end
 
   def title
@@ -695,11 +678,11 @@ class Medium < ApplicationRecord
 
   private
 
-  # media of type kaviar associated to a lesson, keks question do not require
+  # media of type kaviar associated to a lesson and script do not require
   # a description
   def undescribable?
     (sort == 'Kaviar' && teachable.class.to_s == 'Lesson') ||
-      sort == 'Question' || sort == 'Remark' || sort == 'Script'
+      sort == 'Script'
   end
 
   def touch_teachable
