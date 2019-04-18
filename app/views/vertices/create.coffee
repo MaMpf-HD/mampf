@@ -11,7 +11,7 @@ $('#quizzable-data').empty()
                         locals: { remark: @quizzable } %>'
 <% end %>
 $('#quizzableModal').modal 'show'
-quizzableData = document.getElementById('quizzable_data')
+quizzableData = document.getElementById('quizzable-data')
 renderMathInElement quizzableData,
   delimiters: [
     {

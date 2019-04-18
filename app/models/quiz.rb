@@ -67,13 +67,13 @@ class Quiz < Medium
   end
 
   def question_ids
-    return [] unless quiz_graph &&  quiz_graph.vertices.present?
+    return [] unless quiz_graph && quiz_graph.vertices.present?
     quiz_graph.vertices.select { |_k, v| v[:type] == 'Question' }
               .values.map { |v| v[:id] }.uniq
   end
 
   def remark_ids
-    return [] if quiz_graph.vertices.blank?
+    return [] unless quiz_graph && quiz_graph.vertices.blank?
     quiz_graph.vertices.select { |_k, v| v[:type] == 'Remark' }.values
               .map { |v| v[:id] }.uniq
   end

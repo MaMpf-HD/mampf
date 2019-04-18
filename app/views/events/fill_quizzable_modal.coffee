@@ -1,8 +1,6 @@
 $('#quizzableModalLabel').empty()
-  .append "<%= @type == 'Question' ? 'Frage ' + @quizzable.description +
-                                     ' bearbeiten' :
-                                     'Bemerkung ' + @quizzable.description +
-                                     ' bearbeiten' %>"
+  .append "<%= @type == 'Question' ? 'Frage bearbeiten' :
+                                     'Bemerkung bearbeiten' %>"
 <% if @type == 'Question' %>
 $('#quizzable-data').empty()
   .append '<%= j render partial: "questions/data",
@@ -12,6 +10,7 @@ $('#quizzable-data').empty()
   .append '<%= j render partial: "remarks/data",
                         locals: { remark: @quizzable }%>'
 <% end %>
+
 quizzableModal = document.getElementById('quizzableModal')
 renderMathInElement quizzableModal,
   delimiters: [
