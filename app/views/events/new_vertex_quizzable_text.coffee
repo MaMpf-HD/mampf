@@ -1,4 +1,6 @@
-$('#new_vertex_text').empty().append '<%= j @text %>'
+$('#new_vertex_text').empty()
+  .append '<%= j render partial: "quizzes/quizzable_preview",
+                        locals: { quizzable: @quizzable } %>'
 newVertex = document.getElementById('new_vertex_text')
 renderMathInElement newVertex,
   delimiters: [

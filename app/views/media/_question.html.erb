@@ -30,23 +30,8 @@
         Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
         die Frage erstmalig abgespeichert hast.
       <% else %>
-      <div class="bg-question p-2 border">
-      <div class="row mb-3">
-        <div class="col-12">
-          <%= question.text %>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-12">
-          <%= render partial: 'questions/answers',
-                     locals: { answers: question.answers } %>
-        </div>
-      </div>
-      <% if question.hint.present? %>
-        <i>Hinweis:</i>
-        <%= question.hint %>
-      <% end %>
-      </div>
+        <%= render partial: 'quizzes/quizzable_preview',
+                   locals: { quizzable: question } %>
       <% end %>
       <div class="row mt-3">
         <div class="col-12">

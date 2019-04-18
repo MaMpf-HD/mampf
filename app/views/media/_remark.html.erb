@@ -32,9 +32,8 @@
         die Quiz-Erläuterung erstmalig abgespeichert hast.
     <% else %>
       Anzeige
-      <div class="bg-remark border p-2 mb-3">
-        <%= remark.text %>
-      </div>
+      <%= render partial: 'quizzes/quizzable_preview',
+                 locals: { quizzable: remark } %>
     <% end %>
   </div>
 </div>

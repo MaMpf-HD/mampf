@@ -25,7 +25,7 @@ class EventsController < ApplicationController
   def new_vertex_quizzable_text
     @type = params[:type]
     @id = params[:id]
-    @text = @type.constantize.find_by_id(@id)&.text
+    @quizzable = @type.constantize.find_by_id(@id)
   end
 
   def update_vertex_body
