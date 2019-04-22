@@ -346,7 +346,7 @@ class Course < ApplicationRecord
       Question.where(teachable: [self] + [lectures.published],
                      independent: true,
                      released: ['all', 'users'])
-              .joins(:answers).group('question_id').having('count(question_id) > 1')
+              .joins(:answers).group('id').having('count(question_id) > 1')
               .pluck(:id).count
     end
   end
@@ -359,7 +359,7 @@ class Course < ApplicationRecord
     question_ids = Question.where(teachable: [self] + [lectures.published],
                                   independent: true,
                                   released: ['all', 'users'])
-                           .joins(:answers).group('question_id')
+                           .joins(:answers).group('id')
                            .having('count(question_id) > 1')
                            .pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
@@ -387,7 +387,7 @@ class Course < ApplicationRecord
   # to this course and a given project (kaviar, semsam etc.)
   def strict_project?(project)
     Rails.cache.fetch("#{cache_key}/strict_#{project}") do
-      Medium.where(sort: sort[project], teachable: self).any?
+      Medium.where(sort: sort[project], teachable: self).exists?
     end
   end
 
