@@ -6,6 +6,7 @@ class CoursesController < ApplicationController
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   before_action :check_if_enough_questions, only: [:show_random_quizzes,
                                                    :take_random_quiz]
+  before_action :check_for_consent
   authorize_resource
   layout 'administration'
 
@@ -137,5 +138,9 @@ class CoursesController < ApplicationController
   def check_if_enough_questions
     return if @course.enough_questions?
     redirect_to :root, alert: 'Für dieses Modul gibt es keinen Test.'
+  end
+
+  def check_for_consent
+    redirect_to consent_profile_path unless current_user.consents
   end
 end
