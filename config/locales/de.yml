@@ -33,7 +33,7 @@ de:
     randomquiz:
       singular: 'Zufallsquiz'
     test:
-      singular: 'Test'
+      singular: 'Selbsttest'
     question:
       singular: 'Quiz-Frage'
       plural: 'Quiz-Fragen'
