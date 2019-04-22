@@ -275,9 +275,9 @@ class Course < ApplicationRecord
   # lessons associated to this course)
   def media_with_inheritance
     Rails.cache.fetch("#{cache_key}/media_with_inheritance") do
-      Medium.where(id: Medium.proper.includes(:teachable)
-                             .select { |m| m.teachable.course == self }
-                             .map(&:id))
+      Medium.proper.where(teachable: self)
+        .or(Medium.proper.where(teachable: self.lectures))
+        .or(Medium.proper.where(teachable: Lesson.where(lecture: self.lectures)))
     end
   end
 
