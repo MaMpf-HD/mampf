@@ -346,8 +346,8 @@ class Course < ApplicationRecord
       Question.where(teachable: [self] + [lectures.published],
                      independent: true,
                      released: ['all', 'users'])
-              .select { |q| q.answers.count > 1 }
-              .count
+              .joins(:answers).group('question_id').having('count(question_id) > 1')
+              .pluck(:id).count
     end
   end
 
@@ -359,8 +359,9 @@ class Course < ApplicationRecord
     question_ids = Question.where(teachable: [self] + [lectures.published],
                                   independent: true,
                                   released: ['all', 'users'])
-                           .select { |q| q.answers.count > 1 }
-                           .sample(5).map(&:id)
+                           .joins(:answers).group('question_id')
+                           .having('count(question_id) > 1')
+                           .pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
     quiz = Quiz.new(description: "Zufallsquiz #{course.title} #{Time.now}",
                     level: 1,

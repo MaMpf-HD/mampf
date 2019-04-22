@@ -11,21 +11,6 @@ class Quiz < Medium
                                           default_table: {}, hide_solution: []))
   end
 
-  def self.create_randomized(course)
-    question_ids = course.media_with_inheritance.locally_visible
-                         .where(sort: 'Question')
-                         .select { |q| q.answers.count > 1 }
-                         .sample(5).map(&:id)
-    quiz_graph = QuizGraph.build_from_questions(question_ids)
-    quiz = Quiz.new(description: "Zufallsquiz #{course.title} #{Time.now}",
-                    level: 1,
-                    quiz_graph: quiz_graph,
-                    sort: 'RandomQuiz')
-    quiz.save
-    return quiz.errors unless quiz.valid?
-    quiz
-  end
-
   def label
     description
   end
