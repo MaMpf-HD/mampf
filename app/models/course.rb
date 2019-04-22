@@ -378,8 +378,10 @@ class Course < ApplicationRecord
   # to this course and a given project (kaviar, semsam etc.)
   def project?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
-      Medium.where(sort: sort[project]).includes(:teachable)
-            .any? { |m| m.teachable.present? && m.teachable.course == self }
+      Medium.where(sort: sort[project], teachable: self).exists? ||
+        Medium.where(sort: sort[project], teachable: self.lectures).exists? ||
+        Medium.where(sort: sort[project],
+                     teachable: Lesson.where(lecture: self.lectures)).exists?
     end
   end
 

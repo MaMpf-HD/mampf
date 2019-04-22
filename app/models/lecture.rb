@@ -454,7 +454,7 @@ class Lecture < ApplicationRecord
     user.active_announcements(lecture).map(&:notifiable)
   end
 
-  private
+#  private
 
   # used for after save callback
   def remove_teacher_as_editor
@@ -465,11 +465,15 @@ class Lecture < ApplicationRecord
   # to this lecture and a given project (kaviar, semsam etc.)
   def project?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
-      Medium.where(sort: sort[project], released: ['all', 'users', 'subscribers'])
-            .includes(:teachable)
-            .any? do |m|
-        m.teachable&.lecture == self || m.teachable == course
-      end
+      Medium.where(sort: sort[project],
+                   released: ['all', 'users', 'subscribers'],
+                   teachable: self).exists? ||
+      Medium.where(sort: sort[project],
+                   released: ['all', 'users', 'subscribers'],
+                   teachable: lessons).exists? ||
+      Medium.where(sort: sort[project],
+                   released: ['all', 'users', 'subscribers'],
+                   teachable: course).exists?
     end
   end
 
