@@ -408,12 +408,12 @@ class Lecture < ApplicationRecord
   # 1) media associated to the lecture
   # 2) media associated to lessons of the lecture, sorted by lesson numbers
   def lecture_lesson_results(filtered_media)
-    lecture_results = filtered_media.select { |m| m.teachable == self }
-    lesson_results = filtered_media.select do |m|
-      m.teachable_type == 'Lesson' && m.teachable &&
-        m.teachable.lecture == self
-    end
-    lecture_results + lesson_results.sort_by { |m| m.teachable.lesson.number }
+    lecture_results = filtered_media.where(teachable: self)
+    lesson_results = filtered_media.where(teachable:
+                                            Lesson.where(lecture: self))
+    lecture_results + lesson_results.includes(:teachable)
+                                    .sort_by { |m| [m.lesson.date,
+                                                    m.lesson.id] }
   end
 
   def self.sort_by_date(lectures)
