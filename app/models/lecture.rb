@@ -173,9 +173,8 @@ class Lecture < ApplicationRecord
   # returns the ARel of all media whose teachable's lecture is the given lecture
   def media_with_inheritance
     Rails.cache.fetch("#{cache_key}/media_with_inheritance") do
-      Medium.where(id: Medium.includes(:teachable)
-                             .select { |m| m.teachable&.lecture == self }
-                             .map(&:id))
+      Medium.proper.where(teachable: self)
+        .or(Medium.proper.where(teachable: self.lessons))
     end
   end
 

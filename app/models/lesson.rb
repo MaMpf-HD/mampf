@@ -236,7 +236,7 @@ class Lesson < ApplicationRecord
 
   # used for after save callback
   def touch_media
-    lecture.media_with_inheritance.each(&:touch)
+    lecture.media_with_inheritance.update_all(updated_at: Time.now)
   end
 
   def touch_siblings
