@@ -34,10 +34,10 @@ class SectionsController < ApplicationController
 
   def update
     @old_chapter = @section.chapter
-    @section.update(tags: [])
     @section.update(section_params)
     if @section.valid?
       update_position
+      update_tags_order
       if params[:commit] == 'Speichern'
         render :edit
       else
@@ -85,5 +85,11 @@ class SectionsController < ApplicationController
       position -= 1
     end
     @section.insert_at(position + 1)
+  end
+
+  def update_tags_order
+    tags_order = params[:section][:tag_ids].map(&:to_i) - [0]
+    tags_order
+    @section.update(tags_order: tags_order)
   end
 end

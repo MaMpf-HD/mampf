@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_24_124609) do
+ActiveRecord::Schema.define(version: 2019_04_24_174546) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -282,6 +282,7 @@ ActiveRecord::Schema.define(version: 2019_04_24_124609) do
     t.integer "position"
     t.text "display_number"
     t.boolean "hidden"
+    t.text "tags_order"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 

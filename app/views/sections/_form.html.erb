@@ -111,8 +111,8 @@
        data-from="section">
     </a>
     <%= f.select :tag_ids,
-                 options_for_select(section.tags
-                                           .map { |t| [t.title, t.id] } +
+                 options_for_select(section.tags_order
+                                           .map { |t| [Tag.find_by_id(t).title, t] } +
                                       Tag.select_by_title_except(section.tags),
                                     section.tag_ids),
                  {},

@@ -45,7 +45,7 @@
                       <% end %>
                     </div>
                     <div class="col-12 mt-2">
-                      <% s.tags.includes(:lessons).each do |t| %>
+                      <% s.ordered_tags.each do |t| %>
                         <%= link_to shorten(t.title, 50),
                                     tag_path(t),
                                     id: 'lecture-' + dom_id(t),
