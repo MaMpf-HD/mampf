@@ -23,9 +23,9 @@
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
       <div class="col-12">
-        <div class="card mb-2 bg-green-lighten-4"
+        <div class="card bg-light mb-2"
              id="relatedTags">
-          <div class="card-header bg-green-darken-3 text-light">
+          <div class="card-header">
             <h5>
               Verknüpfte Tags
             </h5>
@@ -74,17 +74,17 @@
   </div>
   <div class="col-12 col-lg-8 col-xl-6 col-xxl-7 mb-2">
     <div class="card">
-      <div class="card-header bg-green-darken-3">
+      <div class="card-header">
         <div class="row">
           <div class="col-3">
-            <h5 class="text-light">
+            <h5>
               MaMpf-Map
             </h5>
           </div>
           <div class="col-9 text-right">
             <%= link_to 'in externem Tab rendern',
                         display_cyto_tag_path(@tag),
-                        class: 'btn btn-sm btn-outline-light',
+                        class: 'btn btn-sm btn-outline-secondary',
                         target: :_blank%>
           </div>
         </div>
