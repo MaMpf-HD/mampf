@@ -164,10 +164,10 @@ class Item < ApplicationRecord
 
   # background color of different item sorts within thyme editor
   def background
-    return '#0c0;' if ['remark', 'theorem', 'lemma', 'corollary',
+    return '#70db70;' if ['remark', 'theorem', 'lemma', 'corollary',
                        'algorithm', 'Theorem', 'Corollary', 'Lemma',
                        'proposition'].include?(sort)
-    return '#1ad1ff;' if ['definition', 'annotation', 'example',
+    return '#75d7f0;' if ['definition', 'annotation', 'example',
                           'figure', 'exercise', 'equation'].include?(sort)
     return 'lightgray;' if sort == 'link' || sort == 'self'
     ''

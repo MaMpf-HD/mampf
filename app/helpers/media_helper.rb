@@ -56,7 +56,7 @@ module MediaHelper
   end
 
   def section_selection(medium)
-    medium.teachable.&lecture&.section_selection
+    medium.teachable&.lecture&.section_selection
   end
 
   def preselected_sections(medium)

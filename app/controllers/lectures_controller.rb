@@ -19,6 +19,10 @@ class LecturesController < ApplicationController
     @errors = @lecture.errors
   end
 
+  def show
+    render layout: 'application'
+  end
+
   def new
     @lecture = Lecture.new
     @from = params[:from]
