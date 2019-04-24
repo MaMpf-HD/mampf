@@ -552,23 +552,6 @@ class Medium < ApplicationRecord
     true
   end
 
-  # returns true if the medium's teachable if one of the following:
-  # - a course that the given lecture is associated to
-  # - the given lecture
-  # - a lesson whose lecture is the given lecture
-  def related_to_lecture?(lecture)
-    return true if belongs_to_course?(lecture)
-    return true if belongs_to_lecture?(lecture)
-    return true if belongs_to_lesson?(lecture)
-    false
-  end
-
-  # returns true if the medium's teachable is #related_to one of the
-  # given lectures
-  def related_to_lectures?(lectures)
-    lectures.map { |l| related_to_lecture?(l) }.include?(true)
-  end
-
   def course
     return if teachable.nil?
     teachable.course

@@ -329,7 +329,12 @@ class MediaController < ApplicationController
   def search_results
     search_results = Medium.search(@course.primary_lecture(current_user),
                                    params)
-                           .select { |m| m.visible_for_user?(current_user) }
+    # search_results are ordered in a certain way
+    # the next lines ensure that filtering for visible media does not
+    # mess up the ordering
+    search_arel = Medium.where(id: search_results.pluck(:id))
+    visible_search_results = current_user.filter_visible_media(search_arel)
+    search_results &= visible_search_results
     return search_results unless params[:reverse]
     search_results.reverse
   end

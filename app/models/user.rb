@@ -117,7 +117,7 @@ class User < ApplicationRecord
 
   # related lectures are lectures associated to related courses (see above)
   def related_lectures
-    related_courses.map(&:lectures).flatten
+    Lecture.where(course: related_courses)
   end
 
   # returns ARel of all those tags from the given tags that belong to
@@ -133,12 +133,12 @@ class User < ApplicationRecord
     Lecture.where(id: lectures.pluck(:id) & related_lectures.pluck(:id))
   end
 
-  #  # returns ARel of all those media from the given media that are related to
+  # returns ARel of all those media from the given media that are related to
   # the user's related lectures
   def filter_media(media)
-    Medium
-      .where(id: media.select { |m| m.related_to_lectures?(related_lectures) }
-                      .map(&:id))
+    media.where(teachable: related_lectures)
+      .or(media.where(teachable: related_courses))
+      .or(media.where(teachable: Lesson.where(lecture: related_lectures)))
   end
 
   # returns array of all those sections from the given sections that belon to
@@ -317,6 +317,32 @@ class User < ApplicationRecord
                                                   .map(&:title))
     end
     Thredded::Messageboard.none
+  end
+
+  # for a given arel of media, returns those media that are visible for
+  # the user
+  # this method is more efficient than
+  # media.select { |m| m.visible_for_user?(self)}
+  def filter_visible_media(media)
+    nonsubscribed_courses =
+      Course.where(id: Course.pluck(:id) - courses.pluck(:id))
+    nonsubscribed_lectures =
+      Lecture.where(id: Lecture.pluck(:id) - lectures.pluck(:id),
+                    released: ['all'])
+    lessons = Lesson.where(lecture: lectures)
+    nonsubscribed_lessons =
+      Lesson.where(lecture: nonsubscribed_lectures)
+    media.where(teachable: courses, released: ['all', 'subscribers', 'users'])
+      .or(media.where(teachable: nonsubscribed_courses,
+                      released: ['all', 'users']))
+      .or(media.where(teachable: lectures,
+                      released: ['all', 'subscribers', 'users']))
+      .or(media.where(teachable: nonsubscribed_lectures,
+                      released: ['all', 'users']))
+      .or(media.where(teachable: lessons,
+                      released: ['all', 'subscribers', 'users']))
+      .or(media.where(teachable: nonsubscribed_lessons,
+                      released: ['all', 'users']))
   end
 
   private

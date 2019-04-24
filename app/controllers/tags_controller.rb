@@ -18,10 +18,12 @@ class TagsController < ApplicationController
   def show
     set_related_tags_for_user
     @lectures = current_user.filter_lectures(@tag.lectures)
-    @media = current_user.filter_media(@tag.media
-                                           .where.not(sort: ['Question',
-                                                             'Remark']))
-                         .select { |m| m.visible_for_user?(current_user) }
+    # first, filter the media according to the users subscription type
+    media = current_user.filter_media(@tag.media
+                                          .where.not(sort: ['Question',
+                                                            'Remark']))
+    # then, filter these according to their visibility for the user
+    @media = current_user.filter_visible_media(media)
     render layout: 'application_no_sidebar'
   end
 
