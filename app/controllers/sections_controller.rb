@@ -34,6 +34,7 @@ class SectionsController < ApplicationController
 
   def update
     @old_chapter = @section.chapter
+    @section.update(tags: [])
     @section.update(section_params)
     if @section.valid?
       update_position

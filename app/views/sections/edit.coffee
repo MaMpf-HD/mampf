@@ -14,7 +14,7 @@ $('#<%= dom_id(@section) %>').empty().removeClass('bg-mdb-color-lighten-6')
                         locals: { section: @section } %>')
 
  # activate popovers and selectize
-$('#section-form .selectize').selectize({ plugins: ['remove_button'] })
+$('#section-form .selectize').selectize({ plugins: ['remove_button', 'drag_drop'] })
 $('[data-toggle="popover"]').popover()
 # bugfix for selectize (which sometimes renders the prompt with a zero width)
 $('input[id$="-selectized"]').css('width', '100%')

@@ -55,6 +55,14 @@ class Tag < ApplicationRecord
        .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
+  # returns the array of all tags (sorted by title) excluding a given
+  # arel of tags together with
+  def self.select_by_title_except(excluded_tags)
+    Tag.where.not(id: excluded_tags.pluck(:id)).pluck(:title, :id)
+       .map { |title, id| { title: title, id: id } }
+       .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
+  end
+
   # converts the subgraph of all tags of distance <= 2 to the given marked tag
   # into a cytoscape array representing this subgraph
   def self.to_cytoscape(tags, marked_tag)

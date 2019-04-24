@@ -13,7 +13,8 @@ else
 
   # activate popovers and selectize
   $('[data-toggle="popover"]').popover()
-  $('#lesson-modal-content .selectize').selectize({ plugins: ['remove_button'] })
+  $('#lesson-modal-content .selectize').selectize({ plugins: ['remove_button',
+                                                              'drag_drop'] })
 
   # add/remove associated tags in the tag selector
   # if sections are selected/deselected

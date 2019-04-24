@@ -111,7 +111,10 @@
        data-from="section">
     </a>
     <%= f.select :tag_ids,
-                 options_for_select(Tag.select_by_title,section.tag_ids),
+                 options_for_select(section.tags
+                                           .map { |t| [t.title, t.id] } +
+                                      Tag.select_by_title_except(section.tags),
+                                    section.tag_ids),
                  {},
                  { multiple: true,
                    class: 'selectize mt-2',

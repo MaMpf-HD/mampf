@@ -110,6 +110,8 @@ class Ability
         end
       end
 
+      cannot :show, Lecture
+
       can [:take, :proceed], Quiz do |quiz|
         if !user.new_record?
           quiz.visible_for_user?(user)

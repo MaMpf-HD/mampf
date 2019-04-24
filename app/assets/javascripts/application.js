@@ -18,6 +18,7 @@
 //= require js-routes
 //= require selectize
 //= require jquery.fileDownload
+//= require jquery-ui
 //= require trix
 //= require_tree .
 //= require turbolinks

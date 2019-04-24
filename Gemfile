@@ -49,6 +49,7 @@ gem 'erubis'
 gem 'cancancan'
 gem 'jquery-rails'
 gem 'jquery_file_download-rails'
+gem 'jquery-ui-rails'
 gem 'js-routes'
 gem 'bootstrap'
 gem "bootstrap_form",
