@@ -359,7 +359,7 @@ class MediaController < ApplicationController
 
   def search_params
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
-                                   :all_editors,
+                                   :all_editors, :tag_operator,
                                    types: [],
                                    teachable_ids: [],
                                    tag_ids: [],
