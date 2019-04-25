@@ -80,6 +80,7 @@ class Section < ApplicationRecord
   # reorders the tags as given by the order in tags_order
   # returns an array
   def ordered_tags
+    return tags.to_a unless tag_ids.sort == tags_order.sort
     tags.index_by(&:id).values_at(*tags_order)
   end
 

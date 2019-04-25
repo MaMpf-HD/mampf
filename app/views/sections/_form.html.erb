@@ -112,7 +112,7 @@
     </a>
     <%= f.select :tag_ids,
                  options_for_select(section.tags_order
-                                           .map { |t| [Tag.find_by_id(t).title, t] } +
+                                           .map { |t| [Tag.find_by_id(t)&.title, t] } +
                                       Tag.select_by_title_except(section.tags),
                                     section.tag_ids),
                  {},
