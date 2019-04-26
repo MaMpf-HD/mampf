@@ -385,11 +385,10 @@ class Lecture < ApplicationRecord
   end
 
   # returns path for show action of the lecture's course,
-  # with the lecture on top of the lecture carousel (if subscribed by user)
   def path(user)
     return unless user.lectures.include?(self)
     Rails.application.routes.url_helpers
-         .course_path(course, params: { active: id })
+         .lecture_path(self)
   end
 
   def last_chapter_by_position

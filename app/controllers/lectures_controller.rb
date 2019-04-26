@@ -20,6 +20,8 @@ class LecturesController < ApplicationController
   end
 
   def show
+    cookies[:current_course] = @lecture.course.id
+    cookies[:current_lecture] = @lecture.id
     render layout: 'application'
   end
 
