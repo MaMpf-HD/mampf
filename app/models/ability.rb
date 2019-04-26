@@ -53,7 +53,7 @@ class Ability
           Lecture do |lecture|
         lecture.edited_by?(user)
       end
-      cannot [:show_announcements, :organizational], Lecture do |lecture|
+      cannot [:show, :show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
 
@@ -110,7 +110,9 @@ class Ability
         end
       end
 
-      cannot :show, Lecture
+      cannot :show, Lecture  do |lecture|
+        !lecture.in?(user.lectures)
+      end
 
       can [:take, :proceed], Quiz do |quiz|
         if !user.new_record?
@@ -118,6 +120,10 @@ class Ability
         else
           quiz.published_with_inheritance? && quiz.free?
         end
+      end
+
+      cannot :show, Course  do |course|
+        !course.in?(user.courses)
       end
 
       can :display, Course
