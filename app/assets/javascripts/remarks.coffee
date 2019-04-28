@@ -4,18 +4,21 @@
 
 # highlight 'Ungespeicherte Änderungen' if something is entered in remark basics
 
-$(document).on 'keyup', '#remark-basics-edit', ->
-  $('#remark-basics-options').removeClass("no_display")
-  $('#remark-basics-warning').removeClass("no_display")
+$(document).on 'turbolinks:load', ->
 
-$(document).on 'change', '#remark-basics-edit', ->
-  $('#remark-basics-options').removeClass("no_display")
-  $('#remark-basics-warning').removeClass("no_display")
+  $(document).on 'keyup', '#remark-basics-edit', ->
+    $('#remark-basics-options').removeClass("no_display")
+    $('#remark-basics-warning').removeClass("no_display")
+    return
 
+  $(document).on 'change', '#remark-basics-edit', ->
+    $('#remark-basics-options').removeClass("no_display")
+    $('#remark-basics-warning').removeClass("no_display")
+    return
 
-# restore status quo if editing of remark basics is cancelled
+  # restore status quo if editing of remark basics is cancelled
 
-$(document).on 'click', '#remark-basics-cancel', ->
+  $(document).on 'click', '#remark-basics-cancel', ->
     $.ajax Routes.cancel_remark_basics_path(),
       type: 'GET'
       dataType: 'script'
@@ -24,3 +27,13 @@ $(document).on 'click', '#remark-basics-cancel', ->
       }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
+    return
+
+  return
+
+# clean up everything before turbolinks caches
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'keyup', '#remark-basics-edit'
+  $(document).off 'change', '#remark-basics-edit'
+  $(document).off 'click', '#remark-basics-cancel'
+  return

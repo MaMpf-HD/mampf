@@ -3,7 +3,6 @@ $(document).on 'turbolinks:load', ->
   # restore site after editing of term was cancelled (via ajax)
   $(document).on 'click', '#cancel-term-edit', ->
     term = this.dataset.term
-    console.log 'Hig'
     new_action = this.dataset.new
     $.ajax Routes.cancel_term_edit_path(),
       type: 'GET'

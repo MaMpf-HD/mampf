@@ -13,7 +13,6 @@ $(document).on 'turbolinks:load', ->
 
 
   $(document).on 'change', '#question-basics-edit :input', ->
-    console.log 'Hi!'
     $('#question-basics-options').removeClass("no_display")
     $('#question-basics-warning').removeClass("no_display")
     return
