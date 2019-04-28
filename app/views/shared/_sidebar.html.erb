@@ -1,10 +1,9 @@
-<% lecture ||= Lecture.find_by_id(params[:active]) %>
 <% lecture ||= Lecture.find_by_id(params[:lecture_id]) %>
 <% lecture ||= Lecture.find_by_id(cookies[:current_lecture]) %>
 <% lecture ||= course.primary_lecture(current_user) %>
 <% if course.subscribed_lectures(current_user) == [lecture] %>
   <%= link_to lecture.title_for_viewers,
-              lecture.path(current_user),
+              lecture_path(lecture),
               class: 'btn btn-primary btn-sm' %>
 <% elsif lecture %>
   <ul class="navbar-nav"
@@ -12,7 +11,7 @@
     <li class="nav-item">
       <div class="btn-group dropright">
         <%= link_to starred_title(lecture,current_user).html_safe,
-                    lecture.path(current_user),
+                    lecture_path(lecture),
                     class: 'btn btn-primary btn-sm' %>
         <button class="btn btn-primary btn-sm dropdown-toggle mr-3"
                 type="button"
@@ -21,7 +20,7 @@
         <div class="dropdown-menu">
           <% (course.subscribed_lectures(current_user) - [lecture]).each do |l| %>
             <%= link_to starred_term(l, current_user),
-                        l.lecture_path,
+                        lecture_path(l),
                         class: 'dropdown-item' %>
           <% end %>
         </div>
@@ -94,7 +93,8 @@
       </span>
     <% else %>
       <%= link_to t('categories.test.singular'),
-                  show_random_quizzes_path(course),
+                  show_random_quizzes_path(course,
+                                           params: { lecture_id: lecture&.id }),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -208,7 +208,8 @@
     </li>
     <li class="nav-item">
       <%= link_to 'Modul',
-                  display_course_path(lecture.course),
+                  display_course_path(lecture.course,
+                                      params: { lecture_id: lecture&.id }),
                   class: 'nav-link' %>
     </li>
   <% end %>

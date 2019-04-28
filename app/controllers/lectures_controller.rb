@@ -19,6 +19,12 @@ class LecturesController < ApplicationController
     @errors = @lecture.errors
   end
 
+  def show
+    cookies[:current_course] = @lecture.course.id
+    cookies[:current_lecture] = @lecture.id
+    render layout: 'application'
+  end
+
   def new
     @lecture = Lecture.new
     @from = params[:from]

@@ -344,31 +344,4 @@ RSpec.describe Medium, type: :model do
       expect(medium.teachable_type_de).to eq('Sitzung')
     end
   end
-  describe '#related_to_lecture' do
-    it 'returns true if the medium is related to the given lecture' do
-      lesson = FactoryBot.create(:lesson)
-      medium = FactoryBot.build(:medium, teachable: lesson)
-      expect(medium.related_to_lecture?(lesson.lecture)).to be true
-    end
-    it 'returns false if the medium is unrelated to the given lecture' do
-      lesson = FactoryBot.create(:lesson)
-      medium = FactoryBot.build(:medium, teachable: lesson)
-      lecture = FactoryBot.build(:lecture)
-      expect(medium.related_to_lecture?(lecture)).to be false
-    end
-  end
-  describe '#related_to_lectures_do' do
-    it 'returns true if the medium is related to the given lectures' do
-      lesson = FactoryBot.create(:lesson)
-      medium = FactoryBot.build(:medium, teachable: lesson)
-      lecture = FactoryBot.build(:lecture)
-      expect(medium.related_to_lectures?([lesson.lecture, lecture])).to be true
-    end
-    it 'returns false if the medium is unrelated to the given lectures' do
-      lesson = FactoryBot.create(:lesson)
-      medium = FactoryBot.build(:medium, teachable: lesson)
-      lectures = FactoryBot.build_list(:lecture, 2)
-      expect(medium.related_to_lectures?(lectures)).to be false
-    end
-  end
 end

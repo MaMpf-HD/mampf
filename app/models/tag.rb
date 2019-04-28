@@ -33,6 +33,11 @@ class Tag < ApplicationRecord
   after_save :touch_lectures
   after_save :touch_sections
 
+  # remove tag from all section tag orderings
+  # execute this callback before all others, as otherwise associated sections
+  # will already have been deleted
+  before_destroy :remove_from_section_tags_order, prepend: true
+
   def self.ids_titles_json
     Tag.order(:title).map { |t| { id: t.id, title: t.title } }.to_json
   end
@@ -52,6 +57,14 @@ class Tag < ApplicationRecord
   # their ids
   def self.select_by_title
     Tag.pluck(:title,:id).map { |title, id| { title: title, id: id } }
+       .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
+  end
+
+  # returns the array of all tags (sorted by title) excluding a given
+  # arel of tags together with
+  def self.select_by_title_except(excluded_tags)
+    Tag.where.not(id: excluded_tags.pluck(:id)).pluck(:title, :id)
+       .map { |title, id| { title: title, id: id } }
        .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
@@ -174,5 +187,11 @@ class Tag < ApplicationRecord
   def destroy_relations(related_tag)
     Relation.where(tag: [self, related_tag],
                    related_tag: [self, related_tag]).delete_all
+  end
+
+  def remove_from_section_tags_order
+    sections.each do |s|
+      s.update(tags_order: s.tags_order - [id])
+    end
   end
 end

@@ -15,3 +15,7 @@ $('input[id$="-selectized"]').css('width', '100%')
 
 # store from where the modal was called
 $('#newTagModal').modal('show').data('from','<%= @from %>')
+
+$('#newTagModal').on 'shown.bs.modal', ->
+  $('#tag_title_0').focus()
+  return

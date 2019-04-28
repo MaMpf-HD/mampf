@@ -9,6 +9,8 @@ class Section < ApplicationRecord
   # a section has many tags
   has_many :section_tag_joins, dependent: :destroy
   has_many :tags, through: :section_tag_joins
+  # the tags have an ordering (an array with their ids)
+  serialize :tags_order, Array
 
   # a section has many lessons
   has_many :lesson_section_joins, dependent: :destroy
@@ -73,6 +75,13 @@ class Section < ApplicationRecord
    # visible media are published with inheritance and unlocked
   def visible_media_for_user(user)
     media.select { |m| m.visible_for_user?(user) }
+  end
+
+  # reorders the tags as given by the order in tags_order
+  # returns an array
+  def ordered_tags
+    return tags.to_a unless tag_ids.sort == tags_order.sort
+    tags.index_by(&:id).values_at(*tags_order)
   end
 
   def visible_for_user?(user)

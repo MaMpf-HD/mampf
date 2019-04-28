@@ -102,7 +102,7 @@
          title="Info"
          data-content="Hier kannst Du (im Sinne von
          <i>
-         ODER
+         ODER/UND
          </i>
          ) die Tags auswählen, mit denen das Medium verknüpft sein soll."
          data-html="true">
@@ -122,6 +122,25 @@
                    { multiple: true,
                      class: 'selectize',
                      disabled: true } %>
+      <div class="custom-control custom-radio custom-control-inline">
+        <%= f.radio_button :tag_operator,
+                           'or',
+                           checked: true,
+                           class: 'custom-control-input' %>
+        <%= f.label :tag_operator,
+                    'ODER',
+                    value: 'or',
+                    class: 'custom-control-label' %>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <%= f.radio_button :tag_operator,
+                           'and',
+                           class: 'custom-control-input' %>
+        <%= f.label :tag_operator,
+                    'UND',
+                     value: 'and',
+                     class: 'custom-control-label' %>
+      </div>
     </div>
     <div class="col-3 form-group">
       <%= f.label :editor_ids, 'EditorInnen' %>

@@ -1,7 +1,7 @@
-<div class="card bg-teal-lighten-4">
+<div class="card bg-light">
   <% unless embedded %>
-    <div class="card-header bg-teal-darken-3">
-      <h5 class="text-light">
+    <div class="card-header bg-generic-card-header">
+      <h5>
         Inhalt
       </h5>
     </div>
@@ -11,9 +11,8 @@
     <% if items.present? %>
       <ul class="list-group">
         <% items.each do |i| %>
-          <li class="list-group-item"
-              style="background: <%= i.section_background %>">
-            <div class="row" >
+          <li class="list-group-item">
+            <div class="row">
               <div class="col-3"
                    style="background: <%= i.background %>">
                 <%= i.short_reference %>

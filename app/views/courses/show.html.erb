@@ -1,4 +1,14 @@
-<%= render partial: 'courses/show',
-           locals: { course: @course,
-                     lectures: @lectures,
-                     front_lecture: @front_lecture } %>
+<div class="alert alert-primary">
+  <% if @course.lectures.any? %>
+    Du hast keine zu diesem Modul gehörige Vorlesung
+    <%= link_to 'abonniert',
+                edit_profile_path %>
+    .
+  <% else %>
+    Zu diesem Modul existieren noch keine Vorlesungen.
+  <% end %>
+  Du bekommst deswegen nur Medien und Informationen angezeigt, die auf der Ebene des Moduls
+  angesiedelt sind.
+</div>
+<%= render partial: 'courses/infos',
+           locals: { course: @course } %>

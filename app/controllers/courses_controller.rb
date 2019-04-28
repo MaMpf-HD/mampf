@@ -1,7 +1,7 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :check_for_course, only: [:show]
-  before_action :set_course, only: [:display, :take_random_quiz,
+  before_action :set_course, only: [:show, :display, :take_random_quiz,
                                     :show_random_quizzes]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   before_action :check_if_enough_questions, only: [:show_random_quizzes,
@@ -37,23 +37,16 @@ class CoursesController < ApplicationController
   end
 
   def show
-    @course = Course.includes(lectures: [:teacher, :term, :chapters])
-                    .find_by_id(params[:id])
-    # if active_id is corresponds to an unpublished lecture, redirect to
-    # course page without active_id parameter
-    if !params[:active].to_i.in?(@course.subscribed_lectures(current_user).map(&:id) + [0])
-      redirect_to course_path(@course)
+    cookies[:current_course] = @course.id
+    @lecture = @course.primary_lecture(current_user)
+    unless @course.in?(current_user.courses) && @lecture
+      cookies[:current_lecture] = nil
+      render layout: 'application'
       return
     end
-    # id of the current course is stored in a cookie
-    # the cookie is used to keep track of the course in the course dropdown
-    cookies[:current_course] = params[:id]
-    @lectures = @course.subscribed_lectures_by_date(current_user)
-    # determine which lecture gets the top position in the lecture carousel
-    # and update lecture cookie correspondingly
-    @front_lecture = @course.front_lecture(current_user, params[:active].to_i)
-    cookies[:current_lecture] = @front_lecture&.id
-    render layout: 'application'
+    @lecture = @course.primary_lecture(current_user)
+    cookies[:current_lecture] = @lecture.id
+    render template: 'lectures/show', layout: 'application'
   end
 
   def inspect
@@ -90,7 +83,7 @@ class CoursesController < ApplicationController
   def set_course
     @course = Course.find_by_id(params[:id])
     return if @course.present?
-    redirect_to :root, alert: 'Eine Vorlesung mit der angeforderten id ' \
+    redirect_to :root, alert: 'Ein Modul mit der angeforderten id ' \
                               'existiert nicht.'
   end
 

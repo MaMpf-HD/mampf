@@ -219,16 +219,6 @@ class Course < ApplicationRecord
     lectures.collect(&:items).flatten
   end
 
-  # returns the lecture which gets to sit on top in the lecture carousel in the
-  # lecture view
-  def front_lecture(user, active_lecture_id)
-    # make sure the front lecture is subscribed by the user
-    if subscribed_lectures(user).map(&:id).include?(active_lecture_id)
-      return Lecture.find_by_id(active_lecture_id)
-    end
-    primary_lecture(user)
-  end
-
   def primary_lecture(user)
     user_join = CourseUserJoin.where(course: self, user: user)
     return if user_join.empty?

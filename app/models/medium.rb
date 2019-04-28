@@ -232,11 +232,20 @@ class Medium < ApplicationRecord
                                 teachable: Course.search_teachables(search_params))
     tags = Tag.search_tags(search_params)
     editors = User.search_editors(search_params).pluck(:id)
-    tagged_media = MediumTagJoin.where(medium: media, tag: tags)
-                                .pluck(:medium_id).uniq
-    if search_params[:all_tags] == '1'
-      untagged_media = media.pluck(:id) - MediumTagJoin.pluck(:medium_id).uniq
-      tagged_media += untagged_media
+    if search_params[:tag_operator] == 'or'
+      tagged_media = MediumTagJoin.where(medium: media, tag: tags)
+                                  .pluck(:medium_id).uniq
+      if search_params[:all_tags] == '1'
+        untagged_media = media.pluck(:id) - MediumTagJoin.pluck(:medium_id).uniq
+        tagged_media += untagged_media
+      end
+    else
+      tagged_media_ids = Medium.pluck(:id)
+      tags.each do |t|
+        tagged_media_ids &= t.medium_ids
+        break if tagged_media_ids == []
+      end
+      tagged_media = Medium.where(id: tagged_media_ids)
     end
     edited_media = EditableUserJoin.where(editable_id: tagged_media,
                                           editable_type: 'Medium',
@@ -550,23 +559,6 @@ class Medium < ApplicationRecord
       return false if restricted? && !teachable.lecture.in?(user.lectures)
     end
     true
-  end
-
-  # returns true if the medium's teachable if one of the following:
-  # - a course that the given lecture is associated to
-  # - the given lecture
-  # - a lesson whose lecture is the given lecture
-  def related_to_lecture?(lecture)
-    return true if belongs_to_course?(lecture)
-    return true if belongs_to_lecture?(lecture)
-    return true if belongs_to_lesson?(lecture)
-    false
-  end
-
-  # returns true if the medium's teachable is #related_to one of the
-  # given lectures
-  def related_to_lectures?(lectures)
-    lectures.map { |l| related_to_lecture?(l) }.include?(true)
   end
 
   def course

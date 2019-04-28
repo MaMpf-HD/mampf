@@ -261,21 +261,24 @@ class Manuscript
   def update_tags!(filter_boxes)
     sections_with_content.each do |s|
       content_in_section(s).each do |c|
+        section = s['mampf_section']
         # if tag for content already exists, add tag to the section and course
         if c['tag_id']
           tag = Tag.find_by_id(c['tag_id'])
           next unless tag
-          section = s['mampf_section']
           next unless section
-          tag.sections |= [s['mampf_section']]
+          next if section.in?(tag.sections)
+          tag.sections |= [section]
+          section.update(tags_order: section.tags_order + [tag.id])
           tag.courses |= [@lecture.course]
           next
         end
         next unless filter_boxes[c['counter']].second
         # if checkbox for tag creation is checked, create the tag,
         # associate it with course and section
-        Tag.create(title: c['description'], courses: [@lecture.course],
-                   sections: [s['mampf_section']])
+        tag = Tag.create(title: c['description'], courses: [@lecture.course],
+                         sections: [section])
+        section.update(tags_order: section.tags_order +  [tag.id])
       end
     end
   end
