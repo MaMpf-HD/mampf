@@ -2,15 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `rails
+# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_24_174546) do
+ActiveRecord::Schema.define(version: 2019_04_30_111047) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -548,4 +548,9 @@ ActiveRecord::Schema.define(version: 2019_04_24_174546) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "announcements", "lectures"
+  add_foreign_key "announcements", "users", column: "announcer_id"
+  add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "items", "media"
+  add_foreign_key "items", "sections"
 end
