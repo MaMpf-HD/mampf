@@ -56,11 +56,9 @@
     <% end %>
   </div>
 </div>
-<% cache @media do %>
 <%= render partial: 'media/media',
            locals: { media: @media,
                      tags: true } %>
-<% end %>
 <% else %>
   <div class="jumbotron bg-light-blue-lighten-5">
     Es konnten leider keine Medien gefunden werden.
