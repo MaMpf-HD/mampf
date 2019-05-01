@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_30_111047) do
+ActiveRecord::Schema.define(version: 2019_05_01_135815) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -77,7 +77,6 @@ ActiveRecord::Schema.define(version: 2019_04_30_111047) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "short_title"
-    t.text "news"
     t.boolean "organizational"
     t.text "organizational_concept"
   end
@@ -107,7 +106,6 @@ ActiveRecord::Schema.define(version: 2019_04_30_111047) do
     t.text "sort"
     t.integer "page"
     t.text "description"
-    t.integer "number"
     t.text "link"
     t.text "explanation"
     t.integer "medium_id"
@@ -191,10 +189,6 @@ ActiveRecord::Schema.define(version: 2019_04_30_111047) do
   end
 
   create_table "media", force: :cascade do |t|
-    t.text "video_stream_link"
-    t.text "video_file_link"
-    t.text "video_thumbnail_link"
-    t.text "manuscript_link"
     t.text "external_reference_link"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -202,8 +196,6 @@ ActiveRecord::Schema.define(version: 2019_04_30_111047) do
     t.string "description"
     t.string "teachable_type"
     t.integer "teachable_id"
-    t.text "extras_link"
-    t.text "extras_description"
     t.text "video_data"
     t.text "screenshot_data"
     t.text "manuscript_data"
