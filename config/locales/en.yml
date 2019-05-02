@@ -75,16 +75,38 @@ en:
   here: 'here'
   disclosure: 'Legal disclosure'
   policy: 'Privacy Policy'
+  navbar:
+    search: 'Search'
+    profile: 'Profile'
+    administration: 'Administration'
   profile:
     account: 'Account'
     name: 'Display name'
-    name_information_html: '<i>Note:</i> This name will be displayed in your board posts.'
+    name_information_html: >
+      <i>Note:</i>
+      This name will be displayed in your board posts.
     change_data: 'Change data'
     courses: 'Courses'
     primary_lecture: 'Primary lecture'
     secondary_lectures: 'Secondary lectures'
     no_lectures: 'There are no lectures available for this course yet.'
     preferences: 'Preferences'
-  sure: 'Are you sure?'
+    content_info: >
+      MaMpf can give a multitude of related content.
+      I want to see related content (if it is released for me)
+    subscription_mixed: >
+      from subscribed courses and from courses that these build upon.
+    subscription_all: 'from all courses.'
+    subscription_strict: 'only from the subscribed courses.'
+    no_notifications: >
+      I do not want to obtain notifications about new media, new lectures
+      or new features via the internal notification system of MaMpf.
+    update: 'Update profile'
+    success: 'Profil was updated successfully.'
+    please_update: >
+      Please take some time to edit your profile settings.
+    consent: >
+      You consented to our privacy policy.
+    sure: 'Are you sure?'
   details: 'Details'
   none: 'none'

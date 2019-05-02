@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
   # will halt the filter chain and redirect before the location can be stored.
   before_action :authenticate_user!
+  before_action :set_locale
 
   # show error message if authorization with cancancan fails
   rescue_from CanCan::AccessDenied do |exception|
@@ -35,5 +36,9 @@ class ApplicationController < ActionController::Base
   def store_user_location!
     # :user is the scope we are authenticating
     store_location_for(:user, request.fullpath)
+  end
+
+  def set_locale
+    I18n.locale = current_user.try(:locale) || I18n.default_locale
   end
 end

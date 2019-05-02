@@ -1,5 +1,6 @@
 de:
-  send_me_reset_password_instructions: "Schick mir die Anleitung zur Änderung meines Passworts"
+  send_me_reset_password_instructions: >
+    Schick mir die Anleitung zur Änderung meines Passworts.
   views:
     pagination:
       first: "&laquo; Erste"
@@ -48,7 +49,10 @@ de:
     reste: 'Sonstiges'
     course: 'Modul'
   unauthorized:
-    default: 'Du bist nicht berechtigt, auf diese Seite zuzugreifen. Gegebenenfalls kannst Du durch Anpassungen Deiner Einstellungen auf Deiner Profilseite Zugriff erhalten.'
+    default: >
+      Du bist nicht berechtigt, auf diese Seite zuzugreifen.
+      Gegebenenfalls kannst Du durch Anpassungen Deiner Einstellungen auf
+      Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
       &copy; MaMpf Team 2018. MaMpf ist auf %{github}.
@@ -58,6 +62,8 @@ de:
   here: 'hier'
   disclosure: 'Impressum'
   policy: 'Datenschutzerklärung'
+  navbar:
+    search: 'Suche'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -65,12 +71,30 @@ de:
       <i>Zur Info:</i>
       Bei Deinen Forenbeiträgen wird der obige Name angezeigt werden.
     change_data: 'Zuganagsdaten ändern'
-    delete_Account: 'Account löschen'
+    delete_account: 'Account löschen'
     courses: 'Module'
     primary_lecture: 'Primäre Vorlesung'
     secondary_lectures: 'Weitere Vorlesungen'
     no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Vorlesungen.'
     preferences: 'Einstellungen'
+    content_info: >
+      MaMpf liefert eine Vielzahl von verknüpften Inhalten.
+      Ich möchte verknüpfte Inhalte (wenn diese freigegeben sind)
+    subscription_mixed: >
+      auch aus allen Modulen sehen, die sich inhaltlich vor den von mir
+      abonnierten Modulen einsortieren.
+    subscription_all: 'aus allen Modulen sehen.'
+    subscription_strict: >
+      ausschließlich aus den von mir abonnierten Modulen sehen.
+    no_notifications: >
+      Ich möchte keine Benachrichtigungen über neue Medien, neue Vorlesungen
+      oder neue Features erhalten und in MaMpf angezeigt bekommen.
+    update: 'Profil updaten'
+    success: 'Profil erfolgreich geupdatet.'
+    please_update: >
+      Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
+    consent: >
+      Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
   sure: 'Bist du sicher?'
   details: 'Details'
   none: 'keine'

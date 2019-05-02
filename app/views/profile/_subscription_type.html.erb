@@ -1,30 +1,22 @@
 <div class="row">
   <div class="col-12">
     <%= f.form_group :subscription_type,
-                      label: { text: 'MaMpf liefert eine Vielzahl von ' \
-                                     'verknüpften Inhalten. Ich möchte ' \
-                                     'verknüpfte Inhalte ' \
-                                     '(wenn diese freigegeben sind)' } do %>
+                      label: { text: t('profile.content_info') } do %>
       <%= f.radio_button :subscription_type, 1,
-                         label: 'auch aus allen Modulen sehen, die sich ' \
-                                'inhaltlich vor den von mir abonnierten ' \
-                                'Modulen einsortieren.',
+                         label: t('profile.subscription_mixed'),
                          checked: @user.subscription_type == 1 ||
                                   @user.subscription_type.nil? %>
       <%= f.radio_button :subscription_type, 2,
-                         label: "aus allen Modulen sehen.",
+                         label: t('profile.subscription_all'),
                          checked: @user.subscription_type == 2 %>
       <%= f.radio_button :subscription_type, 3,
-                         label: 'ausschließlich aus den von mir abonnierten ' \
-                                'Modulen sehen.',
+                         label: t('profile.subscription_strict'),
                          checked: @user.subscription_type == 3 %>
     <% end %>
   </div>
   <div class="col-12">
     <%= f.check_box :no_notifications,
-                    label: 'Ich möchte keine Benachrichtigungen über ' \
-                           'neue Medien, neue Vorlesungen oder neue Features ' \
-                           'erhalten und in MaMpf angezeigt bekommen.',
+                    label: t('profile.no_notifications'),
                     checked: current_user.no_notifications,
                     inline: true %>
   </div>

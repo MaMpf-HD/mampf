@@ -44,8 +44,4 @@ class NotificationsController < ApplicationController
     redirect_to :root, alert: 'Eine Benachrichtigung mit der angeforderten id' \
                               'existiert nicht.'
   end
-
-  def set_locale
-    I18n.locale = current_user.try(:locale) || I18n.default_locale
-  end
 end

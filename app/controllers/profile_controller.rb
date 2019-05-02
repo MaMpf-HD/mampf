@@ -30,7 +30,7 @@ class ProfileController < ApplicationController
       # update course and lecture cookies
       update_course_cookie
       update_lecture_cookie
-      redirect_to :root, notice: 'Profil erfolgreich geupdatet.'
+      redirect_to :root, notice: t('profile.success')
     else
       @errors = @user.errors
     end
@@ -45,15 +45,13 @@ class ProfileController < ApplicationController
     end
     return unless @user.consents
     redirect_to edit_profile_path,
-                notice: 'Bitte nimm Dir ein paar Minuten Zeit, um Dein ' \
-                        'Profil zu bearbeiten.'
+                notice: t('profile.please_update')
   end
 
   # DSGVO consent action
   def add_consent
     @user.update(consents: true, consented_at: Time.now)
-    redirect_to :root, notice: 'Einwilligung zur Speicherung und Verarbeitung'\
-                                'von Daten wurde erklärt.'
+    redirect_to :root, notice: t('profile.consent')
   end
 
   private
