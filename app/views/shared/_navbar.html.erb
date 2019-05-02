@@ -17,7 +17,7 @@
              class="fas fa-user-cog fa-lg text-light nav-link"
              style="text-decoration: none; "
              data-toggle="tooltip"
-             title="Profil">
+             title="<%= t('navbar.profile') %>">
           </a>
         </li>
         <% if current_user.admin || current_user.editor? %>
@@ -26,7 +26,7 @@
                class="fas fa-tools fa-lg text-light nav-link"
                style="text-decoration: none; "
                data-toggle="tooltip"
-               title="Administration">
+               title="<%= t('navbar.administration') %>">
             </a>
           </li>
         <% end %>
@@ -35,7 +35,7 @@
              class="far fa-newspaper fa-lg text-light nav-link"
              style="text-decoration: none; "
              data-toggle="tooltip"
-             title="News">
+             title="<%= t('navbar.news') %>">
           </a>
         </li>
         <li class="nav-item">
@@ -43,7 +43,7 @@
              class="fas fa-blog fa-lg text-light nav-link"
              style="text-decoration: none; "
              data-toggle="tooltip"
-             title="Blog">
+             title="<%= t('navbar.blog') %>">
           </a>
         </li>
         <li class="nav-item">
@@ -52,7 +52,7 @@
              style="text-decoration: none; "
              data-toggle="tooltip"
              data-method="delete"
-             title="Logout">
+             title="<%= t('navbar.logout') %>">
           </a>
         </li>
       <% else %>

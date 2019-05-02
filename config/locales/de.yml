@@ -64,6 +64,11 @@ de:
   policy: 'Datenschutzerklärung'
   navbar:
     search: 'Suche'
+    profile: 'Profil'
+    administration: 'Administration'
+    news: 'News'
+    blog: 'Blog'
+    logout: 'Logout'
   profile:
     account: 'Account'
     name: 'Anzeigename'

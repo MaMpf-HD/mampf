@@ -79,6 +79,9 @@ en:
     search: 'Search'
     profile: 'Profile'
     administration: 'Administration'
+    news: 'News'
+    blog: 'Blog'
+    logout: 'Logout'
   profile:
     account: 'Account'
     name: 'Display name'
