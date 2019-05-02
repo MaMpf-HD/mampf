@@ -17,7 +17,7 @@ RUN chmod 555 /etc/cron.weekly/delete_upload_caches.sh
 COPY ./.destroy_expired_quizzes.sh /etc/cron.daily/destroy_expired_quizzes.sh
 RUN chmod 555 /etc/cron.daily/destroy_expired_quizzes.sh
 
-RUN useradd -g 501 -u 501 -m -d /usr/src/app app
+RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 WORKDIR /usr/src/app
 USER app
 
