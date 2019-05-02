@@ -4,7 +4,7 @@ ENV RAILS_ENV=production
 
 EXPOSE 3000
 
-ENTRYPOINT ["/usr/bin/app/entrypoint.sh"]
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 
 # https://github.com/nodesource/distributions#installation-instructions
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
