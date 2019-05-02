@@ -10,12 +10,7 @@ ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
 
-RUN apt-get update && apt-get install -y nodejs ffmpeg imagemagick pdftk ghostscript graphviz sqlite3 cron anacron --no-install-recommends && rm -rf /var/lib/apt/lists/*
-
-COPY ./.delete_upload_caches.sh /etc/cron.weekly/delete_upload_caches.sh
-RUN chmod 555 /etc/cron.weekly/delete_upload_caches.sh
-COPY ./.destroy_expired_quizzes.sh /etc/cron.daily/destroy_expired_quizzes.sh
-RUN chmod 555 /etc/cron.daily/destroy_expired_quizzes.sh
+RUN apt-get update && apt-get install -y nodejs ffmpeg imagemagick pdftk ghostscript graphviz sqlite3 --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 WORKDIR /usr/src/app
