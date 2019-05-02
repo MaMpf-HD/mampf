@@ -46,5 +46,31 @@ de:
     organizational: 'Organisatorisches'
     announcements: 'Mitteilungen'
     reste: 'Sonstiges'
+    course: 'Modul'
   unauthorized:
-    default: "Du bist nicht berechtigt, auf diese Seite zuzugreifen. Gegebenenfalls kannst Du durch Anpassungen Deiner Einstellungen auf Deiner Profilseite Zugriff erhalten."
+    default: 'Du bist nicht berechtigt, auf diese Seite zuzugreifen. Gegebenenfalls kannst Du durch Anpassungen Deiner Einstellungen auf Deiner Profilseite Zugriff erhalten.'
+  footer:
+    text_html: >
+      &copy; MaMpf Team 2018. MaMpf ist auf %{github}.
+      Powered by %{rails}, %{bootstrap}, %{docker}, %{basecamp}.<br>
+      Bugs meldest Du am besten %{bugs}.
+      Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
+  here: 'hier'
+  disclosure: 'Impressum'
+  policy: 'Datenschutzerklärung'
+  profile:
+    account: 'Account'
+    name: 'Anzeigename'
+    name_information_html: >
+      <i>Zur Info:</i>
+      Bei Deinen Forenbeiträgen wird der obige Name angezeigt werden.
+    change_data: 'Zuganagsdaten ändern'
+    delete_Account: 'Account löschen'
+    courses: 'Module'
+    primary_lecture: 'Primäre Vorlesung'
+    secondary_lectures: 'Weitere Vorlesungen'
+    no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Vorlesungen.'
+    preferences: 'Einstellungen'
+  sure: 'Bist du sicher?'
+  details: 'Details'
+  none: 'keine'

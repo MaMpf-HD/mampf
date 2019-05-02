@@ -1,10 +1,10 @@
 <% if @user.edited_profile %>
-  <%= link_to "Zugangsdaten ändern",
+  <%= link_to t('profile.change_data'),
               edit_user_registration_path,
               class: "btn btn-outline-secondary mb-2" %>
 <% end %>
-<%= link_to 'Account löschen',
+<%= link_to t('profile.delete_account'),
             user_registration_path,
             class: "btn btn-outline-danger mb-2",
-            data: { confirm: 'Bist Du sicher?' },
+            data: { confirm: t('sure') },
             method: :delete %>

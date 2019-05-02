@@ -30,4 +30,61 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  categories:
+    kaviar:
+      singular: 'Lesson'
+      plural: 'Lessons'
+    exercises:
+      singular: 'Exercise'
+      plural: 'Exercises'
+    examples: 'Examples'
+    script: 'Manuscript'
+    nuesse: 'Worksheets'
+    sesam:
+      singular: 'Worked Example'
+      plural: 'Worked Examples'
+    kiwi: 'Repetition'
+    quiz:
+      singular: 'Quiz'
+      plural: 'Quizzes'
+    randomquiz:
+      singular: 'Random Quiz'
+    test:
+      singular: 'Self Assessment'
+    question:
+      singular: 'Question'
+      plural: 'Questions'
+    remark:
+      singular: 'Quiz Remark'
+      plural: 'Quiz Remarks'
+    erdbeere: 'Examples'
+    muesli: 'MUESLI'
+    board: 'Board'
+    organizational: 'Organizational'
+    announcements: 'Announcements'
+    reste: 'Other'
+    course: 'Course'
+  unauthorized:
+    default: "You are noth authorized to access this page. Possibly you can get access by modifying your account settings."
+  footer:
+    text_html: >
+      &copy; MaMpf Team 2018. MaMpf is on %{github}.
+      Powered by %{rails}, %{bootstrap}, %{docker}, %{basecamp}.<br>
+      Bugs can be reported %{bugs}.
+      We encourage you to send further feedback to %{feedback}.
+  here: 'here'
+  disclosure: 'Legal disclosure'
+  policy: 'Privacy Policy'
+  profile:
+    account: 'Account'
+    name: 'Display name'
+    name_information_html: '<i>Note:</i> This name will be displayed in your board posts.'
+    change_data: 'Change data'
+    courses: 'Courses'
+    primary_lecture: 'Primary lecture'
+    secondary_lectures: 'Secondary lectures'
+    no_lectures: 'There are no lectures available for this course yet.'
+    preferences: 'Preferences'
+  sure: 'Are you sure?'
+  details: 'Details'
+  none: 'none'

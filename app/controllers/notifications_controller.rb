@@ -1,6 +1,7 @@
 # NotificationsController
 class NotificationsController < ApplicationController
   before_action :set_notification, only: [:destroy]
+  before_action :set_locale
   authorize_resource
 
   def index
@@ -42,5 +43,9 @@ class NotificationsController < ApplicationController
     return if @notification.present?
     redirect_to :root, alert: 'Eine Benachrichtigung mit der angeforderten id' \
                               'existiert nicht.'
+  end
+
+  def set_locale
+    I18n.locale = current_user.try(:locale) || I18n.default_locale
   end
 end

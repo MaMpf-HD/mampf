@@ -1,14 +1,14 @@
 <% if c.published_lectures.empty? %>
   <div class="row">
     <div class="col-12">
-      Zu diesem Modul gibt es im Moment noch keine Vorlesungen.
+      <%= t('profile.no_lectures') %>
     </div>
   </div>
 <% end %>
 <% if c.published_lectures.any? %>
   <div class="row">
     <div class="col-12">
-      Primäre Vorlesung:
+      <%= t('profile.primary_lecture') %>:
     </div>
   </div>
   <div class="row">
@@ -26,7 +26,7 @@
         <% end %>
         <%= f.radio_button primary_lecture,
                            0,
-                           label: "keine",
+                           label: t('none'),
                            data: { course: c.id },
                            checked: c.primary_lecture(current_user).nil?,
                            disabled: !subscribed,
@@ -56,7 +56,7 @@
        style="display: <%= show(c.primary_lecture(current_user).present?) %>">
     <div class="row">
       <div class="col-12">
-        Weitere Vorlesungen:
+        <%= t('profile.secondary_lectures') %>:
       </div>
     </div>
     <div class="row">
