@@ -12,6 +12,11 @@ class ApplicationController < ActionController::Base
     redirect_to main_app.root_url, alert: exception.message
   end
 
+  rescue_from ActionController::InvalidAuthenticityToken do
+    redirect_to main_app.root_url,
+      alert: "Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an."
+  end
+
   # determine where to send the user after login
   def after_sign_in_path_for(resource_or_scope)
     # checks if user consented to DSGVO and has ever edited his/her profile
