@@ -35,11 +35,11 @@ module NotificationsHelper
     text = if notification.medium?
              medium_notification_card_header(notifiable)
            elsif notification.course? || notification.lecture?
-             'Kursangebot'
+             t('notifications.course_selection')
            elsif notification.lecture_announcement?
              announcement_notification_card_header(notifiable)
            else
-             link_to 'MaMpf-News', news_path, class: 'text-dark'
+             link_to t('mampf_news.title'), news_path, class: 'text-dark'
            end
     text.html_safe
   end
@@ -48,13 +48,13 @@ module NotificationsHelper
   def notification_text(notification)
     notifiable = notification.notifiable
     text = if notification.medium?
-             'Neues Medium angelegt:'
+             t('notifications.new_medium')
            elsif notification.course?
              course_notification_card_text(notifiable)
            elsif notification.lecture?
              lecture_notification_card_text(notifiable)
            else
-             'Neue Mitteilung:'
+             t('notifications.new_announcement')
            end
     text.html_safe
   end

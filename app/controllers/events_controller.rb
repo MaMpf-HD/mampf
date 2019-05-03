@@ -19,7 +19,6 @@ class EventsController < ApplicationController
     @type = params[:type]
     @quizzables = @type.constantize.all
                        .map { |q| { value: q.id, text: q.label }}.to_json
-    pp @quizzables
   end
 
   def new_vertex_quizzable_text

@@ -48,6 +48,7 @@ de:
     announcements: 'Mitteilungen'
     reste: 'Sonstiges'
     course: 'Modul'
+    mampf_news: 'MaMpf-News'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.
@@ -75,7 +76,7 @@ de:
     name_information_html: >
       <i>Zur Info:</i>
       Bei Deinen Forenbeiträgen wird der obige Name angezeigt werden.
-    change_data: 'Zuganagsdaten ändern'
+    change_data: 'Zugangsdaten ändern'
     delete_account: 'Account löschen'
     courses: 'Module'
     primary_lecture: 'Primäre Vorlesung'
@@ -100,6 +101,23 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
+  mampf_news:
+    title: 'MaMpf-News'
+    check_notifications: 'Alle erledigen'
+    no_news: 'Es liegen keine MaMpf-News vor.'
+  notifications:
+    title: 'Neue Benachrichtigungen'
+    check_notifications: 'Alle erledigen'
+    new_medium_in: 'Neues Medium in '
+    new_medium: 'Neues Medium angelegt:'
+    new_announcement: 'Neue Mitteilung:'
+    course_selection: 'Kursangebot'
+    new_course: 'Neues Modul %{title}'
+    new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
+    subscribe_course: 'Über Deine Profileinstellungen kannst Du es abonnieren.'
+    subscribe_course_html: 'Du kannst es über deine %{profile} abonnieren.'
+    profile: 'Profileinstellungen'
   sure: 'Bist du sicher?'
   details: 'Details'
   none: 'keine'
+  back: 'Zurück'

@@ -55,6 +55,15 @@ de:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
       unlocked: "Dein Account wurde entsperrt. Du bist jetzt angemeldet."
+    edit:
+      title: "Zugangsdaten ändern"
+      email: "Emailaddresse"
+      current_password: "Aktuelles Passwort"
+      need_password: "Wir benötigen Dein aktuelles Passwort, um die Änderung zu bestätigen."
+      no_change: "Freilassen, wenn Du das Passwort nicht ändern willst."
+      update: "Update"
+      new_password: "Neues Passwort"
+      confirm_new_password: "Bestätigung des neuen Passworts"
   errors:
     messages:
       already_confirmed: "wurde bereits bestätigt"

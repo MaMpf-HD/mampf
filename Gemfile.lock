@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/zdennis/activerecord-import.git
+  revision: 1f3c7cb3d8b7110531b1796db61b195b379f019c
+  branch: master
+  specs:
+    activerecord-import (1.0.1)
+      activerecord (>= 3.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -56,8 +64,6 @@ GEM
     activerecord (6.0.0.rc1)
       activemodel (= 6.0.0.rc1)
       activesupport (= 6.0.0.rc1)
-    activerecord-import (1.0.1)
-      activerecord (>= 3.2)
     activestorage (6.0.0.rc1)
       actionpack (= 6.0.0.rc1)
       activejob (= 6.0.0.rc1)
@@ -483,7 +489,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_model_serializers
-  activerecord-import
+  activerecord-import!
   acts_as_list
   acts_as_tree
   bootsnap (>= 1.4.2)

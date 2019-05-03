@@ -1,36 +1,45 @@
 <%= bootstrap_devise_error_messages! %>
 
-<h1>Zugangsdaten ändern</h1>
+<h2><%= t('devise.edit.title') %></h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <div class="form-group">
-    <%= f.label :email %>
+    <%= f.label :email, t('devise.edit.email') %>
     <%= f.email_field :email, autofocus: true, class: 'form-control' %>
   </div>
   <div class="form-group">
-    <%= f.label :current_password, 'Aktuelles Passwort' %>
-    <i>
-      (wir benötigen Dein aktuelles Passwort, um die Änderung zu bestätigen )
+    <%= f.label :current_password, t('devise.edit.current_password') %>
+    <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="<%= t('devise.edit.need_password') %>">
     </i>
     <%= f.password_field :current_password, class: 'form-control' %>
   </div>
   <div class="form-group">
-    <%= f.label :password, 'Neues Passwort' %>
-    <i>
-      (freilassen, wenn Du das Passwort nicht ändern willst)
+    <%= f.label :password, t('devise.edit.new_password') %>
+    <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="<%= t('devise.edit.no_change') %>">
     </i>
     <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
   </div>
   <div class="form-group">
-    <%= f.label :password_confirmation, 'Bestätigung des neuen Passworts' %>
-    <i>
-      (freilassen, wenn Du das Passwort nicht ändern willst)
+    <%= f.label :password_confirmation, t('devise.edit.confirm_new_password') %>
+    <i class="far fa-question-circle helpdesk"
+             tabindex="-1"
+             data-toggle="popover" data-trigger="focus"
+             title="Info"
+             data-content="<%= t('devise.edit.no_change') %>">
     </i>
     <%= f.password_field :password_confirmation, class: 'form-control'  %>
   </div>
 
   <div class="form-group">
-    <%= f.submit t('.update', default: 'Update'), class: 'btn btn-primary' %>
-    <%= link_to 'Zurück', :back, class: 'btn btn-secondary' %>
+    <%= f.submit t('devise.edit.update'), class: 'btn btn-primary' %>
+    <%= link_to t('back'), :back, class: 'btn btn-secondary' %>
   </div>
 <% end %>

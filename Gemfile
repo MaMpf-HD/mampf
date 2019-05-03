@@ -64,7 +64,9 @@ gem 'kaminari'
 gem "selectize-rails"
 gem 'acts_as_list'
 gem 'acts_as_tree'
-gem 'activerecord-import'
+gem 'activerecord-import',
+  git: 'https://github.com/zdennis/activerecord-import.git',
+  branch: 'master'
 gem 'thredded'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'

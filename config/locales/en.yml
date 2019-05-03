@@ -65,7 +65,7 @@ en:
     reste: 'Other'
     course: 'Course'
   unauthorized:
-    default: "You are noth authorized to access this page. Possibly you can get access by modifying your account settings."
+    default: "You are not authorized to access this page. Possibly you can get access by modifying your account settings."
   footer:
     text_html: >
       &copy; MaMpf Team 2018. MaMpf is on %{github}.
@@ -88,7 +88,7 @@ en:
     name_information_html: >
       <i>Note:</i>
       This name will be displayed in your board posts.
-    change_data: 'Change data'
+    change_data: 'Change login data'
     courses: 'Courses'
     primary_lecture: 'Primary lecture'
     secondary_lectures: 'Secondary lectures'
@@ -111,5 +111,22 @@ en:
     consent: >
       You consented to our privacy policy.
     sure: 'Are you sure?'
+  mampf_news:
+    title: 'MaMpf News'
+    check_notifications: 'Check off all'
+    no_news: 'There are no MaMpf news available.'
+  notifications:
+    title: 'New notifications'
+    check_notifications: 'Check off all'
+    new_medium_in: 'New medium in '
+    new_medium: 'New medium created:'
+    new_announcement: 'New announcement:'
+    course_selection: 'Course selection'
+    new_course: 'New course %{title}'
+    new_course_created_html: 'New course created:<br>%{title}'
+    subscribe_course: 'You can subscribe it via your profile.'
+    subscribe_course_html: 'You can subscribe it via your %{profile}.'
+    profile: 'profile'
   details: 'Details'
   none: 'none'
+  back: 'Back'
