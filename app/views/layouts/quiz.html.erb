@@ -3,7 +3,7 @@
   <head>
     <%= render partial: 'layouts/head' %>
   </head>
-  <body>
+  <body data-locale="<%= I18n.locale %>">
     <%= yield %>
   </body>
 </html>

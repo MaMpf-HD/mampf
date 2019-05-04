@@ -107,17 +107,150 @@ de:
     no_news: 'Es liegen keine MaMpf-News vor.'
   notifications:
     title: 'Neue Benachrichtigungen'
-    check_notifications: 'Alle erledigen'
+    check_notifications: 'alle erledigen'
     new_medium_in: 'Neues Medium in '
     new_medium: 'Neues Medium angelegt:'
     new_announcement: 'Neue Mitteilung:'
     course_selection: 'Kursangebot'
     new_course: 'Neues Modul %{title}'
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
-    subscribe_course: 'Über Deine Profileinstellungen kannst Du es abonnieren.'
+    subscribe_course: 'Abonniere es in deinem Profil.'
     subscribe_course_html: 'Du kannst es über deine %{profile} abonnieren.'
     profile: 'Profileinstellungen'
+    mampf_announcement: 'Neue Mitteilung über MaMpf'
+    lecture_announcement: 'Neue Mitteilung in %{title}'
+    new_lecture: 'Neue Vorlesung %{title}'
+    subscribe_lecture: 'Abonniere sie in deinem Profil.'
+    subscribe_lecture_html: 'Du kannst sie über deine %{profile} abonnieren.'
+    new_lecture_created_html: >
+      Neue Vorlesung angelegt:<br>
+      %{title} (%{term}, %{teacher})
+    show_all: 'alle anzeigen'
+    lecture:
+      title: 'Aktuelles'
+      one_new: 'Es gibt eine neue Mitteilung:'
+      more_new: 'Es gibt %{count} neue Mitteilungen:'
+      new_post_html: 'Im %{board} gibt es ein ungelesenes Thema.'
+      new_posts_html: 'Im %{board} gibt es %{count} ungelesene Themen.'
+    no_notifications: 'Es liegen keine neuen Benachrichtigungen für Dich vor.'
+  lecture:
+    content: 'Vorlesungsinhalt'
   sure: 'Bist du sicher?'
   details: 'Details'
   none: 'keine'
   back: 'Zurück'
+  today: 'heute'
+  yesterday: 'gestern'
+  chapter: 'Kapitel %{number}. %{title}'
+  hidden_chapter: '*Kapitel %{number}. %{title}'
+  section: 'Abschnitt'
+  next_section: 'nächster Abschnitt'
+  previous_section: 'voriger Abschnitt'
+  related_sections: 'Verknüpfte Abschnitte'
+  no_related_sections: 'Es sind keine verknüpften Abschnitte vorhanden.'
+  reverse_order: 'Reihenfolge umkehren'
+  all: 'alle'
+  per_page: 'pro Seite'
+  from: 'von'
+  tag: 'Begriff'
+  related_tags: 'Verknüpfte Begriffe'
+  no_related_tags: 'Es liegen keine verknüpften Begriffe vor.'
+  tags_in_neighbourhood: 'im weiteren Umfeld'
+  related_lessons: 'Verknüpfte Sitzungen'
+  no_related_lessons: 'Es sind keine verknüpften Sizungen vorhanden.'
+  related_media: 'Verknüpfte Medien'
+  no_related_media: 'Es sind keine verknüpften Medien vorhanden.'
+  content: 'Inhalt'
+  no_content: 'Es liegen keine detaillierten Inhaltsangaben vor.'
+  lesson: 'Sitzung'
+  next_lesson: 'nächste Sitzung'
+  previous_lesson: 'vorige Sitzung'
+  mampf_map: 'MaMpf-Map'
+  external_render: 'in externem Tab rendern'
+  medium:
+    details: 'Details ansehen'
+  video:
+    video: 'Video'
+    play: 'THymE-Player'
+    download: 'Video herunterladen'
+    length: 'Länge'
+    resolution: 'Auflösung'
+    size: 'Größe'
+  manuscript:
+    manuscript: 'Manuskript'
+    view: 'pdf im browser betrachten'
+    download: 'Manuskript herunterladen'
+    length: 'Länge'
+    size: 'Größe'
+    pages: 'S'
+  quiz:
+    quiz: 'Quiz'
+    start: 'Quiz beginnen'
+  external_link: 'Externer Link'
+  external_link_lc: 'externer Link'
+  no_announcements: 'Es liegen keine Mitteilungen vor.'
+  click_here: 'Hier klicken'
+  course:
+    info: 'Informationen zum Modul %{title}'
+    editors: 'ModuleditorInnen'
+    further_info: 'Weitere Informationen'
+  test:
+    info: >
+      Auf Modulebene liegen %{count} Multiple-Choice-Fragen vor.
+      MaMpf erstellt Dir daraus gerne einen zufälligen Test aus 5 Fragen:
+    start: 'Test beginnen'
+    notation: >
+      Die Notationen und Begrifflichkeiten in den einzelnen Fragen und Antworten
+      können eventuell leicht von denen abweichen, die Deine DozentIn
+      verwendet.
+    future: >
+      In Zukunft wirst Du an dieser Stelle den Inhalt und Umfang des Tests
+      genauer spezifizieren können.
+    notation_header: 'Typische Beispiele für Unterschiede'
+    notation_examples_html: >
+      <ul>
+      <li>
+      Die natürlichen Zahlen beginnen je nach DozentIn
+      mal bei 0, mal bei 1.
+      </li>
+      <li>
+      Die Notation für Teilmengen kann
+      verschieden sein: \subset, \subseteq (im LaTEX-Code)
+      <li>
+      Basen werden als Mengen (in Mengenklammern)
+      oder als Familien (in runden klammern) geschrieben.
+      </li>
+      <li>
+      Das Erzeugnis einer Menge/Familie von Vektoren wird verschieden
+      notiert: span(...), Lin(...), <...>
+      </li>
+  note: 'Hinweis'
+  date:
+    formats:
+      concise: '%d.%m.%Y'
+  time:
+    formats:
+      concise: '%d.%m.%Y'
+  thyme:
+    back: 'zurück'
+    back_to: 'zurück zu '
+  item:
+    external_reference: 'externe Referenz:'
+    internal_reference: 'Verweis auf %{ref}:'
+  errors:
+    profile:
+      passphrase: 'Falscher Zugangsschlüssel'
+    thyme:
+      no_metadata: 'Es ist ein Fehler beim Laden der Metadaten aufgetreten.'
+      bad_browser: >
+        Dein Browser wird von Thyme leider nicht unterstützt.
+        Du kannst das Video nur mit dem Browser-Player anschauen.
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            courses:
+              blank: 'Es muss mindestens ein Modul abonniert werden.'
+            name:
+              blank: 'Es muss ein Anzeigename angegeben werden.'

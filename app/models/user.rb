@@ -36,8 +36,7 @@ class User < ApplicationRecord
 
   # at least one course must be subscribed (if there are courses)
   validates :courses,
-            presence: { message: 'Es muss mindestens ein Modul abonniert ' \
-                                 'werden.' },
+            presence: true,
             if: :courses_exist?
 
   # if a homepage is given it should at leat be a valid address
@@ -45,7 +44,7 @@ class User < ApplicationRecord
 
   # a user needs to give a display name
   validates :name,
-            presence: { message: 'Es muss ein Anzeigename angegeben werden.' },
+            presence: true,
             if: :edited_profile?
 
   # set some default values before saving if they are not set

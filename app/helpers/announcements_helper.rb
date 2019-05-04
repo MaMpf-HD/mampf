@@ -3,11 +3,11 @@ module AnnouncementsHelper
   # create text for notification about new announcement in notification dropdown
   # menu
   def announcement_notification_item_header(announcement)
-    text = 'Neue Mitteilung '
-    if announcement.lecture.present?
-      return text + 'in ' + announcement.lecture.title_for_viewers
+    unless announcement.lecture.present?
+      return t('notifications.mampf_announcement')
     end
-    text + ' über MaMpf'
+    t('notifications.lecture_announcement',
+      title: announcement.lecture.title_for_viewers)
   end
 
   # make announcements cards colored if the announcement is active

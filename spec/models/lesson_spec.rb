@@ -68,12 +68,12 @@ RSpec.describe Lesson, type: :model do
       expect(lesson.course).to eq(course)
     end
   end
-  describe '#date_de' do
+  describe '#date_localized' do
     it 'returns the correct date in german spelling' do
       term = FactoryBot.create(:term, year: 2199, season: 'SS')
       lecture = FactoryBot.create(:lecture, term: term)
       lesson = FactoryBot.build(:lesson, lecture: lecture, date: Date.new(2199, 7, 5))
-      expect(lesson.date_de).to eq('5.7.2199')
+      expect(lesson.date_localized).to eq('5.7.2199')
     end
   end
   describe '#to_label' do

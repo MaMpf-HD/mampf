@@ -517,6 +517,10 @@ class Medium < ApplicationRecord
     Medium.sort_de[sort]
   end
 
+  def cache_key
+    super + '-' + I18n.locale.to_s
+  end
+
   # returns the mediums publish state *with inheritance*, i.e. it is true iff
   # - the medium itself has been published
   # AND
@@ -616,7 +620,7 @@ class Medium < ApplicationRecord
     return 'ohne Titel' unless undescribable?
     if sort == 'Kaviar'
       return "zu Sitzung #{teachable.lesson&.number}, " \
-             "#{teachable.lesson&.date_de}"
+             "#{teachable.lesson&.date_localized}"
     elsif sort == 'Script'
       return 'Skript'
     elsif sort == 'Question'

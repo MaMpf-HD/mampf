@@ -3,12 +3,12 @@
     <div class="card">
       <div class="card-header">
         <h4>
-          Informationen zum Modul <%= course.title %>
+          <%=t('course.info', title: course.title) %>
         </h4>
       </div>
       <div class="card-body" id="organizationalCardBody">
         <h5>
-          ModuleditorInnen
+          <%= t('course.editors') %>
         </h5>
         <ul>
           <% course.editors.each do |e| %>
@@ -23,7 +23,7 @@
         </ul>
         <% if course.organizational %>
           <h5>
-            Weitere Informationen
+            <%= t('course.further_info') %>
           </h5>
           <%= course.organizational_concept&.html_safe %>
         <% end %>

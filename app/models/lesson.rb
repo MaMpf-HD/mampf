@@ -51,21 +51,25 @@ class Lesson < ApplicationRecord
   end
 
   def title
-    'Sitzung ' + number.to_s + ', ' + date_de.to_s
+    I18n.t('lesson') + ' ' + number.to_s + ', ' + date_localized.to_s
   end
 
   def to_label
-    'Nr. ' + number.to_s + ', ' + date_de.to_s
+    'Nr. ' + number.to_s + ', ' + date_localized.to_s
   end
 
   def compact_title
     lecture.compact_title + '.E' + number.to_s
   end
 
+  def cache_key
+    super + '-' + I18n.locale.to_s
+  end
+
   def title_for_viewers
     Rails.cache.fetch("#{cache_key}/title_for_viewers") do
-      lecture.title_for_viewers + ', Sitzung ' + number.to_s + ' vom ' +
-        date_de
+      lecture.title_for_viewers + ', ' + I18n.t('lesson') + ' ' + number.to_s +
+        ' ' + I18n.t('from') + ' ' + date_localized
     end
   end
 
@@ -74,7 +78,7 @@ class Lesson < ApplicationRecord
   end
 
   def card_header
-    lecture.short_title_brackets + ', ' + date_de
+    lecture.short_title_brackets + ', ' + date_localized
   end
 
   def card_header_path(user)
@@ -93,7 +97,7 @@ class Lesson < ApplicationRecord
   end
 
   def short_title_with_lecture_date
-    lecture.short_title + ', ' + date_de
+    lecture.short_title + ', ' + date_localized
   end
 
   def short_title
@@ -101,7 +105,7 @@ class Lesson < ApplicationRecord
   end
 
   def local_title_for_viewers
-    'Sitzung ' + number.to_s + ' vom ' + date_de
+    "#{I18n.t('lesson')} #{number} #{I18n.t('from')} #{date_localized}"
   end
 
   def restricted?
@@ -147,8 +151,8 @@ class Lesson < ApplicationRecord
     lecture.lessons.order(:date, :id).pluck(:id).index(id) + 1
   end
 
-  def date_de
-    date.day.to_s + '.' + date.month.to_s + '.' + date.year.to_s
+  def date_localized
+    I18n.localize date, format: :concise
   end
 
   def section_titles

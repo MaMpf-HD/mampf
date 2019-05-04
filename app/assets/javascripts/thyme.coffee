@@ -115,9 +115,9 @@ setupHypervideo = ->
     if currentChapter.length > 0
       backInfo = currentChapter.data('text').split(':', 1)[0]
       if backInfo? && backInfo.length > 20
-        backInfo = 'zurück'
+        backInfo = I18n.t('thyme.back')
       else
-        backInfo = 'zurück zu ' + backInfo
+        backInfo = I18n.t('thyme.back_to') + backInfo
       $(backButton).empty().append(backInfo).show()
       renderMathInElement backButton,
         delimiters: [
@@ -346,7 +346,7 @@ setupHypervideo = ->
       displayChapters()
       displayMetadata()
     else
-      alert('Es ist ein Fehler beim Laden der Metadaten aufgetreten.')
+      alert(I18n.t('errors.thyme.no_metadata'))
   return
 
 $(document).on 'turbolinks:load', ->
@@ -400,8 +400,7 @@ $(document).on 'turbolinks:load', ->
   # detect IE/edge and inform user that they are not suppported if necessary,
   # only use browser player
   if document.documentMode || /Edge/.test(navigator.userAgent)
-    alert 'Dein Browser wird von Thyme leider nicht unterstützt.' +
-    'Du kannst das Video nur mit dem Browser-Player anschauen.'
+    alert I18n.t('errors.thyme.bad_browser')
     $('#caption').hide()
     $('#video-controlBar').hide()
     video.style.width = '100%'

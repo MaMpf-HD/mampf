@@ -2,7 +2,7 @@
   <% unless embedded %>
     <div class="card-header bg-generic-card-header">
       <h5>
-        Inhalt
+        <%= t('content') %>
       </h5>
     </div>
   <% end %>
@@ -49,7 +49,7 @@
         <% end%>
       </ul>
     <% else %>
-      Es liegen keine detaillierten Inhaltsangaben vor.
+      <%= t('no_content') %>
     <% end %>
   </div>
 </div>

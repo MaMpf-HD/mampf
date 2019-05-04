@@ -1,7 +1,7 @@
 <div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
     <h5>
-      Vorlesungsinhalt
+      <%= t('lecture.content') %>
     </h5>
   </div>
   <div class="card-body">
@@ -36,7 +36,7 @@
                     </div>
                     <div class="col-6">
                       <% s.lessons.includes(:tags).order(:date).each do |l| %>
-                        <%= link_to  l.date_de,
+                        <%= link_to  l.date_localized,
                                      lesson_path(l),
                                      class: 'badge badge-secondary lecture-lesson',
                                      id: 'lecture-' + dom_id(l),

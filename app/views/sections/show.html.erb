@@ -2,13 +2,13 @@
   <div class="col-12 col-xl-5">
     <h2>
       <span class="badge badge-secondary mr-3">
-        Abschnitt
+        <%= t('section') %>
       </span>
       <%= @section.to_label %>
     </h2>
   </div>
   <div class="col-9 col-xl-5 pt-2">
-    (von
+    (<%= t('from') %>
     <% if current_user.lectures.include?(@section.lecture) %>
       <%= link_to @section.lecture.to_label,
                   @section.lecture.path(current_user) %>
@@ -25,7 +25,7 @@
          class="text-secondary material-icons mr-2"
          style="text-decoration:none; font-size: 3em;"
          data-toggle="tooltip"
-         title="voriger Abschnitt">
+         title="<%= t('previous_section') %>">
         keyboard_arrow_left
       </a>
     <% end %>
@@ -34,7 +34,7 @@
          class="text-secondary material-icons"
          style="text-decoration:none; font-size: 3em;"
          data-toggle="tooltip"
-         title="nächster Abschnitt">
+         title="<%= t('next_section') %>">
         keyboard_arrow_right
       </a>
     <% end %>
@@ -46,13 +46,13 @@
       <div class="col-12">
         <%= render partial: 'tags/tags',
                    locals: { related_tags: @section.tags,
-                             tags_description: 'Verknüpfte Begriffe',
+                             tags_description: t('related_tags'),
                              small: false } %>
       </div>
       <div class="col-12 mt-2 mb-2">
         <%= render partial: 'lessons/lessons',
                    locals: { lessons: @section.lessons,
-                             lessons_description: 'Verknüpfte Sitzungen' } %>
+                             lessons_description: t('related_lessons') } %>
       </div>
     </div>
   </div>

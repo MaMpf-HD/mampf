@@ -105,6 +105,10 @@ class Lecture < ApplicationRecord
     lecture_path
   end
 
+  def cache_key
+    super + '-' + I18n.locale.to_s
+  end
+
   def restricted?
     passphrase.present?
   end

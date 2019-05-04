@@ -1,7 +1,7 @@
 <div class="card bg-light">
   <div class="card-header bg-generic-card-header">
     <h5>
-      Verknüpfte Medien
+      <%= t('related_media') %>
       <span class="badge badge-secondary">
         <%= media.count %>
       </span>
@@ -18,7 +18,7 @@
           </div>
         <% end %>
       <% else %>
-        Es sind keine verknüpften Medien vorhanden.
+        <%= t('no_related_media') %>
       <% end %>
     </div>
   </div>

@@ -16,6 +16,8 @@
 //= require rails-ujs
 //= require activestorage
 //= require js-routes
+//= require i18n
+//= require i18n/translations
 //= require selectize
 //= require jquery.fileDownload
 //= require jquery-ui
