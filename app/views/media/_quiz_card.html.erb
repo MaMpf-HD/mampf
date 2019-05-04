@@ -1,18 +1,20 @@
   <div class="card bg-light">
     <div class="card-header bg-generic-card-header">
       <div class="row">
-        <div class="col-6 text-light">
-          Quiz
+        <div class="col-6">
+          <h5>
+            <%= t('categories.quiz.singular') %>
+          </h5>
         </div>
         <div class="col-6">
           <div class="media-card-header">
             <a href="<%= take_quiz_path(medium.id) %>"
                class="no-deco mr-2"
                target="_blank">
-              <i class="material-icons text-light"
+              <i class="material-icons text-dark"
                  data-toggle="tooltip"
                  data-placement="bottom"
-                 title="Quiz starten">
+                 title="<%= t('quiz.start') %>">
                 videogame_asset
               </i>
             </a>
@@ -23,12 +25,12 @@
     <div class="card-body">
       <div class="row">
         <div class="col-12">
-          Anzahl der Fragen:
-          <%= medium.becomes(Quiz).question_ids.count %>
+          <%= t('quiz.number_of_questions',
+                count: medium.becomes(Quiz).question_ids.count) %>
         </div>
         <div class="col-12">
-          Schwierigkeitsgrad:
-          <%= level_to_word(medium.becomes(Quiz)) %>
+          <%= t('quiz.quiz_level',
+                level: level_to_word(medium.becomes(Quiz))) %>
         </div>
       </div>
     </div>

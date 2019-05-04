@@ -195,6 +195,13 @@ en:
   quiz:
     quiz: 'Quiz'
     start: 'start quiz'
+    number_of_questions: 'Number of questions: %{count}'
+    quiz_level: 'Difficulty level: %{level}'
+    level:
+      not_set: 'not set'
+      easy: 'easy'
+      medium: 'medium'
+      difficult: 'difficult'
   external_link: 'External Link'
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'

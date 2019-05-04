@@ -186,6 +186,13 @@ de:
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
+    number_of_questions: 'Anzahl der Fragen: %{count}'
+    quiz_level: 'Schwierigkeitsgrad: %{level}'
+    level:
+      not_set: 'nicht gesetzt'
+      easy: 'leicht'
+      medium: 'mittel'
+      difficult: 'schwierig'
   external_link: 'Externer Link'
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
