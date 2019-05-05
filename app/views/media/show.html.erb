@@ -19,7 +19,7 @@
   </div>
   <div class="col-4 pt-2">
     <strong>
-      zu:
+      <%= t('from') %>:
     </strong>
     <% if @medium.teachable_type == 'Course' && @medium.teachable %>
       <% if current_user.courses.include?(@medium.teachable) %>
