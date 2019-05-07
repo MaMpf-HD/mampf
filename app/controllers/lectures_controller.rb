@@ -22,7 +22,8 @@ class LecturesController < ApplicationController
   def show
     cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
-    I18n.locale = @lecture.locale if @lecture.locale
+    I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
     render layout: 'application'
   end
 
