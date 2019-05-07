@@ -4,8 +4,9 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
 
   def edit
-    # ensure that users do not have a blank name
-    @user.update(name: @user.name || @user.email.split('@').first)
+    # ensure that users do not have a blank name and a locale
+    @user.update(name: @user.name || @user.email.split('@').first,
+                 locale: @user.locale || I18n.default_locale.to_s)
     unless @user.consents
       redirect_to consent_profile_path
       return
