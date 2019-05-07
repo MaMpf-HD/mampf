@@ -101,6 +101,7 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
+    locale: 'Sprache'
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -169,6 +170,7 @@ de:
   external_render: 'in externem Tab rendern'
   medium:
     details: 'Details ansehen'
+    different_language: 'Das Medium ist auf %{language}.'
   video:
     video: 'Video'
     play: 'THymE-Player'
@@ -201,6 +203,13 @@ de:
     info: 'Informationen zum Modul %{title}'
     editors: 'ModuleditorInnen'
     further_info: 'Weitere Informationen'
+    no_lectures: 'Zu diesem Modul existieren noch keine Vorlesungen.'
+    only_course: >
+      Du bekommst deswegen nur Medien und Informationen angezeigt,
+      die auf der Ebene des Moduls angesiedelt sind.
+    no_subscription_html: >
+      Du hast keine zu diesem Modul gehörige Vorlesung %{profile}.
+    subscribed: 'abonniert'
   test:
     info: >
       Auf Modulebene liegen %{count} Multiple-Choice-Fragen vor.
@@ -252,6 +261,9 @@ de:
       bad_browser: >
         Dein Browser wird von Thyme leider nicht unterstützt.
         Du kannst das Video nur mit dem Browser-Player anschauen.
+  locales:
+    en: 'englisch'
+    de: 'deutsch'
   activerecord:
     errors:
       models:

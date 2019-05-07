@@ -111,6 +111,7 @@ en:
     consent: >
       You consented to our privacy policy.
     sure: 'Are you sure?'
+    locale: 'Language'
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Check off all'
@@ -178,6 +179,7 @@ en:
   external_render: 'render in external tab'
   medium:
     details: 'view details'
+    different_language: 'This medium is in %{language}.'
   video:
     video: 'Video'
     play: 'THymE Player'
@@ -210,6 +212,13 @@ en:
     info: 'Information about the course %{title}'
     editors: 'Course Editors'
     further_info: 'Further information'
+    no_lectures: 'There are no lectures for this module.'
+    only_course: >
+      Therefore, only those media and information will be displayed
+      that are located at course level.
+    no_subscription_html: >
+      You are not %{profile} to any of this course's lectures.
+    subscribed: 'subscribed'
   test:
     info: >
       There are %{count} multiple choice question at course level.
@@ -254,6 +263,9 @@ en:
     thyme:
       no_metadata: 'An error has happened related to the loading of metadata.'
       bad_browser: 'Your browser is not supported by the THymE Player.'
+  locales:
+    en: 'english'
+    de: 'german'
   activerecord:
     errors:
       models:

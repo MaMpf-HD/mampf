@@ -22,6 +22,7 @@ class LecturesController < ApplicationController
   def show
     cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
+    I18n.locale = @lecture.locale if @lecture.locale
     render layout: 'application'
   end
 
@@ -40,6 +41,8 @@ class LecturesController < ApplicationController
     if @lecture.valid?
       # set organizational_concept to default
       set_organizational_defaults
+      # set lenguage to default language
+      set_language
       # depending on where the create action was trriggered from, return
       # to admin index view or edit course view
       unless params[:lecture][:from] == 'course'
@@ -119,6 +122,7 @@ class LecturesController < ApplicationController
   # show all announcements for this lecture
   def show_announcements
     @announcements = @lecture.announcements.order(:created_at).reverse
+    I18n.locale = @lecture.locale_with_inheritance
     render layout: 'application'
   end
 
@@ -149,7 +153,7 @@ class LecturesController < ApplicationController
   def lecture_params
     params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
                                     :start_chapter, :absolute_numbering,
-                                    :start_section, :organizational,
+                                    :start_section, :organizational, :locale,
                                     :organizational_concept, :muesli,
                                     :content_mode, :passphrase,
                                     editor_ids: [])
@@ -180,5 +184,10 @@ class LecturesController < ApplicationController
                                                 'organizational_default',
                                        formats: :html,
                                        layout: false))
+  end
+
+  # set language to default language
+  def set_language
+    @lecture.update(locale: I18n.default_locale.to_s)
   end
 end

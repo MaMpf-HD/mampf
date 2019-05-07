@@ -5,6 +5,7 @@ class SectionsController < ApplicationController
   layout 'administration'
 
   def show
+    I18n.locale = @section.lecture.locale_with_inheritance
     render layout: 'application_no_sidebar'
   end
 

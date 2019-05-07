@@ -1,5 +1,16 @@
 <div class="row">
   <div class="col-12">
+    <%= f.form_group :locale,
+                    label: { text: t('profile.locale') } do %>
+      <% I18n.available_locales.each do |locale| %>
+        <%= f.radio_button :locale,
+                           locale.to_s,
+                           label: t('locales.' + locale.to_s,
+                                    locale: current_user.locale) %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="col-12">
     <%= f.form_group :subscription_type,
                       label: { text: t('profile.content_info') } do %>
       <%= f.radio_button :subscription_type, 1,

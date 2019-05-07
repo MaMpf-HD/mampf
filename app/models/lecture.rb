@@ -92,6 +92,10 @@ class Lecture < ApplicationRecord
     end
   end
 
+  def locale_with_inheritance
+    locale || course.locale
+  end
+
   def long_title
     title
   end
@@ -449,8 +453,7 @@ class Lecture < ApplicationRecord
   # for courses, with the lecture on top in the carousel
   def lecture_path
     Rails.application.routes.url_helpers
-         .course_path(course,
-                      params: { active: id })
+         .lecture_path(self)
   end
 
   def active_announcements(user)

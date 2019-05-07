@@ -129,6 +129,23 @@
             </div>
           </div>
           <% end %>
+          <div class="form-group">
+            Sprache
+            <div class="form-row ml-2">
+            <% I18n.available_locales.each do |locale| %>
+              <div class="custom-control custom-radio custom-control-inline">
+                <%= f.radio_button :locale,
+                                   locale.to_s,
+                                   class: 'custom-control-input' %>
+                <%= f.label :locale,
+                            t('locales.' + locale.to_s,
+                              locale: I18n.default_locale),
+                              value: locale.to_s,
+                              class: 'custom-control-label' %>
+              </div>
+            <% end %>
+            </div>
+          </div>
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">

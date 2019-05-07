@@ -73,6 +73,10 @@ class Course < ApplicationRecord
     title
   end
 
+  def locale_with_inheritance
+    locale
+  end
+
   def card_header
     title
   end

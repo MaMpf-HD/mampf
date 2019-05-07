@@ -1,6 +1,7 @@
 <% lecture ||= Lecture.find_by_id(params[:lecture_id]) %>
 <% lecture ||= Lecture.find_by_id(cookies[:current_lecture]) %>
 <% lecture ||= course.primary_lecture(current_user) %>
+<% I18n.with_locale(lecture&.locale_with_inheritance || course.locale) do %>
 <% if course.subscribed_lectures(current_user) == [lecture] %>
   <%= link_to lecture.title_for_viewers,
               lecture_path(lecture),
@@ -214,3 +215,4 @@
     </li>
   <% end %>
 </ul>
+<% end %>

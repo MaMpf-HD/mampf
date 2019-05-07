@@ -159,6 +159,10 @@ class Section < ApplicationRecord
     chapter.hidden || hidden
   end
 
+  def cache_key
+    super + '-' + I18n.locale.to_s
+  end
+
   private
 
   def touch_lecture

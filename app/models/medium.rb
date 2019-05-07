@@ -674,6 +674,10 @@ class Medium < ApplicationRecord
     false
   end
 
+  def locale_with_inheritance
+    locale || teachable.locale_with_inheritance
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

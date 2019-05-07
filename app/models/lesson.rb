@@ -77,6 +77,14 @@ class Lesson < ApplicationRecord
     lecture.title + ', ' + title
   end
 
+  def locale_with_inheritance
+    lecture.locale_with_inheritance
+  end
+
+  def locale
+    locale_with_inheritance
+  end
+
   def card_header
     lecture.short_title_brackets + ', ' + date_localized
   end
