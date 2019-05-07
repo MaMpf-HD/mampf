@@ -62,6 +62,7 @@ class CoursesController < ApplicationController
   end
 
   def display
+    I18n.locale = @course.locale || I18n.default_locale
     render layout: 'application'
   end
 

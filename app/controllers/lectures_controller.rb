@@ -130,6 +130,7 @@ class LecturesController < ApplicationController
   def organizational
     cookies[:current_lecture] = @lecture.id
     cookies[:current_course] = @lecture.course.id
+    I18n.locale = @lecture.locale_with_inheritance
     render layout: 'application'
   end
 
