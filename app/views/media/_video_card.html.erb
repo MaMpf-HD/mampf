@@ -2,7 +2,9 @@
     <div class="card-header bg-generic-card-header">
       <div class="row">
         <div class="col-6">
-          Video
+          <h5>
+            <%= t('video.video') %>
+          </h5>
         </div>
         <div class="col-6">
           <div class="media-card-header">
@@ -12,7 +14,7 @@
               <i class="material-icons text-dark"
                  data-toggle="tooltip"
                  data-placement="bottom"
-                 title="Thyme Player">
+                 title="<%= t('video.play') %>">
                 play_arrow
               </i>
             </a>
@@ -23,7 +25,7 @@
                   <span class="badge badge-light"
                         data-toggle="tooltip"
                         data-placement="bottom"
-                        title="Video speichern">
+                        title="<%= t('video.download') %>">
                     &darr;mp4
                   </span>
                 </span>
@@ -44,19 +46,19 @@
     <div class="card-body">
       <div class="row">
         <div class="col-12">
-          Länge:
+          <%= t('video.length') %>:
           <span id="video-duration">
             <%= medium.video_duration_hms_string %>
           </span>
         </div>
         <div class="col-12">
-          Auflösung:
+          <%= t('video.resolution') %>:
           <span id="video-resolution">
             <%= medium.video_resolution %>
           </span>
         </div>
         <div class="col-12">
-          Größe:
+          <%= t('video.size') %>:
           <span id="video-size">
             <%= number_to_human_size(medium.video_size) %>
           </span>

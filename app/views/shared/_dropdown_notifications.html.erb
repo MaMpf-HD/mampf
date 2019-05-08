@@ -37,13 +37,13 @@
           </div>
           <a href="<%= notifications_path %>"
              class="dropdown-item">
-            alle anzeigen
+            <%= t('notifications.show_all') %>
           </a>
           <a href="<%= destroy_all_notifications_path %>"
              class="dropdown-item"
              data-remote="true"
              data-method="post">
-            alle erledigen
+            <%= t('notifications.check_notifications') %>
           </a>
         </div>
       </div>

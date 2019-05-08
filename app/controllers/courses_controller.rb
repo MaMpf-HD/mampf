@@ -41,11 +41,13 @@ class CoursesController < ApplicationController
     @lecture = @course.primary_lecture(current_user)
     unless @course.in?(current_user.courses) && @lecture
       cookies[:current_lecture] = nil
+      I18n.locale = @course.locale || I18n.default_locale
       render layout: 'application'
       return
     end
     @lecture = @course.primary_lecture(current_user)
     cookies[:current_lecture] = @lecture.id
+    I18n.locale = @lecture.locale_with_inheritance || I18n.default_locale
     render template: 'lectures/show', layout: 'application'
   end
 
@@ -60,10 +62,17 @@ class CoursesController < ApplicationController
   end
 
   def display
+    I18n.locale = @course.locale || I18n.default_locale
     render layout: 'application'
   end
 
   def show_random_quizzes
+    lecture = Lecture.find_by_id(params[:lecture_id])
+    I18n.locale = if lecture
+                    lecture.locale_with_inheritance
+                  else
+                    @course.locale
+                  end
     render layout: 'application'
   end
 
@@ -95,7 +104,7 @@ class CoursesController < ApplicationController
 
   def course_params
     params.require(:course).permit(:title, :short_title, :organizational,
-                                   :organizational_concept,
+                                   :organizational_concept, :locale,
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [])

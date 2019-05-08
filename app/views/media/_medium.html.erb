@@ -1,5 +1,8 @@
+<% I18n.with_locale(medium.locale_with_inheritance) do %>
   <div class="card bg-mdb-color-lighten-7">
-    <div class="card-header bg-mdb-color-lighten-1">
+    <div class="card-header bg-mdb-color-lighten-1"
+         style="display: flex; justify-content: space-between;">
+      <div>
       <% ref = medium.card_header_teachable_path(current_user) %>
       <% if ref.present? %>
         <%= link_to medium.card_header,
@@ -10,6 +13,21 @@
           <%= medium.card_header %>
         </span>
       <% end %>
+      </div>
+      <div class="text-light">
+        <% if current_user.locale.to_s != medium.locale_with_inheritance %>
+          <small style="color: lightgray;"
+                data-toggle="tooltip"
+                title="<%= t('medium.different_language',
+                             language: t('locales.' +
+                                         (medium.locale_with_inheritance ||
+                                            I18n.default_locale.to_s),
+                                         locale: current_user.locale),
+                             locale: current_user.locale) %>">
+            <%= medium.locale_with_inheritance.to_s %>
+          </small>
+        <% end %>
+      </div>
     </div>
     <% cache medium do %>
       <ul class="list-group list-group-flush">
@@ -56,7 +74,7 @@
                 <i class="material-icons text-secondary"
                    data-toggle="tooltip"
                    data-placement="bottom"
-                   title="THymE Player">
+                   title="<%= t('video.play') %>">
                   play_arrow
                 </i>
               </a>
@@ -70,7 +88,7 @@
                 <i class="material-icons text-secondary"
                    data-toggle="tooltip"
                    data-placement="bottom"
-                   title="pdf im Browser">
+                   title="<%= t('manuscript.view') %>">
                   library_books
                 </i>
               </a>
@@ -84,7 +102,7 @@
                 <i class="material-icons text-secondary"
                    data-toggle="tooltip"
                    data-placement="bottom"
-                   title="externer Link">
+                   title="<%= t('external_link_lc') %>">
                   link
                 </i>
               </a>
@@ -98,7 +116,7 @@
                 <i class="material-icons text-secondary"
                    data-toggle="tooltip"
                    data-placement="bottom"
-                   title="Quiz beginnen">
+                   title="<%= t('quiz.start') %>">
                   videogame_asset
                 </i>
               </a>
@@ -110,7 +128,7 @@
               <i class="material-icons text-secondary"
                  data-toggle="tooltip"
                  data-placement="bottom"
-                 title="Details">
+                 title="<%= t('medium.details') %>">
                 info
               </i>
             </a>
@@ -123,7 +141,7 @@
                   <span class="badge badge-secondary"
                         data-toggle="tooltip"
                         data-placement="bottom"
-                        title="Video speichern">
+                        title="<%= t('video.download') %>">
                     &darr;mp4
                   </span>
                 </span>
@@ -138,7 +156,7 @@
                   <span class="badge badge-secondary"
                         data-toggle="tooltip"
                         data-placement="bottom"
-                        title="Manuskript speichern">
+                        title="<%= t('manuscript.download') %>">
                     &darr;pdf
                   </span>
                 </span>
@@ -149,3 +167,4 @@
       </div>
     <% end %>
   </div>
+<% end %>

@@ -92,6 +92,10 @@ class Lecture < ApplicationRecord
     end
   end
 
+  def locale_with_inheritance
+    locale || course.locale
+  end
+
   def long_title
     title
   end
@@ -103,6 +107,10 @@ class Lecture < ApplicationRecord
   def card_header_path(user)
     return unless user.lectures.include?(self)
     lecture_path
+  end
+
+  def cache_key
+    super + '-' + I18n.locale.to_s
   end
 
   def restricted?
@@ -445,8 +453,7 @@ class Lecture < ApplicationRecord
   # for courses, with the lecture on top in the carousel
   def lecture_path
     Rails.application.routes.url_helpers
-         .course_path(course,
-                      params: { active: id })
+         .lecture_path(self)
   end
 
   def active_announcements(user)

@@ -3,12 +3,12 @@
     <div class="row">
       <div class="col-12 col-sm-10">
         <h5>
-          Aktuelles
+          <%= t('notifications.lecture.title') %>
         </h5>
       </div>
       <div class="col-12 col-sm-2 text-right">
         <% if announcements.any? %>
-          <%= link_to 'alle abhaken',
+          <%= link_to t('notifications.check_notifications'),
                       destroy_lecture_notifications_path(params: { lecture_id: lecture.id }),
                       class: 'btn btn-sm btn-outline-secondary',
                       method: :post,
@@ -22,11 +22,10 @@
       <div class="mb-2 activeAnnouncementsCounter"
            data-lecture="<%= lecture.id %>"
            data-count="<%= announcements.count %>">
-        Es gibt
         <% if announcements.count == 1 %>
-          eine neue Mitteilung:
+          <%= t('notifications.lecture.one_new') %>
         <% else %>
-          <%= announcements.count %> neue Mitteilungen:
+          <%= t('notifications.lecture.more_new', count: announcements.count) %>
         <% end %>
       </div>
       <div class="list-group mb-2" style="max-height: 10vh; overflow-y: scroll;">
@@ -45,15 +44,17 @@
     <% end %>
     <% if lecture.forum? && posts_count&.positive? %>
       <div id="unreadPosts">
-        Im
-        <%= link_to 'Forum', '/forum/' + lecture.forum.slug,
-                    target: :blank %>
-        gibt es
         <% if posts_count == 1 %>
-          ein ungelesenes Thema.
+          <%= t('notifications.lecture.new_post_html',
+                board: link_to(t('categories.board'),
+                               '/forum/' + lecture.forum.slug,
+                               target: :blank)) %>
         <% else %>
-          <%= posts_count %>
-          ungelesene Themen.
+          <%= t('notifications.lecture.new_posts_html',
+                board: link_to(t('categories.board'),
+                               '/forum/' + lecture.forum.slug,
+                               target: :blank),
+                count: posts_count) %>
         <% end %>
       </div>
     <% end %>

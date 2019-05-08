@@ -4,8 +4,9 @@ class ProfileController < ApplicationController
   before_action :set_basics, only: [:update]
 
   def edit
-    # ensure that users do not have a blank name
-    @user.update(name: @user.name || @user.email.split('@').first)
+    # ensure that users do not have a blank name and a locale
+    @user.update(name: @user.name || @user.email.split('@').first,
+                 locale: @user.locale || I18n.default_locale.to_s)
     unless @user.consents
       redirect_to consent_profile_path
       return
@@ -22,6 +23,7 @@ class ProfileController < ApplicationController
     if @user.update(lectures: @lectures, courses: @courses, name: @name,
                     subscription_type: @subscription_type,
                     no_notifications: @no_notifications,
+                    locale: @locale,
                     edited_profile: true)
       # remove notifications that have become obsolete
       clean_up_notifications
@@ -30,6 +32,7 @@ class ProfileController < ApplicationController
       # update course and lecture cookies
       update_course_cookie
       update_lecture_cookie
+      I18n.locale = @locale
       redirect_to :root, notice: t('profile.success')
     else
       @errors = @user.errors
@@ -66,6 +69,7 @@ class ProfileController < ApplicationController
     @no_notifications = params[:user][:no_notifications] == '1'
     @courses = Course.where(id: course_ids)
     @lectures = Lecture.where(id: lecture_ids)
+    @locale = params[:user][:locale]
   end
 
   # extracts all course ids from user params

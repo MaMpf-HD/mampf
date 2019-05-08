@@ -7,8 +7,10 @@ class Chapter < ApplicationRecord
   validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
 
   def to_label
-    return 'Kapitel ' + displayed_number + '. ' + title unless hidden
-    '*Kapitel ' + displayed_number + '. ' + title
+    unless hidden
+      return I18n.t('chapter', number: displayed_number, title: title)
+    end
+    I18n.t('hidden_chapter', number: displayed_number, title: title)
   end
 
   # Returns the number of the chapter. Unless the user explicitly specified
@@ -49,5 +51,9 @@ class Chapter < ApplicationRecord
   def select_sections
     sections.includes(:chapter).order(:position)
             .map { |s| [s.to_label, s.position] }
+  end
+
+  def cache_key
+    super + '-' + I18n.locale.to_s
   end
 end

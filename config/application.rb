@@ -12,7 +12,7 @@ module Mampf
     config.load_defaults 5.1
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
-    config.i18n.available_locales = [:en, :de]
+    config.i18n.available_locales = [:de, :en]
     config.time_zone = 'Berlin'
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers

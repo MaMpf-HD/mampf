@@ -28,7 +28,7 @@ module MediaHelper
   # create text for notification about new medium in notification dropdown menu
   def medium_notification_item_header(medium)
     return unless medium.proper?
-    'Neues Medium in ' + medium.teachable.media_scope.title_for_viewers
+    t('notifications.new_medium_in') + medium.teachable.media_scope.title_for_viewers
   end
 
   def medium_notification_item_details(medium)
@@ -79,10 +79,10 @@ module MediaHelper
   end
 
   def level_to_word(medium)
-    return 'nicht gesetzt' unless medium.level.present?
-    return 'leicht' if medium.level == 0
-    return 'mittel' if medium.level == 1
-    'schwer'
+    return t('quiz.level.not_set') unless medium.level.present?
+    return t('quiz.level.easy') if medium.level == 0
+    return t('quiz.level.medium') if medium.level == 1
+    t('quiz.level.difficult')
   end
 
   def independent_to_word(medium)

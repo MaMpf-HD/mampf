@@ -1,7 +1,7 @@
 <div class="card bg-light">
   <div class="card-header bg-generic-card-header">
     <h5>
-      Verknüpfte Abschnitte
+      <%= t('related_sections') %>
     </h5>
   </div>
   <div class="card-body"
@@ -18,7 +18,7 @@
         <% end %>
       </ul>
     <% else %>
-      Es sind keine verknüpften Abschnitte vorhanden.
+      <%= t('no_related_sections') %>
     <% end %>
   </div>
 </div>

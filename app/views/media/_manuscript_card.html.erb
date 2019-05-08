@@ -2,7 +2,9 @@
   <div class="card-header bg-generic-card-header">
     <div class="row">
       <div class="col-6">
-        Manuskript
+        <h5>
+          <%= t('manuscript.manuscript') %>
+        </h5>
       </div>
       <div class="col-6">
         <div class="media-card-header">
@@ -12,7 +14,7 @@
             <i class="material-icons text-dark"
                data-toggle="tooltip"
                data-placement="bottom"
-               title="pdf im Browser">
+               title="<%= t('manuscript.view') %>">
               library_books
             </i>
           </a>
@@ -23,7 +25,7 @@
                 <span class="badge badge-light"
                       data-toggle="tooltip"
                       data-placement="bottom"
-                      title="Manuskript speichern">
+                      title="<%= t('manuscript.download') %>">
                   &darr;pdf
                 </span>
               </span>
@@ -42,15 +44,15 @@
       <div id="manuscript-meta" class="col-12 rounded">
         <div class="row">
           <div class="col-12">
-            Länge:
+            <%= t('manuscript.length') %>:
             <span id="manuscript-pages">
-              <%= medium.manuscript_pages.to_s + ' S' %>
+              <%= "#{medium.manuscript_pages} #{t('manuscript.pages')}" %>
             </span>
           </div>
         </div>
         <div class="row">
           <div class="col-12">
-            Größe:
+            <%= t('manuscript.size') %>:
             <span id="manuscript-size">
               <%= number_to_human_size(medium.manuscript_size) %>
             </span>

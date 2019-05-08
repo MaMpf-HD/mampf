@@ -2,24 +2,24 @@
 module CoursesHelper
   # create text for notification about new course in notification dropdown menu
   def course_notification_item_header(course)
-    'Neues Modul ' + course.title
+    t('notifications.new_course', title: course.title)
   end
 
   # create text for notification card
   def course_notification_item_details(course)
-    'Über Deine Profileinstellungen kannst Du es abonnieren.'
+    t('notifications.subscribe_course')
   end
 
   # create text for notification about new course in notification card
   def course_notification_card_text(course)
-    'Neues Modul angelegt:' + tag(:br) + course.title
+    t('notifications.new_course_created_html', title: course.title)
   end
 
   # create link for notification about new lecture in notification card
   def course_notification_card_link
-    'Du kannst es über Deine ' +
-      link_to('Profileinstellungen', edit_profile_path,
-              class: 'darkblue') +
-      ' abonnieren.'
+    t('notifications.subscribe_course_html',
+      profile: link_to(t('notifications.profile'),
+                       edit_profile_path,
+                       class: 'darkblue'))
   end
 end

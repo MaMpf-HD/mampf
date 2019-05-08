@@ -19,7 +19,7 @@
   </div>
   <div class="col-4 pt-2">
     <strong>
-      zu:
+      <%= t('from') %>:
     </strong>
     <% if @medium.teachable_type == 'Course' && @medium.teachable %>
       <% if current_user.courses.include?(@medium.teachable) %>
@@ -95,17 +95,8 @@
       <% end %>
       <% if @medium.external_reference_link.present? %>
         <div class="col-6 col-lg-12 mt-2">
-          <div class="card bg-light">
-            <div class="card-header bg-generic-card-header">
-              Externer Link
-            </div>
-            <div class="card-body text-center">
-              <%= link_to 'hier klicken',
-                          @medium.external_reference_link,
-                          class: "btn btn-info",
-                          target: :_blank %>
-            </div>
-          </div>
+          <%= render partial: 'media/external_link_card',
+                     locals: { medium: @medium } %>
         </div>
       <% end %>
     </div>
@@ -116,7 +107,7 @@
         <div class="col-12 mb-2">
           <%= render partial: 'tags/tags',
                      locals: { related_tags: @medium.tags,
-                               tags_description: 'Verknüpfte Begriffe',
+                               tags_description: t('related_tags'),
                                small: true} %>
         </div>
       <% end %>

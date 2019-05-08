@@ -1,14 +1,11 @@
 <div class="alert alert-primary">
   <% if @course.lectures.any? %>
-    Du hast keine zu diesem Modul gehörige Vorlesung
-    <%= link_to 'abonniert',
-                edit_profile_path %>
-    .
+    <%= t('course.no_subscription_html',
+          profile: link_to(t('course.subscribed'), edit_profile_path)) %>
   <% else %>
-    Zu diesem Modul existieren noch keine Vorlesungen.
+    <%= t('course.no_lectures') %>
   <% end %>
-  Du bekommst deswegen nur Medien und Informationen angezeigt, die auf der Ebene des Moduls
-  angesiedelt sind.
+  <%= t('course.only_course') %>
 </div>
 <%= render partial: 'courses/infos',
            locals: { course: @course } %>

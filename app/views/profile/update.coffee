@@ -13,7 +13,7 @@ $('[id^="passphrase-error-secondary-"]').empty()
 <% @errors[:primary_pass].each do |c| %>
 $('#user_pass_primary_' + '<%= c %>').addClass('is-invalid')
 $('#passphrase-error-primary-' + '<%= c %>')
-  .append('Falscher Zugangsschlüssel')
+  .append('<%= t('errors.profile.passphrase') %>')
 $('#course-card-' + '<%= c %>').addClass('border-danger')
 <% end %>
 <% end %>
@@ -21,7 +21,7 @@ $('#course-card-' + '<%= c %>').addClass('border-danger')
 <% @errors[:secondary_pass].each do |l| %>
 $('#user_pass_lecture-' + '<%= l %>').addClass('is-invalid')
 $('#passphrase-error-secondary-' + '<%= l %>')
-  .append('Falscher Zugangsschlüssel')
+  .append('<%= t('errors.profile.passphrase') %>')
 $('#course-card-' + '<%= Lecture.find_by_id(l).course.id %>')
   .addClass('border-danger')
 <% end %>

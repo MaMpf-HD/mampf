@@ -19,6 +19,7 @@
 !/tmp/.keep
 /public/tmp/*
 /public/assets/*
+!/public/assets/.keep
 
 /node_modules
 /yarn-error.log

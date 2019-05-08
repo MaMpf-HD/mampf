@@ -1,34 +1,32 @@
-Deine Suche nach dem Begriff
-"<%= @search_string %>"
-hat <%= @filtered_tags.count %> Treffer ergeben.
+<%= t('search.info',
+      search_string: @search_string,
+      count: @filtered_tags.count) %>
 <% if @tags.count != @filtered_tags.count %>
-  Aufgrund Deiner
-  <%= link_to "Profileinstellungen", edit_profile_path %>
-  wurde<%= plural_n(@tags, @filtered_tags) %>
-  <%= @tags.count - @filtered_tags.count %>
-  Treffer aus der Datenbank nicht berücksichtigt.
+  <%= t('search.omitted_html',
+        profile: link_to(t('search.settings'), edit_profile_path),
+        count: @tags.count - @filtered_tags.count) %>
 <% end %>
 <% if @filtered_tags.present? %>
   <div class="row">
     <div class="col-12 col-lg-8 pt-3 pb-3">
       <%= render partial: 'tags/tags',
                  locals: { related_tags: @filtered_tags,
-                           tags_description: "Suchergebnisse für den " \
-                                             "Begriff \"#{@search_string}\"",
+                           tags_description:
+                             t('search.results',
+                               search_string: @search_string),
                            small: true } %>
     </div>
   </div>
 <% end %>
 <% if @tags.empty? %>
   <% if @filtered_similar_tags.present? %>
-    Meintest Du vielleicht etwas anderes?
+    <%= t('search.alternative') %>
     <div class="row">
       <div class="col-12 col-lg-8 pt-3 pb-3">
         <%= render partial: 'tags/tags',
                    locals: { related_tags: @filtered_similar_tags,
-                             tags_description: "Zum Suchbegriff " \
-                                               "\"#{@search_string}\" ähnliche"\
-                                               " Begriffe",
+                             tags_description: t('search.similar',
+                                                 search_string: @search_string),
                              small: true } %>
       </div>
     </div>

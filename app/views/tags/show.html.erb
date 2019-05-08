@@ -2,7 +2,7 @@
   <div class="col-10">
     <h2>
       <span class="badge badge-secondary mr-3">
-        Begriff<%= ' #' + @tag.id.to_s %>
+        <%= t('tag') %>
       </span>
       <%= @tag.title %>
     </h2>
@@ -27,7 +27,7 @@
              id="relatedTags">
           <div class="card-header bg-generic-card-header">
             <h5>
-              Verknüpfte Tags
+              <%= t('related_tags') %>
             </h5>
           </div>
           <div class="card-body"
@@ -45,11 +45,11 @@
                 <br>
               <% end %>
             <% else %>
-              Es liegen keine verknüpften Tags vor.
+              <%= t('no_related_tags') %>
             <% end %>
             <% if @tags_in_neighbourhood.present? %>
               <h6 class="mt-2">
-                im weiteren Umfeld
+                <%= t('tags_in_neighbourhood') %>
               </h6>
               <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
                 <%= link_to t.short_title,
@@ -78,11 +78,11 @@
         <div class="row">
           <div class="col-3">
             <h5>
-              MaMpf-Map
+              <%= t('mampf_map') %>
             </h5>
           </div>
           <div class="col-9 text-right">
-            <%= link_to 'in externem Tab rendern',
+            <%= link_to t('external_render'),
                         display_cyto_tag_path(@tag),
                         class: 'btn btn-sm btn-outline-secondary',
                         target: :_blank%>

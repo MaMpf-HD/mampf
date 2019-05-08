@@ -223,7 +223,7 @@
                       </div>
                       <div class="col-6">
                         <% s.lessons.includes(:tags).order(:date).each do |l| %>
-                          <%= link_to l.date_de,
+                          <%= link_to l.date_localized,
                                       lesson_link(l, inspection),
                                       class: 'badge badge-secondary' +
                                              ' lecture-lesson',
@@ -260,7 +260,7 @@
     <% if lecture.orphaned_lessons.present? %>
       Verwaiste Sitzungen:
       <% lecture.orphaned_lessons.each do |l| %>
-        <%= link_to  l.date_de,
+        <%= link_to  l.date_localized,
                      edit_lesson_path(l),
                      remote: true,
                      class: 'badge badge-light' %>

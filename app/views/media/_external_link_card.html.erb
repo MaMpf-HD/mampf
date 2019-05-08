@@ -1,0 +1,13 @@
+<div class="card bg-light">
+  <div class="card-header bg-generic-card-header">
+    <h5>
+      <%= t('external_link') %>
+    </h5>
+  </div>
+  <div class="card-body text-center">
+    <%= link_to t('click_here'),
+                medium.external_reference_link,
+                class: "btn btn-info",
+                target: :_blank %>
+  </div>
+</div>

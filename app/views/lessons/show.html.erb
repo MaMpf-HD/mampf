@@ -2,10 +2,10 @@
   <div class="col-10">
     <h2>
       <span class="badge badge-secondary mr-3">
-        Sitzung
+        <%= t('lesson') %>
       </span>
       <%= @lesson.to_label %>
-      von
+      <%= t('from') %>
       <% if current_user.lectures.include?(@lesson.lecture) %>
         <%= link_to @lesson.lecture.title,
                     @lesson.lecture.path(current_user),
@@ -23,7 +23,7 @@
          class="text-secondary material-icons mr-2"
          style="text-decoration:none; font-size: 3em;"
          data-toggle="tooltip"
-         title="vorige Sitzung">
+         title="<%= t('previous_lesson') %>">
         keyboard_arrow_left
       </a>
     <% end %>
@@ -32,7 +32,7 @@
          class="text-secondary material-icons"
          style="text-decoration:none; font-size: 3em;"
          data-toggle="tooltip"
-         title="nächste Sitzung">
+         title="<%= t('next_lesson') %>">
         keyboard_arrow_right
       </a>
     <% end %>
@@ -44,7 +44,7 @@
       <div class="col-12">
         <%= render partial: 'tags/tags',
                    locals: { related_tags: @lesson.tags,
-                             tags_description: 'Verknüpfte Begriffe',
+                             tags_description: t('related_tags'),
                              small: false } %>
       </div>
       <div class="col-12 mt-2 mb-2">

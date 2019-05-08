@@ -27,6 +27,7 @@ class MediaController < ApplicationController
     # destroy the notifications related to the medium
     current_user.notifications.where(notifiable_type: 'Medium',
                                      notifiable_id: @medium.id).each(&:destroy)
+    I18n.locale = @medium.locale_with_inheritance
     render layout: 'application_no_sidebar'
   end
 

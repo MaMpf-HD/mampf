@@ -55,6 +55,7 @@ gem 'jquery-rails'
 gem 'jquery_file_download-rails'
 gem 'jquery-ui-rails'
 gem 'js-routes'
+gem 'i18n-js'
 gem 'bootstrap'
 gem "bootstrap_form", '>= 4.2.0'
 gem 'devise-bootstrap-views', '~> 1.0'
@@ -64,7 +65,9 @@ gem 'kaminari'
 gem "selectize-rails"
 gem 'acts_as_list'
 gem 'acts_as_tree'
-gem 'activerecord-import'
+gem 'activerecord-import',
+  git: 'https://github.com/zdennis/activerecord-import.git',
+  branch: 'master'
 gem 'thredded'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'

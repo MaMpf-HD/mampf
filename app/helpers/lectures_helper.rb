@@ -17,26 +17,28 @@ module LecturesHelper
 
   # create text for notification about new lecture in notification dropdown menu
   def lecture_notification_item_header(lecture)
-    text = 'Neue Vorlesung ' + lecture.title_for_viewers
+    t('notifications.new_lecture', title: lecture.title_for_viewers)
   end
 
   # create text for notification card
   def lecture_notification_item_details(lecture)
-    'Über Deine Profileinstellungen kannst Du sie abonnieren.'
+    t('notifications.subscribe_lecture')
   end
 
   # create text for notification about new course in notification card
   def lecture_notification_card_text(lecture)
-    'Neue Vorlesung angelegt:' + tag(:br) + lecture.course.title +
-      ' (' + lecture.term.to_label + ', ' + lecture.teacher.name + ')'
+    t('notifications.new_lecture_created_html',
+      title: lecture.course.title,
+      term: lecture.term.to_label,
+      teacher: lecture.teacher.name)
   end
 
   # create link for notification about new course in notification card
   def lecture_notification_card_link
-    'Du kannst sie über Deine ' +
-      link_to('Profileinstellungen', edit_profile_path,
-              class: 'darkblue') +
-      ' abonnieren.'
+    t('notifications.subscribe_lecture_html',
+      profile: link_to(t('notifications.profile'),
+                       edit_profile_path,
+                       class: 'darkblue'))
   end
 
   # add a star to lecture's title if it is a user's primary lecture

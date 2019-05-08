@@ -1,16 +1,20 @@
-<div class="card">
+<div class="card bg-light">
   <div class="card-header bg-generic-card-header">
     <h5>
       <%= lessons_description %>
     </h5>
   </div>
   <div class="card-body" id="relatedLessonsBody">
-    <ul>
-      <% lessons.each do |l| %>
-        <li class="text-dark">
-          <%= link_to l.title, l, class: "text-dark" %>
-        </li>
-      <% end %>
-    </ul>
+    <% if lessons.any? %>
+      <ul>
+        <% lessons.each do |l| %>
+          <li class="text-dark">
+            <%= link_to l.title, l, class: "text-dark" %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <%= t('no_related_lessons') %>
+    <% end %>
   </div>
 </div>

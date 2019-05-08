@@ -19,8 +19,9 @@ adjustNotificationCounter = (notificationId) ->
 		document.title = 'MaMpf'
 		# this is only relevant for index page
 		$('#notificationCardRow')
-			.append('<div class="col-12">Es liegen keine neuen Benachrichtigungen
-				für Dich vor.</div>')
+			.append('<div class="col-12">')
+			.append(I18n.t('notifications.no_notifications'))
+			.append('</div>')
 	return
 
 $(document).on 'turbolinks:load', ->
@@ -29,7 +30,6 @@ $(document).on 'turbolinks:load', ->
 	$('.removeLectureNotification').on 'click', ->
 		notificationId = $(this).data('id')
 		lectureId = $(this).data('lecture')
-		console.log 'Vorlesung'
 		# remove corresponding list group item
 		$(this).closest('.list-group-item').remove()
 
@@ -41,9 +41,9 @@ $(document).on 'turbolinks:load', ->
 			if $('#unreadPosts').length == 0
 				$('#newsCard').remove()
 		else if newCount == 1
-			$counter.append('Es gibt eine neue Mitteilung:').data('count', 1)
+			$counter.append(I18n.t('notifications.lecture.one_new')).data('count', 1)
 		else
-			$counter.append('Es gibt ' + newCount + ' neue Mitteilungen:')
+			$counter.append(I18n.t('notifications.lecture.more_new', count: newCount))
 				.data('count', newCount)
 		adjustNotificationCounter(notificationId)
 		return

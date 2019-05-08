@@ -91,9 +91,9 @@ class Item < ApplicationRecord
   # result might look like this:
   # "Verweis auf LA 2 SS 17, Bem. 29.13:"
   def vtt_meta_reference(referring_medium)
-    return 'externe Referenz:' if sort == 'link'
+    return I18n.t('item.external_reference') if sort == 'link'
     ref = local?(referring_medium) ? short_reference : long_reference
-    'Verweis auf ' + ref + ':'
+    I18n.t('item.internal_reference', ref: ref)
   end
 
   # creates a reference as it would look like form *within* the given context
