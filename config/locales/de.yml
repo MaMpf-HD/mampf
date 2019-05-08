@@ -253,6 +253,17 @@ de:
   item:
     external_reference: 'externe Referenz:'
     internal_reference: 'Verweis auf %{ref}:'
+  search:
+    results: 'Suchergebnisse für den Begriff %{search_string}'
+    info: >
+      Deine Suche nach dem Begriff %{search_string} hat %{count} Treffer
+      ergeben.
+    omitted_html: >
+      Aufgrund deiner %{profile} wurde(n) %{count} Treffer aus der
+      Datenbank nicht berücksichtigt.
+    settings: 'Profileinstellungen'
+    alternative: 'Meintest Du vielleicht etwas anderes?'
+    similar: 'Zum Suchbegriff %{search_string} ähnliche Begriffe'
   errors:
     profile:
       passphrase: 'Falscher Zugangsschlüssel'

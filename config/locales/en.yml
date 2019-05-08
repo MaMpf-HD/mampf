@@ -257,6 +257,16 @@ en:
   item:
     external_reference: 'External reference:'
     internal_reference: 'Reference to %{ref}:'
+  search:
+    results: 'Search results for the tag %{search_string}'
+    info: >
+      Your search for the tag %{search_string} has returned %{count} results.
+    omitted_html: >
+      Because of your %{profile}, %{count} additional results from the database
+      are not shown.
+    settings: 'profile settings'
+    alternative: 'Did you mean something else?'
+    similar: 'Similar tags to %{search_string}'
   errors:
     profile:
       passphrase: 'Incorrect pass phrase'
