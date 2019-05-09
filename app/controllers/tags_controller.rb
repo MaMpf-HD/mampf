@@ -62,7 +62,11 @@ class TagsController < ApplicationController
       render :update
       return
     end
+    notion = @tag.notions.build(title: tag_params[:title], locale: I18n.locale)
     @tag.update(tag_params)
+    # append newly created tag at the end of the *ordered* tags for
+    # the relevant sections
+    update_sections if @tag.valid? && tag_params[:section_ids]
     if @tag.valid? && !@modal
       redirect_to edit_tag_path(@tag)
       return
@@ -177,6 +181,13 @@ class TagsController < ApplicationController
 
   def added_courses
     Course.where(id: tag_params[:course_ids]) - @tag.courses
+  end
+
+  def update_sections
+    sections = Section.where(id: tag_params[:section_ids])
+    sections.each do |s|
+      s.update(tags_order: s.tags_order.to_a + [@tag.id])
+    end
   end
 
   def error_hash

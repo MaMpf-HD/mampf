@@ -13,6 +13,7 @@ class Tag < ApplicationRecord
   has_many :sections, through: :section_tag_joins
 
   # a tag appears in many media
+  # a tag appears in many media
   has_many :medium_tag_joins, dependent: :destroy
   has_many :media, through: :medium_tag_joins
 
@@ -23,10 +24,13 @@ class Tag < ApplicationRecord
   # the symmetrization callback on relations
   has_many :related_tags, through: :relations, after_remove: :destroy_relations
 
-  # a tag needs to have a unique title
-  validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
-                                         'werden.' },
-                    uniqueness: { message: 'Titel ist bereits vergeben.' }
+  # a tag has different notions in different languages
+  has_many :notions, foreign_key: 'tag_id',
+                     after_remove: :touch_self,
+                     after_add: :touch_self
+  has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
+
+  validates_presence_of :notions
 
   # touch related lectures and sections after saving because lecture tags
   # are cached
@@ -42,6 +46,10 @@ class Tag < ApplicationRecord
     Tag.order(:title).map { |t| { id: t.id, title: t.title } }.to_json
   end
 
+  def self.ids_titles_json_2
+    Tag.all.map { |t| { id: t.id, title: t.local_title_cached }}.to_json
+  end
+
   # returns all tags whose title is close to the given search string
   # wrt to the JaroWinkler metric
   def self.similar_tags(search_string)
@@ -51,6 +59,11 @@ class Tag < ApplicationRecord
                                             search_string.downcase) > 0.9
                   end
                   .map(&:id))
+  end
+
+  def local_title
+    notions.find_by(locale: I18n.locale)&.title ||
+      notions.find_by(locale: I18n.default_locale)&.title || notions.first&.title
   end
 
   # returns the array of all tags (sorted by title) together with
@@ -173,6 +186,16 @@ class Tag < ApplicationRecord
     user.filter_sections(sections).select { |s| s.lecture.visible_for_user?(user) }
   end
 
+  def cache_key
+    super + '-' + I18n.locale.to_s
+  end
+
+  def local_title_cached
+    Rails.cache.fetch("#{cache_key}/locale_title") do
+      local_title
+    end
+  end
+
   private
 
   def touch_lectures
@@ -181,6 +204,10 @@ class Tag < ApplicationRecord
 
   def touch_sections
     sections.update_all updated_at: Time.now
+  end
+
+  def touch_self(notion)
+    touch if persisted?
   end
 
   # simulates the after_destroy callback for relations

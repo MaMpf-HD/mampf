@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_07_171538) do
+ActiveRecord::Schema.define(version: 2019_05_08_155308) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -235,6 +235,17 @@ ActiveRecord::Schema.define(version: 2019_05_07_171538) do
     t.datetime "updated_at", null: false
     t.index ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type"
     t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
+  end
+
+  create_table "notions", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "title"
+    t.text "locale"
+    t.integer "tag_id"
+    t.integer "aliased_tag_id"
+    t.index ["aliased_tag_id"], name: "index_notions_on_aliased_tag_id"
+    t.index ["tag_id"], name: "index_notions_on_tag_id"
   end
 
   create_table "referrals", force: :cascade do |t|

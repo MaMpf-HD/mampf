@@ -285,3 +285,13 @@ en:
               blank: 'You nedd to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
+        notion:
+          attributes:
+            title:
+              taken:  >
+                This title is already taken in the chosen language.
+              blank: 'The title cannot be blank.'
+            tag:
+              no_tag: 'A related tag has to be given.'
+            notions:
+              blank: 'You need to give at least one notion.'
