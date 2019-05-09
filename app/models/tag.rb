@@ -30,7 +30,15 @@ class Tag < ApplicationRecord
                      after_add: :touch_self
   has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
 
+  accepts_nested_attributes_for :notions,
+    reject_if: lambda {|attributes| attributes['title'].blank?}
+
+  validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
+                                         'werden.' },
+                    uniqueness: { message: 'Titel ist bereits vergeben.' }
+
   validates_presence_of :notions
+  validates_associated :notions
 
   # touch related lectures and sections after saving because lecture tags
   # are cached

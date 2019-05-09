@@ -42,6 +42,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    @tag.notions.new
   end
 
   def update
@@ -62,7 +63,7 @@ class TagsController < ApplicationController
       render :update
       return
     end
-    notion = @tag.notions.build(title: tag_params[:title], locale: I18n.locale)
+#    notion = @tag.notions.build(title: tag_params[:title], locale: I18n.locale)
     @tag.update(tag_params)
     # append newly created tag at the end of the *ordered* tags for
     # the relevant sections
@@ -72,6 +73,7 @@ class TagsController < ApplicationController
       return
     end
     @errors = @tag.errors
+    pp @errors
     render :update
   end
 
@@ -119,6 +121,9 @@ class TagsController < ApplicationController
 
   def set_up_tag
     @tag = Tag.new
+    I18n.available_locales.each do |l|
+      @tag.notions.new(locale: l)
+    end
     related_tag = Tag.find_by_id(params[:related_tag])
     @tag.related_tags << related_tag if related_tag.present?
   end
@@ -145,6 +150,7 @@ class TagsController < ApplicationController
   def tag_params
     params.require(:tag).permit(:title,
                                 related_tag_ids: [],
+                                notions_attributes: [:title, :locale],
                                 course_ids: [],
                                 section_ids: [],
                                 media_ids: [])

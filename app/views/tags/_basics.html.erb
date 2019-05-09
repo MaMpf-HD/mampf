@@ -24,6 +24,20 @@
          id="tag-title-error-<%= tag.id.to_i %>">
     </div>
   </div>
+  Titel
+  <%= f.fields_for :notions do |n| %>
+    <div class="form-group">
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <div class="input-group-text">
+            <%= n.object.locale %>
+          </div>
+        </div>
+        <%= n.text_field :title, class: 'form-control' %>
+      </div>
+      <%= n.hidden_field :locale %>
+    </div>
+  <% end %>
   <% if new_tag %>
     <div class="form-group">
       <%= f.label :related_tag_ids, 'Verknüpfte Tags' %>
