@@ -293,5 +293,7 @@ en:
               blank: 'The title cannot be blank.'
             tag:
               no_tag: 'A related tag has to be given.'
+        tag:
+          attributes:
             notions:
-              blank: 'You need to give at least one notion.'
+              blank: 'You need to give a title for at least one language.'

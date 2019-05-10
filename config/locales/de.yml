@@ -288,12 +288,14 @@ de:
           attributes:
             title:
               taken:  >
-                Dieser Titel ist in der betreffenden Sprache ist schon
+                Der Titel %{value} ist in der betreffenden Sprache schon
                 vergeben.
               blank: 'Es muss ein Titel angegeben werden.'
             tag:
               no_tag: 'Es muss ein Tag angegeben werden.'
+        tag:
+          attributes:
             notions:
               blank: >
-                Es muss mindestens eine Beschreibung angegeben
+                Es muss mindestens für eine Sprache ein Titel angegeben
                 werden.

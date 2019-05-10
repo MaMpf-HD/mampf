@@ -5,6 +5,7 @@ $('#tag-additional-lectures-error-<%= @tag.id.to_i %>').empty()
 $('#tag-disabled-lectures-error-<%= @tag.id.to_i %>').empty()
 $('#tag-courses-error-<%= @tag.id.to_i %>').empty()
 $('#tag-related-tags-error-<%= @tag.id.to_i %>').empty()
+$('#tag-notions-error-<%= @tag.id.to_i %>').empty()
 
 # display error messages
 <% if @errors.present? %>
@@ -18,6 +19,17 @@ $('#tag_title_<%= @tag.id.to_i %>').addClass('is-invalid')
 <% if @errors[:courses].present? %>
 $('#tag-courses-error-<%= @tag.id.to_i %>')
   .append('<%= @errors[:courses].join(" ") %>').show()
+<% end %>
+
+<% if @errors[:notions].present? %>
+<% if @errors.messages[:"notions.title"].present? %>
+$('#tag-notions-error-<%= @tag.id.to_i %>')
+  .append('<%= @errors[:"notions.title"].first %>')
+  .show()
+<% else%>
+$('#tag-notions-error-<%= @tag.id.to_i %>')
+  .append('<%= @errors[:notions].join(" ") %>').show()
+<% end %>
 <% end %>
 
 <% if @errors[:related_tags].present? %>

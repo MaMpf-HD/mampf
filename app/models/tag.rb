@@ -31,7 +31,8 @@ class Tag < ApplicationRecord
   has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
 
   accepts_nested_attributes_for :notions,
-    reject_if: lambda {|attributes| attributes['title'].blank?}
+    reject_if: lambda {|attributes| attributes['title'].blank?},
+    allow_destroy: true
 
   validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
                                          'werden.' },
@@ -56,6 +57,10 @@ class Tag < ApplicationRecord
 
   def self.ids_titles_json_2
     Tag.all.map { |t| { id: t.id, title: t.local_title_cached }}.to_json
+  end
+
+  def locales
+    notions.pluck(:locale)
   end
 
   # returns all tags whose title is close to the given search string

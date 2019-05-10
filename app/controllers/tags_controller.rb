@@ -38,11 +38,15 @@ class TagsController < ApplicationController
 
   def edit
     set_related_tags
+    # build notions for missing locales
+    (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
+      @tag.notions.new(locale: l)
+    end
   end
 
   def new
     @tag = Tag.new
-    @tag.notions.new
+    set_notions
   end
 
   def update
@@ -54,6 +58,7 @@ class TagsController < ApplicationController
       return
     end
     @errors = @tag.errors
+    pp @errors
   end
 
   def create
@@ -73,7 +78,6 @@ class TagsController < ApplicationController
       return
     end
     @errors = @tag.errors
-    pp @errors
     render :update
   end
 
@@ -121,9 +125,7 @@ class TagsController < ApplicationController
 
   def set_up_tag
     @tag = Tag.new
-    I18n.available_locales.each do |l|
-      @tag.notions.new(locale: l)
-    end
+    set_notions
     related_tag = Tag.find_by_id(params[:related_tag])
     @tag.related_tags << related_tag if related_tag.present?
   end
@@ -150,7 +152,8 @@ class TagsController < ApplicationController
   def tag_params
     params.require(:tag).permit(:title,
                                 related_tag_ids: [],
-                                notions_attributes: [:title, :locale],
+                                notions_attributes: [:title, :locale, :id,
+                                  :_destroy],
                                 course_ids: [],
                                 section_ids: [],
                                 media_ids: [])
@@ -193,6 +196,13 @@ class TagsController < ApplicationController
     sections = Section.where(id: tag_params[:section_ids])
     sections.each do |s|
       s.update(tags_order: s.tags_order.to_a + [@tag.id])
+    end
+  end
+
+  def set_notions
+    @tag.notions.new(locale: I18n.locale)
+    (I18n.available_locales - [I18n.locale]).each do |l|
+      @tag.notions.new(locale: l)
     end
   end
 

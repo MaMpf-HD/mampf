@@ -25,18 +25,40 @@
     </div>
   </div>
   Titel
+  <i class="far fa-question-circle helpdesk"
+       tabindex="-1"
+       data-toggle="popover"
+       data-trigger="focus"
+       title="Info"
+       data-content="Hier kannst Du den Titel des Tags in verschiedenen
+       Sprachen eingeben. Zumindest für eine Sprache muss ein Titel vergeben
+       werden.">
+  </i>
+  <div class="invalid-feedback"
+       id="tag-notions-error-<%= tag.id.to_i %>">
+  </div>
   <%= f.fields_for :notions do |n| %>
-    <div class="form-group">
+    <div class="form-row">
+    <div class="form-group col-11">
       <div class="input-group">
         <div class="input-group-prepend">
           <div class="input-group-text">
             <%= n.object.locale %>
           </div>
         </div>
-        <%= n.text_field :title, class: 'form-control' %>
+        <%= n.text_field :title, class: 'form-control',
+                                 data: { id: tag.id.to_i } %>
       </div>
-      <%= n.hidden_field :locale %>
     </div>
+    <% unless new_tag %>
+      <div class="form-group col-1">
+        <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
+        <i class="fas fa-trash-alt text-dark">
+        </i>
+      </div>
+    <% end %>
+    </div>
+    <%= n.hidden_field :locale %>
   <% end %>
   <% if new_tag %>
     <div class="form-group">
