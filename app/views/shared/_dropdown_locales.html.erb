@@ -1,0 +1,21 @@
+<li class="nav-item">
+  <div class="btn-group">
+    <button type="button"
+            class="btn btn-secondary dropdown-toggle"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false">
+      <i class="fas fa-language">
+      </i>
+    </button>
+    <div class="dropdown-menu dropdown-menu-right" style="max-width: 80px !important;">
+      <% I18n.available_locales.each do |l| %>
+        <% unless l == I18n.locale %>
+          <%= link_to l.to_s,
+                      { locale: l },
+                      class: 'dropdown-item' %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</li>

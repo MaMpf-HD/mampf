@@ -65,7 +65,9 @@ en:
     reste: 'Miscellaneous'
     course: 'Course'
   unauthorized:
-    default: "You are not authorized to access this page. Possibly you can get access by modifying your account settings."
+    default: >
+      You are not authorized to access this page.
+      Possibly you can get access by modifying your account settings.
   footer:
     text_html: >
       &copy; MaMpf Team 2018. MaMpf is on %{github}.
@@ -73,6 +75,7 @@ en:
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
   here: 'here'
+  here_capital: 'Here'
   disclosure: 'Legal disclosure'
   policy: 'Privacy Policy'
   navbar:
@@ -274,6 +277,36 @@ en:
     thyme:
       no_metadata: 'An error has happened related to the loading of metadata.'
       bad_browser: 'Your browser is not supported by the THymE Player.'
+  sign_up_html:
+    Don't have an account yet? Just %{path}.
+  sign_up: 'sign up'
+  main:
+    welcome:
+      Welcome to the homepage of MaMpf, the Mathematical
+      Media platform of the Mathematical Institute of Heidelberg University.
+    about:
+      'MaMpf is a constantly growing project which bundles various
+      e-learning services. Thanks to the tagging system im MaMpf you will
+      quickly and easily find all existing media to a keyword.
+      In addition, MaMpf links keywords and visualizes the connections
+      in MaMpf maps. In MaMpf you have the following at your disposal:'
+    kaviar_html:
+      <strong>
+        Lecture videos
+      </strong>
+      for Algebra, Complex Analysis, Linear Algebra and Topology
+    sesam_html:
+      <strong>
+        Worked Example videos
+      </strong>
+      for Algebra, Analysis, Geometry und Linear Algebra
+    keks_html:
+      <strong>
+        Quizzes
+      </strong>
+      for Algebra, Analysis und Linear Algebra
+    interested_html:
+     Curious? %{blog} you can find more information and news about MaMpf.
   locales:
     en: 'english'
     de: 'german'
