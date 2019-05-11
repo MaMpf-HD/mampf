@@ -8,22 +8,6 @@
   </div>
 </div>
 <div class="card-body p-2">
-  <div class="form-group">
-    <%= f.label :title, 'Titel' %>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Hier kannst Du den Titel des Tags eingeben.">
-     </i>
-    <%= f.text_field :title, { class: 'form-control',
-                               data: { id: tag.id.to_i },
-                               id: 'tag_title_' + tag.id.to_i.to_s } %>
-    <div class="invalid-feedback"
-         id="tag-title-error-<%= tag.id.to_i %>">
-    </div>
-  </div>
   Titel
   <i class="far fa-question-circle helpdesk"
        tabindex="-1"

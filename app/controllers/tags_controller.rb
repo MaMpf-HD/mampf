@@ -11,7 +11,7 @@ class TagsController < ApplicationController
   layout 'administration'
 
   def index
-    @tags = Tag.includes(:courses, :related_tags).order(:title)
+    @tags = Tag.includes(:courses, :related_tags)
     @tags_with_id = Tag.ids_titles_json
   end
 
@@ -54,6 +54,9 @@ class TagsController < ApplicationController
     return if @errors.present?
     @tag.update(tag_params)
     if @tag.valid?
+      # make sure the tag is touched even if only some relations have been
+      # modified (important for caching)
+      @tag.touch
       redirect_to edit_tag_path(@tag)
       return
     end
@@ -68,7 +71,6 @@ class TagsController < ApplicationController
       render :update
       return
     end
-#    notion = @tag.notions.build(title: tag_params[:title], locale: I18n.locale)
     @tag.update(tag_params)
     # append newly created tag at the end of the *ordered* tags for
     # the relevant sections
@@ -150,8 +152,7 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:title,
-                                related_tag_ids: [],
+    params.require(:tag).permit(related_tag_ids: [],
                                 notions_attributes: [:title, :locale, :id,
                                   :_destroy],
                                 course_ids: [],

@@ -26,7 +26,7 @@ $(document).on 'turbolinks:load', ->
     for id in ids
       row = document.getElementById('row-tag-' + id)
       courses = JSON.parse(row.dataset.courses).map (item) -> parseInt(item)
-      if (id in matchedIds) && ($(courses).not($(courses).not($(selectedCourses)))).length > 0
+      if (id in matchedIds) && (($(courses).not($(courses).not($(selectedCourses)))).length > 0 || (courses.length == 0 && selectedCourses.length ==0))
         $(row).show()
       else
         $(row).hide()

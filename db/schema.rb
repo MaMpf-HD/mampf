@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_08_155308) do
+ActiveRecord::Schema.define(version: 2019_05_10_233648) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -292,7 +292,7 @@ ActiveRecord::Schema.define(version: 2019_05_08_155308) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string "title"
+    t.string "title_backup"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

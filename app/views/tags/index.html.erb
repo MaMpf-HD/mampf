@@ -96,11 +96,11 @@
   </div>
 </div>
 <div id="tagTable" data-tags="<%= @tags_with_id %>">
-  <% @tags.each do |t| %>
+  <% @tags.natural_sort_by(&:title).each do |t| %>
     <% cache t do %>
       <div class="row border-bottom mx-2 px-4"
            id="row-tag-<%= t.id %>"
-           data-courses="<%= t.courses.each.map(&:id).to_json %>">
+           data-courses="<%= t.courses.map(&:id).to_json %>">
         <%= render partial: 'tags/row', locals: { tag: t }%>
       </div>
     <% end %>

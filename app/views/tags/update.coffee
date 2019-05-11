@@ -10,12 +10,6 @@ $('#tag-notions-error-<%= @tag.id.to_i %>').empty()
 # display error messages
 <% if @errors.present? %>
 
-<% if @errors[:title].present? %>
-$('#tag-title-error-<%= @tag.id.to_i %>')
-  .append('<%= @errors[:title].join(", ") %>').show()
-$('#tag_title_<%= @tag.id.to_i %>').addClass('is-invalid')
-<% end %>
-
 <% if @errors[:courses].present? %>
 $('#tag-courses-error-<%= @tag.id.to_i %>')
   .append('<%= @errors[:courses].join(" ") %>').show()

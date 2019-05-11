@@ -208,6 +208,7 @@ en:
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
   click_here: 'Click here'
+  translations: 'Translations'
   course:
     info: 'Information about the course %{title}'
     editors: 'Course Editors'

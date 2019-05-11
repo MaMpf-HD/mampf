@@ -26,17 +26,13 @@ class Tag < ApplicationRecord
 
   # a tag has different notions in different languages
   has_many :notions, foreign_key: 'tag_id',
-                     after_remove: :touch_self,
-                     after_add: :touch_self
+                     after_remove: :touch_relations,
+                     after_add: :touch_relations
   has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
 
   accepts_nested_attributes_for :notions,
     reject_if: lambda {|attributes| attributes['title'].blank?},
     allow_destroy: true
-
-  validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
-                                         'werden.' },
-                    uniqueness: { message: 'Titel ist bereits vergeben.' }
 
   validates_presence_of :notions
   validates_associated :notions
@@ -52,11 +48,16 @@ class Tag < ApplicationRecord
   before_destroy :remove_from_section_tags_order, prepend: true
 
   def self.ids_titles_json
-    Tag.order(:title).map { |t| { id: t.id, title: t.title } }.to_json
+    Tag.all.map { |t| t.extended_title_id_hash }.to_json
   end
 
-  def self.ids_titles_json_2
-    Tag.all.map { |t| { id: t.id, title: t.local_title_cached }}.to_json
+  def title
+    local_title_cached
+  end
+
+  def extended_title
+    return local_title_cached unless other_titles.any?
+    local_title_cached + " (#{other_titles_cached.join(', ')})"
   end
 
   def locales
@@ -79,18 +80,22 @@ class Tag < ApplicationRecord
       notions.find_by(locale: I18n.default_locale)&.title || notions.first&.title
   end
 
+  def other_titles
+    notions.pluck(:title) - [local_title]
+  end
+
   # returns the array of all tags (sorted by title) together with
   # their ids
   def self.select_by_title
-    Tag.pluck(:title,:id).map { |title, id| { title: title, id: id } }
+    Tag.all.map { |t| t.extended_title_id_hash }
        .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
   # returns the array of all tags (sorted by title) excluding a given
   # arel of tags together with
   def self.select_by_title_except(excluded_tags)
-    Tag.where.not(id: excluded_tags.pluck(:id)).pluck(:title, :id)
-       .map { |title, id| { title: title, id: id } }
+    Tag.where.not(id: excluded_tags.pluck(:id))
+       .map { |t| t.extended_title_id_hash }
        .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
@@ -209,18 +214,47 @@ class Tag < ApplicationRecord
     end
   end
 
-  private
+  def other_titles_cached
+    Rails.cache.fetch("#{cache_key}/other_titles") do
+      other_titles
+    end
+  end
+
+  def title_id_hash
+    Rails.cache.fetch("#{cache_key}/title_id_hash") do
+      { title: local_title, id: id }
+    end
+  end
+
+  def extended_title_id_hash
+    Rails.cache.fetch("#{cache_key}/extended_title_id_hash") do
+      { title: extended_title, id: id }
+    end
+  end
 
   def touch_lectures
-    sections.map(&:lecture).uniq.each(&:touch)
+    Lecture.where(id: sections.map(&:lecture)
+                              .map(&:id)).update_all updated_at: Time.now
   end
 
   def touch_sections
     sections.update_all updated_at: Time.now
   end
 
-  def touch_self(notion)
-    touch if persisted?
+  def touch_chapters
+    Chapter.where(id: sections.map(&:chapter)
+                              .map(&:id)).update_all updated_at: Time.now
+  end
+
+  private
+
+  def touch_relations(notion)
+    if persisted?
+      touch
+      touch_lectures
+      touch_sections
+      touch_chapters
+    end
   end
 
   # simulates the after_destroy callback for relations
