@@ -74,9 +74,8 @@ de:
   profile:
     account: 'Account'
     name: 'Anzeigename'
-    name_information_html: >
-      <i>Zur Info:</i>
-      Bei Deinen Forenbeiträgen wird der obige Name angezeigt werden.
+    name_information: >
+      Bei Deinen Forenbeiträgen wird dieser Name angezeigt werden.
     change_data: 'Zugangsdaten ändern'
     delete_account: 'Account löschen'
     courses: 'Module'
@@ -102,6 +101,8 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
+    no_consent:
+      Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
   mampf_news:
     title: 'MaMpf-News'

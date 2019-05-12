@@ -1,15 +1,20 @@
 <%= bootstrap_devise_error_messages! %>
 
-<h1>Passwort vergessen?</h1>
+<h3>
+  <%= t('.forgot_password') %>
+</h3>
 
-<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, role: 'form' }) do |f| %>
+<%= form_for(resource, as: resource_name,
+                       url: password_path(resource_name),
+                       html: { method: :post, role: 'form' }) do |f| %>
   <div class="form-group">
-    <%= f.label :email %>
+    <%= f.label :email, t('.email') %>
     <%= f.email_field :email, autofocus: true, class: 'form-control' %>
   </div>
 
   <div class="form-group">
-    <%= f.submit 'Schick mir eine Anleitung zur Änderung meines Passwortes', class: 'btn btn-primary' %>
+    <%= f.submit t('.instructions'),
+                 class: 'btn btn-primary' %>
   </div>
 <% end %>
 

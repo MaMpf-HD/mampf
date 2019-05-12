@@ -88,8 +88,7 @@ en:
   profile:
     account: 'Account'
     name: 'Display name'
-    name_information_html: >
-      <i>Note:</i>
+    name_information: >
       This name will be displayed in your board posts.
     change_data: 'Change login data'
     courses: 'Courses'
@@ -113,6 +112,8 @@ en:
       Please take some time to edit your profile settings.
     consent: >
       You consented to our privacy policy.
+    no_consent: >
+      You have not consented to our privacy policy.
     sure: 'Are you sure?'
     locale: 'Language'
   mampf_news:

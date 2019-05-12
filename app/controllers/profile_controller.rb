@@ -7,6 +7,7 @@ class ProfileController < ApplicationController
     # ensure that users do not have a blank name and a locale
     @user.update(name: @user.name || @user.email.split('@').first,
                  locale: @user.locale || I18n.default_locale.to_s)
+    I18n.locale = @user.locale
     unless @user.consents
       redirect_to consent_profile_path
       return
@@ -33,6 +34,7 @@ class ProfileController < ApplicationController
       update_course_cookie
       update_lecture_cookie
       I18n.locale = @locale
+      cookies[:locale] = @locale
       redirect_to :root, notice: t('profile.success')
     else
       @errors = @user.errors
