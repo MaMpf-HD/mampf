@@ -24,6 +24,10 @@ class ApplicationController < ActionController::Base
     stored_location_for(resource_or_scope) || super
   end
 
+  def self.default_url_options(options={})
+    options.merge({ :locale => I18n.locale })
+  end
+
   private
 
   # It's important that the location is NOT stored if:
