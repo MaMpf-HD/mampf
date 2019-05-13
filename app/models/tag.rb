@@ -13,6 +13,7 @@ class Tag < ApplicationRecord
   has_many :sections, through: :section_tag_joins
 
   # a tag appears in many media
+  # a tag appears in many media
   has_many :medium_tag_joins, dependent: :destroy
   has_many :media, through: :medium_tag_joins
 
@@ -23,10 +24,18 @@ class Tag < ApplicationRecord
   # the symmetrization callback on relations
   has_many :related_tags, through: :relations, after_remove: :destroy_relations
 
-  # a tag needs to have a unique title
-  validates :title, presence: { message: 'Es muss ein Titel angegeben ' \
-                                         'werden.' },
-                    uniqueness: { message: 'Titel ist bereits vergeben.' }
+  # a tag has different notions in different languages
+  has_many :notions, foreign_key: 'tag_id',
+                     after_remove: :touch_relations,
+                     after_add: :touch_relations
+  has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
+
+  accepts_nested_attributes_for :notions,
+    reject_if: lambda {|attributes| attributes['title'].blank?},
+    allow_destroy: true
+
+  validates_presence_of :notions
+  validates_associated :notions
 
   # touch related lectures and sections after saving because lecture tags
   # are cached
@@ -39,7 +48,20 @@ class Tag < ApplicationRecord
   before_destroy :remove_from_section_tags_order, prepend: true
 
   def self.ids_titles_json
-    Tag.order(:title).map { |t| { id: t.id, title: t.title } }.to_json
+    Tag.all.map { |t| t.extended_title_id_hash }.to_json
+  end
+
+  def title
+    local_title_cached
+  end
+
+  def extended_title
+    return local_title_cached unless other_titles.any?
+    local_title_cached + " (#{other_titles_cached.join(', ')})"
+  end
+
+  def locales
+    notions.pluck(:locale)
   end
 
   # returns all tags whose title is close to the given search string
@@ -53,18 +75,27 @@ class Tag < ApplicationRecord
                   .map(&:id))
   end
 
+  def local_title
+    notions.find_by(locale: I18n.locale)&.title ||
+      notions.find_by(locale: I18n.default_locale)&.title || notions.first&.title
+  end
+
+  def other_titles
+    notions.pluck(:title) - [local_title]
+  end
+
   # returns the array of all tags (sorted by title) together with
   # their ids
   def self.select_by_title
-    Tag.pluck(:title,:id).map { |title, id| { title: title, id: id } }
+    Tag.all.map { |t| t.extended_title_id_hash }
        .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
   # returns the array of all tags (sorted by title) excluding a given
   # arel of tags together with
   def self.select_by_title_except(excluded_tags)
-    Tag.where.not(id: excluded_tags.pluck(:id)).pluck(:title, :id)
-       .map { |title, id| { title: title, id: id } }
+    Tag.where.not(id: excluded_tags.pluck(:id))
+       .map { |t| t.extended_title_id_hash }
        .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
@@ -173,14 +204,57 @@ class Tag < ApplicationRecord
     user.filter_sections(sections).select { |s| s.lecture.visible_for_user?(user) }
   end
 
-  private
+  def cache_key
+    super + '-' + I18n.locale.to_s
+  end
+
+  def local_title_cached
+    Rails.cache.fetch("#{cache_key}/locale_title") do
+      local_title
+    end
+  end
+
+  def other_titles_cached
+    Rails.cache.fetch("#{cache_key}/other_titles") do
+      other_titles
+    end
+  end
+
+  def title_id_hash
+    Rails.cache.fetch("#{cache_key}/title_id_hash") do
+      { title: local_title, id: id }
+    end
+  end
+
+  def extended_title_id_hash
+    Rails.cache.fetch("#{cache_key}/extended_title_id_hash") do
+      { title: extended_title, id: id }
+    end
+  end
 
   def touch_lectures
-    sections.map(&:lecture).uniq.each(&:touch)
+    Lecture.where(id: sections.map(&:lecture)
+                              .map(&:id)).update_all updated_at: Time.now
   end
 
   def touch_sections
     sections.update_all updated_at: Time.now
+  end
+
+  def touch_chapters
+    Chapter.where(id: sections.map(&:chapter)
+                              .map(&:id)).update_all updated_at: Time.now
+  end
+
+  private
+
+  def touch_relations(notion)
+    if persisted?
+      touch
+      touch_lectures
+      touch_sections
+      touch_chapters
+    end
   end
 
   # simulates the after_destroy callback for relations

@@ -1,7 +1,6 @@
 # NotificationsController
 class NotificationsController < ApplicationController
   before_action :set_notification, only: [:destroy]
-  before_action :set_locale
   authorize_resource
 
   def index

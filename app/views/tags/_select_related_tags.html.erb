@@ -22,7 +22,7 @@
      style="display: none;">
   </i>
   <%= f.select :related_tag_ids,
-                options_for_select(tags_except_self_for_selector(tag),
+                options_for_select(Tag.select_by_title_except(Tag.where(id: tag.id)),
                                    related_tag_ids_selection(tag)),
                 {},
                 { multiple: true,

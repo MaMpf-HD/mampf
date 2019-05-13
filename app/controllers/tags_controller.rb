@@ -11,7 +11,7 @@ class TagsController < ApplicationController
   layout 'administration'
 
   def index
-    @tags = Tag.includes(:courses, :related_tags).order(:title)
+    @tags = Tag.includes(:courses, :related_tags)
     @tags_with_id = Tag.ids_titles_json
   end
 
@@ -38,10 +38,15 @@ class TagsController < ApplicationController
 
   def edit
     set_related_tags
+    # build notions for missing locales
+    (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
+      @tag.notions.new(locale: l)
+    end
   end
 
   def new
     @tag = Tag.new
+    set_notions
   end
 
   def update
@@ -49,10 +54,14 @@ class TagsController < ApplicationController
     return if @errors.present?
     @tag.update(tag_params)
     if @tag.valid?
+      # make sure the tag is touched even if only some relations have been
+      # modified (important for caching)
+      @tag.touch
       redirect_to edit_tag_path(@tag)
       return
     end
     @errors = @tag.errors
+    pp @errors
   end
 
   def create
@@ -63,6 +72,9 @@ class TagsController < ApplicationController
       return
     end
     @tag.update(tag_params)
+    # append newly created tag at the end of the *ordered* tags for
+    # the relevant sections
+    update_sections if @tag.valid? && tag_params[:section_ids]
     if @tag.valid? && !@modal
       redirect_to edit_tag_path(@tag)
       return
@@ -115,6 +127,7 @@ class TagsController < ApplicationController
 
   def set_up_tag
     @tag = Tag.new
+    set_notions
     related_tag = Tag.find_by_id(params[:related_tag])
     @tag.related_tags << related_tag if related_tag.present?
   end
@@ -139,8 +152,9 @@ class TagsController < ApplicationController
   end
 
   def tag_params
-    params.require(:tag).permit(:title,
-                                related_tag_ids: [],
+    params.require(:tag).permit(related_tag_ids: [],
+                                notions_attributes: [:title, :locale, :id,
+                                  :_destroy],
                                 course_ids: [],
                                 section_ids: [],
                                 media_ids: [])
@@ -177,6 +191,20 @@ class TagsController < ApplicationController
 
   def added_courses
     Course.where(id: tag_params[:course_ids]) - @tag.courses
+  end
+
+  def update_sections
+    sections = Section.where(id: tag_params[:section_ids])
+    sections.each do |s|
+      s.update(tags_order: s.tags_order.to_a + [@tag.id])
+    end
+  end
+
+  def set_notions
+    @tag.notions.new(locale: I18n.locale)
+    (I18n.available_locales - [I18n.locale]).each do |l|
+      @tag.notions.new(locale: l)
+    end
   end
 
   def error_hash

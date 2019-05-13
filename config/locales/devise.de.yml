@@ -38,6 +38,10 @@ de:
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Dein Passwort zurücksetzen können."
       updated: "Dein Passwort wurde geändert. Du bist jetzt angemeldet."
       updated_not_active: "Dein Passwort wurde geändert."
+      new:
+        forgot_password: 'Passwort vergessen?'
+        email: 'Email'
+        instructions: 'Schick mir eine Anleitung zur Änderung meines Passwortes'
     registrations:
       destroyed: "Dein Account wurde gelöscht."
       signed_up: "Du hast dich erfolgreich registriert. Bitte nimm Dir eine Minute, um Dein Profil zu vervollständigen"
@@ -46,11 +50,29 @@ de:
       signed_up_but_unconfirmed: "Du hast Dich erfolgreich registriert. Wir konnten Dich noch nicht anmelden, da Dein Account noch nicht bestätigt ist. Du erhältst in Kürze eine E-Mail mit der Anleitung, wie Du Deinen Account freischalten kannst."
       update_needs_confirmation: "Deine Daten wurden aktualisiert, aber Du musst Deine neue E-Mail-Adresse bestätigen. Du erhältst in wenigen Minuten eine E-Mail, mit der Du die Änderung Deiner E-Mail-Adresse abschließen kannst."
       updated: "Deine Daten wurden aktualisiert."
+      new:
+        sign_up: 'Registrieren'
+        email: 'Email'
+        password: 'Passwort'
+        password_confirm: 'Passwortbestätigung'
+        consent_html: >
+          Ich stimme der Speicherung und Verarbeitung meiner Daten gemäß der
+          %{policy} der Universität Heidelberg zu.
+        policy: 'Datenschutzerklärung'
     sessions:
       signed_in: "Du hast Dich erfolgreich angemeldet."
       signed_out: "Du hast Dich erfolgreich abgemeldet."
       remember_me: "Erinnere Dich an mich (hierzu wird ein Cookie gesetzt)"
-
+      new:
+        email: 'Email'
+        password: 'Passwort'
+        remember: 'Erinnere dich an mich (hierzu wird ein Cookie gesetzt)'
+        login: 'Einloggen'
+    shared:
+      links:
+        login: 'Einloggen'
+        sign_up: 'Registrieren'
+        forgot_password: 'Passwort vergessen?'
     unlocks:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."

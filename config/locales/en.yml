@@ -65,7 +65,9 @@ en:
     reste: 'Miscellaneous'
     course: 'Course'
   unauthorized:
-    default: "You are not authorized to access this page. Possibly you can get access by modifying your account settings."
+    default: >
+      You are not authorized to access this page.
+      Possibly you can get access by modifying your account settings.
   footer:
     text_html: >
       &copy; MaMpf Team 2018. MaMpf is on %{github}.
@@ -73,6 +75,7 @@ en:
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
   here: 'here'
+  here_capital: 'Here'
   disclosure: 'Legal disclosure'
   policy: 'Privacy Policy'
   navbar:
@@ -85,8 +88,7 @@ en:
   profile:
     account: 'Account'
     name: 'Display name'
-    name_information_html: >
-      <i>Note:</i>
+    name_information: >
       This name will be displayed in your board posts.
     change_data: 'Change login data'
     courses: 'Courses'
@@ -110,6 +112,8 @@ en:
       Please take some time to edit your profile settings.
     consent: >
       You consented to our privacy policy.
+    no_consent: >
+      You have not consented to our privacy policy.
     sure: 'Are you sure?'
     locale: 'Language'
   mampf_news:
@@ -208,6 +212,7 @@ en:
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
   click_here: 'Click here'
+  translations: 'Translations'
   course:
     info: 'Information about the course %{title}'
     editors: 'Course Editors'
@@ -273,6 +278,36 @@ en:
     thyme:
       no_metadata: 'An error has happened related to the loading of metadata.'
       bad_browser: 'Your browser is not supported by the THymE Player.'
+  sign_up_html:
+    Don't have an account yet? Just %{path}.
+  sign_up: 'sign up'
+  main:
+    welcome:
+      Welcome to the homepage of MaMpf, the Mathematical
+      Media platform of the Mathematical Institute of Heidelberg University.
+    about:
+      'MaMpf is a constantly growing project which bundles various
+      e-learning services. Thanks to the tagging system im MaMpf you will
+      quickly and easily find all existing media to a keyword.
+      In addition, MaMpf links keywords and visualizes the connections
+      in MaMpf maps. In MaMpf you have the following at your disposal:'
+    kaviar_html:
+      <strong>
+        Lecture videos
+      </strong>
+      for Algebra, Complex Analysis, Linear Algebra and Topology
+    sesam_html:
+      <strong>
+        Worked Example videos
+      </strong>
+      for Algebra, Analysis, Geometry und Linear Algebra
+    keks_html:
+      <strong>
+        Quizzes
+      </strong>
+      for Algebra, Analysis und Linear Algebra
+    interested_html:
+     Curious? %{blog} you can find more information and news about MaMpf.
   locales:
     en: 'english'
     de: 'german'
@@ -285,3 +320,15 @@ en:
               blank: 'You nedd to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
+        notion:
+          attributes:
+            title:
+              taken:  >
+                This title is already taken in the chosen language.
+              blank: 'The title cannot be blank.'
+            tag:
+              no_tag: 'A related tag has to be given.'
+        tag:
+          attributes:
+            notions:
+              blank: 'You need to give a title for at least one language.'

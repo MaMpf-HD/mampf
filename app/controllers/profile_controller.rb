@@ -33,6 +33,7 @@ class ProfileController < ApplicationController
       update_course_cookie
       update_lecture_cookie
       I18n.locale = @locale
+      cookies[:locale] = @locale
       redirect_to :root, notice: t('profile.success')
     else
       @errors = @user.errors

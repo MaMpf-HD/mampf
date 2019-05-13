@@ -4,6 +4,9 @@ class MainController < ApplicationController
   before_action :check_for_consent
 
   def home
+    if user_signed_in?
+      cookies[:locale] = current_user.locale
+    end
     render layout: 'application_no_sidebar'
   end
 

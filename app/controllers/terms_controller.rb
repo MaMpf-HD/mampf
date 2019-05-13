@@ -19,7 +19,7 @@ class TermsController < ApplicationController
 
   def create
     @term = Term.new(term_params)
-    @term.save(term_params)
+    @term.save
     if @term.valid?
       redirect_to terms_path
       return

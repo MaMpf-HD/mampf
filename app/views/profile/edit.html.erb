@@ -18,13 +18,18 @@
           <div class="form-group">
             <%= f.label :name,
                         t('profile.name') %>
+            <i class="far fa-question-circle helpdesk"
+               tabindex="-1"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="<%= t('profile.name_information') %>">
+            </i>
             <%= f.text_field_without_bootstrap :name,
                                                class: 'form-control' %>
             <div class="invalid-feedback"
                  id="username-error">
             </div>
           </div>
-          <%= t('profile.name_information_html') %>
         </div>
       </div>
     </div>

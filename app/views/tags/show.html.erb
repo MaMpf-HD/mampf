@@ -23,6 +23,24 @@
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
       <div class="col-12">
+        <div class="card bg-light mb-2">
+          <div class="card-header bg-generic-card-header">
+            <h5>
+              <%= t('translations') %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <% @tag.locales.each do |l| %>
+              <span class="badge badge-light">
+                <%= l.to_s %>
+              </span>
+              <%= @tag.notions.where(locale: l)&.first&.title %>
+              <br>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
         <div class="card bg-light mb-2"
              id="relatedTags">
           <div class="card-header bg-generic-card-header">

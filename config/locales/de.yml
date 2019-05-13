@@ -61,6 +61,7 @@ de:
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
   here: 'hier'
+  here_capital: 'Hier'
   disclosure: 'Impressum'
   policy: 'Datenschutzerklärung'
   navbar:
@@ -73,9 +74,8 @@ de:
   profile:
     account: 'Account'
     name: 'Anzeigename'
-    name_information_html: >
-      <i>Zur Info:</i>
-      Bei Deinen Forenbeiträgen wird der obige Name angezeigt werden.
+    name_information: >
+      Bei Deinen Forenbeiträgen wird dieser Name angezeigt werden.
     change_data: 'Zugangsdaten ändern'
     delete_account: 'Account löschen'
     courses: 'Module'
@@ -101,6 +101,8 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
+    no_consent:
+      Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
   mampf_news:
     title: 'MaMpf-News'
@@ -199,6 +201,7 @@ de:
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
   click_here: 'Hier klicken'
+  translations: 'Translations'
   course:
     info: 'Informationen zum Modul %{title}'
     editors: 'ModuleditorInnen'
@@ -272,6 +275,39 @@ de:
       bad_browser: >
         Dein Browser wird von Thyme leider nicht unterstützt.
         Du kannst das Video nur mit dem Browser-Player anschauen.
+  sign_up_html: >
+    Du hast noch keinen Account? Dann kannst Du dich mit deiner Emailadresse
+    %{path}.
+  sign_up: 'registrieren'
+  main:
+    welcome:
+      Herzlich willkommen auf der Homepage von MaMpf, der Mathematischen
+      Medienplattform des Mathematischen Instituts der Universität Heidelberg.
+    about:
+      'MaMpf ist ein ständig wachsendes Projekt, das verschiedene
+      E-Learning-Angebote bündelt. Dank des Tagging-Systems findest du in
+      MaMpf schnell und einfach alle vorhandenen Medien zu einem Schlagwort.
+      Außerdem vernetzt MaMpf Schlagwörter und präsentiert sie dir in
+      übersichtlichen MaMpf-Maps. Auf MaMpf stehen dir zur Verfügung:'
+    kaviar_html:
+      <strong>
+        Vorlesungsvideos
+      </strong>
+      zu Algebra, Funktionentheorie, Lineare Algebra und Mengentheoretische
+      Topologie
+    sesam_html:
+      <strong>
+        Beispielvideos
+      </strong>
+      zu Algebra, Analysis, Geometrie und Lineare Algebra
+    keks_html:
+      <strong>
+      Quizzes
+      </strong>
+      zu Algebra, Analysis und Lineare Algebra
+    interested_html:
+      Neugierig geworden?
+      %{blog} findest du weitere Informationen über und Neuigkeiten zu MaMpf.
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -284,3 +320,18 @@ de:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
               blank: 'Es muss ein Anzeigename angegeben werden.'
+        notion:
+          attributes:
+            title:
+              taken:  >
+                Der Titel %{value} ist in der betreffenden Sprache schon
+                vergeben.
+              blank: 'Es muss ein Titel angegeben werden.'
+            tag:
+              no_tag: 'Es muss ein Tag angegeben werden.'
+        tag:
+          attributes:
+            notions:
+              blank: >
+                Es muss mindestens für eine Sprache ein Titel angegeben
+                werden.
