@@ -27,7 +27,8 @@ class Tag < ApplicationRecord
   # a tag has different notions in different languages
   has_many :notions, foreign_key: 'tag_id',
                      after_remove: :touch_relations,
-                     after_add: :touch_relations
+                     after_add: :touch_relations,
+                     dependent: :destroy
   has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
 
   accepts_nested_attributes_for :notions,

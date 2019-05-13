@@ -7,6 +7,8 @@ class LecturesController < ApplicationController
 
   def edit
     @announcements = @lecture.announcements.order(:created_at).reverse
+    I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
   end
 
   def inspect
