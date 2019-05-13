@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   # will halt the filter chain and redirect before the location can be stored.
   before_action :authenticate_user!
   before_action :set_locale
+  before_action :set_locale
 
   # show error message if authorization with cancancan fails
   rescue_from CanCan::AccessDenied do |exception|
@@ -24,9 +25,9 @@ class ApplicationController < ActionController::Base
     stored_location_for(resource_or_scope) || super
   end
 
-  def self.default_url_options(options={})
-    options.merge({ :locale => I18n.locale })
-  end
+#  def self.default_url_options(options={})
+#    options.merge({ :locale => I18n.locale })
+#  end
 
   private
 
