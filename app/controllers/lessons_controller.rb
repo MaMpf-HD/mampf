@@ -10,6 +10,7 @@ class LessonsController < ApplicationController
   end
 
   def edit
+    I18n.locale = @lesson.locale_with_inheritance
   end
 
   def new

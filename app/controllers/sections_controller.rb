@@ -10,8 +10,7 @@ class SectionsController < ApplicationController
   end
 
   def edit
-    I18n.locale = @section.lecture.locale_with_inheritance ||
-                    current_user.locale || I18n.default_locale
+    I18n.locale = @section.lecture.locale_with_inheritance
   end
 
   def new

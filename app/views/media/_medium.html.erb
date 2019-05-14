@@ -1,5 +1,5 @@
 <% I18n.with_locale(medium.locale_with_inheritance) do %>
-  <div class="card bg-mdb-color-lighten-7">
+  <div class="card bg-mdb-color-lighten-7 <%= medium_border(medium) %>">
     <div class="card-header bg-mdb-color-lighten-1"
          style="display: flex; justify-content: space-between;">
       <div>
@@ -26,6 +26,19 @@
                              locale: current_user.locale) %>">
             <%= medium.locale_with_inheritance.to_s %>
           </small>
+        <% end %>
+        <% if !medium.published_with_inheritance? %>
+          <i class="fas fa-eye-slash redtext ml-2"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="Dieses Medium ist nicht veröfffentlicht.">
+          </i>
+        <% elsif medium.locked %>
+          <i class="fas fa-lock redtext ml-2"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="Diese Medium ist gesperrt.">
+          </i>
         <% end %>
       </div>
     </div>

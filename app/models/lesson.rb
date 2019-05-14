@@ -139,11 +139,6 @@ class Lesson < ApplicationRecord
     media.published
   end
 
-  # visible media are published with inheritance and not locked
-  def visible_media
-    media.select(&:visible?)
-  end
-
    # visible media are published with inheritance and unlocked
   def visible_media_for_user(user)
     media.select { |m| m.visible_for_user?(user) }

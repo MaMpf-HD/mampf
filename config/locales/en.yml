@@ -95,6 +95,7 @@ en:
     primary_lecture: 'Primary lecture'
     secondary_lectures: 'Secondary lectures'
     no_lectures: 'There are no lectures available for this course yet.'
+    passphrase: 'Passphrase'
     preferences: 'Preferences'
     content_info: >
       MaMpf can give a multitude of related content.

@@ -118,6 +118,8 @@ class Lecture < ApplicationRecord
   end
 
   def visible_for_user?(user)
+    return true if user.admin
+    return true if edited_by?(user)
     return false unless published?
     return false if restricted? && !self.in?(user.lectures)
     true
@@ -203,36 +205,36 @@ class Lecture < ApplicationRecord
   # projects that are associated to this lecture *with inheritance*
   # These methods make use of caching.
 
-  def kaviar?
-    project?('kaviar')
+  def kaviar?(user)
+    project?('kaviar', user)
   end
 
-  def sesam?
-    project?('sesam')
+  def sesam?(user)
+    project?('sesam', user)
   end
 
-  def keks?
-    project?('keks')
+  def keks?(user)
+    project?('keks', user)
   end
 
-  def erdbeere?
-    project?('erdbeere')
+  def erdbeere?(user)
+    project?('erdbeere', user)
   end
 
-  def kiwi?
-    project?('kiwi')
+  def kiwi?(user)
+    project?('kiwi', user)
   end
 
-  def nuesse?
-    project?('nuesse')
+  def nuesse?(user)
+    project?('nuesse', user)
   end
 
-  def script?
-    project?('script')
+  def script?(user)
+    project?('script', user)
   end
 
-  def reste?
-    project?('reste')
+  def reste?(user)
+    project?('reste', user)
   end
 
 
@@ -345,10 +347,6 @@ class Lecture < ApplicationRecord
 
   def editors_with_inheritance
     ([teacher] + editors.to_a + course.editors).to_a
-  end
-
-  def teacher_and_editors_with_inheritance
-    ([teacher] + editors_with_inheritance).uniq
   end
 
   # the next methods provide user related information about the lecture
@@ -469,7 +467,7 @@ class Lecture < ApplicationRecord
 
   # looks in the cache if there are any media associated *with inheritance*
   # to this lecture and a given project (kaviar, semsam etc.)
-  def project?(project)
+  def project_as_user?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
       Medium.where(sort: sort[project],
                    released: ['all', 'users', 'subscribers'],
@@ -481,6 +479,23 @@ class Lecture < ApplicationRecord
                    released: ['all', 'users', 'subscribers'],
                    teachable: course).exists?
     end
+  end
+
+  def project?(project, user)
+    return project_as_user?(project) unless edited_by?(user)
+    course_media = if user.in?(course.editors)
+                     Medium.where(sort: sort[project],
+                                  teachable: course).exists?
+                   else
+                      Medium.where(sort: sort[project],
+                                   released: ['all', 'users', 'subscribers'],
+                                   teachable: course).exists?
+                   end
+    lecture_media = Medium.where(sort: sort[project],
+                                 teachable: self).exists?
+    lesson_media = Medium.where(sort: sort[project],
+                                teachable: lessons).exists?
+    course_media || lecture_media || lesson_media
   end
 
   def sort

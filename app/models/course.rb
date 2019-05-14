@@ -99,6 +99,20 @@ class Course < ApplicationRecord
     lectures.published
   end
 
+  def subscribable_lectures(user)
+    return lectures if user.admin
+    return published_lectures unless user.editor?
+    lectures.where(id: lectures.select { |l| l.edited_by?(user) ||
+                                               l.published? }
+                               .map(&:id))
+  end
+
+  def subscribable_lectures_by_date(user)
+    subscribable_lectures(user).to_a.sort do |i, j|
+      j.term.begin_date <=> i.term.begin_date
+    end
+  end
+
   def restricted?
     false
   end
@@ -234,7 +248,7 @@ class Course < ApplicationRecord
   end
 
   def to_be_authorized_lectures(user)
-    published_lectures.select(&:restricted?) -
+    subscribable_lectures(user).select(&:restricted?) -
       subscribed_lectures(user)
   end
 

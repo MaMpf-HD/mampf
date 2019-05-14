@@ -67,11 +67,6 @@ class Section < ApplicationRecord
     lessons.map(&:media).flatten
   end
 
-  # visible media are published with inheritance and unlocked
-  def visible_media
-    media.select(&:visible?)
-  end
-
    # visible media are published with inheritance and unlocked
   def visible_media_for_user(user)
     media.select { |m| m.visible_for_user?(user) }
@@ -85,6 +80,8 @@ class Section < ApplicationRecord
   end
 
   def visible_for_user?(user)
+    return true if user.admin
+    return true if lecture.edited_by?(user)
     return false unless lecture.published?
     return false unless lecture.visible_for_user?(user)
     true

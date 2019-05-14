@@ -1,4 +1,5 @@
 <% lecture ||= Lecture.find_by_id(params[:lecture_id]) %>
+<% lecture = nil unless lecture&.id.in?(current_user.lecture_ids) %>
 <% lecture ||= Lecture.find_by_id(cookies[:current_lecture]) %>
 <% lecture ||= course.primary_lecture(current_user) %>
 <% I18n.with_locale(lecture&.locale_with_inheritance || course.locale) do %>
@@ -31,7 +32,7 @@
 <% end %>
 <ul class="nav nav-pills flex-column">
   <li class="nav-item">
-    <% if (lecture && !lecture.kaviar?) ||
+    <% if (lecture && !lecture.kaviar?(current_user)) ||
           (!lecture && !course.strict_kaviar?) %>
       <span class="nav-link disabled">
         <%= t('categories.kaviar.plural') %>
@@ -46,7 +47,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.script?) ||
+    <% if (lecture && !lecture.script?(current_user)) ||
           (!lecture && !course.strict_script?) %>
       <span class="nav-link disabled">
         <%= t('categories.script') %>
@@ -60,7 +61,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.nuesse?) ||
+    <% if (lecture && !lecture.nuesse?(current_user)) ||
           (!lecture && !course.strict_nuesse?) %>
       <span class="nav-link disabled">
         <%= t('categories.exercises.plural') %>
@@ -75,7 +76,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.keks?) || (!lecture && !course.strict_keks?) %>
+    <% if (lecture && !lecture.keks?(current_user)) || (!lecture && !course.strict_keks?) %>
       <span class="nav-link disabled">
         <%= t('categories.quiz.plural') %>
       </span>
@@ -100,7 +101,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.sesam?) || (!lecture && !course.strict_sesam?) %>
+    <% if (lecture && !lecture.sesam?(current_user)) || (!lecture && !course.strict_sesam?) %>
       <span class="nav-link disabled">
         <%= t('categories.sesam.plural') %>
       </span>
@@ -113,7 +114,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.erdbeere?) ||
+    <% if (lecture && !lecture.erdbeere?(current_user)) ||
           (!lecture && !course.strict_erdbeere?) %>
       <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
          class="nav-link"
@@ -131,7 +132,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.kiwi?) || (!lecture && !course.strict_kiwi?) %>
+    <% if (lecture && !lecture.kiwi?(current_user)) || (!lecture && !course.strict_kiwi?) %>
       <span class="nav-link disabled">
         <%= t('categories.kiwi') %>
       </span>
@@ -144,7 +145,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.reste?) || (!lecture && !course.strict_reste?) %>
+    <% if (lecture && !lecture.reste?(current_user)) || (!lecture && !course.strict_reste?) %>
       <span class="nav-link disabled">
         <%= t('categories.reste') %>
       </span>

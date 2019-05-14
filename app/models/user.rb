@@ -320,6 +320,8 @@ class User < ApplicationRecord
 
   # for a given arel of media, returns those media that are visible for
   # the user
+  # note: this concerns only access rights, not whether these media
+  # math subscribtions or not
   # this method is more efficient than
   # media.select { |m| m.visible_for_user?(self)}
   def filter_visible_media(media)
@@ -329,8 +331,9 @@ class User < ApplicationRecord
       Lecture.where(id: Lecture.pluck(:id) - lectures.pluck(:id),
                     released: ['all'])
     lessons = Lesson.where(lecture: lectures)
-    nonsubscribed_lessons =
-      Lesson.where(lecture: nonsubscribed_lectures)
+    nonsubscribed_lessons = Lesson.where(lecture: nonsubscribed_lectures)
+    edited_lessons = Lesson.where(lecture: teaching_related_lectures)
+    return media if admin
     media.where(teachable: courses, released: ['all', 'subscribers', 'users'])
       .or(media.where(teachable: nonsubscribed_courses,
                       released: ['all', 'users']))
@@ -342,6 +345,9 @@ class User < ApplicationRecord
                       released: ['all', 'subscribers', 'users']))
       .or(media.where(teachable: nonsubscribed_lessons,
                       released: ['all', 'users']))
+      .or(media.where(teachable: edited_courses))
+      .or(media.where(teachable: teaching_related_lectures))
+      .or(media.where(teachable: edited_lessons))
   end
 
   private

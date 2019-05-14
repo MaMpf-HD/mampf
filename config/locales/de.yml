@@ -82,6 +82,7 @@ de:
     primary_lecture: 'Primäre Vorlesung'
     secondary_lectures: 'Weitere Vorlesungen'
     no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Vorlesungen.'
+    passphrase: 'Zugangsschlüssel'
     preferences: 'Einstellungen'
     content_info: >
       MaMpf liefert eine Vielzahl von verknüpften Inhalten.

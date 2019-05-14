@@ -1,11 +1,11 @@
-<% if c.published_lectures.empty? %>
+<% if c.subscribable_lectures(current_user).empty? %>
   <div class="row">
     <div class="col-12">
       <%= t('profile.no_lectures') %>
     </div>
   </div>
 <% end %>
-<% if c.published_lectures.any? %>
+<% if c.subscribable_lectures(current_user).any? %>
   <div class="row">
     <div class="col-12">
       <%= t('profile.primary_lecture') %>:
@@ -15,7 +15,7 @@
     <div class="col-12">
       <% primary_lecture = 'primary_lecture-' + c.id.to_s %>
       <%= f.form_group primary_lecture do %>
-        <% c.published_lectures_by_date.each do |l| %>
+        <% c.subscribable_lectures_by_date(current_user).each do |l| %>
           <%= f.radio_button primary_lecture,
                              l.id,
                              label: l.term_teacher_info,
@@ -51,7 +51,7 @@
     <% end %>
   </div>
 <% end %>
-<% if c.published_lectures.count > 1 %>
+<% if c.subscribable_lectures(current_user).count > 1 %>
   <div id="secondaries-course-<%= c.id %>"
        style="display: <%= show(c.primary_lecture(current_user).present?) %>">
     <div class="row">
@@ -62,7 +62,7 @@
     <div class="row">
       <div class="col-12"
            id="secondaries-course-<%= c.id %>">
-        <% c.published_lectures_by_date.each do |l| %>
+        <% c.subscribable_lectures_by_date(current_user).each do |l| %>
           <% lecture = 'lecture-' + l.id.to_s %>
           <% if subscribed %>
             <% show_box = hide(l.primary?(current_user)) %>
@@ -82,7 +82,7 @@
               <% if l.restricted? %>
                 <div class="row mb-2">
                   <div class="col-12">
-                    <%= f.label 'pass_' + lecture, 'Zugangsschlüssel' %>
+                    <%= f.label 'pass_' + lecture, t('profile.passphrase') %>
                     <%= f.text_field_without_bootstrap 'pass_' + lecture,
                                                        class: 'form-control' %>
                     <div class="invalid-feedback"

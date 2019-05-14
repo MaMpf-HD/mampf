@@ -325,13 +325,14 @@ class Medium < ApplicationRecord
   def edited_with_inheritance_by?(user)
     return true if editors.include?(user)
     return true if teachable.lecture&.editors&.include?(user)
+    return true if teachable.lecture&.teacher == user
     return true if teachable.course.editors&.include?(user)
     false
   end
 
   def editors_with_inheritance
     (editors.to_a + teachable.lecture&.editors&.to_a +
-      teachable.course.editors&.to_a).uniq
+      [teachable.lecture&.teacher] + teachable.course.editors&.to_a).uniq
   end
 
   # creates a .vtt file (and returns its path), which contains
@@ -387,6 +388,7 @@ class Medium < ApplicationRecord
 
   def manuscript_pages
     return unless manuscript.present?
+    return manuscript.metadata['pages'] unless manuscript.is_a?(Hash)
     manuscript[:original].metadata['pages']
   end
 
@@ -430,26 +432,31 @@ class Medium < ApplicationRecord
   end
 
   def manuscript_url
-    return unless manuscript.present?
+    return '' unless manuscript.present?
+    return manuscript.url(host: host) unless manuscript.is_a?(Hash)
     manuscript[:original].url(host: host)
   end
 
   def manuscript_download_url
+    return manuscript.url(host: download_host) unless manuscript.is_a?(Hash)
     manuscript[:original].url(host: download_host)
   end
 
   def manuscript_filename
     return unless manuscript.present?
+    return manuscript.metadata['filename'] unless manuscript.is_a?(Hash)
     manuscript[:original].metadata['filename']
   end
 
   def manuscript_size
     return unless manuscript.present?
+    return manuscript.metadata['size'] unless manuscript.is_a?(Hash)
     manuscript[:original].metadata['size']
   end
 
   def manuscript_screenshot_url
-    return unless manuscript.present?
+    return '' unless manuscript.present?
+    return '' unless manuscript.is_a?(Hash)
     manuscript[:screenshot].url(host: host)
   end
 
@@ -553,6 +560,8 @@ class Medium < ApplicationRecord
   end
 
   def visible_for_user?(user)
+    return true if user.admin
+    return true if edited_with_inheritance_by?(user)
     return false unless published?
     return false unless published_with_inheritance?
     return false if locked?
