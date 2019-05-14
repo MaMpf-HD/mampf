@@ -276,8 +276,11 @@ class Manuscript
         next unless filter_boxes[c['counter']].second
         # if checkbox for tag creation is checked, create the tag,
         # associate it with course and section
-        tag = Tag.create(title: c['description'], courses: [@lecture.course],
-                         sections: [section])
+        tag = Tag.new(courses: [@lecture.course],
+                      sections: [section])
+        tag.notions.new(title: c['description'],
+                        locale: @lecture.locale || I18n.default_locale)
+        tag.save
         section.update(tags_order: section.tags_order +  [tag.id])
       end
     end
@@ -306,7 +309,9 @@ class Manuscript
     tags = existing_tags
     @content.each do |c|
       c['tag_id'] = if c['description'].in?(tags)
-                      Tag.where(title: c['description'])&.first&.id
+                      Notion.where(title: c['description'],
+                                   locale: @lecture.locale ||
+                                             I18n.default_locale)&.first&.tag&.id
                     end
     end
   end
@@ -422,6 +427,7 @@ class Manuscript
   # returns the titles of those tags that are descriptions of content in
   # the manuscript as well
   def existing_tags
-    Tag.pluck('title') & @content_descriptions
+    Notion.where(locale: @lecture.locale || I18n.default_locale)
+          .pluck('title') & @content_descriptions
   end
 end
