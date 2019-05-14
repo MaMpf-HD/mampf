@@ -279,11 +279,6 @@ class Lecture < ApplicationRecord
     course.title + ' (' + teacher.name + ')'
   end
 
-  def term_teacher_kaviar_info
-    videos = kaviar? ? ' ' : ' nicht '
-    term_teacher_info + ' (Vorlesungsvideos' + videos + 'vorhanden)'
-  end
-
   # returns whether the lecture is newest among all lectures associated to its
   # course
   def newest?

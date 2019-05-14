@@ -151,7 +151,6 @@ class Medium < ApplicationRecord
   # given course has media for this project
   def self.filter_media(course, project)
     return Medium.order(:id) unless project.present?
-    return Medium.none unless course.available_food.include?(project)
     sort = project == 'keks' ? 'Quiz' : project.capitalize
     Medium.where(sort: sort).order(:id)
   end

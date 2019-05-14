@@ -3,7 +3,6 @@ class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search]
   before_action :set_course, only: [:index]
-  before_action :check_project, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params
   before_action :check_for_consent, except: [:play, :display]
@@ -292,13 +291,6 @@ class MediaController < ApplicationController
     end
     return unless params[:medium][:detach_manuscript] == 'true'
     @medium.update(manuscript: nil)
-  end
-
-  def check_project
-    return unless params[:project]
-    return if @course.available_food.include?(params[:project])
-    redirect_to :root, alert: 'Ein solches MaMpf-Teilprojekt existiert ' \
-                              'für dieses Modul nicht.'
   end
 
   def sanitize_params

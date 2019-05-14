@@ -69,22 +69,6 @@ class Notification < ApplicationRecord
     notifiable.class.to_s == 'Announcement'
   end
 
-  def sesam?
-    medium? && notifiable.sort == 'Sesam'
-  end
-
-  def nuesse?
-    medium? && notifiable.sort == 'Nuesse'
-  end
-
-  def script?
-    medium? && notifiable.sort == 'Script'
-  end
-
-  def quiz?
-    medium? && notifiable.sort == 'Quiz'
-  end
-
   def generic_announcement?
     announcement? && notifiable.lecture.nil?
   end

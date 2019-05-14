@@ -33,7 +33,7 @@
 <ul class="nav nav-pills flex-column">
   <li class="nav-item">
     <% if (lecture && !lecture.kaviar?(current_user)) ||
-          (!lecture && !course.strict_kaviar?) %>
+          (!lecture && !course.kaviar?(current_user)) %>
       <span class="nav-link disabled">
         <%= t('categories.kaviar.plural') %>
       </span>
@@ -48,7 +48,7 @@
   </li>
   <li class="nav-item">
     <% if (lecture && !lecture.script?(current_user)) ||
-          (!lecture && !course.strict_script?) %>
+          (!lecture && !course.script?(current_user)) %>
       <span class="nav-link disabled">
         <%= t('categories.script') %>
       </span>
@@ -62,7 +62,7 @@
   </li>
   <li class="nav-item">
     <% if (lecture && !lecture.nuesse?(current_user)) ||
-          (!lecture && !course.strict_nuesse?) %>
+          (!lecture && !course.nuesse?(current_user)) %>
       <span class="nav-link disabled">
         <%= t('categories.exercises.plural') %>
       </span>
@@ -76,7 +76,8 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.keks?(current_user)) || (!lecture && !course.strict_keks?) %>
+    <% if (lecture && !lecture.keks?(current_user)) ||
+            (!lecture && !course.keks?(current_user)) %>
       <span class="nav-link disabled">
         <%= t('categories.quiz.plural') %>
       </span>
@@ -101,7 +102,8 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.sesam?(current_user)) || (!lecture && !course.strict_sesam?) %>
+    <% if (lecture && !lecture.sesam?(current_user)) ||
+            (!lecture && !course.sesam?(current_user)) %>
       <span class="nav-link disabled">
         <%= t('categories.sesam.plural') %>
       </span>
@@ -115,7 +117,7 @@
   </li>
   <li class="nav-item">
     <% if (lecture && !lecture.erdbeere?(current_user)) ||
-          (!lecture && !course.strict_erdbeere?) %>
+            (!lecture && !course.erdbeere?(current_user)) %>
       <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
          class="nav-link"
          target="_blank" %>
@@ -132,7 +134,8 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.kiwi?(current_user)) || (!lecture && !course.strict_kiwi?) %>
+    <% if (lecture && !lecture.kiwi?(current_user)) ||
+         (!lecture && !course.kiwi?(current_user)) %>
       <span class="nav-link disabled">
         <%= t('categories.kiwi') %>
       </span>
@@ -145,7 +148,8 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.reste?(current_user)) || (!lecture && !course.strict_reste?) %>
+    <% if (lecture && !lecture.reste?(current_user)) ||
+         (!lecture && !course.reste?(current_user)) %>
       <span class="nav-link disabled">
         <%= t('categories.reste') %>
       </span>

@@ -33,11 +33,11 @@
              data-toggle="tooltip"
              title="Dieses Medium ist nicht veröfffentlicht.">
           </i>
-        <% elsif medium.locked %>
+        <% elsif medium.locked? %>
           <i class="fas fa-lock redtext ml-2"
              tabindex="-1"
              data-toggle="tooltip"
-             title="Diese Medium ist gesperrt.">
+             title="Dieses Medium ist gesperrt.">
           </i>
         <% end %>
       </div>

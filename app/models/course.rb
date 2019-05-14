@@ -118,91 +118,39 @@ class Course < ApplicationRecord
   end
 
   # The next methods return if there are any media in the Kaviar, Sesam etc.
-  # projects that are associated to this course *with inheritance*
-  # These methods make use of caching.
-
-  def kaviar?
-    project?('kaviar')
-  end
-
-  def sesam?
-    project?('sesam')
-  end
-
-  def keks?
-    project?('keks')
-  end
-
-  def erdbeere?
-    project?('erdbeere')
-  end
-
-  def kiwi?
-    project?('kiwi')
-  end
-
-  def nuesse?
-    project?('nuesse')
-  end
-
-  def script?
-    project?('script')
-  end
-
-  def reste?
-    project?('reste')
-  end
-
-  # The next methods return if there are any media in the Kaviar, Sesam etc.
   # projects that are associated to this course *without inheritance*
   # These methods make use of caching.
 
-  def strict_kaviar?
-    strict_project?('kaviar')
+  def kaviar?(user)
+    project?('kaviar',user)
   end
 
-  def strict_sesam?
-    strict_project?('sesam')
+  def sesam?(user)
+    project?('sesam', user)
   end
 
-  def strict_keks?
-    strict_project?('keks')
+  def keks?(user)
+    project?('keks', user)
   end
 
-  def strict_erdbeere?
-    strict_project?('erdbeere')
+  def erdbeere?(user)
+    project?('erdbeere', user)
   end
 
-  def strict_kiwi?
-    strict_project?('kiwi')
+  def kiwi?(user)
+    project?('kiwi', user)
   end
 
-  def strict_nuesse?
-    strict_project?('nuesse')
+  def nuesse?(user)
+    project?('nuesse', user)
   end
 
-  def strict_script?
-    strict_project?('script')
+  def script?(user)
+    project?('script', user)
   end
 
-  def strict_reste?
-    strict_project?('reste')
-  end
-
-  # returns if there are any media associated to this course
-  # which are not of type kaviar *with inheritance*
-  def available_extras
-    hash = { 'sesam' => sesam?, 'keks' => keks?,
-             'erdbeere' => erdbeere?, 'kiwi' => kiwi?, 'nuesse' => nuesse?,
-             'script' => script?, 'reste' => reste? }
-    hash.keys.select { |k| hash[k] == true }
-  end
-
-  # returns an array with all types of media that are associated to this course
-  # *with inheritance*
-  def available_food
-    kaviar_info = kaviar? ? ['kaviar'] : []
-    kaviar_info.concat(available_extras)
+  def reste?(user)
+    project?('reste', user)
   end
 
   def lectures_by_date
@@ -382,23 +330,20 @@ class Course < ApplicationRecord
 
   private
 
-  # looks in the cache if there are any media associated *with inheritance*
-  # to this course and a given project (kaviar, semsam etc.)
-  def project?(project)
+  # looks in the cache if there are any media associated *without_inheritance*
+  # to this course and a given project (kaviar, sesam etc.)
+  def project_as_user?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
-      Medium.where(sort: sort[project], teachable: self).exists? ||
-        Medium.where(sort: sort[project], teachable: self.lectures).exists? ||
-        Medium.where(sort: sort[project],
-                     teachable: Lesson.where(lecture: self.lectures)).exists?
+      Medium.where(sort: sort[project],
+                   released: ['all', 'users', 'subscribers'],
+                   teachable: self).exists?
     end
   end
 
-  # looks in the cache if there are any media associated *without_inheritance*
-  # to this course and a given project (kaviar, semsam etc.)
-  def strict_project?(project)
-    Rails.cache.fetch("#{cache_key}/strict_#{project}") do
-      Medium.where(sort: sort[project], teachable: self).exists?
-    end
+  def project?(project, user)
+    return project_as_user?(project) unless edited_by?(user)
+    Medium.where(sort: sort[project],
+                 teachable: self).exists?
   end
 
   def sort
