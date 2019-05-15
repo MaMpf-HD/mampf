@@ -1,8 +1,11 @@
 # Quizzes controller
 class QuizzesController < ApplicationController
   skip_before_action :authenticate_user!, only: [:take, :proceed]
+  before_action :set_quiz, except: [:new]
+  # cancancan gem does not work well with single table inheritance
+  # therefore, check access rights manually for :take and :proceed
+  before_action :check_accesibility, only: [:take, :proceed]
   before_action :init_values, only: [:take, :proceed]
-  before_action :set_quiz, only: [:show, :edit, :update, :destroy, :preview]
   authorize_resource
   layout 'administration'
 
@@ -46,8 +49,8 @@ class QuizzesController < ApplicationController
   def set_quiz
     @quiz = Quiz.find_by_id(params[:id])
     return if @quiz.present?
-    redirect_to quizzes_path, alert: 'Ein Quiz mit der angeforderten id '\
-                                     'existiert nicht.'
+    redirect_to :root, alert: 'Ein Quiz mit der angeforderten id '\
+                              'existiert nicht.'
   end
 
   def init_values
@@ -56,5 +59,13 @@ class QuizzesController < ApplicationController
 
   def quiz_params
     params.require(:quiz).permit(:label, :root, :level, :id_js)
+  end
+
+  def check_accesibility
+    return if user_signed_in? && @quiz.visible_for_user?(current_user)
+    return if !user_signed_in? && @quiz.published_with_inheritance? &&
+                @quiz.free?
+    redirect_to :root, alert: 'Du hast keine Berechtigung, auf dieses Quiz ' \
+                              'zuzugreifen.'
   end
 end

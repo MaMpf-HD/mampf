@@ -114,14 +114,6 @@ class Ability
         !lecture.in?(user.lectures)
       end
 
-      can [:take, :proceed], Quiz do |quiz|
-        if !user.new_record?
-          quiz.visible_for_user?(user)
-        else
-          quiz.published_with_inheritance? && quiz.free?
-        end
-      end
-
       cannot :show, Course  do |course|
         !course.in?(user.courses)
       end
