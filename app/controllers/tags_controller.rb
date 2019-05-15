@@ -16,6 +16,9 @@ class TagsController < ApplicationController
   end
 
   def show
+    if params[:locale].in?(I18n.available_locales.map(&:to_s))
+      I18n.locale = params[:locale]
+    end
     set_related_tags_for_user
     @lectures = current_user.filter_lectures(@tag.lectures)
     # first, filter the media according to the users subscription type

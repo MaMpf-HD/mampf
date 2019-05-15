@@ -41,7 +41,7 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="<%= destroy_user_session_path %>"
+          <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
              class="fas fa-sign-out-alt fa-lg text-light nav-link"
              style="text-decoration: none; "
              data-toggle="tooltip"

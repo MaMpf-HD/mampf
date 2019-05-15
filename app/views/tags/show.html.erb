@@ -31,9 +31,9 @@
           </div>
           <div class="card-body">
             <% @tag.locales.each do |l| %>
-              <span class="badge badge-light">
-                <%= l.to_s %>
-              </span>
+              <%= link_to l.to_s,
+                          tag_path(@tag, params: { locale: l }),
+                          class: 'badge badge-light' %>
               <%= @tag.notions.where(locale: l)&.first&.title %>
               <br>
             <% end %>
