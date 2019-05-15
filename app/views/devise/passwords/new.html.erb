@@ -5,7 +5,8 @@
 </h3>
 
 <%= form_for(resource, as: resource_name,
-                       url: password_path(resource_name),
+                       url: password_path(resource_name,
+                                          params: { locale: I18n.locale }),
                        html: { method: :post, role: 'form' }) do |f| %>
   <div class="form-group">
     <%= f.label :email, t('.email') %>

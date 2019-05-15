@@ -24,9 +24,11 @@ de:
         subject: "Anleitung zur Bestätigung Deines MaMpf-Accounts"
       reset_password_instructions:
         subject: "Anleitung für das Zurücksetzen Deines MaMpf-Passworts"
-        instruction: "Jemand hat einen Link zur Änderung Deines MaMpf-Passworts angefordert. Klicke auf den unten aufgeführten Link, um das MaMpf-Passwort zu ändern"
-        instruction_2: "Bitte ignoriere diese E-Mail, wenn Du kein neues MaMpf-Passwort angefordert hast."
-        .instruction_3: "Das MaMpf-Passwort wird nicht geändert, bis Du den obenstehenden Link abrufst und ein neues MaMpf-Passwort bestimmst."
+        greetings: 'Hallo, %{name}!'
+        change_password: 'Passwort ändern'
+        instruction: "Jemand hat einen Link zur Änderung deines MaMpf-Passworts angefordert. Klicke auf den unten aufgeführten Link, um dein MaMpf-Passwort zu ändern:"
+        instruction_2: "Bitte ignoriere diese E-Mail, wenn du kein neues MaMpf-Passwort angefordert hast."
+        instruction_3: "Dein MaMpf-Passwort wird nicht geändert, bis du den obenstehenden Link abrufst und ein neues MaMpf-Passwort bestimmst."
       unlock_instructions:
         subject: "Anleitung um Deinen Account freizuschalten"
     omniauth_callbacks:
@@ -42,6 +44,10 @@ de:
         forgot_password: 'Passwort vergessen?'
         email: 'Email'
         instructions: 'Schick mir eine Anleitung zur Änderung meines Passwortes'
+      edit:
+        change_password: 'Passwort ändern'
+        new_password: 'Neues Passwort'
+        confirm_new_password: 'Neues Passwort bestätigen'
     registrations:
       destroyed: "Dein Account wurde gelöscht."
       signed_up: "Du hast dich erfolgreich registriert. Bitte nimm Dir eine Minute, um Dein Profil zu vervollständigen"

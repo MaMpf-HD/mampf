@@ -20,7 +20,17 @@ en:
       confirmation_instructions:
         subject: "Confirmation instructions"
       reset_password_instructions:
-        subject: "Reset password instructions"
+        subject: "Reset MaMpf password instructions"
+        greetings: 'Hi, %{name}!'
+        change_password: 'Change password'
+        instruction: >
+          Someone has requested a link in order to change your MaMpf password.
+          Click the link below to change your MaMpf password:
+        instruction_2: >
+          Please ignore this mail if you did not request a password change.
+        instruction_3: >
+          Your MaMpf password will not be changed unless you click the above
+          link and set a valid new password.
       unlock_instructions:
         subject: "Unlock instructions"
       email_changed:
@@ -40,6 +50,10 @@ en:
         forgot_password: 'Forgot your password?'
         email: 'Email'
         instructions: 'Send me instructions on how to change my password'
+      edit:
+        change_password: 'Change password'
+        new_password: 'New password'
+        confirm_new_password: 'Confirm new password'
     registrations:
       destroyed: "Bye! Your account has been successfully cancelled. We hope to see you again soon."
       signed_up: "Welcome! You have signed up successfully."
