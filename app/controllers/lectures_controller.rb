@@ -3,12 +3,11 @@ class LecturesController < ApplicationController
   before_action :set_lecture, except: [:new, :create]
   authorize_resource
   before_action :check_for_consent
+  before_action :set_view_locale, only: [:edit, :show, :inspect]
   layout 'administration'
 
   def edit
     @announcements = @lecture.announcements.order(:created_at).reverse
-    I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
   end
 
   def inspect
@@ -24,8 +23,6 @@ class LecturesController < ApplicationController
   def show
     cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
-    I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
     render layout: 'application'
   end
 
@@ -148,6 +145,11 @@ class LecturesController < ApplicationController
     return if @lecture.present?
     redirect_to :root, alert: 'Eine Vorlesung mit der angeforderten id ' \
                               'existiert nicht.'
+  end
+
+  def set_view_locale
+    I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
   end
 
   def check_for_consent

@@ -135,7 +135,7 @@ $(document).on 'turbolinks:load', ->
       if action == 'edit'
         window.location.href = Routes.edit_tag_path(node.id())
       else
-        window.location.href = Routes.tag_path(node.id())
+        window.location.href = Routes.tag_path(node.id(), locale: I18n.locale)
       return
 
     # mouseenter over related tag -> colorize cytoscape node
