@@ -151,6 +151,7 @@ en:
     no_notifications: 'There are no new notifications for you.'
   lecture:
     content: 'Lecture content'
+    unpublished: 'This lecture is unpublished.'
   details: 'Details'
   none: 'none'
   back: 'Back'
@@ -185,6 +186,8 @@ en:
   medium:
     details: 'view details'
     different_language: 'This medium is in %{language}.'
+    unpublished: 'This medium is unpublished.'
+    locked: 'This medium is locked.'
   video:
     video: 'Video'
     play: 'THymE Player'

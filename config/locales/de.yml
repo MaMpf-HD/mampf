@@ -139,6 +139,7 @@ de:
     no_notifications: 'Es liegen keine neuen Benachrichtigungen für Dich vor.'
   lecture:
     content: 'Vorlesungsinhalt'
+    unpublished: 'Diese Vorlesung ist unveröffentlicht.'
   sure: 'Bist du sicher?'
   details: 'Details'
   none: 'keine'
@@ -174,6 +175,8 @@ de:
   medium:
     details: 'Details ansehen'
     different_language: 'Das Medium ist auf %{language}.'
+    unpublished: 'Dieses Medium ist nicht veröffentlicht.'
+    locked: 'Dieses Medium ist gesperrt.'
   video:
     video: 'Video'
     play: 'THymE-Player'
