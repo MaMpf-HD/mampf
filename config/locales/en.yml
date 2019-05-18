@@ -315,6 +315,9 @@ en:
   locales:
     en: 'english'
     de: 'german'
+  mailer:
+    notification: 'MaMpf notification'
+    medium_subject: 'New Medium'
   activerecord:
     errors:
       models:

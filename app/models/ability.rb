@@ -110,6 +110,8 @@ class Ability
         end
       end
 
+      can [:take, :proceed], Quiz
+
       cannot :show, Lecture  do |lecture|
         !lecture.in?(user.lectures)
       end

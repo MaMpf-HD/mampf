@@ -113,8 +113,11 @@ class MediaController < ApplicationController
     release_state = params[:medium][:released]
     @medium.update(released: release_state)
     # create notification about creation of medium to all subscribers
-    create_notifications unless @medium.sort.in?(['Question', 'Remark',
-                                                  'RandomQuiz'])
+    # and send an email
+    unless @medium.sort.in?(['Question', 'Remark', 'RandomQuiz'])
+      create_notifications
+      send_notification_email
+    end
     redirect_to edit_medium_path(@medium)
   end
 
@@ -371,6 +374,17 @@ class MediaController < ApplicationController
                                         action: 'create')
     end
     Notification.import notifications
+  end
+
+  def send_notification_email
+    recipients = @medium.teachable.media_scope.users
+                        .where(no_notifications: false)
+    I18n.available_locales.each do |l|
+      NotificationMailer.with(recipients: recipients.where(locale: l),
+                              locale: l,
+                              medium: @medium)
+                        .medium_email.deliver_now
+    end
   end
 
   # destroy all notifications related to this medium
