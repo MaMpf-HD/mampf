@@ -23,6 +23,7 @@ class ProfileController < ApplicationController
     if @user.update(lectures: @lectures, courses: @courses, name: @name,
                     subscription_type: @subscription_type,
                     no_notifications: @no_notifications,
+                    email_notifications: @email_notifications,
                     locale: @locale,
                     edited_profile: true)
       # remove notifications that have become obsolete
@@ -68,6 +69,7 @@ class ProfileController < ApplicationController
     @subscription_type = params[:user][:subscription_type].to_i
     @name = params[:user][:name]
     @no_notifications = params[:user][:no_notifications] == '1'
+    @email_notifications = params[:user][:email_notifications] == '1'
     @courses = Course.where(id: course_ids)
     @lectures = Lecture.where(id: lecture_ids)
     @locale = params[:user][:locale]

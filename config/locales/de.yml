@@ -94,8 +94,11 @@ de:
     subscription_strict: >
       ausschließlich aus den von mir abonnierten Modulen sehen.
     no_notifications: >
-      Ich möchte keine Benachrichtigungen über neue Medien, neue Vorlesungen
-      oder neue Features erhalten und in MaMpf angezeigt bekommen.
+      Ich möchte keine Benachrichtigungen über neue Medien, neue Vorlesungen,
+      neue Mitteilungen oder neue Features über das MaMpf-interne
+      Benachrichtigungssystem erhalten und in MaMpf angezeigt bekommen.
+    email_notifications: >
+      Ich möchte per Email über neue Benachrichtigungen informiert werden.
     update: 'Profil updaten'
     success: 'Profil erfolgreich geupdatet.'
     please_update: >

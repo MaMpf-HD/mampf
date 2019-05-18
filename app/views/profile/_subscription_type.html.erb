@@ -31,4 +31,9 @@
                     checked: current_user.no_notifications,
                     inline: true %>
   </div>
+  <div class="col-12">
+    <%= f.check_box :email_notifications,
+                    label: t('profile.email_notifications'),
+                    inline: true %>
+  </div>
 </div>

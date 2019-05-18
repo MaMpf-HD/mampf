@@ -107,6 +107,8 @@ en:
     no_notifications: >
       I do not want to obtain notifications about new media, new lectures
       or new features via the internal notification system of MaMpf.
+    email_notifications: >
+      I want to obtain an email if a new notification for me is available.
     update: 'Update profile'
     success: 'Profil was updated successfully.'
     please_update: >

@@ -378,12 +378,18 @@ class MediaController < ApplicationController
 
   def send_notification_email
     recipients = @medium.teachable.media_scope.users
-                        .where(no_notifications: false)
+                        .where(email_notifications: true)
     I18n.available_locales.each do |l|
-      NotificationMailer.with(recipients: recipients.where(locale: l),
-                              locale: l,
-                              medium: @medium)
-                        .medium_email.deliver_now
+      local_recipients = recipients.where(locale: l)
+      pp '*******************************'
+      pp local_recipients
+      pp '+++++++++++++++++++++++++++++++'
+      if local_recipients.any?
+        NotificationMailer.with(recipients: local_recipients,
+                                locale: l,
+                                medium: @medium)
+                          .medium_email.deliver_now
+      end
     end
   end
 
