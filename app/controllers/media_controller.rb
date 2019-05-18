@@ -381,9 +381,6 @@ class MediaController < ApplicationController
                         .where(email_notifications: true)
     I18n.available_locales.each do |l|
       local_recipients = recipients.where(locale: l)
-      pp '*******************************'
-      pp local_recipients
-      pp '+++++++++++++++++++++++++++++++'
       if local_recipients.any?
         NotificationMailer.with(recipients: local_recipients,
                                 locale: l,
