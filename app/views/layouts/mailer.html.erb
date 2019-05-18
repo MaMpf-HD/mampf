@@ -8,6 +8,13 @@
   </head>
 
   <body>
+    <h4>
+      <%= t('mailer.notification_header') %>
+    </h4>
     <%= yield %>
+    <hr>
+    <%= t('mailer.unsubscribe_html',
+          profile: link_to(t('notifications.profile'),
+                           edit_profile_url)) %>
   </body>
 </html>

@@ -216,6 +216,7 @@ en:
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
   click_here: 'Click here'
+  in: 'in'
   translations: 'Translations'
   course:
     info: 'Information about the course %{title}'
@@ -317,7 +318,15 @@ en:
     de: 'german'
   mailer:
     notification: 'MaMpf notification'
+    notification_header: 'MaMpf notification'
     medium_subject: 'New Medium'
+    new_medium: 'A new medium has been published: %{title}'
+    unsubscribe_html: >
+      If you do not want to receive emails about activities in MaMpf
+      you can disable that feature in your %{profile}.
+    unsubscribe_text:
+      If you do not want to receive emails about activities in MaMpf
+      you can disable that feature in your profile settings.
   activerecord:
     errors:
       models:
