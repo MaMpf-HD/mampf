@@ -22,6 +22,8 @@ class AnnouncementsController < ApplicationController
     if @announcement.valid?
       # trigger creation of notifications for all relevant users
       create_notifications
+      # send notification email
+      send_notification_email
       # redirection depending from where the announcement was created
       unless @announcement.lecture.present?
         redirect_to announcements_path
@@ -54,5 +56,23 @@ class AnnouncementsController < ApplicationController
     end
     # use activerecord-import gem to use only one SQL instruction
     Notification.import notifications
+  end
+
+  def send_notification_email
+    recipients = if @announcement.lecture.present?
+                   @announcement.lecture.users
+                 else
+                   User
+                 end
+                   .where(email_notifications: true)
+    I18n.available_locales.each do |l|
+      local_recipients = recipients.where(locale: l)
+      if local_recipients.any?
+        NotificationMailer.with(recipients: local_recipients,
+                                locale: l,
+                                announcement: @announcement)
+                          .announcement_email.deliver_now
+      end
+    end
   end
 end

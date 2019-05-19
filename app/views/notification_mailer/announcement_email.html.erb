@@ -1,0 +1,7 @@
+<%= "#{t('mailer.new_announcement')} #{@announcement_details}:" %>
+<p>
+  <%= "#{t('mailer.author')}: #{@announcement.announcer.name}" %>
+  <br>
+  <%= "#{t('mailer.text')}: " %>
+  <%= simple_format(h(@announcement.details)) %>
+</p>

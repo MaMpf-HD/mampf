@@ -329,6 +329,11 @@ en:
     unsubscribe_text:
       If you do not want to receive emails about activities in MaMpf
       you can disable that feature in your profile settings.
+    announcement_subject: 'New announcement'
+    mampf_news: 'about MaMpf'
+    new_announcement: 'There is a new announcement'
+    author: 'Author'
+    text: 'Text'
   activerecord:
     errors:
       models:

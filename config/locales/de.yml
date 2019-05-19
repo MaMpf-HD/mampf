@@ -331,6 +331,11 @@ de:
       Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf bekommen
       möchtest, kannst Du dieses Feature in Deinen Profileinstellungen
       deaktivieren.
+    announcement_subject: 'Neue Mitteilung'
+    mampf_news: 'über MaMpf'
+    new_announcement: 'Es gibt eine neue Mitteilung'
+    author: 'Verfasser'
+    text: 'Text'
   activerecord:
     errors:
       models:
