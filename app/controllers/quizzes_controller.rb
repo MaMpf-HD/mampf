@@ -4,7 +4,7 @@ class QuizzesController < ApplicationController
   before_action :set_quiz, except: [:new]
   # cancancan gem does not work well with single table inheritance
   # therefore, check access rights manually for :take and :proceed
-  before_action :check_accesibility, only: [:take, :proceed]
+  before_action :check_accessibility, only: [:take, :proceed]
   before_action :init_values, only: [:take, :proceed]
   authorize_resource
   layout 'administration'
@@ -61,7 +61,8 @@ class QuizzesController < ApplicationController
     params.require(:quiz).permit(:label, :root, :level, :id_js)
   end
 
-  def check_accesibility
+  def check_accessibility
+    return if @quiz.sort == 'RandomQuiz'
     return if user_signed_in? && @quiz.visible_for_user?(current_user)
     return if !user_signed_in? && @quiz.published_with_inheritance? &&
                 @quiz.free?
