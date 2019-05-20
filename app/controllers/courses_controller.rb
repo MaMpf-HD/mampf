@@ -30,6 +30,7 @@ class CoursesController < ApplicationController
       # set organizational_concept to default
       set_organizational_defaults
       create_notifications
+      send_notification_email
       redirect_to administration_path
       return
     end
@@ -120,6 +121,19 @@ class CoursesController < ApplicationController
                                         action: 'create')
     end
     Notification.import notifications
+  end
+
+  def send_notification_email
+    recipients = User.where(email_notifications: true)
+    I18n.available_locales.each do |l|
+      local_recipients = recipients.where(locale: l)
+      if local_recipients.any?
+        NotificationMailer.with(recipients: local_recipients,
+                                locale: l,
+                                course: @course)
+                          .new_course_email.deliver_now
+      end
+    end
   end
 
   # destroy all notifications related to this course

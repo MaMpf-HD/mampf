@@ -61,8 +61,9 @@ class LecturesController < ApplicationController
       @lecture.media_with_inheritance
               .update_all(released: params[:medium][:released])
     end
-    # create notifications about creation od this lecture
+    # create notifications about creation od this lecture and send email
     create_notifications
+    send_notification_email
     redirect_to edit_lecture_path(@lecture)
   end
 
@@ -175,6 +176,19 @@ class LecturesController < ApplicationController
                                         action: 'create')
     end
     Notification.import notifications
+  end
+
+  def send_notification_email
+    recipients = User.where(email_notifications: true)
+    I18n.available_locales.each do |l|
+      local_recipients = recipients.where(locale: l)
+      if local_recipients.any?
+        NotificationMailer.with(recipients: local_recipients,
+                                locale: l,
+                                lecture: @lecture)
+                          .new_lecture_email.deliver_now
+      end
+    end
   end
 
   # destroy all notifications related to this lecture

@@ -334,6 +334,16 @@ en:
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
+    new_lecture_subject: 'New lecture %{title}'
+    new_lecture: 'A new lecture has been made available: %{title}.'
+    subscribe_lecture_html: 'You can subscribe it in your %{profile}.'
+    subscribe_lecture_text: >
+      You can subscribe it in your profile settings.
+    new_course_subject: 'New Course %{title}'
+    new_course: 'A new course has been made available: %{title}.'
+    subscribe_course_html: 'You can subscribe it in your %{profile}.'
+    subscribe_course_text: >
+      You can subscribe it in your profile settings.
   activerecord:
     errors:
       models:

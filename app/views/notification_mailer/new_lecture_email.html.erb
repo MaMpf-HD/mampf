@@ -1,0 +1,5 @@
+<%= t('mailer.new_lecture', title: @lecture.title_with_teacher) %>
+<br>
+<%= t('mailer.subscribe_lecture_html',
+      profile: link_to(t('notifications.profile'),
+                       edit_profile_url)) %>
