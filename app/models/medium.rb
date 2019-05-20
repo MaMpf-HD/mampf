@@ -323,9 +323,9 @@ class Medium < ApplicationRecord
   # medium's associated teachable)
   def edited_with_inheritance_by?(user)
     return true if editors.include?(user)
-    return true if teachable.lecture&.editors&.include?(user)
-    return true if teachable.lecture&.teacher == user
-    return true if teachable.course.editors&.include?(user)
+    return true if teachable&.lecture&.editors&.include?(user)
+    return true if teachable&.lecture&.teacher == user
+    return true if teachable&.course&.editors&.include?(user)
     false
   end
 
