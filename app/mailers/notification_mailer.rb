@@ -3,9 +3,9 @@ class NotificationMailer < ApplicationMailer
     @recipients = params[:recipients]
     @medium = params[:medium]
     I18n.locale = params[:locale]
-    mail(bcc: @recipients.pluck(:email),
-         subject: t('mailer.notification') + ': ' +
-                  t('mailer.medium_subject') + ' ' + t('in') + ' ' +
+    mail(from: "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_EMAIL}>",
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.medium_subject') + ' ' + t('in') + ' ' +
                   @medium.teachable.media_scope.title_for_viewers)
   end
 
@@ -19,9 +19,9 @@ class NotificationMailer < ApplicationMailer
                             else
                               t('mailer.mampf_news')
                             end
-    mail(bcc: @recipients.pluck(:email),
-         subject: t('mailer.notification') + ': ' +
-                  t('mailer.announcement_subject') + ' ' +
+    mail(from: "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_EMAIL}>",
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.announcement_subject') + ' ' +
                   @announcement_details)
   end
 
@@ -29,9 +29,9 @@ class NotificationMailer < ApplicationMailer
     @recipients = params[:recipients]
     @lecture = params[:lecture]
     I18n.locale = params[:locale]
-    mail(bcc: @recipients.pluck(:email),
-         subject: t('mailer.notification') + ': ' +
-                  t('mailer.new_lecture_subject',
+    mail(from: "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_EMAIL}>",
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.new_lecture_subject',
                     title: @lecture.title_for_viewers))
   end
 
@@ -39,9 +39,9 @@ class NotificationMailer < ApplicationMailer
     @recipients = params[:recipients]
     @course = params[:course]
     I18n.locale = params[:locale]
-    mail(bcc: @recipients.pluck(:email),
-         subject: t('mailer.notification') + ': ' +
-                  t('mailer.new_course_subject',
+    mail(from: "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_EMAIL}>",
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.new_course_subject',
                     title: @course.title))
   end
 end
