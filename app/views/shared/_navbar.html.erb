@@ -83,9 +83,7 @@
                      locals: { courses: current_user.courses } %>
         </ul>
       <% end %>
-      <% unless current_user.no_notifications %>
-        <%= render partial: 'shared/dropdown_notifications'%>
-      <% end %>
+      <%= render partial: 'shared/dropdown_notifications'%>
       <%= form_tag(search_index_path,
                    method: 'get',
                    class: 'form-inline mt-2 mt-md-0',

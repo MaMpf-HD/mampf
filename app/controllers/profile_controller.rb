@@ -22,8 +22,10 @@ class ProfileController < ApplicationController
     return if @errors.present?
     if @user.update(lectures: @lectures, courses: @courses, name: @name,
                     subscription_type: @subscription_type,
-                    no_notifications: @no_notifications,
-                    email_notifications: @email_notifications,
+                    email_for_medium: @email_for_medium,
+                    email_for_teachable: @email_for_teachable,
+                    email_for_announcement: @email_for_announcement,
+                    email_for_news: @email_for_news,
                     locale: @locale,
                     edited_profile: true)
       # remove notifications that have become obsolete
@@ -68,9 +70,14 @@ class ProfileController < ApplicationController
   def set_basics
     @subscription_type = params[:user][:subscription_type].to_i
     @name = params[:user][:name]
-    @no_notifications = params[:user][:no_notifications] == '1'
-    @email_notifications = params[:user][:email_notifications] == '1'
+    @email_for_medium = params[:user][:email_for_medium] == '1'
+    @email_for_announcement = params[:user][:email_for_announcement] == '1'
+    @email_for_teachable = params[:user][:email_for_teachable] == '1'
+    @email_for_news = params[:user][:email_for_news] == '1'
     @courses = Course.where(id: course_ids)
+    pp '*******************'
+    pp primary
+    pp secondary
     @lectures = Lecture.where(id: lecture_ids)
     @locale = params[:user][:locale]
   end
@@ -94,7 +101,7 @@ class ProfileController < ApplicationController
 
   # extracts secondary lectures from user params
   def secondary
-    filter_by('lecture')
+    filter_by('lecture') - primary
   end
 
   # extracts selected (secondary) lectures/courses (given as type)
@@ -115,7 +122,6 @@ class ProfileController < ApplicationController
 
   def clean_up_notifications
     # delete all of the user's notifications if he does not want them
-    # @user.notifications.delete_all if @no_notifications
     # remove all notification related not related to subscribed courses
     # or lectures
     subscribed_teachables = @courses + @lectures

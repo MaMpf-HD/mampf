@@ -6,11 +6,11 @@ class User < ApplicationRecord
 
   # a user has many subscribed lectures
   has_many :lecture_user_joins, dependent: :destroy
-  has_many :lectures, through: :lecture_user_joins
+  has_many :lectures, -> { distinct }, through: :lecture_user_joins
 
   # a user has many subscribed courses
   has_many :course_user_joins, dependent: :destroy
-  has_many :courses, through: :course_user_joins
+  has_many :courses, -> { distinct }, through: :course_user_joins
 
   # a user has many courses as an editor
   has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy

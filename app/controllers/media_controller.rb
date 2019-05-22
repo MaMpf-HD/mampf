@@ -366,8 +366,7 @@ class MediaController < ApplicationController
   # to the medium's teachable's media_scope
   def create_notifications
     notifications = []
-    @medium.teachable.media_scope.users.where(no_notifications: false)
-           .each do |u|
+    @medium.teachable.media_scope.users.each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @medium.id,
                                         notifiable_type: 'Medium',
@@ -378,7 +377,7 @@ class MediaController < ApplicationController
 
   def send_notification_email
     recipients = @medium.teachable.media_scope.users
-                        .where(email_notifications: true)
+                        .where(email_for_medium: true)
     I18n.available_locales.each do |l|
       local_recipients = recipients.where(locale: l)
       if local_recipients.any?

@@ -12,7 +12,7 @@ class Course < ApplicationRecord
 
   # users in this context are users who have subscribed to this course
   has_many :course_user_joins, dependent: :destroy
-  has_many :users, through: :course_user_joins
+  has_many :users, -> { distinct }, through: :course_user_joins
 
   # preceding courses are courses that this course is based upon
   has_many :course_self_joins, dependent: :destroy

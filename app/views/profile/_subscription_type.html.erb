@@ -26,14 +26,16 @@
     <% end %>
   </div>
   <div class="col-12">
-    <%= f.check_box :no_notifications,
-                    label: t('profile.no_notifications'),
-                    checked: current_user.no_notifications,
-                    inline: true %>
-  </div>
-  <div class="col-12">
-    <%= f.check_box :email_notifications,
-                    label: t('profile.email_notifications'),
-                    inline: true %>
+    <%= f.form_group :email_notifications,
+                      label: { text: t('profile.email_notifications') } do %>
+      <%= f.check_box :email_for_announcement,
+                      label: t('profile.email_for_announcement') %>
+      <%= f.check_box :email_for_medium,
+                      label: t('profile.email_for_medium') %>
+      <%= f.check_box :email_for_teachable,
+                      label: t('profile.email_for_teachable') %>
+      <%= f.check_box :email_for_news,
+                      label: t('profile.email_for_news') %>
+    <% end %>
   </div>
 </div>

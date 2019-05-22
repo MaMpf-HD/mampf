@@ -23,7 +23,7 @@ class Lecture < ApplicationRecord
 
   # a lecture has many users who have subscribed it in their profile
   has_many :lecture_user_joins, dependent: :destroy
-  has_many :users, through: :lecture_user_joins
+  has_many :users, -> { distinct }, through: :lecture_user_joins
 
   # a lecture has many editors
   # these are users different from the teacher who have the right to

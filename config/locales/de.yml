@@ -98,7 +98,15 @@ de:
       neue Mitteilungen oder neue Features über das MaMpf-interne
       Benachrichtigungssystem erhalten und in MaMpf angezeigt bekommen.
     email_notifications: >
-      Ich möchte per Email über neue Benachrichtigungen informiert werden.
+      Ich möchte per Email über Folgendes benachrichtigt werden:
+    email_for_announcement:
+      neue Mitteilungen in von mir abonnierten Vorlesungen.
+    email_for_medium:
+      neue Medien in von mir abonnierten Vorlesungen oder Modulen.
+    email_for_teachable:
+      neue angelegte Vorlesungen oder Module.
+    email_for_news:
+      Neuigkeiten über MaMpf.
     update: 'Profil updaten'
     success: 'Profil erfolgreich geupdatet.'
     please_update: >

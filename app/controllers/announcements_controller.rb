@@ -48,7 +48,7 @@ class AnnouncementsController < ApplicationController
                         User
                       end
     notifications = []
-    users_to_notify.where(no_notifications: false).find_each do |u|
+    users_to_notify.find_each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @announcement.id,
                                         notifiable_type: 'Announcement',
@@ -61,10 +61,10 @@ class AnnouncementsController < ApplicationController
   def send_notification_email
     recipients = if @announcement.lecture.present?
                    @announcement.lecture.users
+                                .where(email_for_announcement: true)
                  else
-                   User
+                   User.where(email_for_news: true)
                  end
-                   .where(email_notifications: true)
     I18n.available_locales.each do |l|
       local_recipients = recipients.where(locale: l)
       if local_recipients.any?

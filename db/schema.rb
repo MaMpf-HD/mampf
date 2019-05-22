@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_18_161033) do
+ActiveRecord::Schema.define(version: 2019_05_22_114150) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -550,7 +550,10 @@ ActiveRecord::Schema.define(version: 2019_05_18_161033) do
     t.text "homepage"
     t.boolean "no_notifications", default: false
     t.text "locale"
-    t.boolean "email_notifications"
+    t.boolean "email_for_medium"
+    t.boolean "email_for_announcement"
+    t.boolean "email_for_teachable"
+    t.boolean "email_for_news"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

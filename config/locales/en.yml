@@ -108,7 +108,15 @@ en:
       I do not want to obtain notifications about new media, new lectures
       or new features via the internal notification system of MaMpf.
     email_notifications: >
-      I want to obtain an email if a new notification for me is available.
+      I want to obtain email notifications about:
+    email_for_announcement:
+      new announcements in lectures I have subscribed.
+    email_for_medium:
+      new media in lectures or courses I have subscribed.
+    email_for_teachable:
+      new lectures or modules.
+    email_for_news:
+      news about MaMpf.
     update: 'Update profile'
     success: 'Profil was updated successfully.'
     please_update: >

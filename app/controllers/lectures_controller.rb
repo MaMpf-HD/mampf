@@ -169,7 +169,7 @@ class LecturesController < ApplicationController
   # create notifications to all users about creation of new lecture
   def create_notifications
     notifications = []
-    User.where(no_notifications: false).find_each do |u|
+    User.find_each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @lecture.id,
                                         notifiable_type: 'Lecture',
@@ -179,7 +179,7 @@ class LecturesController < ApplicationController
   end
 
   def send_notification_email
-    recipients = User.where(email_notifications: true)
+    recipients = User.where(email_for_teachable: true)
     I18n.available_locales.each do |l|
       local_recipients = recipients.where(locale: l)
       if local_recipients.any?
