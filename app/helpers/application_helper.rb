@@ -274,4 +274,14 @@ module ApplicationHelper
   def hide_as_class(value)
     value ? 'no_display' : ''
   end
+
+  def helpdesk(text, html)
+    tag.i class: 'far fa-question-circle helpdesk ml-2',
+                  tabindex: -1,
+                  data: { toggle: 'popover',
+                          trigger: 'focus',
+                          content: text,
+                          html: html },
+                  title: t('info')
+  end
 end

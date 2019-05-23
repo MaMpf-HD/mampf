@@ -85,6 +85,53 @@ en:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+  info: 'Info'
+  admin:
+    navbar:
+      exit: 'Exit administration'
+      main: 'Overview'
+      logout: 'Logout'
+      media_search: 'Search media'
+      tags: 'Tag overview'
+      terms: 'Terms'
+      news: 'News'
+      users: 'User administration'
+      courses: 'Course'
+    main:
+      my_lectures: 'My Lectures'
+      create_lecture: 'Create Lecture'
+      as_teacher: 'As teacher'
+      as_editor: 'As additional editor'
+      as_course_editor: 'As course editor'
+      no_lectures_taught: >
+        There is no lecture for which you are listed as teacher or editor.
+      info:
+        lecture_definition:
+          This is the list of all
+          <i>Lectures</i>
+          for which you have editing access.
+          <br>
+          <br>
+          A
+          <i>Lecture</i>
+          in the sense of MaMpf is a lecture with the topic of the parent
+          <i>Course</i>,
+          given by a specific teacher in specific term.
+          <br>
+          Lectures in red  have not yet been published.
+        given_lectures: >
+          This is the list of all lectures that you have given as a teacher.
+          For these you have editing access, of course.
+        edited_lectures: >
+          This is the list of all lectures for which you are liste as
+          additional editor. By that, you have editing access to those.
+        lectures_as_course_editor: >
+          This is the list of all lectures that belong to courses for which you
+          are course editor, minus those lectures which you have given yourself.
+          By inheritance, you have editing access to these lectures.
+      term: 'Term'
+      title: 'Title'
+      teacher: 'Teacher'
   profile:
     account: 'Account'
     name: 'Display name'

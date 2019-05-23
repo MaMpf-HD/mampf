@@ -3,7 +3,7 @@
                 class: 'img-fluid mr-2' %>
   <%= link_to "MaMpf", exit_administration_path,
               class: 'navbar-brand',
-              title: 'Administration beenden',
+              title: t('admin.navbar.exit'),
               data: { toggle: 'tooltip' } %>
   <button class="navbar-toggler"
           type="button"
@@ -16,21 +16,18 @@
        id="collapsingNavbarLg">
     <ul class="navbar-nav mr-auto">
       <li class="nav-item <%= active_controller?('administration', 'index') %>">
-        <a href="<%= administration_path %>"
-             class="fas fa-home fa-lg text-light nav-link"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="Übersicht">
-        </a>
+        <%= link_to '', administration_path,
+                    class: 'fas fa-home fa-lg text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: "tooltip" },
+                    title: t('admin.navbar.main') %>
       </li>
       <li class="nav-item">
-        <a href="<%= destroy_user_session_path %>"
-             class="fas fa-sign-out-alt fa-lg text-light nav-link"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             data-method="delete"
-             title="Logout">
-        </a>
+        <%= link_to '', destroy_user_session_path,
+                    class: 'fas fa-sign-out-alt fa-lg text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: 'tooltip', method: 'delete' },
+                    title: t('admin.navbar.logout') %>
       </li>
     </ul>
     <ul class="navbar-nav mr-auto">
@@ -39,60 +36,54 @@
     </ul>
     <ul class="navbar-nav mr-auto">
       <li class="nav-item <%= active_controller?('media') %>">
-        <a href="<%= media_catalog_path %>"
-           class="far fa-file-video fa-lg text-light nav-link"
-           style="text-decoration: none; "
-           data-toggle="tooltip"
-           title="Mediensuche">
-        </a>
+        <%= link_to '', media_catalog_path,
+                    class: 'far fa-file-video fa-lg text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: 'tooltip' },
+                    title: t('admin.navbar.media_search') %>
       </li>
       <li class="nav-item <%= active_controller?('tags') %>">
-        <a href="<%= tags_path %>"
-           class="fas fa-tags fa-lg text-light nav-link"
-           style="text-decoration: none; "
-           data-toggle="tooltip"
-           title="Tagübersicht">
-        </a>
+        <%= link_to '', tags_path,
+                    class: 'fas fa-tags fa-lg text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: 'tooltip' },
+                    title: t('admin.navbar.tags') %>
       </li>
       <% if current_user.admin? %>
         <li class="nav-item <%= active_controller?('terms') %>">
-          <a href="<%= terms_path %>"
-             class="far fa-calendar-alt fa-lg text-light nav-link"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="Semester">
-          </a>
+          <%= link_to '', terms_path,
+                      class: 'far fa-calendar-alt fa-lg text-light nav-link',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip' },
+                      title: t('admin.navbar.terms') %>
         </li>
         <li>
-          <a href="<%= announcements_path %>"
-             class="far fa-newspaper fa-lg text-light nav-link"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="News">
-          </a>
+          <%= link_to '', announcements_path,
+                      class: 'far fa-newspaper fa-lg text-light nav-link',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip' },
+                      title: t('admin.navbar.news') %>
         </li>
       <% end %>
     </ul>
     <% if current_user.admin? %>
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item <%= active_controller?('users') %>">
-        <a href="<%= users_path %>"
-           class="fas fa-users-cog fa-lg text-light nav-link"
-           style="text-decoration: none; "
-           data-toggle="tooltip"
-           title="Nutzerverwaltung">
-        </a>
-      </li>
-    </ul>
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item <%= active_controller?('users') %>">
+          <%= link_to '', users_path,
+                      class: 'fas fa-users-cog fa-lg text-light nav-link',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip' },
+                      title: t('admin.navbar.users') %>
+        </li>
+      </ul>
     <% end %>
     <ul class="navbar-nav">
       <li class="nav-item <%= active_controller?('administration', 'profile') %>">
-        <a href="<%= elevated_profile_path %>"
-           class="fas fa-user fa-lg text-light nav-link"
-           style="text-decoration: none; "
-           data-toggle="tooltip"
-           title="Profil">
-        </a>
+        <%= link_to '', elevated_profile_path,
+                    class: 'fas fa-user fa-lg text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: 'tooltip' },
+                    title: t('admin.navbar.profile') %>
       </li>
     </ul>
   </div>

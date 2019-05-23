@@ -71,6 +71,60 @@ de:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+  info: 'Info'
+  admin:
+    navbar:
+      exit: 'Administration beenden'
+      main: 'Übersicht'
+      logout: 'Logout'
+      media_search: 'Mediensuche'
+      tags: 'Tagübersicht'
+      terms: 'Semester'
+      news: 'News'
+      users: 'Nutzerverwaltung'
+      course: 'Lehrveranstaltung'
+    main:
+      my_lectures: 'Meine Vorlesungen'
+      create_lecture: 'Vorlesung anlegen'
+      as_teacher: 'Als DozentIn'
+      as_editor: 'Als zusätzliche VorlesungeditorIn'
+      as_course_editor: 'Als Moduleditor'
+      no_lectures_taught: >
+        Es gibt keine Vorlesung, für die Du als DozentIn oder EditorIn
+        eingetragen bist.
+      info:
+        lecture_definition: >
+          Dies ist eine Liste aller
+          <i>Vorlesungen</i>,
+          für die Du Bearbeitungsrechte hast.
+          <br>
+          <br>
+          Eine
+          <i>Vorlesung</i>
+          im Sinne von MaMpf ist hierbei eine
+          Lehrveranstaltung zum Thema des zugehörigen
+          <i>Moduls</i>,
+          die von einer bestimmten DozentIn in einem
+          bestimmten Semester abgehalten wird bzw. wurde.
+          <br>
+          Vorlesungen in rötlicher Farbe sind noch nicht veröffentlicht.
+        given_lectures: >
+          Dies ist eine Liste aller Vorlesungen, die Du als
+          Dozent verantwortet hast. Für diese hast Du natürlich die
+          Bearbeitungsberechtigung.
+        edited_lectures: >
+          Dies ist eine Liste aller Vorlesungen, für die
+          Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
+          Bearbeitungsrechte an diesen Vorlesungen.
+        lectures_as_module_editor: >
+          Dies ist eine Liste aller Vorlesungen, die zu
+          Modulen gehören, für die du EditorIn bist, abzüglich der
+          Vorlesungen, die Du selbst als DozentIn gehalten hast.
+          Durch Deine Rechte als ModuleditorIn erbst Du
+          Bearbeitungsrechte an diesen Vorlesungen.
+      term: 'Sem'
+      title: 'Titel'
+      teacher: 'DozentIn'
   profile:
     account: 'Account'
     name: 'Anzeigename'

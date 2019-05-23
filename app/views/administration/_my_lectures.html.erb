@@ -2,37 +2,15 @@
   <div class="card-header bg-primary text-white">
     <div class="row">
       <div class="col-8">
-        Meine Vorlesungen
-        <i class="far fa-question-circle helpdesk ml-2"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Dies ist eine Liste aller
-           <i>Vorlesungen</i>,
-           für die Du Bearbeitungsrechte hast.
-           <br>
-           <br>
-           Eine
-           <i>Vorlesung</i>
-           im Sinne von MaMpf ist hierbei eine
-           Lehrveranstaltung zum Thema des zugehörigen
-           <i>Moduls</i>,
-           die von einer bestimmten DozentIn in einem
-           bestimmten Semester abgehalten wird bzw. wurde.
-           <br>
-           Vorlesungen in rötlicher Farbe sind noch nicht veröffentlicht."
-           data-html="true">
-        </i>
+        <%= t('admin.main.my_lectures') %>
+        <%= helpdesk(t('admin.main.info.lecture_definition'), true) %>
       </div>
       <div class="col-4 text-right">
-        <a href="<%= new_lecture_path %>"
-           class="fas fa-plus-circle text-light admin-index-button"
-           id="new-lecture-button"
-           data-remote="true"
-           data-toggle="tooltip"
-           title="Vorlesung anlegen">
-        </a>
+        <%= link_to '', new_lecture_path,
+                    class: 'fas fa-plus-circle text-light admin-index-button',
+                    id: 'new-lecture-button',
+                    data: { remote: true, toggle: 'tooltip' },
+                    title: t('admin.main.create_lecture') %>
       </div>
     </div>
   </div>
@@ -42,17 +20,9 @@
          style="display: none;">
     </div>
     <% if current_user.given_lectures.exists? %>
-      als DozentIn
+      <%= t('admin.main.as_teacher') %>
       (<%= current_user.given_lectures.count %>)
-      <i class="far fa-question-circle helpdesk ml-2"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Dies ist eine Liste aller Vorlesungen, die Du als
-         Dozent verantwortet hast. Für diese hast Du natürlich die
-         Bearbeitungsberechtigung.">
-      </i>
+      <%=  helpdesk(t('admin.main.info.given_lectures'), true) %>
       <%= render partial: 'administration/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.given_lectures),
@@ -60,17 +30,9 @@
                            teacher: false } %>
     <% end %>
     <% if current_user.edited_lectures.exists? %>
-      als zusätzlicher Vorlesungeditor
+      <%= t('admin.main.as_editor') %>
       (<%= current_user.edited_lectures.count %>)
-      <i class="far fa-question-circle helpdesk ml-2"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Dies ist eine Liste aller Vorlesungen, für die
-         Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
-         Bearbeitungsrechte an diesen Vorlesungen.">
-      </i>
+      <%= helpdesk(t('admin.main.info.edited_lectures'), false) %>
       <%= render partial: 'administration/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.edited_lectures),
@@ -78,19 +40,9 @@
                            teacher: true } %>
     <% end %>
     <% if current_user.lectures_as_module_editor.present? %>
-      als Moduleditor
+      <%= t('admin.main.as_course_editor') %>
       (<%= current_user.lectures_as_module_editor.count %>)
-      <i class="far fa-question-circle helpdesk ml-2"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Dies ist eine Liste aller Vorlesungen, die zu
-         Modulen gehören, für die du EditorIn bist, abzüglich der
-         Vorlesungen, die Du selbst als DozentIn gehalten hast.
-         Durch Deine Rechte als ModuleditorIn erbst Du
-         Bearbeitungsrechte an diesen Vorlesungen.">
-      </i>
+      <%= helpdesk(t('admin.main.info.lectures_as_course_editor'), false) %>
       <%= render partial: 'administration/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
@@ -101,8 +53,7 @@
     <% if current_user.given_lectures.empty? &&
             current_user.edited_lectures.empty? &&
             current_user.lectures_as_module_editor.empty? %>
-      Es gibt keine Vorlesung, für die Du als DozentIn oder EditorIn
-      eingetragen bist.
+      <%= t('admin.main.no_lectures_taught') %>
     <% end %>
   </div>
 </div>

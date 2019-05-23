@@ -1,6 +1,6 @@
 <li class="nav-item dropdown">
   <a href="#" id="menu" data-toggle="dropdown" class="nav-link dropdown-toggle">
-    Lehrveranstaltung
+    <%= t('admin.navbar.course') %>
   </a>
   <div class="dropdown-menu">
     <% courses.each do |c| %>
@@ -15,7 +15,7 @@
           <div class="dropdown-menu">
             <a href="<%= edit_or_inspect_course_path(c) %>"
                class="dropdown-item">
-              Modul
+              <%= t('admin.navbar.course') %>
               <i class="<%= edit_or_inspect_course_icon(c) %>">
               </i>
             </a>
