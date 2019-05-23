@@ -6,7 +6,8 @@
         <%= f.radio_button :locale,
                            locale.to_s,
                            label: t('locales.' + locale.to_s,
-                                    locale: current_user.locale) %>
+                                    locale: current_user.locale),
+                           custom: true %>
       <% end %>
     <% end %>
   </div>
@@ -16,26 +17,33 @@
       <%= f.radio_button :subscription_type, 1,
                          label: t('profile.subscription_mixed'),
                          checked: @user.subscription_type == 1 ||
-                                  @user.subscription_type.nil? %>
+                                  @user.subscription_type.nil?,
+                         custom: true %>
       <%= f.radio_button :subscription_type, 2,
                          label: t('profile.subscription_all'),
-                         checked: @user.subscription_type == 2 %>
+                         checked: @user.subscription_type == 2,
+                         custom: true %>
       <%= f.radio_button :subscription_type, 3,
                          label: t('profile.subscription_strict'),
-                         checked: @user.subscription_type == 3 %>
+                         checked: @user.subscription_type == 3,
+                         custom: true %>
     <% end %>
   </div>
   <div class="col-12">
     <%= f.form_group :email_notifications,
                       label: { text: t('profile.email_notifications') } do %>
       <%= f.check_box :email_for_announcement,
-                      label: t('profile.email_for_announcement') %>
+                      label: t('profile.email_for_announcement'),
+                      custom: true %>
       <%= f.check_box :email_for_medium,
-                      label: t('profile.email_for_medium') %>
+                      label: t('profile.email_for_medium'),
+                      custom: true %>
       <%= f.check_box :email_for_teachable,
-                      label: t('profile.email_for_teachable') %>
+                      label: t('profile.email_for_teachable'),
+                      custom: true %>
       <%= f.check_box :email_for_news,
-                      label: t('profile.email_for_news') %>
+                      label: t('profile.email_for_news'),
+                      custom: true %>
     <% end %>
   </div>
 </div>

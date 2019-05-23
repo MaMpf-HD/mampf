@@ -3,6 +3,10 @@
 		<div class="row">
 			<div class="col-10">
 				<%= human_readable_date(announcement.created_at) %>
+        <%= t('from') %>
+        <% if announcement.lecture %>
+          <%= announcement.announcer&.name %>
+        <% end %>
 			</div>
 			<div class="col-2 text-right">
 				<% if user_signed_in? && announcement.active?(current_user) %>

@@ -44,6 +44,13 @@
                                              tags: l.tags.map(&:id) }  %>
                       <% end %>
                     </div>
+                    <% unless s.details.blank? %>
+                      <div class="col-12 my-2">
+                        <div class="bg-mdb-color-lighten-8 rounded p-2">
+                          <%= s.details.html_safe %>
+                        </div>
+                      </div>
+                    <% end %>
                     <div class="col-12 mt-2">
                       <% s.ordered_tags.each do |t| %>
                         <%= link_to shorten(t.title, 50),
