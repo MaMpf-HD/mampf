@@ -105,6 +105,11 @@ en:
       as_course_editor: 'As course editor'
       no_lectures_taught: >
         There is no lecture for which you are listed as teacher or editor.
+      my_courses: 'My Courses'
+      create_course: 'Create Course'
+      no_edited_courses: >
+        There are no courses for which you are editor.
+      my_media: 'My Media'
       info:
         lecture_definition:
           This is the list of all
@@ -129,9 +134,60 @@ en:
           This is the list of all lectures that belong to courses for which you
           are course editor, minus those lectures which you have given yourself.
           By inheritance, you have editing access to these lectures.
+        course_definition: >
+          This is the list of all
+          <i>Courses</i>,
+          for which you are editor, hence have editing access to.
+          <br>
+          </br>
+          A <i>Course</i> in the sense of MaMpf is a thematically
+          defined module whose content is described in the
+          module handbook.
+        medium_definition: >
+          This is the list of all
+          <i>Media</i>,
+          for which you are editor. Media for which you inherit editing access
+          (e.g. as course editor) are not listed here. Unpublished media
+          are shown in red.
+          <br>
+          <br>
+          A
+          <i>Medium</i>
+          in the senso of MaMpf is a bundle consisting of
+          <ul>
+          <li>
+          at most one video
+          </li>
+          <li>
+          at most one manuscript
+          </li>
+          <li>
+          at most one external link
+          </li>
+          <li>
+          at most one quiz, question or quiz remark
+          </li>
+          </ul>
+          to the same content. Example for media are
+          <ul>
+          <li>
+          a medium consisting of a lesson video recording together with
+          lesson notes.
+          </li>
+          <li>
+          a medium consisting only of lesson notes.
+          </li>
+          <li>
+          a medium consisting of a Worked Example Video with corresponding notes
+          </li>
+          <li>
+          a quiz.
+          </li>
+          </ul>
       term: 'Term'
       title: 'Title'
       teacher: 'Teacher'
+      editors: 'Editors'
   profile:
     account: 'Account'
     name: 'Display name'

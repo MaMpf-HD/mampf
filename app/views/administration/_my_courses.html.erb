@@ -2,32 +2,17 @@
   <div class="card-header bg-primary text-white">
     <div class="row">
       <div class="col-8">
-        Meine Module
+        <%= t('admin.main.my_courses') %>
         (<%= current_user.edited_courses.count  %>)
-        <i class="far fa-question-circle helpdesk ml-2"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Dies ist eine Liste aller
-           <i>Module</i>,
-           für die Du EditorIn bist und damit Bearbeitungsrechte hast.
-           <br>
-           </br>
-           Ein <i>Modul</i> im Sinne von MaMpf ist hierbei eher abstrakt
-           zu verstehen als eine thematisch abgegerenzte, inhaltlich
-           durch die Modulbeschreibung festgelegte Lerneinheit. "
-           data-html="true">
-        </i>
+        <%= helpdesk(t('admin.main.info.course_definition'), true) %>
       </div>
       <div class="col-4 text-right">
         <% if current_user.admin? %>
-          <a href="<%= new_course_path %>"
-             id="new-course-button"
-             class="fas fa-plus-circle text-light admin-index-button"
-             data-remote="true"
-             data-toggle="tooltip" title="Modul anlegen">
-          </a>
+          <%= link_to '', new_course_path,
+                      class: 'fas fa-plus-circle text-light admin-index-button',
+                      id: 'new-course-button',
+                      data: { remote: true, toggle: 'tooltip' },
+                      title: t('admin.main.create_course') %>
         <% end %>
       </div>
     </div>
@@ -46,7 +31,7 @@
                                          .natural_sort_by(&:title),
                            inspection: false } %>
     <% else %>
-      Es gibt keine Module, für die Du als EditorIn eingetragen bist.
+      <%= t('admin.main.no_edited_courses') %>
     <% end %>
   </div>
 </div>
