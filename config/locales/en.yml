@@ -201,17 +201,17 @@ en:
     passphrase: 'Passphrase'
     preferences: 'Preferences'
     content_info: >
-      MaMpf can give a multitude of related content.
+      MaMpf can show you related content.
       I want to see related content (if it is released for me)
     subscription_mixed: >
-      from subscribed courses and from courses that these build upon.
+      from courses I have subscribed to and from courses that these build upon.
     subscription_all: 'from all courses.'
-    subscription_strict: 'only from the subscribed courses.'
+    subscription_strict: 'only from the courses I have subscribed to.'
     no_notifications: >
       I do not want to obtain notifications about new media, new lectures
       or new features via the internal notification system of MaMpf.
     email_notifications: >
-      I want to obtain email notifications about:
+      I want to receive email notifications about:
     email_for_announcement:
       new announcements in lectures I have subscribed.
     email_for_medium:
@@ -232,7 +232,7 @@ en:
     locale: 'Language'
   mampf_news:
     title: 'MaMpf News'
-    check_notifications: 'Check off all'
+    check_notifications: 'Clear all'
     no_news: 'There are no MaMpf news available.'
   notifications:
     title: 'New notifications'
@@ -257,7 +257,7 @@ en:
     show_all: 'Show all'
     lecture:
       title: 'News'
-      one_new: 'There is a new anouncement:'
+      one_new: 'There is a new announcement:'
       more_new: 'There are %{count} new announcements:'
       new_post_html: 'There is an unread topic in the %{board}.'
       new_posts_html: 'There are %{count} unread topics in the %{board}.'
@@ -351,8 +351,8 @@ en:
       Notation and terminology in these questions may deviate from those used
       in your lecture by your teacher.
     future: >
-      In the future you will be able to specify the content and the length
-      of the test.
+      In the future you will be able to specify the content and the number
+      of questions.
     notation_header: 'Typical examples for differences'
     notation_examples_html: >
       <ul>
@@ -427,8 +427,8 @@ en:
     interested_html:
      Curious? %{blog} you can find more information and news about MaMpf.
   locales:
-    en: 'english'
-    de: 'german'
+    en: 'English'
+    de: 'German'
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -438,7 +438,7 @@ en:
       If you do not want to receive emails about activities in MaMpf
       you can disable that feature in your %{profile}.
     unsubscribe_text:
-      If you do not want to receive emails about activities in MaMpf
+      If you do not want to receive emails about activities in MaMpf,
       you can disable that feature in your profile settings.
     announcement_subject: 'New announcement'
     mampf_news: 'about MaMpf'
