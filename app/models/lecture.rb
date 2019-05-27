@@ -170,6 +170,7 @@ class Lecture < ApplicationRecord
   def script_items_by_position
     return [] unless manuscript
     Item.where(medium: lecture.manuscript)
+        .where.not(sort: 'self')
         .content
         .unquarantined
         .unhidden

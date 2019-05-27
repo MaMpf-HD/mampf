@@ -199,7 +199,7 @@
       <%= f.select :start_destination,
                    options_for_select(select_script_items(lesson.lecture),
                                       lesson.start_destination),
-                   {},
+                   { prompt: 'auswählen'},
                    { class: 'selectize' } %>
         </div>
         <div class="col-6">
@@ -207,7 +207,7 @@
       <%= f.select :end_destination,
                    options_for_select(select_script_items(lesson.lecture),
                                       lesson.end_destination),
-                   {},
+                   { prompt: 'auswählen' },
                    { class: 'selectize' } %>
         </div>
       </div>
