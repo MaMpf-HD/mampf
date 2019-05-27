@@ -213,9 +213,9 @@ en:
     email_notifications: >
       I want to receive email notifications about:
     email_for_announcement:
-      new announcements in lectures I have subscribed.
+      new announcements in lectures I have subscribed to.
     email_for_medium:
-      new media in lectures or courses I have subscribed.
+      new media in lectures or courses I have subscribed to.
     email_for_teachable:
       new lectures or modules.
     email_for_news:
