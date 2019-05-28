@@ -22,6 +22,10 @@ $(document).on 'turbolinks:load', ->
       this.selectize.enable()
     return
 
+  $(document).on 'click', '.cancel-lesson-edit', ->
+    location.reload()
+    return
+
   # add/remove associated tags in the tag selector
   # if sections are selected/deselected
   # this code has to be here, as turbolinks will not remember event handlers
@@ -60,4 +64,5 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#lesson-form :input'
   $(document).off 'click', '#cancel-new-lesson'
+  $(document).off 'click', '.cancel-lesson-edit'
   return

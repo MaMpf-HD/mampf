@@ -198,7 +198,7 @@
       <%= f.label :start_destination, 'Anfangs-Item' %>
       <%= f.select :start_destination,
                    options_for_select(select_script_items(lesson.lecture),
-                                      lesson.start_destination),
+                                      lesson.guess_start_destination),
                    { prompt: 'auswählen'},
                    { class: 'selectize' } %>
         </div>
@@ -206,7 +206,7 @@
       <%= f.label :end_destination, 'End-Item' %>
       <%= f.select :end_destination,
                    options_for_select(select_script_items(lesson.lecture),
-                                      lesson.end_destination),
+                                      lesson.guess_end_destination),
                    { prompt: 'auswählen' },
                    { class: 'selectize' } %>
         </div>

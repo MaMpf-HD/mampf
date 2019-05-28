@@ -4,7 +4,7 @@ if $('#lecture-basics-warning').is(':visible') || $('#lecture-preferences-warnin
   $('#no-effect-warning').show()
 else
   # render edit lesson form
-  $('#new-lesson-area').empty()
+  $('#new-lesson-area').empty().hide()
   $('#lesson-action').empty().append('bearbeiten')
   $('#lesson-modal-content').empty()
     .append('<%= j render partial: "lessons/edit",

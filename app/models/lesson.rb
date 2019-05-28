@@ -234,6 +234,30 @@ class Lesson < ApplicationRecord
           .map { |l| [l.title_for_viewers, 'Lesson-' + l.id.to_s] }
   end
 
+  def guess_start_destination
+    return start_destination if start_destination
+    return unless previous
+    probable_start_destination
+  end
+
+  def guess_end_destination
+    return end_destination if end_destination
+    return unless previous
+    probable_start_destination
+  end
+
+  def probable_start_destination
+    end_item = Item.where(medium: lecture.manuscript,
+                          pdf_destination: previous.end_destination)&.first
+    return unless end_item
+    position = end_item.position
+    return unless position
+    successor = lecture.script_items_by_position.where('position > ?', position)
+                       .order(:position)&.first&.pdf_destination
+    return successor if successor
+    end_item.pdf_destination
+  end
+
   private
 
   # path for show lesson action
