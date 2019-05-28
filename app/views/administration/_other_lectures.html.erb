@@ -4,7 +4,7 @@
     (<%= current_user.teaching_unrelated_lectures.count  %>)
     <%= helpdesk(t('admin.main.info.other_lectures'), false) %>
   </div>
-  <div class="card-body">
+  <div class="card-body card-compact">
     <% if current_user.teaching_unrelated_lectures.present? %>
       <%= render partial: 'administration/lectures_card',
                  locals: { lectures:
