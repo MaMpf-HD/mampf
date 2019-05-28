@@ -1,23 +1,15 @@
 <div class="row">
   <div class="col-12">
     <h6>
-      Neues Modul anlegen
+      <%= t('admin.course.new_course') %>
     </h6>
   </div>
 </div>
 <%= form_with model: course do |f| %>
   <div class="form-row">
     <div class="col-8 form-group">
-      <%= f.label :title, 'Titel' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier musst Du den Titel des Moduls eintragen.
-         Typischerweise sollte das der Titel aus dem Modulhandbuch sein.
-         Modulnamen dürfen nur einmal vergeben werden.">
-      </i>
+      <%= f.label :title, t('basics.title') %>
+      <%= helpdesk(t('admin.course.info.title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'new_course_title' } %>
       <div class="invalid-feedback"
@@ -25,15 +17,8 @@
       </div>
     </div>
     <div class="col-4 form-group">
-      <%= f.label :short_title, 'Kurztitel' %>
-      <i class="far fa-question-circle helpdesk ml-2"
-               tabindex="-1"
-               data-toggle="popover"
-               data-trigger="focus"
-               title="Info"
-               data-content="Der Kurztitel wird an mehreren Stellen als
-               Abkürzung verwendet.">
-      </i>
+      <%= f.label :short_title, t('basics.short_title') %>
+      <%= helpdesk(t('admin.course.info.short_title'), false) %>
       <%= f.text_field :short_title, { class: 'form-control',
                                  id: 'new_course_short_title' } %>
       <div class="invalid-feedback"
@@ -42,17 +27,8 @@
     </div>
     <div class="col-12 form-group">
       <%= f.label :editor_ids,
-                  'EditorInnen' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier gibst Du die ModuleditorInnen an. Diese können
-         das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
-         des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
-         alle Vorlesungen innerhalb des Moduls.">
-      </i>
+                  t('basics.editors') %>
+      <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
                    options_for_select(User.select_editors),
                    {}, { class: 'selectize', multiple: true } %>

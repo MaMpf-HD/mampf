@@ -221,6 +221,19 @@ en:
           Normally this should be the person that actually gives the lecture.
           If this person does not want to upload materials himself or
           herself, this can be realized by additional lecture editors.
+    course:
+      new_course: 'Create new course'
+      info:
+        title: >
+          Here you can enter the title of the course. Typically, this should be
+          the title form the module handbook. Course titles have to be unique.
+        short_title: >
+          The short title will be used as abbreviation in several places.
+        editors: >
+          Here you can enter the course editors. They can edit the course,
+          in particular they can create lectures within the course. Every course
+          editor inherits editing acces for all lectures belonging to the
+          course.
   profile:
     account: 'Account'
     name: 'Display name'
