@@ -34,7 +34,7 @@ class LessonsController < ApplicationController
   def update
     @lesson.update(lesson_params)
     if @lesson.valid?
-      if params[:commit] == 'Speichern'
+      if params[:commit] == t('buttons.save')
         render :edit
       else
         # if user clicked 'save and back'
@@ -83,7 +83,7 @@ class LessonsController < ApplicationController
   end
 
   def redirect_or_edit
-    if params[:commit] == 'Speichern'
+    if params[:commit] == t('buttons.save')
       redirect_to edit_lecture_path(@lesson.lecture)
     else
       # if user clicked 'save and edit'

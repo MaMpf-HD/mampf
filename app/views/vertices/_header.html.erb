@@ -57,7 +57,8 @@
               aria-controls="collapse-vertex-<%= vertex_id %>">
         Ziele ändern
       </button>
-      <%= link_to 'Löschen', quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
+      <%= link_to t('buttons.delete'),
+                  quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
                   method: :delete,
                   data: { confirm: 'Bist Du sicher? Damit werden auch die'\
                                     'zugehörigen Kanten gelöscht.' },

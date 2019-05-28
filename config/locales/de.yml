@@ -97,6 +97,18 @@ de:
       no_edited_courses: >
         Es gibt keine Module, für die Du als EditorIn eingetragen bist.
       my_media: 'Meine Medien'
+      media_restriction_html: >
+        Es werden nur die 25 zuletzt geupdateten Medien angezeigt.
+        Mehr Medien findest du über die %{media_search} oder in deinen
+        %{profile}.
+      media_search: 'Mediensuche'
+      user_profile: 'Nutzerprofil'
+      no_media: >
+        Es gibt keine Medien, für die Du als EditorIn eingetragen bist.
+      other_lectures: 'Sonstige Vorlesungen'
+      no_other_lectures: 'Es gibt keine sonstigen Vorlesungen.'
+      other_courses: 'Sonstige Module'
+      no_other_courses: 'Es gibt keine sonstigen Module.'
       info:
         lecture_definition: >
           Dies ist eine Liste aller
@@ -179,10 +191,35 @@ de:
           ein Quiz.
           </li>
           </ul>
+        other_lectures: >
+          Dies ist eine Liste aller Vorlesungen, für die Du keine
+          Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
+        other_courses: >
+          Dies ist eine Liste aller Module, für die Du
+          kein(e) EditorIn bist und somit keine Bearbeitungsrechte hast.
+          (Es sei denn, Du bist Admin :-P )
       term: 'Sem'
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
+    lecture:
+      new_lecture: 'Neue Vorlesung anlegen'
+      no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
+      no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
+      info:
+        course: >
+          Hier kannst Du das Modul auswählen, zu dem diese
+          Vorlesung gehört.
+        term: >
+          Hier kannst Du das Semester auswählen, in dem diese
+          Vorlesung stattfindet bzw. stattgefunden hat.
+        teacher: >
+          Hier kannst Du die DozentIn der Vorlesung auswählen.
+          Die DozentIn sollte im Normalfall diejenige Person sein,
+          die die Vorlesung hält. Möchte die entsprechende Person
+          sich nicht selbst um das Einstellen von Materialien
+          kümmern, so kann dies durch zusätzliche
+          Vorlesungseditoren geschehen.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -466,6 +503,18 @@ de:
     subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
     subscribe_course_text: >
       Du kannst es über Deine Profileinstellungen abonnieren.
+  basics:
+    course: 'Modul'
+    term: 'Semester'
+    teacher: 'DozentIn'
+    title: 'Titel'
+    short_title: 'Kurztitel'
+    editors: 'EditorInnen'
+  buttons:
+    save: 'Speichern'
+    save_and_exit: 'Speichern und zurück'
+    cancel: 'Abbrechen'
+    delete: 'Löschen'
   activerecord:
     errors:
       models:

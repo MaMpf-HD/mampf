@@ -85,11 +85,11 @@
             <div class="col-12 text-center">
               <div id="lecture-organizational-warning">
                 Achtung, es gibt ungespeicherte Änderungen!
-                <%= f.submit "Speichern und zurück",
+                <%= f.submit t('buttons.save_and_exit'),
                              class: "btn btn-primary" %>
                 <button type="button" id="cancel-lecture-organizational"
                         class="btn btn-secondary">
-                  Abbrechen
+                  <%= t('buttons.cancel') %>
                 </button>
               </div>
             </div>

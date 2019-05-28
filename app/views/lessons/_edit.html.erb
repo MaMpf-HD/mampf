@@ -19,15 +19,17 @@
   </div>
   <div class="row mb-3">
     <div class="col-12 text-center">
-      <%= f.submit 'Speichern',
+      <%= f.submit t('buttons.save'),
                    class: 'btn btn-primary' %>
-      <%= f.submit 'Speichern und zurück',
+      <%= f.submit t('buttons.save_and_exit'),
                    class: 'btn btn-primary' %>
       <button type="button"
               class="btn btn-secondary cancel-lesson-edit">
-        Abbrechen
+        <%= t('buttons.cancel') %>
       </button>
-      <%= link_to 'löschen', lesson_path(@lesson), method: :delete,
+      <%= link_to t('buttons.delete'),
+                  lesson_path(@lesson),
+                  method: :delete,
                   data: { confirm: 'Bist Du sicher? Die zugehörigen Medien ' \
                                     'werden nicht gelöscht, sondern ' \
                                     'werden dann der entsprechenden Vorlesung ' \

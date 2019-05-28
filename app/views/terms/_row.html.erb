@@ -20,7 +20,7 @@
               class: 'btn btn-outline-primary my-1',
               remote: true %>
   <% if term.lectures.empty? %>
-    <%= link_to 'Löschen',
+    <%= link_to t('buttons.delete'),
                 term_path(term),
                 method: :delete,
                 data: { confirm: 'Bist Du sicher?' },

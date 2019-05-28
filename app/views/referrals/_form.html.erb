@@ -360,15 +360,15 @@
                        value: referral.id %>
     <%= f.hidden_field :medium_id,
                        value: referral.medium_id %>
-    <%= f.submit 'Speichern',
+    <%= f.submit t('buttons.save'),
                  class: 'btn btn-primary' %>
     <button id="cancel-item"
             class="btn btn-secondary ml-3"
             type="button">
-      Abbrechen
+      <%= t('buttons.cancel') %>
     </button>
     <% if referral.id.present? %>
-      <%= link_to 'Löschen',
+      <%= link_to t('buttons.delete'),
                   referral_path(referral),
                   method: :delete,
                   remote: true,

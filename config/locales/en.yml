@@ -110,6 +110,18 @@ en:
       no_edited_courses: >
         There are no courses for which you are editor.
       my_media: 'My Media'
+      media_restriction_html: >
+        Only the last 25 recently updated media are shown.
+        You can find more media via the %{media_search} oder in your
+        %{profile}.
+      media_search: 'media search'
+      user_profile: 'user profile'
+      no_media: >
+        There are no media for which you are registered as editor.
+      other_lectures: 'Other lectures'
+      no_other_lectures: 'There are no other lectures.'
+      other_courses: 'Other courses'
+      no_other_courses: 'There are no other courses.'
       info:
         lecture_definition:
           This is the list of all
@@ -153,7 +165,7 @@ en:
           <br>
           A
           <i>Medium</i>
-          in the senso of MaMpf is a bundle consisting of
+          in the sense of MaMpf is a bundle consisting of
           <ul>
           <li>
           at most one video
@@ -184,10 +196,31 @@ en:
           a quiz.
           </li>
           </ul>
+        other_lectures: >
+          This is the list of lectures for which you do not have editing access.
+          (Except if you are an admin :-P )
+        other_courses: >
+          This is the list of courses for which you do not have editing access.
+          (Except if you are an admin :-P )
       term: 'Term'
       title: 'Title'
       teacher: 'Teacher'
       editors: 'Editors'
+    lecture:
+      new_lecture: 'Create new lecture'
+      no_courses_yet: 'Before you can do that, you have to create a course.'
+      no_terms_yet: 'Before_you can do that, you have to create a term.'
+      info:
+        course: >
+          Here you can choose the course to which this lecture belongs.
+        term: >
+          Here you can choose the term in which this lecture takes place or
+          took place.
+        teacher: >
+          Here you can choose the teacher of this lecture.
+          Normally this should be the person that actually gives the lecture.
+          If this person does not want to upload materials himself or
+          herself, this can be realized by additional lecture editors.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -455,6 +488,18 @@ en:
     subscribe_course_html: 'You can subscribe it in your %{profile}.'
     subscribe_course_text: >
       You can subscribe it in your profile settings.
+  basics:
+    course: 'Course'
+    term: 'Term'
+    teacher: 'Teacher'
+    title: 'Title'
+    short_title: 'Short title'
+    editors: 'Editors'
+  buttons:
+    save: 'Save'
+    cancel: 'Cancel'
+    save_and_exit: 'Save and Exit'
+    delete: 'Delete'
   activerecord:
     errors:
       models:

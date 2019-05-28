@@ -87,13 +87,14 @@
   <%= f.hidden_field :lecture_id, value: lecture.id %>
   <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit 'Speichern und zurück', class: 'btn btn-primary' %>
+      <%= f.submit t('buttons.save_and_exit'), class: 'btn btn-primary' %>
       <button type="button" id="cancel-chapter"
               class="btn btn-secondary">
-        Abbrechen
+        <%= t('buttons.cancel') %>
       </button>
       <% if chapter.sections.empty? %>
-        <%= link_to 'Löschen', chapter_path(chapter),
+        <%= link_to t('buttons.delete'),
+                    chapter_path(chapter),
                     class: 'btn btn-danger',
                     method: :delete,
                     data: { confirm: 'Bist Du sicher?' }%>

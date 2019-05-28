@@ -89,10 +89,10 @@
           </div>
           <%= f.hidden_field :sort, value: 'link' %>
           <%= f.hidden_field :from, value: 'referral' %>
-          <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+          <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
           <button class="btn btn-secondary ml-3" type="button"
                   data-dismiss="modal">
-            Abbrechen
+            <%= t('buttons.cancel') %>
           </button>
         <% end %>
       </div>

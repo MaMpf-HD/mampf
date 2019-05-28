@@ -8,7 +8,7 @@
               Ecke anlegen
             </div>
             <div class="col-4 text-right">
-              <%= link_to 'Abbrechen', edit_quiz_path(quiz),
+              <%= link_to t('buttons.cancel'), edit_quiz_path(quiz),
                           class: 'btn btn-sm btn-secondary' %>
             </div>
           </div>
@@ -94,7 +94,7 @@
                                           id: 'vertex_sort_question' %>
                 <%= f.text_field :label, label: 'Fragen-Titel' %>
                 <div class='text-center'>
-                  <%= f.submit 'Speichern' %>
+                  <%= f.submit t('buttons.save') %>
                 </div>
               <% end %>
             </div>
@@ -106,7 +106,7 @@
                                           id: 'vertex_sort_remark' %>
                 <%= f.text_field :label, label: 'Bemerkungs-Titel' %>
                 <div class='text-center'>
-                  <%= f.submit 'Speichern' %>
+                  <%= f.submit t('buttons.save') %>
                 </div>
               <% end %>
             </div>

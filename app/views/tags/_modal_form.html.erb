@@ -12,12 +12,12 @@
                        value: true %>
     <%= f.hidden_field :from,
                        value: from %>
-    <%= f.submit "Speichern",
+    <%= f.submit t('buttons.save'),
                  class: "btn btn-primary" %>
     <button type="button"
             class="btn btn-secondary"
             data-dismiss="modal">
-      Abbrechen
+      <%= t('buttons.cancel') %>
     </button>
   <% end %>
 </div>

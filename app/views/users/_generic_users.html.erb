@@ -31,12 +31,12 @@
         <div class="col-3">
           <span id="submit-user-elevate"
                 class="no_display">
-          <%= f.submit 'Speichern',
+          <%= f.submit t('buttons.save'),
                        class: 'btn btn-primary' %>
           </span>
         </div>
         <div class="col-3 text-right">
-          <%= link_to 'Löschen',
+          <%= link_to t('buttons.delete'),
                       nil,
                       method: :delete,
                       data: { confirm: 'Bist Du sicher?' },

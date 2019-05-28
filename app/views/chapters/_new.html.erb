@@ -45,10 +45,10 @@
   <%= f.hidden_field :lecture_id, value: lecture.id %>
   <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+      <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
       <button type="button" id="cancel-new-chapter"
               class="btn btn-secondary">
-        Abbrechen
+        <%= t('buttons.cancel') %>
       </button>
     </div>
   </div>

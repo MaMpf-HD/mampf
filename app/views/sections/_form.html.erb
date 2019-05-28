@@ -171,16 +171,16 @@
   <%= f.trix_editor :details %>
   <div class="row mt-2 ">
     <div class="col-12 text-center">
-      <%= f.submit "Speichern",
+      <%= f.submit t('buttons.save'),
                    class: "btn btn-primary mr-2 mb-2" %>
-      <%= f.submit "Speichern und zurück",
+      <%= f.submit t('buttons.save_and_exit'),
                    class: "btn btn-primary mr-2 mb-2" %>
       <button type="button"
               class="btn btn-secondary mb-2"
               id="cancel-section">
-        Abbrechen
+        <%= t('buttons.cancel') %>
       </button>
-      <%= link_to 'löschen',
+      <%= link_to t('buttons.delete'),
                   section_path,
                   method: :delete,
                   data: { confirm: 'Bist Du sicher?' },

@@ -1,16 +1,8 @@
 <div class="card">
   <div class="card-header bg-teal-lighten-4">
-    Sonstige Module
+    <%= t('admin.main.other_courses') %>
     (<%= Course.count - current_user.edited_courses.count  %>)
-    <i class="far fa-question-circle helpdesk ml-2"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Dies ist eine Liste aller Module, für die Du
-       kein(e) EditorIn bist und somit keine Bearbeitungsrechte hast.
-       (Es sei denn, Du bist Admin :-P )">
-    </i>
+    <%= helpdesk(t('admin.main.info.other_courses'), false) %>
   </div>
   <div class="card-body">
     <% if (Course.all - current_user.edited_courses).present? %>
@@ -18,7 +10,7 @@
                  locals: { courses: non_edited_courses.natural_sort_by(&:title),
                            inspection: true } %>
     <% else %>
-      Es gibt keine sonstigen Module.
+      <%= t('admin.main.no_other_courses') %>
     <% end %>
   </div>
 </div>

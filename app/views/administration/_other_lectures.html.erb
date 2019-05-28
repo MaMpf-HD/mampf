@@ -1,16 +1,8 @@
  <div class="card">
   <div class="card-header bg-teal-lighten-4">
-    Sonstige Vorlesungen
+    <%= t('admin.main.other_lectures') %>
     (<%= current_user.teaching_unrelated_lectures.count  %>)
-    <i class="far fa-question-circle helpdesk ml-2"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Dies ist eine Liste aller Vorlesungen,
-       für die Du keine Bearbeitungsrechte hast.
-       (Es sei denn, Du bist Admin :-P )">
-    </i>
+    <%= helpdesk(t('admin.main.info.other_lectures'), false) %>
   </div>
   <div class="card-body">
     <% if current_user.teaching_unrelated_lectures.present? %>
@@ -21,7 +13,7 @@
                            inspection: true,
                            teacher: true } %>
     <% else %>
-      Es gibt keine sonstigen Vorlesungen.
+      <%= t('admin.main.no_other_lectures') %>
     <% end %>
   </div>
 </div>

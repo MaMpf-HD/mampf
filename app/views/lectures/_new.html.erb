@@ -2,28 +2,21 @@
   <div class="row">
     <div class="col-12">
       <h6>
-        Neue Vorlesung anlegen
+        <%= t('admin.lecture.new_lecture') %>
       </h6>
     </div>
   </div>
 <% end %>
 <% if Course.count == 0 %>
-  Es muss zunächst ein Modul angelegt werden.
+  <%= t('admin.lecture.no_courses_yet') %>
 <% elsif Term.count == 0 %>
-  Es muss zunächst ein Semester angelegt werden.
+  <%= t('admin.lecture.no_terms_yet') %>
 <% else %>
   <%= form_with model: lecture do |f| %>
     <div class="form-row">
       <div class="col-8 form-group">
-        <%= f.label :course_id, 'Modul' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du das Modul auswählen, zu dem diese
-           Vorlesung gehört.">
-        </i>
+        <%= f.label :course_id, t('basics.course') %>
+        <%= helpdesk(t('admin.lecture.info.course'), false) %>
         <%= f.select :course_id,
                      options_for_select(current_user
                                           .select_administrated_courses,
@@ -39,15 +32,8 @@
       </div>
       <div class="col-4 form-group">
         <%= f.label :term_id,
-                    'Semester' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du das Semester auswählen, in dem diese
-           Vorlesung stattfindet bzw. stattgefunden hat.">
-        </i>
+                    t('basics.term') %>
+        <%= helpdesk(t('admin.lecture.info.term'), false) %>
         <%= f.select :term_id,
                      options_for_select(Term.select_terms),
                      {},
@@ -55,19 +41,8 @@
       </div>
       <div class="col-12 form-group">
         <%= f.label :teacher_id,
-                    'DozentIn' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du die DozentIn der Vorlesung auswählen.
-           Die DozentIn sollte im Normalfall diejenige Person sein,
-           die die Vorlesung hält. Möchte die entsprechende Person
-           sich nicht selbst um das Einstellen von Materialien
-           kümmern, so kann dies durch zusätzliche
-           Vorlesungseditoren geschehen.">
-        </i>
+                    t('basics.teacher') %>
+        <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
         <%= f.select :teacher_id,
                      options_for_select(User.select_editors,
                                         current_user.id),
@@ -78,12 +53,12 @@
     </div>
     <div class="row">
       <div class="col-12 text-center">
-        <%= f.submit 'Speichern',
+        <%= f.submit t('buttons.save'),
             class: 'btn btn-primary' %>
         <button type="button"
                 id="cancel-new-lecture"
                 class="btn btn-secondary">
-          Abbrechen
+          <%= t('buttons.cancel') %>
         </button>
       </div>
     </div>

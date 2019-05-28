@@ -51,13 +51,13 @@
   <%= f.hidden_field :from %>
   <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit 'Speichern',
+      <%= f.submit t('buttons.save'),
                    class: 'btn btn-primary' %>
       <button type="button"
               id="cancel-new-section"
               data-chapter="<%= chapter.id %>"
               class="btn btn-secondary">
-        Abbrechen
+        <%= t('buttons.cancel') %>
       </button>
     </div>
   </div>

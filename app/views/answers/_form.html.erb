@@ -30,11 +30,11 @@
   <%= f.hidden_field :question_id, value: question_id,
                      id: 'answer_' + id.to_s + '_question_id' %>
   <div class="text-center mt-4">
-    <%= f.submit "Speichern", class: "btn btn-primary" %>
+    <%= f.submit t('buttons.save'), class: "btn btn-primary" %>
     <% if id == 0 %>
       <button type="button" class="btn btn-secondary ml-3"
               id="new-answer-cancel">
-        Abbrechen
+        <%= t('buttons.cancel') %>
       </button>
     <% end %>
   </div>

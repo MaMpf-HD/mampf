@@ -20,7 +20,8 @@
                 aria-controls="collapse-answer-<%= answer.id %>">
           Bearbeiten
         </button>
-        <%= link_to 'Löschen', answer_path(answer), method: :delete,
+        <%= link_to t('buttons.delete'),
+                    answer_path(answer), method: :delete,
                     data: { confirm: 'Bist Du sicher?' },
                     class: 'btn btn-sm btn-danger',
                     remote: true %>

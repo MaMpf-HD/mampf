@@ -208,14 +208,14 @@
     <% end %>
     <div>
       <%= f.hidden_field :medium_id, value: item.medium.id %>
-      <%= f.submit 'Speichern', class: 'btn btn-primary' %>
+      <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
       <button id="cancel-item"
               class="btn btn-secondary ml-3"
               type="button">
-        Abbrechen
+        <%= t('buttons.cancel') %>
       </button>
       <% if item.id.present? %>
-      <%= link_to 'Löschen',
+      <%= link_to t('buttons.delete'),
                   item_path(item),
                   method: :delete,
                   remote: true,

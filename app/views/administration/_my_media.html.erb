@@ -19,14 +19,14 @@
         <% end %>
       </ul>
       <% if current_user.edited_media.count > 25 %>
-        Es werden nur die 25 zuletzt geupdateten Medien angezeigt.
-        Mehr Medien findest Du über die
-        <%= link_to 'Mediensuche', media_catalog_path %>
-        oder in Deinem
-        <%= link_to 'Nutzerprofil', elevated_profile_path(current_user) %>.
+        <%= t('admin.main.media_restriction_html',
+              media_search: link_to(t('admin.main.media_search'),
+                                    media_catalog_path),
+              profile: link_to(t('admin.main.user_profile'),
+                               elevated_profile_path(current_user))) %>
       <% end %>
     <% else %>
-      Es gibt keine Medien, für die Du als EditorIn eingetragen bist.
+      <%= t('admin.main.no_media') %>
     <% end %>
   </div>
 </div>

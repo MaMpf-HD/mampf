@@ -21,14 +21,14 @@
       </ul>
     </div>
     <div class="col-4">
-      <%= f.submit 'Speichern',
+      <%= f.submit t('buttons.save'),
                    class: 'btn btn-primary' %>
         <button type="button"
                 class="btn btn-secondary"
                 id="cancel-term-edit"
                 data-term="<%= term.id %>"
                 data-new="<%= new_action %>">
-          Abbrechen
+          <%= t('buttons.cancel') %>
         </button>
       </div>
     </div>
