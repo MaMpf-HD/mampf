@@ -625,16 +625,23 @@ class Medium < ApplicationRecord
   # returned, or a Script
   def local_info
     return description if description.present?
-    return 'ohne Titel' unless undescribable?
+    return I18n.t('medium.local_info.no_title') unless undescribable?
     if sort == 'Kaviar'
-      return "zu Sitzung #{teachable.lesson&.number}, " \
-             "#{teachable.lesson&.date_localized}"
+      return I18n.t('admin.medium.local_info.to_session',
+                    number: teachable.lesson&.number,
+                    date: teachable.lesson&.date_localized)
     elsif sort == 'Script'
-      return 'Skript'
+      return I18n.t('categories.script')
     elsif sort == 'Question'
-      'Frage ' + position.to_s + '/' + siblings.count.to_s
+      # actually, Questions should alway have a description
+      return I18n.t('admin.medium.local_info.question',
+                    position: position,
+                    count: siblings.count)
     end
-    'Erläuterung ' + position.to_s + '/' + siblings.count.to_s
+    # actually, Remarks should alway have a description
+    I18n.t('admin.medium.local_info.remark',
+            position: position,
+            count: siblings.count)
   end
 
   # returns description if present, otherwise ''

@@ -27,13 +27,13 @@
   </div>
   <div class="col-5">
     <div id="medium-basics-warning">
-      Achtung, ungespeicherte Änderungen!
+      <%= t('warnings.unsaved_changes') %>
       <%= f.submit t('buttons.save'),
                    class: "btn btn-primary" %>
       <button type="button"
               class="btn btn-secondary ml-2"
               id="medium-basics-cancel">
-        verwerfen
+        <%= t('button.discard') %>
       </button>
     </div>
   </div>

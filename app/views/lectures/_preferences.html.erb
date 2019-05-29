@@ -13,7 +13,7 @@
              href="#preferences_collapse"
              id="preferences_collapse_button"
              aria-expanded="false" aria-controls="preferences_collapse">
-            Ein-/Ausklappen
+            <%= t('buttons.toggle') %>
           </a>
         </div>
       </div>
@@ -149,7 +149,7 @@
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">
-                Achtung, es gibt ungespeicherte Änderungen!
+                <%= t('warnings.unsaved_changes') %>
                 <%= f.submit t('buttons.save_and_exit'),
                              class: "btn btn-primary" %>
                 <button type="button" id="cancel-lecture-preferences"

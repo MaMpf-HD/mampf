@@ -8,7 +8,7 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'shown.bs.collapse', '[id^="collapse-answer-"]', ->
     $('#targets-answer-' + $(this).data('id')).empty()
-      .append('verwerfen').removeClass('btn-primary').addClass('btn-secondary')
+      .append(I18n.t('buttons.discard')).removeClass('btn-primary').addClass('btn-secondary')
     return
 
   # change button 'verwerfen' back to 'Ziele ändern' and rerender answer body

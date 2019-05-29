@@ -11,14 +11,14 @@
       </div>
       <div class="col-6">
         <div id="user-basics-warning">
-          Achtung, es gibt ungespeicherte Änderungen!
+          <%= t('warnings.unsaved_changes') %>
           <%= f.submit t('buttons.save'),
                        class: "btn btn-primary" %>
           <button type="button"
                   class="btn btn-secondary ml-2"
                   id="user-basics-cancel"
                   data-id="<%= user.id %>">
-            verwerfen
+            <%= t('button.discard') %>
           </button>
         </div>
       </div>

@@ -8,7 +8,7 @@
       </div>
       <div class="col-5">
         <span class="no_display incorrect" id="quiz-basics-warning">
-          Achtung, es gibt ungespeicherte Änderungen!
+          <%= t('warnings.unsaved_changes') %>
         </span>
       </div>
       <div class="col-4">
@@ -16,7 +16,7 @@
           <%= f.submit t('buttons.save'), class: "btn btn-primary btn-sm" %>
           <button type="button" class="btn btn-secondary btn-sm"
                   id="quiz-basics-cancel" data-id="<%= quiz.id %>">
-            verwerfen
+            <%= t('button.discard') %>
           </button>
         </span>
       </div>

@@ -3,30 +3,32 @@
     <div class="col-7">
       <h4 class="pl-2">
         <span class="badge badge-secondary">
-          Vorlesung
+          <%= t('basics.lecture') %>
         </span>
         <% unless lecture.published? %>
           <span class="badge badge-warning">
-            unveröffentlicht
+            <%= t('access.unpublished') %>
           </span>
         <% end %>
         <%= lecture.title_with_teacher %>
       </h4>
     </div>
     <div class="col-5 text-right">
+      <%= link_to t('buttons.course'),
+                  edit_or_inspect_course_path(lecture.course),
+                  class: 'btn btn-outline-primary' %>
       <% if !inspection && !lecture.published? %>
-        <button type="button" class="btn btn-danger"
+        <button type="button" class="btn btn-outline-danger"
                 data-toggle="modal" data-target="#publishLectureModal">
-          Veröffentlichen
+          <%= t('buttons.publish') %>
         </button>
       <% end %>
-      <%= link_to 'zum Modul',
-                  edit_or_inspect_course_path(lecture.course),
-                  class: 'btn btn-primary' %>
       <% if lecture_deletable?(lecture, inspection) %>
-        <%= link_to 'Vorlesung löschen', lecture_path, method: :delete,
-                    data: { confirm: 'Bist Du sicher?' },
-                    class: 'btn btn-danger' %>
+        <%= link_to t('buttons.delete'),
+                    lecture_path,
+                    method: :delete,
+                    data: { confirm: t('confirmation.generic') },
+                    class: 'btn btn-outline-danger' %>
       <% end %>
     </div>
   </div>

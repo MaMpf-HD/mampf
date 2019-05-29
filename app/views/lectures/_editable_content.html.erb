@@ -3,71 +3,33 @@
     <div class="row">
       <div class="col-3">
         <h5>
-          Vorlesungsinhalt
+          <%= t('lecture.content') %>
           <i id="show-media-button"
              class="far fa-list-alt clickable"
              data-toggle="tooltip"
-             title="Medien einblenden">
+             title="<%= t('admin.lecture.show_media') %>">
           </i>
         </h5>
       </div>
       <div class="col-2">
         <% unless inspection %>
-        zum Workflow
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
-             title="Info"
-             data-content="Wir beschreiben im Folgenden einen sinnvollen
-             Workflow. Hierbei sollte man unterscheiden, ob die Vorlesung
-             <i>videobasiert</i> oder <i>skriptbasiert</i> ist.
-             <ul>
-             <li>
-             <i>
-             videobasiert:
-             </i>
-             Zunächst legt man die Kapitel und Abschnitte an und tagged diese.
-             Danach werden Sitzungen und zugeordnete Medien angelegt, diese
-             erben dann die entsprechenden Tags. Andersherum geht es natürlich
-             auch, dann ist jedoch ein höherer Aufwand beim Tagging
-             erforderlich.
-             </li>
-             <li>
-             <i>
-             skriptbasiert:
-             </i>
-             Es empfiehlt sich, in der .tex-Datei das
-             <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
-             einzubinden
-             und alles, was gelabelt werden soll, mit \mampflabels zu versehen.
-             Das so entstandene Skript wird in Mampf hochgeladen und die
-             Gliederung in MaMpf importiert. Dabei ist es möglich, dass
-             in MaMpf automatisch zugehörige Tags angelegt werden. Danach kann
-             man Sitzungen anlegen, bei denen man jeweils die Einträge aus dem
-             Skript auswählt, die die Sitzung begrenzen.
-             </li>
-             </ul>
-             In gewissem Umfang kann man auch versuchen, die Vorteile beider
-             Varianten zu kombinieren. Hat man eine videobasierte Vorlesung,
-             kann man natürlich trotzdem ein Skript hochladen und daraus die
-             grobe Gliederung importieren."
-             data-html="true">
-          </i>
+          <%= t('admin.lecture.workflow') %>
+          <%= helpdesk(t('admin.lecture.info.workflow'), true) %>
         <% end %>
       </div>
       <% unless inspection %>
         <div class="col-2">
           <span id="no-effect-warning">
-            Du musst zunächst die anderen Änderungen speichern oder verwerfen.
+            <%= t('warnings.save_before') %>
           </span>
         </div>
         <div class="col-5 text-right">
-          <%= link_to 'Kapitel anlegen',
+          <%= link_to t('buttons.create_chapter'),
                        new_chapter_path(lecture_id: lecture.id),
                        remote: true,
                        class: 'btn btn-secondary new-in-lecture',
                        id: 'new_chapter_button' %>
-          <%= link_to 'Sitzung anlegen',
+          <%= link_to t('buttons.create_lesson'),
                        new_lesson_path(lecture_id: lecture.id),
                        remote: true,
                        class: 'btn btn-secondary new-in-lecture',
@@ -87,7 +49,8 @@
                  data-lecture="<%= lecture.id %>">
           <label class="custom-control-label"
                  for="video-based">
-            videobasiert</label>
+            <%= t('admin.lecture.video_based') %>
+          </label>
         </div>
         <div class="custom-control custom-radio custom-control-inline">
           <input type="radio"
@@ -98,40 +61,10 @@
                  data-lecture="<%= lecture.id %>">
           <label class="custom-control-label"
                  for="manuscript-based">
-            skriptbasiert</label>
+            <%= t('admin.lecture.script_based') %>
+          </label>
         </div>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
-           title="Info"
-           data-content="Damit legst Du fest, wie MaMpf die detaillierten
-           Inhalte von Abschnitten bzw. Sitzungen ermittelt:
-           <ul>
-           <li>
-           <i>
-           videobasiert:
-           </i>
-           MaMpf legt für den Inhalt alle Items zugrunde, die im THymE-Editor
-           für den entsprechenden Abschnitt angelegt wurden bzw. zu denjenigen
-           Videos gehören, die zu der Sitzung assoziiert sind.
-           Diese werden nach der Zeit ihres Auftretens im Video sortiert.
-           </li>
-           <li>
-           <i>
-           skriptbasiert:
-           </i>
-           MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
-           denjenigen Abschnitt mit einem MaMpf-Label versehen wurden,
-           bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
-           wurden. Damit dass funktioniert, müssen die MaMpf-Labels im
-           LaTEX-File für das Manuskript mit dem
-           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
-           erzeugt werden
-           und nach dem Hochladen des Skriptes in MaMpf übernommen werden.
-           </li>
-           </ul>"
-           data-html="true">
-        </i>
+        <%= helpdesk(t('admin.lecture.info.variants'), true) %>
       </div>
     </div>
     <% end %>
@@ -163,7 +96,7 @@
                        class="text-light"
                        data-toggle="tooltip"
                        data-placement="bottom"
-                       title="Bearbeiten"
+                       title="<%= t('buttons.edit') %>"
                        data-remote="true">
                       <i class="far fa-edit text">
                       </i>
@@ -175,7 +108,8 @@
                     <a href="<%= new_section_path(chapter_id: c.id) %>"
                        class="text-light new-in-lecture"
                        data-remote="true"
-                       data-toggle="tooltip" title="Abschnitt anlegen">
+                       data-toggle="tooltip"
+                       title="<%= t('buttons.create_section') %>">
                       <i class="fas fa-plus-circle">
                       </i>
                     </a>
@@ -203,7 +137,7 @@
                                class="text-dark"
                                data-toggle="tooltip"
                                data-placement="bottom"
-                               title="Bearbeiten"
+                               title="<%= t('buttons.edit') %>"
                                data-remote="true"
                                style="text-decoration: none;">
                               <i class="far fa-edit">
@@ -214,7 +148,7 @@
                                class="text-dark"
                                data-toggle="tooltip"
                                data-placement="bottom"
-                               title="Inhalt"
+                               title="<%= t('buttons.content') %>"
                                data-remote="true">
                               <i class="fas fa-list-ol">
                               </i>
@@ -262,10 +196,11 @@
         <% end %>
       </div>
     <% else %>
-      Es sind noch keine Kapitel vorhanden.
+      <%= t('admin.lecture.no_chapters') %>
     <% end %>
     <% if lecture.orphaned_lessons.present? %>
-      Verwaiste Sitzungen:
+      <%= t('admin.lecture.orphaned_lessons') %>:
+      <%= helpdesk(t('admin.lecture.info.orphaned_lessons'), false) %>
       <% lecture.orphaned_lessons.each do |l| %>
         <%= link_to  l.date_localized,
                      edit_lesson_path(l),

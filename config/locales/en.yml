@@ -97,6 +97,7 @@ en:
       news: 'News'
       users: 'User administration'
       courses: 'Course'
+      profile: 'My Profile'
     main:
       my_lectures: 'My Lectures'
       create_lecture: 'Create Lecture'
@@ -221,6 +222,117 @@ en:
           Normally this should be the person that actually gives the lecture.
           If this person does not want to upload materials himself or
           herself, this can be realized by additional lecture editors.
+        workflow: >
+          In the following we describe one possible workflow.
+          The workflow depends on whether the lecture is
+          <i>video based</i> oder <i>script based</i>.
+          <ul>
+          <li>
+          <i>
+          video based:
+          </i>
+          Create chapters and sections and tag these. Afterwards,
+          create sessions and related media - they will inherit the tags.
+          Of course it is possible the other way around as well,
+          but then you will not have the benefits of inheritance of tags.
+          </li>
+          <li>
+          <i>
+          script based:
+          </i>
+          It is recommended to include the
+          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
+          into the manuscript's .tex-file and to provide anything
+          that is labelled with \mampflabels.
+          When the resulting script is uploaded to MaMpf, it is possible to
+          import the structure of the manuscript to MaMpf as well, so that
+          chapters and sections are automatically created in MaMpf.
+          Additionally, MaMpf can automatically create corresponding tags.
+          After the script has been uploaded and its structure imported to
+          MaMpf, you can create sessions. For these you can choose
+          the content from the script's structure.
+          </li>
+          </ul>
+          You can try to combine both variants. If you have a video based
+          lecture, you can of upload a manuscript as well and import its
+          structure, if the manuscript uses MaMpf's LaTEX package.
+        variants: >
+          Here you can set how MaMpf gets the detailed contents of sections
+          and sessions. This is irrelevant if you do not want to supply
+          MaMpf with detailed content.
+          <ul>
+          <li>
+          <i>
+          video based:
+          </i>
+          MaMpf uses all items that have been created in the THymE video editor
+          for the corresponding sections and for videos that are associated to
+          the corresponding sessions. They are sorted by the time they appear
+          in the video.
+          </li>
+          <li>
+          <i>
+          script based:
+          </i>
+          MaMpf uses all items in that section that have been provided with a
+          MaMpf label in the LATEX file of the manuscript
+          and those that have been chosen during the editing of the session.
+          In order for that to work, MaMpf labels have to created in the
+          script's LaTEX file using the
+          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
+          and have to be imported to MaMpf after the uploading of the script.
+          </li>
+          </ul>
+        orphaned_lessons: >
+          Orphans session are sessions that do not belong to any section.
+          They can emerge if you deleted a section that had sessions in it.
+        media: >
+          This is the list of all media that are associated to this lecture
+          or sessions of this lecture. Media in red are not yet published or
+          locked. Additionaly, a note will be shown in case there exist media
+          on the level of the course that this lecture belongs to.
+        course_tags: >
+          These are the tags associated to the parent course that appear in at least
+          one section of this lecture.
+        additional_tags: >
+          These are the tags that appear in at least one section of this
+          lecture, but are not associated to the parent course.
+        untreated_tags: >
+          These are the tags associated to the parent course that do
+          not appear in any section of this lecture.
+        course_editors: >
+          Course editors have editing access to the parent course. They inherit
+          editing access to any lecture that belongs to this course.
+        lecture_editors: >
+          Additional lecture editors are people who have editing access to
+          this lecture, but are different from the teacher and the course
+          editor. E.g., this can be teaching assistants who upload material for
+          this lecture.
+        subscribers_count: >
+          This is the number of all users who have subscribed this lecture in
+          their profile settings.
+      show_media: 'Show media'
+      workflow: 'Workflow'
+      video_based: 'video based'
+      script_based: 'script based'
+      no_chapters: 'There no chapters yet.'
+      orphaned_lessons: 'Orphaned Sessions'
+      related_tags: 'Related tags'
+      course_tags_html: >
+        Tags from the parent course %{course} that have (already) been treated
+        (%{count})
+      no_course_tags: >
+        There are no tags yet.
+      additional_tags:
+        Additional tags (%{count})
+      untreated_tags:
+        (Yet) untreated tags (%{count})
+      subscribers_count: >
+        Number of subscribers: %{count}
+      no_course_editors: >
+        There are no course editors.
+      no_lecture_editors: >
+        There are no additional lecture editors.
     course:
       new_course: 'Create new course'
       info:
@@ -234,6 +346,21 @@ en:
           in particular they can create lectures within the course. Every course
           editor inherits editing acces for all lectures belonging to the
           course.
+    medium:
+      course_medium_html: >
+        There is one medium of this type that is associated to the
+        course %{course}.
+      course_media_html: >
+        There are %{count} media of this type that are associated to the
+        course %{course}.
+      use_search_html: >
+        Only the last 50 media (by creation) are shown. You can find more media
+        via the %{media_search}.
+      local_info:
+        no_title: 'untitled'
+        to_session: 'to Session %{number}, %{date}'
+        question: 'Question %{position}/%{count}'
+        question: 'Remark %{position}/%{count}'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -309,7 +436,7 @@ en:
       new_posts_html: 'There are %{count} unread topics in the %{board}.'
     no_notifications: 'There are no new notifications for you.'
   lecture:
-    content: 'Lecture content'
+    content: 'Lecture contents'
     unpublished: 'This lecture is unpublished.'
   details: 'Details'
   none: 'none'
@@ -508,11 +635,38 @@ en:
     title: 'Title'
     short_title: 'Short title'
     editors: 'Editors'
+    lecture: 'Lecture'
+    media: 'Media'
+    medium: 'Medium'
+    people: 'People'
+    course_editors: 'Course Editors'
+    lecture_editors: 'Additional Lecture Editors'
+    display_name: 'Display Name'
+    email: 'Email address'
+  warnings:
+    save_before: 'Before you continue, you need to save or discard your changes'
+    unsaved_changes: >
+      Attention, there are unsaved changes!
+  access:
+    unpublished: 'unpublished'
   buttons:
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     delete: 'Delete'
+    publish: 'Publish'
+    course: 'to Course'
+    create_chapter: 'Create Chapter'
+    create_lesson: 'Create Session'
+    create_section: 'Create Section'
+    create_medium: 'Create Medium'
+    edit: 'Edit'
+    content: 'Content'
+    hide_media: 'Hide Media'
+    toggle: 'Toggle'
+    discard: 'Discard'
+  confirmation:
+    generic: 'Are you sure?'
   activerecord:
     errors:
       models:

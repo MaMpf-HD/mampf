@@ -16,7 +16,7 @@
              href="#organizational_collapse"
              id="organizational_collapse_button"
              aria-expanded="false" aria-controls="organizational_collapse">
-            Ein-/Ausklappen
+            <%= t('buttons.toggle') %>
           </a>
         </div>
       </div>
@@ -84,7 +84,7 @@
           <div class="row mt-3">
             <div class="col-12 text-center">
               <div id="lecture-organizational-warning">
-                Achtung, es gibt ungespeicherte Änderungen!
+                <%= t('warnings.unsaved_changes') %>
                 <%= f.submit t('buttons.save_and_exit'),
                              class: "btn btn-primary" %>
                 <button type="button" id="cancel-lecture-organizational"

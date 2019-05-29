@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-6">
           <h5>
-            Personen
+            <%= t('basics.people') %>
           </h5>
         </div>
         <div class="col-6 text-right">
@@ -16,7 +16,7 @@
              href="#people_collapse"
              id="people_collapse_button"
              aria-expanded="false" aria-controls="people_collapse">
-            Ein-/Ausklappen
+            <%= t('buttons.toggle') %>
           </a>
         </div>
       </div>
@@ -31,28 +31,18 @@
           <div class="form-row">
             <div class="col-4 form-group">
               <%= f.label :teacher_id,
-                          'DozentIn' %>
+                          t('basics.teacher') %>
               <% unless inspection %>
                 <a href="<%= update_teacher_path(lecture) %>"
                    class="far fa-edit text-dark"
                    data-toggle="tooltip"
                    id="update-teacher-button"
                    style="text-decoration: none;"
-                   data-placement="bottom" title="Bearbeiten"
+                   data-placement="bottom" title="<%= t('buttons.edit') %>"
                    data-remote="true">
                 </a>
               <% end %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Die DozentIn sollte im Normalfall diejenige
-                 Person sein, die die Vorlesung hält. Möchte die entsprechende
-                 Person sich nicht selbst um das Einstellen von Materialien
-                 kümmern, so kann dies durch zusätzliche Vorlesungseditoren
-                 geschehen.">
-              </i>
+              <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
               <div id="lecture_teacher_select" %>
                 <%= f.select :teacher_id,
                              options_for_select([[lecture.teacher.info,
@@ -68,15 +58,8 @@
               </div>
             </div>
             <div class="col-4">
-              ModuleditorInnen
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
-                 title="Info"
-                 data-content="ModuleditorInnen haben das Bearbeitungsrecht
-                 für das zugeordnete Modul. Dieses vererbt sich auf jede
-                 Vorlesung zu diesem Modul.">
-              </i>
+              <%= t('basics.course_editors') %>
+              <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
               <% if lecture.course.editors.present? %>
                 <ul>
                   <% lecture.course.editors.each do |e| %>
@@ -87,12 +70,12 @@
                 </ul>
               <% else %>
                 <br>
-                Es sind keine ModuleditorInnen eingetragen.
+                <%= t('admin.lecture.no_course_editors') %>
               <% end %>
             </div>
             <div class="col-4 form-group">
               <%= f.label :editor_ids,
-                          'zusätzliche VorlesungseditorInnen' %>
+                          t('basics.lecture_editors') %>
               <% unless inspection %>
                 <a href="<%= update_editors_path(lecture) %>"
                    class="far fa-edit text-dark"
@@ -100,24 +83,14 @@
                    style="text-decoration: none;"
                    data-toggle="tooltip"
                    data-placement="bottom"
-                   title="Bearbeiten"
+                   title="<%= t('buttons.edit') %>"
                    data-remote="true">
                  </a>
               <% end %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Zusätzliche Vorlesungseditoren sind
-                 bearbeitungsberechtigte Personen, die verschieden vom
-                 Dozenten und von den Moduleditoren sind. Das können z.B.
-                 VorlesungsassistentInnen sein, die Materialien zur
-                 Vorlesung einpflegen.">
-              </i>
+              <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
               <div id="lecture_editors_select" %>
                 <%= f.select :editor_ids,
-                             options_for_select([['keiner', '']] +
+                             options_for_select([[t('none'), '']] +
                                                 lecture.select_editors,
                                                 lecture.editors.map(&:id)),
                              {},
@@ -136,33 +109,25 @@
                   </ul>
                 <% else %>
                   <br>
-                  Es sind keine (zusätzlichen) VorlesungseditorInnen
-                  eingetragen.
+                  <%= t('admin.lecture.no_lecture_editors') %>
                 <% end %>
               </div>
             </div>
           </div>
           <div class="row mb-3">
             <div class="col-12">
-              Abonnentenzahl:
-              <%= lecture.users&.count %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Das ist die Zahl aller NutzerInnen, die diese
-                 Vorlesung in ihrem Profil abonniert haben.">
-              </i>
+              <%= t('admin.lecture.subscribers_count',
+                    count: lecture.users&.count) %>
+              <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
             </div>
           </div>
           <% unless inspection %>
             <div class="row border bg-mdb-color-lighten-5 mx-2">
               <div class="col-6">
-                Anzeigename
+                <%= t('basics.display_name') %>
               </div>
               <div class="col-6">
-                E-Mail-Adresse
+                <%= t('basics.email') %>
               </div>
             </div>
             <div style="max-height: 30vh; overflow-y: scroll;">
@@ -180,17 +145,17 @@
               <% end %>
             </div>
           <% end %>
-          <div class="row">
+          <div class="row mt-3">
             <div class="col-12 text-center">
               <div id="lecture-basics-warning">
-                Achtung, es gibt ungespeicherte Änderungen!
+                <%= t('warnings.unsaved_changes') %>
                 <%= f.submit t('buttons.save'),
                     class: "btn btn-primary" %>
                 <button type="button"
                         class="btn btn-secondary ml-2"
                         id="lecture-basics-cancel"
                         data-id="<%= lecture.id %>">
-                  verwerfen
+                  <%= t('buttons.discard') %>
                 </button>
               </div>
             </div>

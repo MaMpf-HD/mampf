@@ -83,6 +83,7 @@ de:
       news: 'News'
       users: 'Nutzerverwaltung'
       course: 'Lehrveranstaltung'
+      profile: 'Mein Profil'
     main:
       my_lectures: 'Meine Vorlesungen'
       create_lecture: 'Vorlesung anlegen'
@@ -220,6 +221,126 @@ de:
           sich nicht selbst um das Einstellen von Materialien
           kümmern, so kann dies durch zusätzliche
           Vorlesungseditoren geschehen.
+        workflow: >
+          Wir beschreiben im Folgenden einen sinnvollen
+          Workflow. Hierbei sollte man unterscheiden, ob die Vorlesung
+          <i>videobasiert</i> oder <i>skriptbasiert</i> ist.
+          <ul>
+          <li>
+          <i>
+          videobasiert:
+          </i>
+          Zunächst legt man die Kapitel und Abschnitte an und tagged diese.
+          Danach werden Sitzungen und zugeordnete Medien angelegt, diese
+          erben dann die entsprechenden Tags. Andersherum geht es natürlich
+          auch, dann ist jedoch ein höherer Aufwand beim Tagging
+          erforderlich.
+          </li>
+          <li>
+          <i>
+          skriptbasiert:
+          </i>
+          Es empfiehlt sich, in der .tex-Datei das
+          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          einzubinden
+          und alles, was gelabelt werden soll, mit \mampflabels zu versehen.
+          Das so entstandene Skript wird in Mampf hochgeladen und die
+          Gliederung in MaMpf importiert. Dabei ist es möglich, dass
+          in MaMpf automatisch zugehörige Tags angelegt werden. Danach kann
+          man Sitzungen anlegen, bei denen man jeweils die Einträge aus dem
+          Skript auswählt, die die Sitzung begrenzen.
+          </li>
+          </ul>
+          In gewissem Umfang kann man auch versuchen, die Vorteile beider
+          Varianten zu kombinieren. Hat man eine videobasierte Vorlesung,
+          kann man natürlich trotzdem ein Skript hochladen und daraus die
+          grobe Gliederung importieren.
+        variants: >
+          Damit legst Du fest, wie MaMpf die detaillierten
+          Inhalte von Abschnitten bzw. Sitzungen ermittelt:
+          <ul>
+          <li>
+          <i>
+          videobasiert:
+          </i>
+          MaMpf legt für den Inhalt alle Items zugrunde, die im THymE-Editor
+          für den entsprechenden Abschnitt angelegt wurden bzw. zu denjenigen
+          Videos gehören, die zu der Sitzung assoziiert sind.
+          Diese werden nach der Zeit ihres Auftretens im Video sortiert.
+          </li>
+          <li>
+          <i>
+          skriptbasiert:
+          </i>
+          MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
+          denjenigen Abschnitt mit einem MaMpf-Label versehen wurden,
+          bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
+          wurden. Damit dass funktioniert, müssen die MaMpf-Labels im
+          LaTEX-File für das Manuskript mit dem
+          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          erzeugt werden
+          und nach dem Hochladen des Skriptes in MaMpf übernommen werden.
+          </li>
+          </ul>
+        orphaned_lessons: >
+          Verwaiste Sitzungen sind Sitzungen, die zu keinem Abschnitt gehören.
+          Solche Sitzungen können entstehen, wenn Du einen Abschnitt gelöscht
+          hast, in dem Sitzungen existierten.
+        media: >
+          Hier werden alle Medien angezeigt, die direkt zu
+          dieser Vorlesung oder zu Sitzungen dieser Vorlesung assoziiert
+          sind. Medien in Rot sind noch nicht veröffentlicht oder
+          gesperrt.
+          Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
+          angesiedelt sind, so wird darauf hingeweisen.
+        course_tags: >
+          Hier werden diejenigen Tags aus dem zugeordneten
+          Modul angezeigt, die in mindestens einem Abschnitt dieser
+          Vorlesung vorkommen.
+        additional_tags: >
+          Hier werden diejenigen Tags angezeigt, welche
+          in mindestens einem Abschnitt dieser Vorlesung vorkommen,
+          jedoch kein Tag des zugeordneten Moduls sind.
+        untreated_tags: >
+          Hier werden diejenigen Tags aus dem zugeordneten
+          Modul angezeigt, die in keinem Abschnitt dieser Vorlesung
+          vorkommen.
+        course_editors: >
+          ModuleditorInnen haben das Bearbeitungsrecht
+          für das zugeordnete Modul. Dieses vererbt sich auf jede
+          Vorlesung zu diesem Modul.
+        lecture_editors: >
+          Zusätzliche Vorlesungseditoren sind
+          bearbeitungsberechtigte Personen, die verschieden vom
+          Dozenten und von den Moduleditoren sind. Das können z.B.
+          VorlesungsassistentInnen sein, die Materialien zur
+          Vorlesung einpflegen.
+        subscribers_count: >
+          Das ist die Zahl aller NutzerInnen, die diese
+          Vorlesung in ihrem Profil abonniert haben.
+      show_media: 'Medien einblenden'
+      workflow: 'Workflow'
+      video_based: 'videobasiert'
+      script_based: 'skriptbasiert'
+      no_chapters: 'Es sind noch keine Kapitel vorhanden.'
+      orphaned_lessons: 'Verwaiste Sitzungen'
+      related_tags: 'Verknüpfte Begriffe'
+      course_tags_html: >
+        (Bisher) behandelte Begriffe aus dem zugehörigen Modul %{course}
+        ({%count})
+      no_course_tags: >
+        Es sind noch keine Begriffe vorhanden.
+      additional_tags: >
+        Zusätzlich behandelte Begriffe (%{count})
+      untreated_tags: >
+        (Noch) nicht behandelte Begriffe (%{count})
+      subscribers_count: >
+        Abonnentenzahl: %{count}
+      no_course_editors: >
+        Es sind keine ModuleditorInnen eingetragen.
+      no_lecture_editors: >
+        Es sind keine zusätzlichen VorlesungseditorInnen
+        eingetragen.
     course:
       new_course: 'Neues Modul anlegen'
       info:
@@ -234,6 +355,21 @@ de:
           das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
           des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
           alle Vorlesungen innerhalb des Moduls.
+    medium:
+      course_medium_html: >
+        Es gibt ein Medium dieses Typs, das auf der Ebene des
+        zugehörigen Moduls %{course} angesiedelt ist.
+      course_media_html: >
+        Es gibt %{count} Medien dieses Typs, die auf der Ebene des
+        zugehörigen Moduls %{course} angesiedelt sind.
+      use_search_html: >
+        Es werden nur die 50 zuletzt angelegten Medien angezeigt.
+        Mehr findest Du über die %{media_search}.
+      local_info:
+        no_title: 'ohne Titel'
+        to_session: 'zu Sitzung %{number}, %{date}'
+        question: 'Frage %{position}/%{count}'
+        remark: 'Erläuterung %{position}/%{count}'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -524,11 +660,39 @@ de:
     title: 'Titel'
     short_title: 'Kurztitel'
     editors: 'EditorInnen'
+    lecture: 'Vorlesung'
+    media: 'Medien'
+    medium: 'Medium'
+    people: 'Personen'
+    course_editors: 'ModuleditorInnen'
+    lecture_editors: 'zusätzliche VorlesungseditorInnen'
+    display_name: 'Anzeigename'
+    email: 'E-Mail-Addresse'
+  access:
+    unpublished: 'unveröffentlicht'
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     cancel: 'Abbrechen'
     delete: 'Löschen'
+    publish: 'Veröffentlichen'
+    course: 'zum Modul'
+    create_chapter: 'Kapitel anlegen'
+    create_lesson: 'Sitzung anlegen'
+    create_section: 'Abschnitt anlegen'
+    create_medium: 'Medium anlegen'
+    edit: 'Bearbeiten'
+    content: 'Inhalt'
+    hide_media: 'Medien ausblenden'
+    toggle: 'Ein-/Ausklappen'
+    discard: 'Verwerfen'
+  warnings:
+    save_before: >
+      Du musst zunächst die anderen Änderungen speichern oder verwerfen.
+    unsaved_changes: >
+      Achtung, es gibt ungespeicherte Änderungen!
+  confirmation:
+    generic: 'Bist du sicher?'
   activerecord:
     errors:
       models:

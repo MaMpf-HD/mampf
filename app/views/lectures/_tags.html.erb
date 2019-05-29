@@ -5,7 +5,7 @@
       <div class="row">
         <div class="col-6">
           <h5 class="text-dark">
-            Verknüpfte Begriffe
+            <%= t('admin.lecture.related_tags') %>
             <%= ' (' + lecture.tags.count.to_s + ') '%>
           </h5>
         </div>
@@ -14,7 +14,7 @@
              data-toggle="collapse"
              href="#tags_collapse"
              aria-expanded="false" aria-controls="tags_collapse">
-            Ein-/Ausklappen
+            <%= t('buttons.toggle') %>
           </a>
         </div>
       </div>
@@ -28,41 +28,25 @@
         <ul>
           <li class="mb-2">
             <h6>
-              (Bisher) behandelte Begriffe aus dem zugehörigen Modul
-              <%= link_to lecture.course.title,
-                          edit_or_inspect_course_path(lecture.course) %>
-              <%= ' (' + lecture.course_tags.count.to_s + ')' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Hier werden diejenigen Tags aus dem zugeordneten
-                 Modul angezeigt, die in mindestens einem Abschnitt dieser
-                 Vorlesung vorkommen.">
-              </i>
+              <%= t('admin.lecture.course_tags_html',
+                    course: link_to(lecture.course.title,
+                                    edit_or_inspect_course_path(lecture.course)),
+                    count: lecture.course_tags.count) %>
+              <%= helpdesk(t('admin.lecture.info.course_tags'), false) %>
             </h6>
             <% if lecture.course_tags.present? %>
               <%= render partial: "tags/list",
                          locals: { tags: lecture.course_tags
                                                 .natural_sort_by(&:title) } %>
             <% else %>
-              Es sind noch keine Begriffe vorhanden.
+              <%= t('admin.lecture.no_course_tags') %>
             <% end %>
           </li>
           <li class="mb-2">
             <h6>
-              Zusätzlich behandelte Begriffe
-              <%= ' (' + lecture.extra_tags.count.to_s + ')' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Hier werden diejenigen Tags angezeigt, welche
-                 in mindestens einem Abschnitt dieser Vorlesung vorkommen,
-                 jedoch kein Tag des zugeordneten Moduls sind.">
-              </i>
+              <%= t('admin.lecture.additional_tags',
+                    count: lecture.extra_tags.count) %>
+              <%= helpdesk(t('admin.lecture.info.additional_tags'), false) %>
             </h6>
             <%= render partial: "tags/list",
                          locals: { tags: lecture.extra_tags
@@ -70,17 +54,9 @@
           </li>
           <li>
             <h6>
-              (Noch) nicht behandelte Begriffe
-              <%= ' (' + lecture.deferred_tags.count.to_s + ')' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Hier werden diejenigen Tags aus dem zugeordneten
-                 Modul angezeigt, die in keinem Abschnitt dieser Vorlesung
-                 vorkommen.">
-              </i>
+              <%= t('admin.lecture.untreated_tags',
+                    count: lecture.deferred_tags.count) %>
+              <%= helpdesk(t('admin.lecture.info.untreated_tags'), false) %>
             </h6>
             <%= render partial: "tags/list",
                        locals: { tags: lecture.deferred_tags

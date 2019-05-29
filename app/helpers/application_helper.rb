@@ -74,11 +74,16 @@ module ApplicationHelper
 
   # media_sort -> acronym
   def media_names
-    { 'kaviar' => 'Lektionen', 'sesam' => 'Worked Examples',
-      'keks' => 'Quizzes', 'kiwi' => 'Wiederholung',
-      'erdbeere' => 'Beispiel-Datenbank', 'nuesse' => 'Übungen',
-      'script' => 'Skript', 'questions' => 'Quiz-Fragen',
-      'remarks' => 'Quiz-Erläuterungen', 'reste' => 'Sonstiges' }
+    { 'kaviar' => t('categories.kaviar.plural'),
+      'sesam' => t('categories.sesam.plural'),
+      'keks' => t('categories.quiz.plural'),
+      'kiwi' => t('categories.kiwi'),
+      'erdbeere' => t('categories.erdbeere'),
+      'nuesse' => t('categories.exercises.plural'),
+      'script' => t('categories.script'),
+      'questions' => t('categories.question.plural'),
+      'remarks' => t('categories.remark.plural'),
+      'reste' => t('categories.reste') }
   end
 
   # Selects all media associated to lectures and lessons from a given list

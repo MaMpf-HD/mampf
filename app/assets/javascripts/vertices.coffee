@@ -71,7 +71,8 @@ $(document).on 'turbolinks:load', ->
   # change button 'Ziele ändern' to 'verwerfen' after vertex body is revealed
 
   $(document).on 'shown.bs.collapse', '[id^="collapse-vertex-"]', ->
-    $('#targets-vertex-' + $(this).data('vertex')).empty().append('verwerfen')
+    $('#targets-vertex-' + $(this).data('vertex')).empty()
+      .append(I18n.t('buttons.discard'))
     return
 
   # change button 'verwerfen' back to 'Ziele ändern' and rerender vertex body
