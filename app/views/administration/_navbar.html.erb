@@ -1,21 +1,15 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+<% I18n.with_locale(current_user.try(:locale)) do %>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark"
+     id="first-admin-nav">
   <%= image_tag '/MaMpf-Logo_32x32.png',
                 class: 'img-fluid mr-2' %>
   <%= link_to "MaMpf", exit_administration_path,
               class: 'navbar-brand',
               title: t('admin.navbar.exit'),
               data: { toggle: 'tooltip' } %>
-  <button class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#collapsingNavbarLg">
-    <span class="navbar-toggler-icon">
-    </span>
-  </button>
-  <div class="navbar-collapse collapse"
-       id="collapsingNavbarLg">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item <%= active_controller?('administration', 'index') %>">
+    <ul class="navbar-nav mr-auto" id="adminMain">
+      <li class="nav-item <%= active_controller?('administration', 'index') %>"
+          id="adminHome">
         <%= link_to '', administration_path,
                     class: 'fas fa-home fa-lg text-light nav-link',
                     style: 'text-decoration: none;',
@@ -30,11 +24,12 @@
                     title: t('admin.navbar.logout') %>
       </li>
     </ul>
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto"
+        id="teachableDrop">
       <%= render partial: 'administration/dropdown_teachables',
                  locals: { courses: editable_courses_dropdown } %>
     </ul>
-    <ul class="navbar-nav mr-auto">
+    <ul class="navbar-nav mr-auto" id="adminDetails">
       <li class="nav-item <%= active_controller?('media') %>">
         <%= link_to '', media_catalog_path,
                     class: 'far fa-file-video fa-lg text-light nav-link',
@@ -67,7 +62,7 @@
       <% end %>
     </ul>
     <% if current_user.admin? %>
-      <ul class="navbar-nav mr-auto">
+      <ul class="navbar-nav mr-auto" id="adminUsers">
         <li class="nav-item <%= active_controller?('users') %>">
           <%= link_to '', users_path,
                       class: 'fas fa-users-cog fa-lg text-light nav-link',
@@ -77,7 +72,7 @@
         </li>
       </ul>
     <% end %>
-    <ul class="navbar-nav">
+    <ul class="navbar-nav" id="adminProfile">
       <li class="nav-item <%= active_controller?('administration', 'profile') %>">
         <%= link_to '', elevated_profile_path,
                     class: 'fas fa-user fa-lg text-light nav-link',
@@ -86,5 +81,8 @@
                     title: t('admin.navbar.profile') %>
       </li>
     </ul>
-  </div>
 </nav>
+<nav class="navbar navbar-expand navbar-dark bg-dark" id="second-admin-nav"
+     style="display: none;">
+</nav>
+<% end %>

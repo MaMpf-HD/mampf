@@ -103,6 +103,12 @@ trix-toolbar .trix-button-row {
   overflow-y: scroll;
 }
 
+.card-tiny
+{
+  max-height: 30vh;
+  overflow-y: scroll;
+}
+
 
 $modal-xl:                    1140px !default;
 $modal-xxl:                   1600px !default;

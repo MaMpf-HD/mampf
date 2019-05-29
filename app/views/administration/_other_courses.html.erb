@@ -4,7 +4,7 @@
     (<%= Course.count - current_user.edited_courses.count  %>)
     <%= helpdesk(t('admin.main.info.other_courses'), false) %>
   </div>
-  <div class="card-body card-compact">
+  <div class="card-body card-tiny">
     <% if (Course.all - current_user.edited_courses).present? %>
       <%= render partial: 'administration/courses_card',
                  locals: { courses: non_edited_courses.natural_sort_by(&:title),

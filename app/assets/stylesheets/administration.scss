@@ -1,15 +1,15 @@
-#administrate {
-  height:100vh;
-  width: 100vw;
-  display: grid;
-  grid-template-rows: 56px auto;
-}
+// #administrate {
+//   height:100vh;
+//   width: 100vw;
+//   display: grid;
+//   grid-template-rows: 56px auto;
+// }
 
-#admin-navbar {
-  grid-row: 1 / 2;
-}
+// #admin-navbar {
+//   grid-row: 1 / 2;
+// }
 
-#admin-area {
-  grid-row: 2 / 2;
-  height: calc(100vh - 56px);
-}
+// #admin-area {
+//   grid-row: 2 / 2;
+//   height: calc(100vh - 56px);
+// }

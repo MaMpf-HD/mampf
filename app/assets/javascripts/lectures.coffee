@@ -186,6 +186,13 @@ $(document).on 'turbolinks:load', ->
     $('#coursesDrop').appendTo($('#secondnav'))
     $('#notificationDropdown').appendTo($('#secondnav'))
     $('#searchField').appendTo($('#secondnav'))
+    $('#second-admin-nav').show()
+    $('#adminDetails').appendTo($('#second-admin-nav'))
+    $('#adminUsers').appendTo($('#second-admin-nav'))
+    $('#adminProfile').appendTo($('#second-admin-nav'))
+    $('#teachableDrop').prependTo($('#second-admin-nav'))
+    $('#adminMain').css('flex-direction', 'row')
+    $('#adminHome').css('padding-right', '0.5rem')
     return
 
     # on large display, use normal tag badges and course titles
@@ -198,6 +205,13 @@ $(document).on 'turbolinks:load', ->
     $('#coursesDrop').appendTo($('#firstnav'))
     $('#notificationDropdown').appendTo($('#firstnav'))
     $('#searchField').appendTo($('#firstnav'))
+    $('#second-admin-nav').hide()
+    $('#teachableDrop').appendTo($('#first-admin-nav'))
+    $('#adminDetails').appendTo($('#first-admin-nav'))
+    $('#adminUsers').appendTo($('#first-admin-nav'))
+    $('#adminProfile').appendTo($('#first-admin-nav'))
+    $('#adminMain').removeAttr('style')
+    $('#adminHome').removeAttr('style')
     return
 
     # highlight tagbadges if screen is very small
