@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-6">
           <h5>
-            Organisatorisches
+            <%= t('categories.organizational') %>
           </h5>
         </div>
         <div class="col-6 text-right">
@@ -36,19 +36,9 @@
                                 class: 'custom-control-input',
                                 disabled: inspection %>
                 <%= f.label :organizational,
-                            'Organisatorisches sichtbar',
+                            t('admin.lecture.organizational_visible'),
                             { class: 'custom-control-label' } %>
-                <i class="far fa-question-circle helpdesk"
-                   tabindex="-1"
-                   data-toggle="popover"
-                   data-trigger="focus"
-                   title="Info"
-                   data-content="Wenn Du diesen Haken setzt, wird in der
-                   Sidebar der Punkt Organisatorisches für alle Studierenden
-                   auf sichtbar gestellt. Als Text erscheint dabei der unten
-                   stehende Text. Als Vorschlag gibt es von uns einen
-                   Mustertext, den Du beliebig editieren kannst
-                   (und solltest).">
+                <%= helpdesk(t('admin.lecture.info.organizational'), false) %>
                 </i>
               </div>
             </div>
@@ -58,16 +48,9 @@
                                 class: 'custom-control-input',
                                 disabled: inspection %>
                 <%= f.label :muesli,
-                            'Vorlesung verwendet MÜSLI',
+                            t('admin.lecture.uses_muesli'),
                             { class: 'custom-control-label' } %>
-                <i class="far fa-question-circle helpdesk"
-                   tabindex="-1"
-                   data-toggle="popover"
-                   data-trigger="focus"
-                   title="Info"
-                   data-content="Wenn Du diesen Haken setzt, wird in der
-                   Sidebar für diese Vorlesung der Link zu MUESLI aktiviert.">
-                </i>
+                <%= helpdesk(t('admin.lecture.info.muesli'), false) %>
               </div>
             </div>
           </div>

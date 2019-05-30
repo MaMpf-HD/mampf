@@ -310,7 +310,33 @@ en:
           this lecture.
         subscribers_count: >
           This is the number of all users who have subscribed this lecture in
+        organizational: >
+          If you check this box, the general information will be visible for
+          all subscribers of your lecture in (it can be accessed via
+          the sidebar).
+          The text they see will be the text below. As a suggestion, we have
+          a default text that you may edit as you wish.
+        muesli: >
+          If you check this box, the link to MÜSLI will be activated in the
+          sidebar for this lecture.
           their profile settings.
+        first_chapter: >
+          If the first chapter is supposed to have a number different from "1",
+          you can enter this number here. E.g., this may apply to lectures
+          where chapter numbering is continued over successive terms as it
+          is sometimes done in successive lectures.
+        first_section: >
+          If absolute numbering is activated for sections, you can enter
+          the number of the first section here.
+        absolute_numbering: >
+          By default, the numbering for sections is relative to the chapter.
+          E.g., the third section in chapter 4 is §4.3. If you deactivate this
+          behaviour, sections will be counted across chapter borders.
+        passphrase: >
+          If you enter something here, users can subscribe to this lecture only
+          upon entering this passphrase. Media associated to this lecture or
+          any of its sessions are then invisible for users who have not
+          subscribed to this lecture.
       show_media: 'Show media'
       workflow: 'Workflow'
       video_based: 'video based'
@@ -333,6 +359,12 @@ en:
         There are no course editors.
       no_lecture_editors: >
         There are no additional lecture editors.
+      organizational_visible: 'General information visible'
+      uses_muesli: 'Lecture uses MÜSLI'
+      first_chapter: 'Number of the first chapter'
+      first_section: 'Nummer of the first section'
+      absolute_numbering: 'absolute numbering'
+      passphrase: 'Passphrase'
     course:
       new_course: 'Create new course'
       info:
@@ -643,6 +675,8 @@ en:
     lecture_editors: 'Additional Lecture Editors'
     display_name: 'Display Name'
     email: 'Email address'
+    preferences: 'Preferences'
+    language: 'Language'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -660,11 +694,16 @@ en:
     create_lesson: 'Create Session'
     create_section: 'Create Section'
     create_medium: 'Create Medium'
+    create_announcement: 'Create Announcement'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
     toggle: 'Toggle'
     discard: 'Discard'
+    unlock_board: 'Unlock Board'
+    lock_board: 'Lock Board'
+    delete_board: 'Delete Board'
+    add_board: 'Create Board'
   confirmation:
     generic: 'Are you sure?'
   activerecord:

@@ -318,6 +318,39 @@ de:
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese
           Vorlesung in ihrem Profil abonniert haben.
+        organizational: >
+          Wenn Du diesen Haken setzt, wird in der
+          Sidebar der Punkt Organisatorisches für alle Studierenden
+          auf sichtbar gestellt. Als Text erscheint dabei der unten
+          stehende Text. Als Vorschlag gibt es von uns einen
+          Mustertext, den Du beliebig editieren kannst
+          (und solltest).
+        muesli: >
+          Wenn Du diesen Haken setzt, wird in der
+          Sidebar für diese Vorlesung der Link zu MUESLI aktiviert.
+        first_chapter: >
+          Soll das erste Kapitel eine von eins
+          verschiedene Nummer haben, so kann dies hier eingetragen
+          werden. Anwendungsmöglichkeiten sind z.B.
+          Kapitelnummerierungen, die in Fortsetzungsvorlesungen
+          weitergeführt werden.
+        first_section: >
+          Ist die absolute Nummerierung für Abschnitte
+          aktiviert, so kann hier die Nummer des ersten Abschnitts
+          eingestellt werden.
+        absolute_numbering: >
+          Standardmäßig wird für Abschnitte eine
+          Nummerierung relativ zum Kapitel angezeigt:
+          Der dritte Abschnitt in Kapitel 4 ist etwa §4.3.
+          Durch Aktivierung der absoluten Nummerierung wird dieses
+          Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen
+          weitergezählt.
+        passphrase: >
+          Wenn Du hier etwa eingibst, können
+          NutzerInnen diese Vorlesung nur unter Angabe dieses
+          Schlüssels abonnieren. Medien, die zu dieser Vorlesung
+          oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
+          die diese Vorlesung nicht abonniert haben, unsichtbar.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       video_based: 'videobasiert'
@@ -341,6 +374,12 @@ de:
       no_lecture_editors: >
         Es sind keine zusätzlichen VorlesungseditorInnen
         eingetragen.
+      organizational_visible: 'Organisatorisches sichtbar'
+      uses_muesli: 'Vorlesung verwendet MÜSLI'
+      first_chapter: 'Nummer des ersten Kapitels'
+      first_section: 'Nummer des ersten Abschnitts'
+      absolute_numbering: 'absolute Nummerierung'
+      passphrase: 'Zugangsschlüssel'
     course:
       new_course: 'Neues Modul anlegen'
       info:
@@ -668,6 +707,8 @@ de:
     lecture_editors: 'zusätzliche VorlesungseditorInnen'
     display_name: 'Anzeigename'
     email: 'E-Mail-Addresse'
+    preferences: 'Einstellungen'
+    language: 'Sprache'
   access:
     unpublished: 'unveröffentlicht'
   buttons:
@@ -681,11 +722,16 @@ de:
     create_lesson: 'Sitzung anlegen'
     create_section: 'Abschnitt anlegen'
     create_medium: 'Medium anlegen'
+    create_announcement: 'Mitteilung anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
     toggle: 'Ein-/Ausklappen'
     discard: 'Verwerfen'
+    unlock_board: 'Forum entsperren'
+    lock_board: 'Forum sperren'
+    delete_board: 'Forum löschen'
+    add_board: 'Forum anlegen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

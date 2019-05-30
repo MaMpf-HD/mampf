@@ -293,9 +293,9 @@ ActiveRecord::Schema.define(version: 2019_05_22_152209) do
   end
 
   create_table "tags", force: :cascade do |t|
-    t.string "title_backup"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "title_backup"
   end
 
   create_table "terms", force: :cascade do |t|

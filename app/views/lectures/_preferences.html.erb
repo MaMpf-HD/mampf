@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-6">
           <h5>
-            Einstellungen
+            <%= t('basics.preferences') %>
           </h5>
         </div>
         <div class="col-6 text-right">
@@ -29,15 +29,8 @@
           <div class="form-row">
             <div class="col-3 form-group">
               <%= f.label :term_id,
-                          'Semester' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Hier kannst Du das Semester auswählen, in dem
-                 diese Vorlesung stattfindet bzw. stattgefunden hat.">
-              </i>
+                          t('basics.term') %>
+              <%= helpdesk(t('admin.lecture.info.term'), false) %>
               <%= f.select :term_id,
                            options_for_select(Term.select_terms,
                                               lecture.term.id),
@@ -49,18 +42,8 @@
               </div>
             </div>
             <div class="col-3 form-group">
-              <%= f.label :start_chapter, 'Nummer des ersten Kapitels' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Soll das erste Kapitel eine von eins
-                 verschiedene Nummer haben, so kann dies hier eingetragen
-                 werden. Anwendungsmöglichkeiten sind z.B.
-                 Kapitelnummerierungen, die in Fortsetzungsvorlesungen
-                 weitergeführt werden.">
-              </i>
+              <%= f.label :start_chapter, t('admin.lecture.first_chapter') %>
+              <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>
               <%= f.number_field :start_chapter,
                                  value: lecture.start_chapter || 1,
                                  class: 'form-control',
@@ -69,15 +52,8 @@
             <div class="col-3 mt-6">
               <div id="start-section-input">
                 <%= f.label :start_section,
-                            'Startabschnitt' %>
-                <i class="far fa-question-circle helpdesk"
-                   tabindex="-1"
-                   data-toggle="popover" data-trigger="focus"
-                   title="Info"
-                   data-content="Ist die absolute Nummerierung für Abschnitte
-                   aktiviert, so kann hier die Nummer des ersten Abschnitts
-                   eingestellt werden.">
-                </i>
+                            t('admin.lecture.first_section') %>
+                <%= helpdesk(t('admin.lecture.info.first_section'), false) %>
                 <%= f.number_field :start_section,
                                    value: lecture.start_section || 1,
                                    class: 'form-control',
@@ -91,38 +67,18 @@
                                 class: 'custom-control-input',
                                 disabled: inspection %>
                 <%= f.label :absolute_numbering,
-                            'absolute Nummerierung',
+                            t('admin.lecture.absolute_numbering'),
                             { class: 'custom-control-label' } %>
-                <i class="far fa-question-circle helpdesk"
-                   tabindex="-1"
-                   data-toggle="popover"
-                   data-trigger="focus"
-                   title="Info"
-                   data-content="Standardmäßig wird für Abschnitte eine
-                   Nummerierung relativ zum Kapitel angezeigt:
-                   Der dritte Abschnitt in Kapitel 4 ist etwa §4.3.
-                   Durch Aktivierung der absoluten Nummerierung wird dieses
-                   Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen
-                   weitergezählt. ">
-                </i>
+                <%= helpdesk(t('admin.lecture.info.absolute_numbering'),
+                             false) %>
               </div>
             </div>
           </div>
           <% unless inspection %>
           <div class="form-row">
             <div class="col-auto form-group">
-              <%= f.label :passphrase, 'Zugangsschlüssel' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Wenn Du hier etwa eingibst, können
-                 NutzerInnen diese Vorlesung nur unter Angabe dieses
-                 Schlüssels abonnieren. Medien, die zu dieser Vorlesung
-                 oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
-                 die diese Vorlesung nicht abonniert haben, unsichtbar.">
-              </i>
+              <%= f.label :passphrase, t('admin.lecture.passphrase') %>
+              <%= helpdesk(t('admin.lecture.info.passphrase'), false) %>
               <%= f.text_field :passphrase,
                                { class: 'form-control',
                                  size: 50 } %>
@@ -130,7 +86,7 @@
           </div>
           <% end %>
           <div class="form-group">
-            Sprache
+            <%= t('basics.language') %>
             <div class="form-row ml-2">
             <% I18n.available_locales.each do |locale| %>
               <div class="custom-control custom-radio custom-control-inline">
@@ -138,10 +94,9 @@
                                    locale.to_s,
                                    class: 'custom-control-input' %>
                 <%= f.label :locale,
-                            t('locales.' + locale.to_s,
-                              locale: I18n.default_locale),
-                              value: locale.to_s,
-                              class: 'custom-control-label' %>
+                            t('locales.' + locale.to_s),
+                            value: locale.to_s,
+                            class: 'custom-control-label' %>
               </div>
             <% end %>
             </div>

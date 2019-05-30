@@ -4,7 +4,7 @@
       <div class="row">
         <div class="col-6">
           <h5>
-            Forum
+            <%= t('categories.board') %>
           </h5>
         </div>
         <div class="col-6 text-right">
@@ -25,22 +25,26 @@
          data-parent="#forum_accordion">
       <div class="card-body">
         <div class="row">
-          <div class="col-4" id="forum-buttons">
+          <div class="col-12 text-center" id="forum-buttons">
             <% if inspection %>
               Forum: <%= lecture.forum? ? 'Ja' : 'Nein' %>
             <% else %>
             <% if lecture.forum? %>
               <% if lecture.forum.locked %>
-                <%= link_to 'Forum entsperren', unlock_forum_path(lecture),
+                <%= link_to t('buttons.unlock_board'),
+                            unlock_forum_path(lecture),
                             class: 'btn btn-primary' %>
               <% else %>
-                <%= link_to 'Forum sperren', lock_forum_path(lecture),
+                <%= link_to t('buttons.lock_board'),
+                            lock_forum_path(lecture),
                             class: 'btn btn-primary' %>
               <% end %>
-              <%= link_to 'Forum löschen', destroy_forum_path(lecture),
+              <%= link_to t('buttons.delete_board'),
+                          destroy_forum_path(lecture),
                           class: 'btn btn-danger' %>
             <% else %>
-              <%= link_to 'Forum anlegen', add_forum_path(lecture),
+              <%= link_to t('buttons.add_board'),
+                          add_forum_path(lecture),
                           class: 'btn btn-primary' %>
             <% end %>
             <% end %>

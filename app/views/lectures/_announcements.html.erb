@@ -4,17 +4,17 @@
       <div class="row">
         <div class="col-6">
           <h5>
-            Mitteilungen
+            <%= t('categories.announcements') %>
             (<%= lecture.announcements.count %>)
           </h5>
         </div>
         <div class="col-6 text-right">
           <% unless inspection %>
-            <%= link_to 'Mitteilung anlegen',
-                         new_announcement_path(params: { lecture: lecture.id }),
-                         class: 'btn btn-secondary',
-                         id: 'new-announcement-button',
-                         remote: true %>
+            <%= link_to t('buttons.create_announcement'),
+                        new_announcement_path(params: { lecture: lecture.id }),
+                        class: 'btn btn-secondary',
+                        id: 'new-announcement-button',
+                        remote: true %>
           <% end %>
           <a class="btn btn-primary"
              data-toggle="collapse"
