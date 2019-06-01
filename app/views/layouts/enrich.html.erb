@@ -4,11 +4,8 @@
     <%= render partial: 'layouts/head' %>
   </head>
   <body data-locale="<%= I18n.locale %>">
-    <div id="admin-navbar">
-      <%= render partial: 'administration/navbar' %>
-    </div>
-    <div class="container-fluid">
-      <%= yield %>
+    <div id="editor-container">
+        <%= yield %>
     </div>
   </body>
 </html>

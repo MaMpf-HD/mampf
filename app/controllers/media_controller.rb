@@ -207,6 +207,7 @@ class MediaController < ApplicationController
 
   # start the thyme editor
   def enrich
+    render layout: 'enrich'
   end
 
   # export the video's toc data to a .vtt file
