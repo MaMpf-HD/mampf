@@ -2,6 +2,7 @@
 class ChaptersController < ApplicationController
   before_action :set_chapter, except: [:new, :create]
   authorize_resource
+  before_action :set_view_locale, only: [:edit]
   layout 'administration'
 
   def edit
@@ -40,6 +41,8 @@ class ChaptersController < ApplicationController
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     @chapter = Chapter.new(lecture: @lecture)
+    I18n.locale = @chapter.lecture.locale_with_inheritance ||
+                    current_user.locale || I18n.default_locale
   end
 
   def destroy
@@ -65,5 +68,10 @@ class ChaptersController < ApplicationController
   def chapter_params
     params.require(:chapter).permit(:title, :display_number, :lecture_id,
                                     :hidden)
+  end
+
+  def set_view_locale
+    I18n.locale = @chapter.lecture.locale_with_inheritance ||
+                    current_user.locale || I18n.default_locale
   end
 end

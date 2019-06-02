@@ -337,6 +337,18 @@ en:
           upon entering this passphrase. Media associated to this lecture or
           any of its sessions are then invisible for users who have not
           subscribed to this lecture.
+        chapter_title: >
+          Here you can enter the title of the chapter.
+        insert_after: >
+          Here you can choose at which position the new chapter will be placed
+          by choosing the previous chapter.
+        date: >
+          Here you can choose the date when the session took place.
+        sections: >
+          Here you can choose which sections of the lecture where treated in
+          this session. By default, the session gets assigned all tags that
+          belong to these sections. When editing the session, you can refine
+          the tag selection.
       show_media: 'Show media'
       workflow: 'Workflow'
       video_based: 'video based'
@@ -365,6 +377,7 @@ en:
       first_section: 'Nummer of the first section'
       absolute_numbering: 'absolute numbering'
       passphrase: 'Passphrase'
+      insert_after: 'Insert after chapter'
     course:
       new_course: 'Create new course'
       info:
@@ -677,6 +690,9 @@ en:
     email: 'Email address'
     preferences: 'Preferences'
     language: 'Language'
+    date: 'Date'
+    sections: 'Sections'
+    at_the_beginning: 'At the beginning'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -687,6 +703,7 @@ en:
     save: 'Save'
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
+    save_and_edit: 'Save and Edit'
     delete: 'Delete'
     publish: 'Publish'
     course: 'to Course'

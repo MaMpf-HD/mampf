@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <h6>
-      Sitzung anlegen
+      <%= t('buttons.create_lesson') %>
     </h6>
   </div>
 </div>
@@ -11,15 +11,8 @@
       <div class="row">
         <div class="col-12">
           <%= f.label :date,
-                      'Datum' %>
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Hier kannst Du das Datum auswählen, an dem die
-             Sitzung stattgefunden hat.">
-          </i>
+                      t('basics.date') %>
+          <%= helpdesk(t('admin.lecture.info.date'), false) %>
         </div>
         <div class="col-12">
           <%= f.date_field :date %>
@@ -33,18 +26,8 @@
     <div class="col-8">
       <div class="form-group">
         <%= f.label :section_ids,
-                    'Abschnitte' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du auswählen, welche Abschnitte aus der
-           Vorlesung in der entsprechenden Sitzung behandelt wurden.
-           Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
-           die zu den entsprechenden Abschnitten gehören. Beim Editieren
-           der Sitzung kann diese Auswahl dann nachbearbeitet werden.">
-        </i>
+                    t('basics.sections') %>
+        <%= helpdesk(t('admin.lecture.info.sections'), false) %>
         <%= f.select :section_ids,
                      options_for_select(lesson.lecture.section_selection),
                      {},
@@ -61,7 +44,7 @@
     <div class="col-12 text-center">
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-primary' %>
-      <%= f.submit 'Speichern und Bearbeiten',
+      <%= f.submit t('buttons.save_and_edit'),
                    class: 'btn btn-primary' %>
       <button type="button"
               id="cancel-new-lesson"

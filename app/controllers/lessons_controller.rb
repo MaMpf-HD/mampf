@@ -15,6 +15,7 @@ class LessonsController < ApplicationController
 
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
+    I18n.locale = @lecture.locale_with_inheritance
     @lesson = Lesson.new(lecture: @lecture)
   end
 

@@ -1,21 +1,15 @@
 <div class="row">
   <div class="col-12">
     <h6>
-      Kapitel anlegen
+      <%= t('buttons.create_chapter') %>
     </h6>
   </div>
 </div>
 <%= form_with model: chapter do |f| %>
   <div class="form-row">
     <div class="col-6 form-group">
-      <%= f.label :title, 'Titel' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du den Titel des Kapitels angeben.">
-      </i>
+      <%= f.label :title, t('basics.title') %>
+      <%= helpdesk(t('admin.lecture.info.chapter_title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'new_chapter_title' } %>
       <div class="invalid-feedback"
@@ -25,17 +19,10 @@
     <% if lecture.chapters.exists? %>
       <div class="col-6 form-group">
         <%= f.label :predecessor,
-                    'Einfügen nach Kapitel' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du auswählen, an welcher Stelle das Kapitel
-           eingefügt werden soll, indem Du das Vorgängerkapitel auswählst.">
-        </i>
+                    t('admin.lecture.insert_after') %>
+        <%= helpdesk(t('admin.lecture.info.insert_after'), false) %>
         <%= f.select :predecessor,
-                     options_for_select([['am Anfang', 0]] +
+                     options_for_select([[t('basics.at_the_beginning'), 0]] +
                                         lecture.select_chapters,
                                         lecture.last_chapter_by_position.position) ,
                                  {}, { class: 'form-control' } %>

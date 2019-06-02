@@ -346,11 +346,25 @@ de:
           Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen
           weitergezählt.
         passphrase: >
-          Wenn Du hier etwa eingibst, können
+          Wenn du hier etwa eingibst, können
           NutzerInnen diese Vorlesung nur unter Angabe dieses
           Schlüssels abonnieren. Medien, die zu dieser Vorlesung
           oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
           die diese Vorlesung nicht abonniert haben, unsichtbar.
+        chapter_title: >
+          Hier kannst du den Titel des Kapitels angeben.
+        insert_after: >
+          Hier kannst du auswählen, an welcher Stelle das Kapitel
+          eingefügt werden soll, indem du das Vorgängerkapitel auswählst.
+        date: >
+          Hier kannst Du das Datum auswählen, an dem die
+          Sitzung stattgefunden hat.
+        sections: >
+          Hier kannst Du auswählen, welche Abschnitte aus der
+          Vorlesung in der entsprechenden Sitzung behandelt wurden.
+          Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
+          die zu den entsprechenden Abschnitten gehören. Beim Editieren
+          der Sitzung kann diese Auswahl dann nachbearbeitet werden.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       video_based: 'videobasiert'
@@ -380,6 +394,7 @@ de:
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
+      insert_after: 'Einfügen nach Kapitel'
     course:
       new_course: 'Neues Modul anlegen'
       info:
@@ -709,11 +724,15 @@ de:
     email: 'E-Mail-Addresse'
     preferences: 'Einstellungen'
     language: 'Sprache'
+    date: 'Datum'
+    sections: 'Abschnitte'
+    at_the_beginning: 'am Anfang'
   access:
     unpublished: 'unveröffentlicht'
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
+    save_and_edit: 'Speichern und Bearbeiten'
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
