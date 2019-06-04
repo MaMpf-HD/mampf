@@ -16,6 +16,7 @@ class SectionsController < ApplicationController
   def new
     @chapter = Chapter.find_by_id(params[:chapter_id])
     @section = Section.new(chapter: @chapter)
+    I18n.locale = @section.lecture.locale_with_inheritance
   end
 
   def create

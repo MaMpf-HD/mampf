@@ -1,11 +1,9 @@
 # disable all other input fields when a new section is created
 $('.fa-edit').hide()
 $('.new-in-lecture').hide()
-$('#lecture-preferences-form input').prop('disabled', true)
-$('#lecture-form input').prop('disabled', true)
-$('#lecture-form .selectized').each ->
-  this.selectize.disable()
-  return
+$('#lectureAccordion .collapse').collapse('hide')
+$('[data-toggle="collapse"]').addClass('disabled')
+$('#new-announcement-button').addClass('disabled')
 
 # render new section form
 $('#new-section-area-<%= @chapter.id %>').empty()

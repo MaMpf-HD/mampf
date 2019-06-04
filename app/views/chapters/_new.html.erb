@@ -19,8 +19,8 @@
     <% if lecture.chapters.exists? %>
       <div class="col-6 form-group">
         <%= f.label :predecessor,
-                    t('admin.lecture.insert_after') %>
-        <%= helpdesk(t('admin.lecture.info.insert_after'), false) %>
+                    t('admin.lecture.insert_after_chapter') %>
+        <%= helpdesk(t('admin.lecture.info.insert_after_chapter'), false) %>
         <%= f.select :predecessor,
                      options_for_select([[t('basics.at_the_beginning'), 0]] +
                                         lecture.select_chapters,

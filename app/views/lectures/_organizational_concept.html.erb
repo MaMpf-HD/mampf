@@ -1,5 +1,3 @@
-<div id="organizational_accordion"
-     role="tablist">
   <div class="card bg-light">
     <div class="card-header"
          role="tab"
@@ -25,7 +23,7 @@
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#organizational_accordion">
+         data-parent="#lectureAccordion">
       <div class="card-body">
         <%= form_with model: lecture,
                       html: { id: 'lecture-organizational-form' } do |f| %>
@@ -81,4 +79,3 @@
       </div>
     </div>
   </div>
-</div>

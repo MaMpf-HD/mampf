@@ -46,34 +46,24 @@
     </div>
   </div>
   <div class="row px-4 py-2 mt-3">
-    <div class="col-12">
+    <div class="accordion col-12" id="lectureAccordion">
       <%= render partial: 'lectures/tags',
                  locals: { lecture: lecture,
                            inspection: inspection } %>
-    </div>
-    <div class="col-12">
       <%= render partial: 'lectures/people',
                  locals: { lecture: lecture,
                            inspection: inspection,
                            users: lecture.users } %>
-    </div>
-    <div class="col-12">
       <%= render partial: 'lectures/organizational_concept',
                  locals: { lecture: lecture,
                            inspection: inspection } %>
-    </div>
-    <div class="col-12">
       <%= render partial: 'lectures/announcements',
                  locals: { lecture: lecture,
                            announcements: announcements,
                            inspection: inspection } %>
-    </div>
-    <div class="col-12">
       <%= render partial: 'lectures/forum',
                  locals: { lecture: lecture,
                            inspection: inspection } %>
-    </div>
-    <div class="col-12">
       <%= render partial: 'lectures/preferences',
                  locals: { lecture: lecture,
                            inspection: inspection } %>

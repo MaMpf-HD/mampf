@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <h6>
-      Abschnitt anlegen
+      <%= t('buttons.create_section') %>
     </h6>
   </div>
 </div>
@@ -9,14 +9,8 @@
   <div class="form-row">
     <div class="col-6 form-group">
       <%= f.label :title,
-                  'Titel' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du den Titel des Abschnitts angeben.">
-      </i>
+                  t('basics.title') %>
+      <%= helpdesk(t('admin.lecture.info.section_title'), false) %>
       <%= f.text_field :title,
                        { class: 'form-control',
                          id: 'new_section_title' } %>
@@ -27,15 +21,8 @@
     <% if chapter.sections.exists? %>
       <div class="col-6 form-group">
         <%= f.label :predecessor,
-                    'Einfügen nach Abschnitt' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du auswählen, an welcher Stelle der
-           Abschnitt eingefügt werden soll, indem Du den Vorgängerabschnitt
-           auswählst.">
+                    t('admin.lecture.insert_after_section') %>
+        <%= helpdesk(t('admin.lecture.info.insert_after_section'), false) %>
         </i>
         <%= f.select :predecessor,
                      options_for_select(new_section_position_for_select(chapter),

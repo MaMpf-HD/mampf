@@ -8,10 +8,9 @@ $('#new-lesson-area .selectize').selectize({ plugins: ['remove_button'] })
 $('[data-toggle="popover"]').popover()
 
 # disable all other input fields when a new lesson is being created
+# and disable lecture Accordion
 $('.fa-edit').hide()
 $('.new-in-lecture').hide()
-$('#lecture-preferences-form input').prop('disabled', true)
-$('#lecture-form input').prop('disabled', true)
-$('#lecture-form .selectized').each ->
-  this.selectize.disable()
-  return
+$('#lectureAccordion .collapse').collapse('hide')
+$('[data-toggle="collapse"]').addClass('disabled')
+$('#new-announcement-button').addClass('disabled')

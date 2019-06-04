@@ -339,7 +339,7 @@ en:
           subscribed to this lecture.
         chapter_title: >
           Here you can enter the title of the chapter.
-        insert_after: >
+        insert_after_chapter: >
           Here you can choose at which position the new chapter will be placed
           by choosing the previous chapter.
         date: >
@@ -349,6 +349,11 @@ en:
           this session. By default, the session gets assigned all tags that
           belong to these sections. When editing the session, you can refine
           the tag selection.
+        section_title: >
+          Here you can choose the section title.
+        insert_after_section: >
+          Here you can choose at which position the new section will be placed
+          by choosing the previous section.
       show_media: 'Show media'
       workflow: 'Workflow'
       video_based: 'video based'
@@ -377,7 +382,8 @@ en:
       first_section: 'Nummer of the first section'
       absolute_numbering: 'absolute numbering'
       passphrase: 'Passphrase'
-      insert_after: 'Insert after chapter'
+      insert_after_chapter: 'Insert after chapter'
+      insert_after_section: 'Insert after section'
     course:
       new_course: 'Create new course'
       info:
@@ -391,6 +397,26 @@ en:
           in particular they can create lectures within the course. Every course
           editor inherits editing acces for all lectures belonging to the
           course.
+    chapter:
+      edit_html: 'Edit Chapter %{chapter}'
+      position: 'Position after Chapter'
+      display_number: 'Disp.nr.'
+      exempt: 'Exempt from table of contents'
+      info:
+        title: >
+          Here you can enter the title of the chapter.
+        position: >
+          Here you can choose at which position the chapter is placed by
+          selecting the previous chapter.
+        display_number: >
+          If a display number is given, it will overwrite the calculated number.
+          That makes sense e.g. if you want 'Appendix A. My Section' as title
+          instead of '§3.2 My title'.
+        exempt: >
+          If you check this box, this chapter will not be listed in the
+          lecture contents visible for users. Note however that the chapter
+          and its published contents can be accesed by users, e.g. if they
+          search for it.
     medium:
       course_medium_html: >
         There is one medium of this type that is associated to the
@@ -693,6 +719,8 @@ en:
     date: 'Date'
     sections: 'Sections'
     at_the_beginning: 'At the beginning'
+    at_beginning_of_chapter: 'At the beginning of the Chapter'
+    chapter: 'Chapter'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

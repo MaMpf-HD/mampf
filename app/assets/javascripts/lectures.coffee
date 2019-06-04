@@ -4,17 +4,10 @@
 
 disableExceptOrganizational = ->
   $('#lecture-organizational-warning').show()
-  $('#organizational_collapse_button').hide()
-  $('#forum-buttons .btn').addClass('disabled')
   $('#new-announcement-button').addClass('disabled')
-  $('#lecture-preferences-form input').prop('disabled', true)
-  $('#lecture-preferences-form select').prop('disabled', true)
-  $('#lecture-form input').prop('disabled', true)
-  $('#lecture-form .selectized').each ->
-    this.selectize.disable()
-    return
   $('.fa-edit').hide()
   $('.new-in-lecture').hide()
+  $('[data-toggle="collapse"]').addClass('disabled')
   return
 
 $(document).on 'turbolinks:load', ->
@@ -26,29 +19,20 @@ $(document).on 'turbolinks:load', ->
   # disable other input
   $('#lecture-form :input').on 'change', ->
     $('#lecture-basics-warning').show()
-    $('#people_collapse_button').hide()
     $('.fa-edit:not(#update-teacher-button,#update-editors-button)').hide()
     $('.new-in-lecture').hide()
-    $('#forum-buttons .btn').addClass('disabled')
+    $('[data-toggle="collapse"]').addClass('disabled')
     $('#new-announcement-button').addClass('disabled')
-    $('#lecture-organizational-form input').prop('disabled', true)
-    $('#lecture-preferences-form input').prop('disabled', true)
-    $('#lecture-preferences-form select').prop('disabled', true)
     return
 
   # if any input is given to the preferences form, disable other input
   $('#lecture-preferences-form :input').on 'change', ->
     $('#lecture-preferences-warning').show()
-    $('#preferences_collapse_button').hide()
-    $('#lecture-form input').prop('disabled', true)
-    $('#lecture-organizational-form input').prop('disabled', true)
-    $('#forum-buttons .btn').addClass('disabled')
     $('#new-announcement-button').addClass('disabled')
-    $('#lecture-form .selectized').each ->
-      this.selectize.disable()
-      return
+    $('[data-toggle="collapse"]').addClass('disabled')
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()
+    return
 
   # if any input is given to the organizational form, disable other input
   $('#lecture-organizational-form :input').on 'change', ->

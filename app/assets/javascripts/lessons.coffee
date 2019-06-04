@@ -16,10 +16,8 @@ $(document).on 'turbolinks:load', ->
     $('#new-lesson-area').empty().hide()
     $('.fa-edit').show()
     $('.new-in-lecture').show()
-    $('#lecture-preferences-form input').prop('disabled', false)
-    $('#lecture-form input').prop('disabled', false)
-    $('#lecture-form .selectized').each ->
-      this.selectize.enable()
+    $('[data-toggle="collapse"]').removeClass('disabled')
+    $('#new-announcement-button').removeClass('disabled')
     return
 
   $(document).on 'click', '.cancel-lesson-edit', ->

@@ -29,11 +29,8 @@ $(document).on 'turbolinks:load', ->
     $('#new-section-area-' + chapterId).empty().hide()
     $('.fa-edit').show()
     $('.new-in-lecture').show()
-    $('#lecture-preferences-form input').prop('disabled', false)
-    $('#lecture-form input').prop('disabled', false)
-    $('#lecture-form .selectized').each ->
-      this.selectize.enable()
-      return
+    $('[data-toggle="collapse"]').removeClass('disabled')
+    $('#new-announcement-button').removeClass('disabled')
     return
 
   # reload page if editing of section is cancelled

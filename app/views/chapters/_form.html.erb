@@ -1,11 +1,8 @@
 <div class="row">
   <div class="col-6">
     <h6>
-      Kapitel
-      <span class="redtext">
-        <%= chapter.to_label %>
-      </span>
-      bearbeiten
+      <%= t('admin.chapter.edit_html',
+            chapter: content_tag(:span, chapter.to_label, class: 'redtext')) %>
     </h6>
   </div>
   <div class="col-6">
@@ -17,15 +14,10 @@
 <%= form_with model: chapter, html: { id: 'chapter-form' } do |f| %>
   <div class="form-row">
     <div class="col-12 form-group">
-      <%= f.label :title, 'Titel' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du den Titel des Kapitels angeben.">
-      </i>
-      <%= f.text_field :title, { class: 'form-control' } %>
+      <%= f.label :title, t('basics.title') %>
+      <%= helpdesk(t('admin.chapter.info.title'), false) %>
+      <%= f.text_field :title,
+                       { class: 'form-control' } %>
       <div class="invalid-feedback" id="chapter-title-error">
       </div>
     </div>
@@ -33,35 +25,20 @@
   <div class="form-row">
     <div class="col-10 form-group">
       <%= f.label :predecessor,
-                  'Positionierung nach Kapitel' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du auswählen, an welcher Stelle das Kapitel
-         positioniert werden soll, indem Du das Vorgängerkapitel auswählst.">
-      </i>
+                  t('admin.chapter.position') %>
+      <%= helpdesk(t('admin.chapter.info.position'), false) %>
       <%= f.select :predecessor,
-                   options_for_select([['am Anfang', 0]] +
-                                      lecture.select_chapters -
-                                      [[chapter.to_label, chapter.position]],
+                   options_for_select(chapter_positions_for_select(chapter),
                                       chapter.position - 1) ,
-                                      {}, { class: 'form-control' } %>
+                                      {},
+                                      { class: 'form-control' } %>
     </div>
     <div class="col-2 form-group">
       <%= f.label :display_number,
-                  'Anz.nr.' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese
-         die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
-         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel
-         haben möchtest.">
-      </i>
-      <%= f.text_field :display_number, { class: 'form-control' } %>
+                  t('admin.chapter.display_number') %>
+      <%= helpdesk(t('admin.chapter.info.display_number'), false) %>
+      <%= f.text_field :display_number,
+                       { class: 'form-control' } %>
     </div>
   </div>
   <div class="form-row">
@@ -70,25 +47,20 @@
         <%= f.check_box :hidden,
                         class: 'custom-control-input' %>
         <%= f.label :hidden,
-                    'von Gliederung ausgenommen',
+                    t('admin.chapter.exempt'),
                     { class: 'custom-control-label' } %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Wenn Du dieses Feld anklickst, wird dieses Kapitel
-           nicht in der Vorlesungsgliederung als Kapitel auftreten. Trotzdem
-           sind das Kapitel und seine Inhalte für Nutzer auffindbar.">
-        </i>
+        <%= helpdesk(t('admin.chapter.info.exempt'), false) %>
       </div>
     </div>
   </div>
-  <%= f.hidden_field :lecture_id, value: lecture.id %>
+  <%= f.hidden_field :lecture_id,
+                     value: lecture.id %>
   <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit t('buttons.save_and_exit'), class: 'btn btn-primary' %>
-      <button type="button" id="cancel-chapter"
+      <%= f.submit t('buttons.save_and_exit'),
+                   class: 'btn btn-primary' %>
+      <button type="button"
+              id="cancel-chapter"
               class="btn btn-secondary">
         <%= t('buttons.cancel') %>
       </button>
@@ -97,7 +69,7 @@
                     chapter_path(chapter),
                     class: 'btn btn-danger',
                     method: :delete,
-                    data: { confirm: 'Bist Du sicher?' }%>
+                    data: { confirm: t('confirmation.generic') } %>
       <% end %>
     </div>
   </div>

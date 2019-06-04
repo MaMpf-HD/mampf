@@ -353,7 +353,7 @@ de:
           die diese Vorlesung nicht abonniert haben, unsichtbar.
         chapter_title: >
           Hier kannst du den Titel des Kapitels angeben.
-        insert_after: >
+        insert_after_chapter: >
           Hier kannst du auswählen, an welcher Stelle das Kapitel
           eingefügt werden soll, indem du das Vorgängerkapitel auswählst.
         date: >
@@ -365,6 +365,12 @@ de:
           Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
           die zu den entsprechenden Abschnitten gehören. Beim Editieren
           der Sitzung kann diese Auswahl dann nachbearbeitet werden.
+        section_title: >
+          Hier kannst Du den Titel des Abschnitts angeben.
+        insert_after_section: >
+          Hier kannst Du auswählen, an welcher Stelle der
+          Abschnitt eingefügt werden soll, indem Du den Vorgängerabschnitt
+          auswählst.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       video_based: 'videobasiert'
@@ -394,7 +400,8 @@ de:
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
-      insert_after: 'Einfügen nach Kapitel'
+      insert_after_chapter: 'Einfügen nach Kapitel'
+      insert_after_section: 'Einfügen nach Abschnitt'
     course:
       new_course: 'Neues Modul anlegen'
       info:
@@ -409,6 +416,27 @@ de:
           das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
           des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
           alle Vorlesungen innerhalb des Moduls.
+    chapter:
+      edit_html: 'Kapitel %{chapter} bearbeiten'
+      position: 'Positionierung nach Kapitel'
+      display_number: 'Anz.nr.'
+      exempt: 'Exempt from table of contents'
+      info:
+        title: >
+          Hier kannst Du den Titel des Kapitels angeben.
+        position: >
+          Hier kannst Du auswählen, an welcher Stelle das Kapitel
+          positioniert werden soll, indem Du das Vorgängerkapitel auswählst.
+        display_number: >
+          Wird eine Anzeigenummer angegeben, so überschreibt diese
+          die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
+          '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel
+          haben möchtest.
+        exempt: >
+          Wenn Du dieses Feld anklickst, wird dieses Kapitel
+          nicht in der Vorlesungsgliederung als Kapitel auftreten. Trotzdem
+          sind das Kapitel und seine veröffentlichten Inhalte für Nutzer
+          auffindbar.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
@@ -727,6 +755,8 @@ de:
     date: 'Datum'
     sections: 'Abschnitte'
     at_the_beginning: 'am Anfang'
+    at_beginning_of_chapter: 'am Anfang des Kapitels'
+    chapter: 'Kapitel'
   access:
     unpublished: 'unveröffentlicht'
   buttons:
