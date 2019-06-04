@@ -420,7 +420,7 @@ de:
       edit_html: 'Kapitel %{chapter} bearbeiten'
       position: 'Positionierung nach Kapitel'
       display_number: 'Anz.nr.'
-      exempt: 'Exempt from table of contents'
+      exempt: 'von Gliederung ausgenommen'
       info:
         title: >
           Hier kannst Du den Titel des Kapitels angeben.
@@ -430,13 +430,48 @@ de:
         display_number: >
           Wird eine Anzeigenummer angegeben, so überschreibt diese
           die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
-          '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt' als Titel
+          'Kapitel 3. Mein Kapitel' lieber 'Kapitel A. Mein Kapitel' als Titel
           haben möchtest.
         exempt: >
           Wenn Du dieses Feld anklickst, wird dieses Kapitel
           nicht in der Vorlesungsgliederung als Kapitel auftreten. Trotzdem
           sind das Kapitel und seine veröffentlichten Inhalte für Nutzer
           auffindbar.
+    section:
+      edit_html: 'Abschnitt %{section} bearbeiten'
+      position: 'Positionierung nach Abschnitt'
+      display_number: 'Anzeigenr.'
+      exempt: 'von Gliederung ausgenommen'
+      content: 'Inhalt des Abschnitts'
+      info:
+        title: >
+          Hier kannst Du den Titel des Abschnitts angeben.
+        chapter: >
+          Hier kannst Du auswählen, in welchem Kapitel sich der
+          Abschnitt befinden soll.
+        position: >
+          Hier kannst Du auswählen, an welcher Stelle der
+          Abschnitt positioniert werden soll, indem Du den Vorgängerabschnitt
+          auswählst.
+        display_number: >
+          Wird eine Anzeigenummer angegeben, so überschreibt diese
+          die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
+          '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt'
+          als Titel haben möchte.
+        related_tags: >
+          Hier kannst Du die Tags auswählen, die zu diesem Abschnitt
+          assoziiert sein sollen und ggf. neue Tags erstellen.
+        lessons: >
+          Hier kannst Du die Sitzungen auswählen, in denen Inhalte
+          aus diesem Abschnitt behandelt werden bzw. wurden.
+        exempt: >
+          Wenn Du dieses Feld anklickst, wird dieser Abschnitt
+          nicht in der Vorlesungsgliederung als Abschnitt auftreten. Trotzdem
+          sind der Abschnitt und seine Inhalte für NutzerInnen auffindbar.
+        details: >
+          Hier hast du die Möglichkeit, für dich wichtige Details anzugeben
+          (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
+          Vorlesungsseite angezeigt werden.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
@@ -757,6 +792,10 @@ de:
     at_the_beginning: 'am Anfang'
     at_beginning_of_chapter: 'am Anfang des Kapitels'
     chapter: 'Kapitel'
+    section: 'Abschnitt'
+    related_tags: 'Verknüpfte Tags'
+    lessons: 'Sitzungen'
+    details: 'Details'
   access:
     unpublished: 'unveröffentlicht'
   buttons:

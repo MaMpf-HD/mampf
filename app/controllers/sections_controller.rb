@@ -52,6 +52,7 @@ class SectionsController < ApplicationController
   end
 
   def display
+    I18n.locale = @section.lecture.locale_with_inheritance
   end
 
   private

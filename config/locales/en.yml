@@ -410,13 +410,46 @@ en:
           selecting the previous chapter.
         display_number: >
           If a display number is given, it will overwrite the calculated number.
-          That makes sense e.g. if you want 'Appendix A. My Section' as title
-          instead of '§3.2 My title'.
+          That makes sense e.g. if you want 'Chapter A. My Chapter' as title
+          instead of 'Chapter 3. My Chapter'.
         exempt: >
           If you check this box, this chapter will not be listed in the
           lecture contents visible for users. Note however that the chapter
-          and its published contents can be accesed by users, e.g. if they
+          and its published contents can be accessed by users, e.g. if they
           search for it.
+    section:
+      edit_html: 'Edit Section %{section}'
+      position: 'Position after Section'
+      display_number: 'Disp.nr.'
+      exempt: 'Exempt from table of contents'
+      content: 'Contents of the section'
+      info:
+        title: >
+          Here you can enter the title of the section.
+        chapter: >
+          Here you can choose the chapter to which this section belongs.
+        position: >
+          Here you can choose at which position the section is placed by
+          selecting the previous section.
+        display_number: >
+          If a display number is given, it will overwrite the calculated number.
+          That makes sense e.g. if you want '§A. My Section' as title
+          instead of '§3.2 My Section'.
+        related_tags: >
+          Here you can select the tags that are associated to this section,
+          and you can create new tags if necessary.
+        lessons: >
+          Here you can select the sessions in which contents from thsi section
+          have been treated.
+        exempt: >
+          If you check this box, this section will not be listed in the
+          lecture contents visible for users. Note however that the section
+          and its published contents can be accessed by users, e.g. if they
+          search for it.
+        details: >
+          Here you can enter details that are important for you (e.g.
+          literature used in this section). Users can see them in the lecture
+          contents card, right under the section title.
     medium:
       course_medium_html: >
         There is one medium of this type that is associated to the
@@ -721,6 +754,9 @@ en:
     at_the_beginning: 'At the beginning'
     at_beginning_of_chapter: 'At the beginning of the Chapter'
     chapter: 'Chapter'
+    related_tags: 'Related tags'
+    lessons: 'Sessions'
+    details: 'Details'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

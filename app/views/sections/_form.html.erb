@@ -1,11 +1,8 @@
 <div class="row">
   <div class="col-6">
     <h6>
-      Abschnitt
-      <span class="redtext">
-        <%= section.to_label %>
-      </span>
-      bearbeiten
+      <%= t('admin.section.edit_html',
+            section: content_tag(:span, section.to_label, class: 'redtext')) %>
     </h6>
   </div>
   <div class="col-6">
@@ -21,14 +18,8 @@
                       data: { id: section.id } } do |f| %>
   <div class="form-row">
     <div class="col-12 form-group">
-      <%= f.label :title, 'Titel' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du den Titel des Abschnitts angeben.">
-      </i>
+      <%= f.label :title, t('basics.title') %>
+      <%= helpdesk(t('admin.section.info.title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'section_title_' + section.id.to_s,
                                  data: { id: section.id,
@@ -41,15 +32,8 @@
   <div class="form-row">
     <div class="col-12 form-group">
       <%= f.label :chapter_id,
-                  'Kapitel' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du auswählen, in welchem Kapitel sich der
-         Abschnitt befinden soll.">
-      </i>
+                  t('basics.chapter') %>
+      <%= helpdesk(t('admin.section.info.chapter'), false) %>
       <%= f.select :chapter_id,
                    options_for_select(lecture_chapters_for_select(section),
                                       section.chapter.id), {},
@@ -57,16 +41,8 @@
     </div>
     <div class="col-8 form-group">
       <%= f.label :predecessor,
-                  'Positionierung nach Abschnitt' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du auswählen, an welcher Stelle der
-         Abschnitt positioniert werden soll, indem Du den Vorgängerabschnitt
-         auswählst.">
-      </i>
+                  t('admin.section.position') %>
+      <%= helpdesk(t('admin.section.info.position'), false) %>
       <%= f.select :predecessor,
                    options_for_select(section_positions_for_select(section),
                                       section.position - 1) ,
@@ -75,16 +51,8 @@
     </div>
     <div class="col-4 form-group">
       <%= f.label :display_number,
-                  'Anzeigenr.' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover" data-trigger="focus"
-         title="Info"
-         data-content="Wird eine Anzeigenummer angegeben, so überschreibt diese
-         die berechnete Nummer. Das macht z.B. Sinn, wenn man statt
-         '§3.2. Mein Abschnitt' lieber 'Anhang A. Mein Abschnitt'
-         als Titel haben möchte.">
-      </i>
+                  t('admin.section.display_number') %>
+      <%= helpdesk(t('admin.section.info.display_number'), false) %>
       <%= f.text_field :display_number,
                        { class: 'form-control',
                          id: 'section_number_alt_' + section.id.to_s,
@@ -93,15 +61,9 @@
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :tag_ids, 'Verknüpfte Tags' %>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Hier kannst Du die Tags auswählen, die zu diesem Abschnitt
-       assoziiert sein sollen und ggf. neue Tags erstellen.">
-    </i>
+    <%= f.label :tag_ids,
+                t('basics.related_tags') %>
+    <%= helpdesk(t('admin.section.info.related_tags'), false) %>
     <a class="fas fa-plus-circle clickable"
        id="new-tag-button"
        data-toggle="tooltip"
@@ -126,15 +88,9 @@
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :lesson_ids, 'Sitzungen' %>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Hier kannst Du die Sitzungen auswählen, in denen Inhalte
-       aus diesem Abschnitt behandelt werden bzw. wurden.">
-    </i>
+    <%= f.label :lesson_ids,
+                t('basics.lessons') %>
+    <%= helpdesk(t('admin.section.info.lessons'), false) %>
     <%= f.select :lesson_ids,
                  options_for_select(section_lessons_for_select(section),
                                     section.lesson_ids),
@@ -153,21 +109,16 @@
         <%= f.check_box :hidden,
                         class: 'custom-control-input' %>
         <%= f.label :hidden,
-                    'von Gliederung ausgenommen',
+                    t('admin.section.exempt'),
                     { class: 'custom-control-label' } %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Wenn Du dieses Feld anklickst, wird dieser Abschnitt
-           nicht in der Vorlesungsgliederung als Abschnitt auftreten. Trotzdem
-           sind der Abschnitt und seine Inhalte für NutzerInnen auffindbar.">
-        </i>
+        <%= helpdesk(t('admin.section.info.exempt'), false) %>
       </div>
     </div>
   </div>
-  Details:
+  <div class="mb-2">
+    <%= t('basics.details') %>
+    <%= helpdesk(t('admin.section.info.details'), false) %>
+  </div>
   <%= f.trix_editor :details %>
   <div class="row mt-2 ">
     <div class="col-12 text-center">
