@@ -7,7 +7,7 @@
           </h5>
         </div>
         <div class="col-6 text-right">
-          <a class="btn btn-primary"
+          <a class="btn btn-sm btn-outline-primary"
              data-toggle="collapse"
              href="#preferences_collapse"
              id="preferences_collapse_button"
@@ -98,6 +98,30 @@
                             class: 'custom-control-label' %>
               </div>
             <% end %>
+            </div>
+          </div>
+          <div class="form-group">
+            <%= t('admin.lecture.content_mode') %>
+            <%= helpdesk(t('admin.lecture.info.variants'), true) %>
+            <div class="form-row ml-2">
+              <div class="custom-control custom-radio custom-control-inline">
+                <%= f.radio_button :content_mode,
+                                   'video',
+                                   class: 'custom-control-input' %>
+                <%= f.label :content_mode,
+                            t('admin.lecture.video_based'),
+                            value: 'video',
+                            class: 'custom-control-label' %>
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <%= f.radio_button :content_mode,
+                                   'manuscript',
+                                   class: 'custom-control-input' %>
+                <%= f.label :content_mode,
+                            t('admin.lecture.script_based'),
+                            value: 'manuscript',
+                            class: 'custom-control-label' %>
+              </div>
             </div>
           </div>
           <div class="row">

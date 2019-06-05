@@ -65,6 +65,7 @@ class LessonsController < ApplicationController
   end
 
   def inspect
+    I18n.locale = @lesson.locale_with_inheritance
   end
 
   private

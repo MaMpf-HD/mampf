@@ -7,7 +7,7 @@
           </h5>
         </div>
         <div class="col-6 text-right">
-          <a class="btn btn-primary"
+          <a class="btn btn-sm btn-outline-primary"
              data-toggle="collapse"
              href="#forum_collapse"
              id="forum_collapse_button"
@@ -32,19 +32,19 @@
               <% if lecture.forum.locked %>
                 <%= link_to t('buttons.unlock_board'),
                             unlock_forum_path(lecture),
-                            class: 'btn btn-primary' %>
+                            class: 'btn btn-sm btn-primary' %>
               <% else %>
                 <%= link_to t('buttons.lock_board'),
                             lock_forum_path(lecture),
-                            class: 'btn btn-primary' %>
+                            class: 'btn btn-sm btn-primary' %>
               <% end %>
               <%= link_to t('buttons.delete_board'),
                           destroy_forum_path(lecture),
-                          class: 'btn btn-danger' %>
+                          class: 'btn btn-sm btn-danger' %>
             <% else %>
               <%= link_to t('buttons.add_board'),
                           add_forum_path(lecture),
-                          class: 'btn btn-primary' %>
+                          class: 'btn btn-sm btn-primary' %>
             <% end %>
             <% end %>
           </div>

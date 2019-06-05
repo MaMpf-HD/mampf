@@ -140,17 +140,6 @@ $(document).on 'turbolinks:load', ->
         .addClass('badge-secondary')
     return
 
-  $('.content-mode').on 'change', ->
-    mode = if this.id == 'video-based' then 'video' else 'manuscript'
-    lectureId = $(this).data('lecture')
-    $.ajax Routes.update_content_mode_path(lectureId),
-      type: 'POST'
-      dataType: 'script'
-      data: {
-        mode: mode
-      }
-    return
-
   $('#edited-media-tab a[data-toggle="tab"]').on 'shown.bs.tab', (e) ->
     sort = e.target.dataset.sort # newly activated tab
     path = $('#create-new-medium').prop('href')

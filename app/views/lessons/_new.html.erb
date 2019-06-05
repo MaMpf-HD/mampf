@@ -12,7 +12,7 @@
         <div class="col-12">
           <%= f.label :date,
                       t('basics.date') %>
-          <%= helpdesk(t('admin.lecture.info.date'), false) %>
+          <%= helpdesk(t('admin.lesson.info.date'), false) %>
         </div>
         <div class="col-12">
           <%= f.date_field :date %>
@@ -27,7 +27,7 @@
       <div class="form-group">
         <%= f.label :section_ids,
                     t('basics.sections') %>
-        <%= helpdesk(t('admin.lecture.info.sections'), false) %>
+        <%= helpdesk(t('admin.lesson.info.sections'), false) %>
         <%= f.select :section_ids,
                      options_for_select(lesson.lecture.section_selection),
                      {},

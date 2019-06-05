@@ -1,27 +1,24 @@
 <div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
     <div class="row">
-      <div class="col-6">
+      <div class="col-4">
         <h5>
           <%= t('basics.media') %>
           <%= helpdesk(t('admin.lecture.info.media'), false) %>
         </h5>
       </div>
-      <div class="col-3">
+      <div class="col-6">
         <% unless inspection %>
-          <a href="<%= new_medium_path(params:
-                                         { sort: 'Kaviar',
-                                           teachable_id: lecture.id,
-                                           teachable_type: 'Lecture' }) %>"
-             class="fas fa-plus-circle fa-lg new-in-lecture text-dark"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="<%= t('buttons.create_medium') %>"
-             id="create-new-medium">
-          </a>
+          <%= link_to t('buttons.create_medium'),
+                      new_medium_path(params:
+                                        { sort: 'Kaviar',
+                                          teachable_id: lecture.id,
+                                          teachable_type: 'Lecture' }),
+                      class: 'btn btn-sm btn-secondary new-in-lecture',
+                      id: 'create-new-medium' %>
         <% end %>
       </div>
-      <div class="col-3 text-right">
+      <div class="col-2 text-right">
         <i id="hide-media-button"
            class="far fa-window-close clickable"
            data-toggle="tooltip"

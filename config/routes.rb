@@ -68,8 +68,7 @@ Rails.application.routes.draw do
                                          as: 'organizational'
   post 'lecture/:id/publish', to: 'lectures#publish',
                             as: 'publish_lecture'
-  post 'lecture/:id/update_content_mode', to: 'lectures#update_content_mode',
-                                          as: 'update_content_mode'
+
   resources :lectures, except: [:index]
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',

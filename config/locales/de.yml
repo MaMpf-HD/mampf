@@ -224,11 +224,11 @@ de:
         workflow: >
           Wir beschreiben im Folgenden einen sinnvollen
           Workflow. Hierbei sollte man unterscheiden, ob die Vorlesung
-          <i>videobasiert</i> oder <i>skriptbasiert</i> ist.
+          <i>medienbasiert</i> oder <i>skriptbasiert</i> ist.
           <ul>
           <li>
           <i>
-          videobasiert:
+          medienbasiert (Standard):
           </i>
           Zunächst legt man die Kapitel und Abschnitte an und tagged diese.
           Danach werden Sitzungen und zugeordnete Medien angelegt, diese
@@ -240,7 +240,7 @@ de:
           <i>
           skriptbasiert:
           </i>
-          Es empfiehlt sich, in der .tex-Datei das
+          Hier ist es notwendig, in der .tex-Datei für das Manuskript das
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
           einzubinden
           und alles, was gelabelt werden soll, mit \mampflabels zu versehen.
@@ -261,7 +261,7 @@ de:
           <ul>
           <li>
           <i>
-          videobasiert:
+          medienbasiert (Standard):
           </i>
           MaMpf legt für den Inhalt alle Items zugrunde, die im THymE-Editor
           für den entsprechenden Abschnitt angelegt wurden bzw. zu denjenigen
@@ -270,7 +270,8 @@ de:
           </li>
           <li>
           <i>
-          skriptbasiert:
+          unter Verwendung eines Vorlesungsskriptes, das mit dem MaMpf
+          LaTEX-Paket erstellt wurde:
           </i>
           MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
           denjenigen Abschnitt mit einem MaMpf-Label versehen wurden,
@@ -356,15 +357,6 @@ de:
         insert_after_chapter: >
           Hier kannst du auswählen, an welcher Stelle das Kapitel
           eingefügt werden soll, indem du das Vorgängerkapitel auswählst.
-        date: >
-          Hier kannst Du das Datum auswählen, an dem die
-          Sitzung stattgefunden hat.
-        sections: >
-          Hier kannst Du auswählen, welche Abschnitte aus der
-          Vorlesung in der entsprechenden Sitzung behandelt wurden.
-          Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
-          die zu den entsprechenden Abschnitten gehören. Beim Editieren
-          der Sitzung kann diese Auswahl dann nachbearbeitet werden.
         section_title: >
           Hier kannst Du den Titel des Abschnitts angeben.
         insert_after_section: >
@@ -373,8 +365,11 @@ de:
           auswählst.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
-      video_based: 'videobasiert'
-      script_based: 'skriptbasiert'
+      content_mode: 'Inhaltsermittlung'
+      video_based: 'medienbasiert'
+      script_based: >
+          unter Verwendung eines Vorlesungsskriptes, das mit dem MaMpf
+          LaTEX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
@@ -472,6 +467,45 @@ de:
           Hier hast du die Möglichkeit, für dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
           Vorlesungsseite angezeigt werden.
+    lesson:
+      edit: 'Sitzung bearbeiten'
+      inspect: 'Sitzung ansehen'
+      no_media: 'Für diese Sitzung sind keine Medien vorhanden.'
+      no_sections: 'Zu dieser Sitzung sind keine Abschnitte assoziiert.'
+      start_item: 'Anfangs-Item'
+      end_item: 'End-Item'
+      info:
+        date: >
+          Hier kannst Du das Datum auswählen, an dem die
+          Sitzung stattgefunden hat.
+        date_inspection: >
+          Das ist das Datum, an dem die Sitzung
+          stattgefunden hat.
+        sections: >
+          Hier kannst Du auswählen, welche Abschnitte aus der
+          Vorlesung in der entsprechenden Sitzung behandelt wurden.
+          Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
+          die zu den entsprechenden Abschnitten gehören. Beim Editieren
+          der Sitzung kann diese Auswahl dann nachbearbeitet werden.
+        sections_inspection:
+          Das ist die Liste der Abschnitte aus der
+          Vorlesung, die  in der entsprechenden Sitzung behandelt wurden.
+        tags: >
+          Dies ist die Liste aller Tags, die zu dieser Sitzung
+          assoziiert sind. Beim Anlegen einer Sitzung werden hier automatisch
+          alle Tags aus sämtlichen mit dieser Sitzung mit der Sitzung
+          verknüpften Abschnitten eingetragen.
+          Diese Auswahl kannst Du hier nachbearbeiten.
+        tags_inspection:
+          Dies ist die Liste aller Tags, die zu dieser Sitzung
+          assoziiert sind.
+        media: >
+          Dies ist die Liste aller Medien, die zu dieser
+          Sitzung assoziiert sind.
+        start_item: >
+          Hier kannst Du auswählen, wo die Sitzung inhaltlich begonnen hat.
+        end_item: >
+          Hier kannst Du auswählen, wo die Sitzung inhaltlich geendet hat.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
@@ -796,6 +830,7 @@ de:
     related_tags: 'Verknüpfte Tags'
     lessons: 'Sitzungen'
     details: 'Details'
+    select: 'auswählen'
   access:
     unpublished: 'unveröffentlicht'
   buttons:

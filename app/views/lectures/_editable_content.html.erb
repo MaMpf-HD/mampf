@@ -27,47 +27,16 @@
           <%= link_to t('buttons.create_chapter'),
                        new_chapter_path(lecture_id: lecture.id),
                        remote: true,
-                       class: 'btn btn-secondary new-in-lecture',
+                       class: 'btn btn-sm btn-secondary new-in-lecture',
                        id: 'new_chapter_button' %>
           <%= link_to t('buttons.create_lesson'),
                        new_lesson_path(lecture_id: lecture.id),
                        remote: true,
-                       class: 'btn btn-secondary new-in-lecture',
+                       class: 'btn btn-sm btn-secondary new-in-lecture',
                        id: 'new_lesson_button'%>
         </div>
       <% end %>
     </div>
-    <% unless inspection %>
-    <div class="row">
-      <div class="col-12">
-        <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio"
-                 id="video-based"
-                 name="content_mode"
-                 <%= lecture.content_mode == 'video' ? 'checked ' : '' %>
-                 class="custom-control-input content-mode"
-                 data-lecture="<%= lecture.id %>">
-          <label class="custom-control-label"
-                 for="video-based">
-            <%= t('admin.lecture.video_based') %>
-          </label>
-        </div>
-        <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio"
-                 id="manuscript-based"
-                 name="content_mode"
-                 <%= lecture.content_mode == 'manuscript' ? 'checked ' : '' %>
-                 class="custom-control-input content-mode"
-                 data-lecture="<%= lecture.id %>">
-          <label class="custom-control-label"
-                 for="manuscript-based">
-            <%= t('admin.lecture.script_based') %>
-          </label>
-        </div>
-        <%= helpdesk(t('admin.lecture.info.variants'), true) %>
-      </div>
-    </div>
-    <% end %>
   </div>
   <div class="card-body">
     <div id="new-chapter-area"
@@ -83,7 +52,7 @@
             <div id="<%= dom_id(c) %>"
                  class="card-header <%= chapter_header_color(c) %>">
               <div class="row">
-                <div class="col-10">
+                <div class="col-8">
                   <% if inspection %>
                     <span class="text-light">
                       <%= c.to_label %>
@@ -104,15 +73,12 @@
                   <% end %>
                 </div>
                 <% unless inspection %>
-                  <div class="col-2 text-right">
-                    <a href="<%= new_section_path(chapter_id: c.id) %>"
-                       class="text-light new-in-lecture"
-                       data-remote="true"
-                       data-toggle="tooltip"
-                       title="<%= t('buttons.create_section') %>">
-                      <i class="fas fa-plus-circle">
-                      </i>
-                    </a>
+                  <div class="col-4 text-right">
+                    <%= link_to t('buttons.create_section'),
+                                new_section_path(chapter_id: c.id),
+                                remote: true,
+                                class: 'btn btn-sm btn-secondary new-in-lecture',
+                                id: 'new_lesson_button' %>
                   </div>
                 <% end %>
               </div>

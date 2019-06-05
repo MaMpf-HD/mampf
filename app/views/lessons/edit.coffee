@@ -5,7 +5,6 @@ if $('#lecture-basics-warning').is(':visible') || $('#lecture-preferences-warnin
 else
   # render edit lesson form
   $('#new-lesson-area').empty().hide()
-  $('#lesson-action').empty().append('bearbeiten')
   $('#lesson-modal-content').empty()
     .append('<%= j render partial: "lessons/edit",
                           locals: { lesson: @lesson } %>').show()
