@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_22_152209) do
+ActiveRecord::Schema.define(version: 2019_06_06_084258) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -293,9 +293,9 @@ ActiveRecord::Schema.define(version: 2019_05_22_152209) do
   end
 
   create_table "tags", force: :cascade do |t|
+    t.string "title_backup"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "title_backup"
   end
 
   create_table "terms", force: :cascade do |t|
@@ -555,6 +555,7 @@ ActiveRecord::Schema.define(version: 2019_05_22_152209) do
     t.boolean "email_for_announcement"
     t.boolean "email_for_teachable"
     t.boolean "email_for_news"
+    t.integer "current_lecture_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

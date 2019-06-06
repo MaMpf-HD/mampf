@@ -16,6 +16,15 @@
                     data: { toggle: "tooltip" },
                     title: t('admin.navbar.main') %>
       </li>
+      <% if current_user.current_lecture_id
+                        .in?(current_user.teaching_related_lectures.map(&:id)) %>
+        <%= link_to '',
+                    edit_lecture_path(Lecture.find_by_id(current_user.current_lecture_id)),
+                    class: 'fas fa-chalkboard-teacher text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: "tooltip" },
+                    title: t('admin.navbar.current_lecture') %>
+      <% end %>
       <li class="nav-item">
         <%= link_to '', destroy_user_session_path,
                     class: 'fas fa-sign-out-alt fa-lg text-light nav-link',

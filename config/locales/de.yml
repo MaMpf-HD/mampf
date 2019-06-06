@@ -76,6 +76,7 @@ de:
     navbar:
       exit: 'Administration beenden'
       main: 'Übersicht'
+      current_lecture: 'Aktuelle Vorlesung'
       logout: 'Logout'
       media_search: 'Mediensuche'
       tags: 'Tagübersicht'

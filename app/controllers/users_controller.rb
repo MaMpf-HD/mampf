@@ -61,7 +61,8 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :admin, :homepage)
+    params.require(:user).permit(:name, :email, :admin, :homepage,
+                                 :current_lecture_id)
   end
 
   def set_elevated_users

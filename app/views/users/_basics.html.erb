@@ -53,6 +53,17 @@
     </div>
   </div>
 <div class="form-group">
+  <%= f.label :current_lecture_id,
+              'Aktuelle Vorlesung' %>
+  <%= helpdesk('Hier kannst Du auswählen, welche Vorlesung aktuell für Dich primär ist. Ein entsprechendes Icon in der Navigationsleiste führt Dich direkt zu ihr.', false) %>
+  <%= f.select :current_lecture_id,
+               options_for_select(current_user.teaching_related_lectures
+                                              .map { |l| [l.title, l.id] },
+                                  current_user.current_lecture_id),
+               { prompt: t('basics.select') },
+               { class: 'selectize' } %>
+</div>
+<div class="form-group">
   <%= f.label :homepage %>
   <i class="far fa-question-circle helpdesk"
      tabindex="-1"

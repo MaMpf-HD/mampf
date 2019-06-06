@@ -90,6 +90,7 @@ en:
     navbar:
       exit: 'Exit administration'
       main: 'Overview'
+      current_lecture: 'Current lecture'
       logout: 'Logout'
       media_search: 'Search media'
       tags: 'Tag overview'
