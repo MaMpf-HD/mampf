@@ -166,6 +166,7 @@ $(document).on 'turbolinks:load', ->
     $('#teachableDrop').prependTo($('#second-admin-nav'))
     $('#adminMain').css('flex-direction', 'row')
     $('#adminHome').css('padding-right', '0.5rem')
+    $('#adminCurrentLecture').css('padding-right', '0.5rem')
     return
 
     # on large display, use normal tag badges and course titles
@@ -185,6 +186,7 @@ $(document).on 'turbolinks:load', ->
     $('#adminProfile').appendTo($('#first-admin-nav'))
     $('#adminMain').removeAttr('style')
     $('#adminHome').removeAttr('style')
+    $('#adminCurrentLecture').removeAttr('style')
     return
 
     # highlight tagbadges if screen is very small
