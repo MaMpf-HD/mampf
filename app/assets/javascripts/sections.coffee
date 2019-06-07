@@ -30,7 +30,6 @@ $(document).on 'turbolinks:load', ->
     $('.fa-edit').show()
     $('.new-in-lecture').show()
     $('[data-toggle="collapse"]').removeClass('disabled')
-    $('#new-announcement-button').removeClass('disabled')
     return
 
   # reload page if editing of section is cancelled

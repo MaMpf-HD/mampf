@@ -3,7 +3,6 @@ $('.fa-edit').hide()
 $('.new-in-lecture').hide()
 $('#lectureAccordion .collapse').collapse('hide')
 $('[data-toggle="collapse"]').addClass('disabled')
-$('#new-announcement-button').addClass('disabled')
 
 # render edit section form
 $('#<%= dom_id(@section) %>').empty().removeClass('bg-mdb-color-lighten-6')

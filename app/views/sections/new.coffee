@@ -3,7 +3,6 @@ $('.fa-edit').hide()
 $('.new-in-lecture').hide()
 $('#lectureAccordion .collapse').collapse('hide')
 $('[data-toggle="collapse"]').addClass('disabled')
-$('#new-announcement-button').addClass('disabled')
 
 # render new section form
 $('#new-section-area-<%= @chapter.id %>').empty()

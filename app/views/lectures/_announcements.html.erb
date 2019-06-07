@@ -8,13 +8,6 @@
           </h5>
         </div>
         <div class="col-6 text-right">
-          <% unless inspection %>
-            <%= link_to t('buttons.create_announcement'),
-                        new_announcement_path(params: { lecture: lecture.id }),
-                        class: 'btn btn-sm btn-secondary',
-                        id: 'new-announcement-button',
-                        remote: true %>
-          <% end %>
           <a class="btn btn-sm btn-outline-primary"
              data-toggle="collapse"
              href="#announcements_collapse"
@@ -31,6 +24,17 @@
          aria-labelledby="heading"
          data-parent="#lectureAccordion">
       <div class="card-body">
+        <% unless inspection %>
+          <div class="row mb-2">
+            <div class="col-12 text-center">
+              <%= link_to t('buttons.create_announcement'),
+                          new_announcement_path(params: { lecture: lecture.id }),
+                          class: 'btn btn-sm btn-secondary',
+                          id: 'new-announcement-button',
+                          remote: true %>
+            </div>
+          </div>
+        <% end %>
         <% announcements.each do |a| %>
           <div class="row border-bottom mx-2 px-4 py-2"
                id="row-announcement-<%= a.id %>">

@@ -4,7 +4,6 @@
 
 disableExceptOrganizational = ->
   $('#lecture-organizational-warning').show()
-  $('#new-announcement-button').addClass('disabled')
   $('.fa-edit').hide()
   $('.new-in-lecture').hide()
   $('[data-toggle="collapse"]').addClass('disabled')
@@ -22,13 +21,11 @@ $(document).on 'turbolinks:load', ->
     $('.fa-edit:not(#update-teacher-button,#update-editors-button)').hide()
     $('.new-in-lecture').hide()
     $('[data-toggle="collapse"]').addClass('disabled')
-    $('#new-announcement-button').addClass('disabled')
     return
 
   # if any input is given to the preferences form, disable other input
   $('#lecture-preferences-form :input').on 'change', ->
     $('#lecture-preferences-warning').show()
-    $('#new-announcement-button').addClass('disabled')
     $('[data-toggle="collapse"]').addClass('disabled')
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()

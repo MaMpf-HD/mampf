@@ -3,7 +3,6 @@ $('.fa-edit').hide()
 $('.new-in-lecture').hide()
 $('#lectureAccordion .collapse').collapse('hide')
 $('[data-toggle="collapse"]').addClass('disabled')
-$('#new-announcement-button').addClass('disabled')
 
 # render chapters form
 $('#<%= dom_id(@chapter) %>').empty().removeClass('bg-mdb-color-lighten-2')
