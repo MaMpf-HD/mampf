@@ -155,8 +155,8 @@ de:
           <i>Medien</i>,
           für die Du als BearbeiterIn eingetragen bist. Medien, für Die Du
           Bearbeitungsrechte erbst (beispielsweise als ModuleditorIn), sind in
-          dieser Liste nicht aufgeführt. Unveröffentlichte Medien sind in rötlicher
-          Farbe gekennzeichnet.
+          dieser Liste nicht aufgeführt. Unveröffentlichte sowie gesperrte
+          Medien sind in rötlicher Farbe gekennzeichnet.
           <br>
           <br>
           Ein
@@ -468,6 +468,8 @@ de:
           Hier hast du die Möglichkeit, für dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
           Vorlesungsseite angezeigt werden.
+        list: >
+          Dies ist die Liste aller assoziierten Abschnitte.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -507,6 +509,8 @@ de:
           Hier kannst Du auswählen, wo die Sitzung inhaltlich begonnen hat.
         end_item: >
           Hier kannst Du auswählen, wo die Sitzung inhaltlich geendet hat.
+        list: >
+          Dies ist die Liste aller assoziierten Sitzungen.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
@@ -517,11 +521,57 @@ de:
       use_search_html: >
         Es werden nur die 50 zuletzt angelegten Medien angezeigt.
         Mehr findest Du über die %{media_search}.
+      associated: >
+        Dies ist die Liste aller assoziierten Medien.
+        Rot eingefärbte Medien sind noch nicht veröffentlicht oder gesperrt.
       local_info:
         no_title: 'ohne Titel'
         to_session: 'zu Sitzung %{number}, %{date}'
         question: 'Frage %{position}/%{count}'
         remark: 'Erläuterung %{position}/%{count}'
+    tag:
+      index: 'Tagübersicht'
+      related_tags: 'Verknüpfte Tags'
+      extra_lectures: 'Zusätzliche Vorlesungen'
+      missing_lectures: 'Fehlende Vorlesungen'
+      create: 'Tag anlegen'
+      mampf_map: 'MaMpf-Map'
+      render: 'in externem Tab rendern'
+      edit_related_tags: >
+        Verknüpfte Tags hinzufügen/entfernen
+      no_tags: >
+        There are no associated tags.
+      info:
+        title: >
+          Hier kannst Du den Titel des Tags in verschiedenen
+          Sprachen eingeben. Zumindest für eine Sprache muss ein Titel vergeben
+          werden.
+        related_tags: >
+          Die Tags bilden einen Graphen. Verknüpfte Tags sind
+          genau die Nachbarn eines Tags. Diese kannst Du hier auswählen.
+        courses: >
+          Hier kannst Du auswählen, zu welchen Modulen dieser Tag
+          assoziiert sein soll.
+        extra_lectures: >
+          Dies ist eine Liste aller Vorlesungen, für welche
+          dieser Tag nicht zu dem übergeordneten Modul assoziiert ist,
+          jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.
+        missing_lectures: >
+          Dies ist eine Liste aller Vorlesungen, für welche
+          dieser Tag zu dem übergeordneten Modul assoziiert ist, jedoch in
+          keinem Abschnitt der entsprechenden Vorlesung auftaucht.
+        sections: >
+          Hier kannst Du auswählen, zu welchen Abschnitten dieser Tag
+          assoziiert sein soll.
+        list: >
+          Das ist die Liste aller assoziierten Tags.
+        search_title: >
+          Hier kannst Du den Titel des gesuchten Tags eingeben.
+          Die Liste der angezeigten Tags wird nach dann entsprechend
+          gefiltert.
+        search_course: >
+          Hier kannst Du (im Sinne von <i>ODER</i>)
+          auswählen, zu welchen Modulen das Tag assoziiert sein soll.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -773,8 +823,8 @@ de:
       </strong>
       zu Algebra, Analysis und Lineare Algebra
     interested_html:
-      Neugierig geworden?
-      %{blog} findest du weitere Informationen über und Neuigkeiten zu MaMpf.
+      Neugierig geworden? %{blog} findest du weitere Informationen über
+      und Neuigkeiten zu MaMpf.
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -807,6 +857,7 @@ de:
       Du kannst es über Deine Profileinstellungen abonnieren.
   basics:
     course: 'Modul'
+    courses: 'Module'
     term: 'Semester'
     teacher: 'DozentIn'
     title: 'Titel'
@@ -815,6 +866,7 @@ de:
     lecture: 'Vorlesung'
     media: 'Medien'
     medium: 'Medium'
+    tag: 'Tag'
     people: 'Personen'
     course_editors: 'ModuleditorInnen'
     lecture_editors: 'zusätzliche VorlesungseditorInnen'
@@ -832,6 +884,10 @@ de:
     lessons: 'Sitzungen'
     details: 'Details'
     select: 'auswählen'
+    basics: 'Basisdaten'
+    action: 'Aktion'
+    actions: 'Aktionen'
+    search: 'Suche'
   access:
     unpublished: 'unveröffentlicht'
   buttons:
@@ -856,6 +912,9 @@ de:
     lock_board: 'Forum sperren'
     delete_board: 'Forum löschen'
     add_board: 'Forum anlegen'
+    all_courses: 'alle Module'
+    edited_courses: 'von mir editierte Module'
+    clean_courses_form: 'Module leeren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

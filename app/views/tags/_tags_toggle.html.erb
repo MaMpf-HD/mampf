@@ -5,14 +5,8 @@
          role="tab"
          id="tags_heading<%= id %>">
       <h5 class="text-dark">
-        <%= tags_description + ' (' + tags.count.to_s + ') '%>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Das ist die Liste aller assoziierten Tags.">
-        </i>
+        <%= t('admin.tag.related_tags') %> (<%= tags.count.to_s %>)
+        <%= helpdesk(t('admin.tag.info.list'), false) %>
         <a class="btn btn-primary float-right"
            data-toggle="collapse"
            href="#tags_collapse<%= id %>"
@@ -39,7 +33,7 @@
                 <% end %>
               <% end %>
             <% else %>
-              Es sind noch keine Begriffe vorhanden.
+              <%= t('admin.tag.no_tags') %>
             <% end %>
           </div>
         </div>

@@ -9,13 +9,12 @@
   </div>
   <div class="col-2 text-right">
     <% if current_user.editor? %>
-      <a href="<%= edit_tag_path(@tag) %>"
-         class="far fa-edit fa-lg text-secondary"
-         data-toggle="tooltip"
-         data-placement="bottom"
-         title="Bearbeiten"
-         style="text-decoration: none;">
-      </a>
+      <%= link_to '',
+                  edit_tag_path(@tag),
+                  class: 'far fa-edit fa-lg text-secondary',
+                  data: { toggle: 'tooltip', placement: 'bottom' },
+                  title: t('buttons.edit'),
+                  style: 'text-decoration: none;' %>
     <% end %>
   </div>
 </div>

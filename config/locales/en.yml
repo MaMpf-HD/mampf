@@ -137,7 +137,7 @@ en:
           <i>Course</i>,
           given by a specific teacher in specific term.
           <br>
-          Lectures in red  have not yet been published.
+          Lectures in red have not yet been published.
         given_lectures: >
           This is the list of all lectures that you have given as a teacher.
           For these you have editing access, of course.
@@ -161,8 +161,8 @@ en:
           This is the list of all
           <i>Media</i>,
           for which you are editor. Media for which you inherit editing access
-          (e.g. as course editor) are not listed here. Unpublished media
-          are shown in red.
+          (e.g. as course editor) are not listed here. Unpublished media and
+          locked media are shown in red.
           <br>
           <br>
           A
@@ -452,9 +452,11 @@ en:
           Here you can enter details that are important for you (e.g.
           literature used in this section). Users can see them in the lecture
           contents card, right under the section title.
+        list: >
+          This is the list of all associated sections.
     lesson:
-      edit: 'Edit lesson'
-      inspect: 'Inspect lesson'
+      edit: 'Edit Session'
+      inspect: 'Inspect Session'
       no_media: >
         There are no media associated  to this session.
       no_sections: >
@@ -489,6 +491,8 @@ en:
         end_item: >
           Here you can select the manuscript item with which the
           session ended.
+        list: >
+          This is the list of all associated sessions.
     medium:
       course_medium_html: >
         There is one medium of this type that is associated to the
@@ -499,11 +503,52 @@ en:
       use_search_html: >
         Only the last 50 media (by creation) are shown. You can find more media
         via the %{media_search}.
+      associated: >
+        This is the list of all associated media. Media in red are unpublished
+        or locked.
       local_info:
         no_title: 'untitled'
         to_session: 'to Session %{number}, %{date}'
         question: 'Question %{position}/%{count}'
         question: 'Remark %{position}/%{count}'
+    tag:
+      index: 'Tag Index'
+      related_tags: 'Related Tags'
+      extra_lectures: 'Addictional Lectures'
+      missing_lectures: 'Missing lectures'
+      create: 'Create Tag'
+      mampf_map: 'MaMpf Map'
+      render: 'Render in external tab'
+      edit_related_tags: >
+        Add/Remove related tags
+      no_tags: >
+        There are no associated tags.
+      info:
+        title: >
+          Hier you can enter the title of the tag in different languages.
+          A title has to be given for at least one language.
+        related_tags: >
+          The tags form agraph. Related tags are the neighbours of a tag.
+          You can select these here.
+        courses: >
+          Here you can select the courses that this tag is associated to.
+        extra_lectures: >
+          This is the list of all lectures where the tag is not associated to
+          the parent course, but appears in one of the lecture's sections.
+        missing_lectures: >
+          This is the list of all lectures for which the tag is associated to
+          the parent course but does not appear in any of the lecture's
+          sections.
+        sections: >
+          Here you can select the sections that this tag is associated to.
+        list: >
+          This is the list of all associated tags.
+        search_title: >
+          Here you can enter the title of the tag that you are searching for.
+          The list of all tags will be filtered correspondingly.
+        search_course: >
+          Here you can enter the courses that the tag is associated to (in
+          the sense of <i>OR</i>).
   profile:
     account: 'Account'
     name: 'Display name'
@@ -773,6 +818,7 @@ en:
       You can subscribe it in your profile settings.
   basics:
     course: 'Course'
+    courses: 'Courses'
     term: 'Term'
     teacher: 'Teacher'
     title: 'Title'
@@ -781,6 +827,7 @@ en:
     lecture: 'Lecture'
     media: 'Media'
     medium: 'Medium'
+    tag: 'Tag'
     people: 'People'
     course_editors: 'Course Editors'
     lecture_editors: 'Additional Lecture Editors'
@@ -797,6 +844,10 @@ en:
     lessons: 'Sessions'
     details: 'Details'
     select: 'Select'
+    basics: 'Basics'
+    action: 'Action'
+    actions: 'Actions'
+    search: 'Search'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -825,6 +876,9 @@ en:
     lock_board: 'Lock Board'
     delete_board: 'Delete Board'
     add_board: 'Create Board'
+    all_courses: 'All Courses'
+    edited_courses: 'Courses edited by myself'
+    clean_courses_form: 'Clean Courses Form'
   confirmation:
     generic: 'Are you sure?'
   activerecord:

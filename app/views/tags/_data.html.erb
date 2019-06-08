@@ -1,8 +1,7 @@
 <% if new_tag %>
   <div class="row p-2">
     <div class="col-12">
-      <div class="card bg-light mb-4"
-           id="tag-basics-edit-<%= tag.id.to_i %>">
+      <div class="card bg-light mb-4">
         <%= render partial: 'tags/basics',
                    locals: { tag: tag,
                              f: f,
@@ -13,19 +12,19 @@
   </div>
 <% else %>
   <div class="row p-2">
-    <div class="col-6">
+    <div class="col-12 col-xxl-6 mb-2">
       <div class="card">
-        <div class="card-header">
+        <div class="card-header bg-generic-card-header">
           <div class="row">
             <div class="col-3">
               <h5 class="text">
-               MaMpf-Map
+               <%= t('mampf_map') %>
               </h5>
             </div>
             <div class="col-9 text-right">
-              <%= link_to 'in externem Tab rendern',
+              <%= link_to t('admin.tag.render'),
                           display_cyto_tag_path(tag),
-                          class: 'btn btn-outline-secondary',
+                          class: 'btn btn-sm btn-outline-secondary',
                           target: :_blank%>
             </div>
           </div>
@@ -39,70 +38,80 @@
         </div>
       </div>
     </div>
-    <div class="col-2">
-      <div class="card mb-2 bg-green-lighten-4" id="relatedTagsEdit">
-        <div class="card-header bg-green-darken-3 text-light">
-          <div class="row">
-            <div class="col-9">
-              <h5>
-                Verknüpfte Tags
-              </h5>
+    <div class="col-12 col-xxl-6">
+      <div class="row">
+        <div class="col-12 mb-2">
+          <div class="card bg-light"
+               id="tagBasicsEdit">
+            <%= render partial: 'tags/basics',
+                       locals: { tag: tag,
+                                 f: f,
+                                 new_tag: false,
+                                 from: from } %>
+          </div>
+        </div>
+        <div class="col-6 col-xxl-4">
+          <div class="card mb-2 bg-light"
+               id="relatedTagsEdit">
+            <div class="card-header">
+              <div class="row">
+                <div class="col-9">
+                  <h5>
+                    <%= t('admin.tag.related_tags') %>
+                  </h5>
+                </div>
+                <div class="col-3 text-right">
+                  <i class="far fa-edit clickable"
+                     id="selectRelatedTags"
+                     data-remote="true"
+                     data-toggle="tooltip"
+                     title="<%= t('admin.tag.edit_related_tags') %>">
+                  </i>
+                </div>
+              </div>
             </div>
-            <div class="col-3 text-right">
-              <i class="far fa-edit text-light clickable"
-                 id="selectRelatedTags"
-                 data-remote="true"
-                 data-toggle="tooltip" title="Tags hinzufügen/entfernen">
-              </i>
+            <div class="card-body" id="relatedTagsBodyEdit">
+              <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
+                <%= link_to t.short_title,
+                            edit_tag_path(t),
+                            class: "badge badge-light",
+                            id: 'related-' + dom_id(t),
+                            data: { toggle: 'tooltip',
+                                    placement: 'top',
+                                    id: t.id },
+                            title: t.title %>
+                <br>
+              <% end %>
             </div>
           </div>
         </div>
-        <div class="card-body" id="relatedTagsBodyEdit">
-          <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
-            <%= link_to t.short_title,
-                        edit_tag_path(t),
-                        class: "badge badge-light",
-                        id: 'related-' + dom_id(t),
-                        data: { toggle: 'tooltip', placement: 'top', id: t.id },
-                        title: t.title %>
-            <br>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
-      <div class="card mb-2"
-           id="tagEditAction">
-        <div class="card-header bg-mdb-color-darken-2 text-light">
-          Aktion
-          <span id="tagActionType"
-                style="display: none;">
-            Verknüpfte Tags hinzufügen/entfernen
-          </span>
-        </div>
-        <div class="card-body"
-             id="tagEditActionBody">
-          <div id="selectRelatedTagsForm"
-               style="display: none;">
-            <%= render partial: 'tags/select_related_tags',
-                       locals: { tag: tag, f: f } %>
+        <div class="col-6 col-xxl-8">
+          <div class="card mb-2"
+               id="tagEditAction">
+            <div class="card-header bg-mdb-color-darken-2 text-light">
+              <span id="tagActionHeader">
+                <%= t('basics.action') %>
+              </span>
+              <span id="tagActionType"
+                    style="display: none;">
+                <%= t('admin.tag.edit_related_tags') %>
+              </span>
+            </div>
+            <div class="card-body"
+                 id="tagEditActionBody">
+              <div id="selectRelatedTagsForm"
+                   style="display: none;">
+                <%= render partial: 'tags/select_related_tags',
+                           locals: { tag: tag, f: f } %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
   <div class="row p-2">
-    <div class="col-6">
-      <div class="card bg-light mb-4"
-           id="tag-basics-edit-<%= tag.id.to_i %>">
-        <%= render partial: 'tags/basics',
-                   locals: { tag: tag,
-                             f: f,
-                             new_tag: false,
-                             from: from } %>
-      </div>
-    </div>
-    <div class="col-6">
+    <div class="col-12 col-xl-6 mb-2">
       <%= render partial: 'media/card',
                  locals: { media: tag.media,
                            small: false,
@@ -112,15 +121,19 @@
                            tag_ids: [tag.id],
                            inspection: false } %>
     </div>
-    <div class="col-6">
-      <%= render partial: 'sections/card',
-                 locals: { sections: tag.sections,
-                           inspection: false } %>
-    </div>
-    <div class="col-6">
-      <%= render partial: 'lessons/card',
-                 locals: { lessons: tag.lessons,
-                           inspection: false } %>
+    <div class="col-12 col-xl-6">
+      <div class="row">
+        <div class="col-12 mb-2">
+          <%= render partial: 'sections/card',
+                     locals: { sections: tag.sections,
+                               inspection: false } %>
+        </div>
+        <div class="col-12">
+          <%= render partial: 'lessons/card',
+                     locals: { lessons: tag.lessons,
+                               inspection: false } %>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>

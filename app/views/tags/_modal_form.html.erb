@@ -12,12 +12,16 @@
                        value: true %>
     <%= f.hidden_field :from,
                        value: from %>
-    <%= f.submit t('buttons.save'),
-                 class: "btn btn-primary" %>
-    <button type="button"
-            class="btn btn-secondary"
-            data-dismiss="modal">
-      <%= t('buttons.cancel') %>
-    </button>
+    <div class="row">
+      <div class="col-12 text-center">
+        <%= f.submit t('buttons.save'),
+                     class: "btn btn-primary" %>
+        <button type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal">
+          <%= t('buttons.cancel') %>
+        </button>
+      </div>
+    </div>
   <% end %>
 </div>

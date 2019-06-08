@@ -1,15 +1,10 @@
-<div class="card bg-light mb-4">
+<div class="card bg-light">
   <div class="card-header">
     <div class="row">
       <div class="col-12">
         <h5>
-          Abschnitte (<%= sections.count %>)
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
-             title="Info"
-             data-content="Dies ist die Liste aller assoziierten Abschnitte.">
-          </i>
+          <%= t('basics.sections') %> (<%= sections.count %>)
+          <%= helpdesk(t('admin.section.info.list'), false) %>
         </h5>
       </div>
     </div>

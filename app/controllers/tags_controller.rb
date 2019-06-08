@@ -13,6 +13,7 @@ class TagsController < ApplicationController
   def index
     @tags = Tag.includes(:courses, :related_tags)
     @tags_with_id = Tag.ids_titles_json
+    I18n.locale = current_user.locale
   end
 
   def show
@@ -142,12 +143,18 @@ class TagsController < ApplicationController
 
   def add_section
     section = Section.find_by_id(params[:section])
-    @tag.sections << section if section.present?
+    if section
+      @tag.sections << section
+      I18n.locale = section.lecture.locale || current_user.locale
+    end
   end
 
   def add_medium
     medium = Medium.find_by_id(params[:medium])
-    @tag.media << medium if medium.present?
+    if medium
+        I18n.locale = medium.locale_with_inheritance || current_user.locale
+        @tag.media << medium
+    end
   end
 
   def check_for_consent

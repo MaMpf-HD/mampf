@@ -75,6 +75,14 @@ $(document).on 'turbolinks:load', ->
     $('#selectRelatedTagsForm').show()
     $('#tagActionType').show()
     $(this).hide()
+    $('#tagActionHeader').hide()
+    return
+
+  $('#cancelSelectRelatedTags').on 'click', ->
+    $('#selectRelatedTagsForm').hide()
+    $('#tagActionType').hide()
+    $('#tagActionHeader').show()
+    $('#selectRelatedTags').show()
     return
 
   # container for cytoscape view

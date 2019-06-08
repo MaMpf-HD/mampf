@@ -18,12 +18,19 @@
   max-height: 50vh;
 }
 
-#relatedTagsBodyEdit {
+#tagBasicsBodyEdit {
+  max-height: 40vh;
   overflow-y: scroll;
-  height: calc(70vh + 30px);
+  overflow-x: hidden;
+}
+
+#relatedTagsBodyEdit {
+  height: 30vh;
+  overflow-y: scroll;
 }
 
 #tagEditActionBody {
-  height: calc(70vh + 30px);
+  height: 30vh;
+  overflow-y: scroll;
 }
 

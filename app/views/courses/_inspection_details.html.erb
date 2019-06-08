@@ -21,7 +21,7 @@
         <div class="row">
           <div class="col-12">
             <h5>
-              Basisdaten
+              <%= t('basics.basics') %>
             </h5>
           </div>
         </div>
@@ -145,7 +145,6 @@
     <div class="col-12">
       <%= render partial: 'tags/tags_toggle',
                  locals: { tags: course.tags,
-                           tags_description: 'Verknüpfte Begriffe',
                            id: course.id,
                            inspection: true} %>
     </div>

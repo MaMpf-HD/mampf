@@ -3,14 +3,8 @@
     <div class="row">
       <div class="col-12">
         <h5>
-          Sitzungen (<%= lessons.count %>)
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Dies ist die Liste aller assoziierten Sitzungen.">
-          </i>
+          <%= t('basics.lessons') %> (<%= lessons.count %>)
+          <%= helpdesk(t('admin.lesson.info.list'), false) %>
         </h5>
       </div>
     </div>

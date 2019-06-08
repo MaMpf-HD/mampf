@@ -1,13 +1,13 @@
 <div class="row mt-3 p-2">
   <div class="col-10">
     <h4>
-      Tagübersicht
+      <%= t('admin.tag.index') %>
     </h4>
   </div>
   <div class="col-2">
-    <%= link_to 'Tag anlegen',
+    <%= link_to t('admin.tag.create'),
                 new_tag_path,
-                class: 'btn btn-secondary',
+                class: 'btn btn-sm btn-secondary',
                 id: 'create-new-tag' %>
   </div>
 </div>
@@ -15,37 +15,21 @@
   <div class="form-row mb-3 p-2">
     <div class="form-group col-3 mx-3">
       <label for="inputTag">
-        Titel
+        <%= t('basics.title') %>
       </label>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du den Titel des Tags eingeben.
-         Die Liste der angezeigten Tags wird nach dann entsprechend
-         gefiltert.">
-      </i>
+      <%= helpdesk(t('admin.tag.info.search_title'), false) %>
       <input type="text"
              id="inputTag"
              class="form-control"
-             placeholder="suchen">
+             placeholder="<%= t('basics.search') %>">
     </div>
     <div class="form-group col-6">
       <label for="inputCourses">
-        Module
+        <%= t('basics.courses') %>
       </label>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du (im Sinne von <i>ODER</i>)
-         auswählen, zu welchen Modulen das Tag assoziiert sein soll."
-         data-html="true">
-      </i>
+      <%= helpdesk(t('admin.tag.info.search_course'), true) %>
       <select multiple id="inputCourses" class="selectize"
-              placeholder="eingeben">
+              placeholder="<%= t('basics.select') %>">
         <%= Course.all.each do |c| %>
           <option selected value="<%= c.id %>">
             <%= c.short_title %>
@@ -57,18 +41,18 @@
               class="btn btn-sm btn-outline-info"
               data-courses="<%= current_user.edited_courses.map(&:id)
                                             .to_json %>">
-        von mir editierte Module
+        <%= t('buttons.edited_courses') %>
       </button>
       <button id="tags-all-courses"
               type="button"
               class="btn btn-sm btn-outline-info"
               data-courses="<%= Course.all.map(&:id).to_json %>">
-        alle Module
+        <%= t('buttons.all_courses') %>
       </button>
       <button id="tags-no-courses"
               type="button"
               class="btn btn-sm btn-outline-info">
-        Module leeren
+        <%= t('buttons.clean_courses_form') %>
       </button>
     </div>
   </div>
@@ -76,22 +60,22 @@
 <div class="row bg-mdb-color-lighten-2 mx-2 px-4 py-3">
   <div class="col-3 text-light">
     <strong>
-      Titel
+      <%= t('basics.title') %>
     </strong>
   </div>
   <div class="col-2 text-light">
     <strong>
-      Module
+      <%= t('basics.courses') %>
     </strong>
   </div>
   <div class="col-6 text-light">
     <strong>
-      verknüpfte Tags
+      <%= t('admin.tag.related_tags') %>
     </strong>
   </div>
   <div class="col-1 text-light">
     <strong>
-      Aktionen
+      <%= t('basics.actions') %>
     </strong>
   </div>
 </div>

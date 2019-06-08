@@ -4,30 +4,23 @@
       <div class="row">
         <div class="col-6">
           <h5>
-            Medien (<%= media.count %>)
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover"
-               data-trigger="focus"
-               title="Info"
-               data-content="Dies ist die Liste aller assoziierten Medien.
-               Ausgegraute Medien sind noch nicht veröffentlicht.">
-            </i>
+            <%= t('basics.media') %> (<%= media.count %>)
+            <%= helpdesk(t('admin.medium.associated'), false) %>
           </h5>
         </div>
         <div class="col-6 text-right">
           <% if teachable_id && teachable_type && !inspection %>
-            <a href="<%= new_medium_path(params:
+            <%= link_to '',
+                        new_medium_path(params:
                                           { sort: 'Kaviar',
                                             teachable_id: teachable_id,
                                             teachable_type: teachable_type,
-                                            tag_ids: tag_ids }) %>"
-               class="fas fa-plus-circle fa-lg new-in-lecture text-dark"
-               style="text-decoration: none; "
-               data-toggle="tooltip"
-               title="Medium anlegen"
-               id="create-new-medium">
-            </a>
+                                            tag_ids: tag_ids }),
+                        class: "fas fa-plus-circle fa-lg new-in-lecture text-dark",
+                        style: "text-decoration: none; ",
+                        data: { toggle: 'tooltip' },
+                        title: t('buttons.create_medium'),
+                        id: 'create-new-medium' %>
           <% end %>
           <% if collapsible %>
             <a class="btn btn-primary"
