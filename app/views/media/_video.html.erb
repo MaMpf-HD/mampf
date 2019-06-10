@@ -2,23 +2,11 @@
   <div class="card-header">
     <div class="row">
       <div class="col-3">
-        Video
+        <%= t('video.video') %>
         <span class="badge badge-secondary">
           mp4
         </span>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Das Video sollte im mp4-Format vorliegen.
-           Die empfohlene horizontale Auflösung ist 1080 Pixel, um eine
-           hinreichende Zukunftskompatibilität zu gewährleisten.
-           Für den thyme-Player ist ein 3:2 Bildschirmverhältnis optimal,
-           da in diesem Fall der Platz für interne und externe Referenzen
-           bestmöglich ausgenutzt wird, sofern ein 16:9 Monitor verwendet wird."
-           data-html="true">
-        </i>
+        <%= helpdesk(t('admin.medium.info.video'), false) %>
       </div>
       <div class="col-3 text-right"
            id="video-uploadButton">
@@ -32,10 +20,10 @@
       </div>
       <div class="col-6 text-right">
         <% if medium.video.present? %>
-          <%= link_to 'Editor',
+          <%= link_to t('basics.editor'),
                       enrich_medium_path(medium),
                       class: 'btn btn-sm btn-outline-secondary' %>
-          <%= link_to 'Thyme',
+          <%= link_to t('basics.thyme'),
                       play_medium_path(medium),
                       class: 'btn btn-outline-secondary btn-sm',
                       target: :blank %>
@@ -49,7 +37,7 @@
     <%= f.hidden_field :detach_video, value: false %>
     <% if medium.screenshot.present? %>
       <div class="my-2">
-        Screenshot
+        <%= t('basics.screenshot') %>
       </div>
       <img id="screenshot-preview"
            class="img-fluid mb-3"

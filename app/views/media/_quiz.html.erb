@@ -2,42 +2,23 @@
   <div class="card-header">
     <div class="row">
       <div class="col-8">
-        Quiz-Graph
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Der Quiz-Graph ist der gerichtete Graph, der zu dem
-           Quiz korrespondiert."
-           data-html="true">
-        </i>
+        <%= t('admin.quiz.graph') %>
+        <%= helpdesk(t('admin.quiz.info.graph'), false) %>
       </div>
       <div class="col-4 text-right">
         <% if quiz.quiz_graph %>
-          <a href="<%= edit_quiz_path(quiz) %>"
-             class="fas fa-edit fa-lg text-dark mr-3"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="Bearbeiten">
-          </a>
-          <a href="<%= take_quiz_path(quiz) %>"
-             class="fas fa-gamepad fa-lg text-dark mr-3"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="Spielen"
-             target="_blank">
-          </a>
-          <a href="<%= quiz_path(quiz) %>"
-             class="fas fa-trash-alt fa-lg text-dark"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="Löschen"
-             target="_blank"
-             data-method="delete"
-             data-confirm="Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
-             nicht das Medium.">
-          </a>
+          <%= link_to t('buttons.edit'),
+                      edit_quiz_path(quiz),
+                      class: 'btn btn-sm btn-secondary' %>
+          <%= link_to t('buttons.take_quiz'),
+                      take_quiz_path(quiz),
+                      class: 'btn btn-sm btn-secondary',
+                      target: :_blank %>
+          <%= link_to t('buttons.delete'),
+                      quiz_path(quiz),
+                      class: 'btn btn-sm btn-danger',
+                      data: { method: 'delete',
+                              confirm: t('confirmation.delete_graph') } %>
         <% end %>
       </div>
     </div>
@@ -47,7 +28,8 @@
       <%= image_tag(quiz.image_path.remove('public'),
                     class: "img-fluid",
                     id: "quiz-preview-image",
-                    data: { id: quiz.id }) %>
+                    data: { id: quiz.id,
+                            time: Time.now }) %>
     <% else %>
       <div class="custom-control custom-checkbox">
         <%= f.check_box :create_quiz_graph,

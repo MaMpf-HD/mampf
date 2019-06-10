@@ -58,16 +58,16 @@
   <div class="row">
     <div class="col-12 text-center">
       <%= f.submit t('buttons.save_and_exit'),
-                   class: 'btn btn-primary' %>
+                   class: 'btn btn-sm btn-primary' %>
       <button type="button"
               id="cancel-chapter"
-              class="btn btn-secondary">
+              class="btn btn-sm btn-secondary">
         <%= t('buttons.cancel') %>
       </button>
       <% if chapter.sections.empty? %>
         <%= link_to t('buttons.delete'),
                     chapter_path(chapter),
-                    class: 'btn btn-danger',
+                    class: 'btn btn-sm btn-danger',
                     method: :delete,
                     data: { confirm: t('confirmation.generic') } %>
       <% end %>

@@ -10,7 +10,7 @@
   </div>
   <div class="row" id="video-wait">
     <div class="col-12">
-      Bitte warten...
+      <%= t('basics.please_wait') %>
     </div>
   </div>
   <div class="row p-2">
@@ -19,7 +19,7 @@
          style="display:<%= show(medium.video.present?) %>">
       <div class="row">
         <div class="col-11">
-          Datei:
+          <%= t('basics.file') %>:
           <span id="video-file">
             <%= medium.video_filename %>
           </span>
@@ -31,7 +31,7 @@
       </div>
       <div class="row">
         <div class="col-12">
-          Größe:
+          <%= t('basics.size') %>:
           <span id="video-size">
             <%= number_to_human_size(medium.video_size) %>
           </span>
@@ -39,7 +39,7 @@
       </div>
       <div class="row">
         <div class="col-12">
-          Auflösung:
+          <%= t('video.resolution') %>:
           <span id="video-resolution">
             <%= medium.video_resolution %>
           </span>
@@ -47,7 +47,7 @@
       </div>
       <div class="row">
         <div class="col-12">
-          Länge:
+          <%= t('video.length') %>:
           <span id="video-duration">
             <%= medium.video_duration_hms_string %>
           </span>

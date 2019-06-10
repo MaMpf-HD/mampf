@@ -32,6 +32,7 @@ class MediaController < ApplicationController
 
   def new
     @medium = Medium.new(teachable: @teachable, level: 1)
+    I18n.locale = @medium.locale_with_inheritance
     @medium.editors << current_user
     tags = Tag.where(id: params[:tag_ids])
     @medium.tags << tags if tags.exists?
@@ -39,6 +40,7 @@ class MediaController < ApplicationController
   end
 
   def edit
+    I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
   end
 

@@ -524,11 +524,209 @@ de:
       associated: >
         Dies ist die Liste aller assoziierten Medien.
         Rot eingefärbte Medien sind noch nicht veröffentlicht oder gesperrt.
+      sort: 'Typ'
       local_info:
         no_title: 'ohne Titel'
         to_session: 'zu Sitzung %{number}, %{date}'
         question: 'Frage %{position}/%{count}'
         remark: 'Erläuterung %{position}/%{count}'
+      info:
+        locked: >
+          Dieses Medium wurde gesperrt. Du kannst es unter
+          Basisdaten->Zugriffsrechte entsperren.
+        unpublished_lecture: 'in einer unveröffentlichten Vorlesung'
+        medium_definition: >
+          Ein
+          <i>Medium</i>
+          im Sinne von MaMpf ist hierbei ein Bündel aus
+          <ul>
+          <li>
+          höchstens einem Video
+          </li>
+          <li>
+          höchstens einem Manuskript
+          </li>
+          <li>
+          höchstens einem externen Link
+          </li>
+          <li>
+          höchstens einem Quiz, einer Quizfrage oder -erläuterung
+          </li>
+          </ul>
+          zum selben Inhalt. Beispiele für Medien sind etwa
+          <ul>
+          <li>
+          ein Medium, das aus der Videoaufzeichnung einer
+          Vorlesungssitzung mit dazugehörigem Mitschrieb besteht.
+          </li>
+          <li>
+          ein Medium, das aus dem Mitschrieb einer Vorlesungssitzung besteht.
+          </li>
+          <li>
+          ein Medium, das aus einem Worked-Example-Video mit dazugehörigem
+          Mitschrieb besteht.
+          </li>
+          <li>
+          ein Quiz.
+          </li>
+          </ul>
+        sort: >
+          Jedes Medium hat genau einen Typ. Die folgenden Typen
+          stehen zur Auswahl:
+          <ul>
+          <li>
+          Lektion: korrespondiert in etwa zum Inhalt von Vorlesungssitzungen.
+          Hier können z.B. Videos oder Manuskripte einzelner Sitzungen
+          untergebracht werden, aber auch Vertiefungen zum Vorlesungsstoff.
+          </li>
+          <li>
+          Worked-Example: ausgearbeitete Beispiele ergänzed zur Vorlesung, z.B.
+          als Video produziert oder aus der Plenarübung
+          </li>
+          <li>
+          Übung: Übungsblätter
+          </li>
+          <li>
+          Skript: Vorlesungsmanuskript
+          <i>
+          Beachte:
+          </i>
+          Pro Vorlesung kann es höchstens ein Skript geben.
+          Skripte können nicht in andere Medientypen umgewandelt werden,
+          dasselbe gilt auch andersherum. Verwendest Du das
+          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          für LaTEX, kann MaMpf aus dem pdf zusätzliche Informationen
+          extrahieren.
+          </li>
+          <li>
+          Wiederholung: Materialien, die Vorwissen auffrischen.
+          </li>
+          <li>
+          Quiz: einzelnes Quiz
+          </li>
+          <li>
+          Quiz-Frage: einzelne Quiz-Frage
+          </li>
+          <li>
+          Quiz-Erläuterung: einzelne Quiz-Erläuterung. Quiz-Erläuterungen
+          dienen als Bindeglied zwischen Quiz-Fragen in komplexreren Quizzes
+          (z.B. angeleiteten Beweisen)
+          </li>
+          <li>
+          Beispiel-Datenbank: Beispiel aus der ErDBeere-Datenbank
+          (z.Zt. nur Prototyp)
+          </li>
+          <li>
+          Sonstiges: Hier kannst Du alles unterbringen, was in keine andere
+          Rubrik passt.
+          </li>
+          </ul>
+        latex_package_html: >
+          <i>
+          Beachte:
+          </i>
+          Für Skripte steht das %{package} für LaTEX zur Verfügung.
+          Es erlaubt, Inhalte aus dem Manuskript-pdf zu extrahieren und in
+          MaMpf zur Verfügung zu stellen sowie Medien aus MaMpf über
+          QR-Codes im Manuskript verfügbar zu machen.
+        teachable: >
+          Jedes Medium ist zu genau einer Lehrveranstaltung
+          assoziiert. Die Assoziation erfolgt hierbei zu einer/einem
+          <ul>
+          <li>
+          <i>
+          Sitzung,
+          </i>
+          wenn der Inhalt zu einer Vorlesungssitzung gehört,
+          beispielsweise eine Videoaufzeichnung.
+          </li>
+          <li>
+          <i>
+          Vorlesung,
+          </i>
+          wenn der Inhalt spezifisch für die konkrete Vorlesung ist,
+          jedoch ohne Bezug zu einer konkreten Sitzung, beispielsweise bei
+          Worked-Example-Videos
+          </li>
+          <li>
+          <i>
+          Modul,
+          </i>
+          wenn der Inhalt zum Modul gehört, jedoch keinen Bezug zu einer
+          konkreten Vorlesung braucht, bespielsweise Worked-Example-Videos zu
+          Grundlagen, die in jeder Vorlesung eines entsprechenden Moduls gleich
+          behandelt werden.
+          </li>
+          </ul>
+        editors: >
+          Dies die Liste aller Personen, die für dieses Medium
+          als Editor verantwortlich sind. Es muss mindestens eine angegeben
+          werden, jede dieser Personen erhält das Bearbeitungsrecht für das
+          Medium.
+          <br>
+          Anmerkung: Unabhängig davon kann das Medium auch von Personen mit
+          höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren
+          oder Vorlesungeditorem aus dem zugeordneten Modul bzw. der
+          zugeordneten Vorlesung.
+        description: >
+          Die Beschreibung wird in Verweisen auf das Medium
+          verwendet. Die Angabe einer Beschreibung ist obligatorisch,
+          außer im Falle eines KaViar-Mediums, das zu einer Sitzung assoziiert
+          ist oder im Falle eines Manuskripts.
+        related_tags: >
+          Dies ist die Liste aller Tags, die mit diesem Medium
+          verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt,
+          so stehen hier zunächst alle zu dieser Sitzung assoziierten Tags;
+          diese Wauswahl kann natürlich bearbeitet werden.
+        linked_media: >
+          Dies ist eine Liste aller Medien, die mit diesem Medium
+          verknüpft sind bzw. die von diesem Medium aus referenziert werden.
+          <br>
+          <b>
+          Achtung:
+          </b>
+          Das Feature wird evtl. demnächst abgeschafft werden, da diese
+          Informationen z.T. automatisch über die im THymE-editor hinterlegten
+          Daten ausgelesen werden können.
+        external_link: >
+          Externer Link, der einen Teil diese Mediums ausmacht.
+          Könnte z.B. ein Link auf das Stacks-Project sein.
+        access_rights: >
+          Die Varianten von Zugriffsrechten sind möglich:
+          <ul>
+          <li>
+          frei (Standardeinstellung): Registrierte MaMpf-NutzerInnen können das
+          Medium sehen. Nicht registrierte BenutzerInnen können den
+          den THymE-Player für das Video (falls vorhanden),
+          den pdf-Viewer für das Manuskript (falls vorhanden) oder
+          das Quiz (falls vorhanden) aufrufen, sofern sie die Medien-ID kennen.
+          </li>
+          <li>
+          nur registrierte MaMpf-NutzerInnen: Registrierte MaMpf-NutzerInnen
+          können das Medium sehen. Nicht registrierte NutzerInnen haben keinen
+          Zugriff.
+          </li>
+          <li>
+          nur AbonenntInnen: Registrierte MaMpf-NutzerInnen, die das
+          assoziierte Modul/die assoziierte Vorlesung/die zur assoziierten
+          Sitzung gehörige Vorlesung abonniert haben,
+          können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
+          das Medium nicht sehen.
+          </li>
+          <li>
+          gesperrt: Generische MaMpf-NutzerInnen können das Medium nicht mehr
+          sehen.
+          </li>
+          </ul>
+        video: >
+          Das Video sollte im mp4-Format vorliegen.
+          Die empfohlene horizontale Auflösung ist 1080 Pixel, um eine
+          hinreichende Zukunftskompatibilität zu gewährleisten.
+          Für den thyme-Player ist ein 3:2 Bildschirmverhältnis optimal,
+          da in diesem Fall der Platz für interne und externe Referenzen
+          bestmöglich ausgenutzt wird, sofern ein 16:9 Monitor verwendet wird.
+        manuscript: >
+          Das Manuskript sollte im pdf-Format vorliegen.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
@@ -572,6 +770,12 @@ de:
         search_course: >
           Hier kannst Du (im Sinne von <i>ODER</i>)
           auswählen, zu welchen Modulen das Tag assoziiert sein soll.
+    quiz:
+      graph: Quiz-Graph
+      info:
+        graph: >
+          Der Quiz-Graph ist der gerichtete Graph, der zu dem
+          Quiz korrespondiert.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -703,6 +907,7 @@ de:
     length: 'Länge'
     size: 'Größe'
     pages: 'S'
+    destinations: 'Destinations'
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
@@ -713,7 +918,6 @@ de:
       easy: 'leicht'
       medium: 'mittel'
       difficult: 'schwierig'
-  external_link: 'Externer Link'
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
   click_here: 'Hier klicken'
@@ -888,8 +1092,24 @@ de:
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
+    mampf_package: 'MaMpf-Paket'
+    associated_to: 'Assoziiert zu'
+    description: 'Beschreibung'
+    related_media: 'Verknüpfte Medien'
+    external_link: 'Externer Link'
+    editor: 'Editor'
+    thyme: 'THymE'
+    screenshot: 'Screenshot'
+    file: 'Datei'
+    size: 'Größe'
+    please_wait: 'Bitte warten...'
+    access_rights: 'Zugriffsrechte'
   access:
     unpublished: 'unveröffentlicht'
+    all: 'frei'
+    users: 'nur registrierte MaMpf-NutzerInnen'
+    subscribers: 'nur AbonenntInnen'
+    locked: 'gesperrt'
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
@@ -897,7 +1117,8 @@ de:
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
-    course: 'zum Modul'
+    parent_course: 'zum Modul'
+    parent_lecture: 'zur Vorlesung'
     create_chapter: 'Kapitel anlegen'
     create_lesson: 'Sitzung anlegen'
     create_section: 'Abschnitt anlegen'
@@ -915,6 +1136,8 @@ de:
     all_courses: 'alle Module'
     edited_courses: 'von mir editierte Module'
     clean_courses_form: 'Module leeren'
+    publish: 'Veröffentlichen'
+    take_quiz: 'Quiz spielen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -922,6 +1145,9 @@ de:
       Achtung, es gibt ungespeicherte Änderungen!
   confirmation:
     generic: 'Bist du sicher?'
+    delete_graph: >
+      Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
+      nicht das Medium.
   activerecord:
     errors:
       models:

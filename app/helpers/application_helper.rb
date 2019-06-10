@@ -252,6 +252,11 @@ module ApplicationHelper
     I18n.localize date, format: :concise
   end
 
+  # prepend a select prompt to selection for options_for_select
+  def add_prompt(selection)
+    [[t('basics.select'), '']] + selection
+  end
+
   def quizzable_color(type)
     'bg-' + type.downcase
   end

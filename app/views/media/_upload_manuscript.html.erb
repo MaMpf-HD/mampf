@@ -18,7 +18,7 @@
          style="display:<%= show(medium.manuscript.present?) %>">
       <div class="row">
         <div class="col-11">
-          Datei:
+          <%= t('basics.file') %>:
           <span id="manuscript-file">
             <%= medium.manuscript_filename %>
           </span>
@@ -30,7 +30,7 @@
       </div>
       <div class="row">
         <div class="col-12">
-          Größe:
+          <%= t('basics.size') %>:
           <span id="manuscript-size">
             <%= number_to_human_size(medium.manuscript_size) %>
           </span>
@@ -38,9 +38,9 @@
       </div>
       <div class="row">
         <div class="col-12">
-          Länge:
+          <%= t('manuscript.length') %>:
           <span id="manuscript-pages">
-            <%= medium.manuscript_pages.to_s + ' S' %>
+            <%= "#{medium.manuscript_pages} #{t('manuscript.pages')}" %>
           </span>
         </div>
       </div>
@@ -48,7 +48,7 @@
         <div id="manuscript-destinations"
              class="row">
           <div class="col-12">
-            Zielpunkte:
+            <%= t('medium.destinations') %>:
             <span>
               <%= medium.manuscript_destinations.count %>
             </span>

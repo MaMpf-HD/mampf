@@ -1,44 +1,12 @@
 <div class="form-group">
-  Zugriffsrechte
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Die Varianten von Zugriffsrechten sind möglich:
-     <ul>
-     <li>
-     alle (Standardeinstellung): Registrierte MaMpf-NutzerInnen können das
-     Medium sehen. Nicht registrierte BenutzerInnen können über die Pfade
-     <%= medium ? play_medium_path(medium) : '.../play/medium_id' %> den
-     Thyme-Player bzw. über
-     <%= medium ? display_medium_path(medium) : '.../display/medium_id' %> das Manuskript aufrufen, falls
-     vorhanden.
-     </li>
-     <li>
-     nur MaMpf-NutzerInnen: Registrierte MaMpf-NutzerInnen können das
-     Medium sehen. Nicht registrierte NutzerInnen haben keinen Zugriff.
-     </li>
-     <li>
-     nur AbonenntInnen: Registrierte MaMpf-NutzerInnen, die das
-     assoziierte Modul/die assoziierte Vorlesung/die zur assoziierten
-     Sitzung gehörige Vorlesung abonniert haben,
-     können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
-     das Medium nicht sehen.
-     </li>
-     <li>
-     gesperrt: Generische MaMpf-NutzerInnen können das Medium nicht mehr
-     sehen.
-     </li>
-     </ul>"
-     data-html="true">
-  </i>
+  <%= t('basics.access_rights') %>
+  <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
   <div class="custom-control custom-radio">
     <%= f.radio_button :released,
                        'all',
                        class: 'custom-control-input' %>
     <%= f.label :released,
-                'frei',
+                t('access.all'),
                 value: 'all',
                 class: 'custom-control-label' %>
   </div>
@@ -47,25 +15,25 @@
                        'users',
                        class: 'custom-control-input' %>
     <%= f.label :released,
-                'nur MaMpf-NutzerInnen',
-                 value: 'users',
-                 class: 'custom-control-label' %>
+                t('access.users'),
+                value: 'users',
+                class: 'custom-control-label' %>
   </div>
   <div class="custom-control custom-radio">
     <%= f.radio_button :released,
                        'subscribers',
                        class: 'custom-control-input' %>
     <%= f.label :released,
-                'nur AbonenntInnen',
-                 value: 'subscribers',
-                 class: 'custom-control-label' %>
+                t('access.subscribers'),
+                value: 'subscribers',
+                class: 'custom-control-label' %>
   </div>
   <div class="custom-control custom-radio">
     <%= f.radio_button :released,
                        'locked',
                        class: 'custom-control-input' %>
     <%= f.label :released,
-                'gesperrt',
+                t('access.locked'),
                 value: 'locked',
                 class: 'custom-control-label' %>
   </div>

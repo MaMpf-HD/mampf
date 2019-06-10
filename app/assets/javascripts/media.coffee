@@ -84,7 +84,6 @@ $(document).on 'turbolinks:load', ->
     return
 
   $('#publish-medium-button').on 'click', ->
-    console.log 'Hi'
     $('#publishMediumModal').modal('show')
     return
 
