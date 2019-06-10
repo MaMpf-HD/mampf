@@ -25,11 +25,10 @@
   </div>
   <div class="card-body">
     <% if quiz.quiz_graph %>
-      <%= image_tag(quiz.image_path.remove('public'),
+      <%= image_tag(quiz.quiz_image_url,
                     class: "img-fluid",
                     id: "quiz-preview-image",
-                    data: { id: quiz.id,
-                            time: Time.now }) %>
+                    data: { id: quiz.id }) %>
     <% else %>
       <div class="custom-control custom-checkbox">
         <%= f.check_box :create_quiz_graph,

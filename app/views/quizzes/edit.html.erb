@@ -30,7 +30,7 @@
         </h5>
       </div>
       <div class="card-body">
-        <%= image_tag(@quiz.image_path.remove('public'),
+        <%= image_tag(@quiz.quiz_image_url,
                       class: "img-fluid", id: "quiz-preview-image",
                       data: { id: @quiz.id }) %>
         <div class="text-center mt-3">

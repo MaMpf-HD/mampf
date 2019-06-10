@@ -42,6 +42,9 @@ class MediaController < ApplicationController
   def edit
     I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
+    if @medium.sort == 'Quiz' && @medium.quiz_graph && !@medium.becomes(Quiz).quiz_image
+      @medium.becomes(Quiz).save_png!
+    end
   end
 
   def update

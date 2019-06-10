@@ -1,4 +1,6 @@
 class Quiz < Medium
+  include QuizImageUploader[:quiz_image]
+
   def self.new_prefilled
     Quiz.new(level: 1,
              quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
@@ -49,6 +51,12 @@ class Quiz < Medium
 
   def save_png!
     quiz_graph.to_graphviz.output(png: image_path)
+    update(quiz_image: File.open(image_path))
+  end
+
+  def quiz_image_url
+    return unless quiz_image.present?
+    quiz_image.url(host: host)
   end
 
   def question_ids
@@ -79,7 +87,7 @@ class Quiz < Medium
   end
 
   def image_path
-    'public/assets/quiz-' + id.to_s + '.png'
+    'tmp/quiz-' + id.to_s + '.png'
   end
 
   def preselected_branch(vertex_id, crosses)

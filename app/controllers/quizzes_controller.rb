@@ -13,7 +13,7 @@ class QuizzesController < ApplicationController
   end
 
   def edit
-    @quiz.save_png!
+    @quiz.save_png! unless @quiz.quiz_image
   end
 
   def update
