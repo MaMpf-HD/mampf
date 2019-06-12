@@ -266,7 +266,7 @@ module ApplicationHelper
   end
 
   def vertex_label(quiz, vertex_id)
-    vertex_id.to_s + ' ' + quiz.quizzable(vertex_id).label
+    vertex_id.to_s + ' ' + quiz.quizzable(vertex_id)&.label.to_s
   end
 
   def ballot_box(correctness)

@@ -530,6 +530,8 @@ de:
         to_session: 'zu Sitzung %{number}, %{date}'
         question: 'Frage %{position}/%{count}'
         remark: 'Erläuterung %{position}/%{count}'
+      manuscript:
+        structure: 'Struktur des Manuskripts'
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -718,6 +720,10 @@ de:
           sehen.
           </li>
           </ul>
+        language: >
+          Hier kannst Du die Sprache für das Medium festelegen. Standardmäßig
+          ist das die Sprache der zugehörigen Vorlesung bzw. des zugehörigen
+          Moduls.
         video: >
           Das Video sollte im mp4-Format vorliegen.
           Die empfohlene horizontale Auflösung ist 1080 Pixel, um eine
@@ -727,6 +733,12 @@ de:
           bestmöglich ausgenutzt wird, sofern ein 16:9 Monitor verwendet wird.
         manuscript: >
           Das Manuskript sollte im pdf-Format vorliegen.
+        manuscript_structure: >
+          Das ist die aus dem pdf extrahierte Struktur
+          des Manuskripts. Du kannst Kapitel, Abschnitte und Einträge in
+          in MaMpf importieren (falls keine Widersprüche vorliegen).
+        import_warning: >
+          Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
@@ -772,10 +784,26 @@ de:
           auswählen, zu welchen Modulen das Tag assoziiert sein soll.
     quiz:
       graph: Quiz-Graph
+      create_graph: 'Quiz-Graph anlegen'
       info:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem
           Quiz korrespondiert.
+    question:
+      info:
+        first_save: >
+          Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
+          die Frage erstmalig abgespeichert hast.
+    remark:
+      info:
+        about: >
+          Eine Bemerkung korrespondiert zu einem Passus im Quiz,
+          in dem man der NutzerIn Dinge erklärt, Sachverhalte einordnet oder
+          den weiteren Beweisgang vorantreibt, häufig als Verbindungsstück
+          zwischen zwei Fragen.
+        first_save: >
+          Ein editierbarer Text wird erzeugt, nachdem Du
+          die Quiz-Erläuterung erstmalig abgespeichert hast.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -908,6 +936,22 @@ de:
     size: 'Größe'
     pages: 'S'
     destinations: 'Destinations'
+    one_contradiction: >
+      Es wurde ein Widerspruch gefunden. Wenn Du die Struktur des
+      Skriptes in MaMpf importieren möchtest, musst Du erst den
+      Widerspruch auflösen.
+    more_contradictions: >
+      Es wurden %{count} Widersprüche gefunden. Wenn Du die Struktur des
+      Skriptes in MaMpf importieren möchtest, musst Du erst die
+      Widersprüche auflösen.
+    no_contradiction: >
+      Es wurden keine Widersprüche zu den in MaMpf bereits gespeicherten
+      Daten zu Kapiteln und Abschnitten gefunden. Du kannst die Daten
+      aus dem Skript importieren.
+    no_labels: >
+      In diesem Abschnitt sind keine Inhalte gelabelt.
+    visibility: >
+      Sichtbarkeit in Gliederung
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
@@ -1095,6 +1139,8 @@ de:
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     description: 'Beschreibung'
+    type: 'Typ'
+    label: 'Label'
     related_media: 'Verknüpfte Medien'
     external_link: 'Externer Link'
     editor: 'Editor'
@@ -1104,6 +1150,18 @@ de:
     size: 'Größe'
     please_wait: 'Bitte warten...'
     access_rights: 'Zugriffsrechte'
+    level: 'Schwierigkeitsgrad'
+    independent: 'unabhängig'
+    not_set: 'nicht gesetzt'
+    level_easy: 'leicht'
+    level_medium: 'mittel'
+    level_hard: 'schwer'
+    yes_lc: 'ja'
+    no_lc: 'nein'
+    text: 'Text'
+    attention: 'Achtung'
+    new: 'neu'
+    in_mampf: 'in MaMpf'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1138,6 +1196,7 @@ de:
     clean_courses_form: 'Module leeren'
     publish: 'Veröffentlichen'
     take_quiz: 'Quiz spielen'
+    import: 'Übernehmen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

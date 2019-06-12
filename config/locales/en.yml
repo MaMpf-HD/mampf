@@ -507,6 +507,8 @@ en:
         This is the list of all associated media. Media in red are unpublished
         or locked.
       sort: 'Type'
+      manuscript:
+        structure: 'Structure of the manuscript'
       local_info:
         no_title: 'untitled'
         to_session: 'to Session %{number}, %{date}'
@@ -687,6 +689,9 @@ en:
           locked: generic MaMpf users cannot see the medium.
           </li>
           </ul>
+        language: >
+          Here you can select the language for this medium. By default,
+          it is the language of the associated lecture/course.
         video: >
           The video should be in mp4 format. The recommended horizontal
           resolution is 1080 Pixel for future compatibility.
@@ -695,6 +700,13 @@ en:
           used on 16:9 monitors.
         manuscript: >
           The manuscript should be in pdf format.
+        manuscript_structure: >
+          This is the structure of the manuscript that was extracted from the
+          pdf. You can import chapters, sections and tags to MaMpf if no
+          contradisctions are displayed.
+        import_warning: >
+          Attention: The structure of the manuscript has not yet been imported
+          to MaMpf.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
@@ -735,9 +747,23 @@ en:
           the sense of <i>OR</i>).
     quiz:
       graph: 'Quiz Graph'
+      create_graph: 'Create Quiz Graph'
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
+    question:
+      info:
+        first_save: >
+          An editable text for this question, together with answers, will be
+          created after you have saved this medium for the first time.
+    remark:
+      info:
+        about: >
+          A remark corresponds to a passage in a quiz in which you explain
+          material to the user, often as a link between successive questions.
+        first_save: >
+          An editable text for this remark will be created after
+          you have saved this medium for the first time.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -866,6 +892,21 @@ en:
     size: 'Size'
     pages: 'p'
     destinations: 'destinations'
+    structure: 'Structure of the manuscript'
+    one_contradiction: >
+      A contradiction has been found. If you want to import the manuscript's
+      structure to MaMpf, you have to resolve that contradiction first.
+    more_contradictions: >
+      %{count} contradictions have been found. If you ant to import the
+      manuscript's structure to MaMpf, you have to resolve these
+      contradictions first.
+    no_contradictions: >
+      No contradictions to data about chapters and sections in MaMpf have been
+      found. You can import the data form the manuscript.
+    no_labels: >
+      In this section there are no labels.
+    visibility: >
+      Visibility in lecture contents
   quiz:
     quiz: 'Quiz'
     start: 'start quiz'
@@ -1040,6 +1081,8 @@ en:
     mampf_package: 'MaMpf package'
     associated_to: 'Associated to'
     description: 'Description'
+    type: 'Type'
+    label: 'Label'
     related_media: 'Related media'
     external_link: 'External Link'
     editor: 'Editor'
@@ -1049,6 +1092,18 @@ en:
     size: 'Size'
     please_wait: 'Please wait...'
     access_rights: 'Access rights'
+    level: 'Difficulty Level'
+    independent: 'independent'
+    not_set: 'not set'
+    level_easy: 'easy'
+    level_medium: 'medium'
+    level_hard: 'hard'
+    yes_lc: 'yes'
+    no_lc: 'no'
+    text: 'Text'
+    attention: 'Attention'
+    new: 'new'
+    in_mampf: 'in MaMpf'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1087,6 +1142,7 @@ en:
     clean_courses_form: 'Clean Courses Form'
     publish: 'Publish'
     take_quiz: 'Take Quiz'
+    import: 'Import'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

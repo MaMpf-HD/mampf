@@ -83,6 +83,9 @@ class Medium < ApplicationRecord
   # as an item as well
   after_create :create_self_item
 
+  # if medium is a question or remark, delete all quiz vertices that refer to it
+  before_destroy :delete_vertices
+
   # keep track of copies (in particular for Questions, Remarks)
   acts_as_tree
 
@@ -808,5 +811,14 @@ class Medium < ApplicationRecord
     return true unless sort == 'Script' && tags.any?
     errors.add(:tags, 'Ein Skript darf keine Tags haben.')
     false
+  end
+
+  def delete_vertices
+    return unless type.in?(['Question', 'Remark'])
+    if type == 'Question'
+      becomes(Question).delete_vertices
+      return
+    end
+    becomes(Remark).delete_vertices
   end
 end

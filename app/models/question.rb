@@ -56,18 +56,20 @@ class Question < Medium
     Question.all.map { |r| [r.label, r.id] }
   end
 
-  private
-
   def delete_vertices
     quiz_ids.each do |q|
       quiz = Quiz.find(q)
       vertices = quiz.quiz_graph.find_vertices(self)
       vertices.each do |v|
-        quiz.update(quiz_graph: quiz.quiz_graph.destroy_vertex(v))
+        quiz.update(quiz_graph: quiz.quiz_graph.destroy_vertex(v),
+                    quiz_image: nil,
+                    released: 'locked')
       end
     end
     true
   end
+
+  private
 
   def prelim_answer_table
     table = []

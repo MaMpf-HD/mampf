@@ -5,10 +5,14 @@
         <%= vertex_id.to_s %>
       </span>
       <strong>
-        <%= quiz.quizzable(vertex_id).label %>
+        <%= quiz.quizzable(vertex_id)&.label %>
       </strong>
     </div>
-    <%= quiz.quizzable(vertex_id).text %>
+    <% if quiz.quizzable(vertex_id) %>
+      <%= quiz.quizzable(vertex_id).text %>
+    <% else %>
+      Medium gelöscht
+    <% end %>
   </div>
   <div class="col-1">
     <span id="neighbours-<%= vertex_id %>"
@@ -39,24 +43,26 @@
   </div>
   <div class="col-4 text-right">
     <div class='btn-group'>
-      <button class="btn btn-sm btn-outline-primary rounded m-1"
-              id="edit-vertex-content-<%= vertex_id %>"
-              data-toggle="modal" data-target="#quizzableModal"
-              data-type="<%= quiz.quiz_graph.vertices[vertex_id][:type] %>"
-              data-id="<%= quiz.quiz_graph.vertices[vertex_id][:id] %>">
-        Bearbeiten
-      </button>
-      <%= link_to 'Medium',
-                  edit_medium_path(quiz.quizzable(vertex_id)),
-                  class: 'btn btn-sm btn-outline-primary rounded m-1' %>
-      <button id="targets-vertex-<%= vertex_id %>"
-              class="btn btn-sm btn-outline-primary rounded collapsed m-1"
-              data-toggle="collapse"
-              data-target="#collapse-vertex-<%= vertex_id %>"
-              aria-expanded="true"
-              aria-controls="collapse-vertex-<%= vertex_id %>">
-        Ziele ändern
-      </button>
+      <% if quiz.quizzable(vertex_id) %>
+        <button class="btn btn-sm btn-outline-primary rounded m-1"
+                id="edit-vertex-content-<%= vertex_id %>"
+                data-toggle="modal" data-target="#quizzableModal"
+                data-type="<%= quiz.quiz_graph.vertices[vertex_id][:type] %>"
+                data-id="<%= quiz.quiz_graph.vertices[vertex_id][:id] %>">
+          Bearbeiten
+        </button>
+        <%= link_to 'Medium',
+                    edit_medium_path(quiz.quizzable(vertex_id)),
+                    class: 'btn btn-sm btn-outline-primary rounded m-1' %>
+        <button id="targets-vertex-<%= vertex_id %>"
+                class="btn btn-sm btn-outline-primary rounded collapsed m-1"
+                data-toggle="collapse"
+                data-target="#collapse-vertex-<%= vertex_id %>"
+                aria-expanded="true"
+                aria-controls="collapse-vertex-<%= vertex_id %>">
+          Ziele ändern
+        </button>
+      <% end %>
       <%= link_to t('buttons.delete'),
                   quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
                   method: :delete,

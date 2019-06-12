@@ -31,8 +31,10 @@ class MediaController < ApplicationController
   end
 
   def new
-    @medium = Medium.new(teachable: @teachable, level: 1)
-    I18n.locale = @medium.locale_with_inheritance
+    @medium = Medium.new(teachable: @teachable,
+                         level: 1,
+                         locale: @teachable.locale_with_inheritance)
+    I18n.locale = @teachable.locale_with_inheritance
     @medium.editors << current_user
     tags = Tag.where(id: params[:tag_ids])
     @medium.tags << tags if tags.exists?
@@ -265,7 +267,7 @@ class MediaController < ApplicationController
   def medium_params
     params.require(:medium).permit(:sort, :description, :video, :manuscript,
                                    :external_reference_link, :teachable_type,
-                                   :teachable_id, :released, :text,
+                                   :teachable_id, :released, :text, :locale,
                                    editor_ids: [],
                                    tag_ids: [],
                                    linked_medium_ids: [])

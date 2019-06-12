@@ -6,30 +6,22 @@
       <div class="row">
         <div class="col-6">
           <h5 class="text-dark">
-            Struktur des Manuskripts
+            <%= t('admin.medium.manuscript.structure') %>
             <%= ' (' + medium.manuscript_destinations.count.to_s + ') '%>
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover"
-               data-trigger="focus"
-               title="Info"
-               data-content="Das ist die aus dem pdf extrahierte Struktur
-               des Manuskripts. Du kannst Kapitel, Abschnitte und Einträge in
-               in MaMpf importieren (falls keine Widersprüche vorliegen).">
-            </i>
+            <%= helpdesk(t('admin.medium.info.manuscript_structure'), false) %>
           </h5>
         </div>
         <div class="col-6 text-right">
           <% unless manuscript.contradiction_count.positive? %>
             <button id="import-from-manuscript"
                     type="button"
-                    class="btn btn-danger"
+                    class="btn btn-sm btn-secondary"
                     data-count="<%= manuscript.count %>"
                     data-mediumid="<%= medium.id %>">
-              Übernehmen
+              <%= t('buttons.import') %>
             </button>
           <% end %>
-          <a class="btn btn-primary"
+          <a class="btn btn-sm btn-outline-primary"
              data-toggle="collapse"
              href="#destinations_collapse"
              aria-expanded="false" aria-controls="destinations_collapse">
@@ -40,7 +32,7 @@
       <% unless medium.imported_manuscript %>
         <div class="row">
           <div class="col-12 redtext">
-            Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
+            <%= t('admin.medium.info.import_warning') %>
           </div>
         </div>
       <% end %>
@@ -48,22 +40,16 @@
         <div class="col-12">
           <% if manuscript.contradiction_count.positive? %>
             <span class="redtext">
-              Achtung:
+              <%= t('basics.attention') %>:
             </span>
             <% if manuscript.contradiction_count == 1 %>
-              Es wurde ein Widerspruch gefunden. Wenn Du die Struktur des
-              Skriptes in MaMpf importieren möchtest, musst Du erst den
-              Widerspruch auflösen.
+              <%= t('manuscript.one_contradiction') %>
             <% elsif manuscript.contradiction_count > 1 %>
-              Es wurden <%= manuscript.contradiction_count %> Widersprüche
-              gefunden. Wenn Du die Struktur des
-              Skriptes in MaMpf importieren möchtest, musst Du erst die
-              Widersprüche auflösen.
+              <%= t('manuscript.more_contradictions',
+                    count: manuscript.contradiction_count) %>
             <% end %>
           <% else %>
-            Es wurden keine Widersprüche zu den in MaMpf bereits gespeicherten
-            Daten zu Kapiteln und Abschnitten gefunden. Du kannst die Daten
-            aus dem Skript importieren.
+            <%= t('manuscript.no_contradictions') %>
           <% end %>
         </div>
       </div>
@@ -85,11 +71,11 @@
                 <div class="col-12">
                   <% if c['mampf_chapter'].nil? %>
                     <span class="badge badge-secondary mr-2">
-                      neu
+                      <%= t('basics.new') %>
                     </span>
                   <% end %>
                   <span class="text-light">
-                    Kapitel
+                    <%= t('basics.chapter') %>
                     <%= "#{c['label']}. #{c['description']}" %>
                   </span>
                 </div>
@@ -97,7 +83,7 @@
               <% if c['contradiction'] == :different_title %>
                 <div class="row">
                   <span class="text-warning">
-                    &#x26a1; in MaMpf:
+                    &#x26a1; <%= t('basics.in_mampf') %>:
                     <%= c['mampf_chapter'].title %>
                   </span>
                 </div>
@@ -113,7 +99,7 @@
                         <div class="col-12">
                           <% if s['mampf_section'].nil? %>
                             <span class="badge badge-secondary">
-                              neu
+                              <%= t('basics.new') %>
                             </span>
                           <% end %>
                           <button class="btn btn-link"
@@ -127,7 +113,7 @@
                       <% if s['contradiction'] == :different_title %>
                         <div class="row">
                           <span class="text-info">
-                            &#x26a1; in MaMpf:
+                            &#x26a1; <%= t('basics.in_mampf') %>:
                               <%= s['mampf_section'].title %>
                           </span>
                         </div>
@@ -138,29 +124,29 @@
                          data-parent="#manuscriptAccordion">
                       <div class="card-body">
                         <% if manuscript.content_in_section(s).blank? %>
-                          In diesem Abschnitt sind keine Inhalte gelabelt.
+                          <%= t('manuscript.no_labels') %>
                         <% else %>
                           <div class="row">
                             <div class="col-3 mt-2">
                               <strong>
-                                Typ
+                                <%= t('basics.type') %>
                               </strong>
                             </div>
                             <div class="col-2 mt-2">
                               <strong>
-                                Label
+                                <%= t('basics.label') %>
                               </strong>
                             </div>
                             <div class="col-4 mt-2">
                               <strong>
-                                Beschreibung
+                                <%= t('basics.description') %>
                               </strong>
                             </div>
                             <div class="col-1 mt-2 text-right">
                               <i class="fas fa-tag"
                                  data-toggle="tooltip"
                                  data-placement="bottom"
-                                 title="Tag dazu erstellen">
+                                 title="<%= t('admin.tag.create') %>">
                               </i>
                             </div>
                             <div class="col-2 mt-2 text-center">

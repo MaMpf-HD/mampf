@@ -119,6 +119,23 @@
                  locals: { f: f,
                  medium: medium } %>
     <% end %>
+    <div class="form-group">
+      <%= t('basics.language') %>
+      <%= helpdesk(t('admin.medium.info.language'), false) %>
+      <div class="form-row ml-2">
+        <% I18n.available_locales.each do |locale| %>
+          <div class="custom-control custom-radio custom-control-inline">
+            <%= f.radio_button :locale,
+                               locale.to_s,
+                               class: 'custom-control-input' %>
+            <%= f.label :locale,
+                        t('locales.' + locale.to_s),
+                        value: locale.to_s,
+                        class: 'custom-control-label' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
     <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
   </div>

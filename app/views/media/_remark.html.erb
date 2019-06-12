@@ -2,36 +2,23 @@
   <div class="card-header">
     <div class="row">
       <div class="col-8">
-        Details
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Eine Bemerkung korrespondiert zu einem Passus im Quiz,
-           in dem man der NutzerIn Dinge erklärt, Sachverhalte einordnet oder
-           den weiteren Beweisgang vorantreibt."
-           data-html="true">
-        </i>
+        <%= t('basics.details') %>
+        <%= helpdesk(t('admin.remark.info.about'), false) %>
       </div>
       <div class="col-4 text-right">
         <% unless remark.new_record? %>
-          <a href="<%= edit_remark_path(remark) %>"
-             class="fas fa-edit fa-lg text-dark"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="Bearbeiten">
-          </a>
+          <%= link_to t('basics.edit'),
+                      edit_remark_path(remark),
+                      class: 'btn btn-sm btn-secondary' %>
         <% end %>
       </div>
     </div>
   </div>
   <div class="card-body">
     <% if remark.new_record? %>
-        Ein editierbarer Text wird erzeugt, nachdem Du
-        die Quiz-Erläuterung erstmalig abgespeichert hast.
+      <%= t('admin.remark.info.first_save') %>
     <% else %>
-      Anzeige
+      <%= t('basics.text') %>
       <%= render partial: 'quizzes/quizzable_preview',
                  locals: { quizzable: remark } %>
     <% end %>

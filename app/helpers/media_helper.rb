@@ -79,15 +79,15 @@ module MediaHelper
   end
 
   def level_to_word(medium)
-    return t('quiz.level.not_set') unless medium.level.present?
-    return t('quiz.level.easy') if medium.level == 0
-    return t('quiz.level.medium') if medium.level == 1
-    t('quiz.level.difficult')
+    return t('basics.not_set') unless medium.level.present?
+    return t('basics.level_easy') if medium.level == 0
+    return t('basics.level_medium') if medium.level == 1
+    t('basics.level_hard')
   end
 
   def independent_to_word(medium)
-    return 'nein' unless medium.independent
-    'ja'
+    return t('basics.no_lc') unless medium.independent
+    t('basics.yes_lc')
   end
 
   def medium_border(medium)
