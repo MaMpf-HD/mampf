@@ -2,18 +2,8 @@
   <%= form_with model: item do |f|%>
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
-        Startzeit
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du die Zeit eingeben, an der entsprechende
-           Eintrag im Video beginnt. Wenn Du den 'Eintrag hinzufügen'-Button
-           an der richtigen Stelle im Video gedrückt hast, sollte hier schon
-           die korrekte Zeit stehen. Du kannst sie aber auch mit Button
-           'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder
-           manuell eintippen.">
-        </i>
+        <%= t('admin.item.start_time') %>
+        <%= helpdesk(t('admin.item.info.start_time'), false) %>
       </div>
       <div class="col-auto">
         <%= f.text_field :start_time,
@@ -24,7 +14,7 @@
       </div>
       <div class="col-1 col-form-label">
         <i class="material-icons clickable timer" data-toggle="tooltip"
-           data-placement="right" title="Zeit aus Video übernehmen"
+           data-placement="right" title="<%= t('admin.item.take_time') %>"
            data-timer="item_start_time">
           timer
         </i>
@@ -32,17 +22,8 @@
     </div>
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
-        <%= f.label :sort, 'Typ' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover" data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du angeben, um welche Art von Eintrag es
-           sich handelt (Satz, Bemerkung, Lemma etc.).
-           Passt keine der klassischen Auswahlen, empfiehlt es sich,
-           'Markierung' auszuwählen und Details in der Beschreibung
-           nachzuliefern.">
-        </i>
+        <%= f.label :sort, t('basics.type') %>
+        <%= helpdesk(t('admin.item.info.type'), false) %>
       </div>
       <div class="col-auto">
         <%= f.select :sort,
@@ -57,30 +38,8 @@
            class="form-group form-row"
            style="display: <%= show_no_block(item.sort != 'chapter') %>">
         <div class="col-2 col-form-label">
-          <%= f.label :section_id, 'Abschnitt' %>
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover" data-trigger="focus"
-             title="Info"
-             data-content="Hier kannst Du auswählen, zu welchem Abschnitt der
-             Eintrag gehört. Du hast hierbei zwei Möglichkeiten:
-             <ul>
-             <li>
-             Ist das Medium zu einer Vorlesung oder einer Sitzung assoziiert,
-             kannst Du einen von den Abschnitten auswählen, die zu dieser
-             Vorlesung bzw. Sitzung assoziiert sind.
-             Dies ist im wesentlichen für KaViaR-Videos gedacht.
-             </li>
-             <li>
-             Du möchtest keinen Abschnitt aus der Datenbank assoziieren.
-             In dem Fall kannst Du Titel und Nummer in weiteren Eingabefeldern
-             eintragen. Das macht z.B. Sinn, wenn die Abschnitte der Gliederung
-             des Videos dienen, aber keine strukturelle Bedeutung im Rahmen
-             einer Vorlesung haben.
-             </li>
-             </ul>"
-             data-html="true">
-          </i>
+          <%= f.label :section_id, t('basics.section') %>
+          <%= helpdesk(t('admin.item.info.section'), true) %>
         </div>
         <div class="col-10">
           <%= f.select :section_id,
@@ -97,16 +56,8 @@
          style="display: <%= show_no_block(item.sort != 'label') %>"
          class="form-group form-row">
       <div class="col-2 col-form-label">
-        <%= f.label :ref_number, 'Nummer' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du die Nummer des Eintrags in der von
-           Dir bevorzugten Art der Nummerierung eintragen, also typischerweise
-           so etwas wie '7.4' oder '7.1.3'.">
-        </i>
+        <%= f.label :ref_number, t('basics.number') %>
+        <%= helpdesk(t('admin.item.info.number'), false) %>
       </div>
       <div class="col-4">
         <%= f.text_field :ref_number, class: 'form-control' %>
@@ -116,33 +67,16 @@
           <%= f.check_box :hidden,
                           class: 'custom-control-input' %>
           <%= f.label :hidden,
-                      'verstecken',
+                      t('basics.hide'),
                       { class: 'custom-control-label' } %>
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Wenn Du diesen Haken setzt, wird der Eintrag
-             den Nutzerinnen im Inhaltsverzeichnis nicht angezeigt,
-             Du kanst ihn aber trotzdem von woanders referenzieren.">
-          </i>
+          <%= helpdesk(t('admin.item.info.hide'), false) %>
         </div>
       </div>
     </div>
     <div id="item_description_field" class="form-group form-row">
       <div class="col-2 col-form-label">
-        <%= f.label :description, 'Beschreibung' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du den Eintrag näher beschreiben,
-           also so etwas wie 'Satz von Wilson'. Du kannt hierbei auch LaTeX
-           verwenden, und zwar in dem Umfang, wie es durch katex
-           bereitgestellt wird.">
-        </i>
+        <%= f.label :description, t('basics.description') %>
+        <%= helpdesk(t('admin.item.info.description'), false) %>
       </div>
       <div class="col-auto">
         <%= f.text_field :description, { size: 50, class: 'form-control' } %>
@@ -152,18 +86,8 @@
       <div id="item_page_field" class="form-group form-row"
            style="display: <%= show_no_block(item.pdf_destination.blank?) %>">
         <div class="col-2 col-form-label">
-          <%= f.label :page, 'Seite im pdf' %>
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Hier kannst Du optional angeben, auf welcher Seite
-             im zugeordneten Manuskript sich der Eintrag befindet.
-             Bei Referenzierung dieses Eintrags wird dann im pdf an die
-             entsprechende Stelle gesprungen. Gibst Du nichts ein, wird an
-             den Anfang des Manuskripts gesprungen.">
-          </i>
+          <%= f.label :page, t('admin.item.page') %>
+          <%= helpdesk(t('admin.item.info.page'), false) %>
         </div>
         <div class="col-auto">
           <%= f.number_field :page,
@@ -171,46 +95,18 @@
                                class: 'form-control' } %>
         </div>
         <div class="col-2">
-          <%= link_to 'pdf ansehen',
+          <%= link_to t('buttons.view_pdf'),
                       item.medium.manuscript[:original].url(host: host),
-                      class: 'btn btn-outline-info',
+                      class: 'btn btn-sm btn-outline-info',
                       target: :blank %>
         </div>
       </div>
-      <% if item.medium.manuscript_destinations.present? ||
-            item.pdf_destination.present? %>
-        <div id="item_pdf_destination_field" class="form-group form-row">
-          <div class="col-2 col-form-label">
-            <%= f.label :pdf_destination, 'pdf-Zielpunkt' %>
-            <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Im zugehörigen Manuskript sind
-             <i>named destinations</i>
-             vorhanden. Hier kannst Du auswählen, zu welcher named destination
-             der Eintrag gehören soll. Die Referenzierung auf named
-             destinations überstimmt evtl. bereits vorhandene Verweise auf
-             Seitenzahlen."
-             data-html="true">
-            </i>
-          </div>
-          <div class="col-10">
-            <%= f.select :pdf_destination,
-                         options_for_select(select_destinations(item),
-                                           item.pdf_destination),
-                         {},
-                         { class: 'selectize'} %>
-          </div>
-        </div>
-      <% end %>
     <% end %>
     <div>
       <%= f.hidden_field :medium_id, value: item.medium.id %>
-      <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
+      <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
       <button id="cancel-item"
-              class="btn btn-secondary ml-3"
+              class="btn btn-sm btn-secondary ml-3"
               type="button">
         <%= t('buttons.cancel') %>
       </button>
@@ -219,9 +115,9 @@
                   item_path(item),
                   method: :delete,
                   remote: true,
-                  data: { confirm: 'Bist Du sicher?' },
+                  data: { confirm: t('confirmation.generic') },
                   id: 'delete-item',
-                  class: 'btn btn-danger' %>
+                  class: 'btn btn-sm btn-danger mr-2' %>
       <% end %>
     </div>
   <% end %>

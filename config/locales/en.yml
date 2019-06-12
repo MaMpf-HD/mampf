@@ -817,12 +817,56 @@ en:
         This item is not referenced from anywhere. You can safely delete it without
         damaging other media.
       create: 'Create Item'
+      start_time: 'Start time'
+      page: 'Page in pdf'
+      take_time: 'Take time from video'
       info:
         delete_from_quarantine: >
           If you delete this item, all references to it will be deleted (also
           in media from other editors).
         hidden: >
           will not be shown to users
+        start_time: >
+          Here you can enter the time when the item starts in the video.
+          If you clicked the 'Add Item' button at the correct position in the
+          video, the correct time should already be displayed here.
+          Alternatively, you can grab the time corresponding to the current
+          position in the video by clicking the 'Take current time' button,
+          or you may enter the time manually.
+        type: >
+          Here you can select which kind of item it is (Theorem, Remark,
+          Lemma etc.). If none of the selections match it is recommended
+          that you select 'Mark' and provide details in the description.
+        section: >
+          Here you can select to which section the item belongs. You have
+          two choices:
+          <ul>
+          <li>
+          If the medium is associated to a lecture or a session, you can
+          select one of the sections associated to this lecture or session.
+          This is primarily designed for session videos.
+          </li>
+          <li>
+          You do not want to associate a section form the database.
+          That is fine as well.
+          </li>
+          </ul>
+        number: >
+          Here you can enter the number of the item in your preferred kind
+          of numbering, e.g. '7.4' or '7.1.3'.
+        hide: >
+          If you check this box, the item will not be displayed to users
+          in the table of contents in THymE player, but you are nonetheless
+          able to refer to it from other media.
+        description: >
+          Here you can give a description of the item, e.g. 'Wilson's Theorem'.
+          You may use LaETX if you want (to the extent that is provided
+          by katex which we use for LaTEX rendering.)
+        page: >
+          Here you can optionally enter at which page in the pdf the item is.
+          When users click a reference to this item, the pdf view will
+          jump to this page. If you do not enter anything, the first page
+          will be shown by default.
     referral:
       create: 'Create Reference'
   profile:
@@ -1249,6 +1293,8 @@ en:
     all: 'all'
     OR: 'OR'
     AND: 'AND'
+    number: 'Number'
+    hide: 'Hide'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1291,6 +1337,7 @@ en:
     okay: 'Okay'
     remove: 'Remove'
     export: 'Export'
+    view_pdf: 'View pdf'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

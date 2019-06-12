@@ -863,12 +863,62 @@ de:
         Der Eintrag wird von nirgendwo referenziert. Du kannst ihn also
         löschen, ohne dass irgendein anderes Medium davon beeinträchtigt wird.
       create: 'Eintrag anlegen'
+      start_time: 'Startzeit'
+      page: 'Seite im pdf'
+      take_time: 'Zeit aus Video übernehmen'
       info:
         delete_from_quarantine: >
           Wenn Du den Eintrag löschst, werden alle Referenzen auf
           ihn ebenfalls gelöscht (auch in Videos anderer EditorInnen).
         hidden: >
           wird den NutzerInnen nicht angezeigt
+        start_time: >
+          Hier kannst Du die Zeit eingeben, an der entsprechende
+          Eintrag im Video beginnt. Wenn Du den 'Eintrag hinzufügen'-Button
+          an der richtigen Stelle im Video gedrückt hast, sollte hier schon
+          die korrekte Zeit stehen. Du kannst sie aber auch mit Button
+          'Zeit aus Video übernehmen' erneut aus dem Video abgreifen oder
+          manuell eintippen.
+        type: >
+          Hier kannst Du angeben, um welche Art von Eintrag es
+          sich handelt (Satz, Bemerkung, Lemma etc.).
+          Passt keine der klassischen Auswahlen, empfiehlt es sich,
+          'Markierung' auszuwählen und Details in der Beschreibung
+          nachzuliefern.
+        section: >
+          Hier kannst Du auswählen, zu welchem Abschnitt der
+          Eintrag gehört. Du hast hierbei zwei Möglichkeiten:
+          <ul>
+          <li>
+          Ist das Medium zu einer Vorlesung oder einer Sitzung assoziiert,
+          kannst Du einen von den Abschnitten auswählen, die zu dieser
+          Vorlesung bzw. Sitzung assoziiert sind.
+          Dies ist im wesentlichen für KaViaR-Videos gedacht.
+          </li>
+          <li>
+          Du möchtest keinen Abschnitt aus der Datenbank assoziieren.
+          Das ist natürlich auch in Ordnung.
+          </li>
+          </ul>
+        number: >
+          Hier kannst Du die Nummer des Eintrags in der von
+          Dir bevorzugten Art der Nummerierung eintragen, also typischerweise
+          so etwas wie '7.4' oder '7.1.3'.
+        hide: >
+          Wenn Du diesen Haken setzt, wird der Eintrag
+          den Nutzerinnen im Inhaltsverzeichnis nicht angezeigt,
+          Du kanst ihn aber trotzdem von woanders referenzieren.
+        description: >
+          Hier kannst Du den Eintrag näher beschreiben,
+          also so etwas wie 'Satz von Wilson'. Du kannt hierbei auch LaTeX
+          verwenden, und zwar in dem Umfang, wie es durch katex
+          bereitgestellt wird.
+        page: >
+          Hier kannst Du optional angeben, auf welcher Seite
+          im zugeordneten Manuskript sich der Eintrag befindet.
+          Bei Referenzierung dieses Eintrags wird dann im pdf an die
+          entsprechende Stelle gesprungen. Gibst Du nichts ein, wird an
+          den Anfang des Manuskripts gesprungen.
     referral:
       create: 'Referenz anlegen'
   profile:
@@ -1317,6 +1367,8 @@ de:
     all: 'all'
     OR: 'ODER'
     AND: 'UND'
+    number: 'Nummer'
+    hide: 'verstecken'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1356,6 +1408,7 @@ de:
     okay: 'Okay'
     remove: 'Entfernen'
     export: 'Exportieren'
+    view_pdf: 'pdf ansehen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
