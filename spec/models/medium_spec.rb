@@ -318,10 +318,10 @@ RSpec.describe Medium, type: :model do
       expect(medium.card_subheader_teachable(user)).to eq(lesson)
     end
   end
-  describe '#sort_de' do
+  describe '#sort_localized' do
     it 'returns the correct sort in german spelling' do
       medium = FactoryBot.build(:medium, sort: 'Question')
-      expect(medium.sort_de).to eq('Quiz-Frage')
+      expect(medium.sort_localized).to eq('Quiz-Frage')
     end
   end
   describe '#question_ids' do

@@ -103,15 +103,8 @@ class Medium < ApplicationRecord
        Reste Remark]
   end
 
-  # Returns the list of media sorts, together with their index in the
-  # sort_enum array
-  # Is used in options_for_select in form helpers.
-  def self.sort_selection
-    Medium.sort_enum.map.with_index { |s, i| [s, i] }
-  end
-
   # media sorts and their german descriptions
-  def self.sort_de
+  def self.sort_localized
     { 'Kaviar' => I18n.t('categories.kaviar.singular'),
       'Sesam' => I18n.t('categories.sesam.singular'),
       'Nuesse' => I18n.t('categories.exercises.singular'),
@@ -126,7 +119,7 @@ class Medium < ApplicationRecord
   end
 
   def self.select_sorts
-    Medium.sort_de.except('RandomQuiz').map { |k, v| [v, k] }
+    Medium.sort_localized.except('RandomQuiz').map { |k, v| [v, k] }
   end
 
   # returns the array of all media subject to the conditions
@@ -519,11 +512,11 @@ class Medium < ApplicationRecord
   end
 
   def card_subheader
-    sort_de
+    sort_localized
   end
 
-  def sort_de
-    Medium.sort_de[sort]
+  def sort_localized
+    Medium.sort_localized[sort]
   end
 
   def cache_key
@@ -618,7 +611,7 @@ class Medium < ApplicationRecord
   #  provides sort and compact title for teachable, additionally information
   # about number of siblings if there are any
   def compact_info
-    compact_info = sort_de + '.' + teachable.compact_title
+    compact_info = sort_localized + '.' + teachable.compact_title
     return compact_info unless siblings.count > 1
     compact_info + '.(' + position.to_s + '/' + siblings.count.to_s + ')'
   end
@@ -660,7 +653,7 @@ class Medium < ApplicationRecord
   # returns info made from sort, teachable title and description
   def title_for_viewers
     Rails.cache.fetch("#{cache_key}/title_for_viewers") do
-      sort_de + ', ' + teachable&.title_for_viewers.to_s +
+      sort_localized + ', ' + teachable&.title_for_viewers.to_s +
         (description.present? ? ', ' + description : '')
     end
   end
@@ -670,7 +663,7 @@ class Medium < ApplicationRecord
     if sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
       return 'Lektion, ' + teachable.local_title_for_viewers
     end
-    sort_de + (description.present? ? ', ' + description : ', ohne Titel')
+    sort_localized + (description.present? ? ', ' + description : ', ohne Titel')
   end
 
   # returns the (cached) array of hashes describing this mediums items

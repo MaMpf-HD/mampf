@@ -17,7 +17,7 @@
           <ul>
             <% lesson.media.each do |m| %>
               <li>
-                <%= link_to m.sort_de + ', ' + m.local_info,
+                <%= link_to m.sort_localized + ', ' + m.local_info,
                             edit_or_inspect_medium_path(m),
                             class: textcolor(m) %>
               </li>
@@ -54,7 +54,7 @@
           <ul>
             <% lesson.media.each do |m| %>
               <li>
-                <%= link_to m.sort_de + ', ' + m.local_info,
+                <%= link_to m.sort_localized + ', ' + m.local_info,
                             edit_medium_path(m),
                             class: textcolor(m) %>
               </li>
