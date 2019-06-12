@@ -1,4 +1,5 @@
 de:
+  mampf: 'MaMpf'
   send_me_reset_password_instructions: >
     Schick mir die Anleitung zur Änderung meines Passworts.
   views:
@@ -525,6 +526,11 @@ de:
         Dies ist die Liste aller assoziierten Medien.
         Rot eingefärbte Medien sind noch nicht veröffentlicht oder gesperrt.
       sort: 'Typ'
+      edited_by: 'editiert von %{editors}'
+      publish: 'Publish Medium'
+      media_search: 'Mediensuche'
+      create: 'Medium anlegen'
+      no_media: 'Es konnten leider keine Medien gefunden werden.'
       local_info:
         no_title: 'ohne Titel'
         to_session: 'zu Sitzung %{number}, %{date}'
@@ -739,6 +745,54 @@ de:
           in MaMpf importieren (falls keine Widersprüche vorliegen).
         import_warning: >
           Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
+        search_type: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen,
+          was der Typ des Mediums sein soll.
+        search_teachable: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, zu welchen Modulen bzw.
+          Vorlesungen das Medium
+          <i>
+          mit Vererbung
+          </i>
+          assoziiert sein soll.
+          Bei Auswahl eines Moduls werden also auch alle Medien angezeigt,
+          die zu dazugehörigen Vorlesungen oder Sitzungen verknüpft sind;
+          bei Auswahl einer Vorlesung werden auch alle Medien angezeigt,
+          die mit Sitzungen dieser Vorlesung verknüpft sind.
+        search_tags: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER/UND
+          </i>
+          ) die Tags auswählen, mit denen das Medium verknüpft sein soll.
+        search_editors: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, wer die EditorInnen des Mediums sein sollen.
+        inspection_editors: >
+          Dies die Liste aller Personen, die für dieses Medium
+          als Editor verantwortlich sind.
+          <br>
+          Anmerkung: Unabhängig davon kann das Medium auch von Personen mit
+          höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren
+          oder Vorlesungeditorem aus dem zugeordneten Modul bzw. der
+          zugeordneten Vorlesung.
+        inspection_description: >
+          Die Beschreibung wird in Verweisen auf das Medium
+          verwendet.
+        inspection_related_tags: >
+          Dies ist die Liste aller Tags, die mit diesem Medium
+          verknüpft sind.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
@@ -804,6 +858,19 @@ de:
         first_save: >
           Ein editierbarer Text wird erzeugt, nachdem Du
           die Quiz-Erläuterung erstmalig abgespeichert hast.
+    item:
+      safe_delete_from_quarantine: >
+        Der Eintrag wird von nirgendwo referenziert. Du kannst ihn also
+        löschen, ohne dass irgendein anderes Medium davon beeinträchtigt wird.
+      create: 'Eintrag anlegen'
+      info:
+        delete_from_quarantine: >
+          Wenn Du den Eintrag löschst, werden alle Referenzen auf
+          ihn ebenfalls gelöscht (auch in Videos anderer EditorInnen).
+        hidden: >
+          wird den NutzerInnen nicht angezeigt
+    referral:
+      create: 'Referenz anlegen'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -944,7 +1011,7 @@ de:
       Es wurden %{count} Widersprüche gefunden. Wenn Du die Struktur des
       Skriptes in MaMpf importieren möchtest, musst Du erst die
       Widersprüche auflösen.
-    no_contradiction: >
+    no_contradictions: >
       Es wurden keine Widersprüche zu den in MaMpf bereits gespeicherten
       Daten zu Kapiteln und Abschnitten gefunden. Du kannst die Daten
       aus dem Skript importieren.
@@ -952,6 +1019,44 @@ de:
       In diesem Abschnitt sind keine Inhalte gelabelt.
     visibility: >
       Sichtbarkeit in Gliederung
+    no_chapters: >
+      Im Manuskript sind keine Kapitel vorhanden.
+    section_in_unlabelled_chapter: >
+      Es gibt einen Abschnitt im Manuskript, der in einem ungelabelten Kapitel
+      liegt:
+    sections_in_unlabelled_chapter: >
+      Es gibt %{count} Abschnitte im Manuskript, die in einem ungelabelten Kapitel
+      liegen:
+    label_in_unlabelled_neighbourhood: >
+      Es gibt ein inhaltliches Label im Manuskript, die in einem ungelabelten
+      Kapitel oder einem ungelabelten Abschnitt liegt:
+    labels_in_unlabelled_neighbourhood: >
+      Es gibt %{count} inhaltliche Labels im Manuskript, die in einem ungelabelten
+      Kapitel oder einem ungelabelten Abschnitt liegen:
+    duplicate_destinations: >
+      Die folgenden named destinations tauchen im Manuskript mehrfach auf:
+    unmatched_chapters: >
+      Es gibt Kapitel in MaMpf, die in diesem Skript nicht vorkommen.
+      Bei Import des Manuskripts werden diese beibehalten und nach ggf.
+      im Import vorhandenen Kapiteln einsortiert:
+    unmatched_sections: >
+      Es gibt Abschnitte in MaMpf, die in diesem Skript nicht vorkommen.
+      Bei Import des Manuskripts werden diese beibehalten und nach ggf.
+      im Import vorhandenen Abschnitten einsortiert:
+    quarantine: 'Quarantäne'
+    quarantine_about: >
+      Die folgenden named destinations tauchen in Referenzen auf dieses
+      Skript auf, liegen in der aktuell hochgeladenen Datei aber nicht mehr
+      vor:
+    quarantine_info: >
+      Aus diesem Grund sind wurden sie in die Quarantäne verschoben. Dort
+      kannst Du sie weiterverarbeiten.
+    info:
+      quarantined_items: >
+        Dies ist eine Liste aller Items, die in Quarantäne
+        sind. Es handelt sich hierbei um Items, die an anderen Stellen
+        referenziert werden und zu diesem Manuskript gehören, aber in der
+        vorliegenden pdf-Datei nicht mehr vorkommen.
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
@@ -1008,7 +1113,6 @@ de:
       Das Erzeugnis einer Menge/Familie von Vektoren wird verschieden
       notiert: span(...), Lin(...), <...>
       </li>
-  note: 'Hinweis'
   date:
     formats:
       concise: '%d.%m.%Y'
@@ -1018,6 +1122,51 @@ de:
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
+  thyme_editor:
+    add_item: 'Eintrag zum Inhaltsverzeichnis hinzufügen'
+    add_referral: 'Referenz hinzufügen'
+    create_screenshot: 'Screenshot erstellen'
+    thyme_preview: 'THyme-Vorschau'
+    back_to_medium: 'zurück zum Medium'
+    toc: 'Inhaltsverzeichnis'
+    references: 'Referenzen'
+    info:
+      screenshot: >
+        Der Screenshot dient als kleines Vorschaubild für
+        das Video in den verschiedenen Nutzeransichten für Medien.
+        Ein Screenshot kann durch den 'Screenshot erstellen'-Button
+        angelegt werden.
+      toc: >
+        Das Inhaltsverzeichnis ist die zeitlich geordnete Liste aller
+        Einträge (Sätze, Definitionen etc.) aus diesem Video.
+        Einträge können mit dem 'Item zum Inhaltsverzeichnis hinzufügen'-
+        Button angelegt werden.
+        Im Thyme-Player wird das Inhaltsverzeichnis im oberen Bereich
+        der interactive area angezeigt.
+      references: >
+        Referenzen sind Verweise auf andere Medien,
+        Einträge aus anderen Medien oder externe Einträge,
+        die in diesem Video getätigt werden.
+        Dies können beispielsweise Verweise sein auf
+        <ul>
+        <li>
+        Resultate, die in Beweisen von Aussagen aus dem vorliegenden
+        Video verwendet werden
+        </li>
+        <li>
+        Quizzes
+        </li>
+        <li>
+        Worked-Example-Videos
+        </li>
+        <li>
+        vorangegangene Vorlesungssitzungen
+        </li>
+        </ul>
+        Rosa markierte Referenzen sind Referenzen auf unveröffentlichte
+        oder gesperrte Medien. NutzerInnen ohne erhöhte Rechte bekommen
+        diese nicht angezeigt, solange bis das entsprechende Medium
+        veröffentlicht bzw. entsperrt wird.
   item:
     external_reference: 'externe Referenz:'
     internal_reference: 'Verweis auf %{ref}:'
@@ -1138,6 +1287,7 @@ de:
     search: 'Suche'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
+    associated_with_inheritance: 'Assoziiert mit Vererbung zu'
     description: 'Beschreibung'
     type: 'Typ'
     label: 'Label'
@@ -1162,12 +1312,18 @@ de:
     attention: 'Achtung'
     new: 'neu'
     in_mampf: 'in MaMpf'
+    note: 'Hinweis'
+    inspect: 'Ansehen'
+    all: 'all'
+    OR: 'ODER'
+    AND: 'UND'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
     users: 'nur registrierte MaMpf-NutzerInnen'
     subscribers: 'nur AbonenntInnen'
     locked: 'gesperrt'
+    referenced_from: 'referenziert in'
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
@@ -1197,6 +1353,9 @@ de:
     publish: 'Veröffentlichen'
     take_quiz: 'Quiz spielen'
     import: 'Übernehmen'
+    okay: 'Okay'
+    remove: 'Entfernen'
+    export: 'Exportieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

@@ -6,22 +6,13 @@
       <div class="row">
         <div class="col-6">
           <h5 class="text-dark">
-            Quarantäne
+            <%= t('manuscript.quarantine') %>
             <%= ' (' + quarantine.count.to_s + ') '%>
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover"
-               data-trigger="focus"
-               title="Info"
-               data-content="Dies ist eine Liste aller Items, die in Quarantäne
-               sind. Es handelt sich hierbei um Items, die an anderen Stellen
-               referenziert werden und zu diesem Manuskript gehören, aber in der
-               vorliegenden pdf-Datei nicht mehr vorkommen.">
-            </i>
+            <%= helpdesk(t('manuscript.info.quarantined_items'), false) %>
           </h5>
         </div>
         <div class="col-6 text-right">
-          <a class="btn btn-primary"
+          <a class="btn btn-sm btn-primary"
              data-toggle="collapse"
              href="#quarantine_collapse"
              aria-expanded="false" aria-controls="quarantine_collapse">

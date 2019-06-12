@@ -1,5 +1,5 @@
 # prepare action box
-$('#action-placeholder').empty().append('Referenz anlegen')
+$('#action-placeholder').empty().append(I18n.t('admin.referral.create'))
 # render referral form to action box
 $('#action-container').empty()
   .append('<%= j render partial: "referrals/form",

@@ -20,6 +20,7 @@ class MediaController < ApplicationController
   end
 
   def catalog
+    I18n.locale = current_user.locale
   end
 
   def show

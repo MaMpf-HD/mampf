@@ -11,23 +11,20 @@
       <div class="modal-header">
         <h5 class="modal-title"
             id="destinationWarningModalLabel">
-          Hinweis: Quarantäne
+          <%= t('basics.note') %>: <%= t('manuscript.quarantine') %>
         </h5>
       </div>
       <div class="modal-body">
-        Die folgenden named destinations tauchen in Referenzen auf dieses
-        Skript auf, liegen in der aktuell hochgeladenen Datei aber nicht mehr
-        vor:
+        <%= t('manuscript.quarantine_about') %>
         <div id="quarantineDestinations">
         </div>
-        Aus diesem Grund sind wurden sie in die Quarantäne verschoben. Dort
-        kannst Du sie weiterverarbeiten.
+        <%= t('manuscript.quarantine_info') %>
         <div class="row mt-3">
           <div class="col-12 text-center">
             <button id="keep-old-destinations"
                     type="button"
-                    class="btn btn-secondary">
-              Okay
+                    class="btn btn-sm btn-secondary">
+              <%= t('buttons.okay') %>
             </button>
           </div>
         </div>

@@ -1,17 +1,17 @@
 <div class="row mt-3 p-2">
   <div class="col-10">
     <h4>
-      Mediensuche
+      <%= t('admin.medium.media_search') %>
     </h4>
   </div>
   <div class="col-2">
     <% if Course.any? %>
-      <%= link_to 'Medium anlegen',
+      <%= link_to t('admin.medium.create'),
                   new_medium_path(params:
                                     { sort: 'Kaviar',
                                       teachable_id: Course.first.id,
                                       teachable_type: 'Course' }),
-                  class: 'btn btn-secondary',
+                  class: 'btn btn-sm btn-secondary',
                   id: 'create-new-tag' %>
     <% end %>
   </div>
@@ -21,103 +21,59 @@
               remote: true,
               method: 'get' do |f| %>
   <div class="form-row p-2">
-    <div class="col-3 form-group">
-      <%= f.label :types, 'Typ' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du (im Sinne von
-         <i>
-         ODER
-         </i>
-         ) auswählen,
-         was der Typ des Mediums sein soll."
-         data-html="true">
-      </i>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :types, t('basics.type') %>
+      <%= helpdesk(t('admin.medium.info.search_type'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_types,
                         class: 'custom-control-input',
                         checked: true,
                         data: { id: 'search_types'} %>
         <%= f.label :all_types,
-                    'alle',
+                    t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
       <%= f.select :types,
-                   options_for_select([['auswählen','']] +
-                                        Medium.sort_selection),
+                   options_for_select(add_prompt(Medium.select_sorts)),
                    {},
                    { multiple: true,
                      class: 'selectize',
                      disabled: true } %>
     </div>
-    <div class="col-3 form-group">
-      <%= f.label :teachable_ids, 'assoziiert mit Vererbung zu' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du (im Sinne von
-         <i>
-         ODER
-         </i>
-         ) auswählen, zu welchen Modulen bzw.
-         Vorlesungen das Medium
-         <i>
-         mit Vererbung
-         </i>
-         assoziiert sein soll.
-         Bei Auswahl eines Moduls werden also auch alle Medien angezeigt,
-         die zu dazugehörigen Vorlesungen oder Sitzungen verknüpft sind;
-         bei Auswahl einer Vorlesung werden auch alle Medien angezeigt,
-         die mit Sitzungen dieser Vorlesung verknüpft sind."
-         data-html="true">
-      </i>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :teachable_ids, t('basics.associated_with_inheritance') %>
+      <%= helpdesk(t('admin.medium.info.search_teachable'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_teachables,
                         class: 'custom-control-input',
                         checked: true,
                         data: { id: 'search_teachable_ids' } %>
         <%= f.label :all_teachables,
-                    'alle',
+                    t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
       <%= f.select :teachable_ids,
                    grouped_options_for_select(grouped_teachable_list_alternative),
-                   { prompt: 'auswählen'},
+                   { prompt: t('basics.select')},
                    { multiple: true,
                      class: 'selectize',
                      disabled: true } %>
     </div>
-    <div class="col-3 form-group">
+    <div class="col-6 col-lg-3 form-group">
       <%= f.label :tag_ids,
-                  'Tags' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du (im Sinne von
-         <i>
-         ODER/UND
-         </i>
-         ) die Tags auswählen, mit denen das Medium verknüpft sein soll."
-         data-html="true">
-      </i>
+                  t('basics.related_tags') %>
+      <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_tags,
                         class: 'custom-control-input',
                         checked: true,
                         data: { id: 'search_tag_ids' } %>
         <%= f.label :all_tags,
-                    'alle',
+                    t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
       <%= f.select :tag_ids,
-                   options_for_select([['auswählen','']] + Tag.select_by_title),
+                   options_for_select(add_prompt(Tag.select_by_title)),
                    {},
                    { multiple: true,
                      class: 'selectize',
@@ -128,7 +84,7 @@
                            checked: true,
                            class: 'custom-control-input' %>
         <%= f.label :tag_operator,
-                    'ODER',
+                    t('basics.OR'),
                     value: 'or',
                     class: 'custom-control-label' %>
       </div>
@@ -137,37 +93,25 @@
                            'and',
                            class: 'custom-control-input' %>
         <%= f.label :tag_operator,
-                    'UND',
-                     value: 'and',
-                     class: 'custom-control-label' %>
+                    t('basics.AND'),
+                    value: 'and',
+                    class: 'custom-control-label' %>
       </div>
     </div>
-    <div class="col-3 form-group">
-      <%= f.label :editor_ids, 'EditorInnen' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier kannst Du (im Sinne von
-         <i>
-         ODER
-         </i>
-         ) auswählen, wer die EditorInnen des Mediums sein sollen."
-         data-html="true">
-      </i>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :editor_ids, t('basics.editors') %>
+      <%= helpdesk(t('admin.medium.info.search_editors'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_editors,
                         class: 'custom-control-input',
                         checked: true,
                         data: { id: 'search_editor_ids' } %>
         <%= f.label :all_editors,
-                    'alle',
+                    t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
       <%= f.select :editor_ids,
-                   options_for_select([['auswählen','']] +
-                                      User.only_editors_selection),
+                   options_for_select(add_prompt(User.only_editors_selection)),
                    {},
                    { multiple: true,
                      class: 'selectize',
@@ -176,7 +120,7 @@
   </div>
   <div class="row mb-3">
     <div class="col-12 text-center">
-      <%= f.submit 'Suchen',
+      <%= f.submit t('basics.search'),
                    class: 'btn btn-primary' %>
     </div>
   </div>

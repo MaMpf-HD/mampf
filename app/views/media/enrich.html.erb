@@ -53,21 +53,21 @@
         <div id="add-buttons">
           <i id="add-item"
              class="material-icons clickable"
-             title="Eintrag zum Inhaltsverzeichnis hinzufügen"
+             title="<%= t('thyme_editor.add_item') %>"
              data-toggle="tooltip"
              data-placement="bottom">
             playlist_add
           </i>
           <i id="add-reference"
              class="material-icons clickable ml-2"
-             title="Referenz hinzufügen"
+             title="<%= t('thyme_editor.add_referral') %>"
              data-toggle="tooltip"
              data-placement="bottom">
               insert_link
           </i>
           <i id="add-screenshot"
              class="material-icons clickable ml-2"
-             title="Screenshot erstellen"
+             title="<%= t('thyme_editor.create_screenshot') %>"
              data-toggle="tooltip"
              data-placement="bottom">
             add_a_photo
@@ -91,25 +91,25 @@
   <div id="action-edit">
     <div class="thyme-header bg-mdb-color text-light">
       <div>
-        Aktion
+        <%= t('basics.action') %>
         <span id="action-placeholder">
         </span>
       </div>
       <div>
-        <%= link_to 'Thyme Preview',
+        <%= link_to t('thyme_editor.thyme_preview'),
                     play_medium_path(@medium),
                     class: 'btn btn-outline-light btn-sm',
                     target: :blank %>
-        <%= link_to 'zurück zum Medium',
+        <%= link_to t('thyme_editor.back_to_medium'),
                     edit_medium_path(@medium),
                     class: 'btn btn-outline-light btn-sm ml-2' %>
         <% teachable_scope = @medium.teachable.media_scope %>
         <% if teachable_scope.class.to_s == 'Course' %>
-          <%= link_to 'zum Modul',
+          <%= link_to t('buttons.parent_course'),
                       edit_or_inspect_course_path(teachable_scope),
                       class: 'btn btn-outline-light btn-sm ml-2' %>
         <% else %>
-          <%= link_to 'zur Vorlesung',
+          <%= link_to t('buttons.parent_lecture'),
                       edit_or_inspect_lecture_path(teachable_scope),
                       class: 'btn btn-outline-light btn-sm ml-2' %>
         <% end %>
@@ -122,21 +122,12 @@
     <div class="thyme-header bg-teal-lighten-2 text-light">
       <div>
         <span>
-          Screenshot
+          <%= t('basics.screenshot') %>
         </span>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Der Screenshot dient als kleines Vorschaubild für
-           das Video in den verschiedenen Nutzeransichten für Medien.
-           Ein Screenshot kann durch den 'Screenshot erstellen'-Button
-           angelegt werden.">
-        </i>
+        <%= helpdesk(t('thyme_editor.info.screenshot'), false) %>
       </div>
       <div>
-        <%= link_to 'Entfernen',
+        <%= link_to t('buttons.remove'),
                     remove_screenshot_path(@medium),
                     method: :patch,
                     remote: true,
@@ -145,7 +136,7 @@
                     class: 'btn btn-sm btn-outline-light',
                     style: 'display: ' +
                               show_inline(@medium.screenshot.present?) %>
-        <%= link_to 'Exportieren',
+        <%= link_to t('buttons.export'),
                     export_screenshot_path(@medium),
                     class: 'btn btn-outline-light btn-sm',
                     id: 'export-screenshot',
@@ -162,21 +153,10 @@
   <div id="toc-edit">
     <div class="thyme-header bg-teal-darken-2 text-light">
         <span>
-          Inhaltsverzeichnis
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Das Inhaltsverzeichnis ist die Liste aller
-             Einträge (Sätze, Definitionen etc.) aus diesem Video.
-             Einträge können mit dem 'Item zum Inhaltsverzeichnis hinzufügen'-
-             Button angelegt werden.
-             Im Thyme-Player wird das Inhaltsverzeichnis im oberen Bereich
-             der interactive area angezeigt.">
-          </i>
+          <%= t('thyme_editor.toc') %>
+          <%= helpdesk(t('thyme_editor.info.toc'), false) %>
         </span>
-        <%= link_to 'Exportieren',
+        <%= link_to t('buttons.export'),
                     export_toc_path(@medium),
                     class: 'btn btn-outline-light btn-sm',
                     id: 'export-toc',
@@ -190,39 +170,10 @@
   <div id="meta-edit">
     <div class="thyme-header bg-teal text-light">
       <span>
-        Referenzen
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Referenzen sind Verweise auf andere Medien,
-           Einträge aus anderen Medien oder externe Einträge,
-           die in diesem Video getätigt werden.
-           Dies können beispielsweise Verweise sein auf
-           <ul>
-           <li>
-           Resultate, die in Beweisen von Aussagen aus dem vorliegenden
-           Video verwendet werden
-           </li>
-           <li>
-           Quizzes
-           </li>
-           <li>
-           SeSAM-Videos
-           </li>
-           <li>
-           vorangegangene Vorlesungssitzungen
-           </li>
-           </ul>
-           Rosa markierte Referenzen sind Referenzen auf unveröffentlichte
-           oder gesperrte Medien. NutzerInnen ohne erhöhte Rechte bekommen
-           diese nicht angezeigt, solange bis das entsprechende Medium
-           veröffentlicht bzw. entsperrt wird."
-           data-html="true">
-        </i>
+        <%= t('thyme_editor.references') %>
+        <%= helpdesk(t('thyme_editor.info.references'), true) %>
       </span>
-      <%= link_to 'Exportieren',
+      <%= link_to t('buttons.export'),
                   export_references_path(@medium),
                   class: 'btn btn-outline-light btn-sm',
                   id: 'export-references',

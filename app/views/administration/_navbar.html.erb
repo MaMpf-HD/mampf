@@ -3,7 +3,8 @@
      id="first-admin-nav">
   <%= image_tag '/MaMpf-Logo_32x32.png',
                 class: 'img-fluid mr-2' %>
-  <%= link_to "MaMpf", exit_administration_path,
+  <%= link_to t('mampf'),
+              exit_administration_path,
               class: 'navbar-brand',
               title: t('admin.navbar.exit'),
               data: { toggle: 'tooltip' } %>

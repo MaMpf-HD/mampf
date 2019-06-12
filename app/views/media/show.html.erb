@@ -6,12 +6,12 @@
       </span>
       <% unless @medium.published_with_inheritance? %>
         <span class="badge badge-warning">
-          unveröffentlicht
+          <%= t('access.unpublished') %>
         </span>
       <% end %>
       <% if @medium.published_with_inheritance? && @medium.locked? %>
         <span class="badge badge-warning">
-          gesperrt
+          <%= t('access.locked') %>
         </span>
       <% end %>
       <%= @medium.caption %>
@@ -62,13 +62,13 @@
   <div class="col-12 col-xl-2 text-right">
     <% if current_user.admin ||
           @medium.edited_with_inheritance_by?(current_user) %>
-      <a href="<%= edit_medium_path(@medium) %>"
-         class="far fa-edit fa-lg text-secondary"
-         data-toggle="tooltip"
-         data-placement="bottom"
-         title="Bearbeiten"
-         style="text-decoration: none;">
-      </a>
+      <%= link_to '',
+                  edit_medium_path(@medium),
+                  class: 'far fa-edit fa-lg text-secondary',
+                  data: { toggle: 'tooltip',
+                          placement: 'bottom' },
+                  title: t('buttons.edit'),
+                  style: 'text-decoration: none;' %>
     <% end %>
   </div>
 </div>

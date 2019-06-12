@@ -1,5 +1,5 @@
 # prepare action box
-$('#action-placeholder').empty().append('Eintrag anlegen')
+$('#action-placeholder').empty().append(I18n.t('admin.item.create'))
 # render item form to action box
 $('#action-container').empty()
   .append('<%= j render partial: "items/form",

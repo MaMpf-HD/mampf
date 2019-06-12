@@ -2,7 +2,7 @@
   <div class="col-9">
     <h4 class="pl-2">
       <span class="badge badge-secondary">
-        Medium
+        <%= t('basics.medium') %>
       </span>
       <%= @medium.title %>
     </h4>
@@ -10,19 +10,13 @@
   <div class="col-3 text-right">
     <% teachable_scope = @medium.teachable&.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-      <a href="<%= edit_or_inspect_course_path(teachable_scope) %>"
-         class="fas fa-chalkboard-teacher fa-lg mr-3 text-dark"
-         style="text-decoration: none; "
-         data-toggle="tooltip"
-         title="zum Modul">
-      </a>
+      <%= link_to t('buttons.parent_course'),
+                  edit_or_inspect_course_path(teachable_scope),
+                  class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% else %>
-      <a href="<%= edit_or_inspect_lecture_path(teachable_scope) %>"
-         class="fas fa-chalkboard-teacher fa-lg mr-3 text-dark"
-         style="text-decoration: none; "
-         data-toggle="tooltip"
-         title="zur Vorlesung">
-      </a>
+      <%= link_to t('buttons.parent_lecture'),
+                  edit_or_inspect_lecture_path(teachable_scope),
+                  class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
   </div>
 </div>
@@ -35,63 +29,8 @@
       <div class="card-body">
         <div class="row mb-2">
           <div class="col-4">
-            Typ
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Jedes Medium hat genau einen Typ. Die folgenden Typen
-               stehen zur Auswahl:
-               <ul>
-               <li>
-               Lektion: korrespondiert in etwa zum Inhalt von Vorlesungssitzungen.
-               Hier können z.B. Videos oder Manuskripte einzelner Sitzungen
-               untergebracht werden, aber auch Vertiefungen zum Vorlesungsstoff.
-               </li>
-               <li>
-               Worked-Example: ausgearbeitete Beispiele ergänzed zur Vorlesung, z.B.
-               als Video produziert oder aus der Plenarübung
-               </li>
-               <li>
-               Übung: Übungsblätter
-               </li>
-               <li>
-               Skript: Vorlesungsmanuskript
-               <i>
-               Beachte:
-               </i>
-               Pro Vorlesung kann es höchstens ein Skript geben.
-               Skripte können nicht in andere Medientypen umgewandelt werden,
-               dasselbe gilt auch andersherum. Verwendest Du das
-               <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
-               für LaTEX, kann MaMpf aus dem pdf zusätzliche Informationen
-               extrahieren.
-               </li>
-               <li>
-               Wiederholung: Materialien, die Vorwissen auffrischen.
-               </li>
-               <li>
-               Quiz: einzelnes Quiz
-               </li>
-               <li>
-               Quiz-Frage: einzelne Quiz-Frage
-               </li>
-               <li>
-               Quiz-Erläuterung: einzelne Quiz-Erläuterung. Quiz-Erläuterungen
-               dienen als Bindeglied zwischen Quiz-Fragen in komplexreren Quizzes
-               (z.B. angeleiteten Beweisen)
-               </li>
-               <li>
-               Beispiel-Datenbank: Beispiel aus der ErDBeere-Datenbank
-               (z.Zt. nur Prototyp)
-               </li>
-               <li>
-               Sonstiges: Hier kannst Du alles unterbringen, was in keine andere
-               Rubrik passt.
-               </li>
-               </ul>"
-               data-html="true">
-            </i>
+            <%= t('basics.type') %>
+            <%= helpdesk(t('admin.medium.info.sort'), true) %>
           </div>
           <div class="col-8">
             <%= @medium.sort_de %>
@@ -99,15 +38,8 @@
         </div>
         <div class="row mb-2">
           <div class="col-4">
-            assoziiert zu
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Jedes Medium ist zu genau einer Lehrveranstaltung assoziiert. Die Assoziation erfolgt hierbei zu einer/einem<ul><li><i>Sitzung</i>, wenn der Inhalt zu einer Vorlesungssitzung gehört, beispielsweise eine Videoaufzeichnung aus KaViaR</li><li><i>Vorlesung</i>, wenn der Inhalt spezifisch für die konkrete Vorlesung ist, jedoch ohne Bezug zu einer konkreten Sitzung, beispielsweise bei SeSAM-Videos</li><li><i>Modul</i>, wenn der Inhalt zum Modul gehört, jedoch keinen Bezug zu einer konkreten Vorlesung braucht, bespielsweise SeSAM-Videos zu Grundlagen, die in jeder Vorlesung eines entsprechenden Moduls gleich behandelt werden.
-               </li></ul>"
-               data-html="true">
-            </i>
+            <%= t('basics.associated_to') %>
+            <%= helpdesk(t('admin.medium.info.teachable'), true) %>
           </div>
           <div class="col-8">
             <%= @medium.teachable.long_title %>
@@ -115,14 +47,8 @@
         </div>
         <div class="row mb-2">
           <div class="col-4">
-            Editoren
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Dies eine Liste aller Personen, die für diese Medium als Editor verantwortlich sind. Jede dieser Personen hat Bearbeitungsrecht für das Medium. <br>Anmerkung: Unabhängig davon kann das Medium auch von Personen mit höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren oder Vorlesungeditorem aus dem zugeordneten Modul bzw. der zugeordneten Vorlesung."
-               data-html="true">
-            </i>
+            <%= t('basics.editors') %>
+            <%= helpdesk(t('admin.medium.info.inspection_editors'), true) %>
           </div>
           <div class="col-8">
             <ul>
@@ -137,13 +63,8 @@
         <% if @medium.description.present? %>
           <div class="row mb-2">
             <div class="col-4">
-              Beschreibung
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
-                 title="Info"
-                 data-content="Die Beschreibung wird in Verweisen auf das Medium verwendet.">
-              </i>
+              <%= t('basics.description') %>
+              <%= helpdesk(t('admin.medium.info.inspection_description'), true) %>
             </div>
             <div class="col-8">
               <%= @medium.description %>
@@ -153,13 +74,8 @@
         <% if @medium.tags.present? %>
         <div class="row mb-2">
           <div class="col-4">
-            Verknüpfte Begriffe
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Dies ist eine Liste aller Tags, die mit diesem Medium verknüpft sind.">
-            </i>
+            <%= t('basics.related_tags') %>
+            <%= helpdesk(t('admin.medium.info.inspection_related_tags'), false) %>
           </div>
           <div class="col-8">
             <%= render partial: 'tags/list',
@@ -170,15 +86,8 @@
         <% if @medium.linked_media.present? %>
         <div class="row mb-2">
           <div class="col-4">
-            Verknüpfte Medien
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Dies ist eine Liste aller Medien, die mit diesem Medium verknüpft sind bzw. die von diesem Medium aus referenziert werden. <br><b>Achtung:</b> Das Feature wird vermutlich spätestens nach der Integration von BananE abgeschafft werden, da diese Informationen
-               dann automatisch erfasst werden können; für die via Thyme referenzierten Medien gilt das bereits jetzt."
-               data-html="true">
-            </i>
+            <%= t('basics.related_media') %>
+            <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
           </div>
           <div class="col-8">
             <ul>
@@ -194,13 +103,8 @@
         <% if @medium.external_reference_link.present? %>
         <div class="row">
           <div class="col-4">
-            Externer Link
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Externer Link, der einen Teil diese Mediums ausmacht.">
-            </i>
+            <%= t('basics.external_link') %>
+            <%= helpdesk(t('admin.medium.info.external_link'), true) %>
           </div>
           <div class="col-8">
             <%= link_to @medium.external_reference_link, @medium.external_reference_link %>
@@ -216,7 +120,7 @@
       <div class="card-header">
         <div class="row">
           <div class="col-3">
-            Video
+            <%= t('video.video') %>
             <span class="badge badge-secondary">
               mp4
             </span>
@@ -236,7 +140,7 @@
           <div id="video-meta" class="col-12 meta rounded">
             <div class="row">
               <div class="col-12">
-                Datei:
+                <%= t('basics.file') %>:
                 <span id="video-file">
                   <%= @medium.video_filename %>
                 </span>
@@ -244,7 +148,7 @@
             </div>
             <div class="row">
               <div class="col-12">
-                Größe:
+                <%= t('video.size') %>:
                 <span id="video-size">
                   <%= number_to_human_size(@medium.video_size) %>
                 </span>
@@ -252,7 +156,7 @@
             </div>
             <div class="row">
               <div class="col-12">
-                Auflösung:
+                <%= t('video.resolution') %>:
                 <span id="video-resolution">
                   <%= @medium.video_resolution %>
                 </span>
@@ -260,7 +164,7 @@
             </div>
             <div class="row">
               <div class="col-12">
-                Länge:
+                <%= t('video.length') %>:
                 <span id="video-duration">
                   <%= @medium.video_duration_hms_string %>
                 </span>
@@ -274,11 +178,11 @@
         </video>
       </div>
       <% else %>
-        Es ist kein Video vorhanden.
+        <%= t('video.no_video') %>
       <% end %>
       <% if @medium.screenshot.present? %>
         <div class="my-2">
-          Screenshot
+          <%= t('basics.screenshot') %>
         </div>
         <img id="screenshot-preview" class="img-fluid mb-3"
              src="<%= @medium.screenshot_url %>">
@@ -292,7 +196,7 @@
     <div class="card-header">
       <div class="row">
         <div class="col-12">
-          Manuskript
+          <%= t('manuscript.manuscript') %>
           <span class="badge badge-secondary">
             pdf
           </span>
@@ -305,7 +209,7 @@
         <div id="manuscript-meta" class="col-12 meta rounded">
           <div class="row">
             <div class="col-12">
-              Datei:
+              <%= t('basics.file') %>:
               <span id="manuscript-file">
                 <%= @medium.manuscript_filename %>
               </span>
@@ -313,7 +217,7 @@
           </div>
           <div class="row">
             <div class="col-12">
-              Größe:
+              <%= t('basics.size') %>:
               <span id="manuscript-size">
                 <%= number_to_human_size(@medium.manuscript_size) %>
               </span>
@@ -321,9 +225,9 @@
           </div>
           <div class="row">
             <div class="col-12">
-              Länge:
+              <%= t('manuscript.length') %>:
               <span id="manuscript-pages">
-                <%= @medium.manuscript_pages.to_s + ' S' %>
+                <%= "#{@medium.manuscript_pages} #{t('manuscript.pages')}" %>
               </span>
             </div>
           </div>
@@ -333,7 +237,7 @@
                             id: 'manuscript-preview'),
                   @medium.manuscript_url, target: :blank %>
       <% else %>
-        Es ist kein Manuskript vorhanden.
+        <%= t('manuscript.no_manuscript') %>
       <% end %>
     </div>
   </div>

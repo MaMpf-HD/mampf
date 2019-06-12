@@ -1,26 +1,19 @@
 <div class="row">
   <div class="col-3">
     <strong>
-      Titel
+      <%= t('basics.title') %>
     </strong>
   </div>
   <div class="col-7">
     <strong>
-      referenziert in
+      <%= t('basics.referenced_from') %>
     </strong>
   </div>
   <div class="col-2">
     <strong>
-      Aktion
+      <%= t('basics.action') %>
     </strong>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Wenn Du den Eintrag löschst, werden alle Referenzen auf
-       ihn ebenfalls gelöscht (auch in Videos anderer EditorInnen).">
-     </i>
+    <%= helpdesk(t('admin.item.info.delete_from_quarantine'), false) %>
   </div>
 </div>
 <% quarantine.each do |d| %>
@@ -32,8 +25,7 @@
     <div class="col-7">
       <ul>
         <% unless d.referencing_media.any? %>
-          Der Eintrag wird von nirgendwo referenziert. Du kannst ihn also
-          löschen, ohne dass irgendein anderes Medium davon beeinträchtigt wird.
+          <%= t('admin.item.safe_delete_from_quarantine') %>
         <% end %>
         <% d.referencing_media.each do |m| %>
           <li>
@@ -44,9 +36,9 @@
               <%= link_to m.title_for_viewers,
                           play_medium_path(m) %>
             <% end %>
-            (editiert von
-            <%= m.editors_with_inheritance.map(&:name).join(', ') %>
-            )
+            (<%= t('admin.medium.edited_by',
+                   editors: m.editors_with_inheritance.map(&:name)
+                             .join(', ')) %>)
           </li>
         <% end %>
       </ul>
@@ -56,7 +48,7 @@
                   item_path(d, params: { from: 'quarantine' }),
                   class: 'btn btn-danger btn-sm',
                   method: :delete,
-                  data: { confirm: 'Bist Du sicher?' },
+                  data: { confirm: t('confirmation.generic') },
                   remote: true %>
     </div>
   </div>

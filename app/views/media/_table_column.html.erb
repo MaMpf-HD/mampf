@@ -57,10 +57,9 @@
                 </div>
               <% end %>
               <% if relevant.size == 50 %>
-                Es werden nur die 50 zuletzt angelegten Medien angezeigt.
-                Mehr findest Du über die
-                <%= link_to 'Mediensuche',
-                            media_catalog_path %>.
+                <%= t('admin.medium.use_search_html',
+                      media_search: link_to(t('admin.main.media_search'),
+                                            media_catalog_path)) %>
               <% end %>
             </div>
           <% end %>

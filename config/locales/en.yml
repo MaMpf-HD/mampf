@@ -30,6 +30,7 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  mampf: 'MaMpf'
   categories:
     kaviar:
       singular: 'Lesson'
@@ -507,6 +508,11 @@ en:
         This is the list of all associated media. Media in red are unpublished
         or locked.
       sort: 'Type'
+      edited_by: 'edited by %{editors}'
+      publish: 'Publish Medium'
+      media_search: 'Search Media'
+      create: 'Create Medium'
+      no_media: 'No media found.'
       manuscript:
         structure: 'Structure of the manuscript'
       local_info:
@@ -707,6 +713,48 @@ en:
         import_warning: >
           Attention: The structure of the manuscript has not yet been imported
           to MaMpf.
+        search_type: >
+          Here you can select (in the sense of
+          <i>
+          OR
+          </i>
+          ) of what type the medium is.
+        search_teachable: >
+          Here you can select (in the sense of
+          <i>
+          OR
+          </i>
+          ), to which courses or lectures this medium is associated to
+          <i>
+          with inheritance.
+          </i>
+          This means that if you select a course, media that are associated
+          to the course's lectures and sessions will be shown as well;
+          if you select a lecture, media that are associated to the lecture's
+          sessions will be shown as well.
+        search_tags: >
+          Here you can select the tags (in the sense of
+          <i>
+          OR/AND
+          </i>
+          ) which are associated to the medium.
+        search_editors: >
+          Here you can select the editors of the medium (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        inspection_editors: >
+          This is the list of all persons that are responsible for this
+          medium as editor.
+          <br>
+          Note: Independently from this setting, this medium can be edited
+          by people with higher access rights, e.g. editors of the associated
+          course or lecture.
+        inspection_description: >
+          The description is used in references to this medium.
+        inspection_related_tags: >
+          This is the list of all tags that are associated to this medium.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
@@ -764,6 +812,19 @@ en:
         first_save: >
           An editable text for this remark will be created after
           you have saved this medium for the first time.
+    item:
+      safe_delete_from_quarantine: >
+        This item is not referenced from anywhere. You can safely delete it without
+        damaging other media.
+      create: 'Create Item'
+      info:
+        delete_from_quarantine: >
+          If you delete this item, all references to it will be deleted (also
+          in media from other editors).
+        hidden: >
+          will not be shown to users
+    referral:
+      create: 'Create Reference'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -879,6 +940,7 @@ en:
     locked: 'This medium is locked.'
   video:
     video: 'Video'
+    no_video: 'There is no video present.'
     play: 'THymE Player'
     download: 'download video'
     length: 'Length'
@@ -886,6 +948,7 @@ en:
     size: 'Size'
   manuscript:
     manuscript: 'Manuscript'
+    no_manuscript: 'There is no manuscript present.'
     view: 'view pdf in browser'
     download: 'download manuscript'
     length: 'Length'
@@ -902,11 +965,48 @@ en:
       contradictions first.
     no_contradictions: >
       No contradictions to data about chapters and sections in MaMpf have been
-      found. You can import the data form the manuscript.
+      found. You can import the data from the manuscript.
     no_labels: >
       In this section there are no labels.
     visibility: >
       Visibility in lecture contents
+    no_chapters: >
+      There are no chapters in the manuscript.
+    section_in_unlabelled_chapter: >
+      There is a section in the manuscript that lies within an unlabelled
+      chapter:
+    sections_in_unlabelled_chapter: >
+      There are %{count} sections in the manuscript that lie within an
+      unlabelled chapter:
+    label_in_unlabelled_neighbourhood: >
+      There is a content item in the manuscript that lies within an unlabelled
+      section or chapter.
+    labels_in_unlabelled_neighbourhood: >
+      There are %{count} content items in the manuscript that lie within an
+      unlabelled section or chapter.
+    duplicate_destinations: >
+      The following destination(s) appear multiple times in the manuscript:
+    unmatched_chapters: >
+      There are chapters in MaMpf that do not appear in the manuscript.
+      When the manuscript is imported, they will be kept and will be placed
+      after the imported chapters.
+    unmatched_sections: >
+      There are sections in MaMpf that do not appear in the manuscript.
+      When the manuscript is imported, they will be kept and will be placed
+      after the imported sections.
+    quarantine: 'Quarantine'
+    quarantine_about: >
+      The following named destinations appear in references to this manuscript,
+      but they are no longer present in the uploaded file:
+    quarantine_info: >
+      For that reason, they have been moved to Quarantine. There you can
+      decide what do about them.
+    info:
+      quarantined_items: >
+        This is the list of all items that are in quarantine.
+        These are items that belong to this manuscript and are
+        referenced from other places, but are not present in the current
+        pdf file.
   quiz:
     quiz: 'Quiz'
     start: 'start quiz'
@@ -958,7 +1058,6 @@ en:
       The subspace generated by a set/family of vectors may be denoted
       as span(...), Lin(...), <...>
       </li>
-  note: 'Note'
   date:
     formats:
       concise: '%Y-%m-%d'
@@ -968,6 +1067,45 @@ en:
   thyme:
     back: 'back'
     back_to: 'back to '
+  thyme_editor:
+    add_item: 'Add Item to Table of Contents'
+    add_referral: 'Add Reference'
+    create_screenshot: 'Create Screenshot'
+    thyme_preview: 'THyme Preview'
+    back_to_medium: 'Back to Medium'
+    toc: 'Table of Contents'
+    references: 'References'
+    info:
+      screenshot: >
+        The screenshot serves as preview image for the video in several user
+        views for media. A screenshot can be created by clicking the 'Create
+        Screenshot' button.
+      toc: >
+        The table of contents is the list of all items (Theorems, Definitions,
+        etc.) from this video, ordered by time. Items can be created by
+        clicking the 'Add Item' button. In the THymE player, the table of
+        contents is displayed in the upper half of the interactive area.
+      references: >
+        References are references to other media, items from other media
+        or external references in this video. E.g., this can be references to
+        Referenzen sind Verweise auf andere Medien,
+        <ul>
+        <li>
+        Results that are used in the proof of statements in this video
+        </li>
+        <li>
+        Quizzes
+        </li>
+        <li>
+        Worked Example Videos
+        </li>
+        <li>
+        previous sessions
+        </li>
+        </ul>
+        References marked in pink are references to unpublished or locked media.
+        Users without elevated rights cannot see these as until the
+        corresponding media are published or unlocked.
   item:
     external_reference: 'External reference:'
     internal_reference: 'Reference to %{ref}:'
@@ -1080,6 +1218,7 @@ en:
     search: 'Search'
     mampf_package: 'MaMpf package'
     associated_to: 'Associated to'
+    associated_with_inheritance: 'Associated with inheritance to'
     description: 'Description'
     type: 'Type'
     label: 'Label'
@@ -1104,6 +1243,12 @@ en:
     attention: 'Attention'
     new: 'new'
     in_mampf: 'in MaMpf'
+    note: 'Note'
+    referenced_from: 'referenced from'
+    inspect: 'Inspect'
+    all: 'all'
+    OR: 'OR'
+    AND: 'AND'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1143,6 +1288,9 @@ en:
     publish: 'Publish'
     take_quiz: 'Take Quiz'
     import: 'Import'
+    okay: 'Okay'
+    remove: 'Remove'
+    export: 'Export'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
