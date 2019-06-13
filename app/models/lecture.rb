@@ -248,7 +248,7 @@ class Lecture < ApplicationRecord
 
   def short_title_release
     return short_title if published?
-    short_title + ' (unveröffentlicht)'
+    short_title + ' (' + I18n.t('access.unpublished') + ')'
   end
 
   def short_title_brackets

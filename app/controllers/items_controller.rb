@@ -9,6 +9,7 @@ class ItemsController < ApplicationController
   end
 
   def edit
+    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
   end
 
   def create

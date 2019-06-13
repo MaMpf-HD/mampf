@@ -866,6 +866,47 @@ de:
       start_time: 'Startzeit'
       page: 'Seite im pdf'
       take_time: 'Zeit aus Video übernehmen'
+      edit: 'Eintrag bearbeiten'
+      no_section: 'kein zugeordneter Abschnitt aus der Datenbank'
+      create_external: 'Externen Eintrag anlegen'
+      explanation: 'Erläuterung'
+      sort:
+        definition: 'Definition'
+        remark: 'Bemerkung'
+        lemma: 'Lemma'
+        theorem: 'Satz'
+        example: 'Beispiel'
+        annotation: 'Anmerkung'
+        algorithm: 'Algorithmus'
+        corollary: 'Folgerung'
+        section: 'Abschnitt'
+        label: 'Markierung'
+        subsection: 'Unterabschnitt'
+        Theorem: 'Theorem'
+        proposition: 'Proposition'
+        Lemma: 'Hilfssatz'
+        Corollary: 'Korollar'
+        figure: 'Abbildung'
+        chapter: 'Kapitel'
+        exercise: 'Aufgabe'
+        equation: 'Gleichung'
+      sort_short:
+        definition: 'Def.'
+        remark: 'Bem.'
+        lemma: 'Lemma'
+        theorem: 'Satz'
+        example: 'Bsp.'
+        annotation: 'Anm.'
+        algorithm: 'Alg.'
+        corollary: 'Folg.'
+        subsection: 'Unterabschnitt'
+        Theorem: 'Thm.'
+        proposition: 'Prop.'
+        Lemma: 'Hilfssatz'
+        Corollary: 'Kor.'
+        figure: 'Abb.'
+        exercise: 'Aufg.'
+        equation: 'Gl.'
       info:
         delete_from_quarantine: >
           Wenn Du den Eintrag löschst, werden alle Referenzen auf
@@ -919,8 +960,116 @@ de:
           Bei Referenzierung dieses Eintrags wird dann im pdf an die
           entsprechende Stelle gesprungen. Gibst Du nichts ein, wird an
           den Anfang des Manuskripts gesprungen.
+        title_warning: >
+          Achtung: Der externe Eintrag ist bereits von woanders
+          referenziert. Wenn Du den Titel bearbeitest, ändert sich dieser
+          an allen Stellen, an denen der Eintrag referenziert ist.
+        link_warning: >
+          Achtung: Der externe Eintrag ist bereits von woanders
+          referenziert. Wenn Du den Link bearbeitest, ändert sich dieser
+          an allen Stellen, an denen der Eintrag referenziert ist.
+        title: >
+          Hier kannst einen Titel für den Eintrag eingeben.
+        link: >
+          Hier kannst Du (optional) einen Link eingeben.
+        explanation: >
+          Hier kannst Du (optional) eine Erläuterung zu
+          diesem Eintrag eingeben. Dies ist eine generische Erläuterung,
+          die für einzelne Referenzen überschrieben werden kann.
     referral:
       create: 'Referenz anlegen'
+      edit: 'Referenz bearbeiten'
+      start_time: 'Startzeit'
+      end_time: 'Endzeit'
+      preselection: 'Vorauswahl'
+      item: 'Eintrag'
+      explanation: 'Erläuterung'
+      take_time: 'Zeit aus Video übernehmen'
+      external_references: 'Externe Referenzen'
+      external_all: 'extern (alle)'
+      info:
+        start_time: >
+          Hier kannst Du die Zeit eingeben, an der die
+          entsprechende Referenz im Video beginnen soll.
+          Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle
+          im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen.
+          Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen'
+          erneut aus dem Video abgreifen oder manuell eintippen.
+        end_time: >
+          Hier kannst Du die Zeit eingeben, an der die
+          entsprechende Referenz im Video enden soll. Im Thyme-Player ist
+          sie danach immer noch sichtbar, wird aber leicht ausgegraut.
+          Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle
+          im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen.
+          Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen'
+          erneut aus dem Video abgreifen oder manuell eintippen.
+        preselection: >
+          Hier kannst Du eine Vorauswahl treffen, aus welchem
+          Modul bzw. welcher Vorlesung der zu referenzierende Eintrag
+          stammen soll, bzw. ob es sich um einen externen Eintrag
+          (typischerweise z.B. eine Webseite) handelt. Ein externer Eintrag
+          kann bei Bedarf auch neu angelegt werden.
+        item: >
+          Hier kannst Du den zu referenzierenden Eintrag
+          auswählen.
+        description: >
+          Hier kannst Du den Titel des externen Eintrages
+          bearbeiten.
+          <br>
+          <i>
+          Achtung:
+          </i>
+          Hierbei handelt es sich um eine globale Bearbeitung des externen
+          Eintrages, d.h. der Titel ändert sich dann an allen Stellen,
+          an denen dieser Eintrag referenziert ist.
+          Falls der externe Eintrag noch von woanders referenziert wird,
+          wird dies durch eine Warnmeldung angezeigt.
+        link: >
+          Hier kannst Du einen ggf. vorhandenen Link, auf den
+          der externe Eintrag verweist, bearbeiten.
+          <br>
+          <i>
+          Achtung:
+          </i>
+          Hierbei handelt es sich um eine globale Bearbeitung des externen
+          Eintrages, d.h. der Link ändert sich dann an allen Stellen,
+          an denen dieser Eintrag referenziert ist. Falls der externe
+          Eintrag noch von woanders referenziert wird, wird dies durch
+          eine Warnmeldung angezeigt.
+        media: >
+          Hier wird Dir angezeigt, in welchen Medienformen
+          der zu referenzierende Eintrag vorliegt.
+        explanation: >
+          Hier kannst Du den zu referenzierenden Eintrag noch
+          mit einer (optionalen) zusätzlichen Beschreibung versehen.
+          <br>
+          <br>
+          <i>
+          Achtung:
+          </i>
+          Falls es sich um einen externen Eintrag handelt, ist hier die
+          Erläuterung des externen Eintrags voreingestellt. Du kannst
+          das Feld bearbeiten, die Änderung wirkt sich nur auf die
+          vorliegende Referenzierung, jedoch nicht auf den externen
+          Eintrag aus.
+        unpublished_medium: >
+          Das referenzierte Medium ist nicht veröfffentlicht. D.h.: Du kannst
+          diese Referenz anlegen; solange aber der
+          Veröffentlichungsstatus des zu referenzierenden Mediums auf
+          unveröffentlicht bleibt, ist die Referenz für NutzerInnen bei Aufruf
+          des THymE-Players nicht sichtbar.
+        locked_medium: >
+          Das referenzierte Medium ist gesperrt. D.h.: Du kannst diese
+          Referenz anlegen; solange aber der
+          Veröffentlichungsstatus des zu referenzierenden Mediums auf
+          gesperrt bleibt, ist die Referenz für NutzerInnen bei Aufruf
+          des THymE-Players nicht sichtbar.
+        quarantine_item: >
+          Das referenzierte Item ist in Quarantäne.D.h.: Die named destination
+          im pdf zu diesem Item existiert nicht
+          mehr. Du kannst diese Referenz trotzdem anlegen oder beibehalten;
+          solange sich in dem pdf nichts ändert, wird die Referenz aber
+          nichts bewirken, d.h. auf die erste Seite zeigen.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -1369,6 +1518,7 @@ de:
     AND: 'UND'
     number: 'Nummer'
     hide: 'verstecken'
+    link: 'Link'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1409,6 +1559,7 @@ de:
     remove: 'Entfernen'
     export: 'Exportieren'
     view_pdf: 'pdf ansehen'
+    test: 'Test'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

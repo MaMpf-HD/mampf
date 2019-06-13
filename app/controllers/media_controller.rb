@@ -178,6 +178,7 @@ class MediaController < ApplicationController
 
   # add a toc item for the video
   def add_item
+    I18n.locale = @medium.locale_with_inheritance
     @time = params[:time].to_f
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
@@ -185,6 +186,7 @@ class MediaController < ApplicationController
 
   # add a reference for the video
   def add_reference
+    I18n.locale = @medium.locale_with_inheritance
     @time = params[:time].to_f
     @end_time = [@time + 60, @medium.video_duration].min
     @referral = Referral.new(medium: @medium,
@@ -215,6 +217,7 @@ class MediaController < ApplicationController
 
   # start the thyme editor
   def enrich
+    I18n.locale = @medium.locale_with_inheritance
     render layout: 'enrich'
   end
 

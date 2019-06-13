@@ -8,7 +8,7 @@
       <div class="modal-header">
         <h5 class="modal-title"
             id="newItemModalLabel">
-          Externen Eintrag anlegen
+          <%= t('admin.item.create_external') %>
         </h5>
         <button type="button"
                 class="close"
@@ -24,15 +24,8 @@
           <div id="referral_description_field"
                class="form-group form-row">
             <div class="col-2 col-form-label">
-              <%= f.label :description, 'Titel' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Hier kannst einen Titel für den
-                 Eintrag eingeben.">
-            </i>
+              <%= f.label :description, t('basics.title') %>
+              <%= helpdesk(t('admin.item.info.title'), false) %>
             </div>
             <div class="col-8">
               <%= f.text_field :description,
@@ -44,14 +37,8 @@
           <div id="referral_link_field"
                class="form-group form-row">
             <div class="col-2 col-form-label">
-              <%= f.label :link, 'Link' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Hier kannst Du (optional) einen Link eingeben.">
-              </i>
+              <%= f.label :link, t('basics.link') %>
+              <%= helpdesk(t('admin.item.info.link'), false) %>
             </div>
             <div class="col-8">
               <%= f.text_field :link,
@@ -62,23 +49,15 @@
             <div class="col-2 col-form-label">
               <button id="item-test-link" type="button"
                       class="btn btn-sm btn-outline-info">
-                Test
+                <%= t('buttons.test') %>
               </button>
             </div>
           </div>
           <div id="referral_explanation_field"
                class="form-group form-row">
             <div class="col-2 col-form-label">
-              <%= f.label :explanation, 'Erläuterung' %>
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover"
-                 data-trigger="focus"
-                 title="Info"
-                 data-content="Hier kannst Du (optional) eine Erläuterung zu
-                 diesem Eintrag eingeben. Dies ist eine generische Erläuterung,
-                 die für einzelne Referenzen überschrieben werden kann.">
-              </i>
+              <%= f.label :explanation, t('admin.item.explanation') %>
+              <%= helpdesk(t('admin.item.info.explanation'), false) %>
             </div>
             <div class="col-8">
               <%= f.text_area :explanation,
@@ -89,11 +68,15 @@
           </div>
           <%= f.hidden_field :sort, value: 'link' %>
           <%= f.hidden_field :from, value: 'referral' %>
-          <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
-          <button class="btn btn-secondary ml-3" type="button"
-                  data-dismiss="modal">
-            <%= t('buttons.cancel') %>
-          </button>
+          <div class="row">
+            <div class="col-12 text-center">
+              <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>
+              <button class="btn btn-secondary ml-3" type="button"
+                      data-dismiss="modal">
+                <%= t('buttons.cancel') %>
+              </button>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>

@@ -2,19 +2,8 @@
   <%= form_with model: referral  do |f|%>
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
-        Startzeit
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du die Zeit eingeben, an der die
-           entsprechende Referenz im Video beginnen soll.
-           Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle
-           im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen.
-           Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen'
-           erneut aus dem Video abgreifen oder manuell eintippen.">
-        </i>
+        <%= t('admin.referral.start_time') %>
+        <%= helpdesk(t('admin.referral.info.start_time'), false) %>
       </div>
       <div class="col-3">
         <%= f.text_field :start_time,
@@ -30,7 +19,7 @@
         <i class="material-icons clickable timer"
            data-toggle="tooltip"
            data-placement="right"
-           title="Zeit aus Video übernehmen"
+           title="<%= t('admin.referral.take_time') %>"
            data-timer="referral_start_time">
           timer
         </i>
@@ -38,20 +27,8 @@
     </div>
     <div class="form-group form-row">
       <div class="col-2 col-form-label">
-        Endzeit
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du die Zeit eingeben, an der die
-           entsprechende Referenz im Video enden soll. Im Thyme-Player ist
-           sie danach immer noch sichtbar, wird aber leicht ausgegraut.
-           Wenn Du den 'Referenz hinzufügen'-Button an der richtigen Stelle
-           im Video gedrückt hast, sollte hier schon die korrekte Zeit stehen.
-           Du kannst sie aber auch mit Button 'Zeit aus Video übernehmen'
-           erneut aus dem Video abgreifen oder manuell eintippen.">
-        </i>
+        <%= t('admin.referral.end_time') %>
+        <%= helpdesk(t('admin.referral.info.end_time'), false) %>
       </div>
       <div class="col-3">
         <%= f.text_field :end_time,
@@ -67,7 +44,7 @@
         <i class="material-icons clickable timer"
            data-toggle="tooltip"
            data-placement="right"
-           title="Zeit aus Video übernehmen"
+           title="<%= t('admin.referral.take_time') %>"
            data-timer="referral_end_time">
           timer
         </i>
@@ -77,44 +54,26 @@
          class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :teachable,
-                    'Vorauswahl' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du eine Vorauswahl treffen, aus welchem
-           Modul bzw. welcher Vorlesung der zu referenzierende Eintrag
-           stammen soll, bzw. ob es sich um einen externen Eintrag
-           (typischerweise z.B. eine Webseite) handelt. Ein externer Eintrag
-           kann bei Bedarf auch neu angelegt werden.">
-        </i>
+                    t('admin.referral.preselection') %>
+        <%= helpdesk(t('admin.referral.info.end_time'), false) %>
       </div>
       <div class="col-9">
         <%= f.select :teachable,
                      grouped_options_for_select(grouped_teachable_list,
                                                 teachable_selector(referral)),
-                     { prompt: 'auswählen' },
+                     { prompt: t('basics.select') },
                      { class: 'selectize' } %>
       </div>
     </div>
     <div id="item_select" class="form-group form-row">
       <div class="col-2 col-form-label">
         <%= f.label :item_id,
-                    'Eintrag' %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du den zu referenzierenden Eintrag
-           auswählen.">
-        </i>
+                    t('admin.referral.item') %>
+        <%= helpdesk(t('admin.referral.info.item'), false) %>
       </div>
       <div class="col-9">
         <%= f.select :item_id,
-                     [['auswählen', '']] +
-                       item_selection,
+                     add_prompt(item_selection),
                      {},
                      { class: 'selectize' } %>
       </div>
@@ -123,7 +82,7 @@
            class="material-icons clickable"
            data-toggle="tooltip"
            data-placement="left"
-           title="externen Eintrag anlegen"
+           title="<%= t('admin.item.create_external') %>"
            style="display: <%= show(referral.item&.sort == 'link') %>">
           note_add
         </i>
@@ -134,33 +93,14 @@
            class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :description,
-                      'Titel' %>
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Hier kannst Du den Titel des externen Eintrages
-             bearbeiten.
-             <br>
-             <i>
-             Achtung:
-             </i>
-             Hierbei handelt es sich um eine globale Bearbeitung des externen
-             Eintrages, d.h. der Titel ändert sich dann an allen Stellen,
-             an denen dieser Eintrag referenziert ist.
-             Falls der externe Eintrag noch von woanders referenziert wird,
-             wird dies durch eine Warnmeldung angezeigt."
-             data-html="true">
-          </i>
+                      t('basics.title') %>
+          <%= helpdesk(t('admin.referral.info.description'), true) %>
           <i id="link_reappearance_title"
              class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
              data-toggle="tooltip"
              data-placement="left"
-             title="Achtung: Der externe Eintrag ist bereits von woanders
-             referenziert. Wenn Du den Titel bearbeitest, ändert sich dieser
-             an allen Stellen, an denen der Eintrag referenziert ist.">
+             title="<%= t('admin.item.info.title_warning') %>">
           </i>
         </div>
         <div class="col-6">
@@ -177,33 +117,14 @@
            class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :link,
-                      'Link' %>
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Hier kannst Du einen ggf. vorhandenen Link, auf den
-             der externe Eintrag verweist, bearbeiten.
-             <br>
-             <i>
-             Achtung:
-             </i>
-             Hierbei handelt es sich um eine globale Bearbeitung des externen
-             Eintrages, d.h. der Link ändert sich dann an allen Stellen,
-             an denen dieser Eintrag referenziert ist. Falls der externe
-             Eintrag noch von woanders referenziert wird, wird dies durch
-             eine Warnmeldung angezeigt."
-             data-html="true">
-          </i>
+                      t('basics.link') %>
+          <%= helpdesk(t('admin.referral.info.link'), true) %>
           <i id="link_reappearance_link"
              class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
              data-toggle="tooltip"
              data-placement="left"
-             title="Achtung: Der externe Eintrag ist bereits von woanders
-             referenziert. Wenn Du den Link bearbeitest, ändert sich dieser
-             an allen Stellen, an denen der Eintrag referenziert ist.">
+             title="<%= t('admin.item.info.link_warning') %>">
           </i>
         </div>
         <div class="col-8">
@@ -230,47 +151,28 @@
         <div class="col-2">
         </div>
         <div class="col-10">
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Hier wird Dir angezeigt, in welchen Medienformen
-             der zu referenzierende Eintrag vorliegt.">
-          </i>
-          Medien:
+          <%= helpdesk(t('admin.referral.info.media'), false) %>
+          <%= t('basics.media') %>:
           <i class="fas fa-eye-slash fa-lg redtext ml-2"
              id="unpublished_medium_item"
              style="display: <%= show_no_block(!referral.item_published?) %>"
              tabindex="-1"
              data-toggle="tooltip"
-             title="Das referenzierte Medium ist nicht veröfffentlicht.
-             D.h.: Du kannst diese Referenz anlegen; solange aber der
-             Veröffentlichungsstatus des zu referenzierenden Mediums auf
-             unveöffentlicht bleibt, ist die Referenz für NutzerInnen bei Aufruf
-             des THymE-Players nicht sichtbar.">
+             title="<%= t('admin.referral.info.unpublished_medium') %>">
           </i>
           <i class="fas fa-lock fa-lg redtext ml-2"
              id="locked_medium_item"
              style="display: <%= show_no_block(referral.item_locked?) %>"
              tabindex="-1"
              data-toggle="tooltip"
-             title="Das referenzierte Medium ist gesperrt.
-             D.h.: Du kannst diese Referenz anlegen; solange aber der
-             Veröffentlichungsstatus des zu referenzierenden Mediums auf
-             gesperrt bleibt, ist die Referenz für NutzerInnen bei Aufruf
-             des THymE-Players nicht sichtbar.">
+             title="<%= t('admin.referral.info.locked_medium') %>">
           </i>
           <i class="fas fa-notes-medical fa-lg redtext ml-2"
              id="locked_medium_item"
              style="display: <%= show_no_block(referral.item_in_quarantine?) %>"
              tabindex="-1"
              data-toggle="tooltip"
-             title="Das referenzierte Item ist in Quarantäne.
-             D.h.: Die named destination im pdf zu diesem Item existiert nicht
-             mehr. Du kannst diese Referenz trotzdem anlegen oder beibehalten;
-             solange sich in dem pdf nichts ändert, wird die Referenz aber
-             nichts bewirken, d.h. auf die erste Seite zeigen.">
+             title="<%= t('admin.referral.info.quarantine_item') %>">
           </i>
           <a id="video-ref"
              href="<%= referral.item&.video_link %>"
@@ -278,7 +180,7 @@
              style="text-decoration: none;
                     display: <%= show_no_block(referral.video?) %>"
              data-toggle="tooltip"
-             title="Video"
+             title="<%= t('video.video') %>"
              target="_blank">
           </a>
           <a id="manuscript-ref"
@@ -287,7 +189,7 @@
              style="text-decoration: none;
                     display: <%= show_no_block(referral.manuscript?) %>"
              data-toggle="tooltip"
-             title="Manuskript"
+             title="<%= t('manuscript.manuscript') %>"
              target="_blank">
           </a>
           <a id="quiz-ref"
@@ -296,7 +198,7 @@
              style="text-decoration: none;
                     display: <%= show_no_block(referral.quiz?) %>"
              data-toggle="tooltip"
-             title="Quiz"
+             title="<%= t('quiz.quiz') %>"
              target="_blank">
           </a>
           <a id="medium-link-ref"
@@ -325,26 +227,8 @@
       <div class="form-group form-row">
         <div class="col-2 col-form-label">
           <%= f.label :explanation,
-                      'Erläuterung' %>
-          <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-toggle="popover"
-             data-trigger="focus"
-             title="Info"
-             data-content="Hier kannst Du den zu referenzierenden Eintrag noch
-             mit einer (optionalen) zusätzlichen Beschreibung versehen.
-             <br>
-             <br>
-             <i>
-             Achtung:
-             </i>
-             Falls es sich um einen externen Eintrag handelt, ist hier die
-             Erläuterung des externen Eintrags voreingestellt. Du kannst
-             das Feld bearbeiten, die Änderung wirkt sich nur auf die
-             vorliegende Referenzierung, jedoch nicht auf den externen
-             Eintrag aus."
-             data-html="true">
-          </i>
+                      t('admin.referral.explanation') %>
+          <%= helpdesk(t('admin.referral.info.explanation'), true) %>
         </div>
         <div class="col-8">
           <%= f.text_area :explanation, { value: referral.explain,
@@ -361,9 +245,9 @@
     <%= f.hidden_field :medium_id,
                        value: referral.medium_id %>
     <%= f.submit t('buttons.save'),
-                 class: 'btn btn-primary' %>
+                 class: 'btn btn-sm btn-primary' %>
     <button id="cancel-item"
-            class="btn btn-secondary ml-3"
+            class="btn btn-sm btn-secondary ml-3"
             type="button">
       <%= t('buttons.cancel') %>
     </button>
@@ -372,9 +256,9 @@
                   referral_path(referral),
                   method: :delete,
                   remote: true,
-                  data: { confirm: 'Bist Du sicher?' },
+                  data: { confirm: t('confirmation.generic') },
                   id: 'delete-item',
-                  class: 'btn btn-danger' %>
+                  class: 'btn btn-sm btn-danger mr-2' %>
     <% end %>
   <% end %>
 </div>

@@ -820,6 +820,47 @@ en:
       start_time: 'Start time'
       page: 'Page in pdf'
       take_time: 'Take time from video'
+      edit: 'Edit Item'
+      no_section: 'no associated section from the database'
+      create_external: 'Create external item'
+      explanation: 'Explanation'
+      sort:
+        definition: 'Definition'
+        remark: 'Remark'
+        lemma: 'Lemma'
+        theorem: 'Theorem'
+        example: 'Example'
+        annotation: 'Annotation'
+        algorithm: 'Algorithm'
+        corollary: 'Corollary'
+        section: 'Section'
+        label: 'Label'
+        subsection: 'Subsection'
+        Theorem: 'Theorem'
+        proposition: 'Proposition'
+        Lemma: 'Lemma'
+        Corollary: 'Corollary'
+        figure: 'Figure'
+        chapter: 'Chapter'
+        exercise: 'Exercise'
+        equation: 'Equation'
+      sort_short:
+        definition: 'Def.'
+        remark: 'Rem.'
+        lemma: 'Lemma'
+        theorem: 'Thm.'
+        example: 'Ex.'
+        annotation: 'Ann.'
+        algorithm: 'Alg.'
+        corollary: 'Cor.'
+        subsection: 'Subsection'
+        Theorem: 'Thm.'
+        proposition: 'Prop.'
+        Lemma: 'Lemma'
+        Corollary: 'Cor.'
+        figure: 'Fig.'
+        exercise: 'Exerc.'
+        equation: 'Eq.'
       info:
         delete_from_quarantine: >
           If you delete this item, all references to it will be deleted (also
@@ -867,8 +908,100 @@ en:
           When users click a reference to this item, the pdf view will
           jump to this page. If you do not enter anything, the first page
           will be shown by default.
+        title_warning: >
+          Attention: The external item is already referenced from another
+          medium. If you edit the title, it will change in all places
+          where this item is referenced from.
+        link_warning: >
+          Attention: The external item is already referenced from another
+          medium. If you edit the link, it will change in all places
+          where this item is referenced from.
+        title: >
+          Here you can enter the title for the item.
+        link: >
+          Here you can (optionally) enter a link.
+        explanation: >
+          Here you can (optionally) enter an explanation for this item.
+          This is a generic explanation, which can be locally overwritten for
+          references to this item.
     referral:
       create: 'Create Reference'
+      edit: 'Edit Reference'
+      start_time: 'Start Time'
+      end_time: 'End Time'
+      preselection: 'Preselection'
+      item: 'Item'
+      explanation: 'Explanation'
+      take_time: 'Take time from video'
+      external_references: 'external references'
+      external_all: 'external (all)'
+      info:
+        start_time: >
+          Here you can enter the time at which the reference is supposed to
+          start in the video. If you have clicked the 'Add Reference' buttton
+          at the correct position in the video, the correct time should
+          be already in here. Alternatively, you can grab the time form the
+          video using the 'Take Time' button, or you may enter it manually.
+        end_time: >
+          Here you can enter the time at which the reference is supposed to
+          end in the video. After that, it will still be visible in the
+          THymE player, but greyed out. If you have clicked the 'Add Reference'
+          Buttton at the correct position in the video, the correct time should
+          be already in here. Alternatively, you can grab the time form the
+          video using the 'Take Time' button, or you may enter it manually.
+        preselection: >
+          Here you can preselect, from which course or lecture the
+          preferenced item is supposed to come from or if it is an external
+          item (typically a website). An external item can be created
+          if necessary.
+        item: >
+          Here you can select the referenced item.
+        description: >
+          Here you can edit the title of the external item.
+          <br>
+          <i>
+          Attention:
+          </i>
+          This is a global edit of the external item which means that the title
+          will change in all places where this item is referenced. If the
+          external item is referenced from other media, a warning will be
+          displayed.
+        link: >
+          Here you can edit a link that the external item refers to.
+          <br>
+          <i>
+          Achtung:
+          </i>
+          This is a global edit of the external item which means that the link
+          will change in all places where this item is referenced. If the
+          external item is referenced from other media, a warning will be
+          displayed.
+        media: >
+          Here it is shown in which media forms the referened item occurs.
+        explanation: >
+          Here you can give an optional additional explanation for the
+          referenced item.
+          <br>
+          <br>
+          <i>
+          Attention:
+          </i>
+          If it is an external item, its' explanation is put here by default.
+          You can edit it, but this will only be a local change that does
+          not affect the external item itself.
+        unpublished_medium: >
+          The referenced medium is unpublished. That means: You can create
+          this reference; as long as the referenced medium remains unpublished,
+          users will not see the reference in THymE player.
+        locked_medium: >
+          The referenced medium is locked. That means: You can create
+          this reference; as long as the referenced medium remains locked,
+          users will not see the reference in THymE player.
+        quarantine_item: >
+          The referenced item is in quarantine. That means:
+          The named destination in the pdf does not exist any longer.
+          You can still create this reference, but as long as the pdf remains
+          unchanged the reference will just point to the first page of the pdf.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1295,6 +1428,7 @@ en:
     AND: 'AND'
     number: 'Number'
     hide: 'Hide'
+    link: 'Link'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1338,6 +1472,7 @@ en:
     remove: 'Remove'
     export: 'Export'
     view_pdf: 'View pdf'
+    test: 'Test'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

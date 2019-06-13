@@ -215,15 +215,19 @@ class Item < ApplicationRecord
     medium.external_reference_link
   end
 
-  def self.internal_sorts
-    [['Definition', 'definition'], ['Bemerkung', 'remark'], ['Lemma', 'lemma'],
-     ['Satz', 'theorem'], ['Beispiel', 'example'], ['Anmerkung', 'annotation'],
-     ['Algorithmus', 'algorithm'], ['Folgerung', 'corollary'],
-     ['Abschnitt', 'section'], ['Markierung', 'label'],
-     ['Unterabschnitt', 'subsection'], ['Theorem', 'Theorem'],
-     ['Proposition', 'proposition'], ['Hilfssatz', 'Lemma'],
-     ['Korollar', 'Corollary'], ['Abbildung', 'figure'],
-     ['Kapitel', 'chapter'], ['Aufgabe', 'exercise'], ['Gleichung', 'equation']]
+  def self.available_sorts
+    ['definition','remark', 'lemma', 'theorem', 'example', 'annotation',
+     'algorithm', 'corollary', 'section', 'label', 'subsection', 'Theorem',
+     'proposition', 'Lemma', 'Corollary', 'figure', 'chapter', 'exercise',
+     'equation']
+  end
+
+  def self.localized_sorts
+    Item.available_sorts.map { |s| [s, I18n.t("admin.item.sort.#{s}")] }
+  end
+
+  def self.inverted_sorts
+    Item.localized_sorts.to_h.invert
   end
 
   def self.content_sorts
@@ -241,7 +245,7 @@ class Item < ApplicationRecord
   end
 
   def self.internal_sort(sort)
-    Item.internal_sorts.select { |s| s.first == sort }&.map(&:second)&.first
+    Item.inverted_sorts[sort]
   end
 
   def video?
@@ -291,15 +295,7 @@ class Item < ApplicationRecord
   end
 
   def sort_long
-    hash = { 'definition' => 'Def.', 'theorem' => 'Satz', 'remark' => 'Bem.',
-             'lemma' => 'Lemma', 'annotation' => 'Anm.', 'example' => 'Bsp.',
-             'corollary' => 'Folg.', 'algorithm' => 'Alg.',
-             'Theorem' => 'Thm.', 'proposition' => 'Prop.',
-             'Lemma' => 'Hilfssatz',
-             'Corollary' => 'Kor.', 'figure' => 'Abb.',
-             'subsection' => 'Unterabschnitt', 'exercise' => 'Aufg.',
-             'equation' => 'Gl.' }
-    hash[sort]
+    I18n.t("admin.item.sort_short.#{sort}")
   end
 
   # the next methods are used to put together the references and descriptions

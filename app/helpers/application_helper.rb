@@ -164,13 +164,14 @@ module ApplicationHelper
   def grouped_teachable_list
     list = []
     Course.all.each do |c|
-      lectures = [[c.short_title + ' alle', 'Course-' + c.id.to_s]]
+      lectures = [[c.short_title + ' (' + t('basics.all') + ')', 'Course-' + c.id.to_s]]
       c.lectures.includes(:term).each do |l|
         lectures.push [l.short_title_release, 'Lecture-' + l.id.to_s]
       end
       list.push [c.title, lectures]
     end
-    list.push ['externe Referenzen', [['extern alle', 'external-0']]]
+    list.push [t('admin.referral.external_references'),
+               [[t('admin.referral.external_all'), 'external-0']]]
   end
 
   # Returns the grouped list of all courses/lectures together with their ids.
