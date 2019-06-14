@@ -86,7 +86,7 @@ class Referral < ApplicationRecord
   end
 
   def item_locked?
-    return true unless item && item.medium
+    return false unless item && item.medium
     item.medium.locked?
   end
 
