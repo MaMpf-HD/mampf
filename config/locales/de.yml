@@ -1519,6 +1519,10 @@ de:
     number: 'Nummer'
     hide: 'verstecken'
     link: 'Link'
+    news: 'News'
+    time: 'Zeit'
+    author: 'Autor'
+    mark_as_read: 'als gelesen markieren'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1560,6 +1564,7 @@ de:
     export: 'Exportieren'
     view_pdf: 'pdf ansehen'
     test: 'Test'
+    create_announcement: 'Mitteilung anlegen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -1570,6 +1575,9 @@ de:
     delete_graph: >
       Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
       nicht das Medium.
+    announcement: >
+      Bist Du sicher? Du kannst Die Mitteilung nach dem Absenden weder
+      bearbeiten noch löschen.
   activerecord:
     errors:
       models:

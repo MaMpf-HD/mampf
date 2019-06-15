@@ -3,8 +3,8 @@
 		<div class="row">
 			<div class="col-10">
 				<%= human_readable_date(announcement.created_at) %>
-        <%= t('from') %>
         <% if announcement.lecture %>
+          <%= t('from') %>
           <%= announcement.announcer&.name %>
         <% end %>
 			</div>
@@ -20,7 +20,7 @@
                                 .matching_notification(announcement)&.id } do %>
 		      	<i class="fas fa-check text-dark"
     		    	 data-toggle="tooltip"
-        			 title="als gelesen markieren">
+        			 title="<%= t('basics.mark_as_read') %>">
       			</i>
     			<% end %>
 				<% end %>

@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
   # will halt the filter chain and redirect before the location can be stored.
   before_action :authenticate_user!
   before_action :set_locale
-  before_action :set_locale
 
   # show error message if authorization with cancancan fails
   rescue_from CanCan::AccessDenied do |exception|

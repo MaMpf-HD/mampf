@@ -1429,6 +1429,10 @@ en:
     number: 'Number'
     hide: 'Hide'
     link: 'Link'
+    news: 'News'
+    time: 'Time'
+    author: 'Author'
+    mark_as_read: 'Mark as read'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1473,11 +1477,15 @@ en:
     export: 'Export'
     view_pdf: 'View pdf'
     test: 'Test'
+    create_announcement: 'Create Announcement'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
       Are you sure? Note: Only the quiz graph will be deleted,
-      not the medium.
+      not the medium.#
+    announcement: >
+      Are you sure? You can neither edit nor delete the announcement after
+      sending.
   activerecord:
     errors:
       models:
