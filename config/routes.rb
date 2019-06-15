@@ -181,11 +181,6 @@ Rails.application.routes.draw do
   get 'main/news', to: 'main#news',
                    as: 'news'
 
-  namespace :api do
-    namespace :v1 do
-      get 'keks_questions/:id', to: 'media#keks_question'
-    end
-  end
   mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"

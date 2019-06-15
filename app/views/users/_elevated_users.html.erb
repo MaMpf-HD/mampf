@@ -3,15 +3,16 @@
     <div class="row">
       <div class="col-6">
         <h5>
-          Admins, EditorInnen und  DozentInnen
+          <%= t('admin.user.sorts') %>
           (<%= elevated_users.count %>)
         </h5>
       </div>
       <div class="col-6 text-right">
         <button id="open-generic-users-modal"
                 type="button"
-                class="btn btn-outline-primary">
-          Sonstige NutzerInnen (<%= generic_users_count %>) bearbeiten
+                class="btn btn-sm btn-outline-primary">
+          <%= t('buttons.edit_users',
+                count: generic_users_count) %>
         </button>
       </div>
     </div>
@@ -20,27 +21,27 @@
     <div class="row bg-mdb-color-lighten-2 py-3">
       <div class="col-2 text-light">
         <strong>
-          Name
+          <%= t('basics.display_name') %>
         </strong>
       </div>
       <div class="col-3 text-light">
         <strong>
-          Email
+          <%= t('basics.email') %>
         </strong>
       </div>
       <div class="col-3 text-light">
         <strong>
-          Rolle
+          <%= t('basics.role') %>
         </strong>
       </div>
       <div class="col-2 text-light">
         <strong>
-          Editierte Medien
+          <%= t('admin.user.edited_media') %>
         </strong>
       </div>
       <div class="col-2 text-light">
         <strong>
-          Aktion
+          <%= t('basics.action') %>
         </strong>
       </div>
     </div>

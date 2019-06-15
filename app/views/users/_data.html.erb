@@ -1,5 +1,5 @@
 <div class="row p-2">
-  <div class="col-5">
+  <div class="col-12 col-lg-5">
     <div class="card bg-light mb-4">
       <div class="card-header">
         <div class="row">
@@ -11,17 +11,17 @@
           <div class="col-6 text-right">
             <% if user.admin? %>
               <span class="badge badge-info">
-                Admin
+                <%= t('basics.administrator_short') %>
               </span>
             <% end %>
             <% if user.editor? %>
               <span class="badge badge-info">
-                EditorIn
+                <%= t('basics.editor') %>
               </span>
             <% end %>
             <% if user.teacher? %>
               <span class="badge badge-info">
-                DozentIn
+                <%= t('basics.teacher') %>
               </span>
             <% end %>
           </div>
@@ -35,11 +35,11 @@
       </div>
     </div>
   </div>
-  <div class="col-7">
+  <div class="col-12 col-lg-7">
     <div class="card bg-light">
       <div class="card-header">
         <h5>
-          Betreute Inhalte
+          <%= t('admin.user.edited_content') %>
         </h5>
       </div>
       <div class="card-body">
@@ -49,7 +49,7 @@
                      locals: { user: user,
                                f: f } %>
         <% else %>
-          Es gibt noch keine entsprechenden Inhalte.
+          <%= t('admin.user.no_content') %>
         <% end %>
       </div>
     </div>

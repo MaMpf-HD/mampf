@@ -14,7 +14,7 @@
       </div>
       <div class="col-12 col-sm-2 text-right">
         <% if @lecture.active_announcements(current_user).any? %>
-          <%= link_to 'alle abhaken',
+          <%= link_to t('buttons.clear_all'),
                       destroy_lecture_notifications_path(params: { lecture_id: @lecture.id }),
                       class: 'btn btn-sm btn-secondary',
                       method: :post,

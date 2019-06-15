@@ -1,17 +1,17 @@
 <%= form_with model: term  do |f|%>
   <div class="form-row py-2">
-    <div class="col-1">
+    <div class="col-2">
       <%= f.select :year,
                    (2016...2025).to_a,
                    {}, { class: 'form-control' }%>
     </div>
-    <div class="col-1">
+    <div class="col-2">
       <%= f.select :season,
                    ['WS', 'SS'],
                    {},
                    { class: 'form-control' } %>
     </div>
-    <div class="col-6">
+    <div class="col-4">
       <ul>
         <% term.lectures.each do |l| %>
           <li>
@@ -22,9 +22,9 @@
     </div>
     <div class="col-4">
       <%= f.submit t('buttons.save'),
-                   class: 'btn btn-primary' %>
+                   class: 'btn btn-sm btn-primary' %>
         <button type="button"
-                class="btn btn-secondary"
+                class="btn btn-sm btn-secondary"
                 id="cancel-term-edit"
                 data-term="<%= term.id %>"
                 data-new="<%= new_action %>">

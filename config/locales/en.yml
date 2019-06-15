@@ -86,6 +86,7 @@ en:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+    login: 'Login'
   info: 'Info'
   admin:
     navbar:
@@ -213,6 +214,15 @@ en:
       new_lecture: 'Create new lecture'
       no_courses_yet: 'Before you can do that, you have to create a course.'
       no_terms_yet: 'Before_you can do that, you have to create a term.'
+      no_content_yet: 'There is not any information about the contents.'
+      publish: 'Publish Lecture'
+      publish_request: 'When this lecture is published,'
+      publish_all_media: >
+        all related media shall be published as well.
+      media_access: >
+        In this case, there are the following access rights for media:
+      media_unpublished: >
+        all related media shall remain unpublished.
       info:
         course: >
           Here you can select the course to which this lecture belongs.
@@ -312,6 +322,7 @@ en:
           this lecture.
         subscribers_count: >
           This is the number of all users who have subscribed this lecture in
+          their profile settings.
         organizational: >
           If you check this box, the general information will be visible for
           all subscribers of your lecture in (it can be accessed via
@@ -373,8 +384,6 @@ en:
         Additional tags (%{count})
       untreated_tags:
         (Yet) untreated tags (%{count})
-      subscribers_count: >
-        Number of subscribers: %{count}
       no_course_editors: >
         There are no course editors.
       no_lecture_editors: >
@@ -389,6 +398,10 @@ en:
       insert_after_section: 'Insert after section'
     course:
       new_course: 'Create new course'
+      preceding_courses: 'Preceding courses'
+      no_lectures: 'There are no lectures for this course.'
+      additional_information: 'Additional information'
+      additional_information_visible: 'Additional information visible'
       info:
         title: >
           Here you can enter the title of the course. Typically, this should be
@@ -400,6 +413,33 @@ en:
           in particular they can create lectures within the course. Every course
           editor inherits editing access for all lectures belonging to the
           course.
+        preceding_courses: >
+          Here you can enter which courses this course builds upon.
+          E.g., Linear Algebra 1 and Linear Algebra 2 might be preceding
+          courses to Algebra 1.
+          This is relevant because users can adjust their settings so
+          that they are shown related materials form preceding courses.
+        lectures: >
+          This is the list of lectures for this course.
+          Unpublished lectures are displayed in red.
+        subscribers_count: >
+          This is the number of all users who have subscribed this lecture in
+          their profile settings.
+        tags: >
+          This is the list of all tags that are associated to this course.
+          Typically they correspond to the content of the module handbook.
+          You can add tags, remove tags and create new tags.
+        editors_inspect: >
+          This is the list of course editors. They can edit the course,
+          in particular they can create lectures within the course. Every course
+          editor inherits editing access for all lectures belonging to the
+          course.
+        preceding_courses_inspect: >
+          This is the list of courses this course builds upon.
+          E.g., Linear Algebra 1 and Linear Algebra 2 might be preceding
+          courses to Algebra 1.
+          This is relevant because users can adjust their settings so
+          that they are shown related materials form preceding courses.
     chapter:
       edit_html: 'Edit Chapter %{chapter}'
       position: 'Position after Chapter'
@@ -793,6 +833,8 @@ en:
         search_course: >
           Here you can enter the courses that the tag is associated to (in
           the sense of <i>OR</i>).
+    term:
+      index: 'Term Index'
     quiz:
       graph: 'Quiz Graph'
       create_graph: 'Create Quiz Graph'
@@ -1002,6 +1044,54 @@ en:
           The named destination in the pdf does not exist any longer.
           You can still create this reference, but as long as the pdf remains
           unchanged the reference will just point to the first page of the pdf.
+    user:
+      current_lecture: 'Current Lecture'
+      homepage: 'Homepage'
+      profile_image: 'Profile image'
+      index: 'User Index'
+      edited_content: 'Curated Content'
+      no_content: 'There is no content yet.'
+      given_lectures: 'Given Lectures'
+      edited_courses: 'Edited Courses'
+      edited_lectures: 'Additional Edited Lectures'
+      edited_media: 'Edited Media'
+      administration: 'User Administration'
+      sorts: 'Admins, Editors and Teachers'
+      edit_generics: 'Edit generic users'
+      elevate: 'Promote to Administrator'
+      info:
+        display_name: >
+          Here you can enter the display name. The display name
+          is used for the display of teachers, editors, forum posts etc.
+        email: >
+          Here you can enter the email address. It is used for signing in,
+          and emails for password reset will be sent there.
+        administrator: >
+          Here you can decide whether the user has administrator rights or not.
+          You cannot revoke your own administrator rights, only another
+          adminsitrator can do that.
+        current_lecture: >
+          Here you can select the lecture which is currently your primary one.
+          If a lecture is selected here, an icon in the navbar will take
+          you right there.
+        homepage: >
+          Here you can enter the adress of a homepage. This can make sense
+          for teachers.
+        profile_image: >
+          Here you will soon have the opportunity to upload a profile image.
+        given_lectures: >
+          This is the list of lectures that were/are given as teacher.
+          Unpublished lectures are displayed in red.
+        edited_courses: >
+          This is the list of courses for which there are course editor rights.
+        edited_lectures: >
+          This is the list of lectures for which there are editing rights
+          (even if the teacher was a different person). Unpublished lectures
+          are displayed in red.
+        edited_media: >
+          This is the list of media for which there are editing rights.
+        elevate: >
+          If you check this box, the user will be promoted to administrator.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1050,7 +1140,7 @@ en:
     no_news: 'There are no MaMpf news available.'
   notifications:
     title: 'New notifications'
-    check_notifications: 'Check off all'
+    check_notifications: 'Clear all'
     new_medium_in: 'New medium in '
     new_medium: 'New medium created:'
     new_announcement: 'New announcement:'
@@ -1370,9 +1460,11 @@ en:
     short_title: 'Short title'
     editors: 'Editors'
     lecture: 'Lecture'
+    lectures: 'Lectures'
     media: 'Media'
     medium: 'Medium'
     tag: 'Tag'
+    tags: 'Tags'
     people: 'People'
     course_editors: 'Course Editors'
     lecture_editors: 'Additional Lecture Editors'
@@ -1433,6 +1525,20 @@ en:
     time: 'Time'
     author: 'Author'
     mark_as_read: 'Mark as read'
+    subscribers_count: >
+      Number of subscribers: %{count}
+    subscribers_count_nc:
+      Number of subscribers
+    empty_text: >
+      This should be the text.
+    year: 'Year'
+    nothing_here: 'There is nothing to be seen here.'
+    administrator: 'Administrator'
+    coming_soon: 'Coming soon.'
+    user: 'User'
+    administrator_short: 'Admin'
+    role: 'Role'
+    information: 'Information'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1457,6 +1563,7 @@ en:
     create_section: 'Create Section'
     create_medium: 'Create Medium'
     create_announcement: 'Create Announcement'
+    create_lecture: 'Create Lecture'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -1478,6 +1585,13 @@ en:
     view_pdf: 'View pdf'
     test: 'Test'
     create_announcement: 'Create Announcement'
+    create_tag: 'Create Tag'
+    clear_all: 'Clear all'
+    i_consent: 'I consent'
+    delete_account: 'Delete Account'
+    create_term: 'Create Term'
+    edit_users: 'Edit generic users (%{count})'
+    close: 'Close'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -1486,6 +1600,15 @@ en:
     announcement: >
       Are you sure? You can neither edit nor delete the announcement after
       sending.
+    publish: >
+      Are you sure? The publishing cannot be undone.
+    lesson: >
+      Are you sure? The associated media will not be deleted,
+      but will become associated to the parent lecture.
+  privacy_html: >
+    We take the responsibility for your data seriously. By
+    GDPR, we need your consent for the storage and processing
+    of your data according to the %{policy} of Heidelberg University.
   activerecord:
     errors:
       models:

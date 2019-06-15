@@ -21,49 +21,40 @@
   </div>
   <div class="col-6">
     <div class="row">
-    <div class="col-12 mb-3">
-        <%= render partial: 'courses/organizational',
-                   locals: { course: course, f: f,
-                             inspection: false } %>
-    </div>
-    <div class="col-12">
-    <div class="card bg-light">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-4">
-            <h5>
-              Tags
-              <i class="far fa-question-circle helpdesk"
-                 tabindex="-1"
-                 data-toggle="popover" data-trigger="focus"
-                 title="Info"
-                 data-content="Das ist die Liste aller zu diesem Modul
-                 assoziierten Tags. Diese korrespondieren typischerweise
-                 zum Inhalt der Modulbeschreibung aus dem Modulhandbuch.
-                 Du kannst Tags hinzufügen, entfernen oder neue Tags
-                 anlegen.">
-              </i>
-            </h5>
+      <div class="col-12 mb-3">
+          <%= render partial: 'courses/organizational',
+                     locals: { course: course, f: f,
+                               inspection: false } %>
+      </div>
+      <div class="col-12">
+        <div class="card bg-light">
+          <div class="card-header">
+            <div class="row">
+              <div class="col-4">
+                <h5>
+                  <%= t('basics.tags') %>
+                  <%= helpdesk(t('admin.course.info.tags'), false) %>
+                </h5>
+              </div>
+              <div class="col-8 text-right">
+                <a class="fas fa-plus-circle fa-lg clickable"
+                   id="new-tag-button"
+                   data-toggle="tooltip"
+                   title="<%= t('buttons.create_tag') %>"
+                   data-course="<%= course.id %>"
+                   data-from="course">
+                </a>
+              </div>
+            </div>
           </div>
-          <div class="col-8 text-right">
-            <a class="fas fa-plus-circle fa-lg clickable"
-               id="new-tag-button"
-               data-toggle="tooltip"
-               title="Tag anlegen"
-               data-course="<%= course.id %>"
-               data-from="course">
-            </a>
+          <div class="card-body">
+            <div id="course-tags">
+            </div>
+            <%= render partial: 'courses/tags',
+                       locals: { course: course, f: f } %>
           </div>
         </div>
       </div>
-      <div class="card-body">
-        <div id="course-tags">
-        </div>
-        <%= render partial: 'courses/tags',
-                   locals: { course: course, f: f } %>
-      </div>
-    </div>
-    </div>
     </div>
   </div>
 </div>

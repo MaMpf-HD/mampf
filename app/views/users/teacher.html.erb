@@ -2,7 +2,7 @@
   <div class="col-12">
     <h2>
       <span class="badge badge-secondary mr-3">
-        Dozent
+        <%= t('basics.teacher') %>
       </span>
       <%= @teacher.name %>
     </h2>
@@ -13,7 +13,7 @@
     <div class="card bg-light">
       <div class="card-header bg-generic-card-header">
         <h5>
-          Info
+          <%= t('basics.information') %>
         </h5>
       </div>
       <%= image_tag('/unknown-person.gif',
@@ -24,13 +24,13 @@
         <ul>
           <% if @teacher.homepage.present? %>
             <li>
-              <%= link_to 'Homepage',
+              <%= link_to t('admin.user.homepage'),
                           @teacher.homepage,
                           class: 'text-dark' %>
             </li>
           <% end %>
           <li>
-            Email:
+            <%= t('basics.email') %>:
             <%= mail_to @teacher.email,
                         nil,
                         class: 'text-dark' %>

@@ -1,17 +1,11 @@
 <div class="row mt-2 p-2">
-  <div class="col-9">
+  <div class="col-12">
     <h4 class="pl-2">
       <span class="badge badge-secondary">
-        Modul
+        <%= t('basics.course') %>
       </span>
       <%= course.title %>
     </h4>
-  </div>
-  <div class="col-3 text-center">
-    <% if current_user.admin? || course.editors.include?(current_user) %>
-      <%= link_to 'Bearbeiten', edit_course_path(course),
-                  class: 'btn btn-primary my-1' %>
-    <% end %>
   </div>
 </div>
 <div class="row p-2">
@@ -29,15 +23,8 @@
       <div class="card-body p-2">
         <div class="row">
           <div class="col-2">
-            Kurztitel
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover"
-               data-trigger="focus"
-               title="Info"
-               data-content="Der Kurztitel wird an Stellen mit wenig
-               Platz anstelle des Modultitels verwendet.">
-            </i>
+            <%= t('basics.short_title') %>
+            <%= helpdesk(t('admin.course.info.short_title'), false) %>
           </div>
           <div class="col-10">
               <%= course.short_title %>
@@ -45,17 +32,8 @@
         </div>
         <div class="row mt-2">
           <div class="col-2">
-            EditorInnen
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Das ist die Liste aller ModuleditorInnen für
-               dies Modul. Diese können das Modul bearbeiten, insbesondere
-               können sie Vorlesungen innerhalb des Moduls anlegen.
-               Jeder Moduleditor erbt die Bearbeitungsrechte für
-               alle Vorlesungen innerhalb des Moduls.">
-            </i>
+            <%= t('basics.editors') %>
+            <%= helpdesk(t('admin.course.info.editors_inspect'), false) %>
           </div>
           <div class="col-10">
             <ul  class="list-unstyled">
@@ -69,42 +47,34 @@
         </div>
         <div class="row">
           <div class="col-2">
-            Vorlesungen
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Dies ist die Liste aller Vorlesungen zu
-               diesem Modul.">
-            </i>
+            <%= t('basics.lectures') %>
+            <%= helpdesk(t('admin.course.info.lectures'), false) %>
           </div>
           <div class="col-10">
             <ul  class="list-unstyled">
               <% course.lectures_by_date.each do |l| %>
                 <li>
                   <%= link_to l.term_teacher_published_info,
-                              edit_or_inspect_lecture_path(l) %>
+                              edit_or_inspect_lecture_path(l),
+                              class: lectures_color(l) %>
                 </li>
               <% end %>
             </ul>
           </div>
         </div>
+        <div class="row my-2">
+          <div class="col-2">
+            <%= t('basics.language') %>
+          </div>
+          <div class="col-10">
+            <%= t('locales.' + locale.to_s) %>
+          </div>
+        </div>
         <div class="row">
           <div class="col-2">
-            Module, auf denen das vorliegende Modul aufbaut
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Das ist die Liste derjenigen Module, auf denen
-               das vorliegende Modul aufbaut.
-               Beispielsweise könnte das Modul Algebra 1 auf den Modulen
-               Lineare Algebra 1 und Lineare Algebra 2 aufbauen. Das ist
-               insofern relevant, als dass Nutzer in ihren Profileinstellungen
-               angeben können, ob sie verknüpfte Materialien auch von
-               inhaltlich vorher einzuordnenden Modulen angezeigt bekommen
-               möchten.">
-            </i>
+            <%= t('admin.course.preceding_courses') %>
+            <%= helpdesk(t('admin.course.info.preceding_courses_inspect'),
+                         false) %>
           </div>
           <div class="col-10">
             <ul  class="list-unstyled">
@@ -118,14 +88,8 @@
         </div>
         <div class="row mt-2">
           <div class="col-2">
-            Abonnentenzahl
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="Dies ist Anzahl aller NutzerInnen, die diesen Kurs
-               in ihren Profileinstellungen abonniert haben.">
-            </i>
+            <%= t('basics.subscribers_count_nc') %>
+            <%= helpdesk(t('admin.course.info.subscribers_count'), false) %>
           </div>
           <div class="col-10">
             <%= course.users&.count %>

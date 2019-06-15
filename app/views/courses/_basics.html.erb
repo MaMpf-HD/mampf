@@ -9,37 +9,21 @@
 </div>
 <div class="card-body p-2">
   <div class="form-group">
-    <%= f.label :title, 'Titel' %>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Hier musst Du den Titel des Moduls eintragen.
-       Typischerweise sollte das der Titel aus dem Modulhandbuch sein.
-       Modulnamen dürfen nur einmal vergeben werden.">
-    </i>
+    <%= f.label :title, t('basics.title') %>
+    <%= helpdesk(t('admin.course.info.title'), false) %>
     <%= f.text_field :title, { class: 'form-control' } %>
     <div class="invalid-feedback" id="course-title-error">
     </div>
   </div>
   <div class="form-group">
-    <%= f.label :short_title, 'Kurztitel' %>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="Info"
-       data-content="Hier musst Du einen Kurztitel für das Modul eintragen.
-       Dieser wird an Stellen mit wenig Platz anstelle des Modultitels
-       verwendet.">
-    </i>
+    <%= f.label :short_title, t('basics.short_title') %>
+    <%= helpdesk(t('admin.course.info.short_title'), false) %>
     <%= f.text_field :short_title, { class: 'form-control' } %>
     <div class="invalid-feedback" id="course-short-title-error">
     </div>
   </div>
   <div class="form-group">
-    Sprache
+    <%= t('basics.language') %>
     <div class="form-row ml-2">
     <% I18n.available_locales.each do |locale| %>
       <div class="custom-control custom-radio custom-control-inline">
@@ -47,29 +31,17 @@
                            locale.to_s,
                            class: 'custom-control-input' %>
         <%= f.label :locale,
-                    t('locales.' + locale.to_s,
-                       locale: I18n.default_locale),
-                       value: locale.to_s,
-                       class: 'custom-control-label' %>
+                    t('locales.' + locale.to_s),
+                    value: locale.to_s,
+                    class: 'custom-control-label' %>
       </div>
     <% end %>
     </div>
   </div>
   <div class="form-group">
     <%= f.label :preceding_course_ids,
-                'Module, auf denen das vorliegende Modul aufbaut' %>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover" data-trigger="focus"
-       title="Info"
-       data-content="Hier kannst Du angeben, auf welchen Modulen das
-       vorliegende Modul aufbaut.
-       Beispielsweise könnte das Modul Algebra 1 auf den Modulen
-       Lineare Algebra 1 und Lineare Algebra 2 aufbauen. Das ist insofern
-       relevant, als dass Nutzer in ihren Profileinstellungen angeben können,
-       ob sie verknüpfte Materialien auch von inhaltlich vorher
-       einzuordnenden Modulen angezeigt bekommen möchten.">
-    </i>
+                t('admin.course.preceding_courses') %>
+    <%= helpdesk(t('admin.course.info.preceding_courses'), false) %>
     <%= f.select :preceding_course_ids,
                  options_for_select(Course.all.map { |c| [c.title, c.id]},
                                     course.preceding_courses.map(&:id)),
@@ -78,24 +50,15 @@
   </div>
   <% if current_user.admin? %>
     <div class="form-group">
-      <%= f.label :editor_ids, 'EditorInnen' %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="Info"
-         data-content="Hier gibst Du die ModuleditorInnen an. Diese können
-         das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
-         des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
-         alle Vorlesungen innerhalb des Moduls.">
-      </i>
+      <%= f.label :editor_ids, t('basics.editors') %>
+      <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
                    options_for_select(User.select_editors,
                                       course.editors.map(&:id)),
                    {}, { multiple: true, class: 'selectize' } %>
     </div>
   <% else %>
-    Editoren
+    <%= t('basics.editors') %>
     <ul>
       <% course.editors.each do |e| %>
         <li>
@@ -104,43 +67,40 @@
       <% end %>
     </ul>
   <% end %>
-  Vorlesungen
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Dies ist die Liste aller Vorlesungen zu diesem Modul.
-     Unveröffentlichte Vorlesungen sind in rötlicher Farbe gekennzeichnet.">
-  </i>
-  <a href="<%= new_lecture_path(params: { from: 'course',
-                                          course: course.id }) %>"
-     class="fas fa-plus-circle text-dark"
-     id="new-lecture-button"
-     data-remote="true"
-     data-toggle="tooltip"
-     title="Vorlesung anlegen">
-  </a>
-  <% if course.lectures.exists? %>
-    <ul>
-      <% course.lectures_by_date.each do |l| %>
-        <li>
-          <%= link_to l.term_teacher_info,
-                      edit_or_inspect_lecture_path(l),
-                      class: lectures_color(l)  %>
-        </li>
+  <div class="row">
+    <div class="col-12">
+      <%= t('basics.lectures') %>
+      <%= helpdesk(t('admin.course.info.lectures'), false) %>
+      <%= link_to '',
+                  new_lecture_path(params: { from: 'course',
+                                             course: course.id }),
+                  class: 'fas fa-plus-circle text-dark',
+                  id: 'new-lecture-button',
+                  data: { remote: true,
+                          toggle: 'tooltip' },
+                  title: t('buttons.create_lecture') %>
+    </div>
+    <div class="col-12">
+      <% if course.lectures.exists? %>
+        <ul>
+          <% course.lectures_by_date.each do |l| %>
+            <li>
+              <%= link_to l.term_teacher_info,
+                          edit_or_inspect_lecture_path(l),
+                          class: lectures_color(l)  %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <%= t('admin.course.no_lectures') %>
       <% end %>
-    </ul>
-  <% else %>
-    Für diesen Kurs gibt es noch keine Vorlesungen.
-  <% end %>
-  Abonnentenzahl: <%= course.users&.count %>
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Dies ist Anzahl aller NutzerInnen, die diesen Kurs
-     in ihren Profileinstellungen abonniert haben.">
-  </i>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <%= t('basics.subscribers_count',
+          count: course.users&.count) %>
+      <%= helpdesk(t('admin.course.info.subscribers_count'), false) %>
+    </div>
+  </div>
 </div>

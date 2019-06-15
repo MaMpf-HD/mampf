@@ -4,7 +4,7 @@
       <div class="col-3">
         <h4 class="pl-2">
           <span class="badge badge-secondary">
-            NutzerIn
+            <%= t('basics.user') %>
           </span>
           <%= user.short_info %>
         </h4>
@@ -13,9 +13,9 @@
         <div id="user-basics-warning">
           <%= t('warnings.unsaved_changes') %>
           <%= f.submit t('buttons.save'),
-                       class: "btn btn-primary" %>
+                       class: "btn btn-sm btn-primary" %>
           <button type="button"
-                  class="btn btn-secondary ml-2"
+                  class="btn btn-sm btn-secondary ml-2"
                   id="user-basics-cancel"
                   data-id="<%= user.id %>">
             <%= t('button.discard') %>
@@ -24,9 +24,9 @@
       </div>
       <div class="col-3 text-center">
         <% unless profile %>
-          <%= link_to 'zur NutzerInnenübersicht',
+          <%= link_to t('admin.user.index'),
                       users_path,
-                      class: 'btn btn-primary' %>
+                      class: 'btn btn-sm btn-outline-primary' %>
         <% end %>
       </div>
     </div>

@@ -9,7 +9,7 @@
       <div class="modal-header">
         <h5 class="modal-title"
             id="genericUsersModalLabel">
-          Sonstige NutzerInnen bearbeiten
+          <%= t('admin.users.edit_generics') %>
         </h5>
         <button type="button"
                 class="close"
@@ -24,11 +24,15 @@
            id="generic-users-modal-content">
       </div>
       <div class="modal-footer">
-        <button type="button"
-                class="btn btn-secondary"
-                data-dismiss="modal">
-          Beenden
-        </button>
+        <div class="row">
+          <div class="col-12 text-center">
+            <button type="button"
+                    class="btn btn-sm btn-secondary"
+                    data-dismiss="modal">
+              <%= t('buttons.close') %>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

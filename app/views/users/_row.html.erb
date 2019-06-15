@@ -7,25 +7,25 @@
 <div class="col-3">
   <% if user.admin? %>
     <span class="badge badge-info">
-      Admin
+      <%= t('basics.administrator_short') %>
     </span>
   <% end %>
   <% if user.editor? %>
     <span class="badge badge-info">
-      EditorIn
+      <%= t('basics.editor') %>
     </span>
   <% end %>
   <% if user.teacher? %>
     <span class="badge badge-info">
-      DozentIn
+      <%= t('basics.teacher') %>
     </span>
   <% end %>
 </div>
-<div class="col-2 text-center">
+<div class="col-2">
   <%= user.edited_media.count %>
 </div>
 <div class="col-2">
-  <%= link_to 'Bearbeiten',
+  <%= link_to t('buttons.edit'),
               edit_user_path(user),
-              class: 'btn btn-outline-primary my-1' %>
+              class: 'btn btn-sm btn-outline-primary my-1' %>
 </div>

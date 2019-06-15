@@ -9,7 +9,7 @@
       <div class="modal-header">
         <h5 class="modal-title"
             id="publishLectureModalLabel">
-          Vorlesung veröffentlichen
+          <%= t('admin.lecture.publish') %>
         </h5>
         <button type="button"
                 class="close"
@@ -25,7 +25,7 @@
                     remote: true,
                     method: 'post' do |f| %>
         <div class="modal-body">
-          Beim Veröffentlichen der Vorlesung sollen
+          <%= t('admin.lecture.publish_request') %>
           <div class="row mt-2 mb-2">
             <div class="col-12">
               <div class="custom-control custom-radio">
@@ -34,12 +34,11 @@
                                    class: 'custom-control-input',
                                    checked: true %>
                 <%= f.label :publish_media,
-                            'sämtliche verknüpfte Medien ebenfalls ' \
-                            'veröffentlicht werden.',
+                            t('admin.lecture.publish_all_media'),
                             value: 1,
                             class: 'custom-control-label' %>
               </div>
-              In diesem Fall gelten für die Medien die folgenden Zugriffsrechte:
+              <%= t('admin.lecture.media_access') %>
               <%= render partial: 'media/access_rights',
                          locals: { f: f,
                                    medium: nil } %>
@@ -49,8 +48,7 @@
                                     class: 'custom-control-input',
                                     checked: false %>
                 <%= f.label :publish_media,
-                            'unveröffentlichte verknüpfte Medien '\
-                            'weiterhin unveröffentlicht bleiben.',
+                            t('admin.lecture.media_unpublished'),
                             value: 0,
                             class: 'custom-control-label' %>
               </div>
@@ -60,13 +58,11 @@
         <div class="modal-footer">
           <div class="row mt-3">
             <div class="col-12 text-center">
-              <%= f.submit 'Veröffentlichen',
-                           class: 'btn btn-danger',
-                           data: { confirm: 'Bist Du sicher? ' \
-                                            'Die Veröffentlichung kann nicht ' \
-                                            'rückgängig gemacht werden.' } %>
+              <%= f.submit t('buttons.publish'),
+                           class: 'btn btn-sm btn-danger',
+                           data: { confirm: t('confirmation.publish') } %>
               <button type="button"
-                      class="btn btn-secondary"
+                      class="btn btn-sm btn-secondary"
                       data-dismiss="modal">
                 <%= t('buttons.cancel') %>
               </button>

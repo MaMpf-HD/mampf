@@ -11,6 +11,7 @@ class CoursesController < ApplicationController
   layout 'administration'
 
   def edit
+    I18n.locale = @course.locale || I18n.default_locale
     cookies[:edited_course] = params[:id]
   end
 
@@ -53,6 +54,7 @@ class CoursesController < ApplicationController
   end
 
   def inspect
+    I18n.locale = @course.locale || I18n.default_locale
   end
 
   def destroy

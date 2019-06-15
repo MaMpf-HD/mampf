@@ -33,6 +33,7 @@ class LecturesController < ApplicationController
     # if new action was triggered from inside a course view, add the course
     # info to the lecture
     @lecture.course = Course.find_by_id(params[:course])
+    I18n.locale = @lecture.course.locale
   end
 
   def create

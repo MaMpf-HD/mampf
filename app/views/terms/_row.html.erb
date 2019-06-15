@@ -15,15 +15,15 @@
   </ul>
 </div>
 <div class="col-4">
-  <%= link_to 'Bearbeiten',
+  <%= link_to t('buttons.edit'),
               edit_term_path(term),
-              class: 'btn btn-outline-primary my-1',
+              class: 'btn btn-sm btn-outline-primary my-1',
               remote: true %>
   <% if term.lectures.empty? %>
     <%= link_to t('buttons.delete'),
                 term_path(term),
                 method: :delete,
-                data: { confirm: 'Bist Du sicher?' },
+                data: { confirm: t('confirmation.generic') },
                 remote: true,
                 class: 'btn btn-outline-danger my-1' %>
   <% end %>

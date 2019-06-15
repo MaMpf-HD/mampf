@@ -7,11 +7,11 @@
       <div class="row">
         <div class="col-6">
           <h5>
-            Weitere Informationen
+            <%= t('admin.course.additional_information') %>
           </h5>
         </div>
         <div class="col-6 text-right">
-          <a class="btn btn-primary"
+          <a class="btn btn-sm btn-outline-primary"
              data-toggle="collapse"
              href="#organizational_collapse"
              id="organizational_collapse_button"
@@ -30,15 +30,15 @@
           <div class="form-row mb-3">
             <div class="col-6">
               <% if inspection %>
-                weitere Informationen sichtbar:
-                <%= course.organizational ? 'Ja' : 'Nein' %>
+                <%= t('admin.course.additional_information_visible') %>:
+                <%= course.organizational ? t('basics.yes_lc') : t('basics.no_lc') %>
               <% else %>
                 <div class="custom-control custom-checkbox">
                   <%= f.check_box :organizational,
                                   class: 'custom-control-input',
                                   disabled: inspection %>
                   <%= f.label :organizational,
-                              'weitere Informationen sichtbar',
+                              t('admin.course.additional_information_visible'),
                               { class: 'custom-control-label' } %>
                 </div>
               <% end %>

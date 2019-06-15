@@ -3,7 +3,7 @@
     <div class="col-3">
       <h4 class="pl-2">
         <span class="badge badge-secondary">
-          Modul
+          <%= t('basics.course') %>
         </span>
         <%= course.title %>
       </h4>
@@ -11,20 +11,23 @@
     <div class="col-6">
       <div id="course-basics-warning">
         <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save'), class: "btn btn-primary" %>
+        <%= f.submit t('buttons.save'),
+                     class: "btn btn-sm btn-primary" %>
         <button type="button"
-                class="btn btn-secondary ml-2"
+                class="btn btn-sm btn-secondary ml-2"
                 id="course-basics-cancel"
                 data-id="<%= course.id %>">
-          <%= t('button.discard') %>
+          <%= t('buttons.discard') %>
         </button>
       </div>
     </div>
     <div class="col-3 text-center">
       <% if course.irrelevant? && current_user.admin %>
-        <%= link_to 'Modul löschen', course_path, method: :delete,
-                    data: { confirm: 'Bist Du sicher?' },
-                    class: 'btn btn-danger' %>
+        <%= link_to t('buttons.delete'),
+                    course_path,
+                    method: :delete,
+                    data: { confirm: t('confirmation.generic') },
+                    class: 'btn btn-sm btn-danger' %>
       <% end %>
     </div>
   </div>

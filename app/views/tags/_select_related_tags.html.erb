@@ -1,19 +1,11 @@
 <div class="form-group">
   <%= f.label :related_tag_ids,
-              'Verknüpfte Tags' %>
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Die Tags bilden einen Graphen. Verknüpfte Tags
-     sind genau die Nachbarn eines Tags. Diese kannst Du
-     hier auswählen.">
-  </i>
+              t('basics.related_tags') %>
+  <%= helpdesk(t('admin.tag.info.related_tags'), false) %>
   <a class="fas fa-plus-circle clickable"
        id="new-tag-button"
        data-toggle="tooltip"
-       title="Tag anlegen"
+       title="<%= t('buttons.create_tag') %>"
        data-tag="<%= tag.id %>"
        data-from="tag">
   </a>
@@ -34,7 +26,7 @@
   <div class="row mt-3">
     <div class="col-12 text-center">
       <button type="button"
-              class="btn btn-secondary"
+              class="btn btn-sm btn-secondary"
               id="cancelSelectRelatedTags">
         <%= t('buttons.cancel') %>
       </button>

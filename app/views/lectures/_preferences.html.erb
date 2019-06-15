@@ -91,7 +91,8 @@
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :locale,
                                    locale.to_s,
-                                   class: 'custom-control-input' %>
+                                   class: 'custom-control-input',
+                                   disabled: inspection %>
                 <%= f.label :locale,
                             t('locales.' + locale.to_s),
                             value: locale.to_s,
@@ -107,7 +108,8 @@
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :content_mode,
                                    'video',
-                                   class: 'custom-control-input' %>
+                                   class: 'custom-control-input',
+                                   disabled: inspection %>
                 <%= f.label :content_mode,
                             t('admin.lecture.video_based'),
                             value: 'video',
@@ -116,7 +118,8 @@
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :content_mode,
                                    'manuscript',
-                                   class: 'custom-control-input' %>
+                                   class: 'custom-control-input',
+                                   disabled: inspection %>
                 <%= f.label :content_mode,
                             t('admin.lecture.script_based'),
                             value: 'manuscript',

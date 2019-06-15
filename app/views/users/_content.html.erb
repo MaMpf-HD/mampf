@@ -1,35 +1,19 @@
 <% if user.teacher? %>
-  Gehaltene Vorlesungen (<%= user.given_lectures.count %>)
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Dies ist die Liste aller Vorlesungen, die als DozentIn
-     verantwortet wurden bzw. werden.">
-  </i>
+  <%= t('admin.user.given_lectures') %> (<%= user.given_lectures.count %>)
+  <%= helpdesk(t('admin.user.info.given_lectures'), false) %>
   <ul>
     <% user.given_lectures.each do |l| %>
       <li>
         <%= link_to l.title_term_info,
-                    edit_lecture_path(l) %>
-        <% unless l.published? %>
-          (unveröffentlicht)
-        <% end %>
+                    edit_lecture_path(l),
+                    class: lectures_color(l) %>
       </li>
     <% end %>
   </ul>
 <% end %>
 <% if user.edited_courses.any? %>
-  Editierte Module (<%= user.edited_courses.count %>)
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Dies ist die Liste aller Module, für die
-     Moduleditorenrechte bestehen.">
-  </i>
+  <%= t('admin.user.edited_courses') %> (<%= user.edited_courses.count %>)
+  <%= helpdesk(t('admin.user.info.edited_courses'), false) %>
   <ul>
     <% user.edited_courses.each do |c| %>
       <li>
@@ -40,39 +24,23 @@
   </ul>
 <% end %>
 <% if user.edited_lectures.any? %>
-  Zusätzlich editierte Vorlesungen
+  <%= t('admin.user.edited_lectures') %>
   (<%= user.edited_lectures.count %>)
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Dies ist die Liste aller Vorlesungen, für die
-     zusätzliche Editorenrechte bestehen.">
-  </i>
+  <%= helpdesk(t('admin.user.info.edited_lectures'), false) %>
   <ul>
     <% user.edited_lectures.each do |l| %>
       <li>
         <%= link_to l.title_term_info,
-                    edit_lecture_path(l) %>
-        <% unless l.published? %>
-          (unveröffentlicht)
-        <% end %>
+                    edit_lecture_path(l),
+                    class: lectures_color(l) %>
       </li>
     <% end %>
   </ul>
 <% end %>
 <% if user.edited_media.any? %>
-  Editierte Medien
+  <%= t('admin.user.edited_media') %>
   (<%= user.edited_media.count %>)
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Dies ist die Liste aller Medien, für die
-     Medieneditorenrechte bestehen.">
-  </i>
+  <%= helpdesk(t('admin.user.info.edited_media'), false) %>
   <%= render partial: 'media/table',
              locals: { media: user.edited_media,
                        small: false,

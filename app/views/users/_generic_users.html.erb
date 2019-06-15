@@ -7,7 +7,7 @@
         <div class="col-12">
           <%= f.select :id,
                        options_for_select(users_for_select(generic_users), nil),
-                       {},
+                       { prompt: t('basics.select') },
                        { class: 'selectize' } %>
         </div>
       </div>
@@ -16,32 +16,26 @@
           <div class="custom-control custom-checkbox">
             <%= f.check_box :admin,
                             class: 'custom-control-input' %>
-            <%= f.label :admin, 'zum Administrator befördern',
+            <%= f.label :admin,
+                        t('admin.user.elevate'),
                         { class: 'custom-control-label' } %>
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-toggle="popover"
-               data-trigger="focus"
-               title="Info"
-               data-content="Wenn Du das anklickst, wird die NutzerIn zur
-               AdministratorIn befördert.">
-            </i>
+            <%= helpdesk(t('admin.user.info.elevate'), false) %>
           </div>
         </div>
         <div class="col-3">
           <span id="submit-user-elevate"
                 class="no_display">
           <%= f.submit t('buttons.save'),
-                       class: 'btn btn-primary' %>
+                       class: 'btn btn-sm btn-primary' %>
           </span>
         </div>
         <div class="col-3 text-right">
           <%= link_to t('buttons.delete'),
                       nil,
                       method: :delete,
-                      data: { confirm: 'Bist Du sicher?' },
+                      data: { confirm: t('confirmation.generic') },
                       id: 'delete-generic-user',
-                      class: 'btn btn-danger' %>
+                      class: 'btn btn-sm btn-danger' %>
         </div>
       </div>
     <% end %>

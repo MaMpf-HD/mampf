@@ -72,6 +72,7 @@ de:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+    login: 'Login'
   info: 'Info'
   admin:
     navbar:
@@ -209,6 +210,16 @@ de:
       new_lecture: 'Neue Vorlesung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
+      no_content_yet: 'Es liegen noch keine Inhaltsangaben vor.'
+      publish: 'Vorlesung veröffentlichen'
+      publish_request: 'Beim Veröffentlichen der Vorlesung sollen'
+      publish_all_media: >
+        sämtliche verknüpfte Medien ebenfalls veröffentlicht werden.
+      media_access: >
+        In diesem Fall gelten für die Medien die folgenden Zugriffsrechte:
+      media_unpublished: >
+        unveröffentlichte verknüpfte Medien weiterhin unveröffentlicht
+        bleiben.
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -384,8 +395,6 @@ de:
         Zusätzlich behandelte Begriffe (%{count})
       untreated_tags: >
         (Noch) nicht behandelte Begriffe (%{count})
-      subscribers_count: >
-        Abonnentenzahl: %{count}
       no_course_editors: >
         Es sind keine ModuleditorInnen eingetragen.
       no_lecture_editors: >
@@ -401,6 +410,10 @@ de:
       insert_after_section: 'Einfügen nach Abschnitt'
     course:
       new_course: 'Neues Modul anlegen'
+      preceding_courses: 'Module, auf denen das vorliegende Modul aufbaut'
+      no_lectures: 'Für diesen Kurs gibt es noch keine Vorlesungen.'
+      additional_information: 'Weitere Informationen'
+      additional_information_visible: 'Weitere Informationen sichtbar'
       info:
         title: >
           Hier musst Du den Titel des Moduls eintragen.
@@ -413,6 +426,41 @@ de:
           das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
           des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
           alle Vorlesungen innerhalb des Moduls.
+        preceding_courses: >
+          Hier kannst Du angeben, auf welchen Modulen das
+          vorliegende Modul aufbaut.
+          Beispielsweise könnte das Modul Algebra 1 auf den Modulen
+          Lineare Algebra 1 und Lineare Algebra 2 aufbauen. Das ist insofern
+          relevant, als dass Nutzer in ihren Profileinstellungen angeben können,
+          ob sie verknüpfte Materialien auch von inhaltlich vorher
+          einzuordnenden Modulen angezeigt bekommen möchten.
+        lectures: >
+          Dies ist die Liste aller Vorlesungen zu diesem Modul.
+          Unveröffentlichte Vorlesungen sind in rötlicher Farbe gekennzeichnet.
+        subscribers_count: >
+          Das ist die Zahl aller NutzerInnen, die diese
+          Vorlesung in ihrem Profil abonniert haben.
+        tags: >
+          Das ist die Liste aller zu diesem Modul
+          assoziierten Tags. Diese korrespondieren typischerweise
+          zum Inhalt der Modulbeschreibung aus dem Modulhandbuch.
+          Du kannst Tags hinzufügen, entfernen oder neue Tags
+          anlegen.
+        editors_inspect: >
+          Das ist die Liste aller ModuleditorInnen für
+          dieses Modul. Diese können das Modul bearbeiten, insbesondere
+          können sie Vorlesungen innerhalb des Moduls anlegen.
+          Jeder Moduleditor erbt die Bearbeitungsrechte für
+          alle Vorlesungen innerhalb des Moduls.
+        preceding_courses_inspect: >
+          Das ist die Liste derjenigen Module, auf denen
+          das vorliegende Modul aufbaut.
+          Beispielsweise könnte das Modul Algebra 1 auf den Modulen
+          Lineare Algebra 1 und Lineare Algebra 2 aufbauen. Das ist
+          insofern relevant, als dass Nutzer in ihren Profileinstellungen
+          angeben können, ob sie verknüpfte Materialien auch von
+          inhaltlich vorher einzuordnenden Modulen angezeigt bekommen
+          möchten.
     chapter:
       edit_html: 'Kapitel %{chapter} bearbeiten'
       position: 'Positionierung nach Kapitel'
@@ -836,6 +884,8 @@ de:
         search_course: >
           Hier kannst Du (im Sinne von <i>ODER</i>)
           auswählen, zu welchen Modulen das Tag assoziiert sein soll.
+    term:
+      index: 'Semesterübersicht'
     quiz:
       graph: Quiz-Graph
       create_graph: 'Quiz-Graph anlegen'
@@ -1070,6 +1120,60 @@ de:
           mehr. Du kannst diese Referenz trotzdem anlegen oder beibehalten;
           solange sich in dem pdf nichts ändert, wird die Referenz aber
           nichts bewirken, d.h. auf die erste Seite zeigen.
+    user:
+      current_lecture: 'Aktuelle Vorlesung'
+      homepage: 'Homepage'
+      index: 'NutzerInnenübersicht'
+      edited_content: 'Betreute Inhalte'
+      no_content: 'Es gibt noch keine entsprechenden Inhalte.'
+      given_lectures: 'Gehaltene Vorlesungen'
+      edited_courses: 'Editierte Module'
+      edited_lectures: 'Weitere editierte Vorlesungen'
+      edited_media: 'Editierte Medien'
+      administration: 'Nutzerverwaltung'
+      sorts: 'Admins, EditorInnen und DozentInnen'
+      edit_generics: 'Sonstige NutzerInnen bearbeiten'
+      elevate: 'zum Administrator befördern'
+      info:
+        display_name: >
+          Hier kannst Du den Anzeigename eingeben. Der Anzeigename
+          wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.
+        email: >
+          Hier kannst Du die Emailadresse eingeben. Mit dieser erfolgt
+          dann auch die Nutzeranmeldung, außerdem werden Emails bezüglich
+          Passwortzurücksetzung dorthin geschickt.
+        administrator: >
+          Hier kannst Du anklicken, ob die NutzerIn
+          Administratorenrechte haben soll oder nicht. Dir selbst kannst Du
+          nicht die Administratorenrechte entziehen, das kann nur ein von
+          Dir verschiedener Administrator.
+        current_lecture: >
+          Hier kannst Du auswählen, welche Vorlesung aktuell für Dich primär
+          ist. Falls hier eine Vorlesung ausgewählt ist, führt dich
+          ein entsprechendes Icon in der Navigationsleiste direkt zu ihr.
+        homepage: >
+          Hier kannst Du die Adresse einer Homepage eingeben. Das
+          macht z.B. bei DozentInnen Sinn.
+        profile_image: >
+          Hier wirst Du demnächst die Möglichkeit haben, ein
+          Profilbild hochzuladen.
+        given_lectures: >
+          Dies ist die Liste aller Vorlesungen, die als DozentIn
+          verantwortet wurden bzw. werden. Unveröffentlichte Vorlesung
+          sind in rötlicher Farbe gekennzeichnet.
+        edited_courses: >
+          Dies ist die Liste aller Module, für die
+          Moduleditorenrechte bestehen.
+        edited_lectures: >
+          Dies ist die Liste aller Vorlesungen, für die
+          zusätzliche Editorenrechte bestehen. Unveröffentlichte Vorlesung
+          sind in rötlicher Farbe gekennzeichnet.
+        edited_media: >
+          Dies ist die Liste aller Medien, für die
+          Medieneditorenrechte bestehen.
+        elevate: >
+          Wenn Du das anklickst, wird die NutzerIn zur
+          AdministratorIn befördert.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -1460,9 +1564,11 @@ de:
     short_title: 'Kurztitel'
     editors: 'EditorInnen'
     lecture: 'Vorlesung'
+    lectures: 'Vorlesungen'
     media: 'Medien'
     medium: 'Medium'
     tag: 'Tag'
+    tags: 'Tags'
     people: 'Personen'
     course_editors: 'ModuleditorInnen'
     lecture_editors: 'zusätzliche VorlesungseditorInnen'
@@ -1523,6 +1629,20 @@ de:
     time: 'Zeit'
     author: 'Autor'
     mark_as_read: 'als gelesen markieren'
+    subscribers_count: >
+      AbonnentInnenzahl: %{count}
+    subscribers_count_nc: >
+      AbonnentInnenzahl:
+    empty_text: >
+      Hier sollte der Text stehen.
+    year: 'Jahr'
+    nothing_here: 'Hier gibts nichts zu sehen.'
+    administrator: 'Administrator'
+    coming_soon: 'Kommt bald.'
+    user: 'NutzerIn'
+    administrator_short: 'Admin'
+    role: 'Rolle'
+    information: 'Information'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1544,6 +1664,7 @@ de:
     create_section: 'Abschnitt anlegen'
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
+    create_lecture: 'Create Lecture'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -1565,6 +1686,13 @@ de:
     view_pdf: 'pdf ansehen'
     test: 'Test'
     create_announcement: 'Mitteilung anlegen'
+    create_tag: 'Tag anlegen'
+    clear_all: 'Alle abhaken'
+    i_consent: 'Ich stimme zu'
+    delete_account: 'Account löschen'
+    create_term: 'Semester anlegen'
+    edit_users: 'Sonstige NutzerInnen (%{count}) bearbeiten'
+    close: 'Schließen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -1578,6 +1706,16 @@ de:
     announcement: >
       Bist Du sicher? Du kannst Die Mitteilung nach dem Absenden weder
       bearbeiten noch löschen.
+    publish: >
+      Bist Du sicher? Die Veröffentlichung kann nicht rückgängig gemacht werden.
+    lesson: >
+      Bist Du sicher? Die zugehörigen Medien werden nicht gelöscht,
+      sondern werden dann der entsprechenden Vorlesung zugeordnet.
+  privacy_html: >
+    Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
+    Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur
+    Speicherung und Verarbeitung Deiner Daten gemäß der %{policy}
+    der Universität Heidelberg.
   activerecord:
     errors:
       models:

@@ -1,28 +1,14 @@
 <div class="form-group">
-  <%= f.label :name, 'Anzeigename' %>
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover" data-trigger="focus"
-     title="Info"
-     data-content="Hier kannst Du den Anzeigename eingeben. Der Anzeigename
-     wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.">
-  </i>
+  <%= f.label :name, t('basics.display_name') %>
+  <%= helpdesk(t('admin.user.info.display_name'), false) %>
   <%= f.text_field :name, { class: 'form-control' } %>
   <div class="invalid-feedback" id="user-name-error">
   </div>
 </div>
 <div class="form-group">
   <%= f.label :email,
-              'Email (Achtung: Mit dieser erfolgt auch die Nutzeranmeldung.)' %>
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Hier kannst Du die Emailadresse eingeben. Mit dieser erfolgt
-     dann auch die Nutzeranmeldung, außerdem werden Emails bezüglich
-     Passwortzurücksetzung dorthin geschickt.">
-  </i>
+              t('basics.email') %>
+  <%= helpdesk(t('admin.user.info.email'), false) %>
   <%= f.text_field :email,
                    { class: 'form-control' } %>
   <div class="invalid-feedback"
@@ -37,25 +23,16 @@
                         class: 'custom-control-input',
                         disabled: user == current_user %>
         <%= f.label :admin,
-                    'Administrator',
+                    t('basics.administrator'),
                     { class: 'custom-control-label' } %>
-        <i class="far fa-question-circle helpdesk"
-           tabindex="-1"
-           data-toggle="popover"
-           data-trigger="focus"
-           title="Info"
-           data-content="Hier kannst Du anklicken, ob die NutzerIn
-           Administratorenrechte haben soll oder nicht. Dir selbst kannst Du
-           nicht die Administratorenrechte entziehen, das kann nur ein von
-           Dir verschiedener Administrator.">
-        </i>
+        <%= helpdesk(t('admin.user.info.administrator'), false) %>
       </div>
     </div>
   </div>
 <div class="form-group">
   <%= f.label :current_lecture_id,
-              'Aktuelle Vorlesung' %>
-  <%= helpdesk('Hier kannst Du auswählen, welche Vorlesung aktuell für Dich primär ist. Ein entsprechendes Icon in der Navigationsleiste führt Dich direkt zu ihr.', false) %>
+              t('admin.user.current_lecture') %>
+<%= helpdesk(t('admin.user.info.current_lecture'), false) %>
   <%= f.select :current_lecture_id,
                options_for_select(current_user.teaching_related_lectures
                                               .map { |l| [l.title, l.id] },
@@ -64,15 +41,9 @@
                { class: 'selectize' } %>
 </div>
 <div class="form-group">
-  <%= f.label :homepage %>
-  <i class="far fa-question-circle helpdesk"
-     tabindex="-1"
-     data-toggle="popover"
-     data-trigger="focus"
-     title="Info"
-     data-content="Hier kannst Du die Adresse einer Homepage eingeben. Das
-     macht z.B. bei DozentInnen Sinn.">
-  </i>
+  <%= f.label :homepage,
+              t('admin.user.homepage') %>
+  <%= helpdesk(t('admin.user.info.homepage'), false) %>
   <div class="row">
     <div class="col-10">
       <%= f.text_field :homepage,
@@ -85,17 +56,11 @@
       <button id="test-link"
               type="button"
               class="btn btn-sm btn-outline-info">
-        Test
+        <%= t('buttons.test') %>
       </button>
     </div>
   </div>
 </div>
-Profilbild(kommt noch...)
-<i class="far fa-question-circle helpdesk"
-   tabindex="-1"
-   data-toggle="popover"
-   data-trigger="focus"
-   title="Info"
-   data-content="Hier wirst Du demnächst die Möglichkeit haben, ein
-   Profilbild hochzuladen.">
-</i>
+<%= t('admin.users.profile_image') %>
+(<%= t('basics.coming_soon') %>)
+<%= helpdesk(t('admin.user.info.profile_image'), false) %>
