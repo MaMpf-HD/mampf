@@ -35,6 +35,7 @@ class EventsController < ApplicationController
   def update_answer_body
     @answer = Answer.find_by_id(params[:answer_id])
     @question = @answer.question
+    I18n.locale = @question.locale_with_inheritance
     @input = params[:input]
   end
 
@@ -59,11 +60,13 @@ class EventsController < ApplicationController
     @id = params[:id]
     @type = params[:type]
     @quizzable = @type.constantize.find_by_id(@id)
+    I18n.locale = @quizzable.locale_with_inheritance
   end
 
   def fill_reassign_modal
     @type = params[:type]
     @quizzable = @type.constantize.find_by_id(params[:id])
+    I18n.locale = @quizzable.locale_with_inheritance
     @in_quiz = params[:in_quiz] == 'true'
     @quiz_id = params[:quiz_id].to_i
   end

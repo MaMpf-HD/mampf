@@ -5,10 +5,13 @@ class AnswersController < ApplicationController
 
   def new
     @answer = Answer.new(value: true)
+    I18n.locale = Question.find_by_id(params[:question_id])
+                         &.locale_with_inheritance
   end
 
   def create
     @answer = Answer.new(answer_params)
+    I18n.locale = @answer.question&.locale_with_inheritance
     return unless @answer.save
     @success = true
   end

@@ -1174,6 +1174,105 @@ de:
         elevate: >
           Wenn Du das anklickst, wird die NutzerIn zur
           AdministratorIn befördert.
+    question:
+      independent: 'Frage ist unabhängig'
+      hint: 'Lösungshinweis'
+      referencing_quizzes: 'Referenzierende Quizzes'
+      global_changes_html: >
+        Änderungen an dieser Frage sind
+        <strong>
+        globale Änderungen.
+        </strong>
+      all_quizzes_html: >
+        Insbesondere werden Änderungen an dieser Frage und ihren Antworten in
+        <strong>
+          allen Quizzes,
+        </strong>
+        in denen diese Frage vorkommt, übernommen.
+      its_a_copy_html: >
+        Diese Frage wurde als Kopie von %{original} angelegt.
+      copies: >
+        Fragen, die als Kopie dieser Frage angelegt wurden:
+      copy_created: >
+        Es wird eine Kopie dieser Frage erstellt.
+      current_only_html: >
+        Diese wird
+        <strong>
+        nur im aktuell bearbeiteten Quiz
+        </strong>
+        referenziert.
+      current_and_checked_html: >
+        Diese wird
+        <strong>
+        nur im aktuell bearbeiteten Quiz sowie in den angekreuzten Quizzes
+         </strong>
+        referenziert.
+      checked_only_html: >
+        Diese wird
+        <strong>
+          nur in den angekreuzten Quizzes
+        </strong>
+        referenziert.
+      edit_question: >
+        Frage %{question} bearbeiten
+      edit: >
+        Frage bearbeiten
+      save_error: >
+        Fehler beim Abspeichern der Frage
+    answer:
+      new: 'Neue Antwort'
+      delete_error: >
+        Fehler beim Löschen der Antwort
+      preview_text: 'Preview Text'
+      explanation: 'Erklärung'
+      preview_explanation: 'Preview Erklärung'
+      correctness: 'Korrektheit'
+      true_lc: 'wahr'
+      false_lc: 'falsch'
+    remark:
+      test: 'Test'
+      create: 'Bemerkung anlegen'
+      referencing_quizzes: 'Referenzierende Quizzes'
+      global_changes_html: >
+        Änderungen an dieser Bemerkung sind
+        <strong>
+        globale Änderungen.
+        </strong>
+      all_quizzes_html: >
+        Insbesondere werden Änderungen an dieser Bemerkung in
+        <strong>
+          allen Quizzes,
+        </strong>
+        in denen diese Bemerkung vorkommt, übernommen.
+      its_a_copy_html: >
+        Diese Bemerkung wurde als Kopie von %{original} angelegt.
+      copies: >
+        Bemerkungen, die als Kopie dieser Bemerkung angelegt wurden:
+      copy_created: >
+        Es wird eine Kopie dieser Bemerkung erstellt.
+      current_only_html: >
+        Diese wird
+        <strong>
+        nur im aktuell bearbeiteten Quiz
+        </strong>
+        referenziert.
+      current_and_checked_html: >
+        Diese wird
+        <strong>
+        nur im aktuell bearbeiteten Quiz sowie in den angekreuzten Quizzes
+         </strong>
+        referenziert.
+      checked_only_html: >
+        Diese wird
+        <strong>
+          nur in den angekreuzten Quizzes
+        </strong>
+        referenziert.
+      save_error: >
+        Fehler beim Abspeichern der Bemerkung
+      edit_remark: >
+        Bemerkung %{remark} bearbeiten
+      edit: 'Bemerkung bearbeiten'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -1643,6 +1742,12 @@ de:
     administrator_short: 'Admin'
     role: 'Rolle'
     information: 'Information'
+    question: 'Frage'
+    answer: 'Antwort'
+    answers: 'Antworten'
+    none: 'none'
+    remark: 'Bemerkung'
+    latex: 'LaTEX'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1659,6 +1764,7 @@ de:
     publish: 'Veröffentlichen'
     parent_course: 'zum Modul'
     parent_lecture: 'zur Vorlesung'
+    parent_medium: 'zum Medium'
     create_chapter: 'Kapitel anlegen'
     create_lesson: 'Sitzung anlegen'
     create_section: 'Abschnitt anlegen'
@@ -1693,6 +1799,9 @@ de:
     create_term: 'Semester anlegen'
     edit_users: 'Sonstige NutzerInnen (%{count}) bearbeiten'
     close: 'Schließen'
+    add_answer: 'Antwort hinzufügen'
+    create_copy: 'Kopie erstellen'
+    copy_edit: 'Kopie erstellen und bearbeiten'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

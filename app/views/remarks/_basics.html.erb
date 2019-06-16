@@ -2,18 +2,25 @@
   <div class="card-header">
     <div class="row">
       <div class="col-3">
-        <h5>Details<h5>
+        <h5>
+          <%= t('basics.details') %>
+        <h5>
       </div>
       <div class="col-5">
-        <span class="no_display incorrect" id="remark-basics-warning">
+        <span class="no_display incorrect"
+              id="remark-basics-warning">
           <%= t('warnings.unsaved_changes') %>
         </span>
       </div>
       <div class="col-4">
-        <span class="no_display" id="remark-basics-options">
-          <%= f.submit t('buttons.save'), class: "btn btn-primary btn-sm" %>
-          <button type="button" class="btn btn-secondary btn-sm"
-                  id="remark-basics-cancel" data-id="<%= remark.id %>">
+        <span class="no_display"
+              id="remark-basics-options">
+          <%= f.submit t('buttons.save'),
+                       class: "btn btn-primary btn-sm" %>
+          <button type="button"
+                  class="btn btn-secondary btn-sm"
+                  id="remark-basics-cancel"
+                  data-id="<%= remark.id %>">
             <%= t('button.discard') %>
           </button>
         </span>
@@ -21,13 +28,12 @@
     </div>
   </div>
   <div class="card-body p-2">
-    Anzeige
     <div id="tex-preview-remark-<%= remark.id %>"
          class="bg-remark border p-2 mb-3">
       <%= remark.text %>
     </div>
     <%= f.text_area :text, id: 'tex-area-remark-' + remark.id.to_s,
-                           label: 'LaTeX',
+                           label: t('basics.latex'),
                            rows: 6 %>
     <%= render partial: 'remarks/options', locals: { remark: remark } %>
   </div>

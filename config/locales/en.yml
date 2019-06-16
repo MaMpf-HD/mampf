@@ -1092,6 +1092,100 @@ en:
           This is the list of media for which there are editing rights.
         elevate: >
           If you check this box, the user will be promoted to administrator.
+    question:
+      independent: 'Question is independent'
+      hint: 'Hint'
+      referencing_quizzes: 'Referencing Quizzes'
+      global_changes_html: >
+        Changes for this question are
+        <strong>
+        global changes.
+        </strong>
+      all_quizzes_html: >
+        In particular, changes for this question and its' answers will
+        affect
+        <strong>
+        all quizzes
+        </strong>
+        where this question is used.
+      its_a_copy_html: >
+        This question was created as a duplicate of %{original}.
+      copies: >
+        Questions that were created as copies of this question:
+      copy_created: >
+        A copy of this question will be created.
+      current_only_html: >
+        It will be referenced
+        <strong>
+        only in the currently edited quiz.
+        </strong>
+      current_and_checked_html: >
+        It will be referenced
+        <strong>
+        only in the currently edited quiz and the checked quizzes.
+        </strong>
+      checked_only_html: >
+        It will be referenced
+        <strong>
+        only in the checked quizzes.
+        </strong>
+      edit_question: >
+        Edit Question %{question}
+      edit: >
+        Edit Question
+      save_error: >
+        Error in saving the question
+    answer:
+      new: 'New Answer'
+      delete_error: >
+        Error in deleting answer
+      preview_text: 'Preview Text'
+      explanation: 'Explanation'
+      preview_explanation: 'Preview Explanation'
+      correctness: 'Correctness'
+      true_lc: 'true'
+      false_lc: 'false'
+    remark:
+      test: 'Test'
+      create: 'Create Remark'
+      referencing_quizzes: 'Referencing Quizzes'
+      global_changes_html: >
+        Changes for this remark are
+        <strong>
+        global changes.
+        </strong>
+      all_quizzes_html: >
+        In particular, changes for this remark will affect
+        <strong>
+        all quizzes
+        </strong>
+        where this remark is used.
+      its_a_copy_html: >
+        This remark was created as a duplicate of %{original}.
+      copies: >
+        Remarks that were created as copies of this remark:
+      copy_created: >
+        A copy of this remark will be created.
+      current_only_html: >
+        It will be referenced
+        <strong>
+        only in the currently edited quiz.
+        </strong>
+      current_and_checked_html: >
+        It will be referenced
+        <strong>
+        only in the currently edited quiz and the checked quizzes.
+        </strong>
+      checked_only_html: >
+        It will be referenced
+        <strong>
+        only in the checked quizzes.
+        </strong>
+      save_error: >
+        Error in saving the remark
+      edit_remark: >
+        Edit Remark %{remark}
+      edit: 'Edit Remark'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1539,6 +1633,12 @@ en:
     administrator_short: 'Admin'
     role: 'Role'
     information: 'Information'
+    question: 'Question'
+    answer: 'Answer'
+    answers: 'Answers'
+    none: 'none'
+    remark: 'Remark'
+    latex: 'LaTEX'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1558,6 +1658,7 @@ en:
     publish: 'Publish'
     parent_course: 'Parent Course'
     parent_lecture: 'Parent Lecture'
+    parent_medium: 'Parent Medium'
     create_chapter: 'Create Chapter'
     create_lesson: 'Create Session'
     create_section: 'Create Section'
@@ -1592,6 +1693,9 @@ en:
     create_term: 'Create Term'
     edit_users: 'Edit generic users (%{count})'
     close: 'Close'
+    add_answer: 'Add Answer'
+    create_copy: 'Create Copy'
+    copy_edit: 'Create Copy and Edit'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

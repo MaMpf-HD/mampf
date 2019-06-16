@@ -6,6 +6,7 @@ class QuestionsController < ApplicationController
   layout 'administration'
 
   def edit
+    I18n.locale = @question.locale_with_inheritance
   end
 
   def update
@@ -18,6 +19,7 @@ class QuestionsController < ApplicationController
     @quizzes.each do |q|
       Quiz.find_by_id(q).replace_reference!(question_old, @question, answer_map)
     end
+    I18n.locale = @question.locale_with_inheritance
     redirect_to edit_question_path(@question) if question_params[:type] == 'edit'
   end
 

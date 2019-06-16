@@ -6,6 +6,7 @@ class RemarksController < MediaController
   layout 'administration'
 
   def edit
+    I18n.locale = @remark.locale_with_inheritance
   end
 
   def update
@@ -18,6 +19,7 @@ class RemarksController < MediaController
     @quizzes.each do |q|
       Quiz.find_by_id(q).replace_reference!(remark_old, @remark)
     end
+    I18n.locale = @remark.locale_with_inheritance
     redirect_to edit_remark_path(@remark) if remark_params[:type] == 'edit'
   end
 
@@ -36,6 +38,6 @@ class RemarksController < MediaController
   end
 
   def remark_params
-    params.require(:remark).permit(:text)
+    params.require(:remark).permit(:text, :type)
   end
 end

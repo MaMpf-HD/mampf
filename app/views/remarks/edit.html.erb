@@ -2,15 +2,15 @@
   <div class="col-8">
     <h4 class="p-2">
       <span class="badge badge-secondary">
-        Bemerkung
+        <%= t('basics.remark') %>
       </span>
       <%= @remark.label %>
     </h4>
   </div>
   <div class="col-4 text-right">
-    <%= link_to 'zum Medium',
+    <%= link_to t('buttons.parent_medium'),
                 edit_medium_path(@remark),
-                class: 'btn btn-primary' %>
+                class: 'btn btn-sm btn-primary' %>
   </div>
 </div>
 <%= render partial: 'remarks/data', locals: { remark: @remark } %>

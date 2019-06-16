@@ -18,11 +18,11 @@
                 data-target="#collapse-answer-<%= answer.id %>"
                 aria-expanded="true"
                 aria-controls="collapse-answer-<%= answer.id %>">
-          Bearbeiten
+          <%= t('buttons.edit') %>
         </button>
         <%= link_to t('buttons.delete'),
                     answer_path(answer), method: :delete,
-                    data: { confirm: 'Bist Du sicher?' },
+                    data: { confirm: t('confirmation.generic') },
                     class: 'btn btn-sm btn-danger',
                     remote: true %>
       </div>
@@ -43,7 +43,8 @@
     <div class="card-body bg-mdb-color-lighten-6"
          id="answer-body-<%= answer.id %>">
       <%= render partial: 'answers/form.html',
-                 locals: { answer: answer, question_id: answer.question.id } %>
+                 locals: { answer: answer,
+                           question_id: answer.question.id } %>
     </div>
   </div>
 </div>

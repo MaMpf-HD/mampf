@@ -2,15 +2,15 @@
   <div class="col-9">
     <h4 class="p-2">
       <span class="badge badge-secondary">
-        Frage
+        <%= t('basics.question') %>
       </span>
       <%= @question.label %>
     </h4>
   </div>
   <div class="col-3 text-right">
-    <%= link_to 'zum Medium',
+    <%= link_to t('buttons.parent_medium'),
                 edit_medium_path(@question),
-                class: 'btn btn-primary' %>
+                class: 'btn btn-sm btn-outline-primary' %>
   </div>
 </div>
 <%= render partial: 'questions/data', locals: { question: @question } %>

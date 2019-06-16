@@ -2,5 +2,5 @@
 $('#remark-basics-warning').addClass 'no_display'
 $('#remark-basics-options').addClass 'no_display'
 <% else %>
-alert 'Fehler beim Abspeichern der Bemerkung'
+alert I18n.t('admin.remark.save_error')
 <% end %>

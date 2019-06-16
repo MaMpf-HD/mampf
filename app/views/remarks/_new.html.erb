@@ -2,7 +2,9 @@
   <div class='row'>
     <div class="col-12 col-md-6 col-lg-4">
       <div class="card m-3">
-        <div class='card-header'>Bemerkung anlegen</div>
+        <div class='card-header'>
+           <%= t('admin.remark.create') %>
+        </div>
         <div class='card-body'>
           <%= bootstrap_form_with model: remark do |f| %>
             <%= f.text_field :label %>

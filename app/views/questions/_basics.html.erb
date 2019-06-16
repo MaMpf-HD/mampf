@@ -7,16 +7,21 @@
         </h5>
       </div>
       <div class="col-5">
-        <span class="no_display incorrect" id="question-basics-warning">
+        <span class="no_display incorrect"
+              id="question-basics-warning">
           <%= t('warnings.unsaved_changes') %>
         </span>
       </div>
       <div class="col-4">
-        <span class="no_display", id="question-basics-options">
-          <%= f.submit t('buttons.save'), class: "btn btn-primary btn-sm",
-                                    id: "question-basics-save" %>
-          <button type="button" class="btn btn-secondary btn-sm"
-                  id="question-basics-cancel" data-id="<%= question.id %>">
+        <span class="no_display"
+              id="question-basics-options">
+          <%= f.submit t('buttons.save'),
+                      class: "btn btn-primary btn-sm",
+                      id: "question-basics-save" %>
+          <button type="button"
+                  class="btn btn-secondary btn-sm"
+                  id="question-basics-cancel"
+                  data-id="<%= question.id %>">
             <%= t('button.discard') %>
           </button>
         </span>
@@ -28,25 +33,38 @@
          class="bg-edit-question p-2 mb-3">
       <%= question.text %>
     </div>
-    <%= f.text_area :text, id: 'tex-area-question-' + question.id.to_s,
-                    label: 'LaTeX',
+    <%= f.text_area :text,
+                    id: 'tex-area-question-' + question.id.to_s,
+                    label: t('basics.latex'),
                     rows: 5 %>
-    <%= f.form_group :level, label: { text: "Schwierigkeitsgrad" } do %>
+    <%= f.form_group :level,
+                     label: { text: t('basics.level') } do %>
       <div id="level">
-        <%= f.radio_button :level, 0, label: "leicht", inline: true %>
-        <%= f.radio_button :level, 1, label: "mittel", inline: true %>
-        <%= f.radio_button :level, 2, label: "schwer", inline: true %>
+        <%= f.radio_button :level,
+                           0,
+                           label: t('basics.level_easy'),
+                           inline: true %>
+        <%= f.radio_button :level,
+                           1,
+                           label: t('basics.level_medium'),
+                           inline: true %>
+        <%= f.radio_button :level,
+                           2,
+                           label: t('basics.level_hard'),
+                           inline: true %>
       </div>
     <% end %>
     <%= f.form_group :independent do %>
-      <%= f.check_box :independent, label: 'Frage ist unabhängig' %>
+      <%= f.check_box :independent,
+                      label: t('admin.question.independent') %>
     <% end %>
     <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
-                    label: 'Lösungshinweis' %>
+                    label: t('admin.question.hint') %>
     <div id="tex-preview-hint-<%= question.id %>"
          class="p-2 mb-3">
       <%= question.hint %>
     </div>
-    <%= render partial: 'questions/options', locals: { question: question } %>
+    <%= render partial: 'questions/options',
+               locals: { question: question } %>
   </div>
 <% end %>

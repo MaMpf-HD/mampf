@@ -1,5 +1,5 @@
 <% if @success %>
 $('#answer-card-<%= @id %>').remove()
 <% else %>
-alert 'Fehler beim Löschen der Antwort'
+alert I18n.t('admin.answer.delete_error')
 <% end %>

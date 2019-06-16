@@ -1,6 +1,7 @@
 $('#reassignModal').modal 'hide'
 $('#quizzableModalLabel').empty()
-  .append('Frage <%= @question.description %> bearbeiten')
+  .append(I18n.t('admin.question.edit_question', question: '<%= @question.description %>'))
+$('#closeQuizzableModal').empty().append(I18n.t('buttons.close'))
 $('#quizzable-data').empty()
   .append '<%= j render partial: "questions/data",
                         locals: { question: @question } %>'

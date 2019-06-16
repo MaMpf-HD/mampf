@@ -217,7 +217,6 @@ class Medium < ApplicationRecord
   def self.search_sorts(search_params)
     return Medium.sort_enum unless search_params[:all_types] == '0'
     types = search_params[:types] || []
-    types.map(&:to_i).map { |i| Medium.sort_enum[i] }
   end
 
   # returns search results for the media search with search_params provided

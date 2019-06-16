@@ -5,7 +5,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="reassignModalLabel">
-          Kopie erstellen
+          <%= t('buttons.create_copy') %>
         </h5>
         <button type="button" class="close" data-dismiss="modal"
                 aria-label="Close">
@@ -21,8 +21,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary"
-                data-dismiss="modal"><%= t('buttons.cancel') %></button>
+        <button type="button"
+                class="btn btn-sm btn-secondary"
+                data-dismiss="modal"><%= t('buttons.cancel') %>
+        </button>
       </div>
     </div>
   </div>

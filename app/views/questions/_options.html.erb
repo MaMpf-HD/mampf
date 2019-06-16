@@ -1,7 +1,7 @@
 <div class="border rounded border-info p-2">
-  Referenzierende Quizzes:
+  <%= t('admin.question.referencing_quizzes') %>:
   <% if question.proper_quiz_ids.blank? %>
-    keine
+    <%= t('basics.none') %>
   <% else %>
     <ul>
       <% question.proper_quiz_ids.each do |q| %>
@@ -12,24 +12,18 @@
     </ul>
   <% end %>
   <div>
-    Änderungen an dieser Frage sind
-    <strong>
-      globale Änderungen
-    </strong>.
+    <%= t('admin.question.global_changes_html') %>
     <% if question.proper_quiz_ids.present? %>
-      Insbesondere werden Änderungen an dieser
-      Frage und ihren Antworten in
-      <strong>
-        allen Quizzes
-      </strong>
-      , in denen diese Frage vorkommt, übernommen.
+      <%= t('admin.question.all_quizzes_html') %>
       <div class="text-center">
-        <button id="button-reassign" type="button"
+        <button id="button-reassign"
+                type="button"
                 class="btn btn-sm btn-secondary"
-                data-toggle="modal" data-target="#reassignModal"
+                data-toggle="modal"
+                data-target="#reassignModal"
                 data-id="<%= question.id %>"
                 data-type="Question">
-          Kopie erstellen
+          <%= t('buttons.create_copy') %>
         </button>
       </div>
     <% end %>
@@ -37,19 +31,21 @@
 </div>
 <div class="mt-3">
   <% if question.parent.present? %>
-    Diese Frage wurde als Kopie von
-    <%= link_to question.parent.label, edit_question_path(question.parent),
-                target: :_blank %>
-    angelegt.
+    <%= t('admin.question.its_a_copy_html',
+          original: link_to(question.parent.label,
+                            edit_question_path(question.parent),
+                            target: :_blank)) %>
   <% end %>
 </div>
 <% if question.children.present? %>
   <div class="mt-3">
-    Fragen, die als Kopie dieser Frage angelegt wurden:
+    <%= t('admin.question.copies') %>
     <ul>
       <% question.children.each do |c| %>
         <li>
-          <%= link_to c.label, edit_question_path(c), target: :_blank %>
+          <%= link_to c.label,
+                      edit_question_path(c),
+                      target: :_blank %>
         </li>
       <% end %>
     </ul>

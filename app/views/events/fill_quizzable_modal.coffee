@@ -1,6 +1,7 @@
+$('#closeQuizzableModal').empty().append("<%= t('buttons.close') %>")
 $('#quizzableModalLabel').empty()
-  .append "<%= @type == 'Question' ? 'Frage bearbeiten' :
-                                     'Bemerkung bearbeiten' %>"
+  .append "<%= @type == 'Question' ? t('admin.question.edit') :
+                                     t('admin.remark.edit') %>"
 <% if @type == 'Question' %>
 $('#quizzable-data').empty()
   .append '<%= j render partial: "questions/data",
