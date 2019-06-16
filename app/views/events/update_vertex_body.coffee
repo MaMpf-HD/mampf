@@ -1,4 +1,4 @@
-$('#targets-vertex-<%= @vertex_id %>').empty().append('Ziele ändern')
+$('#targets-vertex-<%= @vertex_id %>').empty().append("<%= t('buttons.edit_targets') %>")
 $('#vertex-body-<%= @vertex_id %>').empty()
   .append '<%= j render partial: "vertices/form",
                         locals: { quiz: @quiz, vertex_id: @vertex_id } %>'

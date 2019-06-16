@@ -14,6 +14,7 @@ class QuizzesController < ApplicationController
 
   def edit
     @quiz.save_png! unless @quiz.quiz_image
+    I18n.locale = @quiz.locale_with_inheritance
   end
 
   def update

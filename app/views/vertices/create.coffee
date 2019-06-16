@@ -1,11 +1,11 @@
 <% if @success == true %>
 <% if @sort == 'Question' %>
-$('#quizzableModalLabel').empty().append 'Frage bearbeiten'
+$('#quizzableModalLabel').empty().append("<%= t('admin.question.edit') %>")
 $('#quizzable-data').empty()
   .append '<%=  j render partial: "questions/data",
                          locals: { question: @quizzable } %>'
 <% else %>
-$('#quizzableModalLabel').empty().append 'Bemerkung bearbeiten'
+$('#quizzableModalLabel').empty().append("<%= t('admin.remark.edit') %>")
 $('#quizzable-data').empty()
   .append '<%= j render partial: "remarks/data",
                         locals: { remark: @quizzable } %>'
@@ -37,5 +37,5 @@ renderMathInElement quizzableData,
   ]
   throwOnError: false
 <% else %>
-alert 'Fehler beim Abspeichern der Ecke'
+alert("<%= t('admin.quiz.save_vertex_error') %>")
 <% end %>

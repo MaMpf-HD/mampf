@@ -29,6 +29,7 @@ class EventsController < ApplicationController
 
   def update_vertex_body
     @quiz = Quiz.find(params[:quiz_id])
+    I18n.locale = @quiz.locale_with_inheritance
     @vertex_id = params[:vertex_id].to_i
   end
 

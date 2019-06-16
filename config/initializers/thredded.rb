@@ -148,12 +148,12 @@ Thredded.layout = 'thredded/application'
 #
 #     $ grep view_hooks -R --include '*.html.erb' "$(bundle show thredded)"
 #
-# Rails.application.config.to_prepare do
-#   Thredded.view_hooks.post_form.content_text_area.config.before do |form:, **args|
-#     # This is called in the Thredded view context, so all Thredded helpers and URLs are accessible here directly.
-#     'hi'
-#   end
-# end
+Rails.application.config.to_prepare do
+  Thredded.view_hooks.post_form.content_text_area.config.before do |form:, **args|
+    # This is called in the Thredded view context, so all Thredded helpers and URLs are accessible here directly.
+    render 'thredded/modifications/explain_tex', form: form
+  end
+end
 
 # ==> Topic following
 #

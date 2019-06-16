@@ -21,6 +21,7 @@ class VerticesController < ApplicationController
                                            @hide)
     @quiz.update(quiz_graph: graph)
     @quiz.save_png!
+    I18n.locale = @quiz.locale_with_inheritance
   end
 
   def destroy

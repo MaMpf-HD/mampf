@@ -1273,6 +1273,16 @@ de:
       edit_remark: >
         Bemerkung %{remark} bearbeiten
       edit: 'Bemerkung bearbeiten'
+    quiz:
+      start_vertex: 'Start-Ecke'
+      vertices: 'Ecken'
+      medium_deleted: 'Medium gelöscht'
+      undefined: 'undefiniert'
+      end: 'Ende'
+      target: 'Ziel'
+      hide_solution: 'Lösung verstecken'
+      save_vertex_error: 'Fehler beim Abspeichern der Ecke'
+      save_error: 'Fehler beim Abspeichern des Quizzes'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -1748,6 +1758,9 @@ de:
     none: 'none'
     remark: 'Bemerkung'
     latex: 'LaTEX'
+    quiz: 'Quiz'
+    preview: 'Vorschau'
+    enlarge: 'vergrößern'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1802,6 +1815,9 @@ de:
     add_answer: 'Antwort hinzufügen'
     create_copy: 'Kopie erstellen'
     copy_edit: 'Kopie erstellen und bearbeiten'
+    create_vertex: 'Ecke anlegen'
+    edit_targets: 'Ziele ändern'
+    save_targets: 'Ziele speichern'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -1820,11 +1836,20 @@ de:
     lesson: >
       Bist Du sicher? Die zugehörigen Medien werden nicht gelöscht,
       sondern werden dann der entsprechenden Vorlesung zugeordnet.
+    vertex: >
+      Bist Du sicher? Damit werden auch die zugehörigen Kanten gelöscht.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur
     Speicherung und Verarbeitung Deiner Daten gemäß der %{policy}
     der Universität Heidelberg.
+  thredded:
+    explain_tex_html: >
+      <i>
+      Hinweis.
+      </i>
+      Du kannst LaTEX in Deinen Posts benutzen, indem Du den LaTEX-Code
+      zwischen doppelte Dollarzeichen schreibst, z.B. $$e^{\pi i}+1=0$$.
   activerecord:
     errors:
       models:

@@ -7,15 +7,20 @@
         </h5>
       </div>
       <div class="col-5">
-        <span class="no_display incorrect" id="quiz-basics-warning">
+        <span class="no_display incorrect"
+              id="quiz-basics-warning">
           <%= t('warnings.unsaved_changes') %>
         </span>
       </div>
       <div class="col-4">
-        <span class="no_display", id="quiz-basics-options">
-          <%= f.submit t('buttons.save'), class: "btn btn-primary btn-sm" %>
-          <button type="button" class="btn btn-secondary btn-sm"
-                  id="quiz-basics-cancel" data-id="<%= quiz.id %>">
+        <span class="no_display"
+              id="quiz-basics-options">
+          <%= f.submit t('buttons.save'),
+                       class: "btn btn-primary btn-sm" %>
+          <button type="button"
+                  class="btn btn-secondary btn-sm"
+                  id="quiz-basics-cancel"
+                  data-id="<%= quiz.id %>">
             <%= t('button.discard') %>
           </button>
         </span>
@@ -25,18 +30,29 @@
   <div class="card-body">
     <%= f.select :root,
                  options_for_select(vertices_labels_no_end(quiz),quiz.root),
-                 { label: 'Start-Ecke' },
+                 { label: t('admin.quiz.start_vertex') },
                  { id: 'quiz-top-select' } %>
     <%= f.hidden_field :id_js, value: quiz.id %>
-    <%= f.form_group :level, label: { text: "Schwierigkeitsgrad" } do %>
+    <%= f.form_group :level,
+                     label: { text: t('basics.level') } do %>
       <div id="level">
-        <%= f.radio_button :level, 0, label: "leicht", inline: true %>
-        <%= f.radio_button :level, 1, label: "mittel", inline: true %>
-        <%= f.radio_button :level, 2, label: "schwer", inline: true %>
+        <%= f.radio_button :level,
+                           0,
+                           label: t('basics.level_easy'),
+                           inline: true %>
+        <%= f.radio_button :level,
+                           1,
+                           label: t('basics.level_medium'),
+                           inline: true %>
+        <%= f.radio_button :level,
+                           2,
+                           label: t('basics.level_hard'),
+                           inline: true %>
       </div>
     <% end %>
     <div id="quiz-error-messages">
-      <%= render partial: 'quizzes/errors_in_editing', locals: { quiz: quiz } %>
+      <%= render partial: 'quizzes/errors_in_editing',
+                 locals: { quiz: quiz } %>
     </div>
   </div>
 <% end %>

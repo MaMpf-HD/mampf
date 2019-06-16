@@ -11,7 +11,7 @@
     <% if quiz.quizzable(vertex_id) %>
       <%= quiz.quizzable(vertex_id).text %>
     <% else %>
-      Medium gelöscht
+      <%= t('admin.quiz.medium_deleted') %>
     <% end %>
   </div>
   <div class="col-1">
@@ -31,11 +31,11 @@
           </span>
         <% elsif n[0] == 0 %>
           <span class="badge badge-primary">
-            undefined
+            <%= t('admin.quiz.undefined') %>
           </span>
         <% elsif n[0] == -1 %>
           <span class="badge badge-warning">
-            Ende
+            <%= t('admin.quiz.end') %>
           </span>
         <% end %>
       <% end %>
@@ -49,9 +49,9 @@
                 data-toggle="modal" data-target="#quizzableModal"
                 data-type="<%= quiz.quiz_graph.vertices[vertex_id][:type] %>"
                 data-id="<%= quiz.quiz_graph.vertices[vertex_id][:id] %>">
-          Bearbeiten
+          <%= t('buttons.edit') %>
         </button>
-        <%= link_to 'Medium',
+        <%= link_to t('basics.medium'),
                     edit_medium_path(quiz.quizzable(vertex_id)),
                     class: 'btn btn-sm btn-outline-primary rounded m-1' %>
         <button id="targets-vertex-<%= vertex_id %>"
@@ -60,14 +60,13 @@
                 data-target="#collapse-vertex-<%= vertex_id %>"
                 aria-expanded="true"
                 aria-controls="collapse-vertex-<%= vertex_id %>">
-          Ziele ändern
+          <%= t('buttons.edit_targets') %>
         </button>
       <% end %>
       <%= link_to t('buttons.delete'),
                   quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
                   method: :delete,
-                  data: { confirm: 'Bist Du sicher? Damit werden auch die'\
-                                    'zugehörigen Kanten gelöscht.' },
+                  data: { confirm: t('confirmation.vertex') },
                   class: 'btn btn-outline-danger rounded btn-sm m-1' %>
     </div>
   </div>

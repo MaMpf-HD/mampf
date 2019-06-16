@@ -1,18 +1,24 @@
 <% vertex_type = quiz.vertices[vertex_id][:type] %>
 <% default_id = quiz.default_table[vertex_id] || 0 %>
 <% q = quiz.quizzable(vertex_id) %>
-<%= bootstrap_form_with url: quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
-                        scope: 'vertex', method: 'patch' do |f| %>
+<%= bootstrap_form_with url: quiz_vertex_path(quiz_id: quiz.id,
+                                              id: vertex_id),
+                        scope: 'vertex',
+                        method: 'patch' do |f| %>
   <div class="text-center">
-    <%= f.submit 'Ziele speichern', class: 'btn btn-secondary m-3' %>
+    <%= f.submit t('buttons.save_targets'),
+                 class: 'btn btn-sm btn-secondary m-3' %>
   </div>
   <% if vertex_type == 'Remark' %>
     <%= f.select :default,
-                 options_for_select(vertices_labels(quiz, vertex_id, true),
+                 options_for_select(vertices_labels(quiz,
+                                                    vertex_id,
+                                                    true),
                                     default_id),
                  { hide_label: true },
                  { id: 'default_target_select_' + vertex_id.to_s,
-                   data: { vertexid: vertex_id, quizid: quiz.id } }  %>
+                   data: { vertexid: vertex_id,
+                           quizid: quiz.id } }  %>
     <div id ="vertex_default_target_<%= vertex_id %>">
       <% unless default_id.in?([0,-1]) %>
         <%= render partial: 'vertices/quizzable',
@@ -20,7 +26,8 @@
       <% end %>
     </div>
   <% else %>
-    <%= f.form_group :branching, hide_label: true do %>
+    <%= f.form_group :branching,
+                     hide_label: true do %>
       <div class="row">
         <% q.answer_table.each do |c| %>
           <% preselect = quiz.preselected_branch(vertex_id, c) %>
@@ -29,7 +36,8 @@
             <div class="card m-2 <%= bgcolor(q.answer_scheme == c) %>">
               <div class="card-header">
                 <%= render partial: 'questions/answers',
-                           locals: { answers: q.answers, crosses: c } %>
+                           locals: { answers: q.answers,
+                                     crosses: c } %>
               </div>
               <div class="card-body">
                 <%= f.select ('branching-' + c.to_s).to_sym,
@@ -37,10 +45,10 @@
                                                                  vertex_id,
                                                                  c == q.answer_scheme),
                                                  preselect),
-                              { label: 'Ziel:' },
+                              { label: t('admin.quiz.target') + ':' },
                               { id: 'branching_select-' + crosses_id(c),
-                                    data: { quizid: quiz.id } } %>
-                <div id=<%= "branching_quizzable-" + crosses_id(c) %> >
+                                data: { quizid: quiz.id } } %>
+                <div id="<%= 'branching_quizzable-' + crosses_id(c) %>" >
                   <% unless preselect.in?([0,-1]) %>
                     <%= render partial: 'vertices/quizzable',
                                locals: { quizzable: quiz.quizzable(preselect) } %>
@@ -50,7 +58,7 @@
                   <%= f.check_box ('hide-' + c.to_s).to_sym,
                                   id: 'hide-' + crosses_id(c),
                                   checked: prehide,
-                                  label: 'Lösung verstecken' %>
+                                  label: t('admin.quiz.hide_solution') %>
                 <% end %>
               </div>
             </div>

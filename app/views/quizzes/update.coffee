@@ -5,5 +5,5 @@ $('#quiz-error-messages').empty()
   .append '<%= j render partial: "errors_in_editing",
                           locals: { quiz: @quiz } %>'
 <% else %>
-alert 'Fehler beim Abspeichern des Quizzes'
+alert("<%= t('admin.quiz.save_error') %>")
 <% end %>

@@ -1186,6 +1186,16 @@ en:
       edit_remark: >
         Edit Remark %{remark}
       edit: 'Edit Remark'
+    quiz:
+      start_vertex: 'Start Vertex'
+      vertices: 'Vertices'
+      medium_deleted: 'Medium deleted'
+      undefined: 'undefined'
+      end: 'end'
+      target: 'Target'
+      hide_solution: 'Hide Solution'
+      save_vertex_error: 'Error in saving vertex'
+      save_error: 'Error in saving quiz'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1639,6 +1649,9 @@ en:
     none: 'none'
     remark: 'Remark'
     latex: 'LaTEX'
+    quiz: 'Quiz'
+    preview: 'Preview'
+    enlarge: 'Enlarge'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1696,6 +1709,9 @@ en:
     add_answer: 'Add Answer'
     create_copy: 'Create Copy'
     copy_edit: 'Create Copy and Edit'
+    create_vertex: 'Create Vertex'
+    edit_targets: 'Edit Targets'
+    save_targets: 'Save Targets'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -1709,10 +1725,19 @@ en:
     lesson: >
       Are you sure? The associated media will not be deleted,
       but will become associated to the parent lecture.
+    vertex: >
+      Are you sure? All associated edges will be deleted as well.
   privacy_html: >
     We take the responsibility for your data seriously. By
     GDPR, we need your consent for the storage and processing
     of your data according to the %{policy} of Heidelberg University.
+  thredded:
+    explain_tex_html: >
+      <i>
+      Note.
+      </i>
+      You can use LaTEX in your posts by writing the LaTEX code between
+      double dollar signs, e.g. $$e^{\pi i}+1=0$$
   activerecord:
     errors:
       models:

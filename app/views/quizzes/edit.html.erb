@@ -2,40 +2,48 @@
   <div class="col-7">
     <h4 class="p-2">
       <span class="badge badge-secondary">
-        Quiz
+        <%= t('basics.quiz') %>
       </span>
       <%= @quiz.description %>
     </h4>
   </div>
   <div class="col-5 text-right">
     <% unless @quiz.sort == 'RandomQuiz' %>
-      <%= link_to 'zum Medium', edit_medium_path(@quiz),
-                  class: 'btn btn-primary m-2' %>
+      <%= link_to t('buttons.parent_medium'),
+                  edit_medium_path(@quiz),
+                  class: 'btn btn-sm btn-primary m-2' %>
     <% end %>
-    <%= link_to 'Spielen', take_quiz_path(@quiz),
-                class: 'btn btn-primary m-2', target: :_blank %>
+    <%= link_to t('buttons.take_quiz'),
+                take_quiz_path(@quiz),
+                class: 'btn btn-sm btn-primary m-2',
+                target: :_blank %>
   </div>
 </div>
 <div class="row mx-2 mt-2 mb-4">
   <div class="col-4">
-    <div class="card bg-light" id="quiz-basics-edit">
-      <%= render partial: 'quizzes/basics', locals: { quiz: @quiz } %>
+    <div class="card bg-light"
+         id="quiz-basics-edit">
+      <%= render partial: 'quizzes/basics',
+                 locals: { quiz: @quiz } %>
     </div>
   </div>
   <div class="col-8">
     <div class="card bg-light" id="quiz-preview">
       <div class="card-header">
         <h5>
-          Vorschau
+          <%= t('basics.preview') %>
         </h5>
       </div>
       <div class="card-body">
         <%= image_tag(@quiz.quiz_image_url,
-                      class: "img-fluid", id: "quiz-preview-image",
+                      class: "img-fluid",
+                      id: "quiz-preview-image",
                       data: { id: @quiz.id }) %>
         <div class="text-center mt-3">
-          <%= link_to 'vergrößern', preview_quiz_path(@quiz),
-                      target: :_blank, class: 'btn btn-outline-secondary' %>
+          <%= link_to t('basics.enlarge'),
+                      preview_quiz_path(@quiz),
+                      target: :_blank,
+                      class: 'btn btn-sm btn-outline-secondary' %>
         </div>
       </div>
     </div>
