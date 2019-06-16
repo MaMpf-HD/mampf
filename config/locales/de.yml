@@ -284,13 +284,13 @@ de:
           <li>
           <i>
           unter Verwendung eines Vorlesungsskriptes, das mit dem MaMpf
-          LaTEX-Paket erstellt wurde:
+          LaTeX-Paket erstellt wurde:
           </i>
           MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
           denjenigen Abschnitt mit einem MaMpf-Label versehen wurden,
           bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
           wurden. Damit dass funktioniert, müssen die MaMpf-Labels im
-          LaTEX-File für das Manuskript mit dem
+          LaTeX-File für das Manuskript mit dem
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
           erzeugt werden
           und nach dem Hochladen des Skriptes in MaMpf übernommen werden.
@@ -382,7 +382,7 @@ de:
       video_based: 'medienbasiert'
       script_based: >
           unter Verwendung eines Vorlesungsskriptes, das mit dem MaMpf
-          LaTEX-Paket erstellt wurde
+          LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
@@ -651,7 +651,7 @@ de:
           Skripte können nicht in andere Medientypen umgewandelt werden,
           dasselbe gilt auch andersherum. Verwendest Du das
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
-          für LaTEX, kann MaMpf aus dem pdf zusätzliche Informationen
+          für LaTeX, kann MaMpf aus dem pdf zusätzliche Informationen
           extrahieren.
           </li>
           <li>
@@ -681,7 +681,7 @@ de:
           <i>
           Beachte:
           </i>
-          Für Skripte steht das %{package} für LaTEX zur Verfügung.
+          Für Skripte steht das %{package} für LaTeX zur Verfügung.
           Es erlaubt, Inhalte aus dem Manuskript-pdf zu extrahieren und in
           MaMpf zur Verfügung zu stellen sowie Medien aus MaMpf über
           QR-Codes im Manuskript verfügbar zu machen.
@@ -1516,7 +1516,7 @@ de:
       </li>
       <li>
       Die Notation für Teilmengen kann
-      verschieden sein: \subset, \subseteq (im LaTEX-Code)
+      verschieden sein: \subset, \subseteq (im LaTeX-Code)
       <li>
       Basen werden als Mengen (in Mengenklammern)
       oder als Familien (in runden klammern) geschrieben.
@@ -1757,7 +1757,7 @@ de:
     answers: 'Antworten'
     none: 'none'
     remark: 'Bemerkung'
-    latex: 'LaTEX'
+    latex: 'LaTeX'
     quiz: 'Quiz'
     preview: 'Vorschau'
     enlarge: 'vergrößern'
@@ -1848,8 +1848,11 @@ de:
       <i>
       Hinweis.
       </i>
-      Du kannst LaTEX in Deinen Posts benutzen, indem Du den LaTEX-Code
+      Du kannst LaTeX in Deinen Posts benutzen, indem Du den LaTeX-Code
       zwischen doppelte Dollarzeichen schreibst, z.B. $$e^{\pi i}+1=0$$.
+      Eine Liste der unterstützten Symbole gibt es
+      <a href="https://katex.org/docs/supported.html">
+      hier</a>.
   activerecord:
     errors:
       models:
