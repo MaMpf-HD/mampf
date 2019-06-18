@@ -5,7 +5,7 @@
         <div class='card-header'>
           <div class="row">
             <div class="col-8">
-              Ecke anlegen
+              <%= t('buttons.create_vertex') %>
             </div>
             <div class="col-4 text-right">
               <%= link_to t('buttons.cancel'), edit_quiz_path(quiz),
@@ -19,21 +19,21 @@
               <a class="nav-link active" id="import-vertex-tab"
                  data-toggle="pill" href="#import-vertex" role="tab"
                  aria-controls="import-vertex" aria-selected="true">
-                Inhalt importieren
+                <%= t('admin.quiz.import_content') %>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" id="create-question-tab"
                  data-toggle="pill" href="#create-question" role="tab"
                  aria-controls="create-question" aria-selected="false">
-                Frage erstellen
+                <%= t('admin.quiz.create_question') %>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" id="create-remark-tab"
                  data-toggle="pill" href="#create-remark" role="tab"
                  aria-controls="create-remark" aria-selected="false">
-                Bemerkung erstellen
+                <%= t('admin.quiz.create_remark') %>
               </a>
             </li>
           </ul>
@@ -52,7 +52,7 @@
                                            'Question',
                                            class: 'custom-control-input' %>
                         <%= f.label :type,
-                                    'Frage',
+                                    t('basics.question'),
                                     value: 'Question',
                                     class: 'custom-control-label' %>
                       </div>
@@ -61,9 +61,9 @@
                                            'Remark',
                                            class: 'custom-control-input' %>
                         <%= f.label :type,
-                                    'Bemerkung',
-                                     value: 'Remark',
-                                     class: 'custom-control-label' %>
+                                    t('basics.remark'),
+                                    value: 'Remark',
+                                    class: 'custom-control-label' %>
                       </div>
                     </div>
                   </div>
@@ -71,15 +71,16 @@
                        style="display: none;">
                     <%= f.select :quizzable,
                                 options_for_select([[]]),
-                                { hide_label: true, include_blank: 'Suche' },
+                                { hide_label: true,
+                                  include_blank: t('basics.search') },
                                 { id: 'new_vertex_quizzable_select',
                                   class: 'selectize' } %>
                   </div>
                   <div id='new_vertex_text'>
                   </div>
                   <div class='text-center'>
-                    <%= f.submit 'Ecke speichern',
-                                 class: 'btn btn-secondary m-2',
+                    <%= f.submit t('buttons.save_vertex'),
+                                 class: 'btn btn-sm btn-secondary m-2',
                                  style: 'display: none;',
                                  id: 'submit-vertex' %>
                   </div>
@@ -89,24 +90,32 @@
             <div class="tab-pane fade" id="create-question"
                  role="tabpanel" aria-labelledby="create-question-tab">
               <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: quiz.id),
-                                      scope: 'vertex', method: 'post' do |f| %>
-                <%= f.hidden_field :sort, value: 'Question',
-                                          id: 'vertex_sort_question' %>
-                <%= f.text_field :label, label: 'Fragen-Titel' %>
+                                      scope: 'vertex',
+                                      method: 'post' do |f| %>
+                <%= f.hidden_field :sort,
+                                   value: 'Question',
+                                   id: 'vertex_sort_question' %>
+                <%= f.text_field :label,
+                                 label: t('basics.title') %>
                 <div class='text-center'>
-                  <%= f.submit t('buttons.save') %>
+                  <%= f.submit t('buttons.save'),
+                               class: 'btn btn-sm btn-secondary' %>
                 </div>
               <% end %>
             </div>
             <div class="tab-pane fade" id="create-remark" role="tabpanel"
                  aria-labelledby="create-remark-tab">
               <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: quiz.id),
-                                      scope: 'vertex', method: 'post' do |f| %>
-                <%= f.hidden_field :sort, value: 'Remark',
-                                          id: 'vertex_sort_remark' %>
-                <%= f.text_field :label, label: 'Bemerkungs-Titel' %>
+                                      scope: 'vertex',
+                                      method: 'post' do |f| %>
+                <%= f.hidden_field :sort,
+                                   value: 'Remark',
+                                   id: 'vertex_sort_remark' %>
+                <%= f.text_field :label,
+                                 label: t('basics.title') %>
                 <div class='text-center'>
-                  <%= f.submit t('buttons.save') %>
+                  <%= f.submit t('buttons.save'),
+                               class: 'btn btn-sm btn-secondary' %>
                 </div>
               <% end %>
             </div>

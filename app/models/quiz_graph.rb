@@ -71,14 +71,14 @@ class QuizGraph
   end
 
   def find_errors
-    return ['Es sind keine Ecken vorhanden'] unless @vertices.present?
+    return [I18n.t('admin.quiz.no_vertices')] unless @vertices.present?
     branch_undef = @default_table.values.include?(0)
     no_end = @edges.select { |e| e[1] == -1 }.blank?
     no_root = @root.blank? || @root.zero?
     messages = []
-    messages.push('Es gibt undefinierte Verzweigungen') if branch_undef
-    messages.push('Keine Verzweigung führt zum Ende') if no_end
-    messages.push('Es ist keine Startecke definiert') if no_root
+    messages.push(I18n.t('admin.quiz.undefined_targets')) if branch_undef
+    messages.push(I18n.t('admin.quiz.no_end')) if no_end
+    messages.push(I18n.t('admin.quiz.no_start')) if no_root
     messages
   end
 

@@ -33,6 +33,7 @@ class QuizzesController < ApplicationController
   end
 
   def take
+    I18n.locale = @quiz.locale_with_inheritance
     render layout: 'quiz'
   end
 

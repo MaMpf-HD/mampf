@@ -17,8 +17,10 @@
           <span class="text-right">
             <i class="far fa-question-circle"
                id="reveal-explanation-<%= old_id %>-<%= a.id %>"
-               style="cursor: pointer;" data-toggle="tooltip"
-               data-placement="right" title="Warum war das richtig?">
+               style="cursor: pointer;"
+               data-toggle="tooltip"
+               data-placement="right"
+               title="<%= t('admin.quiz.why_correct') %>">
             </i>
           </span>
         <% end %>
@@ -29,21 +31,23 @@
       <% if input[a.id] != a.value %>
         <span class="badge badge-danger">
           <% if input[a.id] %>
-            Das hast Du angekreuzt. Die Aussage ist aber falsch.
+            <%= t('admin.quiz.checked_false') %>
           <% else %>
-            Das hast Du nicht angekreuzt. Die Aussage ist aber richtig.
+            <%= t('admin.quiz.not_checked_correct') %>
           <% end %>
         </span>
       <% else %>
         <span class="badge badge-success">
-          Das hast Du richtig gemacht, die Aussage ist
-          <%= a.value ? 'wahr' :'falsch' %>.
+          <%= t('admin.quiz.correct_answer',
+                value: t('admin.answer.' + a.value.to_s + '_lc')) %>
         </span>
         <% if a.explanation.present? &&  input != question.answer_scheme %>
           <i class="far fa-question-circle"
              id="reveal-explanation-<%= old_id %>-<%= a.id %>"
-             style="cursor: pointer;" data-toggle="tooltip"
-             data-placement="right" title="Warum war das richtig?">
+             style="cursor: pointer;"
+             data-toggle="tooltip"
+             data-placement="right"
+             title="<%= t('admin.quiz.why_correct') %>">
           </i>
         <% end %>
       <% end %>
@@ -53,7 +57,7 @@
          id="explanation-<%= old_id %>-<%= a.id %>">
       <% unless a.explanation.blank? %>
         <span class="badge badge-secondary">
-          Denn:
+          <%= t('admin.quiz.reason') %>
         </span>
         <%= a.conditional_explanation(input[a.id] == a.value) %>
       <% end %>

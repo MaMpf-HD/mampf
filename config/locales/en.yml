@@ -1196,6 +1196,50 @@ en:
       hide_solution: 'Hide Solution'
       save_vertex_error: 'Error in saving vertex'
       save_error: 'Error in saving quiz'
+      loop_info: >
+        That was not quite correct. You will get another chance to answer
+        this question. Before that, we will do some preliminary considerations.
+      video: 'Explanation Video'
+      video_info: 'Explanation Video in THymEPlayer'
+      manuscript: 'Manuscript'
+      manuscript_info: 'Manuskript as pdf'
+      medium_for_remark_html: >
+        There is a %{medium} for this remark.
+      media_for_remark_html: >
+        There is a %{medium_1} und a %{medium_2} for this remark.
+      okay: 'Okay!'
+      import_content: 'Import Content'
+      create_question: 'Create Question'
+      create_remark: 'Create Remark'
+      why_correct: 'Why was this correct?'
+      checked_false: 'You checked this box. But this statement is false.'
+      not_checked_correct:  >
+        You did not check this box. But this statement is true.
+      correct_answer: >
+        You solved this correctly, the statement is %{value}.
+      reason: 'Reason'
+      correct_answer: 'Great, that was correct!'
+      incorrect_answer: 'Unfortunately, that was not quite correct.'
+      medium_for_question_html: >
+        There is a %{medium} for this question.
+      media_for_question_html: >
+        There is a %{medium_1} und a %{medium_2} for this question.
+      correct_result: 'Answered correctly'
+      incorrect_result: 'Answered incorrectly'
+      hide: 'Hide'
+      finale_html: >
+        You made it! As a small reward there is an %{xkcd_link} comic:
+      xkcd: 'XKCD'
+      errors: 'Attention, the quiz contains errors'
+      undefined_targets: 'There are undefined targets'
+      no_end: 'No way leads to the end'
+      no_start: 'There is no start vertex defined'
+      no_vertices: 'There are no vertices'
+      error_occured: >
+        An error has occured. This branch was not implemented.
+      none_correct: 'None of the given options was true.'
+      undefined: 'undefined'
+      default: 'default'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1712,6 +1756,8 @@ en:
     create_vertex: 'Create Vertex'
     edit_targets: 'Edit Targets'
     save_targets: 'Save Targets'
+    save_vertex: 'Save Vertex'
+    submit: 'Submit'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

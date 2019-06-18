@@ -11,23 +11,25 @@
         </div>
         <% if remark.video || remark.manuscript %>
           <div class="col-12 text-center my-2 remark-infotainment-text">
-            Es gibt
-            <% if remark.video %>
-              ein
-              <%= link_to 'Erklärvideo',
-                          play_medium_path(remark),
-                          target: :_blank %>
-            <% end %>
             <% if remark.video && remark.manuscript %>
-              und
+              <%= t('admin.quiz.media_for_remark_html',
+                    medium_1: link_to(t('admin.quiz.video'),
+                                      play_medium_path(remark),
+                                      target: :_blank),
+                    medium_2: link_to(t('admin.quiz.manuscript'),
+                                      display_medium_path(remark),
+                                      target: :_blank)) %>
+            <% elsif remark.video %>
+              <%= t('admin.quiz.medium_for_remark_html',
+                    medium: link_to(t('admin.quiz.video'),
+                                      play_medium_path(remark),
+                                      target: :_blank)) %>
+            <% elsif remark.manuscript %>
+              <%= t('admin.quiz.medium_for_remark_html',
+                    medium: link_to(t('admin.quiz.manuskript'),
+                                    display_medium_path(remark),
+                                    target: :_blank)) %>
             <% end %>
-            <% if remark.manuscript %>
-              ein
-              <%= link_to 'Manuskript',
-                          display_medium_path(remark),
-                          target: :_blank %>
-            <% end %>
-            zu dieser Erläuterung.
           </div>
           <div class="col-12 text-center my-2 remark-infotainment-icons"
                style="display: none;">
@@ -36,7 +38,7 @@
                  class="no-deco ml-3 fas fa-play fa-2x text-info"
                  data-toggle="tooltip"
                  data-placement="bottom"
-                 title="Erklärvideo im THymE Player"
+                 title="<%= t('admin.quiz.video_info') %>"
                  target="_blank">
               </a>
             <% end %>
@@ -45,14 +47,14 @@
                  class="no-deco ml-3 far fa-file-pdf fa-2x text-info"
                  data-toggle="tooltip"
                  data-placement="bottom"
-                 title="Manuskript als pdf"
+                 title="<%= t('admin.quiz.manuscript_info') %>"
                  target="_blank">
               </a>
             <% end %>
           </div>
         <% end %>
         <div class="col-12 text-center">
-          <%= f.submit "Alles klar!",
+          <%= f.submit t('admin.quiz.okay'),
                        class: "send-it btn btn-secondary ml-2"  %>
         </div>
       </div>

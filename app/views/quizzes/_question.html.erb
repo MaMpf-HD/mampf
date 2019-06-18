@@ -12,7 +12,7 @@
             <i class="far fa-question-circle"
                id="reveal-hint-<%= question.id %>"
                style="cursor: pointer;" data-toggle="tooltip"
-               data-placement="left" title="Lösungshinweis">
+               data-placement="left" title="<%= t('admin.question.hint') %>">
             </i>
           </span>
         </div>
@@ -23,7 +23,7 @@
         <div class="col-12">
           <span>
             <em>
-              Hinweis.
+              <%= t('admin.question.hint') %>
             </em>
           </span>
           <%= question.hint %>
@@ -41,9 +41,8 @@
                  locals: { answers: answers } %>
     </div>
   </div>
-  <div class="card-footer no_display" id="footer-<%= @quiz_round.round_id %>">
-    Das war leider nicht ganz richtig. Du bekommst gleich nochmal die Chance,
-    die Frage zu beantworten. Damit es beim nächsten Mal besser klappt,
-    stellen wir ein paar Vorüberlegungen an.
+  <div class="card-footer no_display"
+       id="footer-<%= @quiz_round.round_id %>">
+    <%= t('admin.quiz.loop_info') %>
   </div>
 </div>

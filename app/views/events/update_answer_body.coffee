@@ -56,7 +56,9 @@ $('#answer-box-<%= @answer.id %>').empty()
   .append '<%= ballot_box(@answer.value) %>'
 $('#answer-header-<%= @answer.id %>').removeClass('bg-correct')
   .removeClass('bg-incorrect').addClass '<%= bgcolor(@answer.value) %>'
-$('#targets-answer-<%= @answer.id %>').empty().append(I18n.t('buttons.edit'))
+$target = $('#targets-answer-<%= @answer.id %>')
+$target.empty()
+  .append(I18n.t('buttons.edit', { locale: $target.data('locale') }))
   .removeClass('btn-secondary').addClass 'btn-primary'
 $('#answer-body-<%= @answer.id %>').empty()
   .append '<%= j render partial: "answers/form",

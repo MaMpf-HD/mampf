@@ -1,7 +1,8 @@
 # Vertices Helper
 module VerticesHelper
   def vertices_labels(quiz, vertex_id, undefined)
-    special = [[undefined ? 'undefined' : 'default', 0], ['Ende', -1]]
+    special = [[undefined ? I18n.t('admin.quiz.undefined') : I18n.t('admin.quiz.default'), 0],
+               [I18n.t('admin.quiz.end'), -1]]
     list = (quiz.vertices.keys - [vertex_id]).collect do |k|
       [k.to_s + ' ' + quiz.quizzable(k).label, k]
     end

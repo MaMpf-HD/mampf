@@ -1283,6 +1283,52 @@ de:
       hide_solution: 'Lösung verstecken'
       save_vertex_error: 'Fehler beim Abspeichern der Ecke'
       save_error: 'Fehler beim Abspeichern des Quizzes'
+      loop_info: >
+        Das war leider nicht ganz richtig. Du bekommst gleich nochmal die Chance,
+        die Frage zu beantworten. Damit es beim nächsten Mal besser klappt,
+        stellen wir ein paar Vorüberlegungen an.
+      video: 'Erklärvideo'
+      video_info: 'Erklärvideo im THymE-Player'
+      manuscript: 'Manuskript'
+      manuscript_info: 'Manuskript als pdf'
+      medium_for_remark_html: >
+        Es gibt ein %{medium} zu dieser Erläuterung.
+      media_for_remark_html: >
+        Es gibt ein %{medium_1} und ein %{medium_2} zu dieser Erläuterung.
+      okay: 'Alles klar!'
+      import_content: 'Inhalt importieren'
+      create_question: 'Frage erstellen'
+      create_remark: 'Bemerkung erstellen'
+      why_correct: 'Warum war das richtig?'
+      checked_false: 'Das hast Du angekreuzt. Die Aussage ist aber falsch.'
+      not_checked_correct:  >
+        Das hast Du nicht angekreuzt. Die Aussage ist aber richtig.
+      correct_answer: >
+        Das hast Du richtig gemacht, die Aussage ist %{value}.
+      reason: 'Denn'
+      correct_answer: 'Super, das war richtig!'
+      incorrect_answer: 'Das war leider nicht ganz richtig.'
+      medium_for_question_html: >
+        Es gibt ein %{medium} zu dieser Frage.
+      media_for_question_html: >
+        Es gibt ein %{medium_1} und ein %{medium_2} zu dieser Frage.
+      correct_result: 'richtig beantwortet'
+      incorrect_result: 'falsch beantwortet'
+      hide: 'ausblenden'
+      finale_html: >
+        Du hast es geschafft! Zur Belohnung gibt es ein %{xkcd_link}-Comic:
+      xkcd: 'XKCD'
+      errors: 'Achtung, das Quiz enthält noch Fehler'
+      undefined_targets: 'Es gibt undefinierte Verzweigungen'
+      no_end: 'Keine Verzweigung führt zum Ende'
+      no_start: 'Es ist keine Startecke definiert'
+      no_vertices: 'Es sind keine Ecken vorhanden'
+      error_occured: >
+        Da ist leider ein Fehler aufgetreten.
+        Diese Abzweigung wurde nicht implementiert.
+      none_correct: 'Keine der angegebenen Optionen war korrekt.'
+      undefined: 'undefined'
+      dafault: 'default'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -1818,6 +1864,8 @@ de:
     create_vertex: 'Ecke anlegen'
     edit_targets: 'Ziele ändern'
     save_targets: 'Ziele speichern'
+    save_vertex: 'Ecke speichern'
+    submit: 'Fertig'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

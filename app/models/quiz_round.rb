@@ -44,7 +44,8 @@ class QuizRound
   end
 
   def statement
-    (@correct ? 'richtig ' : 'falsch ') + 'beantwortet'
+    return I18n.t('admin.quiz.correct_result') if @correct
+    I18n.t('admin.quiz.incorrect_result')
   end
 
   private

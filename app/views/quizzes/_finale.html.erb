@@ -3,11 +3,15 @@
     <div class="col-sm-12 col-md-12 col-lg-10">
       <div class="card bg-remark border-secondary mt-2">
         <div class="card-body">
-          Du hast es geschafft! Zur Belohnung gibt es ein
-          <%= link_to 'XKCD', 'https://xkcd.com', target: :_blank %>-Comic:
+          <%= t('admin.quiz.finale_html',
+                xkcd_link: link_to(t('admin.quiz.xkcd'),
+                                   'https://xkcd.com',
+                                   target: :_blank)) %>
           <div>
             <% xkcd_comic = URI.extract(XKCD.img, ['https'])&.first %>
-            <%= link_to image_tag(xkcd_comic, class: "img-fluid"), xkcd_comic,
+            <%= link_to image_tag(xkcd_comic,
+                                  class: "img-fluid"),
+                        xkcd_comic,
                         target: :_blank %>
           </div>
         </div>

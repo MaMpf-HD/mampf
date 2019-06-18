@@ -1,34 +1,34 @@
 <% question = Question.find(vertex[:id]) %>
 <div class="text-center">
   <div class="col-12">
-  <% if input == question.answer_scheme %>
-    Super, das war richtig!
-  <% else %>
-    Das war leider nicht ganz richtig.
-  <% end %>
-  <% if question.video || question.manuscript %>
-    Es gibt
-    <% if question.video %>
-      ein
-      <%= link_to 'Erklärvideo',
-                  play_medium_path(question),
-                  target: :_blank %>
+    <% if input == question.answer_scheme %>
+      <%= t('admin.quiz.correct_answer') %>
+    <% else %>
+      <%= t('admin.quiz.incorrect_answer') %>
     <% end %>
     <% if question.video && question.manuscript %>
-      und
+      <%= t('admin.quiz.media_for_question_html',
+            medium_1: link_to(t('admin.quiz.video'),
+                                play_medium_path(question),
+                                target: :_blank),
+            medium_2: link_to(t('admin.quiz.manuscript'),
+                                display_medium_path(question),
+                                target: :_blank)) %>
+    <% elsif question.video %>
+      <%= t('admin.quiz.medium_for_question_html',
+            medium: link_to(t('admin.quiz.video'),
+                            play_medium_path(question),
+                            target: :_blank)) %>
+    <% elsif question.manuscript %>
+      <%= t('admin.quiz.medium_for_question_html',
+            medium: link_to(t('admin.quiz.manuskript'),
+                            display_medium_path(question),
+                            target: :_blank)) %>
     <% end %>
-    <% if question.manuscript %>
-      ein
-      <%= link_to 'Manuskript',
-                  display_medium_path(question),
-                  target: :_blank %>
-    <% end %>
-    zu dieser Frage.
-  <% end %>
   </div>
   <div class="col-12 mt-2">
     <button id="accept_results" type="button" class="btn btn-secondary">
-      Alles klar!
+      <%= t('admin.quiz.okay') %>
     </button>
   </div>
 
