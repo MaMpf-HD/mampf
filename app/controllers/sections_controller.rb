@@ -60,8 +60,7 @@ class SectionsController < ApplicationController
   def set_section
     @section = Section.find_by_id(params[:id])
     return if @section.present?
-    redirect_to :root, alert: 'Ein Abschnitt mit der angeforderten id ' \
-                              'existiert nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_section')
   end
 
   def section_params

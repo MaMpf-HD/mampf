@@ -34,14 +34,12 @@ class SearchController < ApplicationController
   def sanitize_search_string
     if @search_string.nil?
       redirect_back fallback_location: root_path,
-                    alert: 'Du hast eine Suche ohne Suchbegriff angefordert. ' \
-                           'Das funktioniert nicht.'
+                    alert: I18n.t('controllers.no_search_term')
       return
     end
     return if @search_string.length > 1
     redirect_back fallback_location: root_path,
-                  alert: 'Dein Suchbegriff sollte aus mindestens zwei ' \
-                         'Buchstaben bestehen.'
+                  alert: I18n.t('controllers.search_term_short')
   end
 
   def find_similar_tags

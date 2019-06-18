@@ -50,8 +50,7 @@ class UsersController < ApplicationController
       return
     end
     redirect_to :root,
-                alert: 'Ein(e) DozentIn mit der angeforderten id existiert ' \
-                       'nicht.'
+                alert: I18n.t('controllers.no_teacher')
   end
 
   private

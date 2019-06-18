@@ -52,8 +52,7 @@ class QuizzesController < ApplicationController
   def set_quiz
     @quiz = Quiz.find_by_id(params[:id])
     return if @quiz.present?
-    redirect_to :root, alert: 'Ein Quiz mit der angeforderten id '\
-                              'existiert nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_quiz')
   end
 
   def init_values
@@ -69,7 +68,6 @@ class QuizzesController < ApplicationController
     return if user_signed_in? && @quiz.visible_for_user?(current_user)
     return if !user_signed_in? && @quiz.published_with_inheritance? &&
                 @quiz.free?
-    redirect_to :root, alert: 'Du hast keine Berechtigung, auf dieses Quiz ' \
-                              'zuzugreifen.'
+    redirect_to :root, alert: I18n.t('controllers.no_quiz_access')
   end
 end

@@ -526,6 +526,7 @@ de:
       no_sections: 'Zu dieser Sitzung sind keine Abschnitte assoziiert.'
       start_item: 'Anfangs-Item'
       end_item: 'End-Item'
+      destroyed: 'Sitzung gelöscht'
       info:
         date: >
           Hier kannst Du das Datum auswählen, an dem die
@@ -886,28 +887,6 @@ de:
           auswählen, zu welchen Modulen das Tag assoziiert sein soll.
     term:
       index: 'Semesterübersicht'
-    quiz:
-      graph: Quiz-Graph
-      create_graph: 'Quiz-Graph anlegen'
-      info:
-        graph: >
-          Der Quiz-Graph ist der gerichtete Graph, der zu dem
-          Quiz korrespondiert.
-    question:
-      info:
-        first_save: >
-          Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
-          die Frage erstmalig abgespeichert hast.
-    remark:
-      info:
-        about: >
-          Eine Bemerkung korrespondiert zu einem Passus im Quiz,
-          in dem man der NutzerIn Dinge erklärt, Sachverhalte einordnet oder
-          den weiteren Beweisgang vorantreibt, häufig als Verbindungsstück
-          zwischen zwei Fragen.
-        first_save: >
-          Ein editierbarer Text wird erzeugt, nachdem Du
-          die Quiz-Erläuterung erstmalig abgespeichert hast.
     item:
       safe_delete_from_quarantine: >
         Der Eintrag wird von nirgendwo referenziert. Du kannst ihn also
@@ -1219,6 +1198,11 @@ de:
         Frage bearbeiten
       save_error: >
         Fehler beim Abspeichern der Frage
+      initial_text: 'Dummytext'
+      info:
+        first_save: >
+          Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
+          die Frage erstmalig abgespeichert hast.
     answer:
       new: 'Neue Antwort'
       delete_error: >
@@ -1229,6 +1213,7 @@ de:
       correctness: 'Korrektheit'
       true_lc: 'wahr'
       false_lc: 'falsch'
+      initial_text: 'Dummyantwort'
     remark:
       test: 'Test'
       create: 'Bemerkung anlegen'
@@ -1273,6 +1258,16 @@ de:
       edit_remark: >
         Bemerkung %{remark} bearbeiten
       edit: 'Bemerkung bearbeiten'
+      initial_text: 'Dummytext'
+      info:
+        about: >
+          Eine Bemerkung korrespondiert zu einem Passus im Quiz,
+          in dem man der NutzerIn Dinge erklärt, Sachverhalte einordnet oder
+          den weiteren Beweisgang vorantreibt, häufig als Verbindungsstück
+          zwischen zwei Fragen.
+        first_save: >
+          Ein editierbarer Text wird erzeugt, nachdem Du
+          die Quiz-Erläuterung erstmalig abgespeichert hast.
     quiz:
       start_vertex: 'Start-Ecke'
       vertices: 'Ecken'
@@ -1329,6 +1324,12 @@ de:
       none_correct: 'Keine der angegebenen Optionen war korrekt.'
       undefined: 'undefined'
       dafault: 'default'
+      graph: Quiz-Graph
+      create_graph: 'Quiz-Graph anlegen'
+      info:
+        graph: >
+          Der Quiz-Graph ist der gerichtete Graph, der zu dem
+          Quiz korrespondiert.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -1901,6 +1902,41 @@ de:
       Eine Liste der unterstützten Symbole gibt es
       <a href="https://katex.org/docs/supported.html">
       hier</a>.
+  controllers:
+    no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
+    session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
+    no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
+    no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
+    no_test: 'Für dieses Modul gibt es keinen Test.'
+    no_lecture: 'Eine Vorlesung mit der angeforderten id existiert nicht.'
+    no_lesson: 'Eine Sitzung mit der angeforderten id existiert nicht.'
+    no_page: >
+      Die angeforderte Seit existiert nicht. Du wurdest auf die
+      MaMpf-Homepage umgeleitet.
+    no_video: 'Zu diesem Medium existiert kein Video.'
+    no_manuscript: 'Zu diesem Medium existiert kein Manuskript.'
+    no_medium: 'Ein Medium mit der angeforderten id existiert nicht.'
+    contradiction: 'Widersprüchliche Suchanfrage.'
+    no_notification: >
+      Eine Benachrichtigung mit der angeforderten id existiert nicht.
+    no_question: 'Eine Frage mit der angeforderten id existiert nicht.'
+    no_quiz: 'Ein Quiz mit der angeforderten id existiert nicht.'
+    no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
+    no_search_string: >
+      Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
+    search_term_short: >
+      Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
+    no_section: 'Ein Abschnitt mit der angeforderten id existiert nicht.'
+    no_tag: 'Ein Begriff mit der angeforderten id existiert nicht.'
+    no_removal_rights: >
+      Für mindestens eines der Module, das Du entfernt hast, hast Du keine
+      Editorenrechte für das Entfernen von Tags.
+    no_adding_rights: >
+      Für mindestens eines der Module, das Du hinzugefügt hast, hast Du keine
+      Editorenrechte für das Hinzufügen von Tags.
+    no_term: 'Ein Semester mit der angeforderten id existiert nicht.'
+    no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
+  activerecord:
   activerecord:
     errors:
       models:

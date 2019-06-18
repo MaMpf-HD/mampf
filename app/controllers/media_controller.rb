@@ -89,13 +89,16 @@ class MediaController < ApplicationController
     @medium.save
     if @medium.valid?
       if @medium.sort == 'Remark'
-        @medium.update(type: 'Remark', text: 'Dummytext')
+        @medium.update(type: 'Remark',
+                       text: I18n.t('admin.remark.initial_text'))
       end
       if @medium.sort == 'Question'
-        @medium.update(type: 'Question', text: 'Dummytext', level: 1,
+        @medium.update(type: 'Question',
+                       text: I18n.t('admin.question.initial_text'),
+                       level: 1,
                        independent: false)
         Answer.create(question: @medium.becomes(Question),
-                      text: 'Dummyantwort',
+                      text: I18n.t('admin.answer.initial_text'),
                       value: true)
       end
       if @medium.sort == 'Quiz'
@@ -151,7 +154,7 @@ class MediaController < ApplicationController
   # play the video using thyme player
   def play
     if @medium.video.nil?
-      redirect_to :root, alert: 'Zu diesem Medium existiert kein Video.'
+      redirect_to :root, alert: I18n.t('controllers.no_video')
       return
     end
     @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
@@ -163,7 +166,7 @@ class MediaController < ApplicationController
   # show the pdf, optionally at specified page or named destination
   def display
     if @medium.manuscript.nil?
-      redirect_to :root, alert: 'Zu diesem Medium existiert kein Manuskript.'
+      redirect_to :root, alert: I18n.t('controllers.no_manuscript')
       return
     end
     if params[:destination].present?
@@ -280,15 +283,13 @@ class MediaController < ApplicationController
   def set_medium
     @medium = Medium.find_by_id(params[:id])&.becomes(Medium)
     return if @medium.present? && @medium.sort != 'RandomQuiz'
-    redirect_to :root, alert: 'Ein Medium mit der angeforderten id existiert ' \
-                              'nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_medium')
   end
 
   def set_course
     @course = Course.find_by_id(params[:course_id])
     return if @course.present?
-    redirect_to :root, alert: 'Ein Modul mit der angeforderten id ' \
-                              'existiert nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_course')
   end
 
   def set_teachable
@@ -350,7 +351,7 @@ class MediaController < ApplicationController
   def reveal_contradictions
     return unless params[:lecture_id].present?
     return if params[:lecture_id].to_i.in?(@course.lecture_ids)
-    redirect_to :root, alert: 'Wiedersprüchliche Suchanfrage.'
+    redirect_to :root, alert: I18n.t('controllers.contradiction')
   end
 
   def sanitize_page!

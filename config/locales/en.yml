@@ -504,6 +504,7 @@ en:
         There are no sections associated to this session.
       start_item: 'Start Item'
       end_item: 'End Item'
+      destroyed: 'Session Destroyed'
       info:
         date: >
           Here you can select the date when the session took place.
@@ -841,19 +842,6 @@ en:
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
-    question:
-      info:
-        first_save: >
-          An editable text for this question, together with answers, will be
-          created after you have saved this medium for the first time.
-    remark:
-      info:
-        about: >
-          A remark corresponds to a passage in a quiz in which you explain
-          material to the user, often as a link between successive questions.
-        first_save: >
-          An editable text for this remark will be created after
-          you have saved this medium for the first time.
     item:
       safe_delete_from_quarantine: >
         This item is not referenced from anywhere. You can safely delete it without
@@ -1135,6 +1123,11 @@ en:
         Edit Question
       save_error: >
         Error in saving the question
+      initial_text: 'Initial text'
+      info:
+        first_save: >
+          An editable text for this question, together with answers, will be
+          created after you have saved this medium for the first time.
     answer:
       new: 'New Answer'
       delete_error: >
@@ -1145,6 +1138,7 @@ en:
       correctness: 'Correctness'
       true_lc: 'true'
       false_lc: 'false'
+      initial_text: 'Initial text'
     remark:
       test: 'Test'
       create: 'Create Remark'
@@ -1186,6 +1180,14 @@ en:
       edit_remark: >
         Edit Remark %{remark}
       edit: 'Edit Remark'
+      initial_text: 'Initial text'
+      info:
+        about: >
+          A remark corresponds to a passage in a quiz in which you explain
+          material to the user, often as a link between successive questions.
+        first_save: >
+          An editable text for this remark will be created after
+          you have saved this medium for the first time.
     quiz:
       start_vertex: 'Start Vertex'
       vertices: 'Vertices'
@@ -1240,6 +1242,11 @@ en:
       none_correct: 'None of the given options was true.'
       undefined: 'undefined'
       default: 'default'
+      graph: 'Quiz Graph'
+      create_graph: 'Create Quiz Graph'
+      info:
+        graph: >
+          The Quiz Graph is the directed graph corresponding to this quiz.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1787,6 +1794,40 @@ en:
       A list of supported symbols can be found
       <a href="https://katex.org/docs/supported.html">
       here</a>.
+  controllers:
+    no_answer: 'There is no answer with this id.'
+    session_expired: 'Your session has expired. Please login again.'
+    no_chapter: 'There is no chapter with this id.'
+    no_course: 'There is no course with this id.'
+    no_test: 'There is no test for this course.'
+    no_lecture: 'There is no lecture with this id.'
+    no_lesson: 'There is no session with this id.'
+    no_page: >
+      The requested page does not exist. You were redirected to
+      the MaMpf homepage.
+    no_video: 'There is no video for this medium.'
+    no_manuscript: 'There is no manuscript for this medium.'
+    no_medium: 'There is no medium with this id.'
+    contradiction: 'Contradictory request.'
+    no_notification: 'There is no notification with this id.'
+    no_question: 'There is no question with this id.'
+    no_quiz: 'There is no quiz with this id.'
+    no_quiz_access: 'Du hast keine Berechtigung, auf dieses Quiz zuzugreifen.'
+    no_remark: 'There is no remark with this id.'
+    no_search_term: >
+      You made a search without a search term. That does not work.
+    search_term_short: >
+      Your search term should consist of at least two letters.
+    no_section: 'There is no section with this id.'
+    no_tag: 'There is no tag with this id.'
+    no_removal_rights: >
+      For at least one of the courses that you removed, you do not have
+      the necessary editing rights for the removal of tags.
+    no_adding_rights: >
+      For at least one of the courses that you added, you do not have
+      the necessary editing rights for the adding of tags.
+    no_term: 'There is no term for this id.'
+    no_teacher: 'There is no teacher with this id.'
   activerecord:
     errors:
       models:

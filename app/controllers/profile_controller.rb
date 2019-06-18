@@ -75,9 +75,6 @@ class ProfileController < ApplicationController
     @email_for_teachable = params[:user][:email_for_teachable] == '1'
     @email_for_news = params[:user][:email_for_news] == '1'
     @courses = Course.where(id: course_ids)
-    pp '*******************'
-    pp primary
-    pp secondary
     @lectures = Lecture.where(id: lecture_ids)
     @locale = params[:user][:locale]
   end

@@ -140,8 +140,7 @@ class LecturesController < ApplicationController
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
     return if @lecture.present?
-    redirect_to :root, alert: 'Eine Vorlesung mit der angeforderten id ' \
-                              'existiert nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 
   def set_view_locale

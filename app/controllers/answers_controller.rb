@@ -31,8 +31,7 @@ class AnswersController < ApplicationController
   def set_answer
     @answer = Answer.find_by_id(params[:id])
     return if @answer.present?
-    redirect_to root_path, alert: 'Eine Antwort mit der angeforderten id' \
-                                  'existiert nicht.'
+    redirect_to root_path, alert: I18n.t('controllers.no_answers')
   end
 
   def answer_params

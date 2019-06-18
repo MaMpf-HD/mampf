@@ -48,12 +48,13 @@ class LessonsController < ApplicationController
 
   def destroy
     lecture = @lesson.lecture
+    I18n.locale = lecture.locale_with_inheritance
     media = @lesson.media
     # move all of the lessons's media to the level of the lesson's lecture
     media.each do |m|
       m.update(teachable: lecture,
                description: m.description.presence ||
-                              (m.title + ' (Sitzung gelöscht)'))
+                              (m.title + ' (' + I18n.t('admin.lesson.destroyed') + ')'))
     end
     @lesson.destroy
     redirect_to edit_lecture_path(lecture)
@@ -73,8 +74,7 @@ class LessonsController < ApplicationController
   def set_lesson
     @lesson = Lesson.find_by_id(params[:id])
     return if @lesson.present?
-    redirect_to :root, alert: 'Eine Sitzung mit der angeforderten id ' \
-                              'existiert nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_lesson')
   end
 
   def lesson_params

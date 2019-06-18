@@ -40,7 +40,6 @@ class NotificationsController < ApplicationController
   def set_notification
     @notification = Notification.find_by_id(params[:id])
     return if @notification.present?
-    redirect_to :root, alert: 'Eine Benachrichtigung mit der angeforderten id' \
-                              'existiert nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_notification')
   end
 end

@@ -28,8 +28,7 @@ class RemarksController < MediaController
   def set_remark
     @remark = Remark.find_by_id(params[:id])
     return if @remark.present?
-    redirect_to remarks_path, alert: 'Eine Bemerkung mit der angeforderten id '\
-                                     'existiert nicht.'
+    redirect_to remarks_path, alert: I18n.t('controllers.no_remark')
   end
 
   def set_quizzes

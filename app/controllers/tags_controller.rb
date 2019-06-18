@@ -106,8 +106,7 @@ class TagsController < ApplicationController
   def set_tag
     @tag = Tag.find_by_id(params[:id])
     return if @tag.present?
-    redirect_to :root, alert: 'Ein Begriff mit der angeforderten id existiert '\
-                              'nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_tag')
   end
 
   # set up cytoscape graph data for neighbourhood subgraph of @tag,
@@ -218,11 +217,7 @@ class TagsController < ApplicationController
   end
 
   def error_hash
-    { 'remove_course' => 'Für mindestens eines der Module, das Du entfernt ' \
-                         'hast, hast Du keine Editorenrechte für das ' \
-                         'Entfernen von Tags.',
-      'add_course' => 'Für mindestens eines der Module, das Du hinzugefügt ' \
-                      'hast, hast Du keine Editorenrechte für das Hinzufügen ' \
-                      'von Tags.' }
+    { 'remove_course' => I18n.t('controllers.no_removal_rights'),
+      'add_course' => I18n.t('controllers.no_adding_rights') }
   end
 end

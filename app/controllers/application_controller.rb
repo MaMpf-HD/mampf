@@ -14,7 +14,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do
     redirect_to main_app.root_url,
-      alert: "Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an."
+      alert: I18n.t('controllers.session_expired')
   end
 
   # determine where to send the user after login

@@ -88,15 +88,13 @@ class CoursesController < ApplicationController
 
   def check_for_course
     return if Course.exists?(params[:id])
-    redirect_to :root, alert: 'Ein Modul mit der angeforderten id existiert ' \
-                              'nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_course')
   end
 
   def set_course
     @course = Course.find_by_id(params[:id])
     return if @course.present?
-    redirect_to :root, alert: 'Ein Modul mit der angeforderten id ' \
-                              'existiert nicht.'
+    redirect_to :root, alert: I18n.t('controllers.no_course')
   end
 
   def set_course_admin
@@ -155,7 +153,7 @@ class CoursesController < ApplicationController
 
   def check_if_enough_questions
     return if @course.enough_questions?
-    redirect_to :root, alert: 'Für dieses Modul gibt es keinen Test.'
+    redirect_to :root, alert: I18n.t('controllers.no_test')
   end
 
   def check_for_consent
