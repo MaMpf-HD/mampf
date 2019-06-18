@@ -38,6 +38,7 @@ class QuizzesController < ApplicationController
   end
 
   def proceed
+    I18n.locale = @quiz.locale_with_inheritance
     @quiz_round.update
   end
 
