@@ -68,6 +68,7 @@
           </div>
           <%= f.hidden_field :sort, value: 'link' %>
           <%= f.hidden_field :from, value: 'referral' %>
+          <%= f.hidden_field :locale, value: I18n.locale %>
           <div class="row">
             <div class="col-12 text-center">
               <%= f.submit t('buttons.save'), class: 'btn btn-primary' %>

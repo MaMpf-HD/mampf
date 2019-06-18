@@ -1939,13 +1939,48 @@ de:
   activerecord:
   activerecord:
     errors:
+      no_valid_url: 'Das ist keine gültige URL.'
       models:
+        announcement:
+          attributes:
+            details:
+              blank: 'Es muss ein Text angegeben werden.'
+        chapter:
+          attributes:
+            title:
+              blank: 'Es muss ein Titel angegeben werden.'
+        course:
+          attributes:
+            title:
+              blank: 'Es muss ein Titel angegeben werden.'
+              taken: 'Dieser Titel ist bereits vergeben.'
+            short_title:
+              blank: 'Es muss ein Kurztitel angegeben werden.'
+              taken: 'Dieser Kurztitel ist bereits vergeben.'
+        course_self_join:
+          attributes:
+            preceding_course:
+              taken: 'Diesen Eintrag in der Join Table gibt es bereits.'
+        item:
+          attributes:
+            sort:
+              inclusion: 'Der Typ ist unzuläsig.'
+            description:
+              blank: 'Es muss eine Beschreibung angegeben werden.'
+            start_time:
+              invalid_format: 'Ungültiges Format.'
+              too_late: 'Startzeit darf nicht größer sein als Videolänge.'
+              taken: 'Für diese Startzeit gibt es bereits einen Eintrag.'
         user:
           attributes:
             courses:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
               blank: 'Es muss ein Anzeigename angegeben werden.'
+            link:
+              blank: 'Link und Erläuterung können nicht gleichzeitig leer sein.'
+            description:
+              blank: 'Link und Erläuterung können nicht gleichzeitig leer sein.'
         notion:
           attributes:
             title:

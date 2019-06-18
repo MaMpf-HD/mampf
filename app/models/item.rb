@@ -32,12 +32,9 @@ class Item < ApplicationRecord
                                      'link', 'pdf_destination', 'self',
                                      'proposition', 'Lemma', 'Theorem',
                                      'subsection', 'Corollary', 'figure',
-                                     'chapter', 'exercise', 'equation'],
-                                message: 'Unzulässiger Typ' }
+                                     'chapter', 'exercise', 'equation'] }
   validates :link, http_url: true, if: :proper_link?
-  validates :description,
-            presence: { message: 'Beschreibung muss vorhanden sein.' },
-            if: :link?
+  validates :description, presence: true, if: :link?
   validate :valid_start_time
   validate :start_time_not_too_late
   validate :no_duplicate_start_time
@@ -404,7 +401,7 @@ class Item < ApplicationRecord
   def valid_start_time
     return true if start_time.nil?
     return true if start_time.valid?
-    errors.add(:start_time, 'Ungültiges Zeitformat.')
+    errors.add(:start_time, :invalid_format)
     false
   end
 
@@ -416,7 +413,7 @@ class Item < ApplicationRecord
   def start_time_not_too_late
     return true if start_time_not_required
     return true if start_time.total_seconds <= medium.video.metadata['duration']
-    errors.add(:start_time, 'Startzeit darf nicht größer sein als Videolänge.')
+    errors.add(:start_time, :too_late)
     false
   end
 
@@ -430,8 +427,7 @@ class Item < ApplicationRecord
     return true if start_time_not_required
     if start_times_without.include?([start_time.floor_seconds,
                                      start_time.milliseconds])
-      errors.add(:start_time,
-                 'Für diese Startzeit gibt es bereits einen Eintrag.')
+      errors.add(:start_time, :taken)
       false
     end
     true
@@ -441,10 +437,8 @@ class Item < ApplicationRecord
     return true if sort != 'link'
     return true if link.present?
     return true if explanation.present?
-    errors.add(:link,
-               'Link und Erläuterung können nicht gleichzeitig leer sein.')
-    errors.add(:explanation,
-               'Link und Erläuterung können nicht gleichzeitig leer sein.')
+    errors.add(:link, :blank)
+    errors.add(:explanation, :blank)
   end
 
   # is used for after save and before destroy callbacks

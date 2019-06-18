@@ -10,6 +10,8 @@ class ChaptersController < ApplicationController
   end
 
   def update
+    I18n.locale = @chapter.lecture.locale_with_inheritance ||
+                    current_user.locale || I18n.default_locale
     @chapter.update(chapter_params)
     if @chapter.valid?
       predecessor = params[:chapter][:predecessor]
@@ -27,6 +29,8 @@ class ChaptersController < ApplicationController
 
   def create
     @chapter = Chapter.new(chapter_params)
+    I18n.locale = @chapter&.lecture&.locale_with_inheritance ||
+                    current_user.locale || I18n.default_locale
     position = params[:chapter][:predecessor]
     # place the chapter in the correct position
     if position.present?

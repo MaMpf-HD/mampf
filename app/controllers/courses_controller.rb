@@ -16,6 +16,7 @@ class CoursesController < ApplicationController
   end
 
   def update
+    I18n.locale = @course.locale || I18n.default_locale
     @course.update(course_params)
     @errors = @course.errors
   end

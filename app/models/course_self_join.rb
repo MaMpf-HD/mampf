@@ -5,9 +5,8 @@
 class CourseSelfJoin < ApplicationRecord
   belongs_to :course
   belongs_to :preceding_course, class_name: 'Course'
-  validates :preceding_course, uniqueness: { scope: :course,
-                                             message: 'self join already ' \
-                                                      'exists' }
+  validates :preceding_course, uniqueness: { scope: :course}
+
   # we do not allow a course to be preceding itself
   after_save :destroy, if: :self_inverse?
 

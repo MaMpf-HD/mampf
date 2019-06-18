@@ -4,7 +4,7 @@ class Chapter < ApplicationRecord
   # the chapters of a lecture form an ordered list
   acts_as_list scope: :lecture
   has_many :sections, -> { order(position: :asc) }, dependent: :destroy
-  validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
+  validates :title, presence: true
 
   def to_label
     unless hidden

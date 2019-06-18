@@ -4,6 +4,7 @@ class ItemsController < ApplicationController
   authorize_resource
 
   def update
+    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
     @item.update(item_params)
     @errors = @item.errors unless @item.valid?
   end
@@ -13,7 +14,12 @@ class ItemsController < ApplicationController
   end
 
   def create
-    @item = Item.create(item_params)
+    if params[:item][:locale].in?(I18n.available_locales.map(&:to_s))
+      I18n.locale = params[:item][:locale]
+    end
+    @item = Item.new(item_params)
+    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
+    @item.save
     @errors = @item.errors unless @item.valid?
     # @from stores information about where the creation was triggered
     # @from is nil if the item was created as a toc item in thyme editor,

@@ -1830,11 +1830,47 @@ en:
     no_teacher: 'There is no teacher with this id.'
   activerecord:
     errors:
+      no_valid_url: 'This is not a valid URL.'
       models:
+        announcement:
+          attributes:
+            details:
+              blank: 'You need to give a text.'
+        chapter:
+          attributes:
+            title:
+              blank: 'You need to give a title.'
+        course:
+          attributes:
+            title:
+              blank: 'You need to give a title.'
+              taken: 'This title is already in use.'
+            short_title:
+              blank: 'You need to give a short title.'
+              taken: 'This short title is already in use.'
+        course_self_join:
+          attributes:
+            preceding_course:
+              taken: 'This entry in the join table already exists.'
+        item:
+          attributes:
+            sort:
+              inclusion: 'This sort is not allowed.'
+            description:
+              blank: 'You need to give a description.'
+            start_time:
+              invalid_format: 'Invalid format.'
+              too_late: >
+                Start time should not be later than the video's length.
+              taken: 'There is already an item with this start time.'
+            link:
+              blank: 'Link and description cannot both be blank.'
+            description:
+              blank: 'Link and description cannot both be blank.'
         user:
           attributes:
             courses:
-              blank: 'You nedd to subscribe at least one course.'
+              blank: 'You need to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
         notion:
