@@ -14,9 +14,11 @@ class Remark < Medium
   end
 
   def self.create_prefilled(label, teachable, editors)
-    remark = Remark.new(sort: 'Remark', description: label,
-                        teachable: teachable, editors: editors,
-                        text: 'Dummytext')
+    remark = Remark.new(sort: 'Remark',
+                        description: label,
+                        teachable: teachable,
+                        editors: editors,
+                        text: I18n.t('admin.remark.initial_text'))
     remark.save
     remark
   end
@@ -29,7 +31,8 @@ class Remark < Medium
     copy.editors = editors
     copy.parent_id = id
     copy.save
-    copy.update(description: copy.description + '-KOPIE-' + copy.id.to_s)
+    copy.update(description: copy.description +
+                               I18n.t('admin.remark.copy_marker') + copy.id.to_s)
     copy
   end
 

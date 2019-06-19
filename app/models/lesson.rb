@@ -15,9 +15,8 @@ class Lesson < ApplicationRecord
   # being a teachable (course/lecture/lesson), a lesson has associated media
   has_many :media, as: :teachable
 
-  validates :date, presence: { message: 'Es muss ein Datum angegeben werden.' }
-  validates :sections, presence: { message: 'Es muss mindestens ein Abschnitt '\
-                                            'angegeben werden.' }
+  validates :date, presence: true
+  validates :sections, presence: true
 
   # media are cached in several places
   # media are touched in order to find out whether cache is out of date

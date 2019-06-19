@@ -21,6 +21,7 @@ class LessonsController < ApplicationController
 
   def create
     @lesson = Lesson.new(lesson_params)
+    I18n.locale = @lesson.lecture.locale_with_inheritance if @lesson.lecture
     # add all tags from sections associated to this lesson
     @lesson.tags = @lesson.sections.map(&:tags).flatten
     @lesson.save
@@ -33,6 +34,7 @@ class LessonsController < ApplicationController
   end
 
   def update
+    I18n.locale = @lesson.lecture.locale_with_inheritance
     @lesson.update(lesson_params)
     if @lesson.valid?
       if params[:commit] == t('buttons.save')

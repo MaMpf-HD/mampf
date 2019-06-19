@@ -35,9 +35,7 @@ class User < ApplicationRecord
   has_many :announcements, foreign_key: 'announcer_id'
 
   # at least one course must be subscribed (if there are courses)
-  validates :courses,
-            presence: true,
-            if: :courses_exist?
+  validates :courses, presence: true, if: :courses_exist?
 
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?

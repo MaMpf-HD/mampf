@@ -51,17 +51,13 @@ class Medium < ApplicationRecord
   # a valid http(s) adress
   validates :external_reference_link, http_url: true,
                                       if: :external_reference_link?
+
   # the other validations are pretty straightforward
-  validates :sort, presence: { message: 'Es muss ein Typ angegeben werden.' }
-  validates :teachable, presence: { message: 'Es muss eine Assoziation ' \
-                                             'angegeben werden.' },
-            if: :proper?
-  validates :description, presence: { message: 'Es muss eine Beschreibung' \
-                                               'angegeben werden.' },
-                          unless: :undescribable?
-  validates :editors, presence: { message: 'Es muss ein Editor ' \
-                                           'angegeben werden.' },
-                      if: :proper?
+  validates :sort, presence: true
+  validates :teachable, presence: true, if: :proper?
+  validates :description, presence: true, unless: :undescribable?
+  validates :editors, presence: true, if: :proper?
+
   # make sure that a lecture cannot have two or more media of type 'Script'
   validate :at_most_one_manuscript
   # media of type 'Script' can only be associated to lectures
@@ -764,7 +760,7 @@ class Medium < ApplicationRecord
     return true unless sort == 'Script'
     if (Medium.where(sort: 'Script',
                      teachable: teachable).to_a - [self]).size.positive?
-      errors.add(:sort, 'Diese Vorlesung hat schon ein Skript.')
+      errors.add(:sort, :lecture_manuscript_exists)
       return false
     end
     true
@@ -773,27 +769,24 @@ class Medium < ApplicationRecord
   def script_only_for_lectures
     return true if teachable_type == 'Lecture'
     return true unless sort == 'Script'
-    errors.add(:sort, 'Der Medientyp "Skript" kann nur zu Vorlesungen
-                       assoziiert werden.')
+    errors.add(:sort, :lecture_only)
     false
   end
 
   def no_video_for_script
     return true unless sort == 'Script'
     return true unless video.present?
-    errors.add(:sort, 'Medien vom Typ "Skript" beinhalten kein Video.')
+    errors.add(:sort, :no_video)
     false
   end
 
   def no_changing_sort_to_or_from_script
     if sort_was == 'Script' && sort != 'Script'
-      errors.add(:sort, 'Ein Skript kann nicht in einen anderen Medientyp ' \
-                        'umgewandelt werden.')
+      errors.add(:sort, :no_conversion_from_script)
       return false
     end
     if persisted? && sort_was != 'Script' && sort == 'Script'
-      errors.add(:sort, 'Medien, die keine Skripte sind, können nicht in ' \
-                        'ein Skript umgewandelt werden.')
+      errors.add(:sort, :no_conversion_to_script)
       return false
     end
     true
@@ -801,7 +794,7 @@ class Medium < ApplicationRecord
 
   def no_tags_for_scripts
     return true unless sort == 'Script' && tags.any?
-    errors.add(:tags, 'Ein Skript darf keine Tags haben.')
+    errors.add(:tags, :no_tags_allowed)
     false
   end
 

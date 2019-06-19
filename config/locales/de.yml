@@ -1199,6 +1199,7 @@ de:
       save_error: >
         Fehler beim Abspeichern der Frage
       initial_text: 'Dummytext'
+      copy_marker: '-KOPIE-'
       info:
         first_save: >
           Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
@@ -1259,6 +1260,7 @@ de:
         Bemerkung %{remark} bearbeiten
       edit: 'Bemerkung bearbeiten'
       initial_text: 'Dummytext'
+      copy_marker: '-KOPIE-'
       info:
         about: >
           Eine Bemerkung korrespondiert zu einem Passus im Quiz,
@@ -1969,18 +1971,57 @@ de:
               blank: 'Es muss eine Beschreibung angegeben werden.'
             start_time:
               invalid_format: 'Ungültiges Format.'
-              too_late: 'Startzeit darf nicht größer sein als Videolänge.'
+              too_late: 'Die Startzeit darf nicht größer sein als die Videolänge.'
               taken: 'Für diese Startzeit gibt es bereits einen Eintrag.'
-        user:
-          attributes:
-            courses:
-              blank: 'Es muss mindestens ein Modul abonniert werden.'
-            name:
-              blank: 'Es muss ein Anzeigename angegeben werden.'
             link:
               blank: 'Link und Erläuterung können nicht gleichzeitig leer sein.'
             description:
               blank: 'Link und Erläuterung können nicht gleichzeitig leer sein.'
+        lecture:
+          attributes:
+            course:
+              taken: >
+                Eine Vorlesung mit derselben Kombination aus Modul, Semester
+                und DozentIn existiert bereits.
+              required: 'Es muss ein Modul angegeben werden.'
+            content_mode:
+              inclusion: 'Ungültiger Modus.'
+            term:
+              required: 'Es muss ein Semester angegeben werden.'
+            teacher:
+              required: 'Es muss ein(e) DozentIn angegeben werden.'
+        link:
+          attributes:
+            linked_medium:
+              uniqueness: 'Diese Verknüpfung gibt es bereits.'
+        lesson:
+          attributes:
+            date:
+              blank: 'Es muss ein Datum angegeben werden.'
+            sections:
+              blank: 'Es muss mindestens ein Abschnitt angegeben werden.'
+        medium:
+          attributes:
+            sort:
+              blank: 'Es muss ein Typ angegeben werden.'
+              lecture_manuscript_exists: >
+                Diese Vorlesung hat schon ein Skript.
+              lecture_only: >
+                Der Medienyp "Skript" kann nur zu Vorlesungen
+                assoziiert werden.
+              no_video: >
+                Medien vom Typ "Skript" beinhalten kein Video.
+            teachable:
+              blank: >
+                Es muss eine Assoziation zu einem Modul/Vorlesung/Sitzung
+                angegeben werden.
+            description:
+              blank: 'Es muss eine Beschreibung angegeben werden.'
+            editors:
+              blank: 'Es muss ein Editor angegeben werden.'
+            tags:
+              no_tags_allowed: >
+                Ein Medium vom Typ "Skript" darf keine Tags haben.'
         notion:
           attributes:
             title:
@@ -1990,9 +2031,39 @@ de:
               blank: 'Es muss ein Titel angegeben werden.'
             tag:
               no_tag: 'Es muss ein Tag angegeben werden.'
+        referral:
+          attributes:
+            start_time:
+              invalid_format: 'Ungültiges Zeitformat.'
+              too_late: >
+                Die Endzeit muss hinter der Startzeit liegen.
+            end_time:
+              invalid_format: 'Ungültiges Zeitformat.'
+              too_soon: 'Die Endzeit muss hinter der Startzeit liegen.'
+              too_late: >
+                Die Endzeit darf nicht größer sein als die Videolänge.
+        relation:
+          attributes:
+            related_tag:
+              taken: 'Diese Relation gibt es schon.'
+        section:
+          attributes:
+            title:
+              blank: 'Es muss ein Titel angegeben werden.'
         tag:
           attributes:
             notions:
               blank: >
                 Es muss mindestens für eine Sprache ein Titel angegeben
                 werden.
+        term:
+          attributes:
+            season:
+              inclusion: 'Ungültiger Typ.'
+              taken: 'Dieses Semester existiert bereits.'
+        user:
+          attributes:
+            courses:
+              blank: 'Es muss mindestens ein Modul abonniert werden.'
+            name:
+              blank: 'Es muss ein Anzeigename angegeben werden.'

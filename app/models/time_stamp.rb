@@ -3,7 +3,7 @@
 class TimeStamp
   include ActiveModel::Model
 
-  validates :milliseconds, presence: { message: 'Invalid timestamp.' }
+  validates :milliseconds, presence: true
   attr_reader :hours, :minutes, :seconds, :milliseconds
 
   # extract from YAML

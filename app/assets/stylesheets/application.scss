@@ -27,7 +27,8 @@ $grid-breakpoints: (
   xl: 1200px,
   xxl: 1440px,
   xxxl: 1600px,
-  xxxxl: 1920px
+  xxxxl: 1920px,
+  xxxxxl: 2160px
 );
 
 $container-max-widths: (
@@ -40,7 +41,8 @@ $container-max-widths: (
   xl: 1200px,
   xxl: 1440px,
   xxxl: 1600px,
-  xxxxl: 1920px
+  xxxxl: 1920px,
+  xxxxxl: 2160px
 );
 
 
@@ -139,6 +141,12 @@ $modal-xxl:                   1600px !default;
 
 
 .card-columns {
+  @include media-breakpoint-only(xxxxl) {
+    column-count: 2;
+  }
+  @include media-breakpoint-only(xxxl) {
+    column-count: 2;
+  }
   @include media-breakpoint-only(xxxl) {
     column-count: 2;
   }

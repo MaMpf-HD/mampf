@@ -1124,6 +1124,7 @@ en:
       save_error: >
         Error in saving the question
       initial_text: 'Initial text'
+      copy_marker: '-COPY-'
       info:
         first_save: >
           An editable text for this question, together with answers, will be
@@ -1181,6 +1182,7 @@ en:
         Edit Remark %{remark}
       edit: 'Edit Remark'
       initial_text: 'Initial text'
+      copy_marker: '-COPY-'
       info:
         about: >
           A remark corresponds to a passage in a quiz in which you explain
@@ -1867,12 +1869,54 @@ en:
               blank: 'Link and description cannot both be blank.'
             description:
               blank: 'Link and description cannot both be blank.'
-        user:
+        lecture:
           attributes:
-            courses:
-              blank: 'You need to subscribe at least one course.'
-            name:
-              blank: 'You need to give a display name.'
+            course:
+              taken: >
+                A lecture with the same combination of course, term and teacher
+                already exists.
+              required: 'You need to give a course.'
+            content_mode:
+              inclusion: 'Invalid mode.'
+            term:
+              required: 'You need to give a term.'
+            teacher:
+              required: 'You need to give a teacher.'
+        lesson:
+          attributes:
+            date:
+              blank: 'You need to give a date.'
+            sections:
+              blank: 'You need to give at least one section.'
+        link:
+          attributes:
+            linked_medium:
+              taken: 'This link already exists.'
+        medium:
+          attributes:
+            sort:
+              blank: 'You need to give a type.'
+              lecture_manuscript_exists: >
+                This lecture already has a manuscript.
+              lecture_only: >
+                Media of type 'Manuscript' can only be associated to lectures.
+              no_video: >
+                Media of type 'Manuscript' do not contain a video.
+              no_conversion_from_script: >
+                A medium of type 'Manuscript' cannot be converted to a different
+                media type.
+              no_conversion_to_script: >
+                A medium of type different from 'Manuscript' cannot be converted
+                to a medium of type 'Manuscript'.
+            teachable:
+              blank: 'You need to give an associated course/lecture/lesson.'
+            description:
+              blank: 'You need to give a description.'
+            editors:
+              blank: 'You need to give an editor.'
+            tags:
+              no_tags_allowed: >
+                A medium of type 'Manuscript' cannot have tags.
         notion:
           attributes:
             title:
@@ -1881,7 +1925,37 @@ en:
               blank: 'The title cannot be blank.'
             tag:
               no_tag: 'A related tag has to be given.'
+        referral:
+          attributes:
+            start_time:
+              invalid_format: 'Invalid format.'
+              too_late: >
+                Start time should not be later than the video's length.
+            end_time:
+              invalid_format: 'Invalid format.'
+              too_soon: 'End time has to be after the start time.'
+              too_late: >
+                End time should not be later than the video's length.
+        relation:
+          attributes:
+            related_tag:
+              taken: 'This relation already exists.'
+        section:
+          attributes:
+            title:
+              blank: 'You need to give a title.'
         tag:
           attributes:
             notions:
               blank: 'You need to give a title for at least one language.'
+        term:
+          attributes:
+            season:
+              inclusion: 'Not a valid type.'
+              taken: 'This term already exists.'
+        user:
+          attributes:
+            courses:
+              blank: 'You need to subscribe at least one course.'
+            name:
+              blank: 'You need to give a display name.'

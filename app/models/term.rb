@@ -5,10 +5,8 @@ class Term < ApplicationRecord
 
   # season can only be SS/WS, and there can be only one of this type each year
   validates :season, presence: true,
-                     inclusion: { in: %w[SS WS],
-                                  message: 'not a valid type' },
-                     uniqueness: { scope: :year,
-                                   message: 'Semester existiert bereits.' }
+                     inclusion: { in: %w[SS WS] },
+                     uniqueness: { scope: :year }
   # a year >=2000 needs to be present
   validates :year, presence: true,
                    numericality: { only_integer: true,

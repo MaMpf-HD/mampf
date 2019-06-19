@@ -37,18 +37,26 @@ class Question < Medium
     copy.editors = editors
     copy.parent_id = id
     copy.save
-    copy.update(description: copy.description + '-KOPIE-' + copy.id.to_s)
+    copy.update(description: copy.description +
+                               I18n.t('admin.question.copy_marker') +
+                               copy.id.to_s)
     answer_map = {}
     answers.each { |a| answer_map[a.id] = a.duplicate(copy).id }
     [copy, answer_map]
   end
 
   def self.create_prefilled(label, teachable, editors)
-    question = Question.new(sort: 'Question', description: label,
-                            teachable: teachable, editors: editors,
-                            text: 'Dummytext', level: 1, independent: false)
+    question = Question.new(sort: 'Question',
+                            description: label,
+                            teachable: teachable,
+                            editors: editors,
+                            text: I18n.t('admin.question.initial_text'),
+                            level: 1,
+                            independent: false)
     return question if question.invalid?
-    Answer.create(question: question, text: 'Dummyantwort', value: true)
+    Answer.create(question: question,
+                  text: I18n.t('admin.answer.initial_text'),
+                  value: true)
     question
   end
 

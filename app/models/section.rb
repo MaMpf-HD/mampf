@@ -17,7 +17,7 @@ class Section < ApplicationRecord
   has_many :lessons, through: :lesson_section_joins
 
   # a section needs to have a title
-  validates :title, presence: { message: 'Es muss ein Titel angegeben werden.' }
+  validates :title, presence: true
 
   # a section has many items, do not execute callbacks when section is destroyed
   has_many :items, dependent: :nullify

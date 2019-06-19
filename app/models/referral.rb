@@ -110,14 +110,14 @@ class Referral < ApplicationRecord
   def valid_start_time
     return true if start_time.nil?
     return true if start_time.valid?
-    errors.add(:start_time, 'Ungültiges Zeitformat.')
+    errors.add(:start_time, :invalid_format)
     false
   end
 
   def valid_end_time
     return true if end_time.nil?
     return true if end_time.valid?
-    errors.add(:end_time, 'Ungültiges Zeitformat.')
+    errors.add(:end_time, :invalid_format)
     false
   end
 
@@ -125,7 +125,7 @@ class Referral < ApplicationRecord
     return true if medium.nil?
     return true unless start_time.valid?
     return true if start_time.total_seconds <= medium.video_duration
-    errors.add(:start_time, 'Startzeit darf nicht größer sein als Videolänge.')
+    errors.add(:start_time, :too_late)
     false
   end
 
@@ -133,7 +133,7 @@ class Referral < ApplicationRecord
     return true if medium.nil?
     return true unless end_time.valid?
     return true if end_time.total_seconds <= medium.video_duration
-    errors.add(:end_time, 'Endzeit darf nicht größer sein als Videolänge.')
+    errors.add(:end_time, :too_late)
     false
   end
 
@@ -141,7 +141,7 @@ class Referral < ApplicationRecord
     return true unless start_time.valid?
     return true unless end_time.valid?
     return true if start_time.total_seconds < end_time.total_seconds
-    errors.add(:end_time, 'Endzeit muss hinter der Startzeit liegen.')
+    errors.add(:end_time, :too_soon)
     false
   end
 end

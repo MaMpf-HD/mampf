@@ -51,6 +51,7 @@ class MediaController < ApplicationController
   end
 
   def update
+    I18n.locale = @medium.locale_with_inheritance
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?

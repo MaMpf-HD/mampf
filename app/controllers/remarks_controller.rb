@@ -15,6 +15,7 @@ class RemarksController < MediaController
 
   def reassign
     remark_old = Remark.find_by_id(params[:id])
+    I18n.locale = remark_old.locale_with_inheritance
     @remark = remark_old.duplicate
     @quizzes.each do |q|
       Quiz.find_by_id(q).replace_reference!(remark_old, @remark)

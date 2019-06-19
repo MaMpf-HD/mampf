@@ -4,8 +4,7 @@ class Relation < ApplicationRecord
   belongs_to :tag
   belongs_to :related_tag, class_name: 'Tag'
 
-  validates :related_tag, uniqueness: { scope: :tag,
-                                        message: 'relation already exists' }
+  validates :related_tag, uniqueness: { scope: :tag }
   after_save :create_inverse, unless: :inverse?
   after_save :destroy, if: :self_inverse?
   after_save :touch_tag

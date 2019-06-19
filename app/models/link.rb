@@ -6,8 +6,7 @@ class Link < ApplicationRecord
   belongs_to :linked_medium, class_name: 'Medium'
 
   # we do not want duplicate entries
-  validates :linked_medium, uniqueness: { scope: :medium,
-                                          message: 'link already exists' }
+  validates :linked_medium, uniqueness: { scope: :medium }
 
   # after saving, we symmetrize the relation
   after_save :create_inverse, unless: :inverse?

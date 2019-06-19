@@ -36,13 +36,9 @@ class Lecture < ApplicationRecord
   has_many :announcements, dependent: :destroy
 
   # we do not allow that a teacher gives a certain lecture in a given term twice
-  validates :course, uniqueness: { scope: [:teacher_id, :term_id],
-                                   message: 'Eine Vorlesung mit derselben ' \
-                                            'Kombination aus Modul, Semester ' \
-                                            'und DozentIn existiert bereits.' }
+  validates :course, uniqueness: { scope: [:teacher_id, :term_id] }
 
-  validates :content_mode, inclusion: { in: ['video', 'manuscript'] ,
-                                        message: 'Ungültiger Modus.'}
+  validates :content_mode, inclusion: { in: ['video', 'manuscript'] }
 
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
