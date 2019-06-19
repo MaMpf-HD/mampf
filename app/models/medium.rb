@@ -235,7 +235,7 @@ class Medium < ApplicationRecord
         tagged_media_ids &= t.medium_ids
         break if tagged_media_ids == []
       end
-      tagged_media = Medium.where(id: tagged_media_ids)
+      tagged_media = media.where(id: tagged_media_ids)
     end
     edited_media = EditableUserJoin.where(editable_id: tagged_media,
                                           editable_type: 'Medium',
