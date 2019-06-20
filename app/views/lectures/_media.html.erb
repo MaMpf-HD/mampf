@@ -60,7 +60,7 @@
                                         .first(50)
                                         .each do |m| %>
                   <li>
-                    <%= link_to m.local_info,
+                    <%= link_to m.local_info_for_admins,
                                 inspect_or_edit_medium_path(m, inspection),
                                 id: "lecture-#{dom_id(m)}",
                                 class: textcolor(m),

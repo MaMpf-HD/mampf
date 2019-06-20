@@ -628,6 +628,13 @@ class Medium < ApplicationRecord
     end
   end
 
+  def local_info_for_admins
+    Rails.cache.fetch("#{cache_key}/local_info_for_admins") do
+      return local_info unless quizzy?
+      "\##{id}.#{local_info}"
+    end
+  end
+
   # returns description if present, otherwise ''
   def details
     Rails.cache.fetch("#{cache_key}/details") do

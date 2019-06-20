@@ -45,7 +45,7 @@
                         <% media_list.each do |m| %>
                           <% unless m.nil? %>
                             <li>
-                              <%= link_to m.local_info,
+                              <%= link_to m.local_info_for_admins,
                                   inspect_or_edit_medium_path(m, inspection),
                                   class: textcolor(m) %>
                             </li>
