@@ -559,8 +559,8 @@ en:
       local_info:
         no_title: 'untitled'
         to_session: 'to Session %{number}, %{date}'
-        question: 'Question %{position}/%{count}'
-        question: 'Remark %{position}/%{count}'
+        question: 'Question %{id}'
+        question: 'Remark %{id}'
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -1635,6 +1635,7 @@ en:
     at_beginning_of_chapter: 'At the beginning of the Chapter'
     chapter: 'Chapter'
     related_tags: 'Related tags'
+    lesson: 'Session'
     lessons: 'Sessions'
     details: 'Details'
     select: 'Select'

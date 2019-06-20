@@ -583,8 +583,8 @@ de:
       local_info:
         no_title: 'ohne Titel'
         to_session: 'zu Sitzung %{number}, %{date}'
-        question: 'Frage %{position}/%{count}'
-        remark: 'Erläuterung %{position}/%{count}'
+        question: 'Frage %{id}'
+        remark: 'Erläuterung %{id}'
       manuscript:
         structure: 'Struktur des Manuskripts'
       info:
@@ -1741,6 +1741,7 @@ de:
     chapter: 'Kapitel'
     section: 'Abschnitt'
     related_tags: 'Verknüpfte Tags'
+    lesson: 'Sitzung'
     lessons: 'Sitzungen'
     details: 'Details'
     select: 'auswählen'

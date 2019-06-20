@@ -603,46 +603,52 @@ class Medium < ApplicationRecord
   # the next methods all provide information about the medium, with more or
   # less details
 
-  #  provides sort and compact title for teachable, additionally information
-  # about number of siblings if there are any
   def compact_info
-    compact_info = sort_localized + '.' + teachable.compact_title
-    return compact_info unless siblings.count > 1
-    compact_info + '.(' + position.to_s + '/' + siblings.count.to_s + ')'
+    Rails.cache.fetch("#{cache_key}/compact_info") do
+      "#{sort_localized}.#{teachable.compact_title}.\##{id}"
+    end
   end
 
   # returns description unless medium is Kaviar associated to a lesson or a
   # question, in which case details about the lesson/the question are
   # returned, or a Script
   def local_info
-    return description if description.present?
-    return I18n.t('medium.local_info.no_title') unless undescribable?
-    if sort == 'Kaviar'
-      return I18n.t('admin.medium.local_info.to_session',
-                    number: teachable.lesson&.number,
-                    date: teachable.lesson&.date_localized)
-    elsif sort == 'Script'
-      return I18n.t('categories.script')
-    elsif sort == 'Question'
-      # actually, Questions should alway have a description
-      return I18n.t('admin.medium.local_info.question',
-                    position: position,
-                    count: siblings.count)
+    Rails.cache.fetch("#{cache_key}/local_info") do
+      return description if description.present?
+      return I18n.t('admin.medium.local_info.no_title') unless undescribable?
+      if sort == 'Kaviar'
+        return I18n.t('admin.medium.local_info.to_session',
+                      number: teachable.lesson&.number,
+                      date: teachable.lesson&.date_localized)
+      elsif sort == 'Script'
+        return I18n.t('categories.script')
+      elsif sort == 'Question'
+        # actually, Questions should alway have a description
+        return I18n.t('admin.medium.local_info.question',
+                      id: id)
+      end
+      # actually, Remarks should alway have a description
+      I18n.t('admin.medium.local_info.remark',
+             id: id)
     end
-    # actually, Remarks should alway have a description
-    I18n.t('admin.medium.local_info.remark',
-            position: position,
-            count: siblings.count)
   end
 
   # returns description if present, otherwise ''
   def details
-    description.to_s
+    Rails.cache.fetch("#{cache_key}/details") do
+      return description unless description.blank?
+      unless undescribable?
+        return "#{I18n.t('admin.medium.local_info.no_title')}.ID#{id}"
+      end
+      ''
+    end
   end
 
   def title
-    return compact_info if details.blank?
-    compact_info + '.' + details
+    Rails.cache.fetch("#{cache_key}/title") do
+      return compact_info if details.blank?
+      compact_info + '.' + details
+    end
   end
 
   # returns info made from sort, teachable title and description
@@ -655,10 +661,13 @@ class Medium < ApplicationRecord
 
   # returns info made from sort and description
   def local_title_for_viewers
-    if sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
-      return 'Lektion, ' + teachable.local_title_for_viewers
+    Rails.cache.fetch("#{cache_key}/local_title_for_viewers") do
+      return"#{sort_localized}, #{description}" if description.present?
+      if sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
+        return "#{I18n.t('categories.kaviar.singular')}, #{teachable.local_title_for_viewers}"
+      end
+      "#{sort_localized}, #{I18n.t('admin.medium.local_info.no_title')}"
     end
-    sort_localized + (description.present? ? ', ' + description : ', ohne Titel')
   end
 
   # returns the (cached) array of hashes describing this mediums items
