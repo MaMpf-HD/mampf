@@ -605,6 +605,7 @@ class Medium < ApplicationRecord
 
   def compact_info
     Rails.cache.fetch("#{cache_key}/compact_info") do
+      return "#{sort_localized}.#{teachable.compact_title}" unless quizzy?
       "#{sort_localized}.#{teachable.compact_title}.\##{id}"
     end
   end
@@ -700,6 +701,10 @@ class Medium < ApplicationRecord
   def undescribable?
     (sort == 'Kaviar' && teachable.class.to_s == 'Lesson') ||
       sort == 'Script'
+  end
+
+  def quizzy?
+    sort.in?(['Quiz', 'Question', 'Remark'])
   end
 
   def touch_teachable
