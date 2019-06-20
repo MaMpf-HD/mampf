@@ -71,4 +71,10 @@ class EventsController < ApplicationController
     @in_quiz = params[:in_quiz] == 'true'
     @quiz_id = params[:quiz_id].to_i
   end
+
+  def render_tag_title
+    tag = Tag.find_by_id(params[:tag_id])
+    identified_tag = Tag.find_by_id(params[:identified_tag_id])
+    @common_titles = tag.common_titles(identified_tag)
+  end
 end

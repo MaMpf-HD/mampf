@@ -247,6 +247,52 @@ class Tag < ApplicationRecord
                               .map(&:id)).update_all updated_at: Time.now
   end
 
+  def identify_with!(tag)
+    # otherwise, uniqueness per locale will cause problems:
+    # tag.notions.update_all(title: SecureRandom.hex(10))
+    # I18n.available_locales.each do |l|
+    #   if notions.exists?(locale: l)
+    #     if new_notions[l]
+    #       notions.find_by(locale: l).update(title: new_notions[l])
+    #     else
+    #       notions.find_by(locale: l).destroy
+    #     end
+    #   elsif new_notions[l]
+    #     notions << Notion.new(locale: l, title: new_notions[l])
+    #   end
+    # end
+    courses << (tag.courses - courses)
+    lessons << (tag.lessons - lessons)
+    sections << (tag.sections - sections)
+    media << (tag.media - media)
+    related_tags << tag.related_tags
+    related_tags.delete(tag)
+    tag.sections.each do |s|
+      new_order = if !id.in?(s.tags_order)
+                    s.tags_order.map { |t| t == tag.id ? id : t }
+                  else
+                    s.tags_order - [tag.id]
+                  end
+      s.update(tags_order: new_order)
+    end
+  end
+
+  def common_titles(tag)
+    result = { contradictions: [] }
+    I18n.available_locales.each do |l|
+      if notions.exists?(locale: l) && !tag.notions.exists?(locale: l)
+        result[l] = notions.find_by(locale: l).title
+      elsif !notions.exists?(locale: l) && tag.notions.exists?(locale: l)
+        result[l] = tag.notions.find_by(locale: l).title
+      elsif notions.exists?(locale: l) && tag.notions.exists?(locale: l)
+        result[l] = notions.find_by(locale: l).title + '|' +
+                      tag.notions.find_by(locale: l).title
+        result[:contradictions].push(l)
+      end
+    end
+    result
+  end
+
   private
 
   def touch_relations(notion)

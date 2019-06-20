@@ -802,6 +802,12 @@ en:
       extra_lectures: 'Addictional Lectures'
       missing_lectures: 'Missing lectures'
       create: 'Create Tag'
+      identify: 'Identify Tag'
+      identified_tag: 'Tdentified Tag'
+      identified_titles: 'Title of the identified tag'
+      contradiction: >
+        Attention! Thes two tags have different titles for this language.
+        You should decide for one of them.
       mampf_map: 'MaMpf Map'
       render: 'Render in external tab'
       edit_related_tags: >

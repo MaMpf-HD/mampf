@@ -171,10 +171,27 @@ $(document).on 'turbolinks:load', ->
         from: this.dataset.from
       }
     return
-  return
+
+  $(document).on 'change', '#tag_identified_tag_id', ->
+    if $(this).val()
+      $('#identified_tag_titles').show()
+      $('#submit_identified_tag').show()
+      $.ajax Routes.render_tag_title_path(),
+        type: 'GET'
+        dataType: 'script'
+        data: {
+          tag_id: this.dataset.id
+          identified_tag_id: $(this).val()
+        }
+      return
+    else
+      $('#identified_tag_titles').hide()
+      $('#submit_identified_tag').hide()
+    return
 
 # clean up before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#new-tag-button'
+  $(document).off 'change', '#tag_identified_tag_id'
   $('#cy').empty()
   return

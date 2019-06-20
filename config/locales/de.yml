@@ -848,6 +848,12 @@ de:
       extra_lectures: 'Zusätzliche Vorlesungen'
       missing_lectures: 'Fehlende Vorlesungen'
       create: 'Tag anlegen'
+      identify: 'Tag identifizieren'
+      identified_tag: 'zu identifizierender Tag'
+      identified_titles: 'Titel des identifizierten Tags'
+      contradiction: >
+        Achtung! Die zwei Tags haben für diese Sprache unterschiedliche Titel.
+        Hier solltest Du Dich für einen entscheiden.
       mampf_map: 'MaMpf-Map'
       render: 'in externem Tab rendern'
       edit_related_tags: >

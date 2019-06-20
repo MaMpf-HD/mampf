@@ -1,7 +1,7 @@
 # TagsController
 class TagsController < ApplicationController
   before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect,
-                                 :display_cyto]
+                                 :display_cyto, :identify]
   before_action :set_related_tags_for_user, only: [:show, :display_cyto]
   before_action :set_related_tags, only: [:edit, :inspect]
   before_action :check_for_consent
@@ -99,6 +99,14 @@ class TagsController < ApplicationController
     add_section
     add_medium
     @from = params[:from]
+  end
+
+  def identify
+    @identified_tag = Tag.find_by_id(params[:tag][:identified_tag_id])
+    @tag.identify_with!(@identified_tag)
+    @identified_tag.destroy
+    @tag.update(tag_params)
+    @errors = @tag.errors
   end
 
   private

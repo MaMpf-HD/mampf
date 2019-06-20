@@ -140,8 +140,9 @@ $(document).on 'turbolinks:load', ->
   $('#edited-media-tab a[data-toggle="tab"]').on 'shown.bs.tab', (e) ->
     sort = e.target.dataset.sort # newly activated tab
     path = $('#create-new-medium').prop('href')
-    new_path = path.replace(/\?sort=.+?&/, '?sort=' + sort + '&')
-    $('#create-new-medium').prop('href', new_path)
+    if path
+      new_path = path.replace(/\?sort=.+?&/, '?sort=' + sort + '&')
+      $('#create-new-medium').prop('href', new_path)
     return
 
 

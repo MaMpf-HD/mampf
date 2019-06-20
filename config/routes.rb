@@ -41,6 +41,7 @@ Rails.application.routes.draw do
   get 'events/cancel_quiz_basics', as: 'cancel_quiz_basics'
   get 'events/fill_quizzable_modal', as: 'fill_quizzable_modal'
   get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
+  get 'events/render_tag_title', as: 'render_tag_title'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'
@@ -150,13 +151,16 @@ Rails.application.routes.draw do
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
-  get 'tags/:id/inspect/', to: 'tags#inspect',
+  get 'tags/:id/inspect', to: 'tags#inspect',
                            as: 'inspect_tag'
-  get 'tags/:id/display_cyto/', to: 'tags#display_cyto',
+  get 'tags/:id/display_cyto', to: 'tags#display_cyto',
                                 as: 'display_cyto_tag'
+  patch 'tags/:id/identify', to: 'tags#identify',
+                            as: 'identify_tags'
+  put 'tags/:id/identify', to: 'tags#identify'
   resources :tags
 
-  get 'sections/list_tags/', to: 'sections#list_tags',
+  get 'sections/list_tags', to: 'sections#list_tags',
                              as: 'list_section_tags'
   get 'sections/:id/display', to: 'sections#display',
                               as: 'display_section'

@@ -26,12 +26,18 @@
           </button>
         </div>
       </div>
-      <div class="col-3 text-center">
+      <div class="col-3 text-right">
         <%= link_to t('admin.tag.index'),
                     tags_path,
                     class: 'btn btn-sm btn-outline-primary' %>
         <% if tag.id.present? && (current_user.admin? ||
               (tag.courses - current_user.edited_courses).blank?) %>
+          <button class="btn btn-sm btn-secondary"
+                  type="button"
+                  data-toggle="modal"
+                  data-target="#identifyTagModal">
+            <%= t('admin.tag.identify') %>
+          </button>
           <%= link_to t('buttons.delete'),
                       tag_path(tag),
                       method: :delete,
