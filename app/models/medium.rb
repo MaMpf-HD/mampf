@@ -623,14 +623,8 @@ class Medium < ApplicationRecord
                       date: teachable.lesson&.date_localized)
       elsif sort == 'Script'
         return I18n.t('categories.script')
-      elsif sort == 'Question'
-        # actually, Questions should alway have a description
-        return I18n.t('admin.medium.local_info.question',
-                      id: id)
       end
-      # actually, Remarks should alway have a description
-      I18n.t('admin.medium.local_info.remark',
-             id: id)
+      "#{sort_localized} \##{id}"
     end
   end
 
