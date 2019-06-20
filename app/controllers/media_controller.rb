@@ -314,7 +314,9 @@ class MediaController < ApplicationController
     reveal_contradictions
     sanitize_page!
     sanitize_per!
-    params[:all] = params[:all] == 'true'
+    params[:all] = params[:all] == 'true' || cookies[:all]
+    cookies[:all] = params[:all] || false
+    cookies[:per] = false if cookies[:all]
     params[:reverse] = params[:reverse] == 'true'
   end
 
@@ -360,6 +362,7 @@ class MediaController < ApplicationController
   end
 
   def sanitize_per!
+    cookies[:all] = false if params[:per] || cookies[:per]
     params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
                      params[:per].to_i
                    elsif cookies[:per]
