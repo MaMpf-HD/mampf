@@ -47,16 +47,18 @@ videoUpload = (fileInput) ->
   # create uppy istance
   uppy = Uppy.Core(
     id: fileInput.id
+    autoProceed: true
     restrictions: allowedFileTypes: [
       '.mp4'
       '.webm'
       '.ogg'
     ])
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: I18n.t('basics.file'))
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.ProgressBar, target: progressBar)
+  uppy.use(Uppy.FileInput,
+           target: uploadButton
+           locale: strings: chooseFiles: I18n.t('basics.file'))
+  uppy.use(Uppy.Informer, target: informer)
+  uppy.use(Uppy.ProgressBar, target: progressBar)
+
 
   # target the endpoint for shrine uploader
   # timeout has been increased from standard value to allow storing of large
@@ -73,8 +75,9 @@ videoUpload = (fileInput) ->
     return
 
   # add metadata to video card if upload was successful
-  uppy.on 'upload-success', (file, data) ->
+  uppy.on 'upload-success', (file, response) ->
     $('#video-wait').hide()
+    data = response.body
     if data.metadata.mime_type in ['video/mp4']
       # show video preview
       videoPreview.src = URL.createObjectURL(file.data)
@@ -129,6 +132,7 @@ manuscriptUpload = (fileInput) ->
   # create uppy instance
   uppy = Uppy.Core(
     id: fileInput.id
+    autoProceed: true
     restrictions: allowedFileTypes: [ '.pdf' ])
     .use(Uppy.FileInput,
       target: uploadButton
@@ -142,7 +146,8 @@ manuscriptUpload = (fileInput) ->
     fieldName: 'file'
 
   # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, data) ->
+  uppy.on 'upload-success', (file, response) ->
+    data = response.body
     if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
       # read uploaded file data from the upload endpoint response
       uploadedFileData = JSON.stringify(data)
