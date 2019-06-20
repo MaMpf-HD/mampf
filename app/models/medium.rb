@@ -603,86 +603,124 @@ class Medium < ApplicationRecord
   # the next methods all provide information about the medium, with more or
   # less details
 
+  def compact_info_uncached
+    return "#{sort_localized}.#{teachable.compact_title}" unless quizzy?
+    "#{sort_localized}.#{teachable.compact_title}.\##{id}"
+  end
+
   def compact_info
     Rails.cache.fetch("#{cache_key}/compact_info") do
-      return "#{sort_localized}.#{teachable.compact_title}" unless quizzy?
-      "#{sort_localized}.#{teachable.compact_title}.\##{id}"
+      compact_info_uncached
     end
   end
 
   # returns description unless medium is Kaviar associated to a lesson or a
   # question, in which case details about the lesson/the question are
   # returned, or a Script
+
+  def local_info_uncached
+    return description if description.present?
+    return I18n.t('admin.medium.local_info.no_title') unless undescribable?
+    if sort == 'Kaviar'
+      return I18n.t('admin.medium.local_info.to_session',
+                    number: teachable.lesson&.number,
+                    date: teachable.lesson&.date_localized)
+    elsif sort == 'Script'
+      return I18n.t('categories.script')
+    end
+    "#{sort_localized} \##{id}"
+  end
+
   def local_info
     Rails.cache.fetch("#{cache_key}/local_info") do
-      return description if description.present?
-      return I18n.t('admin.medium.local_info.no_title') unless undescribable?
-      if sort == 'Kaviar'
-        return I18n.t('admin.medium.local_info.to_session',
-                      number: teachable.lesson&.number,
-                      date: teachable.lesson&.date_localized)
-      elsif sort == 'Script'
-        return I18n.t('categories.script')
-      end
-      "#{sort_localized} \##{id}"
+      local_info_uncached
     end
+  end
+
+  def local_info_for_admins_uncached
+    return local_info unless quizzy?
+    "\##{id}.#{local_info}"
   end
 
   def local_info_for_admins
     Rails.cache.fetch("#{cache_key}/local_info_for_admins") do
-      return local_info unless quizzy?
-      "\##{id}.#{local_info}"
+      local_info_for_admins_uncached
     end
   end
 
   # returns description if present, otherwise ''
+
+  def details_uncached
+    return description unless description.blank?
+    unless undescribable?
+      return "#{I18n.t('admin.medium.local_info.no_title')}.ID#{id}"
+    end
+    ''
+  end
+
   def details
     Rails.cache.fetch("#{cache_key}/details") do
-      return description unless description.blank?
-      unless undescribable?
-        return "#{I18n.t('admin.medium.local_info.no_title')}.ID#{id}"
-      end
-      ''
+      details_uncached
     end
+  end
+
+  def title_uncached
+    return compact_info if details.blank?
+    compact_info + '.' + details
   end
 
   def title
     Rails.cache.fetch("#{cache_key}/title") do
-      return compact_info if details.blank?
-      compact_info + '.' + details
+      title_uncached
     end
   end
 
   # returns info made from sort, teachable title and description
+
+  def title_for_viewers_uncached
+    sort_localized + ', ' + teachable&.title_for_viewers.to_s +
+      (description.present? ? ', ' + description : '')
+  end
+
   def title_for_viewers
     Rails.cache.fetch("#{cache_key}/title_for_viewers") do
-      sort_localized + ', ' + teachable&.title_for_viewers.to_s +
-        (description.present? ? ', ' + description : '')
+      title_for_viewers_uncached
     end
   end
 
   # returns info made from sort and description
+  def local_title_for_viewers_uncached
+    return"#{sort_localized}, #{description}" if description.present?
+    if sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
+      return "#{I18n.t('categories.kaviar.singular')}, #{teachable.local_title_for_viewers}"
+    end
+    "#{sort_localized}, #{I18n.t('admin.medium.local_info.no_title')}"
+  end
+
+
+  # returns info made from sort and description
   def local_title_for_viewers
     Rails.cache.fetch("#{cache_key}/local_title_for_viewers") do
-      return"#{sort_localized}, #{description}" if description.present?
-      if sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
-        return "#{I18n.t('categories.kaviar.singular')}, #{teachable.local_title_for_viewers}"
-      end
-      "#{sort_localized}, #{I18n.t('admin.medium.local_info.no_title')}"
+      local_title_for_viewers_uncached
     end
   end
 
   # returns the (cached) array of hashes describing this mediums items
   # by id, and their title from within a given course or lecture
+
+  def items_with_references_uncached
+    items.map do |i|
+      {
+        id: i.id,
+        title_within_course: i.title_within_course,
+        title_within_lecture: i.title_within_lecture
+      }
+    end
+  end
+
   def items_with_references
     Rails.cache.fetch("#{cache_key}/items_with_reference") do
-      items.map do |i|
-        {
-          id: i.id,
-          title_within_course: i.title_within_course,
-          title_within_lecture: i.title_within_lecture
-        }
-      end
+      items_with_references_uncached
     end
   end
 
@@ -707,6 +745,20 @@ class Medium < ApplicationRecord
   def quizzy?
     sort.in?(['Quiz', 'Question', 'Remark'])
   end
+
+  def title_uncached
+    return compact_info if details.blank?
+    compact_info + '.' + details
+  end
+
+  def local_title_for_viewers_uncached
+    return"#{sort_localized}, #{description}" if description.present?
+    if sort == 'Kaviar' && teachable.class.to_s == 'Lesson'
+      return "#{I18n.t('categories.kaviar.singular')}, #{teachable.local_title_for_viewers}"
+    end
+    "#{sort_localized}, #{I18n.t('admin.medium.local_info.no_title')}"
+  end
+
 
   def touch_teachable
     return if teachable.nil?

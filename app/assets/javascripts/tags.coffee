@@ -187,6 +187,7 @@ $(document).on 'turbolinks:load', ->
     else
       $('#identified_tag_titles').hide()
       $('#submit_identified_tag').hide()
+      $('#identified_tag_titles select').empty()
     return
 
 # clean up before turbolinks caches

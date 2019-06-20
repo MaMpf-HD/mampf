@@ -198,13 +198,17 @@ class User < ApplicationRecord
     edited_courses.any? || edited_lectures.any? || edited_media.any?
   end
 
-  # the next three methods return information about the user extracted from
+  # the next methods return information about the user extracted from
   # email and name
+
+  def info_uncached
+    return email unless name.present?
+    name + ' (' + email + ')'
+  end
 
   def info
     Rails.cache.fetch("#{cache_key}/user_info") do
-      return email unless name.present?
-      name + ' (' + email + ')'
+      info_uncached
     end
   end
 

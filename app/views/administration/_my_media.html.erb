@@ -11,11 +11,13 @@
         <% current_user.edited_media.order(:updated_at)
                        .reverse.first(25)
                        .each do |m| %>
-          <li>
-            <%= link_to m.title,
-                        edit_medium_path(m),
-                        class: textcolor(m) %>
-          </li>
+          <% cache m do %>
+            <li>
+              <%= link_to m.title,
+                          edit_medium_path(m),
+                          class: textcolor(m) %>
+            </li>
+          <% end %>
         <% end %>
       </ul>
       <% if current_user.edited_media.count > 25 %>

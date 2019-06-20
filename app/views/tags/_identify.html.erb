@@ -44,11 +44,12 @@
                         <%= n.object.locale %>
                       </div>
                     </div>
-                    <%= n.text_field :title,
-                                     class: 'form-control',
-                                     id: 'identified_tag_title-' + n.object.locale.to_s,
-                                     data: { id: tag.id.to_i,
-                                             locale: n.object.locale } %>
+                    <%= n.select :title,
+                                 options_for_select([[]]),
+                                 {},
+                                 { class: 'form-control',
+                                   data: { id: tag.id.to_i,
+                                           locale: n.object.locale } } %>
                     <%= n.hidden_field :locale,
                                        value: n.object.locale %>
                   </div>

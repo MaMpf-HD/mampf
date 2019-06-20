@@ -74,7 +74,7 @@ class EventsController < ApplicationController
 
   def render_tag_title
     tag = Tag.find_by_id(params[:tag_id])
-    identified_tag = Tag.find_by_id(params[:identified_tag_id])
-    @common_titles = tag.common_titles(identified_tag)
+    @identified_tag = Tag.find_by_id(params[:identified_tag_id])
+    @common_titles = tag.common_titles(@identified_tag)
   end
 end

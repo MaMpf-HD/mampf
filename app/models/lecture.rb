@@ -178,10 +178,16 @@ class Lecture < ApplicationRecord
   end
 
   # returns the ARel of all media whose teachable's lecture is the given lecture
+
+  def media_with_inheritance_uncached
+    Medium.proper.where(teachable: self)
+      .or(Medium.proper.where(teachable: self.lessons))
+  end
+
+
   def media_with_inheritance
     Rails.cache.fetch("#{cache_key}/media_with_inheritance") do
-      Medium.proper.where(teachable: self)
-        .or(Medium.proper.where(teachable: self.lessons))
+      media_with_inheritance_uncached
     end
   end
 

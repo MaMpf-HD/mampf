@@ -53,16 +53,55 @@ class Tag < ApplicationRecord
   end
 
   def title
-    local_title_cached
+    Rails.cache.fetch("#{cache_key}/title") do
+      local_title_uncached
+    end
+  end
+
+  def extended_title_uncached
+    return local_title_uncached unless other_titles_uncached.any?
+    local_title_uncached + " (#{other_titles_uncached.join(', ')})"
   end
 
   def extended_title
-    return local_title_cached unless other_titles.any?
-    local_title_cached + " (#{other_titles_cached.join(', ')})"
+    Rails.cache.fetch("#{cache_key}/extended_title") do
+      extended_title_uncached
+    end
   end
 
   def locales
     notions.pluck(:locale)
+  end
+
+  def local_title_uncached
+    notions.find_by(locale: I18n.locale)&.title ||
+      notions.find_by(locale: I18n.default_locale)&.title || notions.first&.title
+  end
+
+  def other_titles_uncached
+    notions.pluck(:title) - [local_title_uncached]
+  end
+
+  def other_titles
+    Rails.cache.fetch("#{cache_key}/other_titles") do
+      other_titles_uncached
+    end
+  end
+
+  def title_id_hash
+    Rails.cache.fetch("#{cache_key}/title_id_hash") do
+      { title: local_title_uncached, id: id }
+    end
+  end
+
+  def extended_title_id_hash
+    Rails.cache.fetch("#{cache_key}/extended_title_id_hash") do
+      { title: extended_title_uncached, id: id }
+    end
+  end
+
+  def locale_title_hash
+    notions.map { |n| [n.locale, n.title] }.to_h
   end
 
   # returns all tags whose title is close to the given search string
@@ -74,15 +113,6 @@ class Tag < ApplicationRecord
                                             search_string.downcase) > 0.9
                   end
                   .map(&:id))
-  end
-
-  def local_title
-    notions.find_by(locale: I18n.locale)&.title ||
-      notions.find_by(locale: I18n.default_locale)&.title || notions.first&.title
-  end
-
-  def other_titles
-    notions.pluck(:title) - [local_title]
   end
 
   # returns the array of all tags (sorted by title) together with
@@ -209,30 +239,6 @@ class Tag < ApplicationRecord
     super + '-' + I18n.locale.to_s
   end
 
-  def local_title_cached
-    Rails.cache.fetch("#{cache_key}/locale_title") do
-      local_title
-    end
-  end
-
-  def other_titles_cached
-    Rails.cache.fetch("#{cache_key}/other_titles") do
-      other_titles
-    end
-  end
-
-  def title_id_hash
-    Rails.cache.fetch("#{cache_key}/title_id_hash") do
-      { title: local_title, id: id }
-    end
-  end
-
-  def extended_title_id_hash
-    Rails.cache.fetch("#{cache_key}/extended_title_id_hash") do
-      { title: extended_title, id: id }
-    end
-  end
-
   def touch_lectures
     Lecture.where(id: sections.map(&:lecture)
                               .map(&:id)).update_all updated_at: Time.now
@@ -248,19 +254,6 @@ class Tag < ApplicationRecord
   end
 
   def identify_with!(tag)
-    # otherwise, uniqueness per locale will cause problems:
-    # tag.notions.update_all(title: SecureRandom.hex(10))
-    # I18n.available_locales.each do |l|
-    #   if notions.exists?(locale: l)
-    #     if new_notions[l]
-    #       notions.find_by(locale: l).update(title: new_notions[l])
-    #     else
-    #       notions.find_by(locale: l).destroy
-    #     end
-    #   elsif new_notions[l]
-    #     notions << Notion.new(locale: l, title: new_notions[l])
-    #   end
-    # end
     courses << (tag.courses - courses)
     lessons << (tag.lessons - lessons)
     sections << (tag.sections - sections)
@@ -280,15 +273,10 @@ class Tag < ApplicationRecord
   def common_titles(tag)
     result = { contradictions: [] }
     I18n.available_locales.each do |l|
-      if notions.exists?(locale: l) && !tag.notions.exists?(locale: l)
-        result[l] = notions.find_by(locale: l).title
-      elsif !notions.exists?(locale: l) && tag.notions.exists?(locale: l)
-        result[l] = tag.notions.find_by(locale: l).title
-      elsif notions.exists?(locale: l) && tag.notions.exists?(locale: l)
-        result[l] = notions.find_by(locale: l).title + '|' +
-                      tag.notions.find_by(locale: l).title
-        result[:contradictions].push(l)
-      end
+      result[l] = [locale_title_hash[l.to_s]] + [tag.locale_title_hash[l.to_s]]
+      result[l].delete(nil)
+      result[:contradictions].push(l) if result[l].count > 1
+      result.delete(l) unless result[l].present?
     end
     result
   end
