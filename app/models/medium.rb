@@ -692,7 +692,7 @@ class Medium < ApplicationRecord
   end
 
   def locale_with_inheritance
-    locale || teachable.locale_with_inheritance
+    locale || teachable&.locale_with_inheritance
   end
 
   private

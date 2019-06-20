@@ -319,7 +319,8 @@ class Course < ApplicationRecord
     quiz = Quiz.new(description: "Zufallsquiz #{course.title} #{Time.now}",
                     level: 1,
                     quiz_graph: quiz_graph,
-                    sort: 'RandomQuiz')
+                    sort: 'RandomQuiz',
+                    locale: locale)
     quiz.save
     return quiz.errors unless quiz.valid?
     quiz
