@@ -360,11 +360,14 @@ class MediaController < ApplicationController
   end
 
   def sanitize_per!
-    params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24])
+    params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
                      params[:per].to_i
+                   elsif cookies[:per]
+                     cookies[:per]
                    else
                      8
                    end
+    cookies[:per] = params[:per]
   end
 
   def search_params

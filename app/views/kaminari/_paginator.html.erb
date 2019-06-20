@@ -1,4 +1,5 @@
 <%= paginator.render do %>
+<div style="float: right;">
   <nav>
     <ul class="pagination pagination-sm">
       <%= first_page_tag unless current_page.first? %>
@@ -14,4 +15,5 @@
       <%= last_page_tag unless current_page.last? %>
     </ul>
   </nav>
+</div>
 <% end %>

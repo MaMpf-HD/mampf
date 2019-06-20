@@ -1,62 +1,68 @@
 <% if @media.any? %>
-<div class="row pb-2">
-  <div class="col-sm-12 col-md-12 col-lg-6">
-    <ul class="nav">
-      <li class="nav-item pr-1">
-        <%= link_to t('reverse_order'),
-                    course_food_path(@course,
-                                     params: { project: params[:project],
-                                               lecture_id: params[:lecture_id],
-                                               reverse: !params[:reverse],
-                                               all: params[:all],
-                                               per: params[:per] }),
-                    class: 'nav-link btn btn-sm bg-grey-lighten-4' %>
-      </li>
-      <li class="nav-item pl-1 pr-1">
-        <% unless @media.page(1).total_pages == 1 || params[:all] %>
-          <%= link_to t('all'),
+  <div class="row pb-2">
+    <div class="col-sm-12 col-md-12 col-lg-6">
+      <ul class="nav">
+        <li class="nav-item pr-1">
+          <%= link_to t('reverse_order'),
                       course_food_path(@course,
                                        params: { project: params[:project],
                                                  lecture_id: params[:lecture_id],
-                                                 reverse: params[:reverse],
-                                                 all: true,
+                                                 reverse: !params[:reverse],
+                                                 all: params[:all],
                                                  per: params[:per] }),
-                      class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
-
-        <% end %>
-      </li>
-      <li class="nav-item pl-1">
-        <div class="dropdown pl-2">
-          <button class="btn btn-sm dropdown-toggle text-primary" type="button"
-                  id="results_per_page" data-toggle="dropdown"
-                  aria-haspopup="true" aria-expanded="false">
-            <%= t('per_page') %>
-          </button>
-          <div class="dropdown-menu" id="results_per_page">
-            <% [3,4,8,12,24].each do |hits| %>
-              <%= link_to hits.to_s,
-                          course_food_path(@course,
-                                           params: { page: 1,
-                                                     project: params[:project],
-                                                     lecture_id: params[:lecture_id],
-                                                     reverse: params[:reverse],
-                                                     per: hits }),
-                          class: 'dropdown-item' %>
-            <% end %>
+                      class: 'nav-link btn btn-sm bg-grey-lighten-4' %>
+        </li>
+        <li class="nav-item pl-1 pr-1">
+          <% unless @media.page(1).total_pages == 1 || params[:all] %>
+            <%= link_to t('all'),
+                        course_food_path(@course,
+                                         params: { project: params[:project],
+                                                   lecture_id: params[:lecture_id],
+                                                   reverse: params[:reverse],
+                                                   all: true,
+                                                   per: params[:per] }),
+                        class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
+          <% end %>
+        </li>
+        <li class="nav-item pl-1">
+          <div class="dropdown pl-2">
+            <button class="btn btn-sm dropdown-toggle text-primary" type="button"
+                    id="results_per_page" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+              <%= t('per_page') %>
+            </button>
+            <div class="dropdown-menu" id="results_per_page">
+              <% [3,4,8,12,24,48].each do |hits| %>
+                <%= link_to hits.to_s,
+                            course_food_path(@course,
+                                             params: { page: 1,
+                                                       project: params[:project],
+                                                       lecture_id: params[:lecture_id],
+                                                       reverse: params[:reverse],
+                                                       per: hits }),
+                            class: 'dropdown-item' %>
+              <% end %>
+            </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="col-sm-12 col-md-12 col-lg-6 pt-1">
+      <% unless params[:all] %>
+        <%= paginate @media, window: 2 %>
+      <% end %>
+    </div>
   </div>
-  <div class="col-sm-12 col-md-12 col-lg-6 pt-1">
-    <% unless params[:all] %>
-      <%= paginate @media, window: 2 %>
-    <% end %>
-  </div>
-</div>
-<%= render partial: 'media/media',
-           locals: { media: @media,
-                     tags: true } %>
+  <%= render partial: 'media/media',
+             locals: { media: @media,
+                       tags: true } %>
+  <% unless params[:all] %>
+    <div class="row my-2">
+      <div class="col-12">
+        <%= paginate @media, window: 2 %>
+      </div>
+    </div>
+  <% end %>
 <% else %>
   <div class="jumbotron bg-light-blue-lighten-5">
     <%= t('admin.medium.no_media') %>
