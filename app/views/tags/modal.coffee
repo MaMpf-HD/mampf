@@ -17,5 +17,5 @@ $('input[id$="-selectized"]').css('width', '100%')
 $('#newTagModal').modal('show').data('from','<%= @from %>')
 
 $('#newTagModal').on 'shown.bs.modal', ->
-  $('#tag_notions_attributes_0_title').focus()
+  $('#titlesInput input[data-locale="<%= @locale %>"]').focus()
   return

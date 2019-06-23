@@ -99,6 +99,7 @@ class TagsController < ApplicationController
     add_section
     add_medium
     @from = params[:from]
+    @locale = locale
   end
 
   def identify
@@ -222,6 +223,17 @@ class TagsController < ApplicationController
     (I18n.available_locales - [I18n.locale]).each do |l|
       @tag.notions.new(locale: l)
     end
+  end
+
+  def locale
+    locale = if params[:from] == 'course'
+               @tag.courses&.first&.locale
+             elsif params[:from] == 'medium'
+               @tag.media&.first&.locale_with_inheritance
+             elsif params[:from] == 'section'
+               @tag.sections&.first&.lecture&.locale_with_inheritance
+             end
+    locale || current_user.locale
   end
 
   def error_hash

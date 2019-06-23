@@ -16,31 +16,34 @@
       id="tag-notions-error-<%= tag.id.to_i %>">
     </div>
   </div>
-  <%= f.fields_for :notions do |n| %>
-    <div class="form-row">
-    <div class="form-group col-11">
-      <div class="input-group">
-        <div class="input-group-prepend">
-          <div class="input-group-text">
-            <%= n.object.locale %>
+  <div id="titlesInput">
+    <%= f.fields_for :notions do |n| %>
+      <div class="form-row">
+        <div class="form-group col-11">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">
+                <%= n.object.locale %>
+              </div>
+            </div>
+            <%= n.text_field :title, class: 'form-control',
+                                     data: { id: tag.id.to_i,
+                                             locale: n.object.locale } %>
           </div>
         </div>
-        <%= n.text_field :title, class: 'form-control',
-                                 data: { id: tag.id.to_i } %>
+        <% unless new_tag %>
+          <div class="form-group col-1">
+            <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
+            <i class="fas fa-trash-alt text-dark"
+               data-toggle="tooltip"
+               title="<%= t('buttons.delete') %>">
+            </i>
+          </div>
+        <% end %>
       </div>
-    </div>
-    <% unless new_tag %>
-      <div class="form-group col-1">
-        <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
-        <i class="fas fa-trash-alt text-dark"
-           data-toggle="tooltip"
-           title="<%= t('buttons.delete') %>">
-        </i>
-      </div>
+      <%= n.hidden_field :locale %>
     <% end %>
-    </div>
-    <%= n.hidden_field :locale %>
-  <% end %>
+  </div>
   <% if new_tag %>
     <div class="form-group">
       <%= f.label :related_tag_ids, t('admin.tag.related_tags') %>
