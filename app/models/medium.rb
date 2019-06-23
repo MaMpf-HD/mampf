@@ -705,6 +705,13 @@ class Medium < ApplicationRecord
     end
   end
 
+  # this is used in dropdowns for compact info
+  def extended_label
+    Rails.cache.fetch("#{cache_key}/extended_label") do
+      "#{teachable.compact_title}.\##{id}.#{description}"
+    end
+  end
+
   # returns the (cached) array of hashes describing this mediums items
   # by id, and their title from within a given course or lecture
 

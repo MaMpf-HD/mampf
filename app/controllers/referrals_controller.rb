@@ -51,12 +51,12 @@ class ReferralsController < ApplicationController
   def list_items
     teachable_id = params[:teachable_id].to_s.split('-')
     if teachable_id[0] == 'external'
-      result = Item.where(medium: nil).map { |i| [i.description, i.id] }
+      result = Item.where(medium: nil).pluck(:description, :id)
     else
       @teachable = teachable_id[0].constantize.find_by_id(teachable_id[1])
       result = @teachable.media_items_with_inheritance
     end
-    render json: result
+    render json: result.map { |i| { value: i.second, text: i.first } }
   end
 
   private

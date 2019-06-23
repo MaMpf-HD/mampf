@@ -65,8 +65,7 @@ $(document).on 'turbolinks:load', ->
         itemSelectize.clear()
         itemSelectize.clearOptions()
         if result?
-          for r in result
-            itemSelectize.addOption({ value: r[1], text: r[0] })
+          itemSelectize.addOption(result)
         itemSelectize.refreshOptions(false)
         $('#create_external_link').show() if teachableId == 'external-0'
         return

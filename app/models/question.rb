@@ -6,12 +6,6 @@ class Question < Medium
     description
   end
 
-  def extended_label
-    Rails.cache.fetch("#{cache_key}/extended_label") do
-      "#{teachable.compact_title}.\##{id}.#{description}"
-    end
-  end
-
   def answer_scheme
     scheme = {}
     answers.each do |a|
