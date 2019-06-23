@@ -19,6 +19,7 @@
 !/tmp/.keep
 /public/tmp/*
 /public/assets/*
+/public/packs/*
 !/public/assets/.keep
 
 /node_modules
