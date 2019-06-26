@@ -1712,6 +1712,10 @@ en:
     quiz: 'Quiz'
     preview: 'Preview'
     enlarge: 'Enlarge'
+    hits: 'Hits'
+    no_hits: 'The search has not returned any hits.'
+    with_inheritance: 'with inheritance'
+    without_inheritance: 'without inheritance'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

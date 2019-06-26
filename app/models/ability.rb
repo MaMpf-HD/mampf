@@ -84,7 +84,7 @@ class Ability
       can [:list_tags, :list_sections, :display], Section
 
       can :manage, Tag
-      can :display_cyto, Tag
+      can [:display_cyto, :fill_tag_select], Tag
 
       cannot :read, Term
 

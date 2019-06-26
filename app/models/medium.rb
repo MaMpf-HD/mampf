@@ -93,10 +93,21 @@ class Medium < ApplicationRecord
   scope :proper, -> { where.not(sort: 'RandomQuiz') }
   scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 1.day.ago) }
 
+  searchable do
+    string :sort
+    string :teachable_compact do
+      "#{teachable_type}-#{teachable_id}"
+    end
+    integer :id
+    integer :teachable_id
+    integer :tag_ids, multiple: true
+    integer :editor_ids, multiple: true
+  end
+
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
     %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script Question Quiz
-       Reste Remark]
+       Reste Remark RandomQuiz]
   end
 
   # media sorts and their german descriptions
@@ -123,7 +134,7 @@ class Medium < ApplicationRecord
   # and the user's primary lecture for the given course (this is relevant for
   # the ordering of the results as results for the primary lecture are placed
   # before hits for other lectures)
-  def self.search(primary_lecture, params)
+  def self.search_all(primary_lecture, params)
     course = Course.find_by_id(params[:course_id])
     return Medium.none if course.nil?
     filtered = Medium.filter_media(course, params[:project])
@@ -211,8 +222,10 @@ class Medium < ApplicationRecord
   # value for :types is an array of integers which correspond to indices
   # in the sort_enum array
   def self.search_sorts(search_params)
-    return Medium.sort_enum unless search_params[:all_types] == '0'
-    types = search_params[:types] || []
+    unless search_params[:all_types] == '0'
+      return (Medium.sort_enum - ['RandomQuiz'])
+    end
+    search_params[:types] || []
   end
 
   # returns search results for the media search with search_params provided
@@ -242,6 +255,39 @@ class Medium < ApplicationRecord
                                           user_id: editors)
                                    .pluck(:editable_id).uniq
     Medium.where(id: edited_media)
+  end
+
+  def self.search_by(search_params, per, page)
+    search_params[:types] = [] if search_params[:all_types] == '1'
+    if search_params[:teachable_inheritance] == '1'
+      search_params[:teachable_ids] = Course.search_inherited_teachables(search_params)
+    end
+    search_params[:teachable_ids] = [] if search_params[:all_teachables] == '1'
+    search_params[:editor_ids] = [] if search_params[:all_editors] == '1'
+    if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
+      search_params[:tag_ids] = Tag.pluck(:id)
+    end
+    search = Sunspot.new_search(Medium) do
+      with(:sort, search_params[:types])
+      with(:editor_ids, search_params[:editor_ids])
+      with(:teachable_compact, search_params[:teachable_ids])
+    end
+    unless search_params[:all_tags] == '1' &&
+             search_params[:tag_operator] == 'or'
+      if search_params[:tag_operator] == 'or'
+        search.build do
+          with(:tag_ids).any_of(search_params[:tag_ids])
+        end
+      else
+        search.build do
+          with(:tag_ids).all_of(search_params[:tag_ids])
+        end
+      end
+    end
+    search.build do
+      paginate page: page, per_page: per
+    end
+    search
   end
 
   def restricted?

@@ -158,6 +158,12 @@ Rails.application.routes.draw do
   patch 'tags/:id/identify', to: 'tags#identify',
                             as: 'identify_tags'
   put 'tags/:id/identify', to: 'tags#identify'
+  get 'tags/fill_tag_select', to: 'tags#fill_tag_select',
+                              as: 'fill_tag_select'
+  get 'tags/catalog', to: 'tags#catalog',
+                       as: 'tags_catalog'
+  get 'tags/search', to: 'tags#search',
+                      as: 'tags_search'
   resources :tags
 
   get 'sections/list_tags', to: 'sections#list_tags',

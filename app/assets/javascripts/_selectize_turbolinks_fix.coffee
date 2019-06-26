@@ -25,6 +25,23 @@ $(document).on 'turbolinks:before-cache', ->
 # making it look empty
 # brute force solution: set width to 100%
 $(document).on 'turbolinks:load', ->
-  $('.selectize').selectize({ plugins: ['remove_button'] })
-  $('input[id$="-selectized"]').css('width', '100%')
+  $('.selectize').each ->
+    if this.id == 'search_tag_ids' && this.dataset.filled == 'false'
+      tag_select = this
+      $.ajax Routes.fill_tag_select_path(),
+        type: 'GET'
+        dataType: 'json'
+        success: (result) ->
+          for option in result
+            new_option = document.createElement('option')
+            new_option.value = option.value
+            new_option.text = option.text
+            tag_select.add(new_option, null)
+          tag_select.dataset.filled = 'true'
+          $(tag_select).selectize({ plugins: ['remove_button'] })
+          return
+      return
+    else
+      $(this).selectize({ plugins: ['remove_button'] })
+    $('input[id$="-selectized"]').css('width', '100%')
   return

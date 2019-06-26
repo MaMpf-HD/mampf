@@ -4,7 +4,7 @@ class MediaController < ApplicationController
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search]
   before_action :set_course, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :sanitize_params
+  before_action :sanitize_params, only: [:index]
   before_action :check_for_consent, except: [:play, :display]
   authorize_resource
   layout 'administration'
@@ -20,7 +20,6 @@ class MediaController < ApplicationController
   end
 
   def catalog
-    I18n.locale = current_user.locale
   end
 
   def show
@@ -149,7 +148,12 @@ class MediaController < ApplicationController
 
   # return all media that match the search parameters
   def search
-    @media = Medium.search_by_attributes(search_params)
+    search = Medium.search_by(search_params, 10, params[:page])
+    search.execute
+    results = search.results
+    @total = search.total
+    @media = Kaminari.paginate_array(results, total_count: @total)
+                     .page(params[:page]).per(10)
   end
 
   # play the video using thyme player
@@ -339,8 +343,8 @@ class MediaController < ApplicationController
 
   # search is done in search class method for Medium
   def search_results
-    search_results = Medium.search(@course.primary_lecture(current_user),
-                                   params)
+    search_results = Medium.search_all(@course.primary_lecture(current_user),
+                                       params)
     # search_results are ordered in a certain way
     # the next lines ensure that filtering for visible media does not
     # mess up the ordering
@@ -376,6 +380,7 @@ class MediaController < ApplicationController
   def search_params
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
                                    :all_editors, :tag_operator,
+                                   :teachable_inheritance,
                                    types: [],
                                    teachable_ids: [],
                                    tag_ids: [],

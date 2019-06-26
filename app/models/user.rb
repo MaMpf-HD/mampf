@@ -64,13 +64,12 @@ class User < ApplicationRecord
 
   # returns the array of all teachers
   def self.teachers
-    User.includes(:given_lectures).select(&:teacher?)
+    User.where(id: Lecture.pluck(:user_id).uniq)
   end
 
   # returns the array of all editors
   def self.editors
-    User.includes(:edited_courses, :edited_lectures, :edited_media)
-        .select(&:editor?)
+    User.where(id: EditableUserJoin.pluck(:user_id).uniq)
   end
 
   # Returns the array of all editors (of courses, lectures, media), together
