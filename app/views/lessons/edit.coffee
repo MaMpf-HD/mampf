@@ -12,7 +12,28 @@ else
 
   # activate popovers and selectize
   $('[data-toggle="popover"]').popover()
-  $('#lesson-modal-content .selectize').selectize({ plugins: ['remove_button'] })
+
+  $('#lesson-modal-content .selectize').each ->
+    if this.dataset.ajax == 'true' && this.dataset.filled == 'false'
+      tag_select = this
+      $.ajax Routes.fill_tag_select_path(),
+        type: 'GET'
+        dataType: 'json'
+        success: (result) ->
+          for option in result
+            new_option = document.createElement('option')
+            new_option.value = option.value
+            new_option.text = option.text
+            tag_select.add(new_option, null)
+          tag_select.dataset.filled = 'true'
+          $(tag_select).selectize({ plugins: ['remove_button'] })
+          return
+      return
+    else
+      $(this).selectize({ plugins: ['remove_button'] })
+  $('#lesson-modal-content input[id$="-selectized"]').css('width', '100%')
+
+
 
   # add/remove associated tags in the tag selector
   # if sections are selected/deselected

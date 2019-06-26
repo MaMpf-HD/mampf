@@ -31,7 +31,7 @@
                     tags_path,
                     class: 'btn btn-sm btn-outline-primary' %>
         <% if tag.id.present? && (current_user.admin? ||
-              (tag.courses - current_user.edited_courses).blank?) %>
+              (tag.courses & current_user.edited_courses).any?) %>
           <button class="btn btn-sm btn-secondary"
                   type="button"
                   data-toggle="modal"

@@ -65,7 +65,7 @@ class UsersController < ApplicationController
   end
 
   def set_elevated_users
-    @elevated_users = User.where(admin: true).to_a | User.editors |
+    @elevated_users = User.where(admin: true) | User.editors |
                       User.teachers
   end
 end

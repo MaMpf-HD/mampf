@@ -75,10 +75,14 @@
          data-from="medium">
       </a>
       <%= f.select :tag_ids,
-                   options_for_select(Tag.select_by_title,
-                                      medium.tags.map(&:id)),
+                   options_for_select(medium.tags.map { |t| [t.extended_title, t.id] },
+                                      medium.tags.pluck(:id)),
                    {},
-                   { multiple: true, class: 'selectize' } %>
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
+                     data: { ajax: true,
+                             filled: false } } %>
       <div class="invalid-feedback"
            id="medium-tags-error">
       </div>
@@ -90,7 +94,7 @@
       <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
       <%= f.select :linked_medium_ids,
                    options_for_select(Medium.select_by_name,
-                                      medium.linked_media.map(&:id)),
+                                      medium.linked_media.pluck(:id)),
                    {}, { multiple: true, class: 'selectize' } %>
     </div>
     <div class="form-group">

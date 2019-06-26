@@ -14,12 +14,16 @@
      style="display: none;">
   </i>
   <%= f.select :related_tag_ids,
-                options_for_select(Tag.select_by_title_except(Tag.where(id: tag.id)),
-                                   related_tag_ids_selection(tag)),
+                options_for_select(related_tag_ids_selection(tag)
+                                     .map { |t| [t.extended_title, t.id]},
+                                   related_tag_ids_selection(tag)
+                                     .map(&:id)),
                 {},
                 { multiple: true,
                   class: 'selectize',
-                  data: { id: tag.id.to_i } } %>
+                  data: { id: tag.id.to_i,
+                          ajax: true,
+                          filled: false } } %>
   <div class="invalid-feedback"
        id="tag-related-tags-error-<%= tag.id.to_i %>">
   </div>

@@ -251,7 +251,7 @@ class Course < ApplicationRecord
   # or 'course-' followed by the id
   # search is done with inheritance
   def self.search_teachables(search_params)
-    unless search_params[:all_teachables] == '0'
+    if search_params[:all_teachables] == '1'
       return Course.all + Lecture.all + Lesson.all
     end
     courses = Course.where(id: Course.search_course_ids(search_params))
@@ -265,14 +265,19 @@ class Course < ApplicationRecord
 
   def self.search_lecture_ids(search_params)
     teachable_ids = search_params[:teachable_ids] || []
-    teachable_ids.select { |t| t.start_with?('lecture') }
-                 .map { |t| t.remove('lecture-') }
+    teachable_ids.select { |t| t.start_with?('Lecture') }
+                 .map { |t| t.remove('Lecture-') }
   end
 
   def self.search_course_ids(search_params)
     teachable_ids = search_params[:teachable_ids] || []
-    teachable_ids.select { |t| t.start_with?('course') }
-                 .map { |t| t.remove('course-') }
+    teachable_ids.select { |t| t.start_with?('Course') }
+                 .map { |t| t.remove('Course-') }
+  end
+
+  def self.search_inherited_teachables(search_params)
+    return unless search_params[:teachable_ids]
+    self.search_teachables(search_params).map { |t| "#{t.class}-#{t.id}" }
   end
 
   # returns the array of courses that can be edited by the given user,

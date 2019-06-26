@@ -11,8 +11,6 @@ class TagsController < ApplicationController
   layout 'administration'
 
   def index
-    @tags = Tag.includes(:courses, :related_tags)
-    @tags_with_id = Tag.ids_titles_json
     I18n.locale = current_user.locale
   end
 
@@ -108,6 +106,23 @@ class TagsController < ApplicationController
     @identified_tag.destroy
     @tag.update(tag_params)
     @errors = @tag.errors
+  end
+
+  def fill_tag_select
+    result = Tag.select_by_title.map { |t| { value: t[1], text: t[0] } }
+    render json: result
+  end
+
+  def search
+    search = Tag.search do
+      fulltext search_params[:title]
+      with(:course_ids, search_params[:course_ids])
+      paginate page: params[:page], per_page: 10
+    end
+    results = search.results
+    @total = search.total
+    @tags = Kaminari.paginate_array(results, total_count: @total)
+                    .page(params[:page]).per(10)
   end
 
   private
@@ -240,4 +255,9 @@ class TagsController < ApplicationController
     { 'remove_course' => I18n.t('controllers.no_removal_rights'),
       'add_course' => I18n.t('controllers.no_adding_rights') }
   end
+
+  def search_params
+    params.require(:search).permit(:title, course_ids: [])
+  end
+
 end

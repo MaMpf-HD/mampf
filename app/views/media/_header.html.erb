@@ -55,7 +55,7 @@
     <% unless new_medium %>
       <% if medium.teachable.published? &&
              !medium.published_with_inheritance? %>
-        <button class="btn btn-sm btn-secondary mb-2"
+        <button class="btn btn-sm btn-warning mb-2"
                 type="button"
                 id="publish-medium-button">
           <%= t('buttons.publish') %>

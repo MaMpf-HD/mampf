@@ -25,6 +25,12 @@
 /node_modules
 /yarn-error.log
 
+/solr/data
+/solr/test/data
+/solr/development/data
+/solr/default/data
+/solr/pids
+
 .byebug_history
 coverage
 

@@ -1,6 +1,12 @@
 <div class="form-group">
   <%= f.select :tag_ids,
-               options_for_select(Tag.select_by_title,
+               options_for_select(course.tags.natural_sort_by(&:extended_title)
+                                        .map { |t| [t.extended_title, t.id] },
                                   course.tags.map(&:id)),
-               {}, { multiple: true, class: 'selectize' } %>
+               {},
+               { multiple: true,
+                 class: 'selectize',
+                 style: 'display: none;',
+                 data: { ajax: true,
+                         filled: false } } %>
 </div>

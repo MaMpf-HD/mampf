@@ -74,14 +74,16 @@
     </a>
     <%= f.select :tag_ids,
                  options_for_select(section.tags_order
-                                           .map { |t| [Tag.find_by_id(t)&.extended_title, t] } +
-                                      Tag.select_by_title_except(section.tags),
+                                           .map { |t| [Tag.find_by_id(t)&.extended_title, t] },
                                     section.tag_ids),
                  {},
                  { multiple: true,
                    class: 'selectize mt-2',
                    data: { id: section.id,
-                           chapter: section.chapter.id },
+                           chapter: section.chapter.id,
+                           ajax: true,
+                           filled: false,
+                           drag: true },
                    id: 'section_tag_ids_' + section.id.to_s } %>
     <div class="invalid-feedback"
          id="section-tags-error-<%= section.id %>">

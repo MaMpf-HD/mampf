@@ -48,6 +48,13 @@ class Tag < ApplicationRecord
   # will already have been deleted
   before_destroy :remove_from_section_tags_order, prepend: true
 
+  searchable do
+    text :titles do
+      notions.pluck(:title).join(' ')
+    end
+    integer :course_ids, multiple: true
+  end
+
   def self.ids_titles_json
     Tag.all.map { |t| t.extended_title_id_hash }.to_json
   end
@@ -258,7 +265,7 @@ class Tag < ApplicationRecord
     lessons << (tag.lessons - lessons)
     sections << (tag.sections - sections)
     media << (tag.media - media)
-    related_tags << tag.related_tags
+    related_tags << (tag.related_tags - related_tags)
     related_tags.delete(tag)
     tag.sections.each do |s|
       new_order = if !id.in?(s.tags_order)

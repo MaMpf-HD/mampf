@@ -767,10 +767,10 @@ en:
           </i>
           ), to which courses or lectures this medium is associated to
           <i>
-          with inheritance.
+          with inheritance (without inheritance.
           </i>
-          This means that if you select a course, media that are associated
-          to the course's lectures and sessions will be shown as well;
+          If "with inheritance" is chosen, this means that if you select a
+          course, media that are associated to the course's lectures and sessions will be shown as well;
           if you select a lecture, media that are associated to the lecture's
           sessions will be shown as well.
         search_tags: >
@@ -1712,6 +1712,10 @@ en:
     quiz: 'Quiz'
     preview: 'Preview'
     enlarge: 'Enlarge'
+    hits: 'Hits'
+    no_hits: 'The search has not returned any hits.'
+    with_inheritance: 'with inheritance'
+    without_inheritance: 'without inheritance'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
