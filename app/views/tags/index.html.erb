@@ -11,31 +11,30 @@
                 id: 'create-new-tag' %>
   </div>
 </div>
-<form>
+<%= form_with url: tags_search_path,
+              scope: 'search',
+              remote: true,
+              method: 'get' do |f| %>
+
   <div class="form-row mb-3 p-2">
-    <div class="form-group col-3 mx-3">
-      <label for="inputTag">
-        <%= t('basics.title') %>
-      </label>
+    <div class="form-group col-6 mx-3">
+      <%= f.label :title, t('basics.title') %>
       <%= helpdesk(t('admin.tag.info.search_title'), false) %>
-      <input type="text"
-             id="inputTag"
-             class="form-control"
-             placeholder="<%= t('basics.search') %>">
+      <%= f.text_field :title,
+                       { class: 'form-control',
+                         placeholder: t('basics.search') } %>
     </div>
-    <div class="form-group col-6">
-      <label for="inputCourses">
-        <%= t('basics.courses') %>
-      </label>
+    <div class="form-group col-5">
+      <%= f.label :course_ids, t('basics.courses') %>
       <%= helpdesk(t('admin.tag.info.search_course'), true) %>
-      <select multiple id="inputCourses" class="selectize"
-              placeholder="<%= t('basics.select') %>">
-        <%= Course.all.each do |c| %>
-          <option selected value="<%= c.id %>">
-            <%= c.short_title %>
-          </option>
-        <% end %>
-      </select>
+      <%= f.select :course_ids,
+                   options_for_select(Course.all
+                                            .map { |c| [c.title, c.id] },
+                                      Course.pluck(:id)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     id: 'inputCourses' } %>
       <button id="tags-edited-courses"
               type="button"
               class="btn btn-sm btn-outline-info"
@@ -56,37 +55,12 @@
       </button>
     </div>
   </div>
-</form>
-<div class="row bg-mdb-color-lighten-2 mx-2 px-4 py-3">
-  <div class="col-3 text-light">
-    <strong>
-      <%= t('basics.title') %>
-    </strong>
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= f.submit t('basics.search'),
+                   class: 'btn btn-primary' %>
+    </div>
   </div>
-  <div class="col-2 text-light">
-    <strong>
-      <%= t('basics.courses') %>
-    </strong>
-  </div>
-  <div class="col-6 text-light">
-    <strong>
-      <%= t('admin.tag.related_tags') %>
-    </strong>
-  </div>
-  <div class="col-1 text-light">
-    <strong>
-      <%= t('basics.actions') %>
-    </strong>
-  </div>
-</div>
-<div id="tagTable" data-tags="<%= @tags_with_id %>">
-  <% @tags.natural_sort_by(&:title).each do |t| %>
-    <% cache t do %>
-      <div class="row border-bottom mx-2 px-4"
-           id="row-tag-<%= t.id %>"
-           data-courses="<%= t.courses.map(&:id).to_json %>">
-        <%= render partial: 'tags/row', locals: { tag: t }%>
-      </div>
-    <% end %>
-  <% end %>
+<% end %>
+<div id="tag-search-results">
 </div>

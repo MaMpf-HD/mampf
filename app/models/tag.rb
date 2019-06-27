@@ -265,7 +265,7 @@ class Tag < ApplicationRecord
     lessons << (tag.lessons - lessons)
     sections << (tag.sections - sections)
     media << (tag.media - media)
-    related_tags << tag.related_tags
+    related_tags << (tag.related_tags - related_tags)
     related_tags.delete(tag)
     tag.sections.each do |s|
       new_order = if !id.in?(s.tags_order)

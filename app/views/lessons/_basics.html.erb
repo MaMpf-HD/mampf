@@ -125,7 +125,10 @@
                                     lesson.tag_ids),
                  {},
                  { multiple: true,
-                   class: 'selectize' } %>
+                   class: 'selectize',
+                   style: 'display: none;',
+                   data: { ajax: true,
+                           filled: false } } %>
     <div class="invalid-feedback"
          id="lesson-tags-error">
     </div>

@@ -11,7 +11,27 @@ $('#<%= dom_id(@section) %>').empty().removeClass('bg-mdb-color-lighten-6')
                         locals: { section: @section } %>')
 
  # activate popovers and selectize
-$('#section-form .selectize').selectize({ plugins: ['remove_button', 'drag_drop'] })
+$('#section-form .selectize').each ->
+  if this.dataset.ajax == 'true' && this.dataset.filled == 'false'
+    tag_select = this
+    $.ajax Routes.fill_tag_select_path(),
+      type: 'GET'
+      dataType: 'json'
+      success: (result) ->
+        for option in result
+          new_option = document.createElement('option')
+          new_option.value = option.value
+          new_option.text = option.text
+          tag_select.add(new_option, null)
+        tag_select.dataset.filled = 'true'
+        $(tag_select).selectize({ plugins: ['remove_button', 'drag_drop'] })
+        return
+    return
+  else
+    $(this).selectize({ plugins: ['remove_button'] })
+  $('#section-form input[id$="-selectized"]').css('width', '100%')
+
+
 $('[data-toggle="popover"]').popover()
 # bugfix for selectize (which sometimes renders the prompt with a zero width)
 $('input[id$="-selectized"]').css('width', '100%')

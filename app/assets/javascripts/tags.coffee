@@ -3,45 +3,6 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'turbolinks:load', ->
-  # set up tag search in administration mode using Sifter plugin
-  tagTable = document.getElementById('tagTable')
-  inputCourses = document.getElementById('inputCourses')
-  inputTag = document.getElementById('inputTag')
-  if inputTag?
-    tagsWithId = JSON.parse(tagTable.dataset.tags)
-    ids = tagsWithId.map (item) -> item.id
-    sifter = new Sifter(tagsWithId)
-
-  # hide non-matching tag rows in tag indexx table in administration mode
-  displayResults = ->
-    searchString = $('#inputTag').val()
-    selectedCourses = $('#inputCourses').val().map (item) -> parseInt(item)
-    result = sifter.search(searchString,
-      fields: [ 'title' ]
-      sort: [ {
-        field: 'title'
-        direction: 'asc'
-      } ])
-    matchedIds = result.items.map (item) -> tagsWithId[item.id].id
-    for id in ids
-      row = document.getElementById('row-tag-' + id)
-      courses = JSON.parse(row.dataset.courses).map (item) -> parseInt(item)
-      if (id in matchedIds) && (($(courses).not($(courses).not($(selectedCourses)))).length > 0 || (courses.length == 0 && selectedCourses.length ==0))
-        $(row).show()
-      else
-        $(row).hide()
-    return
-
-  # refine tag search results on keyup in tag input field
-  $('#inputTag').on 'keyup', ->
-    displayResults()
-    return
-
-  # refine tag search results upon changing of courses
-  $('#inputCourses').on 'change', ->
-    displayResults()
-    return
-
   # fill courses selector in admin tag search with user's edited courses
   $('#tags-edited-courses').on 'click', ->
     inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))

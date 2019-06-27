@@ -11,8 +11,6 @@ class TagsController < ApplicationController
   layout 'administration'
 
   def index
-    @tags = Tag.includes(:courses, :related_tags)
-    @tags_with_id = Tag.ids_titles_json
     I18n.locale = current_user.locale
   end
 
@@ -113,9 +111,6 @@ class TagsController < ApplicationController
   def fill_tag_select
     result = Tag.select_by_title.map { |t| { value: t[1], text: t[0] } }
     render json: result
-  end
-
-  def catalog
   end
 
   def search

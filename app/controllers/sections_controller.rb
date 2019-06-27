@@ -36,6 +36,7 @@ class SectionsController < ApplicationController
   end
 
   def update
+    I18n.locale = @section.lecture.locale_with_inheritance
     @old_chapter = @section.chapter
     @section.update(section_params)
     if @section.valid?
