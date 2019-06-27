@@ -388,7 +388,7 @@ de:
       related_tags: 'Verknüpfte Begriffe'
       course_tags_html: >
         (Bisher) behandelte Begriffe aus dem zugehörigen Modul %{course}
-        ({%count})
+        (%{count})
       no_course_tags: >
         Es sind noch keine Begriffe vorhanden.
       additional_tags: >
