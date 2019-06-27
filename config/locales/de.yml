@@ -807,12 +807,12 @@ de:
           ODER
           </i>
           ) auswählen, zu welchen Modulen bzw.
-          Vorlesungen das Medium
+          Vorlesungen das Medium assoziiert sein soll, und zwar
           <i>
-          mit Vererbung
+          mit Vererbung / ohne Vererbung.
           </i>
-          assoziiert sein soll.
-          Bei Auswahl eines Moduls werden also auch alle Medien angezeigt,
+          Im Falle der Auswahl von "mit Vererbung" werden bei Auswahl eines
+          Moduls auch alle Medien angezeigt,
           die zu dazugehörigen Vorlesungen oder Sitzungen verknüpft sind;
           bei Auswahl einer Vorlesung werden auch alle Medien angezeigt,
           die mit Sitzungen dieser Vorlesung verknüpft sind.

@@ -48,7 +48,10 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    I18n.locale = current_user.try(:locale) || params[:locale] ||
+    if params[:locale].in?(I18n.available_locales.map(&:to_s))
+      locale_param = params[:locale]
+    end
+    I18n.locale = current_user.try(:locale) || locale_param ||
                     cookies[:locale] ||I18n.default_locale
   end
 end
