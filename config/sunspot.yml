@@ -1,6 +1,6 @@
 production:
   solr:
-    hostname: solr.mathi.uni-heidelberg.de
+    hostname: solr
     port: 8983
     log_level: WARNING
     path: /solr/mampf-dev
