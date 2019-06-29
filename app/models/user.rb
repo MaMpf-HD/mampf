@@ -64,7 +64,7 @@ class User < ApplicationRecord
 
   # returns the array of all teachers
   def self.teachers
-    User.where(id: Lecture.pluck(:user_id).uniq)
+    User.where(id: Lecture.pluck(:teacher_id).uniq)
   end
 
   # returns the array of all editors
