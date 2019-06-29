@@ -79,24 +79,6 @@ class LecturesController < ApplicationController
     @course = @lecture.course
   end
 
-  # teacher selection is prepared here (in the view, it will be injected
-  # as additional options for a selectize input field; therefore the subtraction
-  # of the current value and the .to_json)
-  def update_teacher
-    @teacher_selection = (User.select_editors_hash -
-                          [{ text: @lecture.teacher.info,
-                             value: @lecture.teacher.id }]).to_json
-  end
-
-  # editor selection is prepared here (in the view, it will be injected
-  # as additional options for a selectize input field; therefore the subtraction
-  # of t he current value and the .to_json)
-  def update_editors
-    @editor_selection = (User.select_editors_hash -
-      @lecture.course.editors.map { |e| { text: e.info, value: e.id } } -
-      @lecture.editors.map { |e| { text: e.info, value: e.id } }).to_json
-  end
-
   # add forum for this lecture
   def add_forum
     Thredded::Messageboard.create(name: @lecture.title) unless @lecture.forum?

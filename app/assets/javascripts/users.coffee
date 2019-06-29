@@ -30,13 +30,6 @@ $(document).on 'turbolinks:load', ->
     window.open(url, '_blank')
     return
 
-  # trigger generic user modal
-  $(document).on 'click', '#open-generic-users-modal', ->
-    $.ajax Routes.list_generic_users_path(),
-      type: 'GET'
-      dataType: 'script'
-    return
-
   # reload page after user editing is cancelled
   $('#user-basics-cancel').on 'click', ->
     location.reload()

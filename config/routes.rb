@@ -181,6 +181,8 @@ Rails.application.routes.draw do
                                    as: 'teacher'
   get 'users/list_generic_users', to: 'users#list_generic_users',
                                   as: 'list_generic_users'
+  get 'users/fill_user_select', to: 'users#fill_user_select',
+                              as: 'fill_user_select'
   resources :users, only: [:index, :edit, :update, :destroy]
 
   root 'main#home'

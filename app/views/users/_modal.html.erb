@@ -22,6 +22,8 @@
       </div>
       <div class="modal-body"
            id="generic-users-modal-content">
+        <%= render partial: "users/generic_users",
+                   locals: { generic_users: generic_users } %>
       </div>
       <div class="modal-footer">
         <div class="row">

@@ -8,9 +8,10 @@
         </h5>
       </div>
       <div class="col-6 text-right">
-        <button id="open-generic-users-modal"
-                type="button"
-                class="btn btn-sm btn-outline-primary">
+        <button type="button"
+                class="btn btn-sm btn-outline-primary"
+                data-toggle="modal"
+                data-target="#genericUsersModal">
           <%= t('buttons.edit_users',
                 count: generic_users_count) %>
         </button>

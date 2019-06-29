@@ -44,10 +44,14 @@
                   t('basics.editors') %>
       <%= helpdesk(t('admin.medium.info.editors'), false) %>
       <%= f.select :editor_ids,
-                   options_for_select(add_prompt(User.select_editors),
+                   options_for_select(add_prompt(medium.editors
+                                                       .map { |e| [e.info, e.id] }),
                                       medium.editors.map(&:id)),
                    {},
-                   { multiple: true, class: 'selectize' } %>
+                   { multiple: true, class: 'selectize',
+                     data: { ajax: true,
+                             filled: false,
+                             model: 'user' } } %>
       <div class="invalid-feedback"
            id="medium-editors-error">
       </div>
@@ -82,7 +86,8 @@
                      class: 'selectize',
                      style: 'display: none;',
                      data: { ajax: true,
-                             filled: false } } %>
+                             filled: false,
+                             model: 'tag' } } %>
       <div class="invalid-feedback"
            id="medium-tags-error">
       </div>

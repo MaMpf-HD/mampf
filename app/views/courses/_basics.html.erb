@@ -53,9 +53,15 @@
       <%= f.label :editor_ids, t('basics.editors') %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
-                   options_for_select(User.select_editors,
+                   options_for_select(course.editors.map { |e| [ e.info, e.id] },
                                       course.editors.map(&:id)),
-                   {}, { multiple: true, class: 'selectize' } %>
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
+                     data: { ajax: true,
+                             model: 'user',
+                             filled: false } } %>
     </div>
   <% else %>
     <%= t('basics.editors') %>

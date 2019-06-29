@@ -9,7 +9,8 @@
   <div class="col-12">
     <%= render partial: 'users/elevated_users',
                locals: { elevated_users: @elevated_users,
-                         generic_users_count: @generic_users_count } %>
+                         generic_users_count: @generic_users.count } %>
   </div>
 </div>
-<%= render partial: 'users/modal' %>
+<%= render partial: 'users/modal',
+           locals: { generic_users: @generic_users } %>

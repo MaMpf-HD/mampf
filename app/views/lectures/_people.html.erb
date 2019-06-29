@@ -30,30 +30,26 @@
             <div class="col-4 form-group">
               <%= f.label :teacher_id,
                           t('basics.teacher') %>
-              <% unless inspection %>
-                <a href="<%= update_teacher_path(lecture) %>"
-                   class="far fa-edit text-dark"
-                   data-toggle="tooltip"
-                   id="update-teacher-button"
-                   style="text-decoration: none;"
-                   data-placement="bottom" title="<%= t('buttons.edit') %>"
-                   data-remote="true">
-                </a>
-              <% end %>
               <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
-              <div id="lecture_teacher_select" %>
-                <%= f.select :teacher_id,
-                             options_for_select([[lecture.teacher.info,
-                                                  lecture.teacher.id]],
-                                                lecture.teacher.id),
-                             {},
-                             { class: 'selectize', disabled: true } %>
-                <div class="invalid-feedback" id="lecture-teacher-error">
+              <% if inspection %>
+                <div id="lecture_teacher_info">
+                  <%= lecture.teacher.name %>
                 </div>
-              </div>
-              <div id="lecture_teacher_info">
-                <%= lecture.teacher.name %>
-              </div>
+              <% else %>
+                <div id="lecture_teacher_select" %>
+                  <%= f.select :teacher_id,
+                                 options_for_select([[lecture.teacher.info,
+                                                      lecture.teacher.id]],
+                                                    lecture.teacher.id),
+                                 {},
+                                 { class: 'selectize',
+                                   data: { ajax: true,
+                                           model: 'user',
+                                           filled: false } } %>
+                  <div class="invalid-feedback" id="lecture-teacher-error">
+                  </div>
+                </div>
+              <% end %>
             </div>
             <div class="col-4">
               <%= t('basics.course_editors') %>
@@ -74,42 +70,36 @@
             <div class="col-4 form-group">
               <%= f.label :editor_ids,
                           t('basics.lecture_editors') %>
-              <% unless inspection %>
-                <a href="<%= update_editors_path(lecture) %>"
-                   class="far fa-edit text-dark"
-                   id="update-editors-button"
-                   style="text-decoration: none;"
-                   data-toggle="tooltip"
-                   data-placement="bottom"
-                   title="<%= t('buttons.edit') %>"
-                   data-remote="true">
-                 </a>
-              <% end %>
               <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
-              <div id="lecture_editors_select" %>
-                <%= f.select :editor_ids,
-                             options_for_select([[t('none'), '']] +
-                                                lecture.select_editors,
-                                                lecture.editors.map(&:id)),
-                             {},
-                             { multiple: true,
-                               class: 'selectize',
-                               disabled: true } %>
-              </div>
-              <div id="lecture_editors_info">
-                <% if lecture.editors.present? %>
-                  <ul>
-                    <% lecture.editors.each do |e| %>
-                      <li>
-                        <%= e.name %>
-                      </li>
-                    <% end %>
-                  </ul>
-                <% else %>
-                  <br>
-                  <%= t('admin.lecture.no_lecture_editors') %>
-                <% end %>
-              </div>
+              <% if inspection %>
+                <div id="lecture_editors_info">
+                  <% if lecture.editors.present? %>
+                    <ul>
+                      <% lecture.editors.each do |e| %>
+                        <li>
+                          <%= e.name %>
+                        </li>
+                      <% end %>
+                    </ul>
+                  <% else %>
+                    <br>
+                    <%= t('admin.lecture.no_lecture_editors') %>
+                  <% end %>
+                </div>
+              <% else %>
+                <div id="lecture_editors_select" %>
+                  <%= f.select :editor_ids,
+                               options_for_select([[t('none'), '']] +
+                                                  lecture.select_editors,
+                                                  lecture.editors.map(&:id)),
+                               {},
+                               { multiple: true,
+                                 class: 'selectize',
+                                 data: { ajax: true,
+                                         model: 'user',
+                                         filled: false } } %>
+                </div>
+              <% end %>
             </div>
           </div>
           <div class="row mb-3">
@@ -148,9 +138,9 @@
               <div id="lecture-basics-warning">
                 <%= t('warnings.unsaved_changes') %>
                 <%= f.submit t('buttons.save'),
-                    class: "btn btn-primary" %>
+                    class: "btn btn-sm btn-primary" %>
                 <button type="button"
-                        class="btn btn-secondary ml-2"
+                        class="btn btn-sm btn-secondary ml-2"
                         id="lecture-basics-cancel"
                         data-id="<%= lecture.id %>">
                   <%= t('buttons.discard') %>

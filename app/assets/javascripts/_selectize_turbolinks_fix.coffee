@@ -11,6 +11,9 @@ resetSelectized = (index, select) ->
     for val in selectedValue
       $(select).find("option[value=#{val}]").attr('selected', true) if val != ''
   else
+    console.log 'hier!'
+    console.log select
+    console.log selectedValue
     $(select).find("option[value=#{selectedValue}]").attr('selected', true) if selectedValue != ''
   return
 
@@ -31,18 +34,26 @@ $(document).on 'turbolinks:load', ->
     else
       plugins = ['remove_button']
     if this.dataset.ajax == 'true' && this.dataset.filled == 'false'
-      tag_select = this
-      $.ajax Routes.fill_tag_select_path(),
+      model_select = this
+      existing_values = Array.apply(null, model_select.options).map (o) -> o.value
+      if this.dataset.model == 'tag'
+        fill_path = Routes.fill_tag_select_path()
+      else if this.dataset.model == 'user'
+        fill_path = Routes.fill_user_select_path()
+      else if this.dataset.model == 'user_generic'
+        fill_path = Routes.list_generic_users_path()
+      $.ajax fill_path,
         type: 'GET'
         dataType: 'json'
         success: (result) ->
           for option in result
-            new_option = document.createElement('option')
-            new_option.value = option.value
-            new_option.text = option.text
-            tag_select.add(new_option, null)
-          tag_select.dataset.filled = 'true'
-          $(tag_select).selectize({ plugins: plugins })
+            if option.value.toString() not in existing_values
+              new_option = document.createElement('option')
+              new_option.value = option.value
+              new_option.text = option.text
+              model_select.add(new_option, null)
+          model_select.dataset.filled = 'true'
+          $(model_select).selectize({ plugins: plugins })
           return
       return
     else

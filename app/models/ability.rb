@@ -92,7 +92,7 @@ class Ability
       can :update, User do |u|
         user == u
       end
-      can :teacher, User
+      can [:teacher, :fill_user_select], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
     else

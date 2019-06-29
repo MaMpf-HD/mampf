@@ -5,7 +5,7 @@ class UsersController < ApplicationController
   layout 'administration'
 
   def index
-    @generic_users_count = User.count - @elevated_users.count
+    @generic_users = User.where.not(id: @elevated_users.pluck(:id))
   end
 
   def edit
@@ -34,7 +34,9 @@ class UsersController < ApplicationController
   end
 
   def list_generic_users
-    @generic_users = User.all.to_a - @elevated_users
+    result = User.where.not(id: @elevated_users.pluck(:id))
+                 .map { |u| { value: u.id, text: u.info }}
+    render json: result
   end
 
   def destroy
@@ -53,6 +55,11 @@ class UsersController < ApplicationController
                 alert: I18n.t('controllers.no_teacher')
   end
 
+  def fill_user_select
+    result = User.all.map { |u| { value: u.id, text: u.info } }
+    render json: result
+  end
+
   private
 
   def elevate_params
@@ -65,7 +72,6 @@ class UsersController < ApplicationController
   end
 
   def set_elevated_users
-    @elevated_users = User.where(admin: true) | User.editors |
-                      User.teachers
+    @elevated_users = User.where(admin: true).or(User.editors).or(User.teachers)
   end
 end

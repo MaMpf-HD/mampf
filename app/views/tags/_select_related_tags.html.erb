@@ -23,6 +23,7 @@
                   class: 'selectize',
                   data: { id: tag.id.to_i,
                           ajax: true,
+                          model: 'tag',
                           filled: false } } %>
   <div class="invalid-feedback"
        id="tag-related-tags-error-<%= tag.id.to_i %>">

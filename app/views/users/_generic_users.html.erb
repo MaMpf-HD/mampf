@@ -6,9 +6,12 @@
       <div class="form-group form-row">
         <div class="col-12">
           <%= f.select :id,
-                       options_for_select(users_for_select(generic_users), nil),
+                       options_for_select([[]], nil),
                        { prompt: t('basics.select') },
-                       { class: 'selectize' } %>
+                       { class: 'selectize',
+                         data: { ajax: true,
+                                 model: 'user_generic',
+                                 filled: false } } %>
         </div>
       </div>
       <div class="form-group form-row generic-user no_display">
