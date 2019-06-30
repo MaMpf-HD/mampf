@@ -12,15 +12,15 @@
       </span>
       <% privileged = current_user.admin ||
                       current_user.in?(@lecture.editors_with_inheritance) %>
-      <a href="<%= edit_lecture_path(@lecture) %>"
-         id="lecture-edit"
-         class="far fa-edit text-secondary"
-         data-toggle="tooltip"
-         data-placement="bottom"
-         title="Bearbeiten"
-         style="text-decoration: none;
-                display: <%= show_inline(privileged) %>">
-      </a>
+      <%= link_to '',
+                  edit_lecture_path(@lecture),
+                  id: 'lecture-edit',
+                  class: 'far fa-edit text-secondary',
+                  data: { toggle: 'tooltip',
+                          placement: 'bottom' },
+                  title: t('buttons.edit'),
+                  style: 'text-decoration: none; ' +
+                         'display: ' + show_inline(privileged) %>
     </h4>
   </div>
 </div>
@@ -38,7 +38,7 @@
   <% end %>
   <% cache @lecture do %>
     <div class="col-12">
-      <%= render partial: 'lectures/content',
+      <%= render partial: 'lectures/show/content',
                  locals: { lecture: @lecture } %>
     </div>
   <% end %>

@@ -1,0 +1,19 @@
+<div class="card bg-mdb-color-lighten-6">
+  <div class="card-header">
+    <h5>
+      <%= t('lecture.content') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="card-columns">
+      <% if !lecture.chapters.any? %>
+        <%= t('admin.lecture.no_content_yet') %>
+      <% else %>
+        <%= render partial: 'lectures/show/chapter',
+                   collection: lecture.chapters.includes(:sections, :lecture)
+                                      .where(hidden: [false, nil]),
+                   cached: true %>
+      <% end %>
+    </div>
+  </div>
+</div>

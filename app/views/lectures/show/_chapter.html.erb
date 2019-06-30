@@ -1,0 +1,15 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-2">
+    <span class="text-light">
+      <%= chapter.to_label %>
+    </span>
+  </div>
+  <div class="card-body">
+    <ul class="list-group list-group-flush">
+      <%= render partial: 'lectures/show/section',
+                 collection: chapter.sections.includes(:chapter)
+                                    .where(hidden: [false, nil]),
+                 cached: true %>
+    </ul>
+  </div>
+</div>

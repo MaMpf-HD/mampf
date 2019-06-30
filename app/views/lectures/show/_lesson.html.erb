@@ -1,0 +1,6 @@
+<%= link_to lesson.date_localized,
+            lesson_path(lesson),
+            class: 'badge badge-secondary lecture-lesson mr-1',
+            id: 'lecture-' + dom_id(lesson),
+            data: { id: lesson.id,
+                    tags: lesson.tags.map(&:id) }  %>

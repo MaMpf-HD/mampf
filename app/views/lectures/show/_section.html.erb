@@ -1,0 +1,30 @@
+<li class="list-group-item bg-mdb-color-lighten-5">
+  <div class="row">
+    <div class="col-6">
+      <span class="text-dark">
+        <strong>
+          <%= link_to section.to_label,
+                      section_path(section),
+                      class: 'text-dark' %>
+        </strong>
+      </span>
+    </div>
+    <div class="col-6">
+      <%= render partial: 'lectures/show/lesson',
+                 collection: section.lessons.includes(:tags).order(:date),
+                 cached: true %>
+    </div>
+    <% unless section.details.blank? %>
+      <div class="col-12 my-2">
+        <div class="bg-mdb-color-lighten-8 rounded p-2">
+          <%= section.details.html_safe %>
+        </div>
+      </div>
+    <% end %>
+    <div class="col-12 mt-2">
+      <%= render partial: 'lectures/show/tag',
+                 collection: section.ordered_tags,
+                 cached: true %>
+    </div>
+  </div>
+</li>
