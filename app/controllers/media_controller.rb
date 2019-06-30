@@ -2,7 +2,8 @@
 class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search,
-                                      :fill_teachable_select]
+                                      :fill_teachable_select,
+                                      :fill_media_select]
   before_action :set_course, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
@@ -283,6 +284,11 @@ class MediaController < ApplicationController
     render json: result
   end
 
+  def fill_media_select
+    result = Medium.select_by_name.map { |t| { value: t[1], text: t[0] } }
+    render json: result
+  end
+
   private
 
   def medium_params
@@ -389,7 +395,7 @@ class MediaController < ApplicationController
   def search_params
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
                                    :all_editors, :tag_operator,
-                                   :teachable_inheritance,
+                                   :teachable_inheritance, :fulltext,
                                    types: [],
                                    teachable_ids: [],
                                    tag_ids: [],

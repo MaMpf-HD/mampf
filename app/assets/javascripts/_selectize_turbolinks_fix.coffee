@@ -11,9 +11,6 @@ resetSelectized = (index, select) ->
     for val in selectedValue
       $(select).find("option[value=#{val}]").attr('selected', true) if val != ''
   else
-    console.log 'hier!'
-    console.log select
-    console.log selectedValue
     $(select).find("option[value=#{selectedValue}]").attr('selected', true) if selectedValue != ''
   return
 
@@ -44,6 +41,8 @@ $(document).on 'turbolinks:load', ->
         fill_path = Routes.list_generic_users_path()
       else if this.dataset.model == 'teachable'
         fill_path = Routes.fill_teachable_select_path()
+      else if this.dataset.model == 'medium'
+        fill_path = Routes.fill_media_select_path()
       $.ajax fill_path,
         type: 'GET'
         dataType: 'json'

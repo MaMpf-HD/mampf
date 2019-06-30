@@ -140,6 +140,12 @@
                      class: 'selectize',
                      disabled: true } %>
     </div>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :fulltext, t('basics.fulltext') %>
+      <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
+      <%= f.text_field :fulltext,
+                        class: 'form-control' %>
+    </div>
   </div>
   <div class="row mb-3">
     <div class="col-12 text-center">

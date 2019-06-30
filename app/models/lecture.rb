@@ -419,10 +419,14 @@ class Lecture < ApplicationRecord
                                                     m.lesson.id] }
   end
 
-  def self.sort_by_date(lectures)
-    lectures.to_a.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
+  def begin_date
+    Rails.cache.fetch("#{cache_key}/begin_date") do
+      term&.begin_date
     end
+  end
+
+  def self.sort_by_date(lectures)
+    lectures.sort_by(&:begin_date).reverse
   end
 
   def forum?

@@ -828,6 +828,11 @@ de:
           ODER
           </i>
           ) auswählen, wer die EditorInnen des Mediums sein sollen.
+        search_fulltext: >
+          Hier kannst Du Text eingeben, nach dem in den Feldern Beschreibung,
+          Fragen- bzw. Antworttext sowie Bemerkungstext gesucht wird.
+          Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
+          eingibst), wird es bei der Suche ignoriert.
         inspection_editors: >
           Dies die Liste aller Personen, die für dieses Medium
           als Editor verantwortlich sind.
@@ -1821,6 +1826,7 @@ de:
     no_hits: 'Die Suche hat keine Treffer ergeben.'
     with_inheritance: 'mit Vererbung'
     without_inheritance: 'ohne Vererbung'
+    fulltext: 'Volltext'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

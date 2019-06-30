@@ -94,6 +94,10 @@ class Medium < ApplicationRecord
   scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 1.day.ago) }
 
   searchable do
+    text :description
+    text :text do
+      text_join
+    end
     string :sort
     string :teachable_compact do
       "#{teachable_type}-#{teachable_id}"
@@ -282,6 +286,11 @@ class Medium < ApplicationRecord
         search.build do
           with(:tag_ids).all_of(search_params[:tag_ids])
         end
+      end
+    end
+    if search_params[:fulltext].present?
+      search.build do
+        fulltext search_params[:fulltext]
       end
     end
     search.build do
@@ -925,5 +934,11 @@ class Medium < ApplicationRecord
       return
     end
     becomes(Remark).delete_vertices
+  end
+
+  def text_join
+    return unless type.in?(['Question', 'Remark'])
+    return text if type == 'Remark'
+    "#{text} #{becomes(Question).answers&.map(&:text)&.join(' ')}"
   end
 end

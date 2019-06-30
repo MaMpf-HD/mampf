@@ -35,6 +35,7 @@
                                       medium.teachable_select),
                    { prompt: t('basics.select') },
                    { class: 'selectize',
+                     style: 'display: none;',
                      disabled: medium.sort == 'Script',
                      data: { ajax: medium.sort != 'Script',
                              model: 'teachable',
@@ -52,7 +53,9 @@
                                                        .map { |e| [e.info, e.id] }),
                                       medium.editors.map(&:id)),
                    {},
-                   { multiple: true, class: 'selectize',
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
                      data: { ajax: true,
                              filled: false,
                              model: 'user' } } %>
@@ -102,9 +105,16 @@
                   t('basics.related_media') %>
       <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
       <%= f.select :linked_medium_ids,
-                   options_for_select(Medium.select_by_name,
+                   options_for_select(medium.linked_media
+                                            .map{ |m| [m.title_for_viewers,
+                                                       m.id] },
                                       medium.linked_media.pluck(:id)),
-                   {}, { multiple: true, class: 'selectize' } %>
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     data: { ajax: true,
+                             model: 'medium',
+                             filled: false } } %>
     </div>
     <div class="form-group">
       <%= f.label :external_reference_link,
