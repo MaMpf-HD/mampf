@@ -42,6 +42,8 @@ $(document).on 'turbolinks:load', ->
         fill_path = Routes.fill_user_select_path()
       else if this.dataset.model == 'user_generic'
         fill_path = Routes.list_generic_users_path()
+      else if this.dataset.model == 'teachable'
+        fill_path = Routes.fill_teachable_select_path()
       $.ajax fill_path,
         type: 'GET'
         dataType: 'json'

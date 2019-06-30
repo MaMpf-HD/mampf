@@ -30,11 +30,15 @@
       <%= f.label :teachable, t('basics.associated_to') %>
       <%= helpdesk(t('admin.medium.info.teachable'), true) %>
       <%= f.select :teachable,
-                   options_for_select(add_prompt(all_teachables_selection(current_user)),
+                   options_for_select([[medium.teachable&.title_for_viewers,
+                                        medium.teachable_select]],
                                       medium.teachable_select),
-                   {},
+                   { prompt: t('basics.select') },
                    { class: 'selectize',
-                     disabled: medium.sort == 'Script' } %>
+                     disabled: medium.sort == 'Script',
+                     data: { ajax: medium.sort != 'Script',
+                             model: 'teachable',
+                             filled: false } } %>
       <div class="invalid-feedback"
            id="medium-teachable-error">
       </div>

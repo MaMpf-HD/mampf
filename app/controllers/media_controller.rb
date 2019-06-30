@@ -1,7 +1,8 @@
 # MediaController
 class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
-  before_action :set_medium, except: [:index, :catalog, :new, :create, :search]
+  before_action :set_medium, except: [:index, :catalog, :new, :create, :search,
+                                      :fill_teachable_select]
   before_action :set_course, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
@@ -272,6 +273,14 @@ class MediaController < ApplicationController
     manuscript.export_to_db!(filter_boxes)
     @medium.update(imported_manuscript: true)
     redirect_to edit_medium_path(@medium)
+  end
+
+  def fill_teachable_select
+    result = (Course.editable_selection(current_user) +
+                Lecture.editable_selection(current_user) +
+                Lesson.editable_selection(current_user))
+               .map { |t| { value: t[1], text: t[0] } }
+    render json: result
   end
 
   private

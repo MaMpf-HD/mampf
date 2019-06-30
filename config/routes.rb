@@ -108,6 +108,8 @@ Rails.application.routes.draw do
                             as: 'publish_medium'
   post 'media/:id/import_manuscript', to: 'media#import_manuscript',
                                       as: 'import_manuscript'
+  get 'media/fill_teachable_select', to: 'media#fill_teachable_select',
+                                     as: 'fill_teachable_select'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',

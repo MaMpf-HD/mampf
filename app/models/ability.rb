@@ -65,7 +65,7 @@ class Ability
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot, :publish, :destroy,
-           :import_manuscript], Medium do |m|
+           :import_manuscript, :fill_teachable_select], Medium do |m|
         m.edited_with_inheritance_by?(user)
       end
 
