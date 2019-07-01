@@ -113,8 +113,9 @@
         <%= helpdesk(t('admin.lesson.info.tags_inspection'), false) %>
       </div>
       <div class="col-12">
-        <%= render partial: 'tags/list',
-                   locals: { tags: lesson.tags } %>
+        <%= render partial: 'tags/tag',
+                   collection: lesson.tags,
+                   cached: true %>
       </div>
     </div>
   <% else %>

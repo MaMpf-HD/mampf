@@ -1,0 +1,7 @@
+<%= link_to lesson.date_localized,
+            lesson_link(lesson, inspection),
+            class: 'badge badge-secondary lecture-lesson',
+            id: 'lecture-' + dom_id(lesson),
+            remote: true,
+            data: { id: lesson.id,
+                    tags: lesson.tags.map(&:id) } %>

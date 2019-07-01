@@ -34,9 +34,10 @@
               <%= helpdesk(t('admin.lecture.info.course_tags'), false) %>
             </h6>
             <% if lecture.course_tags.present? %>
-              <%= render partial: "tags/list",
-                         locals: { tags: lecture.course_tags
-                                                .natural_sort_by(&:title) } %>
+              <%= render partial: "tags/tag",
+                         collection: lecture.course_tags
+                                            .natural_sort_by(&:title),
+                         cached: true %>
             <% else %>
               <%= t('admin.lecture.no_course_tags') %>
             <% end %>
@@ -47,9 +48,10 @@
                     count: lecture.extra_tags.count) %>
               <%= helpdesk(t('admin.lecture.info.additional_tags'), false) %>
             </h6>
-            <%= render partial: "tags/list",
-                         locals: { tags: lecture.extra_tags
-                                                .natural_sort_by(&:title) } %>
+            <%= render partial: "tags/tag",
+                       collection: lecture.extra_tags
+                                          .natural_sort_by(&:title),
+                       cached: true %>
           </li>
           <li>
             <h6>
@@ -57,9 +59,10 @@
                     count: lecture.deferred_tags.count) %>
               <%= helpdesk(t('admin.lecture.info.untreated_tags'), false) %>
             </h6>
-            <%= render partial: "tags/list",
-                       locals: { tags: lecture.deferred_tags
-                                              .natural_sort_by(&:title) } %>
+            <%= render partial: "tags/tag",
+                       collection: lecture.deferred_tags
+                                          .natural_sort_by(&:title),
+                       cached: true %>
           </li>
         </ul>
       </div>

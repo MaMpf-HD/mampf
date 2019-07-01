@@ -78,8 +78,9 @@
             <%= helpdesk(t('admin.medium.info.inspection_related_tags'), false) %>
           </div>
           <div class="col-8">
-            <%= render partial: 'tags/list',
-                       locals: { tags: @medium.tags } %>
+            <%= render partial: 'tags/tag',
+                       collection: @medium.tags,
+                       cached: true %>
           </div>
         </div>
         <% end %>

@@ -1,0 +1,57 @@
+<li class="list-group-item <%= section_background_color(section) %>"
+    id="<%= dom_id(section) %>">
+  <div class="row">
+    <div class="col-6">
+      <strong>
+        <span class="<%= section_color(section) %>">
+          <%= section.to_label %>
+        </span>
+        <% unless inspection %>
+          <a href="<%= edit_section_path(section) %>"
+             class="text-dark"
+             data-toggle="tooltip"
+             data-placement="bottom"
+             title="<%= t('buttons.edit') %>"
+             data-remote="true"
+             style="text-decoration: none;">
+            <i class="far fa-edit">
+            </i>
+          </a>
+        <% end %>
+        <a href="<%= display_section_path(section) %>"
+           class="text-dark"
+           data-toggle="tooltip"
+           data-placement="bottom"
+           title="<%= t('buttons.content') %>"
+           data-remote="true">
+          <i class="fas fa-list-ol">
+          </i>
+        </a>
+      </strong>
+    </div>
+    <div class="col-6">
+      <% section.lessons.includes(:tags).order(:date).each do |l| %>
+        <% cache [l, inspection] do %>
+          <%= render partial: 'lectures/edit/lesson',
+                     locals: { lesson: l,
+                               inspection: inspection } %>
+        <% end %>
+      <% end %>
+    </div>
+    <% unless section.details.blank? %>
+      <div class="col-12 my-2">
+        <div class="bg-mdb-color-lighten-8 rounded p-2">
+          <%= section.details.html_safe %>
+        </div>
+      </div>
+    <% end %>
+    <div class="col-12 mt-2">
+      <% section.ordered_tags.each do |t| %>
+        <% cache t do %>
+          <%= render partial: 'lectures/edit/tag',
+                     locals: { tag: t } %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</li>

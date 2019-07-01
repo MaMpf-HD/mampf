@@ -1,0 +1,9 @@
+<%= link_to shorten(tag.title, 45),
+            edit_tag_path(tag),
+            id: 'lecture-' + dom_id(tag),
+            class: 'badge badge-light lecture-tag',
+            title: (tag.title if tag.title.length > 45),
+            data: { id: tag.id,
+                    lessons: tag.lessons.map(&:id),
+                    toggle: 'tooltip',
+                    placement: 'bottom' } %>

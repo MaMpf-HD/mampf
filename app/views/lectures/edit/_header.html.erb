@@ -1,0 +1,35 @@
+<div class="row px-4 py-2 mt-2">
+  <div class="col-7">
+    <h4 class="pl-2">
+      <span class="badge badge-secondary">
+        <%= t('basics.lecture') %>
+      </span>
+      <% unless lecture.published? %>
+        <span class="badge badge-warning">
+          <%= t('access.unpublished') %>
+        </span>
+      <% end %>
+      <%= lecture.title_with_teacher %>
+    </h4>
+  </div>
+  <div class="col-5 text-right">
+    <%= link_to t('buttons.parent_course'),
+                edit_or_inspect_course_path(lecture.course),
+                class: 'btn btn-sm btn-outline-primary' %>
+    <% if !inspection && !lecture.published? %>
+      <button type="button"
+              class="btn btn-sm btn-outline-danger"
+              data-toggle="modal"
+              data-target="#publishLectureModal">
+        <%= t('buttons.publish') %>
+      </button>
+    <% end %>
+    <% if lecture_deletable?(lecture, inspection) %>
+      <%= link_to t('buttons.delete'),
+                  lecture_path,
+                  method: :delete,
+                  data: { confirm: t('confirmation.generic') },
+                  class: 'btn btn-sm btn-outline-danger' %>
+    <% end %>
+  </div>
+</div>

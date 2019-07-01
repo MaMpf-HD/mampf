@@ -1,0 +1,51 @@
+<div class="card <%= chapter_card_color(chapter) %>">
+  <div id="<%= dom_id(chapter) %>"
+       class="card-header <%= chapter_header_color(chapter) %>">
+    <div class="row">
+      <div class="col-8">
+        <% if inspection %>
+          <span class="text-light">
+            <%= chapter.to_label %>
+          </span>
+        <% else %>
+          <span class="text-light">
+            <%= chapter.to_label %>
+          </span>
+          <a href="<%= edit_chapter_path(chapter) %>"
+             class="text-light"
+             data-toggle="tooltip"
+             data-placement="bottom"
+             title="<%= t('buttons.edit') %>"
+             data-remote="true">
+            <i class="far fa-edit text">
+            </i>
+          </a>
+        <% end %>
+      </div>
+      <% unless inspection %>
+        <div class="col-4 text-right">
+          <%= link_to t('buttons.create_section'),
+                      new_section_path(chapter_id: chapter.id),
+                      remote: true,
+                      class: 'btn btn-sm btn-secondary new-in-lecture',
+                      id: 'new_lesson_button' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="card-body">
+    <div id="new-section-area-<%= chapter.id %>"
+         class="bg-green-lighten-4 p-2 mb-3 rounded"
+         style="display: none;">
+    </div>
+    <ul class="list-group">
+      <% chapter.sections.includes(:chapter, :tags).each do |s| %>
+        <% cache [s, inspection] do %>
+          <%= render partial: 'lectures/edit/section',
+                     locals: { section: s,
+                               inspection: inspection } %>
+        <% end %>
+      <% end %>
+    </ul>
+  </div>
+</div>

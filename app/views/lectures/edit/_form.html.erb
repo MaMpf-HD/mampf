@@ -1,0 +1,52 @@
+<% cache [lecture, inspection] do %>
+  <div id="lecture-area">
+    <%= render partial: 'lectures/edit/header',
+               locals: { lecture: lecture,
+                         inspection: inspection } %>
+    <div class="row px-4 py-2">
+      <div id="lecture-content-card" class="col-12 col-xxxl-9 mb-1">
+        <%= render partial: 'lectures/edit/content',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
+      </div>
+      <div id="lecture-media-card" class="col-12 col-xxxl-3 mb-1">
+        <%= render partial: 'lectures/edit/media',
+                   locals: { media: lecture.media_with_inheritance,
+                             inspection: inspection,
+                             lecture: lecture } %>
+      </div>
+    </div>
+    <div class="row px-4 py-2 mt-3">
+      <div class="accordion col-12" id="lectureAccordion">
+        <%= render partial: 'lectures/edit/tags',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
+        <%= render partial: 'lectures/edit/people',
+                   locals: { lecture: lecture,
+                             inspection: inspection,
+                             users: lecture.users } %>
+        <%= render partial: 'lectures/edit/organizational_concept',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
+        <%= render partial: 'lectures/edit/announcements',
+                   locals: { lecture: lecture,
+                             announcements: announcements,
+                             inspection: inspection } %>
+        <%= render partial: 'lectures/edit/forum',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
+        <%= render partial: 'lectures/edit/preferences',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
+      </div>
+    </div>
+  </div>
+  <%= render partial: 'lessons/modal' %>
+  <%= render partial: 'sections/content_modal' %>
+  <% unless inspection %>
+    <%= render partial: 'tags/modal' %>
+    <%= render partial: 'announcements/modal' %>
+    <%= render partial: 'lectures/publish/publish',
+               locals: { lecture: lecture } %>
+  <% end %>
+<% end %>
