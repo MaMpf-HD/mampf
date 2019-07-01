@@ -8,17 +8,10 @@
   <div class="card-body">
     <% if current_user.edited_media.exists? %>
       <ul>
-        <% current_user.edited_media.order(:updated_at)
-                       .reverse.first(25)
-                       .each do |m| %>
-          <% cache m do %>
-            <li>
-              <%= link_to m.title,
-                          edit_medium_path(m),
-                          class: textcolor(m) %>
-            </li>
-          <% end %>
-        <% end %>
+        <%= render partial: 'administration/index/medium',
+                   collection: current_user.edited_media.order(:updated_at)
+                                           .reverse.first(25),
+                   cached: true %>
       </ul>
       <% if current_user.edited_media.count > 25 %>
         <%= t('admin.main.media_restriction_html',

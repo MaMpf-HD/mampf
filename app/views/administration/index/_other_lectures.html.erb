@@ -6,7 +6,7 @@
   </div>
   <div class="card-body card-tiny">
     <% if current_user.teaching_unrelated_lectures.present? %>
-      <%= render partial: 'administration/lectures_card',
+      <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
                                                     .teaching_unrelated_lectures),

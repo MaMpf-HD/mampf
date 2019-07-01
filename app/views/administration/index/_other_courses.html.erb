@@ -6,7 +6,7 @@
   </div>
   <div class="card-body card-tiny">
     <% if (Course.all - current_user.edited_courses).present? %>
-      <%= render partial: 'administration/courses_card',
+      <%= render partial: 'administration/index/courses_card',
                  locals: { courses: non_edited_courses.natural_sort_by(&:title),
                            inspection: true } %>
     <% else %>

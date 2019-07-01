@@ -8,7 +8,8 @@
       </div>
       <div class="col-4 text-right">
         <% if current_user.admin? %>
-          <%= link_to '', new_course_path,
+          <%= link_to '',
+                      new_course_path,
                       class: 'fas fa-plus-circle text-light admin-index-button',
                       id: 'new-course-button',
                       data: { remote: true, toggle: 'tooltip' },
@@ -25,7 +26,7 @@
                  locals: { course: Course.new } %>
     </div>
     <% if current_user.edited_courses.exists? %>
-      <%= render partial: 'administration/courses_card',
+      <%= render partial: 'administration/index/courses_card',
                  locals: { courses:
                              current_user.edited_courses
                                          .natural_sort_by(&:title),

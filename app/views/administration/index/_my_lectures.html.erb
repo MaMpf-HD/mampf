@@ -23,7 +23,7 @@
       <%= t('admin.main.as_teacher') %>
       (<%= current_user.given_lectures.count %>)
       <%=  helpdesk(t('admin.main.info.given_lectures'), true) %>
-      <%= render partial: 'administration/lectures_card',
+      <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.given_lectures),
                            inspection: false,
@@ -33,7 +33,7 @@
       <%= t('admin.main.as_editor') %>
       (<%= current_user.edited_lectures.count %>)
       <%= helpdesk(t('admin.main.info.edited_lectures'), false) %>
-      <%= render partial: 'administration/lectures_card',
+      <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.edited_lectures),
                            inspection: false,
@@ -43,7 +43,7 @@
       <%= t('admin.main.as_course_editor') %>
       (<%= current_user.lectures_as_module_editor.count %>)
       <%= helpdesk(t('admin.main.info.lectures_as_course_editor'), false) %>
-      <%= render partial: 'administration/lectures_card',
+      <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
                                                     .lectures_as_module_editor),
