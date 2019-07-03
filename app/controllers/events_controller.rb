@@ -65,6 +65,13 @@ class EventsController < ApplicationController
     I18n.locale = @quizzable.locale_with_inheritance
   end
 
+  def fill_quizzable_preview
+    @id = params[:id]
+    @type = params[:type]
+    @quizzable = @type.constantize.find_by_id(@id)
+    I18n.locale = @quizzable.locale_with_inheritance
+  end
+
   def fill_reassign_modal
     @type = params[:type]
     @quizzable = @type.constantize.find_by_id(params[:id])

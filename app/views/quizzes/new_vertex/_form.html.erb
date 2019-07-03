@@ -1,0 +1,44 @@
+<%= form_with url: quiz_vertices_path(quiz_id: quiz.id),
+                                        scope: 'vertex',
+                                        method: 'post' do |f| %>
+  <%= f.hidden_field :sort, value: 'import' %>
+  <div id='new_vertex_type'>
+    <div class="form-group" id="new_vertex_type_select">
+      <div class="custom-control custom-radio custom-control-inline">
+        <%= f.radio_button :type,
+                           'Question',
+                           class: 'custom-control-input' %>
+        <%= f.label :type,
+                    t('basics.question'),
+                    value: 'Question',
+                    class: 'custom-control-label' %>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <%= f.radio_button :type,
+                           'Remark',
+                           class: 'custom-control-input' %>
+        <%= f.label :type,
+                    t('basics.remark'),
+                    value: 'Remark',
+                    class: 'custom-control-label' %>
+      </div>
+    </div>
+  </div>
+  <div id='new_vertex_quizzable'
+       style="display: none;">
+    <%= f.select :quizzable,
+                 options_for_select([[]]),
+                 { hide_label: true,
+                   include_blank: t('basics.search') },
+                   { id: 'new_vertex_quizzable_select',
+                     class: 'selectize' } %>
+  </div>
+  <div id='new_vertex_text'>
+  </div>
+  <div class='text-center'>
+    <%= f.submit t('buttons.save_vertex'),
+                 class: 'btn btn-sm btn-secondary m-2',
+                 style: 'display: none;',
+                 id: 'submit-vertex' %>
+  </div>
+<% end %>

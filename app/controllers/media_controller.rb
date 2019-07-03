@@ -156,6 +156,10 @@ class MediaController < ApplicationController
     @total = search.total
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
+    if search_params[:quiz] == 'true'
+      render template: "quizzes/new_vertex/preview"
+      return
+    end
   end
 
   # play the video using thyme player
@@ -393,8 +397,10 @@ class MediaController < ApplicationController
   end
 
   def search_params
+    types = params[:search][:types]
+    params[:search][:types] = [types] if types && !types.kind_of?(Array)
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
-                                   :all_editors, :tag_operator,
+                                   :all_editors, :tag_operator, :quiz,
                                    :teachable_inheritance, :fulltext, :per,
                                    types: [],
                                    teachable_ids: [],

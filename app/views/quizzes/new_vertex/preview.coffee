@@ -1,7 +1,7 @@
 # render media reults partial
 searchResults = document.getElementById('media-search-results')
-searchResults.innerHTML = '<%= j render partial: "media/catalog/results",
-                                  locals: { media: @media } %>'
+searchResults.innerHTML = '<%= j render partial: "quizzes/new_vertex/search_results",
+                                 locals: { media: @media } %>'
 
 # run katex on search results
 mediaResults = document.getElementById('media-search-results')

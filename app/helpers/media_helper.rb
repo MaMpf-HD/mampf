@@ -94,4 +94,13 @@ module MediaHelper
     return if medium.published_with_inheritance? && !medium.locked?
     'border-danger'
   end
+
+  def media_sorts(quiz)
+    add_prompt(quiz ? Medium.select_quizzables : Medium.select_sorts)
+  end
+
+  def sort_preselect(quiz)
+    return '' unless quiz
+    'Question'
+  end
 end

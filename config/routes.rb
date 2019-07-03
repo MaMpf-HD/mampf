@@ -42,6 +42,7 @@ Rails.application.routes.draw do
   get 'events/fill_quizzable_modal', as: 'fill_quizzable_modal'
   get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
   get 'events/render_tag_title', as: 'render_tag_title'
+  get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'

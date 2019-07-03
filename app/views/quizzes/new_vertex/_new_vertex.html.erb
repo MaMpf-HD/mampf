@@ -1,6 +1,6 @@
 <div id='new_vertex' class='no_display' >
   <div class='row'>
-    <div class="col-12 col-md-6 col-lg-6">
+    <div class="col-12">
       <div id='new_vertex_card' class="card bg-light m-3">
         <div class='card-header'>
           <div class="row">
@@ -8,7 +8,8 @@
               <%= t('buttons.create_vertex') %>
             </div>
             <div class="col-4 text-right">
-              <%= link_to t('buttons.cancel'), edit_quiz_path(quiz),
+              <%= link_to t('buttons.cancel'),
+                          edit_quiz_path(quiz),
                           class: 'btn btn-sm btn-secondary' %>
             </div>
           </div>
@@ -41,50 +42,10 @@
             <div class="tab-pane fade show active" id="import-vertex"
                  role="tabpanel" aria-labelledby="import-vertex-tab">
               <div id="import-vertex">
-                <%= form_with url: quiz_vertices_path(quiz_id: quiz.id),
-                                        scope: 'vertex',
-                                        method: 'post' do |f| %>
-                  <%= f.hidden_field :sort, value: 'import' %>
-                  <div id='new_vertex_type'>
-                    <div class="form-group" id="new_vertex_type_select">
-                      <div class="custom-control custom-radio custom-control-inline">
-                        <%= f.radio_button :type,
-                                           'Question',
-                                           class: 'custom-control-input' %>
-                        <%= f.label :type,
-                                    t('basics.question'),
-                                    value: 'Question',
-                                    class: 'custom-control-label' %>
-                      </div>
-                      <div class="custom-control custom-radio custom-control-inline">
-                        <%= f.radio_button :type,
-                                           'Remark',
-                                           class: 'custom-control-input' %>
-                        <%= f.label :type,
-                                    t('basics.remark'),
-                                    value: 'Remark',
-                                    class: 'custom-control-label' %>
-                      </div>
-                    </div>
-                  </div>
-                  <div id='new_vertex_quizzable'
-                       style="display: none;">
-                    <%= f.select :quizzable,
-                                options_for_select([[]]),
-                                { hide_label: true,
-                                  include_blank: t('basics.search') },
-                                { id: 'new_vertex_quizzable_select',
-                                  class: 'selectize' } %>
-                  </div>
-                  <div id='new_vertex_text'>
-                  </div>
-                  <div class='text-center'>
-                    <%= f.submit t('buttons.save_vertex'),
-                                 class: 'btn btn-sm btn-secondary m-2',
-                                 style: 'display: none;',
-                                 id: 'submit-vertex' %>
-                  </div>
-                <% end %>
+                <%= render partial: 'media/catalog/search_form',
+                           locals: { quiz: true } %>
+                <div id="media-search-results">
+                </div>
               </div>
             </div>
             <div class="tab-pane fade" id="create-question"

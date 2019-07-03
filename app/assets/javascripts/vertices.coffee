@@ -176,6 +176,25 @@ $(document).on 'turbolinks:load', ->
           $(header).removeClass('bg-red-lighten-2').addClass(color)
     return
 
+  $(document).on 'mouseenter', '[id^="result-quizzable-"]', ->
+    $(this).addClass('bg-orange')
+    $.ajax Routes.fill_quizzable_preview_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: $(this).data('id')
+        type: $(this).data('type')
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'mouseleave', '[id^="result-quizzable-"]', ->
+    $(this).removeClass('bg-orange')
+    return
+
+  return
+
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '[id^="default_target_select_"]'
@@ -189,4 +208,6 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#button-reassign'
   $(document).off 'mouseenter', '[id^="neighbours-"]'
   $(document).off 'mouseleave', '[id^="neighbours-"]'
+  $(document).off 'mouseenter', '[id^="result-quizzable-"]'
+  $(document).off 'mouseleave', '[id^="result-quizzable-"]'
   return

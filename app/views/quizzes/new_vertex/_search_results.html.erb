@@ -1,0 +1,105 @@
+<% if @total.positive? %>
+  <div class="row mx-2 py-3">
+    <div class="col-2">
+      <strong>
+      <%= t('basics.hits') %>:
+    </strong>
+      <%= @total %>
+    </div>
+    <div class="col-7">
+      <%= paginate @media, remote: true %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-9">
+      <div class="row bg-mdb-color-lighten-5 mx-2 py-1">
+        <div class="col-6">
+          <strong>
+            <%= t('basics.description') %>
+          </strong>
+        </div>
+        <div class="col-1">
+          <strong>
+            <%= t('basics.associated_to') %>
+          </strong>
+        </div>
+        <div class="col-3">
+          <strong>
+            <%= t('basics.related_tags') %>
+          </strong>
+        </div>
+        <div class="col-2">
+          <strong>
+            <%= t('basics.editors') %>
+          </strong>
+        </div>
+      </div>
+      <div id="mediaTable">
+        <% @media.each do |m| %>
+          <% cache m do %>
+            <div class="row border-bottom mx-2"
+                 id="result-quizzable-<%= m.id %>"
+                 data-type="<%= m.type %>"
+                 data-id="<%= m.id %>"
+                 style="cursor: pointer;">
+              <div class="col-6">
+                <%= m.details %>
+              </div>
+              <div class="col-1">
+                <% if m.teachable_type == 'Course' %>
+                  <%= link_to m.teachable.short_title,
+                              edit_or_inspect_course_path(m.teachable) %>
+                <% elsif m.teachable_type == 'Lecture' %>
+                  <%= link_to m.teachable.short_title,
+                              edit_or_inspect_lecture_path(m.teachable) %>
+                <% else %>
+                  <%= link_to m.teachable.short_title_with_lecture_date,
+                              edit_or_inspect_lecture_path(m.teachable.lecture) %>
+                <% end %>
+              </div>
+              <div class="col-3">
+                <% m.tags.each do |t| %>
+                  <%= link_to t.short_title,
+                              edit_tag_path(t),
+                              class:'badge badge-light',
+                              data: { toggle: 'tooltip', placement: 'top'},
+                              title: t.title %>
+                <% end %>
+              </div>
+              <div class="col-2">
+                <ul class="list-unstyled">
+                  <% m.editors.each do |e| %>
+                    <li>
+                      <%= e.name_or_email  %>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="row bg-mdb-color-lighten-5 mx-2 py-2">
+        <div class="col-12">
+          <strong>
+            <%= t('basics.preview') %>
+          </strong>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div id="quizzablePreview">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= t('basics.no_hits') %>
+    </div>
+  </div>
+<% end %>
