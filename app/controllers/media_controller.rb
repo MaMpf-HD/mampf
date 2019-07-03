@@ -150,12 +150,12 @@ class MediaController < ApplicationController
 
   # return all media that match the search parameters
   def search
-    search = Medium.search_by(search_params, 10, params[:page])
+    search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
     @total = search.total
     @media = Kaminari.paginate_array(results, total_count: @total)
-                     .page(params[:page]).per(10)
+                     .page(params[:page]).per(search_params[:per])
   end
 
   # play the video using thyme player
@@ -395,7 +395,7 @@ class MediaController < ApplicationController
   def search_params
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
                                    :all_editors, :tag_operator,
-                                   :teachable_inheritance, :fulltext,
+                                   :teachable_inheritance, :fulltext, :per,
                                    types: [],
                                    teachable_ids: [],
                                    tag_ids: [],

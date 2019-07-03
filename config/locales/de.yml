@@ -1827,6 +1827,7 @@ de:
     with_inheritance: 'mit Vererbung'
     without_inheritance: 'ohne Vererbung'
     fulltext: 'Volltext'
+    hits_per_page: 'Treffer pro Seite'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

@@ -261,7 +261,7 @@ class Medium < ApplicationRecord
     Medium.where(id: edited_media)
   end
 
-  def self.search_by(search_params, per, page)
+  def self.search_by(search_params, page)
     search_params[:types] = [] if search_params[:all_types] == '1'
     if search_params[:teachable_inheritance] == '1'
       search_params[:teachable_ids] = Course.search_inherited_teachables(search_params)
@@ -271,30 +271,39 @@ class Medium < ApplicationRecord
     if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
       search_params[:tag_ids] = Tag.pluck(:id)
     end
-    search = Sunspot.new_search(Medium) do
+    search = Sunspot.new_search(Medium)
+    search.build do
       with(:sort, search_params[:types])
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
     end
     unless search_params[:all_tags] == '1' &&
              search_params[:tag_operator] == 'or'
-      if search_params[:tag_operator] == 'or'
-        search.build do
-          with(:tag_ids).any_of(search_params[:tag_ids])
+      if search_params[:tag_ids]
+        if search_params[:tag_operator] == 'or'
+          search.build do
+            with(:tag_ids).any_of(search_params[:tag_ids])
+          end
+        else
+          search.build do
+            with(:tag_ids).all_of(search_params[:tag_ids])
+          end
         end
       else
         search.build do
-          with(:tag_ids).all_of(search_params[:tag_ids])
+          with(:tag_ids, nil)
         end
       end
     end
     if search_params[:fulltext].present?
       search.build do
-        fulltext search_params[:fulltext]
+        fulltext search_params[:fulltext] do
+          boost_fields :description => 2.0
+        end
       end
     end
     search.build do
-      paginate page: page, per_page: per
+      paginate page: page, per_page: search_params[:per]
     end
     search
   end
