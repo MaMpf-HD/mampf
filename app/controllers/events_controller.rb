@@ -61,7 +61,6 @@ class EventsController < ApplicationController
   def fill_quizzable_modal
     @id = params[:id]
     @type = params[:type]
-    @quizzable = @type.constantize.find_by_id(@id)
     I18n.locale = @quizzable.locale_with_inheritance
   end
 
@@ -70,6 +69,13 @@ class EventsController < ApplicationController
     @type = params[:type]
     @quizzable = @type.constantize.find_by_id(@id)
     I18n.locale = @quizzable.locale_with_inheritance
+  end
+
+  def render_import_vertex
+    @id = params[:id]
+    @type = params[:type]
+    @quiz_id = params[:quiz_id]
+    I18n.locale = Quiz.find_by_id(@quiz_id)&.locale_with_inheritance
   end
 
   def fill_reassign_modal

@@ -1,7 +1,6 @@
 $('#quizzablePreview').empty()
   .append '<%= j render partial: "quizzes/quizzable_preview",
                         locals: { quizzable: @quizzable } %>'
-
 quizzablePreview = document.getElementById('quizzablePreview')
 renderMathInElement quizzablePreview,
   delimiters: [
