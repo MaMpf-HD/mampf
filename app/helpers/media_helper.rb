@@ -95,7 +95,7 @@ module MediaHelper
     'border-danger'
   end
 
-  def media_sorts(quiz)
+  def media_sorts_select(quiz)
     add_prompt(quiz ? Medium.select_quizzables : Medium.select_sorts)
   end
 

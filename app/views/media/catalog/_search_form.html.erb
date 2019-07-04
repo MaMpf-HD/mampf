@@ -21,7 +21,7 @@
         <%= f.hidden_field :all_types, value: '0' %>
       <% end %>
       <%= f.select :types,
-                   options_for_select(media_sorts(quiz),
+                   options_for_select(media_sorts_select(quiz),
                                       sort_preselect(quiz)),
                    {},
                    { multiple: !quiz,
