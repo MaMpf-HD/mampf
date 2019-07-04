@@ -3,7 +3,7 @@ production:
     hostname: solr
     port: 8983
     log_level: WARNING
-    path: /solr/mampf-dev
+    path: <%= ENV['SOLR_PATH'] %>
     # read_timeout: 2
     # open_timeout: 0.5
 
@@ -20,4 +20,4 @@ test:
     port: 8981
     log_level: WARNING
     path: /solr/test
-    
+
