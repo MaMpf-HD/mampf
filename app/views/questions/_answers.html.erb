@@ -8,5 +8,13 @@
       <% end%>
     </span>
     <%= a.text %>
+    <% if a.explanation %>
+      <div>
+        <i>
+          denn:
+        </i>
+        <%= a.explanation %>
+      </div>
+    <% end %>
   </div>
 <% end %>

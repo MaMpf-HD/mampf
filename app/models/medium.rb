@@ -952,6 +952,6 @@ class Medium < ApplicationRecord
   def text_join
     return unless type.in?(['Question', 'Remark'])
     return text if type == 'Remark'
-    "#{text} #{becomes(Question).answers&.map(&:text)&.join(' ')}"
+    "#{text} #{becomes(Question).answers&.map(&:text_join)&.join(' ')}"
   end
 end

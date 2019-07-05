@@ -20,6 +20,10 @@ class Answer < ApplicationRecord
                   question: new_question)
   end
 
+  def text_join
+    "#{text} #{explanation}"
+  end
+
   private
 
   def question_not_orphaned?
@@ -40,7 +44,6 @@ class Answer < ApplicationRecord
   end
 
   def touch_medium
-    pp '*************************************'
     question.becomes(Medium).update(updated_at: Time.now)
   end
 end

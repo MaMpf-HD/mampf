@@ -34,53 +34,6 @@ $(document).on 'turbolinks:load', ->
         console.log("AJAX Error: #{textStatus}")
     return
 
-  # update quizzable list after quizzable type is selected in new vertex import
-
-  $(document).on 'change', '#new_vertex_type_select', ->
-    type = $('input[name="vertex[type]"]:checked').val()
-    $('#new_vertex_quizzable').show()
-    $.ajax Routes.new_vertex_quizzables_path(),
-      type: 'GET'
-      dataType: 'json'
-      data: {
-        type: type
-      }
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log("AJAX Error: #{textStatus}")
-      success: (result) ->
-        quizzableSelector = document.getElementById('new_vertex_quizzable_select')
-        if quizzableSelector?
-          quizzableSelectize = quizzableSelector.selectize
-          quizzableSelectize.clearOptions()
-          quizzableSelectize.addOption(result)
-          quizzableSelectize.refreshOptions(false)
-          quizzableSelectize.clear()
-          quizzableSelectize.refreshOptions(false)
-        $('#new_vertex_quizzable_select').trigger 'change'
-        return
-    return
-
-  # update quizzable text after quizzable is selected in new vertex creation
-
-  $(document).on 'change', '#new_vertex_quizzable_select', ->
-    id = $("#new_vertex_quizzable_select option:selected").val()
-    if id != ''
-      $('#submit-vertex').show()
-      $.ajax Routes.new_vertex_quizzable_text_path(),
-        type: 'GET'
-        dataType: 'script'
-        data: {
-          type: $('input[name="vertex[type]"]:checked').val()
-          id: id
-        }
-        error: (jqXHR, textStatus, errorThrown) ->
-          console.log("AJAX Error: #{textStatus}")
-      return
-    else
-      $('#submit-vertex').hide()
-      $('#new_vertex_text').empty()
-    return
-
   # change button 'Ziele ändern' to 'verwerfen' after vertex body is revealed
 
   $(document).on 'shown.bs.collapse', '[id^="collapse-vertex-"]', ->

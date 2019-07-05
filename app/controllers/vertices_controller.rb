@@ -11,6 +11,7 @@ class VerticesController < ApplicationController
   def create
     if @success
       @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(@quizzable))
+      @quiz.save_png!
     end
     redirect_to edit_quiz_path(@quiz) if @sort == 'import'
   end

@@ -15,19 +15,6 @@ class EventsController < ApplicationController
     @hide_id = params[:id].sub 'branching_select', 'hide'
   end
 
-  def new_vertex_quizzables
-    type = params[:type]
-    quizzables = type.constantize.all
-                     .map { |q| { value: q.id, text: q.extended_label }}
-    render json: quizzables
-  end
-
-  def new_vertex_quizzable_text
-    @type = params[:type]
-    @id = params[:id]
-    @quizzable = @type.constantize.find_by_id(@id)
-  end
-
   def update_vertex_body
     @quiz = Quiz.find(params[:quiz_id])
     I18n.locale = @quiz.locale_with_inheritance

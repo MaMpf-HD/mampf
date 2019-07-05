@@ -31,8 +31,6 @@ Rails.application.routes.draw do
 
   get 'events/update_vertex_default', as: 'update_vertex_default'
   get 'events/update_branching', as: 'update_branching'
-  get 'events/new_vertex_quizzables', as: 'new_vertex_quizzables'
-  get 'events/new_vertex_quizzable_text', as: 'new_vertex_quizzable_text'
   get 'events/update_vertex_body', as: 'update_vertex_body'
   get 'events/update_answer_body', as: 'update_answer_body'
   get 'events/update_answer_box', as: 'update_answer_box'
