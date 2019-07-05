@@ -1,0 +1,37 @@
+<% if medium.type == 'Question' %>
+  <%= render partial: 'quizzes/quizzable_preview',
+             locals: { quizzable: medium.becomes(Question) } %>
+<% elsif medium.type == 'Remark' %>
+  <%= render partial: 'quizzes/quizzable_preview',
+             locals: { quizzable: medium.becomes(Remark) } %>
+<% else %>
+  <% if medium.video && medium.screenshot %>
+    <img class="card-img-top video-thumbnail"
+         src="<%= medium.screenshot_url %>">
+  <% elsif medium.manuscript && medium.manuscript_screenshot_url %>
+    <img class="card-img-top video-thumbnail"
+         src="<%= medium.manuscript_screenshot_url %>">
+  <% elsif medium.sort == 'Quiz' && medium.becomes(Quiz).quiz_image_url %>
+    <img class="card-img-top video-thumbnail"
+         src="<%= medium.becomes(Quiz).quiz_image_url %>">
+  <% end %>
+<% end %>
+<div class="row">
+  <div class="col-12">
+    <% if medium.video %>
+      <span class="badge badge-secondary">
+        <%= t('video.video') %>
+      </span>
+    <% end %>
+    <% if medium.manuscript %>
+      <span class="badge badge-secondary">
+        <%= t('manuscript.manuscript') %>
+      </span>
+    <% end %>
+    <% if medium.external_reference_link %>
+      <span class="badge badge-secondary">
+        <%= t('external_link_lc') %>
+      </span>
+    <% end %>
+  </div>
+</div>

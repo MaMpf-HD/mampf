@@ -579,6 +579,8 @@ de:
       publish: 'Publish Medium'
       media_search: 'Mediensuche'
       create: 'Medium anlegen'
+      edit: 'Medium bearbeiten'
+      inspect: 'Medium ansehen'
       no_media: 'Es konnten leider keine Medien gefunden werden.'
       local_info:
         no_title: 'ohne Titel'
@@ -783,7 +785,7 @@ de:
           Das Video sollte im mp4-Format vorliegen.
           Die empfohlene horizontale Auflösung ist 1080 Pixel, um eine
           hinreichende Zukunftskompatibilität zu gewährleisten.
-          Für den thyme-Player ist ein 3:2 Bildschirmverhältnis optimal,
+          Für den THymE-Player ist ein 3:2 Bildschirmverhältnis optimal,
           da in diesem Fall der Platz für interne und externe Referenzen
           bestmöglich ausgenutzt wird, sofern ein 16:9 Monitor verwendet wird.
         manuscript: >
@@ -1282,6 +1284,7 @@ de:
           Ein editierbarer Text wird erzeugt, nachdem Du
           die Quiz-Erläuterung erstmalig abgespeichert hast.
     quiz:
+      edit: 'Quiz bearbeiten'
       start_vertex: 'Start-Ecke'
       vertices: 'Ecken'
       medium_deleted: 'Medium gelöscht'
@@ -1770,6 +1773,7 @@ de:
     external_link: 'Externer Link'
     editor: 'Editor'
     thyme: 'THymE'
+    thyme_editor: 'THymE-Editor'
     screenshot: 'Screenshot'
     file: 'Datei'
     size: 'Größe'

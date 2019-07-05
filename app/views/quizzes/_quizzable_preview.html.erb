@@ -1,25 +1,25 @@
 <% cache quizzable do %>
-<% if quizzable %>
-<div class="<%= quizzable_color(quizzable.sort) %> p-2 border mt-2">
-  <div class="row mb-3">
-    <div class="col-12">
-      <%= quizzable.text %>
-    </div>
-  </div>
-  <% if quizzable.sort == 'Question' %>
-    <div class="row mb-3">
-      <div class="col-12">
-        <%= render partial: 'questions/answers',
-                   locals: { answers: quizzable.answers } %>
+  <% if quizzable %>
+    <div class="<%= quizzable_color(quizzable.sort) %> p-2 border mt-2">
+      <div class="row mb-3">
+        <div class="col-12">
+          <%= quizzable.text %>
+        </div>
       </div>
+      <% if quizzable.sort == 'Question' %>
+        <div class="row mb-3">
+          <div class="col-12">
+            <%= render partial: 'questions/answers',
+                       locals: { answers: quizzable.answers } %>
+          </div>
+        </div>
+        <% if quizzable.hint.present? %>
+          <i>
+            <%= t('admin.question.hint') %>:
+          </i>
+          <%= quizzable.hint %>
+        <% end %>
+      <% end %>
     </div>
-    <% if quizzable.hint.present? %>
-      <i>
-        <%= t('admin.question.hint') %>:
-      </i>
-      <%= quizzable.hint %>
-    <% end %>
   <% end %>
-</div>
-<% end %>
 <% end %>

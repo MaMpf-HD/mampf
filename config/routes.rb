@@ -41,7 +41,9 @@ Rails.application.routes.draw do
   get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
   get 'events/render_tag_title', as: 'render_tag_title'
   get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
+  get 'events/fill_medium_preview', as: 'fill_medium_preview'
   get 'events/render_import_vertex', as: 'render_import_vertex'
+  get 'events/render_medium_actions', as: 'render_medium_actions'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'

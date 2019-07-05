@@ -181,6 +181,49 @@ $(document).on 'turbolinks:load', ->
       }
     return
 
+  $(document).on 'mouseenter', '[id^="row-medium-"]', ->
+    mediumActions = document.getElementById('mediumActions')
+    unless mediumActions.dataset.filled == 'true'
+      $(this).addClass('bg-orange-lighten-4')
+      $.ajax Routes.fill_medium_preview_path(),
+         type: 'GET'
+         dataType: 'script'
+         data: {
+           id: $(this).data('id')
+           type: $(this).data('type')
+         }
+         error: (jqXHR, textStatus, errorThrown) ->
+           console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'mouseleave', '[id^="row-medium-"]', ->
+    $(this).removeClass('bg-orange-lighten-4')
+    return
+
+  $(document).on 'click', '[id^="row-medium-"]', ->
+    mediumActions = document.getElementById('mediumActions')
+    if mediumActions && mediumActions.dataset.filled != 'true'
+      $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
+      $('[id^="row-medium-"]').css('cursor','')
+      $.ajax Routes.render_medium_actions_path(),
+        type: 'GET'
+        dataType: 'script'
+        data: {
+          id: $(this).data('id')
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#cancel-medium-actions', ->
+    mediumActions = document.getElementById('mediumActions')
+    $(mediumActions).empty()
+    mediumActions.dataset.filled = 'false'
+    $('#mediumPreview').empty()
+    $('[id^="row-medium-"]').css('cursor','pointer')
+    $('[id^="row-medium-"]').removeClass('bg-green-lighten-4')
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->
@@ -189,4 +232,8 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#export-toc'
   $(document).off 'click', '#export-references'
   $(document).off 'click', '#export-screenshot'
+  $(document).off 'mouseenter', '[id^="row-medium-"]'
+  $(document).off 'mouseleave', '[id^="row-medium-"]'
+  $(document).off 'click', '[id^="row-medium-"]'
+  $(document).off 'click', '#cancel-medium-actions'
   return

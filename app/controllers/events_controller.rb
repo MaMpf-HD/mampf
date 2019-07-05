@@ -59,6 +59,18 @@ class EventsController < ApplicationController
     I18n.locale = @quizzable.locale_with_inheritance
   end
 
+  def fill_medium_preview
+    @id = params[:id]
+    @medium = Medium.find_by_id(@id)
+    I18n.locale = current_user.locale
+  end
+
+  def render_medium_actions
+    @id = params[:id]
+    @medium = Medium.find_by_id(@id)
+    I18n.locale = current_user.locale
+  end
+
   def render_import_vertex
     @id = params[:id]
     @type = params[:type]

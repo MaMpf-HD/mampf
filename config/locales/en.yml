@@ -553,6 +553,8 @@ en:
       publish: 'Publish Medium'
       media_search: 'Search Media'
       create: 'Create Medium'
+      edit: 'Edit Medium'
+      inspect: 'Inspect Medium'
       no_media: 'No media found.'
       manuscript:
         structure: 'Structure of the manuscript'
@@ -1202,6 +1204,7 @@ en:
           An editable text for this remark will be created after
           you have saved this medium for the first time.
     quiz:
+      edit: 'Edit Quiz'
       start_vertex: 'Start Vertex'
       vertices: 'Vertices'
       medium_deleted: 'Medium deleted'
@@ -1664,6 +1667,7 @@ en:
     external_link: 'External Link'
     editor: 'Editor'
     thyme: 'THymE'
+    thyme_editor: 'THymE Editor'
     screenshot: 'Screenshot'
     file: 'File'
     size: 'Size'
