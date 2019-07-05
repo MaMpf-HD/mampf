@@ -1,19 +1,20 @@
-<%= form_with url: quiz_vertices_path(quiz_id: quiz_id),
+<%#= form_with url: quiz_vertices_path(quiz_id: quiz_id),
                                         scope: 'vertex',
                                         method: 'post' do |f| %>
-  <%= f.hidden_field :sort, value: 'import' %>
-  <%= f.hidden_field :type, value: type %>
-  <%= f.hidden_field :quizzable, value: id %>
-  <div class="row mt-2">
+  <%#= f.hidden_field :sort, value: 'import' %>
+  <%#= f.hidden_field :quizzable_ids, value: [] %>
+  <div class="row">
     <div class="col-12 text-center">
-      <%= f.submit t('buttons.import'),
-                   class: 'btn btn-sm btn-primary mt-3',
-                   id: 'submit-vertex' %>
       <button type="button"
-              class="btn btn-sm btn-secondary mt-3 ml-2"
+              id="submit-import-vertex"
+              class="btn btn-sm btn-primary">
+        <%= t('buttons.import') %>
+      </button>
+      <button type="button"
+              class="btn btn-sm btn-secondary ml-2"
               id="cancel-import-vertex">
-        <%= t('buttons.cancel') %>
+        <%= t('buttons.reset') %>
       </button>
     </div>
   </div>
-<% end %>
+<%# end %>

@@ -10,7 +10,9 @@ class VerticesController < ApplicationController
 
   def create
     if @success
-      @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(@quizzable))
+      @quizzables.each do |q|
+        @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(q))
+      end
       @quiz.save_png!
     end
     redirect_to edit_quiz_path(@quiz) if @sort == 'import'
@@ -51,14 +53,15 @@ class VerticesController < ApplicationController
   def set_create_vertex_params
     @sort = @params_v[:sort]
     if @sort == 'import'
-      @quizzable = @params_v[:type].constantize
-                                   .find_by_id(@params_v[:quizzable])
-      @success = @quizzable.present?
+      @quizzables = Medium.where(id: @params_v[:quizzable_ids],
+                                 type: ['Question', 'Remark'])
+      @success = @quizzables.any?
     else
-      @quizzable = @sort.constantize.create_prefilled(@params_v[:label],
+      quizzable = @sort.constantize.create_prefilled(@params_v[:label],
                                                       @quiz.teachable,
                                                       @quiz.editors)
-      @success = @quizzable.valid?
+      @success = quizzable.valid?
+      @quizzables = [quizzable]
     end
   end
 

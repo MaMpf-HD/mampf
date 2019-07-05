@@ -3,12 +3,12 @@
 $('#quizzableModalLabel').empty().append("<%= t('admin.question.edit') %>")
 $('#quizzable-data').empty()
   .append '<%=  j render partial: "questions/data",
-                         locals: { question: @quizzable } %>'
+                         locals: { question: @quizzables.first } %>'
 <% else %>
 $('#quizzableModalLabel').empty().append("<%= t('admin.remark.edit') %>")
 $('#quizzable-data').empty()
   .append '<%= j render partial: "remarks/data",
-                        locals: { remark: @quizzable } %>'
+                        locals: { remark: @quizzables.first } %>'
 <% end %>
 $('#quizzableModal').modal 'show'
 quizzableData = document.getElementById('quizzable-data')

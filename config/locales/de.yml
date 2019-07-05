@@ -1832,6 +1832,8 @@ de:
     without_inheritance: 'ohne Vererbung'
     fulltext: 'Volltext'
     hits_per_page: 'Treffer pro Seite'
+    selection: 'Auswahl'
+    nothing_selected: 'Du hast nichts ausgewählt.'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1891,6 +1893,7 @@ de:
     save_targets: 'Ziele speichern'
     save_vertex: 'Ecke speichern'
     submit: 'Fertig'
+    reset: 'Zurücksetzen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

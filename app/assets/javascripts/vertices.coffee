@@ -130,44 +130,79 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'mouseenter', '[id^="result-quizzable-"]', ->
-    unless $('#importVertexForm').data('filled')
-      $(this).addClass('bg-orange-lighten-4')
-      $.ajax Routes.fill_quizzable_preview_path(),
-        type: 'GET'
-        dataType: 'script'
-        data: {
-          id: $(this).data('id')
-          type: $(this).data('type')
-        }
-        error: (jqXHR, textStatus, errorThrown) ->
-          console.log("AJAX Error: #{textStatus}")
+    $('#quizzesPreviewHeader').show()
+    $(this).addClass('bg-orange-lighten-4')
+    $.ajax Routes.fill_quizzable_preview_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: $(this).data('id')
+        type: $(this).data('type')
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
     return
 
   $(document).on 'mouseleave', '[id^="result-quizzable-"]', ->
     $(this).removeClass('bg-orange-lighten-4')
     return
 
+  $(document).on 'mouseleave', '#quizzableSearchResults', ->
+    $('#quizzablePreview').empty()
+    $('#quizzesPreviewHeader').hide()
+    return
+
+  $(document).on 'mouseenter', '#selectedQuizzablesColumn', ->
+    $('#quizzablePreview').empty()
+    $('#quizzesPreviewHeader').hide()
+    return
+
+
   $(document).on 'click', '[id^="result-quizzable-"]', ->
-    unless $('#importVertexForm').data('filled')
-      $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
-      $('[id^="result-quizzable-"]').css('cursor','')
-      $.ajax Routes.render_import_vertex_path(),
-        type: 'GET'
-        dataType: 'script'
-        data: {
-          quiz_id: $('#new_vertex').data('quiz')
-          id: $(this).data('id')
-          type: $(this).data('type')
-        }
-        error: (jqXHR, textStatus, errorThrown) ->
-          console.log("AJAX Error: #{textStatus}")
+    $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
+    $.ajax Routes.render_import_vertex_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        quiz_id: $('#new_vertex').data('quiz')
+        id: $(this).data('id')
+        type: $(this).data('type')
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
     return
 
   $(document).on 'click', '#cancel-import-vertex', ->
-    $('#importVertexForm').empty().data('filled', false)
     $('#quizzablePreview').empty()
-    $('[id^="result-quizzable-"]').css('cursor','pointer')
     $('[id^="result-quizzable-"]').removeClass('bg-green-lighten-4')
+    importTab = document.getElementById('import-vertex-tab')
+    importTab.dataset.selected = '[]'
+    $.ajax Routes.cancel_import_vertex_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        quiz_id: $('#new_vertex').data('quiz')
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#submit-import-vertex', ->
+    quizId = $('#new_vertex').data('quiz')
+    importTab = document.getElementById('import-vertex-tab')
+    selected = JSON.parse(importTab.dataset.selected)
+    console.log 'Hier'
+    $.ajax Routes.quiz_vertices_path(quiz_id: quizId),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        vertex: {
+          sort: 'import'
+          quizzable_ids: selected
+        }
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
     return
 
   return
@@ -187,6 +222,9 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'mouseleave', '[id^="neighbours-"]'
   $(document).off 'mouseenter', '[id^="result-quizzable-"]'
   $(document).off 'mouseleave', '[id^="result-quizzable-"]'
+  $(document).off 'mouseleave', '#quizzableSearchResults'
   $(document).off 'click', '[id^="result-quizzable-"]'
   $(document).off 'click', '#cancel-import-vertex'
+  $(document).off 'click', '#submit-import-vertex'
+  $(document).off 'mouseenter', '#selectedQuizzablesColumn'
   return

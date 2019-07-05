@@ -1727,6 +1727,8 @@ en:
     without_inheritance: 'without inheritance'
     fulltext: 'Full text'
     hits_per_page: 'Hits per page'
+    selection: 'Selection'
+    nothing_selected: 'You have not selected anything.'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1789,6 +1791,7 @@ en:
     save_targets: 'Save Targets'
     save_vertex: 'Save Vertex'
     submit: 'Submit'
+    reset: 'Reset'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

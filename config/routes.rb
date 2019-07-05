@@ -43,6 +43,7 @@ Rails.application.routes.draw do
   get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
   get 'events/fill_medium_preview', as: 'fill_medium_preview'
   get 'events/render_import_vertex', as: 'render_import_vertex'
+  get 'events/cancel_import_vertex', as: 'cancel_import_vertex'
   get 'events/render_medium_actions', as: 'render_medium_actions'
 
   get 'items/:id/display', to: 'items#display',
