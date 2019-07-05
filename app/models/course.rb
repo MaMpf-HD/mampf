@@ -98,7 +98,7 @@ class Course < ApplicationRecord
 
   def subscribable_lectures(user)
     return lectures if user.admin
-    return published_lectures unless user.editor?
+    return published_lectures unless user.editor? || user.teacher?
     lectures.where(id: lectures.select { |l| l.edited_by?(user) ||
                                                l.published? }
                                .map(&:id))
