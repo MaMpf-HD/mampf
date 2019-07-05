@@ -48,6 +48,7 @@ class EventsController < ApplicationController
   def fill_quizzable_modal
     @id = params[:id]
     @type = params[:type]
+    @quizzable = @type.constantize.find_by_id(@id)
     I18n.locale = @quizzable.locale_with_inheritance
   end
 
