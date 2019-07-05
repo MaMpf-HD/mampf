@@ -28,7 +28,7 @@
         <%= t('manuscript.manuscript') %>
       </span>
     <% end %>
-    <% if medium.external_reference_link %>
+    <% if medium.external_reference_link.present? %>
       <span class="badge badge-secondary">
         <%= t('external_link_lc') %>
       </span>
