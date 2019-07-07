@@ -14,6 +14,11 @@
                           new_quiz_vertex_path(quiz_id: quiz.id),
                           remote: true,
                           class: 'btn btn-sm btn-secondary' %>
+              <%= link_to t('buttons.linearize_quiz'),
+                          linearize_quiz_path(quiz),
+                          class: 'btn btn-sm btn-secondary',
+                          method: 'patch',
+                          data: { confirm: t('confirmation.linearize') } %>
             </div>
           </div>
         </div>

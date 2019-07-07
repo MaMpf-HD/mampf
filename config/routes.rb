@@ -143,6 +143,8 @@ Rails.application.routes.draw do
   put 'quizzes/:id/take', to: 'quizzes#proceed'
   get 'quizzes/:id/preview', to: 'quizzes#preview',
                              as: 'preview_quiz'
+  patch 'quizzes/:id/linearize', to: 'quizzes#linearize',
+                                 as: 'linearize_quiz'
 
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]

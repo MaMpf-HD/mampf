@@ -96,6 +96,9 @@ class Ability
       can [:teacher, :fill_user_select], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
+      can [:linearize], Quiz do |quiz|
+        q.edited_with_inheritance_by?(user)
+      end
     else
       can :read, :all
       cannot :read, [:administration, Term, User, Announcement]

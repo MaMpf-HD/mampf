@@ -808,6 +808,12 @@ class Medium < ApplicationRecord
     locale || teachable&.locale_with_inheritance
   end
 
+  def sanitize_type!
+    update(type: 'Quiz') if sort.in?(['Quiz', 'RandomQuiz'])
+    update(type: sort) if sort.in?(['Question', 'Remark'])
+    update(type: nil) if !sort.in?(['Quiz', 'Question', 'Remark', 'RandomQuiz'])
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

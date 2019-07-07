@@ -60,6 +60,7 @@ class MediaController < ApplicationController
     # (it will not be touched automatically in some cases (e.g. if you only
     # update the associated tags), causing trouble for caching)
     @medium.touch
+    @medium.sanitize_type!
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript
     if @medium.sort == 'Quiz' &&params[:medium][:create_quiz_graph] == '1'

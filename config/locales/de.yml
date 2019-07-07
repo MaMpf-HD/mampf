@@ -1894,6 +1894,7 @@ de:
     save_vertex: 'Ecke speichern'
     submit: 'Fertig'
     reset: 'Zurücksetzen'
+    linearize_quiz: 'Quiz linearisieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -1914,6 +1915,9 @@ de:
       sondern werden dann der entsprechenden Vorlesung zugeordnet.
     vertex: >
       Bist Du sicher? Damit werden auch die zugehörigen Kanten gelöscht.
+    linearize: >
+      Bist Du sicher? Damit wird das Quiz linearisiert, insbesondere werden alle
+      Änderungen, die Du bisher an den Kanten vorgenommen hast, gelöscht.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur

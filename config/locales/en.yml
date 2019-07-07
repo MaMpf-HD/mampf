@@ -1792,6 +1792,7 @@ en:
     save_vertex: 'Save Vertex'
     submit: 'Submit'
     reset: 'Reset'
+    linearize_quiz: 'Linearize Quiz'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -1807,6 +1808,9 @@ en:
       but will become associated to the parent lecture.
     vertex: >
       Are you sure? All associated edges will be deleted as well.
+    linearize: >
+      Are you sure? The quiz will be linearized, and any changes you have
+      made to edges before will be deleted.
   privacy_html: >
     We take the responsibility for your data seriously. By
     GDPR, we need your consent for the storage and processing

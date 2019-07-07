@@ -47,6 +47,13 @@ class QuizzesController < ApplicationController
     send_file @quiz.image_path, type: 'image/png', disposition: 'inline'
   end
 
+  def linearize
+    quiz_graph = @quiz.quiz_graph
+    @quiz.update(quiz_graph: quiz_graph.linearize!)
+    @quiz.save_png!
+    redirect_to edit_quiz_path(@quiz)
+  end
+
   private
 
   def set_quiz

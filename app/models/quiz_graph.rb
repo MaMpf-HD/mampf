@@ -259,6 +259,26 @@ class QuizGraph
     add_colored_edge(graph, nodes[edge[0]], qed, color)
   end
 
+  def linearize!
+    edges = {}
+    default_table = {}
+    @vertices.keys.each do |i|
+      j = i < @vertices.count ? i + 1 : -1
+      default_table[i] = j
+      if @vertices[i][:type] == 'Question'
+        question = quizzable(i)
+        edges[[i, j]] = [question.answer_scheme]
+        edges[[i, 0]] = question.answer_table - [question.answer_scheme]
+      else
+        edges[[i, j]] = []
+      end
+    end
+    @edges = edges
+    @root = @vertices.keys.first
+    @default_table = default_table
+    self
+  end
+
   def self.build_from_questions(question_ids)
     vertices = {}
     edges = {}
