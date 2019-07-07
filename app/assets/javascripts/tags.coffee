@@ -65,8 +65,9 @@ $(document).on 'turbolinks:load', ->
           style:
             'width': 3
             'line-color': '#ccc'
-            'target-arrow-color': '#ccc'
-            'target-arrow-shape': 'triangle'
+            # 'curve-style': 'bezier'
+            # 'target-arrow-color': '#ccc'
+            # 'target-arrow-shape': 'triangle'
         }
         {
           selector: '.hovering'

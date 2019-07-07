@@ -146,9 +146,11 @@ class Tag < ApplicationRecord
       result.push(data: t.cytoscape_vertex(marked_tag))
     end
     # add edges
+    edges = []
     tags.each do |t|
       (t.related_tags & tags).each do |r|
-        result.push(data: t.cytoscape_edge(r))
+        edges.push([t.id, r.id])
+        result.push(data: t.cytoscape_edge(r)) unless [r.id, t.id].in?(edges)
       end
     end
     result
