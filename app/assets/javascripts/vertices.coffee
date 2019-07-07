@@ -152,12 +152,6 @@ $(document).on 'turbolinks:load', ->
     $('#quizzesPreviewHeader').hide()
     return
 
-  $(document).on 'mouseenter', '#selectedQuizzablesColumn', ->
-    $('#quizzablePreview').empty()
-    $('#quizzesPreviewHeader').hide()
-    return
-
-
   $(document).on 'click', '[id^="result-quizzable-"]', ->
     $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
     $.ajax Routes.render_import_vertex_path(),
@@ -226,5 +220,4 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '[id^="result-quizzable-"]'
   $(document).off 'click', '#cancel-import-vertex'
   $(document).off 'click', '#submit-import-vertex'
-  $(document).off 'mouseenter', '#selectedQuizzablesColumn'
   return
