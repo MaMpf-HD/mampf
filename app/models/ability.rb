@@ -97,7 +97,7 @@ class Ability
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
       can [:linearize], Quiz do |quiz|
-        q.edited_with_inheritance_by?(user)
+        quiz.edited_with_inheritance_by?(user)
       end
     else
       can :read, :all
