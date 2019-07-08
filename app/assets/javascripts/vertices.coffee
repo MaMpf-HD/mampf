@@ -130,6 +130,14 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'mouseenter', '[id^="result-quizzable-"]', ->
+    thisY = $(this).position().top
+    bufferY = $('#yBuffer').position().top
+    diff = thisY - bufferY
+    $('#yBuffer').css('height', '')
+    if diff > 0
+      $('#yBuffer').css('height', diff + 'px')
+    else
+      $('#yBuffer').css('height', diff + 'px')
     $('#quizzesPreviewHeader').show()
     $(this).addClass('bg-orange-lighten-4')
     $.ajax Routes.fill_quizzable_preview_path(),
@@ -147,10 +155,10 @@ $(document).on 'turbolinks:load', ->
     $(this).removeClass('bg-orange-lighten-4')
     return
 
-  $(document).on 'mouseleave', '#quizzableSearchResults', ->
-    $('#quizzablePreview').empty()
-    $('#quizzesPreviewHeader').hide()
-    return
+  # $(document).on 'mouseleave', '#quizzableSearchResults', ->
+  #   $('#quizzablePreview').empty()
+  #   $('#quizzesPreviewHeader').hide()
+  #   return
 
   $(document).on 'click', '[id^="result-quizzable-"]', ->
     $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
