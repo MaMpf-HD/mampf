@@ -48,7 +48,7 @@ $(document).on 'turbolinks:load', ->
 
   # container for cytoscape view
   $cyContainer = $('#cy')
-  if $cyContainer.length > 0
+  if $cyContainer.length > 0 && $cyContainer.data('type') == 'tag'
     cy = cytoscape(
       container: $cyContainer
       elements: $cyContainer.data('elements')
@@ -65,9 +65,6 @@ $(document).on 'turbolinks:load', ->
           style:
             'width': 3
             'line-color': '#ccc'
-            # 'curve-style': 'bezier'
-            # 'target-arrow-color': '#ccc'
-            # 'target-arrow-shape': 'triangle'
         }
         {
           selector: '.hovering'

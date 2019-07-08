@@ -35,15 +35,9 @@
         </h5>
       </div>
       <div class="card-body">
-        <%= image_tag(@quiz.quiz_image_url,
-                      class: "img-fluid",
-                      id: "quiz-preview-image",
-                      data: { id: @quiz.id }) %>
-        <div class="text-center mt-3">
-          <%= link_to t('basics.enlarge'),
-                      preview_quiz_path(@quiz),
-                      target: :_blank,
-                      class: 'btn btn-sm btn-outline-secondary' %>
+        <div id="cy"
+             data-elements="<%= @graph_elements.to_json %>"
+             data-type="quiz">
         </div>
       </div>
     </div>

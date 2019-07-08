@@ -240,6 +240,10 @@ class QuizGraph
     @default_table[edge[0]] == edge[1] ? 'limegreen' : 'red3'
   end
 
+  def edge_color_for_cytoscape(edge)
+    @default_table[edge[0]] == edge[1] ? '#32cd32' : '#f00'
+  end
+
   def add_colored_edge(graph, from, to, color)
     graph.add_edges(from, to).set { |prop| prop.color = color }
   end
@@ -295,5 +299,39 @@ class QuizGraph
     end
     QuizGraph.new(vertices: vertices, edges: edges, root: 1,
                   default_table: default_table, hide_solution: [])
+  end
+
+  def to_cytoscape
+    result = []
+    # add vertices
+    vertices.keys.each do |v|
+      result.push(data: cytoscape_vertex(v))
+    end
+    result.push(data: { id: '-1',
+                        label: I18n.t('admin.quiz.end'),
+                        color: '#000',
+                        background: '#f4a460'} )
+    # add edges
+    edges.keys.each do |e|
+      next if e.second == 0
+      result.push(data: cytoscape_edge(e))
+    end
+    result
+  end
+
+  # returns the cytoscape hash describing the vertex
+  def cytoscape_vertex(id)
+    { id: id.to_s,
+      label: quizzable(id).description,
+      color: '#000',
+      background: id == @root ? '#00f' : '#666' }
+  end
+
+  # returns the cytoscape hash describing the edge
+  def cytoscape_edge(edge)
+    { id: "#{edge.first}-#{edge.second}",
+      source: edge.first,
+      target: edge.second,
+      color: edge_color_for_cytoscape(edge) }
   end
 end

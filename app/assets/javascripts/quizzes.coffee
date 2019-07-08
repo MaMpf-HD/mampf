@@ -78,6 +78,53 @@ $(document).on 'turbolinks:load', ->
     $(this).remove()
     return
 
+   # container for cytoscape view
+  $cyContainer = $('#cy')
+  if $cyContainer.length > 0 && $cyContainer.data('type') == 'quiz'
+    cy = cytoscape(
+      container: $cyContainer
+      elements: $cyContainer.data('elements')
+      userPanningEnabled: false
+      autoungrabify: true
+      style: [
+        {
+          selector: 'node'
+          style:
+            'background-color': 'data(background)'
+            'label': 'data(label)'
+            'color': 'data(color)'
+        }
+        {
+          selector: 'edge'
+          style:
+            'width': 3
+            'line-color': 'data(color)'
+            'curve-style': 'bezier'
+            'control-point-distances' : '-50 50 -50'
+            'target-arrow-color': 'data(color)'
+            'target-arrow-shape': 'triangle'
+            'arrow-scale': 2
+        }
+        {
+          selector: '.hovering'
+          style:
+            'font-size': '2em'
+            'background-color': 'green'
+            'color': 'green'
+        }
+        {
+          selector: '.selected'
+          style:
+            'font-size': '2em'
+            'background-color': 'green'
+            'color': 'green'
+        }
+      ]
+      layout:
+        name: 'breadthfirst'
+        directed: false)
+
+
   return
 
 # clean up everything before turbolinks caches
