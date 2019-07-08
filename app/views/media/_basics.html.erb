@@ -87,7 +87,7 @@
       </a>
       <%= f.select :tag_ids,
                    options_for_select(medium.tags.map { |t| [t.extended_title, t.id] },
-                                      medium.tags.pluck(:id)),
+                                      medium.tags.map(&:id)),
                    {},
                    { multiple: true,
                      class: 'selectize',
