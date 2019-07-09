@@ -84,8 +84,6 @@ $(document).on 'turbolinks:load', ->
     cy = cytoscape(
       container: $cyContainer
       elements: $cyContainer.data('elements')
-      userPanningEnabled: false
-      autoungrabify: true
       style: [
         {
           selector: 'node'
@@ -101,8 +99,8 @@ $(document).on 'turbolinks:load', ->
             'line-color': 'data(color)'
             'curve-style': 'bezier'
             'control-point-distances' : '-50 50 -50'
-            'target-arrow-color': 'data(color)'
-            'target-arrow-shape': 'triangle'
+            'mid-target-arrow-color': 'data(color)'
+            'mid-target-arrow-shape': 'triangle'
             'arrow-scale': 2
         }
         {
@@ -121,7 +119,14 @@ $(document).on 'turbolinks:load', ->
         }
       ]
       layout:
-        name: 'breadthfirst'
+        name: 'circle'
+        nodeDimensionsIncludeLabels: false
+#        circle: true
+#        grid: true
+#        roots: '1'
+#        rows: 5
+#        columns: 5
+        fit: true
         directed: false)
 
 
