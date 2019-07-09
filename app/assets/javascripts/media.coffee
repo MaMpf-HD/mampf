@@ -16,6 +16,18 @@ fancyTimeFormat = (time) ->
   output += '' + (if milli < 10 then '0' else '') + milli
   output
 
+# insert vertical space in the neighbouring column to make it look like
+# the rendered partial is at rogughly the same height as the given row
+insertSpace = ($row) ->
+  rowY = $row.position().top
+  bufferY = $('#yBuffer').position().top
+  diff = rowY - bufferY
+  if diff > 0
+    $('#yBuffer').css('height', diff + 'px')
+  else
+    $('#yBuffer').css('height', '')
+  return
+
 $(document).on 'turbolinks:load', ->
 
   # disable/enable search field on the media search page, depending on
@@ -185,6 +197,7 @@ $(document).on 'turbolinks:load', ->
     mediumActions = document.getElementById('mediumActions')
     unless mediumActions.dataset.filled == 'true'
       $(this).addClass('bg-orange-lighten-4')
+      insertSpace($(this))
       $.ajax Routes.fill_medium_preview_path(),
          type: 'GET'
          dataType: 'script'
@@ -202,7 +215,14 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'click', '[id^="row-medium-"]', ->
     mediumActions = document.getElementById('mediumActions')
-    if mediumActions && mediumActions.dataset.filled != 'true'
+    insertSpace($(this))
+    if $(this).hasClass('bg-green-lighten-4')
+      $(this).removeClass('bg-green-lighten-4')
+      $('#mediumPreview').empty()
+      $('#mediumActions').empty()
+      mediumActions.dataset.filled = 'false'
+    else
+      $('[id^="row-medium-"]').removeClass('bg-green-lighten-4')
       $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
       $('[id^="row-medium-"]').css('cursor','')
       $.ajax Routes.render_medium_actions_path(),
