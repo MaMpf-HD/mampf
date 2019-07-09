@@ -106,8 +106,7 @@ $(document).on 'turbolinks:load', ->
           selector: '.hovering'
           style:
             'font-size': '2em'
-            'background-color': 'green'
-            'color': 'green'
+            'background-color': 'blue'
         }
         {
           selector: '.selected'
@@ -129,6 +128,16 @@ $(document).on 'turbolinks:load', ->
 #        columns: 5
         fit: true
         directed: false)
+    if $cyContainer.data('mode') != 'view'
+      cy.on 'mouseover', 'node', (evt) ->
+        node = evt.target
+        node.addClass('hovering')
+        return
+
+      cy.on 'mouseout', 'node', (evt) ->
+        node = evt.target
+        node.removeClass('hovering')
+        return
 
 
   return

@@ -1,8 +1,5 @@
 date = new Date
 $('#collapse-vertex-<%= @id%>').collapse 'hide'
-$('#quiz-preview-image').attr('src',
-                              '<%= @quiz.quiz_image_url %>' +
-                              '?' + date.getTime())
 $('#vertex-heading-<%= @id %>').empty()
   .append '<%= j render partial: "vertices/header",
                  locals: { quiz: @quiz, vertex_id: @id } %>'
