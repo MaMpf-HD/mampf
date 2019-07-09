@@ -235,15 +235,6 @@ $(document).on 'turbolinks:load', ->
           console.log("AJAX Error: #{textStatus}")
     return
 
-  $(document).on 'click', '#cancel-medium-actions', ->
-    mediumActions = document.getElementById('mediumActions')
-    $(mediumActions).empty()
-    mediumActions.dataset.filled = 'false'
-    $('#mediumPreview').empty()
-    $('[id^="row-medium-"]').css('cursor','pointer')
-    $('[id^="row-medium-"]').removeClass('bg-green-lighten-4')
-    return
-
   return
 
 $(document).on 'turbolinks:before-cache', ->
