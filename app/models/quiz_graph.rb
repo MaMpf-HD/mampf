@@ -303,6 +303,10 @@ class QuizGraph
 
   def to_cytoscape
     result = []
+    result.push(data: { id: '-2',
+                        label: I18n.t('admin.quiz.start'),
+                        color: '#000',
+                        background: '#f4a460'} )
     # add vertices
     vertices.keys.each do |v|
       result.push(data: cytoscape_vertex(v))
@@ -312,6 +316,10 @@ class QuizGraph
                         color: '#000',
                         background: '#f4a460'} )
     # add edges
+    result.push(data: { id: "-2-#{@root}",
+                        source: -2,
+                        target: 1,
+                        color: '#aaa'} )
     edges.keys.each do |e|
       next if e.second == 0
       result.push(data: cytoscape_edge(e))
@@ -319,12 +327,17 @@ class QuizGraph
     result
   end
 
+  def linear?
+    @edges.keys.select { |e| e.second != 0 }
+          .reject { |e| e.in?(default_table.to_a)}.empty?
+  end
+
   # returns the cytoscape hash describing the vertex
   def cytoscape_vertex(id)
     { id: id.to_s,
       label: quizzable(id).description,
       color: '#000',
-      background: id == @root ? '#00f' : '#666' }
+      background: '#666' }
   end
 
   # returns the cytoscape hash describing the edge

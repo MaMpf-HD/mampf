@@ -1209,6 +1209,7 @@ en:
       vertices: 'Vertices'
       medium_deleted: 'Medium deleted'
       undefined: 'undefined'
+      start: 'start'
       end: 'end'
       target: 'Target'
       hide_solution: 'Hide Solution'

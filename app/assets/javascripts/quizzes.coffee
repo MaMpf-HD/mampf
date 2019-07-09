@@ -81,6 +81,10 @@ $(document).on 'turbolinks:load', ->
    # container for cytoscape view
   $cyContainer = $('#cy')
   if $cyContainer.length > 0 && $cyContainer.data('type') == 'quiz'
+    if $cyContainer.data('linear')
+      layout = 'circle'
+    else
+      layout = 'breadthfirst'
     cy = cytoscape(
       container: $cyContainer
       elements: $cyContainer.data('elements')
@@ -119,11 +123,10 @@ $(document).on 'turbolinks:load', ->
         }
       ]
       layout:
-        name: 'circle'
+        name: layout
         nodeDimensionsIncludeLabels: false
 #        circle: true
 #        grid: true
-#        roots: '1'
 #        rows: 5
 #        columns: 5
         fit: true

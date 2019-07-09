@@ -1289,6 +1289,7 @@ de:
       vertices: 'Ecken'
       medium_deleted: 'Medium gelöscht'
       undefined: 'undefiniert'
+      start: 'Start'
       end: 'Ende'
       target: 'Ziel'
       hide_solution: 'Lösung verstecken'

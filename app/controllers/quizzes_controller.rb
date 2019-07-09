@@ -14,7 +14,8 @@ class QuizzesController < ApplicationController
 
   def edit
     @quiz.save_png! unless @quiz.quiz_image
-    @graph_elements = @quiz.quiz_graph.to_cytoscape
+    @graph_elements = @quiz.quiz_graph.to_cytoscape.to_json
+    @linear = @quiz.quiz_graph.linear?
     I18n.locale = @quiz.locale_with_inheritance
   end
 
