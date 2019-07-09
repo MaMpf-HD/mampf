@@ -1,17 +1,4 @@
-reload_quiz_image = ->
-  image = $('#quiz-preview-image')
-  if image.length != 0
-    quiz_id = image.data('id')
-    preview_path = '/assets/quiz-' + quiz_id + '.png'
-    date = new Date
-    image.attr 'src', preview_path + '?' + date.getTime()
-  return
-
 $(document).on 'turbolinks:load', ->
-
-  # reload quiz image after page load
-
-  reload_quiz_image
 
   # toggle results display for answered questions in an active quiz
 
@@ -85,6 +72,14 @@ $(document).on 'turbolinks:load', ->
       layout = 'circle'
     else
       layout = 'breadthfirst'
+    if $cyContainer.data('mode') == 'view'
+      zoomable = false
+      ungrabbable = true
+      pannable = false
+    else
+      zoomable = true
+      ungrabbable = false
+      pannable = true
     cy = cytoscape(
       container: $cyContainer
       elements: $cyContainer.data('elements')
@@ -122,6 +117,9 @@ $(document).on 'turbolinks:load', ->
             'color': 'green'
         }
       ]
+      userZoomingEnabled: zoomable
+      autoungrabify: ungrabbable
+      userPanningEnabled: pannable
       layout:
         name: layout
         nodeDimensionsIncludeLabels: false

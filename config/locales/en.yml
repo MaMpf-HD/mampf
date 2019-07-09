@@ -1215,6 +1215,7 @@ en:
       hide_solution: 'Hide Solution'
       save_vertex_error: 'Error in saving vertex'
       save_error: 'Error in saving quiz'
+      uninitialized: 'For this quiz, a quiz graph has not yet been created.'
       loop_info: >
         That was not quite correct. You will get another chance to answer
         this question. Before that, we will do some preliminary considerations.

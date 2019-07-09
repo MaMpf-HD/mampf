@@ -1288,6 +1288,7 @@ de:
       start_vertex: 'Start-Ecke'
       vertices: 'Ecken'
       medium_deleted: 'Medium gelöscht'
+      uninitialized: 'Für dieses Quiz wurde noch kein Quiz-Graph angelegt.'
       undefined: 'undefiniert'
       start: 'Start'
       end: 'Ende'

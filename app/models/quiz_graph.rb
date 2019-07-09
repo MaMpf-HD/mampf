@@ -108,19 +108,6 @@ class QuizGraph
     fallback_neighbours(id).map { |n| [n, n == @default_table[id]] }
   end
 
-  def to_graphviz
-    graph = GraphViz.new(:Graph, type: :digraph, rankdir: 'LR')
-    style_nodes!(graph)
-    nodes = create_graphviz_nodes!(graph)
-    qed = create_qed!(graph)
-    @vertices.keys.each do |v|
-      edges_from(v).each do |e|
-        add_edge_to_graphviz!(graph, e, nodes, qed)
-      end
-    end
-    graph
-  end
-
   def remove_hide_solution!(id)
     @hide_solution = @hide_solution.reject { |s| s[0] == id }
   end
@@ -199,68 +186,8 @@ class QuizGraph
     @vertices.keys.max + 1
   end
 
-  def create_graphviz_nodes!(graph)
-    nodes = []
-    @vertices.keys.each do |v|
-      nodes[v] = graph.add_nodes(label_for_graphviz(v))
-      nodes[v].set { |prop| prop.fillcolor = node_color_for_graphviz(v) }
-    end
-    nodes
-  end
-
-  def style_nodes!(graph)
-    graph.node[:style] = 'filled'
-    graph.node[:shape] = 'box'
-    graph.node[:color] = 'grey'
-  end
-
-  def label_for_graphviz(vertex)
-    compact_label = label_text_for_graphviz(vertex)
-    '<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="0">' \
-    '<TR><TD CELLPADDING="1" BGCOLOR="turquoise3">' \
-    '<B>' + vertex.to_s + '</B></TD></TR>' \
-    '<TR><TD><SUB>' + compact_label[0].to_s + '</SUB></TD></TR>' \
-    '<TR><TD>' + compact_label[1].to_s + '</TD></TR></TABLE>>'
-  end
-
-  def label_text_for_graphviz(vertex)
-    quizzable(vertex).label.gsub(/\(.*?\)/, '').gsub(/\[.*?\]/, '')
-                     .scan(/.{1,6}/).map { |s| '<SUB>' + s + '</SUB>' }
-  end
-
-  def node_color_for_graphviz(vertex)
-    if @vertices[vertex][:type] == 'Remark'
-      'lightgoldenrodyellow'
-    else
-      'lightblue1'
-    end
-  end
-
-  def edge_color_for_graphviz(edge)
-    @default_table[edge[0]] == edge[1] ? 'limegreen' : 'red3'
-  end
-
   def edge_color_for_cytoscape(edge)
     @default_table[edge[0]] == edge[1] ? '#32cd32' : '#f00'
-  end
-
-  def add_colored_edge(graph, from, to, color)
-    graph.add_edges(from, to).set { |prop| prop.color = color }
-  end
-
-  def create_qed!(graph)
-    qed = graph.add_nodes('Ende')
-    qed.set { |prop| prop.fillcolor = 'sandybrown' }
-    qed
-  end
-
-  def add_edge_to_graphviz!(graph, edge, nodes, qed)
-    return if edge[1].zero?
-    color = edge_color_for_graphviz(edge)
-    unless edge[1] == -1
-      return add_colored_edge(graph, nodes[edge[0]], nodes[edge[1]], color)
-    end
-    add_colored_edge(graph, nodes[edge[0]], qed, color)
   end
 
   def linearize!
@@ -316,10 +243,12 @@ class QuizGraph
                         color: '#000',
                         background: '#f4a460'} )
     # add edges
-    result.push(data: { id: "-2-#{@root}",
-                        source: -2,
-                        target: 1,
-                        color: '#aaa'} )
+    if @root.in?(@vertices.keys)
+      result.push(data: { id: "-2-#{@root}",
+                          source: -2,
+                          target: 1,
+                          color: '#aaa'} )
+    end
     edges.keys.each do |e|
       next if e.second == 0
       result.push(data: cytoscape_edge(e))

@@ -11,9 +11,18 @@
   <% elsif medium.manuscript && medium.manuscript_screenshot_url %>
     <img class="card-img-top video-thumbnail"
          src="<%= medium.manuscript_screenshot_url %>">
-  <% elsif medium.sort == 'Quiz' && medium.becomes(Quiz).quiz_image_url %>
-    <img class="card-img-top video-thumbnail"
-         src="<%= medium.becomes(Quiz).quiz_image_url %>">
+  <% elsif medium.sort == 'Quiz'%>
+    <% if medium.becomes(Quiz).quiz_graph %>
+      <div id="cy"
+           style="max-height: 30vh;"
+           data-elements="<%= medium.becomes(Quiz).quiz_graph
+                                   &.to_cytoscape&.to_json %>"
+           data-type="quiz"
+           data-linear="<%= medium.becomes(Quiz).quiz_graph&.linear? %>">
+      </div>
+    <% else %>
+      <%= t('admin.quiz.uninitialized') %>
+    <% end %>
   <% end %>
 <% end %>
 <div class="row">

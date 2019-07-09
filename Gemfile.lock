@@ -562,7 +562,6 @@ DEPENDENCIES
   rgl
   rspec-rails
   rubocop (~> 0.54.0)
-  ruby-graphviz
   sass-rails (~> 5)
   selectize-rails
   selenium-webdriver

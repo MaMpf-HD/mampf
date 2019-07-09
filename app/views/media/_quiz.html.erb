@@ -25,10 +25,12 @@
   </div>
   <div class="card-body">
     <% if quiz.quiz_graph %>
-      <%= image_tag(quiz.quiz_image_url,
-                    class: "img-fluid",
-                    id: "quiz-preview-image",
-                    data: { id: quiz.id }) %>
+       <div id="cy"
+           data-elements="<%= quiz.quiz_graph.to_cytoscape.to_json %>"
+           data-type="quiz"
+           data-linear="<%= quiz.quiz_graph.linear? %>"
+           data-mode="view">
+      </div>
     <% else %>
       <div class="custom-control custom-checkbox">
         <%= f.check_box :create_quiz_graph,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_11_081201) do
+ActiveRecord::Schema.define(version: 2019_07_09_111532) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -213,7 +213,6 @@ ActiveRecord::Schema.define(version: 2019_06_11_081201) do
     t.boolean "independent"
     t.integer "keks_id"
     t.text "locale"
-    t.text "quiz_image_data"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end

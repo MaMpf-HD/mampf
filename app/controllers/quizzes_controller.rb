@@ -13,7 +13,6 @@ class QuizzesController < ApplicationController
   end
 
   def edit
-    @quiz.save_png! unless @quiz.quiz_image
     @graph_elements = @quiz.quiz_graph.to_cytoscape.to_json
     @linear = @quiz.quiz_graph.linear?
     I18n.locale = @quiz.locale_with_inheritance
@@ -44,15 +43,9 @@ class QuizzesController < ApplicationController
     @quiz_round.update
   end
 
-  def preview
-    @quiz.save_png!
-    send_file @quiz.image_path, type: 'image/png', disposition: 'inline'
-  end
-
   def linearize
     quiz_graph = @quiz.quiz_graph
     @quiz.update(quiz_graph: quiz_graph.linearize!)
-    @quiz.save_png!
     redirect_to edit_quiz_path(@quiz)
   end
 
