@@ -83,6 +83,17 @@ class Quiz < Medium
     [vertex_id, target_id, crosses].in?(quiz_graph.hide_solution)
   end
 
+  def questions
+    ids = quiz_graph&.vertices&.values&.select { |v| v[:type] == 'Question' }
+                    &.map { |v| v[:id] }
+    Question.where(id: ids)
+  end
+
+  def questions_count
+    return 0 unless quiz_graph
+    quiz_graph.questions_count
+  end
+
   private
 
   def target_vertex(progress, input)

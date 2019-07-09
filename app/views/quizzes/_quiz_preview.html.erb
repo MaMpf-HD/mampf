@@ -1,0 +1,26 @@
+<% cache quiz do %>
+  <div class="p-2 border mt-2">
+    <div class="row mb-3">
+      <div class="col-12">
+        <% if quiz.questions_count.zero? %>
+          <%= t('admin.quiz.no_question') %>
+        <% elsif quiz.questions_count == 1 %>
+          <%= t('admin.quiz.one_question') %>
+        <% else %>
+          <%= t('admin.quiz.many_questions',
+                count: quiz.questions_count) %>
+        <% end %>
+        <% if quiz.questions_count > 5 %>
+          <%= t('admin.quiz.first_five_questions') %>
+        <% end %>
+        <ul>
+          <% quiz.questions.first(5).each do |q| %>
+            <li>
+              <%= q.text %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% end %>

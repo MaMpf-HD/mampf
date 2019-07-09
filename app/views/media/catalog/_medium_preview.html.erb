@@ -13,13 +13,8 @@
          src="<%= medium.manuscript_screenshot_url %>">
   <% elsif medium.sort == 'Quiz'%>
     <% if medium.becomes(Quiz).quiz_graph %>
-      <div id="cy"
-           style="max-height: 30vh;"
-           data-elements="<%= medium.becomes(Quiz).quiz_graph
-                                   &.to_cytoscape&.to_json %>"
-           data-type="quiz"
-           data-linear="<%= medium.becomes(Quiz).quiz_graph&.linear? %>">
-      </div>
+      <%= render partial: 'quizzes/quiz_preview',
+                 locals: { quiz: medium.becomes(Quiz) } %>
     <% else %>
       <%= t('admin.quiz.uninitialized') %>
     <% end %>

@@ -276,4 +276,8 @@ class QuizGraph
       target: edge.second,
       color: edge_color_for_cytoscape(edge) }
   end
+
+  def questions_count
+    @vertices.values.select { |v| v[:type] == 'Question'}.count
+  end
 end
