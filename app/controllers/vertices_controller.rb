@@ -13,7 +13,6 @@ class VerticesController < ApplicationController
       @quizzables.each do |q|
         @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(q))
       end
-      @quiz.save_png!
     end
     redirect_to edit_quiz_path(@quiz) if @sort == 'import'
   end
@@ -23,7 +22,6 @@ class VerticesController < ApplicationController
     graph = @quiz.quiz_graph.update_vertex(@vertex_id, @default_id, @branching,
                                            @hide)
     @quiz.update(quiz_graph: graph)
-    @quiz.save_png!
     I18n.locale = @quiz.locale_with_inheritance
   end
 

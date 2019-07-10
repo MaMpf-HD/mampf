@@ -67,7 +67,6 @@ class MediaController < ApplicationController
                                                root: 0,
                                                default_table: {},
                                                hide_solution: []))
-      @medium.becomes(Quiz).save_png!
     end
     # if changes to the manuscript have been made,
     # remove items that correspond to named destinations that no longer
@@ -110,7 +109,6 @@ class MediaController < ApplicationController
                                                   default_table: {},
                                                   hide_solution: []),
                          level: 1)
-          @medium.becomes(Quiz).save_png!
         end
       end
       redirect_to edit_medium_path(@medium)
