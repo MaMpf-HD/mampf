@@ -34,10 +34,11 @@
           </strong>
         </div>
       </div>
-      <div id="mediaTable">
+      <div id="mediaTable"
+           class="mx-2 pl-2">
         <% @media.each do |m| %>
           <% cache m do %>
-            <div class="row border-bottom mx-2"
+            <div class="row border-bottom"
                  id="row-medium-<%= m.id %>"
                  data-id="<%= m.id %>"
                  style="cursor: pointer;">

@@ -15,11 +15,9 @@ class Quiz < Medium
     description
   end
 
-  def next_vertex(progress, fallback, input = {})
+  def next_vertex(progress, input = {})
     return default_table[progress] if vertices[progress][:type] == 'Remark'
-    target = target_vertex(progress, input)
-    return target unless target.zero? && fallback
-    default_table[progress]
+    target_vertex(progress, input)
   end
 
   def replace_reference!(old_quizzable, new_quizzable, answer_map = {})
@@ -74,13 +72,14 @@ class Quiz < Medium
     quiz_graph.quizzable(vertex_id)
   end
 
-  def preselected_branch(vertex_id, crosses)
-    next_vertex(vertex_id, false, crosses)
+  def preselected_branch(vertex_id, crosses, fallback)
+    successor = next_vertex(vertex_id, crosses)
+    return successor unless successor == default_table[vertex_id] && fallback
+    0
   end
 
   def preselected_hide_solution(vertex_id, crosses)
-    target_id = preselected_branch(vertex_id, crosses)
-    [vertex_id, target_id, crosses].in?(quiz_graph.hide_solution)
+    [vertex_id, crosses].in?(quiz_graph.hide_solution)
   end
 
   def questions
@@ -97,6 +96,7 @@ class Quiz < Medium
   private
 
   def target_vertex(progress, input)
-    edges.select { |e, t| e[0] == progress && t.include?(input) }.keys.first[1]
+    edges.select { |e, t| e[0] == progress && t.include?(input) }&.keys
+        &.first&.second || default_table[progress]
   end
 end

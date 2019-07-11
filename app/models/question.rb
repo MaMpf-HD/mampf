@@ -70,7 +70,6 @@ class Question < Medium
       vertices = quiz.quiz_graph.find_vertices(self)
       vertices.each do |v|
         quiz.update(quiz_graph: quiz.quiz_graph.destroy_vertex(v),
-                    quiz_image: nil,
                     released: 'locked')
       end
     end

@@ -15,11 +15,10 @@ class QuizGraph
   def update_vertex(vertex_id, default_id, branching, hide)
     remove_edges_from!(vertex_id)
     if @vertices[vertex_id][:type] == 'Remark'
-      set_new_default_for_remark!(vertex_id, default_id)
+      @default_table[vertex_id] = default_id
     else
-      new_edges = create_new_edges!(branching)
-      set_new_default_for_question!(vertex_id, new_edges)
-      update_hide_solutions!(hide, branching)
+      update_edges_for_question!(vertex_id, branching)
+      update_hide_solutions!(vertex_id, hide)
     end
     self
   end
@@ -30,16 +29,13 @@ class QuizGraph
     id = new_vertex_id
     @vertices[id] = { type: quizzable.class.to_s, id: quizzable.id }
     @default_table[id] = 0
-    @edges[[id, 0]] = quizzable.answer_table
     self
   end
 
   def destroy_vertex(id)
     @vertices.delete(id)
-    bend_edges_deletion!(id)
-    @default_table.delete(id)
-    @default_table.transform_values! { |v| v == id ? 0 : v }
-    @hide_solution = @hide_solution.select { |h| h[0] != id && h[1] != id }
+    remove_edges_involving!(id)
+    @hide_solution.reject! { |h| h[0] == id }
     self
   end
 
@@ -64,8 +60,6 @@ class QuizGraph
 
   def reset_vertex_answers_change(id)
     edges_from(id).each { |e| @edges.delete(e) }
-    @edges[[id, 0]] = quizzable(id).answer_table
-    @default_table[id] = 0
     @hide_solution.reject! { |h| h[0] == id }
     self
   end
@@ -73,7 +67,7 @@ class QuizGraph
   def find_errors
     return [I18n.t('admin.quiz.no_vertices')] unless @vertices.present?
     branch_undef = @default_table.values.include?(0)
-    no_end = @edges.select { |e| e[1] == -1 }.blank?
+    no_end = default_table.values.exclude?(-1) && @edges.select { |e| e[1] == -1 }.blank?
     no_root = @root.blank? || @root.zero?
     messages = []
     messages.push(I18n.t('admin.quiz.undefined_targets')) if branch_undef
@@ -94,13 +88,19 @@ class QuizGraph
              .keys
   end
 
+  def edges_from_plus_default(id)
+    result = []
+    result.push([id, @default_table[id]]) unless @default_table[id].zero?
+    result + @edges.keys.select { |k| k[0] == id }
+  end
+
   def edges_from(id)
     @edges.keys.select { |k| k[0] == id }
   end
 
   def fallback_neighbours(id)
     list = neighbours(id)
-    list.delete(0) if @default_table[id] != 0
+    list.push(0) if list.empty?
     list
   end
 
@@ -109,44 +109,36 @@ class QuizGraph
   end
 
   def remove_hide_solution!(id)
-    @hide_solution = @hide_solution.reject { |s| s[0] == id }
-  end
-
-  def set_new_default_for_remark!(vertex_id, default_id)
-    @default_table[vertex_id] = default_id
-    @edges[[vertex_id, default_id]] = []
+    @hide_solution.reject! { |s| s[0] == id }
   end
 
   def remove_edges_from!(vertex_id)
     edges_from(vertex_id).each { |e| @edges.delete(e) }
+    @default_table[vertex_id] = 0
     remove_hide_solution!(vertex_id)
   end
 
-  def create_new_edges!(branching)
+  def update_edges_for_question!(vertex_id, branching)
     new_hash = Hash.new { |h, k| h[k] = [] }
-    news = branching.each_with_object(new_hash) { |(k, v), h| h[v] << k }
-    @edges.merge!(news)
-    news
-  end
-
-  def set_new_default_for_question!(vertex_id, new_edges)
+    new_edges = branching.each_with_object(new_hash) { |(k, v), h| h[v] << k }
     new_default_edge = new_edges.keys.detect do |k|
       quizzable(vertex_id).answer_scheme.in?(new_edges[k])
     end
-    @default_table[vertex_id] = new_default_edge[1]
+    @edges.merge!(new_hash.except(new_default_edge))
+    @default_table[vertex_id] = new_default_edge&.second.to_i
   end
 
-  def update_hide_solutions!(hide, branching)
-    @hide_solution.concat(hide.map { |h| branching[h] + [h] })
+  def update_hide_solutions!(vertex_id, hide)
+    @hide_solution.concat(hide.map { |h| [vertex_id, h] })
   end
 
-  def bend_edges_deletion!(id)
+  def remove_edges_involving!(id)
     edges_from(id).each { |e| @edges.delete(e) }
     incoming(id).each do |i|
-      @edges[[i, 0]] ||= []
-      @edges[[i, 0]].concat @edges[[i, id]]
       @edges.delete([i, id])
     end
+    @default_table.delete(id)
+    @default_table.transform_values! { |v| v == id ? 0 : v }
   end
 
   def bend_edges_rereferencing!(affected_edges, answer_map)
@@ -158,7 +150,7 @@ class QuizGraph
   def bend_hide_solution_rereferencing!(vertex, answer_map)
     affected_hide_solution = @hide_solution.select { |h| h[0] == vertex }
     affected_hide_solution.each do |h|
-      h[2].transform_keys! { |k| answer_map[k] }
+      h[1].transform_keys! { |k| answer_map[k] }
     end
   end
 
@@ -171,7 +163,7 @@ class QuizGraph
   end
 
   def neighbours(id)
-    edges_from(id).map { |e| e[1] }
+    edges_from_plus_default(id).map { |e| e[1] }
   end
 
   def referencing_vertices(quizzable)
@@ -194,15 +186,7 @@ class QuizGraph
     edges = {}
     default_table = {}
     @vertices.keys.each do |i|
-      j = i < @vertices.count ? i + 1 : -1
-      default_table[i] = j
-      if @vertices[i][:type] == 'Question'
-        question = quizzable(i)
-        edges[[i, j]] = [question.answer_scheme]
-        edges[[i, 0]] = question.answer_table - [question.answer_scheme]
-      else
-        edges[[i, j]] = []
-      end
+      default_table[i] = i < @vertices.count ? i + 1 : -1
     end
     @edges = edges
     @root = @vertices.keys.first
@@ -220,8 +204,6 @@ class QuizGraph
       k =   j < size ? j + 1 : -1
       question = Question.find_by_id(q)
       vertices[j] = { type: 'Question', id: q }
-      edges[[j, k]] = [question.answer_scheme]
-      edges[[j, 0]] = question.answer_table - [question.answer_scheme]
       default_table[j] = k
     end
     QuizGraph.new(vertices: vertices, edges: edges, root: 1,
@@ -235,7 +217,7 @@ class QuizGraph
                         color: '#000',
                         background: '#f4a460'} )
     # add vertices
-    vertices.keys.each do |v|
+    @vertices.keys.each do |v|
       result.push(data: cytoscape_vertex(v))
     end
     result.push(data: { id: '-1',
@@ -246,19 +228,19 @@ class QuizGraph
     if @root.in?(@vertices.keys)
       result.push(data: { id: "-2-#{@root}",
                           source: -2,
-                          target: 1,
+                          target: @root,
                           color: '#aaa'} )
     end
-    edges.keys.each do |e|
-      next if e.second == 0
-      result.push(data: cytoscape_edge(e))
+    @vertices.keys.each do |v|
+      edges_from_plus_default(v).each do |e|
+        result.push(data: cytoscape_edge(e))
+      end
     end
     result
   end
 
   def linear?
-    @edges.keys.select { |e| e.second != 0 }
-          .reject { |e| e.in?(default_table.to_a)}.empty?
+    @edges.empty?
   end
 
   # returns the cytoscape hash describing the vertex

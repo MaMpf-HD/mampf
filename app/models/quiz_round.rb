@@ -19,12 +19,10 @@ class QuizRound
   def update
     @input = @quiz.crosses_to_input(@progress, @crosses)
     @correct = (@input == @answer_scheme)
-    @progress = @quiz.next_vertex(@progress, true, @input)
+    @progress = @quiz.next_vertex(@progress, @input)
     @counter += 1
     @hide_solution = @quiz.quiz_graph.hide_solution
-                          .include?([@progress_old, @progress, @input]) ||
-                     @quiz.quiz_graph.hide_solution
-                          .include?([@progress_old, 0, @input])
+                          .include?([@progress_old, @input])
     @vertex = @quiz.vertices[@progress]
     self
   end

@@ -30,7 +30,8 @@
                      hide_label: true do %>
       <div class="row">
         <% q.answer_table.each do |c| %>
-          <% preselect = quiz.preselected_branch(vertex_id, c) %>
+          <% preselect = quiz.preselected_branch(vertex_id, c,
+                                                 q.answer_scheme != c) %>
           <% prehide = quiz.preselected_hide_solution(vertex_id, c) %>
           <div class="col-12 col-md-6 col-lg-4 col-xl-3">
             <div class="card m-2 <%= bgcolor(q.answer_scheme == c) %>">

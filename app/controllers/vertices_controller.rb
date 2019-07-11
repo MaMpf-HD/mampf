@@ -66,6 +66,7 @@ class VerticesController < ApplicationController
   def set_branching_hash
     @branching = {}
     @params_v.keys.select { |k| k.start_with?('branching-') }.each do |k|
+      next if @params_v[k].to_i == 0
       @branching[k.remove('branching-').to_h] = [@vertex_id, @params_v[k].to_i]
     end
   end

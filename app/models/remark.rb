@@ -47,7 +47,6 @@ class Remark < Medium
                      .select { |_k, v| v == { type: 'Remark', id: id } }.keys
       vertices.each do |v|
         quiz.update(quiz_graph: quiz.quiz_graph.destroy_vertex(v),
-                    quiz_image: nil,
                     released: 'locked')
       end
     end

@@ -82,6 +82,9 @@ class Medium < ApplicationRecord
   # if medium is a question or remark, delete all quiz vertices that refer to it
   before_destroy :delete_vertices
 
+  # if medium is a question, delete all answers that belong to it
+  after_destroy :delete_answers
+
   # keep track of copies (in particular for Questions, Remarks)
   acts_as_tree
 
@@ -954,6 +957,12 @@ class Medium < ApplicationRecord
     end
     becomes(Remark).delete_vertices
   end
+
+  def delete_answers
+    return unless type == 'Question'
+    becomes(Question).answers.delete_all
+  end
+
 
   def text_join
     return unless type.in?(['Question', 'Remark'])

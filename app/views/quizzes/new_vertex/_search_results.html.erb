@@ -36,7 +36,8 @@
           </strong>
         </div>
       </div>
-      <div id="mediaTable">
+      <div id="mediaTable"
+           class="mx-2 pl-2">
         <% @media.each do |m| %>
           <% cache m do %>
             <div class="row border-bottom mx-2"
@@ -84,7 +85,7 @@
     </div>
     <div class="col-4"
          id="selectedQuizzablesColumn">
-      <div class="row bg-mdb-color-lighten-5 mx-2 py-2 mb-3"
+      <div class="row bg-mdb-color-lighten-5 ml-2 py-2 mb-3"
            id="quizzableSelection">
         <div class="col-12">
           <strong>
@@ -99,8 +100,6 @@
           <div id="importVertexForm">
           </div>
         </div>
-      </div>
-      <div class="row" id="yBuffer">
       </div>
       <div class="row bg-mdb-color-lighten-5 mx-2 mt-3 py-2"
            id="quizzesPreviewHeader"

@@ -130,14 +130,6 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'mouseenter', '[id^="result-quizzable-"]', ->
-    thisY = $(this).position().top
-    bufferY = $('#yBuffer').position().top
-    diff = thisY - bufferY
-    $('#yBuffer').css('height', '')
-    if diff > 0
-      $('#yBuffer').css('height', diff + 'px')
-    else
-      $('#yBuffer').css('height', diff + 'px')
     $('#quizzesPreviewHeader').show()
     $(this).addClass('bg-orange-lighten-4')
     $.ajax Routes.fill_quizzable_preview_path(),

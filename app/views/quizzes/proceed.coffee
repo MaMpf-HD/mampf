@@ -167,6 +167,37 @@ nextRound = ->
   <% end %>
   return
 
+presentResultsToLoop = ->
+  <% if @quiz_round.is_question %>
+  $previous_round = changeBackground()
+  <% if @quiz_round.hide_solution %>
+  displayWithoutAnswers()
+  <% else %>
+  answers = '<%= j render partial: "quizzes/question_closed",
+                          locals: { progress: @quiz_round.progress_old,
+                                    vertex: @quiz_round.vertex_old,
+                                    input: @quiz_round.input,
+                                    old_id: @quiz_round.round_id_old } %>'
+  revealAnswers(answers)
+  success =  '<%= j render partial: "question_footer",
+                           locals: { vertex: @quiz_round.vertex_old,
+                                     input: @quiz_round.input } %>'
+  revealSuccess(success)
+  scrollDown()
+  info = '<%= j render partial: "footer_info",
+                        locals: { round_id: @quiz_round.round_id_old,
+                                  question_id: @quiz_round.question_id } %>'
+  $('#accept_results').click ->
+    removeLoop()
+    return
+  <% end %>
+  <% else %>
+  removeLoop()
+  <% end %>
+  return
+
+
+
 removeLoop = ->
   <% unless @quiz_round.progress.nil? %>
   $current = $('[id^="round<%= @quiz_round.progress %>-"]')
@@ -175,7 +206,7 @@ removeLoop = ->
   $all.wrapAll '<div id="loop"></div>'
   $('#loop').fadeOut 2000, ->
     $(this).remove()
-    nextRound()
+    displayNext()
     return
   return
   <% end %>
@@ -183,6 +214,6 @@ removeLoop = ->
 
 removeResidues()
 if detectLoop()
-  removeLoop()
+  presentResultsToLoop()
 else
   nextRound()

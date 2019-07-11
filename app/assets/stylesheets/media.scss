@@ -6,6 +6,11 @@
   display: none;
 }
 
+#mediaTable {
+  overflow-y: scroll;
+  max-height: 50vh;
+}
+
 #medium-basics-warning {
   color: red;
   display: none;
