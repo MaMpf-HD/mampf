@@ -120,7 +120,7 @@ $(document).on 'turbolinks:load', ->
       autoungrabify: ungrabbable
       userPanningEnabled: pannable
       layout:
-        name: 'dagre'
+        name: layout
         nodeDimensionsIncludeLabels: false
 #        circle: true
 #        grid: true
