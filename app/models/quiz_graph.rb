@@ -36,6 +36,7 @@ class QuizGraph
     @vertices.delete(id)
     remove_edges_involving!(id)
     @hide_solution.reject! { |h| h[0] == id }
+    @root = nil if @root == id
     self
   end
 

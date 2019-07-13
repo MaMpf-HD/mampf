@@ -1,5 +1,4 @@
 <div id='new_vertex'
-     class='no_display'
      data-quiz="<%= quiz.id %>">
   <div class='row'>
     <div class="col-12">
@@ -10,9 +9,11 @@
               <%= t('buttons.create_vertex') %>
             </div>
             <div class="col-4 text-right">
-              <%= link_to t('buttons.cancel'),
-                          edit_quiz_path(quiz),
-                          class: 'btn btn-sm btn-secondary' %>
+              <button type="button"
+                      class="btn btn-sm btn-secondary"
+                      id="cancelNewVertex">
+                <%= t('buttons.cancel') %>
+              </button>
             </div>
           </div>
         </div>

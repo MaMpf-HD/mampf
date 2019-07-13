@@ -43,6 +43,8 @@ Rails.application.routes.draw do
   get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
   get 'events/fill_medium_preview', as: 'fill_medium_preview'
   get 'events/render_import_vertex', as: 'render_import_vertex'
+  get 'events/render_vertex_quizzable', as: 'render_vertex_quizzable'
+  get 'events/edit_vertex_targets', as: 'edit_vertex_targets'
   get 'events/cancel_import_vertex', as: 'cancel_import_vertex'
   get 'events/render_medium_actions', as: 'render_medium_actions'
 
@@ -145,7 +147,10 @@ Rails.application.routes.draw do
                              as: 'preview_quiz'
   patch 'quizzes/:id/linearize', to: 'quizzes#linearize',
                                  as: 'linearize_quiz'
-
+  post 'quizzes/:id/set_root', to: 'quizzes#set_root',
+                                 as: 'set_quiz_root'
+  post 'quizzes/:id/set_level', to: 'quizzes#set_level',
+                                 as: 'set_quiz_level'
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]
   end

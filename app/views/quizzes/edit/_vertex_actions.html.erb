@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="col-12">
+    <div class='btn-group'>
+      <% if quizzable %>
+        <button class="btn btn-sm btn-outline-primary rounded m-1"
+                id="edit-vertex-content-<%= vertex_id %>"
+                data-toggle="modal"
+                data-target="#quizzableModal"
+                data-type="<%= quizzable.type %>"
+                data-id="<%= quizzable.id %>">
+          <%= t('buttons.edit') %>
+        </button>
+        <%= link_to t('basics.medium'),
+                    edit_medium_path(quizzable),
+                    class: 'btn btn-sm btn-outline-primary rounded m-1' %>
+        <button id="targetsFromVertex"
+                class="btn btn-sm btn-outline-primary rounded collapsed m-1"
+                data-quiz="<%= quiz.id %>"
+                data-vertex="<%= vertex_id %>">
+          <%= t('buttons.edit_targets') %>
+        </button>
+      <% end %>
+      <%= link_to t('buttons.delete_vertex'),
+                  quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
+                  method: :delete,
+                  data: { confirm: t('confirmation.vertex') },
+                  class: 'btn btn-outline-danger rounded btn-sm m-1' %>
+    </div>
+  </div>
+</div>
+<%= render partial: "quizzes/quizzable_preview",
+           locals: { quizzable: quizzable } %>

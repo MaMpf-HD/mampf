@@ -1,6 +1,6 @@
 <% if @quiz.quiz_graph.find_errors.present? %>
-  <div class="alert alert-danger" role="alert">
+  <span class="redtext">
     <%= t('admin.quiz.errors') %>:
     <%= quiz.quiz_graph.find_errors.join('. ') + '.' %>
-  </div>
+  </span>
 <% end %>

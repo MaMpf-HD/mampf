@@ -1286,6 +1286,7 @@ de:
     quiz:
       edit: 'Quiz bearbeiten'
       start_vertex: 'Start-Ecke'
+      select_root: 'Wähle die Startecke durch Anklicken aus.'
       vertices: 'Ecken'
       medium_deleted: 'Medium gelöscht'
       uninitialized: 'Für dieses Quiz wurde noch kein Quiz-Graph angelegt.'
@@ -1898,9 +1899,11 @@ de:
     edit_targets: 'Ziele ändern'
     save_targets: 'Ziele speichern'
     save_vertex: 'Ecke speichern'
+    delete_vertex: 'Ecke löschen'
     submit: 'Fertig'
     reset: 'Zurücksetzen'
     linearize_quiz: 'Quiz linearisieren'
+    back: 'Zurück'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -1921,6 +1924,8 @@ de:
       sondern werden dann der entsprechenden Vorlesung zugeordnet.
     vertex: >
       Bist Du sicher? Damit werden auch die zugehörigen Kanten gelöscht.
+      Beachte, dass die zugehörige Frage oder Bemerkung selbst nicht gelöscht
+      wird, sondern nur die Ecke in diesem Graphen.
     linearize: >
       Bist Du sicher? Damit wird das Quiz linearisiert, insbesondere werden alle
       Änderungen, die Du bisher an den Kanten vorgenommen hast, gelöscht.

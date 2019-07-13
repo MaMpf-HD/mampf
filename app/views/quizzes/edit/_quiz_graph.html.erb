@@ -1,0 +1,99 @@
+<div class="card bg-light" id="quiz-preview">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-2">
+        <h5>
+          <%= t('admin.quiz.graph') %>
+        </h5>
+      </div>
+      <div class="col-10 text-left">
+        <div id="quiz_buttons">
+          <%= link_to t('buttons.create_vertex'),
+                      new_quiz_vertex_path(quiz_id: quiz.id),
+                      remote: true,
+                      class: 'btn btn-sm btn-secondary basicQuizButton' %>
+          <%= link_to t('buttons.linearize_quiz'),
+                      linearize_quiz_path(quiz),
+                      class: 'btn btn-sm btn-secondary basicQuizButton',
+                      method: 'patch',
+                      data: { confirm: t('confirmation.linearize') } %>
+          <button type="button"
+                  id="selectQuizRoot"
+                  class="btn btn-sm btn-secondary basicQuizButton">
+            <%= t('admin.quiz.start_vertex') %>
+          </button>
+          <span id="selectRootInfo">
+            <%= t('admin.quiz.select_root') %>
+            <button type="button"
+                    id="cancelQuizRoot"
+                    class="btn btn-sm btn-secondary">
+              <%= t('buttons.cancel') %>
+            </button>
+          </span>
+          <button type="button"
+                  id="selectQuizLevel"
+                  class="btn btn-sm btn-secondary basicQuizButton">
+            <%= t('basics.level') %>
+          </button>
+        </div>
+        <span id="quizLevelForm">
+          <span class="mr-4">
+            <%= t('basics.level') %>
+          </span>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio"
+                   id="quiz_easy"
+                   name="quizLevel"
+                   <%= quiz.level == 0 ? 'checked ' : '' %>
+                   class="custom-control-input quiz-level"
+                   data-quiz="<%= quiz.id %>"
+                   data-level="0">
+            <label class="custom-control-label"
+                   for="quiz_easy">
+              <%= t('basics.level_easy') %>
+            </label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio"
+                   id="quiz_medium"
+                   name="quizLevel"
+                   <%= quiz.level == 1 ? 'checked ' : '' %>
+                   class="custom-control-input quiz-level"
+                   data-quiz="<%= quiz.id %>"
+                   data-level="1">
+            <label class="custom-control-label"
+                   for="quiz_medium">
+              <%= t('basics.level_medium') %>
+            </label>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <input type="radio"
+                   id="quiz_hard"
+                   name="quizLevel"
+                   <%= quiz.level == 2 ? 'checked ' : '' %>
+                   class="custom-control-input quiz-level"
+                   data-quiz="<%= quiz.id %>"
+                   data-level="2">
+            <label class="custom-control-label"
+                   for="quiz_hard">
+              <%= t('basics.level_hard') %>
+            </label>
+          </div>
+          <button type="button"
+                  id="cancelQuizLevel"
+                  class="btn btn-sm btn-secondary">
+            <%= t('buttons.back') %>
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div id="cy"
+         data-elements="<%= graph_elements %>"
+         data-type="quiz"
+         data-linear="<%= linear %>"
+         data-quiz="<%= quiz.id %>">
+    </div>
+  </div>
+</div>

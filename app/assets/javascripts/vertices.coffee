@@ -34,28 +34,6 @@ $(document).on 'turbolinks:load', ->
         console.log("AJAX Error: #{textStatus}")
     return
 
-  # change button 'Ziele ändern' to 'verwerfen' after vertex body is revealed
-
-  $(document).on 'shown.bs.collapse', '[id^="collapse-vertex-"]', ->
-    $('#targets-vertex-' + $(this).data('vertex')).empty()
-      .append(I18n.t('buttons.discard'))
-    return
-
-  # change button 'verwerfen' back to 'Ziele ändern' and rerender vertex body
-  # after vertex body is hidden
-
-  $(document).on 'hidden.bs.collapse', '[id^="collapse-vertex-"]', ->
-    $.ajax Routes.update_vertex_body_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        vertex_id: $(this).data('vertex')
-        quiz_id: $(this).data('quiz')
-      }
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log("AJAX Error: #{textStatus}")
-    return
-
   # render quizzable modal after 'bearbeiten' is clicked in vertex header
 
   $(document).on 'click', '[id^="edit-vertex-content-"]', ->
@@ -90,43 +68,6 @@ $(document).on 'turbolinks:load', ->
       }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
-    return
-
-  # highlight neighbouring vertices rows on mouseenter von neighbour span
-
-  $(document).on 'mouseenter', '[id^="neighbours-"]', ->
-    neighbours = $(this).data('neighbours')
-    id =  $(this).data('id')
-    for n in neighbours
-      vertex = if n[0] == -1 then id else n[0]
-      header = $('#vertex-heading-' + vertex)
-      color = $(header).data('color')
-      if n[0] == -1
-        $(header).removeClass(color).addClass('bg-orange')
-      else
-        if n[1]
-          $(header).removeClass(color).addClass('bg-green-lighten-2')
-        else
-          $(header).removeClass(color).addClass('bg-red-lighten-2')
-    return
-
-  # remove highlighting of neighbouring vertices rows on mouseleave of neighbour
-  # span
-
-  $(document).on 'mouseleave', '[id^="neighbours-"]', ->
-    neighbours = $(this).data('neighbours')
-    id =  $(this).data('id')
-    for n in neighbours
-      vertex = if n[0] == -1 then id else n[0]
-      header = $('#vertex-heading-' + vertex)
-      color = $(header).data('color')
-      if n[0] == -1
-        $(header).removeClass('bg-orange').addClass(color)
-      else
-        if n[1]
-          $(header).removeClass('bg-green-lighten-2').addClass(color)
-        else
-          $(header).removeClass('bg-red-lighten-2').addClass(color)
     return
 
   $(document).on 'mouseenter', '[id^="result-quizzable-"]', ->
@@ -180,7 +121,6 @@ $(document).on 'turbolinks:load', ->
     quizId = $('#new_vertex').data('quiz')
     importTab = document.getElementById('import-vertex-tab')
     selected = JSON.parse(importTab.dataset.selected)
-    console.log 'Hier'
     $.ajax Routes.quiz_vertices_path(quiz_id: quizId),
       type: 'POST'
       dataType: 'script'
@@ -194,25 +134,47 @@ $(document).on 'turbolinks:load', ->
         console.log("AJAX Error: #{textStatus}")
     return
 
+  $(document).on 'click', '#cancelNewVertex', ->
+    $('#quiz_buttons').show()
+    $('#new_vertex').hide()
+    $('html, body').animate scrollTop: 0
+    return
+
+  $(document).on 'click', '#targetsFromVertex', ->
+    quizId = $(this).data('quiz')
+    vertexId = $(this).data('vertex')
+    $.ajax Routes.edit_vertex_targets_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        quiz_id: quizId
+        id: vertexId
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#cancelVertexTargets', ->
+    $('#vertexTargetArea').empty()
+    $('html, body').animate scrollTop: 0
+    return
+
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '[id^="default_target_select_"]'
   $(document).off 'change', '[id^="branching_select-"]'
-  $(document).off 'change', '#new_vertex_type_select'
-  $(document).off 'change', '#new_vertex_quizzable_select'
-  $(document).off 'shown.bs.collapse', '[id^="collapse-vertex-"]'
-  $(document).off 'hidden.bs.collapse', '[id^="collapse-vertex-"]'
   $(document).off 'click', '[id^="edit-vertex-content-"]'
   $(document).off 'hidden.bs.modal', '#quizzableModal'
   $(document).off 'click', '#button-reassign'
-  $(document).off 'mouseenter', '[id^="neighbours-"]'
-  $(document).off 'mouseleave', '[id^="neighbours-"]'
   $(document).off 'mouseenter', '[id^="result-quizzable-"]'
   $(document).off 'mouseleave', '[id^="result-quizzable-"]'
   $(document).off 'mouseleave', '#quizzableSearchResults'
   $(document).off 'click', '[id^="result-quizzable-"]'
   $(document).off 'click', '#cancel-import-vertex'
   $(document).off 'click', '#submit-import-vertex'
+  $(document).off 'click', '#cancelNewVertex'
+  $(document).off 'click', '#targetsFromVertex'
+  $(document).off 'click', '#cancelVertexTargets'
   return

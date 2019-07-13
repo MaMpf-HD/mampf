@@ -49,6 +49,18 @@ class QuizzesController < ApplicationController
     redirect_to edit_quiz_path(@quiz)
   end
 
+  def set_root
+    quiz_graph = @quiz.quiz_graph
+    quiz_graph.root = params[:root].to_i
+    @quiz.update(quiz_graph: quiz_graph)
+    redirect_to edit_quiz_path(@quiz)
+  end
+
+  def set_level
+    @quiz.update(level: params[:level].to_i)
+    head :ok, content_type: "text/html"
+  end
+
   private
 
   def set_quiz

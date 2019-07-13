@@ -5,9 +5,16 @@
                                               id: vertex_id),
                         scope: 'vertex',
                         method: 'patch' do |f| %>
-  <div class="text-center">
-    <%= f.submit t('buttons.save_targets'),
-                 class: 'btn btn-sm btn-secondary m-3' %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save_targets'),
+                   class: 'btn btn-sm btn-primary m-3' %>
+      <button type="button"
+              id="cancelVertexTargets"
+              class="btn btn-sm btn-secondary">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
   </div>
   <% if vertex_type == 'Remark' %>
     <%= f.select :default,

@@ -1206,6 +1206,7 @@ en:
     quiz:
       edit: 'Edit Quiz'
       start_vertex: 'Start Vertex'
+      select_root: 'Select the start vertex by clicking it.'
       vertices: 'Vertices'
       medium_deleted: 'Medium deleted'
       undefined: 'undefined'
@@ -1796,9 +1797,11 @@ en:
     edit_targets: 'Edit Targets'
     save_targets: 'Save Targets'
     save_vertex: 'Save Vertex'
+    delete_vertex: 'Delete Vertex'
     submit: 'Submit'
     reset: 'Reset'
     linearize_quiz: 'Linearize Quiz'
+    back: 'Back'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -1814,6 +1817,8 @@ en:
       but will become associated to the parent lecture.
     vertex: >
       Are you sure? All associated edges will be deleted as well.
+      Note that the corresponding question or remark will NOT be deleted,
+      only the vertex in this graph.
     linearize: >
       Are you sure? The quiz will be linearized, and any changes you have
       made to edges before will be deleted.

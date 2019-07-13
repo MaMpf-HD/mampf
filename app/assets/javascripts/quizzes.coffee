@@ -22,34 +22,6 @@ $(document).on 'turbolinks:load', ->
         return
     return
 
-  # highlight 'Ungespeicherte Änderungen' if quiz top is selected
-
-  $(document).on 'change', '#quiz-top-select', ->
-    $('#quiz-basics-options').removeClass("no_display")
-    $('#quiz-basics-warning').removeClass("no_display")
-    return
-
-  # highlight 'Ungespeicherte Änderungen' if quiz level is changed
-
-  $(document).on 'change', '#level', ->
-    $('#quiz-basics-options').removeClass("no_display")
-    $('#quiz-basics-warning').removeClass("no_display")
-    return
-
-
-  # restore status quo if editing of quiz basics is cancelled
-
-  $(document).on 'click', '#quiz-basics-cancel', (evt) ->
-    $.ajax Routes.cancel_quiz_basics_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        quiz_id: $(this).data('id')
-      }
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log("AJAX Error: #{textStatus}")
-    return
-
   # reveal explanations for answers
 
   $(document).on 'click', '[id^="reveal-explanation-"]', ->
@@ -121,11 +93,6 @@ $(document).on 'turbolinks:load', ->
       userPanningEnabled: pannable
       layout:
         name: layout
-        nodeDimensionsIncludeLabels: false
-#        circle: true
-#        grid: true
-#        rows: 5
-#        columns: 5
         fit: true
         directed: false)
     if $cyContainer.data('mode') != 'view'
@@ -139,15 +106,78 @@ $(document).on 'turbolinks:load', ->
         node.removeClass('hovering')
         return
 
+      cy.on 'tap', 'node', (evt) ->
+        node = evt.target
+        id = node.id()
+        if id not in ['-1','-2']
+          if $cyContainer.data('root') != 'select'
+            $.ajax Routes.render_vertex_quizzable_path(),
+              type: 'GET'
+              dataType: 'script'
+              data: {
+                quiz_id: $cyContainer.data('quiz')
+                id: id
+              }
+              error: (jqXHR, textStatus, errorThrown) ->
+                console.log("AJAX Error: #{textStatus}")
+          else
+            quizId = $cyContainer.data('quiz')
+            $.ajax Routes.set_quiz_root_path(quizId),
+              type: 'POST'
+              dataType: 'script'
+              data: {
+                root: id
+              }
+              error: (jqXHR, textStatus, errorThrown) ->
+                console.log("AJAX Error: #{textStatus}")
+        return
+
+  $(document).on 'click', '#selectQuizRoot', ->
+    console.log 'Hier'
+    $('#cy').data('root', 'select')
+    $('.basicQuizButton').hide()
+    $('#selectRootInfo').show()
+    return
+
+  $(document).on 'click', '#cancelQuizRoot', ->
+    $('#cy').data('root', '')
+    $('.basicQuizButton').show()
+    $('#selectRootInfo').hide()
+    return
+
+  $(document).on 'click', '#selectQuizLevel', ->
+    $('#cy').data('root', 'select')
+    $('.basicQuizButton').hide()
+    $('#quizLevelForm').show()
+    return
+
+  $(document).on 'change', '.quiz-level', ->
+    level = $(this).data('level')
+    quizId = $(this).data('quiz')
+    $.ajax Routes.set_quiz_level_path(quizId),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        level: level
+      }
+    return
+
+  $(document).on 'click', '#cancelQuizLevel', ->
+    $('.basicQuizButton').show()
+    $('#quizLevelForm').hide()
+    return
+
 
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '[id^="toggle_results-"]'
-  $(document).off 'change', '#quiz-top-select'
-  $(document).off 'change', '#level'
-  $(document).off 'click', '#quiz-basics-cancel'
   $(document).off 'click', '[id^="reveal-explanation-"]'
   $(document).off 'click', '[id^="reveal-hint-"]'
+  $(document).off 'click', '#selectQuizRoot'
+  $(document).off 'click', '#cancelQuizRoot'
+  $(document).off 'click', '#selectQuizLevel'
+  $(document).off 'change', '.quiz-level'
+  $(document).off 'click', '#cancelQuizLevel'
   return

@@ -78,6 +78,17 @@ class EventsController < ApplicationController
     I18n.locale = Quiz.find_by_id(@quiz_id)&.locale_with_inheritance
   end
 
+  def render_vertex_quizzable
+    @quiz = Quiz.find_by_id(params[:quiz_id])
+    @vertex_id = params[:id].to_i
+    @quizzable = @quiz.quizzable(@vertex_id)
+  end
+
+  def edit_vertex_targets
+    @quiz = Quiz.find_by_id(params[:quiz_id])
+    @vertex_id = params[:id].to_i
+  end
+
   def cancel_import_vertex
     quiz_id = params[:quiz_id]
     I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance

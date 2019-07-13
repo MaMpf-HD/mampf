@@ -22,7 +22,7 @@ class VerticesController < ApplicationController
     graph = @quiz.quiz_graph.update_vertex(@vertex_id, @default_id, @branching,
                                            @hide)
     @quiz.update(quiz_graph: graph)
-    I18n.locale = @quiz.locale_with_inheritance
+    redirect_to edit_quiz_path(@quiz)
   end
 
   def destroy

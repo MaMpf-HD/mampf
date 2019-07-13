@@ -1,5 +1,5 @@
 <div class="row p-2 mb-4">
-  <div class="col-7">
+  <div class="col-4">
     <h4 class="p-2">
       <span class="badge badge-secondary">
         <%= t('basics.quiz') %>
@@ -7,7 +7,13 @@
       <%= @quiz.description %>
     </h4>
   </div>
-  <div class="col-5 text-right">
+  <div class="col-5">
+    <div id="quiz-error-messages" class="mt-2">
+      <%= render partial: 'quizzes/errors_in_editing',
+                 locals: { quiz: @quiz } %>
+    </div>
+  </div>
+  <div class="col-3 text-right">
     <% unless @quiz.sort == 'RandomQuiz' %>
       <%= link_to t('buttons.parent_medium'),
                   edit_medium_path(@quiz),
@@ -20,31 +26,20 @@
   </div>
 </div>
 <div class="row mx-2 mt-2 mb-4">
-  <div class="col-4">
-    <div class="card bg-light"
-         id="quiz-basics-edit">
-      <%= render partial: 'quizzes/basics',
-                 locals: { quiz: @quiz } %>
-    </div>
-  </div>
   <div class="col-8">
-    <div class="card bg-light" id="quiz-preview">
-      <div class="card-header">
-        <h5>
-          <%= t('admin.quiz.graph') %>
-        </h5>
-      </div>
-      <div class="card-body">
-        <div id="cy"
-             data-elements="<%= @graph_elements %>"
-             data-type="quiz"
-             data-linear="<%= @linear %>">
-        </div>
-      </div>
+    <%= render partial: 'quizzes/edit/quiz_graph',
+               locals: { quiz: @quiz,
+                         graph_elements: @graph_elements,
+                         linear: @linear } %>
+  </div>
+  <div class="col-4">
+    <div id ="vertexActionArea">
     </div>
   </div>
 </div>
-<%= render partial: 'quizzes/edges_accordion',
+<%= render partial: 'quizzes/new_vertex/new_vertex',
            locals: { quiz: @quiz } %>
+<div id="vertexTargetArea">
+</div>
 <%= render partial: 'quizzes/quizzable_modal' %>
 <%= render partial: 'quizzes/reassign_modal', locals: { content: false } %>
