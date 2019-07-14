@@ -1802,6 +1802,7 @@ en:
     reset: 'Reset'
     linearize_quiz: 'Linearize Quiz'
     back: 'Back'
+    finish_editing: 'Finish Editing'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

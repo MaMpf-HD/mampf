@@ -1904,6 +1904,7 @@ de:
     reset: 'Zurücksetzen'
     linearize_quiz: 'Quiz linearisieren'
     back: 'Zurück'
+    finish_editing: 'Bearbeitung beenden'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

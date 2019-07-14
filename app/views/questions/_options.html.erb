@@ -1,7 +1,7 @@
 <div class="border rounded border-info p-2">
   <%= t('admin.question.referencing_quizzes') %>:
   <% if question.proper_quiz_ids.blank? %>
-    <%= t('basics.none') %>
+    <%= t('none') %>
   <% else %>
     <ul>
       <% question.proper_quiz_ids.each do |q| %>

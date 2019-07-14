@@ -167,6 +167,18 @@ $(document).on 'turbolinks:load', ->
     $('#quizLevelForm').hide()
     return
 
+  $(document).on 'click', '#finishQuizzableEditing', ->
+    location.reload() if $(this).data('mode') == 'reassigned'
+    $('#quizzableArea').empty()
+    $('#quizGraphArea').show()
+    $.ajax Routes.render_vertex_quizzable_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        quiz_id: $cyContainer.data('quiz')
+        id: $(this).data('vertex')
+      }
+    return
 
   return
 

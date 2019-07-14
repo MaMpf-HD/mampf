@@ -37,12 +37,13 @@ $(document).on 'turbolinks:load', ->
   # render quizzable modal after 'bearbeiten' is clicked in vertex header
 
   $(document).on 'click', '[id^="edit-vertex-content-"]', ->
-    $.ajax Routes.fill_quizzable_modal_path(),
+    $.ajax Routes.fill_quizzable_area_path(),
       type: 'GET'
       dataType: 'script'
       data: {
         id: $(this).data('id')
         type: $(this).data('type')
+        vertex: $(this).data('vertex')
       }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
@@ -63,8 +64,8 @@ $(document).on 'turbolinks:load', ->
       data: {
         id: $(this).data('id')
         type: $(this).data('type')
-        in_quiz: $('#quiz_id_js').length == 1
-        quiz_id: $('#quiz_id_js').attr('value')
+        in_quiz: $('#cy').length == 1
+        quiz_id: $('#cy').data('quiz')
       }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")

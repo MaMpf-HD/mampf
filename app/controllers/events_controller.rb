@@ -45,9 +45,10 @@ class EventsController < ApplicationController
     @quiz = Quiz.find_by_id(params[:quiz_id])
   end
 
-  def fill_quizzable_modal
+  def fill_quizzable_area
     @id = params[:id]
     @type = params[:type]
+    @vertex_id = params[:vertex]
     @quizzable = @type.constantize.find_by_id(@id)
     I18n.locale = @quizzable.locale_with_inheritance
   end

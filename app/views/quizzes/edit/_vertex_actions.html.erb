@@ -4,10 +4,9 @@
       <% if quizzable %>
         <button class="btn btn-sm btn-outline-primary rounded m-1"
                 id="edit-vertex-content-<%= vertex_id %>"
-                data-toggle="modal"
-                data-target="#quizzableModal"
                 data-type="<%= quizzable.type %>"
-                data-id="<%= quizzable.id %>">
+                data-id="<%= quizzable.id %>"
+                data-vertex="<%= vertex_id %>">
           <%= t('buttons.edit') %>
         </button>
         <%= link_to t('basics.medium'),

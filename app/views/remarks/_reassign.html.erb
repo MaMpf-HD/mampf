@@ -24,6 +24,8 @@
     <%= f.hidden_field :type,
                        id: 'reassign_type',
                        value: in_quiz ? 'quiz' : 'edit' %>
+    <%= f.hidden_field :vertex_id,
+                       value: @vertex_id %>
     <div class="text-center">
       <%= f.submit t('buttons.copy_edit'),
                    class: 'btn btn-sm btn-primary mt-3'%>

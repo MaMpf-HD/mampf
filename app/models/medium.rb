@@ -963,7 +963,6 @@ class Medium < ApplicationRecord
     becomes(Question).answers.delete_all
   end
 
-
   def text_join
     return unless type.in?(['Question', 'Remark'])
     return text if type == 'Remark'

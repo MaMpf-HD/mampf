@@ -22,6 +22,9 @@ class RemarksController < MediaController
     end
     I18n.locale = @remark.locale_with_inheritance
     redirect_to edit_remark_path(@remark) if remark_params[:type] == 'edit'
+    @quizzable = @remark
+    @mode = 'reassigned'
+    render 'events/fill_quizzable_area'
   end
 
   private

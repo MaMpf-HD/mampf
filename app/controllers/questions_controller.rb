@@ -22,6 +22,9 @@ class QuestionsController < ApplicationController
     end
     I18n.locale = @question.locale_with_inheritance
     redirect_to edit_question_path(@question) if question_params[:type] == 'edit'
+    @quizzable = @question
+    @mode = 'reassigned'
+    render 'events/fill_quizzable_area'
   end
 
   private
@@ -33,12 +36,12 @@ class QuestionsController < ApplicationController
   end
 
   def set_quizzes
-    @quizzes = params[:question].select { |_k, v| v == '1' }.keys
-                                .map { |k| k.remove('quiz-').to_i }
+    @quizzes = params[:question].select { |k, v| v == '1' && k.start_with?('quiz-') }
+                                .keys.map { |k| k.remove('quiz-').to_i }
   end
 
   def question_params
     params.require(:question).permit(:label, :text, :type, :hint, :level,
-                                     :independent)
+                                     :independent, :vertex_id)
   end
 end
