@@ -21,7 +21,10 @@ class QuestionsController < ApplicationController
       Quiz.find_by_id(q).replace_reference!(question_old, @question, answer_map)
     end
     I18n.locale = @question.locale_with_inheritance
-    redirect_to edit_question_path(@question) if question_params[:type] == 'edit'
+    if question_params[:type] == 'edit'
+      redirect_to edit_question_path(@question)
+      return
+    end
     @quizzable = @question
     @mode = 'reassigned'
     render 'events/fill_quizzable_area'

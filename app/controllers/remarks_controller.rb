@@ -21,7 +21,10 @@ class RemarksController < MediaController
       Quiz.find_by_id(q).replace_reference!(remark_old, @remark)
     end
     I18n.locale = @remark.locale_with_inheritance
-    redirect_to edit_remark_path(@remark) if remark_params[:type] == 'edit'
+    if remark_params[:type] == 'edit'
+      redirect_to edit_remark_path(@remark)
+      return
+    end
     @quizzable = @remark
     @mode = 'reassigned'
     render 'events/fill_quizzable_area'
