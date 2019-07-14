@@ -1,24 +1,24 @@
 <div class="row">
   <div class="col-12">
     <div class='btn-group'>
-      <% if quizzable %>
+      <% if current_user.in?(quizzable.editors_with_inheritance) %>
         <button class="btn btn-sm btn-outline-primary rounded m-1"
-                id="edit-vertex-content-<%= vertex_id %>"
+               id="edit-vertex-content-<%= vertex_id %>"
                 data-type="<%= quizzable.type %>"
                 data-id="<%= quizzable.id %>"
                 data-vertex="<%= vertex_id %>">
           <%= t('buttons.edit') %>
         </button>
-        <%= link_to t('basics.medium'),
-                    edit_medium_path(quizzable),
-                    class: 'btn btn-sm btn-outline-primary rounded m-1' %>
-        <button id="targetsFromVertex"
-                class="btn btn-sm btn-outline-primary rounded collapsed m-1"
-                data-quiz="<%= quiz.id %>"
-                data-vertex="<%= vertex_id %>">
-          <%= t('buttons.edit_targets') %>
-        </button>
       <% end %>
+      <%= link_to t('basics.medium'),
+                  edit_or_inspect_medium_path(quizzable),
+                  class: 'btn btn-sm btn-outline-primary rounded m-1' %>
+      <button id="targetsFromVertex"
+              class="btn btn-sm btn-outline-primary rounded collapsed m-1"
+              data-quiz="<%= quiz.id %>"
+              data-vertex="<%= vertex_id %>">
+        <%= t('buttons.edit_targets') %>
+      </button>
       <%= link_to t('buttons.delete_vertex'),
                   quiz_vertex_path(quiz_id: quiz.id, id: vertex_id),
                   method: :delete,
