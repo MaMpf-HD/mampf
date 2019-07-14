@@ -175,7 +175,7 @@ $(document).on 'turbolinks:load', ->
       type: 'GET'
       dataType: 'script'
       data: {
-        quiz_id: $cyContainer.data('quiz')
+        quiz_id: $('#cy').data('quiz')
         id: $(this).data('vertex')
       }
     return
