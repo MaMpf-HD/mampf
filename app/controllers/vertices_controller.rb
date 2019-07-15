@@ -14,7 +14,7 @@ class VerticesController < ApplicationController
         @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(q))
       end
     end
-    redirect_to edit_quiz_path(@quiz) if @sort == 'import'
+    redirect_to edit_quiz_path(@quiz)
   end
 
   def update

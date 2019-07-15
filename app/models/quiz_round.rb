@@ -8,8 +8,6 @@ class QuizRound
               :answer_shuffle, :answer_shuffle_old
 
   def initialize(params)
-    pp '**************************'
-    pp params
     @quiz = Quiz.find(params[:id])
     @crosses = params[:quiz].present? ? params[:quiz][:crosses] || [] : []
     progress_counter(params)
@@ -86,7 +84,6 @@ class QuizRound
     else
       @answer_shuffle = Question.find(@question_id).answers.map(&:id).shuffle
     end
-    pp @answer_shuffle
   end
 
   def update_answer_shuffle

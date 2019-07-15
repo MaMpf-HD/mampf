@@ -62,6 +62,9 @@ $(document).on 'turbolinks:load', ->
             'background-color': 'data(background)'
             'label': 'data(label)'
             'color': 'data(color)'
+            'border-color': 'data(bordercolor)'
+            'border-width': 'data(borderwidth)'
+            'shape': 'data(shape)'
         }
         {
           selector: 'edge'

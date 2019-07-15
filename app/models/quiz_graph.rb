@@ -216,7 +216,8 @@ class QuizGraph
     result.push(data: { id: '-2',
                         label: I18n.t('admin.quiz.start'),
                         color: '#000',
-                        background: '#f4a460'} )
+                        background: '#f4a460',
+                        shape: 'diamond' } )
     # add vertices
     @vertices.keys.each do |v|
       result.push(data: cytoscape_vertex(v))
@@ -224,7 +225,8 @@ class QuizGraph
     result.push(data: { id: '-1',
                         label: I18n.t('admin.quiz.end'),
                         color: '#000',
-                        background: '#f4a460'} )
+                        background: '#f4a460',
+                        shape: 'diamond' } )
     # add edges
     if @root.in?(@vertices.keys)
       result.push(data: { id: "-2-#{@root}",
@@ -249,7 +251,10 @@ class QuizGraph
     { id: id.to_s,
       label: quizzable(id).description,
       color: '#000',
-      background: '#666' }
+      background: @vertices[id][:type] == 'Question' ? '#e1f5fe' : '#f9fbe7',
+      borderwidth: '2',
+      bordercolor: '#222',
+      shape: @vertices[id][:type] == 'Question' ? 'ellipse' : 'rectangle'}
   end
 
   # returns the cytoscape hash describing the edge
