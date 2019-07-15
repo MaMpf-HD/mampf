@@ -4,16 +4,21 @@ class QuizRound
   include ActiveModel::Validations
   attr_reader :quiz, :counter, :progress, :crosses, :vertex, :is_question,
               :answer_scheme, :progress_old, :counter_old, :round_id_old,
-              :input, :correct, :hide_solution, :vertex_old, :question_id
+              :input, :correct, :hide_solution, :vertex_old, :question_id,
+              :answer_shuffle, :answer_shuffle_old
 
   def initialize(params)
+    pp '**************************'
+    pp params
     @quiz = Quiz.find(params[:id])
     @crosses = params[:quiz].present? ? params[:quiz][:crosses] || [] : []
     progress_counter(params)
     @vertex = @quiz.vertices[@progress]
     @vertex_old = @vertex
-    question_details if @vertex.present? && @vertex[:type] == 'Question'
+    question_details(params) if @vertex.present? && @vertex[:type] == 'Question'
     @answer_scheme ||= {}
+    @answer_shuffle ||= []
+    @answer_shuffle_old = []
   end
 
   def update
@@ -24,6 +29,8 @@ class QuizRound
     @hide_solution = @quiz.quiz_graph.hide_solution
                           .include?([@progress_old, @input])
     @vertex = @quiz.vertices[@progress]
+    @answer_shuffle_old = @answer_shuffle
+    update_answer_shuffle if @vertex && @vertex[:type] == 'Question'
     self
   end
 
@@ -46,6 +53,16 @@ class QuizRound
     I18n.t('admin.quiz.incorrect_result')
   end
 
+  def answers
+    return [] unless @answer_shuffle
+    @answer_shuffle.map { |a| Answer.find_by_id(a) }
+  end
+
+  def answers_old
+    return [] unless @answer_shuffle_old
+    @answer_shuffle_old.map { |a| Answer.find_by_id(a) }
+  end
+
   private
 
   def progress_counter(params)
@@ -60,9 +77,20 @@ class QuizRound
     @round_id_old = round_id
   end
 
-  def question_details
+  def question_details(params)
     @is_question = true
-    @question_id = vertex[:id]
-    @answer_scheme = Question.find(@vertex[:id]).answer_scheme
+    @question_id = @vertex[:id]
+    @answer_scheme = Question.find(@question_id).answer_scheme
+    if params[:quiz].present? && params[:quiz][:answer_shuffle].present?
+      @answer_shuffle = JSON.parse(params[:quiz][:answer_shuffle]).map(&:to_i)
+    else
+      @answer_shuffle = Question.find(@question_id).answers.map(&:id).shuffle
+    end
+    pp @answer_shuffle
+  end
+
+  def update_answer_shuffle
+    @answer_shuffle = Question.find_by_id(@vertex[:id])&.answers&.map(&:id)
+                             &.shuffle
   end
 end

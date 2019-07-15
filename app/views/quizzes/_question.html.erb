@@ -1,5 +1,5 @@
 <% question = Question.find(@quiz_round.vertex[:id]) %>
-<% answers = question.answers %>
+<% answers = @quiz_round.answers %>
 <div class="card bg-question mt-2 border-secondary">
   <div class="card-header bg-light-blue-lighten-5">
     <div class="row">
@@ -34,7 +34,8 @@
   <div class="card-body" id="body-<%= @quiz_round.round_id %>">
     <div id="results-<%= @quiz_round.round_id %>">
       <%= render partial: "quizzes/question_open",
-                 locals: { quiz_round: @quiz_round } %>
+                 locals: { quiz_round: @quiz_round,
+                           answers: answers } %>
     </div>
     <div id="reduced-<%= @quiz_round.round_id %>" style="display: none;">
       <%= render partial: "quizzes/answers_reduced",

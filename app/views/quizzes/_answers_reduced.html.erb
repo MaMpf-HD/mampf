@@ -1,4 +1,4 @@
-<% correct_answers = answers.where(value:true) %>
+<% correct_answers = answers.select(&:value) %>
 <% if correct_answers.present? %>
   <ul>
     <% correct_answers.each do |a| %>

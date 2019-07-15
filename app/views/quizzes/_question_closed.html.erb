@@ -1,5 +1,4 @@
 <% question = Question.find(vertex[:id]) %>
-<% answers = question.answers %>
 <% answers.each do |a| %>
   <div class="row p-2 mb-2 border border-secondary rounded
               <%= questioncolor(a.value) %>">
