@@ -113,9 +113,12 @@ $(document).on 'turbolinks:load', ->
         node = evt.target
         id = node.id()
         if id not in ['-1','-2']
-          cy.nodes().removeClass('selected')
-          node.addClass('selected')
-          if $cyContainer.data('root') != 'select'
+          if $cyContainer.data('root') != 'select' and $cyContainer.data('vertextarget') != 'select'
+            cy.nodes().removeClass('selected')
+            node.addClass('selected')
+            $('#cy').data('vertex', id)
+            defaultTarget = node.data('defaulttarget')
+            $('#cy').data('defaulttarget', defaultTarget)
             $.ajax Routes.render_vertex_quizzable_path(),
               type: 'GET'
               dataType: 'script'
@@ -125,7 +128,7 @@ $(document).on 'turbolinks:load', ->
               }
               error: (jqXHR, textStatus, errorThrown) ->
                 console.log("AJAX Error: #{textStatus}")
-          else
+          else if $cyContainer.data('root') == 'select'
             quizId = $cyContainer.data('quiz')
             $.ajax Routes.set_quiz_root_path(quizId),
               type: 'POST'
@@ -135,6 +138,25 @@ $(document).on 'turbolinks:load', ->
               }
               error: (jqXHR, textStatus, errorThrown) ->
                 console.log("AJAX Error: #{textStatus}")
+          else
+            edges = cy.filter (element, i) ->
+              element.isEdge() and element.data('selected_default_edge')
+            cy.remove(edges)
+            source = $('#cy').data('vertex')
+            previousdefault = cy.filter (element, i) ->
+              element.isEdge() and element.data('source') == source and element.data('defaultedge')
+            cy.remove previousdefault
+            cy.add
+              group: 'edges'
+              data:
+                id: source + '-' + id
+                source: source
+                target: id
+                color: 'green'
+                selected_default_edge: true
+            $('#saveDefaultTarget').show()
+            $('#saveDefaultTarget').data('source', source)
+            $('#saveDefaultTarget').data('target', id)
         return
 
   $(document).on 'click', '#selectQuizRoot', ->
@@ -189,6 +211,57 @@ $(document).on 'turbolinks:load', ->
     $('#quiz_buttons').show()
     $('#vertexActionArea').empty()
     cy.nodes().removeClass('selected')
+    $('#cy').data('vertex', '')
+    return
+
+  $(document).on 'click', '#selectDefaultTarget', ->
+    $('#cy').data('vertextarget', 'select')
+    $('#vertex-buttons').hide()
+    $('#selectTargetInfo').show()
+    return
+
+  $(document).on 'click', '#cancelDefaultTarget', ->
+    edges = cy.filter (element, i) ->
+      element.isEdge() and element.data('selected_default_edge')
+    cy.remove(edges)
+    source = $('#cy').data('vertex')
+    defaulttarget = $('#cy').data('defaulttarget')
+    previousdefault = cy.filter (element, i) ->
+      element.isEdge() and element.data('source') == source and element.data('defaultedge')
+    if previousdefault.length == 0 && defaulttarget != 0
+      cy.add
+        group: 'edges'
+        data:
+          id: source + '-' + defaulttarget
+          source: source
+          target: defaulttarget
+          color: '#32cd32'
+          defaultedge: true
+    source = $('#cy').data('vertex')
+    $('#selectTargetInfo').hide()
+    $('#saveDefaultTarget').hide()
+    $('#vertex-buttons').show()
+    $('#cy').data('vertextarget', '')
+    return
+
+  $(document).on 'click', '#saveDefaultTarget', ->
+    $('#selectTargetInfo').hide()
+    $('#saveDefaultTarget').hide()
+    $('#vertex-buttons').show()
+    edges = cy.filter (element, i) ->
+      element.isEdge() and element.data('selected_default_edge')
+    edges.data('selected_default_edge', false)
+    edges.data('color', '#32cd32')
+    edges.data('defaultedge', true)
+    $('#cy').data('vertextarget', '')
+    quizId = $('#cy').data('quiz')
+    $.ajax Routes.update_default_target_path(quizId),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        source: $(this).data('source')
+        target: $(this).data('target')
+      }
     return
 
 
@@ -205,4 +278,7 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '.quiz-level'
   $(document).off 'click', '#cancelQuizLevel'
   $(document).off 'click', '#cancelVertexEdit'
+  $(document).off 'click', '#selectDefaultTarget'
+  $(document).off 'click', '#cancelDefaultTarget'
+  $(document).off 'click', '#saveDefaultTarget'
   return

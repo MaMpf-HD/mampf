@@ -1207,6 +1207,7 @@ en:
       edit: 'Edit Quiz'
       start_vertex: 'Start Vertex'
       select_root: 'Select the start vertex by clicking it.'
+      select_default_target: 'Select the default target vertex by clicking it.'
       vertices: 'Vertices'
       medium_deleted: 'Medium deleted'
       undefined: 'undefined'
@@ -1803,6 +1804,7 @@ en:
     linearize_quiz: 'Linearize Quiz'
     back: 'Back'
     finish_editing: 'Finish Editing'
+    default_target: 'Default Target'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

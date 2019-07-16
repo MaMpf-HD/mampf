@@ -148,9 +148,11 @@ Rails.application.routes.draw do
   patch 'quizzes/:id/linearize', to: 'quizzes#linearize',
                                  as: 'linearize_quiz'
   post 'quizzes/:id/set_root', to: 'quizzes#set_root',
-                                 as: 'set_quiz_root'
+                               as: 'set_quiz_root'
   post 'quizzes/:id/set_level', to: 'quizzes#set_level',
                                  as: 'set_quiz_level'
+  post 'quizzes/:id/update_default_target', to: 'quizzes#update_default_target',
+                                            as: 'update_default_target'
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]
   end

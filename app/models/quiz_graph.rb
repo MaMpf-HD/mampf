@@ -40,6 +40,10 @@ class QuizGraph
     self
   end
 
+  def update_default_target!(source, target)
+    @default_table[source] = target
+  end
+
   # replace_reference! replaces all references to old_quizzable within
   # the quiz_graph by references to new_quizzable. It proceeds only if
   # both quizzables are of the same class. If the quizzables are questions,
@@ -258,7 +262,8 @@ class QuizGraph
       background: @vertices[id][:type] == 'Question' ? '#e1f5fe' : '#f9fbe7',
       borderwidth: '2',
       bordercolor: '#222',
-      shape: @vertices[id][:type] == 'Question' ? 'ellipse' : 'rectangle'}
+      shape: @vertices[id][:type] == 'Question' ? 'ellipse' : 'rectangle',
+      defaulttarget: @default_table[id] }
   end
 
   # returns the cytoscape hash describing the edge
@@ -266,10 +271,16 @@ class QuizGraph
     { id: "#{edge.first}-#{edge.second}",
       source: edge.first,
       target: edge.second,
-      color: edge_color_for_cytoscape(edge) }
+      color: edge_color_for_cytoscape(edge),
+      defaultedge: default?(edge) }
   end
 
   def questions_count
     @vertices.values.select { |v| v[:type] == 'Question'}.count
+  end
+
+  def default?(edge)
+    return false unless @default_table[edge.first]
+    @default_table[edge.first] == edge.second
   end
 end

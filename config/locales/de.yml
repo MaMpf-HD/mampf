@@ -1287,6 +1287,7 @@ de:
       edit: 'Quiz bearbeiten'
       start_vertex: 'Start-Ecke'
       select_root: 'Wähle die Startecke durch Anklicken aus.'
+      select_default_target: 'Wähle die Zielecke durch Anklicken aus.'
       vertices: 'Ecken'
       medium_deleted: 'Medium gelöscht'
       uninitialized: 'Für dieses Quiz wurde noch kein Quiz-Graph angelegt.'
@@ -1905,6 +1906,7 @@ de:
     linearize_quiz: 'Quiz linearisieren'
     back: 'Zurück'
     finish_editing: 'Bearbeitung beenden'
+    default_target: 'Standard-Ziel'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

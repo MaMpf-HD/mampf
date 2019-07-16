@@ -96,7 +96,8 @@ class Ability
       can [:teacher, :fill_user_select], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
-      can [:linearize, :set_root, :set_level], Quiz do |quiz|
+      can [:linearize, :set_root, :set_level,
+           :update_default_target], Quiz do |quiz|
         quiz.edited_with_inheritance_by?(user)
       end
     else

@@ -15,6 +15,11 @@
 <%= link_to t('basics.medium'),
             edit_or_inspect_medium_path(quizzable),
             class: 'btn btn-sm btn-secondary' %>
+<button type="button"
+        id="selectDefaultTarget"
+        class="btn btn-sm btn-secondary">
+  <%= t('buttons.default_target') %>
+</button>
 <button id="targetsFromVertex"
         class="btn btn-sm btn-secondary"
         data-quiz="<%= quiz.id %>"

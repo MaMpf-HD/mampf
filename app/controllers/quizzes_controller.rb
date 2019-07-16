@@ -61,6 +61,14 @@ class QuizzesController < ApplicationController
     head :ok, content_type: "text/html"
   end
 
+  def update_default_target
+    quiz_graph = @quiz.quiz_graph
+    source = params[:source].to_i
+    target = params[:target].to_i
+    quiz_graph.update_default_target!(source, target)
+    @quiz.update(quiz_graph: quiz_graph)
+  end
+
   private
 
   def set_quiz
