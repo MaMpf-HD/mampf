@@ -87,8 +87,8 @@ $(document).on 'turbolinks:load', ->
           selector: '.selected'
           style:
             'font-size': '2em'
-            'background-color': 'green'
-            'color': 'green'
+            'border-color': 'blue'
+            'border-width': 4
         }
       ]
       userZoomingEnabled: zoomable
@@ -113,6 +113,8 @@ $(document).on 'turbolinks:load', ->
         node = evt.target
         id = node.id()
         if id not in ['-1','-2']
+          cy.nodes().removeClass('selected')
+          node.addClass('selected')
           if $cyContainer.data('root') != 'select'
             $.ajax Routes.render_vertex_quizzable_path(),
               type: 'GET'
@@ -136,7 +138,6 @@ $(document).on 'turbolinks:load', ->
         return
 
   $(document).on 'click', '#selectQuizRoot', ->
-    console.log 'Hier'
     $('#cy').data('root', 'select')
     $('.basicQuizButton').hide()
     $('#selectRootInfo').show()
@@ -183,6 +184,14 @@ $(document).on 'turbolinks:load', ->
       }
     return
 
+  $(document).on 'click', '#cancelVertexEdit', ->
+    $('#vertex-buttons').empty()
+    $('#quiz_buttons').show()
+    $('#vertexActionArea').empty()
+    cy.nodes().removeClass('selected')
+    return
+
+
   return
 
 # clean up everything before turbolinks caches
@@ -195,4 +204,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#selectQuizLevel'
   $(document).off 'change', '.quiz-level'
   $(document).off 'click', '#cancelQuizLevel'
+  $(document).off 'click', '#cancelVertexEdit'
   return

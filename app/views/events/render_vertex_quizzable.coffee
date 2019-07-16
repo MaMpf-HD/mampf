@@ -1,8 +1,13 @@
-$('#vertexActionArea').empty()
+$('#vertexTargetArea').empty()
+$('#quiz_buttons').hide()
+$('#vertex-buttons').empty()
   .append '<%= j render partial: "quizzes/edit/vertex_actions",
                         locals: { quizzable: @quizzable,
-                                  quiz: @quiz,
-                                  vertex_id: @vertex_id } %>'
+                                  vertex_id: @vertex_id,
+                                  quiz: @quiz } %>'
+$('#vertexActionArea').empty()
+  .append '<%= j render partial: "quizzes/quizzable_preview",
+                        locals: { quizzable: @quizzable } %>'
 
 vertexActionArea = document.getElementById('vertexActionArea')
 renderMathInElement vertexActionArea,

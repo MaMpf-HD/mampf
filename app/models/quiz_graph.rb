@@ -217,6 +217,8 @@ class QuizGraph
                         label: I18n.t('admin.quiz.start'),
                         color: '#000',
                         background: '#f4a460',
+                        borderwidth: '0',
+                        bordercolor: '#f4a460',
                         shape: 'diamond' } )
     # add vertices
     @vertices.keys.each do |v|
@@ -226,6 +228,8 @@ class QuizGraph
                         label: I18n.t('admin.quiz.end'),
                         color: '#000',
                         background: '#f4a460',
+                        borderwidth: '0',
+                        bordercolor: '#f4a460',
                         shape: 'diamond' } )
     # add edges
     if @root.in?(@vertices.keys)
