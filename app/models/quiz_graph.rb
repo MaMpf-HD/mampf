@@ -42,6 +42,7 @@ class QuizGraph
 
   def update_default_target!(source, target)
     @default_table[source] = target
+    @edges.delete([source, target])
   end
 
   # replace_reference! replaces all references to old_quizzable within

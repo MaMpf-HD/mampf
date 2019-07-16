@@ -112,40 +112,56 @@ $(document).on 'turbolinks:load', ->
       cy.on 'tap', 'node', (evt) ->
         node = evt.target
         id = node.id()
-        if id not in ['-1','-2']
-          if $cyContainer.data('root') != 'select' and $cyContainer.data('vertextarget') != 'select'
-            cy.nodes().removeClass('selected')
-            node.addClass('selected')
-            $('#cy').data('vertex', id)
-            defaultTarget = node.data('defaulttarget')
-            $('#cy').data('defaulttarget', defaultTarget)
-            $.ajax Routes.render_vertex_quizzable_path(),
-              type: 'GET'
-              dataType: 'script'
-              data: {
-                quiz_id: $cyContainer.data('quiz')
-                id: id
-              }
-              error: (jqXHR, textStatus, errorThrown) ->
-                console.log("AJAX Error: #{textStatus}")
-          else if $cyContainer.data('root') == 'select'
-            quizId = $cyContainer.data('quiz')
-            $.ajax Routes.set_quiz_root_path(quizId),
-              type: 'POST'
-              dataType: 'script'
-              data: {
-                root: id
-              }
-              error: (jqXHR, textStatus, errorThrown) ->
-                console.log("AJAX Error: #{textStatus}")
+        if $cyContainer.data('root') != 'select' and $cyContainer.data('vertextarget') != 'select'
+          return if id in ['-1','-2']
+          cy.nodes().removeClass('selected')
+          node.addClass('selected')
+          $('#cy').data('vertex', id)
+          defaultTarget = node.data('defaulttarget')
+          $('#cy').data('defaulttarget', defaultTarget)
+          $.ajax Routes.render_vertex_quizzable_path(),
+            type: 'GET'
+            dataType: 'script'
+            data: {
+              quiz_id: $cyContainer.data('quiz')
+              id: id
+            }
+            error: (jqXHR, textStatus, errorThrown) ->
+              console.log("AJAX Error: #{textStatus}")
+        else if $cyContainer.data('root') == 'select'
+          return if id in ['-1','-2']
+          quizId = $cyContainer.data('quiz')
+          $.ajax Routes.set_quiz_root_path(quizId),
+            type: 'POST'
+            dataType: 'script'
+            data: {
+              root: id
+            }
+            error: (jqXHR, textStatus, errorThrown) ->
+              console.log("AJAX Error: #{textStatus}")
+        else
+          return if id == '-2'
+          edges = cy.filter (element, i) ->
+            element.isEdge() and element.data('selected_default_edge') and not element.data('old')
+          cy.remove(edges)
+          edges = cy.filter (element, i) ->
+            element.isEdge() and element.data('selected_default_edge') and element.data('old')
+          edges.data('color', edges.data('oldcolor'))
+          edges.data('selected_default_edge', false)
+          edges.data('defaultedge', false)
+          source = $('#cy').data('vertex')
+          previousdefault = cy.filter (element, i) ->
+            element.isEdge() and element.data('source') == source and element.data('defaultedge')
+          cy.remove previousdefault
+          duplicate = cy.filter (element, i) ->
+            element.isEdge() and element.data('id') == source + '-' + id
+          if duplicate.length > 0
+            oldColor = duplicate.data('color')
+            duplicate.data('color', 'green')
+            duplicate.data('selected_default_edge', true)
+            duplicate.data('oldcolor', oldColor)
+            duplicate.data('old', true)
           else
-            edges = cy.filter (element, i) ->
-              element.isEdge() and element.data('selected_default_edge')
-            cy.remove(edges)
-            source = $('#cy').data('vertex')
-            previousdefault = cy.filter (element, i) ->
-              element.isEdge() and element.data('source') == source and element.data('defaultedge')
-            cy.remove previousdefault
             cy.add
               group: 'edges'
               data:
@@ -154,9 +170,9 @@ $(document).on 'turbolinks:load', ->
                 target: id
                 color: 'green'
                 selected_default_edge: true
-            $('#saveDefaultTarget').show()
-            $('#saveDefaultTarget').data('source', source)
-            $('#saveDefaultTarget').data('target', id)
+          $('#saveDefaultTarget').show()
+          $('#saveDefaultTarget').data('source', source)
+          $('#saveDefaultTarget').data('target', id)
         return
 
   $(document).on 'click', '#selectQuizRoot', ->
