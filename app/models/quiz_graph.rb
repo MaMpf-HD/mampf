@@ -12,14 +12,11 @@ class QuizGraph
     quiz_graph.to_yaml
   end
 
-  def update_vertex(vertex_id, default_id, branching, hide)
+  def update_vertex(vertex_id, branching, hide)
+    return if @vertices[vertex_id][:type] == 'Remark'
     remove_edges_from!(vertex_id)
-    if @vertices[vertex_id][:type] == 'Remark'
-      @default_table[vertex_id] = default_id
-    else
-      update_edges_for_question!(vertex_id, branching)
-      update_hide_solutions!(vertex_id, hide)
-    end
+    update_edges_for_question!(vertex_id, branching)
+    update_hide_solutions!(vertex_id, hide)
     self
   end
 
@@ -120,18 +117,14 @@ class QuizGraph
 
   def remove_edges_from!(vertex_id)
     edges_from(vertex_id).each { |e| @edges.delete(e) }
-    @default_table[vertex_id] = 0
     remove_hide_solution!(vertex_id)
   end
 
   def update_edges_for_question!(vertex_id, branching)
     new_hash = Hash.new { |h, k| h[k] = [] }
     new_edges = branching.each_with_object(new_hash) { |(k, v), h| h[v] << k }
-    new_default_edge = new_edges.keys.detect do |k|
-      quizzable(vertex_id).answer_scheme.in?(new_edges[k])
-    end
-    @edges.merge!(new_hash.except(new_default_edge))
-    @default_table[vertex_id] = new_default_edge&.second.to_i
+    default_edge = [vertex_id, @default_table[vertex_id]]
+    @edges.merge!(new_hash.except(default_edge))
   end
 
   def update_hide_solutions!(vertex_id, hide)

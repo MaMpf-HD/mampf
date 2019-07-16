@@ -1907,6 +1907,7 @@ de:
     back: 'Zurück'
     finish_editing: 'Bearbeitung beenden'
     default_target: 'Standard-Ziel'
+    ramification: 'Verzweigung'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

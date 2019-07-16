@@ -1805,6 +1805,7 @@ en:
     back: 'Back'
     finish_editing: 'Finish Editing'
     default_target: 'Default Target'
+    ramification: 'Ramification'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

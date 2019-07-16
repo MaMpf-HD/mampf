@@ -19,7 +19,7 @@ class VerticesController < ApplicationController
 
   def update
     @id = params[:id].to_i
-    graph = @quiz.quiz_graph.update_vertex(@vertex_id, @default_id, @branching,
+    graph = @quiz.quiz_graph.update_vertex(@vertex_id, @branching,
                                            @hide)
     @quiz.update(quiz_graph: graph)
     redirect_to edit_quiz_path(@quiz)
@@ -42,7 +42,6 @@ class VerticesController < ApplicationController
 
   def set_update_vertex_params
     @vertex_id = @params_v[:vertex_id].to_i
-    @default_id = @params_v[:default].to_i
     @branching = {}
     set_branching_hash
     set_hide_array
