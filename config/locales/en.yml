@@ -1271,6 +1271,12 @@ en:
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
+        ramification: >
+          Here you can select where wrong answers will lead
+          (in case they do not lead to the default target).
+        too_many_answers: >
+          Editing of ramification is disabled for this question as it has more
+          than four answers.
   profile:
     account: 'Account'
     name: 'Display name'

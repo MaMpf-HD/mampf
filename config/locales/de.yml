@@ -1354,6 +1354,12 @@ de:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem
           Quiz korrespondiert.
+        ramification: >
+          Hier kannst Du festlegen, wohin falsche Antworten führen sollen
+          (falls diese nicht zum Standard-Ziel gehen).
+        too_many_answers: >
+          Diese Frage hat mehr als 4 Antworten, weswegen die Bearbeitung
+          von Verzweigung dafür deaktiviert ist.
   profile:
     account: 'Account'
     name: 'Anzeigename'
