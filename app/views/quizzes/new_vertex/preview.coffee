@@ -48,3 +48,5 @@ renderMathInElement mediaResults,
     }
   ]
   throwOnError: false
+
+$('html, body').animate scrollTop: $('#media-search-results').offset().top - 20

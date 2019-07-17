@@ -69,6 +69,15 @@ class QuizzesController < ApplicationController
     @quiz.update(quiz_graph: quiz_graph)
   end
 
+  def delete_edge
+    quiz_graph = @quiz.quiz_graph
+    source = params[:source].to_i
+    target = params[:target].to_i
+    quiz_graph.delete_edge!(source, target)
+    @quiz.update(quiz_graph: quiz_graph)
+    pp @quiz.errors
+  end
+
   private
 
   def set_quiz

@@ -90,6 +90,12 @@ $(document).on 'turbolinks:load', ->
             'border-color': 'blue'
             'border-width': 4
         }
+        {
+          selector: '.edgeselected'
+          style:
+            'line-color': 'blue'
+            'width': 4
+        }
       ]
       userZoomingEnabled: zoomable
       autoungrabify: ungrabbable
@@ -114,7 +120,9 @@ $(document).on 'turbolinks:load', ->
         id = node.id()
         if $cyContainer.data('root') != 'select' and $cyContainer.data('vertextarget') != 'select'
           return if id in ['-1','-2']
+          $('#deleteEdgeButtons').hide()
           cy.nodes().removeClass('selected')
+          cy.edges().removeClass('edgeselected')
           node.addClass('selected')
           $('#cy').data('vertex', id)
           defaultTarget = node.data('defaulttarget')
@@ -175,6 +183,26 @@ $(document).on 'turbolinks:load', ->
           $('#saveDefaultTarget').data('target', id)
         return
 
+      cy.on 'tap', 'edge', (evt) ->
+        edge = evt.target
+        source = edge.data('source')
+        target = edge.data('target')
+        return if source == '-2'
+        if $cyContainer.data('root') != 'select' and $cyContainer.data('vertextarget') != 'select'
+          edge = evt.target
+          id = edge.id()
+          $('#vertex-buttons').empty()
+          $('.basicQuizButton').hide()
+          $('#quizzableArea').empty()
+          $('#vertexActionArea').empty()
+          $('html, body').animate scrollTop: 0
+          $('#deleteEdgeButtons').show()
+          cy.nodes().removeClass('selected')
+          edge.addClass('edgeselected')
+          $('#deleteEdge').data('source', source)
+          $('#deleteEdge').data('target', target)
+        return
+
   $(document).on 'click', '#selectQuizRoot', ->
     $('#cy').data('root', 'select')
     $('.basicQuizButton').hide()
@@ -223,6 +251,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#cancelVertexEdit', ->
+    $('#vertexTargetArea').empty()
     $('#vertex-buttons').empty()
     $('#quiz_buttons').show()
     $('#vertexActionArea').empty()
@@ -232,6 +261,7 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'click', '#selectDefaultTarget', ->
     $('#cy').data('vertextarget', 'select')
+    $('#vertexTargetArea').empty()
     $('#vertex-buttons').hide()
     $('#selectTargetInfo').show()
     return
@@ -280,7 +310,30 @@ $(document).on 'turbolinks:load', ->
       }
     return
 
+  $(document).on 'click', '#cancelDeleteEdge', ->
+    $('#deleteEdgeButtons').hide()
+    $('#quiz_buttons').show()
+    $('.basicQuizButton').show()
+    cy.edges().removeClass('edgeselected')
+    return
 
+  $(document).on 'click', '#deleteEdge', ->
+    quizId = $('#cy').data('quiz')
+    marked = cy.$('.edgeselected')
+    console.log marked
+    if marked.data('defaultedge')
+      cy.$('#' + marked.data('source')).data('defaulttarget', 0)
+    marked.remove()
+    $.ajax Routes.delete_edge_path(quizId),
+      type: 'DELETE'
+      dataType: 'script'
+      data: {
+        source: $(this).data('source')
+        target: $(this).data('target')
+      }
+    $('#deleteEdgeButtons').hide()
+    $('#quiz_buttons').show()
+    $('.basicQuizButton').show()
   return
 
 # clean up everything before turbolinks caches
@@ -297,4 +350,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#selectDefaultTarget'
   $(document).off 'click', '#cancelDefaultTarget'
   $(document).off 'click', '#saveDefaultTarget'
+  $(document).off 'click', '#cancelDeleteEdge'
   return

@@ -153,6 +153,8 @@ Rails.application.routes.draw do
                                  as: 'set_quiz_level'
   post 'quizzes/:id/update_default_target', to: 'quizzes#update_default_target',
                                             as: 'update_default_target'
+  delete 'quizzes/:id/delete_edge', to: 'quizzes#delete_edge',
+                                            as: 'delete_edge'
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]
   end

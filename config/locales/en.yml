@@ -1236,7 +1236,7 @@ en:
       okay: 'Okay!'
       import_content: 'Import Content'
       create_question: 'Create Question'
-      create_remark: 'Create Remark'
+      create_remark: 'Create Quiz Remark'
       why_correct: 'Why was this correct?'
       checked_false: 'You checked this box. But this statement is false.'
       not_checked_correct:  >
@@ -1805,6 +1805,7 @@ en:
     save_targets: 'Save Targets'
     save_vertex: 'Save Vertex'
     delete_vertex: 'Delete Vertex'
+    delete_edge: 'Delete Edge'
     submit: 'Submit'
     reset: 'Reset'
     linearize_quiz: 'Linearize Quiz'

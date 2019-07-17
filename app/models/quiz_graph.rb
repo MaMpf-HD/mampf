@@ -42,6 +42,13 @@ class QuizGraph
     @edges.delete([source, target])
   end
 
+  def delete_edge!(source, target)
+    if @default_table[source] == target
+      @default_table[source] = 0
+    end
+    @edges.delete([source, target])
+  end
+
   # replace_reference! replaces all references to old_quizzable within
   # the quiz_graph by references to new_quizzable. It proceeds only if
   # both quizzables are of the same class. If the quizzables are questions,
@@ -182,12 +189,12 @@ class QuizGraph
   end
 
   def linearize!
-    edges = {}
     default_table = {}
-    @vertices.keys.each do |i|
-      default_table[i] = i < @vertices.count ? i + 1 : -1
+    keys = @vertices.keys
+    keys.each_with_index do |val, index|
+      default_table[val] = index < @vertices.count - 1 ? keys[index + 1] : -1
     end
-    @edges = edges
+    @edges = {}
     @root = @vertices.keys.first
     @default_table = default_table
     self

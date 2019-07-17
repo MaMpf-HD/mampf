@@ -3,7 +3,7 @@
         class="btn btn-sm btn-secondary">
   <%= t('buttons.back') %>
 </button>
-<% if current_user.in?(quizzable.editors_with_inheritance) %>
+<% if current_user.in?(quizzable.editors_with_inheritance) || current_user.admin %>
   <button class="btn btn-sm btn-secondary"
           id="edit-vertex-content-<%= vertex_id %>"
           data-type="<%= quizzable.type %>"

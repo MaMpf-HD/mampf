@@ -1316,8 +1316,8 @@ de:
         Es gibt ein %{medium_1} und ein %{medium_2} zu dieser Erläuterung.
       okay: 'Alles klar!'
       import_content: 'Inhalt importieren'
-      create_question: 'Frage erstellen'
-      create_remark: 'Bemerkung erstellen'
+      create_question: 'Quiz-Frage erstellen'
+      create_remark: 'Quiz-Erläuterung erstellen'
       why_correct: 'Warum war das richtig?'
       checked_false: 'Das hast Du angekreuzt. Die Aussage ist aber falsch.'
       not_checked_correct:  >
@@ -1907,6 +1907,7 @@ de:
     save_targets: 'Ziele speichern'
     save_vertex: 'Ecke speichern'
     delete_vertex: 'Ecke löschen'
+    delete_edge: 'Kante löschen'
     submit: 'Fertig'
     reset: 'Zurücksetzen'
     linearize_quiz: 'Quiz linearisieren'
