@@ -98,6 +98,8 @@ $(document).on 'turbolinks:load', ->
         }
       ]
       userZoomingEnabled: zoomable
+      minZoom: 0.2
+      maxZoom: 5
       autoungrabify: ungrabbable
       userPanningEnabled: pannable
       layout:
@@ -118,15 +120,25 @@ $(document).on 'turbolinks:load', ->
       cy.on 'tap', 'node', (evt) ->
         node = evt.target
         id = node.id()
-        if $cyContainer.data('root') != 'select' and $cyContainer.data('vertextarget') != 'select'
+        # generic case: selection of a vertex (not root vertex, not default
+        # target)
+        if $cyContainer.data('root') != 'select' and
+           $cyContainer.data('vertextarget') != 'select'
+          # ignore if start vertex of ennd vertex is clicked
           return if id in ['-1','-2']
           $('#deleteEdgeButtons').hide()
+          # remove highlighting of previous selections (vertices and nodes)
           cy.nodes().removeClass('selected')
           cy.edges().removeClass('edgeselected')
+          # highlight selection
           node.addClass('selected')
-          $('#cy').data('vertex', id)
+          # store vertex id in cytoscape container
+          $cyContainer.data('vertex', id)
+          # store default target of vertex in cytoscape container
           defaultTarget = node.data('defaulttarget')
           $('#cy').data('defaulttarget', defaultTarget)
+          # render a preview of the quizzable that is associated to the clicked
+          # vertex
           $.ajax Routes.render_vertex_quizzable_path(),
             type: 'GET'
             dataType: 'script'
@@ -136,9 +148,11 @@ $(document).on 'turbolinks:load', ->
             }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
+        # non-generic case: selection of graph root
         else if $cyContainer.data('root') == 'select'
           return if id in ['-1','-2']
           quizId = $cyContainer.data('quiz')
+          # update quiz root in DB
           $.ajax Routes.set_quiz_root_path(quizId),
             type: 'POST'
             dataType: 'script'
@@ -147,20 +161,31 @@ $(document).on 'turbolinks:load', ->
             }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
+        # non-generic case: selection of default target for a vertex
         else
+          # ignore if start vertex is clicked
           return if id == '-2'
-          edges = cy.filter (element, i) ->
-            element.isEdge() and element.data('selected_default_edge') and not element.data('old')
-          cy.remove(edges)
-          edges = cy.filter (element, i) ->
-            element.isEdge() and element.data('selected_default_edge') and element.data('old')
-          edges.data('color', edges.data('oldcolor'))
-          edges.data('selected_default_edge', false)
-          edges.data('defaultedge', false)
+          # remove previously selected default edge that did not exist
+          # before as edge
+          newSelectedEdge = cy.filter (element, i) ->
+            element.isEdge() and element.data('selected_default_edge') and not
+            element.data('old')
+          cy.remove(newSelectedEdge)
+          # restore previously selected default edge that existed before
+          oldSelectedEdge = cy.filter (element, i) ->
+            element.isEdge() and element.data('selected_default_edge') and
+            element.data('old')
+          oldSelectedEdge.data('color', oldSelectedEdge.data('oldcolor'))
+          oldSelectedEdge.data('selected_default_edge', false)
+          oldSelectedEdge.data('defaultedge', false)
+          # remove current default edge from selected source vertex
           source = $('#cy').data('vertex')
-          previousdefault = cy.filter (element, i) ->
-            element.isEdge() and element.data('source') == source and element.data('defaultedge')
-          cy.remove previousdefault
+          previousDefault = cy.filter (element, i) ->
+            element.isEdge() and element.data('source') == source and
+            element.data('defaultedge')
+          cy.remove previousDefault
+          # if an edge already exists between selected source and target vertex,
+          # just change the color, mark it as default edge and store stale data
           duplicate = cy.filter (element, i) ->
             element.isEdge() and element.data('id') == source + '-' + id
           if duplicate.length > 0
@@ -169,6 +194,8 @@ $(document).on 'turbolinks:load', ->
             duplicate.data('selected_default_edge', true)
             duplicate.data('oldcolor', oldColor)
             duplicate.data('old', true)
+          # otherwise, create new default edge from source vertex to target
+          # vertex
           else
             cy.add
               group: 'edges'
@@ -178,29 +205,36 @@ $(document).on 'turbolinks:load', ->
                 target: id
                 color: 'green'
                 selected_default_edge: true
+          # show save default target button and store source and target in it
           $('#saveDefaultTarget').show()
           $('#saveDefaultTarget').data('source', source)
           $('#saveDefaultTarget').data('target', id)
         return
 
       cy.on 'tap', 'edge', (evt) ->
+        # determine source and target vertex
         edge = evt.target
         source = edge.data('source')
         target = edge.data('target')
         return if source == '-2'
-        if $cyContainer.data('root') != 'select' and $cyContainer.data('vertextarget') != 'select'
+        if $cyContainer.data('root') != 'select' and
+           $cyContainer.data('vertextarget') != 'select'
           edge = evt.target
           id = edge.id()
+          # layout changes
           $('#vertex-buttons').empty()
           $('.basicQuizButton').hide()
           $('#quizzableArea').empty()
           $('#vertexActionArea').empty()
           $('html, body').animate scrollTop: 0
+          # show delete edge button and store source and target in it
           $('#deleteEdgeButtons').show()
-          cy.nodes().removeClass('selected')
-          edge.addClass('edgeselected')
           $('#deleteEdge').data('source', source)
           $('#deleteEdge').data('target', target)
+          # remove highlighting of previously selections
+          cy.nodes().removeClass('selected')
+          cy.edges().removeClass('edgeselected')
+          edge.addClass('edgeselected')
         return
 
   $(document).on 'click', '#selectQuizRoot', ->
@@ -267,13 +301,16 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#cancelDefaultTarget', ->
-    edges = cy.filter (element, i) ->
+    # remove selected default edge
+    selectedDefaultEdge = cy.filter (element, i) ->
       element.isEdge() and element.data('selected_default_edge')
-    cy.remove(edges)
+    cy.remove(selectedDefaultEdge)
+    # restore previous default edge
     source = $('#cy').data('vertex')
     defaulttarget = $('#cy').data('defaulttarget')
-    previousdefault = cy.filter (element, i) ->
-      element.isEdge() and element.data('source') == source and element.data('defaultedge')
+    previousDefault = cy.filter (element, i) ->
+      element.isEdge() and element.data('source') == source and
+      element.data('defaultedge')
     if previousdefault.length == 0 && defaulttarget != 0
       cy.add
         group: 'edges'
@@ -283,10 +320,11 @@ $(document).on 'turbolinks:load', ->
           target: defaulttarget
           color: '#32cd32'
           defaultedge: true
-    source = $('#cy').data('vertex')
+    # layout changes
     $('#selectTargetInfo').hide()
     $('#saveDefaultTarget').hide()
     $('#vertex-buttons').show()
+    # clean up data
     $('#cy').data('vertextarget', '')
     return
 
@@ -294,12 +332,14 @@ $(document).on 'turbolinks:load', ->
     $('#selectTargetInfo').hide()
     $('#saveDefaultTarget').hide()
     $('#vertex-buttons').show()
-    edges = cy.filter (element, i) ->
+    # save default edge in cy graph, adjust color
+    defaultEdge = cy.filter (element, i) ->
       element.isEdge() and element.data('selected_default_edge')
-    edges.data('selected_default_edge', false)
-    edges.data('color', '#32cd32')
-    edges.data('defaultedge', true)
+    defaultEdge.data('selected_default_edge', false)
+    defaultEdge.data('color', '#32cd32')
+    defaultEdge.data('defaultedge', true)
     $('#cy').data('vertextarget', '')
+    # transmit changes to DB
     quizId = $('#cy').data('quiz')
     $.ajax Routes.update_default_target_path(quizId),
       type: 'POST'
@@ -320,10 +360,12 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'click', '#deleteEdge', ->
     quizId = $('#cy').data('quiz')
     marked = cy.$('.edgeselected')
-    console.log marked
+    # if edge marked for selection was default edge, refresh default
+    # target for source vertex
     if marked.data('defaultedge')
       cy.$('#' + marked.data('source')).data('defaulttarget', 0)
     marked.remove()
+    # transmit deletion to DB
     $.ajax Routes.delete_edge_path(quizId),
       type: 'DELETE'
       dataType: 'script'
@@ -331,6 +373,7 @@ $(document).on 'turbolinks:load', ->
         source: $(this).data('source')
         target: $(this).data('target')
       }
+    # layout changes
     $('#deleteEdgeButtons').hide()
     $('#quiz_buttons').show()
     $('.basicQuizButton').show()
@@ -351,4 +394,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancelDefaultTarget'
   $(document).off 'click', '#saveDefaultTarget'
   $(document).off 'click', '#cancelDeleteEdge'
+  $(document).off 'click', '#deleteEdge'
   return

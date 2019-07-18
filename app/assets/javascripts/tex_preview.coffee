@@ -1,6 +1,6 @@
 $(document).on 'turbolinks:load', ->
 
-  $(document).on 'change', '[id^="tex-area-"]', ->
+  $(document).on 'keyup', '[id^="tex-area-"]', ->
     content = $(this).val()
     preview = '#' + this.id.replace('area','preview')
     $(preview).text content
@@ -36,5 +36,5 @@ $(document).on 'turbolinks:load', ->
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
-  $(document).off 'change', '[id^="tex-area-"]'
+  $(document).off 'keyup', '[id^="tex-area-"]'
   return
