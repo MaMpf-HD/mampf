@@ -102,14 +102,12 @@ class MediaController < ApplicationController
       end
       if @medium.sort == 'Quiz'
         @medium.update(type: 'Quiz')
-        if params[:medium][:create_quiz_graph] == '1'
-          @medium.update(quiz_graph:QuizGraph.new(vertices: {},
-                                                  edges: {},
-                                                  root: 0,
-                                                  default_table: {},
-                                                  hide_solution: []),
-                         level: 1)
-        end
+        @medium.update(quiz_graph:QuizGraph.new(vertices: {},
+                                                edges: {},
+                                                root: 0,
+                                                default_table: {},
+                                                hide_solution: []),
+                       level: 1)
       end
       redirect_to edit_medium_path(@medium)
       return
