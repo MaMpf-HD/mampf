@@ -19,12 +19,6 @@ class QuizzesController < ApplicationController
   end
 
   def update
-    root = quiz_params[:root].to_i
-    level = quiz_params[:level].to_i
-    quiz_graph = @quiz.quiz_graph
-    quiz_graph.root = root
-    @success = true if @quiz.update(quiz_graph: quiz_graph,
-                                    level: level)
   end
 
   def destroy

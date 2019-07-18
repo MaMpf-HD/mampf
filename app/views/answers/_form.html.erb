@@ -14,7 +14,8 @@
                          id: 'answer-false-' + id.to_s %>
     <% end %>
   </div>
-  <%= f.text_area :text, id: 'tex-area-answer-' + id.to_s  %>
+  <%= f.text_area :text,
+                  id: 'tex-area-answer-' + id.to_s  %>
   <% if id == 0 %>
     <%= t('admin.answer.preview_text') %>:
     <div  class="border bg-correct border-secondary rounded py-2 mb-2"

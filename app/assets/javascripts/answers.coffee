@@ -13,19 +13,28 @@ $(document).on 'turbolinks:load', ->
       .removeClass('btn-primary').addClass('btn-secondary')
     return
 
-  # change button 'verwerfen' back to 'Ziele ändern' and rerender answer body
-  # and header after answer body is hidden
+  # submit form to database after answer body is hidden and restore
+  # buttons after after answer body is hidden
 
   $(document).on 'hidden.bs.collapse', '[id^="collapse-answer-"]', ->
-    $.ajax Routes.update_answer_body_path(),
-      type: 'GET'
+    answerId = $(this).data('id')
+    text = $('#tex-area-answer-' + answerId).val()
+    value = $('#answer-true-' + answerId).is(':checked')
+    explanation = $('#tex-area-explanation-' + answerId).val()
+    $target = $('#targets-answer-' + answerId)
+    $target.empty()
+      .append(I18n.t('buttons.edit', { locale: $target.data('locale') }))
+      .removeClass('btn-secondary').addClass 'btn-primary'
+    $.ajax Routes.answer_path(answerId),
+      type: 'PATCH'
       dataType: 'script'
       data: {
-        answer_id: $(this).data('id')
-        input: $('#tex-area-answer-' + $(this).data('id')).val()
+        answer: {
+          text: text
+          value: value
+          explanation: explanation
+        }
       }
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log("AJAX Error: #{textStatus}")
     return
 
   # change correctness box for answer if radio button is clicked

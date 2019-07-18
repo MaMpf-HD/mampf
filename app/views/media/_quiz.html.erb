@@ -35,7 +35,8 @@
       <div class="custom-control custom-checkbox">
         <%= f.check_box :create_quiz_graph,
                         checked: quiz.new_record?,
-                        class: 'custom-control-input' %>
+                        class: 'custom-control-input',
+                        disabled: quiz.new_record? %>
         <%= f.label :create_quiz_graph,
                     t('admin.quiz.create_graph'),
                     class: 'custom-control-label' %>

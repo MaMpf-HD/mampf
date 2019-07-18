@@ -124,7 +124,7 @@ $(document).on 'turbolinks:load', ->
         # target)
         if $cyContainer.data('root') != 'select' and
            $cyContainer.data('vertextarget') != 'select'
-          # ignore if start vertex of ennd vertex is clicked
+          # ignore if start vertex of end vertex is clicked
           return if id in ['-1','-2']
           $('#deleteEdgeButtons').hide()
           # remove highlighting of previous selections (vertices and nodes)
