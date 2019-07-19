@@ -28,4 +28,3 @@ renderMathInElement texRefresh,
   ]
   throwOnError: false
 <% end %>
-$("<%= '#'+@hide_id %>").prop('checked', false)

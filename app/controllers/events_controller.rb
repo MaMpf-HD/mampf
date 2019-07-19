@@ -12,7 +12,6 @@ class EventsController < ApplicationController
     @quizzable = Quiz.find_by_id(params[:quiz_id])
                      .quizzable(params[:vertex_id].to_i)
     @id = params[:id].sub 'select', 'quizzable'
-    @hide_id = params[:id].sub 'branching_select', 'hide'
   end
 
   def update_vertex_body
