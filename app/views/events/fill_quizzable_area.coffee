@@ -1,5 +1,6 @@
 $('#reassignModal').modal 'hide'
 $('#quizGraphArea').hide()
+$('#vertexTargetArea').empty()
 $('#quizzableArea').empty()
   .append '<%= j render partial: "quizzes/edit/quizzable_area",
                         locals: { quizzable: @quizzable,
