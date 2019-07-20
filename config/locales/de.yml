@@ -1350,6 +1350,20 @@ de:
       dafault: 'default'
       graph: Quiz-Graph
       create_graph: 'Quiz-Graph anlegen'
+      unreleased_vertices: >
+        Es gibt Ecken, deren zugehörige Medien unveröffentlicht oder gesperrt
+        sind.
+      vertex_teachable_unreleased: >
+        Die zu dem Medium assoziierte Vorlesung ist
+        unveröffentlicht, damit ist das Medium selbst per Vererbung
+        unveröffentlicht.
+      vertex_locked: >
+        Das zugehörige Medium ist gesperrt.
+      vertex_unreleased: 'Das zugehörige Medium ist unveröffentlicht.'
+      vertex_release_no_rights: >
+        Du hast leider nicht die erforderlichen Rechte, um das zu ändern.
+      publish_vertices: >
+        veröffentliche alle zum Quiz gehörigen Quiz-Fragen und Quiz-Bemerkungen
       info:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem
@@ -1360,6 +1374,17 @@ de:
         too_many_answers: >
           Diese Frage hat mehr als 4 Antworten, weswegen die Bearbeitung
           von Verzweigung dafür deaktiviert ist.
+        warnings: >
+          Unveröffentlichte oder gesperrte Medien im Quiz führen dazu, dass
+          NutzerInnen mit ungenügenden Rechten das Quiz nicht spielen können.
+          Du hast bei der Veröffentlichung des Quizzes die Option, die
+          betreffenden Medien mit zu veröffentlichen
+        publish_vertices: >
+          Das bezieht sich nur auf unveröffentlichte oder gesperrte Quiz-Fragen
+          und Quiz-Erläuterungen, für die Du die entsprechenden Rechte hast.
+          Für diejenigen, für die du diese Rechte besitzt, werden die
+          Zugriffsrechte für die NutzerInnen genauso gesetzt wie beim Quiz
+          ausgewählt.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -1848,6 +1873,7 @@ de:
     hits_per_page: 'Treffer pro Seite'
     selection: 'Auswahl'
     nothing_selected: 'Du hast nichts ausgewählt.'
+    warning: 'Warnung'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -1974,6 +2000,12 @@ de:
       Eine Benachrichtigung mit der angeforderten id existiert nicht.
     no_question: 'Eine Frage mit der angeforderten id existiert nicht.'
     no_quiz: 'Ein Quiz mit der angeforderten id existiert nicht.'
+    no_quiz_access: 'Du hast keine Berechtigung, auf dieses Quiz zuzugreifen.'
+    no_quiz_vertex_access: >
+      In diesem Quiz kommen Inhalte vor, für die Du keine Zugriffsberechtigung
+      hast.
+    quiz_has_error: >
+      Dieses Quiz hat einen Fehler.
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
     no_search_string: >
       Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.

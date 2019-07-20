@@ -6,6 +6,8 @@ $('#vertex-buttons').empty()
                                   vertex_id: @vertex_id,
                                   quiz: @quiz } %>'
 $('#vertexActionArea').empty()
+  .append '<%= j render partial: "quizzes/edit/vertex_status",
+                        locals: { quizzable: @quizzable } %>'
   .append '<%= j render partial: "quizzes/quizzable_preview",
                         locals: { quizzable: @quizzable } %>'
 

@@ -1,0 +1,7 @@
+<% if @quiz.quiz_graph.warnings %>
+  <span class="orangetext">
+    <%= t('basics.warning') %>:
+  </span>
+  <%= quiz.quiz_graph.warnings %>
+  <%= helpdesk(t('admin.quiz.info.warnings'), false) %>
+<% end %>

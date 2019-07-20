@@ -15,6 +15,29 @@ class Quiz < Medium
     description
   end
 
+  def publish_vertices!(user, release_state)
+    return unless vertices
+    vertices.keys.each do |v|
+      quizzable = quizzable(v)
+      next if quizzable.published_with_inheritance?
+      next if !quizzable.teachable.published?
+      next unless user.in?(quizzable.editors_with_inheritance) || user.admin
+      quizzable.update(released: release_state)
+    end
+  end
+
+  def quizzables
+    Medium.where(id: question_ids + remark_ids)
+  end
+
+  def quizzables_free?
+    quizzables.where(released: 'all').count == quizzables.count
+  end
+
+  def quizzables_visible_for_user?(user)
+    quizzables.all? { |q| q.visible_for_user?(user) }
+  end
+
   def next_vertex(progress, input = {})
     return default_table[progress] if vertices[progress][:type] == 'Remark'
     target_vertex(progress, input)

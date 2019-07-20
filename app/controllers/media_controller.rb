@@ -119,6 +119,9 @@ class MediaController < ApplicationController
   def publish
     release_state = params[:medium][:released]
     @medium.update(released: release_state)
+    if @medium.sort == 'Quiz' && params[:medium][:publish_vertices] == '1'
+      @medium.becomes(Quiz).publish_vertices!(current_user, release_state)
+    end
     # create notification about creation of medium to all subscribers
     # and send an email
     unless @medium.sort.in?(['Question', 'Remark', 'RandomQuiz'])

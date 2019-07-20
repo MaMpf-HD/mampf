@@ -27,6 +27,10 @@
           <%= render partial: 'media/access_rights',
                      locals: { f: f,
                                medium: medium } %>
+          <% if medium.sort == 'Quiz' %>
+            <%= render partial: 'media/quiz_rights',
+                       locals: { f: f } %>
+          <% end %>
           <div class="row mt-3">
             <div class="col-12 text-center">
               <%= f.submit t('buttons.publish'),

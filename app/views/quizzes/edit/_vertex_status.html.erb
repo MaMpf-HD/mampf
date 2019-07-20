@@ -1,0 +1,20 @@
+<% if !quizzable.published_with_inheritance? || quizzable.locked? %>
+  <span class="orangetext">
+    <%= t('basics.warning') %>:
+  </span>
+  <% if !quizzable.teachable.published? %>
+    <%= t('admin.quiz.vertex_teachable_unreleased') %>
+  <% elsif quizzable.locked? %>
+    <%= t('admin.quiz.vertex_locked') %>
+      <% if !current_user.in?(quizzable.editors_with_inheritance) &&
+              !current_user.admin %>
+        <%= t('admin.quiz.vertex_release_no_rights') %>
+      <% end %>
+  <% elsif !quizzable.published? %>
+    <%= t('admin.quiz.vertex_unreleased') %>
+    <% if !current_user.in?(quizzable.editors_with_inheritance) &&
+            !current_user.admin %>
+      <%= t('admin.quiz.vertex_release_no_rights') %>
+    <% end %>
+  <% end %>
+<% end %>

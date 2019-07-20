@@ -1268,6 +1268,18 @@ en:
       default: 'default'
       graph: 'Quiz Graph'
       create_graph: 'Create Quiz Graph'
+      unreleased_vertices: >
+        There are vertices whose associated media are unpublished or locked.
+      vertex_teachable_unreleased: >
+        The lecture associated to this medium is unpublished,
+        therefore the medium itself is unpublished by inheritance.
+      vertex_locked: >
+        The associated medium is locked.
+      vertex_unreleased: 'The associated medium is unpublished.'
+      vertex_release_no_rights: >
+        You do not have the necessary rights to change that.
+      publish_vertices: >
+        Publish all questions and remarks associated to the quiz
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
@@ -1277,6 +1289,17 @@ en:
         too_many_answers: >
           Editing of ramification is disabled for this question as it has more
           than four answers.
+        warnings: >
+          Unpublished or locked media in the quiz have the consequence that
+          users with insufficient rights cannot play the quiz.
+          When publishing the quiz, you have the option to simultaneously
+          publish the affected media (if your rights allow), therefore
+          settling this issue.
+        publish_vertices: >
+          This applies only to unpublished or locked Questions and Quiz Remarks
+          for which you have the right to do so. For those where you have the
+          rights, access for users will be the same as the one you select for
+          the quiz.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1743,6 +1766,7 @@ en:
     hits_per_page: 'Hits per page'
     selection: 'Selection'
     nothing_selected: 'You have not selected anything.'
+    warning: 'Warning'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1865,7 +1889,11 @@ en:
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'
     no_quiz: 'There is no quiz with this id.'
-    no_quiz_access: 'Du hast keine Berechtigung, auf dieses Quiz zuzugreifen.'
+    no_quiz_access: 'You are not allowed to acces this quiz.'
+    no_quiz_vertex_access: >
+      This quiz contains content that you are not allowed to access.
+    quiz_has_error: >
+      This quiz has an error.
     no_remark: 'There is no remark with this id.'
     no_search_term: >
       You made a search without a search term. That does not work.

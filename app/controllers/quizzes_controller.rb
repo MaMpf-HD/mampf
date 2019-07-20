@@ -5,6 +5,8 @@ class QuizzesController < ApplicationController
   # cancancan gem does not work well with single table inheritance
   # therefore, check access rights manually for :take and :proceed
   before_action :check_accessibility, only: [:take, :proceed]
+  before_action :check_vertex_accessibility, only: [:take]
+  before_action :check_errors, only: [:take]
   before_action :init_values, only: [:take, :proceed]
   authorize_resource
   layout 'administration'
@@ -69,7 +71,6 @@ class QuizzesController < ApplicationController
     target = params[:target].to_i
     quiz_graph.delete_edge!(source, target)
     @quiz.update(quiz_graph: quiz_graph)
-    pp @quiz.errors
   end
 
   private
@@ -94,5 +95,22 @@ class QuizzesController < ApplicationController
     return if !user_signed_in? && @quiz.published_with_inheritance? &&
                 @quiz.free?
     redirect_to :root, alert: I18n.t('controllers.no_quiz_access')
+  end
+
+  def check_vertex_accessibility
+    return if @quiz.sort == 'RandomQuiz'
+    if user_signed_in?
+      return if current_user.in?(@quiz.editors_with_inheritance)
+      return if current_user.admin
+      return if @quiz.quizzables_visible_for_user?(current_user)
+    end
+    return if !user_signed_in? && @quiz.quizzables_free?
+    redirect_to :root, alert: I18n.t('controllers.no_quiz_vertex_access')
+  end
+
+  def check_errors
+    return if @quiz.sort == 'RandomQuiz'
+    return unless @quiz.quiz_graph.find_errors.any?
+    redirect_to :root, alert: I18n.t('controllers.quiz_has_error')
   end
 end

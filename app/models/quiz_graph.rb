@@ -86,9 +86,21 @@ class QuizGraph
     messages
   end
 
+  def warnings
+    return I18n.t('admin.quiz.unreleased_vertices') if unreleased_vertices?
+  end
+
   def quizzable(id)
     return unless id.in?(@vertices.keys)
     @vertices[id][:type].constantize.find_by_id(@vertices[id][:id])
+  end
+
+  def visible?(id)
+    quizzable(id).visible?
+  end
+
+  def unreleased_vertices?
+    !@vertices.keys.all? { |v| visible?(v) }
   end
 
   def find_vertices(quizzable)
@@ -221,9 +233,9 @@ class QuizGraph
     result.push(data: { id: '-2',
                         label: I18n.t('admin.quiz.start'),
                         color: '#000',
-                        background: '#f4a460',
+                        background: 'yellowgreen',
                         borderwidth: '0',
-                        bordercolor: '#f4a460',
+                        bordercolor: 'grey',
                         shape: 'diamond' } )
     # add vertices
     @vertices.keys.each do |v|
@@ -232,7 +244,7 @@ class QuizGraph
     result.push(data: { id: '-1',
                         label: I18n.t('admin.quiz.end'),
                         color: '#000',
-                        background: '#f4a460',
+                        background: 'yellowgreen',
                         borderwidth: '0',
                         bordercolor: '#f4a460',
                         shape: 'diamond' } )
@@ -262,7 +274,7 @@ class QuizGraph
       color: '#000',
       background: @vertices[id][:type] == 'Question' ? '#e1f5fe' : '#f9fbe7',
       borderwidth: '2',
-      bordercolor: '#222',
+      bordercolor: visible?(id) ? '#222' : 'orange',
       shape: @vertices[id][:type] == 'Question' ? 'ellipse' : 'rectangle',
       defaulttarget: @default_table[id] }
   end

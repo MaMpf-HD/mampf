@@ -1,0 +1,9 @@
+<div class="custom-control custom-checkbox">
+  <%= f.check_box :publish_vertices,
+                  class: 'custom-control-input',
+                  checked: true %>
+  <%= f.label :publish_vertices,
+              t('admin.quiz.publish_vertices'),
+              { class: 'custom-control-label' } %>
+  <%= helpdesk(t('admin.quiz.info.publish_vertices'), false) %>
+</div>

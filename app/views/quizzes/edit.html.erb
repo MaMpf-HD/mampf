@@ -12,6 +12,10 @@
       <%= render partial: 'quizzes/errors_in_editing',
                  locals: { quiz: @quiz } %>
     </div>
+    <div id="quiz-warnings" class="mt-2">
+      <%= render partial: 'quizzes/edit/warnings',
+                 locals: { quiz: @quiz } %>
+    </div>
   </div>
   <div class="col-3 text-right">
     <% unless @quiz.sort == 'RandomQuiz' %>
