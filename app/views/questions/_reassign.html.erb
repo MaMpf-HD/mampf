@@ -1,5 +1,6 @@
 <% quiz_ids = question.proper_quiz_ids %>
 <% quiz_ids -= [quiz_id] if in_quiz %>
+<% quiz_ids = [] if no_rights %>
 <div id="reassign-question-<%= question.id %>">
   <%= bootstrap_form_with model: question,
                           url: { action: "reassign",

@@ -64,6 +64,7 @@ $(document).on 'turbolinks:load', ->
       data: {
         id: $(this).data('id')
         type: $(this).data('type')
+        rights: $(this).data('rights')
         in_quiz: $('#cy').length == 1
         quiz_id: $('#cy').data('quiz')
       }

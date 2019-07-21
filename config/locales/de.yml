@@ -1351,19 +1351,25 @@ de:
       graph: Quiz-Graph
       create_graph: 'Quiz-Graph anlegen'
       unreleased_vertices: >
-        Es gibt Ecken, deren zugehörige Medien unveröffentlicht oder gesperrt
-        sind.
+        Es gibt Ecken, deren zugehörige Quiz-Fragen oder Quiz-Erläuterungen
+        unveröffentlicht oder gesperrt sind.
       vertex_teachable_unreleased: >
-        Die zu dem Medium assoziierte Vorlesung ist
-        unveröffentlicht, damit ist das Medium selbst per Vererbung
-        unveröffentlicht.
+        Die zu der %{sort} assoziierte Vorlesung ist
+        unveröffentlicht, damit ist die %{sort}
+        selbst per Vererbung unveröffentlicht.
       vertex_locked: >
-        Das zugehörige Medium ist gesperrt.
-      vertex_unreleased: 'Das zugehörige Medium ist unveröffentlicht.'
+        Diese %{sort} ist gesperrt.
+      vertex_unreleased: 'Diese %{sort} ist unveröffentlicht.'
       vertex_release_no_rights: >
         Du hast leider nicht die erforderlichen Rechte, um das zu ändern.
       publish_vertices: >
-        veröffentliche alle zum Quiz gehörigen Quiz-Fragen und Quiz-Bemerkungen
+        veröffentliche alle zum Quiz gehörigen Quiz-Fragen und
+        Quiz-Erläuterungen
+      restricted_vertex: >
+        Diese %{sort} ist nur für AbonenntInnen von %{teachable} aufrufbar.
+        NutzerInnen ohne das Abonnement können das Quiz nicht spielen.
+      no_editor_rights: >
+        Für diese %{sort} hast Du keine Editorenrechte.
       info:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem
@@ -1375,10 +1381,11 @@ de:
           Diese Frage hat mehr als 4 Antworten, weswegen die Bearbeitung
           von Verzweigung dafür deaktiviert ist.
         warnings: >
-          Unveröffentlichte oder gesperrte Medien im Quiz führen dazu, dass
-          NutzerInnen mit ungenügenden Rechten das Quiz nicht spielen können.
-          Du hast bei der Veröffentlichung des Quizzes die Option, die
-          betreffenden Medien mit zu veröffentlichen
+          Unveröffentlichte oder gesperrte Quiz-Fragen bzw. Quiz-Erläuterungen
+          im Quiz führen dazu, dass NutzerInnen mit ungenügenden Rechten das
+          Quiz nicht spielen können. Du hast bei der Veröffentlichung des
+          Quizzes die Option, die betreffenden Fragen bzw. Erläuterungen mit zu
+          veröffentlichen.
         publish_vertices: >
           Das bezieht sich nur auf unveröffentlichte oder gesperrte Quiz-Fragen
           und Quiz-Erläuterungen, für die Du die entsprechenden Rechte hast.
@@ -1966,6 +1973,13 @@ de:
     linearize: >
       Bist Du sicher? Damit wird das Quiz linearisiert, insbesondere werden alle
       Änderungen, die Du bisher an den Kanten vorgenommen hast, gelöscht.
+    create_quizzable_copy: >
+      Bist Du sicher? Duplikation von Daten sollte nach Möglichkeit vermieden
+      werden. Sollte die Quiz-Frage/-Erläuterung, für die Du keine
+      Bearbeitungsrechte hast, einen Fehler enthalten, ist es besser, ihren
+      Editor darauf hinzuweisen und um Korrektur zu bitten. Sonst existieren
+      dann zwei Versionen der Quiz-Frage/-Erläuterung in der Datenbank: eine
+      korrekte und eine inkorrekte.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur

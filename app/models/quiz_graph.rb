@@ -200,6 +200,13 @@ class QuizGraph
     @default_table[edge[0]] == edge[1] ? '#32cd32' : '#f00'
   end
 
+  def border_color_for_cytoscape(id)
+    quizzable = quizzable(id)
+    return 'orange' unless quizzable.visible?
+    return 'chocolate' if quizzable.restricted?
+    '#222'
+  end
+
   def linearize!
     default_table = {}
     keys = @vertices.keys
@@ -274,7 +281,7 @@ class QuizGraph
       color: '#000',
       background: @vertices[id][:type] == 'Question' ? '#e1f5fe' : '#f9fbe7',
       borderwidth: '2',
-      bordercolor: visible?(id) ? '#222' : 'orange',
+      bordercolor: border_color_for_cytoscape(id),
       shape: @vertices[id][:type] == 'Question' ? 'ellipse' : 'rectangle',
       defaulttarget: @default_table[id] }
   end

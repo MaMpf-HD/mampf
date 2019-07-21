@@ -4,14 +4,16 @@ $('#reassign-data').empty()
                         locals: { remark: @quizzable,
                                   in_quiz: @in_quiz,
                                   quiz_id: @quiz_id,
-                                  vertex_id: @vertex_id } %>'
+                                  vertex_id: @vertex_id,
+                                  no_rights: @no_rights } %>'
 <% else %>
 $('#reassign-data').empty()
   .append '<%= j render partial: "questions/reassign",
                  locals: { question: @quizzable,
                            in_quiz: @in_quiz,
                            quiz_id: @quiz_id,
-                           vertex_id: @vertex_id } %>'
+                           vertex_id: @vertex_id,
+                           no_rights: @no_rights } %>'
 <% end %>
 reassignData = document.getElementById('reassign-data')
 renderMathInElement reassignData,

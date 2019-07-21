@@ -1271,15 +1271,20 @@ en:
       unreleased_vertices: >
         There are vertices whose associated media are unpublished or locked.
       vertex_teachable_unreleased: >
-        The lecture associated to this medium is unpublished,
-        therefore the medium itself is unpublished by inheritance.
+        The lecture associated to this %{sort} is unpublished,
+        therefore the %{sort} itself is unpublished by inheritance.
       vertex_locked: >
-        The associated medium is locked.
-      vertex_unreleased: 'The associated medium is unpublished.'
+        This %{sort} is locked.
+      vertex_unreleased: 'This %{sort} is unpublished.'
       vertex_release_no_rights: >
         You do not have the necessary rights to change that.
       publish_vertices: >
         Publish all questions and remarks associated to the quiz
+      restricted_vertex: >
+        This %{sort} is only accesible for subscribers of %{teachable}.
+        Users without subscription caanot play the quiz.
+      no_editor_rights: >
+        You do not have editor rights this %{sort}.
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
@@ -1290,11 +1295,11 @@ en:
           Editing of ramification is disabled for this question as it has more
           than four answers.
         warnings: >
-          Unpublished or locked media in the quiz have the consequence that
-          users with insufficient rights cannot play the quiz.
+          Unpublished or locked Questions/Quiz Remarks in the quiz have the
+          consequence that users with insufficient rights cannot play the quiz.
           When publishing the quiz, you have the option to simultaneously
-          publish the affected media (if your rights allow), therefore
-          settling this issue.
+          publish the affected Questions/Quiz Remarks (if your rights allow it),
+          therefore settling this issue.
         publish_vertices: >
           This applies only to unpublished or locked Questions and Quiz Remarks
           for which you have the right to do so. For those where you have the
@@ -1857,6 +1862,13 @@ en:
     linearize: >
       Are you sure? The quiz will be linearized, and any changes you have
       made to edges before will be deleted.
+    create_quizzable_copy: >
+      Are you sure? Data duplication should be avoided whenever possible.
+      If the Question/Quiz-Remark for which you do not have editing rights
+      contains an errors, it is better to point this out to the editor
+      and ask for correction. Otherwise, two versions of the
+      Question/Quiz-Remark will be in the database: a correct one and an
+      incorrect one.
   privacy_html: >
     We take the responsibility for your data seriously. By
     GDPR, we need your consent for the storage and processing

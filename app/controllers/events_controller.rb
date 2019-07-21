@@ -100,6 +100,7 @@ class EventsController < ApplicationController
     I18n.locale = @quizzable.locale_with_inheritance
     @in_quiz = params[:in_quiz] == 'true'
     @quiz_id = params[:quiz_id].to_i
+    @no_rights = params[:rights] == 'none'
   end
 
   def render_tag_title

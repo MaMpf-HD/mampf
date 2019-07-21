@@ -17,6 +17,7 @@ class QuestionsController < ApplicationController
     question_old = Question.find_by_id(params[:id])
     I18n.locale = question_old.locale_with_inheritance
     @question, answer_map = question_old.duplicate
+    @question.editors = [current_user]
     @quizzes.each do |q|
       Quiz.find_by_id(q).replace_reference!(question_old, @question, answer_map)
     end

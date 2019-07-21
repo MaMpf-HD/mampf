@@ -1,20 +1,38 @@
-<% if !quizzable.published_with_inheritance? || quizzable.locked? %>
+<% if quizzable && (!quizzable.published_with_inheritance? || quizzable.locked?) %>
   <span class="orangetext">
     <%= t('basics.warning') %>:
   </span>
   <% if !quizzable.teachable.published? %>
-    <%= t('admin.quiz.vertex_teachable_unreleased') %>
+    <%= t('admin.quiz.vertex_teachable_unreleased',
+          sort: t("categories.#{quizzable.type.downcase}.singular")) %>
   <% elsif quizzable.locked? %>
-    <%= t('admin.quiz.vertex_locked') %>
+    <%= t('admin.quiz.vertex_locked',
+          sort: t("categories.#{quizzable.type.downcase}.singular")) %>
       <% if !current_user.in?(quizzable.editors_with_inheritance) &&
               !current_user.admin %>
         <%= t('admin.quiz.vertex_release_no_rights') %>
       <% end %>
   <% elsif !quizzable.published? %>
-    <%= t('admin.quiz.vertex_unreleased') %>
+    <%= t('admin.quiz.vertex_unreleased',
+          sort: t("categories.#{quizzable.type.downcase}.singular")) %>
     <% if !current_user.in?(quizzable.editors_with_inheritance) &&
             !current_user.admin %>
       <%= t('admin.quiz.vertex_release_no_rights') %>
     <% end %>
   <% end %>
+<% elsif quizzable&.restricted? %>
+  <span class="chocolatetext">
+    <%= t('basics.note') %>:
+  </span>
+  <%= t('admin.quiz.restricted_vertex',
+        teachable: quizzable.teachable.media_scope.title_for_viewers,
+        sort: t("categories.#{quizzable.type.downcase}.singular")) %>
+<% end %>
+<% if quizzable && !current_user.in?(quizzable.editors_with_inheritance) &&
+        !current_user.admin %>
+  <span class="chocolatetext">
+    <%= t('basics.note') %>:
+  </span>
+  <%= t('admin.quiz.no_editor_rights',
+        sort: t("categories.#{quizzable.type.downcase}.singular")) %>
 <% end %>
