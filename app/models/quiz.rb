@@ -116,6 +116,12 @@ class Quiz < Medium
     quiz_graph.questions_count
   end
 
+  def find_errors
+    Rails.cache.fetch("#{cache_key}/find_errors") do
+      quiz_graph&.find_errors
+    end
+  end
+
   private
 
   def target_vertex(progress, input)

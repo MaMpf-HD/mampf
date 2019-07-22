@@ -110,7 +110,7 @@ class QuizzesController < ApplicationController
 
   def check_errors
     return if @quiz.sort == 'RandomQuiz'
-    return unless @quiz.quiz_graph.find_errors.any?
+    return unless @quiz.find_errors&.any?
     redirect_to :root, alert: I18n.t('controllers.quiz_has_error')
   end
 end
