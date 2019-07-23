@@ -5,6 +5,10 @@ class Chapter < ApplicationRecord
   acts_as_list scope: :lecture
   has_many :sections, -> { order(position: :asc) }, dependent: :destroy
   validates :title, presence: true
+  after_save :touch_sections
+  after_save :touch_chapters
+  before_destroy :touch_sections
+  before_destroy :touch_chapters
 
   def to_label
     unless hidden
@@ -21,7 +25,9 @@ class Chapter < ApplicationRecord
   end
 
   def reference
-    displayed_number
+    Rails.cache.fetch("#{cache_key}/reference") do
+      displayed_number
+    end
   end
 
   # Returns the chapter number based on the position in the chapters list.
@@ -55,5 +61,17 @@ class Chapter < ApplicationRecord
 
   def cache_key
     super + '-' + I18n.locale.to_s
+  end
+
+  def touch_chapters
+    lecture.chapters.update_all(updated_at: Time.now)
+  end
+
+  def touch_sections
+    unless lecture.absolute_numbering
+      sections.update_all(updated_at: Time.now)
+      return
+    end
+    Section.where(chapter: lecture.chapters).update_all(updated_at: Time.now)
   end
 end

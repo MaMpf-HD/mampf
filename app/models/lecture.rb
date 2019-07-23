@@ -48,6 +48,8 @@ class Lecture < ApplicationRecord
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_media
   after_save :touch_lessons
+  after_save :touch_chapters
+  after_save :touch_sections
 
   # scopes for published lectures
   scope :published, -> { where.not(released: nil) }
@@ -294,7 +296,8 @@ class Lecture < ApplicationRecord
 
   # lecture sections are all sections within chapters associated to the lecture
   def sections
-    chapters.includes(:sections).collect(&:sections).flatten
+    Section.where(chapter: chapters)
+#    chapters.includes(:sections).collect(&:sections).flatten
   end
 
   # Returns the list of sections of this lecture (by label), together with
@@ -517,5 +520,13 @@ class Lecture < ApplicationRecord
   def touch_siblings(lesson)
     lessons.update_all(updated_at: Time.now)
     Medium.where(teachable: lessons).update_all(updated_at: Time.now)
+  end
+
+  def touch_chapters
+    chapters.update_all(updated_at: Time.now)
+  end
+
+  def touch_sections
+    Section.where(chapter: chapters).update_all(updated_at: Time.now)
   end
 end

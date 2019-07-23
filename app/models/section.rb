@@ -26,10 +26,22 @@ class Section < ApplicationRecord
   after_save :touch_lecture
   after_save :touch_media
   after_save :touch_self
+
+  # if absolute numbering is enabled for the lecture, all chapters
+  # and sections need to be touched because of possibly changed references
+  after_save :touch_toc
+  before_destroy :touch_toc
+
   before_destroy :touch_lecture
   before_destroy :touch_media
 
   def lecture
+    Rails.cache.fetch("#{cache_key}/lecture") do
+      lecture_uncached
+    end
+  end
+
+  def lecture_uncached
     return unless chapter.present?
     chapter.lecture
   end
@@ -44,7 +56,9 @@ class Section < ApplicationRecord
   end
 
   def reference
-    reference_number
+    Rails.cache.fetch("#{cache_key}/reference") do
+      reference_number
+    end
   end
 
   # calculate the number of the section depending on whether the lecture has
@@ -174,6 +188,12 @@ class Section < ApplicationRecord
 
   def touch_self
     touch
+  end
+
+  def touch_toc
+    return unless lecture.absolute_numbering
+    lecture.chapters.update_all(updated_at: Time.now)
+    lecture.sections.update_all(updated_at: Time.now)
   end
 
   def relative_position

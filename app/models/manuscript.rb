@@ -65,7 +65,7 @@ class Manuscript
   # returns the matching chapter in mampf for the given manuscript chapter
   # (matching is done by label)
   def chapter_in_mampf(chapter)
-    @lecture&.chapters&.includes(:lecture)
+    @lecture&.chapters
             &.find { |chap| chap.reference == chapter['label'] }
   end
 
