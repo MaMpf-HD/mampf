@@ -336,15 +336,10 @@ class Medium < ApplicationRecord
   #   return these)
   def update_pdf_destinations!
     return unless sort == 'Script'
-    irrelevant_items.destroy_all
-    quarantine_added = []
-    # not very elegant, but other attempts at it failed due to
-    # Rails caching of SQL queries
-    missing_items_outside_quarantine.each do |i|
-      quarantine_added.push(i.pdf_destination)
-      i.update(quarantine: true)
-    end
-    quarantine_added
+    irrelevant_items.delete_all
+    result = missing_items_outside_quarantine.pluck(:pdf_destination)
+    missing_items_outside_quarantine.update_all(quarantine: true)
+    result
   end
 
   # is the given user an editor of this medium?

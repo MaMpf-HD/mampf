@@ -297,7 +297,12 @@ class Lecture < ApplicationRecord
   # lecture sections are all sections within chapters associated to the lecture
   def sections
     Section.where(chapter: chapters)
-#    chapters.includes(:sections).collect(&:sections).flatten
+  end
+
+  def sections_cached
+    Rails.cache.fetch("#{cache_key}/sections") do
+      sections.to_a
+    end
   end
 
   # Returns the list of sections of this lecture (by label), together with

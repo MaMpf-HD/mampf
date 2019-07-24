@@ -70,7 +70,7 @@ class Manuscript
   end
 
   def section_in_mampf(section)
-    @lecture&.sections
+    @lecture&.sections_cached
             &.find { |sec| sec.reference == section['label'] }
   end
 
@@ -132,136 +132,122 @@ class Manuscript
   end
 
   def create_or_update_chapter_items!
+    destinations = @chapters.map { |c| c['destination'] } - ['']
+    items = Item.where(medium: @medium,
+                       pdf_destination: destinations,
+                       sort: 'chapter')
+    item_id_map = items.pluck(:pdf_destination, :id).to_h
+    item_destinations = item_id_map.keys
+    attrs = %i(medium_id pdf_destination section_id sort page
+               description ref_number position quarantine)
+    item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
+    contents = []
     @chapters.each do |c|
-      # check if there exists an item with this pdf destination in this medium
-      # if so, only update if necessary
-      items = Item.where(medium: @medium,
-                         pdf_destination: c['destination'])
-      if items.any?
-        next if items.exists?(sort: 'chapter',
-                              page: c['page'],
-                              description: c['description'],
-                              ref_number: c['label'],
-                              position: nil,
-                              section_id: nil,
-                              start_time: nil,
-                              quarantine: false)
-        items.first.update(sort: 'chapter',
-                           page: c['page'],
-                           description: c['description'],
-                           ref_number: c['label'],
-                           position: nil,
-                           section_id: nil,
-                           start_time: nil,
-                           quarantine: false)
-        next
-      end
-      Item.create(medium_id: @medium.id,
-                  section_id: nil,
-                  sort: 'chapter',
-                  page: c['page'],
-                  description: c['description'],
-                  ref_number: c['label'],
-                  pdf_destination: c['destination'])
+      contents.push(
+        { medium_id: @medium.id,
+          pdf_destination: c['destination'],
+          section_id: nil,
+          sort: 'chapter',
+          page: c['page'].to_i,
+          description: c['description'],
+          ref_number: c['label'],
+          position: nil,
+          quarantine: nil })
     end
+    create_or_update_items!(contents, item_details, item_destinations,
+                            item_id_map)
   end
 
   def create_or_update_section_items!
+    destinations = @sections.map { |s| s['destination'] } - ['']
+    items = Item.where(medium: @medium,
+                       pdf_destination: destinations,
+                       sort: 'section')
+    item_id_map = items.pluck(:pdf_destination, :id).to_h
+    item_destinations = item_id_map.keys
+    attrs = %i(medium_id pdf_destination section_id sort page
+               description ref_number position quarantine)
+    item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
+    contents = []
+    # note that sections get a position -1 in order to place them ahead
+    # of all content items within themseleves in #script_items_by_position
     @sections.each do |s|
-      # check if there exists an item with this pdf destination in this medium
-      # if so, only update if necessary
-      items = Item.where(medium: @medium,
-                         pdf_destination: s['destination'])
-
-      if items.any?
-        next if items.exists?(section_id: s['mampf_section'].id,
-                              sort: 'section',
-                              page: s['page'],
-                              description: s['description'],
-                              ref_number: s['label'],
-                              position: -1,
-                              start_time: nil,
-                              quarantine: false)
-        items.first.update(section_id: s['mampf_section'].id,
-                           sort: 'section',
-                           page: s['page'],
-                           description: s['description'],
-                           ref_number: s['label'],
-                           position: -1,
-                           start_time: nil,
-                           quarantine: false)
-        next
-      end
-      # note that sections get a position -1 in order to place them ahead
-      # of all content items within themseleves in #script_items_by_position
-      Item.create(medium_id: @medium.id,
-                  section_id: s['mampf_section'].id,
-                  sort: 'section',
-                  page: s['page'],
-                  description: s['description'],
-                  ref_number: s['label'],
-                  pdf_destination: s['destination'],
-                  position: -1)
+      contents.push(
+        { medium_id: @medium.id,
+          pdf_destination: s['destination'],
+          section_id: s['mampf_section'].id,
+          sort: 'section',
+          page: s['page'].to_i,
+          description: s['description'],
+          ref_number: s['label'],
+          position: -1,
+          quarantine: nil })
     end
+    create_or_update_items!(contents, item_details, item_destinations,
+                            item_id_map)
   end
 
   # creates/updates items for the manuscript content as specified by the user
   # in filter_boxes (which basically contains the information on whichk
   # content checkboxes have been checked)
   def create_or_update_content_items!(filter_boxes)
-    new_items = []
-    sections_with_content.each do |s|
-      content_in_section(s).each do |c|
-        # check if there exists an item with this pdf destination in this medium
-        # if so, only update if necessary
-        hidden = filter_boxes[c['counter']].third == false
-        items = Item.where(medium: @medium,
-                           pdf_destination: c['destination'])
-        if items.any?
-          next if items.exists?(section_id: s['mampf_section'].id,
-                                sort: Item.internal_sort(c['sort']),
-                                page: c['page'], description: c['description'],
-                                ref_number: c['label'], position: c['counter'],
-                                start_time: nil,
-                                quarantine: false,
-                                hidden: hidden)
-          items.first.update(section_id: s['mampf_section'].id,
-                             sort: Item.internal_sort(c['sort']),
-                             page: c['page'], description: c['description'],
-                             ref_number: c['label'], position: c['counter'],
-                             start_time: nil,
-                             quarantine: false,
-                             hidden: hidden)
-          next
-        end
-        new_items.push Item.new(medium_id: @medium.id,
-                                section_id: s['mampf_section'].id,
-                                sort: Item.internal_sort(c['sort']),
-                                page: c['page'],
-                                description: c['description'],
-                                ref_number: c['label'],
-                                position: c['counter'],
-                                pdf_destination: c['destination'],
-                                hidden: hidden)
-      end
+    destinations = @content.map { |c| c['destination'] } - ['']
+    items = Item.where(medium: @medium,
+                       pdf_destination: destinations)
+    item_id_map = items.pluck(:pdf_destination, :id).to_h
+    item_destinations = item_id_map.keys
+    attrs = %i(medium_id pdf_destination section_id sort page
+               description ref_number position hidden quarantine)
+    item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
+    contents = []
+    @content.each do |c|
+      contents.push(
+        { medium_id: @medium.id,
+          pdf_destination: c['destination'],
+          section_id: @sections.find do |s|
+                        c['section'] == s['section']
+                      end ['mampf_section']&.id,
+          sort: Item.internal_sort(c['sort']),
+          page: c['page'].to_i,
+          description: c['description'],
+          ref_number: c['label'],
+          position: c['counter'],
+          hidden: filter_boxes[c['counter']].third == false,
+          quarantine: nil })
     end
-    # in contrast to section items and chapter items, this one uses
-    # the activerecord-import gem which does it with fewer SQL-queries
-    # (however, no validations seem to be performed even though the
-    # corresponding flag is set)
-    Item.import new_items, validate: true
-    @medium.touch
+    create_or_update_items!(contents, item_details, item_destinations,
+                            item_id_map)
+  end
+
+  def create_or_update_items!(contents, item_details, item_destinations,
+                              item_id_map)
+    different_contents = contents - item_details
+    new_contents = different_contents.reject do |c|
+      c[:pdf_destination].in?(item_destinations)
+    end
+    new_items = new_contents.map { |c| Item.new(c) }
+    Item.import new_items, validate: false
+    new_item_ids = Item.where(medium: @medium,
+                              pdf_destination: new_items.pluck(:pdf_destination))
+                       .pluck(:id)
+    @medium.item_ids << new_item_ids
+    changed_contents = different_contents - new_contents
+    changed_contents.each do |c|
+      Item.find_by_id(item_id_map[c[:pdf_destination]])
+          .update(c)
+    end
   end
 
   # creates tags for the manuscript content as specified by the user
-  # in filter_boxes (which basically contains the information on whichk
+  # in filter_boxes (which basically contains the information on which
   # content checkboxes have been checked)
   # updates section and course info for already existin tags (tags will
   # be associated with the course of the manuscript's lecture)
   def update_tags!(filter_boxes)
     sections_with_content.each do |s|
+      section = s['mampf_section']
+      added_tag_ids = []
       content_in_section(s).each do |c|
-        section = s['mampf_section']
         # if tag for content already exists, add tag to the section and course
         if c['tag_id']
           tag = Tag.find_by_id(c['tag_id'])
@@ -269,7 +255,7 @@ class Manuscript
           next unless section
           next if section.in?(tag.sections)
           tag.sections |= [section]
-          section.update(tags_order: section.tags_order + [tag.id])
+          added_tag_ids.push(tag.id)
           tag.courses |= [@lecture.course]
           next
         end
@@ -281,7 +267,10 @@ class Manuscript
         tag.notions.new(title: c['description'],
                         locale: @lecture.locale || I18n.default_locale)
         tag.save
-        section.update(tags_order: section.tags_order +  [tag.id])
+        added_tag_ids.push(tag.id)
+      end
+      if added_tag_ids.any?
+        section.update(tags_order: section.tags_order + added_tag_ids)
       end
     end
   end
@@ -306,28 +295,28 @@ class Manuscript
 
   # add information on the tag ids for manuscript content
   def add_info_on_tag_ids
-    tags = existing_tags
+    desc_hash = Notion.where(title: @content_descriptions,
+                             locale: @lecture.locale || I18n.default_locale)
+                      .pluck(:title, :tag_id).to_h
     @content.each do |c|
-      c['tag_id'] = if c['description'].in?(tags)
-                      Notion.where(title: c['description'],
-                                   locale: @lecture.locale ||
-                                             I18n.default_locale)&.first&.tag&.id
-                    end
+      c['tag_id'] = desc_hash[c['description']]
     end
   end
 
   # add information on the item ids for manuscript content and hidden status
   def add_info_on_item_ids_and_hidden_status
+    destinations = @content.map { |c| c['destination'] } - ['']
+    items_hash = Item.where(medium: @medium,
+                            pdf_destination: destinations)
+                     .pluck(:pdf_destination, :id, :hidden)
+                     .map { |c| [c[0], [c[1], c[2]]] }.to_h
     @content.each do |c|
-      item = Item.where(medium: @medium,
-                        pdf_destination: c['destination'])&.first
-      item_id = item&.id
-      c['item_id'] = item_id
-      c['hidden'] = item ? item.hidden : nil
+      c['item_id'] = items_hash[c['destination']]&.first
+      c['hidden'] = items_hash[c['destination']]&.second
     end
   end
 
-  private
+#  private
 
   def get_chapters(bookmarks)
     bookmarks.select { |b| b['sort'] == 'Kapitel' }
