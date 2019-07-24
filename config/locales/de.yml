@@ -1324,7 +1324,7 @@ de:
         Das hast Du nicht angekreuzt. Die Aussage ist aber richtig.
       correct_answer: >
         Das hast Du richtig gemacht, die Aussage ist %{value}.
-      reason: 'Denn'
+      reason: 'denn'
       correct_answer: 'Super, das war richtig!'
       incorrect_answer: 'Das war leider nicht ganz richtig.'
       medium_for_question_html: >

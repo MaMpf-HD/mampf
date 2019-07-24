@@ -56,7 +56,7 @@
          id="explanation-<%= old_id %>-<%= a.id %>">
       <% unless a.explanation.blank? %>
         <span class="badge badge-secondary">
-          <%= t('admin.quiz.reason') %>
+          <%= t('admin.quiz.reason') %>:
         </span>
         <%= a.conditional_explanation(input[a.id] == a.value) %>
       <% end %>

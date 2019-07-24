@@ -5,13 +5,13 @@
         <%= ballot_box(a.value) %>
       <% else %>
         <%= ballot_box(crosses[a.id]) %>
-      <% end%>
+      <% end %>
     </span>
     <%= a.text %>
     <% if a.explanation.present? %>
-      <div>
+      <div class="grey">
         <i>
-          denn:
+          <%= t('admin.quiz.reason') %>:
         </i>
         <%= a.explanation %>
       </div>
