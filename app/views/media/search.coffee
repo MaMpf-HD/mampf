@@ -38,7 +38,6 @@ if tagIdsSelect and tagIdsSelect.dataset.filled == 'false'
     type: 'GET'
     dataType: 'json'
     success: (result) ->
-      console.log result
       for option in result
         new_option = document.createElement('option')
         new_option.value = option.value
