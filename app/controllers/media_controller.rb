@@ -293,7 +293,7 @@ class MediaController < ApplicationController
   def update_tags
     if current_user.admin || @medium.edited_with_inheritance_by?(current_user)
       @medium.tags = Tag.where(id: params[:tag_ids])
-      @medium.touch
+      @medium.update(updated_at: Time.now)
     end
   end
 
