@@ -14,18 +14,20 @@
                     target: :_blank %>
       </div>
     </div>
-    <span class="badge badge-secondary">
-      <%= t('basics.note') %>.
-    </span>
-    <%= t('test.notation') %>
-    <i class="far fa-question-circle helpdesk"
-       tabindex="-1"
-       data-toggle="popover"
-       data-trigger="focus"
-       title="<%= t('test.notation_header') %>"
-       data-content="<%= t('test.notation_examples_html') %>"
-       data-html="true">
+    <div class="mt-3">
+      <span class="badge badge-secondary">
+        <%= t('basics.note') %>.
+      </span>
+      <%= t('test.notation') %>
+      <i class="far fa-question-circle helpdesk"
+         tabindex="-1"
+         data-toggle="popover"
+         data-trigger="focus"
+         title="<%= t('test.notation_header') %>"
+         data-content="<%= t('test.notation_examples_html') %>"
+         data-html="true">
       </i>
+    </div>
     <div class="row my-4">
     </div>
     <%= t('test.future') %>

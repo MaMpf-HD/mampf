@@ -32,6 +32,7 @@ $(document).on 'turbolinks:load', ->
       plugins = ['remove_button']
     if this.dataset.ajax == 'true' && this.dataset.filled == 'false'
       model_select = this
+      course_id = 0
       existing_values = Array.apply(null, model_select.options).map (o) -> o.value
       if this.dataset.model == 'tag'
         fill_path = Routes.fill_tag_select_path()
@@ -43,9 +44,15 @@ $(document).on 'turbolinks:load', ->
         fill_path = Routes.fill_teachable_select_path()
       else if this.dataset.model == 'medium'
         fill_path = Routes.fill_media_select_path()
+      else if this.dataset.model == 'course_tag'
+        courseId = this.dataset.course
+        fill_path = Routes.fill_course_tags_path()
       $.ajax fill_path,
         type: 'GET'
         dataType: 'json'
+        data: {
+          course_id: courseId
+        }
         success: (result) ->
           for option in result
             if option.value.toString() not in existing_values

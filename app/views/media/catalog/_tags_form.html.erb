@@ -1,0 +1,28 @@
+<div class="row mb-2"
+     id="edit_tag_form">
+  <%= form_with url: update_tags_path,
+                remote: true,
+                method: 'post' do |f| %>
+    <div class="col-12">
+      <%= f.select :tag_ids,
+                   options_for_select([[]]),
+                   {},
+                   { multiple: true,
+                     id: 'medium_tag_ids',
+                     class: 'selectize',
+                     data: { filled: false,
+                             ajax: true,
+                             model: 'tag' } } %>
+      <%= f.hidden_field :id, value: 0, id: 'medium_id_field' %>
+    </div>
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary' %>
+      <button type="button"
+              id="cancelMediumTags"
+              class="btn btn-sm btn-secondary">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  <% end %>
+</div>

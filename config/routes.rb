@@ -47,6 +47,7 @@ Rails.application.routes.draw do
   get 'events/edit_vertex_targets', as: 'edit_vertex_targets'
   get 'events/cancel_import_vertex', as: 'cancel_import_vertex'
   get 'events/render_medium_actions', as: 'render_medium_actions'
+  get 'events/render_medium_tags', as: 'render_medium_tags'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'
@@ -117,6 +118,8 @@ Rails.application.routes.draw do
                                      as: 'fill_teachable_select'
   get 'media/fill_media_select', to: 'media#fill_media_select',
                                      as: 'fill_media_select'
+  post 'media/update_tags', to: 'media#update_tags',
+                            as: 'update_tags'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
@@ -137,6 +140,8 @@ Rails.application.routes.draw do
 
   patch 'questions/:id/reassign', to: 'questions#reassign',
                                   as: 'reassign_question'
+  post 'questions/compile', to: 'questions#compile',
+                            as: 'compile_questions'
   resources :questions, only: [:edit, :update]
 
   get 'quizzes/:id/take', to: 'quizzes#take',
@@ -178,6 +183,8 @@ Rails.application.routes.draw do
   put 'tags/:id/identify', to: 'tags#identify'
   get 'tags/fill_tag_select', to: 'tags#fill_tag_select',
                               as: 'fill_tag_select'
+  get 'events/fill_course_tags', to: 'tags#fill_course_tags',
+                                 as: 'fill_course_tags'
   get 'tags/search', to: 'tags#search',
                       as: 'tags_search'
   resources :tags

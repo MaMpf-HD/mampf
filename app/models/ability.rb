@@ -66,7 +66,7 @@ class Ability
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot, :publish, :destroy,
            :import_manuscript, :fill_teachable_select,
-           :fill_media_select], Medium do |m|
+           :fill_media_select, :update_tags], Medium do |m|
         m.edited_with_inheritance_by?(user)
       end
 
@@ -78,6 +78,8 @@ class Ability
 
       can :reassign, [Question, Remark]
 
+      can :compile, Question
+
       can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
       end
@@ -85,7 +87,7 @@ class Ability
       can [:list_tags, :list_sections, :display], Section
 
       can :manage, Tag
-      can [:display_cyto, :fill_tag_select], Tag
+      can [:display_cyto, :fill_tag_select, :fill_course_tags], Tag
 
       cannot :read, Term
 
@@ -116,6 +118,8 @@ class Ability
 
       can [:take, :proceed], Quiz
 
+      can :compile, Question
+
       cannot :show, Lecture  do |lecture|
         !lecture.in?(user.lectures)
       end
@@ -131,7 +135,7 @@ class Ability
       end
 
       cannot [:index, :update, :create], Tag
-      can :display_cyto, Tag
+      can [:display_cyto, :fill_course_tags], Tag
       can :teacher, User
       # anyone should be able to get a sidebar and see the announcements
       can [:render_sidebar, :show_announcements, :organizational], Lecture

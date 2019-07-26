@@ -221,6 +221,22 @@ $(document).on 'turbolinks:load', ->
           console.log("AJAX Error: #{textStatus}")
     return
 
+  $(document).on 'click', '#editMediumTags', ->
+    $.ajax Routes.render_medium_tags_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: $(this).data('medium')
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#cancelMediumTags', ->
+    $('#edit_tag_form').hide()
+    $('#mediumActions').show()
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->
@@ -233,4 +249,6 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'mouseleave', '[id^="row-medium-"]'
   $(document).off 'click', '[id^="row-medium-"]'
   $(document).off 'click', '#cancel-medium-actions'
+  $(document).off 'click', '#editMediumTags'
+  $(document).off 'click', '#cancelMediumTags'
   return

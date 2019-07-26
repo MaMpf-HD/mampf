@@ -68,6 +68,7 @@ class EventsController < ApplicationController
   def render_medium_actions
     @id = params[:id]
     @medium = Medium.find_by_id(@id)
+    @tag_ids = @medium.tag_ids
     I18n.locale = current_user.locale
   end
 
@@ -107,5 +108,10 @@ class EventsController < ApplicationController
     tag = Tag.find_by_id(params[:tag_id])
     @identified_tag = Tag.find_by_id(params[:identified_tag_id])
     @common_titles = tag.common_titles(@identified_tag)
+  end
+
+  def render_medium_tags
+    @medium = Medium.find_by_id(params[:id])
+    @tag_ids = @medium.tag_ids
   end
 end

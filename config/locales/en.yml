@@ -1492,6 +1492,8 @@ en:
     start: 'start quiz'
     number_of_questions: 'Number of questions: %{count}'
     quiz_level: 'Difficulty level: %{level}'
+    compile_questions: >
+      Here you can specify which tags are relevant for the quiz:
     level:
       not_set: 'not set'
       easy: 'easy'
@@ -1842,6 +1844,7 @@ en:
     finish_editing: 'Finish Editing'
     default_target: 'Default Target'
     ramification: 'Ramification'
+    edit_tags: 'Edit tags'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

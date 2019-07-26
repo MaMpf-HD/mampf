@@ -580,6 +580,7 @@ de:
       media_search: 'Mediensuche'
       create: 'Medium anlegen'
       edit: 'Medium bearbeiten'
+      edit_tags: 'Tags bearbeiten'
       inspect: 'Medium ansehen'
       no_media: 'Es konnten leider keine Medien gefunden werden.'
       local_info:
@@ -1581,6 +1582,9 @@ de:
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
+    compile_questions: >
+      Hier hast Du hast die Möglichkeit, genauer zu spezifizieren,
+      welche Begriffe in den Fragen vorkommen sollen.
     number_of_questions: 'Anzahl der Fragen: %{count}'
     quiz_level: 'Schwierigkeitsgrad: %{level}'
     level:
@@ -1948,6 +1952,7 @@ de:
     finish_editing: 'Bearbeitung beenden'
     default_target: 'Standard-Ziel'
     ramification: 'Verzweigung'
+    edit_tags: 'Tags bearbeiten'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

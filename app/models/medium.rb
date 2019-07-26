@@ -288,6 +288,17 @@ class Medium < ApplicationRecord
     search
   end
 
+  def self.search_questions_by_tags(search_params)
+    search = Sunspot.new_search(Medium)
+    search.build do
+      with(:sort, 'Question')
+      with(:teachable_compact, search_params[:teachable_ids])
+      with(:tag_ids).all_of(search_params[:tag_ids])
+      paginate per_page: Question.count
+    end
+    search
+  end
+
   def restricted?
     return false unless teachable
     teachable.restricted?

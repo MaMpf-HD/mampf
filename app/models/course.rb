@@ -162,6 +162,14 @@ class Course < ApplicationRecord
     end
   end
 
+  # returns the array of all tags (sorted by title) together with
+  # their ids
+  def select_tags_by_title
+    tags.map { |t| t.title_id_hash }
+        .natural_sort_by { |t| t[:title] }
+        .map { |t| [t[:title], t[:id]] }
+  end
+
   # extracts  the id of the lecture that the user has chosen as
   # primary lecture for this module
   # (that is the one that has the first position in the lectures carousel in

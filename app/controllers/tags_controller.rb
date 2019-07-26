@@ -113,6 +113,13 @@ class TagsController < ApplicationController
     render json: result
   end
 
+  def fill_course_tags
+    course = Course.find_by_id(params[:course_id])
+    result = course&.select_tags_by_title
+                    .map { |t| { value: t[1], text: t[0] } }
+    render json: result
+  end
+
   def search
     search = Tag.search do
       fulltext search_params[:title]

@@ -57,7 +57,8 @@
                               edit_or_inspect_lecture_path(m.teachable.lecture) %>
                 <% end %>
               </div>
-              <div class="col-3">
+              <div class="col-3 mediumTags"
+                   data-medium="<%= m.id %>">
                 <% m.tags.each do |t| %>
                   <%= link_to t.short_title,
                               edit_tag_path(t),
@@ -88,8 +89,7 @@
           </strong>
         </div>
       </div>
-      <div class="row" id="yBuffer">
-      </div>
+      <%= render partial: 'media/catalog/tags_form' %>
       <div class="row">
         <div class="col-12">
           <div id="mediumActions">

@@ -126,7 +126,7 @@ class Tag < ApplicationRecord
   # their ids
   def self.select_by_title
     Tag.all.map { |t| t.extended_title_id_hash }
-       .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
+       .natural_sort_by { |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
   # returns the array of all tags (sorted by title) excluding a given

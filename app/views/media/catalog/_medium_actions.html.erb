@@ -17,6 +17,10 @@
                     edit_quiz_path(medium.becomes(Quiz)),
                     class: 'btn btn-sm btn-primary' %>
       <% end %>
+      <button class="btn btn-sm btn-primary"
+              id="editMediumTags">
+        <%= t('buttons.edit_tags') %>
+      </button>
     <% else %>
       <%= link_to t('admin.medium.inspect'),
                   inspect_medium_path(medium),

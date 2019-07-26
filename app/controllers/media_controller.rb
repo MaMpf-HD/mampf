@@ -290,6 +290,12 @@ class MediaController < ApplicationController
     render json: result
   end
 
+  def update_tags
+    if current_user.admin || medium.edited_with_inheritance_by?(current_user)
+      @medium.tags = Tag.where(id: params[:tag_ids])
+    end
+  end
+
   private
 
   def medium_params
