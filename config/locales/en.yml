@@ -1286,6 +1286,11 @@ en:
         Users without subscription caanot play the quiz.
       no_editor_rights: >
         You do not have editor rights this %{sort}.
+      dependent_quizzable: >
+        This Question is marked as "dependent". This typically applies to
+        Questions that only make sense in the context of a
+        certain quiz (e.g., because special assumptions have been made
+        in the questions before)
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.

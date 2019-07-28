@@ -1372,6 +1372,11 @@ de:
         NutzerInnen ohne das Abonnement können das Quiz nicht spielen.
       no_editor_rights: >
         Für diese %{sort} hast Du keine Editorenrechte.
+      dependent_quizzable: >
+        Diese Quiz-Frage ist als "abhängig" markiert. Das betrifft
+        typischerweise Quiz-Fragen, die nur im Kontext eines konkreten Quizzes
+        Sinn ergeben (beispielsweise, weil in vorangegangenen Fragen spezielle
+        Voraussetzungen festgelegt wurden).
       info:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem

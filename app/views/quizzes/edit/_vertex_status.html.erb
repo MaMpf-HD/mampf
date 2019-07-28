@@ -36,3 +36,11 @@
   <%= t('admin.quiz.no_editor_rights',
         sort: t("categories.#{quizzable.type.downcase}.singular")) %>
 <% end %>
+<% if quizzable && quizzable.type == 'Question' && !quizzable.independent %>
+  <div>
+    <span class="chocolatetext">
+      <%= t('basics.note') %>:
+    </span>
+    <%= t('admin.quiz.dependent_quizzable') %>
+  </div>
+<% end %>
