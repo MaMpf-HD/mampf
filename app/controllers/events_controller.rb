@@ -60,16 +60,17 @@ class EventsController < ApplicationController
   end
 
   def fill_medium_preview
+    I18n.locale = current_user.locale
     @id = params[:id]
     @medium = Medium.find_by_id(@id)
-    I18n.locale = current_user.locale
   end
 
   def render_medium_actions
+    I18n.locale = current_user.locale
     @id = params[:id]
     @medium = Medium.find_by_id(@id)
+    return unless @medium
     @tag_ids = @medium.tag_ids
-    I18n.locale = current_user.locale
   end
 
   def render_import_vertex

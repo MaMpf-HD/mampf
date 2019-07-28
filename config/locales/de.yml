@@ -583,6 +583,7 @@ de:
       edit_tags: 'Tags bearbeiten'
       inspect: 'Medium ansehen'
       no_media: 'Es konnten leider keine Medien gefunden werden.'
+      deleted: 'Das Medium wurde gelöscht.'
       local_info:
         no_title: 'ohne Titel'
         to_session: 'zu Sitzung %{number}, %{date}'

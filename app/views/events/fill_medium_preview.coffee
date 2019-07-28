@@ -1,3 +1,4 @@
+<% if @medium %>
 $('#mediumPreview').empty()
   .append '<%= j render partial: "media/catalog/medium_preview",
                         locals: { medium: @medium } %>'
@@ -26,3 +27,7 @@ renderMathInElement mediumPreview,
     }
   ]
   throwOnError: false
+<% else %>
+$('#mediumPreview').empty()
+  .append '<%= t("admin.medium.deleted") %>'
+<% end %>

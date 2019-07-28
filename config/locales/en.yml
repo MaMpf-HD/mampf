@@ -556,6 +556,7 @@ en:
       edit: 'Edit Medium'
       inspect: 'Inspect Medium'
       no_media: 'No media found.'
+      deleted: 'This medium has been deleted.'
       manuscript:
         structure: 'Structure of the manuscript'
       local_info:

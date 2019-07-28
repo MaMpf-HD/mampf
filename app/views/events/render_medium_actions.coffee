@@ -1,4 +1,5 @@
 mediumActions = document.getElementById('mediumActions')
+<% if @medium %>
 $(mediumActions).empty()
   .append '<%= j render partial: "media/catalog/medium_actions",
                         locals: { medium: @medium } %>'
@@ -36,3 +37,9 @@ renderMathInElement mediumPreview,
 
 editMediumTags = document.getElementById('editMediumTags')
 editMediumTags.dataset.medium = <%= @medium.id %>
+<% else %>
+$(mediumActions).empty()
+mediumActions.dataset.filled = 'true'
+$('#mediumPreview').empty()
+  .append '<%= t("admin.medium.deleted") %>'
+<% end %>
