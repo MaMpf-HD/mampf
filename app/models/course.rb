@@ -340,7 +340,7 @@ class Course < ApplicationRecord
       question_ids = questions_with_inheritance.pluck(:id).sample(5)
     end
     quiz_graph = QuizGraph.build_from_questions(question_ids)
-    quiz = Quiz.new(description: "Zufallsquiz #{course.title} #{Time.now}",
+    quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{course.title} #{Time.now}",
                     level: 1,
                     quiz_graph: quiz_graph,
                     sort: 'RandomQuiz',

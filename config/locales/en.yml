@@ -1412,6 +1412,12 @@ en:
   no_related_lessons: 'There are no related sessions.'
   related_media: 'Related media'
   no_related_media: 'There are no related media.'
+  no_related_questions: >
+    There are no related questions that are associated to courses or lectures
+    that you have subscribed.
+  related_questions_count: >
+    There are %{count} related questions to this tag in courses or lectures
+    that you have subscribed.
   content: 'Content'
   no_content: 'There is no information about content available.'
   lesson: 'Session'
@@ -1725,6 +1731,7 @@ en:
     type: 'Type'
     label: 'Label'
     related_media: 'Related media'
+    related_questions: 'Related questions'
     external_link: 'External Link'
     editor: 'Editor'
     thyme: 'THymE'

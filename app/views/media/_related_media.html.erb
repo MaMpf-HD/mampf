@@ -7,7 +7,7 @@
       </span>
     </h5>
   </div>
-  <div class="card-body" style="max-height: 70vh; overflow-y: scroll;">
+  <div class="card-body <%= from == 'tag' && questions ? 'card-compact' : 'card-large' %>">
     <div class="row">
       <% if media.present? %>
         <% media.each do |m| %>

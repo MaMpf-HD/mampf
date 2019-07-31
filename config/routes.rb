@@ -189,6 +189,8 @@ Rails.application.routes.draw do
                                  as: 'fill_course_tags'
   get 'tags/search', to: 'tags#search',
                       as: 'tags_search'
+  get 'tags/:id/take_random_quiz', to: 'tags#take_random_quiz',
+                                   as: 'tag_random_quiz'
   resources :tags
 
   get 'sections/list_tags', to: 'sections#list_tags',

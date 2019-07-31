@@ -1,7 +1,7 @@
 # TagsController
 class TagsController < ApplicationController
   before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect,
-                                 :display_cyto, :identify]
+                                 :display_cyto, :identify, :take_random_quiz]
   before_action :set_related_tags_for_user, only: [:show, :display_cyto]
   before_action :set_related_tags, only: [:edit, :inspect]
   before_action :check_for_consent
@@ -26,6 +26,7 @@ class TagsController < ApplicationController
                                                             'Remark']))
     # then, filter these according to their visibility for the user
     @media = current_user.filter_visible_media(media)
+    @questions = @tag.visible_questions(current_user)
     render layout: 'application_no_sidebar'
   end
 
@@ -129,6 +130,11 @@ class TagsController < ApplicationController
     @total = search.total
     @tags = Kaminari.paginate_array(results, total_count: @total)
                     .page(params[:page]).per(10)
+  end
+
+  def take_random_quiz
+    random_quiz = @tag.create_random_quiz!(current_user)
+    redirect_to take_quiz_path(random_quiz)
   end
 
   private

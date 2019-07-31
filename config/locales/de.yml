@@ -1503,7 +1503,14 @@ de:
   related_lessons: 'Verknüpfte Sitzungen'
   no_related_lessons: 'Es sind keine verknüpften Sizungen vorhanden.'
   related_media: 'Verknüpfte Medien'
+  related_questions: 'Verknüpfte Fragen'
   no_related_media: 'Es sind keine verknüpften Medien vorhanden.'
+  no_related_questions: >
+    Es sind keine verknüpften Fragen vorhanden, die zu Modulen oder
+    Vorlesungen gehören, die Du abonniert hast.
+  related_questions_count: >
+    Es sind %{count} mit diesem Begriff verknüpfte Fragen vorhanden,
+    die zu Modulen oder Vorlesungen gehören, die Du abonniert hast.
   content: 'Inhalt'
   no_content: 'Es liegen keine detaillierten Inhaltsangaben vor.'
   lesson: 'Sitzung'
@@ -1837,6 +1844,7 @@ de:
     type: 'Typ'
     label: 'Label'
     related_media: 'Verknüpfte Medien'
+    related_questions: 'Verknüpfte Fragen'
     external_link: 'Externer Link'
     editor: 'Editor'
     thyme: 'THymE'

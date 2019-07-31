@@ -99,6 +99,12 @@ trix-toolbar .trix-button-row {
   color: red;
 }
 
+.card-large
+{
+  max-height: 70vh;
+  overflow-y: scroll;
+}
+
 .card-compact
 {
   max-height: 50vh;

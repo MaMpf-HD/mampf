@@ -206,6 +206,20 @@ class Tag < ApplicationRecord
     Lecture.where(id: Lecture.all.select { |l| in_lecture?(l) }.map(&:id))
   end
 
+  def create_random_quiz!(user)
+    questions = visible_questions(user)
+    return unless questions.any?
+    question_ids = questions.pluck(:id).sample(5)
+    quiz_graph = QuizGraph.build_from_questions(question_ids)
+    quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{title} #{Time.now}",
+                    level: 1,
+                    quiz_graph: quiz_graph,
+                    sort: 'RandomQuiz')
+    quiz.save
+    return quiz.errors unless quiz.valid?
+    quiz
+  end
+
   # returns the vertex title color of the tag in the neighbourhood graph of
   # the given marked tag
   def color(marked_tag)
@@ -288,6 +302,10 @@ class Tag < ApplicationRecord
       result.delete(l) unless result[l].present?
     end
     result
+  end
+
+  def visible_questions(user)
+    user.filter_visible_media(user.filter_media(media.where(type: 'Question')))
   end
 
   private

@@ -322,7 +322,7 @@ class User < ApplicationRecord
   # for a given arel of media, returns those media that are visible for
   # the user
   # note: this concerns only access rights, not whether these media
-  # math subscribtions or not
+  # match subscriptions or not
   # this method is more efficient than
   # media.select { |m| m.visible_for_user?(self)}
   def filter_visible_media(media)

@@ -116,7 +116,20 @@
     </div>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
-    <%= render partial: 'media/related_media',
-               locals: { media: @media} %>
+    <div class="row">
+      <div class="col-12 mb-2">
+        <%= render partial: 'media/related_media',
+                   locals: { media: @media,
+                             from: 'tag',
+                             questions: @questions.any? } %>
+      </div>
+      <% if @questions.any? %>
+        <div class="col-12">
+          <%= render partial: 'tags/show/random_quiz',
+                     locals: { tag: @tag,
+                               questions: @questions } %>
+        </div>
+      <% end %>
+    </div>
   </div>
 </div>
