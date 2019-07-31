@@ -45,8 +45,19 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'change', '#search_tag_ids', ->
     courseId = $('#start_random_quiz').data('course')
-    console.log $('#search_tag_ids').val()
-    $('#start_random_quiz').prop('href', Routes.random_quiz_path(courseId, {tag_ids: $('#search_tag_ids').val()}))
+    tagIds = $('#search_tag_ids').val()
+    $('#questionCounter').empty()
+    $('#start_random_quiz').removeClass('disabled')
+      .prop('href', Routes.random_quiz_path(courseId, {tag_ids: tagIds}))
+    return if tagIds.length == 0
+    $.ajax Routes.render_question_counter_path(courseId),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        tag_ids: tagIds
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
     return
   return
 

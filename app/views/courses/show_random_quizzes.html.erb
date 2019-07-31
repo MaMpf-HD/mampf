@@ -16,16 +16,24 @@
                     target: :_blank %>
       </div>
     </div>
-    <%= t('quiz.compile_tags') %>
-    <select multiple="multiple"
-            class="selectize"
-            style="display: none;"
-            data-filled="false"
-            data-ajax="true"
-            data-model="course_tag"
-            data-course="<%= @course.id %>"
-            id="search_tag_ids">
-    </select>
+    <% if @course.question_tags.count.positive? %>
+      <div class="row">
+        <div class="col-12">
+          <%= t('quiz.compile_tags') %>
+          <select multiple="multiple"
+                  class="selectize"
+                  style="display: none;"
+                  data-filled="false"
+                  data-ajax="true"
+                  data-model="course_tag"
+                  data-course="<%= @course.id %>"
+                  id="search_tag_ids">
+          </select>
+        </div>
+      </div>
+    <% end %>
+    <div id="questionCounter">
+    </div>
     <div class="mt-3">
       <span class="badge badge-secondary">
         <%= t('basics.note') %>.

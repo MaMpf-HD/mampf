@@ -1592,8 +1592,16 @@ de:
       Hier hast Du hast die Möglichkeit, genauer zu spezifizieren,
       welche Inhalte in den Fragen getestet werden sollen. Fragen, die sogar zu
       mehreren der gewählten Begriffe korrespondieren, werden dabei mit höherer
-      Wahrscheinlichkeit ausgewählt. Wenn Du nichts angibst, werden beliebige
-      Inhalte des Moduls ausgewählt.
+      Wahrscheinlichkeit ausgewählt. Wenn Du nichts angibst, werden für den Test
+      beliebige Inhalte des Moduls ausgewählt.
+    questions_for_tags: >
+      Zu den gewählten Begriffen wurden %{count} Fragen gefunden.
+    question_for_tags: >
+      Zu den gewählten Begriffen wurde eine Frage gefunden.
+    no_question_for_tags: >
+      Zu den gewählten Begriffen wurde eine Frage gefunden.
+    quiz_shortened: >
+      Der Test wird dementsprechend verkürzt.
     number_of_questions: 'Anzahl der Fragen: %{count}'
     quiz_level: 'Schwierigkeitsgrad: %{level}'
     level:

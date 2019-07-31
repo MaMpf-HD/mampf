@@ -321,13 +321,24 @@ class Course < ApplicationRecord
     mc_questions_count >= 10
   end
 
-  def create_random_quiz!
-    question_ids = Question.where(teachable: [self] + [lectures.published],
-                                  independent: true,
-                                  released: ['all', 'users'])
-                           .joins(:answers).group('id')
-                           .having('count(question_id) > 1')
-                           .pluck(:id).sample(5)
+  def create_random_quiz!(tags)
+    if tags.any?
+      tagged_questions = questions(tags)
+      if tagged_questions.count > 5
+        # we use the following algorithm for one-pass weighted sampling:
+        # http://utopia.duth.gr/~pefraimi/research/data/2007EncOfAlg.pdf
+        # see also https://gist.github.com/O-I/3e0654509dd8057b539a
+        weighted_questions = weighted_question_ids(tagged_questions, tags)
+        sample = weighted_questions.max_by(5) do
+          |_, weight| rand ** (1.0 / weight)
+        end
+        question_ids = sample.map(&:first)
+      else
+        question_ids = tagged_questions.map(&:id).shuffle
+      end
+    else
+      question_ids = questions_with_inheritance.pluck(:id).sample(5)
+    end
     quiz_graph = QuizGraph.build_from_questions(question_ids)
     quiz = Quiz.new(description: "Zufallsquiz #{course.title} #{Time.now}",
                     level: 1,
@@ -338,6 +349,48 @@ class Course < ApplicationRecord
     return quiz.errors unless quiz.valid?
     quiz
   end
+
+  def question_tags
+    tag_ids = MediumTagJoin.where(medium: questions_with_inheritance)
+                           .pluck(:tag_id).uniq
+    Tag.where(id: tag_ids)
+  end
+
+  def questions_with_inheritance
+    Question.where(teachable: [self] + [lectures.published],
+                   independent: true)
+            .locally_visible
+            .joins(:answers).group('id')
+            .having('count(question_id) > 1')
+  end
+
+  def question_count(tags)
+    questions(tags).count
+  end
+
+  def weighted_question_ids(questions, tags)
+    tag_ids = tags.pluck(:id)
+    weighted_questions = questions(tags).includes(:tags).map do |q|
+      [q.id, (q.tag_ids & tag_ids).count]
+    end
+    weighted_questions.to_h
+  end
+
+  def questions(tags)
+    return questions_with_inheritance unless tags.any?
+    tagged_ids = MediumTagJoin.where(medium: questions_with_inheritance,
+                                     tag: tags)
+                              .pluck(:medium_id)
+                              .uniq
+    Question.where(id: tagged_ids)
+  end
+
+  def select_question_tags_by_title
+    question_tags.map { |t| t.title_id_hash }
+                 .natural_sort_by { |t| t[:title] }
+                 .map { |t| { value: t[:id], text: t[:title] } }
+  end
+
 
   private
 

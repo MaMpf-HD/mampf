@@ -27,6 +27,8 @@ Rails.application.routes.draw do
                                          as: 'show_random_quizzes'
   get 'courses/:id/take_random_quiz', to: 'courses#take_random_quiz',
                                       as: 'random_quiz'
+  get 'courses/:id/render_question_counter', to: 'courses#render_question_counter',
+                                             as: 'render_question_counter'
   resources :courses, except: [:index]
 
   get 'events/update_vertex_default', as: 'update_vertex_default'

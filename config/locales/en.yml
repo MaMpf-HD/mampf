@@ -1503,6 +1503,14 @@ en:
       Questions that correspond to several of the selected tags will be chosen
       with a higher probability. If you do not select anything, arbitrary
       contest from the course will be picked for the quiz.
+    questions_for_tags: >
+      %{count} questions have been found for the selected tags.
+    question_for_tags: >
+      One question has been found for the selected tags.
+    no_question_for_tags: >
+      No question has been found for the selected_tags.
+    quiz_shortened: >
+      The test will be shortened, therefore.
     level:
       not_set: 'not set'
       easy: 'easy'

@@ -2,7 +2,8 @@
 class CoursesController < ApplicationController
   before_action :check_for_course, only: [:show]
   before_action :set_course, only: [:show, :display, :take_random_quiz,
-                                    :show_random_quizzes]
+                                    :show_random_quizzes,
+                                    :render_question_counter]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   before_action :check_if_enough_questions, only: [:show_random_quizzes,
                                                    :take_random_quiz]
@@ -81,8 +82,14 @@ class CoursesController < ApplicationController
   end
 
   def take_random_quiz
-    random_quiz = @course.create_random_quiz!
+    tags = Tag.where(id: tag_params[:tag_ids])
+    random_quiz = @course.create_random_quiz!(tags)
     redirect_to take_quiz_path(random_quiz)
+  end
+
+  def render_question_counter
+    tags = Tag.where(id: tag_params[:tag_ids])
+    @count = @course.question_count(tags)
   end
 
   private
@@ -110,6 +117,10 @@ class CoursesController < ApplicationController
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [])
+  end
+
+  def tag_params
+    params.permit(tag_ids: [])
   end
 
   # create notifications to all users about creation of new course

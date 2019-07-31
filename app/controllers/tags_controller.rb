@@ -115,8 +115,7 @@ class TagsController < ApplicationController
 
   def fill_course_tags
     course = Course.find_by_id(params[:course_id])
-    result = course&.select_tags_by_title
-                    .map { |t| { value: t[1], text: t[0] } }
+    result = course&.select_question_tags_by_title
     render json: result
   end
 
