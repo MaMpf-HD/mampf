@@ -42,9 +42,16 @@ $(document).on 'turbolinks:load', ->
       $('#new-lecture-area').empty().hide()
       $('.admin-index-button').show()
     return
+
+  $(document).on 'change', '#search_tag_ids', ->
+    courseId = $('#start_random_quiz').data('course')
+    console.log $('#search_tag_ids').val()
+    $('#start_random_quiz').prop('href', Routes.random_quiz_path(courseId, {tag_ids: $('#search_tag_ids').val()}))
+    return
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'
+  $(document).off 'change', '#search_tag_ids'
   return

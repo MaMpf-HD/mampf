@@ -1588,9 +1588,12 @@ de:
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
-    compile_questions: >
+    compile_tags: >
       Hier hast Du hast die Möglichkeit, genauer zu spezifizieren,
-      welche Begriffe in den Fragen vorkommen sollen.
+      welche Inhalte in den Fragen getestet werden sollen. Fragen, die sogar zu
+      mehreren der gewählten Begriffe korrespondieren, werden dabei mit höherer
+      Wahrscheinlichkeit ausgewählt. Wenn Du nichts angibst, werden beliebige
+      Inhalte des Moduls ausgewählt.
     number_of_questions: 'Anzahl der Fragen: %{count}'
     quiz_level: 'Schwierigkeitsgrad: %{level}'
     level:

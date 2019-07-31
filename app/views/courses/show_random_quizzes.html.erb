@@ -11,9 +11,21 @@
         <%= link_to t('test.start'),
                     random_quiz_path(@course),
                     class: 'btn btn-primary my-4',
+                    id: 'start_random_quiz',
+                    data: { course: @course.id },
                     target: :_blank %>
       </div>
     </div>
+    <%= t('quiz.compile_tags') %>
+    <select multiple="multiple"
+            class="selectize"
+            style="display: none;"
+            data-filled="false"
+            data-ajax="true"
+            data-model="course_tag"
+            data-course="<%= @course.id %>"
+            id="search_tag_ids">
+    </select>
     <div class="mt-3">
       <span class="badge badge-secondary">
         <%= t('basics.note') %>.
@@ -28,8 +40,5 @@
          data-html="true">
       </i>
     </div>
-    <div class="row my-4">
-    </div>
-    <%= t('test.future') %>
   </div>
 </div>

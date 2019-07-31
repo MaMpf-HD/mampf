@@ -1498,8 +1498,11 @@ en:
     start: 'start quiz'
     number_of_questions: 'Number of questions: %{count}'
     quiz_level: 'Difficulty level: %{level}'
-    compile_questions: >
-      Here you can specify which tags are relevant for the quiz:
+    compile_tags: >
+      Here you can specify which contents are relevant for the quiz.
+      Questions that correspond to several of the selected tags will be chosen
+      with a higher probability. If you do not select anything, arbitrary
+      contest from the course will be picked for the quiz.
     level:
       not_set: 'not set'
       easy: 'easy'
