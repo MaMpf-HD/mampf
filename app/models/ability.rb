@@ -88,7 +88,8 @@ class Ability
       can [:list_tags, :list_sections, :display], Section
 
       can :manage, Tag
-      can [:display_cyto, :fill_tag_select, :fill_course_tags], Tag
+      can [:display_cyto, :fill_tag_select, :fill_course_tags,
+           :take_random_quiz], Tag
 
       cannot :read, Term
 
@@ -136,7 +137,7 @@ class Ability
         course.subscribed_by?(user)
       end
 
-      cannot [:index, :update, :create], Tag
+      cannot [:index, :update, :create, :take_random_quiz], Tag
       can [:display_cyto, :fill_course_tags], Tag
       can :teacher, User
       # anyone should be able to get a sidebar and see the announcements
