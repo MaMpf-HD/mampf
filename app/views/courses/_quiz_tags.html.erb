@@ -1,0 +1,43 @@
+<div id="tags_accordion"
+     role="tablist">
+  <div class="card">
+    <div class="card-header"
+         role="tab"
+         id="tags_heading">
+      <h6 class="text-dark">
+        <%= t('quiz.question_tags') %> (<%= tags.count.to_s %>)
+        <%= helpdesk(t('admin.tag.info.list'), false) %>
+        <a class="btn btn-sm btn-secondary float-right"
+           data-toggle="collapse"
+           href="#tags_collapse"
+           aria-expanded="false"
+           aria-controls="tags_collapse">
+          <%= t('buttons.toggle') %>
+        </a>
+      </h6>
+    </div>
+    <div id="tags_collapse"
+         class="collapse"
+         role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#tags_accordion">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-12">
+            <% if tags.any? %>
+              <% tags.natural_sort_by(&:title).each do |t| %>
+                <% unless t.nil? %>
+                  <%= link_to t.title,
+                              tag_path(t),
+                              class: "badge badge-light" %>
+                <% end %>
+              <% end %>
+            <% else %>
+              <%= t('admin.tag.no_tags') %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -42,7 +42,7 @@
         <% end %>
       </div>
     </div>
-    <% cache medium do %>
+    <% cache [medium, from] do %>
       <ul class="list-group list-group-flush">
         <li class="list-group-item bg-mdb-color-lighten-4">
           <div class="text-light">
@@ -50,6 +50,7 @@
           </div>
         </li>
       </ul>
+      <% unless from == 'tag' %>
       <% if medium.screenshot.present? %>
         <%= image_tag(medium.screenshot_url,
                       alt: "Card image cap",
@@ -58,6 +59,7 @@
         <%= image_tag(medium.manuscript_screenshot_url,
                       alt: "Card image cap",
                       class: "card-img-top manuscript-thumbnail") %>
+      <% end %>
       <% end %>
       <div class="card-body">
         <% unless medium.caption.nil? %>

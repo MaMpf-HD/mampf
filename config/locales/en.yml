@@ -1509,6 +1509,11 @@ en:
       Questions that correspond to several of the selected tags will be chosen
       with a higher probability. If you do not select anything, arbitrary
       contest from the course will be picked for the quiz.
+    question_tags_info: >
+      This is an overview of all tags of this course for which questions
+      exist.
+    question_tags: >
+      Available tags
     questions_for_tags: >
       %{count} questions have been found for the selected tags.
     question_for_tags: >

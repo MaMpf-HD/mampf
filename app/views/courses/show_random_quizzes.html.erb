@@ -48,5 +48,15 @@
          data-html="true">
       </i>
     </div>
+    <div class="row mt-4">
+      <div class="col-12">
+        <%= t('quiz.question_tags_info') %>
+      </div>
+      <div class="col-12 mt-2">
+        <%= render partial: 'courses/quiz_tags',
+                   locals: { tags: @course.question_tags,
+                             inspection: true} %>
+      </div>
+    </div>
   </div>
 </div>
