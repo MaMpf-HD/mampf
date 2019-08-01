@@ -74,10 +74,10 @@
     <% if (lecture && !lecture.script?(current_user)) ||
           (!lecture && !course.script?(current_user)) %>
       <span class="nav-link disabled">
-        <%= t('categories.script') %>
+        <%= t('categories.script.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.script'),
+      <%= link_to t('categories.script.singular'),
                   course_food_path(course_id: course.id,
                                    params: { project: 'script',
                                              lecture_id: lecture&.id }),
@@ -145,11 +145,11 @@
       <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
          class="nav-link"
          target="_blank" %>
-         <%= t('categories.erdbeere') %>
+         <%= t('categories.erdbeere.singular') %>
          <i class="fas fa-external-link-alt fa-xs"></i>
       </a>
     <% else %>
-      <%= link_to t('categories.erdbeere'),
+      <%= link_to t('categories.erdbeere.singular'),
                   course_food_path(course_id: course.id,
                                    params: { project: 'erdbeere',
                                              lecture_id: lecture&.id }),
@@ -161,10 +161,10 @@
     <% if (lecture && !lecture.kiwi?(current_user)) ||
          (!lecture && !course.kiwi?(current_user)) %>
       <span class="nav-link disabled">
-        <%= t('categories.kiwi') %>
+        <%= t('categories.kiwi.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.kiwi'),
+      <%= link_to t('categories.kiwi.singular'),
                   course_food_path(course_id: course.id,
                                    params: { project: 'kiwi',
                                              lecture_id: lecture&.id }),
@@ -175,10 +175,10 @@
     <% if (lecture && !lecture.reste?(current_user)) ||
          (!lecture && !course.reste?(current_user)) %>
       <span class="nav-link disabled">
-        <%= t('categories.reste') %>
+        <%= t('categories.reste.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.reste'),
+      <%= link_to t('categories.reste.singular'),
                   course_food_path(course_id: course.id,
                                    params: { project: 'reste',
                                              lecture_id: lecture&.id }),

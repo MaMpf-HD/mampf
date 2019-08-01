@@ -6,16 +6,17 @@
   </div>
   <div class="card-body">
     <%= t('test.info', count: @course.mc_questions_count) %>
-    <div class="row">
-      <div class="col-12 text-center">
-        <%= link_to t('test.start'),
-                    random_quiz_path(@course),
-                    class: 'btn btn-primary my-4',
-                    id: 'start_random_quiz',
-                    data: { course: @course.id },
-                    target: :_blank %>
-      </div>
-    </div>
+    <form class="form-inline">
+      <label class="mr-2">
+        <%= t('quiz.number_of_questions_label') %>:
+      </label>
+      <select class="form-control"
+              id="random_quiz_count">
+        <option>5</option>
+        <option>10</option>
+        <option>15</option>
+      </select>
+    </form>
     <% if @course.question_tags.count.positive? %>
       <div class="row">
         <div class="col-12">
@@ -33,6 +34,16 @@
       </div>
     <% end %>
     <div id="questionCounter">
+    </div>
+    <div class="row">
+      <div class="col-12 text-center">
+        <%= link_to t('test.start'),
+                    random_quiz_path(@course),
+                    class: 'btn btn-primary my-4',
+                    id: 'start_random_quiz',
+                    data: { course: @course.id },
+                    target: :_blank %>
+      </div>
     </div>
     <div class="mt-3">
       <span class="badge badge-secondary">

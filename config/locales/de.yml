@@ -19,35 +19,53 @@ de:
     kaviar:
       singular: 'Lektion'
       plural: 'Lektionen'
+      short: 'Lek'
     exercises:
       singular: 'Übung'
       plural: 'Übungen'
-    examples: 'Beispiele'
-    script: 'Skript'
+      short: 'Ü'
+    examples:
+      plural: 'Beispiele'
+      short: 'Bsp'
+    script:
+      singular: 'Skript'
+      short: 'Skr'
     nuesse: 'Blätter'
     sesam:
       singular: 'Worked Example'
       plural: 'Worked Examples'
-    kiwi: 'Wiederholung'
+      short: 'WEx'
+    kiwi:
+      singular: 'Wiederholung'
+      short: 'Wdh'
     quiz:
       singular: 'Quiz'
       plural: 'Quizzes'
+      short: 'Q'
     randomquiz:
       singular: 'Zufallsquiz'
+      short: 'ZufQ'
     test:
       singular: 'Selbsttest'
+      short: 'STst'
     question:
       singular: 'Quiz-Frage'
       plural: 'Quiz-Fragen'
+      short: 'Frg'
     remark:
       singular: 'Quiz-Erläuterung'
       plural: 'Quiz-Erläuterungen'
-    erdbeere: 'Beispiel-Datenbank'
+      short: 'Erl'
+    erdbeere:
+      singular: 'Beispiel-Datenbank'
+      short: 'DB'
     muesli: 'MÜSLI'
     board: 'Forum'
     organizational: 'Organisatorisches'
     announcements: 'Mitteilungen'
-    reste: 'Sonstiges'
+    reste:
+      singular: 'Sonstiges'
+      short: 'Sns'
     course: 'Modul'
     mampf_news: 'MaMpf-News'
   unauthorized:
@@ -1616,6 +1634,7 @@ de:
       Der Test wird dementsprechend verkürzt.
     number_of_questions: 'Anzahl der Fragen: %{count}'
     quiz_level: 'Schwierigkeitsgrad: %{level}'
+    number_of_questions_label: 'Anzahl der Fragen'
     level:
       not_set: 'nicht gesetzt'
       easy: 'leicht'
@@ -1640,7 +1659,7 @@ de:
   test:
     info: >
       Auf Modulebene liegen %{count} Multiple-Choice-Fragen vor.
-      MaMpf erstellt Dir daraus gerne einen zufälligen Test aus 5 Fragen:
+      MaMpf erstellt Dir daraus gerne einen zufälligen Test.
     start: 'Test beginnen'
     notation: >
       Die Notationen und Begrifflichkeiten in den einzelnen Fragen und Antworten

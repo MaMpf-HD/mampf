@@ -35,35 +35,53 @@ en:
     kaviar:
       singular: 'Lesson'
       plural: 'Lessons'
+      short: 'Les'
     exercises:
       singular: 'Exercise'
       plural: 'Exercises'
-    examples: 'Examples'
-    script: 'Manuscript'
+      short: 'Exc'
+    examples:
+      plural: 'Examples'
+      short: 'Exa'
+    script:
+      singular: 'Manuscript'
+      short: 'Man'
     nuesse: 'Worksheets'
     sesam:
       singular: 'Worked Example'
       plural: 'Worked Examples'
-    kiwi: 'Repetition'
+      short: 'WEx'
+    kiwi:
+      singular: 'Repetition'
+      short: 'Rep'
     quiz:
       singular: 'Quiz'
       plural: 'Quizzes'
+      short: 'Quiz'
     randomquiz:
       singular: 'Random Quiz'
+      short: 'RanQ'
     test:
       singular: 'Self Assessment'
+      short: 'SAss'
     question:
       singular: 'Question'
       plural: 'Questions'
+      short: 'Ques'
     remark:
       singular: 'Quiz Remark'
       plural: 'Quiz Remarks'
-    erdbeere: 'Examples'
+      short: 'Rem'
+    erdbeere:
+      singular: 'Examples'
+      short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
     organizational: 'General Information'
     announcements: 'Announcements'
-    reste: 'Miscellaneous'
+    reste:
+      singular: 'Miscellaneous'
+      short: 'Misc'
     course: 'Course'
   unauthorized:
     default: >
@@ -1503,6 +1521,7 @@ en:
     quiz: 'Quiz'
     start: 'start quiz'
     number_of_questions: 'Number of questions: %{count}'
+    number_of_questions_label: 'Number of questions'
     quiz_level: 'Difficulty level: %{level}'
     compile_tags: >
       Here you can specify which contents are relevant for the quiz.
@@ -1546,7 +1565,7 @@ en:
   test:
     info: >
       There are %{count} multiple choice question at course level.
-      MaMpf can create a random test from these consisting of 5 questions:
+      MaMpf can create a random test from these.
     start: 'Start Test'
     notation: >
       Notation and terminology in these questions may deviate from those used

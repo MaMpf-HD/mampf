@@ -3,16 +3,16 @@
     <div class="card-header bg-mdb-color-lighten-1"
          style="display: flex; justify-content: space-between;">
       <div>
-      <% ref = medium.card_header_teachable_path(current_user) %>
-      <% if ref.present? %>
-        <%= link_to medium.card_header,
-                    ref,
-                    class: 'text-light' %>
-      <% else %>
-        <span class="text-light">
-          <%= medium.card_header %>
-        </span>
-      <% end %>
+        <% ref = medium.card_header_teachable_path(current_user) %>
+        <% if ref.present? %>
+          <%= link_to medium.card_header,
+                      ref,
+                      class: 'text-light' %>
+        <% else %>
+          <span class="text-light">
+            <%= medium.card_header %>
+          </span>
+        <% end %>
       </div>
       <div class="text-light">
         <% if current_user.locale.to_s != medium.locale_with_inheritance %>
@@ -42,14 +42,7 @@
         <% end %>
       </div>
     </div>
-    <% cache [medium, from] do %>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item bg-mdb-color-lighten-4">
-          <div class="text-light">
-            <%= medium.card_subheader %>
-          </div>
-        </li>
-      </ul>
+    <% cache [medium, from == 'tag'] do %>
       <% unless from == 'tag' %>
       <% if medium.screenshot.present? %>
         <%= image_tag(medium.screenshot_url,
@@ -63,10 +56,20 @@
       <% end %>
       <div class="card-body">
         <% unless medium.caption.nil? %>
-          <div class="card-title">
-            <h5>
-              <%= medium.caption %>
-            </h5>
+          <div class="card-title"
+               id="media-card-subheader">
+            <div>
+              <h5>
+                <%= medium.caption %>
+              </h5>
+            </div>
+            <div>
+              <span class="badge badge-secondary"
+                    data-toggle="tooltip"
+                    title="<%= medium.sort_localized %>">
+                <%= medium.card_subheader %>
+              </span>
+            </div>
           </div>
         <% end %>
         <div>

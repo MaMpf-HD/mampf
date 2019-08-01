@@ -35,6 +35,11 @@
   justify-content: flex-end;
 }
 
+#media-card-subheader {
+  display: flex;
+  justify-content: space-between;
+}
+
 #video-wait {
   display: none;
 }

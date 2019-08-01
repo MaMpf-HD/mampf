@@ -77,13 +77,13 @@ module ApplicationHelper
     { 'kaviar' => t('categories.kaviar.plural'),
       'sesam' => t('categories.sesam.plural'),
       'keks' => t('categories.quiz.plural'),
-      'kiwi' => t('categories.kiwi'),
-      'erdbeere' => t('categories.erdbeere'),
+      'kiwi' => t('categories.kiwi.singular'),
+      'erdbeere' => t('categories.erdbeere.singular'),
       'nuesse' => t('categories.exercises.plural'),
-      'script' => t('categories.script'),
+      'script' => t('categories.script.singular'),
       'questions' => t('categories.question.plural'),
       'remarks' => t('categories.remark.plural'),
-      'reste' => t('categories.reste') }
+      'reste' => t('categories.reste.singular') }
   end
 
   # Selects all media associated to lectures and lessons from a given list

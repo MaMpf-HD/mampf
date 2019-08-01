@@ -117,20 +117,36 @@ class Medium < ApplicationRecord
        Reste Remark RandomQuiz]
   end
 
-  # media sorts and their german descriptions
+  # media sorts and their descriptions
   def self.sort_localized
     { 'Kaviar' => I18n.t('categories.kaviar.singular'),
       'Sesam' => I18n.t('categories.sesam.singular'),
       'Nuesse' => I18n.t('categories.exercises.singular'),
-      'Script' => I18n.t('categories.script'),
-      'Kiwi' => I18n.t('categories.kiwi'),
+      'Script' => I18n.t('categories.script.singular'),
+      'Kiwi' => I18n.t('categories.kiwi.singular'),
       'Quiz' => I18n.t('categories.quiz.singular'),
       'Question' => I18n.t('categories.question.singular'),
       'Remark' => I18n.t('categories.remark.singular'),
       'RandomQuiz' => I18n.t('categories.randomquiz.singular'),
-      'Erdbeere' => I18n.t('categories.erdbeere'),
-      'Reste' => I18n.t('categories.reste') }
+      'Erdbeere' => I18n.t('categories.erdbeere.singular'),
+      'Reste' => I18n.t('categories.reste.singular') }
   end
+
+  # media sorts and their short descriptions
+  def self.sort_localized_short
+    { 'Kaviar' => I18n.t('categories.kaviar.short'),
+      'Sesam' => I18n.t('categories.sesam.short'),
+      'Nuesse' => I18n.t('categories.exercises.short'),
+      'Script' => I18n.t('categories.script.short'),
+      'Kiwi' => I18n.t('categories.kiwi.short'),
+      'Quiz' => I18n.t('categories.quiz.short'),
+      'Question' => I18n.t('categories.question.short'),
+      'Remark' => I18n.t('categories.remark.short'),
+      'RandomQuiz' => I18n.t('categories.randomquiz.short'),
+      'Erdbeere' => I18n.t('categories.erdbeere.short'),
+      'Reste' => I18n.t('categories.reste.short') }
+  end
+
 
   def self.select_sorts
     Medium.sort_localized.except('RandomQuiz').map { |k, v| [v, k] }
@@ -557,7 +573,7 @@ class Medium < ApplicationRecord
   end
 
   def card_subheader
-    sort_localized
+    Medium.sort_localized_short[sort]
   end
 
   def sort_localized
@@ -676,7 +692,7 @@ class Medium < ApplicationRecord
                     number: teachable.lesson&.number,
                     date: teachable.lesson&.date_localized)
     elsif sort == 'Script'
-      return I18n.t('categories.script')
+      return I18n.t('categories.script.singular')
     end
     "#{sort_localized} \##{id}"
   end
