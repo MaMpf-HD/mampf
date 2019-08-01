@@ -322,11 +322,7 @@ class Course < ApplicationRecord
   end
 
   def create_random_quiz!(tags, count)
-    pp '--------'
-    pp count
-    pp '********'
     count = 5 unless count.in?([5,10,15])
-    pp count
     if tags.any?
       tagged_questions = questions(tags)
       if tagged_questions.count > count
