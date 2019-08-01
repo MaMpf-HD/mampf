@@ -1524,10 +1524,7 @@ en:
     number_of_questions_label: 'Number of questions'
     quiz_level: 'Difficulty level: %{level}'
     compile_tags: >
-      Here you can specify which contents are relevant for the quiz.
-      Questions that correspond to several of the selected tags will be chosen
-      with a higher probability. If you do not select anything, arbitrary
-      contest from the course will be picked for the quiz.
+      Content specification
     question_tags_info: >
       This is an overview of all tags of this course for which questions
       exist.
@@ -1546,6 +1543,15 @@ en:
       easy: 'easy'
       medium: 'medium'
       difficult: 'difficult'
+    info:
+      compile_tags: >
+        Here you can specify which contents are relevant for the quiz.
+        Questions that correspond to several of the selected tags will be chosen
+        with a higher probability. If you do not select anything, arbitrary
+        contest from the course will be picked for the quiz.
+      reduced_questions: >
+        The number of questions will be reduced accordingly if there are
+        fewer questions availabale for your specified content than you selected.
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
   click_here: 'Click here'

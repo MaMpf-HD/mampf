@@ -7,6 +7,3 @@ $('#questionCounter').append('<%= t("quiz.question_for_tags") %>')
 $('#questionCounter').append('<%= t("quiz.no_question_for_tags") %>')
 $('#start_random_quiz').addClass('disabled')
 <% end %>
-<% if @count < 5 %>
-$('#questionCounter').append(' <%= t("quiz.quiz_shortened") %>')
-<% end %>

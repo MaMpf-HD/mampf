@@ -16,11 +16,13 @@
         <option>10</option>
         <option>15</option>
       </select>
+      <%= helpdesk(t('quiz.info.reduced_questions'), false) %>
     </form>
     <% if @course.question_tags.count.positive? %>
       <div class="row">
         <div class="col-12">
-          <%= t('quiz.compile_tags') %>
+          <%= t('quiz.compile_tags') %>:
+          <%= helpdesk(t('quiz.info.compile_tags'), false) %>
           <select multiple="multiple"
                   class="selectize"
                   style="display: none;"

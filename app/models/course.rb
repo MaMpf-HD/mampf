@@ -321,15 +321,20 @@ class Course < ApplicationRecord
     mc_questions_count >= 10
   end
 
-  def create_random_quiz!(tags)
+  def create_random_quiz!(tags, count)
+    pp '--------'
+    pp count
+    pp '********'
+    count = 5 unless count.in?([5,10,15])
+    pp count
     if tags.any?
       tagged_questions = questions(tags)
-      if tagged_questions.count > 5
+      if tagged_questions.count > count
         # we use the following algorithm for one-pass weighted sampling:
         # http://utopia.duth.gr/~pefraimi/research/data/2007EncOfAlg.pdf
         # see also https://gist.github.com/O-I/3e0654509dd8057b539a
         weighted_questions = weighted_question_ids(tagged_questions, tags)
-        sample = weighted_questions.max_by(5) do
+        sample = weighted_questions.max_by(count) do
           |_, weight| rand ** (1.0 / weight)
         end
         question_ids = sample.map(&:first)
@@ -337,7 +342,7 @@ class Course < ApplicationRecord
         question_ids = tagged_questions.map(&:id).shuffle
       end
     else
-      question_ids = questions_with_inheritance.pluck(:id).sample(5)
+      question_ids = questions_with_inheritance.pluck(:id).sample(count)
     end
     quiz_graph = QuizGraph.build_from_questions(question_ids)
     quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{course.title} #{Time.now}",
