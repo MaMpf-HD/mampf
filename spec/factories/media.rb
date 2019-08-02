@@ -37,8 +37,8 @@ FactoryBot.define do
     # embedded_width Faker::Number.between(800, 1800)
     # embedded_height Faker::Number.between(500, 1300)
     # length Faker::Number.between(0, 9).to_s + 'h' + Faker::Number.between(0, 5).to_s +
-           Faker::Number.between(0, 9).to_s + 'm' + Faker::Number.between(0, 5).to_s +
-           Faker::Number.between(0, 9).to_s + 's'
+           # Faker::Number.between(0, 9).to_s + 'm' + Faker::Number.between(0, 5).to_s +
+           # Faker::Number.between(0, 9).to_s + 's'
     # video_size Faker::Number.decimal(3,2).to_s + ' MiB'
     # pages  Faker::Number.between(1, 100)
     # manuscript_size Faker::Number.decimal(3,2).to_s + ' KiB'

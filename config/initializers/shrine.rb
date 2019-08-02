@@ -23,5 +23,5 @@ Shrine.plugin :activerecord
 Shrine.plugin :determine_mime_type
 Shrine.plugin :cached_attachment_data # for forms
 Shrine.plugin :restore_cached_data
-Shrine.plugin :logging
+Shrine.plugin :instrumentation
 Shrine.plugin :upload_endpoint
