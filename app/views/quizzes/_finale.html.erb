@@ -8,11 +8,12 @@
                                    'https://xkcd.com',
                                    target: :_blank)) %>
           <div>
-            <% xkcd_comic = URI.extract(XKCD.img, ['https'])&.first %>
+            <% xkcd_comic = URI.extract(xkcd, ['https'])&.first %>
             <%= link_to image_tag(xkcd_comic,
                                   class: "img-fluid"),
                         xkcd_comic,
-                        target: :_blank %>
+                        target: :_blank,
+                        title: xkcd.remove(xkcd_comic).chomp(': ') %>
           </div>
         </div>
       </div>
