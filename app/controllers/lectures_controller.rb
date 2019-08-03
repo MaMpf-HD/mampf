@@ -139,7 +139,7 @@ class LecturesController < ApplicationController
                                     :start_chapter, :absolute_numbering,
                                     :start_section, :organizational, :locale,
                                     :organizational_concept, :muesli,
-                                    :content_mode, :passphrase,
+                                    :content_mode, :passphrase, :sort,
                                     editor_ids: [])
   end
 

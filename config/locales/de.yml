@@ -96,7 +96,7 @@ de:
     navbar:
       exit: 'Administration beenden'
       main: 'Übersicht'
-      current_lecture: 'Aktuelle Vorlesung'
+      current_lecture: 'Aktuelle Veranstaltung'
       logout: 'Logout'
       media_search: 'Mediensuche'
       tags: 'Tagübersicht'
@@ -106,13 +106,14 @@ de:
       course: 'Lehrveranstaltung'
       profile: 'Mein Profil'
     main:
-      my_lectures: 'Meine Vorlesungen'
-      create_lecture: 'Vorlesung anlegen'
+      my_lectures: 'Meine Veranstaltungen'
+      type: 'Typ'
+      create_lecture: 'Veranstaltung anlegen'
       as_teacher: 'Als DozentIn'
-      as_editor: 'Als zusätzliche VorlesungeditorIn'
+      as_editor: 'Als zusätzliche VeranstaltungseditorIn'
       as_course_editor: 'Als Moduleditor'
       no_lectures_taught: >
-        Es gibt keine Vorlesung, für die Du als DozentIn oder EditorIn
+        Es gibt keine Veranstaltung, für die Du als DozentIn oder EditorIn
         eingetragen bist.
       my_courses: 'Meine Module'
       create_course: 'Modul anlegen'
@@ -127,40 +128,41 @@ de:
       user_profile: 'Nutzerprofil'
       no_media: >
         Es gibt keine Medien, für die Du als EditorIn eingetragen bist.
-      other_lectures: 'Sonstige Vorlesungen'
-      no_other_lectures: 'Es gibt keine sonstigen Vorlesungen.'
+      other_lectures: 'Sonstige Veranstaltungen'
+      no_other_lectures: 'Es gibt keine sonstigen Veranstaltungen.'
       other_courses: 'Sonstige Module'
       no_other_courses: 'Es gibt keine sonstigen Module.'
       info:
         lecture_definition: >
           Dies ist eine Liste aller
-          <i>Vorlesungen</i>,
+          <i>Veranstaltungen</i>,
           für die Du Bearbeitungsrechte hast.
           <br>
           <br>
           Eine
-          <i>Vorlesung</i>
+          <i>Veranstaltung</i>
           im Sinne von MaMpf ist hierbei eine
-          Lehrveranstaltung zum Thema des zugehörigen
+          Lehrveranstaltung (Vorlesung, Seminar, Proseminar, Oberseminar)
+          zum Thema des zugehörigen
           <i>Moduls</i>,
           die von einer bestimmten DozentIn in einem
           bestimmten Semester abgehalten wird bzw. wurde.
           <br>
-          Vorlesungen in rötlicher Farbe sind noch nicht veröffentlicht.
+          Veranstaltungen in rötlicher Farbe sind noch nicht veröffentlicht.
         given_lectures: >
-          Dies ist eine Liste aller Vorlesungen, die Du als
+          Dies ist eine Liste aller Veranstaltungen, die Du als
           Dozent verantwortet hast. Für diese hast Du natürlich die
           Bearbeitungsberechtigung.
         edited_lectures: >
-          Dies ist eine Liste aller Vorlesungen, für die
+          Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
-          Bearbeitungsrechte an diesen Vorlesungen.
+          Bearbeitungsrechte an diesen Veranstaltungen.
         lectures_as_module_editor: >
-          Dies ist eine Liste aller Vorlesungen, die zu
+          Dies ist eine Liste aller Veranstaltungen, die zu
           Modulen gehören, für die du EditorIn bist, abzüglich der
-          Vorlesungen, die Du selbst als DozentIn gehalten hast.
+          Veranstaltungen, die Du selbst als DozentIn gehalten hast.
           Durch Deine Rechte als ModuleditorIn erbst Du
-          Bearbeitungsrechte an diesen Vorlesungen.
+          Bearbeitungsrechte an diesen Veranstaltungen.
         course_definition: >
           Dies ist eine Liste aller
           <i>Module</i>,
@@ -200,10 +202,10 @@ de:
           <ul>
           <li>
           ein Medium, das aus der Videoaufzeichnung einer
-          Vorlesungssitzung mit dazugehörigem Mitschrieb besteht.
+          Veranstaltungssitzung mit dazugehörigem Mitschrieb besteht.
           </li>
           <li>
-          ein Medium, das aus dem Mitschrieb einer Vorlesungssitzung besteht.
+          ein Medium, das aus dem Mitschrieb einer Veranstaltungssitzung besteht.
           </li>
           <li>
           ein Medium, das aus einem Worked-Example-Video mit dazugehörigem
@@ -214,23 +216,32 @@ de:
           </li>
           </ul>
         other_lectures: >
-          Dies ist eine Liste aller Vorlesungen, für die Du keine
+          Dies ist eine Liste aller Veranstaltungen, für die Du keine
           Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
         other_courses: >
           Dies ist eine Liste aller Module, für die Du
           kein(e) EditorIn bist und somit keine Bearbeitungsrechte hast.
           (Es sei denn, Du bist Admin :-P )
       term: 'Sem'
+      term_type: 'Sem/Typ'
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
     lecture:
-      new_lecture: 'Neue Vorlesung anlegen'
+      lecture: 'Vorlesung'
+      lecture_short: 'V'
+      seminar: 'Seminar'
+      seminar_short: 'S'
+      proseminar: 'Proseminar'
+      proseminar_short: 'PS'
+      oberseminar: 'Oberseminar'
+      oberseminar_short: 'OS'
+      new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
       no_content_yet: 'Es liegen noch keine Inhaltsangaben vor.'
-      publish: 'Vorlesung veröffentlichen'
-      publish_request: 'Beim Veröffentlichen der Vorlesung sollen'
+      publish: 'Veranstaltung veröffentlichen'
+      publish_request: 'Beim Veröffentlichen der Veranstaltung sollen'
       publish_all_media: >
         sämtliche verknüpfte Medien ebenfalls veröffentlicht werden.
       media_access: >
@@ -241,20 +252,20 @@ de:
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
-          Vorlesung gehört.
+          Veranstaltung gehört.
         term: >
           Hier kannst Du das Semester auswählen, in dem diese
-          Vorlesung stattfindet bzw. stattgefunden hat.
+          Veranstaltung stattfindet bzw. stattgefunden hat.
         teacher: >
-          Hier kannst Du die DozentIn der Vorlesung auswählen.
+          Hier kannst Du die DozentIn der Veranstaltung auswählen.
           Die DozentIn sollte im Normalfall diejenige Person sein,
-          die die Vorlesung hält. Möchte die entsprechende Person
+          die die Veranstaltung hält. Möchte die entsprechende Person
           sich nicht selbst um das Einstellen von Materialien
           kümmern, so kann dies durch zusätzliche
-          Vorlesungseditoren geschehen.
+          Veranstaltungseditoren geschehen.
         workflow: >
           Wir beschreiben im Folgenden einen sinnvollen
-          Workflow. Hierbei sollte man unterscheiden, ob die Vorlesung
+          Workflow. Hierbei sollte man unterscheiden, ob die Veranstaltung
           <i>medienbasiert</i> oder <i>skriptbasiert</i> ist.
           <ul>
           <li>
@@ -283,7 +294,7 @@ de:
           </li>
           </ul>
           In gewissem Umfang kann man auch versuchen, die Vorteile beider
-          Varianten zu kombinieren. Hat man eine videobasierte Vorlesung,
+          Varianten zu kombinieren. Hat man eine videobasierte Veranstaltung,
           kann man natürlich trotzdem ein Skript hochladen und daraus die
           grobe Gliederung importieren.
         variants: >
@@ -301,7 +312,7 @@ de:
           </li>
           <li>
           <i>
-          unter Verwendung eines Vorlesungsskriptes, das mit dem MaMpf
+          unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde:
           </i>
           MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
@@ -320,7 +331,7 @@ de:
           hast, in dem Sitzungen existierten.
         media: >
           Hier werden alle Medien angezeigt, die direkt zu
-          dieser Vorlesung oder zu Sitzungen dieser Vorlesung assoziiert
+          dieser Veranstaltung oder zu Sitzungen dieser Veranstaltung assoziiert
           sind. Medien in Rot sind noch nicht veröffentlicht oder
           gesperrt.
           Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
@@ -328,28 +339,28 @@ de:
         course_tags: >
           Hier werden diejenigen Tags aus dem zugeordneten
           Modul angezeigt, die in mindestens einem Abschnitt dieser
-          Vorlesung vorkommen.
+          Veranstaltung vorkommen.
         additional_tags: >
           Hier werden diejenigen Tags angezeigt, welche
-          in mindestens einem Abschnitt dieser Vorlesung vorkommen,
+          in mindestens einem Abschnitt dieser Veranstaltung vorkommen,
           jedoch kein Tag des zugeordneten Moduls sind.
         untreated_tags: >
           Hier werden diejenigen Tags aus dem zugeordneten
-          Modul angezeigt, die in keinem Abschnitt dieser Vorlesung
+          Modul angezeigt, die in keinem Abschnitt dieser Veranstaltung
           vorkommen.
         course_editors: >
           ModuleditorInnen haben das Bearbeitungsrecht
           für das zugeordnete Modul. Dieses vererbt sich auf jede
-          Vorlesung zu diesem Modul.
+          Veranstaltung zu diesem Modul.
         lecture_editors: >
-          Zusätzliche Vorlesungseditoren sind
+          Zusätzliche Veranstaltungseditoren sind
           bearbeitungsberechtigte Personen, die verschieden vom
           Dozenten und von den Moduleditoren sind. Das können z.B.
-          VorlesungsassistentInnen sein, die Materialien zur
-          Vorlesung einpflegen.
+          VeranstaltungsassistentInnen sein, die Materialien zur
+          Veranstaltung einpflegen.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese
-          Vorlesung in ihrem Profil abonniert haben.
+          Veranstaltung in ihrem Profil abonniert haben.
         organizational: >
           Wenn Du diesen Haken setzt, wird in der
           Sidebar der Punkt Organisatorisches für alle Studierenden
@@ -359,12 +370,12 @@ de:
           (und solltest).
         muesli: >
           Wenn Du diesen Haken setzt, wird in der
-          Sidebar für diese Vorlesung der Link zu MUESLI aktiviert.
+          Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
         first_chapter: >
           Soll das erste Kapitel eine von eins
           verschiedene Nummer haben, so kann dies hier eingetragen
           werden. Anwendungsmöglichkeiten sind z.B.
-          Kapitelnummerierungen, die in Fortsetzungsvorlesungen
+          Kapitelnummerierungen, die in Fortsetzungsveranstaltungen
           weitergeführt werden.
         first_section: >
           Ist die absolute Nummerierung für Abschnitte
@@ -379,10 +390,10 @@ de:
           weitergezählt.
         passphrase: >
           Wenn du hier etwa eingibst, können
-          NutzerInnen diese Vorlesung nur unter Angabe dieses
-          Schlüssels abonnieren. Medien, die zu dieser Vorlesung
+          NutzerInnen diese Veranstaltung nur unter Angabe dieses
+          Schlüssels abonnieren. Medien, die zu dieser Veranstaltung
           oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
-          die diese Vorlesung nicht abonniert haben, unsichtbar.
+          die diese Veranstaltung nicht abonniert haben, unsichtbar.
         chapter_title: >
           Hier kannst du den Titel des Kapitels angeben.
         insert_after_chapter: >
@@ -399,7 +410,7 @@ de:
       content_mode: 'Inhaltsermittlung'
       video_based: 'medienbasiert'
       script_based: >
-          unter Verwendung eines Vorlesungsskriptes, das mit dem MaMpf
+          unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       orphaned_lessons: 'Verwaiste Sitzungen'
@@ -416,10 +427,10 @@ de:
       no_course_editors: >
         Es sind keine ModuleditorInnen eingetragen.
       no_lecture_editors: >
-        Es sind keine zusätzlichen VorlesungseditorInnen
+        Es sind keine zusätzlichen VeranstaltungseditorInnen
         eingetragen.
       organizational_visible: 'Organisatorisches sichtbar'
-      uses_muesli: 'Vorlesung verwendet MÜSLI'
+      uses_muesli: 'Veranstaltung verwendet MÜSLI'
       first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
@@ -429,7 +440,7 @@ de:
     course:
       new_course: 'Neues Modul anlegen'
       preceding_courses: 'Module, auf denen das vorliegende Modul aufbaut'
-      no_lectures: 'Für diesen Kurs gibt es noch keine Vorlesungen.'
+      no_lectures: 'Für diesen Kurs gibt es noch keine Veranstaltungen.'
       additional_information: 'Weitere Informationen'
       additional_information_visible: 'Weitere Informationen sichtbar'
       info:
@@ -441,9 +452,9 @@ de:
           Der Kurztitel wird an mehreren Stellen als Abkürzung verwendet.
         editors: >
           Hier gibst Du die ModuleditorInnen an. Diese können
-          das Modul bearbeiten, insbesondere können sie Vorlesungen innerhalb
+          das Modul bearbeiten, insbesondere können sie Veranstaltungen innerhalb
           des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
-          alle Vorlesungen innerhalb des Moduls.
+          alle Veranstaltungen innerhalb des Moduls.
         preceding_courses: >
           Hier kannst Du angeben, auf welchen Modulen das
           vorliegende Modul aufbaut.
@@ -453,11 +464,11 @@ de:
           ob sie verknüpfte Materialien auch von inhaltlich vorher
           einzuordnenden Modulen angezeigt bekommen möchten.
         lectures: >
-          Dies ist die Liste aller Vorlesungen zu diesem Modul.
-          Unveröffentlichte Vorlesungen sind in rötlicher Farbe gekennzeichnet.
+          Dies ist die Liste aller Veranstaltungen zu diesem Modul.
+          Unveröffentlichte Veranstaltungen sind in rötlicher Farbe gekennzeichnet.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese
-          Vorlesung in ihrem Profil abonniert haben.
+          Veranstaltung in ihrem Profil abonniert haben.
         tags: >
           Das ist die Liste aller zu diesem Modul
           assoziierten Tags. Diese korrespondieren typischerweise
@@ -467,9 +478,9 @@ de:
         editors_inspect: >
           Das ist die Liste aller ModuleditorInnen für
           dieses Modul. Diese können das Modul bearbeiten, insbesondere
-          können sie Vorlesungen innerhalb des Moduls anlegen.
+          können sie Veranstaltungen innerhalb des Moduls anlegen.
           Jeder Moduleditor erbt die Bearbeitungsrechte für
-          alle Vorlesungen innerhalb des Moduls.
+          alle Veranstaltungen innerhalb des Moduls.
         preceding_courses_inspect: >
           Das ist die Liste derjenigen Module, auf denen
           das vorliegende Modul aufbaut.
@@ -497,7 +508,7 @@ de:
           haben möchtest.
         exempt: >
           Wenn Du dieses Feld anklickst, wird dieses Kapitel
-          nicht in der Vorlesungsgliederung als Kapitel auftreten. Trotzdem
+          nicht in der Veranstaltungsgliederung als Kapitel auftreten. Trotzdem
           sind das Kapitel und seine veröffentlichten Inhalte für Nutzer
           auffindbar.
     section:
@@ -529,12 +540,12 @@ de:
           aus diesem Abschnitt behandelt werden bzw. wurden.
         exempt: >
           Wenn Du dieses Feld anklickst, wird dieser Abschnitt
-          nicht in der Vorlesungsgliederung als Abschnitt auftreten. Trotzdem
+          nicht in der Veranstaltungsgliederung als Abschnitt auftreten. Trotzdem
           sind der Abschnitt und seine Inhalte für NutzerInnen auffindbar.
         details: >
           Hier hast du die Möglichkeit, für dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
-          Vorlesungsseite angezeigt werden.
+          Veranstaltungsseite angezeigt werden.
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
     lesson:
@@ -554,13 +565,13 @@ de:
           stattgefunden hat.
         sections: >
           Hier kannst Du auswählen, welche Abschnitte aus der
-          Vorlesung in der entsprechenden Sitzung behandelt wurden.
+          Veranstaltung in der entsprechenden Sitzung behandelt wurden.
           Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
           die zu den entsprechenden Abschnitten gehören. Beim Editieren
           der Sitzung kann diese Auswahl dann nachbearbeitet werden.
         sections_inspection:
           Das ist die Liste der Abschnitte aus der
-          Vorlesung, die  in der entsprechenden Sitzung behandelt wurden.
+          Veranstaltung, die  in der entsprechenden Sitzung behandelt wurden.
         tags: >
           Dies ist die Liste aller Tags, die zu dieser Sitzung
           assoziiert sind. Beim Anlegen einer Sitzung werden hier automatisch
@@ -613,7 +624,7 @@ de:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
           Basisdaten->Zugriffsrechte entsperren.
-        unpublished_lecture: 'in einer unveröffentlichten Vorlesung'
+        unpublished_lecture: 'in einer unveröffentlichten Veranstaltung'
         medium_definition: >
           Ein
           <i>Medium</i>
@@ -636,10 +647,10 @@ de:
           <ul>
           <li>
           ein Medium, das aus der Videoaufzeichnung einer
-          Vorlesungssitzung mit dazugehörigem Mitschrieb besteht.
+          Veranstaltungssitzung mit dazugehörigem Mitschrieb besteht.
           </li>
           <li>
-          ein Medium, das aus dem Mitschrieb einer Vorlesungssitzung besteht.
+          ein Medium, das aus dem Mitschrieb einer Veranstaltungssitzung besteht.
           </li>
           <li>
           ein Medium, das aus einem Worked-Example-Video mit dazugehörigem
@@ -654,23 +665,23 @@ de:
           stehen zur Auswahl:
           <ul>
           <li>
-          Lektion: korrespondiert in etwa zum Inhalt von Vorlesungssitzungen.
+          Lektion: korrespondiert in etwa zum Inhalt von Veranstaltungssitzungen.
           Hier können z.B. Videos oder Manuskripte einzelner Sitzungen
-          untergebracht werden, aber auch Vertiefungen zum Vorlesungsstoff.
+          untergebracht werden, aber auch Vertiefungen zum Veranstaltungsstoff.
           </li>
           <li>
-          Worked-Example: ausgearbeitete Beispiele ergänzed zur Vorlesung, z.B.
+          Worked-Example: ausgearbeitete Beispiele ergänzed zur Veranstaltung, z.B.
           als Video produziert oder aus der Plenarübung
           </li>
           <li>
           Übung: Übungsblätter
           </li>
           <li>
-          Skript: Vorlesungsmanuskript
+          Skript: Veranstaltungsmanuskript
           <i>
           Beachte:
           </i>
-          Pro Vorlesung kann es höchstens ein Skript geben.
+          Pro Veranstaltung kann es höchstens ein Skript geben.
           Skripte können nicht in andere Medientypen umgewandelt werden,
           dasselbe gilt auch andersherum. Verwendest Du das
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
@@ -716,14 +727,14 @@ de:
           <i>
           Sitzung,
           </i>
-          wenn der Inhalt zu einer Vorlesungssitzung gehört,
+          wenn der Inhalt zu einer Veranstaltungssitzung gehört,
           beispielsweise eine Videoaufzeichnung.
           </li>
           <li>
           <i>
-          Vorlesung,
+          Veranstaltung,
           </i>
-          wenn der Inhalt spezifisch für die konkrete Vorlesung ist,
+          wenn der Inhalt spezifisch für die konkrete Veranstaltung ist,
           jedoch ohne Bezug zu einer konkreten Sitzung, beispielsweise bei
           Worked-Example-Videos
           </li>
@@ -732,8 +743,8 @@ de:
           Modul,
           </i>
           wenn der Inhalt zum Modul gehört, jedoch keinen Bezug zu einer
-          konkreten Vorlesung braucht, bespielsweise Worked-Example-Videos zu
-          Grundlagen, die in jeder Vorlesung eines entsprechenden Moduls gleich
+          konkreten Veranstaltung braucht, bespielsweise Worked-Example-Videos zu
+          Grundlagen, die in jeder Veranstaltung eines entsprechenden Moduls gleich
           behandelt werden.
           </li>
           </ul>
@@ -745,8 +756,8 @@ de:
           <br>
           Anmerkung: Unabhängig davon kann das Medium auch von Personen mit
           höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren
-          oder Vorlesungeditorem aus dem zugeordneten Modul bzw. der
-          zugeordneten Vorlesung.
+          oder Veranstaltungeditorem aus dem zugeordneten Modul bzw. der
+          zugeordneten Veranstaltung.
         description: >
           Die Beschreibung wird in Verweisen auf das Medium
           verwendet. Die Angabe einer Beschreibung ist obligatorisch,
@@ -787,8 +798,8 @@ de:
           </li>
           <li>
           nur AbonenntInnen: Registrierte MaMpf-NutzerInnen, die das
-          assoziierte Modul/die assoziierte Vorlesung/die zur assoziierten
-          Sitzung gehörige Vorlesung abonniert haben,
+          assoziierte Modul/die assoziierte Veranstaltung/die zur assoziierten
+          Sitzung gehörige Veranstaltung abonniert haben,
           können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
           das Medium nicht sehen.
           </li>
@@ -799,7 +810,7 @@ de:
           </ul>
         language: >
           Hier kannst Du die Sprache für das Medium festelegen. Standardmäßig
-          ist das die Sprache der zugehörigen Vorlesung bzw. des zugehörigen
+          ist das die Sprache der zugehörigen Veranstaltung bzw. des zugehörigen
           Moduls.
         video: >
           Das Video sollte im mp4-Format vorliegen.
@@ -829,15 +840,15 @@ de:
           ODER
           </i>
           ) auswählen, zu welchen Modulen bzw.
-          Vorlesungen das Medium assoziiert sein soll, und zwar
+          Veranstaltungen das Medium assoziiert sein soll, und zwar
           <i>
           mit Vererbung / ohne Vererbung.
           </i>
           Im Falle der Auswahl von "mit Vererbung" werden bei Auswahl eines
           Moduls auch alle Medien angezeigt,
-          die zu dazugehörigen Vorlesungen oder Sitzungen verknüpft sind;
-          bei Auswahl einer Vorlesung werden auch alle Medien angezeigt,
-          die mit Sitzungen dieser Vorlesung verknüpft sind.
+          die zu dazugehörigen Veranstaltungen oder Sitzungen verknüpft sind;
+          bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
+          die mit Sitzungen dieser Veranstaltung verknüpft sind.
         search_tags: >
           Hier kannst Du (im Sinne von
           <i>
@@ -861,8 +872,8 @@ de:
           <br>
           Anmerkung: Unabhängig davon kann das Medium auch von Personen mit
           höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren
-          oder Vorlesungeditorem aus dem zugeordneten Modul bzw. der
-          zugeordneten Vorlesung.
+          oder Veranstaltungseditorem aus dem zugeordneten Modul bzw. der
+          zugeordneten Veranstaltung.
         inspection_description: >
           Die Beschreibung wird in Verweisen auf das Medium
           verwendet.
@@ -872,8 +883,8 @@ de:
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
-      extra_lectures: 'Zusätzliche Vorlesungen'
-      missing_lectures: 'Fehlende Vorlesungen'
+      extra_lectures: 'Zusätzliche Veranstaltungen'
+      missing_lectures: 'Fehlende Veranstaltungen'
       create: 'Tag anlegen'
       identify: 'Tag identifizieren'
       identified_tag: 'zu identifizierender Tag'
@@ -899,13 +910,13 @@ de:
           Hier kannst Du auswählen, zu welchen Modulen dieser Tag
           assoziiert sein soll.
         extra_lectures: >
-          Dies ist eine Liste aller Vorlesungen, für welche
+          Dies ist eine Liste aller Veranstaltungen, für welche
           dieser Tag nicht zu dem übergeordneten Modul assoziiert ist,
-          jedoch in einem Abschnitt der entsprechenden Vorlesung auftaucht.
+          jedoch in einem Abschnitt der entsprechenden Veranstaltung auftaucht.
         missing_lectures: >
-          Dies ist eine Liste aller Vorlesungen, für welche
+          Dies ist eine Liste aller Veranstaltungen, für welche
           dieser Tag zu dem übergeordneten Modul assoziiert ist, jedoch in
-          keinem Abschnitt der entsprechenden Vorlesung auftaucht.
+          keinem Abschnitt der entsprechenden Veranstaltung auftaucht.
         sections: >
           Hier kannst Du auswählen, zu welchen Abschnitten dieser Tag
           assoziiert sein soll.
@@ -993,9 +1004,9 @@ de:
           Eintrag gehört. Du hast hierbei zwei Möglichkeiten:
           <ul>
           <li>
-          Ist das Medium zu einer Vorlesung oder einer Sitzung assoziiert,
+          Ist das Medium zu einer Veranstaltung oder einer Sitzung assoziiert,
           kannst Du einen von den Abschnitten auswählen, die zu dieser
-          Vorlesung bzw. Sitzung assoziiert sind.
+          Veranstaltung bzw. Sitzung assoziiert sind.
           Dies ist im wesentlichen für KaViaR-Videos gedacht.
           </li>
           <li>
@@ -1067,7 +1078,7 @@ de:
           erneut aus dem Video abgreifen oder manuell eintippen.
         preselection: >
           Hier kannst Du eine Vorauswahl treffen, aus welchem
-          Modul bzw. welcher Vorlesung der zu referenzierende Eintrag
+          Modul bzw. welcher Veranstaltung der zu referenzierende Eintrag
           stammen soll, bzw. ob es sich um einen externen Eintrag
           (typischerweise z.B. eine Webseite) handelt. Ein externer Eintrag
           kann bei Bedarf auch neu angelegt werden.
@@ -1133,14 +1144,14 @@ de:
           solange sich in dem pdf nichts ändert, wird die Referenz aber
           nichts bewirken, d.h. auf die erste Seite zeigen.
     user:
-      current_lecture: 'Aktuelle Vorlesung'
+      current_lecture: 'Aktuelle Veranstaltung'
       homepage: 'Homepage'
       index: 'NutzerInnenübersicht'
       edited_content: 'Betreute Inhalte'
       no_content: 'Es gibt noch keine entsprechenden Inhalte.'
-      given_lectures: 'Gehaltene Vorlesungen'
+      given_lectures: 'Gehaltene Veranstaltungen'
       edited_courses: 'Editierte Module'
-      edited_lectures: 'Weitere editierte Vorlesungen'
+      edited_lectures: 'Weitere editierte Veranstaltungen'
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
       sorts: 'Admins, EditorInnen und DozentInnen'
@@ -1160,8 +1171,8 @@ de:
           nicht die Administratorenrechte entziehen, das kann nur ein von
           Dir verschiedener Administrator.
         current_lecture: >
-          Hier kannst Du auswählen, welche Vorlesung aktuell für Dich primär
-          ist. Falls hier eine Vorlesung ausgewählt ist, führt dich
+          Hier kannst Du auswählen, welche Veranstaltung aktuell für Dich primär
+          ist. Falls hier eine Veranstaltung ausgewählt ist, führt dich
           ein entsprechendes Icon in der Navigationsleiste direkt zu ihr.
         homepage: >
           Hier kannst Du die Adresse einer Homepage eingeben. Das
@@ -1170,15 +1181,15 @@ de:
           Hier wirst Du demnächst die Möglichkeit haben, ein
           Profilbild hochzuladen.
         given_lectures: >
-          Dies ist die Liste aller Vorlesungen, die als DozentIn
-          verantwortet wurden bzw. werden. Unveröffentlichte Vorlesung
+          Dies ist die Liste aller Veranstaltungen, die als DozentIn
+          verantwortet wurden bzw. werden. Unveröffentlichte Veranstaltung
           sind in rötlicher Farbe gekennzeichnet.
         edited_courses: >
           Dies ist die Liste aller Module, für die
           Moduleditorenrechte bestehen.
         edited_lectures: >
-          Dies ist die Liste aller Vorlesungen, für die
-          zusätzliche Editorenrechte bestehen. Unveröffentlichte Vorlesung
+          Dies ist die Liste aller Veranstaltungen, für die
+          zusätzliche Editorenrechte bestehen. Unveröffentlichte Veranstaltung
           sind in rötlicher Farbe gekennzeichnet.
         edited_media: >
           Dies ist die Liste aller Medien, für die
@@ -1374,7 +1385,7 @@ de:
         Es gibt Ecken, deren zugehörige Quiz-Fragen oder Quiz-Erläuterungen
         unveröffentlicht oder gesperrt sind.
       vertex_teachable_unreleased: >
-        Die zu der %{sort} assoziierte Vorlesung ist
+        Die zu der %{sort} assoziierte Veranstaltung ist
         unveröffentlicht, damit ist die %{sort}
         selbst per Vererbung unveröffentlicht.
       vertex_locked: >
@@ -1425,9 +1436,9 @@ de:
     change_data: 'Zugangsdaten ändern'
     delete_account: 'Account löschen'
     courses: 'Module'
-    primary_lecture: 'Primäre Vorlesung'
-    secondary_lectures: 'Weitere Vorlesungen'
-    no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Vorlesungen.'
+    primary_lecture: 'Primäre Veranstaltung'
+    secondary_lectures: 'Weitere Veranstaltungen'
+    no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Veranstaltungen.'
     passphrase: 'Zugangsschlüssel'
     preferences: 'Einstellungen'
     content_info: >
@@ -1440,17 +1451,17 @@ de:
     subscription_strict: >
       ausschließlich aus den von mir abonnierten Modulen sehen.
     no_notifications: >
-      Ich möchte keine Benachrichtigungen über neue Medien, neue Vorlesungen,
+      Ich möchte keine Benachrichtigungen über neue Medien, neue Veranstaltungen,
       neue Mitteilungen oder neue Features über das MaMpf-interne
       Benachrichtigungssystem erhalten und in MaMpf angezeigt bekommen.
     email_notifications: >
       Ich möchte per Email über Folgendes benachrichtigt werden:
     email_for_announcement:
-      neue Mitteilungen in von mir abonnierten Vorlesungen.
+      neue Mitteilungen in von mir abonnierten Veranstaltungen.
     email_for_medium:
-      neue Medien in von mir abonnierten Vorlesungen oder Modulen.
+      neue Medien in von mir abonnierten Veranstaltungen oder Modulen.
     email_for_teachable:
-      neue angelegte Vorlesungen oder Module.
+      neue angelegte Veranstaltungen oder Module.
     email_for_news:
       Neuigkeiten über MaMpf.
     update: 'Profil updaten'
@@ -1480,11 +1491,11 @@ de:
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
-    new_lecture: 'Neue Vorlesung %{title}'
+    new_lecture: 'Neue Veranstaltung %{title}'
     subscribe_lecture: 'Abonniere sie in deinem Profil.'
     subscribe_lecture_html: 'Du kannst sie über deine %{profile} abonnieren.'
     new_lecture_created_html: >
-      Neue Vorlesung angelegt:<br>
+      Neue Veranstaltung angelegt:<br>
       %{title} (%{term}, %{teacher})
     show_all: 'alle anzeigen'
     lecture:
@@ -1495,8 +1506,8 @@ de:
       new_posts_html: 'Im %{board} gibt es %{count} ungelesene Themen.'
     no_notifications: 'Es liegen keine neuen Benachrichtigungen für Dich vor.'
   lecture:
-    content: 'Vorlesungsinhalt'
-    unpublished: 'Diese Vorlesung ist unveröffentlicht.'
+    content: 'Veranstaltungsinhalt'
+    unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
   sure: 'Bist du sicher?'
   details: 'Details'
   none: 'keine'
@@ -1525,10 +1536,10 @@ de:
   no_related_media: 'Es sind keine verknüpften Medien vorhanden.'
   no_related_questions: >
     Es sind keine verknüpften Fragen vorhanden, die zu Modulen oder
-    Vorlesungen gehören, die Du abonniert hast.
+    Veranstaltungen gehören, die Du abonniert hast.
   related_questions_count: >
     Es sind %{count} mit diesem Begriff verknüpfte Fragen vorhanden,
-    die zu Modulen oder Vorlesungen gehören, die Du abonniert hast.
+    die zu Modulen oder Veranstaltungen gehören, die Du abonniert hast.
   content: 'Inhalt'
   no_content: 'Es liegen keine detaillierten Inhaltsangaben vor.'
   lesson: 'Sitzung'
@@ -1655,12 +1666,12 @@ de:
     info: 'Informationen zum Modul %{title}'
     editors: 'ModuleditorInnen'
     further_info: 'Weitere Informationen'
-    no_lectures: 'Zu diesem Modul existieren noch keine Vorlesungen.'
+    no_lectures: 'Zu diesem Modul existieren noch keine Veranstaltungen.'
     only_course: >
       Du bekommst deswegen nur Medien und Informationen angezeigt,
       die auf der Ebene des Moduls angesiedelt sind.
     no_subscription_html: >
-      Du hast keine zu diesem Modul gehörige Vorlesung %{profile}.
+      Du hast keine zu diesem Modul gehörige Veranstaltung %{profile}.
     subscribed: 'abonniert'
   test:
     info: >
@@ -1739,7 +1750,7 @@ de:
         Worked-Example-Videos
         </li>
         <li>
-        vorangegangene Vorlesungssitzungen
+        vorangegangene Veranstaltungssitzungen
         </li>
         </ul>
         Rosa markierte Referenzen sind Referenzen auf unveröffentlichte
@@ -1821,8 +1832,8 @@ de:
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'Verfasser'
     text: 'Text'
-    new_lecture_subject: 'Neue Vorlesung %{title}'
-    new_lecture: 'Es wurde eine neue Vorlesung angelegt: %{title}.'
+    new_lecture_subject: 'Neue Veranstaltung %{title}'
+    new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
     subscribe_lecture_text: >
       Du kannst sie über Deine Profileinstellungen abonnieren.
@@ -1839,15 +1850,15 @@ de:
     title: 'Titel'
     short_title: 'Kurztitel'
     editors: 'EditorInnen'
-    lecture: 'Vorlesung'
-    lectures: 'Vorlesungen'
+    lecture: 'Veranstaltung'
+    lectures: 'Veranstaltungen'
     media: 'Medien'
     medium: 'Medium'
     tag: 'Tag'
     tags: 'Tags'
     people: 'Personen'
     course_editors: 'ModuleditorInnen'
-    lecture_editors: 'zusätzliche VorlesungseditorInnen'
+    lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     email: 'E-Mail-Addresse'
     preferences: 'Einstellungen'
@@ -1955,7 +1966,7 @@ de:
     delete: 'Löschen'
     publish: 'Veröffentlichen'
     parent_course: 'zum Modul'
-    parent_lecture: 'zur Vorlesung'
+    parent_lecture: 'zur Veranstaltung'
     parent_medium: 'zum Medium'
     create_chapter: 'Kapitel anlegen'
     create_lesson: 'Sitzung anlegen'
@@ -2025,7 +2036,7 @@ de:
       Bist Du sicher? Die Veröffentlichung kann nicht rückgängig gemacht werden.
     lesson: >
       Bist Du sicher? Die zugehörigen Medien werden nicht gelöscht,
-      sondern werden dann der entsprechenden Vorlesung zugeordnet.
+      sondern werden dann der entsprechenden Veranstaltung zugeordnet.
     vertex: >
       Bist Du sicher? Damit werden auch die zugehörigen Kanten gelöscht.
       Beachte, dass die zugehörige Frage oder Bemerkung selbst nicht gelöscht
@@ -2061,7 +2072,7 @@ de:
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
     no_test: 'Für dieses Modul gibt es keinen Test.'
-    no_lecture: 'Eine Vorlesung mit der angeforderten id existiert nicht.'
+    no_lecture: 'Eine Veranstaltung mit der angeforderten id existiert nicht.'
     no_lesson: 'Eine Sitzung mit der angeforderten id existiert nicht.'
     no_page: >
       Die angeforderte Seit existiert nicht. Du wurdest auf die
@@ -2138,7 +2149,7 @@ de:
           attributes:
             course:
               taken: >
-                Eine Vorlesung mit derselben Kombination aus Modul, Semester
+                Eine Veranstaltung mit derselben Kombination aus Modul, Semester
                 und DozentIn existiert bereits.
               required: 'Es muss ein Modul angegeben werden.'
             content_mode:
@@ -2162,15 +2173,15 @@ de:
             sort:
               blank: 'Es muss ein Typ angegeben werden.'
               lecture_manuscript_exists: >
-                Diese Vorlesung hat schon ein Skript.
+                Diese Veranstaltung hat schon ein Skript.
               lecture_only: >
-                Der Medienyp "Skript" kann nur zu Vorlesungen
+                Der Medienyp "Skript" kann nur zu Veranstaltungen
                 assoziiert werden.
               no_video: >
                 Medien vom Typ "Skript" beinhalten kein Video.
             teachable:
               blank: >
-                Es muss eine Assoziation zu einem Modul/Vorlesung/Sitzung
+                Es muss eine Assoziation zu einem Modul/Veranstaltung/Sitzung
                 angegeben werden.
             description:
               blank: 'Es muss eine Beschreibung angegeben werden.'

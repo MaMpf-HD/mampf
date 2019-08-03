@@ -110,7 +110,7 @@ en:
     navbar:
       exit: 'Exit administration'
       main: 'Overview'
-      current_lecture: 'Current lecture'
+      current_lecture: 'Current event series'
       logout: 'Logout'
       media_search: 'Search media'
       tags: 'Tag overview'
@@ -120,13 +120,14 @@ en:
       courses: 'Course'
       profile: 'My Profile'
     main:
-      my_lectures: 'My Lectures'
-      create_lecture: 'Create Lecture'
+      my_lectures: 'My event series'
+      type: 'type'
+      create_lecture: 'Create event series'
       as_teacher: 'As teacher'
       as_editor: 'As additional editor'
       as_course_editor: 'As course editor'
       no_lectures_taught: >
-        There is no lecture for which you are listed as teacher or editor.
+        There is no event series for which you are listed as teacher or editor.
       my_courses: 'My Courses'
       create_course: 'Create Course'
       no_edited_courses: >
@@ -140,34 +141,35 @@ en:
       user_profile: 'user profile'
       no_media: >
         There are no media for which you are registered as editor.
-      other_lectures: 'Other lectures'
-      no_other_lectures: 'There are no other lectures.'
+      other_lectures: 'Other event series'
+      no_other_lectures: 'There are no other event series.'
       other_courses: 'Other courses'
       no_other_courses: 'There are no other courses.'
       info:
         lecture_definition:
           This is the list of all
-          <i>Lectures</i>
+          <i>event series</i>
           for which you have editing access.
           <br>
           <br>
-          A
-          <i>Lecture</i>
-          in the sense of MaMpf is a lecture with the topic of the parent
+          An
+          <i>Event series</i>
+          in the sense of MaMpf is a lecture course/seminar/proseminar/research
+          seminar with the topic of the parent
           <i>Course</i>,
           given by a specific teacher in specific term.
           <br>
-          Lectures in red have not yet been published.
+          Event series in red have not yet been published.
         given_lectures: >
-          This is the list of all lectures that you have given as a teacher.
+          This is the list of all event series that you have given as a teacher.
           For these you have editing access, of course.
         edited_lectures: >
-          This is the list of all lectures for which you are liste as
+          This is the list of all event series for which you are liste as
           additional editor. By that, you have editing access to those.
         lectures_as_course_editor: >
-          This is the list of all lectures that belong to courses for which you
-          are course editor, minus those lectures which you have given yourself.
-          By inheritance, you have editing access to these lectures.
+          This is the list of all event series that belong to courses for which you
+          are course editor, minus those event series which you have given yourself.
+          By inheritance, you have editing access to these event series.
         course_definition: >
           This is the list of all
           <i>Courses</i>,
@@ -219,22 +221,31 @@ en:
           </li>
           </ul>
         other_lectures: >
-          This is the list of lectures for which you do not have editing access.
+          This is the list of event series for which you do not have editing access.
           (Except if you are an admin :-P )
         other_courses: >
           This is the list of courses for which you do not have editing access.
           (Except if you are an admin :-P )
       term: 'Term'
+      term/type: 'Term/Type'
       title: 'Title'
       teacher: 'Teacher'
       editors: 'Editors'
     lecture:
-      new_lecture: 'Create new lecture'
+      lecture: 'Lecture'
+      lecture_short: 'L'
+      seminar: 'Seminar'
+      seminar_short: 'S'
+      proseminar: 'Proseminar'
+      proseminar_short: 'PS'
+      oberseminar: 'Research Seminar'
+      research_seminar: 'RS'
+      new_lecture: 'Create new event series'
       no_courses_yet: 'Before you can do that, you have to create a course.'
       no_terms_yet: 'Before_you can do that, you have to create a term.'
       no_content_yet: 'There is not any information about the contents.'
-      publish: 'Publish Lecture'
-      publish_request: 'When this lecture is published,'
+      publish: 'Publish event series'
+      publish_request: 'When this event series is published,'
       publish_all_media: >
         all related media shall be published as well.
       media_access: >
@@ -243,18 +254,18 @@ en:
         all related media shall remain unpublished.
       info:
         course: >
-          Here you can select the course to which this lecture belongs.
+          Here you can select the course to which this event series belongs.
         term: >
-          Here you can select the term in which this lecture takes place or
+          Here you can select the term in which this event series takes place or
           took place.
         teacher: >
-          Here you can select the teacher of this lecture.
-          Normally this should be the person that actually gives the lecture.
+          Here you can select the teacher of this event series.
+          Normally this should be the person that actually gives the event series.
           If this person does not want to upload materials himself or
-          herself, this can be realized by additional lecture editors.
+          herself, this can be realized by additional event series editors.
         workflow: >
           In the following we describe one possible workflow.
-          The workflow depends on whether the lecture is
+          The workflow depends on whether the event series is
           <i>video based</i> oder <i>script based</i>.
           <ul>
           <li>
@@ -284,7 +295,7 @@ en:
           </li>
           </ul>
           You can try to combine both variants. If you have a video based
-          lecture, you can of upload a manuscript as well and import its
+          event series, you can of upload a manuscript as well and import its
           structure, if the manuscript uses MaMpf's LaTeX package.
         variants: >
           Here you can set how MaMpf gets the detailed contents of sections
@@ -317,45 +328,45 @@ en:
           Orphans session are sessions that do not belong to any section.
           They can emerge if you deleted a section that had sessions in it.
         media: >
-          This is the list of all media that are associated to this lecture
-          or sessions of this lecture. Media in red are not yet published or
+          This is the list of all media that are associated to this event series
+          or sessions of this event series. Media in red are not yet published or
           locked. Additionaly, a note will be shown in case there exist media
-          on the level of the course that this lecture belongs to.
+          on the level of the course that this event series belongs to.
         course_tags: >
           These are the tags associated to the parent course that appear in at least
-          one section of this lecture.
+          one section of this event series.
         additional_tags: >
           These are the tags that appear in at least one section of this
-          lecture, but are not associated to the parent course.
+          event series, but are not associated to the parent course.
         untreated_tags: >
           These are the tags associated to the parent course that do
-          not appear in any section of this lecture.
+          not appear in any section of this event series.
         course_editors: >
           Course editors have editing access to the parent course. They inherit
-          editing access to any lecture that belongs to this course.
+          editing access to any event series that belongs to this course.
         lecture_editors: >
-          Additional lecture editors are people who have editing access to
-          this lecture, but are different from the teacher and the course
+          Additional event series editors are people who have editing access to
+          this event series, but are different from the teacher and the course
           editor. E.g., this can be teaching assistants who upload material for
-          this lecture.
+          this event series.
         subscribers_count: >
-          This is the number of all users who have subscribed this lecture in
+          This is the number of all users who have subscribed this event series in
           their profile settings.
         organizational: >
           If you check this box, the general information will be visible for
-          all subscribers of your lecture in (it can be accessed via
+          all subscribers of your event series in (it can be accessed via
           the sidebar).
           The text they see will be the text below. As a suggestion, we have
           a default text that you may edit as you wish.
         muesli: >
           If you check this box, the link to MÜSLI will be activated in the
-          sidebar for this lecture.
+          sidebar for this event series.
           their profile settings.
         first_chapter: >
           If the first chapter is supposed to have a number different from "1",
-          you can enter this number here. E.g., this may apply to lectures
+          you can enter this number here. E.g., this may apply to event series
           where chapter numbering is continued over successive terms as it
-          is sometimes done in successive lectures.
+          is sometimes done in successive event series.
         first_section: >
           If absolute numbering is activated for sections, you can enter
           the number of the first section here.
@@ -364,10 +375,10 @@ en:
           E.g., the third section in chapter 4 is §4.3. If you deactivate this
           behaviour, sections will be counted across chapter borders.
         passphrase: >
-          If you enter something here, users can subscribe to this lecture only
-          upon entering this passphrase. Media associated to this lecture or
+          If you enter something here, users can subscribe to this event series only
+          upon entering this passphrase. Media associated to this event series or
           any of its sessions are then invisible for users who have not
-          subscribed to this lecture.
+          subscribed to this event series.
         chapter_title: >
           Here you can enter the title of the chapter.
         insert_after_chapter: >
@@ -376,7 +387,7 @@ en:
         date: >
           Here you can select the date when the session took place.
         sections: >
-          Here you can select which sections of the lecture where treated in
+          Here you can select which sections of the event series where treated in
           this session. By default, the session gets assigned all tags that
           belong to these sections. When editing the session, you can refine
           the tag selection.
@@ -405,9 +416,9 @@ en:
       no_course_editors: >
         There are no course editors.
       no_lecture_editors: >
-        There are no additional lecture editors.
+        There are no additional event series editors.
       organizational_visible: 'General information visible'
-      uses_muesli: 'Lecture uses MÜSLI'
+      uses_muesli: 'Event series uses MÜSLI'
       first_chapter: 'Number of the first chapter'
       first_section: 'Nummer of the first section'
       absolute_numbering: 'absolute numbering'
@@ -417,7 +428,7 @@ en:
     course:
       new_course: 'Create new course'
       preceding_courses: 'Preceding courses'
-      no_lectures: 'There are no lectures for this course.'
+      no_lectures: 'There are no event series for this course.'
       additional_information: 'Additional information'
       additional_information_visible: 'Additional information visible'
       info:
@@ -428,8 +439,8 @@ en:
           The short title will be used as abbreviation in several places.
         editors: >
           Here you can enter the course editors. They can edit the course,
-          in particular they can create lectures within the course. Every course
-          editor inherits editing access for all lectures belonging to the
+          in particular they can create event series within the course. Every course
+          editor inherits editing access for all event series belonging to the
           course.
         preceding_courses: >
           Here you can enter which courses this course builds upon.
@@ -438,10 +449,10 @@ en:
           This is relevant because users can adjust their settings so
           that they are shown related materials form preceding courses.
         lectures: >
-          This is the list of lectures for this course.
-          Unpublished lectures are displayed in red.
+          This is the list of event series for this course.
+          Unpublished event series are displayed in red.
         subscribers_count: >
-          This is the number of all users who have subscribed this lecture in
+          This is the number of all users who have subscribed this event series in
           their profile settings.
         tags: >
           This is the list of all tags that are associated to this course.
@@ -449,8 +460,8 @@ en:
           You can add tags, remove tags and create new tags.
         editors_inspect: >
           This is the list of course editors. They can edit the course,
-          in particular they can create lectures within the course. Every course
-          editor inherits editing access for all lectures belonging to the
+          in particular they can create event series within the course. Every course
+          editor inherits editing access for all event series belonging to the
           course.
         preceding_courses_inspect: >
           This is the list of courses this course builds upon.
@@ -475,7 +486,7 @@ en:
           instead of 'Chapter 3. My Chapter'.
         exempt: >
           If you check this box, this chapter will not be listed in the
-          lecture contents visible for users. Note however that the chapter
+          event series contents visible for users. Note however that the chapter
           and its published contents can be accessed by users, e.g. if they
           search for it.
     section:
@@ -504,12 +515,12 @@ en:
           have been treated.
         exempt: >
           If you check this box, this section will not be listed in the
-          lecture contents visible for users. Note however that the section
+          event series contents visible for users. Note however that the section
           and its published contents can be accessed by users, e.g. if they
           search for it.
         details: >
           Here you can enter details that are important for you (e.g.
-          literature used in this section). Users can see them in the lecture
+          literature used in this section). Users can see them in the event series
           contents card, right under the section title.
         list: >
           This is the list of all associated sections.
@@ -529,7 +540,7 @@ en:
         date_inspection: >
           This is the date the session took place.
         sections: >
-          Here you can select which sections of the lecture where treated in
+          Here you can select which sections of the event series were treated in
           this session. By default, the session gets assigned all tags that
           belong to these sections. When editing the session, you can refine
           the tag selection.
@@ -586,7 +597,7 @@ en:
         locked: >
           This medium has been locked. It can be unlocked via
           Basics->Access settings.
-        unpublished_lecture: 'in an unpublished lecture'
+        unpublished_lecture: 'in an unpublished event series'
         medium_definition: >
           A
           <i>Medium</i>
@@ -625,23 +636,23 @@ en:
           Each medium has exactly one type. The following types are available:
           <ul>
           <li>
-          Lesson: corresponds roughly to the content of a lecture session.
-          Here you can store videos or manuscripts of lecture sessions
-          or material to reinforce the material provided in the lecture.
+          Lesson: corresponds roughly to the content of a event series session.
+          Here you can store videos or manuscripts of event series sessions
+          or material to reinforce the material provided in the event series.
           </li>
           <li>
-          Worked Example: worked examples that supplement the lecture material,
+          Worked Example: worked examples that supplement the event series material,
           e.g. produced as a video of form the plenary exercise
           </li>
           <li>
           Exercise: Exercise sheets
           </li>
           <li>
-          Manuscript: Lecture Manuskript
+          Manuscript: Event series Manuscript
           <i>
           Note:
           </i>
-          There can be only one manuscript per lecture.
+          There can be only one manuscript per event series.
           Manuscripts cannot be converted to other media types, the same goes
           in the other direction. If you use the
           <a href='/mampf.sty' download='mampf.sty'>MaMpf Package</a>
@@ -678,21 +689,21 @@ en:
           in MaMpf, and to make MaMpf media available in the manuscript via
           QR-Codes.
         teachable: >
-          Each medium is associate to exactly one course/lecture/session
+          Each medium is associated to exactly one course/event series/session
           It is associated to a
           <ul>
           <li>
           <i>
           Session,
           </i>
-          if the content is associated to a sessio of a lecture, e.g. a video
-          recording of thi session.
+          if the content is associated to a sessio of a event series, e.g. a video
+          recording of this session.
           </li>
           <li>
           <i>
-          Lecture,
+          Event series,
           </i>
-          if the content is specific for the lecture, but there is no
+          if the content is specific for the event series, but there is no
           reference to a concrete session, e.g. in Worked Example videos
           </li>
           <li>
@@ -700,9 +711,9 @@ en:
           Course,
           </i>
           if the content is specific for the course, but there is no reference
-          to a concrete lecture, e.g. in Worked Example videos that deal
-          with basic materials that are required in each lecture of this course,
-          no matter who the teacher is.
+          to a concrete event series, e.g. in Worked Example videos that deal
+          with basic materials that are required in each event series of this course,
+          no matter who the teacher is and what format it has.
           </li>
           </ul>
         editors: >
@@ -712,11 +723,11 @@ en:
           <br>
           Note: Independently from this setting, this medium can be edited
           by people with hiher access rights, e.g. editors of the associated
-          course or lecture.
+          course or event series.
         description: >
           The description is used in references to this medium. Giving a
           description is compulsory except for a lesson associated to
-          a lecture session or a manuscript.
+          a event series session or a manuscript.
         related_tags: >
           This is the list of all tags that are associated to this medium.
           If the medium was created from within a session, you will at first
@@ -749,8 +760,8 @@ en:
           medium. Non-registered users do not have access to the medium.
           </li>
           <li>
-          only subscribers: Registered users of MaMpf who havbe subscribed to
-          the associated lecture/course can see the medium. Other generic
+          only subscribers: Registered users of MaMpf who have subscribed to
+          the associated event series/course can see the medium. Other generic
           MaMpf users cannot see the medium.
           </li>
           <li>
@@ -759,7 +770,7 @@ en:
           </ul>
         language: >
           Here you can select the language for this medium. By default,
-          it is the language of the associated lecture/course.
+          it is the language of the associated event series/course.
         video: >
           The video should be in mp4 format. The recommended horizontal
           resolution is 1080 Pixel for future compatibility.
@@ -786,13 +797,14 @@ en:
           <i>
           OR
           </i>
-          ), to which courses or lectures this medium is associated to
+          ), to which courses or event series this medium is associated to
           <i>
           with inheritance (without inheritance.
           </i>
           If "with inheritance" is chosen, this means that if you select a
-          course, media that are associated to the course's lectures and sessions will be shown as well;
-          if you select a lecture, media that are associated to the lecture's
+          course, media that are associated to the course's event series
+          and sessions will be shown as well;
+          if you select a event series, media that are associated to the event series's
           sessions will be shown as well.
         search_tags: >
           Here you can select the tags (in the sense of
@@ -817,7 +829,7 @@ en:
           <br>
           Note: Independently from this setting, this medium can be edited
           by people with higher access rights, e.g. editors of the associated
-          course or lecture.
+          course or event series.
         inspection_description: >
           The description is used in references to this medium.
         inspection_related_tags: >
@@ -825,8 +837,8 @@ en:
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
-      extra_lectures: 'Addictional Lectures'
-      missing_lectures: 'Missing lectures'
+      extra_lectures: 'Addictional event series'
+      missing_lectures: 'Missing event series'
       create: 'Create Tag'
       identify: 'Identify Tag'
       identified_tag: 'Tdentified Tag'
@@ -850,11 +862,11 @@ en:
         courses: >
           Here you can select the courses that this tag is associated to.
         extra_lectures: >
-          This is the list of all lectures where the tag is not associated to
-          the parent course, but appears in one of the lecture's sections.
+          This is the list of all event series where the tag is not associated to
+          the parent course, but appears in one of the event series's sections.
         missing_lectures: >
-          This is the list of all lectures for which the tag is associated to
-          the parent course but does not appear in any of the lecture's
+          This is the list of all event series for which the tag is associated to
+          the parent course but does not appear in any of the event series's
           sections.
         sections: >
           Here you can select the sections that this tag is associated to.
@@ -945,8 +957,8 @@ en:
           two choices:
           <ul>
           <li>
-          If the medium is associated to a lecture or a session, you can
-          select one of the sections associated to this lecture or session.
+          If the medium is associated to an event series or a session, you can
+          select one of the sections associated to this event series or session.
           This is primarily designed for session videos.
           </li>
           <li>
@@ -1012,7 +1024,7 @@ en:
           be already in here. Alternatively, you can grab the time form the
           video using the 'Take Time' button, or you may enter it manually.
         preselection: >
-          Here you can preselect, from which course or lecture the
+          Here you can preselect, from which course or event series the
           preferenced item is supposed to come from or if it is an external
           item (typically a website). An external item can be created
           if necessary.
@@ -1065,15 +1077,15 @@ en:
           You can still create this reference, but as long as the pdf remains
           unchanged the reference will just point to the first page of the pdf.
     user:
-      current_lecture: 'Current Lecture'
+      current_lecture: 'Current event series'
       homepage: 'Homepage'
       profile_image: 'Profile image'
       index: 'User Index'
       edited_content: 'Curated Content'
       no_content: 'There is no content yet.'
-      given_lectures: 'Given Lectures'
+      given_lectures: 'Given Event Series'
       edited_courses: 'Edited Courses'
-      edited_lectures: 'Additional Edited Lectures'
+      edited_lectures: 'Additional Edited Event Series'
       edited_media: 'Edited Media'
       administration: 'User Administration'
       sorts: 'Admins, Editors and Teachers'
@@ -1091,8 +1103,8 @@ en:
           You cannot revoke your own administrator rights, only another
           adminsitrator can do that.
         current_lecture: >
-          Here you can select the lecture which is currently your primary one.
-          If a lecture is selected here, an icon in the navbar will take
+          Here you can select the event series which is currently your primary one.
+          If a event series is selected here, an icon in the navbar will take
           you right there.
         homepage: >
           Here you can enter the adress of a homepage. This can make sense
@@ -1100,13 +1112,13 @@ en:
         profile_image: >
           Here you will soon have the opportunity to upload a profile image.
         given_lectures: >
-          This is the list of lectures that were/are given as teacher.
-          Unpublished lectures are displayed in red.
+          This is the list of event series that were/are given as teacher.
+          Unpublished event series are displayed in red.
         edited_courses: >
           This is the list of courses for which there are course editor rights.
         edited_lectures: >
-          This is the list of lectures for which there are editing rights
-          (even if the teacher was a different person). Unpublished lectures
+          This is the list of event series for which there are editing rights
+          (even if the teacher was a different person). Unpublished event series
           are displayed in red.
         edited_media: >
           This is the list of media for which there are editing rights.
@@ -1290,7 +1302,7 @@ en:
       unreleased_vertices: >
         There are vertices whose associated media are unpublished or locked.
       vertex_teachable_unreleased: >
-        The lecture associated to this %{sort} is unpublished,
+        The event series associated to this %{sort} is unpublished,
         therefore the %{sort} itself is unpublished by inheritance.
       vertex_locked: >
         This %{sort} is locked.
@@ -1336,9 +1348,9 @@ en:
       This name will be displayed in your board posts.
     change_data: 'Change login data'
     courses: 'Courses'
-    primary_lecture: 'Primary lecture'
-    secondary_lectures: 'Secondary lectures'
-    no_lectures: 'There are no lectures available for this course yet.'
+    primary_lecture: 'Primary event series'
+    secondary_lectures: 'Secondary event seriess'
+    no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
     preferences: 'Preferences'
     content_info: >
@@ -1349,16 +1361,16 @@ en:
     subscription_all: 'from all courses.'
     subscription_strict: 'only from the courses I have subscribed to.'
     no_notifications: >
-      I do not want to obtain notifications about new media, new lectures
+      I do not want to obtain notifications about new media, new event series
       or new features via the internal notification system of MaMpf.
     email_notifications: >
       I want to receive email notifications about:
     email_for_announcement:
-      new announcements in lectures I have subscribed to.
+      new announcements in event series I have subscribed to.
     email_for_medium:
-      new media in lectures or courses I have subscribed to.
+      new media in event series or courses I have subscribed to.
     email_for_teachable:
-      new lectures or courses.
+      new event series or courses.
     email_for_news:
       news about MaMpf.
     update: 'Update profile'
@@ -1389,11 +1401,11 @@ en:
     profile: 'profile'
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
-    new_lecture: 'New lecture %{title}'
+    new_lecture: 'New event series %{title}'
     subscribe_lecture: 'You can subscribe it via your profile.'
     subscribe_lecture_html: 'You can subscribe it via your %{profile}.'
     new_lecture_created_html: >
-      New lecture created:<br>
+      New event series created:<br>
       %{title} (%{term}, %{teacher})
     show_all: 'Show all'
     lecture:
@@ -1404,8 +1416,8 @@ en:
       new_posts_html: 'There are %{count} unread topics in the %{board}.'
     no_notifications: 'There are no new notifications for you.'
   lecture:
-    content: 'Lecture contents'
-    unpublished: 'This lecture is unpublished.'
+    content: 'Event series contents'
+    unpublished: 'This event series is unpublished.'
   details: 'Details'
   none: 'none'
   back: 'Back'
@@ -1431,10 +1443,10 @@ en:
   related_media: 'Related media'
   no_related_media: 'There are no related media.'
   no_related_questions: >
-    There are no related questions that are associated to courses or lectures
+    There are no related questions that are associated to courses or event series
     that you have subscribed.
   related_questions_count: >
-    There are %{count} related questions to this tag in courses or lectures
+    There are %{count} related questions to this tag in courses or event series
     that you have subscribed.
   content: 'Content'
   no_content: 'There is no information about content available.'
@@ -1479,7 +1491,7 @@ en:
     no_labels: >
       In this section there are no labels.
     visibility: >
-      Visibility in lecture contents
+      Visibility in event series contents
     no_chapters: >
       There are no chapters in the manuscript.
     section_in_unlabelled_chapter: >
@@ -1561,12 +1573,12 @@ en:
     info: 'Information about the course %{title}'
     editors: 'Course Editors'
     further_info: 'Further information'
-    no_lectures: 'There are no lectures for this module.'
+    no_lectures: 'There are no event series for this module.'
     only_course: >
       Therefore, only those media and information will be displayed
       that are located at course level.
     no_subscription_html: >
-      You are not %{profile} to any of this course's lectures.
+      You are not %{profile} to any of this course's event series.
     subscribed: 'subscribed'
   test:
     info: >
@@ -1575,7 +1587,7 @@ en:
     start: 'Start Test'
     notation: >
       Notation and terminology in these questions may deviate from those used
-      in your lecture by your teacher.
+      in your event series by your teacher.
     future: >
       In the future you will be able to specify the content and the number
       of questions.
@@ -1709,8 +1721,8 @@ en:
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
-    new_lecture_subject: 'New lecture %{title}'
-    new_lecture: 'A new lecture has been made available: %{title}.'
+    new_lecture_subject: 'New event series %{title}'
+    new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture_html: 'You can subscribe it in your %{profile}.'
     subscribe_lecture_text: >
       You can subscribe it in your profile settings.
@@ -1727,15 +1739,15 @@ en:
     title: 'Title'
     short_title: 'Short title'
     editors: 'Editors'
-    lecture: 'Lecture'
-    lectures: 'Lectures'
+    lecture: 'Event Series'
+    lectures: 'Event Series'
     media: 'Media'
     medium: 'Medium'
     tag: 'Tag'
     tags: 'Tags'
     people: 'People'
     course_editors: 'Course Editors'
-    lecture_editors: 'Additional Lecture Editors'
+    lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
     email: 'Email address'
     preferences: 'Preferences'
@@ -1846,14 +1858,14 @@ en:
     delete: 'Delete'
     publish: 'Publish'
     parent_course: 'Parent Course'
-    parent_lecture: 'Parent Lecture'
+    parent_lecture: 'Parent Event Series'
     parent_medium: 'Parent Medium'
     create_chapter: 'Create Chapter'
     create_lesson: 'Create Session'
     create_section: 'Create Section'
     create_medium: 'Create Medium'
     create_announcement: 'Create Announcement'
-    create_lecture: 'Create Lecture'
+    create_lecture: 'Create Event Series'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -1911,7 +1923,7 @@ en:
       Are you sure? The publishing cannot be undone.
     lesson: >
       Are you sure? The associated media will not be deleted,
-      but will become associated to the parent lecture.
+      but will become associated to the parent event series.
     vertex: >
       Are you sure? All associated edges will be deleted as well.
       Note that the corresponding question or remark will NOT be deleted,
@@ -1946,7 +1958,7 @@ en:
     no_chapter: 'There is no chapter with this id.'
     no_course: 'There is no course with this id.'
     no_test: 'There is no test for this course.'
-    no_lecture: 'There is no lecture with this id.'
+    no_lecture: 'There is no event series with this id.'
     no_lesson: 'There is no session with this id.'
     no_page: >
       The requested page does not exist. You were redirected to
@@ -2021,7 +2033,7 @@ en:
           attributes:
             course:
               taken: >
-                A lecture with the same combination of course, term and teacher
+                An event series with the same combination of course, term and teacher
                 already exists.
               required: 'You need to give a course.'
             content_mode:
@@ -2045,9 +2057,9 @@ en:
             sort:
               blank: 'You need to give a type.'
               lecture_manuscript_exists: >
-                This lecture already has a manuscript.
+                This event series already has a manuscript.
               lecture_only: >
-                Media of type 'Manuscript' can only be associated to lectures.
+                Media of type 'Manuscript' can only be associated to event series.
               no_video: >
                 Media of type 'Manuscript' do not contain a video.
               no_conversion_from_script: >
@@ -2057,7 +2069,7 @@ en:
                 A medium of type different from 'Manuscript' cannot be converted
                 to a medium of type 'Manuscript'.
             teachable:
-              blank: 'You need to give an associated course/lecture/lesson.'
+              blank: 'You need to give an associated course/event series/lesson.'
             description:
               blank: 'You need to give a description.'
             editors:

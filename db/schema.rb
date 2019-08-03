@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_07_09_111532) do
+ActiveRecord::Schema.define(version: 2019_08_03_110440) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -147,6 +147,7 @@ ActiveRecord::Schema.define(version: 2019_07_09_111532) do
     t.text "content_mode"
     t.text "passphrase"
     t.text "locale"
+    t.text "sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end

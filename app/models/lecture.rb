@@ -73,7 +73,7 @@ class Lecture < ApplicationRecord
   end
 
   def title
-    course.title + ', ' + term.to_label
+    "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
   end
 
   def to_label
@@ -81,7 +81,7 @@ class Lecture < ApplicationRecord
   end
 
   def compact_title
-    course.compact_title + '.' + term.compact_title
+    "#{sort_localized_short}.#{course.compact_title}.#{term.compact_title}"
   end
 
   def title_for_viewers
@@ -247,41 +247,49 @@ class Lecture < ApplicationRecord
   # term, title) in various combinations
 
   def short_title
-    course.short_title + ' ' + term.to_label_short
+    "(#{sort_localized_short}) #{course.short_title} #{term.to_label_short}"
   end
 
   def short_title_release
     return short_title if published?
-    short_title + ' (' + I18n.t('access.unpublished') + ')'
+    "#{short_title} (#{I18n.t('access.unpublished')})"
   end
 
   def short_title_brackets
-    course.short_title + ' (' + term.to_label_short + ')'
+    "(#{sort_localized_short}) #{course.short_title} (#{term.to_label_short})"
   end
 
   def title_with_teacher
     return title unless teacher.present? && teacher.name.present?
-    "#{title} (#{teacher.name})"
+    "(#{sort_localized_short}) #{title} (#{teacher.name})"
   end
 
   def term_teacher_info
     return term.to_label unless teacher.present?
     return term.to_label unless teacher.name.present?
-    term.to_label + ', ' + teacher.name
+    "(#{sort_localized_short}) #{term.to_label}, #{teacher.name}"
   end
 
   def term_teacher_published_info
     return term_teacher_info if published?
-    term_teacher_info + ' (unveröffentlicht)'
+    "#{term_teacher_info} (#{I18n.t('access.unpublished')})"
   end
 
   def title_term_info
-    course.title + ', ' + term.to_label
+    "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
   end
 
   def title_teacher_info
     return course.title unless teacher.present? && teacher.name.present?
-    course.title + ' (' + teacher.name + ')'
+    "(#{sort_localized_short}) #{course.title} (#{teacher.name})"
+  end
+
+  def sort_localized
+    I18n.t("admin.lecture.#{sort}")
+  end
+
+  def sort_localized_short
+    I18n.t("admin.lecture.#{sort}_short")
   end
 
   # returns whether the lecture is newest among all lectures associated to its
@@ -468,7 +476,15 @@ class Lecture < ApplicationRecord
     user.active_announcements(lecture).map(&:notifiable)
   end
 
-#  private
+  def self.sorts
+    ['lecture', 'seminar', 'proseminar', 'oberseminar']
+  end
+
+  def self.sort_localized
+    Lecture.sorts.map { |s| [s, I18n.t("admin.lecture.#{s}")] }.to_h
+  end
+
+  private
 
   # used for after save callback
   def remove_teacher_as_editor
@@ -479,13 +495,13 @@ class Lecture < ApplicationRecord
   # to this lecture and a given project (kaviar, semsam etc.)
   def project_as_user?(project)
     Rails.cache.fetch("#{cache_key}/#{project}") do
-      Medium.where(sort: sort[project],
+      Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: self).exists? ||
-      Medium.where(sort: sort[project],
+      Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: lessons).exists? ||
-      Medium.where(sort: sort[project],
+      Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: course).exists?
     end
@@ -494,21 +510,21 @@ class Lecture < ApplicationRecord
   def project?(project, user)
     return project_as_user?(project) unless edited_by?(user)
     course_media = if user.in?(course.editors)
-                     Medium.where(sort: sort[project],
+                     Medium.where(sort: medium_sort[project],
                                   teachable: course).exists?
                    else
-                      Medium.where(sort: sort[project],
+                      Medium.where(sort: medium_sort[project],
                                    released: ['all', 'users', 'subscribers'],
                                    teachable: course).exists?
                    end
-    lecture_media = Medium.where(sort: sort[project],
+    lecture_media = Medium.where(sort: medium_sort[project],
                                  teachable: self).exists?
-    lesson_media = Medium.where(sort: sort[project],
+    lesson_media = Medium.where(sort: medium_sort[project],
                                 teachable: lessons).exists?
     course_media || lecture_media || lesson_media
   end
 
-  def sort
+  def medium_sort
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
       'keks' => ['Quiz'], 'nuesse' => ['Nuesse'],
       'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste']}

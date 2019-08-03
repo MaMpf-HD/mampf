@@ -50,6 +50,15 @@
                      { class: 'selectize',
                        data: { current: current_user.id } } %>
       </div>
+      <div class="col-12 form-group">
+        <%= f.label :sort,
+                    t('basics.type') %>
+        <%= f.select :sort,
+                     options_for_select(Lecture.sort_localized.invert.to_a,
+                                        'lecture'),
+                     {},
+                     { class: 'form-control'} %>
+      </div>
     </div>
     <div class="row">
       <div class="col-12 text-center">
