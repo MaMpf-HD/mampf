@@ -133,7 +133,7 @@ class Lecture < ApplicationRecord
   # lecture tags are all tags that are associated to sections within chapters
   # associated to the lecture
   def tags
-    Rails.cache.fetch("#{cache_key}/tags") do
+    Rails.cache.fetch("#{cache_key_with_version}/tags") do
       chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
               .flatten.uniq
     end
@@ -189,7 +189,7 @@ class Lecture < ApplicationRecord
 
 
   def media_with_inheritance
-    Rails.cache.fetch("#{cache_key}/media_with_inheritance") do
+    Rails.cache.fetch("#{cache_key_with_version}/media_with_inheritance") do
       media_with_inheritance_uncached
     end
   end
@@ -317,7 +317,7 @@ class Lecture < ApplicationRecord
   end
 
   def sections_cached
-    Rails.cache.fetch("#{cache_key}/sections") do
+    Rails.cache.fetch("#{cache_key_with_version}/sections") do
       sections.to_a
     end
   end
@@ -326,7 +326,7 @@ class Lecture < ApplicationRecord
   # their ids.
   # Is used in options_for_select in form helpers.
   def section_selection
-    Rails.cache.fetch("#{cache_key}/section_selection") do
+    Rails.cache.fetch("#{cache_key_with_version}/section_selection") do
       sections.natural_sort_by(&:calculated_number)
               .map { |s| [s.to_label, s.id] }
     end
@@ -445,7 +445,7 @@ class Lecture < ApplicationRecord
   end
 
   def begin_date
-    Rails.cache.fetch("#{cache_key}/begin_date") do
+    Rails.cache.fetch("#{cache_key_with_version}/begin_date") do
       term&.begin_date
     end
   end
@@ -507,7 +507,7 @@ class Lecture < ApplicationRecord
   # looks in the cache if there are any media associated *with inheritance*
   # to this lecture and a given project (kaviar, semsam etc.)
   def project_as_user?(project)
-    Rails.cache.fetch("#{cache_key}/#{project}") do
+    Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: self).exists? ||

@@ -66,7 +66,7 @@ class Lesson < ApplicationRecord
   end
 
   def title_for_viewers
-    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+    Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       lecture.title_for_viewers + ', ' + I18n.t('lesson') + ' ' + number.to_s +
         ' ' + I18n.t('from') + ' ' + date_localized
     end

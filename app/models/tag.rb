@@ -60,7 +60,7 @@ class Tag < ApplicationRecord
   end
 
   def title
-    Rails.cache.fetch("#{cache_key}/title") do
+    Rails.cache.fetch("#{cache_key_with_version}/title") do
       local_title_uncached
     end
   end
@@ -71,7 +71,7 @@ class Tag < ApplicationRecord
   end
 
   def extended_title
-    Rails.cache.fetch("#{cache_key}/extended_title") do
+    Rails.cache.fetch("#{cache_key_with_version}/extended_title") do
       extended_title_uncached
     end
   end
@@ -90,19 +90,19 @@ class Tag < ApplicationRecord
   end
 
   def other_titles
-    Rails.cache.fetch("#{cache_key}/other_titles") do
+    Rails.cache.fetch("#{cache_key_with_version}/other_titles") do
       other_titles_uncached
     end
   end
 
   def title_id_hash
-    Rails.cache.fetch("#{cache_key}/title_id_hash") do
+    Rails.cache.fetch("#{cache_key_with_version}/title_id_hash") do
       { title: local_title_uncached, id: id }
     end
   end
 
   def extended_title_id_hash
-    Rails.cache.fetch("#{cache_key}/extended_title_id_hash") do
+    Rails.cache.fetch("#{cache_key_with_version}/extended_title_id_hash") do
       { title: extended_title_uncached, id: id }
     end
   end

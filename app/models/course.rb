@@ -61,7 +61,7 @@ class Course < ApplicationRecord
   end
 
   def title_for_viewers
-    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+    Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       short_title
     end
   end
@@ -235,7 +235,7 @@ class Course < ApplicationRecord
   # by inheritance (i.e. directly and media which are associated to lectures or
   # lessons associated to this course)
   def media_with_inheritance
-    Rails.cache.fetch("#{cache_key}/media_with_inheritance") do
+    Rails.cache.fetch("#{cache_key_with_version}/media_with_inheritance") do
       Medium.proper.where(teachable: self)
         .or(Medium.proper.where(teachable: self.lectures))
         .or(Medium.proper.where(teachable: Lesson.where(lecture: self.lectures)))
@@ -308,7 +308,7 @@ class Course < ApplicationRecord
   end
 
   def mc_questions_count
-    Rails.cache.fetch("#{cache_key}/mc_questions_count") do
+    Rails.cache.fetch("#{cache_key_with_version}/mc_questions_count") do
       Question.where(teachable: [self] + [lectures.published],
                      independent: true,
                      released: ['all', 'users'])
@@ -398,7 +398,7 @@ class Course < ApplicationRecord
   # looks in the cache if there are any media associated *without_inheritance*
   # to this course and a given project (kaviar, sesam etc.)
   def project_as_user?(project)
-    Rails.cache.fetch("#{cache_key}/#{project}") do
+    Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
       Medium.where(sort: sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: self).exists?

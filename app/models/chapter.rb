@@ -25,7 +25,7 @@ class Chapter < ApplicationRecord
   end
 
   def reference
-    Rails.cache.fetch("#{cache_key}/reference") do
+    Rails.cache.fetch("#{cache_key_with_version}/reference") do
       displayed_number
     end
   end

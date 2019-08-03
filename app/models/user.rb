@@ -206,7 +206,7 @@ class User < ApplicationRecord
   end
 
   def info
-    Rails.cache.fetch("#{cache_key}/user_info") do
+    Rails.cache.fetch("#{cache_key_with_version}/user_info") do
       info_uncached
     end
   end

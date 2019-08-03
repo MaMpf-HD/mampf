@@ -675,7 +675,7 @@ class Medium < ApplicationRecord
   end
 
   def compact_info
-    Rails.cache.fetch("#{cache_key}/compact_info") do
+    Rails.cache.fetch("#{cache_key_with_version}/compact_info") do
       compact_info_uncached
     end
   end
@@ -698,7 +698,7 @@ class Medium < ApplicationRecord
   end
 
   def local_info
-    Rails.cache.fetch("#{cache_key}/local_info") do
+    Rails.cache.fetch("#{cache_key_with_version}/local_info") do
       local_info_uncached
     end
   end
@@ -709,7 +709,7 @@ class Medium < ApplicationRecord
   end
 
   def local_info_for_admins
-    Rails.cache.fetch("#{cache_key}/local_info_for_admins") do
+    Rails.cache.fetch("#{cache_key_with_version}/local_info_for_admins") do
       local_info_for_admins_uncached
     end
   end
@@ -725,7 +725,7 @@ class Medium < ApplicationRecord
   end
 
   def details
-    Rails.cache.fetch("#{cache_key}/details") do
+    Rails.cache.fetch("#{cache_key_with_version}/details") do
       details_uncached
     end
   end
@@ -736,7 +736,7 @@ class Medium < ApplicationRecord
   end
 
   def title
-    Rails.cache.fetch("#{cache_key}/title") do
+    Rails.cache.fetch("#{cache_key_with_version}/title") do
       title_uncached
     end
   end
@@ -749,7 +749,7 @@ class Medium < ApplicationRecord
   end
 
   def title_for_viewers
-    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+    Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       title_for_viewers_uncached
     end
   end
@@ -766,14 +766,14 @@ class Medium < ApplicationRecord
 
   # returns info made from sort and description
   def local_title_for_viewers
-    Rails.cache.fetch("#{cache_key}/local_title_for_viewers") do
+    Rails.cache.fetch("#{cache_key_with_version}/local_title_for_viewers") do
       local_title_for_viewers_uncached
     end
   end
 
   # this is used in dropdowns for compact info
   def extended_label
-    Rails.cache.fetch("#{cache_key}/extended_label") do
+    Rails.cache.fetch("#{cache_key_with_version}/extended_label") do
       "#{teachable.compact_title}.\##{id}.#{description}"
     end
   end
@@ -792,7 +792,7 @@ class Medium < ApplicationRecord
   end
 
   def items_with_references
-    Rails.cache.fetch("#{cache_key}/items_with_reference") do
+    Rails.cache.fetch("#{cache_key_with_version}/items_with_reference") do
       items_with_references_uncached
     end
   end

@@ -117,7 +117,7 @@ class Quiz < Medium
   end
 
   def find_errors
-    Rails.cache.fetch("#{cache_key}/find_errors") do
+    Rails.cache.fetch("#{cache_key_with_version}/find_errors") do
       quiz_graph&.find_errors
     end
   end
