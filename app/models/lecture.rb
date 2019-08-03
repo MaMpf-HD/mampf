@@ -86,7 +86,7 @@ class Lecture < ApplicationRecord
   end
 
   def title_for_viewers
-    Rails.cache.fetch("#{cache_key}/title_for_viewers") do
+    Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       short_title
     end
   end
