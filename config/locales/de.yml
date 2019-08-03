@@ -230,12 +230,16 @@ de:
     lecture:
       lecture: 'Vorlesung'
       lecture_short: 'V'
+      lecture_content: 'Vorlesungsinhalt'
       seminar: 'Seminar'
       seminar_short: 'S'
+      seminar_content: 'Seminarinhalt'
       proseminar: 'Proseminar'
       proseminar_short: 'PS'
+      proseminar_content: 'Proseminarinhalt'
       oberseminar: 'Oberseminar'
       oberseminar_short: 'OS'
+      oberseminar_inhalt: 'Oberseminarinhalt'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
@@ -2150,7 +2154,7 @@ de:
             course:
               taken: >
                 Eine Veranstaltung mit derselben Kombination aus Modul, Semester
-                und DozentIn existiert bereits.
+                DozentIn und Typ existiert bereits.
               required: 'Es muss ein Modul angegeben werden.'
             content_mode:
               inclusion: 'Ungültiger Modus.'

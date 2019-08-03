@@ -81,7 +81,7 @@ class LecturesController < ApplicationController
 
   # add forum for this lecture
   def add_forum
-    Thredded::Messageboard.create(name: @lecture.title) unless @lecture.forum?
+    Thredded::Messageboard.create(name: @lecture.forum_title) unless @lecture.forum?
     redirect_to edit_lecture_path(@lecture)
   end
 

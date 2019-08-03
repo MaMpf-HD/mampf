@@ -51,8 +51,8 @@ module LecturesHelper
   # add a star to lecture's term if it is a user's primary lecture
   def starred_term(lecture, user)
     term = lecture.term.to_label_short
-    return term unless lecture.primary?(user)
-    ('&starf; ' + term).html_safe
+    return "(#{lecture.sort_localized_short}) #{term}" unless lecture.primary?(user)
+    ('&starf; (' + lecture.sort_localized_short + ') ' + term).html_safe
   end
 
   def days_short

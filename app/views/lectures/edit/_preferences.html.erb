@@ -26,7 +26,7 @@
         <%= form_with model: lecture,
                       html: { id: 'lecture-preferences-form' } do |f| %>
           <div class="form-row">
-            <div class="col-3 form-group">
+            <div class="col-2 form-group">
               <%= f.label :term_id,
                           t('basics.term') %>
               <%= helpdesk(t('admin.lecture.info.term'), false) %>
@@ -41,6 +41,19 @@
               </div>
             </div>
             <div class="col-3 form-group">
+              <%= f.label :sort,
+                          t('basics.type') %>
+              <%= f.select :sort,
+                           options_for_select(Lecture.sort_localized.invert.to_a,
+                                              'lecture'),
+                           {},
+                           { class: 'form-control',
+                             disabled: inspection } %>
+              <div class="invalid-feedback"
+                   id="lecture-term-error">
+              </div>
+            </div>
+            <div class="col-2 form-group">
               <%= f.label :start_chapter, t('admin.lecture.first_chapter') %>
               <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>
               <%= f.number_field :start_chapter,
@@ -48,7 +61,7 @@
                                  class: 'form-control',
                                  disabled: inspection  %>
             </div>
-            <div class="col-3 mt-6">
+            <div class="col-2 mt-6">
               <div id="start-section-input">
                 <%= f.label :start_section,
                             t('admin.lecture.first_section') %>

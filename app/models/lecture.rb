@@ -35,8 +35,9 @@ class Lecture < ApplicationRecord
   # a lecture has many announcements
   has_many :announcements, dependent: :destroy
 
-  # we do not allow that a teacher gives a certain lecture in a given term twice
-  validates :course, uniqueness: { scope: [:teacher_id, :term_id] }
+  # we do not allow that a teacher gives a certain lecture in a given term
+  # of the same sort twice
+  validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
 
   validates :content_mode, inclusion: { in: ['video', 'manuscript'] }
 
@@ -261,7 +262,11 @@ class Lecture < ApplicationRecord
 
   def title_with_teacher
     return title unless teacher.present? && teacher.name.present?
-    "(#{sort_localized_short}) #{title} (#{teacher.name})"
+    "#{title} (#{teacher.name})"
+  end
+
+  def title_with_teacher_no_type
+    "#{course.title}, #{term.to_label} (#{teacher.name})"
   end
 
   def term_teacher_info
@@ -445,19 +450,23 @@ class Lecture < ApplicationRecord
     lectures.sort_by(&:begin_date).reverse
   end
 
+  def forum_title
+    "#{title} [#{teacher.name}]"
+  end
+
   def forum?
-    Thredded::Messageboard.where(name: title).exists?
+    Thredded::Messageboard.where(name: forum_title).exists?
   end
 
   def forum
-    Thredded::Messageboard.where(name: title)&.first
+    Thredded::Messageboard.where(name: forum_title)&.first
   end
 
   # extract how many posts in the lecture's forum have not been read
   # by the user
   def unread_forum_topics_count(user)
     return unless forum?
-    forum_relation = Thredded::Messageboard.where(name: title)
+    forum_relation = Thredded::Messageboard.where(name: forum_title)
     forum_view =
       Thredded::MessageboardGroupView.grouped(forum_relation,
                                               user: user,

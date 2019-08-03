@@ -279,13 +279,13 @@ class User < ApplicationRecord
   def thredded_can_read_messageboards
     return Thredded::Messageboard.all if admin?
     subscribed_forums =
-      Thredded::Messageboard.where(name: lectures.map(&:title))
+      Thredded::Messageboard.where(name: lectures.map(&:forum_title))
                             .or(Thredded::Messageboard.where
                                                       .not(name: Lecture.all
-                                                                        .map(&:title)))
+                                                                        .map(&:forum_title)))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(name: teaching_related_lectures
-                                                  .map(&:title))
+                                                  .map(&:forum_title))
                                    .or(subscribed_forums)
     end
     subscribed_forums
@@ -296,10 +296,10 @@ class User < ApplicationRecord
   def thredded_can_write_messageboards
     return Thredded::Messageboard.all if admin?
     subscribed_forums =
-      Thredded::Messageboard.where(name: lectures.map(&:title))
+      Thredded::Messageboard.where(name: lectures.map(&:forum_title))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(name: teaching_related_lectures
-                                                  .map(&:title))
+                                                  .map(&:forum_title))
                                    .or(subscribed_forums)
     end
     subscribed_forums
@@ -314,7 +314,7 @@ class User < ApplicationRecord
     return Thredded::Messageboard.all if admin?
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(name: teaching_related_lectures
-                                                  .map(&:title))
+                                                  .map(&:forum_title))
     end
     Thredded::Messageboard.none
   end

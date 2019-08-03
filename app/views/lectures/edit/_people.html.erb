@@ -109,7 +109,7 @@
               <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
             </div>
           </div>
-          <% unless inspection %>
+          <% if !inspection && lecture.users.any? %>
             <div class="row border bg-mdb-color-lighten-5 mx-2">
               <div class="col-6">
                 <%= t('basics.display_name') %>
