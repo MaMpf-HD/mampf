@@ -284,6 +284,10 @@ class Lecture < ApplicationRecord
     "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
   end
 
+  def title_term_info_no_type
+    "#{course.title}, #{term.to_label}"
+  end
+
   def title_teacher_info
     return course.title unless teacher.present? && teacher.name.present?
     "(#{sort_localized_short}) #{course.title} (#{teacher.name})"
@@ -455,18 +459,18 @@ class Lecture < ApplicationRecord
   end
 
   def forum?
-    Thredded::Messageboard.where(name: forum_title).exists?
+    forum_id.present?
   end
 
   def forum
-    Thredded::Messageboard.where(name: forum_title)&.first
+    Thredded::Messageboard.find_by_id(forum_id)
   end
 
   # extract how many posts in the lecture's forum have not been read
   # by the user
   def unread_forum_topics_count(user)
     return unless forum?
-    forum_relation = Thredded::Messageboard.where(name: forum_title)
+    forum_relation = Thredded::Messageboard.where(id: forum_id)
     forum_view =
       Thredded::MessageboardGroupView.grouped(forum_relation,
                                               user: user,

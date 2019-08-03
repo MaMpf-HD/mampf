@@ -279,13 +279,13 @@ class User < ApplicationRecord
   def thredded_can_read_messageboards
     return Thredded::Messageboard.all if admin?
     subscribed_forums =
-      Thredded::Messageboard.where(name: lectures.map(&:forum_title))
+      Thredded::Messageboard.where(id: lectures.map(&:forum_id))
                             .or(Thredded::Messageboard.where
-                                                      .not(name: Lecture.all
-                                                                        .map(&:forum_title)))
+                                                      .not(id: Lecture.all
+                                                                        .map(&:forum_id)))
     if teacher? || edited_courses.any? || edited_lectures.any?
-      return Thredded::Messageboard.where(name: teaching_related_lectures
-                                                  .map(&:forum_title))
+      return Thredded::Messageboard.where(id: teaching_related_lectures
+                                                  .map(&:forum_id))
                                    .or(subscribed_forums)
     end
     subscribed_forums
@@ -296,10 +296,10 @@ class User < ApplicationRecord
   def thredded_can_write_messageboards
     return Thredded::Messageboard.all if admin?
     subscribed_forums =
-      Thredded::Messageboard.where(name: lectures.map(&:forum_title))
+      Thredded::Messageboard.where(id: lectures.map(&:forum_id))
     if teacher? || edited_courses.any? || edited_lectures.any?
-      return Thredded::Messageboard.where(name: teaching_related_lectures
-                                                  .map(&:forum_title))
+      return Thredded::Messageboard.where(id: teaching_related_lectures
+                                                  .map(&:forum_id))
                                    .or(subscribed_forums)
     end
     subscribed_forums
@@ -313,8 +313,8 @@ class User < ApplicationRecord
   def thredded_can_moderate_messageboards
     return Thredded::Messageboard.all if admin?
     if teacher? || edited_courses.any? || edited_lectures.any?
-      return Thredded::Messageboard.where(name: teaching_related_lectures
-                                                  .map(&:forum_title))
+      return Thredded::Messageboard.where(id: teaching_related_lectures
+                                                  .map(&:forum_id))
     end
     Thredded::Messageboard.none
   end

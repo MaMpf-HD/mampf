@@ -16,6 +16,8 @@ class LecturesController < ApplicationController
 
   def update
     @lecture.update(lecture_params)
+    @lecture.touch
+    @lecture.forum&.update(name: @lecture.forum_title)
     redirect_to edit_lecture_path(@lecture) if @lecture.valid?
     @errors = @lecture.errors
   end
@@ -81,8 +83,11 @@ class LecturesController < ApplicationController
 
   # add forum for this lecture
   def add_forum
-    Thredded::Messageboard.create(name: @lecture.forum_title) unless @lecture.forum?
-    @lecture.touch
+    unless @lecture.forum?
+      forum = Thredded::Messageboard.new(name: @lecture.forum_title)
+      forum.save
+      @lecture.update(forum_id: forum.id) if forum.valid?
+    end
     redirect_to edit_lecture_path(@lecture)
   end
 
@@ -103,7 +108,7 @@ class LecturesController < ApplicationController
   # destroy forum for this lecture
   def destroy_forum
     @lecture.forum.destroy if @lecture.forum?
-    @lecture.touch
+    @lecture.update(forum_id: nil)
     redirect_to edit_lecture_path(@lecture)
   end
 

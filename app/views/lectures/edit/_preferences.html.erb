@@ -45,7 +45,7 @@
                           t('basics.type') %>
               <%= f.select :sort,
                            options_for_select(Lecture.sort_localized.invert.to_a,
-                                              'lecture'),
+                                              lecture.sort),
                            {},
                            { class: 'form-control',
                              disabled: inspection } %>

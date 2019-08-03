@@ -1,8 +1,11 @@
 <div class="row mt-2 mb-2">
   <div id="lecture-details" class="col-12 text-center">
     <h4>
+      <span class="badge badge-secondary">
+        <%= @lecture.sort_localized %>
+      </span>
       <span id="lecture-title" class="mr-3">
-        <%= @lecture.title_for_viewers %>
+        <%= @lecture.title_term_info_no_type %>
       </span>
       <span>
         <%= link_to @lecture.teacher.name,
