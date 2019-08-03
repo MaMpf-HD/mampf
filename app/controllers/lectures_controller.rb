@@ -82,24 +82,28 @@ class LecturesController < ApplicationController
   # add forum for this lecture
   def add_forum
     Thredded::Messageboard.create(name: @lecture.forum_title) unless @lecture.forum?
+    @lecture.touch
     redirect_to edit_lecture_path(@lecture)
   end
 
   # lock forum for this lecture
   def lock_forum
     @lecture.forum.update(locked: true) if @lecture.forum?
+    @lecture.touch
     redirect_to edit_lecture_path(@lecture)
   end
 
   # unlock forum for this lecture
   def unlock_forum
     @lecture.forum.update(locked: false) if @lecture.forum?
+    @lecture.touch
     redirect_to edit_lecture_path(@lecture)
   end
 
   # destroy forum for this lecture
   def destroy_forum
     @lecture.forum.destroy if @lecture.forum?
+    @lecture.touch
     redirect_to edit_lecture_path(@lecture)
   end
 
