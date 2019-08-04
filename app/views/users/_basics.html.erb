@@ -34,9 +34,9 @@
               t('admin.user.current_lecture') %>
 <%= helpdesk(t('admin.user.info.current_lecture'), false) %>
   <%= f.select :current_lecture_id,
-               options_for_select(current_user.teaching_related_lectures
+               options_for_select(user.teaching_related_lectures
                                               .map { |l| [l.title, l.id] },
-                                  current_user.current_lecture_id),
+                                  user.current_lecture_id),
                { prompt: t('basics.select') },
                { class: 'selectize' } %>
 </div>
