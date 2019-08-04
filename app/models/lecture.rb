@@ -521,8 +521,8 @@ class Lecture < ApplicationRecord
   end
 
   def project?(project, user)
-    return project_as_user?(project) unless edited_by?(user)
-    course_media = if user.in?(course.editors)
+    return project_as_user?(project) unless edited_by?(user) || user.admin
+    course_media = if user.in?(course.editors) || user.admin
                      Medium.where(sort: medium_sort[project],
                                   teachable: course).exists?
                    else
