@@ -36,7 +36,7 @@ class Section < ApplicationRecord
   before_destroy :touch_media
 
   def lecture
-    Rails.cache.fetch("#{cache_key}/lecture") do
+    Rails.cache.fetch("#{cache_key_with_version}/lecture") do
       lecture_uncached
     end
   end
@@ -56,7 +56,7 @@ class Section < ApplicationRecord
   end
 
   def reference
-    Rails.cache.fetch("#{cache_key}/reference") do
+    Rails.cache.fetch("#{cache_key_with_version}/reference") do
       reference_number
     end
   end
