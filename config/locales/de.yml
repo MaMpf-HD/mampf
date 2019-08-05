@@ -103,7 +103,7 @@ de:
       terms: 'Semester'
       news: 'News'
       users: 'Nutzerverwaltung'
-      course: 'Lehrveranstaltung'
+      course: 'Modul'
       profile: 'Mein Profil'
     main:
       my_lectures: 'Meine Veranstaltungen'

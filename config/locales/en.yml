@@ -117,7 +117,7 @@ en:
       terms: 'Terms'
       news: 'News'
       users: 'User administration'
-      courses: 'Course'
+      course: 'Course'
       profile: 'My Profile'
     main:
       my_lectures: 'My event series'
