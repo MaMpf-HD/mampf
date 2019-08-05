@@ -2,6 +2,7 @@
   <div class="col-6">
     <h6>
       <%= t('admin.chapter.edit_html',
+            chapter_name: t("basics.#{lecture.chapter_name}"),
             chapter: content_tag(:span, chapter.to_label, class: 'redtext')) %>
     </h6>
   </div>
@@ -25,7 +26,8 @@
   <div class="form-row">
     <div class="col-10 form-group">
       <%= f.label :predecessor,
-                  t('admin.chapter.position') %>
+                  t('admin.chapter.position',
+                    chapter_name: t("basics.#{lecture.chapter_name}")) %>
       <%= helpdesk(t('admin.chapter.info.position'), false) %>
       <%= f.select :predecessor,
                    options_for_select(chapter_positions_for_select(chapter),

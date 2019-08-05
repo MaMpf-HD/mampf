@@ -32,7 +32,7 @@
   <div class="form-row">
     <div class="col-12 form-group">
       <%= f.label :chapter_id,
-                  t('basics.chapter') %>
+                  t("basics.#{section.lecture.chapter_name}") %>
       <%= helpdesk(t('admin.section.info.chapter'), false) %>
       <%= f.select :chapter_id,
                    options_for_select(lecture_chapters_for_select(section),

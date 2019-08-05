@@ -276,7 +276,8 @@ de:
           <i>
           medienbasiert (Standard):
           </i>
-          Zunächst legt man die Kapitel und Abschnitte an und tagged diese.
+          Zunächst legt man die Kapitel (bzw. Vorträge) und Abschnitte an und
+          tagged diese.
           Danach werden Sitzungen und zugeordnete Medien angelegt, diese
           erben dann die entsprechenden Tags. Andersherum geht es natürlich
           auch, dann ist jedoch ein höherer Aufwand beim Tagging
@@ -376,7 +377,7 @@ de:
           Wenn Du diesen Haken setzt, wird in der
           Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
         first_chapter: >
-          Soll das erste Kapitel eine von eins
+          Soll das erste Kapitel bzw. der erste Vortrag eine von eins
           verschiedene Nummer haben, so kann dies hier eingetragen
           werden. Anwendungsmöglichkeiten sind z.B.
           Kapitelnummerierungen, die in Fortsetzungsveranstaltungen
@@ -399,10 +400,11 @@ de:
           oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
           die diese Veranstaltung nicht abonniert haben, unsichtbar.
         chapter_title: >
-          Hier kannst du den Titel des Kapitels angeben.
+          Hier kannst du den Titel des Kapitels (bzw. Vortrags) angeben.
         insert_after_chapter: >
-          Hier kannst du auswählen, an welcher Stelle das Kapitel
-          eingefügt werden soll, indem du das Vorgängerkapitel auswählst.
+          Hier kannst du auswählen, an welcher Stelle das Kapitel (bzw. der Vortrag
+          im Fall eines Seminars) eingefügt werden soll, indem du das
+          Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
         section_title: >
           Hier kannst Du den Titel des Abschnitts angeben.
         insert_after_section: >
@@ -435,11 +437,11 @@ de:
         eingetragen.
       organizational_visible: 'Organisatorisches sichtbar'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
-      first_chapter: 'Nummer des ersten Kapitels'
+      first_chapter: 'Nummer des ersten Kapitels (Vortrags)'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
-      insert_after_chapter: 'Einfügen nach Kapitel'
+      insert_after_chapter: 'Einfügen nach %{chapter_name}'
       insert_after_section: 'Einfügen nach Abschnitt'
     course:
       new_course: 'Neues Modul anlegen'
@@ -495,25 +497,27 @@ de:
           inhaltlich vorher einzuordnenden Modulen angezeigt bekommen
           möchten.
     chapter:
-      edit_html: 'Kapitel %{chapter} bearbeiten'
-      position: 'Positionierung nach Kapitel'
+      edit_html: '%{chapter_name} %{chapter} bearbeiten'
+      position: 'Positionierung nach %{chapter_name}'
       display_number: 'Anz.nr.'
       exempt: 'von Gliederung ausgenommen'
       info:
         title: >
-          Hier kannst Du den Titel des Kapitels angeben.
+          Hier kannst Du den Titel des Kapitels bzw. Vortrags angeben.
         position: >
           Hier kannst Du auswählen, an welcher Stelle das Kapitel
-          positioniert werden soll, indem Du das Vorgängerkapitel auswählst.
+          (bzw. der Vortrag) positioniert werden soll, indem Du das
+          Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
         display_number: >
           Wird eine Anzeigenummer angegeben, so überschreibt diese
           die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
           'Kapitel 3. Mein Kapitel' lieber 'Kapitel A. Mein Kapitel' als Titel
           haben möchtest.
         exempt: >
-          Wenn Du dieses Feld anklickst, wird dieses Kapitel
-          nicht in der Veranstaltungsgliederung als Kapitel auftreten. Trotzdem
-          sind das Kapitel und seine veröffentlichten Inhalte für Nutzer
+          Wenn Du dieses Feld anklickst, wird dieses Kapitel (bzw. dieser Vortrag)
+          nicht in der Veranstaltungsgliederung als Kapitel (bzw.Vortrag)
+          auftreten. Trotzdem sind das Kapitel (bzw. der Vortrag)
+          und seine veröffentlichten Inhalte für NutzerInnen
           auffindbar.
     section:
       edit_html: 'Abschnitt %{section} bearbeiten'
@@ -525,8 +529,8 @@ de:
         title: >
           Hier kannst Du den Titel des Abschnitts angeben.
         chapter: >
-          Hier kannst Du auswählen, in welchem Kapitel sich der
-          Abschnitt befinden soll.
+          Hier kannst Du auswählen, in welchem Kapitel (bzw. Vortrag)
+          sich der Abschnitt befinden soll.
         position: >
           Hier kannst Du auswählen, an welcher Stelle der
           Abschnitt positioniert werden soll, indem Du den Vorgängerabschnitt
@@ -1519,7 +1523,9 @@ de:
   today: 'heute'
   yesterday: 'gestern'
   chapter: 'Kapitel %{number}. %{title}'
+  talk: 'Vortrag %{number}. %{title}'
   hidden_chapter: '*Kapitel %{number}. %{title}'
+  hidden_talk: '*Vortrag %{number}. %{title}'
   section: 'Abschnitt'
   next_section: 'nächster Abschnitt'
   previous_section: 'voriger Abschnitt'
@@ -1872,6 +1878,7 @@ de:
     at_the_beginning: 'am Anfang'
     at_beginning_of_chapter: 'am Anfang des Kapitels'
     chapter: 'Kapitel'
+    talk: 'Vortrag'
     section: 'Abschnitt'
     related_tags: 'Verknüpfte Tags'
     lesson: 'Sitzung'
@@ -1973,6 +1980,7 @@ de:
     parent_lecture: 'zur Veranstaltung'
     parent_medium: 'zum Medium'
     create_chapter: 'Kapitel anlegen'
+    create_talk: 'Vortrag anlegen'
     create_lesson: 'Sitzung anlegen'
     create_section: 'Abschnitt anlegen'
     create_medium: 'Medium anlegen'

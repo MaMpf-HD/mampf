@@ -79,8 +79,6 @@ class Ability
 
       can :reassign, [Question, Remark]
 
-      can :compile, Question
-
       can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
       end
@@ -119,8 +117,6 @@ class Ability
       end
 
       can [:take, :proceed], Quiz
-
-      can :compile, Question
 
       cannot :show, Lecture  do |lecture|
         !lecture.in?(user.lectures)

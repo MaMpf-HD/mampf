@@ -367,9 +367,9 @@ en:
           sidebar for this event series.
           their profile settings.
         first_chapter: >
-          If the first chapter is supposed to have a number different from "1",
+          If the first chapter (or talk) is supposed to have a number different from "1",
           you can enter this number here. E.g., this may apply to event series
-          where chapter numbering is continued over successive terms as it
+          where chapter/talk numbering is continued over successive terms as it
           is sometimes done in successive event series.
         first_section: >
           If absolute numbering is activated for sections, you can enter
@@ -384,10 +384,10 @@ en:
           any of its sessions are then invisible for users who have not
           subscribed to this event series.
         chapter_title: >
-          Here you can enter the title of the chapter.
+          Here you can enter the title of the chapter (or talk).
         insert_after_chapter: >
-          Here you can select at which position the new chapter will be placed
-          by choosing the previous chapter.
+          Here you can select at which position the new chapter (or talk)
+          will be placed by choosing the previous chapter (talk).
         date: >
           Here you can select the date when the session took place.
         sections: >
@@ -423,11 +423,11 @@ en:
         There are no additional event series editors.
       organizational_visible: 'General information visible'
       uses_muesli: 'Event series uses MÜSLI'
-      first_chapter: 'Number of the first chapter'
+      first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'
       absolute_numbering: 'absolute numbering'
       passphrase: 'Passphrase'
-      insert_after_chapter: 'Insert after chapter'
+      insert_after_chapter: 'Insert after %{chapter_name}'
       insert_after_section: 'Insert after section'
     course:
       new_course: 'Create new course'
@@ -474,25 +474,25 @@ en:
           This is relevant because users can adjust their settings so
           that they are shown related materials form preceding courses.
     chapter:
-      edit_html: 'Edit Chapter %{chapter}'
-      position: 'Position after Chapter'
+      edit_html: 'Edit %{chapter_name} %{chapter}'
+      position: 'Position after %{chapter_name}'
       display_number: 'Disp.nr.'
       exempt: 'Exempt from table of contents'
       info:
         title: >
-          Here you can enter the title of the chapter.
+          Here you can enter the title of the chapter (or talk).
         position: >
-          Here you can select at which position the chapter is placed by
-          selecting the previous chapter.
+          Here you can select at which position the chapter/talk is placed by
+          selecting the previous chapter/talk.
         display_number: >
           If a display number is given, it will overwrite the calculated number.
           That makes sense e.g. if you want 'Chapter A. My Chapter' as title
           instead of 'Chapter 3. My Chapter'.
         exempt: >
-          If you check this box, this chapter will not be listed in the
-          event series contents visible for users. Note however that the chapter
-          and its published contents can be accessed by users, e.g. if they
-          search for it.
+          If you check this box, this chapter/talk will not be listed in the
+          event series contents visible for users. Note however that the
+          chapter/talk and its published contents can be accessed by users,
+          e.g. if they search for it.
     section:
       edit_html: 'Edit Section %{section}'
       position: 'Position after Section'
@@ -503,7 +503,7 @@ en:
         title: >
           Here you can enter the title of the section.
         chapter: >
-          Here you can select the chapter to which this section belongs.
+          Here you can select the chapter/talk to which this section belongs.
         position: >
           Here you can select at which position the section is placed by
           selecting the previous section.
@@ -1428,7 +1428,9 @@ en:
   today: 'today'
   yesterday: 'yesterday'
   chapter: 'Chapter %{number}. %{title}'
+  talk: 'Talk %{number}. %{title}'
   hidden_chapter: '*Chapter %{number}. %{title}'
+  hidden_talk: '*Talk %{number}. %{title}'
   section: 'Section'
   next_section: 'next section'
   previous_section: 'previous section'
@@ -1761,6 +1763,7 @@ en:
     at_the_beginning: 'At the beginning'
     at_beginning_of_chapter: 'At the beginning of the Chapter'
     chapter: 'Chapter'
+    talk: 'Talk'
     related_tags: 'Related tags'
     lesson: 'Session'
     lessons: 'Sessions'
@@ -1865,6 +1868,7 @@ en:
     parent_lecture: 'Parent Event Series'
     parent_medium: 'Parent Medium'
     create_chapter: 'Create Chapter'
+    create_talk: 'Create Talk'
     create_lesson: 'Create Session'
     create_section: 'Create Section'
     create_medium: 'Create Medium'

@@ -142,8 +142,6 @@ Rails.application.routes.draw do
 
   patch 'questions/:id/reassign', to: 'questions#reassign',
                                   as: 'reassign_question'
-  post 'questions/compile', to: 'questions#compile',
-                            as: 'compile_questions'
   resources :questions, only: [:edit, :update]
 
   get 'quizzes/:id/take', to: 'quizzes#take',

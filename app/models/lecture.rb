@@ -497,6 +497,11 @@ class Lecture < ApplicationRecord
     Lecture.sorts.map { |s| [s, I18n.t("admin.lecture.#{s}")] }.to_h
   end
 
+  def chapter_name
+    return 'chapter' if sort == 'lecture'
+    'talk'
+  end
+
   private
 
   # used for after save callback

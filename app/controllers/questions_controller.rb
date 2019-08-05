@@ -1,6 +1,6 @@
 # Questions Controller
 class QuestionsController < ApplicationController
-  before_action :set_question, except: [:reassign, :compile]
+  before_action :set_question, except: [:reassign]
   before_action :set_quizzes, only: [:reassign]
   authorize_resource
   layout 'administration'
@@ -31,13 +31,6 @@ class QuestionsController < ApplicationController
     render 'events/fill_quizzable_area'
   end
 
-  def compile
-    pp compile_params
-    search = Medium.search_questions_by_tags(compile_params)
-    search.execute
-    pp search.total
-  end
-
   private
 
   def set_question
@@ -54,13 +47,5 @@ class QuestionsController < ApplicationController
   def question_params
     params.require(:question).permit(:label, :text, :type, :hint, :level,
                                      :independent, :vertex_id)
-  end
-
-  def compile_params
-    allowed = params.require(:search).permit(:course_id, tag_ids: [])
-    result = {}
-    result[:tag_ids] = allowed[:tag_ids].map(&:to_i) -[0]
-    result[:teachable_ids] = [ 'Course-' + allowed[:course_id].to_s]
-    result
   end
 end

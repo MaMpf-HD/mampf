@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <h6>
-      <%= t('buttons.create_chapter') %>
+      <%= t("buttons.create_#{lecture.chapter_name}") %>
     </h6>
   </div>
 </div>
@@ -9,7 +9,8 @@
   <div class="form-row">
     <div class="col-6 form-group">
       <%= f.label :title, t('basics.title') %>
-      <%= helpdesk(t('admin.lecture.info.chapter_title'), false) %>
+      <%= helpdesk(t('admin.lecture.info.chapter_title'),
+                   false) %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'new_chapter_title' } %>
       <div class="invalid-feedback"
@@ -19,8 +20,11 @@
     <% if lecture.chapters.exists? %>
       <div class="col-6 form-group">
         <%= f.label :predecessor,
-                    t('admin.lecture.insert_after_chapter') %>
-        <%= helpdesk(t('admin.lecture.info.insert_after_chapter'), false) %>
+                    t('admin.lecture.insert_after_chapter',
+                      chapter_name: t("basics.#{lecture.chapter_name}")) %>
+        <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
+                       chapter_name: t("basics.#{lecture.chapter_name}")),
+                     false) %>
         <%= f.select :predecessor,
                      options_for_select([[t('basics.at_the_beginning'), 0]] +
                                         lecture.select_chapters,

@@ -12,9 +12,11 @@ class Chapter < ApplicationRecord
 
   def to_label
     unless hidden
-      return I18n.t('chapter', number: displayed_number, title: title)
+      return I18n.t(lecture.chapter_name,
+                    number: displayed_number,
+                    title: title)
     end
-    I18n.t('hidden_chapter', number: displayed_number, title: title)
+    I18n.t("hidden_#{lecture.chapter_name}", number: displayed_number, title: title)
   end
 
   # Returns the number of the chapter. Unless the user explicitly specified
