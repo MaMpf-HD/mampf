@@ -404,7 +404,7 @@ class MediaController < ApplicationController
     types = params[:search][:types]
     params[:search][:types] = [types] if types && !types.kind_of?(Array)
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
-                                   :all_editors, :tag_operator, :quiz,
+                                   :all_editors, :tag_operator, :quiz, :access,
                                    :teachable_inheritance, :fulltext, :per,
                                    types: [],
                                    teachable_ids: [],

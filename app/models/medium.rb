@@ -108,6 +108,9 @@ class Medium < ApplicationRecord
     string :teachable_compact do
       "#{teachable_type}-#{teachable_id}"
     end
+    string :release_state do
+      release_state
+    end
     integer :id
     integer :teachable_id
     integer :tag_ids, multiple: true
@@ -276,6 +279,11 @@ class Medium < ApplicationRecord
       without(:sort, 'RandomQuiz')
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
+    end
+    unless search_params[:access] == 'irrelevant'
+      search.build do
+        with(:release_state, search_params[:access])
+      end
     end
     unless search_params[:all_tags] == '1' &&
              search_params[:tag_operator] == 'or'
@@ -963,5 +971,10 @@ class Medium < ApplicationRecord
     return unless type.in?(['Question', 'Remark'])
     return text if type == 'Remark'
     "#{text} #{becomes(Question).answers&.map(&:text_join)&.join(' ')}"
+  end
+
+  def release_state
+    return released unless released.nil?
+    'unpublished'
   end
 end

@@ -1978,6 +1978,7 @@ de:
     subscribers: 'nur AbonenntInnen'
     locked: 'gesperrt'
     referenced_from: 'referenziert in'
+    irrelevant: 'egal'
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'

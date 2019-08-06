@@ -1864,6 +1864,8 @@ en:
     all: 'free'
     users: 'only registered MaMpf users'
     subscribers: 'only subscribers'
+    referenced_from: 'referenced from'
+    irrelevant: 'irrelevant'
   buttons:
     save: 'Save'
     cancel: 'Cancel'
