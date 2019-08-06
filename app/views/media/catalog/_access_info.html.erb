@@ -1,0 +1,40 @@
+<% if medium.locked? %>
+  <i class="fas fa-lock"
+     id="locked_medium_item"
+     style="padding-top: 12px;"
+     data-toggle="tooltip"
+     title="<%= t('admin.catalog.info.locked_medium') %>">
+  </i>
+<% end %>
+<% if medium.free? %>
+  <i class="fas fa-globe-europe"
+     id="locked_medium_item"
+     style="padding-top: 12px;"
+     data-toggle="tooltip"
+     title="<%= t('admin.catalog.info.free_medium') %>">
+  </i>
+<% end %>
+<% if medium.for_users? %>
+  <i class="fas fa-user"
+     id="locked_medium_item"
+     style="padding-top: 12px;"
+     data-toggle="tooltip"
+     title="<%= t('admin.catalog.info.user_medium') %>">
+  </i>
+<% end %>
+<% if medium.restricted? %>
+  <i class="fas fa-user-plus"
+     id="locked_medium_item"
+     style="padding-top: 12px;"
+     data-toggle="tooltip"
+     title="<%= t('admin.catalog.info.subscriber_medium') %>">
+  </i>
+<% end %>
+<% if !medium.published? %>
+  <i class="fas fa-eye-slash"
+     id="locked_medium_item"
+     style="padding-top: 12px;"
+     data-toggle="tooltip"
+     title="<%= t('admin.catalog.info.unpublished_medium') %>">
+  </i>
+<% end %>

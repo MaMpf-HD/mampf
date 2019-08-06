@@ -15,7 +15,7 @@
          id="quizzableSearchResults">
       <div class="row bg-mdb-color-lighten-5 mx-2 py-1"
            id="searchResultsHeader">
-        <div class="col-6">
+        <div class="col-5">
           <strong>
             <%= t('basics.description') %>
           </strong>
@@ -35,6 +35,8 @@
             <%= t('basics.editors') %>
           </strong>
         </div>
+        <div class="col-1">
+        </div>
       </div>
       <div id="mediaTable"
            class="mx-2 pl-2">
@@ -45,7 +47,7 @@
                  data-type="<%= m.type %>"
                  data-id="<%= m.id %>"
                  style="cursor: pointer;">
-              <div class="col-6">
+              <div class="col-5">
                 <%= m.details %>
               </div>
               <div class="col-1">
@@ -77,6 +79,10 @@
                     </li>
                   <% end %>
                 </ul>
+              </div>
+              <div class="col-1">
+                <%= render partial: 'media/catalog/access_info',
+                           locals: { medium: m } %>
               </div>
             </div>
           <% end %>
