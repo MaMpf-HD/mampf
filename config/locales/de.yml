@@ -1900,6 +1900,7 @@ de:
     search: 'Suche'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
+    associated_to_short: 'Ass. zu'
     associated_with_inheritance: 'Assoziiert mit Vererbung zu'
     description: 'Beschreibung'
     type: 'Typ'

@@ -1782,6 +1782,7 @@ en:
     search: 'Search'
     mampf_package: 'MaMpf package'
     associated_to: 'Associated to'
+    associated_to_short: 'Ass. to'
     associated_with_inheritance: 'Associated with inheritance to'
     description: 'Description'
     type: 'Type'
