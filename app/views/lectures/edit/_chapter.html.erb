@@ -39,15 +39,9 @@
          style="display: none;">
     </div>
     <% unless chapter.details.blank? %>
-    <div class="row mb-2">
-      <div class="col-12">
-        <div class="bg-mdb-color-lighten-8 rounded p-2">
-          <%= chapter.details.html_safe %>
-        </div>
-      </div>
-    </div>
+      <%= chapter.details.html_safe %>
     <% end %>
-    <ul class="list-group">
+    <ul class="list-group mt-2">
       <% chapter.sections.includes(:chapter, :tags).each do |s| %>
         <% cache [s, inspection] do %>
           <%= render partial: 'lectures/edit/section',
