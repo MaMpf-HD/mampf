@@ -6,9 +6,7 @@
   </div>
   <div class="card-body">
     <% unless chapter.details.blank? %>
-      <div class="bg-mdb-color-lighten-8 rounded p-2">
-        <%= chapter.details.html_safe %>
-      </div>
+      <%= chapter.details.html_safe %>
     <% end %>
     <ul class="list-group list-group-flush">
       <%= render partial: 'lectures/show/section',
