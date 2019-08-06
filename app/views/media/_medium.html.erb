@@ -27,7 +27,7 @@
             <%= medium.locale_with_inheritance.to_s %>
           </small>
         <% end %>
-        <% if !medium.published_with_inheritance? %>
+        <% if !medium.published? %>
           <i class="fas fa-eye-slash redtext ml-2"
              tabindex="-1"
              data-toggle="tooltip"

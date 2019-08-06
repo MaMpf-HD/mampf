@@ -57,7 +57,7 @@ $('#medium-link-ref').prop('href', '').hide()
 <% if @item.medium.visible? %>
 $('#unpublished_medium_item').hide()
 $('#locked_medium_item').hide()
-<% elsif !@item.medium.published_with_inheritance? %>
+<% elsif !@item.medium.published? %>
 $('#unpublished_medium_item').show()
 $('#locked_medium_item').hide()
 <% else %>

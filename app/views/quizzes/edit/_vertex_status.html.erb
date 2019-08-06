@@ -1,4 +1,4 @@
-<% if quizzable && (!quizzable.published_with_inheritance? || quizzable.locked?) %>
+<% if quizzable && (!quizzable.published? || quizzable.locked?) %>
   <span class="orangetext">
     <%= t('basics.warning') %>:
   </span>

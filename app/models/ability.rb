@@ -112,7 +112,7 @@ class Ability
         if !user.new_record?
           medium.visible_for_user?(user)
         else
-          medium.published_with_inheritance? && medium.free?
+          medium.free?
         end
       end
 

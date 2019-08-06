@@ -137,7 +137,7 @@
         </div>
       </div>
     </div>
-    <% if medium.published_with_inheritance? %>
+    <% if medium.published? %>
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
                  medium: medium } %>

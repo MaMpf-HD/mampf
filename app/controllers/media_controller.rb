@@ -80,9 +80,6 @@ class MediaController < ApplicationController
         return
       end
     end
-    unless @medium.teachable.published?
-      @medium.update(released: nil)
-    end
     redirect_to edit_medium_path(@medium)
   end
 

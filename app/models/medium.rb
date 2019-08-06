@@ -70,6 +70,9 @@ class Medium < ApplicationRecord
   # a medium of type Script is not allowed to have tags
   # (Reason: A typical script will have *a lot of* tags)
   validate :no_tags_for_scripts
+  # if medium is associated to a nonpublished teachable, reset its published
+  # property to nil
+  before_save :reset_released_status
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_teachable
@@ -585,17 +588,6 @@ class Medium < ApplicationRecord
     super + '-' + I18n.locale.to_s
   end
 
-  # returns the mediums publish state *with inheritance*, i.e. it is true iff
-  # - the medium itself has been published
-  # AND
-  # - the medium's teachable is a course OR it is a lecture that has been
-  #   published OR it it is a lesson belonging to a published lecture
-  def published_with_inheritance?
-    return false unless published?
-    return true if teachable_type == 'Course'
-    teachable.lecture.published?
-  end
-
   def published?
     !released.nil?
   end
@@ -617,14 +609,13 @@ class Medium < ApplicationRecord
   end
 
   def visible?
-    published_with_inheritance? && !locked?
+    released.in?(['all', 'users', 'subscribers'])
   end
 
   def visible_for_user?(user)
     return true if user.admin
     return true if edited_with_inheritance_by?(user)
     return false unless published?
-    return false unless published_with_inheritance?
     return false if locked?
     if teachable_type == 'Course'
       return false if restricted? && !teachable.in?(user.courses)
@@ -850,6 +841,11 @@ class Medium < ApplicationRecord
       teachable.course.touch
     end
     optional_touches
+  end
+
+  def reset_released_status
+    return if teachable.nil? || teachable.published?
+    self.released = nil
   end
 
   def optional_touches

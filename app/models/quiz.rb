@@ -19,7 +19,7 @@ class Quiz < Medium
     return unless vertices
     vertices.keys.each do |v|
       quizzable = quizzable(v)
-      next if quizzable.published_with_inheritance?
+      next if quizzable.published?
       next if !quizzable.teachable.published?
       next unless user.in?(quizzable.editors_with_inheritance) || user.admin
       quizzable.update(released: release_state)

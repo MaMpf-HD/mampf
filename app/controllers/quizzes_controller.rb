@@ -92,8 +92,7 @@ class QuizzesController < ApplicationController
   def check_accessibility
     return if @quiz.sort == 'RandomQuiz'
     return if user_signed_in? && @quiz.visible_for_user?(current_user)
-    return if !user_signed_in? && @quiz.published_with_inheritance? &&
-                @quiz.free?
+    return if !user_signed_in? && @quiz.free?
     redirect_to :root, alert: I18n.t('controllers.no_quiz_access')
   end
 

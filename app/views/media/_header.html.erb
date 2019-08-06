@@ -4,7 +4,7 @@
       <span class="badge badge-secondary">
         <%= t('basics.medium') %>
       </span>
-      <% unless medium.published_with_inheritance? %>
+      <% unless medium.published? %>
         <span class="badge badge-warning"
               data-toggle="tooltip"
               title="<%= if !medium.teachable.published?
@@ -13,7 +13,7 @@
           <%= t('access.unpublished') %>
         </span>
       <% end %>
-      <% if medium.published_with_inheritance? && medium.locked? %>
+      <% if medium.locked? %>
         <span class="badge badge-warning"
               data-toggle="tooltip"
               title="<%= t('admin.medium.info.locked') %>">
@@ -54,7 +54,7 @@
     <% end %>
     <% unless new_medium %>
       <% if medium.teachable.published? &&
-             !medium.published_with_inheritance? %>
+             !medium.published? %>
         <button class="btn btn-sm btn-warning mb-2"
                 type="button"
                 id="publish-medium-button">

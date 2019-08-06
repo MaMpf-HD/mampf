@@ -4,12 +4,12 @@
       <span class="badge badge-secondary">
         <%= @medium.sort_localized %>
       </span>
-      <% unless @medium.published_with_inheritance? %>
+      <% unless @medium.published? %>
         <span class="badge badge-warning">
           <%= t('access.unpublished') %>
         </span>
       <% end %>
-      <% if @medium.published_with_inheritance? && @medium.locked? %>
+      <% if @medium.locked? %>
         <span class="badge badge-warning">
           <%= t('access.locked') %>
         </span>

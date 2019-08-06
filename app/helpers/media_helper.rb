@@ -91,7 +91,7 @@ module MediaHelper
   end
 
   def medium_border(medium)
-    return if medium.published_with_inheritance? && !medium.locked?
+    return if medium.published? && !medium.locked?
     'border-danger'
   end
 
