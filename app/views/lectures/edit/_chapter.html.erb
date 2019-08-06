@@ -38,6 +38,15 @@
          class="bg-green-lighten-4 p-2 mb-3 rounded"
          style="display: none;">
     </div>
+    <% unless chapter.details.blank? %>
+    <div class="row mb-2">
+      <div class="col-12">
+        <div class="bg-mdb-color-lighten-8 rounded p-2">
+          <%= chapter.details.html_safe %>
+        </div>
+      </div>
+    </div>
+    <% end %>
     <ul class="list-group">
       <% chapter.sections.includes(:chapter, :tags).each do |s| %>
         <% cache [s, inspection] do %>

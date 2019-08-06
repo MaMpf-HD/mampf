@@ -5,6 +5,11 @@
     </span>
   </div>
   <div class="card-body">
+    <% unless chapter.details.blank? %>
+      <div class="bg-mdb-color-lighten-8 rounded p-2">
+        <%= chapter.details.html_safe %>
+      </div>
+    <% end %>
     <ul class="list-group list-group-flush">
       <%= render partial: 'lectures/show/section',
                  collection: chapter.sections.includes(:chapter)
