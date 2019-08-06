@@ -119,6 +119,13 @@ en:
       users: 'User administration'
       course: 'Course'
       profile: 'My Profile'
+    catalog:
+      info:
+        locked_medium: 'This medium is locked.'
+        unpublished_medium: 'This medium is unpublished.'
+        free_medium: 'This medium is free.'
+        user_medium: 'This medium is only available for MaMpf users.'
+        subscriber_medium: 'This medium is only available for subscribers.'
     main:
       my_lectures: 'My event series'
       type: 'type'

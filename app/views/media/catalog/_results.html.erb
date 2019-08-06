@@ -13,7 +13,7 @@
   <div class="row">
     <div class="col-9">
       <div class="row bg-mdb-color-lighten-5 mx-2 py-3">
-        <div class="col-6">
+        <div class="col-5">
           <strong>
             <%= t('basics.description') %>
           </strong>
@@ -33,6 +33,8 @@
             <%= t('basics.editors') %>
           </strong>
         </div>
+        <div class="col-1">
+        </div>
       </div>
       <div id="mediaTable"
            class="mx-2 pl-2">
@@ -42,7 +44,7 @@
                  id="row-medium-<%= m.id %>"
                  data-id="<%= m.id %>"
                  style="cursor: pointer;">
-              <div class="col-6">
+              <div class="col-5">
                 <%= m.title_for_viewers %>
               </div>
               <div class="col-1">
@@ -53,8 +55,8 @@
                   <%= link_to m.teachable.short_title,
                               edit_or_inspect_lecture_path(m.teachable) %>
                 <% else %>
-                  <%= link_to m.teachable.short_title_with_lecture_date,
-                              edit_or_inspect_lecture_path(m.teachable.lecture) %>
+                  <%= link_to m.teachable&.short_title_with_lecture_date,
+                              edit_or_inspect_lecture_path(m.teachable&.lecture) %>
                 <% end %>
               </div>
               <div class="col-3 mediumTags"
@@ -75,6 +77,50 @@
                     </li>
                   <% end %>
                 </ul>
+              </div>
+              <div class="col-1">
+                <% if m.teachable.published? %>
+                  <% if m.locked? %>
+                    <i class="fas fa-lock"
+                       id="locked_medium_item"
+                       style="padding-top: 12px;"
+                       data-toggle="tooltip"
+                       title="<%= t('admin.catalog.info.locked_medium') %>">
+                    </i>
+                  <% end %>
+                  <% if m.free? %>
+                    <i class="fas fa-globe-europe"
+                       id="locked_medium_item"
+                       style="padding-top: 12px;"
+                       data-toggle="tooltip"
+                       title="<%= t('admin.catalog.info.free_medium') %>">
+                    </i>
+                  <% end %>
+                  <% if m.for_users? %>
+                    <i class="fas fa-user"
+                       id="locked_medium_item"
+                       style="padding-top: 12px;"
+                       data-toggle="tooltip"
+                       title="<%= t('admin.catalog.info.user_medium') %>">
+                    </i>
+                  <% end %>
+                  <% if m.restricted? %>
+                    <i class="fas fa-user-plus"
+                       id="locked_medium_item"
+                       style="padding-top: 12px;"
+                       data-toggle="tooltip"
+                       title="<%= t('admin.catalog.info.subscriber_medium') %>">
+                    </i>
+                  <% end %>
+                <% end %>
+                <% if !m.teachable.published? || !m.published? %>
+                  <i class="fas fa-eye-slash"
+                     id="locked_medium_item"
+                     style="padding-top: 12px;"
+                     data-toggle="tooltip"
+                     title="<%= t('admin.catalog.info.unpublished_medium') %>">
+                  </i>
+                <% end %>
               </div>
             </div>
           <% end %>

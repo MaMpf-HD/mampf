@@ -105,6 +105,15 @@ de:
       users: 'Nutzerverwaltung'
       course: 'Modul'
       profile: 'Mein Profil'
+    catalog:
+      info:
+        locked_medium: 'Dieses Medium ist gesperrt.'
+        unpublished_medium: 'Dieses Medium ist unveröffentlicht.'
+        free_medium: 'Dieses Medium ist frei zugänglich.'
+        user_medium: 'Dieses Medium ist nur für MaMpf-Nutzerinnen zugänglich.'
+        subscriber_medium: >
+          Dieses Medium ist nur für AbonnentInnen der entsprechenden
+          Lehrveranstaltung zugänglich.
     main:
       my_lectures: 'Meine Veranstaltungen'
       type: 'Typ'

@@ -270,6 +270,7 @@ class Medium < ApplicationRecord
     search = Sunspot.new_search(Medium)
     search.build do
       with(:sort, search_params[:types])
+      without(:sort, 'RandomQuiz')
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
     end
@@ -609,6 +610,10 @@ class Medium < ApplicationRecord
 
   def free?
     released == 'all'
+  end
+
+  def for_users?
+    released == 'users'
   end
 
   def visible?
