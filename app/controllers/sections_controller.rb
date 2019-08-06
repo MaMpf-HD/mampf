@@ -94,7 +94,6 @@ class SectionsController < ApplicationController
 
   def update_tags_order
     tags_order = params[:section][:tag_ids].map(&:to_i) - [0]
-    tags_order
     @section.update(tags_order: tags_order)
   end
 end

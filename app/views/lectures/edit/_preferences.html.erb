@@ -61,30 +61,32 @@
                                  class: 'form-control',
                                  disabled: inspection  %>
             </div>
-            <div class="col-2 mt-6">
-              <div id="start-section-input">
-                <%= f.label :start_section,
-                            t('admin.lecture.first_section') %>
-                <%= helpdesk(t('admin.lecture.info.first_section'), false) %>
-                <%= f.number_field :start_section,
-                                   value: lecture.start_section || 1,
-                                   class: 'form-control',
-                                   disabled: inspection ||
-                                               !lecture.absolute_numbering %>
+            <% unless lecture.seminar? %>
+              <div class="col-2 mt-6">
+                <div id="start-section-input">
+                  <%= f.label :start_section,
+                              t('admin.lecture.first_section') %>
+                  <%= helpdesk(t('admin.lecture.info.first_section'), false) %>
+                  <%= f.number_field :start_section,
+                                     value: lecture.start_section || 1,
+                                     class: 'form-control',
+                                     disabled: inspection ||
+                                                 !lecture.absolute_numbering %>
+                </div>
               </div>
-            </div>
-            <div class="col-3 mt-6">
-              <div class="custom-control custom-checkbox">
-                <%= f.check_box :absolute_numbering,
-                                class: 'custom-control-input',
-                                disabled: inspection %>
-                <%= f.label :absolute_numbering,
-                            t('admin.lecture.absolute_numbering'),
-                            { class: 'custom-control-label' } %>
-                <%= helpdesk(t('admin.lecture.info.absolute_numbering'),
-                             false) %>
+              <div class="col-3 mt-6">
+                <div class="custom-control custom-checkbox">
+                  <%= f.check_box :absolute_numbering,
+                                  class: 'custom-control-input',
+                                  disabled: inspection %>
+                  <%= f.label :absolute_numbering,
+                              t('admin.lecture.absolute_numbering'),
+                              { class: 'custom-control-label' } %>
+                  <%= helpdesk(t('admin.lecture.info.absolute_numbering'),
+                               false) %>
+                </div>
               </div>
-            </div>
+            <% end %>
           </div>
           <% unless inspection %>
           <div class="form-row">

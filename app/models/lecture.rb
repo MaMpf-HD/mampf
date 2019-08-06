@@ -497,8 +497,13 @@ class Lecture < ApplicationRecord
     Lecture.sorts.map { |s| [s, I18n.t("admin.lecture.#{s}")] }.to_h
   end
 
+  def seminar?
+    return true unless sort == 'lecture'
+    false
+  end
+
   def chapter_name
-    return 'chapter' if sort == 'lecture'
+    return 'chapter' unless seminar?
     'talk'
   end
 

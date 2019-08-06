@@ -185,9 +185,10 @@ class LecturesController < ApplicationController
 
   # fill organizational_concept with default view
   def set_organizational_defaults
+    partial_path = 'lectures/organizational/'
+    partial_path += @lecture.seminar? ? 'seminar' : 'lecture'
     @lecture.update(organizational_concept:
-                      render_to_string(partial: 'lectures/' \
-                                                'organizational_default',
+                      render_to_string(partial: partial_path,
                                        formats: :html,
                                        layout: false))
   end
