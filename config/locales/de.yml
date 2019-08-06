@@ -239,7 +239,7 @@ de:
       proseminar_content: 'Proseminarinhalt'
       oberseminar: 'Oberseminar'
       oberseminar_short: 'OS'
-      oberseminar_inhalt: 'Oberseminarinhalt'
+      oberseminar_content: 'Oberseminarinhalt'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
@@ -437,7 +437,7 @@ de:
         eingetragen.
       organizational_visible: 'Organisatorisches sichtbar'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
-      first_chapter: 'Nummer des ersten Kapitels (Vortrags)'
+      first_chapter: 'Nummer des ersten Kapitels/Vortrags'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
