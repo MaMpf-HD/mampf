@@ -5,7 +5,7 @@
     <%= helpdesk(t('admin.main.info.medium_definition'), true) %>
     </i>
   </div>
-  <div class="card-body">
+  <div class="card-body card-compact">
     <% if current_user.edited_media.exists? %>
       <ul>
         <%= render partial: 'administration/index/medium',

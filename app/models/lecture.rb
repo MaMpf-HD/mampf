@@ -35,6 +35,9 @@ class Lecture < ApplicationRecord
   # a lecture has many announcements
   has_many :announcements, dependent: :destroy
 
+  # a lecture has many clickers
+  has_many :clickers, dependent: :destroy
+
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
   validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }

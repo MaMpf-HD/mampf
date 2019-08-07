@@ -17,6 +17,10 @@ Rails.application.routes.draw do
                                      as: 'list_sections'
   resources :chapters, except: [:index, :show]
 
+  resources :clickers
+
+  get 'c/:id', to: 'clickers#show'
+
   get 'courses/:course_id/food', to: 'media#index',
                                  as: 'course_food'
   get 'courses/:id/inspect', to: 'courses#inspect',

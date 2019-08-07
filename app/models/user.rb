@@ -34,6 +34,9 @@ class User < ApplicationRecord
   # a user has many announcements as announcer
   has_many :announcements, foreign_key: 'announcer_id'
 
+  # a user has many clickers as editor
+  has_many :clickers, foreign_key: 'editor_id', dependent: :destroy
+
   # at least one course must be subscribed (if there are courses)
   validates :courses, presence: true, if: :courses_exist?
 

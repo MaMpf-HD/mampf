@@ -126,6 +126,9 @@ de:
         eingetragen bist.
       my_courses: 'Meine Module'
       create_course: 'Modul anlegen'
+      my_clickers: 'Meine Clicker'
+      create_clicker: 'Clicker anlegen'
+      no_edited_clickers: 'Du hast noch keine Clicker angelegt.'
       no_edited_courses: >
         Es gibt keine Module, für die Du als EditorIn eingetragen bist.
       my_media: 'Meine Medien'
@@ -224,6 +227,11 @@ de:
           ein Quiz.
           </li>
           </ul>
+        clicker_definition: >
+          Dies ist eine Liste aller Deiner
+          <i>Clicker</i>,
+          </br>
+          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei ...
         other_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die Du keine
           Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
@@ -452,6 +460,14 @@ de:
       passphrase: 'Zugangsschlüssel'
       insert_after_chapter: 'Einfügen nach %{chapter_name}'
       insert_after_section: 'Einfügen nach Abschnitt'
+    clicker:
+      new_clicker: 'Neuen Clicker anlegen'
+      user_link: 'Link für NutzerInnen'
+      editor_link: 'Link für Editorinnen (ohne Authentifizierung)'
+      info:
+        title: >
+          Hier musst Du den Titel des Clickers eintragen.
+          Du darfst jeden Titel nur einmal vergeben.
     course:
       new_course: 'Neues Modul anlegen'
       preceding_courses: 'Module, auf denen das vorliegende Modul aufbaut'
@@ -2128,6 +2144,8 @@ de:
       Editorenrechte für das Hinzufügen von Tags.
     no_term: 'Ein Semester mit der angeforderten id existiert nicht.'
     no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
+    no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
+    no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
   activerecord:
   activerecord:
     errors:
@@ -2141,6 +2159,11 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        clicker:
+          attributes:
+            title:
+              blank: 'Es muss ein Titel angegeben werden.'
+              taken: 'Dieser Titel ist bereits vergeben.'
         course:
           attributes:
             title:
