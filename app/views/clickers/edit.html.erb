@@ -2,9 +2,15 @@
 <%= t('admin.clicker.user_link') %>:
 <%= link_to @user_path,
             @user_path %>
+<br>
 <%= t('admin.clicker.editor_link') %>:
 <%= link_to @editor_path,
             @editor_path %>
+<br>
+Das ist die authentifizierte Seite zum Bearbeiten des Clickers.
 <% else %>
 Das ist die unauthentifizierte Seite zum Bearbeiten des Clickers.
 <% end %>
+<p>
+Hier kommt noch Inhalt.
+</p>
