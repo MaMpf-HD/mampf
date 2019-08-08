@@ -23,9 +23,6 @@ class Course < ApplicationRecord
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
 
-  # a course has many clickers
-  has_many :clickers, dependent: :destroy
-
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
 

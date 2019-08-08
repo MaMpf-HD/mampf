@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_07_140702) do
+ActiveRecord::Schema.define(version: 2019_08_08_090901) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -46,15 +46,13 @@ ActiveRecord::Schema.define(version: 2019_08_07_140702) do
 
   create_table "clickers", force: :cascade do |t|
     t.integer "editor_id"
-    t.string "teachable_type"
-    t.integer "teachable_id"
     t.integer "question_id"
     t.text "code"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.text "title"
+    t.boolean "open"
     t.index ["editor_id"], name: "index_clickers_on_editor_id"
-    t.index ["teachable_type", "teachable_id"], name: "index_clickers_on_teachable_type_and_teachable_id"
   end
 
   create_table "course_self_joins", force: :cascade do |t|
@@ -573,6 +571,13 @@ ActiveRecord::Schema.define(version: 2019_08_07_140702) do
     t.integer "current_lecture_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "votes", force: :cascade do |t|
+    t.integer "value"
+    t.integer "clicker_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   add_foreign_key "announcements", "lectures"

@@ -17,6 +17,13 @@ Rails.application.routes.draw do
                                      as: 'list_sections'
   resources :chapters, except: [:index, :show]
 
+  get 'clickers/:id/open', to: 'clickers#open',
+                           as: 'open_clicker'
+  get 'clickers/:id/close', to: 'clickers#close',
+                            as: 'close_clicker'
+  get 'clickers/:id/reset', to: 'clickers#reset',
+                            as: 'reset_clicker'
+
   resources :clickers
 
   get 'c/:id', to: 'clickers#show'

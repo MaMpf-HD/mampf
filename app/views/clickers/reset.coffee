@@ -1,0 +1,1 @@
+alert 'Clicker wurde zurückgesetzt'

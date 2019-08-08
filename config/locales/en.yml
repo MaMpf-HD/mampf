@@ -448,6 +448,9 @@ en:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'
       editor_link: 'Link for editors (without authentification)'
+      open: 'Open Clicker'
+      close: 'Close Clicker'
+      reset: 'Reset Clicker'
       info:
         title: >
           Here you have to enter the title of the clicker.

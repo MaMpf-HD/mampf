@@ -1,5 +1,4 @@
 class Clicker < ApplicationRecord
-  belongs_to :teachable, polymorphic: true, optional: true
   belongs_to :editor, class_name: 'User'
   belongs_to :question, optional: true
 
@@ -7,6 +6,8 @@ class Clicker < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:editor_id] }
   validates :title, presence: true
+
+  has_many :votes, dependent: :destroy
 
   def user_link
     clicker_url(self, host: 'localhost').gsub('clickers','c')
@@ -16,6 +17,23 @@ class Clicker < ApplicationRecord
     clicker_url(self,
                 host: 'localhost',
                 params: { code: code }).gsub('clickers','c')
+  end
+
+  def closed?
+    !open?
+  end
+
+  def open!
+    update(open: true)
+  end
+
+  def close!
+    update(open: false)
+  end
+
+  def reset!
+    close!
+    votes.delete_all
   end
 
   private

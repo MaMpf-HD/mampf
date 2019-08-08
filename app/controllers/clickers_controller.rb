@@ -1,10 +1,11 @@
 # ClickersController
 class ClickersController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:show, :edit]
+  skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
+                                                 :reset]
   before_action :set_clicker, except: [:new, :create]
-  before_action :check_accessibility, only: [:edit]
+  before_action :check_accessibility, only: [:edit, :open, :close, :reset]
   authorize_resource
-  layout 'administration'
+  layout 'clicker'
 
   def new
     @clicker = Clicker.new
@@ -14,16 +15,15 @@ class ClickersController < ApplicationController
     @user_path = clicker_url(@clicker).gsub('clickers','c')
     @editor_path = clicker_url(@clicker,
                                params: { code: @clicker.code }).gsub('clickers','c')
-    render layout: false if !user_signed_in?
+    render layout: 'administration' if user_signed_in?
   end
 
   def show
-    if params[:code] == @clicker.code
+    if params[:code] == @code
       redirect_to edit_clicker_path(@clicker,
                                     params: { code: @clicker.code })
       return
     end
-    render layout: false
   end
 
   def create
@@ -34,6 +34,22 @@ class ClickersController < ApplicationController
       return
     end
     @errors = @clicker.errors
+    render layout: 'administration'
+  end
+
+  def open
+    @clicker.open!
+    render layout: 'administration' if user_signed_in?
+  end
+
+  def close
+    @clicker.close!
+    render layout: 'administration' if user_signed_in?
+  end
+
+  def reset
+    @clicker.reset!
+    render layout: 'administration' if user_signed_in?
   end
 
   private
@@ -45,6 +61,7 @@ class ClickersController < ApplicationController
 
   def set_clicker
     @clicker = Clicker.find_by_id(params[:id])
+    @code = user_signed_in? ? nil : @clicker&.code
     return if @clicker
     redirect_to :root, alert: I18n.t('controllers.no_clicker')
   end

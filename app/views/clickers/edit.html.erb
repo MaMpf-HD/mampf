@@ -14,3 +14,24 @@ Das ist die unauthentifizierte Seite zum Bearbeiten des Clickers.
 <p>
 Hier kommt noch Inhalt.
 </p>
+<%= link_to t('admin.clicker.close'),
+            close_clicker_path(@clicker,
+                               params: { code: @code }),
+            id: 'closeClickerButton',
+            class: 'mui-btn mui-btn--primary',
+            style: "display: #{show(@clicker.open?)}",
+            remote: true %>
+<%= link_to t('admin.clicker.open'),
+            open_clicker_path(@clicker,
+                              params: { code: @code }),
+            id: 'openClickerButton',
+            class: 'mui-btn mui-btn--primary',
+            style: "display: #{show(@clicker.closed?)}",
+            remote: true %>
+<%= link_to t('admin.clicker.reset'),
+            reset_clicker_path(@clicker,
+                               params: { code: @code }),
+            id: 'resetClickerButton',
+            class: 'mui-btn mui-btn--primary',
+            style: "display: #{show(@clicker.closed?)}",
+            remote: true %>
