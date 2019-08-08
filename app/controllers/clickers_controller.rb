@@ -19,7 +19,7 @@ class ClickersController < ApplicationController
   end
 
   def show
-    if params[:code] == @code
+    if params[:code] == @clicker.code
       redirect_to edit_clicker_path(@clicker,
                                     params: { code: @clicker.code })
       return

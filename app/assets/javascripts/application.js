@@ -13,9 +13,8 @@
 //= require jquery3
 //= require popper
 //= require bootstrap
-//= require rails-ujs
+//= require clicker_assets
 //= require activestorage
-//= require js-routes
 //= require i18n
 //= require i18n/translations
 //= require selectize
@@ -24,4 +23,3 @@
 //= require trix
 //= require_tree .
 //= require turbolinks
-//= stub clicker_assets
