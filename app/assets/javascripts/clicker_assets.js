@@ -11,4 +11,4 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require js-routes
+//= require show_clicker

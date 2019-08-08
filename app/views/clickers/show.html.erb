@@ -1,1 +1,7 @@
-Blink.
+<div id="clickerChannel" data-url="<%= clicker_path(@clicker) %>">
+  <% if @clicker.open? %>
+    Clicker ist offen.
+  <% else %>
+    Clicker ist geschlossen.
+  <% end %>
+</div>

@@ -24,6 +24,10 @@ class ClickersController < ApplicationController
                                     params: { code: @clicker.code })
       return
     end
+    if stale?(@clicker)
+      render layout: false if params['layout'] == '0'
+      return
+    end
   end
 
   def create

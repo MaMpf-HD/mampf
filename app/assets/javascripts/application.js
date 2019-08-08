@@ -23,3 +23,4 @@
 //= require trix
 //= require_tree .
 //= require turbolinks
+//= stub show_clicker
