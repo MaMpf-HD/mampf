@@ -29,5 +29,7 @@ webNotificationPoll = ->
 
 
 window.onload = ->
-  setInterval(webNotificationPoll, 4000)
+  channel = $('#clickerChannel')
+  if channel.length > 0
+    setInterval(webNotificationPoll, 4000)
   return

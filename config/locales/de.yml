@@ -464,9 +464,9 @@ de:
       new_clicker: 'Neuen Clicker anlegen'
       user_link: 'Link für NutzerInnen'
       editor_link: 'Link für Editorinnen (ohne Authentifizierung)'
-      close_clicker: 'Clicker schließen'
-      open_clicker: 'Clicker öffnen'
-      reset_clicker: 'Clicker zurücksetzen'
+      close: 'Clicker schließen'
+      open: 'Clicker öffnen'
+      reset: 'Clicker zurücksetzen'
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.

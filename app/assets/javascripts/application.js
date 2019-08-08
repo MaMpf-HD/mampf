@@ -15,6 +15,7 @@
 //= require bootstrap
 //= require clicker_assets
 //= require activestorage
+//= require js-routes
 //= require i18n
 //= require i18n/translations
 //= require selectize

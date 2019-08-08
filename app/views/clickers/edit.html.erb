@@ -1,38 +1,50 @@
-<% if user_signed_in? %>
-  Das ist die authentifizierte Seite zum Bearbeiten des Clickers.
-<% else %>
-  Das ist die unauthentifizierte Seite zum Bearbeiten des Clickers.
-<% end %>
-<div class="mui-panel">
-  <%= t('admin.clicker.user_link') %>:
-  <%= link_to @user_path,
-              @user_path %>
+<div class="row mt-3">
+  <div class="col-12">
+    <% if user_signed_in? %>
+      Das ist die authentifizierte Seite zum Bearbeiten des Clickers.
+    <% else %>
+      Das ist die unauthentifizierte Seite zum Bearbeiten des Clickers.
+    <% end %>
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <%= t('admin.clicker.user_link') %>:
+    <%= link_to @user_path,
+                @user_path %>
+  </div>
 </div>
 <% if user_signed_in? %>
-  <div class="mui-panel">
-    <%= t('admin.clicker.editor_link') %>:
-    <%= link_to @editor_path,
-                @editor_path %>
+  <div class="row">
+    <div class="col-12">
+      <%= t('admin.clicker.editor_link') %>:
+      <%= link_to @editor_path,
+                  @editor_path %>
+    </div>
   </div>
 <% end %>
-<%= link_to t('admin.clicker.close'),
-            close_clicker_path(@clicker,
-                               params: { code: @code }),
-            id: 'closeClickerButton',
-            class: 'mui-btn mui-btn--primary',
-            style: "display: #{show(@clicker.open?)}",
-            remote: true %>
-<%= link_to t('admin.clicker.open'),
-            open_clicker_path(@clicker,
-                              params: { code: @code }),
-            id: 'openClickerButton',
-            class: 'mui-btn mui-btn--primary',
-            style: "display: #{show(@clicker.closed?)}",
-            remote: true %>
-<%= link_to t('admin.clicker.reset'),
-            reset_clicker_path(@clicker,
-                               params: { code: @code }),
-            id: 'resetClickerButton',
-            class: 'mui-btn mui-btn--primary',
-            style: "display: #{show(@clicker.closed?)}",
-            remote: true %>
+<div class="row mt-3">
+  <div class="col-12">
+    <%= link_to t('admin.clicker.close'),
+                close_clicker_path(@clicker,
+                                   params: { code: @code }),
+                id: 'closeClickerButton',
+                class: 'btn btn-primary',
+                style: "display: #{show_no_block(@clicker.open?)}",
+                remote: true %>
+    <%= link_to t('admin.clicker.open'),
+                open_clicker_path(@clicker,
+                                  params: { code: @code }),
+                id: 'openClickerButton',
+                class: 'btn btn-primary',
+                style: "display: #{show_no_block(@clicker.closed?)}",
+                remote: true %>
+    <%= link_to t('admin.clicker.reset'),
+                reset_clicker_path(@clicker,
+                                   params: { code: @code }),
+                id: 'resetClickerButton',
+                class: 'btn btn-primary',
+                style: "display: #{show_no_block(@clicker.closed?)}",
+                remote: true %>
+  </div>
+</div>
