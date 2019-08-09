@@ -467,6 +467,7 @@ de:
       close: 'Clicker schließen'
       open: 'Clicker öffnen'
       reset: 'Clicker zurücksetzen'
+      alternatives: 'Anzahl der Auswahlmöglichkeiten'
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.
@@ -2283,3 +2284,11 @@ de:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
               blank: 'Es muss ein Anzeigename angegeben werden.'
+        vote:
+          attributes:
+            clicker:
+              closed: 'Der Clicker ist leider geschlossen.'
+            value:
+              out_of_range: >
+                Das abgegebene Votum ist leider außerhalb des zulässingen
+                Bereiches.

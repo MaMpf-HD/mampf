@@ -1,0 +1,21 @@
+<% if @clicker.open? %>
+  Clicker ist offen.
+  <%= form_with model: Vote.new do |f| %>
+    <%= f.hidden_field :clicker_id, value: @clicker.id %>
+    <% (1..@clicker.alternatives).each do |i| %>
+      <div class="form-check">
+        <%= f.radio_button :value,
+                           i,
+                           class: 'form-check-input' %>
+        <%= f.label :value,
+                    i.to_s,
+                    value: i,
+                    class: 'form-check-label' %>
+      </div>
+    <% end %>
+    <%= f.submit t('buttons.submit'),
+                 class: 'btn btn-primary' %>
+  <% end %>
+<% else %>
+  Clicker ist geschlossen.
+<% end %>

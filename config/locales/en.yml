@@ -451,6 +451,7 @@ en:
       open: 'Open Clicker'
       close: 'Close Clicker'
       reset: 'Reset Clicker'
+      alternatives: 'Number of alternatives'
       info:
         title: >
           Here you have to enter the title of the clicker.
@@ -2162,3 +2163,10 @@ en:
               blank: 'You need to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
+        vote:
+          attributes:
+            clicker:
+              closed: 'The Clicker is closed.'
+            value:
+              out_of_range: >
+                Your vote is outside of the allowed range.

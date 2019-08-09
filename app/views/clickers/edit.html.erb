@@ -48,3 +48,15 @@
                 remote: true %>
   </div>
 </div>
+<% if @clicker.closed? %>
+  <%= form_with model: @clicker do |f| %>
+    <%= f.hidden_field :code, value: @code %>
+    <div class="col-6 col-lg-3 form-.group">
+      <%= f.label :alternatives, t('admin.clicker.alternatives') %>
+      <%= f.select :alternatives,
+                   options_for_select((2..6).zip((2..6)), 3),
+                   {},
+                   { class: 'form-control'} %>
+    </div>
+  <% end %>
+<% end %>

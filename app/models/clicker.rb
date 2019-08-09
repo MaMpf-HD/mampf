@@ -2,7 +2,7 @@ class Clicker < ApplicationRecord
   belongs_to :editor, class_name: 'User'
   belongs_to :question, optional: true
 
-  before_create :set_code
+  before_create :set_basics
 
   validates :title, uniqueness: { scope: [:editor_id] }
   validates :title, presence: true
@@ -24,7 +24,7 @@ class Clicker < ApplicationRecord
   end
 
   def open!
-    update(open: true)
+    update(open: true, instance: SecureRandom.uuid)
   end
 
   def close!
@@ -38,7 +38,8 @@ class Clicker < ApplicationRecord
 
   private
 
-  def set_code
+  def set_basics
     self.code = SecureRandom.uuid
+    self.alternatives = 3
   end
 end

@@ -223,6 +223,8 @@ Rails.application.routes.draw do
                               as: 'fill_user_select'
   resources :users, only: [:index, :edit, :update, :destroy]
 
+  resources :votes, only: :create
+
   root 'main#home'
   get 'error', to: 'main#error'
   get 'main/home'

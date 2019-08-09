@@ -5,7 +5,7 @@ class ClickersController < ApplicationController
   before_action :set_clicker, except: [:new, :create]
   before_action :check_accessibility, only: [:edit, :open, :close, :reset]
   authorize_resource
-  layout 'clicker'
+  layout 'clicker', except: [:edit]
 
   def new
     @clicker = Clicker.new
@@ -15,17 +15,27 @@ class ClickersController < ApplicationController
     @user_path = clicker_url(@clicker).gsub('clickers','c')
     @editor_path = clicker_url(@clicker,
                                params: { code: @clicker.code }).gsub('clickers','c')
-    render layout: 'administration' if user_signed_in?
+    if user_signed_in?
+      render layout: 'administration'
+      return
+    end
+    render layout: 'edit_clicker'
   end
 
   def show
+    pp cookies['clicker-#{@clicker.id}']
+    pp @clicker.instance
+    if @clicker.open? && cookies["clicker-#{@clicker.id}"] == @clicker.instance
+      render :decline
+      return
+    end
     if params[:code] == @clicker.code
       redirect_to edit_clicker_path(@clicker,
                                     params: { code: @clicker.code })
       return
     end
     if stale?(@clicker)
-      render layout: false if params['layout'] == '0'
+      render :show
       return
     end
   end

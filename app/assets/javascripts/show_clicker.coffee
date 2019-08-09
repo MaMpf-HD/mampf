@@ -17,13 +17,14 @@
 
 webNotificationPoll = ->
   channel = $('#clickerChannel')
-  url = channel.data('url') + '?layout=0'
+  url = channel.data('url')
+  val = $('input[name="vote[value]"]:checked').val();
   $.ajax(
     url: url
     ifModified: true
     ).done (response) ->
     if response?
-      $('body').empty().append(response)
+      $('#clickerChannel').html($(response).find('#clickerChannel').html())
     return
   return
 
@@ -31,5 +32,5 @@ webNotificationPoll = ->
 window.onload = ->
   channel = $('#clickerChannel')
   if channel.length > 0
-    setInterval(webNotificationPoll, 4000)
+    window.clickerChannelId = setInterval(webNotificationPoll, 4000)
   return
