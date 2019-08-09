@@ -34,7 +34,7 @@ class ClickersController < ApplicationController
                                     params: { code: @clicker.code })
       return
     end
-    if stale?(@clicker)
+    if stale?(etag: @clicker, last_modified: @clicker.updated_at)
       render :show
       return
     end
