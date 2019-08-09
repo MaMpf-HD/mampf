@@ -5,7 +5,7 @@
 #   xhr = new XMLHttpRequest
 #   channel = document.getElementById('clickerChannel')
 #   url = channel.dataset.url
-#   xhr.open 'GET', url + '?layout=0'
+#   xhr.open 'GET', url
 #   xhr.onload = ->
 #     console.log xhr.getResponseHeader("Last-Modified")
 #     if xhr.status == 200
@@ -22,9 +22,13 @@ webNotificationPoll = ->
   $.ajax(
     url: url
     ifModified: true
-    ).done (response) ->
+    dataType: 'html'
+    ).done (response, statusText, xhr) ->
+    console.log xhr.status
+    console.log val
     if response?
       $('#clickerChannel').html($(response).find('#clickerChannel').html())
+      $('#vote_value_' + val).prop('checked',true);
     return
   return
 

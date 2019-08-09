@@ -25,19 +25,20 @@ class ClickersController < ApplicationController
   def show
     pp cookies['clicker-#{@clicker.id}']
     pp @clicker.instance
-    if @clicker.open? && cookies["clicker-#{@clicker.id}"] == @clicker.instance
-      render :decline
-      return
-    end
     if params[:code] == @clicker.code
       redirect_to edit_clicker_path(@clicker,
                                     params: { code: @clicker.code })
       return
     end
+    pp stale?(@clicker)
     if stale?(etag: @clicker, last_modified: @clicker.updated_at)
       render :show
       return
     end
+  end
+
+  def decline
+
   end
 
   def create

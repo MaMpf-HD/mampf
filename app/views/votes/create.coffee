@@ -1,7 +1,7 @@
 <% if @errors == 'voted already' %>
-clearInterval(window.clickerChannelId)
-$('body').empty().append('Du hast schon abgestimmt')
+$('body').empty().append('<%= j render partial: "votes/create/voted_already",
+                                       locals: { clicker: @clicker } %>')
 <% else %>
-clearInterval(window.clickerChannelId)
-$('body').empty().append('Danke für Dein Votum!')
+$('body').empty().append('<%= j render partial: "votes/create/thankyou",
+                                       locals: { clicker: @clicker } %>')
 <% end %>
