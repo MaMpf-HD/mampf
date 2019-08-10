@@ -468,6 +468,10 @@ de:
       open: 'Clicker öffnen'
       reset: 'Clicker zurücksetzen'
       alternatives: 'Anzahl der Auswahlmöglichkeiten'
+      is_open: 'Der Clicker ist offen.'
+      is_closed: 'Der Clicker ist geschlossen.'
+      thank_vote: 'Danke für Dein Votum.'
+      voted_already: 'Du hast schon abgestimmt.'
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.

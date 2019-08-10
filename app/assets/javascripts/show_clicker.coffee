@@ -14,6 +14,21 @@
 #   xhr.send()
 #   return
 
+getCookie = (name) ->
+  match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+  if match
+    return match[2]
+  return
+
+adjustVoteStatus = (channel) ->
+  if channel.data('open')
+    clickerId = channel.data('clicker')
+    clickerInstance = channel.data('instance')
+    clickerStatus = getCookie('clicker-' + clickerId)
+    if clickerStatus == clickerInstance
+      $('#clickerOpen').hide()
+      $('#votedAlready').show()
+  return
 
 webNotificationPoll = ->
   channel = $('#clickerChannel')
@@ -24,11 +39,15 @@ webNotificationPoll = ->
     ifModified: true
     dataType: 'html'
     ).done (response, statusText, xhr) ->
-    console.log xhr.status
-    console.log val
     if response?
+      responseChannel = $(response).find('#clickerChannel')
+      newClickerInstance = responseChannel.data('instance')
+      newClickerOpen = responseChannel.data('open')
       $('#clickerChannel').html($(response).find('#clickerChannel').html())
+      $('#clickerChannel').data('instance', newClickerInstance)
+      $('#clickerChannel').data('open', newClickerOpen)
       $('#vote_value_' + val).prop('checked',true);
+      adjustVoteStatus($('#clickerChannel'))
     return
   return
 
@@ -36,5 +55,7 @@ webNotificationPoll = ->
 window.onload = ->
   channel = $('#clickerChannel')
   if channel.length > 0
+    console.log 'Hi'
+    adjustVoteStatus(channel)
     window.clickerChannelId = setInterval(webNotificationPoll, 4000)
   return
