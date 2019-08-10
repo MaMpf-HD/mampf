@@ -1,30 +1,51 @@
 <div class="row mt-3">
   <div class="col-12">
-    <% if user_signed_in? %>
-      Das ist die authentifizierte Seite zum Bearbeiten des Clickers.
-    <% else %>
-      Das ist die unauthentifizierte Seite zum Bearbeiten des Clickers.
-    <% end %>
+    <ul class="list-group">
+      <li class="list-group-item list-group-item-secondary">
+        <%= t('admin.clicker.user_link') %>:
+        <%= link_to @user_path,
+                    @user_path %>
+      </li>
+      <% if user_signed_in? %>
+        <li class="list-group-item list-group-item-secondary">
+          <%= t('admin.clicker.editor_link') %>:
+          <%= link_to @editor_path,
+                      @editor_path %>
+        </li>
+      <% end %>
+      <li class="clickerClosed list-group-item list-group-item-light text-dark"
+          style='display: <%= "#{show(@clicker.closed?)}" %>'>
+        <%= render partial: 'clickers/edit/alternatives',
+                   locals: { clicker: @clicker } %>
+      </li>
+      <li class="clickerOpen list-group-item list-group-item-light text-dark"
+          style='display: <%= "#{show(@clicker.open?)}" %>'>
+        Anzahl der Voten:
+        <span class="clickerVotesCount">
+          <%= @clicker.votes.count %>
+        </span>
+      </li>
+      <li class="clickerClosed list-group-item list-group-item-light text-dark"
+          style='display: <%= "#{show(@clicker.closed?)}" %>'>
+        <h5>
+          Ergebnis der letzten Abstimmung
+        </h5>
+        Anzahl der Voten:
+        <span class="clickerVotesCount">
+          <%= @clicker.votes.count %>
+        </span>
+        <div id="votesGfx">
+          <% if @clicker.votes.count.positive? %>
+            <%= render partial: 'clickers/edit/results',
+                       locals: { clicker: @clicker } %>
+          <% end %>
+        </div>
+      </li>
+    </ul>
   </div>
 </div>
-<div class="row">
-  <div class="col-12">
-    <%= t('admin.clicker.user_link') %>:
-    <%= link_to @user_path,
-                @user_path %>
-  </div>
-</div>
-<% if user_signed_in? %>
-  <div class="row">
-    <div class="col-12">
-      <%= t('admin.clicker.editor_link') %>:
-      <%= link_to @editor_path,
-                  @editor_path %>
-    </div>
-  </div>
-<% end %>
-<div class="row mt-3">
-  <div class="col-12">
+<div class="row mt-3 mb-3">
+  <div class="col-12 text-center">
     <%= link_to t('admin.clicker.close'),
                 close_clicker_path(@clicker,
                                    params: { code: @code }),
@@ -39,32 +60,5 @@
                 class: 'btn btn-primary',
                 style: "display: #{show_no_block(@clicker.closed?)}",
                 remote: true %>
-  </div>
-</div>
-<div id="clickerClosed"
-     style='display: <%= "#{show(@clicker.closed?)}" %>'>
-  <div class="row">
-    <div class="col-12">
-      <%= t('admin.clicker.alternatives') %>:
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <% (2..6).each do |i| %>
-        <div class="custom-control custom-radio custom-control-inline">
-          <input type="radio"
-                 name="clickerAlternatives"
-                 id="clickerAlternatives_<%= i %>"
-                 data-clicker="<%= @clicker.id %>"
-                 data-alternatives="<%= i %>"
-                 <%= @clicker.alternatives == i ? 'checked' : '' %>
-                 class="clickerAlternatives custom-control-input">
-          <label class="custom-control-label"
-                 for="clickerAlternatives_<%= i %>">
-            <%= i %>
-          </label>
-        </div>
-      <% end %>
-    </div>
   </div>
 </div>

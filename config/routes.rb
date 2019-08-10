@@ -24,6 +24,9 @@ Rails.application.routes.draw do
   post 'clickers/:id/set_alternatives', to: 'clickers#set_alternatives',
                                         as: 'set_clicker_alternatives'
 
+  get 'clickers/:id/get_votes_count', to: 'clickers#get_votes_count',
+                                      as: 'get_votes_count'
+
   resources :clickers
 
   get 'c/:id', to: 'clickers#show'

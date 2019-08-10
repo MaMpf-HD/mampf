@@ -1,0 +1,17 @@
+<% (1..clicker.alternatives).each do |i| %>
+  <div class="row my-2">
+    <div class="col-1 text-center"
+         style="font-size: 2em;">
+      <%= i %>
+    </div>
+    <div class="col-11">
+      <div class="progress"
+           style="height: 2em; font-size: 2em;">
+        <div class="progress-bar"
+             style="width: <%= clicker.results[i - 1] %>%; color: black;">
+          <%= clicker.results[i - 1] %> %
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>

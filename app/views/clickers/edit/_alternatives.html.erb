@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-12">
+    <%= t('admin.clicker.alternatives') %>:
+  </div>
+</div>
+<div class="row">
+  <div class="col-12">
+    <% (2..6).each do |i| %>
+      <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio"
+               name="clickerAlternatives"
+               id="clickerAlternatives_<%= i %>"
+               data-clicker="<%= @clicker.id %>"
+               data-alternatives="<%= i %>"
+               <%= clicker.alternatives == i ? 'checked' : '' %>
+               class="clickerAlternatives custom-control-input">
+        <label class="custom-control-label"
+               for="clickerAlternatives_<%= i %>">
+          <%= i %>
+        </label>
+      </div>
+    <% end %>
+  </div>
+</div>

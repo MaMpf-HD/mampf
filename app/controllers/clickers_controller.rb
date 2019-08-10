@@ -1,7 +1,8 @@
 # ClickersController
 class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
-                                                 :reset, :set_level]
+                                                 :reset, :set_level,
+                                                 :get_votes_count]
   before_action :set_clicker, except: [:new, :create]
   before_action :check_accessibility, only: [:edit, :open, :close, :set_level]
   authorize_resource
@@ -23,14 +24,11 @@ class ClickersController < ApplicationController
   end
 
   def show
-    pp cookies['clicker-#{@clicker.id}']
-    pp @clicker.instance
     if params[:code] == @clicker.code
       redirect_to edit_clicker_path(@clicker,
                                     params: { code: @clicker.code })
       return
     end
-    pp stale?(@clicker)
     if stale?(etag: @clicker, last_modified: @clicker.updated_at)
       render :show
       return
@@ -61,6 +59,11 @@ class ClickersController < ApplicationController
   def set_alternatives
     @clicker.update(alternatives: params[:alternatives].to_i)
     head :ok, content_type: "text/html"
+  end
+
+  def get_votes_count
+    result = @clicker.votes.count
+    render json: result
   end
 
   private
