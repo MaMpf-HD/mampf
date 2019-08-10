@@ -34,6 +34,7 @@ webNotificationPoll = ->
   channel = $('#clickerChannel')
   url = channel.data('url')
   val = $('input[name="vote[value]"]:checked').val();
+  thankVote = $('#thankVote').is(':visible')
   $.ajax(
     url: url
     ifModified: true
@@ -41,6 +42,8 @@ webNotificationPoll = ->
     ).done (response, statusText, xhr) ->
     if response?
       responseChannel = $(response).find('#clickerChannel')
+      clickerId = channel.data('clicker')
+      clickerStatus = getCookie('clicker-' + clickerId)
       newClickerInstance = responseChannel.data('instance')
       newClickerOpen = responseChannel.data('open')
       $('#clickerChannel').html($(response).find('#clickerChannel').html())
@@ -49,7 +52,12 @@ webNotificationPoll = ->
       if val?
         $('#vote_value_' + val).prop('checked',true)
         $('#submitClickerVote').prop('disabled', false)
-      adjustVoteStatus($('#clickerChannel'))
+      if clickerStatus == newClickerInstance
+        $('#clickerOpen').hide()
+        if thankVote
+          $('#thankVote').show()
+        else
+          $('#votedAlready').show()
     return
   return
 
