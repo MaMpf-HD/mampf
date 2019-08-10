@@ -2065,6 +2065,7 @@ de:
     default_target: 'Standard-Ziel'
     ramification: 'Verzweigung'
     edit_tags: 'Tags bearbeiten'
+    vote: 'Abstimmen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

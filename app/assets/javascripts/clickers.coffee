@@ -11,3 +11,7 @@ $(document).on 'turbolinks:load', ->
     return
   return
 
+# clean up everything before turbolinks caches
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'change', '.clickerAlternatives'
+  return

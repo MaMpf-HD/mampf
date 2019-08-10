@@ -1,21 +1,34 @@
 <% if @clicker.open? %>
   <div id="clickerOpen">
-    <%= t('admin.clicker.is_open') %>
     <%= form_with model: Vote.new do |f| %>
       <%= f.hidden_field :clicker_id, value: @clicker.id %>
-      <% (1..@clicker.alternatives).each do |i| %>
-        <div class="form-check">
-          <%= f.radio_button :value,
-                             i,
-                             class: 'form-check-input' %>
-          <%= f.label :value,
-                      i.to_s,
-                      value: i,
-                      class: 'form-check-label' %>
+      <div class="row mt-2">
+        <div class="col-12">
+          <ul class="list-group">
+            <% (1..@clicker.alternatives).each do |i| %>
+              <li class="list-group-item list-group-item-light">
+                <div class="form-check">
+                  <%= f.radio_button :value,
+                                     i,
+                                     class: 'form-check-input clickerVote' %>
+                  <%= f.label :value,
+                              i.to_s,
+                              value: i,
+                              class: 'form-check-label' %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
         </div>
-      <% end %>
-      <%= f.submit t('buttons.submit'),
-                   class: 'btn btn-primary' %>
+      </div>
+      <div class="row mt-3">
+        <div class="col-12 text-center">
+          <%= f.submit t('buttons.vote'),
+                       id: 'submitClickerVote',
+                       class: 'btn btn-primary',
+                       disabled: true %>
+        </div>
+      </div>
     <% end %>
   </div>
   <div id="thankVote" style="display: none;">

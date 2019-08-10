@@ -46,7 +46,9 @@ webNotificationPoll = ->
       $('#clickerChannel').html($(response).find('#clickerChannel').html())
       $('#clickerChannel').data('instance', newClickerInstance)
       $('#clickerChannel').data('open', newClickerOpen)
-      $('#vote_value_' + val).prop('checked',true);
+      if val?
+        $('#vote_value_' + val).prop('checked',true)
+        $('#submitClickerVote').prop('disabled', false)
       adjustVoteStatus($('#clickerChannel'))
     return
   return
@@ -55,7 +57,9 @@ webNotificationPoll = ->
 window.onload = ->
   channel = $('#clickerChannel')
   if channel.length > 0
-    console.log 'Hi'
     adjustVoteStatus(channel)
     window.clickerChannelId = setInterval(webNotificationPoll, 4000)
+    $(document).on 'change', '.clickerVote', ->
+      $('#submitClickerVote').prop('disabled', false)
+      return
   return
