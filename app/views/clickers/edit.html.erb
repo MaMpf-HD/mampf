@@ -39,24 +39,32 @@
                 class: 'btn btn-primary',
                 style: "display: #{show_no_block(@clicker.closed?)}",
                 remote: true %>
-    <%= link_to t('admin.clicker.reset'),
-                reset_clicker_path(@clicker,
-                                   params: { code: @code }),
-                id: 'resetClickerButton',
-                class: 'btn btn-primary',
-                style: "display: #{show_no_block(@clicker.closed?)}",
-                remote: true %>
   </div>
 </div>
-<% if @clicker.closed? %>
-  <%= form_with model: @clicker do |f| %>
-    <%= f.hidden_field :code, value: @code %>
-    <div class="col-6 col-lg-3 form-.group">
-      <%= f.label :alternatives, t('admin.clicker.alternatives') %>
-      <%= f.select :alternatives,
-                   options_for_select((2..6).zip((2..6)), 3),
-                   {},
-                   { class: 'form-control'} %>
+<div id="clickerClosed"
+     style='display: <%= "#{show(@clicker.closed?)}" %>'>
+  <div class="row">
+    <div class="col-12">
+      <%= t('admin.clicker.alternatives') %>:
     </div>
-  <% end %>
-<% end %>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <% (2..6).each do |i| %>
+        <div class="custom-control custom-radio custom-control-inline">
+          <input type="radio"
+                 name="clickerAlternatives"
+                 id="clickerAlternatives_<%= i %>"
+                 data-clicker="<%= @clicker.id %>"
+                 data-alternatives="<%= i %>"
+                 <%= @clicker.alternatives == i ? 'checked' : '' %>
+                 class="clickerAlternatives custom-control-input">
+          <label class="custom-control-label"
+                 for="clickerAlternatives_<%= i %>">
+            <%= i %>
+          </label>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

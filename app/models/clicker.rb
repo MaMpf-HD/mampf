@@ -24,16 +24,12 @@ class Clicker < ApplicationRecord
   end
 
   def open!
+    votes.delete_all
     update(open: true, instance: SecureRandom.uuid)
   end
 
   def close!
     update(open: false)
-  end
-
-  def reset!
-    close!
-    votes.delete_all
   end
 
   private

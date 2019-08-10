@@ -1,3 +1,3 @@
 $('#openClickerButton').hide()
 $('#closeClickerButton').show()
-$('#resetClickerButton').hide()
+$('#clickerClosed').hide()

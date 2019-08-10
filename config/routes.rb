@@ -21,8 +21,8 @@ Rails.application.routes.draw do
                            as: 'open_clicker'
   get 'clickers/:id/close', to: 'clickers#close',
                             as: 'close_clicker'
-  get 'clickers/:id/reset', to: 'clickers#reset',
-                            as: 'reset_clicker'
+  post 'clickers/:id/set_alternatives', to: 'clickers#set_alternatives',
+                                        as: 'set_clicker_alternatives'
 
   resources :clickers
 

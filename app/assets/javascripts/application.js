@@ -26,6 +26,7 @@
 //= require administration
 //= require bootstrap_modal_turbolinks_fix
 //= require chapters
+//= require clickers
 //= require courses
 //= require file_upload
 //= require items

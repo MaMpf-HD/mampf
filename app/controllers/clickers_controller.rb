@@ -1,9 +1,9 @@
 # ClickersController
 class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
-                                                 :reset]
+                                                 :reset, :set_level]
   before_action :set_clicker, except: [:new, :create]
-  before_action :check_accessibility, only: [:edit, :open, :close, :reset]
+  before_action :check_accessibility, only: [:edit, :open, :close, :set_level]
   authorize_resource
   layout 'clicker', except: [:edit]
 
@@ -37,10 +37,6 @@ class ClickersController < ApplicationController
     end
   end
 
-  def decline
-
-  end
-
   def create
     @clicker = Clicker.new(clicker_params)
     @clicker.save
@@ -62,9 +58,9 @@ class ClickersController < ApplicationController
     render layout: 'administration' if user_signed_in?
   end
 
-  def reset
-    @clicker.reset!
-    render layout: 'administration' if user_signed_in?
+  def set_alternatives
+    @clicker.update(alternatives: params[:alternatives].to_i)
+    head :ok, content_type: "text/html"
   end
 
   private
