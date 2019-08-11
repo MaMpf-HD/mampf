@@ -165,6 +165,7 @@ class MediaController < ApplicationController
       redirect_to :root, alert: I18n.t('controllers.no_video')
       return
     end
+    I18n.locale = @medium.locale_with_inheritance
     @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
     @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
     @time = params[:time]

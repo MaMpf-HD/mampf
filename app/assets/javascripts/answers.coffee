@@ -8,8 +8,7 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'shown.bs.collapse', '[id^="collapse-answer-"]', ->
     $target = $('#targets-answer-' + $(this).data('id'))
-    locale = $target.data('locale')
-    $target.empty().append(I18n.t('buttons.discard', { locale: locale }))
+    $target.empty().append($target.data('discard'))
       .removeClass('btn-primary').addClass('btn-secondary')
     return
 
@@ -23,7 +22,7 @@ $(document).on 'turbolinks:load', ->
     explanation = $('#tex-area-explanation-' + answerId).val()
     $target = $('#targets-answer-' + answerId)
     $target.empty()
-      .append(I18n.t('buttons.edit', { locale: $target.data('locale') }))
+      .append($target.data('edit'))
       .removeClass('btn-secondary').addClass 'btn-primary'
     $.ajax Routes.answer_path(answerId),
       type: 'PATCH'

@@ -20,7 +20,9 @@
     <%= f.password_field :password_confirmation, class: 'form-control' %>
   </div>
   <div class="form-group">
-    <%= f.check_box :consents, id: 'dsgvo-consent' %>
+    <%= f.check_box :consents,
+                    id: 'dsgvo-consent',
+                    data: { noconsent: t('profile.no_consent') } %>
     <%= f.label :consents,
                 t('.consent_html',
                   policy: link_to(t('.policy'),

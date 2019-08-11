@@ -16,14 +16,13 @@
 //= require rails-ujs
 //= require activestorage
 //= require js-routes
-//= require i18n
-//= require i18n/translations
 //= require selectize
 //= require jquery.fileDownload
 //= require jquery-ui
 //= require trix
 //= require _selectize_turbolinks_fix
 //= require administration
+//= require answers
 //= require bootstrap_modal_turbolinks_fix
 //= require chapters
 //= require clickers
@@ -33,7 +32,6 @@
 //= require katex
 //= require lectures
 //= require lessons
-//= require localization
 //= require main
 //= require media
 //= require notifications

@@ -7,7 +7,7 @@ $(document).on 'turbolinks:load', ->
   # make sure user can only register if DSVGO checkbox has been checked
   $(document).on 'click', '#register-user', (evt) ->
     if $('#dsgvo-consent').prop('checked') == false
-      alert I18n.t('profile.no_consent')
+      alert $('#dsgvo-consent').data('noconsent')
       evt.preventDefault()
     return
 

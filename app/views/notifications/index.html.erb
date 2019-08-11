@@ -5,7 +5,8 @@
         <h4>
           <%= t('notifications.title') %>
           <% if @notifications.present? %>
-            <span class="badge badge-secondary notificationCounter">
+            <span class="badge badge-secondary notificationCounter"
+                  data-count="<%= @notifications.count %>">
               <%= @notifications.count %>
             </span>
           <% end %>
@@ -22,7 +23,9 @@
   </div>
   <div class="card-body"
        id="notificationCardBody">
-    <div class="row" id="notificationCardRow">
+    <div class="row"
+         id="notificationCardRow"
+         data-nonotifications="<%= t('notifications.no_notifications') %>">
       <% if @notifications.present? %>
         <% @notifications.each do |n| %>
           <div class="col-12 col-md-6 col-xl-4 col-xxl-4 col-xxxl-3 mb-2"

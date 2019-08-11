@@ -1446,7 +1446,7 @@ en:
     lecture:
       title: 'News'
       one_new: 'There is a new announcement:'
-      more_new: 'There are %{count} new announcements:'
+      more_new: 'There are several new announcements:'
       new_post_html: 'There is an unread topic in the %{board}.'
       new_posts_html: 'There are %{count} unread topics in the %{board}.'
     no_notifications: 'There are no new notifications for you.'

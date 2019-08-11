@@ -55,7 +55,7 @@ videoUpload = (fileInput) ->
     ])
   uppy.use(Uppy.FileInput,
            target: uploadButton
-           locale: strings: chooseFiles: I18n.t('basics.file'))
+           locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
   uppy.use(Uppy.Informer, target: informer)
   uppy.use(Uppy.ProgressBar, target: progressBar)
 
@@ -136,7 +136,7 @@ manuscriptUpload = (fileInput) ->
     restrictions: allowedFileTypes: [ '.pdf' ])
     .use(Uppy.FileInput,
       target: uploadButton
-      locale: strings: chooseFiles: I18n.t('basics.file'))
+      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
     .use(Uppy.Informer, target: informer)
     .use(Uppy.ProgressBar, target: progressBar)
 

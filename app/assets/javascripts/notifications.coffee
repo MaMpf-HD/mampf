@@ -20,7 +20,7 @@ adjustNotificationCounter = (notificationId) ->
 		# this is only relevant for index page
 		$('#notificationCardRow')
 			.append('<div class="col-12">')
-			.append(I18n.t('notifications.no_notifications'))
+			.append($('#notificationCardRow').data('nonotifications'))
 			.append('</div>')
 	return
 
@@ -41,9 +41,9 @@ $(document).on 'turbolinks:load', ->
 			if $('#unreadPosts').length == 0
 				$('#newsCard').remove()
 		else if newCount == 1
-			$counter.append(I18n.t('notifications.lecture.one_new')).data('count', 1)
+			$counter.append($(this).data('onenew')).data('count', 1)
 		else
-			$counter.append(I18n.t('notifications.lecture.more_new', count: newCount))
+			$counter.append($(this).data('morenew'))
 				.data('count', newCount)
 		adjustNotificationCounter(notificationId)
 		return

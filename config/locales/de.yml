@@ -1542,7 +1542,7 @@ de:
     lecture:
       title: 'Aktuelles'
       one_new: 'Es gibt eine neue Mitteilung:'
-      more_new: 'Es gibt %{count} neue Mitteilungen:'
+      more_new: 'Es gibt mehrere neue Mitteilungen:'
       new_post_html: 'Im %{board} gibt es ein ungelesenes Thema.'
       new_posts_html: 'Im %{board} gibt es %{count} ungelesene Themen.'
     no_notifications: 'Es liegen keine neuen Benachrichtigungen für Dich vor.'

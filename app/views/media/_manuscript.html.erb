@@ -9,7 +9,8 @@
         <%= helpdesk(t('admin.medium.info.manuscript'), false) %>
       </div>
       <div class="col-4 text-right"
-           id="manuscript-uploadButton">
+           id="manuscript-uploadButton"
+           data-choosefiles="<%= t('basics.file') %>">
         <input type="hidden"
                name="medium[manuscript]"
                value="<%= medium.cached_manuscript_data %>"

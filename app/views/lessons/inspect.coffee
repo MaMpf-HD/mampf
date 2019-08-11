@@ -1,5 +1,5 @@
 # render inspect lesson modal
-$('#lesson-action').empty().append(I18n.t('admin.lesson.inspect'))
+$('#lesson-action').empty().append('<%= I18n.t("admin.lesson.inspect") %>')
 $('#lesson-modal-content').empty()
   .append('<%= j render partial: "lessons/basics",
                         locals: { lesson: @lesson,
