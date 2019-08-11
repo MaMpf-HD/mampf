@@ -187,7 +187,7 @@ de:
         medium_definition: >
           Dies ist eine Liste aller
           <i>Medien</i>,
-          für die Du als BearbeiterIn eingetragen bist. Medien, für Die Du
+          für die Du als BearbeiterIn eingetragen bist. Medien, für die Du
           Bearbeitungsrechte erbst (beispielsweise als ModuleditorIn), sind in
           dieser Liste nicht aufgeführt. Unveröffentlichte sowie gesperrte
           Medien sind in rötlicher Farbe gekennzeichnet.
@@ -283,7 +283,7 @@ de:
           die die Veranstaltung hält. Möchte die entsprechende Person
           sich nicht selbst um das Einstellen von Materialien
           kümmern, so kann dies durch zusätzliche
-          Veranstaltungseditoren geschehen.
+          VeranstaltungseditorInnen geschehen.
         workflow: >
           Wir beschreiben im Folgenden einen sinnvollen
           Workflow. Hierbei sollte man unterscheiden, ob die Veranstaltung
@@ -375,9 +375,9 @@ de:
           für das zugeordnete Modul. Dieses vererbt sich auf jede
           Veranstaltung zu diesem Modul.
         lecture_editors: >
-          Zusätzliche Veranstaltungseditoren sind
-          bearbeitungsberechtigte Personen, die verschieden vom
-          Dozenten und von den Moduleditoren sind. Das können z.B.
+          Zusätzliche VeranstaltungseditorInnen sind
+          bearbeitungsberechtigte Personen, die verschieden von der
+          DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
           Veranstaltung einpflegen.
         subscribers_count: >
@@ -411,7 +411,7 @@ de:
           Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen
           weitergezählt.
         passphrase: >
-          Wenn du hier etwa eingibst, können
+          Wenn du hier etwas eingibst, können
           NutzerInnen diese Veranstaltung nur unter Angabe dieses
           Schlüssels abonnieren. Medien, die zu dieser Veranstaltung
           oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
@@ -740,7 +740,7 @@ de:
           </li>
           <li>
           Quiz-Erläuterung: einzelne Quiz-Erläuterung. Quiz-Erläuterungen
-          dienen als Bindeglied zwischen Quiz-Fragen in komplexreren Quizzes
+          dienen als Bindeglied zwischen Quiz-Fragen in komplexeren Quizzes
           (z.B. angeleiteten Beweisen)
           </li>
           <li>
@@ -808,7 +808,7 @@ de:
           Dies ist die Liste aller Tags, die mit diesem Medium
           verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt,
           so stehen hier zunächst alle zu dieser Sitzung assoziierten Tags;
-          diese Wauswahl kann natürlich bearbeitet werden.
+          diese Auswahl kann natürlich bearbeitet werden.
         linked_media: >
           Dies ist eine Liste aller Medien, die mit diesem Medium
           verknüpft sind bzw. die von diesem Medium aus referenziert werden.
@@ -821,13 +821,13 @@ de:
           Daten ausgelesen werden können.
         external_link: >
           Externer Link, der einen Teil diese Mediums ausmacht.
-          Könnte z.B. ein Link auf das Stacks-Project sein.
+          Das könnte z.B. ein Link auf das Stacks-Project sein.
         access_rights: >
           Die Varianten von Zugriffsrechten sind möglich:
           <ul>
           <li>
           frei (Standardeinstellung): Registrierte MaMpf-NutzerInnen können das
-          Medium sehen. Nicht registrierte BenutzerInnen können den
+          Medium sehen. Nicht registrierte BenutzerInnen können
           den THymE-Player für das Video (falls vorhanden),
           den pdf-Viewer für das Manuskript (falls vorhanden) oder
           das Quiz (falls vorhanden) aufrufen, sofern sie die Medien-ID kennen.
@@ -1222,19 +1222,17 @@ de:
           Hier wirst Du demnächst die Möglichkeit haben, ein
           Profilbild hochzuladen.
         given_lectures: >
-          Dies ist die Liste aller Veranstaltungen, die als DozentIn
-          verantwortet wurden bzw. werden. Unveröffentlichte Veranstaltung
-          sind in rötlicher Farbe gekennzeichnet.
+          Dies ist die Liste aller Veranstaltungen, für die Du als DozentIn
+          die Du als DozentIn verantwortest bzw. verantwortet hast.
+          Unveröffentlichte Veranstaltung sind in rötlicher Farbe gekennzeichnet.
         edited_courses: >
-          Dies ist die Liste aller Module, für die
-          Moduleditorenrechte bestehen.
+          Dies ist die Liste aller Module, für die Du Moduleditorenrechte hast.
         edited_lectures: >
-          Dies ist die Liste aller Veranstaltungen, für die
-          zusätzliche Editorenrechte bestehen. Unveröffentlichte Veranstaltung
+          Dies ist die Liste aller Veranstaltungen, für die zusätzliche
+          Editorenrechte hast. Unveröffentlichte Veranstaltung
           sind in rötlicher Farbe gekennzeichnet.
         edited_media: >
-          Dies ist die Liste aller Medien, für die
-          Medieneditorenrechte bestehen.
+          Dies ist die Liste aller Medien, für die Du Medieneditorenrechte hast.
         elevate: >
           Wenn Du das anklickst, wird die NutzerIn zur
           AdministratorIn befördert.

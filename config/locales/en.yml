@@ -1147,16 +1147,16 @@ en:
         profile_image: >
           Here you will soon have the opportunity to upload a profile image.
         given_lectures: >
-          This is the list of event series that were/are given as teacher.
+          This is the list of event series you are teaching/have taught.
           Unpublished event series are displayed in red.
         edited_courses: >
-          This is the list of courses for which there are course editor rights.
+          This is the list of courses for which you have course editor rights.
         edited_lectures: >
-          This is the list of event series for which there are editing rights
+          This is the list of event series for which you have editing rights
           (even if the teacher was a different person). Unpublished event series
           are displayed in red.
         edited_media: >
-          This is the list of media for which there are editing rights.
+          This is the list of media for which you have editing rights.
         elevate: >
           If you check this box, the user will be promoted to administrator.
     question:
@@ -1384,7 +1384,7 @@ en:
     change_data: 'Change login data'
     courses: 'Courses'
     primary_lecture: 'Primary event series'
-    secondary_lectures: 'Secondary event seriess'
+    secondary_lectures: 'Secondary event series'
     no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
     preferences: 'Preferences'
