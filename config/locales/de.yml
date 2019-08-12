@@ -465,7 +465,7 @@ de:
       user_link: 'Link für NutzerInnen'
       editor_link: 'Link für Editorinnen (ohne Authentifizierung)'
       close: 'Clicker schließen'
-      open: 'Clicker öffnen'
+      open: 'Clicker freischalten'
       reset: 'Clicker zurücksetzen'
       alternatives: 'Anzahl der Auswahlmöglichkeiten'
       is_open: 'Der Clicker ist offen.'
@@ -474,6 +474,7 @@ de:
       voted_already: 'Du hast schon abgestimmt.'
       show_qr: 'QR-Code zeigen'
       hide_qr: 'QR-Code verstecken'
+      remove_question: 'Assoziierung zu Quizfrage aufheben'
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.

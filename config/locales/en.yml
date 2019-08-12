@@ -448,7 +448,7 @@ en:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'
       editor_link: 'Link for editors (without authentification)'
-      open: 'Open Clicker'
+      open: 'Enable Clicker'
       close: 'Close Clicker'
       reset: 'Reset Clicker'
       is_open: 'Clicker is open.'
@@ -458,6 +458,7 @@ en:
       alternatives: 'Number of alternatives'
       show_qr: 'Show QR Code'
       hide_qr: 'Hide QR Code'
+      remove_question: 'Remove association to Question'
       info:
         title: >
           Here you have to enter the title of the clicker.

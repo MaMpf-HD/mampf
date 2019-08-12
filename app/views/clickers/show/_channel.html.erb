@@ -1,42 +1,36 @@
 <% if @clicker.open? %>
   <div id="clickerOpen">
-    <%= form_with model: Vote.new do |f| %>
-      <%= f.hidden_field :clicker_id, value: @clicker.id %>
-      <div class="row mt-2">
-        <div class="col-12">
-          <ul class="list-group">
-            <% (1..@clicker.alternatives).each do |i| %>
-              <li class="list-group-item list-group-item-light text-dark">
-                <div class="form-check">
-                  <%= f.radio_button :value,
-                                     i,
-                                     class: 'form-check-input clickerVote' %>
-                  <%= f.label :value,
-                              i.to_s,
-                              value: i,
-                              class: 'form-check-label' %>
-                </div>
-              </li>
-            <% end %>
-          </ul>
-        </div>
-      </div>
-      <div class="row mt-3">
-        <div class="col-12 text-center">
-          <%= f.submit t('buttons.vote'),
-                       id: 'submitClickerVote',
-                       class: 'btn btn-primary',
-                       disabled: true %>
-        </div>
-      </div>
-    <% end %>
-  </div>
-  <div id="thankVote" style="display: none;">
-    <%= t('admin.clicker.thank_vote') %>
+    <ul class="list-group mt-2">
+      <% (1..@clicker.alternatives).each do |i| %>
+        <%= link_to(votes_path(params: { vote: { value: i,
+                                                 clicker_id: @clicker.id }}),
+                    method: :post,
+                    remote: true,
+                    class: 'list-group-item list-group-item-action voteClicker',
+                    data: { value: i }) do %>
+          <div class="text-center" style="font-size: 3em;">
+            <%= %w(A B C D E F)[i-1] %>
+          </div>
+        <% end %>
+        <li class="list-group-item votedClicker"
+            style="display: none;"
+            data-value="<%= i%>">
+          <div class="text-center" style="font-size: 3em;">
+            <%= %w(A B C D E F)[i-1] %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
   </div>
   <div id="votedAlready" style="display: none;">
-    <%= t('admin.clicker.voted_already') %>
+    <div class="d-flex justify-content-center mt-3">
+      <div class="spinner-border" role="status">
+      </div>
+    </div>
   </div>
 <% else %>
-  <%= t('admin.clicker.is_closed') %>
+  <div class="d-flex justify-content-center mt-3">
+    <div class="spinner-border" role="status">
+    </div>
+  </div>
 <% end %>
