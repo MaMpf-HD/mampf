@@ -7,11 +7,11 @@ $(document).on 'turbolinks:load', ->
       dataType: 'script'
       data: {
         alternatives: alternatives
+        code:  $(this).data('code')
       }
     return
 
   $(document).on 'click', '#clickerQRButton', ->
-    console.log 'Hi'
     if $(this).data('showqr')
       $('#clickerQRCode').hide()
       $(this).data('showqr', false)

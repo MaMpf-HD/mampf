@@ -2,7 +2,8 @@
 class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
                                                  :reset, :set_level,
-                                                 :get_votes_count]
+                                                 :get_votes_count,
+                                                 :set_alternatives]
   before_action :set_clicker, except: [:new, :create]
   before_action :check_accessibility, only: [:edit, :open, :close, :set_level]
   authorize_resource

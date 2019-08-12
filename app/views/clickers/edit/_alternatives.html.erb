@@ -12,6 +12,7 @@
                id="clickerAlternatives_<%= i %>"
                data-clicker="<%= @clicker.id %>"
                data-alternatives="<%= i %>"
+               data-code="<%= @clicker.code %>"
                <%= clicker.alternatives == i ? 'checked' : '' %>
                class="clickerAlternatives custom-control-input">
         <label class="custom-control-label"
