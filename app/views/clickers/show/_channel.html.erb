@@ -15,7 +15,7 @@
         <li class="list-group-item votedClicker"
             style="display: none;"
             data-value="<%= i%>">
-          <div class="text-center" style="font-size: 3em;">
+          <div class="text-center text-light" style="font-size: 3em;">
             <%= %w(A B C D E F)[i-1] %>
           </div>
         </li>
@@ -24,13 +24,13 @@
   </div>
   <div id="votedAlready" style="display: none;">
     <div class="d-flex justify-content-center mt-3">
-      <div class="spinner-border" role="status">
+      <div class="spinner-border text-primary" role="status">
       </div>
     </div>
   </div>
 <% else %>
   <div class="d-flex justify-content-center mt-3">
-    <div class="spinner-border" role="status">
+    <div class="spinner-border text-primary" role="status">
     </div>
   </div>
 <% end %>
