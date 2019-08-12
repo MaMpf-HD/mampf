@@ -8,16 +8,34 @@
                     remote: true,
                     class: 'list-group-item list-group-item-action voteClicker',
                     data: { value: i }) do %>
-          <div class="text-center" style="font-size: 3em;">
-            <%= %w(A B C D E F)[i-1] %>
-          </div>
+          <% if @clicker.question %>
+            <span class="mr-3" style="font-size: 1.5em;">
+              <%= %w(A B C D E F)[i-1] %>
+            </span>
+            <span>
+              <%= @clicker.question.answers.pluck(:text)[i-1] %>
+            </span>
+          <% else %>
+            <div class="text-center" style="font-size: 3em;">
+              <%= %w(A B C D E F)[i-1] %>
+            </div>
+          <% end %>
         <% end %>
         <li class="list-group-item votedClicker"
             style="display: none;"
             data-value="<%= i%>">
-          <div class="text-center text-light" style="font-size: 3em;">
-            <%= %w(A B C D E F)[i-1] %>
-          </div>
+          <% if @clicker.question %>
+            <span class="mr-3 text-light" style="font-size: 1.5em;">
+              <%= %w(A B C D E F)[i-1] %>
+            </span>
+            <span class="text-light">
+              <%= @clicker.question.answers.pluck(:text)[i-1] %>
+            </span>
+          <% else %>
+            <div class="text-center text-light" style="font-size: 3em;">
+              <%= %w(A B C D E F)[i-1] %>
+            </div>
+          <% end %>
         </li>
       <% end %>
     </ul>

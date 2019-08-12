@@ -22,9 +22,22 @@ $(document).on 'turbolinks:load', ->
       $(this).html($(this).data('hidebutton'))
     return
 
+  $(document).on 'click', '#toggleClickerResults', ->
+    if $(this).data('show')
+      $('#lastPollResults').hide()
+      $(this).data('show', false)
+      $(this).html($(this).data('showbutton'))
+    else
+      $('#lastPollResults').show()
+      $(this).data('show', true)
+      $(this).html($(this).data('hidebutton'))
+    return
+
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '.clickerAlternatives'
+  $(document).off 'click', '#clickerQRButton'
+  $(document).off 'click', '#toggleClickerResults'
   return

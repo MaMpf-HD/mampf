@@ -50,6 +50,30 @@ webNotificationPoll = ->
       if clickerStatus == newClickerInstance
         $('#clickerOpen').hide()
         $('#votedAlready').show()
+      renderMathInElement document.getElementById('clickerChannel'),
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
     return
   return
 
@@ -59,4 +83,28 @@ window.onload = ->
   if channel.length > 0
     adjustVoteStatus(channel)
     window.clickerChannelId = setInterval(webNotificationPoll, 4000)
+    renderMathInElement document.getElementById('clickerChannel'),
+      delimiters: [
+        {
+          left: '$$'
+          right: '$$'
+          display: true
+        }
+        {
+          left: '$'
+          right: '$'
+          display: false
+        }
+        {
+          left: '\\('
+          right: '\\)'
+          display: false
+        }
+        {
+          left: '\\['
+          right: '\\]'
+          display: true
+        }
+      ]
+      throwOnError: false
   return
