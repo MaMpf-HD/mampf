@@ -9,14 +9,14 @@ $(document).on 'turbolinks:load', ->
     if status == 'reduced'
       $('#reduced-' + round_id).hide 400
       $('#body-' + round_id).addClass color
-      $('#toggle_message-' + round_id).empty().append(I18n.t('admin.quiz.hide'))
+      $('#toggle_message-' + round_id).empty().append($(this).data('hide'))
       $('#results-' + round_id).show 800, ->
         $('#toggle_results-' + round_id).data 'status', 'extended'
         return
     else
       $('#results-' + round_id).hide 800
       $('#body-' + round_id).removeClass('bg-correct').removeClass 'bg-incorrect'
-      $('#toggle_message-' + round_id).empty().append(I18n.t('basics.details'))
+      $('#toggle_message-' + round_id).empty().append($(this).data('details'))
       $('#reduced-' + round_id).fadeIn 800, ->
         $('#toggle_results-' + round_id).data 'status', 'reduced'
         return

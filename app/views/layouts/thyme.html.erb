@@ -3,7 +3,9 @@
   <head>
     <%= render partial: 'layouts/head' %>
   </head>
-  <body data-locale="<%= I18n.locale %>">
+  <body data-locale="<%= I18n.locale %>"
+        data-nometadata="<%= I18n.t('errors.thyme.no_metadata') %>"
+        data-badbrowser="<%= I18n.t('errors.thyme.bad_browser') %>">
     <%= yield %>
   </body>
 </html>

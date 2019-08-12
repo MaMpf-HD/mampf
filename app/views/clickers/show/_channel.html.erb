@@ -1,0 +1,36 @@
+<% if @clicker.open? %>
+  <div id="clickerOpen">
+    <ul class="list-group mt-2">
+      <% (1..@clicker.alternatives).each do |i| %>
+        <%= link_to(votes_path(params: { vote: { value: i,
+                                                 clicker_id: @clicker.id }}),
+                    method: :post,
+                    remote: true,
+                    class: 'list-group-item list-group-item-action voteClicker',
+                    data: { value: i }) do %>
+          <div class="text-center" style="font-size: 3em;">
+            <%= %w(A B C D E F)[i-1] %>
+          </div>
+        <% end %>
+        <li class="list-group-item votedClicker"
+            style="display: none;"
+            data-value="<%= i%>">
+          <div class="text-center text-light" style="font-size: 3em;">
+            <%= %w(A B C D E F)[i-1] %>
+          </div>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <div id="votedAlready" style="display: none;">
+    <div class="d-flex justify-content-center mt-3">
+      <div class="spinner-border text-primary" role="status">
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="d-flex justify-content-center mt-3">
+    <div class="spinner-border text-primary" role="status">
+    </div>
+  </div>
+<% end %>

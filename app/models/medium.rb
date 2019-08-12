@@ -111,6 +111,9 @@ class Medium < ApplicationRecord
     string :release_state do
       release_state
     end
+    boolean :clickerizable do
+      clickerizable?
+    end
     integer :id
     integer :teachable_id
     integer :tag_ids, multiple: true
@@ -279,6 +282,11 @@ class Medium < ApplicationRecord
       without(:sort, 'RandomQuiz')
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
+    end
+    if search_params[:clicker] == 'clicker'
+      search.build do
+        with(:clickerizable, true)
+      end
     end
     unless search_params[:access] == 'irrelevant'
       search.build do
@@ -976,5 +984,12 @@ class Medium < ApplicationRecord
   def release_state
     return released unless released.nil?
     'unpublished'
+  end
+
+  def clickerizable?
+    return false unless type == 'Question'
+    question = becomes(Question)
+    return false unless question.answers.count.in?((2..6))
+    question.answers.pluck(:value).count(true) == 1
   end
 end

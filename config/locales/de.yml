@@ -126,6 +126,9 @@ de:
         eingetragen bist.
       my_courses: 'Meine Module'
       create_course: 'Modul anlegen'
+      my_clickers: 'Meine Clicker'
+      create_clicker: 'Clicker anlegen'
+      no_edited_clickers: 'Du hast noch keine Clicker angelegt.'
       no_edited_courses: >
         Es gibt keine Module, für die Du als EditorIn eingetragen bist.
       my_media: 'Meine Medien'
@@ -184,7 +187,7 @@ de:
         medium_definition: >
           Dies ist eine Liste aller
           <i>Medien</i>,
-          für die Du als BearbeiterIn eingetragen bist. Medien, für Die Du
+          für die Du als BearbeiterIn eingetragen bist. Medien, für die Du
           Bearbeitungsrechte erbst (beispielsweise als ModuleditorIn), sind in
           dieser Liste nicht aufgeführt. Unveröffentlichte sowie gesperrte
           Medien sind in rötlicher Farbe gekennzeichnet.
@@ -224,6 +227,11 @@ de:
           ein Quiz.
           </li>
           </ul>
+        clicker_definition: >
+          Dies ist eine Liste aller Deiner
+          <i>Clicker</i>,
+          </br>
+          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei ...
         other_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die Du keine
           Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
@@ -275,7 +283,7 @@ de:
           die die Veranstaltung hält. Möchte die entsprechende Person
           sich nicht selbst um das Einstellen von Materialien
           kümmern, so kann dies durch zusätzliche
-          Veranstaltungseditoren geschehen.
+          VeranstaltungseditorInnen geschehen.
         workflow: >
           Wir beschreiben im Folgenden einen sinnvollen
           Workflow. Hierbei sollte man unterscheiden, ob die Veranstaltung
@@ -367,9 +375,9 @@ de:
           für das zugeordnete Modul. Dieses vererbt sich auf jede
           Veranstaltung zu diesem Modul.
         lecture_editors: >
-          Zusätzliche Veranstaltungseditoren sind
-          bearbeitungsberechtigte Personen, die verschieden vom
-          Dozenten und von den Moduleditoren sind. Das können z.B.
+          Zusätzliche VeranstaltungseditorInnen sind
+          bearbeitungsberechtigte Personen, die verschieden von der
+          DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
           Veranstaltung einpflegen.
         subscribers_count: >
@@ -403,7 +411,7 @@ de:
           Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen
           weitergezählt.
         passphrase: >
-          Wenn du hier etwa eingibst, können
+          Wenn du hier etwas eingibst, können
           NutzerInnen diese Veranstaltung nur unter Angabe dieses
           Schlüssels abonnieren. Medien, die zu dieser Veranstaltung
           oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
@@ -452,6 +460,25 @@ de:
       passphrase: 'Zugangsschlüssel'
       insert_after_chapter: 'Einfügen nach %{chapter_name}'
       insert_after_section: 'Einfügen nach Abschnitt'
+    clicker:
+      new_clicker: 'Neuen Clicker anlegen'
+      user_link: 'Link für NutzerInnen'
+      editor_link: 'Link für Editorinnen (ohne Authentifizierung)'
+      close: 'Clicker schließen'
+      open: 'Clicker freischalten'
+      reset: 'Clicker zurücksetzen'
+      alternatives: 'Anzahl der Auswahlmöglichkeiten'
+      is_open: 'Der Clicker ist offen.'
+      is_closed: 'Der Clicker ist geschlossen.'
+      thank_vote: 'Danke für Dein Votum.'
+      voted_already: 'Du hast schon abgestimmt.'
+      show_qr: 'QR-Code zeigen'
+      hide_qr: 'QR-Code verstecken'
+      remove_question: 'Assoziierung zu Quizfrage aufheben'
+      info:
+        title: >
+          Hier musst Du den Titel des Clickers eintragen.
+          Du darfst jeden Titel nur einmal vergeben.
     course:
       new_course: 'Neues Modul anlegen'
       preceding_courses: 'Module, auf denen das vorliegende Modul aufbaut'
@@ -716,7 +743,7 @@ de:
           </li>
           <li>
           Quiz-Erläuterung: einzelne Quiz-Erläuterung. Quiz-Erläuterungen
-          dienen als Bindeglied zwischen Quiz-Fragen in komplexreren Quizzes
+          dienen als Bindeglied zwischen Quiz-Fragen in komplexeren Quizzes
           (z.B. angeleiteten Beweisen)
           </li>
           <li>
@@ -784,7 +811,7 @@ de:
           Dies ist die Liste aller Tags, die mit diesem Medium
           verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt,
           so stehen hier zunächst alle zu dieser Sitzung assoziierten Tags;
-          diese Wauswahl kann natürlich bearbeitet werden.
+          diese Auswahl kann natürlich bearbeitet werden.
         linked_media: >
           Dies ist eine Liste aller Medien, die mit diesem Medium
           verknüpft sind bzw. die von diesem Medium aus referenziert werden.
@@ -797,13 +824,13 @@ de:
           Daten ausgelesen werden können.
         external_link: >
           Externer Link, der einen Teil diese Mediums ausmacht.
-          Könnte z.B. ein Link auf das Stacks-Project sein.
+          Das könnte z.B. ein Link auf das Stacks-Project sein.
         access_rights: >
           Die Varianten von Zugriffsrechten sind möglich:
           <ul>
           <li>
           frei (Standardeinstellung): Registrierte MaMpf-NutzerInnen können das
-          Medium sehen. Nicht registrierte BenutzerInnen können den
+          Medium sehen. Nicht registrierte BenutzerInnen können
           den THymE-Player für das Video (falls vorhanden),
           den pdf-Viewer für das Manuskript (falls vorhanden) oder
           das Quiz (falls vorhanden) aufrufen, sofern sie die Medien-ID kennen.
@@ -1198,19 +1225,17 @@ de:
           Hier wirst Du demnächst die Möglichkeit haben, ein
           Profilbild hochzuladen.
         given_lectures: >
-          Dies ist die Liste aller Veranstaltungen, die als DozentIn
-          verantwortet wurden bzw. werden. Unveröffentlichte Veranstaltung
-          sind in rötlicher Farbe gekennzeichnet.
+          Dies ist die Liste aller Veranstaltungen, für die Du als DozentIn
+          die Du als DozentIn verantwortest bzw. verantwortet hast.
+          Unveröffentlichte Veranstaltung sind in rötlicher Farbe gekennzeichnet.
         edited_courses: >
-          Dies ist die Liste aller Module, für die
-          Moduleditorenrechte bestehen.
+          Dies ist die Liste aller Module, für die Du Moduleditorenrechte hast.
         edited_lectures: >
-          Dies ist die Liste aller Veranstaltungen, für die
-          zusätzliche Editorenrechte bestehen. Unveröffentlichte Veranstaltung
+          Dies ist die Liste aller Veranstaltungen, für die zusätzliche
+          Editorenrechte hast. Unveröffentlichte Veranstaltung
           sind in rötlicher Farbe gekennzeichnet.
         edited_media: >
-          Dies ist die Liste aller Medien, für die
-          Medieneditorenrechte bestehen.
+          Dies ist die Liste aller Medien, für die Du Medieneditorenrechte hast.
         elevate: >
           Wenn Du das anklickst, wird die NutzerIn zur
           AdministratorIn befördert.
@@ -1518,7 +1543,7 @@ de:
     lecture:
       title: 'Aktuelles'
       one_new: 'Es gibt eine neue Mitteilung:'
-      more_new: 'Es gibt %{count} neue Mitteilungen:'
+      more_new: 'Es gibt mehrere neue Mitteilungen:'
       new_post_html: 'Im %{board} gibt es ein ungelesenes Thema.'
       new_posts_html: 'Im %{board} gibt es %{count} ungelesene Themen.'
     no_notifications: 'Es liegen keine neuen Benachrichtigungen für Dich vor.'
@@ -2042,6 +2067,7 @@ de:
     default_target: 'Standard-Ziel'
     ramification: 'Verzweigung'
     edit_tags: 'Tags bearbeiten'
+    vote: 'Abstimmen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -2129,6 +2155,8 @@ de:
       Editorenrechte für das Hinzufügen von Tags.
     no_term: 'Ein Semester mit der angeforderten id existiert nicht.'
     no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
+    no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
+    no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
   activerecord:
   activerecord:
     errors:
@@ -2142,6 +2170,11 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        clicker:
+          attributes:
+            title:
+              blank: 'Es muss ein Titel angegeben werden.'
+              taken: 'Dieser Titel ist bereits vergeben.'
         course:
           attributes:
             title:
@@ -2258,3 +2291,11 @@ de:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
               blank: 'Es muss ein Anzeigename angegeben werden.'
+        vote:
+          attributes:
+            clicker:
+              closed: 'Der Clicker ist leider geschlossen.'
+            value:
+              out_of_range: >
+                Das abgegebene Votum ist leider außerhalb des zulässingen
+                Bereiches.

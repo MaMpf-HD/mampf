@@ -18,7 +18,9 @@
                 data-target="#collapse-answer-<%= answer.id %>"
                 aria-expanded="true"
                 aria-controls="collapse-answer-<%= answer.id %>"
-                data-locale="<%= answer.question.locale_with_inheritance %>">
+                data-locale="<%= answer.question.locale_with_inheritance %>"
+                data-discard="<%= t('buttons.discard') %>"
+                data-edit="<%= t('buttons.edit') %>">
           <%= t('buttons.edit') %>
         </button>
         <%= link_to t('buttons.delete'),

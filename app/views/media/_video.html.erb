@@ -9,7 +9,8 @@
         <%= helpdesk(t('admin.medium.info.video'), false) %>
       </div>
       <div class="col-3 text-right"
-           id="video-uploadButton">
+           id="video-uploadButton"
+           data-choosefiles="<%= t('basics.file') %>">
         <input type="hidden"
                name="medium[video]"
                value="<%= medium.cached_video_data %>"

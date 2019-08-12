@@ -55,7 +55,6 @@ gem 'jquery-rails'
 gem 'jquery_file_download-rails'
 gem 'jquery-ui-rails'
 gem 'js-routes'
-gem 'i18n-js'
 gem 'bootstrap'
 gem "bootstrap_form", '>= 4.2.0'
 gem 'devise-bootstrap-views', '~> 1.0'
@@ -78,6 +77,8 @@ gem 'xkcd'
 gem 'sunspot_rails'
 gem 'sunspot_solr'
 gem 'progress_bar'
+gem 'barby'
+gem 'rqrcode'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

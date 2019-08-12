@@ -1,7 +1,9 @@
 <div class="row">
   <div class="col-12 text-center">
     <button class="btn btn-sm btn-light border border-secondary"
-            id="toggle_results-<%= round_id %>">
+            id="toggle_results-<%= round_id %>"
+            data-hide="<%= t('admin.quiz.hide') %>"
+            data-details="<%= t('basics.details') %>">
       <div>
         <span id="correctness-<%= round_id %>">
         </span>

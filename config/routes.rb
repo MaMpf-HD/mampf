@@ -17,6 +17,20 @@ Rails.application.routes.draw do
                                      as: 'list_sections'
   resources :chapters, except: [:index, :show]
 
+  get 'clickers/:id/open', to: 'clickers#open',
+                           as: 'open_clicker'
+  get 'clickers/:id/close', to: 'clickers#close',
+                            as: 'close_clicker'
+  post 'clickers/:id/set_alternatives', to: 'clickers#set_alternatives',
+                                        as: 'set_clicker_alternatives'
+
+  get 'clickers/:id/get_votes_count', to: 'clickers#get_votes_count',
+                                      as: 'get_votes_count'
+
+  resources :clickers
+
+  get 'c/:id', to: 'clickers#show'
+
   get 'courses/:course_id/food', to: 'media#index',
                                  as: 'course_food'
   get 'courses/:id/inspect', to: 'courses#inspect',
@@ -211,6 +225,8 @@ Rails.application.routes.draw do
   get 'users/fill_user_select', to: 'users#fill_user_select',
                               as: 'fill_user_select'
   resources :users, only: [:index, :edit, :update, :destroy]
+
+  resources :votes, only: :create
 
   root 'main#home'
   get 'error', to: 'main#error'

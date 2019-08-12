@@ -1,0 +1,77 @@
+<div class="row mt-3">
+  <div class="col-12">
+    <ul class="list-group">
+      <li class="list-group-item list-group-item-secondary">
+        <%= t('admin.clicker.user_link') %>:
+        <%= link_to @user_path,
+                    @user_path %>
+        <button role="button"
+                class="btn btn-sm btn-outline-secondary ml-3"
+                id="clickerQRButton"
+                data-showqr="false"
+                data-showbutton="<%= t('admin.clicker.show_qr') %>"
+                data-hidebutton="<%= t('admin.clicker.hide_qr') %>">
+          <%= t('admin.clicker.show_qr') %>
+        </button>
+      </li>
+      <li class="list-group-item list-group-item-secondary text-center"
+          id="clickerQRCode"
+          style="display: none;">
+          <%= image_tag(generate_qr(@user_path)) %>
+      </li>
+      <% if user_signed_in? %>
+        <li class="list-group-item list-group-item-secondary">
+          <%= t('admin.clicker.editor_link') %>:
+          <%= link_to @editor_path,
+                      @editor_path %>
+        </li>
+      <% end %>
+      <li class="clickerClosed list-group-item list-group-item-light text-dark"
+          style='display: <%= "#{show(@clicker.closed?)}" %>'>
+        <%= render partial: 'clickers/edit/alternatives',
+                   locals: { clicker: @clicker } %>
+      </li>
+      <li class="clickerOpen list-group-item list-group-item-light text-dark"
+          style='display: <%= "#{show(@clicker.open?)}" %>'>
+        Anzahl der Voten:
+        <span class="clickerVotesCount">
+          <%= @clicker.votes.count %>
+        </span>
+      </li>
+      <li class="clickerClosed list-group-item list-group-item-light text-dark"
+          style='display: <%= "#{show(@clicker.closed?)}" %>'>
+        <h5>
+          Ergebnis der letzten Abstimmung
+        </h5>
+        Anzahl der Voten:
+        <span class="clickerVotesCount">
+          <%= @clicker.votes.count %>
+        </span>
+        <div id="votesGfx">
+          <% if @clicker.votes.count.positive? %>
+            <%= render partial: 'clickers/edit/results',
+                       locals: { clicker: @clicker } %>
+          <% end %>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="row mt-3 mb-3">
+  <div class="col-12 text-center">
+    <%= link_to t('admin.clicker.close'),
+                close_clicker_path(@clicker,
+                                   params: { code: @code }),
+                id: 'closeClickerButton',
+                class: 'btn btn-primary',
+                style: "display: #{show_no_block(@clicker.open?)}",
+                remote: true %>
+    <%= link_to t('admin.clicker.open'),
+                open_clicker_path(@clicker,
+                                  params: { code: @code }),
+                id: 'openClickerButton',
+                class: 'btn btn-primary',
+                style: "display: #{show_no_block(@clicker.closed?)}",
+                remote: true %>
+  </div>
+</div>

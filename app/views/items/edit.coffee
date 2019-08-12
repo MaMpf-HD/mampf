@@ -1,5 +1,5 @@
 # set up action box
-$('#action-placeholder').empty().append(I18n.t('admin.item.edit'))
+$('#action-placeholder').empty().append('<%= I18n.t("admin.item.edit") %>')
 $('#action-container').empty()
   .append('<%= j render partial: "items/form",
                         locals: { item: @item }%>')

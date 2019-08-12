@@ -58,7 +58,8 @@ $('#answer-header-<%= @answer.id %>').removeClass('bg-correct')
   .removeClass('bg-incorrect').addClass '<%= bgcolor(@answer.value) %>'
 $target = $('#targets-answer-<%= @answer.id %>')
 $target.empty()
-  .append(I18n.t('buttons.edit', { locale: $target.data('locale') }))
+  .append('<%= I18n.t("buttons.edit",
+                      locale: @answer.question.locale_with_inheritance) %>')
   .removeClass('btn-secondary').addClass 'btn-primary'
 $('#answer-body-<%= @answer.id %>').empty()
   .append '<%= j render partial: "answers/form",

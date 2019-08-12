@@ -1,0 +1,7 @@
+<div id="clickerChannel" data-url="<%= clicker_path(@clicker) %>"
+                         data-clicker="<%= @clicker.id %>"
+                         data-instance="<%= @clicker.instance %>"
+                         data-open="<%= @clicker.open? %>">
+  <%= render partial: 'clickers/show/channel',
+             locals: { clicker: @clicker } %>
+</div>

@@ -1,0 +1,33 @@
+<div class="card">
+  <div class="card-header bg-primary text-white">
+    <div class="row">
+      <div class="col-8">
+        <%= t('admin.main.my_clickers') %>
+        (<%= current_user.clickers.count %>)
+        <%= helpdesk(t('admin.main.info.clicker_definition'), true) %>
+      </div>
+      <div class="col-4 text-right">
+        <%= link_to '',
+                    new_clicker_path,
+                    class: 'fas fa-plus-circle text-light admin-index-button',
+                    id: 'new-clicker-button',
+                    data: { remote: true, toggle: 'tooltip' },
+                    title: t('admin.main.create_clicker') %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body card-tiny">
+    <div id="new-clicker-area"
+         class="bg-green-lighten-4 p-3 mb-3 rounded"
+         style="display: none;">
+    </div>
+    <% if current_user.clickers.exists? %>
+        <%= render partial: 'administration/index/clicker',
+                   collection: current_user.clickers.order(:updated_at)
+                                           .reverse.first(5),
+                   cached: true %>
+    <% else %>
+      <%= t('admin.main.no_edited_clickers') %>
+    <% end %>
+  </div>
+</div>

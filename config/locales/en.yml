@@ -137,6 +137,9 @@ en:
         There is no event series for which you are listed as teacher or editor.
       my_courses: 'My Courses'
       create_course: 'Create Course'
+      my_clickers: 'My Clickers'
+      create_clicker: 'Create Clicker'
+      no_edited_clickers: 'You have not created any clickers yet.'
       no_edited_courses: >
         There are no courses for which you are editor.
       my_media: 'My Media'
@@ -227,6 +230,11 @@ en:
           a quiz.
           </li>
           </ul>
+        clicker_definition: >
+          This is the list of all your
+          <i>Clickers</i>,
+          </br>
+          A <i>Clicker</i> in the sense of MaMpf is ...
         other_lectures: >
           This is the list of event series for which you do not have editing access.
           (Except if you are an admin :-P )
@@ -436,6 +444,25 @@ en:
       passphrase: 'Passphrase'
       insert_after_chapter: 'Insert after %{chapter_name}'
       insert_after_section: 'Insert after section'
+    clicker:
+      new_clicker: 'Create new Clicker'
+      user_link: 'Link for users'
+      editor_link: 'Link for editors (without authentification)'
+      open: 'Enable Clicker'
+      close: 'Close Clicker'
+      reset: 'Reset Clicker'
+      is_open: 'Clicker is open.'
+      is_closed: 'Clicker is closed.'
+      thank_vote: 'Thank you for your vote.'
+      voted_already: 'You have voted already.'
+      alternatives: 'Number of alternatives'
+      show_qr: 'Show QR Code'
+      hide_qr: 'Hide QR Code'
+      remove_question: 'Remove association to Question'
+      info:
+        title: >
+          Here you have to enter the title of the clicker.
+          The title has to be unique among your clickers.
     course:
       new_course: 'Create new course'
       preceding_courses: 'Preceding courses'
@@ -1123,16 +1150,16 @@ en:
         profile_image: >
           Here you will soon have the opportunity to upload a profile image.
         given_lectures: >
-          This is the list of event series that were/are given as teacher.
+          This is the list of event series you are teaching/have taught.
           Unpublished event series are displayed in red.
         edited_courses: >
-          This is the list of courses for which there are course editor rights.
+          This is the list of courses for which you have course editor rights.
         edited_lectures: >
-          This is the list of event series for which there are editing rights
+          This is the list of event series for which you have editing rights
           (even if the teacher was a different person). Unpublished event series
           are displayed in red.
         edited_media: >
-          This is the list of media for which there are editing rights.
+          This is the list of media for which you have editing rights.
         elevate: >
           If you check this box, the user will be promoted to administrator.
     question:
@@ -1360,7 +1387,7 @@ en:
     change_data: 'Change login data'
     courses: 'Courses'
     primary_lecture: 'Primary event series'
-    secondary_lectures: 'Secondary event seriess'
+    secondary_lectures: 'Secondary event series'
     no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
     preferences: 'Preferences'
@@ -1422,7 +1449,7 @@ en:
     lecture:
       title: 'News'
       one_new: 'There is a new announcement:'
-      more_new: 'There are %{count} new announcements:'
+      more_new: 'There are several new announcements:'
       new_post_html: 'There is an unread topic in the %{board}.'
       new_posts_html: 'There are %{count} unread topics in the %{board}.'
     no_notifications: 'There are no new notifications for you.'
@@ -1929,6 +1956,7 @@ en:
     default_target: 'Default Target'
     ramification: 'Ramification'
     edit_tags: 'Edit tags'
+    vote: 'Vote'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -1988,7 +2016,7 @@ en:
     no_notification: 'There is no notification with this id.'
     no_question: 'There is no question with this id.'
     no_quiz: 'There is no quiz with this id.'
-    no_quiz_access: 'You are not allowed to acces this quiz.'
+    no_quiz_access: 'You are not allowed to access this quiz.'
     no_quiz_vertex_access: >
       This quiz contains content that you are not allowed to access.
     quiz_has_error: >
@@ -2008,6 +2036,8 @@ en:
       the necessary editing rights for the adding of tags.
     no_term: 'There is no term for this id.'
     no_teacher: 'There is no teacher with this id.'
+    no_clicker: 'There is no clicker with this id.'
+    no_clicker_access: 'You are not allowed to edit this clicker.'
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'
@@ -2020,6 +2050,11 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        clicker:
+          attributes:
+            title:
+              blank: 'You need to give a title.'
+              taken: 'This title is already in use.'
         course:
           attributes:
             title:
@@ -2137,3 +2172,10 @@ en:
               blank: 'You need to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
+        vote:
+          attributes:
+            clicker:
+              closed: 'The Clicker is closed.'
+            value:
+              out_of_range: >
+                Your vote is outside of the allowed range.
