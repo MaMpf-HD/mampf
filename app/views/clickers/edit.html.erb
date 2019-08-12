@@ -5,6 +5,19 @@
         <%= t('admin.clicker.user_link') %>:
         <%= link_to @user_path,
                     @user_path %>
+        <button role="button"
+                class="btn btn-sm btn-outline-secondary ml-3"
+                id="clickerQRButton"
+                data-showqr="false"
+                data-showbutton="<%= t('admin.clicker.show_qr') %>"
+                data-hidebutton="<%= t('admin.clicker.hide_qr') %>">
+          <%= t('admin.clicker.show_qr') %>
+        </button>
+      </li>
+      <li class="list-group-item list-group-item-secondary text-center"
+          id="clickerQRCode"
+          style="display: none;">
+          <%= image_tag(generate_qr(@user_path)) %>
       </li>
       <% if user_signed_in? %>
         <li class="list-group-item list-group-item-secondary">

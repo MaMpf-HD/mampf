@@ -9,6 +9,19 @@ $(document).on 'turbolinks:load', ->
         alternatives: alternatives
       }
     return
+
+  $(document).on 'click', '#clickerQRButton', ->
+    console.log 'Hi'
+    if $(this).data('showqr')
+      $('#clickerQRCode').hide()
+      $(this).data('showqr', false)
+      $(this).html($(this).data('showbutton'))
+    else
+      $('#clickerQRCode').show()
+      $(this).data('showqr', true)
+      $(this).html($(this).data('hidebutton'))
+    return
+
   return
 
 # clean up everything before turbolinks caches

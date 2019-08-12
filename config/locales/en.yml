@@ -456,6 +456,8 @@ en:
       thank_vote: 'Thank you for your vote.'
       voted_already: 'You have voted already.'
       alternatives: 'Number of alternatives'
+      show_qr: 'Show QR Code'
+      hide_qr: 'Hide QR Code'
       info:
         title: >
           Here you have to enter the title of the clicker.

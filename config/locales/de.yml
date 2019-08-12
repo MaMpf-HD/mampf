@@ -472,6 +472,8 @@ de:
       is_closed: 'Der Clicker ist geschlossen.'
       thank_vote: 'Danke für Dein Votum.'
       voted_already: 'Du hast schon abgestimmt.'
+      show_qr: 'QR-Code zeigen'
+      hide_qr: 'QR-Code verstecken'
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.
