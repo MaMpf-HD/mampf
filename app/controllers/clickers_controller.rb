@@ -14,8 +14,10 @@ class ClickersController < ApplicationController
   end
 
   def edit
-    @user_path = clicker_url(@clicker).gsub('clickers','c')
+    @user_path = clicker_url(@clicker,
+                             host: DefaultSetting::URL_HOST_SHORT).gsub('clickers','c')
     @editor_path = clicker_url(@clicker,
+                               host: DefaultSetting::URL_HOST_SHORT,
                                params: { code: @clicker.code }).gsub('clickers','c')
     if user_signed_in?
       render layout: 'administration'

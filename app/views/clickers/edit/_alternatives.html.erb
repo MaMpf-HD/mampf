@@ -26,12 +26,26 @@
 <% if clicker.question.present? %>
   <div class="row">
     <div class="col-12">
+      <%= t('admin.clicker.associated_to_question') %>
+    </div>
+    <div class="col-12">
+      <%= render partial: 'clickers/edit/question_preview',
+                 locals: { question: clicker.question } %>
+    </div>
+    <div class="col-12">
       <button role="button"
-              class="btn btn-secondary-outline"
+              class="btn btn-outline-secondary mt-2"
               data-code="<%= clicker.code %>"
               id="removeClickerQuestion"
               display="style: <%= show_no_block(clicker.question.present?) %>">
         <%= t('admin.clicker.remove_question') %>
+      </button>
+      <button role="button"
+              class="btn btn-outline-secondary mt-2"
+              data-code="<%= clicker.code %>"
+              id="associateClickerQuestion"
+              display="style: <%= show_no_block(clicker.question.present?) %>">
+        <%= t('admin.clicker.change_associated_question') %>
       </button>
     </div>
   </div>

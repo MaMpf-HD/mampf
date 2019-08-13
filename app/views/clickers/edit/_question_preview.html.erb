@@ -1,0 +1,20 @@
+<% cache question do %>
+  <div class="p-4 border mt-2"
+       style= "background: linear-gradient(#e1f5fe, white);">
+    <div class="row mb-3">
+      <div class="col-12">
+        <%= question.text %>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <% question.answers.each_with_index do |a,i| %>
+        <div class="col-12 border-bottom">
+          <span class="mr-2" style="font-size: 1.5em;">
+            <%= %w(A B C D E F)[i] %>
+          </span>
+          <%= a.text %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

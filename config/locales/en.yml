@@ -459,6 +459,12 @@ en:
       show_qr: 'Show QR Code'
       hide_qr: 'Hide QR Code'
       remove_question: 'Remove association to Question'
+      last_poll_results: 'Result of the last poll'
+      number_of_votes: 'Number of votes'
+      associated_to_question: >
+        This clicker is associated to a question from the database:
+      change_associated_question: >
+        Associate different question
       info:
         title: >
           Here you have to enter the title of the clicker.
@@ -1957,6 +1963,8 @@ en:
     ramification: 'Ramification'
     edit_tags: 'Edit tags'
     vote: 'Vote'
+    show: 'Show'
+    hide: 'Hide'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

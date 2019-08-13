@@ -475,6 +475,12 @@ de:
       show_qr: 'QR-Code zeigen'
       hide_qr: 'QR-Code verstecken'
       remove_question: 'Assoziierung zu Quizfrage aufheben'
+      last_poll_results: 'Ergebnis der letzten Abstimmung'
+      number_of_votes: 'Anzahl der Voten'
+      associated_to_question: >
+        Dieser Clicker ist zu einer Frage aus der Datenbank assoziiert:
+      change_associated_question: >
+        Andere Quizfrage assoziieren
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.
@@ -2068,6 +2074,8 @@ de:
     ramification: 'Verzweigung'
     edit_tags: 'Tags bearbeiten'
     vote: 'Abstimmen'
+    show: 'Anzeigen'
+    hide: 'Verbergen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

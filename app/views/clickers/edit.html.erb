@@ -2,17 +2,23 @@
   <div class="col-12">
     <ul class="list-group">
       <li class="list-group-item list-group-item-secondary">
-        <%= t('admin.clicker.user_link') %>:
-        <%= link_to @user_path,
-                    @user_path %>
-        <button role="button"
-                class="btn btn-sm btn-outline-secondary ml-3"
-                id="clickerQRButton"
-                data-showqr="false"
-                data-showbutton="<%= t('admin.clicker.show_qr') %>"
-                data-hidebutton="<%= t('admin.clicker.hide_qr') %>">
-          <%= t('admin.clicker.show_qr') %>
-        </button>
+        <div class="row">
+          <div class="col-8">
+            <%= t('admin.clicker.user_link') %>:
+            <%= link_to @user_path,
+                        @user_path %>
+          </div>
+          <div class="col-4 text-right">
+            <button role="button"
+                    class="btn btn-sm btn-outline-secondary ml-3"
+                    id="clickerQRButton"
+                    data-showqr="false"
+                    data-showbutton="<%= t('admin.clicker.show_qr') %>"
+                    data-hidebutton="<%= t('admin.clicker.hide_qr') %>">
+              <%= t('admin.clicker.show_qr') %>
+            </button>
+          </div>
+        </div>
       </li>
       <li class="list-group-item list-group-item-secondary text-center"
           id="clickerQRCode"
@@ -33,25 +39,41 @@
       </li>
       <li class="clickerOpen list-group-item list-group-item-light text-dark"
           style='display: <%= "#{show(@clicker.open?)}" %>'>
-        Anzahl der Voten:
+        <%= t('admin.clicker.number_of_votes') %>:
         <span class="clickerVotesCount">
           <%= @clicker.votes.count %>
         </span>
       </li>
       <li class="clickerClosed list-group-item list-group-item-light text-dark"
           style='display: <%= "#{show(@clicker.closed?)}" %>'>
-        <h5>
-          Ergebnis der letzten Abstimmung
-        </h5>
-        Anzahl der Voten:
-        <span class="clickerVotesCount">
-          <%= @clicker.votes.count %>
-        </span>
-        <div id="votesGfx">
-          <% if @clicker.votes.count.positive? %>
-            <%= render partial: 'clickers/edit/results',
-                       locals: { clicker: @clicker } %>
-          <% end %>
+        <div class="row">
+          <div class="col-8">
+            <h5>
+              <%= t('admin.clicker.last_poll_results') %>
+            </h5>
+          </div>
+          <div class="col-4 text-right">
+            <button role="button"
+                    class="btn btn-sm btn-outline-secondary"
+                    data-show="true"
+                    data-hidebutton="<%= t('buttons.hide') %>"
+                    data-showbutton="<%= t('buttons.show') %>"
+                    id="toggleClickerResults">
+              <%= t('buttons.hide') %>
+            </button>
+          </div>
+        </div>
+        <div id="lastPollResults">
+          <%= t('admin.clicker.number_of_votes') %>:
+          <span class="clickerVotesCount">
+            <%= @clicker.votes.count %>
+          </span>
+          <div id="votesGfx">
+            <% if @clicker.votes.count.positive? %>
+              <%= render partial: 'clickers/edit/results',
+                         locals: { clicker: @clicker } %>
+            <% end %>
+          </div>
         </div>
       </li>
     </ul>
