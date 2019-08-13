@@ -415,7 +415,7 @@ class MediaController < ApplicationController
                                    teachable_ids: [],
                                    tag_ids: [],
                                    editor_ids: [])
-  end^
+  end
 
   # create notifications to all users who are subscribed
   # to the medium's teachable's media_scope
