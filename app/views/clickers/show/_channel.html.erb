@@ -1,6 +1,11 @@
 <% if @clicker.open? %>
   <div id="clickerOpen">
     <ul class="list-group mt-2">
+      <% if @clicker.question %>
+        <li class="list-group-item">
+          <%= @clicker.question.text %>
+        </li>
+      <% end %>
       <% (1..@clicker.alternatives).each do |i| %>
         <%= link_to(votes_path(params: { vote: { value: i,
                                                  clicker_id: @clicker.id }}),

@@ -81,7 +81,8 @@ class ClickersController < ApplicationController
   def remove_question
     @clicker.update(question: nil,
                     alternatives: 3)
-    redirect_to edit_clicker_path(@clicker)
+    redirect_to edit_clicker_path(@clicker,
+                                  params: { code: user_signed_in? ? nil : @clicker.code})
   end
 
   private

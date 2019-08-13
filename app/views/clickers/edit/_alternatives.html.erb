@@ -51,15 +51,17 @@
     </div>
     <div class="col-6 text-right">
       <%= link_to t('admin.clicker.remove_question'),
-                  remove_question_path(clicker),
+                  remove_question_path(clicker,
+                                       params: { code: user_signed_in? ? nil : clicker.code }),
                   class: 'btn btn-sm btn-outline-secondary mt-2',
-                  data: { code: clicker.code },
                   method: :delete %>
-      <button role="button"
-              class="btn btn-sm btn-outline-secondary associateClickerQuestion mt-2"
-              data-code="<%= clicker.code %>">
-        <%= t('admin.clicker.change_associated_question') %>
-      </button>
+      <% if user_signed_in? %>
+        <button role="button"
+                class="btn btn-sm btn-outline-secondary associateClickerQuestion mt-2"
+                data-code="<%= clicker.code %>">
+          <%= t('admin.clicker.change_associated_question') %>
+        </button>
+      <% end %>
     </div>
     <div class="col-12">
       <%= render partial: 'clickers/edit/question_preview',
