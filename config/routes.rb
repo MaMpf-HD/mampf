@@ -23,9 +23,12 @@ Rails.application.routes.draw do
                             as: 'close_clicker'
   post 'clickers/:id/set_alternatives', to: 'clickers#set_alternatives',
                                         as: 'set_clicker_alternatives'
-
+  post 'clickers/:id/associate_question', to: 'clickers#associate_question',
+                                          as: 'associate_question'
   get 'clickers/:id/get_votes_count', to: 'clickers#get_votes_count',
                                       as: 'get_votes_count'
+  delete 'clickers/:id/remove_question', to: 'clickers#remove_question',
+                                        as: 'remove_question'
 
   resources :clickers
 
@@ -64,6 +67,7 @@ Rails.application.routes.draw do
   get 'events/cancel_import_vertex', as: 'cancel_import_vertex'
   get 'events/render_medium_actions', as: 'render_medium_actions'
   get 'events/render_medium_tags', as: 'render_medium_tags'
+  get 'events/render_clickerizable_actions', as: 'render_clickerizable_actions'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'

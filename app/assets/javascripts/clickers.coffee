@@ -33,6 +33,54 @@ $(document).on 'turbolinks:load', ->
       $(this).html($(this).data('hidebutton'))
     return
 
+  $(document).on 'click', '.associateClickerQuestion', ->
+    $('#clickerSearchForm').show()
+    $('#clickerAlternativeSelection').hide()
+    $('#clickerAssociatedQuestion').hide()
+    return
+
+  $(document).on 'mouseenter', '[id^="result-clickerizable-"]', ->
+    mediumActions = document.getElementById('mediumActions')
+    unless mediumActions.dataset.filled == 'true'
+      $(this).addClass('bg-orange-lighten-4')
+      $.ajax Routes.fill_medium_preview_path(),
+         type: 'GET'
+         dataType: 'script'
+         data: {
+           id: $(this).data('id')
+           type: $(this).data('type')
+         }
+         error: (jqXHR, textStatus, errorThrown) ->
+           console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'mouseleave', '[id^="result-clickerizable-"]', ->
+    $(this).removeClass('bg-orange-lighten-4')
+    return
+
+  $(document).on 'click', '[id^="result-clickerizable-"]', ->
+    mediumActions = document.getElementById('mediumActions')
+    if $(this).hasClass('bg-green-lighten-4')
+      $(this).removeClass('bg-green-lighten-4')
+      $('#mediumPreview').empty()
+      $('#mediumActions').empty()
+      mediumActions.dataset.filled = 'false'
+    else
+      $('[id^="result-clickerizable-"]').removeClass('bg-green-lighten-4')
+      $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
+      $('[id^="result-clickerizable-"]').css('cursor','')
+      $.ajax Routes.render_clickerizable_actions_path(),
+        type: 'GET'
+        dataType: 'script'
+        data: {
+          id: $(this).data('id')
+          clicker: $('#clickerSearchForm').data('clicker')
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")
+    return
+
+
   return
 
 # clean up everything before turbolinks caches
@@ -40,4 +88,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '.clickerAlternatives'
   $(document).off 'click', '#clickerQRButton'
   $(document).off 'click', '#toggleClickerResults'
+  $(document).off 'click', '.associateClickerQuestion'
   return

@@ -481,6 +481,7 @@ de:
         Dieser Clicker ist zu einer Frage aus der Datenbank assoziiert:
       change_associated_question: >
         Andere Quizfrage assoziieren
+      associate_question: 'Quizfrage assoziieren'
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.
@@ -1932,6 +1933,7 @@ de:
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_with_inheritance: 'Assoziiert mit Vererbung zu'
+    assoicated_to_short: 'Ass. zu'
     description: 'Beschreibung'
     type: 'Typ'
     label: 'Label'

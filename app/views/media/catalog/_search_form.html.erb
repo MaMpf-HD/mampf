@@ -2,16 +2,15 @@
               scope: 'search',
               remote: true,
               method: 'get' do |f| %>
-  <%= f.hidden_field :quiz, value: quiz %>
   <div class="form-row p-2">
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :types, t('basics.type') %>
       <%= helpdesk(t('admin.medium.info.search_type'), true) %>
-      <% if !quiz %>
+      <% if purpose == 'media' %>
         <div class="custom-control custom-checkbox mb-2">
           <%= f.check_box :all_types,
                           class: 'custom-control-input',
-                          checked: !quiz,
+                          checked: true,
                           data: { id: 'search_types'} %>
           <%= f.label :all_types,
                       t('basics.all'),
@@ -21,12 +20,15 @@
         <%= f.hidden_field :all_types, value: '0' %>
       <% end %>
       <%= f.select :types,
-                   options_for_select(media_sorts_select(quiz),
-                                      sort_preselect(quiz)),
+                   options_for_select(media_sorts_select(purpose),
+                                      sort_preselect(purpose)),
                    {},
-                   { multiple: !quiz,
+                   { multiple: purpose == 'media',
                      class: 'selectize',
-                     disabled: !quiz } %>
+                     disabled: purpose.in?(['media', 'clicker']) } %>
+      <% if purpose == 'clicker' %>
+        <%= f.hidden_field :types, value: ['Question'] %>
+      <% end %>
     </div>
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :teachable_ids, t('basics.associated_to') %>
@@ -156,7 +158,7 @@
 
     </div>
   </div>
-  <%= f.hidden_field :clicker, value: nil %>
+  <%= f.hidden_field :purpose, value: purpose %>
   <div class="row mb-3">
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),

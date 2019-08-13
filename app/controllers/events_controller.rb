@@ -115,4 +115,12 @@ class EventsController < ApplicationController
     @medium = Medium.find_by_id(params[:id])
     @tag_ids = @medium.tag_ids
   end
+
+  def render_clickerizable_actions
+    I18n.locale = current_user.locale
+    @id = params[:id]
+    @medium = Medium.find_by_id(@id)
+    @question = Question.find_by_id(@id)
+    @clicker = Clicker.find_by_id(params[:clicker])
+  end
 end

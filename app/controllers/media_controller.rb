@@ -153,8 +153,11 @@ class MediaController < ApplicationController
     @total = search.total
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
-    if search_params[:quiz] == 'true'
+    if search_params[:purpose] == 'quiz'
       render template: "quizzes/new_vertex/preview"
+      return
+    elsif search_params[:purpose] == 'clicker'
+      render template: "clickers/edit/search"
       return
     end
   end
@@ -407,12 +410,12 @@ class MediaController < ApplicationController
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
                                    :all_editors, :tag_operator, :quiz, :access,
                                    :teachable_inheritance, :fulltext, :per,
-                                   :clicker,
+                                   :clicker, :purpose,
                                    types: [],
                                    teachable_ids: [],
                                    tag_ids: [],
                                    editor_ids: [])
-  end
+  end^
 
   # create notifications to all users who are subscribed
   # to the medium's teachable's media_scope

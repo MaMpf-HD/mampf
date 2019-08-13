@@ -12,7 +12,7 @@
   </div>
   <div class="row">
     <div class="col-8"
-         id="quizzableSearchResults">
+         id="clickerizableSearchResults">
       <div class="row bg-mdb-color-lighten-5 mx-2 py-1"
            id="searchResultsHeader">
         <div class="col-5">
@@ -22,7 +22,7 @@
         </div>
         <div class="col-1">
           <strong>
-            <%= t('basics.associated_to_short') %>
+            <%= t('basics.associated_to') %>
           </strong>
         </div>
         <div class="col-3">
@@ -43,8 +43,7 @@
         <% @media.each do |m| %>
           <% cache m do %>
             <div class="row border-bottom mx-2"
-                 id="result-quizzable-<%= m.id %>"
-                 data-type="<%= m.type %>"
+                 id="result-clickerizable-<%= m.id %>"
                  data-id="<%= m.id %>"
                  style="cursor: pointer;">
               <div class="col-5">
@@ -89,27 +88,8 @@
         <% end %>
       </div>
     </div>
-    <div class="col-4"
-         id="selectedQuizzablesColumn">
-      <div class="row bg-mdb-color-lighten-5 ml-2 py-2 mb-3"
-           id="quizzableSelection">
-        <div class="col-12">
-          <strong>
-            <%= t('basics.selection') %>
-            <span id="selectionCounter">
-            </span>
-          </strong>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-12">
-          <div id="importVertexForm">
-          </div>
-        </div>
-      </div>
-      <div class="row bg-mdb-color-lighten-5 mx-2 mt-3 py-2"
-           id="quizzesPreviewHeader"
-           style="display: none;">
+    <div class="col-4">
+      <div class="row bg-mdb-color-lighten-5 mb-2 py-2">
         <div class="col-12">
           <strong>
             <%= t('basics.preview') %>
@@ -118,7 +98,11 @@
       </div>
       <div class="row">
         <div class="col-12">
-          <div id="quizzablePreview">
+          <div id="mediumActions">
+          </div>
+        </div>
+        <div class="col-12">
+          <div id="mediumPreview">
           </div>
         </div>
       </div>

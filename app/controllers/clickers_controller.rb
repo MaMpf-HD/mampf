@@ -3,9 +3,11 @@ class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
                                                  :reset, :set_level,
                                                  :get_votes_count,
-                                                 :set_alternatives]
+                                                 :set_alternatives,
+                                                 :remove_question]
   before_action :set_clicker, except: [:new, :create]
-  before_action :check_accessibility, only: [:edit, :open, :close, :set_level]
+  before_action :check_accessibility, only: [:edit, :open, :close, :set_level,
+                                             :remove_question]
   authorize_resource
   layout 'clicker', except: [:edit]
 
@@ -67,6 +69,19 @@ class ClickersController < ApplicationController
   def get_votes_count
     result = @clicker.votes.count
     render json: result
+  end
+
+  def associate_question
+    question = Question.find_by_id(clicker_params[:question_id])
+    @clicker.update(question: question,
+                    alternatives: question&.answers&.count || 3)
+    redirect_to edit_clicker_path(@clicker)
+  end
+
+  def remove_question
+    @clicker.update(question: nil,
+                    alternatives: 3)
+    redirect_to edit_clicker_path(@clicker)
   end
 
   private
