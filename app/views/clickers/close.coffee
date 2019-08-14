@@ -10,3 +10,6 @@ $('#votesGfx')
                         locals: { clicker: @clicker } %>')
 <% end %>
 $('.clickerClosed').show()
+$('.clickerAlternatives').prop('disabled', false)
+$('.associateClickerQuestion').show()
+$('#removeClickerQuestion').show()

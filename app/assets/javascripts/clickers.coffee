@@ -35,8 +35,17 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'click', '.associateClickerQuestion', ->
     $('#clickerSearchForm').show()
+    $('#cancelSearch').show().data('change', $(this).data('change'))
     $('#clickerAlternativeSelection').hide()
     $('#clickerAssociatedQuestion').hide()
+    return
+
+  $(document).on 'click', '#cancelSearch', ->
+    $('#clickerSearchForm').hide()
+    if $(this).data('change')
+      $('#clickerAssociatedQuestion').show()
+    else
+      $('#clickerAlternativeSelection').show()
     return
 
   $(document).on 'mouseenter', '[id^="result-clickerizable-"]', ->
@@ -89,4 +98,8 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#clickerQRButton'
   $(document).off 'click', '#toggleClickerResults'
   $(document).off 'click', '.associateClickerQuestion'
+  $(document).off 'click', '#cancelSearch'
+  $(document).off 'mouseenter', '[id^="result-clickerizable-"]'
+  $(document).off 'mouseleave', '[id^="result-clickerizable-"]'
+  $(document).off 'click', '[id^="result-clickerizable-"]'
   return

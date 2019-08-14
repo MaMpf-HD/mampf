@@ -8,13 +8,14 @@
     <% (2..6).each do |i| %>
       <div class="custom-control custom-radio custom-control-inline">
         <input type="radio"
+               class="clickerAlternatives custom-control-input"
                name="clickerAlternatives"
                id="clickerAlternatives_<%= i %>"
                data-clicker="<%= clicker.id %>"
                data-alternatives="<%= i %>"
                data-code="<%= clicker.code %>"
-               <%= clicker.alternatives == i ? 'checked' : '' %>
-               class="clickerAlternatives custom-control-input">
+               <%= clicker.alternatives == i ? 'checked ' : ' ' %>
+               <%= clicker.open? ? 'disabled ' : ' ' %>>
         <label class="custom-control-label"
                for="clickerAlternatives_<%= i %>">
           <%= i %>
@@ -26,8 +27,8 @@
     <div class="col-4 text-right">
       <button role="button"
               class="btn btn-sm btn-outline-secondary mt-2 associateClickerQuestion"
-              data-code="<%= clicker.code %>"
-              data-clicker="<%= clicker.id %>">
+              data-change="false"
+              style="display: <%= show_no_block(!clicker.open?) %>">
         <%= t('admin.clicker.associate_question') %>
       </button>
     </div>
@@ -46,23 +47,25 @@
 <% if clicker.question.present? %>
   <div class="row"
        id="clickerAssociatedQuestion">
-    <div class="col-6">
+    <div class="<%= user_signed_in? ? 'col-6' : 'col-12' %>">
       <%= t('admin.clicker.associated_to_question') %>
     </div>
-    <div class="col-6 text-right">
-      <%= link_to t('admin.clicker.remove_question'),
-                  remove_question_path(clicker,
-                                       params: { code: user_signed_in? ? nil : clicker.code }),
-                  class: 'btn btn-sm btn-outline-secondary mt-2',
-                  method: :delete %>
-      <% if user_signed_in? %>
+    <% if user_signed_in? %>
+      <div class="col-6 text-right">
+        <%= link_to t('admin.clicker.remove_question'),
+                    remove_question_path(clicker),
+                    class: 'btn btn-sm btn-outline-secondary mt-2',
+                    method: :delete,
+                    style: "display: #{show_no_block(!clicker.open?)}",
+                    id: 'removeClickerQuestion' %>
         <button role="button"
                 class="btn btn-sm btn-outline-secondary associateClickerQuestion mt-2"
-                data-code="<%= clicker.code %>">
+                data-change="true"
+                style="display: <%= show_no_block(!clicker.open?) %>">
           <%= t('admin.clicker.change_associated_question') %>
         </button>
-      <% end %>
-    </div>
+      </div>
+    <% end %>
     <div class="col-12">
       <%= render partial: 'clickers/edit/question_preview',
                  locals: { question: clicker.question } %>

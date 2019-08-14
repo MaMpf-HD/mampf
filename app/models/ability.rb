@@ -98,9 +98,8 @@ class Ability
       can [:teacher, :fill_user_select], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
-      can [:edit, :open, :close, :set_alternatives, :get_votes_count,
-           :remove_question], Clicker
-      can :associate_question, Clicker do |clicker|
+      can [:edit, :open, :close, :set_alternatives, :get_votes_count], Clicker
+      can [:associate_question, :remove_question], Clicker do |clicker|
         clicker.editor == user
       end
       can [:linearize, :set_root, :set_level,
@@ -121,8 +120,7 @@ class Ability
         end
       end
 
-      can [:edit, :open, :close, :set_alternatives, :get_votes_count,
-           :remove_question], Clicker
+      can [:edit, :open, :close, :set_alternatives, :get_votes_count], Clicker
 
       can [:take, :proceed], Quiz
 
