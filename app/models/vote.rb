@@ -1,3 +1,4 @@
+# Vote class
 class Vote < ApplicationRecord
   belongs_to :clicker
 

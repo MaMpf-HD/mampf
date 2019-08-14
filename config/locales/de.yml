@@ -294,7 +294,7 @@ de:
           medienbasiert (Standard):
           </i>
           Zunächst legt man die Kapitel (bzw. Vorträge) und Abschnitte an und
-          tagged diese.
+          taggt diese.
           Danach werden Sitzungen und zugeordnete Medien angelegt, diese
           erben dann die entsprechenden Tags. Andersherum geht es natürlich
           auch, dann ist jedoch ein höherer Aufwand beim Tagging
