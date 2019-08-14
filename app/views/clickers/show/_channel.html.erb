@@ -7,12 +7,12 @@
         </li>
       <% end %>
       <% (1..@clicker.alternatives).each do |i| %>
-        <%= link_to(votes_path(params: { vote: { value: i,
-                                                 clicker_id: @clicker.id }}),
-                    method: :post,
-                    remote: true,
-                    class: 'list-group-item list-group-item-action voteClicker',
-                    data: { value: i }) do %>
+        <li class="list-group-item list-group-item-action voteClicker"
+            data-clicker="<%= @clicker.id %>"
+            data-value="<%= i %>"
+            data-url="<%= votes_path(params: { vote: { value: i,
+                                                 clicker_id: @clicker.id } }) %>"
+            style="cursor: pointer;">
           <% if @clicker.question %>
             <span class="mr-3" style="font-size: 1.5em;">
               <%= %w(A B C D E F)[i-1] %>
@@ -25,7 +25,7 @@
               <%= %w(A B C D E F)[i-1] %>
             </div>
           <% end %>
-        <% end %>
+        </li>
         <li class="list-group-item votedClicker"
             style="display: none;"
             data-value="<%= i%>">

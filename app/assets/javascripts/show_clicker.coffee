@@ -127,4 +127,14 @@ window.onload = ->
         clearInterval(channel.data('interval'))
         channel.data('interval', -1)
       return
+
+    $(document).on 'click', '.voteClicker', ->
+      value = $(this).data('value')
+      $('.voteClicker').remove()
+      $('.votedClicker[data-value="'+value+'"]').addClass('active')
+      $('.votedClicker').show()
+      $.ajax $(this).data('url'),
+        type: 'POST'
+        dataType: 'script'
+      return
   return
