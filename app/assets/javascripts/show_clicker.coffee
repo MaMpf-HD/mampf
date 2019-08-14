@@ -18,7 +18,7 @@ adjustVoteStatus = (channel) ->
   if channel.data('open')
     clickerId = channel.data('clicker')
     clickerInstance = channel.data('instance')
-    clickerStatus = getCookie('clicker-' + clickerId)
+    clickerStatus = Cookies.get('clicker-' + clickerId)
     if clickerStatus == clickerInstance
       $('#clickerOpen').hide()
       $('#votedAlready').show()
