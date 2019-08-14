@@ -38,10 +38,12 @@ $(document).on 'turbolinks:load', ->
     $('#cancelSearch').show().data('change', $(this).data('change'))
     $('#clickerAlternativeSelection').hide()
     $('#clickerAssociatedQuestion').hide()
+    $('#openClickerButton').hide()
     return
 
   $(document).on 'click', '#cancelSearch', ->
     $('#clickerSearchForm').hide()
+    $('#openClickerButton').show()
     if $(this).data('change')
       $('#clickerAssociatedQuestion').show()
     else
