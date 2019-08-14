@@ -14,12 +14,6 @@
 #   xhr.send()
 #   return
 
-getCookie = (name) ->
-  match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-  if match
-    return match[2]
-  return
-
 adjustVoteStatus = (channel) ->
   if channel.data('open')
     clickerId = channel.data('clicker')
@@ -41,7 +35,7 @@ webNotificationPoll = ->
     if response?
       responseChannel = $(response).find('#clickerChannel')
       clickerId = channel.data('clicker')
-      clickerStatus = getCookie('clicker-' + clickerId)
+      clickerStatus = Cookies.get('clicker-' + clickerId)
       newClickerInstance = responseChannel.data('instance')
       newClickerOpen = responseChannel.data('open')
       $('#clickerChannel').html($(response).find('#clickerChannel').html())
