@@ -95,12 +95,14 @@ module MediaHelper
     'border-danger'
   end
 
-  def media_sorts_select(quiz)
-    add_prompt(quiz ? Medium.select_quizzables : Medium.select_sorts)
+  def media_sorts_select(purpose)
+    return add_prompt(Medium.select_quizzables) if purpose == 'quiz'
+    return Medium.select_question if purpose == 'clicker'
+    add_prompt(Medium.select_sorts)
   end
 
-  def sort_preselect(quiz)
-    return '' unless quiz
+  def sort_preselect(purpose)
+    return '' unless purpose == 'quiz'
     'Question'
   end
 end

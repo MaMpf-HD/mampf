@@ -15,10 +15,12 @@ class ClickersController < ApplicationController
 
   def edit
     @user_path = clicker_url(@clicker,
-                             host: DefaultSetting::URL_HOST_SHORT).gsub('clickers','c')
+                             host: DefaultSetting::URL_HOST_SHORT)
+                 .gsub('clickers', 'c')
     @editor_path = clicker_url(@clicker,
                                host: DefaultSetting::URL_HOST_SHORT,
-                               params: { code: @clicker.code }).gsub('clickers','c')
+                               params: { code: @clicker.code })
+                   .gsub('clickers', 'c')
     if user_signed_in?
       render layout: 'administration'
       return
@@ -61,12 +63,27 @@ class ClickersController < ApplicationController
 
   def set_alternatives
     @clicker.update(alternatives: params[:alternatives].to_i)
-    head :ok, content_type: "text/html"
+    head :ok, content_type: 'text/html'
   end
 
   def get_votes_count
     result = @clicker.votes.count
     render json: result
+  end
+
+  def associate_question
+    question = Question.find_by_id(clicker_params[:question_id])
+    @clicker.update(question: question,
+                    alternatives: question&.answers&.count || 3)
+    redirect_to edit_clicker_path(@clicker)
+  end
+
+  def remove_question
+    @clicker.update(question: nil,
+                    alternatives: 3)
+    code = user_signed_in? ? nil : @clicker.code
+    redirect_to edit_clicker_path(@clicker,
+                                  params: { code: code })
   end
 
   private

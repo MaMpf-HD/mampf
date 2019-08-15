@@ -1,0 +1,11 @@
+<div class="row mt-3 mb-2">
+  <div class="col-12">
+    <%= link_to t('admin.clicker.associate_question'),
+                associate_question_path(clicker,
+                                        params:
+                                          { clicker:
+                                              { question_id: question.id } }),
+                method: :post,
+                class: 'btn btn-sm btn-primary' %>
+  </div>
+</div>

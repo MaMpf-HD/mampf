@@ -1,3 +1,4 @@
+# Clicker class
 class Clicker < ApplicationRecord
   belongs_to :editor, class_name: 'User'
   belongs_to :question, optional: true
@@ -10,13 +11,13 @@ class Clicker < ApplicationRecord
   has_many :votes, dependent: :destroy
 
   def user_link
-    clicker_url(self, host: 'localhost').gsub('clickers','c')
+    clicker_url(self, host: 'localhost').gsub('clickers', 'c')
   end
 
   def editor_link
     clicker_url(self,
                 host: 'localhost',
-                params: { code: code }).gsub('clickers','c')
+                params: { code: code }).gsub('clickers', 'c')
   end
 
   def closed?
@@ -36,7 +37,7 @@ class Clicker < ApplicationRecord
     total = votes.count
     return unless total.positive?
     (1..alternatives).map { |i| votes.where(value: i).count / total.to_f }
-                     .map { |x| (100*x).round }
+                     .map { |x| (100 * x).round }
   end
 
   private

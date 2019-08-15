@@ -14,17 +14,11 @@
 #   xhr.send()
 #   return
 
-getCookie = (name) ->
-  match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-  if match
-    return match[2]
-  return
-
 adjustVoteStatus = (channel) ->
   if channel.data('open')
     clickerId = channel.data('clicker')
     clickerInstance = channel.data('instance')
-    clickerStatus = getCookie('clicker-' + clickerId)
+    clickerStatus = Cookies.get('clicker-' + clickerId)
     if clickerStatus == clickerInstance
       $('#clickerOpen').hide()
       $('#votedAlready').show()
@@ -41,7 +35,7 @@ webNotificationPoll = ->
     if response?
       responseChannel = $(response).find('#clickerChannel')
       clickerId = channel.data('clicker')
-      clickerStatus = getCookie('clicker-' + clickerId)
+      clickerStatus = Cookies.get('clicker-' + clickerId)
       newClickerInstance = responseChannel.data('instance')
       newClickerOpen = responseChannel.data('open')
       $('#clickerChannel').html($(response).find('#clickerChannel').html())
@@ -82,7 +76,10 @@ window.onload = ->
   channel = $('#clickerChannel')
   if channel.length > 0
     adjustVoteStatus(channel)
-    window.clickerChannelId = setInterval(webNotificationPoll, 4000)
+    channel.data('interval', -1)
+    if document.visibilityState == 'visible'
+      i =  setInterval(webNotificationPoll, 5000)
+      channel.data('interval', i)
     renderMathInElement document.getElementById('clickerChannel'),
       delimiters: [
         {
@@ -107,4 +104,31 @@ window.onload = ->
         }
       ]
       throwOnError: false
+
+    document.addEventListener 'visibilitychange', ->
+      if document.visibilityState == 'visible'
+        webNotificationPoll()
+        console.log 'Visible again!'
+        console.log 'Current interval:' + channel.data('interval')
+        if channel.data('interval') == -1
+          console.log 'Interval is empty'
+          i = setInterval(webNotificationPoll, 5000)
+          channel.data('interval', i)
+          console.log 'New interval:' + channel.data('interval')
+      else
+        console.log 'Shutting down'
+        console.log channel.data('interval')
+        clearInterval(channel.data('interval'))
+        channel.data('interval', -1)
+      return
+
+    $(document).on 'click', '.voteClicker', ->
+      value = $(this).data('value')
+      $('.voteClicker').remove()
+      $('.votedClicker[data-value="'+value+'"]').addClass('active')
+      $('.votedClicker').show()
+      $.ajax $(this).data('url'),
+        type: 'POST'
+        dataType: 'script'
+      return
   return

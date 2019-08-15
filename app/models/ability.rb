@@ -98,7 +98,11 @@ class Ability
       can [:teacher, :fill_user_select], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
-      can [:edit, :open, :close, :set_alternatives, :get_votes_count], Clicker
+      can [:new, :create, :edit, :open, :close, :set_alternatives,
+           :get_votes_count], Clicker
+      can [:associate_question, :remove_question], Clicker do |clicker|
+        clicker.editor == user
+      end
       can [:linearize, :set_root, :set_level,
            :update_default_target, :delete_edge], Quiz do |quiz|
         quiz.edited_with_inheritance_by?(user)

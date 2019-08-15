@@ -294,7 +294,7 @@ de:
           medienbasiert (Standard):
           </i>
           Zunächst legt man die Kapitel (bzw. Vorträge) und Abschnitte an und
-          tagged diese.
+          taggt diese.
           Danach werden Sitzungen und zugeordnete Medien angelegt, diese
           erben dann die entsprechenden Tags. Andersherum geht es natürlich
           auch, dann ist jedoch ein höherer Aufwand beim Tagging
@@ -481,6 +481,7 @@ de:
         Dieser Clicker ist zu einer Frage aus der Datenbank assoziiert:
       change_associated_question: >
         Andere Quizfrage assoziieren
+      associate_question: 'Quizfrage assoziieren'
       info:
         title: >
           Hier musst Du den Titel des Clickers eintragen.
@@ -1933,6 +1934,7 @@ de:
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
     associated_with_inheritance: 'Assoziiert mit Vererbung zu'
+    assoicated_to_short: 'Ass. zu'
     description: 'Beschreibung'
     type: 'Typ'
     label: 'Label'

@@ -1,20 +1,21 @@
 <div class="row"
      id="clickerAlternativeSelection"
-     style="display: <%= show(!clicker.question.present?) %>">
-  <div class="col-12">
-    <%= t('admin.clicker.alternatives') %>:
-  </div>
-  <div class="col-12">
+     style="display: <%= show_no_block(!clicker.question.present?) %>">
+  <div class="col-8">
+    <div>
+      <%= t('admin.clicker.alternatives') %>:
+    </div>
     <% (2..6).each do |i| %>
       <div class="custom-control custom-radio custom-control-inline">
         <input type="radio"
+               class="clickerAlternatives custom-control-input"
                name="clickerAlternatives"
                id="clickerAlternatives_<%= i %>"
                data-clicker="<%= clicker.id %>"
                data-alternatives="<%= i %>"
                data-code="<%= clicker.code %>"
-               <%= clicker.alternatives == i ? 'checked' : '' %>
-               class="clickerAlternatives custom-control-input">
+               <%= clicker.alternatives == i ? 'checked ' : ' ' %>
+               <%= clicker.open? ? 'disabled ' : ' ' %>>
         <label class="custom-control-label"
                for="clickerAlternatives_<%= i %>">
           <%= i %>
@@ -22,31 +23,52 @@
       </div>
     <% end %>
   </div>
+  <% if user_signed_in? %>
+    <div class="col-4 text-right">
+      <button role="button"
+              class="btn btn-sm btn-outline-secondary mt-2 associateClickerQuestion"
+              data-change="false"
+              style="display: <%= show_no_block(!clicker.open?) %>">
+        <%= t('admin.clicker.associate_question') %>
+      </button>
+    </div>
+  <% end %>
 </div>
+<% if user_signed_in? %>
+  <div id="clickerSearchForm"
+       style="display: none;"
+       data-clicker="<%= clicker.id %>" >
+    <%= render partial: 'media/catalog/search_form',
+               locals: { purpose: 'clicker' } %>
+    <div id="media-search-results">
+    </div>
+  </div>
+<% end %>
 <% if clicker.question.present? %>
-  <div class="row">
-    <div class="col-12">
+  <div class="row"
+       id="clickerAssociatedQuestion">
+    <div class="<%= user_signed_in? ? 'col-6' : 'col-12' %>">
       <%= t('admin.clicker.associated_to_question') %>
     </div>
+    <% if user_signed_in? %>
+      <div class="col-6 text-right">
+        <%= link_to t('admin.clicker.remove_question'),
+                    remove_question_path(clicker),
+                    class: 'btn btn-sm btn-outline-secondary mt-2',
+                    method: :delete,
+                    style: "display: #{show_no_block(!clicker.open?)}",
+                    id: 'removeClickerQuestion' %>
+        <button role="button"
+                class="btn btn-sm btn-outline-secondary associateClickerQuestion mt-2"
+                data-change="true"
+                style="display: <%= show_no_block(!clicker.open?) %>">
+          <%= t('admin.clicker.change_associated_question') %>
+        </button>
+      </div>
+    <% end %>
     <div class="col-12">
       <%= render partial: 'clickers/edit/question_preview',
                  locals: { question: clicker.question } %>
-    </div>
-    <div class="col-12">
-      <button role="button"
-              class="btn btn-outline-secondary mt-2"
-              data-code="<%= clicker.code %>"
-              id="removeClickerQuestion"
-              display="style: <%= show_no_block(clicker.question.present?) %>">
-        <%= t('admin.clicker.remove_question') %>
-      </button>
-      <button role="button"
-              class="btn btn-outline-secondary mt-2"
-              data-code="<%= clicker.code %>"
-              id="associateClickerQuestion"
-              display="style: <%= show_no_block(clicker.question.present?) %>">
-        <%= t('admin.clicker.change_associated_question') %>
-      </button>
     </div>
   </div>
 <% end %>

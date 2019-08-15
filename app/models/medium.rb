@@ -165,6 +165,10 @@ class Medium < ApplicationRecord
     Medium.sort_localized.slice('Question', 'Remark').map { |k, v| [v, k] }
   end
 
+  def self.select_question
+    Medium.sort_localized.slice('Question').map { |k, v| [v, k] }
+  end
+
   # returns the array of all media subject to the conditions
   # provided by the params hash (keys: :course_id, :lecture_id, :project)
   # and the user's primary lecture for the given course (this is relevant for
@@ -283,7 +287,7 @@ class Medium < ApplicationRecord
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
     end
-    if search_params[:clicker] == 'clicker'
+    if search_params[:purpose] == 'clicker'
       search.build do
         with(:clickerizable, true)
       end

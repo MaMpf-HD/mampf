@@ -32,8 +32,7 @@
                       @editor_path %>
         </li>
       <% end %>
-      <li class="clickerClosed list-group-item list-group-item-light text-dark"
-          style='display: <%= "#{show(@clicker.closed?)}" %>'>
+      <li class="list-group-item list-group-item-light text-dark">
         <%= render partial: 'clickers/edit/alternatives',
                    locals: { clicker: @clicker } %>
       </li>

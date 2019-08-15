@@ -464,7 +464,8 @@ en:
       associated_to_question: >
         This clicker is associated to a question from the database:
       change_associated_question: >
-        Associate different question
+        Associate different Question
+      associate_question: 'Associate Question'
       info:
         title: >
           Here you have to enter the title of the clicker.
@@ -1817,6 +1818,7 @@ en:
     associated_to: 'Associated to'
     associated_to_short: 'Ass. to'
     associated_with_inheritance: 'Associated with inheritance to'
+    associated_to_short: 'Ass. to'
     description: 'Description'
     type: 'Type'
     label: 'Label'
