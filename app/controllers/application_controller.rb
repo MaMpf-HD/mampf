@@ -1,5 +1,6 @@
 # ApplicationController
 class ApplicationController < ActionController::Base
+  skip_before_action :verify_authenticity_token
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
