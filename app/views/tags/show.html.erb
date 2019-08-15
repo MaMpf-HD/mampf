@@ -25,7 +25,11 @@
         <div class="card bg-light mb-2">
           <div class="card-header bg-generic-card-header">
             <h5>
-              <%= t('translations') %>
+              <% if @tag.aliases %>
+                <%= t('basics.translations_aliases') %>
+              <% else %>
+                <%= t('translations') %>
+              <% end %>
             </h5>
           </div>
           <div class="card-body">
@@ -35,6 +39,18 @@
                           class: 'badge badge-light' %>
               <%= @tag.notions.where(locale: l)&.first&.title %>
               <br>
+            <% end %>
+            <% if @tag.aliases %>
+              <h6 class="mt-2">
+                <%= t('basics.aliases') %>
+              </h6>
+              <% @tag.aliases.each do |a| %>
+                <span class="badge badge-light">
+                  <%= a.locale %>
+                </span>
+                <%= a.title %>
+                <br>
+              <% end %>
             <% end %>
           </div>
         </div>

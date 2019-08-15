@@ -899,8 +899,10 @@ en:
         There are no associated tags.
       info:
         title: >
-          Hier you can enter the title of the tag in different languages.
+          Here you can enter the title of the tag in different languages.
           A title has to be given for at least one language.
+        aliases:
+          Here you can add aliases to the tag title.
         related_tags: >
           The tags form agraph. Related tags are the neighbours of a tag.
           You can select these here.
@@ -1889,6 +1891,8 @@ en:
     selection: 'Selection'
     nothing_selected: 'You have not selected anything.'
     warning: 'Warning'
+    aliases: 'Aliases'
+    translations_aliases: 'Translations, Aliases'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2170,6 +2174,8 @@ en:
           attributes:
             notions:
               blank: 'You need to give a title for at least one language.'
+            aliases:
+              invalid: 'The input is invalid.'
         term:
           attributes:
             season:

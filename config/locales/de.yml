@@ -954,6 +954,8 @@ de:
           Hier kannst Du den Titel des Tags in verschiedenen
           Sprachen eingeben. Zumindest für eine Sprache muss ein Titel vergeben
           werden.
+        aliases: >
+          Hier kannst Du Aliase für den Tag anlegen.
         related_tags: >
           Die Tags bilden einen Graphen. Verknüpfte Tags sind
           genau die Nachbarn eines Tags. Diese kannst Du hier auswählen.
@@ -2004,6 +2006,8 @@ de:
     selection: 'Auswahl'
     nothing_selected: 'Du hast nichts ausgewählt.'
     warning: 'Warnung'
+    aliases: 'Aliase'
+    translations_aliases: 'Übersetzungen, Aliase'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2289,6 +2293,8 @@ de:
               blank: >
                 Es muss mindestens für eine Sprache ein Titel angegeben
                 werden.
+            aliases:
+              invalid: 'Die Angaben sind ungültig.'
         term:
           attributes:
             season:

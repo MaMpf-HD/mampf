@@ -38,6 +38,12 @@ class Tag < ApplicationRecord
   validates_presence_of :notions
   validates_associated :notions
 
+  accepts_nested_attributes_for :aliases,
+    reject_if: lambda {|attributes| attributes['title'].blank?},
+    allow_destroy: true
+
+  validates_associated :aliases
+
   # touch related lectures and sections after saving because lecture tags
   # are cached
   after_save :touch_lectures
