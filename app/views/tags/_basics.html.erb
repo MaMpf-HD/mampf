@@ -43,6 +43,41 @@
       </div>
       <%= n.hidden_field :locale %>
     <% end %>
+    <div class="mb-2">
+      <%= t('basics.aliases') %>
+      <%= helpdesk(t('admin.tag.info.aliases'), false) %>
+      <div class="invalid-feedback"
+        id="tag-aliases-error-<%= tag.id.to_i %>">
+      </div>
+    </div>
+    <%= f.fields_for :aliases do |n| %>
+      <div class="form-row">
+        <div class="form-group col-11">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <%= n.select :locale,
+                           options_for_select(I18n.available_locales
+                                                  .map { |l| [l.to_s, l.to_s] },
+                                              n.object.locale.to_s),
+                           {},
+                           { class: 'form-control' } %>
+            </div>
+            <%= n.text_field :title, class: 'form-control',
+                                     data: { id: tag.id.to_i,
+                                             locale: n.object.locale } %>
+          </div>
+        </div>
+        <% unless new_tag %>
+          <div class="form-group col-1">
+            <%= n.check_box :_destroy, data: { id: tag.id.to_i } %>
+            <i class="fas fa-trash-alt text-dark"
+               data-toggle="tooltip"
+               title="<%= t('buttons.delete') %>">
+            </i>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
   </div>
   <% if new_tag %>
     <div class="form-group">

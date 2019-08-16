@@ -19,7 +19,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   # issue a warning if tag form has changed
-  $('[id^="tag-form-"] :input').on 'change', ->
+  $('[id^="tag-form-"]').on 'change', ->
     id = this.dataset.id
     $('#tag-basics-warning-' + id).show()
     $('#new-tag-button').remove()

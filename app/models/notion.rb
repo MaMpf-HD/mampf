@@ -14,8 +14,11 @@ class Notion < ApplicationRecord
   end
 
   def touch_tag_relations
-    tag.touch_lectures
-    tag.touch_sections
-    tag.touch_chapters
+    tag&.touch_lectures
+    tag&.touch_sections
+    tag&.touch_chapters
+    aliased_tag&.touch_lectures
+    aliased_tag&.touch_sections
+    aliased_tag&.touch_chapters
   end
 end

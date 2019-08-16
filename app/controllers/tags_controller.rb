@@ -45,11 +45,13 @@ class TagsController < ApplicationController
     (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
       @tag.notions.new(locale: l)
     end
+    @tag.aliases.new(locale: I18n.locale)
   end
 
   def new
     @tag = Tag.new
     set_notions
+    @tag.aliases.new(locale: I18n.locale)
   end
 
   def update
@@ -94,6 +96,7 @@ class TagsController < ApplicationController
   # prepare new tag instance for modal
   def modal
     set_up_tag
+    @tag.aliases.new(locale: I18n.locale)
     add_course
     add_section
     add_medium
@@ -199,6 +202,8 @@ class TagsController < ApplicationController
   def tag_params
     params.require(:tag).permit(related_tag_ids: [],
                                 notions_attributes: [:title, :locale, :id,
+                                  :_destroy],
+                                aliases_attributes: [:title, :locale, :id,
                                   :_destroy],
                                 course_ids: [],
                                 section_ids: [],

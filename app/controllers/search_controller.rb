@@ -7,9 +7,9 @@ class SearchController < ApplicationController
   def index
     search_down = @search_string.downcase
     # determine tags whose title contains the search string
-    matches = Notion.all.pluck(:tag_id, :title)
+    matches = Notion.all.pluck(:tag_id, :title, :aliased_tag_id)
                     .select { |x| x.second.downcase.include?(search_down) }
-                    .map(&:first).uniq
+                    .map { |a| a.first || a.third }.uniq
     @tags = Tag.where(id: matches)
     # determine which of the found tags can be seen by the user
     # (taking into account his preferences and subscribed courses)
