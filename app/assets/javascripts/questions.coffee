@@ -17,6 +17,15 @@ $(document).on 'turbolinks:load', ->
     $('#question-basics-warning').removeClass("no_display")
     return
 
+  $(document).on 'change', '#questionSort :input', ->
+    if $(this).val() == 'mc'
+      $('#questionAnswers').show()
+      $('#questionSolution').hide()
+    else
+      $('#questionAnswers').hide()
+      $('#questionSolution').show()
+    return
+
 # restore status quo if editing of question basics is cancelled
 
   $(document).on 'click', '#question-basics-cancel', ->
@@ -30,6 +39,17 @@ $(document).on 'turbolinks:load', ->
         console.log("AJAX Error: #{textStatus}")
     return
 
+  $(document).on 'keyup', '#question-solution-edit', ->
+    $('#question-basics-options').removeClass("no_display")
+    $('#question-basics-warning').removeClass("no_display")
+    return
+
+
+  $(document).on 'change', '#question-basics-edit :input', ->
+    $('#question-basics-options').removeClass("no_display")
+    $('#question-basics-warning').removeClass("no_display")
+
+
   return
 
 # clean up everything before turbolinks caches
@@ -37,4 +57,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'keyup', '#question-basics-edit'
   $(document).off 'change', '#question-basics-edit :input'
   $(document).off 'click', '#question-basics-cancel'
+  $(document).off 'change', '#questionSort :input'
   return

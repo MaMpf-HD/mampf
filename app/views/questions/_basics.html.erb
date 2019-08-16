@@ -37,26 +37,45 @@
                     id: 'tex-area-question-' + question.id.to_s,
                     label: t('basics.latex'),
                     rows: 5 %>
+    <%= f.form_group :question_sort,
+                     label: { text: t('basics.type') + ':' } do %>
+      <span id="questionSort" class="ml-2">
+        <%= f.radio_button :question_sort,
+                           'mc',
+                           label: t('basics.multiple_choice'),
+                           inline: true,
+                           custom: true %>
+        <%= f.radio_button :question_sort,
+                           'free',
+                           label: t('basics.free'),
+                           inline: true,
+                           custom: true %>
+      </span>
+    <% end %>
     <%= f.form_group :level,
-                     label: { text: t('basics.level') } do %>
-      <div id="level">
+                     label: { text: t('basics.level') + ':' } do %>
+      <span id="level" class="ml-2">
         <%= f.radio_button :level,
                            0,
                            label: t('basics.level_easy'),
-                           inline: true %>
+                           inline: true,
+                           custom: true %>
         <%= f.radio_button :level,
                            1,
                            label: t('basics.level_medium'),
-                           inline: true %>
+                           inline: true,
+                           custom: true %>
         <%= f.radio_button :level,
                            2,
                            label: t('basics.level_hard'),
-                           inline: true %>
-      </div>
+                           inline: true,
+                           custom: true %>
+      </span>
     <% end %>
     <%= f.form_group :independent do %>
       <%= f.check_box :independent,
-                      label: t('admin.question.independent') %>
+                      label: t('admin.question.independent'),
+                      custom: true %>
     <% end %>
     <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
                     label: t('admin.question.hint') %>

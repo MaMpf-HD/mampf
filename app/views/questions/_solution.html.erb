@@ -1,0 +1,44 @@
+<%= bootstrap_form_with model: question do |f| %>
+  <div class="card-header">
+    <div class="row">
+      <div class="col-3">
+        <h5>
+          <%= t('basics.solution') %>
+        </h5>
+      </div>
+      <div class="col-5">
+        <span class="no_display incorrect"
+              id="question-solution-warning">
+          <%= t('warnings.unsaved_changes') %>
+        </span>
+      </div>
+      <div class="col-4">
+        <span class="no_display"
+              id="question-solution-options">
+          <%= f.submit t('buttons.save'),
+                      class: "btn btn-primary btn-sm",
+                      id: "question-solution-save" %>
+          <button type="button"
+                  class="btn btn-secondary btn-sm"
+                  id="question-solution-cancel"
+                  data-id="<%= question.id %>">
+            <%= t('buttons.discard') %>
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <%= f.form_group :solution_type,
+                     label: { text: t('basics.type') + ':',
+                              class: 'mr-2' } do %>
+      <%= f.radio_button :value,
+                         'MampfNumber',
+                         label: t('admin.question.number'),
+                         inline: true,
+                         custom: true %>
+    <% end %>
+    <%= f.text_field :solution_content,
+                     label: t('basics.solution') %>
+ </div>
+<% end %>

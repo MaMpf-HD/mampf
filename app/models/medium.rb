@@ -41,6 +41,8 @@ class Medium < ApplicationRecord
 
   serialize :quiz_graph, QuizGraph
 
+  serialize :solution, Solution
+
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem
   include VideoUploader[:video]

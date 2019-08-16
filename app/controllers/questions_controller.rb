@@ -46,6 +46,6 @@ class QuestionsController < ApplicationController
 
   def question_params
     params.require(:question).permit(:label, :text, :type, :hint, :level,
-                                     :independent, :vertex_id)
+                                     :question_sort, :independent, :vertex_id)
   end
 end

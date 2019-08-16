@@ -1295,6 +1295,7 @@ de:
         Fehler beim Abspeichern der Frage
       initial_text: 'Dummytext'
       copy_marker: '-KOPIE-'
+      number: 'Zahl'
       info:
         first_save: >
           Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
@@ -2010,6 +2011,9 @@ de:
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
     answer_count: 'Anzahl der Antworten (nur für Quiz-Fragen)'
+    multiple_choice: 'Multiple Choice'
+    free: 'freie Antwort'
+    solution: 'Lösung'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
