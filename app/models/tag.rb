@@ -79,7 +79,7 @@ class Tag < ApplicationRecord
       return local_title_uncached + " (#{other_titles_uncached.join(', ')})"
     end
     unless other_titles_uncached.any?
-      return local_title_uncached + " (#{aliases.pluck(:title).join(', ')}"
+      return local_title_uncached + " (#{aliases.pluck(:title).join(', ')})"
     end
     local_title_uncached +
       " (#{aliases.pluck(:title).join(', ')}," +
