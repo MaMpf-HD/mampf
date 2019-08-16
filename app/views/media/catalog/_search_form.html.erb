@@ -150,6 +150,16 @@
                    { class: 'form-control'} %>
     </div>
     <div class="col-6 col-lg-3 form-.group">
+      <%= f.label :answers_count, t('basics.answer_count') %>
+      <%= f.select :answers_count,
+                   options_for_select([[t('access.irrelevant'), 'irrelevant'],
+                                       [1,1],[2,2],[3,3],[4,4],[5,5], [6,6],
+                                       ['>6', 7]],['irrelevant']),
+                   {},
+                   { class: 'form-control'} %>
+
+    </div>
+    <div class="col-6 col-lg-3 form-.group">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
                    options_for_select([[10,10],[20,20],[50,50]],[10]),

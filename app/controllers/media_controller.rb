@@ -410,7 +410,7 @@ class MediaController < ApplicationController
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
                                    :all_editors, :tag_operator, :quiz, :access,
                                    :teachable_inheritance, :fulltext, :per,
-                                   :clicker, :purpose,
+                                   :clicker, :purpose, :answers_count,
                                    types: [],
                                    teachable_ids: [],
                                    tag_ids: [],

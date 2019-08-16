@@ -1894,6 +1894,7 @@ en:
     warning: 'Warning'
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
+    answer_count: 'Number of answers (only for Questions)'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

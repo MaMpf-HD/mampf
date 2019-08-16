@@ -2009,6 +2009,7 @@ de:
     warning: 'Warnung'
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
+    answer_count: 'Anzahl der Antworten (nur für Quiz-Fragen)'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

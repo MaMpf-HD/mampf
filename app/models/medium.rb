@@ -118,6 +118,7 @@ class Medium < ApplicationRecord
     integer :teachable_id
     integer :tag_ids, multiple: true
     integer :editor_ids, multiple: true
+    integer :answers_count
   end
 
   # these are all the sorts of food(=projects) we currently serve
@@ -290,6 +291,11 @@ class Medium < ApplicationRecord
     if search_params[:purpose] == 'clicker'
       search.build do
         with(:clickerizable, true)
+      end
+    end
+    unless search_params[:answers_count] == 'irrelevant'
+      search.build do
+        with(:answers_count, [-1, search_params[:answers_count].to_i])
       end
     end
     unless search_params[:access] == 'irrelevant'
@@ -995,5 +1001,10 @@ class Medium < ApplicationRecord
     question = becomes(Question)
     return false unless question.answers.count.in?((2..6))
     question.answers.pluck(:value).count(true) == 1
+  end
+
+  def answers_count
+    return -1 unless type == 'Question'
+    becomes(Question).answers.count
   end
 end
