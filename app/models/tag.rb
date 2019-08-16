@@ -56,7 +56,7 @@ class Tag < ApplicationRecord
 
   searchable do
     text :titles do
-      notions.pluck(:title).join(' ')
+      title_join
     end
     integer :course_ids, multiple: true
   end
@@ -72,8 +72,18 @@ class Tag < ApplicationRecord
   end
 
   def extended_title_uncached
-    return local_title_uncached unless other_titles_uncached.any?
-    local_title_uncached + " (#{other_titles_uncached.join(', ')})"
+    unless other_titles_uncached.any? || aliases.any?
+      return local_title_uncached
+    end
+    unless aliases.any?
+      return local_title_uncached + " (#{other_titles_uncached.join(', ')})"
+    end
+    unless other_titles_uncached.any?
+      return local_title_uncached + " (#{aliases.pluck(:title).join(', ')})"
+    end
+    local_title_uncached +
+      " (#{aliases.pluck(:title).join(', ')}," +
+      " #{other_titles_uncached.join(', ')})"
   end
 
   def extended_title
@@ -335,5 +345,11 @@ class Tag < ApplicationRecord
     sections.each do |s|
       s.update(tags_order: s.tags_order - [id])
     end
+  end
+
+  def title_join
+    result = notions.pluck(:title).join(' ')
+    return result unless aliases.any?
+    result + ' ' + aliases.pluck(:title).join(' ')
   end
 end
