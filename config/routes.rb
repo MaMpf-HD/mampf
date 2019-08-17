@@ -219,7 +219,9 @@ Rails.application.routes.draw do
                                 as: 'cancel_term_edit'
   resources :terms, except: [:show]
 
-  devise_for :users, controllers: { registrations: 'registrations' }
+  devise_for :users, controllers: { confirmations: 'confirmations',
+                                    registrations: 'registrations' }
+
   get 'users/elevate', to: 'users#elevate',
                        as: 'elevate_user'
   get 'users/teacher/:teacher_id', to: 'users#teacher',

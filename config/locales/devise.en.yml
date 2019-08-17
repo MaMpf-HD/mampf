@@ -3,9 +3,11 @@
 en:
   devise:
     confirmations:
-      confirmed: "Your email address has been successfully confirmed."
+      confirmed: "Your email address has been successfully confirmed. Please take aminute to complete your profile."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
+      new:
+        resend_confirmation_instructions: 'Resend confirmation instructions'
     failure:
       already_authenticated: "You are already signed in."
       inactive: "Your account is not activated yet."
@@ -18,7 +20,10 @@ en:
       unconfirmed: "You have to confirm your email address before continuing."
     mailer:
       confirmation_instructions:
-        subject: "Confirmation instructions"
+        greeting: "Welcome to MaMpf!"
+        instruction: "You can confirm your MaMpf account through the link below:"
+        subject: "Instructions on the confirmation of your MaMpf account"
+        action: 'Confirm account'
       reset_password_instructions:
         subject: "Reset MaMpf password instructions"
         greetings: 'Hi, %{name}!'
@@ -86,6 +91,8 @@ en:
         login: 'Login'
         sign_up: 'Sign up'
         forgot_password: 'Forgot your password?'
+        didn_t_receive_confirmation_instructions: >
+          Didn't receive unlock instructions?
     unlocks:
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
       send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."

@@ -22,7 +22,8 @@
   <% if devise_mapping.confirmable? && controller_name != 'confirmations' %>
     <%= link_to t('.didn_t_receive_confirmation_instructions',
                 default: "Didn't receive confirmation instructions?"),
-                new_confirmation_path(resource_name) %><br />
+                new_confirmation_path(resource_name,
+                                      params: { locale: I18n.locale }) %><br />
   <% end %>
 
   <% if devise_mapping.lockable? &&

@@ -52,6 +52,9 @@ class ApplicationController < ActionController::Base
       locale_param = params[:locale]
     end
     I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookies[:locale] ||I18n.default_locale
+                    cookies[:locale] || I18n.default_locale
+    unless user_signed_in?
+      cookies[:locale] = I18n.locale
+    end
   end
 end

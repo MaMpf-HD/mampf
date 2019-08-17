@@ -3,10 +3,12 @@
 de:
   devise:
     confirmations:
-      confirmed: "Vielen Dank für Deine Registrierung. Bitte melde dich jetzt an."
+      confirmed: "Vielen Dank für Deine Registrierung. Bitte nimm Dir eine Minute, um Dein Profil zu vervollständigen."
       confirmed_and_signed_in: "Vielen Dank für Deine Registrierung. Du bist jetzt angemeldet."
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail, mit der Du Deine Registrierung bestätigen kannst."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Du Deine Registrierung bestätigen kannst."
+      new:
+        resend_confirmation_instructions: 'Anleitung zur Bestätigung des Accounts erneut versenden'
     failure:
       already_authenticated: "Du bist bereits angemeldet."
       inactive: "Dein Account ist nicht aktiv."
@@ -20,8 +22,9 @@ de:
     mailer:
       confirmation_instructions:
         greeting: "Willkommen bei MaMpf!"
-        instruction: "Folge dem untenstehenden Link, um Dein MaMpf-Konto zu bestätigen:"
+        instruction: "Folge dem untenstehenden Link, um Deinen MaMpf-Account zu bestätigen:"
         subject: "Anleitung zur Bestätigung Deines MaMpf-Accounts"
+        action: 'Account bestätigen'
       reset_password_instructions:
         subject: "Anleitung für das Zurücksetzen Deines MaMpf-Passworts"
         greetings: 'Hallo, %{name}!'
@@ -79,6 +82,7 @@ de:
         login: 'Einloggen'
         sign_up: 'Registrieren'
         forgot_password: 'Passwort vergessen?'
+        didn_t_receive_confirmation_instructions: 'Anleitung zur Bestätigung des Accounts nicht erhalten?'
     unlocks:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
@@ -94,11 +98,11 @@ de:
       confirm_new_password: "Bestätigung des neuen Passworts"
   errors:
     messages:
-      already_confirmed: "wurde bereits bestätigt"
-      confirmation_period_expired: "muss innerhalb %{period} bestätigt werden, bitte fordere einen neuen Link an"
+      already_confirmed: "Account wurde bereits bestätigt"
+      confirmation_period_expired: "Account muss innerhalb %{period} bestätigt werden, bitte fordere einen neuen Link an"
       expired: "ist abgelaufen, bitte neu anfordern"
       not_found: "nicht gefunden"
       not_locked: "ist nicht gesperrt"
       not_saved:
-        one: "Konnte %{resource} nicht speichern: ein Fehler."
-        other: "Konnte %{resource} nicht speichern: %{count} Fehler."
+        one: "Konnte %{resource} nicht speichern: Es ist ein Fehler aufgetreten."
+        other: "Konnte %{resource} nicht speichern: Es sind %{count} Fehler aufgetreten."
