@@ -92,10 +92,13 @@ class MediaController < ApplicationController
                        text: I18n.t('admin.remark.initial_text'))
       end
       if @medium.sort == 'Question'
+        solution = Solution.new(MampfNumber.new('1'))
         @medium.update(type: 'Question',
                        text: I18n.t('admin.question.initial_text'),
                        level: 1,
-                       independent: false)
+                       independent: false,
+                       solution: solution,
+                       question_sort: 'mc')
         Answer.create(question: @medium.becomes(Question),
                       text: I18n.t('admin.answer.initial_text'),
                       value: true)

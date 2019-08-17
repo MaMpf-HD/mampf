@@ -40,14 +40,14 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'keyup', '#question-solution-edit', ->
-    $('#question-basics-options').removeClass("no_display")
-    $('#question-basics-warning').removeClass("no_display")
+    $('#question-solution-options').removeClass("no_display")
+    $('#question-solution-warning').removeClass("no_display")
     return
 
 
-  $(document).on 'change', '#question-basics-edit :input', ->
-    $('#question-basics-options').removeClass("no_display")
-    $('#question-basics-warning').removeClass("no_display")
+  $(document).on 'change', '#question-solution-edit :input', ->
+    $('#question-solution-options').removeClass("no_display")
+    $('#question-solution-warning').removeClass("no_display")
 
 
   return

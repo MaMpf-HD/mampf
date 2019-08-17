@@ -32,13 +32,15 @@
     <%= f.form_group :solution_type,
                      label: { text: t('basics.type') + ':',
                               class: 'mr-2' } do %>
-      <%= f.radio_button :value,
+      <%= f.radio_button :solution_type,
                          'MampfNumber',
                          label: t('admin.question.number'),
                          inline: true,
+                         checked: question.number_solution?,
                          custom: true %>
     <% end %>
     <%= f.text_field :solution_content,
-                     label: t('basics.solution') %>
+                     label: t('basics.solution'),
+                     value: question.solution.content.value %>
  </div>
 <% end %>

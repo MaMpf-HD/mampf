@@ -36,7 +36,8 @@
   <div class="col-6"
        id="questionSolution"
        style="display: <%= show_no_block(question.question_sort == 'free') %>">
-    <div class="card bg-light">
+    <div class="card bg-light"
+         id="question-solution-edit">
         <%= render partial: 'questions/solution',
                    locals: { question: question } %>
     </div>

@@ -2,9 +2,12 @@
 # plain old ruby class, no active record involved
 class Solution
 
-  include ActiveModel::Model
+  attr_accessor :content
+  attr_reader :value
 
-  attr_accessor :type, :content
+  def initialize(content)
+    @content = content
+  end
 
   def self.load(text)
     YAML.safe_load(text, [Solution, MampfNumber]) if text.present?
@@ -12,5 +15,9 @@ class Solution
 
   def self.dump(solution)
     solution.to_yaml
+  end
+
+  def type
+    @content.class.name
   end
 end

@@ -11,6 +11,7 @@ class QuestionsController < ApplicationController
 
   def update
     @success = true if @question.update(question_params)
+    @no_solution_update = question_params[:solution].nil?
   end
 
   def reassign
@@ -45,7 +46,14 @@ class QuestionsController < ApplicationController
   end
 
   def question_params
-    params.require(:question).permit(:label, :text, :type, :hint, :level,
-                                     :question_sort, :independent, :vertex_id)
+    result = params.require(:question)
+                   .permit(:label, :text, :type, :hint, :level,
+                           :question_sort, :independent, :vertex_id,
+                           :solution_type, :solution_content)
+    if result[:solution_type].in?(['MampfNumber'])
+      number = MampfNumber.new(result[:solution_content])
+      result[:solution] = Solution.new(number)
+    end
+    result.except(:solution_type, :solution_content)
   end
 end

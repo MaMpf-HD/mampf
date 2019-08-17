@@ -76,6 +76,10 @@ class Question < Medium
     true
   end
 
+  def number_solution?
+    solution.type == 'MampfNumber'
+  end
+
   private
 
   def prelim_answer_table
