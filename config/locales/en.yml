@@ -1395,6 +1395,7 @@ en:
     name_information: >
       This name will be displayed in your board posts.
     change_data: 'Change login data'
+    delete_account: 'Delete Account'
     courses: 'Courses'
     primary_lecture: 'Primary event series'
     secondary_lectures: 'Secondary event series'
