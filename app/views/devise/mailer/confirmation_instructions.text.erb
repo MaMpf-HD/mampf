@@ -1,0 +1,13 @@
+<%= t('.greeting',
+      recipient: @resource.email,
+      locale: @resource.locale,
+      default: "Welcome #{@resource.email}!") %>
+
+<%= t('.instruction',
+      locale: @resource.locale,
+      default: 'You can confirm your account email through the link below:') %>
+
+<%= confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale) %>
+
+<%= t('.reason',
+      locale: @resource.locale) %>

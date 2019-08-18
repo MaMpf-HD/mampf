@@ -25,6 +25,10 @@ de:
         instruction: "Folge dem untenstehenden Link, um Deinen MaMpf-Account zu bestätigen:"
         subject: "Anleitung zur Bestätigung Deines MaMpf-Accounts"
         action: 'Account bestätigen'
+        reason: >
+          Du hast diese Mail bekommen, weil kürzlich ein MaMpf-Account auf
+          diese Email angelegt oder umgestellt worden ist. Falls Du dies nicht getan
+          hast, ignoriere diese Email bitte.
       reset_password_instructions:
         subject: "Anleitung für das Zurücksetzen Deines MaMpf-Passworts"
         greetings: 'Hallo, %{name}!'

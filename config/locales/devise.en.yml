@@ -24,6 +24,10 @@ en:
         instruction: "You can confirm your MaMpf account through the link below:"
         subject: "Instructions on the confirmation of your MaMpf account"
         action: 'Confirm account'
+        reason: >
+          You’re receiving this email because recently a MaMpf account
+          was linked to this email adress. If this wasn’t you, please ignore
+          this email.
       reset_password_instructions:
         subject: "Reset MaMpf password instructions"
         greetings: 'Hi, %{name}!'
