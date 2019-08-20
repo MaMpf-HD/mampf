@@ -68,6 +68,7 @@ Rails.application.routes.draw do
   get 'events/render_medium_actions', as: 'render_medium_actions'
   get 'events/render_medium_tags', as: 'render_medium_tags'
   get 'events/render_clickerizable_actions', as: 'render_clickerizable_actions'
+  get 'events/cancel_solution_edit', as: 'cancel_solution_edit'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'
@@ -160,6 +161,8 @@ Rails.application.routes.draw do
 
   patch 'questions/:id/reassign', to: 'questions#reassign',
                                   as: 'reassign_question'
+  patch 'question/:id/set_solution_type', to: 'questions#set_solution_type',
+                                          as: 'set_solution_type'
   resources :questions, only: [:edit, :update]
 
   get 'quizzes/:id/take', to: 'quizzes#take',

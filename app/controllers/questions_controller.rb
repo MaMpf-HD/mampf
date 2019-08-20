@@ -12,6 +12,8 @@ class QuestionsController < ApplicationController
   def update
     @success = true if @question.update(question_params)
     @no_solution_update = question_params[:solution].nil?
+    @errors = @question.errors
+    pp @errors[:base].join(", ")
   end
 
   def reassign
@@ -32,6 +34,17 @@ class QuestionsController < ApplicationController
     render 'events/fill_quizzable_area'
   end
 
+  def set_solution_type
+    content = if params[:type] == 'MampfNumber'
+                MampfNumber.trivial_instance
+              elsif params[:type] == 'MampfComplexNumber'
+                MampfComplexNumber.trivial_instance
+              else
+                MampfMatrix.trivial_instance
+              end
+    @solution = Solution.new(content)
+  end
+
   private
 
   def set_question
@@ -49,10 +62,32 @@ class QuestionsController < ApplicationController
     result = params.require(:question)
                    .permit(:label, :text, :type, :hint, :level,
                            :question_sort, :independent, :vertex_id,
-                           :solution_type, :solution_content)
-    if result[:solution_type].in?(['MampfNumber'])
-      number = MampfNumber.new(result[:solution_content])
+                           :solution_type,
+                           solution_content: {})
+    if result[:solution_type] == 'MampfNumber'
+      number = MampfNumber.new(result[:solution_content]['0'])
       result[:solution] = Solution.new(number)
+    elsif result[:solution_type] == 'MampfComplexNumber'
+      number = MampfComplexNumber.new(result[:solution_content]['0'])
+      result[:solution] = Solution.new(number)
+    elsif result[:solution_type] == 'MampfMatrix'
+      row_count = result[:solution_content]['row_count'].to_i
+      column_count = result[:solution_content]['column_count'].to_i
+      domain = result[:solution_content]['domain']
+      if domain.in?(['MampfNumber', 'MampfComplexNumber'])
+        coefficients = []
+        (1..row_count).each do |i|
+          (1..column_count).each do |j|
+            coefficients.push(domain.constantize
+                                    .new(result[:solution_content]["#{i},#{j}"]))
+          end
+        end
+        matrix = MampfMatrix.new(row_count: row_count,
+                                 column_count: column_count,
+                                 domain: domain,
+                                 coefficients: coefficients)
+        result[:solution] = Solution.new(matrix)
+      end
     end
     result.except(:solution_type, :solution_content)
   end

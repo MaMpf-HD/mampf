@@ -1,0 +1,80 @@
+<div class="form-group">
+  <span class="mr-2">
+    <%= "#{t('math.coefficient_domain')}:" %>
+  </span>
+  <div class="custom-control custom-control-inline custom-radio">
+    <%= f.radio_button 'solution_content[domain]',
+                       'MampfNumber',
+                       class: 'custom-control-input',
+                       checked: true %>
+    <%= f.label 'solution_content[domain]',
+                t('math.number'),
+                value: 'MampfNumber',
+                class: 'custom-control-label' %>
+  </div>
+  <div class="custom-control custom-control-inline custom-radio">
+    <%= f.radio_button 'solution_content[domain]',
+                       'MampfComplexNumber',
+                       class: 'custom-control-input',
+                       checked: true %>
+    <%= f.label 'solution_content[domain]',
+                t('math.complex_number'),
+                value: 'MampfComplexNumber',
+                class: 'custom-control-label' %>
+  </div>
+</div>
+<div class="form-group"
+     id="matrixRowCount"
+     data-count="<%= content.row_count %>">
+  <span class="mr-2">
+    <%= "#{t('math.number_of_rows')}:" %>
+  </span>
+  <% (1..4).each do |i| %>
+    <div class="custom-control custom-control-inline custom-radio">
+      <%= f.radio_button 'solution_content[row_count]',
+                         i,
+                         class: 'custom-control-input rowCount',
+                         checked: content.row_count == i,
+                         data: { count: i } %>
+      <%= f.label 'solution_content[row_count]',
+                  "#{i}",
+                  value: i,
+                  class: 'custom-control-label' %>
+    </div>
+  <% end %>
+</div>
+<div class="form-group"
+     id="matrixColumnCount"
+     data-count="<%= content.column_count %>">
+  <span class="mr-2">
+    <%= "#{t('math.number_of_columns')}:" %>
+  </span>
+  <% (1..4).each do |i| %>
+    <div class="custom-control custom-control-inline custom-radio">
+      <%= f.radio_button 'solution_content[column_count]',
+                         i,
+                         class: 'custom-control-input columnCount',
+                         checked: content.column_count == i,
+                         data: { count: i } %>
+      <%= f.label 'solution_content[column_count]',
+                  "#{i}",
+                  value: i,
+                  class: 'custom-control-label' %>
+    </div>
+  <% end %>
+</div>
+<% (1..4).each do |i| %>
+  <div class="row mb-2">
+    <% (1..4).each do |j| %>
+      <div class="col-3 matrixEntry"
+           style="display: <%= show_no_block(i <= content.row_count && j <= content.column_count ) %>"
+           data-row="<%= i %>"
+           data-column="<%= j %>">
+        <%= render partial: 'questions/domains/number',
+                   locals: { f: f,
+                             content: content.entry(i,j),
+                             counter: "[#{i},#{j}]" } %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

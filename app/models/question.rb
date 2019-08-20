@@ -1,6 +1,7 @@
 class Question < Medium
   has_many :answers, dependent: :delete_all
   before_destroy :delete_vertices
+  validate :valid_solution?
 
   def label
     description
@@ -79,6 +80,16 @@ class Question < Medium
   def number_solution?
     solution.type == 'MampfNumber'
   end
+
+  def matrix_solution?
+    solution.type == 'MampfMatrix'
+  end
+
+  def valid_solution?
+    return true if solution.valid?
+    errors.add(:base, solution.errors[:base].join(' '))
+  end
+
 
   private
 

@@ -123,4 +123,8 @@ class EventsController < ApplicationController
     @question = Question.find_by_id(@id)
     @clicker = Clicker.find_by_id(params[:clicker])
   end
+
+  def cancel_solution_edit
+    @question = Question.find_by_id(params[:question_id])
+  end
 end

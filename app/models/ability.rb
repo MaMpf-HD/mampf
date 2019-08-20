@@ -79,6 +79,10 @@ class Ability
 
       can :reassign, [Question, Remark]
 
+      can :set_solution_type, Question do |question|
+        question.edited_with_inheritance_by?(user)
+      end
+
       can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
       end

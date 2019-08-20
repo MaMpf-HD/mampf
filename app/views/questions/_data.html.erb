@@ -37,9 +37,11 @@
        id="questionSolution"
        style="display: <%= show_no_block(question.question_sort == 'free') %>">
     <div class="card bg-light"
-         id="question-solution-edit">
+         id="question-solution-edit"
+         data-question="<%= question.id %>">
         <%= render partial: 'questions/solution',
-                   locals: { question: question } %>
+                   locals: { question: question,
+                             solution: question.solution } %>
     </div>
   </div>
 </div>

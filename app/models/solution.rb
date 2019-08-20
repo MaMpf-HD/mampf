@@ -1,6 +1,8 @@
 # MampfNumber class
 # plain old ruby class, no active record involved
 class Solution
+  include ActiveModel::Validations
+  validate :valid_content?
 
   attr_accessor :content
   attr_reader :value
@@ -10,7 +12,7 @@ class Solution
   end
 
   def self.load(text)
-    YAML.safe_load(text, [Solution, MampfNumber]) if text.present?
+    YAML.load(text, [Solution, MampfNumber, MampfMatrix, ActiveModel::Errors ]) if text.present?
   end
 
   def self.dump(solution)
@@ -19,5 +21,10 @@ class Solution
 
   def type
     @content.class.name
+  end
+
+  def valid_content?
+    return true if content.valid?
+    errors.add(:base, content.errors[:base].join(' '))
   end
 end

@@ -1295,7 +1295,6 @@ de:
         Fehler beim Abspeichern der Frage
       initial_text: 'Dummytext'
       copy_marker: '-KOPIE-'
-      number: 'Zahl'
       info:
         first_save: >
           Ein editierbarer Fragentext mit Antworten wird erzeugt, nachdem Du
@@ -1866,6 +1865,25 @@ de:
     interested_html:
       Neugierig geworden? %{blog} findest du weitere Informationen über
       und Neuigkeiten zu MaMpf.
+  math:
+    number: 'Zahl'
+    complex_number: 'komplexe Zahl'
+    matrix: 'Matrix'
+    number_of_rows: 'Anzahl der Zeilen'
+    number_of_columns: 'Anzahl der Spalten'
+    coefficient_domain: 'Typ der Koeffizienten'
+    expression_has_dependencies: 'Der Ausdruck enthält Variablen: %{dependencies}'
+    not_parsable: 'Der Ausdruck kann nicht ausgewertet werden.'
+    syntax_error: 'Der Ausdruck hat einen Syntax-Fehler.'
+    expression_problem: 'Es gibt ein Problem mit dem Ausdruck: %{problem}'
+    wrong_matrix_dimensions: >
+      Die Anzahl der Zeilen bzw. Spalten passt nicht zu der Anzahl der
+      Koeffizienten.
+    matrix_bad_coefficients: >
+      Mindestens einer der Koeffizienten der Matrix kann nicht ausgewertet
+      werden.
+    parsed_input: >
+      Deine Eingabe wird wie folgt interpretiert:
   locales:
     en: 'englisch'
     de: 'deutsch'

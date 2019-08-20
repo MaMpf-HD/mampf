@@ -1,4 +1,4 @@
-<%= bootstrap_form_with model: question do |f| %>
+<%= form_with model: question do |f| %>
   <div class="card-header">
     <div class="row">
       <div class="col-3">
@@ -29,18 +29,59 @@
     </div>
   </div>
   <div class="card-body">
-    <%= f.form_group :solution_type,
-                     label: { text: t('basics.type') + ':',
-                              class: 'mr-2' } do %>
-      <%= f.radio_button :solution_type,
-                         'MampfNumber',
-                         label: t('admin.question.number'),
-                         inline: true,
-                         checked: question.number_solution?,
-                         custom: true %>
-    <% end %>
-    <%= f.text_field :solution_content,
-                     label: t('basics.solution'),
-                     value: question.solution.content.value %>
- </div>
+    <div class="form-group">
+      <span class="mr-2">
+        <%= t('basics.type') + ':' %>
+      </span>
+      <div class="custom-control custom-control-inline custom-radio">
+        <%= f.radio_button :solution_type,
+                           'MampfNumber',
+                           class: 'custom-control-input solutionType',
+                           checked: solution.type == 'MampfNumber',
+                           data: { type: 'MampfNumber' } %>
+        <%= f.label :solution_type,
+                    t('math.number'),
+                    value: 'MampfNumber',
+                    class: 'custom-control-label' %>
+      </div>
+      <div class="custom-control custom-control-inline custom-radio">
+        <%= f.radio_button :solution_type,
+                           'MampfComplexNumber',
+                           class: 'custom-control-input solutionType',
+                           checked: solution.type == 'MampfComplexNumber',
+                           data: { type: 'MampfComplexNumber' } %>
+        <%= f.label :solution_type,
+                    t('math.complex_number'),
+                    value: 'MampfComplexNumber',
+                    class: 'custom-control-label' %>
+      </div>
+      <div class="custom-control custom-control-inline custom-radio">
+        <%= f.radio_button :solution_type,
+                           'MampfMatrix',
+                           class: 'custom-control-input solutionType',
+                           checked: solution.type == 'MampfMatrix',
+                           data: { type: 'MampfMatrix' } %>
+        <%= f.label :solution_type,
+                    t('math.matrix'),
+                    value: 'MampfMatrix',
+                    class: 'custom-control-label' %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= render partial: 'questions/domains/general_form',
+                 locals: { f: f,
+                           type: solution.type,
+                           content: solution.content } %>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <%= t('math.parsed_input') %>
+        <div id="solution-tex">
+          $$
+          <%= solution.content.to_tex %>
+          $$
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>

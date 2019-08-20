@@ -1216,7 +1216,6 @@ en:
         Error in saving the question
       initial_text: 'Initial text'
       copy_marker: '-COPY-'
-      number: 'number'
       info:
         first_save: >
           An editable text for this question, together with answers, will be
@@ -1753,6 +1752,25 @@ en:
       for Algebra, Analysis und Linear Algebra
     interested_html:
      Curious? %{blog} you can find more information and news about MaMpf.
+  math:
+    number: 'number'
+    complex_number: 'complex number'
+    matrix: 'matrix'
+    number_of_rows: 'Number of rows'
+    number_of_columns: 'Number of columns'
+    coefficient_domain: 'Type of the coefficients'
+    expression_has_dependencies: >
+      Expression contains variables: %{dependencies}
+    not_parsable: 'The expression cannot be evaluated.'
+    syntax_error: 'The expression has a syntax error.'
+    expression_problem: 'There is a problem with the expression: %{problem}'
+    wrong_matrix_dimensions: >
+      The number of rows times the number of columns does not match the
+      number of coefficients.
+    matrix_bad_coefficients: >
+      At least one of the coefficients of the matrix cannot be evaluated.
+    parsed_input: >
+      Your input is interpreted as follows:
   locales:
     en: 'English'
     de: 'German'
