@@ -1,11 +1,6 @@
-$('#question-solution-edit').empty()
-  .append '<%= j render partial: "questions/solution",
-                 locals: { question: @question,
-                           solution: @question.solution } %>'
-
 $('#solution-tex').empty()
   .append('<%= j render partial: "questions/tex_solution",
-                        locals: { solution: @question.solution } %>')
+                        locals: { solution: @solution } %>')
 
 solutionTex = document.getElementById('solution-tex')
 renderMathInElement solutionTex,

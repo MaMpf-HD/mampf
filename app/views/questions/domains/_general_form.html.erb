@@ -3,11 +3,6 @@
              locals: { f: f,
                        content: content,
                        counter: '[0]' } %>
-<% elsif type == 'MampfComplexNumber' %>
-  <%= render partial: 'questions/domains/number',
-             locals: { f: f,
-                       content: content,
-                       counter: '[0]' } %>
 <% elsif type == 'MampfMatrix' %>
   <%= render partial: 'questions/domains/matrix',
              locals: { f: f,

@@ -6,7 +6,9 @@ $('#question-basics-options').addClass 'no_display'
 <% else %>
 $('#question-solution-warning').addClass 'no_display'
 $('#question-solution-options').addClass 'no_display'
-$('#solution-tex').empty().append('$$<%= @question.solution.content.to_tex %>$$')
+$('#solution-tex').empty()
+  .append('<%= j render partial: "questions/tex_solution",
+                        locals: { solution: @question.solution } %>')
 <% end %>
 <% else %>
 $('#solution-error').append('<%= @errors[:base].join(", ") %>').show()

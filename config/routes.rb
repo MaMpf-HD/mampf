@@ -69,6 +69,7 @@ Rails.application.routes.draw do
   get 'events/render_medium_tags', as: 'render_medium_tags'
   get 'events/render_clickerizable_actions', as: 'render_clickerizable_actions'
   get 'events/cancel_solution_edit', as: 'cancel_solution_edit'
+  get 'events/texify_solution', as: 'texify_solution'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'

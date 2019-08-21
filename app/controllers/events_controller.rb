@@ -127,4 +127,10 @@ class EventsController < ApplicationController
   def cancel_solution_edit
     @question = Question.find_by_id(params[:question_id])
   end
+
+  def texify_solution
+    result = params[:content][:question]
+    @solution = Solution.from_hash(result[:solution_type],
+                                   result[:solution_content])
+  end
 end

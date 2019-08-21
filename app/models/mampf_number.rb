@@ -1,51 +1,63 @@
 # MampfNumber class
 # plain old ruby class, no active record involved
 class MampfNumber
-  include ActiveModel::Validations
-  validate :parsable?
-  validate :no_dependencies?
-
-  attr_reader :value
+  attr_accessor :value, :complex, :real, :imaginary
 
   def initialize(value)
     @value = value
+    @complex = @value.to_c
+    @real = @complex.real.rationalize
+    @imaginary = complex.imaginary.rationalize
   end
 
-  def equals?(other_number)
-    calculator = Dentaku::Calculator.new
-    calculator.evaluate(@value) == calculator.evaluate(other_number.value)
-  end
-
-  def no_dependencies?
-    calculator = Dentaku::Calculator.new
-    dependencies = calculator.dependencies(@value)
-    return true if dependencies.blank?
-    errors.add(:base, I18n.t('math.expression_has_dependencies',
-                             dependencies: dependencies.join(', ')))
-    false
-    rescue RuntimeError => e
-      errors.add(:base, I18n.t('math.expression_problem',
-                                  problem: "#{e.message.downcase}"))
-    rescue Exception
-      errors.add(:base, I18n.t('math.syntax_error'))
-  end
-
-  def parsable?
-    calculator = Dentaku::Calculator.new
-    return true if !calculator.evaluate(@value).nil?
-    errors.add(:base, I18n.t('math.not_parsable'))
-    false
+  def equals?(z)
+    @complex == z.complex
   end
 
   def self.trivial_instance
-    self.new('')
-  end
-
-  def self.valid_trivial_instance
-    self.new('1')
+    MampfNumber.new('')
   end
 
   def to_tex
-    ''
+    return '0' if @complex == 0
+    if @real == 0
+      x = ''
+    else
+      real_sign = if @real.numerator < 0
+                    '-'
+                  else
+                    ''
+                  end
+      if @real.denominator == 1
+        x = real_sign + @real.numerator.abs.to_s
+      else
+        x = real_sign + '\frac{' + @real.numerator.abs.to_s + '}{' +
+              @real.denominator.to_s + '}'
+      end
+    end
+    return x if @imaginary == 0
+    imaginary_sign = if @imaginary.numerator < 0
+                       '-'
+                     else
+                       ''
+                     end
+    if @imaginary.denominator == 1
+      if !@imaginary.numerator.in?([1,-1])
+        y = imaginary_sign + @imaginary.numerator.abs.to_s
+      else
+        y = imaginary_sign
+      end
+    else
+      y = imaginary_sign + '\frac{' + @imaginary.numerator.abs.to_s +
+            '}{' + @imaginary.denominator.to_s + '}'
+    end
+    return x + '+' + y + 'i' if x.present? && imaginary_sign == ''
+    return x +  y + 'i' if x.present?
+    y + 'i'
   end
+
+  def self.from_hash(content)
+    MampfNumber.new(content['0'])
+  end
+
 end

@@ -1,4 +1,4 @@
-<%= form_with model: question do |f| %>
+<%= form_with model: question, html: { id: 'solution-form' } do |f| %>
   <div class="card-header">
     <div class="row">
       <div class="col-3">
@@ -46,17 +46,6 @@
       </div>
       <div class="custom-control custom-control-inline custom-radio">
         <%= f.radio_button :solution_type,
-                           'MampfComplexNumber',
-                           class: 'custom-control-input solutionType',
-                           checked: solution.type == 'MampfComplexNumber',
-                           data: { type: 'MampfComplexNumber' } %>
-        <%= f.label :solution_type,
-                    t('math.complex_number'),
-                    value: 'MampfComplexNumber',
-                    class: 'custom-control-label' %>
-      </div>
-      <div class="custom-control custom-control-inline custom-radio">
-        <%= f.radio_button :solution_type,
                            'MampfMatrix',
                            class: 'custom-control-input solutionType',
                            checked: solution.type == 'MampfMatrix',
@@ -73,15 +62,9 @@
                            type: solution.type,
                            content: solution.content } %>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <%= t('math.parsed_input') %>
-        <div id="solution-tex">
-          $$
-          <%= solution.content.to_tex %>
-          $$
-        </div>
-      </div>
+    <div id="solution-tex">
+      <%= render partial: 'questions/tex_solution',
+                 locals: { solution: solution } %>
     </div>
   </div>
 <% end %>

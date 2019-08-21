@@ -37,8 +37,6 @@ class QuestionsController < ApplicationController
   def set_solution_type
     content = if params[:type] == 'MampfNumber'
                 MampfNumber.trivial_instance
-              elsif params[:type] == 'MampfComplexNumber'
-                MampfComplexNumber.trivial_instance
               else
                 MampfMatrix.trivial_instance
               end
@@ -64,31 +62,9 @@ class QuestionsController < ApplicationController
                            :question_sort, :independent, :vertex_id,
                            :solution_type,
                            solution_content: {})
-    if result[:solution_type] == 'MampfNumber'
-      number = MampfNumber.new(result[:solution_content]['0'])
-      result[:solution] = Solution.new(number)
-    elsif result[:solution_type] == 'MampfComplexNumber'
-      number = MampfComplexNumber.new(result[:solution_content]['0'])
-      result[:solution] = Solution.new(number)
-    elsif result[:solution_type] == 'MampfMatrix'
-      row_count = result[:solution_content]['row_count'].to_i
-      column_count = result[:solution_content]['column_count'].to_i
-      domain = result[:solution_content]['domain']
-      if domain.in?(['MampfNumber', 'MampfComplexNumber'])
-        coefficients = []
-        (1..row_count).each do |i|
-          (1..column_count).each do |j|
-            coefficients.push(domain.constantize
-                                    .new(result[:solution_content]["#{i},#{j}"]))
-          end
-        end
-        matrix = MampfMatrix.new(row_count: row_count,
-                                 column_count: column_count,
-                                 domain: domain,
-                                 coefficients: coefficients)
-        result[:solution] = Solution.new(matrix)
-      end
-    end
+    result[:solution] = Solution.from_hash(result[:solution_type],
+                                           result[:solution_content])
+    pp result[:solution]
     result.except(:solution_type, :solution_content)
   end
 end

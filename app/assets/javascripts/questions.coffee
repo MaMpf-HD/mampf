@@ -75,6 +75,10 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'change', '.rowCount', ->
     rowCount = $(this).data('count')
+    content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
+      obj[item.name] = item.value
+      obj
+    ), {})
     columnCount =$('#matrixColumnCount').data('count')
     $('#matrixRowCount').data('count', rowCount)
     for i in [1..4]
@@ -84,11 +88,21 @@ $(document).on 'turbolinks:load', ->
           $entry.show()
         else
           $entry.hide()
+    $.ajax Routes.texify_solution_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        content: content
+      }
     return
 
 
   $(document).on 'change', '.columnCount', ->
     columnCount = $(this).data('count')
+    content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
+      obj[item.name] = item.value
+      obj
+    ), {})
     rowCount =$('#matrixRowCount').data('count')
     $('#matrixColumnCount').data('count', columnCount)
     for i in [1..4]
@@ -98,6 +112,25 @@ $(document).on 'turbolinks:load', ->
           $entry.show()
         else
           $entry.hide()
+    $.ajax Routes.texify_solution_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        content: content
+      }
+    return
+
+  $(document).on 'keyup', '[id^="question_solution_content"]', ->
+    content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
+      obj[item.name] = item.value
+      obj
+    ), {})
+    $.ajax Routes.texify_solution_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        content: content
+      }
     return
 
   return
@@ -113,4 +146,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '.solutionType'
   $(document).off 'change', '.rowCount'
   $(document).off 'change', '.columnCount'
+  $(document).off 'keyup', '[id^="question_solution_content"]'
   return

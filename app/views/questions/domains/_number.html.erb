@@ -1,3 +1,4 @@
 <%= f.text_field "solution_content#{counter}",
                  value: content.value,
-                 class: 'form-control' %>
+                 class: 'form-control',
+                 data: { counter: 0 } %>
