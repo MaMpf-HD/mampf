@@ -92,7 +92,7 @@ class MediaController < ApplicationController
                        text: I18n.t('admin.remark.initial_text'))
       end
       if @medium.sort == 'Question'
-        solution = Solution.new(MampfNumber.valid_trivial_instance)
+        solution = Solution.new(MampfNumber.trivial_instance)
         @medium.update(type: 'Question',
                        text: I18n.t('admin.question.initial_text'),
                        level: 1,

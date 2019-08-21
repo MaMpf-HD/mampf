@@ -62,9 +62,10 @@ class QuestionsController < ApplicationController
                            :question_sort, :independent, :vertex_id,
                            :solution_type,
                            solution_content: {})
-    result[:solution] = Solution.from_hash(result[:solution_type],
-                                           result[:solution_content])
-    pp result[:solution]
+    if result[:solution_type] && result[:solution_content]
+      result[:solution] = Solution.from_hash(result[:solution_type],
+                                             result[:solution_content])
+    end
     result.except(:solution_type, :solution_content)
   end
 end
