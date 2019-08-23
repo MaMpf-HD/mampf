@@ -66,6 +66,17 @@
                     value: 'MampfTuple',
                     class: 'custom-control-label' %>
       </div>
+      <div class="custom-control custom-control-inline custom-radio">
+        <%= f.radio_button :solution_type,
+                           'MampfSet',
+                           class: 'custom-control-input solutionType',
+                           checked: solution.type == 'MampfSet',
+                           data: { type: 'MampfSet' } %>
+        <%= f.label :solution_type,
+                    t('math.set'),
+                    value: 'MampfSet',
+                    class: 'custom-control-label' %>
+      </div>
     </div>
     <div class="form-group">
       <%= render partial: 'questions/domains/general_form',

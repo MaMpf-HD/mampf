@@ -1,6 +1,6 @@
-# MampfTuple class
+# MampfSet class
 # plain old ruby class, no active record involved
-class MampfTuple
+class MampfSet
   attr_reader :value, :tex
 
   def initialize(value, tex)
@@ -9,7 +9,7 @@ class MampfTuple
   end
 
   def self.trivial_instance
-    self.new('0,1', '(0,1)')
+    self.new('0,1', '\{0,1\}')
   end
 
   def self.from_hash(content)

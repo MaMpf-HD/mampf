@@ -42,6 +42,27 @@ extractSolution = ->
       nerd: nerd
       tex: tex
     return result
+  else if type == 'MampfSet'
+    elements = content['question[solution_content[0]]'].split(',')
+    size = elements.length
+    nerds = []
+    set = []
+    for i in [0..size - 1]
+      element = elements[i]
+      nerd = nerdamer(element)
+      duplicate = false
+      for comparedElement in nerds
+        duplicate = true if comparedElement.expand().eq(nerd.expand())
+      unless duplicate
+        nerds.push nerd
+        set.push element
+    nerd = nerdamer('vector(' + set.join(',') + ')')
+    texRaw = nerd.toTeX()
+    tex = '\\{' + texRaw.substr(1, texRaw.length - 2) + '\\}'
+    result =
+      nerd: nerd
+      tex: tex
+    return result
 
 cleanSolutionBox = ->
   $('#solution-error').empty()

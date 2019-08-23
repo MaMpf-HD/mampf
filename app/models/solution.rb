@@ -21,7 +21,7 @@ class Solution
 
   def self.from_hash(solution_type, content)
     return unless solution_type.in?(['MampfExpression', 'MampfMatrix',
-                                     'MampfTuple'])
+                                     'MampfTuple', 'MampfSet'])
     Solution.new(solution_type.constantize.from_hash(content))
   end
 end

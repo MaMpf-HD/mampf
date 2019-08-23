@@ -1872,6 +1872,7 @@ de:
     polynomial: 'Polynom'
     expression: 'Ausdruck'
     tuple: 'Tupel'
+    set: 'Menge'
     degree: 'Grad'
     number_of_rows: 'Anzahl der Zeilen'
     number_of_columns: 'Anzahl der Spalten'
