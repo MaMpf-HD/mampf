@@ -5,7 +5,7 @@ $('#question-solution-edit').empty()
 $('#question-solution-options').removeClass("no_display")
 $('#question-solution-warning').removeClass("no_display")
 
-$('#solution-tex').empty()
+$('#solution-box').empty()
   .append('<%= j render partial: "questions/tex_solution",
                         locals: { solution: @solution } %>')
 solutionTex = document.getElementById('solution-tex')

@@ -1,18 +1,3 @@
-<div class="form-group">
-  <span class="mr-2">
-    <%= "#{t('math.coefficient_domain')}:" %>
-  </span>
-  <div class="custom-control custom-control-inline custom-radio">
-    <%= f.radio_button 'solution_content[domain]',
-                       'MampfExpression',
-                       class: 'custom-control-input',
-                       checked: true %>
-    <%= f.label 'solution_content[domain]',
-                t('math.expression'),
-                value: 'MampfExpression',
-                class: 'custom-control-label' %>
-  </div>
-</div>
 <div class="form-group"
      id="matrixRowCount"
      data-count="<%= content.row_count %>">
@@ -60,9 +45,9 @@
            style="display: <%= show_no_block(i <= content.row_count && j <= content.column_count ) %>"
            data-row="<%= i %>"
            data-column="<%= j %>">
-        <%= render partial: 'questions/domains/number',
+        <%= render partial: 'questions/domains/expression',
                    locals: { f: f,
-                             content: content.entry(i,j),
+                             value: content.entry(i,j),
                              counter: "[#{i},#{j}]" } %>
       </div>
     <% end %>

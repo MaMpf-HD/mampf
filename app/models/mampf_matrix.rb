@@ -3,10 +3,9 @@
 class MampfMatrix
   include ActiveModel::Model
 
-  attr_accessor :domain, :column_count, :row_count, :coefficients
+  attr_accessor :column_count, :row_count, :coefficients, :tex
 
   def equals?(other_matrix)
-    return false unless @domain == other_matrix.domain
     return false unless @column_count = other_matrix.column_count
     return false unless @row_count = other_matrix.row_count
     @coefficients.each_with_index do |c, i|
@@ -15,47 +14,32 @@ class MampfMatrix
     true
   end
 
-  def entry(i,j)
-    if i > @row_count || j > @column_count
-      return domain.constantize.trivial_instance
-    end
-    @coefficients[(i - 1) *  @column_count + (j - 1)]
-  end
-
   def self.trivial_instance
     self.new(row_count: 2, column_count: 2,
-                           domain: 'MampfExpression',
-                           coefficients:
-                             (1..4).map { |i| MampfExpression.trivial_instance })
+                           coefficients: ['0', '0', '0', '0'],
+                           tex: '\begin{pmatrix} 0 & 0 \cr 0 & 0 \end{pmatrix}')
   end
 
-  def to_tex
-    entries = ''
-    (1..row_count).each do |i|
-      (1..column_count).each do |j|
-        entries += entry(i,j).to_tex
-        entries += '&' unless j == column_count
-        entries += '\\\\' if j == column_count && i != row_count
-      end
+  def entry(i,j)
+    if i > @row_count || j > @column_count
+      return '0'
     end
-    '\\begin{pmatrix}' + entries + '\\end{pmatrix}'
+    @coefficients[(i - 1) *  @column_count + (j - 1)]
   end
 
   def self.from_hash(content)
     row_count = content['row_count'].to_i
     column_count = content['column_count'].to_i
-    domain = content['domain']
-    if domain == 'MampfExpression'
-      coefficients = []
-      (1..row_count).each do |i|
-        (1..column_count).each do |j|
-          coefficients.push(MampfExpression.new(content["#{i},#{j}"]))
-        end
+    tex = content['tex']
+    coefficients = []
+    (1..row_count).each do |i|
+      (1..column_count).each do |j|
+        coefficients.push(content["#{i},#{j}"])
       end
-      MampfMatrix.new(row_count: row_count,
-                      column_count: column_count,
-                      domain: domain,
-                      coefficients: coefficients)
     end
+    MampfMatrix.new(row_count: row_count,
+                    column_count: column_count,
+                    coefficients: coefficients,
+                    tex: tex)
   end
 end

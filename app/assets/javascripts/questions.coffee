@@ -4,6 +4,44 @@
 
 # highlight 'Ungespeicherte Änderungen' if something is entered in question basics
 
+extractSolution = ->
+  content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
+    obj[item.name] = item.value
+    obj
+  ), {})
+  type = content['question[solution_type]']
+  if type == 'MampfExpression'
+    return $('[id^="question_solution_content"]').val()
+  else if type = 'MampfMatrix'
+    rowCount = parseInt(content['question[solution_content[row_count]]'])
+    columnCount = parseInt(content['question[solution_content[column_count]]'])
+    matrix = ''
+    for i in [1..rowCount]
+      column = '['
+      for j in [1..columnCount]
+        column += content['question[solution_content[' + i + ',' + j + ']]']
+        column += ',' unless j == columnCount
+      column += ']'
+      matrix += column
+      matrix += ',' unless i == rowCount
+    return 'matrix(' + matrix + ')'
+
+cleanSolutionBox = ->
+  $('#solution-error').empty()
+  $('#solution-box').hide()
+  try
+    expression = nerdamer(extractSolution())
+  catch err
+    expression = 'Syntax Error'
+  if expression == 'Syntax Error'
+    $('#solution_input_tex').val('')
+    $('#solution_input_error').val(expression)
+  else
+    latex = expression.toTeX().replace(/vmatrix/g, 'pmatrix')
+    $('#solution_input_tex').val(latex)
+    $('#solution_input_error').val('')
+  return
+
 $(document).on 'turbolinks:load', ->
 
   $(document).on 'keyup', '#question-basics-edit', ->
@@ -75,10 +113,6 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'change', '.rowCount', ->
     rowCount = $(this).data('count')
-    content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
-      obj[item.name] = item.value
-      obj
-    ), {})
     columnCount =$('#matrixColumnCount').data('count')
     $('#matrixRowCount').data('count', rowCount)
     for i in [1..4]
@@ -88,21 +122,12 @@ $(document).on 'turbolinks:load', ->
           $entry.show()
         else
           $entry.hide()
-    $.ajax Routes.texify_solution_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        content: content
-      }
+    cleanSolutionBox()
     return
 
 
   $(document).on 'change', '.columnCount', ->
     columnCount = $(this).data('count')
-    content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
-      obj[item.name] = item.value
-      obj
-    ), {})
     rowCount =$('#matrixRowCount').data('count')
     $('#matrixColumnCount').data('count', columnCount)
     for i in [1..4]
@@ -112,34 +137,17 @@ $(document).on 'turbolinks:load', ->
           $entry.show()
         else
           $entry.hide()
-    $.ajax Routes.texify_solution_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        content: content
-      }
+    cleanSolutionBox()
     return
 
   $(document).on 'keyup', '[id^="question_solution_content"]', ->
-    $('#solution-error').empty()
-    $('#solution-box').hide()
-    try
-      expression = nerdamer($('[id^="question_solution_content"]').val())
-    catch err
-      expression = 'Syntax Error'
-    if expression == 'Syntax Error'
-      $('#solution_input_tex').val('')
-      $('#solution_input_error').val(expression)
-    else
-      latex = expression.toTeX()
-      $('#solution_input_tex').val(latex)
-      $('#solution_input_error').val('')
+    cleanSolutionBox()
     return
 
 
   $(document).on 'click', '#interpretExpression', ->
     try
-      expression = nerdamer($('[id^="question_solution_content"]').val())
+      expression = nerdamer(extractSolution())
     catch err
       expression = 'Syntax Error'
     if expression == 'Syntax Error'
@@ -147,7 +155,7 @@ $(document).on 'turbolinks:load', ->
       $('#solution_input_tex').val('')
       $('#solution_input_error').val(expression)
     else
-      latex = expression.toTeX()
+      latex = expression.toTeX().replace(/vmatrix/g, 'pmatrix')
       $('#solution_input_error').val('')
       $('#solution_input_tex').val(latex)
       $('#solution-tex').empty().append('$$' + latex + '$$')
