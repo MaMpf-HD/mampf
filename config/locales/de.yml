@@ -1871,6 +1871,7 @@ de:
     matrix: 'Matrix'
     polynomial: 'Polynom'
     expression: 'Ausdruck'
+    tuple: 'Tupel'
     degree: 'Grad'
     number_of_rows: 'Anzahl der Zeilen'
     number_of_columns: 'Anzahl der Spalten'

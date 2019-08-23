@@ -40,6 +40,8 @@ class QuestionsController < ApplicationController
                 MampfExpression.trivial_instance
               elsif params[:type] == 'MampfMatrix'
                 MampfMatrix.trivial_instance
+              elsif params[:type] == 'MampfTuple'
+                MampfTuple.trivial_instance
               end
     @solution = Solution.new(content)
   end

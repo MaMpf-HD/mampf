@@ -1,6 +1,6 @@
-# MampfExpression class
+# MampfTupel class
 # plain old ruby class, no active record involved
-class MampfExpression
+class MampfTuple
   attr_reader :value, :tex
 
   def initialize(value, tex)
@@ -9,10 +9,10 @@ class MampfExpression
   end
 
   def self.trivial_instance
-    MampfExpression.new('0', '0')
+    self.new('0,1', '(0,1)')
   end
 
   def self.from_hash(content)
-    MampfExpression.new(content['0'], content['tex'])
+    MampfTuple.new(content['0'], content['tex'])
   end
 end

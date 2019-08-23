@@ -1,9 +1,7 @@
 # Solution class
 # plain old ruby class, no active record involved
 class Solution
-
-  attr_accessor :content
-  attr_reader :value
+  attr_reader :content
 
   def initialize(content)
     @content = content
@@ -21,13 +19,9 @@ class Solution
     @content.class.name
   end
 
-  def valid_content?
-    return true if content.valid?
-    errors.add(:base, content.errors[:base].join(' '))
-  end
-
   def self.from_hash(solution_type, content)
-    return unless solution_type.in?(['MampfExpression', 'MampfMatrix'])
+    return unless solution_type.in?(['MampfExpression', 'MampfMatrix',
+                                     'MampfTuple'])
     Solution.new(solution_type.constantize.from_hash(content))
   end
 end

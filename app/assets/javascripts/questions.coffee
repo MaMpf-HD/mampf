@@ -11,8 +11,12 @@ extractSolution = ->
   ), {})
   type = content['question[solution_type]']
   if type == 'MampfExpression'
-    return content['question[solution_content[0]]']
-  else if type = 'MampfMatrix'
+    nerd = nerdamer(content['question[solution_content[0]]'])
+    result =
+      nerd: nerd
+      tex: nerd.toTeX()
+    return result
+  else if type == 'MampfMatrix'
     rowCount = parseInt(content['question[solution_content[row_count]]'])
     columnCount = parseInt(content['question[solution_content[column_count]]'])
     matrix = ''
@@ -24,20 +28,33 @@ extractSolution = ->
       column += ']'
       matrix += column
       matrix += ',' unless i == rowCount
-    return 'matrix(' + matrix + ')'
+    nerd = nerdamer('matrix(' + matrix + ')')
+    result =
+      nerd: nerd
+      tex: nerd.toTeX().replace(/vmatrix/g, 'pmatrix')
+    return result
+  else if type == 'MampfTuple'
+    coeffs = content['question[solution_content[0]]']
+    nerd = nerdamer('vector(' + coeffs + ')')
+    texRaw = nerd.toTeX()
+    tex = '(' + texRaw.substr(1, texRaw.length - 2) + ')'
+    result =
+      nerd: nerd
+      tex: tex
+    return result
 
 cleanSolutionBox = ->
   $('#solution-error').empty()
   $('#solution-box').hide()
   try
-    expression = nerdamer(extractSolution())
+    expression = extractSolution()
   catch err
     expression = 'Syntax Error'
   if expression == 'Syntax Error'
     $('#solution_input_tex').val('')
     $('#solution_input_error').val(expression)
   else
-    latex = expression.toTeX().replace(/vmatrix/g, 'pmatrix')
+    latex = expression.tex
     $('#solution_input_tex').val(latex)
     $('#solution_input_error').val('')
   return
@@ -147,7 +164,7 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'click', '#interpretExpression', ->
     try
-      expression = nerdamer(extractSolution())
+      expression = extractSolution()
     catch err
       expression = 'Syntax Error'
     if expression == 'Syntax Error'
@@ -155,7 +172,7 @@ $(document).on 'turbolinks:load', ->
       $('#solution_input_tex').val('')
       $('#solution_input_error').val(expression)
     else
-      latex = expression.toTeX().replace(/vmatrix/g, 'pmatrix')
+      latex = expression.tex
       $('#solution_input_error').val('')
       $('#solution_input_tex').val(latex)
       $('#solution-tex').empty().append('$$' + latex + '$$')

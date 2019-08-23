@@ -7,6 +7,11 @@
   <%= render partial: 'questions/domains/matrix',
              locals: { f: f,
                        content: content } %>
+<% elsif type == 'MampfTuple' %>
+  <%= render partial: 'questions/domains/tuple',
+             locals: { f: f,
+                       value: content.value,
+                       counter: '[0]' } %>
 <% end %>
 <%= f.hidden_field 'solution_content[tex]',
                    value: content.tex,

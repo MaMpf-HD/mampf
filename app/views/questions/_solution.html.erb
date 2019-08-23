@@ -55,6 +55,17 @@
                     value: 'MampfMatrix',
                     class: 'custom-control-label' %>
       </div>
+      <div class="custom-control custom-control-inline custom-radio">
+        <%= f.radio_button :solution_type,
+                           'MampfTuple',
+                           class: 'custom-control-input solutionType',
+                           checked: solution.type == 'MampfTuple',
+                           data: { type: 'MampfTuple' } %>
+        <%= f.label :solution_type,
+                    t('math.tuple'),
+                    value: 'MampfTuple',
+                    class: 'custom-control-label' %>
+      </div>
     </div>
     <div class="form-group">
       <%= render partial: 'questions/domains/general_form',

@@ -1,14 +1,19 @@
 # MampfMatrix class
 # plain old ruby class, no active record involved
 class MampfMatrix
-  include ActiveModel::Model
+  attr_reader :column_count, :row_count, :coefficients, :tex
 
-  attr_accessor :column_count, :row_count, :coefficients, :tex
+  def initialize(row_count, column_count, coefficients, tex)
+    @row_count = row_count
+    @column_count = column_count
+    @coefficients = coefficients
+    @tex = tex
+  end
 
   def self.trivial_instance
-    self.new(row_count: 2, column_count: 2,
-                           coefficients: ['0', '0', '0', '0'],
-                           tex: '\begin{pmatrix} 0 & 0 \cr 0 & 0 \end{pmatrix}')
+    self.new(2, 2,
+             ['0', '0', '0', '0'],
+             '\begin{pmatrix} 0 & 0 \cr 0 & 0 \end{pmatrix}')
   end
 
   def entry(i,j)
@@ -28,9 +33,6 @@ class MampfMatrix
         coefficients.push(content["#{i},#{j}"])
       end
     end
-    MampfMatrix.new(row_count: row_count,
-                    column_count: column_count,
-                    coefficients: coefficients,
-                    tex: tex)
+    MampfMatrix.new(row_count, column_count, coefficients, tex)
   end
 end
