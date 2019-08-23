@@ -7,10 +7,6 @@
   <%= render partial: 'questions/domains/matrix',
              locals: { f: f,
                        content: content } %>
-<% elsif type == 'MampfPolynomial' %>
-  <%= render partial: 'questions/domains/polynomial',
-             locals: { f: f,
-                       content: content } %>
 <% end %>
 <%= f.hidden_field 'solution_content[tex]',
                    value: content,

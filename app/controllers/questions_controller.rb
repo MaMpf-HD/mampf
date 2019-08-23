@@ -40,8 +40,6 @@ class QuestionsController < ApplicationController
                 MampfExpression.trivial_instance
               elsif params[:type] == 'MampfMatrix'
                 MampfMatrix.trivial_instance
-              else
-                MampfPolynomial.trivial_instance
               end
     @solution = Solution.new(content)
   end
