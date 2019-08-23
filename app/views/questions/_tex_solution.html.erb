@@ -2,9 +2,9 @@
   <div class="col-12">
     <%= t('math.parsed_input') %>
   </div>
-  <div class="col-12">
+  <div class="col-12 text-center" id="solution-tex">
     $$
-      <%= solution.content.to_tex.html_safe %>
+      <%= solution.content.tex&.html_safe %>
     $$
   </div>
 </div>

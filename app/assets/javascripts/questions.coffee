@@ -121,16 +121,62 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'keyup', '[id^="question_solution_content"]', ->
-    content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
-      obj[item.name] = item.value
-      obj
-    ), {})
-    $.ajax Routes.texify_solution_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        content: content
-      }
+    $('#solution-error').empty()
+    $('#solution-box').hide()
+    try
+      expression = nerdamer($('[id^="question_solution_content"]').val())
+    catch err
+      expression = 'Syntax Error'
+    if expression == 'Syntax Error'
+      $('#solution_input_tex').val('')
+      $('#solution_input_error').val(expression)
+    else
+      latex = expression.toTeX()
+      $('#solution_input_tex').val(latex)
+      $('#solution_input_error').val('')
+    return
+
+
+  $(document).on 'click', '#interpretExpression', ->
+    try
+      expression = nerdamer($('[id^="question_solution_content"]').val())
+    catch err
+      expression = 'Syntax Error'
+    if expression == 'Syntax Error'
+      $('#solution-tex').empty().append(expression)
+      $('#solution_input_tex').val('')
+      $('#solution_input_error').val(expression)
+    else
+      latex = expression.toTeX()
+      $('#solution_input_error').val('')
+      $('#solution_input_tex').val(latex)
+      $('#solution-tex').empty().append('$$' + latex + '$$')
+      solutionTex = document.getElementById('solution-tex')
+      renderMathInElement solutionTex,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
+    $('#solution-box').show()
     return
 
   return
@@ -147,4 +193,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '.rowCount'
   $(document).off 'change', '.columnCount'
   $(document).off 'keyup', '[id^="question_solution_content"]'
+  $(document).off 'click', '#interpretExpression'
   return

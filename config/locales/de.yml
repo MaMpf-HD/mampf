@@ -1869,6 +1869,9 @@ de:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
     matrix: 'Matrix'
+    polynomial: 'Polynom'
+    expression: 'Ausdruck'
+    degree: 'Grad'
     number_of_rows: 'Anzahl der Zeilen'
     number_of_columns: 'Anzahl der Spalten'
     coefficient_domain: 'Typ der Koeffizienten'
@@ -2105,6 +2108,7 @@ de:
     vote: 'Abstimmen'
     show: 'Anzeigen'
     hide: 'Verbergen'
+    interpret: 'Interpretieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

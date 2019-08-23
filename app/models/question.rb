@@ -76,14 +76,6 @@ class Question < Medium
     true
   end
 
-  def number_solution?
-    solution.type == 'MampfNumber'
-  end
-
-  def matrix_solution?
-    solution.type == 'MampfMatrix'
-  end
-
   private
 
   def prelim_answer_table

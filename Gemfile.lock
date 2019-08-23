@@ -431,6 +431,7 @@ GEM
       rails (>= 3)
       sunspot (= 2.5.0)
     sunspot_solr (2.5.0)
+    symbolic (0.3.8)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
     thor (0.20.3)
@@ -553,6 +554,7 @@ DEPENDENCIES
   streamio-ffmpeg
   sunspot_rails
   sunspot_solr
+  symbolic
   thredded
   thredded-markdown_katex
   trix-rails

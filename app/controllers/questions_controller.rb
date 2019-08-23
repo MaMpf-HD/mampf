@@ -2,6 +2,7 @@
 class QuestionsController < ApplicationController
   before_action :set_question, except: [:reassign]
   before_action :set_quizzes, only: [:reassign]
+  before_action :check_solution_errors, only: [:update]
   authorize_resource
   layout 'administration'
 
@@ -10,10 +11,10 @@ class QuestionsController < ApplicationController
   end
 
   def update
+    return if @errors
     @success = true if @question.update(question_params)
     @no_solution_update = question_params[:solution].nil?
     @errors = @question.errors
-    pp @errors[:base].join(", ")
   end
 
   def reassign
@@ -35,10 +36,12 @@ class QuestionsController < ApplicationController
   end
 
   def set_solution_type
-    content = if params[:type] == 'MampfNumber'
-                MampfNumber.trivial_instance
-              else
+    content = if params[:type] == 'MampfExpression'
+                MampfExpression.trivial_instance
+              elsif params[:type] == 'MampfMatrix'
                 MampfMatrix.trivial_instance
+              else
+                MampfPolynomial.trivial_instance
               end
     @solution = Solution.new(content)
   end
@@ -54,6 +57,12 @@ class QuestionsController < ApplicationController
   def set_quizzes
     @quizzes = params[:question].select { |k, v| v == '1' && k.start_with?('quiz-') }
                                 .keys.map { |k| k.remove('quiz-').to_i }
+  end
+
+  def check_solution_errors
+    return unless params[:question][:solution_error].present?
+    @errors = ActiveModel::Errors.new(@question)
+    @errors.add(:base, params[:question][:solution_error])
   end
 
   def question_params

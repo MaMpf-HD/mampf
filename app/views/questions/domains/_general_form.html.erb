@@ -1,5 +1,5 @@
-<% if type == 'MampfNumber' %>
-  <%= render partial: 'questions/domains/number',
+<% if type == 'MampfExpression' %>
+  <%= render partial: 'questions/domains/expression',
              locals: { f: f,
                        content: content,
                        counter: '[0]' } %>
@@ -7,6 +7,25 @@
   <%= render partial: 'questions/domains/matrix',
              locals: { f: f,
                        content: content } %>
+<% elsif type == 'MampfPolynomial' %>
+  <%= render partial: 'questions/domains/polynomial',
+             locals: { f: f,
+                       content: content } %>
 <% end %>
+<%= f.hidden_field 'solution_content[tex]',
+                   value: content,
+                   id: 'solution_input_tex' %>
+<%= f.hidden_field 'solution_error',
+                   value: nil,
+                   id: 'solution_input_error' %>
 <div class="invalid-feedback" id="solution-error">
+</div>
+<div class="row mt-2">
+  <div class="col-12 text-center">
+    <button type="button"
+            class="btn btn-sm btn-secondary"
+            id="interpretExpression">
+      <%= t('buttons.interpret') %>
+    </button>
+  </div>
 </div>

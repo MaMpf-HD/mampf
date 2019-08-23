@@ -1756,6 +1756,9 @@ en:
     number: 'number'
     complex_number: 'complex number'
     matrix: 'matrix'
+    polynomial: 'polynomial'
+    expression: 'expression'
+    degree: 'degree'
     number_of_rows: 'Number of rows'
     number_of_columns: 'Number of columns'
     coefficient_domain: 'Type of the coefficients'
@@ -1995,6 +1998,7 @@ en:
     vote: 'Vote'
     show: 'Show'
     hide: 'Hide'
+    interpret: 'Interpret'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

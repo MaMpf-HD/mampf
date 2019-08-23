@@ -35,13 +35,13 @@
       </span>
       <div class="custom-control custom-control-inline custom-radio">
         <%= f.radio_button :solution_type,
-                           'MampfNumber',
+                           'MampfExpression',
                            class: 'custom-control-input solutionType',
-                           checked: solution.type == 'MampfNumber',
-                           data: { type: 'MampfNumber' } %>
+                           checked: solution.type == 'MampfExpression',
+                           data: { type: 'MampfExpression' } %>
         <%= f.label :solution_type,
-                    t('math.number'),
-                    value: 'MampfNumber',
+                    t('math.expression'),
+                    value: 'MampfExpression',
                     class: 'custom-control-label' %>
       </div>
       <div class="custom-control custom-control-inline custom-radio">
@@ -62,7 +62,7 @@
                            type: solution.type,
                            content: solution.content } %>
     </div>
-    <div id="solution-tex">
+    <div id="solution-box">
       <%= render partial: 'questions/tex_solution',
                  locals: { solution: solution } %>
     </div>
