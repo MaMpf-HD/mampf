@@ -5,15 +5,6 @@ class MampfMatrix
 
   attr_accessor :column_count, :row_count, :coefficients, :tex
 
-  def equals?(other_matrix)
-    return false unless @column_count = other_matrix.column_count
-    return false unless @row_count = other_matrix.row_count
-    @coefficients.each_with_index do |c, i|
-      return false unless c.equals?(other_matrix.coefficients[i])
-    end
-    true
-  end
-
   def self.trivial_instance
     self.new(row_count: 2, column_count: 2,
                            coefficients: ['0', '0', '0', '0'],
