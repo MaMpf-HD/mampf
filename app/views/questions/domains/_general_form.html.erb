@@ -9,7 +9,7 @@
                        content: content } %>
 <% end %>
 <%= f.hidden_field 'solution_content[tex]',
-                   value: content,
+                   value: content.tex,
                    id: 'solution_input_tex' %>
 <%= f.hidden_field 'solution_error',
                    value: nil,

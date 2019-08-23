@@ -11,7 +11,7 @@ extractSolution = ->
   ), {})
   type = content['question[solution_type]']
   if type == 'MampfExpression'
-    return $('[id^="question_solution_content"]').val()
+    return content['question[solution_content[0]]']
   else if type = 'MampfMatrix'
     rowCount = parseInt(content['question[solution_content[row_count]]'])
     columnCount = parseInt(content['question[solution_content[column_count]]'])
