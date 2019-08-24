@@ -76,6 +76,14 @@ class Question < Medium
     true
   end
 
+  def multiple_choice?
+    question_sort == 'mc'
+  end
+
+  def free_answer?
+    question_sort == 'free'
+  end
+
   private
 
   def prelim_answer_table

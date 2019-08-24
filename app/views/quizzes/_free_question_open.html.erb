@@ -1,0 +1,29 @@
+<%= form_with model: quiz_round.quiz,
+              url: {action: "proceed"},
+              scope: 'question',
+              html: { id: 'solution-form' } do |f| %>
+  <%= f.hidden_field :solution_type, value: solution.type %>
+  <%= f.hidden_field :nerd, value: question.solution.nerd %>
+  <% if question.solution.type == 'MampfMatrix' %>
+    <%= f.hidden_field :row_count,
+                       value: question.solution.content.row_count %>
+    <%= f.hidden_field :column_count,
+                       value: question.solution.content.column_count %>
+  <% end %>
+  <%= f.hidden_field :result, value: false %>
+  <div class="form-group">
+    <%= render partial: 'questions/domains/general_form',
+               locals: { f: f,
+                         type: solution.type,
+                         content: solution.content } %>
+  </div>
+  <div id="solution-box">
+    <%= render partial: 'questions/tex_solution',
+               locals: { solution: solution } %>
+  </div>
+  <div class="text-center">
+    <%= f.submit t('buttons.submit'),
+                 class: "send-it btn btn-secondary mt-2",
+                 id: 'submit-solution'  %>
+  </div>
+<% end %>

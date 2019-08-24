@@ -13,6 +13,12 @@ class QuestionsController < ApplicationController
   def update
     return if @errors
     @success = true if @question.update(question_params)
+    if question_params[:solution]
+      answer = @question.answers.first
+      @question.answers.where.not(id: answer.id).destroy_all
+      answer.update(text: question_params[:solution].tex_mc_answer,
+                    value: true)
+    end
     @no_solution_update = question_params[:solution].nil?
     @errors = @question.errors
   end

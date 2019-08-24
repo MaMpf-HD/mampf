@@ -33,9 +33,16 @@
   </div>
   <div class="card-body" id="body-<%= @quiz_round.round_id %>">
     <div id="results-<%= @quiz_round.round_id %>">
-      <%= render partial: "quizzes/question_open",
-                 locals: { quiz_round: @quiz_round,
-                           answers: answers } %>
+      <% if question.multiple_choice? %>
+        <%= render partial: "quizzes/mc_question_open",
+                   locals: { quiz_round: @quiz_round,
+                             answers: answers } %>
+      <% elsif question.free? %>
+        <%= render partial: 'quizzes/free_question_open',
+                   locals: { quiz_round: @quiz_round,
+                             solution: Solution.new(question.solution.type.constantize.trivial_instance),
+                             question: question } %>
+      <% end %>
     </div>
     <div id="reduced-<%= @quiz_round.round_id %>" style="display: none;">
       <%= render partial: "quizzes/answers_reduced",

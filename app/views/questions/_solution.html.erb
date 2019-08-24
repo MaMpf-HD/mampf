@@ -88,5 +88,8 @@
       <%= render partial: 'questions/tex_solution',
                  locals: { solution: solution } %>
     </div>
+    <%= f.hidden_field 'solution_content[nerd]',
+                       value: solution.content.nerd,
+                       id: 'solution_content_nerd' %>
   </div>
 <% end %>

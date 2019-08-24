@@ -11,10 +11,12 @@ extractSolution = ->
   ), {})
   type = content['question[solution_type]']
   if type == 'MampfExpression'
-    nerd = nerdamer(content['question[solution_content[0]]'])
+    statement = content['question[solution_content[0]]']
+    nerd = nerdamer(statement)
     result =
       nerd: nerd
       tex: nerd.toTeX()
+      statement: statement
     return result
   else if type == 'MampfMatrix'
     rowCount = parseInt(content['question[solution_content[row_count]]'])
@@ -28,19 +30,23 @@ extractSolution = ->
       column += ']'
       matrix += column
       matrix += ',' unless i == rowCount
-    nerd = nerdamer('matrix(' + matrix + ')')
+    statement = 'matrix(' + matrix + ')'
+    nerd = nerdamer(statement)
     result =
       nerd: nerd
       tex: nerd.toTeX().replace(/vmatrix/g, 'pmatrix')
+      statement: statement
     return result
   else if type == 'MampfTuple'
     coeffs = content['question[solution_content[0]]']
-    nerd = nerdamer('vector(' + coeffs + ')')
+    statement = 'vector(' + coeffs + ')'
+    nerd = nerdamer(statement)
     texRaw = nerd.toTeX()
     tex = '(' + texRaw.substr(1, texRaw.length - 2) + ')'
     result =
       nerd: nerd
       tex: tex
+      statement: statement
     return result
   else if type == 'MampfSet'
     elements = content['question[solution_content[0]]'].split(',')
@@ -56,13 +62,64 @@ extractSolution = ->
       unless duplicate
         nerds.push nerd
         set.push element
-    nerd = nerdamer('vector(' + set.join(',') + ')')
+    statement = 'vector(' + set.join(',') + ')'
+    nerd = nerdamer(statement)
     texRaw = nerd.toTeX()
     tex = '\\{' + texRaw.substr(1, texRaw.length - 2) + '\\}'
     result =
       nerd: nerd
       tex: tex
+      statement: statement
     return result
+
+compareToSolution = (expression) ->
+  solutionString = $('#question_nerd').val()
+  solutionNerd = nerdamer(solutionString)
+  expressionNerd = nerdamer(expression)
+  type = $('#question_solution_type').val()
+  if type == 'MampfExpression'
+    result = solutionNerd.expand().eq(expressionNerd.expand())
+  else if type == 'MampfMatrix'
+    rowCount = parseInt($('#question_row_count').val())
+    columnCount = parseInt($('#question_column_count').val())
+    if parseInt($('#matrixRowCount').data('count')) != rowCount ||
+    parseInt($('#matrixColumnCount').data('count')) != columnCount
+      result = false
+    else
+      result = true
+      for i in [1..rowCount]
+        for j in [1..columnCount]
+          c1 = nerdamer('matget(' + solutionString + ',' + (i-1) + ',' + (j-1) + ')')
+          c2 = nerdamer('matget(' + expression + ',' + (i-1) + ',' + (j-1) + ')')
+          result = false unless c1.expand().eq(c2.expand())
+  else if type == 'MampfTuple'
+    size = parseInt(nerdamer('size(' + solutionString + ')'))
+    if parseInt(nerdamer('size(' + expression + ')')) != size
+      result = false
+    else
+      result = true
+      for i in [1..size]
+        c1 = nerdamer('vecget(' + solutionString + ',' + (i-1) + ')')
+        c2 = nerdamer('vecget(' + expression + ',' + (i-1) + ')')
+        result = false unless c1.expand().eq(c2.expand())
+  else if type == 'MampfSet'
+    size = parseInt(nerdamer('size(' + solutionString + ')'))
+    console.log size
+    console.log parseInt(nerdamer('size(' + expression + ')'))
+    if size != parseInt(nerdamer('size(' + expression + ')'))
+      result = false
+    else
+      result = true
+      if size > 0
+        for i in [1..size]
+          c1 = nerdamer('vecget(' + solutionString + ',' + (i-1) + ')')
+          found = false
+          for j in [1..size]
+            c2 = nerdamer('vecget(' + expression + ',' + (j-1) + ')')
+            found = true if c1.expand().eq(c2.expand())
+          result = false unless found
+  $('#question_result').val(result)
+  return
 
 cleanSolutionBox = ->
   $('#solution-error').empty()
@@ -74,10 +131,16 @@ cleanSolutionBox = ->
   if expression == 'Syntax Error'
     $('#solution_input_tex').val('')
     $('#solution_input_error').val(expression)
+    $('#solution_content_nerd').val('')
+    $('#question_result').val(false)
   else
     latex = expression.tex
     $('#solution_input_tex').val(latex)
     $('#solution_input_error').val('')
+    $('#solution_content_nerd').val(expression.statement)
+    if $('#question_result').length > 0
+      compareToSolution(expression.statement)
+  $('#submit-solution').hide()
   return
 
 $(document).on 'turbolinks:load', ->
@@ -198,6 +261,7 @@ $(document).on 'turbolinks:load', ->
       $('#solution_input_tex').val(latex)
       $('#solution-tex').empty().append('$$' + latex + '$$')
       solutionTex = document.getElementById('solution-tex')
+      $('#submit-solution').show()
       renderMathInElement solutionTex,
         delimiters: [
           {

@@ -19,6 +19,20 @@ class Solution
     @content.class.name
   end
 
+  def nerd
+    @content.nerd
+  end
+
+  def tex
+    return '' unless @content.tex
+    '$$' + @content.tex + '$$'
+  end
+
+  def tex_mc_answer
+    return '' unless @content.tex
+    '$' + @content.tex + '$'
+  end
+
   def self.from_hash(solution_type, content)
     return unless solution_type.in?(['MampfExpression', 'MampfMatrix',
                                      'MampfTuple', 'MampfSet'])

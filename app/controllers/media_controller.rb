@@ -100,7 +100,7 @@ class MediaController < ApplicationController
                        solution: solution,
                        question_sort: 'mc')
         Answer.create(question: @medium.becomes(Question),
-                      text: I18n.t('admin.answer.initial_text'),
+                      text: '0',
                       value: true)
       end
       if @medium.sort == 'Quiz'

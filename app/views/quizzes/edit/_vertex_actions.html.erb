@@ -34,7 +34,7 @@
           class="btn btn-sm btn-secondary">
     <%= t('buttons.default_target') %>
   </button>
-  <% if quizzable.sort == 'Question' %>
+  <% if quizzable.sort == 'Question' && quizzable.question_sort == 'mc' %>
     <button id="targetsFromVertex"
             class="btn btn-sm btn-secondary"
             data-quiz="<%= quiz.id %>"
