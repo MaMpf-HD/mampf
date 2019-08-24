@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.0.rc2'
+gem 'rails', '~> 6.0.0'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server
@@ -67,12 +67,15 @@ gem 'acts_as_tree'
 gem 'activerecord-import',
   git: 'https://github.com/zdennis/activerecord-import.git',
   branch: 'master'
-gem 'thredded'
+gem 'thredded', '~> 0.16.13'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
-gem 'rails-i18n'
+gem 'rails-i18n', '~> 6.0.0'
 gem 'kaminari-i18n'
-gem 'trix-rails', require: 'trix'
+gem 'trix-rails',
+  require: 'trix',
+  git: 'https://github.com/king601/trix/',
+  branch: 'rails-6'
 gem 'xkcd'
 gem 'sunspot_rails'
 gem 'sunspot_solr'
