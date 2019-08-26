@@ -46,16 +46,19 @@ class Question < Medium
   end
 
   def self.create_prefilled(label, teachable, editors)
+    solution = Solution.new(MampfExpression.trivial_instance)
     question = Question.new(sort: 'Question',
                             description: label,
                             teachable: teachable,
                             editors: editors,
                             text: I18n.t('admin.question.initial_text'),
                             level: 1,
-                            independent: false)
+                            independent: false,
+                            question_sort: 'mc',
+                            solution: solution)
     return question if question.invalid?
     Answer.create(question: question,
-                  text: I18n.t('admin.answer.initial_text'),
+                  text: '0',
                   value: true)
     question
   end

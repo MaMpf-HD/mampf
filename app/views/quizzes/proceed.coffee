@@ -150,7 +150,8 @@ nextRound = ->
                                     vertex: @quiz_round.vertex_old,
                                     input: @quiz_round.input,
                                     old_id: @quiz_round.round_id_old,
-                                    answers: @quiz_round.answers_old } %>'
+                                    answers: @quiz_round.answers_old,
+                                    solution_input: @quiz_round.solution_input } %>'
   revealAnswers(answers)
   success =  '<%= j render partial: "question_footer",
                            locals: { vertex: @quiz_round.vertex_old,
@@ -180,7 +181,8 @@ presentResultsToLoop = ->
                                     vertex: @quiz_round.vertex_old,
                                     input: @quiz_round.input,
                                     old_id: @quiz_round.round_id_old,
-                                    answers: @quiz_round.answers_old } %>'
+                                    answers: @quiz_round.answers_old,
+                                    solution_input: @quiz_round.solution_input } %>'
   revealAnswers(answers)
   success =  '<%= j render partial: "question_footer",
                            locals: { vertex: @quiz_round.vertex_old,

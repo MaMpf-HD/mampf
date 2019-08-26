@@ -26,4 +26,18 @@
                  class: "send-it btn btn-secondary mt-2",
                  id: 'submit-solution'  %>
   </div>
+  <%= f.hidden_field 'quiz[progress]',
+                     value: quiz_round.progress %>
+  <%= f.hidden_field 'quiz[counter]',
+                     value: quiz_round.counter %>
+  <%= f.hidden_field 'quiz[answer_shuffle]',
+                     value: quiz_round.answer_shuffle.to_json %>
+  <%= f.hidden_field 'quiz[crosses]',
+                     multiple: true,
+                     data: { answer: answers.first.id },
+                     id: 'quiz_question_crosses' %>
+  <%= f.hidden_field 'quiz[solution_input]',
+                     id: 'question_quiz_solution_input' %>
+  <%= f.hidden_field :id,
+                     value: quiz_round.quiz.id %>
 <% end %>

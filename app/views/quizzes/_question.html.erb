@@ -37,9 +37,10 @@
         <%= render partial: "quizzes/mc_question_open",
                    locals: { quiz_round: @quiz_round,
                              answers: answers } %>
-      <% elsif question.free? %>
+      <% elsif question.free_answer? %>
         <%= render partial: 'quizzes/free_question_open',
                    locals: { quiz_round: @quiz_round,
+                             answers: answers,
                              solution: Solution.new(question.solution.type.constantize.trivial_instance),
                              question: question } %>
       <% end %>

@@ -1,4 +1,5 @@
 <% question = Question.find(vertex[:id]) %>
+<% if question.question_sort == 'mc' %>
 <% answers.each do |a| %>
   <div class="row p-2 mb-2 border border-secondary rounded
               <%= questioncolor(a.value) %>">
@@ -61,5 +62,23 @@
         <%= a.conditional_explanation(input[a.id] == a.value) %>
       <% end %>
     </div>
+  </div>
+<% end %>
+<% elsif question.question_sort == 'free' %>
+  <div class="row">
+    <div class="col-12">
+      Deine Antwort war: <%= solution_input %>.
+      <% if input == question.answer_scheme %>
+        Das ist richtig.
+      <% else %>
+        Das ist leider falsch.
+      <% end %>
+    </div>
+    <% if input != question.answer_scheme %>
+      <div class="col-12">
+        Die richtige Antwort lautet:
+        <%= answers.first.text %>.
+      </div>
+    <% end %>
   </div>
 <% end %>

@@ -82,7 +82,13 @@ class QuizzesController < ApplicationController
   end
 
   def init_values
-    @quiz_round = QuizRound.new(params)
+    quiz_round_params = if params[:question].present? &&
+                          params[:question][:solution_type].present?
+                          params[:question]
+                        else
+                          params
+                        end
+    @quiz_round = QuizRound.new(quiz_round_params)
   end
 
   def quiz_params

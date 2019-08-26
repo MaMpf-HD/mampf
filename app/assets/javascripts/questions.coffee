@@ -119,6 +119,10 @@ compareToSolution = (expression) ->
             found = true if c1.expand().eq(c2.expand())
           result = false unless found
   $('#question_result').val(result)
+  if result
+    $('#quiz_question_crosses').val($('#quiz_question_crosses').data('answer'))
+  else
+    $('#quiz_question_crosses').val('')
   return
 
 cleanSolutionBox = ->
@@ -136,6 +140,7 @@ cleanSolutionBox = ->
   else
     latex = expression.tex
     $('#solution_input_tex').val(latex)
+    $('#question_quiz_solution_input').val('$' + latex + '$')
     $('#solution_input_error').val('')
     $('#solution_content_nerd').val(expression.statement)
     if $('#question_result').length > 0
