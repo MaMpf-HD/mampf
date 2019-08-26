@@ -6,42 +6,8 @@
     </div>
   </div>
   <div class="col-6"
-       id="questionAnswers"
-       style="display: <%= show_no_block(question.question_sort == 'mc') %>">
-    <div class="card bg-light">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-8">
-            <h5>
-              <%= t('basics.answers') %>
-            </h5>
-          </div>
-          <div class="col-4 text-right">
-            <%= link_to t('buttons.add_answer'),
-                        new_answer_path(question_id: question.id),
-                        id: 'new-answer',
-                        class: 'btn btn-sm btn-secondary btn-sm',
-                        remote: true %>
-          </div>
-        </div>
-      </div>
-      <div class="card-body">
-        <div id="new-answer-field">
-        </div>
-        <%= render partial: 'questions/answers_accordion',
-                   locals: { question: question } %>
-      </div>
-    </div>
-  </div>
-  <div class="col-6"
-       id="questionSolution"
-       style="display: <%= show_no_block(question.question_sort == 'free') %>">
-    <div class="card bg-light"
-         id="question-solution-edit"
-         data-question="<%= question.id %>">
-        <%= render partial: 'questions/solution',
-                   locals: { question: question,
-                             solution: question.solution } %>
-    </div>
+       id="questionDetails">
+    <%= render partial: 'questions/edit/details',
+               locals: { question: question } %>
   </div>
 </div>

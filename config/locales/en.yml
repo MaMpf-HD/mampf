@@ -1324,6 +1324,10 @@ en:
       reason: 'Reason'
       correct_answer: 'Great, that was correct!'
       incorrect_answer: 'Unfortunately, that was not quite correct.'
+      your_answer: 'Your answer was:'
+      correct_statement: 'That is correct.'
+      incorrect_statement: 'Unfortunately, that is not correct.'
+      correct_answer_free: 'The correct answer is:'
       medium_for_question_html: >
         There is a %{medium} for this question.
       media_for_question_html: >

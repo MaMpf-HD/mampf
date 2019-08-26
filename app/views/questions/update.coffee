@@ -6,16 +6,16 @@ $('#question-basics-options').addClass 'no_display'
 <% else %>
 $('#question-solution-warning').addClass 'no_display'
 $('#question-solution-options').addClass 'no_display'
-$('#solution-box').empty()
-  .append('<%= j render partial: "questions/tex_solution",
-                        locals: { solution: @question.solution } %>')
+$('#questionDetails').empty()
+  .append('<%= j render partial: "questions/edit/details",
+                        locals: { question: @question } %>')
 <% end %>
 <% else %>
 $('#solution-error').append('<%= @errors[:base].join(", ") %>').show()
 <% end %>
 
-solutionTex = document.getElementById('solution-tex')
-renderMathInElement solutionTex,
+questionDetails = document.getElementById('questionDetails')
+renderMathInElement questionDetails,
   delimiters: [
     {
       left: '$$'
@@ -39,3 +39,4 @@ renderMathInElement solutionTex,
     }
   ]
   throwOnError: false
+

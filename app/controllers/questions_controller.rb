@@ -13,6 +13,10 @@ class QuestionsController < ApplicationController
   def update
     return if @errors
     @success = true if @question.update(question_params)
+    if question_params[:question_sort] == 'free'
+      answer = @question.answers.first
+      @question.answers.where.not(id: answer.id).destroy_all
+    end
     if question_params[:solution]
       answer = @question.answers.first
       @question.answers.where.not(id: answer.id).destroy_all

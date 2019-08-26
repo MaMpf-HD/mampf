@@ -98,6 +98,36 @@ acceptedResults = (info, $previous_round) ->
 
 displayWithoutAnswers = ->
   $('#footer-<%= @quiz_round.round_id_old %>').removeClass 'no_display'
+  <% if @quiz_round.solution_input.present? %>
+  $('#results-<%= @quiz_round.round_id_old %>').empty()
+    .append('<%= j render partial: "quizzes/take/old_solution_input",
+                          locals: { solution_input: @quiz_round.solution_input } %>')
+  oldInput = document.getElementById('results-<%= @quiz_round.round_id_old %>')
+  renderMathInElement oldInput,
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+  <% end %>
   displayNext()
   return
 

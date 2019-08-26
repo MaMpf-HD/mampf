@@ -1409,6 +1409,10 @@ de:
       reason: 'denn'
       correct_answer: 'Super, das war richtig!'
       incorrect_answer: 'Das war leider nicht ganz richtig.'
+      your_answer: 'Deine Antwort war:'
+      correct_statement: 'Das ist richtig.'
+      incorrect_statement: 'Das ist leider falsch.'
+      correct_answer_free: 'Die richtige Antwort lautet:'
       medium_for_question_html: >
         Es gibt ein %{medium} zu dieser Frage.
       media_for_question_html: >

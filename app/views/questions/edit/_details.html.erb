@@ -1,0 +1,10 @@
+<div id="questionAnswers"
+     style="display: <%= show_no_block(question.question_sort == 'mc') %>">
+  <%= render partial: 'questions/edit/answers',
+             locals: { question: question } %>
+</div>
+<div id="questionSolution"
+     style="display: <%= show_no_block(question.question_sort == 'free') %>">
+  <%= render partial: 'questions/edit/solution',
+             locals: { question: question } %>
+</div>
