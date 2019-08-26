@@ -252,6 +252,7 @@ $(document).on 'turbolinks:load', ->
 
 
   $(document).on 'click', '#interpretExpression', ->
+    cleanSolutionBox()
     try
       expression = extractSolution()
     catch err

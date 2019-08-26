@@ -17,7 +17,8 @@ class QuestionsController < ApplicationController
       answer = @question.answers.first
       @question.answers.where.not(id: answer.id).destroy_all
       answer.update(text: question_params[:solution].tex_mc_answer,
-                    value: true)
+                    value: true,
+                    explanation: question_params[:solution].explanation)
     end
     @no_solution_update = question_params[:solution].nil?
     @errors = @question.errors

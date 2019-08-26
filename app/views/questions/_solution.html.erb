@@ -91,5 +91,23 @@
     <%= f.hidden_field 'solution_content[nerd]',
                        value: solution.content.nerd,
                        id: 'solution_content_nerd' %>
+    <div class="row">
+      <div class="col-12">
+        <%= f.label 'solution_content[explanation]',
+                   t('admin.answer.explanation') %>
+        <%= f.text_area 'solution_content[explanation]',
+                        class: 'form-control',
+                        id: 'tex-area-explanation-s-' +
+                              question.answers.first.id.to_s,
+                        value: question.answers.first.explanation %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8 py-2">
+        <span id="tex-preview-explanation-s-<%= question.answers.first.id %>">
+          <%= question.answers.first.explanation %>
+        </span>
+      </div>
+    </div>
   </div>
 <% end %>

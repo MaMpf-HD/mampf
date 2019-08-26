@@ -2,6 +2,7 @@
 # plain old ruby class, no active record involved
 class Solution
   attr_reader :content
+  attr_accessor :explanation
 
   def initialize(content)
     @content = content
@@ -36,6 +37,8 @@ class Solution
   def self.from_hash(solution_type, content)
     return unless solution_type.in?(['MampfExpression', 'MampfMatrix',
                                      'MampfTuple', 'MampfSet'])
-    Solution.new(solution_type.constantize.from_hash(content))
+    solution = Solution.new(solution_type.constantize.from_hash(content))
+    solution.explanation = content[:explanation]
+    solution
   end
 end

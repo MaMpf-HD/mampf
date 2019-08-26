@@ -17,14 +17,15 @@
                          type: solution.type,
                          content: solution.content } %>
   </div>
-  <div id="solution-box">
+  <div id="solution-box" style="display: none;">
     <%= render partial: 'questions/tex_solution',
                locals: { solution: solution } %>
   </div>
   <div class="text-center">
     <%= f.submit t('buttons.submit'),
                  class: "send-it btn btn-secondary mt-2",
-                 id: 'submit-solution'  %>
+                 id: 'submit-solution',
+                 style: 'display: none;'  %>
   </div>
   <%= f.hidden_field 'quiz[progress]',
                      value: quiz_round.progress %>
