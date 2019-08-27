@@ -46,7 +46,13 @@ class QuizGraph
     if @default_table[source] == target
       @default_table[source] = 0
     end
+    answers = @edges[[source,target]]
+    return unless answers
     @edges.delete([source, target])
+    affected_hide_solution = @hide_solution.select do |h|
+      h.first == source && h.second.in?(answers)
+    end
+    @hide_solution -= affected_hide_solution
   end
 
   # replace_reference! replaces all references to old_quizzable within
