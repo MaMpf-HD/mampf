@@ -90,7 +90,8 @@ en:
   footer:
     text_html: >
       &copy; MaMpf Team 2018. MaMpf is on %{github}.
-      Powered by %{rails}, %{bootstrap}, %{docker}, %{basecamp}.<br>
+      Powered by %{rails}, %{bootstrap}, %{cytoscape},
+      %{nerdamer}, %{katex}, %{docker}, %{basecamp}.<br>
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
   here: 'here'

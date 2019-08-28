@@ -76,7 +76,8 @@ de:
   footer:
     text_html: >
       &copy; MaMpf Team 2018. MaMpf ist auf %{github}.
-      Powered by %{rails}, %{bootstrap}, %{docker}, %{basecamp}.<br>
+      Powered by %{rails}, %{bootstrap}, %{cytoscape},
+      %{nerdamer}, %{katex}, %{docker}, %{basecamp}.<br>
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
   here: 'hier'
