@@ -307,18 +307,17 @@ class Course < ApplicationRecord
     Course.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
-  def mc_questions_count
-    Rails.cache.fetch("#{cache_key_with_version}/mc_questions_count") do
+  def questions_count
+    Rails.cache.fetch("#{cache_key_with_version}/questions_count") do
       Question.where(teachable: [self] + [lectures.published],
                      independent: true,
                      released: ['all', 'users'])
-              .joins(:answers).group('id').having('count(question_id) > 1')
               .pluck(:id).count
     end
   end
 
   def enough_questions?
-    mc_questions_count >= 10
+    questions_count >= 10
   end
 
   def create_random_quiz!(tags, count)
@@ -361,8 +360,6 @@ class Course < ApplicationRecord
     Question.where(teachable: [self] + [lectures.published],
                    independent: true)
             .locally_visible
-            .joins(:answers).group('id')
-            .having('count(question_id) > 1')
   end
 
   def question_count(tags)
