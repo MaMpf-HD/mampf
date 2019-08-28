@@ -2,7 +2,8 @@
   <%= render partial: 'questions/domains/expression',
              locals: { f: f,
                        value: content.value,
-                       counter: '[0]' } %>
+                       counter: '[0]',
+                       type: type } %>
 <% elsif type == 'MampfMatrix' %>
   <%= render partial: 'questions/domains/matrix',
              locals: { f: f,

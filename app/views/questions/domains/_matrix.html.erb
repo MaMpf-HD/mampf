@@ -48,7 +48,8 @@
         <%= render partial: 'questions/domains/expression',
                    locals: { f: f,
                              value: content.entry(i,j),
-                             counter: "[#{i},#{j}]" } %>
+                             counter: "[#{i},#{j}]",
+                             type: 'MampfExpression' } %>
       </div>
     <% end %>
   </div>

@@ -1,4 +1,20 @@
-<%= f.text_field "solution_content#{counter}",
-                 value: value,
-                 class: 'form-control',
-                 data: { counter: 0 } %>
+<div class="input-group">
+  <% if type.in?(['MampfTuple', 'MampfSet']) %>
+    <div class="input-group-prepend">
+      <div class="input-group-text">
+        <%= type == 'MampfTuple' ? '$($' : '$\{$' %>
+      </div>
+    </div>
+  <% end %>
+  <%= f.text_field "solution_content#{counter}",
+                   value: value,
+                   class: 'form-control',
+                   data: { counter: 0 } %>
+  <% if type.in?(['MampfTuple', 'MampfSet']) %>
+    <div class="input-group-append">
+      <div class="input-group-text">
+        <%= type == 'MampfTuple' ? '$)$' : '$\}$' %>
+      </div>
+    </div>
+  <% end %>
+</div>
