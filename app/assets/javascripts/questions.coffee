@@ -321,6 +321,18 @@ $(document).on 'turbolinks:load', ->
     $('#solution-box').show()
     return
 
+  $(document).on 'keyup', '[id^="tex-area-question-"]', ->
+    console.log $(this).val()
+    $.ajax Routes.render_question_parameters_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        text: $(this).val()
+        id: $(this).data('id')
+      }
+    return
+    return
+
   return
 
 # clean up everything before turbolinks caches
@@ -336,4 +348,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '.columnCount'
   $(document).off 'keyup', '[id^="question_solution_content"]'
   $(document).off 'click', '#interpretExpression'
+  $(document).off 'keyup', '[id^="tex-area-question-"]'
   return

@@ -87,6 +87,37 @@ class Question < Medium
     question_sort == 'free'
   end
 
+  def parametrized?
+    parameters.present?
+  end
+
+  # filter variables
+  def parsed_text_with_params
+    text.gsub(/\\para{(\w+),(.*)?}/, '\color{blue}{\1}')
+  end
+
+  def text_with_sample_params(parameters)
+    return text unless parameters.present?
+    parameters.keys.each do |p|
+      text.gsub!(/\\para{#{Regexp.escape(p)},(.*)?}/, parameters[p].to_s)
+    end
+    text
+  end
+
+  def parameters
+    Question.parameters_from_text(text)
+  end
+
+  def sample_parameters
+    parameters.inject({}) { |h, (k, v)| h[k] = v.to_a.sample; h }
+  end
+
+  def self.parameters_from_text(text)
+    text.scan(/\\para{(\w+),(.*?)}/)
+        .map { |v| [v[0], v[1].to_a_or_range] }
+        .to_h
+  end
+
   private
 
   def prelim_answer_table

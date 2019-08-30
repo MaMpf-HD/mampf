@@ -3,7 +3,7 @@
     <div class="<%= quizzable_color(quizzable.sort) %> p-2 border mt-2">
       <div class="row mb-3">
         <div class="col-12">
-          <%= quizzable.text %>
+          <%= quizzable.parsed_text_with_params %>
         </div>
       </div>
       <% if quizzable.sort == 'Question' %>

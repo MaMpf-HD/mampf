@@ -133,4 +133,9 @@ class EventsController < ApplicationController
     @solution = Solution.from_hash(result[:solution_type],
                                    result[:solution_content])
   end
+
+  def render_question_parameters
+    @parameters = Question.parameters_from_text(params[:text])
+    @id = params[:id]
+  end
 end

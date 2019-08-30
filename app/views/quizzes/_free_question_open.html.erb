@@ -1,7 +1,9 @@
 <%= form_with model: quiz_round.quiz,
               url: {action: "proceed"},
               scope: 'question',
-              html: { id: 'solution-form' } do |f| %>
+              html: { id: 'solution-form',
+                      data:
+                        { parameters: parameters.to_json }} do |f| %>
   <%= f.hidden_field :solution_type, value: solution.type %>
   <%= f.hidden_field :nerd, value: question.solution.nerd %>
   <% if question.solution.type == 'MampfMatrix' %>
