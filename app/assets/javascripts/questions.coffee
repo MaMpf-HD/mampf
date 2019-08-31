@@ -144,7 +144,10 @@ compareToSolution = (solutionInput) ->
   type = $('#question_solution_type').val()
   params = $('#solution-form').data('parameters')
   if params
-    solutionString = nerdamer(solutionString, params).toString()
+    try
+      solutionString = nerdamer(solutionString, params).toString()
+    catch err
+      solutionString = 'Error'
   solution = MampfSolution.fromExpression(type, solutionString)
   result = solutionInput.equals(solution)
   $('#question_result').val(result)

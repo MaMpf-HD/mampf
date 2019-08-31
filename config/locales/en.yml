@@ -1780,6 +1780,29 @@ en:
       At least one of the coefficients of the matrix cannot be evaluated.
     parsed_input: >
       Your input is interpreted as follows:
+    different_interpretation: >
+      Your input has been interpreted in a way you did not expect?
+      This may be due to one of the following reasons:
+      <ul>
+      <li>
+      For polynomials in sveral variables you should pay attention to put
+      a '*' between variables if they are to be multiplied. E.g., the expression
+      "xy" would be interpreted as one Variable with the name xy, not as "x*y"
+      (which you would have to write in this way). For multiplication with
+      scalars, a "*" is unneccessary: 3x will be automatically interpreted as
+      3*x
+      </li>
+      <li>
+      Commas are not admissible for expressing decimals; the fraction 3/2
+      (which would be recognized by MaMpf, by the way) would have to be written
+      as 1.5 as a decimal.
+      </li>
+      <li>
+      Commas are not - as is common in English - admissible for separation
+      of thousands: The number three thousand has to be written as 3000, not as
+      3,000.
+      </li>
+      </ul>
   locales:
     en: 'English'
     de: 'German'
@@ -1928,6 +1951,7 @@ en:
     free: 'free answer'
     solution: 'Solution'
     parametrized: 'parametrized'
+    synonyms: 'Synonyms'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

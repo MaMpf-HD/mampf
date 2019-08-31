@@ -1893,6 +1893,29 @@ de:
       werden.
     parsed_input: >
       Deine Eingabe wird wie folgt interpretiert:
+    different_interpretation: >
+      Deine Eingabe wird anders interpretiert, als Du beabsichtigt hast? Das
+      kann z.B. daran liegen:
+      <ul>
+      <li>
+      Bei Polynomen in mehreren Variablen ist zu beachten, dass bei der
+      Multiplikation von Variablen ein "*" zwischen diese zu setzen ist.
+      Beispielsweise würde der Ausdruck "xy" als eine Variable mit der Bezeichnung
+      xy interpretiert und nicht als x*y (welches man auch so schreiben
+      müsste). Bei Multiplikation mit Skalaren ist dagegen ein "*" nicht nötig:
+      3x wird automatisch als 3*x interpretiert.
+      </li>
+      <li>
+      Kommata sind zur Darstellung von Dezimalbrüchen nicht zulässig; den
+      Bruch 3/2 (den MaMpf übrigens erkennen würde) müsstest Du dezimal als
+      1.5 schreiben
+      </li>
+      <li>
+      Kommata sind nicht - wie etwa im englischen Sprachgebrauch - zulässig zur
+      Trennung von Tausendern: Die Zahl dreitausend ist als 3000 einzugeben,
+      nicht als 3,000
+      </li>
+      </ul>
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2042,6 +2065,7 @@ de:
     free: 'freie Antwort'
     solution: 'Lösung'
     parametrized: 'parametrisiert'
+    synonyms: 'Synonyme'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

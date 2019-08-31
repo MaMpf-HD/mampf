@@ -836,6 +836,19 @@ class Medium < ApplicationRecord
     update(type: nil) if !sort.in?(['Quiz', 'Question', 'Remark', 'RandomQuiz'])
   end
 
+  def select_sorts
+    result = if new_record?
+               Medium.sort_localized.except('RandomQuiz')
+             elsif sort.in?(['Kaviar', 'Sesam', 'Erdbeere', 'Kiwi', 'Nuesse',
+                            'Reste'])
+               Medium.sort_localized.except('RandomQuiz', 'Script', 'Quiz',
+                                            'Question', 'Remark')
+             else
+               Medium.sort_localized.slice(sort)
+             end
+    result.map { |k, v| [v, k] }
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require
