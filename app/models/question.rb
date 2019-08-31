@@ -93,15 +93,16 @@ class Question < Medium
 
   # filter variables
   def parsed_text_with_params
-    text.gsub(/\\para{(\w+),(.*)?}/, '\color{blue}{\1}')
+    text.gsub(/\\para{(\w+),(.*?)}/, '\color{blue}{\1}')
   end
 
   def text_with_sample_params(parameters)
     return text unless parameters.present?
+    result = text
     parameters.keys.each do |p|
-      text.gsub!(/\\para{#{Regexp.escape(p)},(.*)?}/, parameters[p].to_s)
+      result.gsub!(/\\para{#{Regexp.escape(p)},(.*?)}/, parameters[p].to_s)
     end
-    text
+    result
   end
 
   def parameters

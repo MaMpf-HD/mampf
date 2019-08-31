@@ -41,6 +41,8 @@
                      id: 'quiz_question_crosses' %>
   <%= f.hidden_field 'quiz[solution_input]',
                      id: 'question_quiz_solution_input' %>
+  <%= f.hidden_field 'quiz[result]',
+                     id: 'question_quiz_result' %>
   <%= f.hidden_field :id,
                      value: quiz_round.quiz.id %>
 <% end %>

@@ -5,13 +5,14 @@ class QuizRound
   attr_reader :quiz, :counter, :progress, :crosses, :vertex, :is_question,
               :answer_scheme, :progress_old, :counter_old, :round_id_old,
               :input, :correct, :hide_solution, :vertex_old, :question_id,
-              :answer_shuffle, :answer_shuffle_old, :solution_input
+              :answer_shuffle, :answer_shuffle_old, :solution_input, :result
 
   def initialize(params)
     @quiz = Quiz.find(params[:id])
     @crosses = params[:quiz].present? ? params[:quiz][:crosses] || [] : []
     if params[:quiz].present?
       @solution_input = params[:quiz][:solution_input]
+      @result = params[:quiz][:result]
     end
     progress_counter(params)
     @vertex = @quiz.vertices[@progress]
