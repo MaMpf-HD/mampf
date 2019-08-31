@@ -3,7 +3,7 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'keyup', '[id^="tex-area-"]', ->
     content = $(this).val()
     if $(this).data('parse')
-      content = content.replace(/\\para{(\w+),(.*?)}/g, '\\color{blue}{$1}')
+      content = content.replace(/\\para{(\w+),(.*?)}/g, '{\\color{blue}{$1}}')
     preview = '#' + this.id.replace('area','preview')
     $(preview).text content
     # run katex on preview
