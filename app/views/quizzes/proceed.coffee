@@ -73,6 +73,7 @@ displayNext = ->
   <% else %>
   renderNext('<%= j render partial: "quizzes/quiz_round",
                            locals: { hidden: true } %>')
+  $('[data-toggle="popover"]').popover()
   <% end %>
   return
 

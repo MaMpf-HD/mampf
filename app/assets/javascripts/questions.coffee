@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-class @MampfExpression
+class MampfExpression
   constructor: (@expression) ->
     @nerd = nerdamer(@expression)
     @tex = @nerd.toTeX()
@@ -14,7 +14,7 @@ class @MampfExpression
     expression = content['question[solution_content[0]]']
     new MampfExpression(expression)
 
-class @MampfMatrix
+class MampfMatrix
   constructor: (@expression) ->
     @nerd = nerdamer(@expression)
     size = nerdamer('size(' + @expression + ')').text().split(',')
@@ -48,7 +48,7 @@ class @MampfMatrix
     expression = 'matrix(' + matrix + ')'
     new MampfMatrix(expression)
 
-class @MampfTuple
+class MampfTuple
   constructor: (@expression) ->
     @nerd = nerdamer(@expression)
     @length = parseInt(nerdamer('size(' + @expression + ')'))
@@ -69,7 +69,7 @@ class @MampfTuple
     expression = 'vector(' + coeffs + ')'
     new MampfTuple(expression)
 
-class @MampfSet
+class MampfSet
   # note that we assume here that redundant elements have already been removed
   # from the expression (as it is done in the parse class method)
   constructor: (@expression) ->
@@ -108,7 +108,7 @@ class @MampfSet
     expression = 'vector(' + set.join(',') + ')'
     new MampfSet(expression)
 
-class @MampfSolution
+class MampfSolution
   constructor: (@type, @details) ->
 
   equals: (otherSolution) ->
@@ -132,7 +132,7 @@ class @MampfSolution
       when type == 'MampfSet' then new MampfSet(expression)
     new MampfSolution(type, details)
 
-@extractSolution = ->
+extractSolution = ->
   content  = $('#solution-form').serializeArray().reduce(((obj, item) ->
     obj[item.name] = item.value
     obj
