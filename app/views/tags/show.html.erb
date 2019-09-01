@@ -25,11 +25,7 @@
         <div class="card bg-light mb-2">
           <div class="card-header bg-generic-card-header">
             <h5>
-              <% if @tag.aliases.any? %>
-                <%= t('basics.translations_aliases') %>
-              <% else %>
-                <%= t('translations') %>
-              <% end %>
+              <%= t('basics.synonyms') %>
             </h5>
           </div>
           <div class="card-body">
@@ -41,9 +37,7 @@
               <br>
             <% end %>
             <% if @tag.aliases.any? %>
-              <h6 class="mt-2">
-                <%= t('basics.aliases') %>
-              </h6>
+              <hr>
               <% @tag.aliases.each do |a| %>
                 <span class="badge badge-light">
                   <%= a.locale %>

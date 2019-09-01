@@ -1,10 +1,11 @@
 <% question = Question.find(@quiz_round.vertex[:id]) %>
 <% answers = @quiz_round.answers %>
+<% parameters = question.sample_parameters %>
 <div class="card bg-question mt-2 border-secondary">
   <div class="card-header bg-light-blue-lighten-5">
     <div class="row">
       <div class="col-<%= question.hint.present? ? 11 : 12 %>">
-        <%= question.text %>
+        <%= question.text_with_sample_params(parameters) %>
       </div>
       <% if question.hint.present? %>
         <div class="col-1 text-right">
@@ -42,12 +43,11 @@
                    locals: { quiz_round: @quiz_round,
                              answers: answers,
                              solution: Solution.new(question.solution.type.constantize.trivial_instance),
-                             question: question } %>
+                             question: question,
+                             parameters: parameters } %>
       <% end %>
     </div>
     <div id="reduced-<%= @quiz_round.round_id %>" style="display: none;">
-      <%= render partial: "quizzes/answers_reduced",
-                 locals: { answers: answers } %>
     </div>
   </div>
   <div class="card-footer no_display"

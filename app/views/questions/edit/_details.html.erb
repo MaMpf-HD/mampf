@@ -4,7 +4,7 @@
              locals: { question: question } %>
 </div>
 <div id="questionSolution"
-     style="display: <%= show_no_block(question.question_sort == 'free') %>">
+     style="display: <%= show_no_block(question.question_sort.in?(['free', 'parametrized'])) %>">
   <%= render partial: 'questions/edit/solution',
              locals: { question: question } %>
 </div>

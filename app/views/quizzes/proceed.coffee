@@ -73,6 +73,7 @@ displayNext = ->
   <% else %>
   renderNext('<%= j render partial: "quizzes/quiz_round",
                            locals: { hidden: true } %>')
+  $('[data-toggle="popover"]').popover()
   <% end %>
   return
 
@@ -93,7 +94,37 @@ acceptedResults = (info, $previous_round) ->
   $('#correctness-<%= @quiz_round.round_id_old %>')
     .addClass('<%= @quiz_round.badge %>')
     .append '<%= @quiz_round.statement %>'
-  $('#reduced-<%= @quiz_round.round_id_old %>').fadeIn 1000, reduceResults()
+  $('#reduced-<%= @quiz_round.round_id_old %>')
+    .append('<%= j render partial: "quizzes/answers_reduced",
+                          locals: { answers: @quiz_round.answers_old,
+                                    result: @quiz_round.result } %>')
+  oldAnswers = document.getElementById('reduced-<%= @quiz_round.round_id_old %>')
+  renderMathInElement oldAnswers,
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+  $('#reduced-<%= @quiz_round.round_id_old %>')
+    .fadeIn 1000, reduceResults()
   return
 
 displayWithoutAnswers = ->
@@ -181,7 +212,8 @@ nextRound = ->
                                     input: @quiz_round.input,
                                     old_id: @quiz_round.round_id_old,
                                     answers: @quiz_round.answers_old,
-                                    solution_input: @quiz_round.solution_input } %>'
+                                    solution_input: @quiz_round.solution_input,
+                                    result: @quiz_round.result } %>'
   revealAnswers(answers)
   success =  '<%= j render partial: "question_footer",
                            locals: { vertex: @quiz_round.vertex_old,
@@ -212,7 +244,8 @@ presentResultsToLoop = ->
                                     input: @quiz_round.input,
                                     old_id: @quiz_round.round_id_old,
                                     answers: @quiz_round.answers_old,
-                                    solution_input: @quiz_round.solution_input } %>'
+                                    solution_input: @quiz_round.solution_input,
+                                    result: @quiz_round.result } %>'
   revealAnswers(answers)
   success =  '<%= j render partial: "question_footer",
                            locals: { vertex: @quiz_round.vertex_old,

@@ -1,5 +1,11 @@
 <% correct_answers = answers.select(&:value) %>
-<% if correct_answers.present? %>
+<% if result.present? %>
+  <ul>
+    <li>
+      $<%= result %>$
+    </li>
+  </ul>
+<% elsif correct_answers.present? %>
   <ul>
     <% correct_answers.each do |a| %>
       <li class="p-2">

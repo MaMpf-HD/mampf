@@ -142,9 +142,16 @@ extractSolution = ->
 compareToSolution = (solutionInput) ->
   solutionString = $('#question_nerd').val()
   type = $('#question_solution_type').val()
+  params = $('#solution-form').data('parameters')
+  if params
+    try
+      solutionString = nerdamer(solutionString, params).toString()
+    catch err
+      solutionString = 'Error'
   solution = MampfSolution.fromExpression(type, solutionString)
   result = solutionInput.equals(solution)
   $('#question_result').val(result)
+  $('#question_quiz_result').val(solution.details.tex)
   if result
     $('#quiz_question_crosses').val($('#quiz_question_crosses').data('answer'))
   else
@@ -321,6 +328,17 @@ $(document).on 'turbolinks:load', ->
     $('#solution-box').show()
     return
 
+  $(document).on 'keyup', '[id^="tex-area-question-"]', ->
+    $.ajax Routes.render_question_parameters_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        text: $(this).val()
+        id: $(this).data('id')
+      }
+    return
+    return
+
   return
 
 # clean up everything before turbolinks caches
@@ -336,4 +354,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '.columnCount'
   $(document).off 'keyup', '[id^="question_solution_content"]'
   $(document).off 'click', '#interpretExpression'
+  $(document).off 'keyup', '[id^="tex-area-question-"]'
   return
