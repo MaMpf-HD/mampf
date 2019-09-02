@@ -34,7 +34,7 @@ MaMpf has a quiz system that allows you to create complex quizzes quite easily.
 ![quizzes](public/quizzes.png)
 
 MaMpf makes use of the JS based symbolic math expression evaluator
-[nerdamer](https://github.com/jiggzson/nerdamer) to parse student's input.
+[nerdamer](https://github.com/jiggzson/nerdamer) to parse student's input in quizzes.
 
 
 For more information see this [blog](https://mampfdev.wordpress.com).
