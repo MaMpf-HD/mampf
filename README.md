@@ -24,9 +24,18 @@ ThymE is lean and makes use of WebVTT and HTML5 video capabilites
 of modern browsers. A sample hypervideo can be found
 [here](https://mampf.mathi.uni-heidelberg.de/media/384/play).
 
-MaMpf is equipped with a tagging system and rich visualisations for content relations.
+MaMpf is equipped with a tagging system and rich visualisations for content relations,
+making use of [cytoscape.js](http://js.cytoscape.org/).
 
 ![tags](public/tag_visualisation.png)
+
+MaMpf has a quiz system that allows you to create complex quizzes quite easily.
+
+![quizzes](public/quizzes.png)
+
+MaMpf makes uses of the JS based symbolic math expression evaluator
+[nerdamer](https://github.com/jiggzson/nerdamer) to parse student's input.
+
 
 For more information see this [blog](https://mampfdev.wordpress.com).
 There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/gallery/).
