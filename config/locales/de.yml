@@ -341,7 +341,7 @@ de:
           MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
           denjenigen Abschnitt mit einem MaMpf-Label versehen wurden,
           bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
-          wurden. Damit dass funktioniert, müssen die MaMpf-Labels im
+          wurden. Damit das funktioniert, müssen die MaMpf-Labels im
           LaTeX-File für das Manuskript mit dem
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
           erzeugt werden
