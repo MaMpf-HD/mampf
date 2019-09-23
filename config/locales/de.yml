@@ -852,7 +852,7 @@ de:
           nur AbonenntInnen: Registrierte MaMpf-NutzerInnen, die das
           assoziierte Modul/die assoziierte Veranstaltung/die zur assoziierten
           Sitzung gehörige Veranstaltung abonniert haben,
-          können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
+          können das Medium sehen. Sonstige MaMpf-NutzerInnen können
           das Medium nicht sehen.
           </li>
           <li>
@@ -978,8 +978,8 @@ de:
           Das ist die Liste aller assoziierten Tags.
         search_title: >
           Hier kannst Du den Titel des gesuchten Tags eingeben.
-          Die Liste der angezeigten Tags wird nach dann entsprechend
-          gefiltert.
+#          Die Liste der angezeigten Tags wird nach dann entsprechend
+#          gefiltert.
         search_course: >
           Hier kannst Du (im Sinne von <i>ODER</i>)
           auswählen, zu welchen Modulen das Tag assoziiert sein soll.
@@ -1192,7 +1192,7 @@ de:
           gesperrt bleibt, ist die Referenz für NutzerInnen bei Aufruf
           des THymE-Players nicht sichtbar.
         quarantine_item: >
-          Das referenzierte Item ist in Quarantäne.D.h.: Die named destination
+          Das referenzierte Item ist in Quarantäne. D.h.: Die named destination
           im pdf zu diesem Item existiert nicht
           mehr. Du kannst diese Referenz trotzdem anlegen oder beibehalten;
           solange sich in dem pdf nichts ändert, wird die Referenz aber
@@ -1229,8 +1229,8 @@ de:
           ist. Falls hier eine Veranstaltung ausgewählt ist, führt dich
           ein entsprechendes Icon in der Navigationsleiste direkt zu ihr.
         homepage: >
-          Hier kannst Du die Adresse einer Homepage eingeben. Das
-          macht z.B. bei DozentInnen Sinn.
+          Hier kannst Du die Adresse einer Homepage eingeben.
+#         Das macht z.B. bei DozentInnen Sinn.
         profile_image: >
           Hier wirst Du demnächst die Möglichkeit haben, ein
           Profilbild hochzuladen.
@@ -1470,7 +1470,7 @@ de:
           Hier kannst Du festlegen, wohin falsche Antworten führen sollen
           (falls diese nicht zum Standard-Ziel gehen).
         too_many_answers: >
-          Diese Frage hat mehr als 4 Antworten, weswegen die Bearbeitung
+          Diese Frage hat mehr als 4 Antworten, weswegen das Erstellen
           von Verzweigung dafür deaktiviert ist.
         warnings: >
           Unveröffentlichte oder gesperrte Quiz-Fragen bzw. Quiz-Erläuterungen
@@ -1694,7 +1694,7 @@ de:
     question_for_tags: >
       Zu den gewählten Begriffen wurde eine Frage gefunden.
     no_question_for_tags: >
-      Zu den gewählten Begriffen wurde eine Frage gefunden.
+      Zu den gewählten Begriffen wurde keine Frage gefunden.
     quiz_shortened: >
       Der Test wird dementsprechend verkürzt.
     number_of_questions: 'Anzahl der Fragen: %{count}'
@@ -1729,7 +1729,7 @@ de:
       Du bekommst deswegen nur Medien und Informationen angezeigt,
       die auf der Ebene des Moduls angesiedelt sind.
     no_subscription_html: >
-      Du hast keine zu diesem Modul gehörige Veranstaltung %{profile}.
+      Du hast keine zu diesem Modul gehörige Veranstaltung %{subscribed}.
     subscribed: 'abonniert'
   test:
     info: >
@@ -2091,7 +2091,7 @@ de:
     create_section: 'Abschnitt anlegen'
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
-    create_lecture: 'Create Lecture'
+    create_lecture: 'Veranstaltung anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2103,7 +2103,7 @@ de:
     add_board: 'Forum anlegen'
     all_courses: 'alle Module'
     edited_courses: 'von mir editierte Module'
-    clean_courses_form: 'Module leeren'
+    clean_courses_form: 'alle Module entfernen'
     publish: 'Veröffentlichen'
     take_quiz: 'Quiz spielen'
     import: 'Übernehmen'
