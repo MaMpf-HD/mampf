@@ -20,7 +20,7 @@
              title="<%= t('navbar.profile') %>">
           </a>
         </li>
-        <% if current_user.admin || current_user.editor? %>
+        <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
                class="fas fa-tools fa-lg text-light nav-link"
