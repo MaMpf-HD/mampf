@@ -42,7 +42,7 @@
         <% end %>
       </div>
     </div>
-    <% cache [medium, from == 'tag'] do %>
+    <% cache [medium, from == 'tag', ref_link] do %>
       <% unless from == 'tag' %>
       <% if medium.screenshot.present? %>
         <%= image_tag(medium.screenshot_url,

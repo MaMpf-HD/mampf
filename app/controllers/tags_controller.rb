@@ -33,6 +33,7 @@ class TagsController < ApplicationController
                              description: @tag.notions.pluck(:title) +
                                             @tag.aliases.pluck(:title))
                       .where.not(pdf_destination: [nil, ''])
+    pp @references
     render layout: 'application_no_sidebar'
   end
 
