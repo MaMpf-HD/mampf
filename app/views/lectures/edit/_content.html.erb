@@ -45,9 +45,9 @@
     <div id="new-lesson-area"
          class="bg-green-lighten-4 p-2 mb-3 rounded">
     </div>
-    <% if lecture.chapters.present? %>
+    <% if lecture.chapters.any? %>
       <div class="card-columns">
-        <% lecture.chapters.includes([:sections, :lecture]).each do |c| %>
+        <% lecture.chapters.each do |c| %>
           <% cache [c, inspection] do %>
             <%= render partial: 'lectures/edit/chapter',
                        locals: { chapter: c,

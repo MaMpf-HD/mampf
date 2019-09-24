@@ -42,7 +42,7 @@
                  aria-controls="<%= s%>-media" aria-selected="true"
                  data-sort="<%= media_types[s].first %>">
                 <%= media_names[s] %>
-                (<%= media.where(sort: media_types[s]).count %>)
+                (<%= media.select { |m| m.sort.in?(media_types[s]) }.size %>)
               </a>
            </li>
           <% end %>
@@ -56,10 +56,11 @@
                  role="tabpanel"
                  aria-labelledby="<%= s %>-tab">
               <ul>
-                <% media.includes(:tags).where(sort: media_types[s])
-                                        .order(created_at: :desc)
-                                        .first(50)
-                                        .each do |m| %>
+                <% media.select { |m| m.sort.in?(media_types[s]) }
+                        .sort_by(&:created_at)
+                        .reverse
+                        .first(50)
+                        .each do |m| %>
                   <li>
                     <%= link_to m.local_info_for_admins,
                                 inspect_or_edit_medium_path(m, inspection),
@@ -67,26 +68,26 @@
                                 class: textcolor(m),
                                 data: { type: m.teachable.class.to_s,
                                         id: m.teachable.id,
-                                        tags: m.tags.map(&:id) } %>
+                                        tags: m.tags.pluck(:id) } %>
                   </li>
                 <% end %>
               </ul>
-              <% if media.includes(:tags).where(sort: media_types[s])
-                         .count > 50 %>
+              <% if media.select { |m| m.sort.in?(media_types[s]) }
+                         .size > 50 %>
                 <%= t('admin.medium.use_search_html',
                       media_search: link_to(t('admin.main.media_search'),
                                             media_catalog_path)) %>
               <% end %>
               <% course_material = Medium.where(teachable: lecture.course,
-                                                sort: media_types[s]) %>
-              <% if course_material.present? %>
-                <% if course_material.count == 1 %>
+                                                sort: media_types[s]).load %>
+              <% if course_material %>
+                <% if course_material.size == 1 %>
                   <%= t('admin.medium.course_medium_html',
                         course: link_to(lecture.course.title,
                                         edit_or_inspect_course_path(lecture.course))) %>
                 <% else %>
                   <%= t('admin.medium.course_media_html',
-                        count: course_material.count,
+                        count: course_material.size,
                         course: link_to(lecture.course.title,
                                         edit_or_inspect_course_path(lecture.course))) %>
                 <% end %>

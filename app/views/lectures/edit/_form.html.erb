@@ -11,7 +11,7 @@
       </div>
       <div id="lecture-media-card" class="col-12 col-xxxl-3 mb-1">
         <%= render partial: 'lectures/edit/media',
-                   locals: { media: lecture.media_with_inheritance,
+                   locals: { media: @media,
                              inspection: inspection,
                              lecture: lecture } %>
       </div>

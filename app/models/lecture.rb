@@ -134,25 +134,25 @@ class Lecture < ApplicationRecord
   # associated to the lecture
   def tags
     Rails.cache.fetch("#{cache_key_with_version}/tags") do
-      chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
+      chapters.includes(sections: [tags: [:notions]]).map(&:sections).flatten.collect(&:tags)
               .flatten.uniq
     end
   end
 
   # course tags are all tags that are lecture tags as well as tags that are
   # associated to the lecture's course
-  def course_tags
-    tags & course.tags
+  def course_tags(lecture_tags: tags)
+    lecture_tags & course.tags
   end
 
   # extra tags are tags that are lecture tags but not course tags
-  def extra_tags
-    tags - course.tags
+  def extra_tags(lecture_tags: tags)
+    lecture_tags - course.tags
   end
 
   # deferred tags are tags that are course tags but not lecture tags
-  def deferred_tags
-    course.tags - tags
+  def deferred_tags(lecture_tags: tags)
+    course.tags.includes(:notions) - lecture_tags
   end
 
   # lecture items are all items associated to sections within chapters
@@ -185,6 +185,11 @@ class Lecture < ApplicationRecord
   def media_with_inheritance_uncached
     Medium.proper.where(teachable: self)
       .or(Medium.proper.where(teachable: self.lessons))
+  end
+
+  def media_with_inheritance_uncached_eagerload_stuff
+    Medium.includes(:tags, teachable: [lecture: [:lessons]]).proper.where(teachable: self)
+      .or(Medium.includes(:tags, teachable: [lecture: [:lessons]]).proper.where(teachable: self.lessons))
   end
 
 

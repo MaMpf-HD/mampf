@@ -65,6 +65,8 @@
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <%= render partial: 'media/related_media',
                locals: { media: @section.visible_media_for_user(current_user),
-                         from: 'section' } %>
+                         from: 'section',
+                         questions: false,
+                         references: nil } %>
   </div>
 </div>

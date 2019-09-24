@@ -149,8 +149,8 @@ class Lesson < ApplicationRecord
 
   # the number of a lesson is calculated by its date relative to the other
   # lessons
-  def number
-    lecture.lessons.order(:date, :id).pluck(:id).index(id) + 1
+  def number(all_lessons: lecture.lessons)
+    all_lessons.order(:date, :id).pluck(:id).index(id) + 1
   end
 
   def date_localized

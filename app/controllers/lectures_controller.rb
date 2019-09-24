@@ -7,7 +7,23 @@ class LecturesController < ApplicationController
   layout 'administration'
 
   def edit
-    @announcements = @lecture.announcements.order(:created_at).reverse
+    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                :announcements,
+                                course: [:editors],
+                                media: [:teachable, :tags],
+                                lessons: [media: [:tags]],
+                                chapters: [:lecture,
+                                           sections: [lessons: [:tags],
+                                                      chapter: [:lecture],
+                                                      tags: [:notions, :lessons]]])
+                      .find_by_id(params[:id])
+    @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
+    lecture_tags = @lecture.tags
+    @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
+    @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
+    @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
+    @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
+    @terms = Term.select_terms
   end
 
   def inspect
@@ -130,7 +146,7 @@ class LecturesController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
-    return if @lecture.present?
+    return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 

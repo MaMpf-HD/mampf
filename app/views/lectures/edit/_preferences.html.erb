@@ -31,7 +31,7 @@
                           t('basics.term') %>
               <%= helpdesk(t('admin.lecture.info.term'), false) %>
               <%= f.select :term_id,
-                           options_for_select(Term.select_terms,
+                           options_for_select(@terms,
                                               lecture.term.id),
                            {},
                            { class: 'form-control',

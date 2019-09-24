@@ -711,10 +711,11 @@ class Medium < ApplicationRecord
   def local_info_uncached
     return description if description.present?
     return I18n.t('admin.medium.local_info.no_title') unless undescribable?
-    if sort == 'Kaviar'
-      return I18n.t('admin.medium.local_info.to_session',
-                    number: teachable.lesson&.number,
-                    date: teachable.lesson&.date_localized)
+    if sort == 'Kaviar' &&  teachable_type == 'Lesson'
+        return I18n.t('admin.medium.local_info.to_session',
+                      number: teachable.number,
+                      date: teachable.date_localized)
+
     elsif sort == 'Script'
       return I18n.t('categories.script.singular')
     end

@@ -201,7 +201,7 @@ class Section < ApplicationRecord
   end
 
   def absolute_position
-    chapter.higher_items.includes(:sections).map(&:sections).flatten.count +
+    chapter.higher_items.includes(:sections).map(&:sections).flatten.size +
       position
   end
 

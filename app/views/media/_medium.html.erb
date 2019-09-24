@@ -100,7 +100,7 @@
           <% end %>
           <% if medium.manuscript.present? %>
             <div class="mr-2">
-              <a href="<%= display_medium_path(medium) %>"
+              <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"
                  class="no-deco"
                  target="_blank">
                 <i class="material-icons text-secondary"

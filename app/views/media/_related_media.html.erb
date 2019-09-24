@@ -9,16 +9,29 @@
   </div>
   <div class="card-body <%= from == 'tag' && questions ? 'card-medium' : 'card-large' %>">
     <div class="row">
+      <% if references.any? %>
+        <% references.each do |r| %>
+          <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
+            <%= render partial: 'media/medium',
+                       locals: { medium: r.medium,
+                                 tags: false,
+                                 from: 'tag',
+                                 ref_link: r.manuscript_link } %>
+          </div>
+        <% end %>
+      <% end %>
       <% if media.present? %>
         <% media.each do |m| %>
           <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
             <%= render partial: 'media/medium',
                        locals: { medium: m,
                                  tags: false,
-                                 from: 'tag' } %>
+                                 from: 'tag',
+                                 ref_link: nil } %>
           </div>
         <% end %>
-      <% else %>
+      <% end %>
+      <% if references.empty? && media.empty? %>
         <%= t('no_related_media') %>
       <% end %>
     </div>
