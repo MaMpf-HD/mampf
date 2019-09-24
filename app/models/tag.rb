@@ -97,8 +97,8 @@ class Tag < ApplicationRecord
   end
 
   def local_title_uncached
-    notions.find { |n| n.locale == I18n.locale }&.title ||
-      notions.find { |n| n.locale == I18n.default_locale }&.title ||
+    notions.find { |n| n.locale == I18n.locale.to_s }&.title ||
+      notions.find { |n| n.locale == I18n.default_locale.to_s }&.title ||
       notions.first&.title
   end
 

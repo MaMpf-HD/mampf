@@ -23,7 +23,8 @@
     <% end %>
     <div class="col-12 mt-2">
       <%= render partial: 'lectures/show/tag',
-                 collection: section.ordered_tags %>
+                 collection: section.ordered_tags,
+                 cached: true %>
     </div>
   </div>
 </li>
