@@ -1,4 +1,4 @@
-%% LaTeX package mampf - version 1.2 (2019/02/19)
+%% LaTeX package mampf - version 1.3 (2019/09/23)
 %% Source file for mampf.sty
 %%
 %% -------------------------------------------------------------------------------------------
@@ -12,9 +12,9 @@
 %%   https://www.latex-project.org/lppl.txt
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{mampf}[2019/02/19 mampf Package]
+\ProvidesPackage{mampf}[2019/09/23 mampf Package]
 \RequirePackage{marginnote,qrcode}
-\RequirePackage[bookmarks]{hyperref}
+\RequirePackage{hyperref}
 
 \newcount\compileoptions
 \compileoptions 1\relax
@@ -53,14 +53,14 @@
   \def\@checktype{#1}%
   \@language 1\relax%
   \ifnum\languageoptions=\@language%
-    \@for\@check:={Kapitel,Abschnitt,Unterabschnitt,Definition,Theorem,Satz,Proposition,Lemma,Hilfssatz,Korollar,Folgerung,Bemerkung,Anmerkung,Beispiel,Algorithmus,Markierung,Abbildung}\do{%
+    \@for\@check:={Abbildung,Abschnitt,Algorithmus,Anmerkung,Aufgabe,Beispiel,Bemerkung,Definition,Folgerung,Gleichung,Hilfssatz,Kapitel,Korollar,Lemma,Markierung,Proposition,Satz,Theorem,Unterabschnitt}\do{%
       \ifx\@checktype\@check{%
         \global\mampftypeundefinedfalse%
       }\fi}%
   \fi%
   \@language 2\relax%
   \ifnum\languageoptions=\@language%
-    \@for\@check:={chapter,section,subsection,definition,theorem,proposition,lemma,corollary,remark,annotation,example,algorithm,label,figure}\do{%
+    \@for\@check:={algorithm,annotation,chapter,corollary,definition,equation,example,exercise,figure,label,lemma,proposition,remark,section,subsection,theorem}\do{%
       \ifx\@checktype\@check{%
 	\global\mampftypeundefinedfalse%
       }\fi}%
@@ -93,15 +93,19 @@
 \newcommand{\crtrefnumber}[1]{\@@crtextr@ct@ref{reference}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Command defined:	\mampflabel[<description>]{<label>}{<type>}
+%Commands defined:	\mampflabel[<description>]{<label>}{<type>}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\@ifundefined{c@chapter}{%
+  \newcounter{chapter}\setcounter{chapter}{0}
+}{}
 
 \reversemarginpar
 \DeclareRobustCommand\mampflabel{\@ifnextchar[{\@@mampflabel}{\@mampflabel}}%
-  \def\@@praemampflabel[#1]#2#3{\ifnum\compileoptions>0%
-    \checkmampftype{#3}\hypertarget{#2}{}\label{#2}\pdfbookmark{MaMpf-Label|\pdfstringdefPreHook{#2}|\pdfstringdefPreHook{#3}|\crtrefnumber{#2}|\pdfstringdefPreHook{#1}|\thechapter|\thesection|\thesubsection|\getpagerefnumber{#2}}{MaMpf-Label{#2}}%
-  \else%
+  \def\@@praemampflabel[#1]#2#3{\ifnum\compileoptions=0%
     \label{#2}%
+  \else%  
+    \checkmampftype{#3}\hypertarget{#2}{}\label{#2}\pdfbookmark{MaMpf-Label|\pdfstringdefPreHook{#2}|\pdfstringdefPreHook{#3}|\crtrefnumber{#2}|\pdfstringdefPreHook{#1}|\thechapter|\thesection|\thesubsection|\getpagerefnumber{#2}}{MaMpf-Label{#2}}%
   \fi\ifnum\compileoptions=2%
     \marginnote{\begin{minipage}{\marginparwidth}{\footnotesize #3 \crtrefnumber{#2}: #1 (Seite \getpagerefnumber{#2})}\end{minipage}}%
   \fi}
@@ -110,10 +114,10 @@
   \else%
     \@@praemampflabel[#1]{#2}{#3}%
   \fi}
-  \def\@praemampflabel#1#2{\ifnum\compileoptions>0%
-    \hypertarget{#1}{}\label{#1}\pdfbookmark{MaMpf-Label|\pdfstringdefPreHook{#1}|\pdfstringdefPreHook{#2}|\crtrefnumber{#1}||\thechapter|\thesection|\thesubsection|\getpagerefnumber{#1}}{MaMpf-Label{#1}}%
-  \else%
+  \def\@praemampflabel#1#2{\ifnum\compileoptions=0%
     \label{#1}%
+  \else%  
+    \hypertarget{#1}{}\label{#1}\pdfbookmark{MaMpf-Label|\pdfstringdefPreHook{#1}|\pdfstringdefPreHook{#2}|\crtrefnumber{#1}||\thechapter|\thesection|\thesubsection|\getpagerefnumber{#1}}{MaMpf-Label{#1}}%
   \fi\ifnum\compileoptions=2%
     \marginnote{\begin{minipage}{\marginparwidth}{\footnotesize #2 \crtrefnumber{#1} (Seite \getpagerefnumber{#1})}\end{minipage}}%
   \fi}
@@ -130,7 +134,7 @@
   
 \newcount\@linknumber
 \@linknumber 0\relax
-\def\mampflinkprotokoll#1#2{\pdfbookmark{MaMpf-Link|#1}{MaMpf-Link{#2}}}
+\def\mampflinkprotokoll#1#2{\pdfbookmark{MaMpf-Link|#1}{MaMpf-Link{#2}}\!\!}
 \DeclareRobustCommand\mampfvideo{\@ifnextchar[{\@@mampfvideo}{\@mampfvideo}}%
   \def\@@mampfvideo[#1]#2{\global\advance\@linknumber 1\relax%
   \ifnum\compileoptions>0%

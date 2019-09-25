@@ -850,6 +850,33 @@ class Medium < ApplicationRecord
     result.map { |k, v| [v, k] }
   end
 
+  def extracted_linked_media
+    video_links = Medium.where(id: referenced_items.where(sort: 'self')
+                                                   .where.not(medium: nil)
+                                                   .pluck(:medium_id))
+    return video_links unless manuscript.present?
+    if manuscript.class.to_s == 'PdfUploader::UploadedFile'
+      manuscript_media_ids = manuscript.metadata['linked_media']
+    elsif manuscript.class.to_s == 'Hash' && manuscript.keys == [:original,
+                                                                 :screenshot]
+      manuscript_media_ids = manuscript[:original].metadata['linked_media']
+    else
+      manuscript_media_ids = []
+    end
+    manuscript_links = Medium.where(id: manuscript_media_ids)
+    video_links.or(manuscript_links)
+  end
+
+  def linked_media_new
+    Medium.where(id: linked_media_ids_cached)
+  end
+
+  def linked_media_ids_cached
+    Rails.cache.fetch("#{cache_key_with_version}/linked_media_ids_cached") do
+      (linked_media.pluck(:id) + extracted_linked_media.pluck(:id)).uniq
+    end
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require
