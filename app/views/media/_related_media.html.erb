@@ -31,7 +31,7 @@
           </div>
         <% end %>
       <% end %>
-      <% if references.empty? && media.empty? %>
+      <% if !references.present? && !media.present? %>
         <%= t('no_related_media') %>
       <% end %>
     </div>
