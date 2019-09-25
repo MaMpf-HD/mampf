@@ -3,13 +3,13 @@
     <h5>
       <%= t('basics.related_media') %>
       <span class="badge badge-secondary">
-        <%= media.count %>
+        <%= media.size + references.size %>
       </span>
     </h5>
   </div>
   <div class="card-body <%= from == 'tag' && questions ? 'card-medium' : 'card-large' %>">
     <div class="row">
-      <% if references.present? %>
+      <% if references.any? %>
         <% references.each do |r| %>
           <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
             <%= render partial: 'media/medium',
@@ -20,7 +20,7 @@
           </div>
         <% end %>
       <% end %>
-      <% if media.present? %>
+      <% if media.any? %>
         <% media.each do |m| %>
           <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
             <%= render partial: 'media/medium',
@@ -31,7 +31,7 @@
           </div>
         <% end %>
       <% end %>
-      <% if !references.present? && !media.present? %>
+      <% if references.empty? && media.empty? %>
         <%= t('no_related_media') %>
       <% end %>
     </div>
