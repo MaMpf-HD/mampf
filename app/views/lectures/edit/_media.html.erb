@@ -80,7 +80,7 @@
               <% end %>
               <% course_material = Medium.where(teachable: lecture.course,
                                                 sort: media_types[s]).load %>
-              <% if course_material %>
+              <% if course_material.any? %>
                 <% if course_material.size == 1 %>
                   <%= t('admin.medium.course_medium_html',
                         course: link_to(lecture.course.title,
