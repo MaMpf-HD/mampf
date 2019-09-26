@@ -27,7 +27,23 @@ class LecturesController < ApplicationController
   end
 
   def inspect
-    @announcements = @lecture.announcements.order(:created_at).reverse
+    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                :announcements,
+                                course: [:editors],
+                                media: [:teachable, :tags],
+                                lessons: [media: [:tags]],
+                                chapters: [:lecture,
+                                           sections: [lessons: [:tags],
+                                                      chapter: [:lecture],
+                                                      tags: [:notions, :lessons]]])
+                      .find_by_id(params[:id])
+    @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
+    lecture_tags = @lecture.tags
+    @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
+    @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
+    @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
+    @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
+    @terms = Term.select_terms
   end
 
   def update
