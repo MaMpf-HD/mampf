@@ -1633,7 +1633,7 @@ en:
       Therefore, only those media and information will be displayed
       that are located at course level.
     no_subscription_html: >
-      You are not %{profile} to any of this course's event series.
+      You are not %{subscribed} to any of this course's event series.
     subscribed: 'subscribed'
   test:
     info: >
