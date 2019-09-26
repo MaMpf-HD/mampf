@@ -1,49 +1,16 @@
 # LecturesController
 class LecturesController < ApplicationController
   before_action :set_lecture, except: [:new, :create]
+  before_action :eager_load_stuff, only: [:edit, :inspect]
   authorize_resource
   before_action :check_for_consent
   before_action :set_view_locale, only: [:edit, :show, :inspect]
   layout 'administration'
 
   def edit
-    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                :announcements,
-                                course: [:editors],
-                                media: [:teachable, :tags],
-                                lessons: [media: [:tags]],
-                                chapters: [:lecture,
-                                           sections: [lessons: [:tags],
-                                                      chapter: [:lecture],
-                                                      tags: [:notions, :lessons]]])
-                      .find_by_id(params[:id])
-    @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
-    lecture_tags = @lecture.tags
-    @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
-    @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
-    @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
-    @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
-    @terms = Term.select_terms
   end
 
   def inspect
-    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                :announcements,
-                                course: [:editors],
-                                media: [:teachable, :tags],
-                                lessons: [media: [:tags]],
-                                chapters: [:lecture,
-                                           sections: [lessons: [:tags],
-                                                      chapter: [:lecture],
-                                                      tags: [:notions, :lessons]]])
-                      .find_by_id(params[:id])
-    @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
-    lecture_tags = @lecture.tags
-    @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
-    @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
-    @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
-    @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
-    @terms = Term.select_terms
   end
 
   def update
@@ -228,5 +195,25 @@ class LecturesController < ApplicationController
   # set language to default language
   def set_language
     @lecture.update(locale: I18n.default_locale.to_s)
+  end
+
+  def eager_load_stuff
+    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                :announcements,
+                                course: [:editors],
+                                media: [:teachable, :tags],
+                                lessons: [media: [:tags]],
+                                chapters: [:lecture,
+                                           sections: [lessons: [:tags],
+                                                      chapter: [:lecture],
+                                                      tags: [:notions, :lessons]]])
+                      .find_by_id(params[:id])
+    @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
+    lecture_tags = @lecture.tags
+    @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
+    @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
+    @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
+    @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
+    @terms = Term.select_terms
   end
 end
