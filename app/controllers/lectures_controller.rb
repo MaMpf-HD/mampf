@@ -125,6 +125,22 @@ class LecturesController < ApplicationController
     render layout: 'application'
   end
 
+  def import_media
+    media = Medium.where(id: params[:media_ids])
+    new_media = media - @lecture.imported_media
+    new_media.each { |m| Import.create(teachable: @lecture, medium: m) }
+    @lecture.reload
+    @lecture.touch
+  end
+
+  def remove_imported_medium
+    @medium = Medium.find_by_id(params[:medium])
+    import = Import.find_by(teachable: @lecture, medium: @medium)
+    import.destroy if import
+    @lecture.reload
+    @lecture.touch
+  end
+
   private
 
   def set_lecture
@@ -199,7 +215,7 @@ class LecturesController < ApplicationController
 
   def eager_load_stuff
     @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                :announcements,
+                                :announcements, :imported_media,
                                 course: [:editors],
                                 media: [:teachable, :tags],
                                 lessons: [media: [:tags]],

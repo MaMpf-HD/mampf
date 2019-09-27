@@ -21,6 +21,10 @@ class Lecture < ApplicationRecord
   # being a teachable (course/lecture/lesson), a lecture has associated media
   has_many :media, as: :teachable
 
+  # in a lecture, you can import other media
+  has_many :imports, as: :teachable
+  has_many :imported_media, through: :imports, source: :medium
+
   # a lecture has many users who have subscribed it in their profile
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :lecture_user_joins
@@ -219,35 +223,43 @@ class Lecture < ApplicationRecord
   # These methods make use of caching.
 
   def kaviar?(user)
-    project?('kaviar', user)
+    project?('kaviar', user) ||
+      imported_media.exists?(sort:'Kaviar', released: ['all', 'users'])
   end
 
   def sesam?(user)
-    project?('sesam', user)
+    project?('sesam', user) ||
+      imported_media.exists?(sort:'Sesam', released: ['all', 'users'])
   end
 
   def keks?(user)
-    project?('keks', user)
+    project?('keks', user)  ||
+      imported_media.exists?(sort:'Quiz', released: ['all', 'users'])
   end
 
   def erdbeere?(user)
-    project?('erdbeere', user)
+    project?('erdbeere', user) ||
+      imported_media.exists?(sort:'Erdbeere', released: ['all', 'users'])
   end
 
   def kiwi?(user)
-    project?('kiwi', user)
+    project?('kiwi', user) ||
+      imported_media.exists?(sort:'Kiwi', released: ['all', 'users'])
   end
 
   def nuesse?(user)
-    project?('nuesse', user)
+    project?('nuesse', user) ||
+      imported_media.exists?(sort:'Nuesse', released: ['all', 'users'])
   end
 
   def script?(user)
-    project?('script', user)
+    project?('script', user) ||
+      imported_media.exists?(sort:'Script', released: ['all', 'users'])
   end
 
   def reste?(user)
-    project?('reste', user)
+    project?('reste', user) ||
+      imported_media.exists?(sort:'Reste', released: ['all', 'users'])
   end
 
 

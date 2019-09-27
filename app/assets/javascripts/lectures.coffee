@@ -145,6 +145,66 @@ $(document).on 'turbolinks:load', ->
       $('#create-new-medium').prop('href', new_path)
     return
 
+  $(document).on 'mouseenter', '[id^="result-import-"]', ->
+    $('#importPreviewHeader').show()
+    $(this).addClass('bg-orange-lighten-4')
+    $.ajax Routes.fill_medium_preview_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: $(this).data('id')
+        type: $(this).data('type')
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'mouseleave', '[id^="result-import-"]', ->
+    $(this).removeClass('bg-orange-lighten-4')
+    return
+
+  $(document).on 'click', '[id^="result-import-"]', ->
+    $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
+    $.ajax Routes.render_import_media_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: $(this).data('id')
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#cancel-import-media', ->
+    $('#mediumPreview').empty()
+    $('[id^="result-import-"]').removeClass('bg-green-lighten-4')
+    importTab = document.getElementById('importMedia')
+    importTab.dataset.selected = '[]'
+    $.ajax Routes.cancel_import_media_path(),
+      type: 'GET'
+      dataType: 'script'
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#submit-import-media', ->
+    importTab = document.getElementById('importMedia')
+    lectureId = importTab.dataset.lecture
+    selected = JSON.parse(importTab.dataset.selected)
+    $.ajax Routes.lecture_import_media_path(lectureId),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        media_ids: selected
+      }
+      error: (jqXHR, textStatus, errorThrown) ->
+        console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#import-media-button', ->
+    $(this).hide()
+    $('#importedMediaArea').show()
+    return
 
   # on small mobile display, use shortened tag badges and
   # shortened course titles
@@ -226,4 +286,10 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:before-cache', ->
   $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
   $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
+  $(document).off 'mouseenter', '[id^="result-import-"]'
+  $(document).off 'mouseleave', '[id^="result-import-"]'
+  $(document).off 'click', '[id^="result-import-"]'
+  $(document).off 'click', '#cancel-import-media'
+  $(document).off 'click', '#submit-import-media'
+  $(document).off 'click', '#import-media-button'
   return

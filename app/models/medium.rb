@@ -39,6 +39,13 @@ class Medium < ApplicationRecord
   has_many :referrals, dependent: :destroy
   has_many :referenced_items, through: :referrals, source: :item
 
+
+  has_many :imports
+  has_many :importing_lectures, through: :imports,
+           source: :teachable, source_type: 'Lecture'
+  has_many :importing_courses, through: :imports,
+           source: :teachable, source_type: 'Course'
+
   serialize :quiz_graph, QuizGraph
 
   serialize :solution, Solution
@@ -168,6 +175,11 @@ class Medium < ApplicationRecord
     Medium.sort_localized.slice('Question', 'Remark').map { |k, v| [v, k] }
   end
 
+  def self.select_importables
+    Medium.sort_localized.except('RandomQuiz', 'Question', 'Remark',
+                                 'Manuscript').map { |k, v| [v, k] }
+  end
+
   def self.select_question
     Medium.sort_localized.slice('Question').map { |k, v| [v, k] }
   end
@@ -189,6 +201,7 @@ class Medium < ApplicationRecord
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return Medium.none unless course.lectures.include?(lecture)
     # append results at course level to lecture/lesson level results
+    sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize
     lecture.lecture_lesson_results(filtered) +
       filtered.where(teachable: course)
   end

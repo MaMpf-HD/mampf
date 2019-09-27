@@ -272,6 +272,8 @@ en:
         In this case, there are the following access rights for media:
       media_unpublished: >
         all related media shall remain unpublished.
+      import_media: 'Import Media'
+      no_imported_media: 'There are no imported media.'
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -437,6 +439,7 @@ en:
         There are no course editors.
       no_lecture_editors: >
         There are no additional event series editors.
+      imported_media: 'Imported Media'
       organizational_visible: 'General information visible'
       uses_muesli: 'Event series uses MÜSLI'
       first_chapter: 'Number of the first chapter (talk)'
@@ -1515,6 +1518,7 @@ en:
     different_language: 'This medium is in %{language}.'
     unpublished: 'This medium is unpublished.'
     locked: 'This medium is locked.'
+    imported: 'This medium has been imported.'
   video:
     video: 'Video'
     no_video: 'There is no video present.'
@@ -1953,6 +1957,7 @@ en:
     solution: 'Solution'
     parametrized: 'parametrized'
     synonyms: 'Synonyms'
+    status: 'Status'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -1997,6 +2002,7 @@ en:
     publish: 'Publish'
     take_quiz: 'Take Quiz'
     import: 'Import'
+    import_media: 'Import'
     okay: 'Okay'
     remove: 'Remove'
     export: 'Export'
@@ -2031,6 +2037,7 @@ en:
     show: 'Show'
     hide: 'Hide'
     interpret: 'Interpret'
+    import_media: 'Import Media'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

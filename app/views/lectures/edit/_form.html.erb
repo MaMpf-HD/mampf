@@ -21,6 +21,9 @@
         <%= render partial: 'lectures/edit/tags',
                    locals: { lecture: lecture,
                              inspection: inspection } %>
+        <%= render partial: 'lectures/edit/imported_media',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
         <%= render partial: 'lectures/edit/people',
                    locals: { lecture: lecture,
                              inspection: inspection,

@@ -271,6 +271,8 @@ de:
       media_unpublished: >
         unveröffentlichte verknüpfte Medien weiterhin unveröffentlicht
         bleiben.
+      import_media: 'Medien importieren'
+      no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -453,6 +455,7 @@ de:
       no_lecture_editors: >
         Es sind keine zusätzlichen VeranstaltungseditorInnen
         eingetragen.
+      imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
       first_chapter: 'Nummer des ersten Kapitels/Vortrags'
@@ -1610,6 +1613,7 @@ de:
     different_language: 'Das Medium ist auf %{language}.'
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
     locked: 'Dieses Medium ist gesperrt.'
+    imported: 'Dieses Medium wurde importiert.'
   video:
     video: 'Video'
     play: 'THymE-Player'
@@ -2067,6 +2071,7 @@ de:
     solution: 'Lösung'
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
+    status: 'Status'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2107,6 +2112,7 @@ de:
     publish: 'Veröffentlichen'
     take_quiz: 'Quiz spielen'
     import: 'Übernehmen'
+    import_media: 'Importieren'
     okay: 'Okay'
     remove: 'Entfernen'
     export: 'Exportieren'
@@ -2141,6 +2147,7 @@ de:
     show: 'Anzeigen'
     hide: 'Verbergen'
     interpret: 'Interpretieren'
+    import_media: 'Medien importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

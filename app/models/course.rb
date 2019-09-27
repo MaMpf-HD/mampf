@@ -10,6 +10,10 @@ class Course < ApplicationRecord
 
   has_many :media, as: :teachable
 
+  # in a course, you can import other media
+  has_many :imports, as: :teachable
+  has_many :imported_media, through: :imports, source: :medium
+
   # users in this context are users who have subscribed to this course
   has_many :course_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :course_user_joins
