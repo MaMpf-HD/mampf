@@ -27,7 +27,7 @@
             <%= medium.locale_with_inheritance.to_s %>
           </small>
         <% end %>
-        <% if medium.in?(lecture&.imported_media) %>
+        <% if lecture&.imported_media&.include?(medium) %>
           <i class="fas fa-file-import ml-2"
              tabindex="-1"
              data-toggle="tooltip"
