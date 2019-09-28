@@ -159,6 +159,9 @@ class MediaController < ApplicationController
     if search_params[:purpose] == 'quiz'
       render template: "quizzes/new_vertex/preview"
       return
+    elsif search_params[:purpose] == 'import'
+      render template: "lectures/import/preview"
+      return
     elsif search_params[:purpose] == 'clicker'
       render template: "clickers/edit/search"
       return
@@ -381,6 +384,14 @@ class MediaController < ApplicationController
     search_arel = Medium.where(id: search_results.pluck(:id))
     visible_search_results = current_user.filter_visible_media(search_arel)
     search_results &= visible_search_results
+    # add imported media in case of a lecture
+    if params[:lecture_id].present?
+      @lecture = Lecture.find_by_id(params[:lecture_id])
+      sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize
+      search_results +=  @lecture.imported_media
+                                 .where(sort: sort)
+                                 .locally_visible
+    end
     return search_results unless params[:reverse]
     search_results.reverse
   end
@@ -410,6 +421,7 @@ class MediaController < ApplicationController
   def search_params
     types = params[:search][:types]
     params[:search][:types] = [types] if types && !types.kind_of?(Array)
+    params[:search][:types] -= [''] if types
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
                                    :all_editors, :tag_operator, :quiz, :access,
                                    :teachable_inheritance, :fulltext, :per,

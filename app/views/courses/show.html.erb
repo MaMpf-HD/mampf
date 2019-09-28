@@ -1,7 +1,7 @@
 <div class="alert alert-primary">
   <% if @course.lectures.any? %>
     <%= t('course.no_subscription_html',
-          profile: link_to(t('course.subscribed'), edit_profile_path)) %>
+          subscribed: link_to(t('course.subscribed'), edit_profile_path)) %>
   <% else %>
     <%= t('course.no_lectures') %>
   <% end %>

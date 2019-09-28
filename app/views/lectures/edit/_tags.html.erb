@@ -5,7 +5,7 @@
         <div class="col-6">
           <h5 class="text-dark">
             <%= t('admin.lecture.related_tags') %>
-            <%= ' (' + lecture.tags.count.to_s + ') '%>
+            <%= ' (' + lecture.tags.size.to_s + ') '%>
           </h5>
         </div>
         <div class="col-6 text-right">
@@ -30,13 +30,12 @@
               <%= t('admin.lecture.course_tags_html',
                     course: link_to(lecture.course.title,
                                     edit_or_inspect_course_path(lecture.course)),
-                    count: lecture.course_tags.count) %>
+                    count: @course_tags.size) %>
               <%= helpdesk(t('admin.lecture.info.course_tags'), false) %>
             </h6>
-            <% if lecture.course_tags.present? %>
+            <% if @course_tags %>
               <%= render partial: "tags/tag",
-                         collection: lecture.course_tags
-                                            .natural_sort_by(&:title),
+                         collection: @course_tags.natural_sort_by(&:title),
                          cached: true %>
             <% else %>
               <%= t('admin.lecture.no_course_tags') %>
@@ -45,23 +44,21 @@
           <li class="mb-2">
             <h6>
               <%= t('admin.lecture.additional_tags',
-                    count: lecture.extra_tags.count) %>
+                    count: @extra_tags.size) %>
               <%= helpdesk(t('admin.lecture.info.additional_tags'), false) %>
             </h6>
             <%= render partial: "tags/tag",
-                       collection: lecture.extra_tags
-                                          .natural_sort_by(&:title),
+                       collection: @extra_tags.natural_sort_by(&:title),
                        cached: true %>
           </li>
           <li>
             <h6>
               <%= t('admin.lecture.untreated_tags',
-                    count: lecture.deferred_tags.count) %>
+                    count: @deferred_tags.size) %>
               <%= helpdesk(t('admin.lecture.info.untreated_tags'), false) %>
             </h6>
             <%= render partial: "tags/tag",
-                       collection: lecture.deferred_tags
-                                          .natural_sort_by(&:title),
+                       collection: @deferred_tags.natural_sort_by(&:title),
                        cached: true %>
           </li>
         </ul>

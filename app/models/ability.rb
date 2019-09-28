@@ -16,7 +16,7 @@ class Ability
       cannot [:show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
-    elsif user.editor?
+    elsif user.editor? || user.teacher?
       # :read is a cancancan alias for index and show actions
       can [:read, :inspect], :all
       cannot :index, Announcement
@@ -49,7 +49,8 @@ class Ability
       end
 
       can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
-           :publish, :lock_forum, :unlock_forum, :destroy_forum],
+           :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
+           :remove_imported_medium],
           Lecture do |lecture|
         lecture.edited_by?(user)
       end

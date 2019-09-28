@@ -84,7 +84,7 @@
           </div>
         </div>
         <% end %>
-        <% if @medium.linked_media.present? %>
+        <% if @medium.linked_media_new.present? %>
         <div class="row mb-2">
           <div class="col-4">
             <%= t('basics.related_media') %>
@@ -92,7 +92,7 @@
           </div>
           <div class="col-8">
             <ul>
-              <% @medium.linked_media.each do |m| %>
+              <% @medium.linked_media_new.each do |m| %>
                 <li>
                   <%= link_to m.title, inspect_medium_path(m) %>
                 </li>

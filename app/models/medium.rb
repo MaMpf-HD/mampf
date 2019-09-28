@@ -39,6 +39,13 @@ class Medium < ApplicationRecord
   has_many :referrals, dependent: :destroy
   has_many :referenced_items, through: :referrals, source: :item
 
+
+  has_many :imports
+  has_many :importing_lectures, through: :imports,
+           source: :teachable, source_type: 'Lecture'
+  has_many :importing_courses, through: :imports,
+           source: :teachable, source_type: 'Course'
+
   serialize :quiz_graph, QuizGraph
 
   serialize :solution, Solution
@@ -168,6 +175,11 @@ class Medium < ApplicationRecord
     Medium.sort_localized.slice('Question', 'Remark').map { |k, v| [v, k] }
   end
 
+  def self.select_importables
+    Medium.sort_localized.except('RandomQuiz', 'Question', 'Remark',
+                                 'Manuscript').map { |k, v| [v, k] }
+  end
+
   def self.select_question
     Medium.sort_localized.slice('Question').map { |k, v| [v, k] }
   end
@@ -189,6 +201,7 @@ class Medium < ApplicationRecord
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return Medium.none unless course.lectures.include?(lecture)
     # append results at course level to lecture/lesson level results
+    sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize
     lecture.lecture_lesson_results(filtered) +
       filtered.where(teachable: course)
   end
@@ -711,10 +724,11 @@ class Medium < ApplicationRecord
   def local_info_uncached
     return description if description.present?
     return I18n.t('admin.medium.local_info.no_title') unless undescribable?
-    if sort == 'Kaviar'
-      return I18n.t('admin.medium.local_info.to_session',
-                    number: teachable.lesson&.number,
-                    date: teachable.lesson&.date_localized)
+    if sort == 'Kaviar' &&  teachable_type == 'Lesson'
+        return I18n.t('admin.medium.local_info.to_session',
+                      number: teachable.number,
+                      date: teachable.date_localized)
+
     elsif sort == 'Script'
       return I18n.t('categories.script.singular')
     end
@@ -847,6 +861,33 @@ class Medium < ApplicationRecord
                Medium.sort_localized.slice(sort)
              end
     result.map { |k, v| [v, k] }
+  end
+
+  def extracted_linked_media
+    video_links = Medium.where(id: referenced_items.where(sort: 'self')
+                                                   .where.not(medium: nil)
+                                                   .pluck(:medium_id))
+    return video_links unless manuscript.present?
+    if manuscript.class.to_s == 'PdfUploader::UploadedFile'
+      manuscript_media_ids = manuscript.metadata['linked_media']
+    elsif manuscript.class.to_s == 'Hash' && manuscript.keys == [:original,
+                                                                 :screenshot]
+      manuscript_media_ids = manuscript[:original].metadata['linked_media']
+    else
+      manuscript_media_ids = []
+    end
+    manuscript_links = Medium.where(id: manuscript_media_ids)
+    video_links.or(manuscript_links)
+  end
+
+  def linked_media_new
+    Medium.where(id: linked_media_ids_cached)
+  end
+
+  def linked_media_ids_cached
+    Rails.cache.fetch("#{cache_key_with_version}/linked_media_ids_cached") do
+      (linked_media.pluck(:id) + extracted_linked_media.pluck(:id)).uniq
+    end
   end
 
   private

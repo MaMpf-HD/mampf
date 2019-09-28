@@ -271,6 +271,8 @@ de:
       media_unpublished: >
         unveröffentlichte verknüpfte Medien weiterhin unveröffentlicht
         bleiben.
+      import_media: 'Medien importieren'
+      no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -453,6 +455,7 @@ de:
       no_lecture_editors: >
         Es sind keine zusätzlichen VeranstaltungseditorInnen
         eingetragen.
+      imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
       first_chapter: 'Nummer des ersten Kapitels/Vortrags'
@@ -852,7 +855,7 @@ de:
           nur AbonnentInnen: Registrierte MaMpf-NutzerInnen, die das
           assoziierte Modul/die assoziierte Veranstaltung/die zur assoziierten
           Sitzung gehörige Veranstaltung abonniert haben,
-          können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
+          können das Medium sehen. Sonstige MaMpf-NutzerInnen können
           das Medium nicht sehen.
           </li>
           <li>
@@ -1229,8 +1232,7 @@ de:
           ist. Falls hier eine Veranstaltung ausgewählt ist, führt Dich
           ein entsprechendes Icon in der Navigationsleiste direkt zu ihr.
         homepage: >
-          Hier kannst Du die Adresse einer Homepage eingeben. Das
-          macht z.B. bei DozentInnen Sinn.
+          Hier kannst Du die Adresse einer Homepage eingeben.
         profile_image: >
           Hier wirst Du demnächst die Möglichkeit haben, ein
           Profilbild hochzuladen.
@@ -1470,7 +1472,7 @@ de:
           Hier kannst Du festlegen, wohin falsche Antworten führen sollen
           (falls diese nicht zum Standard-Ziel gehen).
         too_many_answers: >
-          Diese Frage hat mehr als 4 Antworten, weswegen die Bearbeitung
+          Diese Frage hat mehr als 4 Antworten, weswegen das Erstellen
           von Verzweigung dafür deaktiviert ist.
         warnings: >
           Unveröffentlichte oder gesperrte Quiz-Fragen bzw. Quiz-Erläuterungen
@@ -1610,6 +1612,7 @@ de:
     different_language: 'Das Medium ist auf %{language}.'
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
     locked: 'Dieses Medium ist gesperrt.'
+    imported: 'Dieses Medium wurde importiert.'
   video:
     video: 'Video'
     play: 'THymE-Player'
@@ -1729,7 +1732,7 @@ de:
       Du bekommst deswegen nur Medien und Informationen angezeigt,
       die auf der Ebene des Moduls angesiedelt sind.
     no_subscription_html: >
-      Du hast keine zu diesem Modul gehörige Veranstaltung %{profile}.
+      Du hast keine zu diesem Modul gehörige Veranstaltung %{subscribed}.
     subscribed: 'abonniert'
   test:
     info: >
@@ -2067,6 +2070,7 @@ de:
     solution: 'Lösung'
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
+    status: 'Status'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2091,7 +2095,7 @@ de:
     create_section: 'Abschnitt anlegen'
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
-    create_lecture: 'Create Lecture'
+    create_lecture: 'Veranstaltung anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2103,10 +2107,11 @@ de:
     add_board: 'Forum anlegen'
     all_courses: 'alle Module'
     edited_courses: 'von mir editierte Module'
-    clean_courses_form: 'Module leeren'
+    clean_courses_form: 'alle Module entfernen'
     publish: 'Veröffentlichen'
     take_quiz: 'Quiz spielen'
     import: 'Übernehmen'
+    import_media: 'Importieren'
     okay: 'Okay'
     remove: 'Entfernen'
     export: 'Exportieren'
@@ -2141,6 +2146,7 @@ de:
     show: 'Anzeigen'
     hide: 'Verbergen'
     interpret: 'Interpretieren'
+    import_media: 'Medien importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

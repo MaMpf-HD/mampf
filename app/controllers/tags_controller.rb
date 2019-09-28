@@ -27,6 +27,13 @@ class TagsController < ApplicationController
     # then, filter these according to their visibility for the user
     @media = current_user.filter_visible_media(media)
     @questions = @tag.visible_questions(current_user)
+    # consider items in manuscripts that are corresponding to tags
+    manuscripts = current_user.filter_media(Medium.where(sort: 'Script'))
+    @references = Item.where(medium: manuscripts,
+                             description: @tag.notions.pluck(:title) +
+                                            @tag.aliases.pluck(:title))
+                      .where.not(pdf_destination: [nil, ''])
+    pp @references
     render layout: 'application_no_sidebar'
   end
 

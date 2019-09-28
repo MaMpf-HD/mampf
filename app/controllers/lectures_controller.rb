@@ -1,17 +1,16 @@
 # LecturesController
 class LecturesController < ApplicationController
   before_action :set_lecture, except: [:new, :create]
+  before_action :eager_load_stuff, only: [:edit, :inspect]
   authorize_resource
   before_action :check_for_consent
   before_action :set_view_locale, only: [:edit, :show, :inspect]
   layout 'administration'
 
   def edit
-    @announcements = @lecture.announcements.order(:created_at).reverse
   end
 
   def inspect
-    @announcements = @lecture.announcements.order(:created_at).reverse
   end
 
   def update
@@ -126,11 +125,27 @@ class LecturesController < ApplicationController
     render layout: 'application'
   end
 
+  def import_media
+    media = Medium.where(id: params[:media_ids])
+    new_media = media - @lecture.imported_media
+    new_media.each { |m| Import.create(teachable: @lecture, medium: m) }
+    @lecture.reload
+    @lecture.touch
+  end
+
+  def remove_imported_medium
+    @medium = Medium.find_by_id(params[:medium])
+    import = Import.find_by(teachable: @lecture, medium: @medium)
+    import.destroy if import
+    @lecture.reload
+    @lecture.touch
+  end
+
   private
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
-    return if @lecture.present?
+    return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 
@@ -196,5 +211,25 @@ class LecturesController < ApplicationController
   # set language to default language
   def set_language
     @lecture.update(locale: I18n.default_locale.to_s)
+  end
+
+  def eager_load_stuff
+    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                :announcements, :imported_media,
+                                course: [:editors],
+                                media: [:teachable, :tags],
+                                lessons: [media: [:tags]],
+                                chapters: [:lecture,
+                                           sections: [lessons: [:tags],
+                                                      chapter: [:lecture],
+                                                      tags: [:notions, :lessons]]])
+                      .find_by_id(params[:id])
+    @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
+    lecture_tags = @lecture.tags
+    @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
+    @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
+    @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
+    @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
+    @terms = Term.select_terms
   end
 end
