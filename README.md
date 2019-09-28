@@ -108,4 +108,4 @@ Give admin rights to this user:
 ```
 User.first.update(admin: true)
 ```
-That's it. Alle the rest can be done entirely via the GUI. In a production environment you might want to regularely delete upload caches `/usr/src/app/public/uploads/cache/*` and expired quizzes (`bundle exec rake cleanup:destroy_random_quizzes`).
+That's it. Everything else can be done entirely via the GUI. In a production environment you might want to delete upload caches `/usr/src/app/public/uploads/cache/*` and expired quizzes (`bundle exec rake cleanup:destroy_random_quizzes`) regularly.

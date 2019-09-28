@@ -86,7 +86,7 @@ en:
   unauthorized:
     default: >
       You are not authorized to access this page.
-      Possibly you can get access by modifying your account settings.
+      You may get access by modifying your account settings.
   footer:
     text_html: >
       &copy; MaMpf Team 2018. MaMpf is on %{github}.
@@ -130,28 +130,28 @@ en:
     main:
       my_lectures: 'My event series'
       type: 'type'
-      create_lecture: 'Create event series'
-      as_teacher: 'As teacher'
-      as_editor: 'As additional editor'
-      as_course_editor: 'As course editor'
+      create_lecture: 'Create an event series'
+      as_teacher: 'As a teacher'
+      as_editor: 'As an additional editor'
+      as_course_editor: 'As a course editor'
       no_lectures_taught: >
-        There is no event series for which you are listed as teacher or editor.
+        You are not listed as a teacher or an editor for any event series.
       my_courses: 'My Courses'
       create_course: 'Create Course'
       my_clickers: 'My Clickers'
       create_clicker: 'Create Clicker'
       no_edited_clickers: 'You have not created any clickers yet.'
       no_edited_courses: >
-        There are no courses for which you are editor.
+        You are not listed as a course editor for any courses.
       my_media: 'My Media'
       media_restriction_html: >
         Only the last 25 recently updated media are shown.
-        You can find more media via the %{media_search} oder in your
+        You can find more by doing a %{media_search} or in your
         %{profile}.
       media_search: 'media search'
       user_profile: 'user profile'
       no_media: >
-        There are no media for which you are registered as editor.
+        You are not listed as an editor for any media.
       other_lectures: 'Other event series'
       no_other_lectures: 'There are no other event series.'
       other_courses: 'Other courses'
@@ -160,47 +160,45 @@ en:
         lecture_definition:
           This is the list of all
           <i>event series</i>
-          for which you have editing access.
+          that you can edit.
           <br>
           <br>
-          An
+          On MaMpf, an
           <i>Event series</i>
-          in the sense of MaMpf is a lecture course/seminar/proseminar/research
-          seminar with the topic of the parent
+          is a lecture course/seminar/proseminar/research
+          seminar on the topic of the parent
           <i>Course</i>,
           given by a specific teacher in specific term.
           <br>
-          Event series in red have not yet been published.
+          Event series in red have not been published yet.
         given_lectures: >
-          This is the list of all event series that you have given as a teacher.
-          For these you have editing access, of course.
+          This is the list of all event series that you teach/have taught.
+          You can edit them.
         edited_lectures: >
-          This is the list of all event series for which you are liste as
-          additional editor. By that, you have editing access to those.
+          This is the list of all event series you can edit as an additional editor.
         lectures_as_course_editor: >
-          This is the list of all event series that belong to courses for which you
-          are course editor, minus those event series which you have given yourself.
+          This is the list of all event series belonging to courses you can edit as
+          course editor. Your own event series are not shown here.
           By inheritance, you have editing access to these event series.
         course_definition: >
           This is the list of all
           <i>Courses</i>,
-          for which you are editor, hence have editing access to.
+          for which you are an editor, hence have editing access to.
           <br>
           </br>
-          A <i>Course</i> in the sense of MaMpf is a thematically
-          defined module whose content is described in the
+          On MaMpf, a <i>Course</i> corresponds to a module as defined in the
           module handbook.
         medium_definition: >
           This is the list of all
           <i>Media</i>,
-          for which you are editor. Media for which you inherit editing access
+          you can edit. Media for which you inherit editing access
           (e.g. as course editor) are not listed here. Unpublished media and
           locked media are shown in red.
           <br>
           <br>
-          A
+          On MaMpf, a
           <i>Medium</i>
-          in the sense of MaMpf is a bundle consisting of
+          is a bundle consisting of
           <ul>
           <li>
           at most one video
@@ -215,11 +213,10 @@ en:
           at most one quiz, question or quiz remark
           </li>
           </ul>
-          to the same content. Example for media are
+          dealing with the same subject matter. Example of media are
           <ul>
           <li>
-          a medium consisting of a lesson video recording together with
-          lesson notes.
+          a medium consisting of a lesson video recording and lesson notes.
           </li>
           <li>
           a medium consisting only of lesson notes.
@@ -237,10 +234,10 @@ en:
           </br>
           A <i>Clicker</i> in the sense of MaMpf is ...
         other_lectures: >
-          This is the list of event series for which you do not have editing access.
+          This is the list of event series you cannot edit.
           (Except if you are an admin :-P )
         other_courses: >
-          This is the list of courses for which you do not have editing access.
+          This is the list of courses you cannot edit.
           (Except if you are an admin :-P )
       term: 'Term'
       term/type: 'Term/Type'
@@ -260,18 +257,18 @@ en:
       oberseminar: 'Research Seminar'
       oberseminar_short: 'RS'
       oberseminar_content: 'Research Seminar Contents'
-      new_lecture: 'Create new event series'
-      no_courses_yet: 'Before you can do that, you have to create a course.'
-      no_terms_yet: 'Before_you can do that, you have to create a term.'
-      no_content_yet: 'There is not any information about the contents.'
+      new_lecture: 'Create a new event series'
+      no_courses_yet: 'You have to create a course first.'
+      no_terms_yet: 'You have to create a term first.'
+      no_content_yet: 'There is no content information.'
       publish: 'Publish event series'
       publish_request: 'When this event series is published,'
       publish_all_media: >
-        all related media shall be published as well.
+        publish all related media.
       media_access: >
         In this case, there are the following access rights for media:
       media_unpublished: >
-        all related media shall remain unpublished.
+        leave all related media unpublished.
       import_media: 'Import Media'
       no_imported_media: 'There are no imported media.'
       info:
@@ -279,14 +276,14 @@ en:
           Here you can select the course to which this event series belongs.
         term: >
           Here you can select the term in which this event series takes place or
-          took place.
+          has taken place.
         teacher: >
           Here you can select the teacher of this event series.
           Normally this should be the person that actually gives the event series.
           If this person does not want to upload materials himself or
-          herself, this can be realized by additional event series editors.
+          herself, additional event series editors can do this instead.
         workflow: >
-          In the following we describe one possible workflow.
+          This is a possible workflow.
           The workflow depends on whether the event series is
           <i>video based</i> oder <i>script based</i>.
           <ul>
@@ -294,10 +291,10 @@ en:
           <i>
           media based (default):
           </i>
-          Create chapters and sections and tag these. Afterwards,
+          Create chapters and sections and tag them. Afterwards,
           create sessions and related media - they will inherit the tags.
-          Of course it is possible the other way around as well,
-          but then you will not have the benefits of inheritance of tags.
+          You can also start with creating sessions and related media if you like.
+          In this case, you will not benefit from inheritance of tags.
           </li>
           <li>
           <i>
@@ -307,81 +304,78 @@ en:
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
           into the manuscript's .tex-file and to provide anything
           that is labelled with \mampflabels.
-          When the resulting script is uploaded to MaMpf, it is possible to
-          import the structure of the manuscript to MaMpf as well, so that
-          chapters and sections are automatically created in MaMpf.
+          When you upload the resulting script to MaMpf, you can import the
+          structure of the manuscript to MaMpf as well. MaMpf will then automatically
+          create chapters and sections.
           Additionally, MaMpf can automatically create corresponding tags.
           After the script has been uploaded and its structure imported to
           MaMpf, you can create sessions. For these you can select
           the content from the script's structure.
           </li>
           </ul>
-          You can try to combine both variants. If you have a video based
-          event series, you can of upload a manuscript as well and import its
-          structure, if the manuscript uses MaMpf's LaTeX package.
+          You can try to combine both variants. Video based event series can
+          have scripts too. You may upload a manuscript and import its structure,
+          if the manuscript uses MaMpf's LaTeX package.
         variants: >
-          Here you can set how MaMpf gets the detailed contents of sections
+          Here you can set how MaMpf extracts content information for sections
           and sessions. This is irrelevant if you do not want to supply
-          MaMpf with detailed content.
+          MaMpf with detailed content information.
           <ul>
           <li>
           <i>
           media based (default):
           </i>
-          MaMpf uses all items that have been created in the THymE video editor
-          for the corresponding sections and for videos that are associated to
-          the corresponding sessions. They are sorted by the time they appear
-          in the video.
+          MaMpf uses all items created in the THymE video editor for the
+          corresponding sections and for videos associated with the corresponding
+          sessions. They are sorted by the time they appear in the video.
           </li>
           <li>
           <i>
           using a manuscript generated by the MaMpf LaTeX package:
           </i>
-          MaMpf uses all items in that section that have been provided with a
-          MaMpf label in the LaTeX file of the manuscript
-          and those that have been chosen during the editing of the session.
-          In order for that to work, MaMpf labels have to created in the
-          script's LaTeX file using the
+          MaMpf uses all items in this section with a MaMpf label in the LaTeX
+          file of the manuscript and all items selected in the editing process
+          of the session. For this to work, you need to create MaMpf labels in
+          the script's LaTeX file using the
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
-          and have to be imported to MaMpf after the uploading of the script.
+          and import them to MaMpf after uploading the script.
           </li>
           </ul>
         orphaned_lessons: >
-          Orphans session are sessions that do not belong to any section.
-          They can emerge if you deleted a section that had sessions in it.
+          Orphaned sessions are sessions that do not belong to any section.
+          They can emerge if you delete a section that had sessions in it.
         media: >
-          This is the list of all media that are associated to this event series
-          or sessions of this event series. Media in red are not yet published or
-          locked. Additionaly, a note will be shown in case there exist media
-          on the level of the course that this event series belongs to.
+          This is the list of all media associated with this event series
+          or its sessions. Media in red are not yet published or locked.
+          If there are media on course level of the same course as this event
+          series, you are informed about them.
         course_tags: >
-          These are the tags associated to the parent course that appear in at least
-          one section of this event series.
+          These are the tags associated with the parent course that appear in at
+          least one section of this event series.
         additional_tags: >
           These are the tags that appear in at least one section of this
-          event series, but are not associated to the parent course.
+          event series, but are not associated with the parent course.
         untreated_tags: >
-          These are the tags associated to the parent course that do
+          These are the tags associated with the parent course that do
           not appear in any section of this event series.
         course_editors: >
           Course editors have editing access to the parent course. They inherit
           editing access to any event series that belongs to this course.
         lecture_editors: >
-          Additional event series editors are people who have editing access to
-          this event series, but are different from the teacher and the course
-          editor. E.g., this can be teaching assistants who upload material for
-          this event series.
+          Additional event series editors can edit event series, but are
+          neither teacher nor course editor, e.g. teaching assistants uploading
+          materials for an event series.
         subscribers_count: >
-          This is the number of all users who have subscribed this event series in
+          This is the number of all users subscribed to this event series in
           their profile settings.
         organizational: >
           If you check this box, the general information will be visible for
-          all subscribers of your event series in (it can be accessed via
+          all subscribers of your event series (it can be accessed via
           the sidebar).
           The text they see will be the text below. As a suggestion, we have
           a default text that you may edit as you wish.
         muesli: >
-          If you check this box, the link to MÜSLI will be activated in the
+          If you check this box, the link to MUESLI will be activated in the
           sidebar for this event series.
           their profile settings.
         first_chapter: >
@@ -423,7 +417,7 @@ en:
       content_mode: 'Content determination'
       video_based: 'media based'
       script_based: 'using a manuscript generated by the MaMpf LaTeX package'
-      no_chapters: 'There no chapters yet.'
+      no_chapters: 'There are no chapters yet.'
       orphaned_lessons: 'Orphaned Sessions'
       related_tags: 'Related tags'
       course_tags_html: >
@@ -441,7 +435,7 @@ en:
         There are no additional event series editors.
       imported_media: 'Imported Media'
       organizational_visible: 'General information visible'
-      uses_muesli: 'Event series uses MÜSLI'
+      uses_muesli: 'Event series uses MUESLI'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'
       absolute_numbering: 'absolute numbering'
@@ -665,7 +659,7 @@ en:
           at most one quiz, question or quiz remark
           </li>
           </ul>
-          to the same content. Example for media are
+          to the same content. Example of media are
           <ul>
           <li>
           a medium consisting of a lesson video recording together with
@@ -1650,7 +1644,7 @@ en:
     future: >
       In the future you will be able to specify the content and the number
       of questions.
-    notation_header: 'Typical examples for differences'
+    notation_header: 'Typical examples of differences'
     notation_examples_html: >
       <ul>
       <li>Natural numbers may begin with 0 or 1, depending on the teacher.
