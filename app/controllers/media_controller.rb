@@ -374,8 +374,7 @@ class MediaController < ApplicationController
 
   # search is done in search class method for Medium
   def search_results
-    search_results = Medium.search_all(@course.primary_lecture(current_user),
-                                       params)
+    search_results = Medium.search_all(params)
     # search_results are ordered in a certain way
     # the next lines ensure that filtering for visible media does not
     # mess up the ordering

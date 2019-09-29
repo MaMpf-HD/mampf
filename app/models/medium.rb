@@ -186,84 +186,26 @@ class Medium < ApplicationRecord
 
   # returns the array of all media subject to the conditions
   # provided by the params hash (keys: :course_id, :lecture_id, :project)
-  # and the user's primary lecture for the given course (this is relevant for
-  # the ordering of the results as results for the primary lecture are placed
-  # before hits for other lectures)
-  def self.search_all(primary_lecture, params)
+  def self.search_all(params)
     course = Course.find_by_id(params[:course_id])
     return Medium.none if course.nil?
-    filtered = Medium.filter_media(course, params[:project])
+    media_in_project = Medium.media_in_project(params[:project])
     # first case: media sitting at course level (no lecture_id given)
+    course_media_in_project = media_in_project.where(teachable: course).natural_sort_by(&:caption)
     unless params[:lecture_id].present?
-      return search_results(filtered, course, primary_lecture)
+      return course_media_in_project
     end
     # second case: media sitting at lecture level
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return Medium.none unless course.lectures.include?(lecture)
     # append results at course level to lecture/lesson level results
-    sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize
-    lecture.lecture_lesson_results(filtered) +
-      filtered.where(teachable: course)
+    lecture.lecture_lesson_results(media_in_project) + course_media_in_project
   end
 
-  # returns the ARel of all media for the given project, if the
-  # given course has media for this project
-  def self.filter_media(course, project)
-    return Medium.order(:id) unless project.present?
+  # returns the ARel of all media for the given project
+  def self.media_in_project(project)
     sort = project == 'keks' ? 'Quiz' : project.capitalize
     Medium.where(sort: sort).order(:id)
-  end
-
-  # returns the array of all media out of the given media that are associated
-  # to a given course (with inheritance), with ordering
-  # (depending on the given primary lecture) as described a few lines below
-  def self.search_results(filtered_media, course, primary_lecture)
-    course_results = filtered_media.where(teachable: course)
-    return course_results.natural_sort_by(&:caption) unless primary_lecture
-    # media associated to primary lecture and its lessons
-    primary_results = Medium.filter_primary(filtered_media, primary_lecture)
-    # media associated to the course, all of its lectures and their lessons
-    secondary_results = Medium.filter_secondary(filtered_media, course)
-    # throw out media that have appeared as one of the above two types
-    secondary_results = Medium.where(id: secondary_results.pluck(:id) -
-                                         course_results.pluck(:id) -
-                                         primary_results.pluck(:id))
-    # differentiate primary results whether they are associated to the lecture
-    # or a lesson of it
-    primary_lecture_results = Medium.filter_by_lecture(primary_results)
-    primary_lessons_results = Medium.where(id: primary_results.pluck(:id) -
-                                               primary_lecture_results.pluck(:id))
-    # sort them in the following way
-    # - course results, by caption
-    # - primary lecture results, by caption
-    # - primary lesson results, by date
-    # - secondary results
-    course_results.natural_sort_by(&:caption) +
-      primary_lecture_results.natural_sort_by(&:caption) +
-      primary_lessons_results.sort_by { |m| m.teachable.date } +
-      secondary_results
-  end
-
-  # returns the array of all media out of th egiven media who are associated
-  # to a lecture
-  def self.filter_by_lecture(media)
-    media.where(teachable_type: 'Lecture')
-  end
-
-  # returns the array of all media out of the given media that are associated
-  # to a given lecture and its lessons
-  def self.filter_primary(filtered_media, primary_lecture)
-    return Medium.none unless primary_lecture
-    filtered_media.where(teachable: primary_lecture)
-      .or(filtered_media.where(teachable: primary_lecture&.lessons))
-  end
-
-  # returns the array of all media out of the given media that are associated
-  # to a given course, its lectures or their lessons
-  def self.filter_secondary(filtered_media, course)
-    filtered_media.where(teachable: course)
-      .or(filtered_media.where(teachable: course.lectures))
-      .or(filtered_media.where(teachable: Lesson.where(lecture: course.lectures)))
   end
 
   # returns the array of all media (by title), together with their ids
@@ -960,18 +902,6 @@ class Medium < ApplicationRecord
 
   def belongs_to_lesson?(lecture)
     teachable_type == 'Lesson' && teachable.lecture == lecture
-  end
-
-  def filter_primary(filtered_media, primary_lecture)
-    filtered_media.select do |m|
-      m.teachable && m.teachable.lecture == primary_lecture
-    end
-  end
-
-  def filter_secondary(filtered_media, course)
-    filtered_media.select do |m|
-      m.teachable && m.teachable.course == course
-    end
   end
 
   def create_self_item
