@@ -431,6 +431,12 @@ de:
           Hier kannst Du auswählen, an welcher Stelle der
           Abschnitt eingefügt werden soll, indem Du den Vorgängerabschnitt
           auswählst.
+        imported_medium_invisible: >
+          Dieses Medium wird als importiertes Medium für die NutzerInnen nicht sichtbar sein,
+          da die Zugriffsrechte weder auf "frei" noch auf "nur regsitrierte MaMpf-NutzerInnen"
+          gestellt sind. Die Zugriffsrechte werden hierbei zur Laufzeit ermittelt, d.h. das Medium wird
+          sichtbar, sobald die Zugriffsrechte auf einen der beiden für importierte Medien zulässigen Werte
+          geändert werden. 
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'

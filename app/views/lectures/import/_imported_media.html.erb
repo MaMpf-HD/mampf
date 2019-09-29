@@ -34,6 +34,13 @@
         <div class="col-1 text-center">
           <%= render partial: 'media/catalog/access_info',
                      locals: { medium: m } %>
+          <% unless m.free? || m.for_users? %>
+            <i class="fas fa-exclamation-circle"
+               style="padding-top: 12px; color: red;"
+               data-toggle="tooltip"
+               title="<%= t('admin.lecture.info.imported_medium_invisible') %>">
+            </i>
+          <% end %>
         </div>
         <% unless inspection %>
           <div class="col-2">

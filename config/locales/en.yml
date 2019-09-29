@@ -412,6 +412,11 @@ en:
         insert_after_section: >
           Here you can select at which position the new section will be placed
           by choosing the previous section.
+        imported_medium_invisible: >
+          This medium will not be visible for users as an imported medium, since its access rights
+          are neither "free" nor "only registered MaMpf users". The access rights are checked at runtime,
+          so the medium will become visible when the access rights are changed to one of the two admissible
+          values for imported media.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
