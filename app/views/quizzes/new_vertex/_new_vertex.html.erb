@@ -20,7 +20,7 @@
         <div class="card-body">
           <ul class="nav nav-pills mb-3" id="new-edge-tab" role="tablist">
             <li class="nav-item">
-              <a class="nav-link active" id="import-vertex-tab"
+              <a class="nav-link active" id="importMedia"
                  data-toggle="pill" href="#import-vertex" role="tab"
                  aria-controls="import-vertex" aria-selected="true">
                 <%= t('admin.quiz.import_content') %>
@@ -43,7 +43,7 @@
           </ul>
           <div class="tab-content" id="new-edge-tabContent">
             <div class="tab-pane fade show active" id="import-vertex"
-                 role="tabpanel" aria-labelledby="import-vertex-tab">
+                 role="tabpanel" aria-labelledby="importMedia">
               <div id="import-vertex">
                 <%= render partial: 'media/catalog/search_form',
                            locals: { purpose: 'quiz' } %>

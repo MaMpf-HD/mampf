@@ -154,20 +154,14 @@ class MediaController < ApplicationController
   # return all media that match the search parameters
   def search
     search = Medium.search_by(search_params, params[:page])
-    pp search_params
     search.execute
     results = search.results
     @total = search.total
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
-    if search_params[:purpose] == 'quiz'
-      render template: "quizzes/new_vertex/preview"
-      return
-    elsif search_params[:purpose] == 'import'
-      render template: "lectures/import/preview"
-      return
-    elsif search_params[:purpose] == 'clicker'
-      render template: "clickers/edit/search"
+    @purpose = search_params[:purpose]
+    if @purpose.in?(['quiz', 'import'])
+      render template: "media/catalog/import_preview"
       return
     end
   end

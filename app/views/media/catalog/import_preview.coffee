@@ -2,7 +2,8 @@
 searchResults = document.getElementById('media-search-results')
 searchResults.innerHTML = '<%= j render partial: "media/catalog/search_results",
                                  locals: { media: @media,
-                                           purpose: "import" } %>'
+                                           total: @total,
+                                           purpose: @purpose } %>'
 
 importTab = document.getElementById('importMedia')
 selected = importTab.dataset.selected
@@ -12,14 +13,15 @@ else
   selected = []
 
 for id in selected
-  $('#result-import-' + id).addClass('bg-green-lighten-4')
+  $('#row-medium-' + id).addClass('bg-green-lighten-4')
 
 if selected.length == 0
   $('#importMediaForm')
-    .append '<%= j render partial: "lectures/import/no_selection" %>'
+    .append '<%= j render partial: "shared/no_selection" %>'
 else
   $('#importMediaForm')
-    .append '<%= j render partial: "lectures/import/form" %>'
+    .append '<%= j render partial: "shared/import_form",
+                          locals: { purpose: @purpose } %>'
 
 $('#selectionCounter').empty().append('(' + selected.length + ')')
 

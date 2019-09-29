@@ -1,3 +1,3 @@
 $('#importMediaForm').empty()
-  .append '<%= j render partial: "lectures/import/no_selection" %>'
+  .append '<%= j render partial: "shared/no_selection" %>'
 $('#selectionCounter').empty().append('(0)')

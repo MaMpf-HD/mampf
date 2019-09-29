@@ -75,13 +75,15 @@ class EventsController < ApplicationController
 
   def render_import_vertex
     @id = params[:id]
-    @type = params[:type]
-    @quiz_id = params[:quiz_id]
-    I18n.locale = Quiz.find_by_id(@quiz_id)&.locale_with_inheritance
+    quiz_id = params[:quiz_id]
+    I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance
+    @purpose = 'quiz'
+    render :render_import_media
   end
 
   def render_import_media
     @id = params[:id]
+    @purpose = 'import'
   end
 
   def render_vertex_quizzable
@@ -98,6 +100,7 @@ class EventsController < ApplicationController
   def cancel_import_vertex
     quiz_id = params[:quiz_id]
     I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance
+    render :cancel_import_media
   end
 
   def fill_reassign_modal

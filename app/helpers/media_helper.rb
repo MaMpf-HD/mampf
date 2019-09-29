@@ -105,49 +105,5 @@ module MediaHelper
   def sort_preselect(purpose)
     return '' unless purpose == 'quiz'
     'Question'
-  end
-
-  def search_results_label(purpose)
-    prefix = if purpose == 'media'
-               'media'
-             elsif purpose == 'quiz'
-               'quizzable'
-             elsif purpose == 'clicker'
-               'clickerizable'
-             else
-               'import'
-             end
-    prefix + 'SearchResults'
-  end
-
-  def search_result_id(purpose, medium)
-    prefix = if purpose == 'media'
-               'row-medium-'
-             elsif purpose == 'quiz'
-               'result-quizzable-'
-             elsif purpose == 'clicker'
-               'result-clickerizable-'
-             else
-               'result-import-'
-             end
-    prefix + medium.id.to_s
-  end    
-
-  def import_form(purpose)
-    return '' unless purpose.in?(['quiz', 'import'])
-    return 'importMediaForm' if purpose == 'import'
-    'importVertexForm'
-  end
-
-  def preview_header(purpose)
-    return '' unless purpose.in?(['quiz', 'import'])
-    return 'importPreviewHeader' if purpose == 'import'
-    'quizzesPreviewHeader'
-  end
-
-  def preview_main(purpose)
-    return '' unless purpose.in?(['quiz', 'import'])
-    return 'mediumPreview' if purpose == 'import'
-    'quizzablePreview'
-  end 
+  end  
 end

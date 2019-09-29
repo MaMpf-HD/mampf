@@ -182,18 +182,43 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'mouseenter', '[id^="row-medium-"]', ->
-    mediumActions = document.getElementById('mediumActions')
-    unless mediumActions.dataset.filled == 'true'
+    if $(this).data('purpose') in ['media', 'clicker']
+      mediumActions = document.getElementById('mediumActions')
+      unless mediumActions.dataset.filled == 'true'
+        $(this).addClass('bg-orange-lighten-4')
+        $.ajax Routes.fill_medium_preview_path(),
+          type: 'GET'
+          dataType: 'script'
+          data: {
+            id: $(this).data('id')
+            type: $(this).data('type')
+          }
+          error: (jqXHR, textStatus, errorThrown) ->
+             console.log("AJAX Error: #{textStatus}")
+    else if $(this).data('purpose') == 'quiz'
+      $('#previewHeader').show()
+      $(this).addClass('bg-orange-lighten-4')
+      $.ajax Routes.fill_quizzable_preview_path(),
+        type: 'GET'
+        dataType: 'script'
+        data: {
+          id: $(this).data('id')
+          type: $(this).data('type')
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")
+    else if $(this).data('purpose') == 'import'
+      $('#previewHeader').show()
       $(this).addClass('bg-orange-lighten-4')
       $.ajax Routes.fill_medium_preview_path(),
-         type: 'GET'
-         dataType: 'script'
-         data: {
-           id: $(this).data('id')
-           type: $(this).data('type')
-         }
-         error: (jqXHR, textStatus, errorThrown) ->
-           console.log("AJAX Error: #{textStatus}")
+        type: 'GET'
+        dataType: 'script'
+        data: {
+          id: $(this).data('id')
+          type: $(this).data('type')
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")      
     return
 
   $(document).on 'mouseleave', '[id^="row-medium-"]', ->
@@ -201,24 +226,113 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '[id^="row-medium-"]', ->
-    mediumActions = document.getElementById('mediumActions')
-    if $(this).hasClass('bg-green-lighten-4')
-      $(this).removeClass('bg-green-lighten-4')
-      $('#mediumPreview').empty()
-      $('#mediumActions').empty()
-      mediumActions.dataset.filled = 'false'
-    else
-      $('[id^="row-medium-"]').removeClass('bg-green-lighten-4')
+    if $(this).data('purpose') in ['media', 'clicker']
+      mediumActions = document.getElementById('mediumActions')
+      if $(this).hasClass('bg-green-lighten-4')
+        $(this).removeClass('bg-green-lighten-4')
+        $('#mediumPreview').empty()
+        $('#mediumActions').empty()
+        $('[id^="row-medium-"]').css('cursor', 'pointer')      
+        mediumActions.dataset.filled = 'false'
+      else
+        $('[id^="row-medium-"]').removeClass('bg-green-lighten-4')
+        $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
+        $('[id^="row-medium-"]').css('cursor','')
+        if $(this).data('purpose') == 'media'
+          $.ajax Routes.render_medium_actions_path(),
+            type: 'GET'
+            dataType: 'script'
+            data: {
+              id: $(this).data('id')
+            }
+            error: (jqXHR, textStatus, errorThrown) ->
+              console.log("AJAX Error: #{textStatus}")
+        else if $(this).data('purpose') == 'clicker'
+          $.ajax Routes.render_clickerizable_actions_path(),
+            type: 'GET'
+            dataType: 'script'
+            data: {
+              id: $(this).data('id')
+              clicker: $('#clickerSearchForm').data('clicker')
+            }
+            error: (jqXHR, textStatus, errorThrown) ->
+              console.log("AJAX Error: #{textStatus}")
+    else if $(this).data('purpose') == 'quiz'
       $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
-      $('[id^="row-medium-"]').css('cursor','')
-      $.ajax Routes.render_medium_actions_path(),
+      $.ajax Routes.render_import_vertex_path(),
+        type: 'GET'
+        dataType: 'script'
+        data: {
+          quiz_id: $('#new_vertex').data('quiz')
+          id: $(this).data('id')
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")
+    else if $(this).data('purpose') == 'import'
+      $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
+      $.ajax Routes.render_import_media_path(),
         type: 'GET'
         dataType: 'script'
         data: {
           id: $(this).data('id')
         }
         error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")        
+    return
+
+  $(document).on 'click', '#cancel-import-media', ->
+    $('#mediumPreview').empty()
+    $('[id^="row-medium-"]').removeClass('bg-green-lighten-4')
+    importTab = document.getElementById('importMedia')
+    importTab.dataset.selected = '[]'
+    if $(this).data('purpose') == 'import'
+      $.ajax Routes.cancel_import_media_path(),
+        type: 'GET'
+        dataType: 'script'
+        error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
+    else if $(this).data('purpose') == 'quiz'    
+      $.ajax Routes.cancel_import_vertex_path(),
+        type: 'GET'
+        dataType: 'script'
+        data: {
+          quiz_id: $('#new_vertex').data('quiz')
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#submit-import-media', ->
+    importTab = document.getElementById('importMedia')
+    selected = JSON.parse(importTab.dataset.selected)
+    if $(this).data('purpose') == 'import'
+      lectureId = importTab.dataset.lecture
+      $.ajax Routes.lecture_import_media_path(lectureId),
+        type: 'POST'
+        dataType: 'script'
+        data: {
+          media_ids: selected
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")
+    else if $(this).data('purpose') == 'quiz'
+      quizId = $('#new_vertex').data('quiz')
+      $.ajax Routes.quiz_vertices_path(quiz_id: quizId),
+        type: 'POST'
+        dataType: 'script'
+        data: {
+          vertex: {
+            sort: 'import'
+            quizzable_ids: selected
+          }
+        }
+        error: (jqXHR, textStatus, errorThrown) ->
+          console.log("AJAX Error: #{textStatus}")
+    return
+
+  $(document).on 'click', '#import-media-button', ->
+    $(this).hide()
+    $('#importedMediaArea').show()
     return
 
   $(document).on 'click', '#editMediumTags', ->
@@ -248,6 +362,9 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'mouseenter', '[id^="row-medium-"]'
   $(document).off 'mouseleave', '[id^="row-medium-"]'
   $(document).off 'click', '[id^="row-medium-"]'
+  $(document).off 'click', '#cancel-import-media'
+  $(document).off 'click', '#submit-import-media'
+  $(document).off 'click', '#import-media-button'  
   $(document).off 'click', '#cancel-medium-actions'
   $(document).off 'click', '#editMediumTags'
   $(document).off 'click', '#cancelMediumTags'
