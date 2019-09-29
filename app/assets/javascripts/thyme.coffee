@@ -344,9 +344,9 @@ setupHypervideo = ->
   initialChapters = true
   initialMetadata = true
   video.addEventListener 'canplay', ->
-    console.log 'chapters.readyState:' + chaptersElement.readyState
-    console.log 'metadata.readyState:' + metadataElement.readyState
-    console.log 'video.readyState:' + video.readyState
+    # console.log 'chapters.readyState:' + chaptersElement.readyState
+    # console.log 'metadata.readyState:' + metadataElement.readyState
+    # console.log 'video.readyState:' + video.readyState
     if initialChapters and chaptersElement.readyState == 2
       displayChapters()
       initialChapters = false
