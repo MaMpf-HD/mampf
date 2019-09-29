@@ -342,7 +342,7 @@ setupHypervideo = ->
   # after video metadata have been loaded, display chapters and metadat in the
   # interactive area
   $(video).on 'loadedmetadata', ->
-    if chaptersElement.readyState == 2
+    if chaptersElement.readyState >= 1
       displayChapters()
       displayMetadata()
     else
