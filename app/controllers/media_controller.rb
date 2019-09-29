@@ -138,6 +138,7 @@ class MediaController < ApplicationController
     @medium.destroy
     # destroy all notifications related to this medium
     destroy_notifications
+    @medium.teachable.touch
     if @medium.teachable_type.in?(['Lecture', 'Lesson'])
       redirect_to edit_lecture_path(@medium.teachable.media_scope)
       return
