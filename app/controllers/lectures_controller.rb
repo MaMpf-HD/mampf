@@ -127,8 +127,9 @@ class LecturesController < ApplicationController
 
   def import_media
     media = Medium.where(id: params[:media_ids])
-    new_media = media - @lecture.imported_media
-    new_media.each { |m| Import.create(teachable: @lecture, medium: m) }
+                  .where.not(id: @lecture.imported_media.pluck(:id))
+                  .where.not(teachable: [@lecture.course, @lecture])
+    media.each { |m| Import.create(teachable: @lecture, medium: m) }
     @lecture.reload
     @lecture.touch
   end
