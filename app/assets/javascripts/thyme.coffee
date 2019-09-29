@@ -147,7 +147,7 @@ setupHypervideo = ->
 
   # set up the chapter elements
   displayChapters = ->
-    if chaptersElement.readyState >= 1 and
+    if chaptersElement.readyState == 2 and
     (chaptersTrack = chaptersElement.track)
       chaptersTrack.mode = 'hidden'
       i = 0
@@ -212,7 +212,7 @@ setupHypervideo = ->
 
   # set up the metadata elements
   displayMetadata = ->
-    if metadataElement.readyState >= 1 and (metaTrack = metadataElement.track)
+    if metadataElement.readyState == 2 and (metaTrack = metadataElement.track)
       metaTrack.mode = 'hidden'
       i = 0
       times = []
@@ -341,15 +341,18 @@ setupHypervideo = ->
 
   # after video metadata have been loaded, display chapters and metadata in the
   # interactive area
-  $(video).on 'loadedmetadata', ->
+  initialChapters = true
+  initialMetadata = true
+  video.addEventListener 'canplay', ->
     console.log 'chapters.readyState:' + chaptersElement.readyState
     console.log 'metadata.readyState:' + metadataElement.readyState
     console.log 'video.readyState:' + video.readyState
-    if video.readyState >= 1
+    if initialChapters and chaptersElement.readyState == 2
       displayChapters()
+      initialChapters = false
+    if initialMetadata and metadataElement.readyState == 2
       displayMetadata()
-    else
-      alert($('body').data('nometadata'))
+      initialMetadata = false
   return
 
 $(document).on 'turbolinks:load', ->
