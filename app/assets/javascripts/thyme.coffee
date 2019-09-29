@@ -347,7 +347,7 @@ setupHypervideo = ->
   # for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp  
   initialChapters = true
   initialMetadata = true
-  video.addEventListener 'loadedmetadata',
+  video.addEventListener 'loadedmetadata', ->
     if initialChapters and chaptersElement.readyState == 2
       displayChapters()
       initialChapters = false
