@@ -31,7 +31,8 @@
              data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
           <%= render partial: 'lectures/import/imported_media',
                      locals: { media: lecture.imported_media,
-                               lecture: lecture } %>
+                               lecture: lecture,
+                               inspection: inspection } %>
         </div>
         <% unless inspection %>
           <div class="row mb-2">

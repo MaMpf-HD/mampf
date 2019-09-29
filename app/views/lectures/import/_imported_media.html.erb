@@ -12,9 +12,11 @@
     <div class="col-1">
       <%= t('basics.status') %>
     </div>
-    <div class="col-2">
-      <%= t('basics.action') %>
-    </div>
+    <% unless inspection %>
+      <div class="col-2">
+        <%= t('basics.action') %>
+      </div>
+    <% end %>
   </div>
   <div style="max-height: 30vh; overflow-y: scroll;" class="mb-3">
     <% media.each do |m| %>
@@ -33,34 +35,36 @@
           <%= render partial: 'media/catalog/access_info',
                      locals: { medium: m } %>
         </div>
-        <div class="col-2">
-          <% if current_user.admin ||
-                  medium.editors_with_inheritance.include?(current_user) %>
+        <% unless inspection %>
+          <div class="col-2">
+            <% if current_user.admin ||
+                    medium.editors_with_inheritance.include?(current_user) %>
+              <%= link_to '',
+                          edit_medium_path(m),
+                          class: 'fas fa-edit text-dark',
+                          style: 'text-decoration: none; padding-top: 12px;',
+                          data: { toggle: "tooltip" },
+                          title: t('buttons.edit') %>
+            <% else %>
+              <%= link_to '',
+                          inspect_medium_path(m),
+                          class: 'fas fa-eye text-dark',
+                          style: 'text-decoration: none; padding-top: 12px;',
+                          data: { toggle: "tooltip" },
+                          title: t('buttons.inspect') %>
+            <% end %>
             <%= link_to '',
-                        edit_medium_path(m),
-                        class: 'fas fa-edit text-dark',
+                        lecture_remove_imported_medium_path(lecture,
+                                                            params:
+                                                              { medium: m.id }),
+                        class: 'fas fa-trash-alt text-dark ml-2',
                         style: 'text-decoration: none; padding-top: 12px;',
                         data: { toggle: "tooltip" },
-                        title: t('buttons.edit') %>
-          <% else %>
-            <%= link_to '',
-                        inspect_medium_path(m),
-                        class: 'fas fa-eye text-dark',
-                        style: 'text-decoration: none; padding-top: 12px;',
-                        data: { toggle: "tooltip" },
-                        title: t('buttons.inspect') %>
-          <% end %>
-          <%= link_to '',
-                      lecture_remove_imported_medium_path(lecture,
-                                                          params:
-                                                            { medium: m.id }),
-                      class: 'fas fa-trash-alt text-dark ml-2',
-                      style: 'text-decoration: none; padding-top: 12px;',
-                      data: { toggle: "tooltip" },
-                      title: t('buttons.delete'),
-                      method: :delete,
-                      remote: true %>
-        </div>
+                        title: t('buttons.delete'),
+                        method: :delete,
+                        remote: true %>
+          </div>
+        <% end %>
       </div>
     <% end %>
   </div>
