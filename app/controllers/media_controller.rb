@@ -57,6 +57,8 @@ class MediaController < ApplicationController
     # (it will not be touched automatically in some cases (e.g. if you only
     # update the associated tags), causing trouble for caching)
     @medium.touch
+    # touch lectures that import this medium
+    @medium.importing_lectures.update_all(updated_at: Time.now)
     @medium.sanitize_type!
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript

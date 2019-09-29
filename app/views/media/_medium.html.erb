@@ -3,6 +3,13 @@
     <div class="card-header bg-mdb-color-lighten-1"
          style="display: flex; justify-content: space-between;">
       <div>
+        <% if lecture&.imported_media&.include?(medium) %>
+          <i class="fas fa-file-import text-light"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="<%= t('medium.imported') %>">
+          </i>
+        <% end %>        
         <% ref = medium.card_header_teachable_path(current_user) %>
         <% if ref.present? %>
           <%= link_to medium.card_header,
@@ -26,13 +33,6 @@
                              locale: current_user.locale) %>">
             <%= medium.locale_with_inheritance.to_s %>
           </small>
-        <% end %>
-        <% if lecture&.imported_media&.include?(medium) %>
-          <i class="fas fa-file-import ml-2"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('medium.imported') %>">
-          </i>
         <% end %>
         <% if !medium.published? %>
           <i class="fas fa-eye-slash redtext ml-2"
