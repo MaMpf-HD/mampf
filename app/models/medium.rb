@@ -40,7 +40,7 @@ class Medium < ApplicationRecord
   has_many :referenced_items, through: :referrals, source: :item
 
 
-  has_many :imports
+  has_many :imports, dependent: :destroy
   has_many :importing_lectures, through: :imports,
            source: :teachable, source_type: 'Lecture'
   has_many :importing_courses, through: :imports,
@@ -830,6 +830,12 @@ class Medium < ApplicationRecord
     Rails.cache.fetch("#{cache_key_with_version}/linked_media_ids_cached") do
       (linked_media.pluck(:id) + extracted_linked_media.pluck(:id)).uniq
     end
+  end
+
+  def toc_items
+    return [] unless sort == 'Script'
+    items.where(sort: ['chapter', 'section'])
+         .natural_sort_by { |x| [x.page, x.ref_number] }
   end
 
   private

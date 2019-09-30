@@ -60,7 +60,8 @@
     <%= render partial: 'items/items',
                locals: { items: @section.visible_items,
                          small: false,
-                         embedded: false } %>
+                         embedded: false,
+                         section_links: false } %>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <%= render partial: 'media/related_media',

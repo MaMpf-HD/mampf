@@ -22,7 +22,7 @@ class Lecture < ApplicationRecord
   has_many :media, as: :teachable
 
   # in a lecture, you can import other media
-  has_many :imports, as: :teachable
+  has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
 
   # a lecture has many users who have subscribed it in their profile

@@ -114,16 +114,16 @@
       <div class="col-12">
         <% if @medium.sort == 'Script' %>
           <%= render partial: 'items/items',
-                     locals: { items: @medium.items
-                                             .where(sort: ['chapter', 'section'])
-                                             .order(:page),
+                     locals: { items: @medium.toc_items,
                                small: true,
-                               embedded: false } %>
+                               embedded: false,
+                               section_links: true } %>
         <% else %>
           <%= render partial: 'items/items',
                      locals: { items: @medium.proper_items_by_time,
                                small: true,
-                               embedded: false } %>
+                               embedded: false,
+                               section_links: false } %>
         <% end %>
       </div>
     </div>
