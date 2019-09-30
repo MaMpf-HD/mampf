@@ -436,7 +436,7 @@ de:
           da die Zugriffsrechte weder auf "frei" noch auf "nur regsitrierte MaMpf-NutzerInnen"
           gestellt sind. Die Zugriffsrechte werden hierbei zur Laufzeit ermittelt, d.h. das Medium wird
           sichtbar, sobald die Zugriffsrechte auf einen der beiden für importierte Medien zulässigen Werte
-          geändert werden. 
+          geändert werden.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -2006,7 +2006,7 @@ de:
     external_link: 'Externer Link'
     editor: 'EditorIn'
     thyme: 'THymE'
-    thyme_editor: 'THymE-EditorIn'
+    thyme_editor: 'Editor'
     screenshot: 'Screenshot'
     file: 'Datei'
     size: 'Größe'
