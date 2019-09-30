@@ -112,10 +112,19 @@
         </div>
       <% end %>
       <div class="col-12">
-        <%= render partial: 'items/items',
-                   locals: { items: @medium.proper_items_by_time,
-                             small: true,
-                             embedded: false } %>
+        <% if @medium.sort == 'Script' %>
+          <%= render partial: 'items/items',
+                     locals: { items: @medium.items
+                                             .where(sort: ['chapter', 'section'])
+                                             .order(:page),
+                               small: true,
+                               embedded: false } %>
+        <% else %>
+          <%= render partial: 'items/items',
+                     locals: { items: @medium.proper_items_by_time,
+                               small: true,
+                               embedded: false } %>
+        <% end %>
       </div>
     </div>
   </div>
