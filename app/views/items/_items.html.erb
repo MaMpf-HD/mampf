@@ -19,7 +19,7 @@
               </div>
               <div class="col-7">
                 <% if i.sort == 'section' && Section.exists?(i.section_id) %>
-                  <%= link_to i.description,
+                  <%= link_to i.short_description,
                               section_path(Section.find_by_id(i.section_id)) %>
                 <% else %>
                   <%= i.short_description %>
