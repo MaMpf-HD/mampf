@@ -43,7 +43,7 @@ class CoursesController < ApplicationController
   def show
     cookies[:current_course] = @course.id
     @lecture = @course.primary_lecture(current_user)
-    if stale?(etag: @lecture || @course,
+    if true || stale?(etag: @lecture || @course,
               last_modified: [current_user.updated_at, @course.updated_at,
                               @lecture&.updated_at || current_user.updated_at].max)
       unless @course.in?(current_user.courses) && @lecture
