@@ -197,7 +197,15 @@ class Course < ApplicationRecord
   def primary_lecture(user)
     user_join = CourseUserJoin.where(course: self, user: user)
     return unless user_join.any?
-    Lecture.includes(:editors, :teacher, :term, course: [:editors])
+    Lecture.includes(:teacher, :term, :editors, :users,
+                     :announcements, :imported_media,
+                     course: [:editors],
+                     media: [:teachable, :tags],
+                     lessons: [media: [:tags]],
+                     chapters: [:lecture,
+                                sections: [lessons: [:tags],
+                                           chapter: [:lecture],
+                                           tags: [:notions, :lessons]]])
            .find_by_id(user_join.first.primary_lecture_id)
   end
 

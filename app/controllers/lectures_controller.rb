@@ -22,6 +22,16 @@ class LecturesController < ApplicationController
   end
 
   def show
+    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                :announcements, :imported_media,
+                                course: [:editors],
+                                media: [:teachable, :tags],
+                                lessons: [media: [:tags]],
+                                chapters: [:lecture,
+                                           sections: [lessons: [:tags],
+                                                      chapter: [:lecture],
+                                                      tags: [:notions, :lessons]]])
+                      .find_by_id(params[:id])
     cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
     render layout: 'application'
