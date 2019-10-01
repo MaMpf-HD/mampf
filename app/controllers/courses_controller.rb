@@ -43,15 +43,19 @@ class CoursesController < ApplicationController
   def show
     cookies[:current_course] = @course.id
     @lecture = @course.primary_lecture(current_user)
-    unless @course.in?(current_user.courses) && @lecture
-      cookies[:current_lecture] = nil
-      I18n.locale = @course.locale || I18n.default_locale
-      render layout: 'application'
-      return
+    if stale?(etag: @lecture,
+              last_modified: [current_user.updated_at, @course.updated_at,
+                              @lecture&.updated_at || current_user.updated_at].max)
+      unless @course.in?(current_user.courses) && @lecture
+        cookies[:current_lecture] = nil
+        I18n.locale = @course.locale || I18n.default_locale
+        render layout: 'application'
+        return
+      end
+      cookies[:current_lecture] = @lecture.id
+      I18n.locale = @lecture.locale_with_inheritance || I18n.default_locale
+      render template: 'lectures/show', layout: 'application'
     end
-    cookies[:current_lecture] = @lecture.id
-    I18n.locale = @lecture.locale_with_inheritance || I18n.default_locale
-    render template: 'lectures/show', layout: 'application'
   end
 
   def inspect
