@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_locale
 
-#  etag { current_user.try :id }
+  etag { current_user.try :id }
 
   def current_user
     @current_user ||= super.tap do |user|

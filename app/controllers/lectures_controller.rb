@@ -22,20 +22,21 @@ class LecturesController < ApplicationController
   end
 
   def show
-    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                :announcements, :imported_media,
-                                course: [:editors],
-                                media: [:teachable, :tags],
-                                lessons: [media: [:tags]],
-                                chapters: [:lecture,
-                                           sections: [lessons: [:tags],
-                                                      chapter: [:lecture],
-                                                      tags: [:notions, :lessons]]])
-                      .find_by_id(params[:id])
     cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
-    render layout: 'application'
-#    fresh_when etag: @lecture
+    if stale?(etag: @lecture, last_modified: current_user.updated_at)
+      @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                  :announcements, :imported_media,
+                                  course: [:editors],
+                                  media: [:teachable, :tags],
+                                  lessons: [media: [:tags]],
+                                  chapters: [:lecture,
+                                             sections: [lessons: [:tags],
+                                                        chapter: [:lecture],
+                                                        tags: [:notions, :lessons]]])
+                        .find_by_id(params[:id])
+      render layout: 'application'
+    end
   end
 
   def new
