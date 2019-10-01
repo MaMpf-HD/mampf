@@ -172,8 +172,7 @@ class User < ApplicationRecord
   # returns the array of those notifications of the user that are announcements
   # in the given lecture
   def active_announcements(lecture)
-    notifications.where(notifiable_type: 'Announcement')
-                 .select { |n| n.notifiable.lecture == lecture }
+    notifications.where(notifiable: lecture.announcements)
   end
 
   # returns the array of those notifications that are related to MaMpf news
@@ -185,8 +184,7 @@ class User < ApplicationRecord
   # returns the unique user notification that corresponds to the given
   # announcement
   def matching_notification(announcement)
-    notifications.where(notifiable_type: 'Announcement',
-                        notifiable_id: announcement.id)&.first
+    notifications.find { |n| n.notifiable == announcement }
   end
 
   # a user is a teacher iff he/she has given any lecture
@@ -194,7 +192,7 @@ class User < ApplicationRecord
     given_lectures.any?
   end
 
-  # a user is an editor iff he/she is a course editro od lecture editor or
+  # a user is an editor iff he/she is a course editor or lecture editor or
   # media editor
   def editor?
     edited_courses.any? || edited_lectures.any? || edited_media.any?

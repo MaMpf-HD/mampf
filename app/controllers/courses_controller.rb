@@ -49,7 +49,6 @@ class CoursesController < ApplicationController
       render layout: 'application'
       return
     end
-    @lecture = @course.primary_lecture(current_user)
     cookies[:current_lecture] = @lecture.id
     I18n.locale = @lecture.locale_with_inheritance || I18n.default_locale
     render template: 'lectures/show', layout: 'application'

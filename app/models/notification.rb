@@ -5,15 +5,16 @@ class Notification < ApplicationRecord
   include Rails.application.routes.url_helpers
 
   belongs_to :recipient, class_name: 'User'
+  belongs_to :notifiable, polymorphic: true, optional: true
 
   paginates_per 12
 
-  # retrieve notifiable defined by notifiable_type and notifiable_id
-  def notifiable
-    return unless notifiable_type.in?(Notification.allowed_notifiable_types) &&
-                  notifiable_id.present?
-    notifiable_type.constantize.find_by_id(notifiable_id)
-  end
+# retrieve notifiable defined by notifiable_type and notifiable_id
+#  def notifiable
+#    return unless notifiable_type.in?(Notification.allowed_notifiable_types) &&
+#                  notifiable_id.present?
+#    notifiable_type.constantize.find_by_id(notifiable_id)
+#  end
 
   # returns the lecture associated to a notification of type announcement,
   # and teachable for a notification of type medium, nil otherwise

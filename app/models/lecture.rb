@@ -223,43 +223,35 @@ class Lecture < ApplicationRecord
   # These methods make use of caching.
 
   def kaviar?(user)
-    project?('kaviar', user) ||
-      imported_media.exists?(sort:'Kaviar', released: ['all', 'users'])
+    project?('kaviar', user) || imported_any?('kaviar')
   end
 
   def sesam?(user)
-    project?('sesam', user) ||
-      imported_media.exists?(sort:'Sesam', released: ['all', 'users'])
+    project?('sesam', user) || imported_any?('sesam')
   end
 
   def keks?(user)
-    project?('keks', user)  ||
-      imported_media.exists?(sort:'Quiz', released: ['all', 'users'])
+    project?('keks', user)  || imported_any?('keks')
   end
 
   def erdbeere?(user)
-    project?('erdbeere', user) ||
-      imported_media.exists?(sort:'Erdbeere', released: ['all', 'users'])
+    project?('erdbeere', user) || imported_any?('erdbeere')
   end
 
   def kiwi?(user)
-    project?('kiwi', user) ||
-      imported_media.exists?(sort:'Kiwi', released: ['all', 'users'])
+    project?('kiwi', user) || imported_any?('kiwi')
   end
 
   def nuesse?(user)
-    project?('nuesse', user) ||
-      imported_media.exists?(sort:'Nuesse', released: ['all', 'users'])
+    project?('nuesse', user) || imported_any?('nuesse')
   end
 
   def script?(user)
-    project?('script', user) ||
-      imported_media.exists?(sort:'Script', released: ['all', 'users'])
+    project?('script', user) || imported_any?('nuesse')
   end
 
   def reste?(user)
-    project?('reste', user) ||
-      imported_media.exists?(sort:'Reste', released: ['all', 'users'])
+    project?('reste', user) || imported_any?('reste')
   end
 
 
@@ -401,9 +393,9 @@ class Lecture < ApplicationRecord
   # is it the user's chosen primary lecture among the course's lectures?
   # returns nil if course is not subscribed
   def primary?(user)
-    course_join = CourseUserJoin.where(user: user, course: lecture.course)
-    return if course_join.empty?
-    course_join.first.primary_lecture_id == id
+    course_join = user.course_user_joins.find { |j| j.course == lecture.course }
+    return if course_join.nil?
+    course_join.primary_lecture_id == id
   end
 
   # is it the user's chosen primary lecture among the course's lectures?
@@ -505,7 +497,9 @@ class Lecture < ApplicationRecord
   end
 
   def active_announcements(user)
-    user.active_announcements(lecture).map(&:notifiable)
+    announcements.includes(:announcer)
+                .where(id: user.notifications.where(notifiable: announcements)
+                .pluck(:notifiable_id))
   end
 
   def self.sorts
@@ -546,6 +540,13 @@ class Lecture < ApplicationRecord
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: course).exists?
+    end
+  end
+
+  def imported_any?(project)
+    Rails.cache.fetch("#{cache_key_with_version}/imported_#{project}") do
+      imported_media.exists?(sort: medium_sort[project],
+                             released: ['all', 'users'])
     end
   end
 

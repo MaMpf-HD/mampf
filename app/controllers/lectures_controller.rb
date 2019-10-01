@@ -25,6 +25,7 @@ class LecturesController < ApplicationController
     cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
     render layout: 'application'
+#    fresh_when etag: @lecture
   end
 
   def new

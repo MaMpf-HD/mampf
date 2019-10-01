@@ -196,8 +196,9 @@ class Course < ApplicationRecord
 
   def primary_lecture(user)
     user_join = CourseUserJoin.where(course: self, user: user)
-    return if user_join.empty?
-    Lecture.find_by_id(user_join.first.primary_lecture_id)
+    return unless user_join.any?
+    Lecture.includes(:editors, :teacher, :term, course: [:editors])
+           .find_by_id(user_join.first.primary_lecture_id)
   end
 
   def subscribed_lectures(user)

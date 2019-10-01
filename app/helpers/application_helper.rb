@@ -19,8 +19,8 @@ module ApplicationHelper
     return 'THymE' if action_name == 'play' && controller_name == 'media'
     return 'Quiz' if action_name == 'take' && controller_name == 'quizzes'
     base_title = 'MaMpf'
-    if user_signed_in? && current_user.notifications.exists?
-      base_title += " (#{current_user.notifications.count})"
+    if user_signed_in? && current_user.notifications
+      base_title += " (#{current_user.notifications.size})"
     end
     base_title
   end

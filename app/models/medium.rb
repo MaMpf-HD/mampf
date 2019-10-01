@@ -734,6 +734,12 @@ class Medium < ApplicationRecord
     end
   end
 
+  def scoped_teachable_title
+    Rails.cache.fetch("#{cache_key_with_version}/scoped_teachable_title") do
+      teachable.media_scope.title_for_viewers
+    end
+  end
+
   # returns info made from sort and description
   def local_title_for_viewers_uncached
     return"#{sort_localized}, #{description}" if description.present?

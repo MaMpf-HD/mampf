@@ -7,6 +7,22 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_locale
 
+#  etag { current_user.try :id }
+
+  def current_user
+    @current_user ||= super.tap do |user|
+      ::ActiveRecord::Associations::Preloader.new
+                                             .preload(user, [:courses,
+                                                             :lectures,
+                                                             :edited_media,
+                                                             :edited_lectures,
+                                                             :edited_courses,
+                                                             :given_lectures,
+                                                             course_user_joins: [:course],
+                                                             notifications: [:notifiable]])
+    end
+  end
+
   # show error message if authorization with cancancan fails
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to main_app.root_url, alert: exception.message

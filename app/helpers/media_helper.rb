@@ -28,7 +28,7 @@ module MediaHelper
   # create text for notification about new medium in notification dropdown menu
   def medium_notification_item_header(medium)
     return unless medium.proper?
-    t('notifications.new_medium_in') + medium.teachable.media_scope.title_for_viewers
+    t('notifications.new_medium_in') + medium.scoped_teachable_title
   end
 
   def medium_notification_item_details(medium)
@@ -105,5 +105,5 @@ module MediaHelper
   def sort_preselect(purpose)
     return '' unless purpose == 'quiz'
     'Question'
-  end  
+  end
 end
