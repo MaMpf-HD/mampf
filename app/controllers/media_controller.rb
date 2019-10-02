@@ -16,6 +16,8 @@ class MediaController < ApplicationController
     if params[:lecture_id].present? &&
       params[:current_lecture].in?(current_user.lecture_ids)
       cookies[:current_lecture] = params[:lecture_id]
+    else
+      cookies[:current_lecture] = nil
     end
     @media = paginated_results
     render layout: 'application'
