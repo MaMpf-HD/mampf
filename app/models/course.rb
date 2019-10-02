@@ -194,9 +194,12 @@ class Course < ApplicationRecord
     lectures.collect(&:items).flatten
   end
 
-  def primary_lecture(user)
+  def primary_lecture(user, eagerload: false)
     user_join = CourseUserJoin.where(course: self, user: user)
     return unless user_join.any?
+    unless eagerload
+      return Lecture.find_by_id(user_join.first.primary_lecture_id)
+    end
     Lecture.includes(:teacher, :term, :editors, :users,
                      :announcements, :imported_media,
                      course: [:editors],
