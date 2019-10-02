@@ -5,7 +5,8 @@
     </h6>
   </div>
 </div>
-<%= form_with model: course do |f| %>
+<%= form_with model: course,
+              html: { id: 'new-course-form' } do |f| %>
   <div class="form-row">
     <div class="col-8 form-group">
       <%= f.label :title, t('basics.title') %>
@@ -30,8 +31,14 @@
                   t('basics.editors') %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
-                   options_for_select(User.select_editors),
-                   {}, { class: 'selectize', multiple: true } %>
+                   options_for_select([[]]),
+                   {},
+                   { class: 'selectize',
+                     multiple: true,
+                     style: 'display: none;',
+                     data: { ajax: true,
+                             model: 'user',
+                             filled: false } } %>
     </div>
   </div>
   <div class="row">

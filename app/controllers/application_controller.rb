@@ -15,9 +15,10 @@ class ApplicationController < ActionController::Base
                                              .preload(user, [:courses,
                                                              :lectures,
                                                              :edited_media,
-                                                             :edited_lectures,
-                                                             :edited_courses,
-                                                             :given_lectures,
+                                                             :clickers,
+                                                             edited_courses: [:editors, lectures: [:term, :teacher]],
+                                                             edited_lectures: [:course, :term, :teacher],
+                                                             given_lectures: [:course, :term, :teacher],
                                                              course_user_joins: [:course],
                                                              notifications: [:notifiable]])
     end

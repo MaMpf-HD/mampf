@@ -19,7 +19,7 @@
               <i class="<%= edit_or_inspect_course_icon(c) %>">
               </i>
             </a>
-            <% Lecture.sort_by_date(c.lectures.includes(:term, :teacher))
+            <% Lecture.sort_by_date(c.lectures)
                       .each do |l| %>
               <a href="<%= edit_or_inspect_lecture_path(l) %>"
                  class="dropdown-item">

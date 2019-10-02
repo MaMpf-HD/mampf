@@ -13,4 +13,15 @@ $(document).on 'turbolinks:load', ->
     $('.dropdown-menu.show').removeClass 'show'
     return
 
+  $('#new-course-button').on 'click', ->
+    $('#new-course-area').show()
+    $('.admin-index-button').hide()
+    return
+
+  $('#cancel-new-course').on 'click', ->
+    $('#new-course-area').hide()
+    $('#new-course-button').show()
+    $('.admin-index-button').show()
+    return
+
 return

@@ -226,7 +226,7 @@ class User < ApplicationRecord
   # - all courses if the user is an admin
   # - all edited courses otherwise
   def editable_courses
-    return Course.all if admin
+    return Course.includes(lectures: [:term, :teacher]).all if admin
     edited_courses
   end
 
@@ -265,7 +265,11 @@ class User < ApplicationRecord
 
   # teaching unrelated lectures are all lectures that are not teaching related
   def teaching_unrelated_lectures
-    Lecture.all - teaching_related_lectures
+    Lecture.includes(:term, :teacher, :course).all - teaching_related_lectures
+  end
+
+  def unrelated_courses
+    Course.includes(:editors).all - edited_courses
   end
 
   # defines which messageboards a user can read:

@@ -19,9 +19,9 @@
          class="bg-green-lighten-4 p-3 mb-3 rounded"
          style="display: none;">
     </div>
-    <% if current_user.given_lectures.exists? %>
+    <% if current_user.given_lectures.any? %>
       <%= t('admin.main.as_teacher') %>
-      (<%= current_user.given_lectures.count %>)
+      (<%= current_user.given_lectures.size %>)
       <%=  helpdesk(t('admin.main.info.given_lectures'), true) %>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
@@ -29,9 +29,9 @@
                            inspection: false,
                            teacher: false } %>
     <% end %>
-    <% if current_user.edited_lectures.exists? %>
+    <% if current_user.edited_lectures.any? %>
       <%= t('admin.main.as_editor') %>
-      (<%= current_user.edited_lectures.count %>)
+      (<%= current_user.edited_lectures.size %>)
       <%= helpdesk(t('admin.main.info.edited_lectures'), false) %>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
