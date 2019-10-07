@@ -4,7 +4,7 @@ class Notification < ApplicationRecord
   include ActionDispatch::Routing::PolymorphicRoutes
   include Rails.application.routes.url_helpers
 
-  belongs_to :recipient, class_name: 'User'
+  belongs_to :recipient, class_name: 'User', touch: true
   belongs_to :notifiable, polymorphic: true, optional: true
 
   paginates_per 12
