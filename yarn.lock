@@ -2,17 +2,3 @@
 # yarn lockfile v1
 
 
-cytoscape@^3.2.21:
-  version "3.2.21"
-  resolved "https://registry.yarnpkg.com/cytoscape/-/cytoscape-3.2.21.tgz#ed99922800fe3f7bfc0d55eb9018b98af2cf4c2d"
-  dependencies:
-    heap "^0.2.6"
-    lodash.debounce "^4.0.8"
-
-heap@^0.2.6:
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/heap/-/heap-0.2.6.tgz#087e1f10b046932fc8594dd9e6d378afc9d1e5ac"
-
-lodash.debounce@^4.0.8:
-  version "4.0.8"
-  resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
