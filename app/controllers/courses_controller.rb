@@ -42,7 +42,7 @@ class CoursesController < ApplicationController
     # deactivate http caching for the moment
     # "refused to execute script because its mime type is not executable
     #  error in Chrome"...
-    if true || stale?(etag: @lecture || @course,
+    if stale?(etag: @lecture || @course,
               last_modified: [current_user.updated_at, @course.updated_at,
                               @lecture&.updated_at || current_user.updated_at].max)
       unless @course.in?(current_user.courses) && @lecture

@@ -25,7 +25,7 @@ class LecturesController < ApplicationController
     cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
     # deactivate http caching for the moment
-    if true || stale?(etag: @lecture,
+    if stale?(etag: @lecture,
               last_modified: [current_user.updated_at, @lecture.updated_at].max)
       @lecture = Lecture.includes(:teacher, :term, :editors, :users,
                                   :announcements, :imported_media,
