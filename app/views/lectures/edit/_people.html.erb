@@ -104,11 +104,13 @@
           </div>
           <div class="row mb-3">
             <div class="col-12">
-              <%= t('basics.subscribers_count',
-                    count: lecture.users&.size) %>
+              <%= t('basics.subscribers_count_nc') %>
+              <span id="lectureUserCounter">
+              </span>
               <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
               <% if !inspection && lecture.users.any? %>
                 <button type="button"
+                        id="lectureUserModalButton"
                         class="ml-3 btn btn-outline-primary btn-sm"
                         data-toggle="modal"
                         data-target="#lectureUserModal">
