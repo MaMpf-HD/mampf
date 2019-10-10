@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_locale
 
-  etag { current_user.try :id }
+  etag { ENV["RAILS_CACHE_ID"] }
 
   def current_user
     unless controller_name == 'administration' &&  action_name == 'index'
