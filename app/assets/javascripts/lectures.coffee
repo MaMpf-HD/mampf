@@ -155,7 +155,6 @@ $(document).on 'turbolinks:load', ->
         lecture: lectureId
       }
       success: (result) ->
-        console.log result
         for u in result
           row = document.createElement('div')
           row.className = 'row mx-2 border-left border-right border-bottom'
