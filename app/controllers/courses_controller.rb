@@ -44,6 +44,7 @@ class CoursesController < ApplicationController
     #  error in Chrome"...
     if stale?(etag: @lecture || @course,
               last_modified: [current_user.updated_at, @course.updated_at,
+                              ENV['RAILS_CACHE_ID'],
                               @lecture&.updated_at || current_user.updated_at].max)
       unless @course.in?(current_user.courses) && @lecture
         cookies[:current_lecture] = nil
