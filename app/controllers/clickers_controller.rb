@@ -51,6 +51,11 @@ class ClickersController < ApplicationController
     render layout: 'administration'
   end
 
+  def destroy
+    @clicker.destroy
+    redirect_to administration_path
+  end
+
   def open
     @clicker.open!
     render layout: 'administration' if user_signed_in?

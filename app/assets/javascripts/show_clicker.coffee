@@ -108,16 +108,10 @@ window.onload = ->
     document.addEventListener 'visibilitychange', ->
       if document.visibilityState == 'visible'
         webNotificationPoll()
-        console.log 'Visible again!'
-        console.log 'Current interval:' + channel.data('interval')
         if channel.data('interval') == -1
-          console.log 'Interval is empty'
           i = setInterval(webNotificationPoll, 5000)
           channel.data('interval', i)
-          console.log 'New interval:' + channel.data('interval')
       else
-        console.log 'Shutting down'
-        console.log channel.data('interval')
         clearInterval(channel.data('interval'))
         channel.data('interval', -1)
       return
@@ -128,6 +122,8 @@ window.onload = ->
       $('.votedClicker[data-value="'+value+'"]').addClass('active')
       $('.votedClicker').show()
       $.ajax $(this).data('url'),
+        beforeSend: (xhr) ->
+          xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
         type: 'POST'
         dataType: 'script'
       return

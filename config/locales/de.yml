@@ -477,6 +477,7 @@ de:
       close: 'Clicker schließen'
       open: 'Clicker freischalten'
       reset: 'Clicker zurücksetzen'
+      delete: 'Clicker löschen'
       alternatives: 'Anzahl der Auswahlmöglichkeiten'
       is_open: 'Der Clicker ist offen.'
       is_closed: 'Der Clicker ist geschlossen.'

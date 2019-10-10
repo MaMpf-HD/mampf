@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   delete 'clickers/:id/remove_question', to: 'clickers#remove_question',
                                         as: 'remove_question'
 
-  resources :clickers
+  resources :clickers, except: [:index, :update]
 
   get 'c/:id', to: 'clickers#show'
 

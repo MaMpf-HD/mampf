@@ -454,6 +454,7 @@ en:
       open: 'Enable Clicker'
       close: 'Close Clicker'
       reset: 'Reset Clicker'
+      delete: 'Delete Clicker'
       is_open: 'Clicker is open.'
       is_closed: 'Clicker is closed.'
       thank_vote: 'Thank you for your vote.'

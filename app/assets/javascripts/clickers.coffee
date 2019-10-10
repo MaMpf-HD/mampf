@@ -54,6 +54,20 @@ $(document).on 'turbolinks:load', ->
       $('#import-media-button').show()
     return
 
+  $(document).on 'click', '#clickerHideEditorLink', ->
+    if $(this).data('showlink')
+      $(this).data('showlink', false)
+      $(this).html($(this).data('showbutton'))
+      $('#clickerEditorLink').hide()
+      $('#clickerNoLink').show()
+    else
+      $(this).data('showlink', true)
+      $(this).html($(this).data('hidebutton'))
+      $('#clickerEditorLink').show()
+      $('#clickerNoLink').hide()
+    return
+
+
   return
 
 # clean up everything before turbolinks caches
