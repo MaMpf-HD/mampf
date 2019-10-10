@@ -470,6 +470,7 @@ de:
       passphrase: 'Zugangsschlüssel'
       insert_after_chapter: 'Einfügen nach %{chapter_name}'
       insert_after_section: 'Einfügen nach Abschnitt'
+      subscribers: 'AbonnentInnen'
     clicker:
       new_clicker: 'Neuen Clicker anlegen'
       user_link: 'Link für NutzerInnen'

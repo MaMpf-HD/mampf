@@ -1,0 +1,50 @@
+<div class="modal fade"
+     id="lectureUserModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="lectureUserModalLabel" aria-hidden="true"
+     data-keyboard="false"
+     data-backdrop="static">
+  <div class="modal-dialog modal-xl"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="lectureUserModalLabel">
+          <%= t('admin.lecture.subscribers') %>
+        </h5>
+        <button type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row border bg-mdb-color-lighten-5 mx-2">
+          <div class="col-6">
+            <%= t('basics.display_name') %>
+          </div>
+          <div class="col-6">
+            <%= t('basics.email') %>
+          </div>
+        </div>
+        <div id="lectureUserModalContent"
+             data-filled="false"
+             data-lecture="<%= lecture.id %>">
+        </div>
+        <div class="row my-3">
+          <div class="col-12 text-center">
+            <button type="button"
+                    class="btn btn-sm btn-secondary"
+                    data-dismiss="modal"
+                    aria-label="Close">
+              <%= t('buttons.close') %>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

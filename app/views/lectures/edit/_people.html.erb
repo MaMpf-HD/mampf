@@ -107,32 +107,16 @@
               <%= t('basics.subscribers_count',
                     count: lecture.users&.size) %>
               <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
-            </div>
-          </div>
-          <% if !inspection && lecture.users.any? %>
-            <div class="row border bg-mdb-color-lighten-5 mx-2">
-              <div class="col-6">
-                <%= t('basics.display_name') %>
-              </div>
-              <div class="col-6">
-                <%= t('basics.email') %>
-              </div>
-            </div>
-            <div style="max-height: 30vh; overflow-y: scroll;">
-              <% lecture.users.each do |u| %>
-                <% cache u do %>
-                  <div class="row mx-2 border-left border-right border-bottom">
-                    <div class="col-6">
-                      <%= u.name %>
-                    </div>
-                    <div class="col-6">
-                      <%= u.email %>
-                    </div>
-                  </div>
-                <% end %>
+              <% if !inspection && lecture.users.any? %>
+                <button type="button"
+                        class="ml-3 btn btn-outline-primary btn-sm"
+                        data-toggle="modal"
+                        data-target="#lectureUserModal">
+                  <%= t('basics.details') %>
+                </button>
               <% end %>
             </div>
-          <% end %>
+          </div>
           <div class="row mt-3">
             <div class="col-12 text-center">
               <div id="lecture-basics-warning">

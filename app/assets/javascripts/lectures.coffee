@@ -145,6 +145,33 @@ $(document).on 'turbolinks:load', ->
       $('#create-new-medium').prop('href', new_path)
     return
 
+  userModalContent = document.getElementById('lectureUserModalContent')
+  if userModalContent? and userModalContent.dataset.filled == 'false'
+    lectureId = userModalContent.dataset.lecture
+    $.ajax Routes.show_subscribers_path(lectureId),
+      type: 'GET'
+      dataType: 'json'
+      data: {
+        lecture: lectureId
+      }
+      success: (result) ->
+        console.log result
+        for u in result
+          row = document.createElement('div')
+          row.className = 'row mx-2 border-left border-right border-bottom'
+          colName = document.createElement('div')
+          colName.className = 'col-6'
+          colName.innerHTML = u[0]
+          row.appendChild(colName)
+          colMail = document.createElement('div')
+          colMail.className = 'col-6'
+          colMail.innerHTML = u[1]
+          row.appendChild(colMail)
+          userModalContent.appendChild(row)
+          userModalContent.dataset.filled = 'true'
+        return
+
+
   # on small mobile display, use shortened tag badges and
   # shortened course titles
   mobileDisplay = ->

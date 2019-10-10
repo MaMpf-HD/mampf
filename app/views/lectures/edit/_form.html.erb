@@ -11,7 +11,7 @@
       </div>
       <div id="lecture-media-card" class="col-12 col-xxxl-3 mb-1">
         <%= render partial: 'lectures/edit/media',
-                   locals: { media: @media,
+                   locals: { media: media,
                              inspection: inspection,
                              lecture: lecture } %>
       </div>
@@ -50,6 +50,8 @@
     <%= render partial: 'tags/modal' %>
     <%= render partial: 'announcements/modal' %>
     <%= render partial: 'lectures/publish/publish',
+               locals: { lecture: lecture } %>
+    <%= render partial: 'lectures/edit/user_modal',
                locals: { lecture: lecture } %>
   <% end %>
 <% end %>

@@ -10,6 +10,9 @@ class ApplicationController < ActionController::Base
   etag { current_user.try :id }
 
   def current_user
+    unless controller_name == 'administration' &&  action_name == 'index'
+      return super
+    end
     @current_user ||= super.tap do |user|
       ::ActiveRecord::Associations::Preloader.new
                                              .preload(user, [:courses,

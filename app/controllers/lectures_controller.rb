@@ -156,6 +156,11 @@ class LecturesController < ApplicationController
     @lecture.touch
   end
 
+  def show_subscribers
+    user_data = @lecture.users.pluck(:name, :email)
+    render json: user_data
+  end
+
   private
 
   def set_lecture
@@ -229,7 +234,7 @@ class LecturesController < ApplicationController
   end
 
   def eager_load_stuff
-    @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+    @lecture = Lecture.includes(:teacher, :term, :editors,
                                 :announcements, :imported_media,
                                 course: [:editors],
                                 media: [:teachable, :tags],

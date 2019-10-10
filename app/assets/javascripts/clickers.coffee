@@ -77,4 +77,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#toggleClickerResults'
   $(document).off 'click', '.associateClickerQuestion'
   $(document).off 'click', '#cancelSearch'
+  $(document).off 'click', '#clickerHideEditorLink'
   return

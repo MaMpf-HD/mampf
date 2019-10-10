@@ -98,8 +98,10 @@ Rails.application.routes.draw do
                                          as: 'show_announcements'
   get 'lectures/:id/organizational', to: 'lectures#organizational',
                                          as: 'organizational'
+  get 'lectures/:id/show_subscribers', to: 'lectures#show_subscribers',
+                                       as: 'show_subscribers'
   post 'lecture/:id/publish', to: 'lectures#publish',
-                            as: 'publish_lecture'
+                              as: 'publish_lecture'
   post 'lectures/:id/import_media', to: 'lectures#import_media',
                                     as: 'lecture_import_media'
   delete 'lectures/:id/remove_imported_medium',

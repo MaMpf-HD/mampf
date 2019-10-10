@@ -447,6 +447,7 @@ en:
       passphrase: 'Passphrase'
       insert_after_chapter: 'Insert after %{chapter_name}'
       insert_after_section: 'Insert after section'
+      subscribers: 'Subscribers'
     clicker:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'
