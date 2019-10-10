@@ -1,0 +1,1 @@
+ENV["RAILS_CACHE_ID"] = Time.now.to_s
