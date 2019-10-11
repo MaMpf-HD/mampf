@@ -105,7 +105,7 @@ class Ability
       can [:take, :proceed, :preview], Quiz
       can [:new, :create, :edit, :open, :close, :set_alternatives,
            :get_votes_count], Clicker
-      can [:associate_question, :remove_question], Clicker do |clicker|
+      can [:associate_question, :remove_question, :destroy], Clicker do |clicker|
         clicker.editor == user
       end
       can [:linearize, :set_root, :set_level,

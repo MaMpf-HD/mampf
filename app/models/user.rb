@@ -54,17 +54,6 @@ class User < ApplicationRecord
   # add timestamp for DSGVO consent
   after_create :set_consented_at
 
-  # array of all users together with their ids for use in options_for_select
-  # (e.g. in a select editors form)
-  def self.select_editors
-    User.all.map { |u| [u.info, u.id] }
-  end
-
-  # array of hashes of user ids together with user info
-  def self.select_editors_hash
-    User.all.map { |u| { text: u.info, value: u.id } }
-  end
-
   # returns the array of all teachers
   def self.teachers
     User.where(id: Lecture.pluck(:teacher_id).uniq)
