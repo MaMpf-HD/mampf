@@ -21,7 +21,8 @@
         </div>
       </li>
       <li class="list-group-item list-group-item-secondary text-center"
-          id="clickerQRCode">
+          id="clickerQRCode"
+          style="display: none;">
           <%= image_tag(generate_qr(@user_path)) %>
       </li>
       <% if user_signed_in? %>
