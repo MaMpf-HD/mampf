@@ -1,16 +1,25 @@
 # LecturesController
 class LecturesController < ApplicationController
   before_action :set_lecture, except: [:new, :create]
-  before_action :eager_load_stuff, only: [:edit, :inspect]
   authorize_resource
   before_action :check_for_consent
   before_action :set_view_locale, only: [:edit, :show, :inspect]
   layout 'administration'
 
   def edit
+    if stale?(etag: @lecture,
+              last_modified: [current_user.updated_at, @lecture.updated_at,
+                              Time.parse(ENV['RAILS_CACHE_ID'])].max)
+      eager_load_stuff
+    end
   end
 
   def inspect
+    if stale?(etag: @lecture,
+              last_modified: [current_user.updated_at, @lecture.updated_at,
+                              Time.parse(ENV['RAILS_CACHE_ID'])].max)
+      eager_load_stuff
+    end    
   end
 
   def update
