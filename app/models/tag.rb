@@ -61,10 +61,6 @@ class Tag < ApplicationRecord
     integer :course_ids, multiple: true
   end
 
-  def self.ids_titles_json
-    Tag.all.map { |t| t.extended_title_id_hash }.to_json
-  end
-
   def title
     Rails.cache.fetch("#{cache_key_with_version}/title") do
       local_title_uncached
@@ -137,6 +133,12 @@ class Tag < ApplicationRecord
                                             search_string.downcase) > 0.9
                   end
                   .map(&:id))
+  end
+
+  def self.select_by_title_cached
+    Rails.cache.fetch("tag_select_by_title_#{I18n.locale}") do
+      Tag.select_by_title.map { |t| { value: t[1], text: t[0] } }.to_json
+    end
   end
 
   # returns the array of all tags (sorted by title) together with
