@@ -120,7 +120,7 @@ class TagsController < ApplicationController
   end
 
   def fill_tag_select
-    result = Tag.select_by_title_cached.map { |t| { value: t[1], text: t[0] } }
+    result = Tag.select_by_title_cached
     render json: result
   end
 
