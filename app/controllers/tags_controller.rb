@@ -120,6 +120,9 @@ class TagsController < ApplicationController
   end
 
   def fill_tag_select
+    if params[:locale].in?(I18n.available_locales.map(&:to_s))
+      I18n.locale = params[:locale]
+    end
     result = Tag.select_by_title_cached
     render json: result
   end

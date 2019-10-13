@@ -90,7 +90,8 @@
                      disabled: true,
                      data: { filled: false,
                              ajax: true,
-                             model: 'tag' } } %>
+                             model: 'tag',
+                             locale: I18n.locale } } %>
       <div class="custom-control custom-radio custom-control-inline">
         <%= f.radio_button :tag_operator,
                            'or',
