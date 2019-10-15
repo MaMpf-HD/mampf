@@ -19,7 +19,7 @@ class LecturesController < ApplicationController
               last_modified: [current_user.updated_at, @lecture.updated_at,
                               Time.parse(ENV['RAILS_CACHE_ID'])].max)
       eager_load_stuff
-    end    
+    end
   end
 
   def update
@@ -152,7 +152,7 @@ class LecturesController < ApplicationController
   def import_media
     media = Medium.where(id: params[:media_ids])
                   .where.not(id: @lecture.imported_media.pluck(:id))
-                  .where.not(teachable: [@lecture.course, @lecture])
+                  .where.not(teachable: @lecture)
     media.each { |m| Import.create(teachable: @lecture, medium: m) }
     @lecture.reload
     @lecture.touch
