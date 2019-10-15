@@ -537,9 +537,12 @@ class Lecture < ApplicationRecord
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: lessons).exists? ||
-      Medium.where(sort: medium_sort[project],
+      Medium.includes(:tags)
+            .where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
-                   teachable: course).exists?
+                   teachable: course)
+            .select { |m| (m.tags & tags).any? }
+            .any?
     end
   end
 

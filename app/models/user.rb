@@ -80,6 +80,13 @@ class User < ApplicationRecord
     User.where(id: editor_ids)
   end
 
+  # array of all users together with their ids for use in options_for_select
+  # (e.g. in a select editors form)
+  def self.select_editors
+    User.pluck(:name, :email, :id)
+        .map { |u| [ "#{u.first} (#{u.second})", u.third] }
+  end
+
   # related courses for user are
   # - all courses that the user has subscribe to plus their preceding courses
   #   (if subscription type is 1)

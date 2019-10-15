@@ -9,7 +9,7 @@
              data-toggle="tooltip"
              title="<%= t('medium.imported') %>">
           </i>
-        <% end %>        
+        <% end %>
         <% ref = medium.card_header_teachable_path(current_user) %>
         <% if ref.present? %>
           <%= link_to medium.card_header,
@@ -45,6 +45,15 @@
              tabindex="-1"
              data-toggle="tooltip"
              title="<%= t('medium.locked') %>">
+          </i>
+        <% end %>
+        <% if lecture &&
+                (current_user.admin || lecture.edited_by?(current_user)) &&
+                (medium.tags & lecture.tags).blank? %>
+          <i class="fas fa-eye-slash bluetext ml-2"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="<%= t('medium.waiting_for_tag') %>">
           </i>
         <% end %>
       </div>

@@ -386,6 +386,12 @@ class MediaController < ApplicationController
     # add imported media in case of a lecture
     if params[:lecture_id].present?
       @lecture = Lecture.find_by_id(params[:lecture_id])
+      # filter out stuff from course level for generic users
+      unless current_user.admin || @lecture.edited_by?(current_user)
+        search_results.reject! do |m|
+          m.teachable_type == 'Course' && (m.tags & @lecture.tags).blank?
+        end
+      end
       sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize
       search_results +=  @lecture.imported_media
                                  .where(sort: sort)

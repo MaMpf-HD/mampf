@@ -129,7 +129,7 @@ de:
       create_course: 'Modul anlegen'
       my_clickers: 'Meine Clicker'
       create_clicker: 'Clicker anlegen'
-      no_edited_clickers: 'Du hast noch keine Clicker angelegt.'
+      no_edited_clickers: 'Du hast aktuell keine Clicker angelegt.'
       no_edited_courses: >
         Es gibt keine Module, für die Du als EditorIn eingetragen bist.
       my_media: 'Meine Medien'
@@ -232,7 +232,13 @@ de:
           Dies ist eine Liste aller Deiner
           <i>Clicker</i>,
           </br>
-          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei ...
+          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei
+          ein Feedbackkanal in Form einer speziellen Webseite.
+          Personen mit dem EditorInnen-Link können Feedback zu einer
+          Fragestellung erbitten und Personen mit dem TeilnehmerInnen-Link
+          können dieses Feedback liefern.
+          Pro Clicker ist zu jedem Zeitpunkt genau eine Fragestellung
+          möglich, aber Clicker können wiederverwendet werden.
         other_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die Du keine
           Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
@@ -1621,6 +1627,12 @@ de:
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
     locked: 'Dieses Medium ist gesperrt.'
     imported: 'Dieses Medium wurde importiert.'
+    waiting_for_tag: >
+      Dieses Medium ist auf Modulebene angesiedelt und bezieht sich auf Tags,
+      die in der vorliegenden Veranstaltung (noch) nicht behandelt wurden.
+      Es ist für AbonnentInnen dieser Veranstaltung deshalb im Augenblick nicht
+      sichtbar. Es wird erst dann sichtbar, wenn mindestens einer der
+      assoziierten Tags in einem Abschnitt dieser Vorlesung auftaucht.
   video:
     video: 'Video'
     play: 'THymE-Player'

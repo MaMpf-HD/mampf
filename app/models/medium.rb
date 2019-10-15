@@ -191,7 +191,9 @@ class Medium < ApplicationRecord
     return Medium.none if course.nil?
     media_in_project = Medium.media_in_project(params[:project])
     # first case: media sitting at course level (no lecture_id given)
-    course_media_in_project = media_in_project.where(teachable: course).natural_sort_by(&:caption)
+    course_media_in_project = media_in_project.includes(:tags)
+                                              .where(teachable: course)
+                                              .natural_sort_by(&:caption)
     unless params[:lecture_id].present?
       return course_media_in_project
     end
