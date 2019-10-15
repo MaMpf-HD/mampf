@@ -396,6 +396,7 @@ class MediaController < ApplicationController
       search_results +=  @lecture.imported_media
                                  .where(sort: sort)
                                  .locally_visible
+      search_results.uniq!
     end
     return search_results unless params[:reverse]
     search_results.reverse
