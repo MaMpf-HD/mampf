@@ -1738,7 +1738,7 @@ en:
   main:
     welcome:
       Welcome to the homepage of MaMpf, the Mathematical
-      Media platform of the Mathematical Institute of Heidelberg University.
+      Media platform of Heidelberg University.
     about:
       'MaMpf is a constantly growing project which bundles various
       e-learning services. Thanks to the tagging system im MaMpf you will
@@ -1746,20 +1746,22 @@ en:
       In addition, MaMpf links keywords and visualizes the connections
       in MaMpf maps. In MaMpf you have the following at your disposal:'
     kaviar_html:
-      <strong>
-        Lecture videos
+      '<strong>
+        Hypervideos:
       </strong>
-      for Algebra, Complex Analysis, Linear Algebra and Topology
+      Lecture recordings, Worked Examples, repetition videos with
+      content structure and links to related materials'
     sesam_html:
-      <strong>
-        Worked Example videos
+      '<strong>
+        Hypertexts:
       </strong>
-      for Algebra, Analysis, Geometry und Linear Algebra
+      Lecture notes, exercise sheets, additional materials with in MaMpf
+      searchable outline and links'
     keks_html:
-      <strong>
-        Quizzes
+      '<strong>
+        Quizzes:
       </strong>
-      for Algebra, Analysis und Linear Algebra
+      Multiple Choice Quizzes, calculation tasks, guided proofs'
     interested_html:
      Curious? %{blog} you can find more information and news about MaMpf.
   math:

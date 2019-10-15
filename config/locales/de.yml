@@ -1855,7 +1855,7 @@ de:
   main:
     welcome:
       Herzlich willkommen auf der Homepage von MaMpf, der Mathematischen
-      Medienplattform des Mathematischen Instituts der Universität Heidelberg.
+      Medienplattform der Universität Heidelberg.
     about:
       'MaMpf ist ein ständig wachsendes Projekt, das verschiedene
       E-Learning-Angebote bündelt. Dank des Tagging-Systems findest Du in
@@ -1863,21 +1863,22 @@ de:
       Außerdem vernetzt MaMpf Schlagwörter und präsentiert sie Dir in
       übersichtlichen MaMpf-Maps. Auf MaMpf stehen Dir zur Verfügung:'
     kaviar_html:
-      <strong>
-        Vorlesungsvideos
+      '<strong>
+        Hypervideos:
       </strong>
-      zu Algebra, Funktionentheorie, Lineare Algebra und Mengentheoretische
-      Topologie
+      Vorlesungsaufzeichnungen, Worked Examples, Wiederholungsvideos mit
+      inhaltlicher Gliederung und Links auf verwandte Materialien'
     sesam_html:
-      <strong>
-        Beispielvideos
+      '<strong>
+        Hypertexte:
       </strong>
-      zu Algebra, Analysis, Geometrie und Lineare Algebra
+      Vorlesungsskripte, Übungsblätter, Zusatzmaterialien mit in MaMpf
+      durchsuchbarer Gliederung und Links'
     keks_html:
-      <strong>
-      Quizzes
+      '<strong>
+      Quizzes:
       </strong>
-      zu Algebra, Analysis und Lineare Algebra
+      Multiple-Choice-Quizzes, Rechenaufgaben, angeleitete Beweise'
     interested_html:
       Neugierig geworden? %{blog} findest du weitere Informationen über
       und Neuigkeiten zu MaMpf.
