@@ -47,7 +47,7 @@
              title="<%= t('medium.locked') %>">
           </i>
         <% end %>
-        <% if lecture && !lecture.imported_media&.include?(medium) &&
+        <% if lecture && medium.teachable_type == 'Course' && !lecture.imported_media&.include?(medium) &&
                 (current_user.admin || lecture.edited_by?(current_user)) &&
                 (medium.tags & lecture.tags).blank? %>
           <i class="fas fa-eye-slash bluetext ml-2"
