@@ -45,7 +45,7 @@
         <% unless inspection %>
           <div class="col-2">
             <% if current_user.admin ||
-                    medium.editors_with_inheritance.include?(current_user) %>
+                    m.editors_with_inheritance.include?(current_user) %>
               <%= link_to '',
                           edit_medium_path(m),
                           class: 'fas fa-edit text-dark',
