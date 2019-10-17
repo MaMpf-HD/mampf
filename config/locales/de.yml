@@ -1866,31 +1866,32 @@ de:
   sign_up: 'registrieren'
   main:
     welcome:
-      Herzlich willkommen auf der Homepage von MaMpf, der Mathematischen
+      Herzlich willkommen auf MaMpf, der Mathematischen
       Medienplattform der Universität Heidelberg.
     about:
       'MaMpf ist ein ständig wachsendes Projekt, das verschiedene
       E-Learning-Angebote bündelt. Dank des Tagging-Systems findest Du in
       MaMpf schnell und einfach alle vorhandenen Medien zu einem Schlagwort.
       Außerdem vernetzt MaMpf Schlagwörter und präsentiert sie Dir in
-      übersichtlichen MaMpf-Maps. Auf MaMpf stehen Dir zur Verfügung:'
+      übersichtlichen Mind-Maps. Auf MaMpf stehen Dir zur Verfügung:'
     kaviar_html:
       '<strong>
         Hypervideos:
       </strong>
-      Vorlesungsaufzeichnungen, Worked Examples, Wiederholungsvideos mit
-      inhaltlicher Gliederung und Links auf verwandte Materialien'
+      Vorlesungs-, Beispiel- und Wiederholungsvideos mit
+      inhaltlicher Gliederung und Links zu verwandten Materialien'
     sesam_html:
       '<strong>
         Hypertexte:
       </strong>
-      Vorlesungsskripte, Übungsblätter, Zusatzmaterialien mit in MaMpf
-      durchsuchbarer Gliederung und Links'
+      Vorlesungsskripte, Übungsblätter und Zusatzmaterialien mit in MaMpf
+      durchsuchbarer Gliederung und Links zu verwandten Materialien'
     keks_html:
       '<strong>
       Quizzes:
       </strong>
-      Multiple-Choice-Quizzes, Rechenaufgaben, angeleitete Beweise'
+      Sammlungen von Multiple-Choice-Fragen und Rechenaufgaben sowie angeleitete
+      Beweise'
     interested_html:
       Neugierig geworden? %{blog} findest du weitere Informationen über
       und Neuigkeiten zu MaMpf.
