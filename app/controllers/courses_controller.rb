@@ -48,7 +48,7 @@ class CoursesController < ApplicationController
                               @lecture&.updated_at || current_user.updated_at,
                               Thredded::UserDetail.find_by(user_id: current_user.id)
                                                   &.last_seen_at || current_user.updated_at,
-                              @lecture&.forum&.updated_at].max)
+                              @lecture&.forum&.updated_at || current_user.updated_at].max)
       unless @course.in?(current_user.courses) && @lecture
         cookies[:current_lecture] = nil
         I18n.locale = @course.locale || I18n.default_locale
