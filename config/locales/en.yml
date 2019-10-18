@@ -1747,31 +1747,32 @@ en:
   sign_up: 'sign up'
   main:
     welcome:
-      Welcome to the homepage of MaMpf, the Mathematical
+      Welcome to MaMpf, the Mathematical
       Media platform of Heidelberg University.
     about:
       'MaMpf is a constantly growing project which bundles various
       e-learning services. Thanks to the tagging system im MaMpf you will
       quickly and easily find all existing media to a keyword.
       In addition, MaMpf links keywords and visualizes the connections
-      in MaMpf maps. In MaMpf you have the following at your disposal:'
+      in Mind maps. In MaMpf you have the following at your disposal:'
     kaviar_html:
       '<strong>
         Hypervideos:
       </strong>
-      Lecture recordings, Worked Examples, repetition videos with
+      Lecture recordings, Worked Examples and repetition videos with
       content structure and links to related materials'
     sesam_html:
       '<strong>
         Hypertexts:
       </strong>
-      Lecture notes, exercise sheets, additional materials with in MaMpf
+      Lecture notes, exercise sheets and additional materials with in MaMpf
       searchable outline and links'
     keks_html:
       '<strong>
         Quizzes:
       </strong>
-      Multiple Choice Quizzes, calculation tasks, guided proofs'
+      Collection of Multiple Choice Questions, calculation tasks and
+      guided proofs'
     interested_html:
      Curious? %{blog} you can find more information and news about MaMpf.
   math:
