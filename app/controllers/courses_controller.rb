@@ -45,7 +45,10 @@ class CoursesController < ApplicationController
     if stale?(etag: @lecture || @course,
               last_modified: [current_user.updated_at, @course.updated_at,
                               Time.parse(ENV['RAILS_CACHE_ID']),
-                              @lecture&.updated_at || current_user.updated_at].max)
+                              @lecture&.updated_at || current_user.updated_at,
+                              Thredded::UserDetail.find_by(user_id: current_user.id)
+                                                  &.last_seen_at || current_user.updated_at,
+                              @lecture&.forum&.updated_at].max)
       unless @course.in?(current_user.courses) && @lecture
         cookies[:current_lecture] = nil
         I18n.locale = @course.locale || I18n.default_locale
