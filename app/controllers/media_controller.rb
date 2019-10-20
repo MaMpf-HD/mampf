@@ -132,6 +132,7 @@ class MediaController < ApplicationController
     # create notification about creation of medium to all subscribers
     # and send an email
     unless @medium.sort.in?(['Question', 'Remark', 'RandomQuiz'])
+      @medium.teachable&.media_scope&.touch
       create_notifications
       send_notification_email
     end
@@ -444,6 +445,7 @@ class MediaController < ApplicationController
   # to the medium's teachable's media_scope
   def create_notifications
     notifications = []
+    @medium.teachable.media_scope.users.update_all(updated_at: Time.now)
     @medium.teachable.media_scope.users.each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @medium.id,
