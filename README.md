@@ -43,7 +43,7 @@ There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/ga
 
 MaMpf is implemented in Ruby on Rails.
 
-* Ruby version: 2.6.4
+* Ruby version: 2.6.5
 * Rails Version: 6.0.0
 * Test suite: rspec
 * support for I18n
