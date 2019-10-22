@@ -285,6 +285,11 @@ class MediaController < ApplicationController
     filter_boxes = JSON.parse(params[:filter_boxes])
     manuscript.export_to_db!(filter_boxes)
     @medium.update(imported_manuscript: true)
+    @quarantine_added = @medium.update_pdf_destinations!
+    if @quarantine_added.any?
+      render :destination_warning
+      return
+    end
     redirect_to edit_medium_path(@medium)
   end
 
