@@ -17,6 +17,12 @@
                 <%= t('basics.answer') %>:
               </i>
               <%= quizzable.solution.tex %>
+              <% if quizzable.solution.explanation %>
+                <i>
+                  <%= t('admin.quiz.reason') %>:
+                </i>
+                <%= quizzable.solution.explanation %>
+              <% end %>
             <% end %>
           </div>
         </div>
