@@ -12,9 +12,9 @@
          id="relatedMediaAccordion">
       <% media_hash = related_media_hash(references, media) %>
       <% media_hash.each do |sort, media_in_sort| %>
-      <div class="card">
+      <div class="card border-bottom">
         <div class="card-header">
-          <button class="btn btn-link"
+          <button class="btn btn-link collapsed"
                   type="button"
                   data-toggle="collapse"
                   data-target="#collapse-<%= sort %>">
@@ -43,34 +43,5 @@
       </div>
       <% end %>
     </div>
-<!--     <div class="row">
-      <% if references.any? %>
-        <% references.each do |r| %>
-          <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
-            <%= render partial: 'media/medium',
-                       locals: { medium: r.medium,
-                                 tags: false,
-                                 from: 'tag',
-                                 ref_link: r.manuscript_link,
-                                 lecture: nil } %>
-          </div>
-        <% end %>
-      <% end %>
-      <% if media.any? %>
-        <% media.each do |m| %>
-          <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
-            <%= render partial: 'media/medium',
-                       locals: { medium: m,
-                                 tags: false,
-                                 from: 'tag',
-                                 ref_link: nil,
-                                 lecture: nil } %>
-          </div>
-        <% end %>
-      <% end %>
-      <% if references.empty? && media.empty? %>
-        <%= t('no_related_media') %>
-      <% end %>
-    </div> -->
   </div>
 </div>
