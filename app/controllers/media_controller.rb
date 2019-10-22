@@ -394,8 +394,9 @@ class MediaController < ApplicationController
       @lecture = Lecture.find_by_id(params[:lecture_id])
       # filter out stuff from course level for generic users
       unless current_user.admin || @lecture.edited_by?(current_user)
+        lecture_tags = @lecture.tags_including_media_tags
         search_results.reject! do |m|
-          m.teachable_type == 'Course' && (m.tags & @lecture.tags).blank?
+          m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
         end
       end
       sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize

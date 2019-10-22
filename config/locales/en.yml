@@ -1529,7 +1529,8 @@ en:
       that have not (yet) been treated in the current event series.
       It is therefore invisible for subscribers of this event series at the
       moment. It will become visible for subscribers as soon as at least one
-      tag of this medium will be assciated to at least one section of this lecture.
+      tag of this medium will be assciated to at least one section of this
+      lecture or to a published medium associated to this event series.
   video:
     video: 'Video'
     no_video: 'There is no video present.'

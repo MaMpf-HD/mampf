@@ -1632,7 +1632,8 @@ de:
       die in der vorliegenden Veranstaltung (noch) nicht behandelt wurden.
       Es ist für AbonnentInnen dieser Veranstaltung deshalb im Augenblick nicht
       sichtbar. Es wird erst dann sichtbar, wenn mindestens einer der
-      assoziierten Tags in einem Abschnitt dieser Vorlesung auftaucht.
+      assoziierten Tags in einem Abschnitt dieser Vorlesung auftaucht oder
+      zu einem veröffentlichten Medium auf Veranstaltungsebene assoziiert ist.
   video:
     video: 'Video'
     play: 'THymE-Player'

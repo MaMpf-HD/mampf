@@ -159,6 +159,17 @@ class Lecture < ApplicationRecord
     course.tags.includes(:notions) - lecture_tags
   end
 
+  def tags_including_media_tags
+    (tags +
+       lessons.includes(media: :tags)
+              .map(&:media).flatten.uniq
+              .select { |m| m.released.in?(['all', 'users', 'subscribers']) }
+              .map(&:tags).flatten +
+       media.includes(:tags)
+            .select { |m| m.released.in?(['all', 'users', 'subscribers']) }
+            .map(&:tags).flatten).uniq
+  end
+
   # lecture items are all items associated to sections within chapters
   # associated to the lecture
   def items

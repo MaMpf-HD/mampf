@@ -48,7 +48,7 @@
           </i>
         <% elsif lecture && medium.teachable_type == 'Course' && !lecture.imported_media&.include?(medium) &&
                 (current_user.admin || lecture.edited_by?(current_user)) &&
-                (medium.tags & lecture.tags).blank? %>
+                (medium.tags & lecture.tags_including_media_tags).blank? %>
           <i class="fas fa-eye-slash bluetext ml-2"
              tabindex="-1"
              data-toggle="tooltip"

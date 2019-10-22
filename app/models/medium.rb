@@ -105,6 +105,7 @@ class Medium < ApplicationRecord
   # (they may not be globally visible as their lecture may be unpublished)
   scope :published, -> { where.not(released: nil) }
   scope :locally_visible, -> { where(released: ['all', 'users']) }
+  scope :potentially_visible, -> { where(released: ['all', 'users', 'subscribers']) }
   scope :proper, -> { where.not(sort: 'RandomQuiz') }
   scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 1.day.ago) }
 
