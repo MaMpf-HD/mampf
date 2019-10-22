@@ -10,6 +10,7 @@
   <div class="card-body <%= from == 'tag' && questions ? 'card-medium' : 'card-large' %>">
     <div class="accordion"
          id="relatedMediaAccordion">
+      <% if references.any? || media.any? %>
       <% media_hash = related_media_hash(references, media) %>
       <% media_hash.each do |sort, media_in_sort| %>
       <div class="card border-bottom">
@@ -41,6 +42,9 @@
           </div>
         </div>
       </div>
+      <% end %>
+      <% else %>
+        <%= t('no_related_media') %>
       <% end %>
     </div>
   </div>
