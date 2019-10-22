@@ -106,4 +106,15 @@ module MediaHelper
     return '' unless purpose == 'quiz'
     'Question'
   end
+
+  def related_media_hash(references, media)
+    media_list = references.pluck(:medium, :manuscript_link) +
+                   media.zip(Array.new(media.size))
+    hash = {}
+    Medium.sort_enum.each do |s|
+      media_in_s = media_list.select { |m| m.first.sort == s }
+      hash[s] = media_in_s unless media_in_s.blank?
+    end
+    hash
+  end
 end
