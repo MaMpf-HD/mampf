@@ -108,7 +108,7 @@ module MediaHelper
   end
 
   def related_media_hash(references, media)
-    media_list = references.pluck(:medium, :manuscript_link) +
+    media_list = references.map { |r| [r.medium_id, r.manuscript_link] } +
                    media.zip(Array.new(media.size))
     hash = {}
     Medium.sort_enum.each do |s|
