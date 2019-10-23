@@ -3,5 +3,5 @@ class MyMailer < Devise::Mailer
   include Devise::Controllers::UrlHelpers # Optional. eg. `confirmation_url`
   default template_path: 'devise/mailer' # to make sure that your mailer uses the devise views
   default from: DefaultSetting::PROJECT_EMAIL
-  default "Message-ID" => "#{Digest::SHA2.hexdigest(Time.now.to_i.to_s)}@#{ENV['MAILID_DOMAIN']}"
+  default "Message-ID" => "<#{Digest::SHA2.hexdigest(Time.now.to_i.to_s)}@#{ENV['MAILID_DOMAIN']}>"
 end
