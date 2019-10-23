@@ -8,45 +8,47 @@
     </h5>
   </div>
   <div class="card-body <%= from == 'tag' && questions ? 'card-medium' : 'card-large' %>">
-    <div class="accordion"
-         id="relatedMediaAccordion">
-      <% if references.any? || media.any? %>
-        <% media_hash = related_media_hash(references, media) %>
-        <dl>
-        <% media_hash.each do |sort, media_in_sort| %>
-            <li>
-              <button class="btn btn-link collapsed"
-                      type="button"
-                      data-toggle="collapse"
-                      data-target="#collapse-<%= sort %>"
-                      style="left: -1em; position: relative;">
-                <%= Medium.sort_localized[sort] %>
-                (<%= media_in_sort.size %>)
-              </button>
-            <div id="collapse-<%= sort %>"
-                 class="collapse pl-3"
-                 data-parent="#relatedMediaAccordion">
-              <div>
-                <div class="row">
-                  <% media_in_sort.each do |m| %>
-                    <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
-                        <%= render partial: 'media/medium',
-                                   locals: { medium: m.first,
-                                             tags: false,
-                                             from: 'tag',
-                                             ref_link: m.second,
-                                             lecture: nil } %>
-                    </div>
-                  <% end %>
-                </div>
-              </div>
-            </div>
-            </li>
+    <div class="row px-2">
+      <div class="col-12">
+        <% if references.any? || media.any? %>
+          <% media_hash = related_media_hash(references, media) %>
+          <div class="accordion"
+               id="relatedMediaAccordion">
+            <dl>
+              <% media_hash.each do |sort, media_in_sort| %>
+                <li>
+                  <button class="btn btn-link collapsed"
+                          type="button"
+                          data-toggle="collapse"
+                          data-target="#collapse-<%= sort %>"
+                          style="left: -10px; position: relative;">
+                    <%= Medium.sort_localized[sort] %>
+                    (<%= media_in_sort.size %>)
+                  </button>
+                  <div id="collapse-<%= sort %>"
+                       class="collapse pl-3"
+                       data-parent="#relatedMediaAccordion">
+                      <div class="row">
+                        <% media_in_sort.each do |m| %>
+                          <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">
+                            <%= render partial: 'media/medium',
+                                       locals: { medium: m.first,
+                                                 tags: false,
+                                                 from: 'tag',
+                                                 ref_link: m.second,
+                                                 lecture: nil } %>
+                          </div>
+                        <% end %>
+                      </div>
+                  </div>
+                </li>
+              <% end %>
+            </dl>
+          </div>
+        <% else %>
+          <%= t('no_related_media') %>
         <% end %>
-        </dl>
-      <% else %>
-        <%= t('no_related_media') %>
-      <% end %>
+      </div>
     </div>
   </div>
 </div>
