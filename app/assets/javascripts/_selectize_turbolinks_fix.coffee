@@ -9,9 +9,9 @@ resetSelectized = (index, select) ->
   $(select).find('option').attr('selected', null)
   if $(select).prop('multiple')
     for val in selectedValue
-      $(select).find("option[value=#{val}]").attr('selected', true) if val != ''
+      $(select).find("option[value='" + val + "']").attr('selected', true) if val != ''
   else
-    $(select).find("option[value=#{selectedValue}]").attr('selected', true) if selectedValue != ''
+    $(select).find("option[value='" + selectedValue + "']").attr('selected', true) if selectedValue != ''
   return
 
 # before caching, destroy selectize forms and tranfer their content to

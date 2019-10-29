@@ -134,11 +134,23 @@ class TagsController < ApplicationController
   end
 
   def search
-    search = Tag.search do
+    search = Sunspot.new_search(Tag)
+    search.build do
       fulltext search_params[:title]
-      with(:course_ids, search_params[:course_ids])
+    end
+    if search_params[:course_ids] == ['']
+      search.build do
+        with(:course_ids, nil)
+      end
+    else
+      search.build do
+        with(:course_ids, search_params[:course_ids])
+      end
+    end
+    search.build do
       paginate page: params[:page], per_page: 10
     end
+    search.execute
     results = search.results
     @total = search.total
     @tags = Kaminari.paginate_array(results, total_count: @total)
