@@ -267,7 +267,7 @@ de:
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
-      no_content_yet: 'Es liegen noch keine Inhaltsangaben vor.'
+      no_content_yet: 'Es liegen noch keine Angaben zum Inhalt vor.'
       publish: 'Veranstaltung veröffentlichen'
       publish_request: 'Beim Veröffentlichen der Veranstaltung sollen'
       publish_all_media: >
@@ -527,9 +527,9 @@ de:
           vorliegende Modul aufbaut.
           Beispielsweise könnte das Modul Algebra 1 auf den Modulen
           Lineare Algebra 1 und Lineare Algebra 2 aufbauen. Das ist insofern
-          relevant, als dass NutzerInnen in ihren Profileinstellungen angeben können,
-          ob sie verknüpfte Materialien auch von inhaltlich vorher
-          einzuordnenden Modulen angezeigt bekommen möchten.
+          relevant, als dass Nutzer in ihren Profileinstellungen festlegen können,
+          ob ihnen verknüpfte Materialien auch von inhaltlich vorher
+          einzuordnenden Modulen angezeigt werden sollen.
         lectures: >
           Dies ist die Liste aller Veranstaltungen zu diesem Modul.
           Unveröffentlichte Veranstaltungen sind in rötlicher Farbe gekennzeichnet.
@@ -553,10 +553,9 @@ de:
           das vorliegende Modul aufbaut.
           Beispielsweise könnte das Modul Algebra 1 auf den Modulen
           Lineare Algebra 1 und Lineare Algebra 2 aufbauen. Das ist
-          insofern relevant, als dass NutzerInnen in ihren Profileinstellungen
-          angeben können, ob sie verknüpfte Materialien auch von
-          inhaltlich vorher einzuordnenden Modulen angezeigt bekommen
-          möchten.
+          insofern relevant, als dass Nutzer in ihren Profileinstellungen
+          festlegen können, ob ihnen verknüpfte Materialien auch von inhaltlich
+          vorher einzuordnenden Modulen angezeigt werden sollen.
     chapter:
       edit_html: '%{chapter_name} %{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
@@ -1615,7 +1614,7 @@ de:
     Es sind %{count} mit diesem Begriff verknüpfte Fragen vorhanden,
     die zu Modulen oder Veranstaltungen gehören, die Du abonniert hast.
   content: 'Inhalt'
-  no_content: 'Es liegen keine detaillierten Inhaltsangaben vor.'
+  no_content: 'Es liegen keine detaillierten Angaben zum Inhalt vor.'
   lesson: 'Sitzung'
   next_lesson: 'nächste Sitzung'
   previous_lesson: 'vorige Sitzung'
@@ -1750,7 +1749,7 @@ de:
     further_info: 'Weitere Informationen'
     no_lectures: 'Zu diesem Modul existieren noch keine Veranstaltungen.'
     only_course: >
-      Du bekommst deswegen nur Medien und Informationen angezeigt,
+      Dir werden deswegen nur Medien und Informationen angezeigt,
       die auf der Ebene des Moduls angesiedelt sind.
     no_subscription_html: >
       Du hast keine zu diesem Modul gehörige Veranstaltung %{subscribed}.
@@ -1836,9 +1835,9 @@ de:
         </li>
         </ul>
         Rosa markierte Referenzen sind Referenzen auf unveröffentlichte
-        oder gesperrte Medien. Einfachen NutzerInnen werden
-        diese nicht angezeigt, solange bis das entsprechende Medium
-        veröffentlicht bzw. entsperrt wird.
+        oder gesperrte Medien. Diese werden gewöhnlichen NutzerInnen nicht
+        angezeigt, solange bis das entsprechende Medium veröffentlicht bzw.
+        entsperrt wird.
   item:
     external_reference: 'externe Referenz:'
     internal_reference: 'Verweis auf %{ref}:'
@@ -1952,10 +1951,10 @@ de:
     medium_subject: 'Neues Medium'
     new_medium: 'Es wurde ein neues Medium veröffentlicht: %{title}'
     unsubscribe_html: >
-      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf bekommen
+      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen %{profile} deaktivieren.
     unsubscribe_text: >
-      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf bekommen
+      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen Profileinstellungen
       deaktivieren.
     announcement_subject: 'Neue Mitteilung'
