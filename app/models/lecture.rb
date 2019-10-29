@@ -21,6 +21,10 @@ class Lecture < ApplicationRecord
   # being a teachable (course/lecture/lesson), a lecture has associated media
   has_many :media, as: :teachable
 
+  # in a lecture, you can import other media
+  has_many :imports, as: :teachable, dependent: :destroy
+  has_many :imported_media, through: :imports, source: :medium
+
   # a lecture has many users who have subscribed it in their profile
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :lecture_user_joins
@@ -134,25 +138,36 @@ class Lecture < ApplicationRecord
   # associated to the lecture
   def tags
     Rails.cache.fetch("#{cache_key_with_version}/tags") do
-      chapters.includes(sections: :tags).map(&:sections).flatten.collect(&:tags)
+      chapters.includes(sections: [tags: [:notions]]).map(&:sections).flatten.collect(&:tags)
               .flatten.uniq
     end
   end
 
   # course tags are all tags that are lecture tags as well as tags that are
   # associated to the lecture's course
-  def course_tags
-    tags & course.tags
+  def course_tags(lecture_tags: tags)
+    lecture_tags & course.tags
   end
 
   # extra tags are tags that are lecture tags but not course tags
-  def extra_tags
-    tags - course.tags
+  def extra_tags(lecture_tags: tags)
+    lecture_tags - course.tags
   end
 
   # deferred tags are tags that are course tags but not lecture tags
-  def deferred_tags
-    course.tags - tags
+  def deferred_tags(lecture_tags: tags)
+    course.tags.includes(:notions) - lecture_tags
+  end
+
+  def tags_including_media_tags
+    (tags +
+       lessons.includes(media: :tags)
+              .map(&:media).flatten.uniq
+              .select { |m| m.released.in?(['all', 'users', 'subscribers']) }
+              .map(&:tags).flatten +
+       media.includes(:tags)
+            .select { |m| m.released.in?(['all', 'users', 'subscribers']) }
+            .map(&:tags).flatten).uniq
   end
 
   # lecture items are all items associated to sections within chapters
@@ -187,6 +202,13 @@ class Lecture < ApplicationRecord
       .or(Medium.proper.where(teachable: self.lessons))
   end
 
+  def media_with_inheritance_uncached_eagerload_stuff
+    Medium.includes(:tags, teachable: [lecture: [:lessons]])
+          .proper.where(teachable: self)
+          .or(Medium.includes(:tags, teachable: [lecture: [:lessons]])
+                    .proper.where(teachable: self.lessons))
+  end
+
 
   def media_with_inheritance
     Rails.cache.fetch("#{cache_key_with_version}/media_with_inheritance") do
@@ -212,35 +234,35 @@ class Lecture < ApplicationRecord
   # These methods make use of caching.
 
   def kaviar?(user)
-    project?('kaviar', user)
+    project?('kaviar', user) || imported_any?('kaviar')
   end
 
   def sesam?(user)
-    project?('sesam', user)
+    project?('sesam', user) || imported_any?('sesam')
   end
 
   def keks?(user)
-    project?('keks', user)
+    project?('keks', user)  || imported_any?('keks')
   end
 
   def erdbeere?(user)
-    project?('erdbeere', user)
+    project?('erdbeere', user) || imported_any?('erdbeere')
   end
 
   def kiwi?(user)
-    project?('kiwi', user)
+    project?('kiwi', user) || imported_any?('kiwi')
   end
 
   def nuesse?(user)
-    project?('nuesse', user)
+    project?('nuesse', user) || imported_any?('nuesse')
   end
 
   def script?(user)
-    project?('script', user)
+    project?('script', user) || imported_any?('nuesse')
   end
 
   def reste?(user)
-    project?('reste', user)
+    project?('reste', user) || imported_any?('reste')
   end
 
 
@@ -382,9 +404,9 @@ class Lecture < ApplicationRecord
   # is it the user's chosen primary lecture among the course's lectures?
   # returns nil if course is not subscribed
   def primary?(user)
-    course_join = CourseUserJoin.where(user: user, course: lecture.course)
-    return if course_join.empty?
-    course_join.first.primary_lecture_id == id
+    course_join = user.course_user_joins.find { |j| j.course == lecture.course }
+    return if course_join.nil?
+    course_join.primary_lecture_id == id
   end
 
   # is it the user's chosen primary lecture among the course's lectures?
@@ -486,7 +508,9 @@ class Lecture < ApplicationRecord
   end
 
   def active_announcements(user)
-    user.active_announcements(lecture).map(&:notifiable)
+    announcements.includes(:announcer)
+                .where(id: user.notifications.where(notifiable: announcements)
+                .pluck(:notifiable_id))
   end
 
   def self.sorts
@@ -524,9 +548,19 @@ class Lecture < ApplicationRecord
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: lessons).exists? ||
-      Medium.where(sort: medium_sort[project],
+      Medium.includes(:tags)
+            .where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
-                   teachable: course).exists?
+                   teachable: course)
+            .select { |m| (m.tags & tags).any? }
+            .any?
+    end
+  end
+
+  def imported_any?(project)
+    Rails.cache.fetch("#{cache_key_with_version}/imported_#{project}") do
+      imported_media.exists?(sort: medium_sort[project],
+                             released: ['all', 'users'])
     end
   end
 

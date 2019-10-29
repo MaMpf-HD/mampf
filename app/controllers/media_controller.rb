@@ -16,6 +16,8 @@ class MediaController < ApplicationController
     if params[:lecture_id].present? &&
       params[:current_lecture].in?(current_user.lecture_ids)
       cookies[:current_lecture] = params[:lecture_id]
+    else
+      cookies[:current_lecture] = nil
     end
     @media = paginated_results
     render layout: 'application'
@@ -57,6 +59,8 @@ class MediaController < ApplicationController
     # (it will not be touched automatically in some cases (e.g. if you only
     # update the associated tags), causing trouble for caching)
     @medium.touch
+    # touch lectures that import this medium
+    @medium.importing_lectures.update_all(updated_at: Time.now)
     @medium.sanitize_type!
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript
@@ -128,6 +132,7 @@ class MediaController < ApplicationController
     # create notification about creation of medium to all subscribers
     # and send an email
     unless @medium.sort.in?(['Question', 'Remark', 'RandomQuiz'])
+      @medium.teachable&.media_scope&.touch
       create_notifications
       send_notification_email
     end
@@ -138,6 +143,7 @@ class MediaController < ApplicationController
     @medium.destroy
     # destroy all notifications related to this medium
     destroy_notifications
+    @medium.teachable.touch
     if @medium.teachable_type.in?(['Lecture', 'Lesson'])
       redirect_to edit_lecture_path(@medium.teachable.media_scope)
       return
@@ -156,11 +162,9 @@ class MediaController < ApplicationController
     @total = search.total
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
-    if search_params[:purpose] == 'quiz'
-      render template: "quizzes/new_vertex/preview"
-      return
-    elsif search_params[:purpose] == 'clicker'
-      render template: "clickers/edit/search"
+    @purpose = search_params[:purpose]
+    if @purpose.in?(['quiz', 'import'])
+      render template: "media/catalog/import_preview"
       return
     end
   end
@@ -281,6 +285,11 @@ class MediaController < ApplicationController
     filter_boxes = JSON.parse(params[:filter_boxes])
     manuscript.export_to_db!(filter_boxes)
     @medium.update(imported_manuscript: true)
+    @quarantine_added = @medium.update_pdf_destinations!
+    if @quarantine_added.any?
+      render :destination_warning
+      return
+    end
     redirect_to edit_medium_path(@medium)
   end
 
@@ -373,14 +382,29 @@ class MediaController < ApplicationController
 
   # search is done in search class method for Medium
   def search_results
-    search_results = Medium.search_all(@course.primary_lecture(current_user),
-                                       params)
+    search_results = Medium.search_all(params)
     # search_results are ordered in a certain way
     # the next lines ensure that filtering for visible media does not
     # mess up the ordering
     search_arel = Medium.where(id: search_results.pluck(:id))
     visible_search_results = current_user.filter_visible_media(search_arel)
     search_results &= visible_search_results
+    # add imported media in case of a lecture
+    if params[:lecture_id].present?
+      @lecture = Lecture.find_by_id(params[:lecture_id])
+      # filter out stuff from course level for generic users
+      unless current_user.admin || @lecture.edited_by?(current_user)
+        lecture_tags = @lecture.tags_including_media_tags
+        search_results.reject! do |m|
+          m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
+        end
+      end
+      sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize
+      search_results +=  @lecture.imported_media
+                                 .where(sort: sort)
+                                 .locally_visible
+      search_results.uniq!
+    end
     return search_results unless params[:reverse]
     search_results.reverse
   end
@@ -409,7 +433,10 @@ class MediaController < ApplicationController
 
   def search_params
     types = params[:search][:types]
-    params[:search][:types] = [types] if types && !types.kind_of?(Array)
+    types = [types] if types && !types.kind_of?(Array)
+    types -= [''] if types
+    types = nil if types == []
+    params[:search][:types] = types
     params.require(:search).permit(:all_types, :all_teachables, :all_tags,
                                    :all_editors, :tag_operator, :quiz, :access,
                                    :teachable_inheritance, :fulltext, :per,
@@ -424,6 +451,7 @@ class MediaController < ApplicationController
   # to the medium's teachable's media_scope
   def create_notifications
     notifications = []
+    @medium.teachable.media_scope.users.update_all(updated_at: Time.now)
     @medium.teachable.media_scope.users.each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @medium.id,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_17_163159) do
+ActiveRecord::Schema.define(version: 2019_09_26_140031) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -114,6 +114,16 @@ ActiveRecord::Schema.define(version: 2019_08_17_163159) do
     t.index ["slug", "sluggable_type"], name: "index_friendly_id_slugs_on_slug_and_sluggable_type"
     t.index ["sluggable_id"], name: "index_friendly_id_slugs_on_sluggable_id"
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
+  end
+
+  create_table "imports", force: :cascade do |t|
+    t.integer "medium_id", null: false
+    t.string "teachable_type", null: false
+    t.integer "teachable_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["medium_id"], name: "index_imports_on_medium_id"
+    t.index ["teachable_type", "teachable_id"], name: "index_imports_on_teachable_type_and_teachable_id"
   end
 
   create_table "items", force: :cascade do |t|
@@ -592,6 +602,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_163159) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
 end

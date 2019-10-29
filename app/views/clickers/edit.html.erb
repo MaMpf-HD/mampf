@@ -27,9 +27,41 @@
       </li>
       <% if user_signed_in? %>
         <li class="list-group-item list-group-item-secondary">
-          <%= t('admin.clicker.editor_link') %>:
-          <%= link_to @editor_path,
-                      @editor_path %>
+          <div class="row">
+            <div class="col-8">
+              <%= t('admin.clicker.editor_link') %>:
+              <%= link_to @editor_path,
+                          @editor_path,
+                          id: 'clickerEditorLink' %>
+              <span id="clickerNoLink">
+                ***********
+              </span>
+            </div>
+            <div class="col-4 text-right">
+              <button role="button"
+                      class="btn btn-sm btn-outline-secondary ml-3"
+                      id="clickerHideEditorLink"
+                      data-showlink="false"
+                      data-showbutton="<%= t('buttons.show') %>"
+                      data-hidebutton="<%= t('buttons.hide') %>">
+                <%= t('buttons.show') %>
+              </button>
+            </div>
+          </div>
+        </li>
+        <li class="list-group-item list-group-item-light text-dark">
+          <div class="row">
+            <div class="col-8">
+              <%= t('admin.clicker.delete') %>
+            </div>
+            <div class="col-4 text-right">
+              <%= link_to t('buttons.delete'),
+                          clicker_path(@clicker),
+                          class: 'btn btn-sm btn-danger',
+                          method: :delete,
+                          data: { confirm: t('confirmation.generic') } %>
+            </div>
+          </div>
         </li>
       <% end %>
       <li class="list-group-item list-group-item-light text-dark">

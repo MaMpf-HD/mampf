@@ -34,7 +34,9 @@ class ClickersController < ApplicationController
                                     params: { code: @clicker.code })
       return
     end
-    if stale?(etag: @clicker, last_modified: @clicker.updated_at)
+    if stale?(etag: @clicker,
+              last_modified: [@clicker.updated_at,
+                              Time.parse(ENV['RAILS_CACHE_ID'])].max)
       render :show
       return
     end
@@ -49,6 +51,11 @@ class ClickersController < ApplicationController
     end
     @errors = @clicker.errors
     render layout: 'administration'
+  end
+
+  def destroy
+    @clicker.destroy
+    redirect_to administration_path
   end
 
   def open

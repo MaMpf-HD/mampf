@@ -6,9 +6,15 @@ class Course < ApplicationRecord
   # tags are notions that treated in the course
   # e.g.: vector space, linear map are tags for the course 'Linear Algebra 1'
   has_many :course_tag_joins, dependent: :destroy
-  has_many :tags, through: :course_tag_joins
+  has_many :tags, through: :course_tag_joins,
+           after_remove: :touch_tag,
+           after_add: :touch_tag
 
   has_many :media, as: :teachable
+
+  # in a course, you can import other media
+  has_many :imports, as: :teachable, dependent: :destroy
+  has_many :imported_media, through: :imports, source: :medium
 
   # users in this context are users who have subscribed to this course
   has_many :course_user_joins, dependent: :destroy
@@ -190,10 +196,22 @@ class Course < ApplicationRecord
     lectures.collect(&:items).flatten
   end
 
-  def primary_lecture(user)
+  def primary_lecture(user, eagerload: false)
     user_join = CourseUserJoin.where(course: self, user: user)
-    return if user_join.empty?
-    Lecture.find_by_id(user_join.first.primary_lecture_id)
+    return unless user_join.any?
+    unless eagerload
+      return Lecture.find_by_id(user_join.first.primary_lecture_id)
+    end
+    Lecture.includes(:teacher, :term, :editors, :users,
+                     :announcements, :imported_media,
+                     course: [:editors],
+                     media: [:teachable, :tags],
+                     lessons: [media: [:tags]],
+                     chapters: [:lecture,
+                                sections: [lessons: [:tags],
+                                           chapter: [:lecture],
+                                           tags: [:notions, :lessons]]])
+           .find_by_id(user_join.first.primary_lecture_id)
   end
 
   def subscribed_lectures(user)
@@ -420,6 +438,11 @@ class Course < ApplicationRecord
 
   def touch_media
     media_with_inheritance.update_all(updated_at: Time.now)
+  end
+
+  def touch_tag(tag)
+    tag.touch
+    Sunspot.index! tag
   end
 
   def touch_lectures_and_lessons

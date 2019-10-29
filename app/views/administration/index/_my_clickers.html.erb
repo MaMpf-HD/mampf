@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-8">
         <%= t('admin.main.my_clickers') %>
-        (<%= current_user.clickers.count %>)
+        (<%= current_user.clickers.size %>)
         <%= helpdesk(t('admin.main.info.clicker_definition'), true) %>
       </div>
       <div class="col-4 text-right">
@@ -21,7 +21,7 @@
          class="bg-green-lighten-4 p-3 mb-3 rounded"
          style="display: none;">
     </div>
-    <% if current_user.clickers.exists? %>
+    <% if current_user.clickers.any? %>
         <%= render partial: 'administration/index/clicker',
                    collection: current_user.clickers.order(:updated_at)
                                            .reverse.first(5),

@@ -8,21 +8,18 @@
   <%= announcement.details %>
 </div>
 <div class="col-1 text-right">
-  <% if announcement.active?(current_user) %>
-    <%= link_to notification_path(current_user
-                                    .matching_notification(announcement)),
-                class: 'removeLectureNotification',
-                remote: true,
-                method: :delete,
-                data:
-                  { id: current_user.matching_notification(announcement)&.id,
-                    lecture: lecture.id,
-                    onenew: t('notifications.lecture.one_new'),
-                    morenew: t('notifications.lecture.more_new') } do %>
-      <i class="fas fa-check text-dark"
-         data-toggle="tooltip"
-         title="<%= t('basics.mark_as_read') %>">
-      </i>
-    <% end %>
+  <%= link_to notification_path(notification),
+              class: 'removeLectureNotification',
+              remote: true,
+              method: :delete,
+              data:
+                { id: notification.id,
+                  lecture: lecture.id,
+                  onenew: t('notifications.lecture.one_new'),
+                  morenew: t('notifications.lecture.more_new') } do %>
+    <i class="fas fa-check text-dark"
+       data-toggle="tooltip"
+       title="<%= t('basics.mark_as_read') %>">
+    </i>
   <% end %>
 </div>

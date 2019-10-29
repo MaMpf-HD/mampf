@@ -3,17 +3,16 @@
     <div class="row">
       <div class="col-8">
         <%= t('admin.main.my_courses') %>
-        (<%= current_user.edited_courses.count  %>)
+        (<%= current_user.edited_courses.size  %>)
         <%= helpdesk(t('admin.main.info.course_definition'), true) %>
       </div>
       <div class="col-4 text-right">
         <% if current_user.admin? %>
-          <%= link_to '',
-                      new_course_path,
-                      class: 'fas fa-plus-circle text-light admin-index-button',
-                      id: 'new-course-button',
-                      data: { remote: true, toggle: 'tooltip' },
-                      title: t('admin.main.create_course') %>
+          <i class="fas fa-plus-circle text-light admin-index-button clickable",
+             id="new-course-button"
+             data-toggle="tooltip"
+             title="<%= t('admin.main.create_course') %>">
+          </i>
         <% end %>
       </div>
     </div>
@@ -25,7 +24,7 @@
       <%= render partial: 'courses/new',
                  locals: { course: Course.new } %>
     </div>
-    <% if current_user.edited_courses.exists? %>
+    <% if current_user.edited_courses.any? %>
       <%= render partial: 'administration/index/courses_card',
                  locals: { courses:
                              current_user.edited_courses

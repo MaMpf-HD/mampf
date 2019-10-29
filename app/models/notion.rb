@@ -7,6 +7,7 @@ class Notion < ApplicationRecord
   validate :presence_of_tag, if: :persisted?
 
   after_save :touch_tag_relations
+  before_destroy :touch_tag_relations
 
   def presence_of_tag
     return if tag || aliased_tag
@@ -20,5 +21,14 @@ class Notion < ApplicationRecord
     aliased_tag&.touch_lectures
     aliased_tag&.touch_sections
     aliased_tag&.touch_chapters
+    clear_tag_cache
+  end
+
+  private
+
+  def clear_tag_cache
+    I18n.available_locales.each do |l|
+      Rails.cache.delete("tag_select_by_title_#{l}")
+    end
   end
 end

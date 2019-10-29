@@ -10,8 +10,8 @@
         <%= t('admin.lecture.no_content_yet') %>
       <% else %>
         <%= render partial: 'lectures/show/chapter',
-                   collection: lecture.chapters.includes(:sections, :lecture)
-                                      .where(hidden: [false, nil]),
+                   collection: lecture.chapters
+                                      .select { |c| c.hidden.in?([false, nil]) },
                    cached: true %>
       <% end %>
     </div>

@@ -39,6 +39,13 @@ class Medium < ApplicationRecord
   has_many :referrals, dependent: :destroy
   has_many :referenced_items, through: :referrals, source: :item
 
+
+  has_many :imports, dependent: :destroy
+  has_many :importing_lectures, through: :imports,
+           source: :teachable, source_type: 'Lecture'
+  has_many :importing_courses, through: :imports,
+           source: :teachable, source_type: 'Course'
+
   serialize :quiz_graph, QuizGraph
 
   serialize :solution, Solution
@@ -98,6 +105,7 @@ class Medium < ApplicationRecord
   # (they may not be globally visible as their lecture may be unpublished)
   scope :published, -> { where.not(released: nil) }
   scope :locally_visible, -> { where(released: ['all', 'users']) }
+  scope :potentially_visible, -> { where(released: ['all', 'users', 'subscribers']) }
   scope :proper, -> { where.not(sort: 'RandomQuiz') }
   scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 1.day.ago) }
 
@@ -168,89 +176,39 @@ class Medium < ApplicationRecord
     Medium.sort_localized.slice('Question', 'Remark').map { |k, v| [v, k] }
   end
 
+  def self.select_importables
+    Medium.sort_localized.except('RandomQuiz', 'Question', 'Remark',
+                                 'Manuscript').map { |k, v| [v, k] }
+  end
+
   def self.select_question
     Medium.sort_localized.slice('Question').map { |k, v| [v, k] }
   end
 
   # returns the array of all media subject to the conditions
   # provided by the params hash (keys: :course_id, :lecture_id, :project)
-  # and the user's primary lecture for the given course (this is relevant for
-  # the ordering of the results as results for the primary lecture are placed
-  # before hits for other lectures)
-  def self.search_all(primary_lecture, params)
+  def self.search_all(params)
     course = Course.find_by_id(params[:course_id])
     return Medium.none if course.nil?
-    filtered = Medium.filter_media(course, params[:project])
+    media_in_project = Medium.media_in_project(params[:project])
     # first case: media sitting at course level (no lecture_id given)
+    course_media_in_project = media_in_project.includes(:tags)
+                                              .where(teachable: course)
+                                              .natural_sort_by(&:caption)
     unless params[:lecture_id].present?
-      return search_results(filtered, course, primary_lecture)
+      return course_media_in_project
     end
     # second case: media sitting at lecture level
     lecture = Lecture.find_by_id(params[:lecture_id].to_i)
     return Medium.none unless course.lectures.include?(lecture)
     # append results at course level to lecture/lesson level results
-    lecture.lecture_lesson_results(filtered) +
-      filtered.where(teachable: course)
+    lecture.lecture_lesson_results(media_in_project) + course_media_in_project
   end
 
-  # returns the ARel of all media for the given project, if the
-  # given course has media for this project
-  def self.filter_media(course, project)
-    return Medium.order(:id) unless project.present?
+  # returns the ARel of all media for the given project
+  def self.media_in_project(project)
     sort = project == 'keks' ? 'Quiz' : project.capitalize
     Medium.where(sort: sort).order(:id)
-  end
-
-  # returns the array of all media out of the given media that are associated
-  # to a given course (with inheritance), with ordering
-  # (depending on the given primary lecture) as described a few lines below
-  def self.search_results(filtered_media, course, primary_lecture)
-    course_results = filtered_media.where(teachable: course)
-    return course_results.natural_sort_by(&:caption) unless primary_lecture
-    # media associated to primary lecture and its lessons
-    primary_results = Medium.filter_primary(filtered_media, primary_lecture)
-    # media associated to the course, all of its lectures and their lessons
-    secondary_results = Medium.filter_secondary(filtered_media, course)
-    # throw out media that have appeared as one of the above two types
-    secondary_results = Medium.where(id: secondary_results.pluck(:id) -
-                                         course_results.pluck(:id) -
-                                         primary_results.pluck(:id))
-    # differentiate primary results whether they are associated to the lecture
-    # or a lesson of it
-    primary_lecture_results = Medium.filter_by_lecture(primary_results)
-    primary_lessons_results = Medium.where(id: primary_results.pluck(:id) -
-                                               primary_lecture_results.pluck(:id))
-    # sort them in the following way
-    # - course results, by caption
-    # - primary lecture results, by caption
-    # - primary lesson results, by date
-    # - secondary results
-    course_results.natural_sort_by(&:caption) +
-      primary_lecture_results.natural_sort_by(&:caption) +
-      primary_lessons_results.sort_by { |m| m.teachable.date } +
-      secondary_results
-  end
-
-  # returns the array of all media out of th egiven media who are associated
-  # to a lecture
-  def self.filter_by_lecture(media)
-    media.where(teachable_type: 'Lecture')
-  end
-
-  # returns the array of all media out of the given media that are associated
-  # to a given lecture and its lessons
-  def self.filter_primary(filtered_media, primary_lecture)
-    return Medium.none unless primary_lecture
-    filtered_media.where(teachable: primary_lecture)
-      .or(filtered_media.where(teachable: primary_lecture&.lessons))
-  end
-
-  # returns the array of all media out of the given media that are associated
-  # to a given course, its lectures or their lessons
-  def self.filter_secondary(filtered_media, course)
-    filtered_media.where(teachable: course)
-      .or(filtered_media.where(teachable: course.lectures))
-      .or(filtered_media.where(teachable: Lesson.where(lecture: course.lectures)))
   end
 
   # returns the array of all media (by title), together with their ids
@@ -711,10 +669,11 @@ class Medium < ApplicationRecord
   def local_info_uncached
     return description if description.present?
     return I18n.t('admin.medium.local_info.no_title') unless undescribable?
-    if sort == 'Kaviar'
-      return I18n.t('admin.medium.local_info.to_session',
-                    number: teachable.lesson&.number,
-                    date: teachable.lesson&.date_localized)
+    if sort == 'Kaviar' &&  teachable_type == 'Lesson'
+        return I18n.t('admin.medium.local_info.to_session',
+                      number: teachable.number,
+                      date: teachable.date_localized)
+
     elsif sort == 'Script'
       return I18n.t('categories.script.singular')
     end
@@ -775,6 +734,12 @@ class Medium < ApplicationRecord
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       title_for_viewers_uncached
+    end
+  end
+
+  def scoped_teachable_title
+    Rails.cache.fetch("#{cache_key_with_version}/scoped_teachable_title") do
+      teachable.media_scope.title_for_viewers
     end
   end
 
@@ -849,6 +814,39 @@ class Medium < ApplicationRecord
     result.map { |k, v| [v, k] }
   end
 
+  def extracted_linked_media
+    video_links = Medium.where(id: referenced_items.where(sort: 'self')
+                                                   .where.not(medium: nil)
+                                                   .pluck(:medium_id))
+    return video_links unless manuscript.present?
+    if manuscript.class.to_s == 'PdfUploader::UploadedFile'
+      manuscript_media_ids = manuscript.metadata['linked_media']
+    elsif manuscript.class.to_s == 'Hash' && manuscript.keys == [:original,
+                                                                 :screenshot]
+      manuscript_media_ids = manuscript[:original].metadata['linked_media']
+    else
+      manuscript_media_ids = []
+    end
+    manuscript_links = Medium.where(id: manuscript_media_ids)
+    video_links.or(manuscript_links)
+  end
+
+  def linked_media_new
+    Medium.where(id: linked_media_ids_cached)
+  end
+
+  def linked_media_ids_cached
+    Rails.cache.fetch("#{cache_key_with_version}/linked_media_ids_cached") do
+      (linked_media.pluck(:id) + extracted_linked_media.pluck(:id)).uniq
+    end
+  end
+
+  def toc_items
+    return [] unless sort == 'Script'
+    items.where(sort: ['chapter', 'section'])
+         .natural_sort_by { |x| [x.page, x.ref_number] }
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require
@@ -919,18 +917,6 @@ class Medium < ApplicationRecord
 
   def belongs_to_lesson?(lecture)
     teachable_type == 'Lesson' && teachable.lecture == lecture
-  end
-
-  def filter_primary(filtered_media, primary_lecture)
-    filtered_media.select do |m|
-      m.teachable && m.teachable.lecture == primary_lecture
-    end
-  end
-
-  def filter_secondary(filtered_media, course)
-    filtered_media.select do |m|
-      m.teachable && m.teachable.course == course
-    end
   end
 
   def create_self_item

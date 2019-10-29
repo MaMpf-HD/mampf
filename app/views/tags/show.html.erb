@@ -138,6 +138,7 @@
       <div class="col-12">
         <%= render partial: 'media/related_media',
                    locals: { media: @media,
+                             references: @references,
                              from: 'tag',
                              questions: @questions.any? } %>
       </div>

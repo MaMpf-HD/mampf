@@ -28,7 +28,7 @@ module MediaHelper
   # create text for notification about new medium in notification dropdown menu
   def medium_notification_item_header(medium)
     return unless medium.proper?
-    t('notifications.new_medium_in') + medium.teachable.media_scope.title_for_viewers
+    t('notifications.new_medium_in') + medium.scoped_teachable_title
   end
 
   def medium_notification_item_details(medium)
@@ -98,11 +98,23 @@ module MediaHelper
   def media_sorts_select(purpose)
     return add_prompt(Medium.select_quizzables) if purpose == 'quiz'
     return Medium.select_question if purpose == 'clicker'
+    return add_prompt(Medium.select_importables) if purpose == 'import'
     add_prompt(Medium.select_sorts)
   end
 
   def sort_preselect(purpose)
     return '' unless purpose == 'quiz'
     'Question'
+  end
+
+  def related_media_hash(references, media)
+    media_list = references.map { |r| [r.medium, r.manuscript_link] } +
+                   media.zip(Array.new(media.size))
+    hash = {}
+    Medium.sort_enum.each do |s|
+      media_in_s = media_list.select { |m| m.first.sort == s }
+      hash[s] = media_in_s unless media_in_s.blank?
+    end
+    hash
   end
 end

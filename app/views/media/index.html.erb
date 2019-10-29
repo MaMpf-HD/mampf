@@ -55,7 +55,8 @@
   </div>
   <%= render partial: 'media/media',
              locals: { media: @media,
-                       tags: true } %>
+                       tags: true,
+                       lecture: @lecture } %>
   <% unless params[:all] %>
     <div class="row my-2">
       <div class="col-12">

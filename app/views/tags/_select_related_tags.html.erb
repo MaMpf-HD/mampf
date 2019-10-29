@@ -24,7 +24,8 @@
                   data: { id: tag.id.to_i,
                           ajax: true,
                           model: 'tag',
-                          filled: false } } %>
+                          filled: false,
+                          locale: I18n.locale } } %>
   <div class="invalid-feedback"
        id="tag-related-tags-error-<%= tag.id.to_i %>">
   </div>

@@ -18,6 +18,7 @@ class NotificationsController < ApplicationController
   # destroy all notifications of the current user
   def destroy_all
     current_user.notifications.delete_all
+    current_user.touch
   end
 
   # destroy all lecture notifications of current user
@@ -25,6 +26,7 @@ class NotificationsController < ApplicationController
     lecture = Lecture.find_by_id(params[:lecture_id])
     return unless lecture.present?
     Notification.delete(current_user.active_announcements(lecture).pluck(:id))
+    current_user.touch
     render :destroy_all
   end
 
@@ -32,6 +34,7 @@ class NotificationsController < ApplicationController
   # to any lecture
   def destroy_news_notifications
     Notification.delete(current_user.active_news.pluck(:id))
+    current_user.touch
     render :destroy_all
   end
 

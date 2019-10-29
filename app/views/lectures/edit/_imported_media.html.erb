@@ -1,0 +1,57 @@
+<div class="card bg-light">
+    <div class="card-header" role="tab" id="imported_media_heading">
+      <div class="row">
+        <div class="col-6">
+          <h5 id="importMedia"
+              data-lecture="<%= lecture.id %>">
+            <%= t('admin.lecture.imported_media') %>
+            <span id="importedMediaCount">
+              (<%= lecture.imported_media.size %>)
+            </span>
+          </h5>
+        </div>
+        <div class="col-6 text-right">
+          <a class="btn btn-sm btn-outline-primary"
+             data-toggle="collapse"
+             href="#imported_media_collapse"
+             id="imported_media_collapse_button"
+             aria-expanded="false" aria-controls="imported_media_collapse">
+            <%= t('buttons.toggle') %>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="imported_media_collapse"
+         class="collapse"
+         role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#lectureAccordion">
+      <div class="card-body">
+        <div id="importedMediaTable"
+             data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
+          <%= render partial: 'lectures/import/imported_media',
+                     locals: { media: lecture.imported_media,
+                               lecture: lecture,
+                               inspection: inspection } %>
+        </div>
+        <% unless inspection %>
+          <div class="row mb-2">
+            <div class="col-12 text-center">
+              <button role="button"
+                      class="btn btn-sm btn-secondary"
+                      id="import-media-button">
+                <%= t('buttons.import_media') %>
+              </button>
+            </div>
+          </div>
+          <div id="importedMediaArea">
+            <hr>
+            <%= render partial: 'media/catalog/search_form',
+                       locals: { purpose: 'import' } %>
+            <div id="media-search-results">
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+</div>

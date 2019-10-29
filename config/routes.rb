@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   delete 'clickers/:id/remove_question', to: 'clickers#remove_question',
                                         as: 'remove_question'
 
-  resources :clickers
+  resources :clickers, except: [:index, :update]
 
   get 'c/:id', to: 'clickers#show'
 
@@ -71,6 +71,8 @@ Rails.application.routes.draw do
   get 'events/cancel_solution_edit', as: 'cancel_solution_edit'
   get 'events/texify_solution', as: 'texify_solution'
   get 'events/render_question_parameters', as: 'render_question_parameters'
+  get 'events/render_import_media', as: 'render_import_media'
+  get 'events/cancel_import_media', as: 'cancel_import_media'
 
   get 'items/:id/display', to: 'items#display',
                            as: 'display_item'
@@ -96,8 +98,15 @@ Rails.application.routes.draw do
                                          as: 'show_announcements'
   get 'lectures/:id/organizational', to: 'lectures#organizational',
                                          as: 'organizational'
+  get 'lectures/:id/show_subscribers', to: 'lectures#show_subscribers',
+                                       as: 'show_subscribers'
   post 'lecture/:id/publish', to: 'lectures#publish',
-                            as: 'publish_lecture'
+                              as: 'publish_lecture'
+  post 'lectures/:id/import_media', to: 'lectures#import_media',
+                                    as: 'lecture_import_media'
+  delete 'lectures/:id/remove_imported_medium',
+         to: 'lectures#remove_imported_medium',
+         as: 'lecture_remove_imported_medium'
 
   resources :lectures, except: [:index]
 

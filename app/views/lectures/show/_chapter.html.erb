@@ -10,8 +10,8 @@
     <% end %>
     <ul class="list-group list-group-flush">
       <%= render partial: 'lectures/show/section',
-                 collection: chapter.sections.includes(:chapter)
-                                    .where(hidden: [false, nil]),
+                 collection: chapter.sections
+                                    .select { |c| c.hidden.in?([false, nil]) },
                  cached: true %>
     </ul>
   </div>

@@ -1,15 +1,14 @@
  <div class="card">
   <div class="card-header bg-teal-lighten-4">
     <%= t('admin.main.other_lectures') %>
-    (<%= current_user.teaching_unrelated_lectures.count  %>)
+    (<%= other_lectures.size  %>)
     <%= helpdesk(t('admin.main.info.other_lectures'), false) %>
   </div>
   <div class="card-body card-tiny">
-    <% if current_user.teaching_unrelated_lectures.present? %>
+    <% if other_lectures.any? %>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
-                             Lecture.sort_by_date(current_user
-                                                    .teaching_unrelated_lectures),
+                             Lecture.sort_by_date(other_lectures),
                            inspection: true,
                            teacher: true } %>
     <% else %>

@@ -56,7 +56,9 @@ class UsersController < ApplicationController
   end
 
   def fill_user_select
-    result = User.all.map { |u| { value: u.id, text: u.info } }
+    result = User.pluck(:name, :email, :id)
+                 .map { |u| { value: u.third,
+                              text: "#{u.first} (#{u.second})" } }
     render json: result
   end
 

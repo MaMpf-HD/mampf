@@ -42,7 +42,7 @@
       <%= chapter.details.html_safe %>
     <% end %>
     <ul class="list-group mt-2">
-      <% chapter.sections.includes(:chapter, :tags).each do |s| %>
+      <% chapter.sections.each do |s| %>
         <% cache [s, inspection] do %>
           <%= render partial: 'lectures/edit/section',
                      locals: { section: s,

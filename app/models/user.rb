@@ -54,17 +54,6 @@ class User < ApplicationRecord
   # add timestamp for DSGVO consent
   after_create :set_consented_at
 
-  # array of all users together with their ids for use in options_for_select
-  # (e.g. in a select editors form)
-  def self.select_editors
-    User.all.map { |u| [u.info, u.id] }
-  end
-
-  # array of hashes of user ids together with user info
-  def self.select_editors_hash
-    User.all.map { |u| { text: u.info, value: u.id } }
-  end
-
   # returns the array of all teachers
   def self.teachers
     User.where(id: Lecture.pluck(:teacher_id).uniq)
@@ -89,6 +78,13 @@ class User < ApplicationRecord
     return User.editors unless search_params[:all_editors] == '0'
     editor_ids = search_params[:editor_ids] || []
     User.where(id: editor_ids)
+  end
+
+  # array of all users together with their ids for use in options_for_select
+  # (e.g. in a select editors form)
+  def self.select_editors
+    User.pluck(:name, :email, :id)
+        .map { |u| [ "#{u.first} (#{u.second})", u.third] }
   end
 
   # related courses for user are
@@ -172,21 +168,20 @@ class User < ApplicationRecord
   # returns the array of those notifications of the user that are announcements
   # in the given lecture
   def active_announcements(lecture)
-    notifications.where(notifiable_type: 'Announcement')
-                 .select { |n| n.notifiable.lecture == lecture }
+    notifications.where(notifiable: lecture.announcements)
   end
 
   # returns the array of those notifications that are related to MaMpf news
   # (i.e. announcements without a lecture)
   def active_news
-    active_announcements(nil)
+    notifications.where(notifiable_type: 'Announcement')
+                 .select { |n| n.notifiable.lecture.nil? }
   end
 
   # returns the unique user notification that corresponds to the given
   # announcement
   def matching_notification(announcement)
-    notifications.where(notifiable_type: 'Announcement',
-                        notifiable_id: announcement.id)&.first
+    notifications.find { |n| n.notifiable == announcement }
   end
 
   # a user is a teacher iff he/she has given any lecture
@@ -194,7 +189,7 @@ class User < ApplicationRecord
     given_lectures.any?
   end
 
-  # a user is an editor iff he/she is a course editro od lecture editor or
+  # a user is an editor iff he/she is a course editor or lecture editor or
   # media editor
   def editor?
     edited_courses.any? || edited_lectures.any? || edited_media.any?
@@ -228,7 +223,7 @@ class User < ApplicationRecord
   # - all courses if the user is an admin
   # - all edited courses otherwise
   def editable_courses
-    return Course.all if admin
+    return Course.includes(lectures: [:term, :teacher]).all if admin
     edited_courses
   end
 
@@ -267,7 +262,11 @@ class User < ApplicationRecord
 
   # teaching unrelated lectures are all lectures that are not teaching related
   def teaching_unrelated_lectures
-    Lecture.all - teaching_related_lectures
+    Lecture.includes(:term, :teacher, :course).all - teaching_related_lectures
+  end
+
+  def unrelated_courses
+    Course.includes(:editors).all - edited_courses
   end
 
   # defines which messageboards a user can read:

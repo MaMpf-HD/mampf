@@ -111,7 +111,7 @@ de:
         locked_medium: 'Dieses Medium ist gesperrt.'
         unpublished_medium: 'Dieses Medium ist unveröffentlicht.'
         free_medium: 'Dieses Medium ist frei zugänglich.'
-        user_medium: 'Dieses Medium ist nur für MaMpf-Nutzerinnen zugänglich.'
+        user_medium: 'Dieses Medium ist nur für MaMpf-NutzerInnen zugänglich.'
         subscriber_medium: >
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
@@ -129,13 +129,13 @@ de:
       create_course: 'Modul anlegen'
       my_clickers: 'Meine Clicker'
       create_clicker: 'Clicker anlegen'
-      no_edited_clickers: 'Du hast noch keine Clicker angelegt.'
+      no_edited_clickers: 'Du hast aktuell keine Clicker angelegt.'
       no_edited_courses: >
         Es gibt keine Module, für die Du als EditorIn eingetragen bist.
       my_media: 'Meine Medien'
       media_restriction_html: >
-        Es werden nur die 25 zuletzt geupdateten Medien angezeigt.
-        Mehr Medien findest du über die %{media_search} oder in deinen
+        Es werden nur die 25 zuletzt upgedateten Medien angezeigt.
+        Mehr Medien findest Du über die %{media_search} oder in Deinen
         %{profile}.
       media_search: 'Mediensuche'
       user_profile: 'Nutzerprofil'
@@ -232,7 +232,13 @@ de:
           Dies ist eine Liste aller Deiner
           <i>Clicker</i>,
           </br>
-          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei ...
+          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei
+          ein Feedbackkanal in Form einer speziellen Webseite.
+          Personen mit dem EditorInnen-Link können Feedback zu einer
+          Fragestellung erbitten und Personen mit dem TeilnehmerInnen-Link
+          können dieses Feedback liefern.
+          Pro Clicker ist zu jedem Zeitpunkt genau eine Fragestellung
+          möglich, aber Clicker können wiederverwendet werden.
         other_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die Du keine
           Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
@@ -271,6 +277,8 @@ de:
       media_unpublished: >
         unveröffentlichte verknüpfte Medien weiterhin unveröffentlicht
         bleiben.
+      import_media: 'Medien importieren'
+      no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -341,7 +349,7 @@ de:
           MaMpf legt für den Inhalt alle Items zugrunde, die im Skript für
           denjenigen Abschnitt mit einem MaMpf-Label versehen wurden,
           bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
-          wurden. Damit dass funktioniert, müssen die MaMpf-Labels im
+          wurden. Damit das funktioniert, müssen die MaMpf-Labels im
           LaTeX-File für das Manuskript mit dem
           <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
           erzeugt werden
@@ -358,13 +366,13 @@ de:
           sind. Medien in Rot sind noch nicht veröffentlicht oder
           gesperrt.
           Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
-          angesiedelt sind, so wird darauf hingeweisen.
+          angesiedelt sind, so wird darauf hingewiesen.
         course_tags: >
           Hier werden diejenigen Tags aus dem zugeordneten
           Modul angezeigt, die in mindestens einem Abschnitt dieser
           Veranstaltung vorkommen.
         additional_tags: >
-          Hier werden diejenigen Tags angezeigt, welche
+          Hier werden diejenigen Tags angezeigt, die
           in mindestens einem Abschnitt dieser Veranstaltung vorkommen,
           jedoch kein Tag des zugeordneten Moduls sind.
         untreated_tags: >
@@ -412,16 +420,16 @@ de:
           Verhalten abgestellt, Abschnitte werden über Kapitelgrenzen
           weitergezählt.
         passphrase: >
-          Wenn du hier etwas eingibst, können
+          Wenn Du hier etwas eingibst, können
           NutzerInnen diese Veranstaltung nur unter Angabe dieses
           Schlüssels abonnieren. Medien, die zu dieser Veranstaltung
           oder Sitzungen davon assoziiert sind, sind für NutzerInnen,
           die diese Veranstaltung nicht abonniert haben, unsichtbar.
         chapter_title: >
-          Hier kannst du den Titel des Kapitels (bzw. Vortrags) angeben.
+          Hier kannst Du den Titel des Kapitels (bzw. Vortrags) angeben.
         insert_after_chapter: >
-          Hier kannst du auswählen, an welcher Stelle das Kapitel (bzw. der Vortrag
-          im Fall eines Seminars) eingefügt werden soll, indem du das
+          Hier kannst Du auswählen, an welcher Stelle das Kapitel (bzw. der Vortrag
+          im Fall eines Seminars) eingefügt werden soll, indem Du das
           Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
         section_title: >
           Hier kannst Du den Titel des Abschnitts angeben.
@@ -429,6 +437,12 @@ de:
           Hier kannst Du auswählen, an welcher Stelle der
           Abschnitt eingefügt werden soll, indem Du den Vorgängerabschnitt
           auswählst.
+        imported_medium_invisible: >
+          Dieses Medium wird als importiertes Medium für die NutzerInnen nicht sichtbar sein,
+          da die Zugriffsrechte weder auf "frei" noch auf "nur regsitrierte MaMpf-NutzerInnen"
+          gestellt sind. Die Zugriffsrechte werden hierbei zur Laufzeit ermittelt, d.h. das Medium wird
+          sichtbar, sobald die Zugriffsrechte auf einen der beiden für importierte Medien zulässigen Werte
+          geändert werden.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -453,6 +467,7 @@ de:
       no_lecture_editors: >
         Es sind keine zusätzlichen VeranstaltungseditorInnen
         eingetragen.
+      imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
       first_chapter: 'Nummer des ersten Kapitels/Vortrags'
@@ -461,13 +476,15 @@ de:
       passphrase: 'Zugangsschlüssel'
       insert_after_chapter: 'Einfügen nach %{chapter_name}'
       insert_after_section: 'Einfügen nach Abschnitt'
+      subscribers: 'AbonnentInnen'
     clicker:
       new_clicker: 'Neuen Clicker anlegen'
       user_link: 'Link für NutzerInnen'
-      editor_link: 'Link für Editorinnen (ohne Authentifizierung)'
+      editor_link: 'Link für EditorInnen (ohne Authentifizierung)'
       close: 'Clicker schließen'
       open: 'Clicker freischalten'
       reset: 'Clicker zurücksetzen'
+      delete: 'Clicker löschen'
       alternatives: 'Anzahl der Auswahlmöglichkeiten'
       is_open: 'Der Clicker ist offen.'
       is_closed: 'Der Clicker ist geschlossen.'
@@ -503,7 +520,7 @@ de:
         editors: >
           Hier gibst Du die ModuleditorInnen an. Diese können
           das Modul bearbeiten, insbesondere können sie Veranstaltungen innerhalb
-          des Moduls anlegen. Jeder Moduleditor erbt die Bearbeitungsrechte für
+          des Moduls anlegen. ModuleditorInnen erben die Bearbeitungsrechte für
           alle Veranstaltungen innerhalb des Moduls.
         preceding_courses: >
           Hier kannst Du angeben, auf welchen Modulen das
@@ -529,7 +546,7 @@ de:
           Das ist die Liste aller ModuleditorInnen für
           dieses Modul. Diese können das Modul bearbeiten, insbesondere
           können sie Veranstaltungen innerhalb des Moduls anlegen.
-          Jeder Moduleditor erbt die Bearbeitungsrechte für
+          ModuleditorInnen erben die Bearbeitungsrechte für
           alle Veranstaltungen innerhalb des Moduls.
         preceding_courses_inspect: >
           Das ist die Liste derjenigen Module, auf denen
@@ -558,7 +575,7 @@ de:
           haben möchtest.
         exempt: >
           Wenn Du dieses Feld anklickst, wird dieses Kapitel (bzw. dieser Vortrag)
-          nicht in der Veranstaltungsgliederung als Kapitel (bzw.Vortrag)
+          nicht in der Veranstaltungsgliederung als Kapitel (bzw. Vortrag)
           auftreten. Trotzdem sind das Kapitel (bzw. der Vortrag)
           und seine veröffentlichten Inhalte für NutzerInnen
           auffindbar.
@@ -594,7 +611,7 @@ de:
           nicht in der Veranstaltungsgliederung als Abschnitt auftreten. Trotzdem
           sind der Abschnitt und seine Inhalte für NutzerInnen auffindbar.
         details: >
-          Hier hast du die Möglichkeit, für dich wichtige Details anzugeben
+          Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
           Veranstaltungsseite angezeigt werden.
         list: >
@@ -617,17 +634,17 @@ de:
         sections: >
           Hier kannst Du auswählen, welche Abschnitte aus der
           Veranstaltung in der entsprechenden Sitzung behandelt wurden.
-          Dadurch erhält die Sitzung automatisch alle Tags zugewiesen,
+          Dadurch werden der Sitzung automatisch alle Tags zugewiesen,
           die zu den entsprechenden Abschnitten gehören. Beim Editieren
           der Sitzung kann diese Auswahl dann nachbearbeitet werden.
         sections_inspection:
           Das ist die Liste der Abschnitte aus der
-          Veranstaltung, die  in der entsprechenden Sitzung behandelt wurden.
+          Veranstaltung, die in der entsprechenden Sitzung behandelt wurden.
         tags: >
           Dies ist die Liste aller Tags, die zu dieser Sitzung
           assoziiert sind. Beim Anlegen einer Sitzung werden hier automatisch
-          alle Tags aus sämtlichen mit dieser Sitzung mit der Sitzung
-          verknüpften Abschnitten eingetragen.
+          alle Tags aus sämtlichen mit dieser Sitzung verknüpften Abschnitten
+          eingetragen.
           Diese Auswahl kannst Du hier nachbearbeiten.
         tags_inspection:
           Dies ist die Liste aller Tags, die zu dieser Sitzung
@@ -806,14 +823,14 @@ de:
           Medium.
           <br>
           Anmerkung: Unabhängig davon kann das Medium auch von Personen mit
-          höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren
-          oder Veranstaltungeditorem aus dem zugeordneten Modul bzw. der
+          höheren Rechten bearbeitet werden, beispielsweise von ModuleditorInnen
+          oder VeranstaltungeditorInnen aus dem zugeordneten Modul bzw. der
           zugeordneten Veranstaltung.
         description: >
           Die Beschreibung wird in Verweisen auf das Medium
           verwendet. Die Angabe einer Beschreibung ist obligatorisch,
           außer im Falle eines KaViar-Mediums, das zu einer Sitzung assoziiert
-          ist oder im Falle eines Manuskripts.
+          ist, oder im Falle eines Manuskripts.
         related_tags: >
           Dies ist die Liste aller Tags, die mit diesem Medium
           verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt,
@@ -848,10 +865,10 @@ de:
           Zugriff.
           </li>
           <li>
-          nur AbonenntInnen: Registrierte MaMpf-NutzerInnen, die das
+          nur AbonnentInnen: Registrierte MaMpf-NutzerInnen, die das
           assoziierte Modul/die assoziierte Veranstaltung/die zur assoziierten
           Sitzung gehörige Veranstaltung abonniert haben,
-          können das Medium sehen. Sonstige generische MaMpf-NutzerInnen können
+          können das Medium sehen. Sonstige MaMpf-NutzerInnen können
           das Medium nicht sehen.
           </li>
           <li>
@@ -919,11 +936,11 @@ de:
           eingibst), wird es bei der Suche ignoriert.
         inspection_editors: >
           Dies die Liste aller Personen, die für dieses Medium
-          als Editor verantwortlich sind.
+          als EditorIn verantwortlich sind.
           <br>
           Anmerkung: Unabhängig davon kann das Medium auch von Personen mit
-          höheren Rechten bearbeitet werden, beispielsweise von Moduleditoren
-          oder Veranstaltungseditorem aus dem zugeordneten Modul bzw. der
+          höheren Rechten bearbeitet werden, beispielsweise von ModuleditorInnen
+          oder VeranstaltungseditorInnen aus dem zugeordneten Modul bzw. der
           zugeordneten Veranstaltung.
         inspection_description: >
           Die Beschreibung wird in Verweisen auf das Medium
@@ -967,7 +984,7 @@ de:
           dieser Tag nicht zu dem übergeordneten Modul assoziiert ist,
           jedoch in einem Abschnitt der entsprechenden Veranstaltung auftaucht.
         missing_lectures: >
-          Dies ist eine Liste aller Veranstaltungen, für welche
+          Dies ist eine Liste aller Veranstaltungen, für die
           dieser Tag zu dem übergeordneten Modul assoziiert ist, jedoch in
           keinem Abschnitt der entsprechenden Veranstaltung auftaucht.
         sections: >
@@ -977,7 +994,7 @@ de:
           Das ist die Liste aller assoziierten Tags.
         search_title: >
           Hier kannst Du den Titel des gesuchten Tags eingeben.
-          Die Liste der angezeigten Tags wird nach dann entsprechend
+          Die Liste der angezeigten Tags wird dann entsprechend
           gefiltert.
         search_course: >
           Hier kannst Du (im Sinne von <i>ODER</i>)
@@ -1060,7 +1077,7 @@ de:
           Ist das Medium zu einer Veranstaltung oder einer Sitzung assoziiert,
           kannst Du einen von den Abschnitten auswählen, die zu dieser
           Veranstaltung bzw. Sitzung assoziiert sind.
-          Dies ist im wesentlichen für KaViaR-Videos gedacht.
+          Dies ist im Wesentlichen für KaViaR-Videos gedacht.
           </li>
           <li>
           Du möchtest keinen Abschnitt aus der Datenbank assoziieren.
@@ -1073,7 +1090,7 @@ de:
           so etwas wie '7.4' oder '7.1.3'.
         hide: >
           Wenn Du diesen Haken setzt, wird der Eintrag
-          den Nutzerinnen im Inhaltsverzeichnis nicht angezeigt,
+          den NutzerInnen im Inhaltsverzeichnis nicht angezeigt,
           Du kanst ihn aber trotzdem von woanders referenzieren.
         description: >
           Hier kannst Du den Eintrag näher beschreiben,
@@ -1191,7 +1208,7 @@ de:
           gesperrt bleibt, ist die Referenz für NutzerInnen bei Aufruf
           des THymE-Players nicht sichtbar.
         quarantine_item: >
-          Das referenzierte Item ist in Quarantäne.D.h.: Die named destination
+          Das referenzierte Item ist in Quarantäne. D.h.: Die named destination
           im pdf zu diesem Item existiert nicht
           mehr. Du kannst diese Referenz trotzdem anlegen oder beibehalten;
           solange sich in dem pdf nichts ändert, wird die Referenz aber
@@ -1225,11 +1242,10 @@ de:
           Dir verschiedener Administrator.
         current_lecture: >
           Hier kannst Du auswählen, welche Veranstaltung aktuell für Dich primär
-          ist. Falls hier eine Veranstaltung ausgewählt ist, führt dich
+          ist. Falls hier eine Veranstaltung ausgewählt ist, führt Dich
           ein entsprechendes Icon in der Navigationsleiste direkt zu ihr.
         homepage: >
-          Hier kannst Du die Adresse einer Homepage eingeben. Das
-          macht z.B. bei DozentInnen Sinn.
+          Hier kannst Du die Adresse einer Homepage eingeben.
         profile_image: >
           Hier wirst Du demnächst die Möglichkeit haben, ein
           Profilbild hochzuladen.
@@ -1240,7 +1256,7 @@ de:
         edited_courses: >
           Dies ist die Liste aller Module, für die Du Moduleditorenrechte hast.
         edited_lectures: >
-          Dies ist die Liste aller Veranstaltungen, für die zusätzliche
+          Dies ist die Liste aller Veranstaltungen, für die Du zusätzliche
           Editorenrechte hast. Unveröffentlichte Veranstaltung
           sind in rötlicher Farbe gekennzeichnet.
         edited_media: >
@@ -1469,7 +1485,7 @@ de:
           Hier kannst Du festlegen, wohin falsche Antworten führen sollen
           (falls diese nicht zum Standard-Ziel gehen).
         too_many_answers: >
-          Diese Frage hat mehr als 4 Antworten, weswegen die Bearbeitung
+          Diese Frage hat mehr als 4 Antworten, weswegen das Erstellen
           von Verzweigung dafür deaktiviert ist.
         warnings: >
           Unveröffentlichte oder gesperrte Quiz-Fragen bzw. Quiz-Erläuterungen
@@ -1520,7 +1536,7 @@ de:
     email_for_news:
       Neuigkeiten über MaMpf.
     update: 'Profil updaten'
-    success: 'Profil erfolgreich geupdatet.'
+    success: 'Profil erfolgreich upgedatet.'
     please_update: >
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
@@ -1541,14 +1557,14 @@ de:
     course_selection: 'Kursangebot'
     new_course: 'Neues Modul %{title}'
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
-    subscribe_course: 'Abonniere es in deinem Profil.'
-    subscribe_course_html: 'Du kannst es über deine %{profile} abonnieren.'
+    subscribe_course: 'Abonniere es in Deinem Profil.'
+    subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
-    subscribe_lecture: 'Abonniere sie in deinem Profil.'
-    subscribe_lecture_html: 'Du kannst sie über deine %{profile} abonnieren.'
+    subscribe_lecture: 'Abonniere sie in Deinem Profil.'
+    subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
     new_lecture_created_html: >
       Neue Veranstaltung angelegt:<br>
       %{title} (%{term}, %{teacher})
@@ -1563,7 +1579,7 @@ de:
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
-  sure: 'Bist du sicher?'
+  sure: 'Bist Du sicher?'
   details: 'Details'
   none: 'keine'
   back: 'Zurück'
@@ -1609,6 +1625,14 @@ de:
     different_language: 'Das Medium ist auf %{language}.'
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
     locked: 'Dieses Medium ist gesperrt.'
+    imported: 'Dieses Medium wurde importiert.'
+    waiting_for_tag: >
+      Dieses Medium ist auf Modulebene angesiedelt und bezieht sich auf Tags,
+      die in der vorliegenden Veranstaltung (noch) nicht behandelt wurden.
+      Es ist für AbonnentInnen dieser Veranstaltung deshalb im Augenblick nicht
+      sichtbar. Es wird erst dann sichtbar, wenn mindestens einer der
+      assoziierten Tags in einem Abschnitt dieser Vorlesung auftaucht oder
+      zu einem veröffentlichten Medium auf Veranstaltungsebene assoziiert ist.
   video:
     video: 'Video'
     play: 'THymE-Player'
@@ -1618,7 +1642,7 @@ de:
     size: 'Größe'
   manuscript:
     manuscript: 'Manuskript'
-    view: 'pdf im browser betrachten'
+    view: 'pdf im Browser betrachten'
     download: 'Manuskript herunterladen'
     length: 'Länge'
     size: 'Größe'
@@ -1649,7 +1673,7 @@ de:
       Es gibt %{count} Abschnitte im Manuskript, die in einem ungelabelten Kapitel
       liegen:
     label_in_unlabelled_neighbourhood: >
-      Es gibt ein inhaltliches Label im Manuskript, die in einem ungelabelten
+      Es gibt ein inhaltliches Label im Manuskript, das in einem ungelabelten
       Kapitel oder einem ungelabelten Abschnitt liegt:
     labels_in_unlabelled_neighbourhood: >
       Es gibt %{count} inhaltliche Labels im Manuskript, die in einem ungelabelten
@@ -1670,7 +1694,7 @@ de:
       Skript auf, liegen in der aktuell hochgeladenen Datei aber nicht mehr
       vor:
     quarantine_info: >
-      Aus diesem Grund sind wurden sie in die Quarantäne verschoben. Dort
+      Aus diesem Grund wurden sie in Quarantäne verschoben. Dort
       kannst Du sie weiterverarbeiten.
     info:
       quarantined_items: >
@@ -1693,7 +1717,7 @@ de:
     question_for_tags: >
       Zu den gewählten Begriffen wurde eine Frage gefunden.
     no_question_for_tags: >
-      Zu den gewählten Begriffen wurde eine Frage gefunden.
+      Zu den gewählten Begriffen wurde keine Frage gefunden.
     quiz_shortened: >
       Der Test wird dementsprechend verkürzt.
     number_of_questions: 'Anzahl der Fragen: %{count}'
@@ -1728,7 +1752,7 @@ de:
       Dir werden deswegen nur Medien und Informationen angezeigt,
       die auf der Ebene des Moduls angesiedelt sind.
     no_subscription_html: >
-      Du hast keine zu diesem Modul gehörige Veranstaltung %{profile}.
+      Du hast keine zu diesem Modul gehörige Veranstaltung %{subscribed}.
     subscribed: 'abonniert'
   test:
     info: >
@@ -1773,7 +1797,7 @@ de:
     add_item: 'Eintrag zum Inhaltsverzeichnis hinzufügen'
     add_referral: 'Referenz hinzufügen'
     create_screenshot: 'Screenshot erstellen'
-    thyme_preview: 'THyme-Vorschau'
+    thyme_preview: 'THymE-Vorschau'
     back_to_medium: 'zurück zum Medium'
     toc: 'Inhaltsverzeichnis'
     references: 'Referenzen'
@@ -1788,7 +1812,7 @@ de:
         Einträge (Sätze, Definitionen etc.) aus diesem Video.
         Einträge können mit dem 'Item zum Inhaltsverzeichnis hinzufügen'-
         Button angelegt werden.
-        Im Thyme-Player wird das Inhaltsverzeichnis im oberen Bereich
+        Im ThymE-Player wird das Inhaltsverzeichnis im oberen Bereich
         der interactive area angezeigt.
       references: >
         Referenzen sind Verweise auf andere Medien,
@@ -1834,38 +1858,40 @@ de:
     thyme:
       no_metadata: 'Es ist ein Fehler beim Laden der Metadaten aufgetreten.'
       bad_browser: >
-        Dein Browser wird von Thyme leider nicht unterstützt.
+        Dein Browser wird von ThymE leider nicht unterstützt.
         Du kannst das Video nur mit dem Browser-Player anschauen.
   sign_up_html: >
-    Du hast noch keinen Account? Dann kannst Du dich mit deiner Emailadresse
+    Du hast noch keinen Account? Dann kannst Du dich mit Deiner Emailadresse
     %{path}.
   sign_up: 'registrieren'
   main:
     welcome:
-      Herzlich willkommen auf der Homepage von MaMpf, der Mathematischen
-      Medienplattform des Mathematischen Instituts der Universität Heidelberg.
+      Herzlich willkommen auf MaMpf, der Mathematischen
+      Medienplattform der Universität Heidelberg.
     about:
       'MaMpf ist ein ständig wachsendes Projekt, das verschiedene
-      E-Learning-Angebote bündelt. Dank des Tagging-Systems findest du in
+      E-Learning-Angebote bündelt. Dank des Tagging-Systems findest Du in
       MaMpf schnell und einfach alle vorhandenen Medien zu einem Schlagwort.
-      Außerdem vernetzt MaMpf Schlagwörter und präsentiert sie dir in
-      übersichtlichen MaMpf-Maps. Auf MaMpf stehen dir zur Verfügung:'
+      Außerdem vernetzt MaMpf Schlagwörter und präsentiert sie Dir in
+      übersichtlichen Mind-Maps. Auf MaMpf stehen Dir zur Verfügung:'
     kaviar_html:
-      <strong>
-        Vorlesungsvideos
+      '<strong>
+        Hypervideos:
       </strong>
-      zu Algebra, Funktionentheorie, Lineare Algebra und Mengentheoretische
-      Topologie
+      Vorlesungs-, Beispiel- und Wiederholungsvideos mit
+      inhaltlicher Gliederung und Links zu verwandten Materialien'
     sesam_html:
-      <strong>
-        Beispielvideos
+      '<strong>
+        Hypertexte:
       </strong>
-      zu Algebra, Analysis, Geometrie und Lineare Algebra
+      Vorlesungsskripte, Übungsblätter und Zusatzmaterialien mit in MaMpf
+      durchsuchbarer Gliederung und Links zu verwandten Materialien'
     keks_html:
-      <strong>
-      Quizzes
+      '<strong>
+      Quizzes:
       </strong>
-      zu Algebra, Analysis und Lineare Algebra
+      Sammlungen von Multiple-Choice-Fragen und Rechenaufgaben sowie angeleitete
+      Beweise'
     interested_html:
       Neugierig geworden? %{blog} findest du weitere Informationen über
       und Neuigkeiten zu MaMpf.
@@ -1934,7 +1960,7 @@ de:
     announcement_subject: 'Neue Mitteilung'
     mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
-    author: 'Verfasser'
+    author: 'VerfasserIn'
     text: 'Text'
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
@@ -1994,9 +2020,9 @@ de:
     related_media: 'Verknüpfte Medien'
     related_questions: 'Verknüpfte Fragen'
     external_link: 'Externer Link'
-    editor: 'Editor'
+    editor: 'EditorIn'
     thyme: 'THymE'
-    thyme_editor: 'THymE-Editor'
+    thyme_editor: 'Editor'
     screenshot: 'Screenshot'
     file: 'Datei'
     size: 'Größe'
@@ -2066,6 +2092,7 @@ de:
     solution: 'Lösung'
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
+    status: 'Status'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2090,7 +2117,7 @@ de:
     create_section: 'Abschnitt anlegen'
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
-    create_lecture: 'Create Lecture'
+    create_lecture: 'Veranstaltung anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2102,10 +2129,11 @@ de:
     add_board: 'Forum anlegen'
     all_courses: 'alle Module'
     edited_courses: 'von mir editierte Module'
-    clean_courses_form: 'Module leeren'
+    clean_courses_form: 'alle Module entfernen'
     publish: 'Veröffentlichen'
     take_quiz: 'Quiz spielen'
     import: 'Übernehmen'
+    import_media: 'Importieren'
     okay: 'Okay'
     remove: 'Entfernen'
     export: 'Exportieren'
@@ -2140,6 +2168,7 @@ de:
     show: 'Anzeigen'
     hide: 'Verbergen'
     interpret: 'Interpretieren'
+    import_media: 'Medien importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

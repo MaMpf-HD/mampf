@@ -27,6 +27,13 @@ class TagsController < ApplicationController
     # then, filter these according to their visibility for the user
     @media = current_user.filter_visible_media(media)
     @questions = @tag.visible_questions(current_user)
+    # consider items in manuscripts that are corresponding to tags
+    manuscripts = current_user.filter_media(Medium.where(sort: 'Script'))
+    @references = Item.where(medium: manuscripts,
+                             description: @tag.notions.pluck(:title) +
+                                            @tag.aliases.pluck(:title))
+                      .where.not(pdf_destination: [nil, ''])
+    pp @references
     render layout: 'application_no_sidebar'
   end
 
@@ -113,7 +120,10 @@ class TagsController < ApplicationController
   end
 
   def fill_tag_select
-    result = Tag.select_by_title.map { |t| { value: t[1], text: t[0] } }
+    if params[:locale].in?(I18n.available_locales.map(&:to_s))
+      I18n.locale = params[:locale]
+    end
+    result = Tag.select_by_title_cached
     render json: result
   end
 
@@ -124,11 +134,23 @@ class TagsController < ApplicationController
   end
 
   def search
-    search = Tag.search do
+    search = Sunspot.new_search(Tag)
+    search.build do
       fulltext search_params[:title]
-      with(:course_ids, search_params[:course_ids])
+    end
+    if search_params[:course_ids] == ['']
+      search.build do
+        with(:course_ids, nil)
+      end
+    else
+      search.build do
+        with(:course_ids, search_params[:course_ids])
+      end
+    end
+    search.build do
       paginate page: params[:page], per_page: 10
     end
+    search.execute
     results = search.results
     @total = search.total
     @tags = Kaminari.paginate_array(results, total_count: @total)

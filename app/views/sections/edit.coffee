@@ -14,7 +14,8 @@ $('#<%= dom_id(@section) %>').empty().removeClass('bg-mdb-color-lighten-6')
 $('#section-form .selectize').each ->
   if this.dataset.ajax == 'true' && this.dataset.filled == 'false'
     tag_select = this
-    $.ajax Routes.fill_tag_select_path(),
+    locale = tag_select.dataset.locale
+    $.ajax Routes.fill_tag_select_path({locale: locale}),
       type: 'GET'
       dataType: 'json'
       success: (result) ->

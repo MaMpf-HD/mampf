@@ -1,7 +1,5 @@
 {
   "name": "mampf",
   "private": true,
-  "dependencies": {
-    "cytoscape": "^3.2.21"
-  }
+  "dependencies": {}
 }

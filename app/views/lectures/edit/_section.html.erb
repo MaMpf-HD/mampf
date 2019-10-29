@@ -30,7 +30,7 @@
       </strong>
     </div>
     <div class="col-6">
-      <% section.lessons.includes(:tags).order(:date).each do |l| %>
+      <% section.lessons.sort_by(&:date).each do |l| %>
         <% cache [l, inspection] do %>
           <%= render partial: 'lectures/edit/lesson',
                      locals: { lesson: l,

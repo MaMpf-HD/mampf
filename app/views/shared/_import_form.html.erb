@@ -1,13 +1,15 @@
 <div class="row">
   <div class="col-12 text-center">
     <button type="button"
-            id="submit-import-vertex"
-            class="btn btn-sm btn-primary">
+            id="submit-import-media"
+            class="btn btn-sm btn-primary"
+            data-purpose="<%= purpose %>">
       <%= t('buttons.import') %>
     </button>
     <button type="button"
             class="btn btn-sm btn-secondary ml-2"
-            id="cancel-import-vertex">
+            id="cancel-import-media"
+            data-purpose="<%= purpose %>">
       <%= t('buttons.reset') %>
     </button>
   </div>

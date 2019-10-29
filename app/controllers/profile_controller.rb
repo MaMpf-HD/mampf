@@ -37,6 +37,7 @@ class ProfileController < ApplicationController
       update_lecture_cookie
       I18n.locale = @locale
       cookies[:locale] = @locale
+      @user.touch
       redirect_to :root, notice: t('profile.success')
     else
       @errors = @user.errors

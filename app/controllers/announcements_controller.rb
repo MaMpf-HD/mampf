@@ -48,6 +48,7 @@ class AnnouncementsController < ApplicationController
                         User
                       end
     notifications = []
+    users_to_notify.update_all(updated_at: Time.now)
     users_to_notify.find_each do |u|
       notifications << Notification.new(recipient: u,
                                         notifiable_id: @announcement.id,

@@ -23,7 +23,7 @@
                    options_for_select(media_sorts_select(purpose),
                                       sort_preselect(purpose)),
                    {},
-                   { multiple: purpose == 'media',
+                   { multiple: purpose.in?(['media', 'import']),
                      class: 'selectize',
                      disabled: purpose.in?(['media', 'clicker']) } %>
       <% if purpose == 'clicker' %>
@@ -90,7 +90,8 @@
                      disabled: true,
                      data: { filled: false,
                              ajax: true,
-                             model: 'tag' } } %>
+                             model: 'tag',
+                             locale: I18n.locale } } %>
       <div class="custom-control custom-radio custom-control-inline">
         <%= f.radio_button :tag_operator,
                            'or',
@@ -149,16 +150,18 @@
                    {},
                    { class: 'form-control'} %>
     </div>
-    <div class="col-6 col-lg-3 form-.group">
-      <%= f.label :answers_count, t('basics.answer_count') %>
-      <%= f.select :answers_count,
-                   options_for_select([[t('access.irrelevant'), 'irrelevant'],
-                                       [1,1],[2,2],[3,3],[4,4],[5,5], [6,6],
-                                       ['>6', 7]],['irrelevant']),
-                   {},
-                   { class: 'form-control'} %>
+    <% unless purpose == 'import' %>
+      <div class="col-6 col-lg-3 form-.group">
+        <%= f.label :answers_count, t('basics.answer_count') %>
+        <%= f.select :answers_count,
+                     options_for_select([[t('access.irrelevant'), 'irrelevant'],
+                                         [1,1],[2,2],[3,3],[4,4],[5,5], [6,6],
+                                         ['>6', 7]],['irrelevant']),
+                     {},
+                     { class: 'form-control'} %>
 
-    </div>
+      </div>
+    <% end %>
     <div class="col-6 col-lg-3 form-.group">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
@@ -173,10 +176,14 @@
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),
                    class: 'btn btn-primary' %>
-      <button class="btn btn-secondary"
-              id="cancelSearch">
-        <%= t('buttons.cancel') %>
-      </button>
+      <% if purpose.in?(['clicker', 'import']) %>
+        <button type="button"
+                class="btn btn-secondary"
+                id="cancelSearch"
+                data-purpose="<%= purpose %>">
+          <%= t('buttons.cancel') %>
+        </button>
+      <% end %>
     </div>
   </div>
 <% end %>

@@ -51,4 +51,8 @@ class Remark < Medium
       end
     end
   end
+
+  def parsed_text_with_params
+    text
+  end
 end

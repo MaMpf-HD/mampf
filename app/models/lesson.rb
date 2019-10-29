@@ -25,6 +25,7 @@ class Lesson < ApplicationRecord
   after_save :touch_sections
   after_save :touch_siblings
   after_save :touch_self
+  after_save :touch_tags
   before_destroy :touch_media
   before_destroy :touch_siblings
 
@@ -149,8 +150,8 @@ class Lesson < ApplicationRecord
 
   # the number of a lesson is calculated by its date relative to the other
   # lessons
-  def number
-    lecture.lessons.order(:date, :id).pluck(:id).index(id) + 1
+  def number(all_lessons: lecture.lessons)
+    all_lessons.order(:date, :id).pluck(:id).index(id) + 1
   end
 
   def date_localized
@@ -279,5 +280,9 @@ class Lesson < ApplicationRecord
 
   def touch_self
     touch
+  end
+
+  def touch_tags
+    tags.update_all(updated_at: Time.now)
   end
 end

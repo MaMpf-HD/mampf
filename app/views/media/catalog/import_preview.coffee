@@ -1,9 +1,11 @@
 # render media reults partial
 searchResults = document.getElementById('media-search-results')
-searchResults.innerHTML = '<%= j render partial: "quizzes/new_vertex/search_results",
-                                 locals: { media: @media } %>'
+searchResults.innerHTML = '<%= j render partial: "media/catalog/search_results",
+                                 locals: { media: @media,
+                                           total: @total,
+                                           purpose: @purpose } %>'
 
-importTab = document.getElementById('import-vertex-tab')
+importTab = document.getElementById('importMedia')
 selected = importTab.dataset.selected
 if selected
   selected = JSON.parse(selected)
@@ -11,14 +13,15 @@ else
   selected = []
 
 for id in selected
-  $('#result-quizzable-' + id).addClass('bg-green-lighten-4')
+  $('#row-medium-' + id).addClass('bg-green-lighten-4')
 
 if selected.length == 0
-  $('#importVertexForm')
-    .append '<%= j render partial: "quizzes/new_vertex/no_selection" %>'
+  $('#importMediaForm')
+    .append '<%= j render partial: "shared/no_selection" %>'
 else
-  $('#importVertexForm')
-    .append '<%= j render partial: "quizzes/new_vertex/form" %>'
+  $('#importMediaForm')
+    .append '<%= j render partial: "shared/import_form",
+                          locals: { purpose: @purpose } %>'
 
 $('#selectionCounter').empty().append('(' + selected.length + ')')
 

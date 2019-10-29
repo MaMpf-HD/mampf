@@ -19,9 +19,4 @@ module AdministrationHelper
   def active_controller?(name, action = nil)
     active(controller_name == name && (action.blank? || action_name == action))
   end
-
-  # Returns all courses that are not edited by the current user.
-  def non_edited_courses
-    Course.all - current_user.edited_courses
-  end
 end

@@ -339,14 +339,29 @@ setupHypervideo = ->
         return
     return
 
-  # after video metadata have been loaded, display chapters and metadat in the
+  # after video metadata have been loaded, display chapters and metadata in the
   # interactive area
-  $(video).on 'loadedmetadata', ->
-    if chaptersElement.readyState == 2
+  # Originally (and more appropriately, according to the standards),
+  # only the 'loadedmetadata' event was used. However, Firefox triggers this event to soon,
+  # i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
+  # for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp  
+  initialChapters = true
+  initialMetadata = true
+  video.addEventListener 'loadedmetadata', ->
+    if initialChapters and chaptersElement.readyState == 2
       displayChapters()
+      initialChapters = false
+    if initialMetadata and metadataElement.readyState == 2
       displayMetadata()
-    else
-      alert($('body').data('nometadata'))
+      initialMetadata = false
+
+  video.addEventListener 'canplay', ->
+    if initialChapters and chaptersElement.readyState == 2
+      displayChapters()
+      initialChapters = false
+    if initialMetadata and metadataElement.readyState == 2
+      displayMetadata()
+      initialMetadata = false
   return
 
 $(document).on 'turbolinks:load', ->

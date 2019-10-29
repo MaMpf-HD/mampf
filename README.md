@@ -43,7 +43,7 @@ There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/ga
 
 MaMpf is implemented in Ruby on Rails.
 
-* Ruby version: 2.6.3
+* Ruby version: 2.6.5
 * Rails Version: 6.0.0
 * Test suite: rspec
 * support for I18n
@@ -108,4 +108,4 @@ Give admin rights to this user:
 ```
 User.first.update(admin: true)
 ```
-That's it. Alle the rest can be done entirely via the GUI. In a production environment you might want to regularely delete upload caches `/usr/src/app/public/uploads/cache/*` and expired quizzes (`bundle exec rake cleanup:destroy_random_quizzes`).
+That's it. Everything else can be done entirely via the GUI. In a production environment you might want to delete upload caches `/usr/src/app/public/uploads/cache/*` and expired quizzes (`bundle exec rake cleanup:destroy_random_quizzes`) regularly.

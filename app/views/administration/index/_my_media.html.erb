@@ -1,19 +1,19 @@
 <div class="card">
   <div class="card-header bg-primary text-white">
     <%= t('admin.main.my_media') %>
-    (<%= current_user.edited_media.count %>)
+    (<%= current_user.edited_media.size %>)
     <%= helpdesk(t('admin.main.info.medium_definition'), true) %>
     </i>
   </div>
   <div class="card-body card-compact">
-    <% if current_user.edited_media.exists? %>
+    <% if current_user.edited_media.any? %>
       <ul>
         <%= render partial: 'administration/index/medium',
                    collection: current_user.edited_media.order(:updated_at)
                                            .reverse.first(25),
                    cached: true %>
       </ul>
-      <% if current_user.edited_media.count > 25 %>
+      <% if current_user.edited_media.size > 25 %>
         <%= t('admin.main.media_restriction_html',
               media_search: link_to(t('admin.main.media_search'),
                                     media_catalog_path),

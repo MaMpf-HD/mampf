@@ -295,11 +295,13 @@ class Manuscript
 
   # add information on the tag ids for manuscript content
   def add_info_on_tag_ids
-    desc_hash = Notion.where(title: @content_descriptions,
-                             locale: @lecture.locale || I18n.default_locale)
-                      .pluck(:title, :tag_id).to_h
+    desc_hash = Notion.where(locale: @lecture.locale || I18n.default_locale)
+                      .pluck(:title, :tag_id)
+                      .map { |x| [x.first.downcase, x.second] }
+                      .select { |x| x.first.in?(@content_descriptions.map(&:downcase)) }
+                      .to_h
     @content.each do |c|
-      c['tag_id'] = desc_hash[c['description']]
+      c['tag_id'] = desc_hash[c['description'].downcase]
     end
   end
 

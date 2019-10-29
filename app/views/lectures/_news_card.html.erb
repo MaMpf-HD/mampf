@@ -7,7 +7,7 @@
         </h5>
       </div>
       <div class="col-12 col-sm-2 text-right">
-        <% if announcements.any? %>
+        <% if announcements.present? %>
           <%= link_to t('notifications.check_notifications'),
                       destroy_lecture_notifications_path(params: { lecture_id: lecture.id }),
                       class: 'btn btn-sm btn-outline-secondary',
@@ -18,11 +18,11 @@
     </div>
   </div>
   <div class="card-body">
-    <% if announcements.any? %>
+    <% if announcements.present? %>
       <div class="mb-2 activeAnnouncementsCounter"
            data-lecture="<%= lecture.id %>"
-           data-count="<%= announcements.count %>">
-        <% if announcements.count == 1 %>
+           data-count="<%= announcements.size %>">
+        <% if announcements.size == 1 %>
           <%= t('notifications.lecture.one_new') %>
         <% else %>
           <%= t('notifications.lecture.more_new') %>
@@ -30,13 +30,13 @@
       </div>
       <div class="list-group mb-2" style="max-height: 10vh; overflow-y: scroll;">
         <% announcements.sort_by(&:created_at).reverse.each do |a| %>
-          <div class="list-group-item
-                     <%= 'list-group-item-info' if a.active?(current_user) %>"
+          <div class="list-group-item list-group-item-info"
                data-listItemNotification="<%= current_user.matching_notification(a)&.id %>">
             <div class="row">
               <%= render partial: 'announcements/row_for_lecture',
                          locals: { announcement: a,
-                                   lecture: lecture } %>
+                                   lecture: lecture,
+                                   notification: current_user.matching_notification(a) } %>
             </div>
           </div>
        <% end %>
