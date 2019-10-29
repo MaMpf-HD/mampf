@@ -310,6 +310,7 @@ class Tag < ApplicationRecord
                   end
       s.update(tags_order: new_order)
     end
+    tag.aliases.update_all(aliased_tag_id: id)
   end
 
   def common_titles(tag)
