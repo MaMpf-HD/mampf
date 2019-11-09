@@ -28,6 +28,10 @@
     </li>
   </ul>
   <%= t('main.interested_html',
-        blog: link_to(t('here_capital'),
-                      DefaultSetting::BLOG_LINK, target: :blank)) %>
+        blog: link_to(t('main.blog'),
+                      DefaultSetting::BLOG_LINK, target: :blank),
+        researchgate: link_to(t('main.researchgate'),
+                              DefaultSetting::RESEARCHGATE_LINK, target: :blank),
+        guided_tour: link_to(t('here_capital'),
+                             DefaultSetting::TOUR_LINK, target: :blank)) %>
 </div>
