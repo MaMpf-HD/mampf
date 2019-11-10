@@ -156,7 +156,7 @@ class Item < ApplicationRecord
   # lesson's lecture
   def local?(referring_medium)
     return false unless section.present?
-    in?(referring_medium.teachable.lecture&.items)
+    in?(referring_medium.teachable.lecture&.items.to_a)
   end
 
   # background color of different item sorts within thyme editor
