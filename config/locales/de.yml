@@ -1468,7 +1468,7 @@ de:
         veröffentliche alle zum Quiz gehörigen Quiz-Fragen und
         Quiz-Erläuterungen
       restricted_vertex: >
-        Diese %{sort} ist nur für AbonenntInnen von %{teachable} aufrufbar.
+        Diese %{sort} ist nur für AbonnentInnen von %{teachable} aufrufbar.
         NutzerInnen ohne das Abonnement können das Quiz nicht spielen.
       no_editor_rights: >
         Für diese %{sort} hast Du keine Editorenrechte.
