@@ -647,6 +647,8 @@ en:
         to_session: 'to Session %{number}, %{date}'
         question: 'Question %{id}'
         question: 'Remark %{id}'
+      content: 'Content'
+      preview_content: 'Content preview'
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -779,14 +781,19 @@ en:
           by people with hiher access rights, e.g. editors of the associated
           course or event series.
         description: >
-          The description is used in references to this medium. Giving a
-          description is compulsory except for a lesson associated to
+          The title is used in references to this medium. Giving a
+          title is compulsory except for a lesson associated to
           a event series session or a manuscript.
         related_tags: >
           This is the list of all tags that are associated to this medium.
           If the medium was created from within a session, you will at first
           find the list of all tags of the session here - you can of course
           edit this selection.
+        content: >
+          Here you can give a description of the content of the medium. If the
+          medium is associated to a session of an event series, the session
+          will inherit the content description. You can use KaTeX. For
+          linebreaks, use $\newline$ or $\\$.
         linked_media: >
           This is the list of all media that are related to this medium or
           are linked from this medium.
@@ -1778,7 +1785,7 @@ en:
      Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
      %{guided_tour} you can find a guided tour of MaMpf.
     blog: Blog
-    researchgate: Researchgate     
+    researchgate: Researchgate
   math:
     number: 'number'
     complex_number: 'complex number'

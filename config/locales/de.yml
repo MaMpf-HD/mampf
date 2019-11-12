@@ -686,6 +686,8 @@ de:
         to_session: 'zu Sitzung %{number}, %{date}'
         question: 'Frage %{id}'
         remark: 'Erläuterung %{id}'
+      content: 'Inhaltsangabe'
+      preview_content: 'Vorschau der Inhaltsangabe'
       manuscript:
         structure: 'Struktur des Manuskripts'
       info:
@@ -827,15 +829,20 @@ de:
           oder VeranstaltungeditorInnen aus dem zugeordneten Modul bzw. der
           zugeordneten Veranstaltung.
         description: >
-          Die Beschreibung wird in Verweisen auf das Medium
-          verwendet. Die Angabe einer Beschreibung ist obligatorisch,
-          außer im Falle eines KaViar-Mediums, das zu einer Sitzung assoziiert
+          Der Titel wird in Verweisen auf das Medium
+          verwendet. Die Angabe eines Titels ist obligatorisch,
+          außer im Falle eines Lektions-Mediums, das zu einer Sitzung assoziiert
           ist, oder im Falle eines Manuskripts.
         related_tags: >
           Dies ist die Liste aller Tags, die mit diesem Medium
           verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt,
           so stehen hier zunächst alle zu dieser Sitzung assoziierten Tags;
           diese Auswahl kann natürlich bearbeitet werden.
+        content: >
+          Hier kannst Du eine Inhaltsangabe machen. Ist das Medium mit einer
+          Sitzung verknüpft, erbt diese die Inhaltsbeschreibung. Du kannst
+          KaTeX verwenden. Für Zeilenumbrüche kannst Du $\newline$ oder $\\$
+          benutzen.
         linked_media: >
           Dies ist eine Liste aller Medien, die mit diesem Medium
           verknüpft sind bzw. die von diesem Medium aus referenziert werden.

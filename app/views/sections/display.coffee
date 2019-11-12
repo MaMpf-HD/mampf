@@ -3,7 +3,8 @@ $('#section-content-modal-content').empty()
                         locals: { items: @section.visible_items,
                                   small: false,
                                   embedded: false,
-                                  section_links: false } %>')
+                                  section_links: false,
+                                  content: nil } %>')
 $('#section-title-modal').empty().append('"<%= @section.title %>"')
 
 sectionModal = document.getElementById('sectionContentModal')

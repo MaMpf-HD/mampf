@@ -2,7 +2,7 @@
   <div class="card-header bg-mdb-color-lighten-3">
     <%= t('basics.basics') %>
   </div>
-  <div class="card-body <%= compact ? 'card-compact' : '' %>">
+  <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <div class="form-group">
       <%= f.label :sort, t('admin.medium.type') %>
       <%= helpdesk(t('admin.medium.info.sort'), true) %>
@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="form-group">
-      <%= f.label :description, t('basics.description') %>
+      <%= f.label :description, t('basics.title') %>
       <%= helpdesk(t('admin.medium.info.description'), false) %>
       <%= f.text_field :description,
                        class: 'form-control' %>
@@ -101,6 +101,43 @@
       </div>
     </div>
     <% end %>
+    <% if medium.published? %>
+      <%= render partial: 'media/access_rights',
+                 locals: { f: f,
+                 medium: medium } %>
+    <% end %>
+    <div class="form-group">
+      <%= t('basics.language') %>
+      <%= helpdesk(t('admin.medium.info.language'), false) %>
+      <div class="form-row ml-2">
+        <% I18n.available_locales.each do |locale| %>
+          <div class="custom-control custom-radio custom-control-inline">
+            <%= f.radio_button :locale,
+                               locale.to_s,
+                               class: 'custom-control-input' %>
+            <%= f.label :locale,
+                        t('locales.' + locale.to_s),
+                        value: locale.to_s,
+                        class: 'custom-control-label' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :content, t('admin.medium.content') %>
+      <%= helpdesk(t('admin.medium.info.content'), false) %>
+      <%= f.text_area :content,
+                      id: 'tex-area-medium-content-' + medium.id.to_i.to_s,
+                      class: 'form-control',
+                      rows: 5 %>
+    </div>
+    <div>
+      <%= t('admin.medium.preview_content') %>
+    </div>
+    <div id="tex-preview-medium-content-<%= medium.id.to_i.to_s %>"
+         class="bg-mdb-color-lighten-6 mb-3 px-2 py-3">
+      <%= medium.content %>
+    </div>
     <div class="form-group">
       <%= f.label :linked_medium_ids,
                   t('basics.related_media') %>
@@ -136,28 +173,6 @@
             Test
           </button>
         </div>
-      </div>
-    </div>
-    <% if medium.published? %>
-      <%= render partial: 'media/access_rights',
-                 locals: { f: f,
-                 medium: medium } %>
-    <% end %>
-    <div class="form-group">
-      <%= t('basics.language') %>
-      <%= helpdesk(t('admin.medium.info.language'), false) %>
-      <div class="form-row ml-2">
-        <% I18n.available_locales.each do |locale| %>
-          <div class="custom-control custom-radio custom-control-inline">
-            <%= f.radio_button :locale,
-                               locale.to_s,
-                               class: 'custom-control-input' %>
-            <%= f.label :locale,
-                        t('locales.' + locale.to_s),
-                        value: locale.to_s,
-                        class: 'custom-control-label' %>
-          </div>
-        <% end %>
       </div>
     </div>
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>

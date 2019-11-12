@@ -117,13 +117,15 @@
                      locals: { items: @medium.toc_items,
                                small: true,
                                embedded: false,
-                               section_links: true } %>
+                               section_links: true,
+                               content: @medium.content } %>
         <% else %>
           <%= render partial: 'items/items',
                      locals: { items: @medium.proper_items_by_time,
                                small: true,
                                embedded: false,
-                               section_links: false } %>
+                               section_links: false,
+                               content: @medium.content } %>
         <% end %>
       </div>
     </div>

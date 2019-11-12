@@ -319,6 +319,7 @@ class MediaController < ApplicationController
     params.require(:medium).permit(:sort, :description, :video, :manuscript,
                                    :external_reference_link, :teachable_type,
                                    :teachable_id, :released, :text, :locale,
+                                   :content,
                                    editor_ids: [],
                                    tag_ids: [],
                                    linked_medium_ids: [])

@@ -8,6 +8,11 @@
   <% end %>
   <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>;
                                 overflow-y: <%= embedded ? '' : 'scroll;' %>">
+    <% unless content.blank? %>
+      <p>
+        <%= content %>
+      </p>
+    <% end %>
     <% if items.present? %>
       <ul class="list-group">
         <% items.each do |i| %>
@@ -56,7 +61,8 @@
           </li>
         <% end%>
       </ul>
-    <% else %>
+    <% end %>
+    <% if content.blank? && !items.any? %>
       <%= t('no_content') %>
     <% end %>
   </div>
