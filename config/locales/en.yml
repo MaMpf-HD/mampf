@@ -1772,10 +1772,13 @@ en:
       '<strong>
         Quizzes:
       </strong>
-      Collection of Multiple Choice Questions, calculation tasks and
+      compiled from a large collection of Multiple Choice Questions and calculation tasks, and
       guided proofs'
-    interested_html:
-     Curious? %{blog} you can find more information and news about MaMpf.
+    interested_html: >
+     Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
+     %{guided_tour} you can find a guided tour of MaMpf.
+    blog: Blog
+    researchgate: Researchgate     
   math:
     number: 'number'
     complex_number: 'complex number'
