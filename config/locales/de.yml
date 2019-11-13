@@ -75,11 +75,52 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2018. MaMpf ist auf %{github}.
+      &copy; MaMpf Team 2019. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{docker}, %{basecamp}.<br>
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
+    sponsors_html: >
+      MaMpf bedankt sich bei seinen %{sponsors}:
+  sponsors:
+    sponsorships: 'Projektförderungen'
+    hse: 'Heidelberg School of Education (HSE)'
+    go_digital_html: >
+      Im Rahmen des Verbundprojekts %{digital_now} der %{hse_link}
+      wird MaMpf durch die Anschaffung medientechnischer Ausstattung
+      unterstützt, die es ermöglicht, die gestiegene Nachfrage nach
+      hypermedialen Inhalten besser zu befriedigen.
+    fellowship_html: >
+      Im Rahmen des Verbundprojekts %{place} der %{hse_link} wurde
+      von %{hendrik} im Rahmen einer PLACE-Fellowship das Projekt
+      %{fellowship_project} durchgeführt. Hierbei wurde mit dem Verschränkungsmodul
+      "Geometrie und Unterricht" im Teilstudiengang Mathematik des Master of
+      Education modellhaft eine Lehrveranstaltung etabliert, in der eine
+      Verschränkung von Fachwissenschaft und Fachdidaktik um eine
+      Verschränkung von Hörergruppen ergänzt wird. Die Problematik
+      unterschiedlicher Bildungshintergründe wurde hierbei durch die Verwendung
+      von MaMpf aufgelöst.
+    zurlamitmu_html: >
+      Im Rahmen des Verbundprojekts %{place} der %{hse_link} wurde
+      von %{markus} und %{denis} das Projekt %{zurlamitmu_project}
+      durchgeführt. Dieses hatte zum Ziel, in Kooperation von Universität und
+      PH Heidelberg Worked-Example-Videos für die Erstsemestervorlesung
+      „Lineare Algebra 1“ unter Verwendung aktueller Ergebnisse der
+      mathematikdidaktischen und multimediatheoretischen Forschung zu erstellen,
+      in MaMpf zu integrieren und auf ihre Wirksamkeit hin zu untersuchen.
+    uni_hd: 'Universität Heidelberg'
+    heistart_html: >
+      Im Rahmen des Projekts <i>heiSTART2.0</i> haben
+      %{hendrik}, %{oli} und %{denis} zusammen mit der %{fs_mathphysinfo}
+      Mittel zur Einrichtung eines MaMpf-unterstützten Mathematik-Helpdesks für
+      die Studieneingangsphase eingeworben. Der Helpdesk kommt im laufenden
+      Wintersemester 2019/20 bereits zum Einsatz.
+    physics_html: >
+      Die %{physics_faculty} unterstützte MaMpf durch die Anschaffung
+      medientechnischer Ausstatttung.
+    math_html: >
+      Die %{math_faculty} unterstützt MaMpf durch die Finanzierung
+      wissenschaftlicher Hilfskräfte.
   here: 'hier'
   here_capital: 'Hier'
   disclosure: 'Impressum'
@@ -656,6 +697,12 @@ de:
           Hier kannst Du auswählen, wo die Sitzung inhaltlich begonnen hat.
         end_item: >
           Hier kannst Du auswählen, wo die Sitzung inhaltlich geendet hat.
+        content: >
+          Den Inhalt der Sitzung extrahiert MaMpf aus den veröffentlichten
+          Medien, die mit dieser Sitzung verknüpft sind. Hierzu werden
+          Inhaltsverzeichnisse aus Videos, die mit dem THymE-Editor bearbeitet
+          wurden, Medieninhaltsangaben und Skript-Metadaten
+          (im Falle skriptbasierter Vorlesungen) verwendet.
         list: >
           Dies ist die Liste aller assoziierten Sitzungen.
     medium:
@@ -2102,6 +2149,8 @@ de:
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
     status: 'Status'
+    sponsors: 'Sponsoren'
+    since: 'seit'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

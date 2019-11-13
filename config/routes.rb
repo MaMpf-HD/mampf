@@ -253,6 +253,8 @@ Rails.application.routes.draw do
   get 'main/home'
   get 'main/news', to: 'main#news',
                    as: 'news'
+  get 'main/sponsors', to: 'main#sponsors',
+                       as: 'sponsors'
 
   mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"

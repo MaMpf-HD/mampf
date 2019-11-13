@@ -32,6 +32,25 @@
            feedback: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
   </div>
 </div>
+<div class="row px-3">
+  <div class="col-12 col-xl-9 bg-grey-lighten-4 pt-3 pb-3">
+    <%= t('footer.sponsors_html',
+          sponsors: link_to(t('basics.sponsors'),
+                            sponsors_path)) %>
+  </div>
+  <div class="col-12 col-xl-3 bg-grey-lighten-4 pt-3 pb-3">
+    <a href="https://hse-heidelberg.de/"
+       target="_blank"
+       style="text-decoration: none;">
+      <img src="/HD-HSE-Logo.png" width="168" height="60" align="middle">
+    </a>
+    <a href="https://uni-heidelberg.de"
+       target="_blank">
+      <img src="/uni_hd_logo.png" width="114" height="60" align="middle"
+           style="margin-left: 20px;">
+    </a>
+  </div>
+</div>
 <div class="row pr-3">
   <div class="col-12 bg-grey-lighten-5 text-right">
     <%= link_to t('disclosure'),

@@ -89,11 +89,47 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2018. MaMpf is on %{github}.
+      &copy; MaMpf Team 2019. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{docker}, %{basecamp}.<br>
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
+    sponsors_html: >
+      MaMpf thanks its %{sponsors}:
+  sponsors:
+    sponsorships: 'Projekt funding'
+    hse: 'Heidelberg School of Education (HSE)'
+    go_digital_html: >
+      Within the framework of the joint project %{digital_now} of the
+      %{hse_link}, MaMpf is supported by the acquisition of media technology
+      equipment which will make it possible to meet the increased demand for
+      hypermedia content.
+    fellowship_html: >
+      Within the framework of the joint project %{place} of the %{hse_link},
+      the project %{fellowship_project} of %{hendrik} was carried out in the
+      context of a PLACE Fellowship. With the entanglement module
+      "Geometry and Teaching", a model course which interweaves mathematics and
+      its' didactics was established. The problem of different educational
+      backgrounds was addressed through the use of MaMpf.
+    zurlamitmu_html: >
+      Within the framework of the joint project %{place} of the %{hse_link},
+      the project %{zurlamitmu_project} of %{markus} und %{denis} was carried
+      out. The aim of this project was to create Worked-Example-Videos for
+      the "Linear Algebra" course using current results from the
+      mathematics didactic and multimedia research and to evaluate their
+      effectiveness.
+    uni_hd: 'Heidelberg University'
+    heistart_html: >
+      Within the framework of the project <i>heiSTART2.0</i>,
+      %{hendrik}, %{oli} and %{denis} together with the %{fs_mathphysinfo}
+      have obtained the funding to set up a MaMpf-supported math helpdesk for
+      the introductory phase of math studies.
+    physics_html: >
+      The %{physics_faculty} supported MaMpf by through the acquisition of
+      media technology equipment.
+    math_html: >
+      The %{math_faculty} has been supporting MaMpf through the financing of
+      assistants since 2017.
   here: 'here'
   here_capital: 'Here'
   disclosure: 'Legal disclosure'
@@ -587,6 +623,11 @@ en:
         There are no sections associated to this session.
       start_item: 'Start Item'
       end_item: 'End Item'
+      content: >
+        MaMpf extracts the session's content from the published media that are associated
+        to the session. It utilizes tables of content from videos that have
+        been edited by THymE, content description form media and script metadata
+        (if the lecture is script based).
       destroyed: 'Session Destroyed'
       info:
         date: >
@@ -1983,6 +2024,8 @@ en:
     parametrized: 'parametrized'
     synonyms: 'Synonyms'
     status: 'Status'
+    sponsors: 'sponsors'
+    since: 'since'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

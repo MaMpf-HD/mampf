@@ -162,11 +162,16 @@
     </div>
   <% end %>
 <% end %>
+<div class="mb-2">
+  <%= t('content') %>
+  <%= helpdesk(t('admin.lesson.info.content'), false) %>
+</div>
 <div id="lessonItems" style="max-height: 20vh; overflow-y: scroll;">
   <%= render partial: 'items/items',
              locals: { items: lesson.content_items,
                        small: true,
                        embedded: true,
                        section_links: false,
-                       content: nil } %>
+                       content: lesson.media.potentially_visible
+                                      .map(&:content) } %>
 </div>

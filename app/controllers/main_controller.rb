@@ -1,6 +1,6 @@
 # MainController
 class MainController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:home, :about, :news]
+  skip_before_action :authenticate_user!, only: [:home, :about, :news, :sponsors]
   before_action :check_for_consent
 
   def home
@@ -21,6 +21,10 @@ class MainController < ApplicationController
   def news
     @announcements = Announcement.where(lecture: nil).order(:created_at)
                                  .reverse
+    render layout: 'application_no_sidebar'
+  end
+
+  def sponsors
     render layout: 'application_no_sidebar'
   end
 

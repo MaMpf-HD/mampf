@@ -118,14 +118,14 @@
                                small: true,
                                embedded: false,
                                section_links: true,
-                               content: @medium.content } %>
+                               content: [@medium.content] } %>
         <% else %>
           <%= render partial: 'items/items',
                      locals: { items: @medium.proper_items_by_time,
                                small: true,
                                embedded: false,
                                section_links: false,
-                               content: @medium.content } %>
+                               content: [@medium.content] } %>
         <% end %>
       </div>
     </div>

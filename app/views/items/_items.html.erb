@@ -9,9 +9,14 @@
   <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>;
                                 overflow-y: <%= embedded ? '' : 'scroll;' %>">
     <% unless content.blank? %>
-      <p>
-        <%= content %>
-      </p>
+      <% content.each_with_index do |c,i| %>
+        <p>
+          <%= c %>
+        </p>
+        <% unless i == content.length - 1 %>
+          <hr>
+        <% end %>
+      <% end %>
     <% end %>
     <% if items.present? %>
       <ul class="list-group">
