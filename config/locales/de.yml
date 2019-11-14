@@ -86,12 +86,12 @@ de:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
     go_digital_html: >
-      Im Rahmen des Verbundprojekts %{digital_now} der %{hse_link}
+      Im Rahmen des Verbundprojekts %{digital_now}
       wird MaMpf durch die Anschaffung medientechnischer Ausstattung
       unterstützt, die es ermöglicht, die gestiegene Nachfrage nach
       hypermedialen Inhalten besser zu befriedigen.
     fellowship_html: >
-      Im Rahmen des Verbundprojekts %{place} der %{hse_link} wurde
+      Im Rahmen des Verbundprojekts %{place} wurde
       von %{hendrik} im Rahmen einer PLACE-Fellowship das Projekt
       %{fellowship_project} durchgeführt. Hierbei wurde mit dem Verschränkungsmodul
       "Geometrie und Unterricht" im Teilstudiengang Mathematik des Master of
@@ -101,7 +101,7 @@ de:
       unterschiedlicher Bildungshintergründe wurde hierbei durch die Verwendung
       von MaMpf aufgelöst.
     zurlamitmu_html: >
-      Im Rahmen des Verbundprojekts %{place} der %{hse_link} wurde
+      Im Rahmen des Verbundprojekts %{place} wurde
       von %{markus} und %{denis} das Projekt %{zurlamitmu_project}
       durchgeführt. Dieses hatte zum Ziel, in Kooperation von Universität und
       PH Heidelberg Worked-Example-Videos für die Erstsemestervorlesung

@@ -100,19 +100,18 @@ en:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
     go_digital_html: >
-      Within the framework of the joint project %{digital_now} of the
-      %{hse_link}, MaMpf is supported by the acquisition of media technology
+      Within the framework of the joint project %{digital_now}, MaMpf is supported by the acquisition of media technology
       equipment which will make it possible to meet the increased demand for
       hypermedia content.
     fellowship_html: >
-      Within the framework of the joint project %{place} of the %{hse_link},
+      Within the framework of the joint project %{place},
       the project %{fellowship_project} of %{hendrik} was carried out in the
       context of a PLACE Fellowship. With the entanglement module
       "Geometry and Teaching", a model course which interweaves mathematics and
       its' didactics was established. The problem of different educational
       backgrounds was addressed through the use of MaMpf.
     zurlamitmu_html: >
-      Within the framework of the joint project %{place} of the %{hse_link},
+      Within the framework of the joint project %{place},
       the project %{zurlamitmu_project} of %{markus} und %{denis} was carried
       out. The aim of this project was to create Worked-Example-Videos for
       the "Linear Algebra" course using current results from the
