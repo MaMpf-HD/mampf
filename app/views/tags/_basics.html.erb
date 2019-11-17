@@ -151,6 +151,10 @@
     <%= f.hidden_field :section_id,
                        value: tag.section_ids.first %>
   <% end %>
+  <% if from == 'lesson' %>
+    <%= f.hidden_field :lesson_id,
+                       value: tag.lesson_ids.first %>
+  <% end %>
   <% if from == 'medium' %>
     <%= f.hidden_field :medium_id,
                        value: tag.medium_ids.first %>

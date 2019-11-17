@@ -18,7 +18,7 @@
                 class="btn btn-sm btn-secondary cancel-lesson-edit ml-2">
           <%= t('buttons.discard') %>
         </button>
-      </div>      
+      </div>
     </div>
     <div class="col-2 text-right">
       <%= link_to t('buttons.parent_lecture'),
@@ -28,9 +28,9 @@
                   lesson_path(@lesson),
                   method: :delete,
                   data: { confirm: t('confirmation.lesson') },
-                  class: 'btn btn-sm btn-danger mb-2' %>            
+                  class: 'btn btn-sm btn-danger mb-2' %>
     </div>
-  </div>  
+  </div>
   <%= f.hidden_field :lecture_id, value: @lesson.lecture_id %>
   <div class="row p-2">
     <div class="col-6">
@@ -44,6 +44,7 @@
                    locals: { lesson: @lesson,
                              f: f,
                              inspection: false } %>
-    </div>    
+    </div>
   </div>
 <% end %>
+<%= render partial: 'tags/modal' %>

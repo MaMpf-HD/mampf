@@ -107,6 +107,7 @@ class TagsController < ApplicationController
     add_course
     add_section
     add_medium
+    add_lesson
     @from = params[:from]
     @locale = locale
   end
@@ -217,6 +218,14 @@ class TagsController < ApplicationController
     end
   end
 
+  def add_lesson
+    lesson = Lesson.find_by_id(params[:lesson])
+    if lesson
+      @tag.lessons << lesson
+      I18n.locale = lesson.lecture.locale || current_user.locale
+    end
+  end
+
   def check_for_consent
     redirect_to consent_profile_path unless current_user.consents
   end
@@ -229,6 +238,7 @@ class TagsController < ApplicationController
                                   :_destroy],
                                 course_ids: [],
                                 section_ids: [],
+                                lesson_ids: [],
                                 media_ids: [])
   end
 

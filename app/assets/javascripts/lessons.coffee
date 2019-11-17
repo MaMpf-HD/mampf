@@ -25,31 +25,31 @@ $(document).on 'turbolinks:load', ->
 
   # add/remove associated tags in the tag selector
   # if sections are selected/deselected
-  # this code has to be here, as turbolinks will not remember event handlers
-  # from a lesson modal
+
   sectionSelector = document.getElementById('lesson_section_ids')
   tagSelector = document.getElementById('lesson_tag_ids')
 
+  # add/remove associated tags in the tag selector
+  # if sections are selected/deselected
   if sectionSelector? && tagSelector?
     sectionSelectize = sectionSelector.selectize
-    tagSelectize = tagSelector.selectize
     # tags and their associated sections are stored in the data-tags attribute
     tags = $(sectionSelector).data('tags')
 
     sectionSelectize.on 'item_remove', (value) ->
+      tagSelectize = tagSelector.selectize
       removeTags = (tags.filter (x) -> x.section.toString() == value.toString())[0].tags
       ids = removeTags.map (x) -> x[0]
       for i in ids
         tagSelectize.removeItem(i)
-        tagSelectize.removeOption(i)
       tagSelectize.refreshItems()
       tagSelectize.refreshOptions(false)
       return
 
     sectionSelectize.on 'item_add', (value) ->
+      tagSelectize = tagSelector.selectize
       addTags = (tags.filter (x) -> x.section.toString() == value.toString())[0].tags
       for i in addTags
-        tagSelectize.addOption({ value: i[0], text: i[1] })
         tagSelectize.addItem(i[0])
       tagSelectize.refreshItems()
       tagSelectize.refreshOptions(false)

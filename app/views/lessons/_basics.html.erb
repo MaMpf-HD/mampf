@@ -2,7 +2,7 @@
   <div class="card-header bg-mdb-color-lighten-3">
     <%= t('basics.basics') %>
   </div>
-  <div class="card-body card-xl">
+  <div class="card-body">
     <% if inspection %>
       <div class="row">
         <div class="col-12">
@@ -129,14 +129,28 @@
       <% else %>
         <%= f.label :tag_ids, t('basics.related_tags') %>
         <%= helpdesk(t('admin.lesson.info.tags'), false) %>
+        <a class="fas fa-plus-circle clickable"
+           id="new-tag-button"
+           data-toggle="tooltip"
+           title="Tag anlegen"
+           data-course="<%= lesson.lecture.course.id %>"
+           data-lesson="<%= lesson.id %>"
+           data-from="lesson">
+        </a>
         <%= f.select :tag_ids,
-                     options_for_select(lesson_tag_selection(lesson),
+                     options_for_select(lesson.tags
+                                              .map { |t| t.extended_title_id_hash }
+                                              .map { |t| [t[:title], t[:id]] },
                                         lesson.tag_ids),
                     {},
                     { multiple: true,
                       class: 'selectize',
                       style: 'display: none;',
-                      data: { ajax: false } } %>
+                      data: { ajax: true,
+                              filled: false,
+                              model: 'tag',
+                              drag: false,
+                              locale: I18n.locale } } %>
         <div class="invalid-feedback"
              id="lesson-tags-error">
         </div>

@@ -32,7 +32,7 @@ $(document).on 'turbolinks:load', ->
       plugins = ['remove_button']
     if this.dataset.ajax == 'true' && this.dataset.filled == 'false'
       model_select = this
-      course_id = 0
+      courseId = 0
       existing_values = Array.apply(null, model_select.options).map (o) -> o.value
       if this.dataset.model == 'tag'
         locale = this.dataset.locale
