@@ -2168,6 +2168,7 @@ de:
     publish: 'Veröffentlichen'
     parent_course: 'zum Modul'
     parent_lecture: 'zur Veranstaltung'
+    parent_lesson: 'zur Sitzung'
     parent_medium: 'zum Medium'
     create_chapter: 'Kapitel anlegen'
     create_talk: 'Vortrag anlegen'

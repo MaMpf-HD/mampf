@@ -37,12 +37,7 @@ class LessonsController < ApplicationController
     I18n.locale = @lesson.lecture.locale_with_inheritance
     @lesson.update(lesson_params)
     if @lesson.valid?
-      if params[:commit] == t('buttons.save')
-        render :edit
-      else
-        # if user clicked 'save and back'
-        redirect_to edit_lecture_path(@lesson.lecture)
-      end
+      redirect_to edit_lesson_path(@lesson)
       return
     end
     @errors = @lesson.errors

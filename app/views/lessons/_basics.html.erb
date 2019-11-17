@@ -1,177 +1,146 @@
-<div class="form-group">
-  <div class="row">
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-3">
+    <%= t('basics.basics') %>
+  </div>
+  <div class="card-body card-xl">
     <% if inspection %>
-      <div class="col-6">
-        <%= t('basics.date') %>
-        <%= helpdesk(t('admin.lesson.info.date_inspection'), false) %>
-      </div>
-      <div class="col-6">
-        <%= t('basics.media') %>
-        <%= helpdesk(t('admin.lesson.info.media'), false) %>
-      </div>
-      <div class="col-6">
-        <%= lesson.date_localized  %>
-      </div>
-      <div class="col-6">
-        <% if lesson.media.present? %>
-          <ul>
-            <% lesson.media.each do |m| %>
-              <li>
-                <%= link_to m.sort_localized + ', ' + m.local_info,
-                            edit_or_inspect_medium_path(m),
-                            class: textcolor(m) %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <%= t('admin.lesson.no_media') %>
-        <% end %>
+      <div class="row">
+        <div class="col-12">
+          <%= t('basics.date') %>
+          <%= helpdesk(t('admin.lesson.info.date_inspection'), false) %>
+        </div>
+        <div class="col-12 my-2">
+          <%= lesson.date_localized  %>
+        </div>
+        <div class="col-12">
+          <%= t('basics.media') %>
+          <%= helpdesk(t('admin.lesson.info.media'), false) %>
+        </div>
+        <div class="col-12">
+          <% if lesson.media.present? %>
+            <ul>
+              <% lesson.media.each do |m| %>
+                <li>
+                  <%= link_to m.sort_localized + ', ' + m.local_info,
+                              edit_or_inspect_medium_path(m),
+                              class: textcolor(m) %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p>
+              <%= t('admin.lesson.no_media') %>
+            </p>
+          <% end %>
+        </div>
       </div>
     <% else %>
-      <div class="col-6">
+      <div class="form-group">
         <%= f.label :date, t('basics.date') %>
         <%= helpdesk(t('admin.lesson.info.date'), false) %>
+        <div class="row">
+          <div class="col-12">
+            <%= f.date_field :date %>
+          </div>
+        </div>
+        <div class="invalid-feedback" id="lesson-date-error">
+        </div>
       </div>
-      <div class="col-6">
-        <%= t('basics.media') %>
-        <%= helpdesk(t('admin.lesson.info.media'), false) %>
-        <%= link_to '',
-                    new_medium_path(params: { teachable_id: lesson.id,
-                                              teachable_type: 'Lesson',
-                                              tag_ids:
-                                                lesson.tags.map(&:id) }),
-                    class: 'fas fa-plus-circle text-dark',
-                    id: 'create-new-lesson-medium',
-                    data: { toggle: 'tooltip' },
-                    title: t('buttons.create_medium'),
-                    style: 'text-decoration: none;' %>
-      </div>
-      <div class="col-6">
-        <%= f.date_field :date %>
-      </div>
-      <div class="col-6">
-        <% if lesson.media.present? %>
-          <ul>
-            <% lesson.media.each do |m| %>
-              <li>
-                <%= link_to m.sort_localized + ', ' + m.local_info,
-                            edit_medium_path(m),
-                            class: textcolor(m) %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <%= t('admin.lesson.no_media') %>
-        <% end %>
+      <div class="row">
+        <div class="col-12">
+          <%= t('basics.media') %>
+          <%= helpdesk(t('admin.lesson.info.media'), false) %>
+          <%= link_to '',
+                      new_medium_path(params: { teachable_id: lesson.id,
+                                                teachable_type: 'Lesson',
+                                                tag_ids: lesson.tags.map(&:id) }),
+                      class: 'fas fa-plus-circle text-dark',
+                      id: 'create-new-lesson-medium',
+                      data: { toggle: 'tooltip' },
+                      title: t('buttons.create_medium'),
+                      style: 'text-decoration: none;' %>
+          <% if lesson.media.present? %>
+            <ul>
+              <% lesson.media.each do |m| %>
+                <li>
+                  <%= link_to m.sort_localized + ', ' + m.local_info,
+                              edit_medium_path(m),
+                              class: textcolor(m) %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <p>
+              <%= t('admin.lesson.no_media') %>
+            </p>
+          <% end %>
+        </div>
       </div>
     <% end %>
-  </div>
-  <div class="invalid-feedback" id="lesson-date-error">
-  </div>
-</div>
-<div class="form-group">
-  <% if inspection %>
-    <div class="row">
-      <div class="col-12">
-        <%= t('basics.sections') %>
-        <%= helpdesk(t('admin.lesson.info.sections_inspection'), false) %>
-      </div>
-    </div>
-    <div class="col-12">
-      <% if lesson.sections.present? %>
-        <ul>
-          <% lesson.sections.each do |s| %>
-            <li>
-              <%= s.to_label %>
-            </li>
+    <div class="form-group">
+      <% if inspection %>
+        <div class="row">
+          <div class="col-12">
+            <%= t('basics.sections') %>
+            <%= helpdesk(t('admin.lesson.info.sections_inspection'), false) %>
+          </div>
+        </div>
+        <div class="col-12">
+          <% if lesson.sections.present? %>
+            <ul>
+              <% lesson.sections.each do |s| %>
+                <li>
+                  <%= s.to_label %>
+                </li>
+              <% end %>
+            </ul>
+          <% else %>
+            <%= t('admin.lesson.no_sections') %>
           <% end %>
-        </ul>
+        </div>
       <% else %>
-        <%= t('admin.lesson.no_sections') %>
+        <%= f.label :section_ids, t('basics.sections') %>
+        <%= helpdesk(t('admin.lesson.info.sections'), false) %>
+        <%= f.select :section_ids,
+                     options_for_select(lesson.lecture.section_selection,
+                                        lesson.section_ids),
+                     {},
+                     { multiple: true,
+                       class: 'selectize',
+                       data: { tags:
+                               lesson.lecture.section_tag_selection.to_json } }%>
+        <div class="invalid-feedback" id="lesson-sections-error">
+        </div>
       <% end %>
     </div>
-  <% else %>
-    <%= f.label :section_ids, t('basics.sections') %>
-    <%= helpdesk(t('admin.lesson.info.sections'), false) %>
-    <%= f.select :section_ids,
-                 options_for_select(lesson.lecture.section_selection,
-                                    lesson.section_ids),
-                 {},
-                 { multiple: true,
-                   class: 'selectize',
-                   data: { tags:
-                            lesson.lecture.section_tag_selection.to_json } }%>
-    <div class="invalid-feedback" id="lesson-sections-error">
-    </div>
-  <% end %>
-</div>
-<div class="form-group">
-  <% if inspection %>
-    <div class="row">
-      <div class="col-12">
-        <%= t('basics.related_tags') %>
-        <%= helpdesk(t('admin.lesson.info.tags_inspection'), false) %>
-      </div>
-      <div class="col-12">
-        <%= render partial: 'tags/tag',
-                   collection: lesson.tags,
-                   cached: true %>
-      </div>
-    </div>
-  <% else %>
-    <%= f.label :tag_ids, t('basics.related_tags') %>
-    <%= helpdesk(t('admin.lesson.info.tags'), false) %>
-    <%= f.select :tag_ids,
-                 options_for_select(lesson_tag_selection(lesson),
-                                    lesson.tag_ids),
-                 {},
-                 { multiple: true,
-                   class: 'selectize',
-                   style: 'display: none;',
-                   data: { ajax: false } } %>
-    <div class="invalid-feedback"
-         id="lesson-tags-error">
-    </div>
-  <% end %>
-</div>
-<% if lesson.lecture.content_mode == 'manuscript' %>
-  <% unless inspection %>
     <div class="form-group">
-      <div class="form-row">
-        <div class="col-6">
-      <%= f.label :start_destination,
-                  t('admin.lesson.start_item') %>
-      <%= helpdesk(t('admin.lesson.info.start_item'), false) %>
-      <%= f.select :start_destination,
-                   options_for_select(select_script_items(lesson.lecture),
-                                      lesson.guess_start_destination),
-                   { prompt: t('basics.select') },
-                   { class: 'selectize' } %>
+      <% if inspection %>
+        <div class="row">
+          <div class="col-12">
+            <%= t('basics.related_tags') %>
+            <%= helpdesk(t('admin.lesson.info.tags_inspection'), false) %>
+          </div>
+          <div class="col-12">
+            <%= render partial: 'tags/tag',
+                       collection: lesson.tags,
+                       cached: true %>
+          </div>
         </div>
-        <div class="col-6">
-      <%= f.label :end_destination,
-                  t('admin.lesson.end_item') %>
-      <%= helpdesk(t('admin.lesson.info.end_item'), false) %>
-      <%= f.select :end_destination,
-                   options_for_select(select_script_items(lesson.lecture),
-                                      lesson.guess_end_destination),
-                   { prompt: t('basics.select') },
-                   { class: 'selectize' } %>
+      <% else %>
+        <%= f.label :tag_ids, t('basics.related_tags') %>
+        <%= helpdesk(t('admin.lesson.info.tags'), false) %>
+        <%= f.select :tag_ids,
+                     options_for_select(lesson_tag_selection(lesson),
+                                        lesson.tag_ids),
+                    {},
+                    { multiple: true,
+                      class: 'selectize',
+                      style: 'display: none;',
+                      data: { ajax: false } } %>
+        <div class="invalid-feedback"
+             id="lesson-tags-error">
         </div>
-      </div>
+      <% end %>
     </div>
-  <% end %>
-<% end %>
-<div class="mb-2">
-  <%= t('content') %>
-  <%= helpdesk(t('admin.lesson.info.content'), false) %>
-</div>
-<div id="lessonItems" style="max-height: 20vh; overflow-y: scroll;">
-  <%= render partial: 'items/items',
-             locals: { items: lesson.content_items,
-                       small: true,
-                       embedded: true,
-                       section_links: false,
-                       content: lesson.media.potentially_visible
-                                      .map(&:content) } %>
+  </div>
 </div>

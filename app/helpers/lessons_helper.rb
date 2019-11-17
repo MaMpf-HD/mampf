@@ -1,10 +1,5 @@
 # Lessons Helper
 module LessonsHelper
-  # returns the path for the edit or inspect action for the lesson
-  def lesson_link(lesson, inspection)
-    inspection ? inspect_lesson_path(lesson) : edit_lesson_path(lesson)
-  end
-
   # Returns the list of tags of this section, followed by all other tags
   # tags, all given by label, together with their ids.
   # Is used in options_for_select in form helpers.
@@ -18,5 +13,13 @@ module LessonsHelper
   def no_inspection_and_editor?(inspection, lecture)
     !inspection &&
       (current_user.admin || current_user.in?(lecture.editors_with_inheritance))
+  end
+
+  def edit_or_inspect_lesson_path(lesson)
+    if current_user.admin ||
+       lesson.lecture.editors_with_inheritance.include?(current_user)
+      return edit_lesson_path(lesson)
+    end
+    inspect_lesson_path(lesson)    
   end
 end

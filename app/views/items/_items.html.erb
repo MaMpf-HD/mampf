@@ -7,7 +7,7 @@
     </div>
   <% end %>
   <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>;
-                                overflow-y: <%= embedded ? '' : 'scroll;' %>">
+                                overflow-y: scroll;">
     <% unless content.blank? %>
       <% content.each_with_index do |c,i| %>
         <p>

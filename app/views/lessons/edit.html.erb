@@ -1,0 +1,49 @@
+<%= form_with model: @lesson,
+              html: { id: 'lesson-form' } do |f| %>
+  <div class="row px-2 py-2 mt-2">
+    <div class="col-5">
+      <h4 class="pl-2">
+        <span class="badge badge-secondary">
+          <%= t('basics.lesson') %>
+        </span>
+        <%= @lesson.title_for_viewers %>
+      </h4>
+    </div>
+    <div class="col-5">
+      <div id="lesson-basics-warning">
+        <%= t('warnings.unsaved_changes') %>
+        <%= f.submit t('buttons.save'),
+                     class: 'btn btn-sm btn-primary' %>
+        <button type="button"
+                class="btn btn-sm btn-secondary cancel-lesson-edit ml-2">
+          <%= t('buttons.discard') %>
+        </button>
+      </div>      
+    </div>
+    <div class="col-2 text-right">
+      <%= link_to t('buttons.parent_lecture'),
+                  edit_or_inspect_lecture_path(@lesson.lecture),
+                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+      <%= link_to t('buttons.delete'),
+                  lesson_path(@lesson),
+                  method: :delete,
+                  data: { confirm: t('confirmation.lesson') },
+                  class: 'btn btn-sm btn-danger mb-2' %>            
+    </div>
+  </div>  
+  <%= f.hidden_field :lecture_id, value: @lesson.lecture_id %>
+  <div class="row p-2">
+    <div class="col-6">
+        <%= render partial: 'lessons/basics',
+                   locals: { lesson: @lesson,
+                             f: f,
+                             inspection: false } %>
+    </div>
+    <div class="col-6">
+        <%= render partial: 'lessons/content',
+                   locals: { lesson: @lesson,
+                             f: f,
+                             inspection: false } %>
+    </div>    
+  </div>
+<% end %>

@@ -8,7 +8,7 @@ $(document).on 'turbolinks:load', ->
   # issue warning
   $(document).on 'change', '#lesson-form :input', ->
     $('#lesson-basics-warning').show()
-    $('#create-new-lesson-medium').addClass('disabled')
+    $('#create-new-lesson-medium').hide()
     return
 
   # restore page if creation of new lesson is cancelled

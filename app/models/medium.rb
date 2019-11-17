@@ -378,7 +378,7 @@ class Medium < ApplicationRecord
 
   def editors_with_inheritance
     (editors&.to_a + teachable.lecture&.editors.to_a +
-      [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq - [nil]
+      [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
   end
 
   # creates a .vtt file (and returns its path), which contains

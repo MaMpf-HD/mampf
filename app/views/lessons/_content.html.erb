@@ -1,0 +1,43 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-3">
+    <%= t('content') %>
+    <%= helpdesk(t('admin.lesson.info.content'), false) %>
+  </div>
+  <div class="card-body">
+<% if lesson.lecture.content_mode == 'manuscript' %>
+  <% unless inspection %>
+    <div class="form-group">
+      <div class="form-row">
+        <div class="col-6">
+      <%= f.label :start_destination,
+                  t('admin.lesson.start_item') %>
+      <%= helpdesk(t('admin.lesson.info.start_item'), false) %>
+      <%= f.select :start_destination,
+                   options_for_select(select_script_items(lesson.lecture),
+                                      lesson.guess_start_destination),
+                   { prompt: t('basics.select') },
+                   { class: 'selectize' } %>
+        </div>
+        <div class="col-6">
+      <%= f.label :end_destination,
+                  t('admin.lesson.end_item') %>
+      <%= helpdesk(t('admin.lesson.info.end_item'), false) %>
+      <%= f.select :end_destination,
+                   options_for_select(select_script_items(lesson.lecture),
+                                      lesson.guess_end_destination),
+                   { prompt: t('basics.select') },
+                   { class: 'selectize' } %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+<%= render partial: 'items/items',
+             locals: { items: lesson.content_items,
+                       small: true,
+                       embedded: true,
+                       section_links: false,
+                       content: lesson.media.potentially_visible
+                                      .map(&:content).compact } %>
+</div>
+</div>

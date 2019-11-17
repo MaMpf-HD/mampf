@@ -52,6 +52,11 @@
                   edit_or_inspect_lecture_path(teachable_scope),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
+    <% if medium.teachable.class.to_s == 'Lesson' %>
+      <%= link_to t('buttons.parent_lesson'),
+                  edit_or_inspect_lesson_path(medium.teachable),
+                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+    <% end %>
     <% unless new_medium %>
       <% if medium.teachable.published? &&
              !medium.published? %>

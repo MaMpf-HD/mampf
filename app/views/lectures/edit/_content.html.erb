@@ -63,8 +63,7 @@
       <%= helpdesk(t('admin.lecture.info.orphaned_lessons'), false) %>
       <% lecture.orphaned_lessons.each do |l| %>
         <%= link_to  l.date_localized,
-                     edit_lesson_path(l),
-                     remote: true,
+                     edit_or_inspect_lesson_path(l),
                      class: 'badge badge-light' %>
       <% end %>
     <% end %>

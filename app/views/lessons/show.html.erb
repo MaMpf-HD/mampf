@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-10">
+  <div class="col-9">
     <h2>
       <span class="badge badge-secondary mr-3">
         <%= t('lesson') %>
@@ -17,6 +17,18 @@
       <% end %>
     </h2>
   </div>
+  <div class="col-1">
+    <% if current_user.admin ||
+          @lesson.lecture.edited_with_inheritance_by?(current_user) %>
+      <%= link_to '',
+                  edit_lesson_path(@lesson),
+                  class: 'far fa-edit fa-lg text-secondary mt-3',
+                  data: { toggle: 'tooltip',
+                          placement: 'bottom' },
+                  title: t('buttons.edit'),
+                  style: 'text-decoration: none;' %>
+    <% end %>
+  </div>  
   <div class="col-2 text-right ">
     <% if @lesson.previous.present? %>
       <a href="<%= lesson_path(@lesson.previous) %>"
@@ -59,7 +71,7 @@
                          small: false,
                          embedded: false,
                          section_links: false,
-                         content: @lesson.media.potentially_visible.map(&:content) } %>
+                         content: @lesson.media.potentially_visible.map(&:content).compact } %>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <%= render partial: 'media/related_media',
