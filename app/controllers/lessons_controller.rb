@@ -86,7 +86,7 @@ class LessonsController < ApplicationController
       redirect_to edit_lecture_path(@lesson.lecture)
     else
       # if user clicked 'save and edit'
-      render :edit
+      redirect_to edit_lesson_path(@lesson)
     end
   end
 end
