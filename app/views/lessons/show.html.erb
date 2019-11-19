@@ -19,7 +19,7 @@
   </div>
   <div class="col-1">
     <% if current_user.admin ||
-          @lesson.lecture.edited_with_inheritance_by?(current_user) %>
+          @lesson.lecture.edited_by?(current_user) %>
       <%= link_to '',
                   edit_lesson_path(@lesson),
                   class: 'far fa-edit fa-lg text-secondary mt-3',
@@ -28,7 +28,7 @@
                   title: t('buttons.edit'),
                   style: 'text-decoration: none;' %>
     <% end %>
-  </div>  
+  </div>
   <div class="col-2 text-right ">
     <% if @lesson.previous.present? %>
       <a href="<%= lesson_path(@lesson.previous) %>"
