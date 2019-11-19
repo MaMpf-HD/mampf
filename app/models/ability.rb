@@ -58,7 +58,7 @@ class Ability
         !lecture.in?(user.lectures)
       end
 
-      can [:update, :destroy], Lesson do |lesson|
+      can [:update, :destroy, :postprocess_tags], Lesson do |lesson|
         lesson.lecture.edited_by?(user)
       end
       can [:modal, :list_sections], Lesson

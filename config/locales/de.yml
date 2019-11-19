@@ -86,13 +86,13 @@ de:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
     go_digital_html: >
-      Im Rahmen des Verbundprojekts %{digital_now}
+      Im Kontext des Verbundprojekts %{digital_now}
       wird MaMpf durch die Anschaffung medientechnischer Ausstattung
       unterstützt, die es ermöglicht, die gestiegene Nachfrage nach
       hypermedialen Inhalten besser zu befriedigen.
     fellowship_html: >
       Im Rahmen des Verbundprojekts %{place} wurde
-      von %{hendrik} im Rahmen einer PLACE-Fellowship das Projekt
+      von %{hendrik} im Zuge einer PLACE-Fellowship das Projekt
       %{fellowship_project} durchgeführt. Hierbei wurde mit dem Verschränkungsmodul
       "Geometrie und Unterricht" im Teilstudiengang Mathematik des Master of
       Education modellhaft eine Lehrveranstaltung etabliert, in der eine
@@ -110,7 +110,7 @@ de:
       in MaMpf zu integrieren und auf ihre Wirksamkeit hin zu untersuchen.
     uni_hd: 'Universität Heidelberg'
     heistart_html: >
-      Im Rahmen des Projekts <i>heiSTART2.0</i> haben
+      Im Rahmen des Projekts heiSTART2.0 haben
       %{hendrik}, %{oli} und %{denis} zusammen mit der %{fs_mathphysinfo}
       Mittel zur Einrichtung eines MaMpf-unterstützten Mathematik-Helpdesks für
       die Studieneingangsphase eingeworben. Der Helpdesk kommt im laufenden
@@ -119,8 +119,8 @@ de:
       Die %{physics_faculty} unterstützte MaMpf durch die Anschaffung
       medientechnischer Ausstatttung.
     math_html: >
-      Die %{math_faculty} unterstützt MaMpf durch die Finanzierung
-      wissenschaftlicher Hilfskräfte.
+      Die %{math_faculty} unterstützt MaMpf durch Finanzierung
+      studentischer und wissenschaftlicher Hilfskräfte.
   here: 'hier'
   here_capital: 'Hier'
   disclosure: 'Impressum'
@@ -665,6 +665,7 @@ de:
       start_item: 'Anfangs-Item'
       end_item: 'End-Item'
       destroyed: 'Sitzung gelöscht'
+      tags_without_section: 'Tags ohne Abschnittszugehörigkeit'
       info:
         date: >
           Hier kannst Du das Datum auswählen, an dem die
@@ -705,6 +706,9 @@ de:
           (im Falle skriptbasierter Vorlesungen) verwendet.
         list: >
           Dies ist die Liste aller assoziierten Sitzungen.
+        tags_without_section: >
+          Die folgenden Tags sind zu keinem der zu dieser Sitzung verknüpften
+          Abschnitte assoziiert. Hier kannst Du eine Zuordnung vornehmen.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des

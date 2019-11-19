@@ -36,11 +36,9 @@ class LessonsController < ApplicationController
   def update
     I18n.locale = @lesson.lecture.locale_with_inheritance
     @lesson.update(lesson_params)
-    if @lesson.valid?
-      redirect_to edit_lesson_path(@lesson)
-      return
-    end
     @errors = @lesson.errors
+    return unless @errors.blank?
+    @tags_without_section = @lesson.tags_without_section
   end
 
   def destroy
@@ -64,6 +62,24 @@ class LessonsController < ApplicationController
 
   def inspect
     I18n.locale = @lesson.locale_with_inheritance
+  end
+
+  def postprocess_tags
+    @tags_hash = params[:tags]
+    @tags_hash.each do |t, section_data|
+      tag = Tag.find_by_id(t)
+      next unless tag
+      section_data.each do |s, v|
+        next if v.to_i == 0
+        section = Section.find(s)
+        next unless section
+        if !tag.in?(section.tags)
+          section.tags << tag
+          section.update(tags_order: section.tags_order.push(tag.id))
+        end
+      end
+    end
+    redirect_to edit_lesson_path(@lesson)
   end
 
   private

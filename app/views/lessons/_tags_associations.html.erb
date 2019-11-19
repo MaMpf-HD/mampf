@@ -1,0 +1,32 @@
+<%= t('admin.lesson.info.tags_without_section') %>
+<%= form_with url: lessons_postprocess_tags_path,
+                method: :post do |f| %>
+  <ul>
+    <% tags_without_section.each do |t| %>
+      <li>
+        <%= t.title %>
+        <div class="form-group">
+          <% lesson.sections.each do |s| %>
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box "tags[#{t.id}][#{s.id}]",
+                  class: 'custom-control-input' %>
+              <%= f.label "tags[#{t.id}][#{s.id}]",
+                          s.to_label,
+                          { class: 'custom-control-label' } %>
+            </div>
+          <% end %>
+        </div>
+      </li>
+    <% end %>
+  </ul>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save'),
+                   class: "btn btn-sm btn-primary" %>
+      <button type="button"
+              class="btn btn-sm btn-secondary cancel-lesson-edit">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>

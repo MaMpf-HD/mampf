@@ -112,6 +112,8 @@ Rails.application.routes.draw do
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',
                              as: 'inspect_lesson'
+  post 'lessons/:id/postprocess_tags', to: 'lessons#postprocess_tags',
+                                       as: 'lessons_postprocess_tags'
   resources :lessons, except: [:index]
 
   get 'media/search', to: 'media#search',

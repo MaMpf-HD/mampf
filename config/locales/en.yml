@@ -119,7 +119,7 @@ en:
       effectiveness.
     uni_hd: 'Heidelberg University'
     heistart_html: >
-      Within the framework of the project <i>heiSTART2.0</i>,
+      Within the framework of the project heiSTART2.0,
       %{hendrik}, %{oli} and %{denis} together with the %{fs_mathphysinfo}
       have obtained the funding to set up a MaMpf-supported math helpdesk for
       the introductory phase of math studies.
@@ -628,6 +628,7 @@ en:
         been edited by THymE, content description form media and script metadata
         (if the lecture is script based).
       destroyed: 'Session Destroyed'
+      tags_without_section: 'Tags without section assocation'
       info:
         date: >
           Here you can select the date when the session took place.
@@ -658,6 +659,9 @@ en:
           session ended.
         list: >
           This is the list of all associated sessions.
+        tags_without_section: >
+          The following tags are not associated to any of the sections
+          that are associated to this lesson. Here you can make assignments.
     medium:
       course_medium_html: >
         There is one medium of this type that is associated to the

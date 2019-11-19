@@ -258,6 +258,10 @@ class Lesson < ApplicationRecord
     end_item.pdf_destination
   end
 
+  def tags_without_section
+    tags.includes(:sections).select { |t| (t.sections & sections).empty? }
+  end
+
   private
 
   # path for show lesson action
