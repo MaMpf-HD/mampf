@@ -28,6 +28,7 @@ class Lesson < ApplicationRecord
   after_save :touch_tags
   before_destroy :touch_media
   before_destroy :touch_siblings
+  before_destroy :touch_sections, prepend: true
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
@@ -279,7 +280,10 @@ class Lesson < ApplicationRecord
   end
 
   def touch_sections
-    sections.each(&:touch)
+    sections.update_all(updated_at: Time.now)
+    chapters = sections.map(&:chapter)
+    sections.map(&:chapter).each(&:touch)
+    lecture.touch
   end
 
   def touch_self
