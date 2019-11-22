@@ -890,8 +890,11 @@ de:
         description: >
           Der Titel wird in Verweisen auf das Medium
           verwendet. Die Angabe eines Titels ist obligatorisch,
-          außer im Falle eines Lektions-Mediums, das zu einer Sitzung assoziiert
-          ist, oder im Falle eines Manuskripts.
+          außer im Falle eines Mediums vom Typ "Lektion", das zu einer Sitzung
+          assoziiert, oder im Falle eines Mediums vom Typ "Skript", das zu
+          einer Veranstaltung assoziiert ist. In diesen beiden Fällen kann
+          MaMpf generische Titel erzeugen, die bei Angabe eines eigenen Titels
+          durch diesen überschrieben werden.
         related_tags: >
           Dies ist die Liste aller Tags, die mit diesem Medium
           verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt,
