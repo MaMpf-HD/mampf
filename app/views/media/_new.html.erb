@@ -1,10 +1,3 @@
-<div class="row">
-  <div class="col-12">
-    <h6>
-      <%= t('admin.medium.new') %>
-    </h6>
-  </div>
-</div>
 <%= form_with model: medium do |f| %>
   <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
   <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
@@ -54,8 +47,8 @@
       <%= f.submit t('buttons.save_and_edit'),
                    class: 'btn btn-sm btn-primary' %>
       <button type="button"
-              id="cancel-new-medium"
-              class="btn btn-sm btn-secondary">
+              class="btn btn-sm btn-secondary"
+              data-dismiss="modal">
         <%= t('buttons.cancel') %>
       </button>
     </div>

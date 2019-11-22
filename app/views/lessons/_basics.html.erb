@@ -59,10 +59,6 @@
                       title: t('buttons.create_medium'),
                       style: 'text-decoration: none;',
                       remote: true %>
-          <div id="new-medium-area"
-               class="bg-green-lighten-4 p-2 mb-3 rounded"
-               style="display: none;">
-          </div>
           <% if lesson.media.present? %>
             <ul>
               <% lesson.media.each do |m| %>

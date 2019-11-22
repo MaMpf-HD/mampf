@@ -39,7 +39,6 @@ class MediaController < ApplicationController
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
     I18n.locale = @teachable.locale_with_inheritance
-    @medium.editors << current_user
     @medium.sort = params[:sort] ? params[:sort] : 'Kaviar'
   end
 
@@ -89,6 +88,7 @@ class MediaController < ApplicationController
 
   def create
     @medium = Medium.new(medium_params)
+    @medium.locale = @medium.teachable&.locale
     @medium.editors = [current_user]
     if @medium.teachable.class.to_s == 'Lesson'
       @medium.tags = @medium.teachable.tags

@@ -31,16 +31,6 @@
       <% end %>
     </div>
   </div>
-  <%= render partial: 'courses/data', locals: { course: course, f: f } %>
+  <%= render partial: 'courses/data',
+             locals: { course: course, f: f } %>
 <% end %>
-<div class="row p-2">
-  <div class="col-12 mb-4">
-    <%= render partial: 'media/card',
-               locals: { media: course.media_with_inheritance,
-                         small: false,
-                         collapsible: false,
-                         teachable_type: 'Course',
-                         teachable_id: course.id,
-                         inspection: false } %>
-  </div>
-</div>

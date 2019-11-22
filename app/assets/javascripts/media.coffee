@@ -350,16 +350,6 @@ $(document).on 'turbolinks:load', ->
     $('#edit_tag_form').hide()
     $('#mediumActions').show()
     return
-
-  # restore page if creation of new lesson is cancelled
-  $(document).on 'click', '#cancel-new-medium', ->
-    console.log 'Hi'
-    $('#new-medium-area').empty().hide()
-    $('.fa-edit').show()
-    $('.new-in-lecture').show()
-    $('[data-toggle="collapse"]').removeClass('disabled')
-    return
-
   return
 
 $(document).on 'turbolinks:before-cache', ->
@@ -377,5 +367,4 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancel-medium-actions'
   $(document).off 'click', '#editMediumTags'
   $(document).off 'click', '#cancelMediumTags'
-  $(document).off 'click', '#cancel-new-medium'
   return
