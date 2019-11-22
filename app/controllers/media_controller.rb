@@ -82,6 +82,7 @@ class MediaController < ApplicationController
         return
       end
     end
+    @tags_without_section = []
     return unless @medium.teachable.class.to_s == 'Lesson'
     add_tags_in_lesson_and_sections
   end
