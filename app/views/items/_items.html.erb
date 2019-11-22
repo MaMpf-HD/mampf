@@ -67,7 +67,7 @@
         <% end%>
       </ul>
     <% end %>
-    <% if (content - ['']).blank? && !items.any? %>
+    <% if content.nil? || (content - ['']).blank? && !items.any? %>
       <%= t('no_content') %>
     <% end %>
   </div>
