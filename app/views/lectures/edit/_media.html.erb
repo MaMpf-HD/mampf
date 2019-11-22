@@ -16,7 +16,8 @@
                                           teachable_id: lecture.id,
                                           teachable_type: 'Lecture' }),
                       class: 'btn btn-sm btn-secondary new-in-lecture',
-                      id: 'create-new-medium' %>
+                      id: 'create-new-medium',
+                      remote: true %>
         <% end %>
       </div>
       <div class="col-2 text-right">
@@ -29,6 +30,10 @@
     </div>
   </div>
   <div class="card-body">
+    <div id="new-medium-area"
+         class="bg-green-lighten-4 p-2 mb-3 rounded"
+         style="display: none;">
+    </div>
     <div class="row">
       <div class="col-4">
         <ul class="nav flex-column nav-pills"

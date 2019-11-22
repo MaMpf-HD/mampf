@@ -112,8 +112,6 @@ Rails.application.routes.draw do
 
   get 'lessons/:id/inspect', to: 'lessons#inspect',
                              as: 'inspect_lesson'
-  post 'lessons/:id/postprocess_tags', to: 'lessons#postprocess_tags',
-                                       as: 'lessons_postprocess_tags'
   resources :lessons, except: [:index]
 
   get 'media/search', to: 'media#search',
@@ -223,6 +221,8 @@ Rails.application.routes.draw do
                       as: 'tags_search'
   get 'tags/:id/take_random_quiz', to: 'tags#take_random_quiz',
                                    as: 'tag_random_quiz'
+  post 'tags/postprocess', to: 'tags#postprocess',
+                           as: 'postprocess_tags'
   resources :tags
 
   get 'sections/list_tags', to: 'sections#list_tags',

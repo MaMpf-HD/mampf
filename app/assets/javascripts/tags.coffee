@@ -149,9 +149,14 @@ $(document).on 'turbolinks:load', ->
       $('#identified_tag_titles select').empty()
     return
 
+  $(document).on 'click', '.cancel-section-association', ->
+    location.reload()
+    return
+  return
 # clean up before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#new-tag-button'
   $(document).off 'change', '#tag_identified_tag_id'
+  $(document).off 'click', '.cancel-section-association'
   $('#cy').empty()
   return

@@ -335,20 +335,24 @@ de:
           kümmern, so kann dies durch zusätzliche
           VeranstaltungseditorInnen geschehen.
         workflow: >
-          Wir beschreiben im Folgenden einen sinnvollen
-          Workflow. Hierbei sollte man unterscheiden, ob die Veranstaltung
+          Wir beschreiben im Folgenden sinnvolle
+          Workflows. Hierbei sollte man unterscheiden, ob die Veranstaltung
           <i>medienbasiert</i> oder <i>skriptbasiert</i> ist.
           <ul>
           <li>
           <i>
           medienbasiert (Standard):
           </i>
+          Möglichkeit 1:
           Zunächst legt man die Kapitel (bzw. Vorträge) und Abschnitte an und
           taggt diese.
           Danach werden Sitzungen und zugeordnete Medien angelegt, diese
-          erben dann die entsprechenden Tags. Andersherum geht es natürlich
-          auch, dann ist jedoch ein höherer Aufwand beim Tagging
-          erforderlich.
+          erben dann die entsprechenden Tags.
+          <br>
+          Möglichkeit 2:
+          Zunächst legt man die Kapitel (bzw. Vorträge) und Abschnitte an.
+          Danach legt man die Sitzungen an und in den Sitzungen die Medien.
+          Die Medien taggt man, die Tags werden dann nach oben wererbt.
           </li>
           <li>
           <i>
@@ -643,7 +647,9 @@ de:
           als Titel haben möchte.
         related_tags: >
           Hier kannst Du die Tags auswählen, die zu diesem Abschnitt
-          assoziiert sein sollen und ggf. neue Tags erstellen.
+          assoziiert sein sollen und ggf. neue Tags erstellen. Du kannst
+          auch die Reihenfolge festlegen, in der die Tags angezeigt werden
+          sollen.
         lessons: >
           Hier kannst Du die Sitzungen auswählen, in denen Inhalte
           aus diesem Abschnitt behandelt werden bzw. wurden.
@@ -665,7 +671,6 @@ de:
       start_item: 'Anfangs-Item'
       end_item: 'End-Item'
       destroyed: 'Sitzung gelöscht'
-      tags_without_section: 'Tags ohne Abschnittszugehörigkeit'
       info:
         date: >
           Hier kannst Du das Datum auswählen, an dem die
@@ -687,7 +692,11 @@ de:
           assoziiert sind. Beim Anlegen einer Sitzung werden hier automatisch
           alle Tags aus sämtlichen mit dieser Sitzung verknüpften Abschnitten
           eingetragen.
-          Diese Auswahl kannst Du hier nachbearbeiten.
+          Diese Auswahl kannst Du hier nachbearbeiten. Tags, die Du zur Sitzung
+          hinzufügst, werden automatisch auch dem verknüpften Abschnitt
+          hinzugefügt - zumindest, falls das genau einer ist. Gehören zu der
+          Sitzung mehrere Abschnitte, erscheint nach dem Abspeichern ein Popup,
+          in dem Du eine Zuordnung der Tags auf die Abschnitte vornehmen kannst.
         tags_inspection:
           Dies ist die Liste aller Tags, die zu dieser Sitzung
           assoziiert sind.
@@ -706,9 +715,6 @@ de:
           (im Falle skriptbasierter Vorlesungen) verwendet.
         list: >
           Dies ist die Liste aller assoziierten Sitzungen.
-        tags_without_section: >
-          Die folgenden Tags sind zu keinem der zu dieser Sitzung verknüpften
-          Abschnitte assoziiert. Hier kannst Du eine Zuordnung vornehmen.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
@@ -741,6 +747,8 @@ de:
       preview_content: 'Vorschau der Inhaltsangabe'
       manuscript:
         structure: 'Struktur des Manuskripts'
+      tags_without_lesson: 'In Sitzung fehlende Tags'
+      new: 'Medium anlegen'
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -887,8 +895,10 @@ de:
         related_tags: >
           Dies ist die Liste aller Tags, die mit diesem Medium
           verknüpft sind. Wurde das Medium von einer Sitzung aus angelegt,
-          so stehen hier zunächst alle zu dieser Sitzung assoziierten Tags;
-          diese Auswahl kann natürlich bearbeitet werden.
+          so gilt das Folgende: Hier stehen zunächst alle zu dieser Sitzung
+          assoziierten Tags; diese Auswahl kann natürlich bearbeitet werden.
+          Tags, die Du diesem Medium hinzufügst, werden auch der Sitzung
+          hinzugefügt.
         content: >
           Hier kannst Du eine Inhaltsangabe machen. Ist das Medium mit einer
           Sitzung verknüpft, erbt diese die Inhaltsbeschreibung. Du kannst
@@ -1023,7 +1033,8 @@ de:
       edit_related_tags: >
         Verknüpfte Tags hinzufügen/entfernen
       no_tags: >
-        There are no associated tags.
+        Es gibt keine verknüpften Tags.
+      section_association: 'Tags mit Abschnitten verknüpfen'
       info:
         title: >
           Hier kannst Du den Titel des Tags in verschiedenen
@@ -1057,6 +1068,11 @@ de:
         search_course: >
           Hier kannst Du (im Sinne von <i>ODER</i>)
           auswählen, zu welchen Modulen das Tag assoziiert sein soll.
+        section_association: >
+          Da nicht klar ist, welche der verknüpften Tags
+          zu welchem Abschnitt der Veranstaltung gehören, kannst Du hier
+          eine Zuordnung vornehmen; die angekreuzten Abschnitte erhalten
+          dann eine Verknüpfung mit diesen Tags.
     term:
       index: 'Semesterübersicht'
     item:

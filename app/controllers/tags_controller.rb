@@ -163,6 +163,28 @@ class TagsController < ApplicationController
     redirect_to take_quiz_path(random_quiz)
   end
 
+  def postprocess
+    @tags_hash = params[:tags]
+    @tags_hash.each do |t, section_data|
+      tag = Tag.find_by_id(t)
+      next unless tag
+      section_data.each do |s, v|
+        next if v.to_i == 0
+        section = Section.find(s)
+        next unless section
+        if !tag.in?(section.tags)
+          section.tags << tag
+          section.update(tags_order: section.tags_order.push(tag.id))
+        end
+      end
+    end
+    if params['from'] == 'Lesson'
+      redirect_to edit_lesson_path(Lesson.find_by_id(params[:id]))
+      return
+    end
+    redirect_to edit_medium_path(Medium.find_by_id(params[:id]))
+  end
+
   private
 
   def set_tag

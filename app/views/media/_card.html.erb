@@ -14,13 +14,13 @@
                         new_medium_path(params:
                                           { sort: 'Kaviar',
                                             teachable_id: teachable_id,
-                                            teachable_type: teachable_type,
-                                            tag_ids: tag_ids }),
+                                            teachable_type: teachable_type }),
                         class: "fas fa-plus-circle fa-lg new-in-lecture text-dark",
                         style: "text-decoration: none; ",
                         data: { toggle: 'tooltip' },
                         title: t('buttons.create_medium'),
-                        id: 'create-new-medium' %>
+                        id: 'create-new-medium',
+                        remote: true %>
           <% end %>
           <% if collapsible %>
             <a class="btn btn-primary"
@@ -39,6 +39,10 @@
          aria-labelledby="heading"
          data-parent="#media_accordion">
       <div class="card-body p-2">
+        <div id="new-medium-area"
+             class="bg-green-lighten-4 p-2 mb-3 rounded"
+             style="display: none;">
+        </div>
         <%= render partial: 'media/table',
                    locals: { media: media,
                              small: small } %>

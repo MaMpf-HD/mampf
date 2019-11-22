@@ -11,7 +11,7 @@ $('#medium-description-error').empty()
 $('#medium-external-reference-error').empty()
 
 # display error messages
-
+<% if @errors.any? %>
 <% if @errors[:description].present? %>
 $('#medium-description-error').append('<%= @errors[:description].join(" ") %>').show()
 $('#medium_description').addClass('is-invalid')
@@ -41,4 +41,18 @@ $('#medium-teachable-error')
 <% if @errors[:editors].present? %>
 $('#medium-editors-error')
   .append('<%= @errors[:editors].join(" ") %>').show()
+<% end %>
+<% else %>
+<% if @tags_without_section.any? && @medium.teachable.sections.count > 1 %>
+$('#manage-tags-modal-content').empty()
+  .append('<%= j render partial: "tags/section_associations",
+                        locals:
+                          { tags_without_section: @tags_without_section,
+                            sections: @medium.teachable.sections,
+                            from: 'Medium',
+                            id: @medium.id } %>')
+$('#manageTagsModal').modal('show')
+<% else %>
+location.reload()
+<% end %>
 <% end %>

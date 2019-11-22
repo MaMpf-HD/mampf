@@ -58,7 +58,7 @@ class Ability
         !lecture.in?(user.lectures)
       end
 
-      can [:update, :destroy, :postprocess_tags], Lesson do |lesson|
+      can [:update, :destroy], Lesson do |lesson|
         lesson.lecture.edited_by?(user)
       end
       can [:modal, :list_sections], Lesson
@@ -92,7 +92,7 @@ class Ability
 
       can :manage, Tag
       can [:display_cyto, :fill_tag_select, :fill_course_tags,
-           :take_random_quiz], Tag
+           :take_random_quiz, :postprocess], Tag
 
       cannot :read, Term
 

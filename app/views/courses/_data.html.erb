@@ -7,16 +7,6 @@
                      locals: { course: course, f: f } %>
         </div>
       </div>
-      <div class="col-12 mb-4">
-        <%= render partial: 'media/card',
-                   locals: { media: course.media_with_inheritance,
-                             small: false,
-                             collapsible: false,
-                             teachable_type: 'Course',
-                             teachable_id: course.id,
-                             tag_ids: nil,
-                             inspection: false } %>
-      </div>
     </div>
   </div>
   <div class="col-6">

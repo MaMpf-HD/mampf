@@ -1,0 +1,63 @@
+<div class="row">
+  <div class="col-12">
+    <h6>
+      <%= t('admin.medium.new') %>
+    </h6>
+  </div>
+</div>
+<%= form_with model: medium do |f| %>
+  <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
+  <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
+  <div class="form-group">
+    <%= f.label :sort, t('admin.medium.sort') %>
+    <%= helpdesk(t('admin.medium.info.sort'), true) %>
+    <%= f.select :sort,
+                 options_for_select(medium.select_sorts, medium.sort),
+                 {},
+                 { class: 'form-control' } %>
+    <div class="invalid-feedback"
+         id="medium-sort-error">
+    </div>
+    <div id="mampfStyInfo" class="mt-2"
+         style="display: <%= show(medium.sort == 'Script') %>">
+      <%= t('admin.medium.info.latex_package_html',
+            package: link_to(t('basics.mampf_package'),
+                             '/mampf.sty',
+                             download: 'mampf.sty')) %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :description, t('basics.title') %>
+    <%= helpdesk(t('admin.medium.info.description'), false) %>
+    <%= f.text_field :description,
+                     class: 'form-control' %>
+    <div class="invalid-feedback"
+         id="medium-description-error">
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :teachable, t('basics.associated_to') %>
+    <%= helpdesk(t('admin.medium.info.teachable'), true) %>
+    <%= f.select :teachable,
+                 options_for_select([[medium.teachable&.title_for_viewers,
+                                      medium.teachable_select]],
+                                    medium.teachable_select),
+                 { prompt: t('basics.select') },
+                 { class: 'form-control',
+                   disabled: true } %>
+    <div class="invalid-feedback"
+         id="medium-teachable-error">
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save_and_edit'),
+                   class: 'btn btn-sm btn-primary' %>
+      <button type="button"
+              id="cancel-new-medium"
+              class="btn btn-sm btn-secondary">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>

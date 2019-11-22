@@ -847,6 +847,11 @@ class Medium < ApplicationRecord
          .natural_sort_by { |x| [x.page, x.ref_number] }
   end
 
+  def tags_outside_lesson
+    return Tag.none unless teachable_type == 'Lesson'
+    tags.where.not(id: teachable.tag_ids)
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

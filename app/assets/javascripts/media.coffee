@@ -218,7 +218,7 @@ $(document).on 'turbolinks:load', ->
           type: $(this).data('type')
         }
         error: (jqXHR, textStatus, errorThrown) ->
-          console.log("AJAX Error: #{textStatus}")      
+          console.log("AJAX Error: #{textStatus}")
     return
 
   $(document).on 'mouseleave', '[id^="row-medium-"]', ->
@@ -232,7 +232,7 @@ $(document).on 'turbolinks:load', ->
         $(this).removeClass('bg-green-lighten-4')
         $('#mediumPreview').empty()
         $('#mediumActions').empty()
-        $('[id^="row-medium-"]').css('cursor', 'pointer')      
+        $('[id^="row-medium-"]').css('cursor', 'pointer')
         mediumActions.dataset.filled = 'false'
       else
         $('[id^="row-medium-"]').removeClass('bg-green-lighten-4')
@@ -277,7 +277,7 @@ $(document).on 'turbolinks:load', ->
           id: $(this).data('id')
         }
         error: (jqXHR, textStatus, errorThrown) ->
-          console.log("AJAX Error: #{textStatus}")        
+          console.log("AJAX Error: #{textStatus}")
     return
 
   $(document).on 'click', '#cancel-import-media', ->
@@ -291,7 +291,7 @@ $(document).on 'turbolinks:load', ->
         dataType: 'script'
         error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
-    else if $(this).data('purpose') == 'quiz'    
+    else if $(this).data('purpose') == 'quiz'
       $.ajax Routes.cancel_import_vertex_path(),
         type: 'GET'
         dataType: 'script'
@@ -351,6 +351,15 @@ $(document).on 'turbolinks:load', ->
     $('#mediumActions').show()
     return
 
+  # restore page if creation of new lesson is cancelled
+  $(document).on 'click', '#cancel-new-medium', ->
+    console.log 'Hi'
+    $('#new-medium-area').empty().hide()
+    $('.fa-edit').show()
+    $('.new-in-lecture').show()
+    $('[data-toggle="collapse"]').removeClass('disabled')
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->
@@ -364,8 +373,9 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '[id^="row-medium-"]'
   $(document).off 'click', '#cancel-import-media'
   $(document).off 'click', '#submit-import-media'
-  $(document).off 'click', '#import-media-button'  
+  $(document).off 'click', '#import-media-button'
   $(document).off 'click', '#cancel-medium-actions'
   $(document).off 'click', '#editMediumTags'
   $(document).off 'click', '#cancelMediumTags'
+  $(document).off 'click', '#cancel-new-medium'
   return

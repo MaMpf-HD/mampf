@@ -1,12 +1,14 @@
-<%= t('admin.lesson.info.tags_without_section') %>
-<%= form_with url: lessons_postprocess_tags_path,
-                method: :post do |f| %>
+<%= t('admin.tag.info.section_association') %>
+<%= form_with url: postprocess_tags_path,
+              method: :post do |f| %>
+  <%= f.hidden_field :from, value: from %>
+  <%= f.hidden_field :id, value: id %>
   <ul>
     <% tags_without_section.each do |t| %>
       <li>
         <%= t.title %>
         <div class="form-group">
-          <% lesson.sections.each do |s| %>
+          <% sections.each do |s| %>
             <div class="custom-control custom-checkbox">
               <%= f.check_box "tags[#{t.id}][#{s.id}]",
                   class: 'custom-control-input' %>
@@ -24,7 +26,7 @@
       <%= f.submit t('buttons.save'),
                    class: "btn btn-sm btn-primary" %>
       <button type="button"
-              class="btn btn-sm btn-secondary cancel-lesson-edit">
+              class="btn btn-sm btn-secondary cancel-section-association">
         <%= t('buttons.cancel') %>
       </button>
     </div>

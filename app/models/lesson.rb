@@ -10,7 +10,9 @@ class Lesson < ApplicationRecord
   # they correspond to these sections of the lecture's chapters who have been
   # taught in the lesson
   has_many :lesson_section_joins, dependent: :destroy
-  has_many :sections, through: :lesson_section_joins
+  has_many :sections, through: :lesson_section_joins,
+           after_remove: :touch_section,
+           after_add: :touch_section
 
   # being a teachable (course/lecture/lesson), a lesson has associated media
   has_many :media, as: :teachable
@@ -292,5 +294,10 @@ class Lesson < ApplicationRecord
 
   def touch_tags
     tags.update_all(updated_at: Time.now)
+  end
+
+  def touch_section(section)
+    section.touch
+    section.chapter.touch
   end
 end

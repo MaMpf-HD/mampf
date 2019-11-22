@@ -40,8 +40,6 @@ class MediaController < ApplicationController
                          locale: @teachable.locale_with_inheritance)
     I18n.locale = @teachable.locale_with_inheritance
     @medium.editors << current_user
-    tags = Tag.where(id: params[:tag_ids])
-    @medium.tags << tags if tags.exists?
     @medium.sort = params[:sort] ? params[:sort] : 'Kaviar'
   end
 
@@ -84,11 +82,16 @@ class MediaController < ApplicationController
         return
       end
     end
-    redirect_to edit_medium_path(@medium)
+    return unless @medium.teachable.class.to_s == 'Lesson'
+    add_tags_in_lesson_and_sections
   end
 
   def create
     @medium = Medium.new(medium_params)
+    @medium.editors = [current_user]
+    if @medium.teachable.class.to_s == 'Lesson'
+      @medium.tags = @medium.teachable.tags
+    end
     @medium.save
     if @medium.valid?
       if @medium.sort == 'Remark'
@@ -144,8 +147,12 @@ class MediaController < ApplicationController
     # destroy all notifications related to this medium
     destroy_notifications
     @medium.teachable.touch
-    if @medium.teachable_type.in?(['Lecture', 'Lesson'])
-      redirect_to edit_lecture_path(@medium.teachable.media_scope)
+    if @medium.teachable_type == 'Lecture'
+      redirect_to edit_lecture_path(@medium.teachable)
+      return
+    end
+    if @medium.teachable_type == 'Lesson'
+      redirect_to edit_lesson_path(@medium.teachable)
       return
     end
     redirect_to edit_course_path(@medium.teachable)
@@ -311,6 +318,9 @@ class MediaController < ApplicationController
       @medium.tags = Tag.where(id: params[:tag_ids])
       @medium.update(updated_at: Time.now)
     end
+  end
+
+  def postprocess_tags
   end
 
   private
@@ -480,5 +490,19 @@ class MediaController < ApplicationController
   def destroy_notifications
     Notification.where(notifiable_id: @medium.id, notifiable_type: 'Medium')
                 .delete_all
+  end
+
+  def add_tags_in_lesson_and_sections
+    @tags_outside_lesson = @medium.tags_outside_lesson
+    if @tags_outside_lesson
+      @medium.teachable.tags << @tags_outside_lesson
+      @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
+      if @medium.teachable.sections.count == 1
+        section = @medium.teachable.sections.first
+        section.tags << @tags_without_section
+        section.update(tags_order: section.tags_order +
+                                     @tags_without_section.map(&:id))
+      end
+    end
   end
 end

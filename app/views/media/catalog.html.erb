@@ -1,19 +1,8 @@
 <div class="row mt-3 p-2">
-  <div class="col-10">
+  <div class="col-12">
     <h4>
       <%= t('admin.medium.media_search') %>
     </h4>
-  </div>
-  <div class="col-2">
-    <% if Course.any? %>
-      <%= link_to t('admin.medium.create'),
-                  new_medium_path(params:
-                                    { sort: 'Kaviar',
-                                      teachable_id: Course.first.id,
-                                      teachable_type: 'Course' }),
-                  class: 'btn btn-sm btn-secondary',
-                  id: 'create-new-tag' %>
-    <% end %>
   </div>
 </div>
 <%= render partial: 'media/catalog/search_form',
