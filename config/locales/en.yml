@@ -613,7 +613,9 @@ en:
         details: >
           Here you can enter details that are important for you (e.g.
           literature used in this section). Users can see them in the event series
-          contents card, right under the section title.
+          contents card, right under the section title. You can use LaTEX
+          (by putting the expression in $...$), but there is no preview of the
+          rendered expression,. as this is a WYSIWYG editor.
         list: >
           This is the list of all associated sections.
     lesson:

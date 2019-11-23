@@ -660,7 +660,9 @@ de:
         details: >
           Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
-          Veranstaltungsseite angezeigt werden.
+          Veranstaltungsseite angezeigt werden. Du kannst LaTEX benutzen
+          (indem du den Ausruck in $...$ setzt), allerdings gibt es keine
+          Vorschau für den gerenderten Ausdruck, da es ein WYSIWYG-Editor ist.
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
     lesson:
