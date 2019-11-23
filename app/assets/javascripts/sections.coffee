@@ -33,9 +33,15 @@ $(document).on 'turbolinks:load', ->
     return
 
   # reload page if editing of section is cancelled
-  $(document).on 'click', '#cancel-section', ->
+  $(document).on 'click', '#cancel-section-edit', ->
     location.reload()
     return
+
+  trixElement = document.querySelector('#section-details-trix')
+  if trixElement?
+    trixElement.addEventListener 'trix-change', ->
+      $('#section-basics-warning').show()
+      return
 
   return
 
@@ -43,6 +49,6 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#section-form :input'
   $(document).off 'change', '#section_chapter_id'
-  $(document).off 'click', '#cancel-section'
+  $(document).off 'click', '#cancel-section-edit'
   $(document).off 'click', '#cancel-new-section'
   return

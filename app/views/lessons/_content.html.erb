@@ -1,7 +1,9 @@
 <div class="card bg-mdb-color-lighten-5">
-  <div class="card-header bg-mdb-color-lighten-3">
-    <%= t('content') %>
-    <%= helpdesk(t('admin.lesson.info.content'), false) %>
+  <div class="card-header bg-mdb-color-lighten-4">
+    <h5>
+      <%= t('content') %>
+      <%= helpdesk(t('admin.lesson.info.content'), false) %>
+    </h5>
   </div>
   <div class="card-body">
 <% if lesson.lecture.content_mode == 'manuscript' %>

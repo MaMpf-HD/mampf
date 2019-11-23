@@ -2155,6 +2155,10 @@ en:
       and ask for correction. Otherwise, two versions of the
       Question/Quiz-Remark will be in the database: a correct one and an
       incorrect one.
+    section: >
+      Are you sure. The associated sessions will not be deleted, but they will
+      be - until you assign them to a different section - considered
+      as "orphaned".
   privacy_html: >
     We take the responsibility for your data seriously. By
     GDPR, we need your consent for the storage and processing

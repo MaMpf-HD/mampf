@@ -42,11 +42,7 @@ class SectionsController < ApplicationController
     if @section.valid?
       update_position
       update_tags_order
-      if params[:commit] == t('buttons.save')
-        render :edit
-      else
-        redirect_to edit_lecture_path(@section.chapter.lecture)
-      end
+      redirect_to edit_section_path(@section)
       return
     end
     @errors = @section.errors

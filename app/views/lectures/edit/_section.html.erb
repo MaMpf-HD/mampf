@@ -4,20 +4,14 @@
     <div class="col-6">
       <strong>
         <span class="<%= section_color(section) %>">
-          <%= section.to_label %>
+          <% if inspection %>
+            <%= section.to_label %>
+          <% else %>
+            <%= link_to section.to_label,
+                        edit_section_path(section),
+                        class: 'text-dark' %>
+          <% end %>
         </span>
-        <% unless inspection %>
-          <a href="<%= edit_section_path(section) %>"
-             class="text-dark"
-             data-toggle="tooltip"
-             data-placement="bottom"
-             title="<%= t('buttons.edit') %>"
-             data-remote="true"
-             style="text-decoration: none;">
-            <i class="far fa-edit">
-            </i>
-          </a>
-        <% end %>
         <a href="<%= display_section_path(section) %>"
            class="text-dark"
            data-toggle="tooltip"

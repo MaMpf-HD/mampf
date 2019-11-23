@@ -2283,6 +2283,10 @@ de:
       Editor darauf hinzuweisen und um Korrektur zu bitten. Sonst existieren
       dann zwei Versionen der Quiz-Frage/-Erläuterung in der Datenbank: eine
       korrekte und eine inkorrekte.
+    section: >
+      Bist Du sicher? Die dazugehörigen Sitzungen werden nicht gelöscht,
+      sondern werden - bis Du eine andere Abschnittszuordnung vornimmst -
+      als "verwaist" geführt.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur

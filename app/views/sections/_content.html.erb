@@ -1,0 +1,16 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-4">
+    <h5>
+      <%= t('content') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="mb-2">
+      <%= t('basics.details') %>
+      <%= helpdesk(t('admin.section.info.details'), false) %>
+    </div>
+    <%= f.trix_editor :details,
+                      class: 'bg-light',
+                      id: 'section-details-trix' %>
+  </div>
+</div>
