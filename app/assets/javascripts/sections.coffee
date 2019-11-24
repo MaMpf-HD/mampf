@@ -41,7 +41,32 @@ $(document).on 'turbolinks:load', ->
   if trixElement?
     trixElement.addEventListener 'trix-change', ->
       $('#section-basics-warning').show()
-      return
+      $('#section-details-preview').html($('#section-details-trix').html())
+      sectionDetails = document.getElementById('section-details-preview')
+      renderMathInElement sectionDetails,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
 
   return
 

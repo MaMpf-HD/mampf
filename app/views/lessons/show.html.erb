@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-9">
+  <div class="col-10">
     <h2>
       <span class="badge badge-secondary mr-3">
         <%= t('lesson') %>
@@ -15,19 +15,17 @@
           <%= @lesson.lecture.title %>
         </span>
       <% end %>
-    </h2>
-  </div>
-  <div class="col-1">
-    <% if current_user.admin ||
+      <% if current_user.admin ||
           @lesson.lecture.edited_by?(current_user) %>
-      <%= link_to '',
-                  edit_lesson_path(@lesson),
-                  class: 'far fa-edit fa-lg text-secondary mt-3',
-                  data: { toggle: 'tooltip',
-                          placement: 'bottom' },
-                  title: t('buttons.edit'),
-                  style: 'text-decoration: none;' %>
-    <% end %>
+        <%= link_to '',
+                    edit_lesson_path(@lesson),
+                    class: 'far fa-edit fa-sm text-dark mt-3',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none;' %>
+      <% end %>
+    </h2>
   </div>
   <div class="col-2 text-right ">
     <% if @lesson.previous.present? %>

@@ -1,15 +1,22 @@
 <%= form_with model: @lesson,
               html: { id: 'lesson-form' } do |f| %>
   <div class="row px-2 py-2 mt-2">
-    <div class="col-5">
+    <div class="col-4">
       <h4 class="pl-2">
         <span class="badge badge-secondary">
           <%= t('basics.lesson') %>
         </span>
         <%= @lesson.title_for_viewers %>
+        <%= link_to '',
+                    lesson_path(@lesson),
+                    class: 'fas fa-eye text-dark mt-3',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.show'),
+                    style: 'text-decoration: none;' %>
       </h4>
     </div>
-    <div class="col-5">
+    <div class="col-4">
       <div id="lesson-basics-warning">
         <%= t('warnings.unsaved_changes') %>
         <%= f.submit t('buttons.save'),
@@ -20,15 +27,35 @@
         </button>
       </div>
     </div>
-    <div class="col-2 text-right">
+    <div class="col-4 text-right">
       <%= link_to t('buttons.parent_lecture'),
                   edit_or_inspect_lecture_path(@lesson.lecture),
-                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+                  class: 'btn btn-sm btn-outline-primary mb-2',
+                  style: @lesson.previous.present? || @lesson.next.present? ? 'position: relative; top: -14px;' : '' %>
       <%= link_to t('buttons.delete'),
                   lesson_path(@lesson),
                   method: :delete,
                   data: { confirm: t('confirmation.lesson') },
-                  class: 'btn btn-sm btn-danger mb-2' %>
+                  class: 'btn btn-sm btn-danger mb-2',
+                  style: @lesson.previous.present? || @lesson.next.present? ? 'position: relative; top: -14px;' : '' %>
+      <% if @lesson.previous.present? %>
+        <a href="<%= edit_lesson_path(@lesson.previous) %>"
+           class="text-secondary material-icons mr-2"
+           style="text-decoration:none; font-size: 3em;"
+           data-toggle="tooltip"
+           title="<%= t('previous_lesson') %>">
+          keyboard_arrow_left
+        </a>
+      <% end %>
+      <% if @lesson.next.present? %>
+        <a href="<%= edit_lesson_path(@lesson.next) %>"
+           class="text-secondary material-icons"
+           style="text-decoration:none; font-size: 3em;"
+           data-toggle="tooltip"
+           title="<%= t('next_lesson') %>">
+          keyboard_arrow_right
+        </a>
+      <% end %>
     </div>
   </div>
   <%= f.hidden_field :lecture_id, value: @lesson.lecture_id %>

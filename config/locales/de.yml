@@ -630,6 +630,7 @@ de:
       display_number: 'Anzeigenr.'
       exempt: 'von Gliederung ausgenommen'
       content: 'Inhalt des Abschnitts'
+      extracted_content: 'Extrahierter Inhalt'
       info:
         title: >
           Hier kannst Du den Titel des Abschnitts angeben.
@@ -661,10 +662,12 @@ de:
           Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
           Veranstaltungsseite angezeigt werden. Du kannst LaTEX benutzen
-          (indem du den Ausruck in $...$ setzt), allerdings gibt es keine
-          Vorschau für den gerenderten Ausdruck, da es ein WYSIWYG-Editor ist.
+          (indem du den Ausruck in $...$ setzt).
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
+        extracted_content: >
+          Hier steht der Inhalt, der aus Medien extrahiert wurde, die zu
+          Sitzungen aus diesem Abschnitt verknüpft sind.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

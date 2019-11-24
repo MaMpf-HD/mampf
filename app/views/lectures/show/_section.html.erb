@@ -15,10 +15,8 @@
                  cached: true %>
     </div>
     <% unless section.details.blank? %>
-      <div class="col-12 my-2">
-        <div class="bg-mdb-color-lighten-8 rounded p-2">
-          <%= section.details.html_safe %>
-        </div>
+      <div class="col-12 mt-2">
+        <%= section.details.html_safe %>
       </div>
     <% end %>
     <div class="col-12 mt-2">

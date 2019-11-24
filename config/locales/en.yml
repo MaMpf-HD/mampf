@@ -586,6 +586,7 @@ en:
       display_number: 'Disp.nr.'
       exempt: 'Exempt from table of contents'
       content: 'Contents of the section'
+      extracted_content: 'Extracted content'
       info:
         title: >
           Here you can enter the title of the section.
@@ -614,10 +615,12 @@ en:
           Here you can enter details that are important for you (e.g.
           literature used in this section). Users can see them in the event series
           contents card, right under the section title. You can use LaTEX
-          (by putting the expression in $...$), but there is no preview of the
-          rendered expression,. as this is a WYSIWYG editor.
+          (by putting the expression in $...$).
         list: >
           This is the list of all associated sections.
+        extracted_content: >
+          This is all cantent that has been extracted form media that are
+          associated to sessions for this section.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

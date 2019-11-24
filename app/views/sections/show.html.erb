@@ -1,13 +1,23 @@
-<div class="row">
+<div class="row mb-2">
   <div class="col-12 col-xl-5">
     <h2>
       <span class="badge badge-secondary mr-3">
         <%= t('section') %>
       </span>
       <%= @section.to_label %>
+    <% if current_user.admin ||
+          @section.lecture.edited_by?(current_user) %>
+      <%= link_to '',
+                  edit_section_path(@section),
+                  class: 'far fa-edit fa-sm text-dark mt-3',
+                  data: { toggle: 'tooltip',
+                          placement: 'bottom' },
+                  title: t('buttons.edit'),
+                  style: 'text-decoration: none;' %>
+    <% end %>
     </h2>
   </div>
-  <div class="col-9 col-xl-5 pt-2">
+  <div class="col-10 col-xl-5 pt-2">
     (<%= t('from') %>
     <% if current_user.lectures.include?(@section.lecture) %>
       <%= link_to @section.lecture.to_label,
@@ -19,7 +29,7 @@
     <% end %>
     )
   </div>
-  <div class="col-3 col-xl-2 text-right ">
+  <div class="col-2 col-xl-2 text-right ">
     <% if !@section.hidden_with_inheritance? && @section.previous %>
       <a href="<%= section_path(@section.previous) %>"
          class="text-secondary material-icons mr-2"
@@ -62,7 +72,7 @@
                          small: false,
                          embedded: false,
                          section_links: false,
-                         content: nil } %>
+                         content: [@section.details].compact } %>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <%= render partial: 'media/related_media',
