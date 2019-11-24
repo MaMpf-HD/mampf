@@ -31,7 +31,7 @@
       <div class="col-12">
         <%= render partial: 'items/items',
                    locals: { items: @section.visible_items,
-                             small: false,
+                             small: true,
                              embedded: true,
                              section_links: false,
                              content: [] } %>
