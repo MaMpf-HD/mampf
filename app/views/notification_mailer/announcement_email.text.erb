@@ -2,4 +2,4 @@
 
 <%= "#{t('mailer.author')}: #{@announcement.announcer.name}" %>
 <%= "#{t('mailer.text')}: " %>
-<%= simple_format(strip_tags(@announcement.details)) %>
+<%= strip_tags(@announcement.details) %>
