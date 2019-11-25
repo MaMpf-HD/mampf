@@ -28,6 +28,6 @@
 		</div>
 	</div>
 	<div class="card-body">
-		<%= simple_format(h(announcement.details)) %>
+		<%= announcement.details.html_safe %>
 	</div>
 </div>

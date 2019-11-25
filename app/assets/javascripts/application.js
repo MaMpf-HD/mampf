@@ -22,6 +22,7 @@
 //= require trix
 //= require _selectize_turbolinks_fix
 //= require administration
+//= require announcements
 //= require answers
 //= require bootstrap_modal_turbolinks_fix
 //= require chapters

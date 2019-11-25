@@ -5,7 +5,7 @@
   <%= announcement.announcer.name %>
 </div>
 <div class="col-7">
-  <%= announcement.details %>
+  <%= announcement.details.html_safe %>
 </div>
 <div class="col-1 text-right">
   <%= link_to notification_path(notification),

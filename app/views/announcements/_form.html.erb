@@ -1,10 +1,20 @@
 <%= form_with model: announcement  do |f|%>
   <%= f.label :details, 'Text' %>
-  <%= f.text_area :details, { class: 'form-control' } %>
+  <%= helpdesk(t('admin.announcement.help'), false) %>
+  <%= f.trix_editor :details,
+                    id: 'announcement-details-trix' %>
   <div class="invalid-feedback"
        id="announcement-error">
   </div>
   <%= f.hidden_field :lecture_id, value: @lecture&.id %>
+  <div class="row my-2">
+    <div class="col-12">
+      <%= t('basics.preview') %>
+    </div>
+  </div>
+  <div class="alert alert-dark bg-mdb-color-lighten-6"
+       id="announcement-details-preview">
+  </div>
   <div class="text-center mt-3">
     <%= f.submit t('buttons.save'),
                  class: 'btn btn-primary',

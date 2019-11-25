@@ -1,8 +1,11 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark"
      id="first-admin-nav">
-  <%= image_tag '/MaMpf-Logo_32x32.png',
-                class: 'img-fluid mr-2' %>
+  <%= link_to image_tag('/MaMpf-Logo_32x32.png',
+                        class: 'img-fluid mr-2'),
+              exit_administration_path,
+              title: t('admin.navbar.exit'),
+              data: { toggle: 'tooltip' }%>
   <%= link_to t('mampf'),
               exit_administration_path,
               class: 'navbar-brand',

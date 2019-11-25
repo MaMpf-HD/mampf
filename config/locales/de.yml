@@ -292,6 +292,11 @@ de:
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
+    announcement:
+      help: >
+        Hier kannst Du den Text eingeben. Du kannst LaTEX benutzen
+        (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
+        siehst Du unten.
     lecture:
       lecture: 'Vorlesung'
       lecture_short: 'V'
@@ -662,7 +667,7 @@ de:
           Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
           Veranstaltungsseite angezeigt werden. Du kannst LaTEX benutzen
-          (indem du den Ausruck in $...$ setzt).
+          (indem du den Ausdruck in $...$ setzt).
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
         extracted_content: >

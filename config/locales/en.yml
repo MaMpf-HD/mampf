@@ -283,6 +283,11 @@ en:
       title: 'Title'
       teacher: 'Teacher'
       editors: 'Editors'
+    announcement:
+      help: >
+        Here you can enter the text. You may use LaTEX (by putting the
+        corresponding expression inside $...$). You can see a preview of your
+        text below.
     lecture:
       lecture: 'Lecture'
       lecture_short: 'L'
