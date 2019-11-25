@@ -3,5 +3,5 @@
   <%= "#{t('mailer.author')}: #{@announcement.announcer.name}" %>
   <br>
   <%= "#{t('mailer.text')}: " %>
-  <%= simple_format(h(@announcement.details)) %>
+  <%= @announcement.details.html_safe %>
 </p>
