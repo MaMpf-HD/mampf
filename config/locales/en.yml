@@ -1778,8 +1778,8 @@ en:
         views for media. A screenshot can be created by clicking the 'Create
         Screenshot' button.
       toc: >
-        The table of contents is the list of all items (Theorems, Definitions,
-        etc.) from this video, ordered by time. Items can be created by
+        The table of contents is the list of all items (theorems, definitions,
+        etc.) from this video, listed by their time of appearance. Items can be created by
         clicking the 'Add Item' button. In the THymE player, the table of
         contents is displayed in the upper half of the interactive area.
       references: >
@@ -1811,11 +1811,11 @@ en:
     info: >
       Your search for the tag %{search_string} has returned %{count} results.
     omitted_html: >
-      Because of your %{profile}, %{count} additional results from the database
-      are not shown.
+      %{count} additional results from the database are not shown because of 
+      your %{profile}.
     settings: 'profile settings'
     alternative: 'Did you mean something else?'
-    similar: 'Similar tags to %{search_string}'
+    similar: 'Tags similar to %{search_string}'
   errors:
     profile:
       passphrase: 'Incorrect pass phrase'
@@ -1830,28 +1830,28 @@ en:
       Welcome to MaMpf, the Mathematical
       Media platform of Heidelberg University.
     about:
-      'MaMpf is a constantly growing project which bundles various
-      e-learning services. Thanks to the tagging system im MaMpf you will
-      quickly and easily find all existing media to a keyword.
-      In addition, MaMpf links keywords and visualizes the connections
+      'MaMpf is a constantly growing project offering various
+      e-learning services. MaMpf's tagging system helps you find
+      all existing media to a keyword quickly and easily.
+      In addition, MaMpf links keywords and visualizes their relations
       in Mind maps. In MaMpf you have the following at your disposal:'
     kaviar_html:
       '<strong>
         Hypervideos:
       </strong>
-      Lecture recordings, Worked Examples and repetition videos with
+      Lecture recordings, worked examples and repetition videos with
       content structure and links to related materials'
     sesam_html:
       '<strong>
         Hypertexts:
       </strong>
-      Lecture notes, exercise sheets and additional materials with in MaMpf
-      searchable outline and links'
+      Lecture notes, exercise sheets and additional materials with links and outlines
+      that can be searched in MaMpf'
     keks_html:
       '<strong>
         Quizzes:
       </strong>
-      compiled from a large collection of Multiple Choice Questions and calculation tasks, and
+      compiled from a large collection of multiple choice questions and calculation tasks, and
       guided proofs'
     interested_html: >
      Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
@@ -1887,10 +1887,10 @@ en:
       This may be due to one of the following reasons:
       <ul>
       <li>
-      For polynomials in sveral variables you should pay attention to put
-      a '*' between variables if they are to be multiplied. E.g., the expression
-      "xy" would be interpreted as one Variable with the name xy, not as "x*y"
-      (which you would have to write in this way). For multiplication with
+      Polynomials in several variables behave differently.  You need to put a '*'
+      between variables if you want them to be multiplied. E.g., the expression
+      "xy" is interpreted as a Variable called xy, not as "x*y"
+      (which is what you want to use). For multiplication with
       scalars, a "*" is unneccessary: 3x will be automatically interpreted as
       3*x
       </li>
@@ -1926,14 +1926,14 @@ en:
     text: 'Text'
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
-    subscribe_lecture_html: 'You can subscribe it in your %{profile}.'
+    subscribe_lecture_html: 'You can subscribe to it in your %{profile}.'
     subscribe_lecture_text: >
-      You can subscribe it in your profile settings.
+      You can subscribe to it in your profile settings.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
-    subscribe_course_html: 'You can subscribe it in your %{profile}.'
+    subscribe_course_html: 'You can subscribe to it in your %{profile}.'
     subscribe_course_text: >
-      You can subscribe it in your profile settings.
+      You can subscribe to it in your profile settings.
   basics:
     course: 'Course'
     courses: 'Courses'
@@ -1958,7 +1958,7 @@ en:
     date: 'Date'
     sections: 'Sections'
     at_the_beginning: 'At the beginning'
-    at_beginning_of_chapter: 'At the beginning of the Chapter'
+    at_beginning_of_chapter: 'At the beginning of the chapter'
     chapter: 'Chapter'
     talk: 'Talk'
     related_tags: 'Related tags'
@@ -2159,20 +2159,20 @@ en:
       Are you sure? The quiz will be linearized, and any changes you have
       made to edges before will be deleted.
     create_quizzable_copy: >
-      Are you sure? Data duplication should be avoided whenever possible.
+      Are you sure? Data duplication should be avoided if possible.
       If the Question/Quiz-Remark for which you do not have editing rights
-      contains an errors, it is better to point this out to the editor
+      contains errors, it is better to point this out to the editor
       and ask for correction. Otherwise, two versions of the
       Question/Quiz-Remark will be in the database: a correct one and an
       incorrect one.
     section: >
-      Are you sure. The associated sessions will not be deleted, but they will
+      Are you sure? The associated sessions will not be deleted, but they will
       be - until you assign them to a different section - considered
       as "orphaned".
   privacy_html: >
-    We take the responsibility for your data seriously. By
-    GDPR, we need your consent for the storage and processing
-    of your data according to the %{policy} of Heidelberg University.
+    We care about handling your data responsibly. By
+    GDPR, we need your consent for storing and processing
+    of your data according to the %{policy} of the University of Heidelberg.
   thredded:
     explain_tex_html: >
       <i>
@@ -2193,7 +2193,7 @@ en:
     no_lesson: 'There is no session with this id.'
     no_page: >
       The requested page does not exist. You were redirected to
-      the MaMpf homepage.
+      MaMpf's homepage.
     no_video: 'There is no video for this medium.'
     no_manuscript: 'There is no manuscript for this medium.'
     no_medium: 'There is no medium with this id.'
@@ -2208,9 +2208,9 @@ en:
       This quiz has an error.
     no_remark: 'There is no remark with this id.'
     no_search_term: >
-      You made a search without a search term. That does not work.
+      You have searched without a search term. That does not work.
     search_term_short: >
-      Your search term should consist of at least two letters.
+      Your search term should have at least two letters.
     no_section: 'There is no section with this id.'
     no_tag: 'There is no tag with this id.'
     no_removal_rights: >
@@ -2222,7 +2222,7 @@ en:
     no_term: 'There is no term for this id.'
     no_teacher: 'There is no teacher with this id.'
     no_clicker: 'There is no clicker with this id.'
-    no_clicker_access: 'You are not allowed to edit this clicker.'
+    no_clicker_access: 'You cannot to edit this clicker.'
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'
@@ -2239,15 +2239,15 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
-              taken: 'This title is already in use.'
+              taken: 'This title is already taken.'
         course:
           attributes:
             title:
               blank: 'You need to give a title.'
-              taken: 'This title is already in use.'
+              taken: 'This title is already taken.'
             short_title:
               blank: 'You need to give a short title.'
-              taken: 'This short title is already in use.'
+              taken: 'This short title is already taken.'
         course_self_join:
           attributes:
             preceding_course:
