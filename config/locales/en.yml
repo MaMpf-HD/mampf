@@ -1815,7 +1815,7 @@ en:
     info: >
       Your search for the tag %{search_string} has returned %{count} results.
     omitted_html: >
-      %{count} additional results from the database are not shown because of 
+      %{count} additional results from the database are not shown because of
       your %{profile}.
     settings: 'profile settings'
     alternative: 'Did you mean something else?'
@@ -1826,19 +1826,19 @@ en:
     thyme:
       no_metadata: 'An error has happened related to the loading of metadata.'
       bad_browser: 'Your browser is not supported by the THymE Player.'
-  sign_up_html:
+  sign_up_html: >
     Don't have an account yet? Just %{path}.
   sign_up: 'sign up'
   main:
     welcome:
       Welcome to MaMpf, the Mathematical
       Media platform of Heidelberg University.
-    about:
-      'MaMpf is a constantly growing project offering various
+    about: >
+      MaMpf is a constantly growing project offering various
       e-learning services. MaMpf's tagging system helps you find
       all existing media to a keyword quickly and easily.
       In addition, MaMpf links keywords and visualizes their relations
-      in Mind maps. In MaMpf you have the following at your disposal:'
+      in Mind maps. In MaMpf you have the following at your disposal:
     kaviar_html:
       '<strong>
         Hypervideos:
