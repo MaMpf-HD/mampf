@@ -14,18 +14,8 @@ resetSelectized = (index, select) ->
     $(select).find("option[value='" + selectedValue + "']").attr('selected', true) if selectedValue != ''
   return
 
-# before caching, destroy selectize forms and tranfer their content to
-# vanilla html
-$(document).on 'turbolinks:before-cache', ->
-  $('.selectized').each resetSelectized
-  return
-
-# bugfix
-# sometimes selectize miscalculates the width of the prompt,
-# making it look empty
-# brute force solution: set width to 100%
-$(document).on 'turbolinks:load', ->
-  $('.selectize').each ->
+@fillOptionsByAjax = ($selectizedSelection)->
+  $selectizedSelection.each ->
     if this.dataset.drag == 'true'
       plugins = ['remove_button', 'drag_drop']
     else
@@ -68,4 +58,19 @@ $(document).on 'turbolinks:load', ->
     else
       $(this).selectize({ plugins: plugins })
     $('input[id$="-selectized"]').css('width', '100%')
+  return
+
+
+# before caching, destroy selectize forms and tranfer their content to
+# vanilla html
+$(document).on 'turbolinks:before-cache', ->
+  $('.selectized').each resetSelectized
+  return
+
+# bugfix
+# sometimes selectize miscalculates the width of the prompt,
+# making it look empty
+# brute force solution: set width to 100%
+$(document).on 'turbolinks:load', ->
+  fillOptionsByAjax($('.selectize'))
   return
