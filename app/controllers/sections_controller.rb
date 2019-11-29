@@ -22,10 +22,6 @@ class SectionsController < ApplicationController
   def create
     @section = Section.new(section_params)
     insert_or_save
-    if @section.valid?
-      redirect_to edit_lecture_path(@section.lecture)
-      return
-    end
     @errors = @section.errors
   end
 

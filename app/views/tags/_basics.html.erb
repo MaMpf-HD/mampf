@@ -155,22 +155,4 @@
     <%= f.hidden_field :lesson_id,
                        value: tag.lesson_ids.first %>
   <% end %>
-  <% if from == 'medium' %>
-    <%= f.hidden_field :medium_id,
-                       value: tag.medium_ids.first %>
-    <% medium = Medium.find_by_id(tag.medium_ids.first) %>
-    <% if medium&.teachable&.class.to_s.in?(['Lesson', 'Lecture']) %>
-      <div class="form-group">
-        <%= f.label :section_ids,
-                    t('basics.sections') %>
-        <%= helpdesk(t('admin.tag.info.sections'), false) %>
-        <%= f.select :section_ids,
-                     options_for_select(section_selection(medium),
-                                        preselected_sections(medium)),
-                     {},
-                     { multiple: true,
-                       class: 'selectize'} %>
-      </div>
-    <% end %>
-  <% end %>
 </div>

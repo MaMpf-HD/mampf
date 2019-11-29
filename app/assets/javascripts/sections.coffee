@@ -7,6 +7,7 @@ $(document).on 'turbolinks:load', ->
   # if any input is given to the lesson form, issue a warning
   $(document).on 'change', '#section-form :input', ->
     $('#section-basics-warning').show()
+    $('#new-lesson-button').hide()
     return
 
   # update the content of the sections dropdown if chapter selector is changed

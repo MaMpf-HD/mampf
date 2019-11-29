@@ -607,10 +607,11 @@ de:
           festlegen können, ob ihnen verknüpfte Materialien auch von inhaltlich
           vorher einzuordnenden Modulen angezeigt werden sollen.
     chapter:
-      edit_html: '%{chapter_name} %{chapter} bearbeiten'
+      edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
       display_number: 'Anz.nr.'
       exempt: 'von Gliederung ausgenommen'
+      no_sections: 'Für dieses Kapitel wurden noch keine Abschnitte angelegt.'
       info:
         title: >
           Hier kannst Du den Titel des Kapitels bzw. Vortrags angeben.
@@ -629,6 +630,8 @@ de:
           auftreten. Trotzdem sind das Kapitel (bzw. der Vortrag)
           und seine veröffentlichten Inhalte für NutzerInnen
           auffindbar.
+        sections: >
+          Das ist die Liste aller Abschnitte, die zu diesem Kapitel gehören.
     section:
       edit_html: 'Abschnitt %{section} bearbeiten'
       position: 'Positionierung nach Abschnitt'
@@ -636,6 +639,7 @@ de:
       exempt: 'von Gliederung ausgenommen'
       content: 'Inhalt des Abschnitts'
       extracted_content: 'Extrahierter Inhalt'
+      no_lesson: 'Mit diesem Abschnitt ist noch keine Sitzung verknüpft.'
       info:
         title: >
           Hier kannst Du den Titel des Abschnitts angeben.
@@ -657,7 +661,7 @@ de:
           auch die Reihenfolge festlegen, in der die Tags angezeigt werden
           sollen.
         lessons: >
-          Hier kannst Du die Sitzungen auswählen, in denen Inhalte
+          Das ist die Liste der Sitzungen auswählen, in denen Inhalte
           aus diesem Abschnitt behandelt werden bzw. wurden.
         exempt: >
           Wenn Du dieses Feld anklickst, wird dieser Abschnitt

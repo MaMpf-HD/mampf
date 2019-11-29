@@ -17,6 +17,8 @@ class LessonsController < ApplicationController
     @lecture = Lecture.find_by_id(params[:lecture_id])
     I18n.locale = @lecture.locale_with_inheritance
     @lesson = Lesson.new(lecture: @lecture)
+    section = Section.find_by_id(params[:section_id])
+    @lesson.sections << section if section
   end
 
   def create
@@ -25,11 +27,11 @@ class LessonsController < ApplicationController
     # add all tags from sections associated to this lesson
     @lesson.tags = @lesson.sections.map(&:tags).flatten
     @lesson.save
-    if @lesson.valid?
-      redirect_or_edit
+    @errors = @lesson.errors
+    if @lesson.valid? && params[:commit] == t('buttons.save_and_edit')
+      redirect_to edit_lesson_path(@lesson)
       return
     end
-    @errors = @lesson.errors
     render :update
   end
 
@@ -82,14 +84,5 @@ class LessonsController < ApplicationController
                                    :end_destination,
                                    section_ids: [],
                                    tag_ids: [])
-  end
-
-  def redirect_or_edit
-    if params[:commit] == t('buttons.save')
-      redirect_to edit_lecture_path(@lesson.lecture)
-    else
-      # if user clicked 'save and edit'
-      redirect_to edit_lesson_path(@lesson)
-    end
   end
 end

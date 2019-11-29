@@ -29,7 +29,8 @@
                     t('basics.sections') %>
         <%= helpdesk(t('admin.lesson.info.sections'), false) %>
         <%= f.select :section_ids,
-                     options_for_select(lesson.lecture.section_selection),
+                     options_for_select(lesson.lecture.section_selection,
+                                        lesson.section_ids),
                      {},
                      { multiple: true,
                        class: 'selectize' } %>
@@ -47,8 +48,8 @@
       <%= f.submit t('buttons.save_and_edit'),
                    class: 'btn btn-sm btn-primary' %>
       <button type="button"
-              id="cancel-new-lesson"
-              class="btn btn-sm btn-secondary">
+              class="btn btn-sm btn-secondary"
+              data-dismiss="modal">
         <%= t('buttons.cancel') %>
       </button>
     </div>

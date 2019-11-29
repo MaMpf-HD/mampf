@@ -1,84 +1,48 @@
-<div class="row">
-  <div class="col-6">
-    <h6>
-      <%= t('admin.chapter.edit_html',
-            chapter_name: t("basics.#{lecture.chapter_name}"),
-            chapter: content_tag(:span, chapter.to_label, class: 'redtext')) %>
-    </h6>
-  </div>
-  <div class="col-6">
-    <div id="chapter-basics-warning">
-      <%= t('warnings.unsaved_changes') %>
-    </div>
-  </div>
-</div>
 <%= form_with model: chapter, html: { id: 'chapter-form' } do |f| %>
-  <div class="form-row">
-    <div class="col-12 form-group">
-      <%= f.label :title, t('basics.title') %>
-      <%= helpdesk(t('admin.chapter.info.title'), false) %>
-      <%= f.text_field :title,
-                       { class: 'form-control' } %>
-      <div class="invalid-feedback" id="chapter-title-error">
+  <div class="row px-2 py-2 mt-2">
+    <div class="col-12 col-lg-4">
+      <h4 class="pl-2">
+        <span class="badge badge-secondary">
+          <%= t('basics.chapter') %>
+        </span>
+        <%= chapter.to_label %>
+      </h4>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div id="chapter-basics-warning">
+        <%= t('warnings.unsaved_changes') %>
+        <%= f.submit t('buttons.save'),
+                     class: 'btn btn-sm btn-primary' %>
+        <button type="button"
+                class="btn btn-sm btn-secondary ml-2"
+                id="cancel-chapter-edit">
+          <%= t('buttons.discard') %>
+        </button>
       </div>
     </div>
-  </div>
-  <div class="form-row">
-    <div class="col-10 form-group">
-      <%= f.label :predecessor,
-                  t('admin.chapter.position',
-                    chapter_name: t("basics.#{lecture.chapter_name}")) %>
-      <%= helpdesk(t('admin.chapter.info.position'), false) %>
-      <%= f.select :predecessor,
-                   options_for_select(chapter_positions_for_select(chapter),
-                                      chapter.position - 1) ,
-                                      {},
-                                      { class: 'form-control' } %>
-    </div>
-    <div class="col-2 form-group">
-      <%= f.label :display_number,
-                  t('admin.chapter.display_number') %>
-      <%= helpdesk(t('admin.chapter.info.display_number'), false) %>
-      <%= f.text_field :display_number,
-                       { class: 'form-control' } %>
-    </div>
-  </div>
-  <div class="form-row">
-    <div class="col-12">
-      <div class="custom-control custom-checkbox mb-2">
-        <%= f.check_box :hidden,
-                        class: 'custom-control-input' %>
-        <%= f.label :hidden,
-                    t('admin.chapter.exempt'),
-                    { class: 'custom-control-label' } %>
-        <%= helpdesk(t('admin.chapter.info.exempt'), false) %>
-      </div>
-    </div>
-  </div>
-  <div class="mb-2">
-    <%= t('basics.details') %>
-    <%= helpdesk(t('admin.section.info.details'), false) %>
-  </div>
-  <%= f.trix_editor :details %>
-  <%= f.hidden_field :lecture_id,
-                     value: lecture.id %>
-  <div class="row mt-2">
-    <div class="col-12 text-center">
-      <%= f.submit t('buttons.save_and_exit'),
-                   class: 'btn btn-sm btn-primary' %>
-      <button type="button"
-              id="cancel-chapter"
-              class="btn btn-sm btn-secondary">
-        <%= t('buttons.cancel') %>
-      </button>
+    <div class="col-12 col-lg-4 text-right">
+      <%= link_to t('buttons.parent_lecture'),
+                  edit_or_inspect_lecture_path(chapter.lecture),
+                  class: 'btn btn-sm btn-outline-primary mb-2' %>
       <% if chapter.sections.empty? %>
         <%= link_to t('buttons.delete'),
                     chapter_path(chapter),
-                    class: 'btn btn-sm btn-danger',
                     method: :delete,
-                    data: { confirm: t('confirmation.generic') } %>
+                    data: { confirm: t('confirmation.generic') },
+                    class: 'btn btn-sm btn-danger mb-2' %>
       <% end %>
     </div>
   </div>
+  <div class="row p-2">
+    <div class="col-6">
+      <%= render partial: 'chapters/basics',
+                 locals: { chapter: chapter,
+                           f: f } %>
+    </div>
+    <div class="col-6">
+      <%= render partial: 'chapters/content',
+                 locals: { chapter: chapter,
+                           f: f } %>
+    </div>
+  </div>
 <% end %>
-<hr>

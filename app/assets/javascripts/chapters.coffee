@@ -9,23 +9,46 @@ $(document).on 'turbolinks:load', ->
     $('#chapter-basics-warning').show()
     return
 
-  $(document).on 'click', '#cancel-chapter', ->
-  	location.reload()
-  	return
-
-  # restore everything after input of new chapter is cancelled
-  $(document).on 'click', '#cancel-new-chapter', ->
-    $('#new-chapter-area').empty().hide()
-    $('.fa-edit').show()
-    $('.new-in-lecture').show()
-    $('[data-toggle="collapse"]').removeClass('disabled')
+  $(document).on 'click', '#cancel-chapter-edit', ->
+    location.reload()
     return
+
+  $(document).on 'trix-change', '#chapter-details-trix', ->
+    $('#chapter-basics-warning').show()
+    $('#chapter-details-preview').html($('#chapter-details-trix').html())
+    chapterDetails = document.getElementById('chapter-details-preview')
+    renderMathInElement chapterDetails,
+      delimiters: [
+        {
+          left: '$$'
+          right: '$$'
+          display: true
+        }
+        {
+          left: '$'
+          right: '$'
+          display: false
+        }
+        {
+          left: '\\('
+          right: '\\)'
+          display: false
+        }
+        {
+          left: '\\['
+          right: '\\]'
+          display: true
+        }
+      ]
+      throwOnError: false
+    return
+  return
+
 
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#chapter-form :input'
-  $(document).off 'click', '#cancel-chapter'
-  $(document).off 'click', '#cancel-new-chapter'
+  $(document).off 'click', '#cancel-chapter-edit'
   return

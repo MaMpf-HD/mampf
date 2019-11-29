@@ -1,12 +1,7 @@
-# disable all other input fields when a new chapter is being created
-$('.fa-edit').hide()
-$('.new-in-lecture').hide()
-$('#lectureAccordion .collapse').collapse('hide')
-$('[data-toggle="collapse"]').addClass('disabled')
-
 # render new chapter form
-$('#new-chapter-area').empty()
+$('#chapter-modal-content').empty()
   .append('<%= j render partial: "chapters/new",
                         locals: { lecture: @lecture,
                                   chapter: @chapter} %>').show()
+$('#chapterModal').modal('show')
 $('[data-toggle="popover"]').popover()

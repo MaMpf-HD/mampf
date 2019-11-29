@@ -9,4 +9,6 @@ $('#new-section-title-error')
   .append('<%= @errors[:title].join(" ") %>').show()
 $('#new_section_title').addClass('is-invalid')
 <% end %>
+<% else %>
+location.reload()
 <% end %>

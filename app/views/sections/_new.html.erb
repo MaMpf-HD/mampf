@@ -1,13 +1,6 @@
-<div class="row">
-  <div class="col-12">
-    <h6>
-      <%= t('buttons.create_section') %>
-    </h6>
-  </div>
-</div>
 <%= form_with model: section do |f| %>
   <div class="form-row">
-    <div class="col-6 form-group">
+    <div class="col-12 form-group">
       <%= f.label :title,
                   t('basics.title') %>
       <%= helpdesk(t('admin.lecture.info.section_title'), false) %>
@@ -19,7 +12,7 @@
       </div>
     </div>
     <% if chapter.sections.exists? %>
-      <div class="col-6 form-group">
+      <div class="col-12 form-group">
         <%= f.label :predecessor,
                     t('admin.lecture.insert_after_section') %>
         <%= helpdesk(t('admin.lecture.info.insert_after_section'), false) %>
@@ -41,8 +34,8 @@
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary' %>
       <button type="button"
-              id="cancel-new-section"
               data-chapter="<%= chapter.id %>"
+              data-dismiss="modal"
               class="btn btn-sm btn-secondary">
         <%= t('buttons.cancel') %>
       </button>

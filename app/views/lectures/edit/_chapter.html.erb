@@ -8,18 +8,9 @@
             <%= chapter.to_label %>
           </span>
         <% else %>
-          <span class="text-light">
-            <%= chapter.to_label %>
-          </span>
-          <a href="<%= edit_chapter_path(chapter) %>"
-             class="text-light"
-             data-toggle="tooltip"
-             data-placement="bottom"
-             title="<%= t('buttons.edit') %>"
-             data-remote="true">
-            <i class="far fa-edit text">
-            </i>
-          </a>
+          <%= link_to chapter.to_label,
+                      edit_chapter_path(chapter),
+                      class: 'text-light' %>
         <% end %>
       </div>
       <% unless inspection %>
@@ -34,10 +25,6 @@
     </div>
   </div>
   <div class="card-body">
-    <div id="new-section-area-<%= chapter.id %>"
-         class="bg-green-lighten-4 p-2 mb-3 rounded"
-         style="display: none;">
-    </div>
     <% unless chapter.details.blank? %>
       <%= chapter.details.html_safe %>
     <% end %>

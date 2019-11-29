@@ -1,0 +1,80 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-4">
+    <h5>
+      <%= t('basics.basics') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="form-row">
+      <div class="col-12 form-group">
+        <%= f.label :title, t('basics.title') %>
+        <%= helpdesk(t('admin.chapter.info.title'), false) %>
+        <%= f.text_field :title,
+                         { class: 'form-control' } %>
+        <div class="invalid-feedback" id="chapter-title-error">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-10 form-group">
+        <%= f.label :predecessor,
+                    t('admin.chapter.position',
+                      chapter_name: t("basics.#{chapter.lecture.chapter_name}")) %>
+        <%= helpdesk(t('admin.chapter.info.position'), false) %>
+        <%= f.select :predecessor,
+                     options_for_select(chapter_positions_for_select(chapter),
+                                        chapter.position - 1) ,
+                                        {},
+                                        { class: 'form-control' } %>
+      </div>
+      <div class="col-2 form-group">
+        <%= f.label :display_number,
+                    t('admin.chapter.display_number') %>
+        <%= helpdesk(t('admin.chapter.info.display_number'), false) %>
+        <%= f.text_field :display_number,
+                         { class: 'form-control' } %>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12">
+        <div class="custom-control custom-checkbox mb-2">
+          <%= f.check_box :hidden,
+                          class: 'custom-control-input' %>
+          <%= f.label :hidden,
+                      t('admin.chapter.exempt'),
+                      { class: 'custom-control-label' } %>
+          <%= helpdesk(t('admin.chapter.info.exempt'), false) %>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <%= t('basics.sections') %>
+        <%= helpdesk(t('admin.chapter.info.sections'), false) %>
+        <%= link_to new_section_path(chapter_id: chapter.id),
+                    remote: true,
+                    class: 'text-dark',
+                    data: { toggle: 'tooltip' },
+                    title: t('buttons.create_section'),
+                    style: 'text-decoration: none;' do %>
+          <i class="fas fa-plus-circle">
+          </i>
+        <% end %>
+      </div>
+      <div class="col-12">
+      <% if chapter.sections.any? %>
+          <ul>
+            <% chapter.sections.each do |s| %>
+              <li>
+                <%= link_to s.to_label,
+                            edit_section_path(s) %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <%= t('admin.chapter.no_sections') %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

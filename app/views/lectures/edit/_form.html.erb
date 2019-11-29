@@ -53,5 +53,9 @@
                locals: { lecture: lecture } %>
     <%= render partial: 'lectures/edit/user_modal',
                locals: { lecture: lecture } %>
+    <%= render partial: 'chapters/modal',
+               locals: { lecture: lecture } %>
+    <%= render partial: 'sections/modal' %>
+    <%= render partial: 'lessons/modal' %>
   <% end %>
 <% end %>

@@ -566,10 +566,11 @@ en:
           This is relevant because users can adjust their settings so
           that they are shown related materials form preceding courses.
     chapter:
-      edit_html: 'Edit %{chapter_name} %{chapter}'
+      edit: 'Edit %{chapter}'
       position: 'Position after %{chapter_name}'
       display_number: 'Disp.nr.'
       exempt: 'Exempt from table of contents'
+      no_sections: For this chapter, no sections have yet been created.
       info:
         title: >
           Here you can enter the title of the chapter (or talk).
@@ -585,6 +586,8 @@ en:
           event series contents visible for users. Note however that the
           chapter/talk and its published contents can be accessed by users,
           e.g. if they search for it.
+        sections: >
+          This ist the list of all sections associated to this chapter.
     section:
       edit_html: 'Edit Section %{section}'
       position: 'Position after Section'
@@ -592,6 +595,7 @@ en:
       exempt: 'Exempt from table of contents'
       content: 'Contents of the section'
       extracted_content: 'Extracted content'
+      no_lessons: 'There are no sessions associated to this section.'
       info:
         title: >
           Here you can enter the title of the section.
@@ -609,7 +613,7 @@ en:
           and you can create new tags if necessary. You can also declare the
           order in which the tags are displayed.
         lessons: >
-          Here you can select the sessions in which contents from this section
+          This is the list of sessions in which contents from this section
           have been treated.
         exempt: >
           If you check this box, this section will not be listed in the

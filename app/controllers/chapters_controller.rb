@@ -21,7 +21,7 @@ class ChaptersController < ApplicationController
         position -= 1 if position > @chapter.position
         @chapter.insert_at(position + 1)
       end
-      redirect_to edit_lecture_path(@chapter.lecture)
+      redirect_to edit_chapter_path(@chapter)
       return
     end
     @errors = @chapter.errors

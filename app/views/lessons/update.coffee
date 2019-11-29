@@ -14,7 +14,7 @@ $('#lesson-sections-error')
   .append('<%= @errors[:sections].join(" ") %>').show()
 <% end %>
 <% else %>
-<% if @tags_without_section.any? && @lesson.sections.count > 1 %>
+<% if @tags_without_section&.any? && @lesson.sections.count > 1 %>
 $('#manage-tags-modal-content').empty()
   .append('<%= j render partial: "tags/section_associations",
                         locals:

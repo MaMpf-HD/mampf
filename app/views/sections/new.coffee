@@ -1,14 +1,9 @@
-# disable all other input fields when a new section is created
-$('.fa-edit').hide()
-$('.new-in-lecture').hide()
-$('#lectureAccordion .collapse').collapse('hide')
-$('[data-toggle="collapse"]').addClass('disabled')
-
 # render new section form
-$('#new-section-area-<%= @chapter.id %>').empty()
+$('#section-modal-content').empty()
   .append('<%= j render partial: "sections/new",
                         locals: { section: @section,
                                   chapter: @chapter } %>').show()
 
+$('#sectionModal').modal('show')
  # activate popovers
 $('[data-toggle="popover"]').popover()
