@@ -55,6 +55,38 @@ $(document).on 'turbolinks:load', ->
       tagSelectize.refreshOptions(false)
       return
 
+  trixElement = document.querySelector('#lesson-details-trix')
+  if trixElement?
+    trixElement.addEventListener 'trix-change', ->
+      $('#lesson-basics-warning').show()
+      $('#lesson-details-preview').html($('#lesson-details-trix').html())
+      lessonDetails = document.getElementById('lesson-details-preview')
+      renderMathInElement lessonDetails,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
+
+
   return
 
 # clean up everything before turbolinks caches
