@@ -854,8 +854,8 @@ class Medium < ApplicationRecord
 
   def extended_content
     result = []
-    if lesson.details.present? && teachable_type == 'Lesson'
-      result.push I18n.t('admin.medium.lesson_details_html') + lesson.details
+    if teachable_type == 'Lesson' && teachable.details.present?
+      result.push I18n.t('admin.medium.lesson_details_html') + teachable.details
     end
     result.push content unless content.blank?
     result
