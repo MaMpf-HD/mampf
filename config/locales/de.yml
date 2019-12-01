@@ -919,10 +919,9 @@ de:
           Tags, die Du diesem Medium hinzufügst, werden auch der Sitzung
           hinzugefügt.
         content: >
-          Hier kannst Du eine Inhaltsangabe machen. Ist das Medium mit einer
-          Sitzung verknüpft, erbt diese die Inhaltsbeschreibung. Du kannst
-          KaTeX verwenden. Für Zeilenumbrüche kannst Du $\newline$ oder $\\$
-          benutzen.
+          Hier kannst Du eine Inhaltsangabe machen. Du kannst LaTEX benutzen
+          (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
+          siehst Du unten.
         linked_media: >
           Dies ist eine Liste aller Medien, die mit diesem Medium
           verknüpft sind bzw. die von diesem Medium aus referenziert werden.
@@ -2191,6 +2190,7 @@ de:
     status: 'Status'
     sponsors: 'Sponsoren'
     since: 'seit'
+    documents: 'Dokumente'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

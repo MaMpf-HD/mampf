@@ -58,9 +58,3 @@
     </div>
   </div>
 </div>
-<% if medium.manuscript.present? %>
-  <%= link_to image_tag(medium.manuscript_screenshot_url,
-                        class: 'img-fluid',
-                        id: 'manuscript-preview'),
-              medium.manuscript_url, target: :blank %>
-<% end %>

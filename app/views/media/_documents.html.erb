@@ -1,0 +1,111 @@
+<div class="card bg-light">
+  <div class="card-header">
+    <h5>
+      <%= t('basics.documents') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-4">
+        <%= t('video.video') %>
+        <span class="badge badge-secondary">
+          mp4
+        </span>
+        <%= helpdesk(t('admin.medium.info.video'), false) %>
+      </div>
+      <div class="col-2 text-right"
+           id="video-uploadButton"
+           data-choosefiles="<%= t('basics.file') %>">
+        <input type="hidden"
+               name="medium[video]"
+               value="<%= medium.cached_video_data %>"
+               id="upload-video-hidden">
+        <input type="file"
+               name="medium[video]"
+               id="upload-video">
+      </div>
+      <div class="col-6 text-right">
+        <% if medium.screenshot.present? %>
+          <button type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  data-toggle="modal"
+                  data-target="#screenshotModal">
+            <%= t('basics.screenshot') %>
+          </button>
+        <% end %>
+        <% if medium.video.present? %>
+          <%= link_to t('basics.editor'),
+                      enrich_medium_path(medium),
+                      class: 'btn btn-sm btn-outline-secondary' %>
+          <%= link_to t('basics.thyme'),
+                      play_medium_path(medium),
+                      class: 'btn btn-outline-secondary btn-sm',
+                      target: :blank %>
+        <% end %>
+      </div>
+    </div>
+    <%= render partial: 'media/upload_video',
+               locals: { medium: medium } %>
+    <%= f.hidden_field :detach_video, value: false %>
+    <hr>
+    <div class="row">
+      <div class="col-4">
+        <%= t('manuscript.manuscript') %>
+        <span class="badge badge-secondary">
+          pdf
+        </span>
+        <%= helpdesk(t('admin.medium.info.manuscript'), false) %>
+      </div>
+      <div class="col-2 text-right"
+           id="manuscript-uploadButton"
+           data-choosefiles="<%= t('basics.file') %>">
+        <input type="hidden"
+               name="medium[manuscript]"
+               value="<%= medium.cached_manuscript_data %>"
+               id="upload-manuscript-hidden">
+        <input type="file"
+               name="medium[manuscript]"
+               id="upload-manuscript">
+      </div>
+      <div class="col-6 text-right">
+        <% if medium.manuscript.present? %>
+          <button type="button"
+                  class="btn btn-sm btn-outline-secondary"
+                  data-toggle="modal"
+                  data-target="#snapshotModal">
+            <%= t('basics.screenshot') %>
+          </button>
+          <%= link_to t('buttons.view'),
+              medium.manuscript_url,
+              class: 'btn btn-sm btn-outline-secondary',
+              target: :blank %>
+        <% end %>
+      </div>
+    </div>
+    <%= render partial: 'media/upload_manuscript',
+               locals: { medium: medium } %>
+    <%= f.hidden_field :detach_manuscript, value: false %>
+    <hr>
+    <div class="form-group">
+      <%= f.label :external_reference_link,
+                  t('basics.external_link') %>
+      <%= helpdesk(t('admin.medium.info.external_link'), false) %>
+      <div class="row">
+        <div class="col-10">
+          <%= f.text_field :external_reference_link,
+                           { class: 'form-control' } %>
+          <div class="invalid-feedback"
+               id="medium-external-reference-error">
+          </div>
+        </div>
+        <div class="col-2">
+          <button id="test-external-link"
+                  type="button"
+                  class="btn btn-sm btn-outline-info">
+            Test
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

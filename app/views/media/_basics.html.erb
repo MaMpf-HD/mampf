@@ -1,6 +1,8 @@
 <div class="card bg-mdb-color-lighten-5">
   <div class="card-header bg-mdb-color-lighten-3">
-    <%= t('basics.basics') %>
+    <h5>
+      <%= t('basics.basics') %>
+    </h5>
   </div>
   <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <div class="form-group">
@@ -101,6 +103,22 @@
       </div>
     </div>
     <% end %>
+    <div class="form-group">
+      <%= f.label :linked_medium_ids,
+                  t('basics.related_media') %>
+      <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
+      <%= f.select :linked_medium_ids,
+                   options_for_select(medium.linked_media
+                                            .map{ |m| [m.title_for_viewers,
+                                                       m.id] },
+                                      medium.linked_media.pluck(:id)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     data: { ajax: true,
+                             model: 'medium',
+                             filled: false } } %>
+    </div>
     <% if medium.published? %>
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
@@ -121,58 +139,6 @@
                         class: 'custom-control-label' %>
           </div>
         <% end %>
-      </div>
-    </div>
-    <div class="form-group">
-      <%= f.label :content, t('admin.medium.content') %>
-      <%= helpdesk(t('admin.medium.info.content'), false) %>
-      <%= f.text_area :content,
-                      id: 'tex-area-medium-content-' + medium.id.to_i.to_s,
-                      class: 'form-control',
-                      rows: 5 %>
-    </div>
-    <div>
-      <%= t('admin.medium.preview_content') %>
-    </div>
-    <div id="tex-preview-medium-content-<%= medium.id.to_i.to_s %>"
-         class="bg-mdb-color-lighten-6 mb-3 px-2 py-3">
-      <%= medium.content %>
-    </div>
-    <div class="form-group">
-      <%= f.label :linked_medium_ids,
-                  t('basics.related_media') %>
-      <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
-      <%= f.select :linked_medium_ids,
-                   options_for_select(medium.linked_media
-                                            .map{ |m| [m.title_for_viewers,
-                                                       m.id] },
-                                      medium.linked_media.pluck(:id)),
-                   {},
-                   { multiple: true,
-                     class: 'selectize',
-                     data: { ajax: true,
-                             model: 'medium',
-                             filled: false } } %>
-    </div>
-    <div class="form-group">
-      <%= f.label :external_reference_link,
-                  t('basics.external_link') %>
-      <%= helpdesk(t('admin.medium.info.external_link'), false) %>
-      <div class="row">
-        <div class="col-10">
-          <%= f.text_field :external_reference_link,
-                           { class: 'form-control' } %>
-          <div class="invalid-feedback"
-               id="medium-external-reference-error">
-          </div>
-        </div>
-        <div class="col-2">
-          <button id="test-external-link"
-                  type="button"
-                  class="btn btn-sm btn-outline-info">
-            Test
-          </button>
-        </div>
       </div>
     </div>
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>

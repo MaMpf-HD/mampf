@@ -350,6 +350,38 @@ $(document).on 'turbolinks:load', ->
     $('#edit_tag_form').hide()
     $('#mediumActions').show()
     return
+
+  trixElement = document.querySelector('#medium-content-trix')
+  if trixElement?
+    trixElement.addEventListener 'trix-change', ->
+      $('#medium-basics-warning').show()
+      $('#medium-content-preview').html($('#medium-content-trix').html())
+      mediumContentDetails = document.getElementById('medium-content-preview')
+      renderMathInElement mediumContentDetails,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
+
   return
 
 $(document).on 'turbolinks:before-cache', ->

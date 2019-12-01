@@ -79,9 +79,6 @@ videoUpload = (fileInput) ->
     $('#video-wait').hide()
     data = response.body
     if data.metadata.mime_type in ['video/mp4']
-      # show video preview
-      videoPreview.src = URL.createObjectURL(file.data)
-
       # read uploaded file data from the upload endpoint response
       uploadedFileData = JSON.stringify(data)
 

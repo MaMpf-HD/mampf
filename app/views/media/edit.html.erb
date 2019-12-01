@@ -32,3 +32,11 @@
   <%= render partial: 'media/publish_modal',
              locals: { medium: @medium } %>
 <% end %>
+<% if @medium.screenshot.present? %>
+  <%= render partial: 'media/screenshot_modal',
+             locals: { medium: @medium } %>
+<% end %>
+<% if @medium.manuscript.present? %>
+  <%= render partial: 'media/snapshot_modal',
+             locals: { medium: @medium } %>
+<% end %>

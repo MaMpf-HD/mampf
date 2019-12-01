@@ -2063,6 +2063,7 @@ en:
     status: 'Status'
     sponsors: 'sponsors'
     since: 'since'
+    documents: 'Documents'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

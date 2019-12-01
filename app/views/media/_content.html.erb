@@ -1,0 +1,41 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-3">
+    <h5>
+      <%= t('content') %>
+    </h5>
+  </div>
+  <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
+    <div class="form-group">
+      <%= f.label :content, t('admin.medium.content') %>
+      <%= helpdesk(t('admin.medium.info.content'), false) %>
+      <%= f.trix_editor :content,
+                        class: 'bg-light',
+                        id: 'medium-content-trix' %>
+    </div>
+    <div class="row my-2">
+      <div class="col-12">
+        <%= t('basics.preview') %>
+      </div>
+    </div>
+    <div class="alert alert-dark bg-mdb-color-lighten-6"
+         id="medium-content-preview">
+        <%= raw(medium.content) %>
+    </div>
+    <div class="row mb-2">
+      <div class="col-12">
+        <%= t('admin.section.extracted_content') %>
+        <%= helpdesk(t('admin.section.info.extracted_content'), false) %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <%= render partial: 'items/items',
+                   locals: { items: medium.proper_items_by_time,
+                             small: true,
+                             embedded: true,
+                             section_links: false,
+                             content: [] } %>
+      </div>
+    </div>
+  </div>
+</div>
