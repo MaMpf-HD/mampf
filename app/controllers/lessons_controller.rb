@@ -81,7 +81,7 @@ class LessonsController < ApplicationController
 
   def lesson_params
     params.require(:lesson).permit(:date, :lecture_id, :start_destination,
-                                   :end_destination,
+                                   :end_destination, :details,
                                    section_ids: [],
                                    tag_ids: [])
   end

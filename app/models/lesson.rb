@@ -194,6 +194,10 @@ class Lesson < ApplicationRecord
     script_items
   end
 
+  def content
+    ([details] + media.potentially_visible.map(&:content)).compact - ['']
+  end
+
   # script items are items in the manuscript between start end end destination
   # (relevant if lecture content mode is manuscript)
   def script_items

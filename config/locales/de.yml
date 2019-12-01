@@ -638,7 +638,7 @@ de:
       display_number: 'Anzeigenr.'
       exempt: 'von Gliederung ausgenommen'
       content: 'Inhalt des Abschnitts'
-      extracted_content: 'Extrahierter Inhalt'
+      extracted_content: 'Aus Medien extrahierter Inhalt'
       no_lesson: 'Mit diesem Abschnitt ist noch keine Sitzung verknüpft.'
       info:
         title: >
@@ -722,8 +722,8 @@ de:
         end_item: >
           Hier kannst Du auswählen, wo die Sitzung inhaltlich geendet hat.
         content: >
-          Den Inhalt der Sitzung extrahiert MaMpf aus den veröffentlichten
-          Medien, die mit dieser Sitzung verknüpft sind. Hierzu werden
+          Hier steht der Inhalt, der aus Medien extrahiert wurde, die zu
+          dieser Sitzungen verknüpft sind. Hierzu werden
           Inhaltsverzeichnisse aus Videos, die mit dem THymE-Editor bearbeitet
           wurden, Medieninhaltsangaben und Skript-Metadaten
           (im Falle skriptbasierter Vorlesungen) verwendet.
@@ -763,6 +763,8 @@ de:
         structure: 'Struktur des Manuskripts'
       tags_without_lesson: 'In Sitzung fehlende Tags'
       new: 'Medium anlegen'
+      lesson_details_html: >
+        <p>Inhaltsbeschreibung der dazugehörigen Sitzung:</p>
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter

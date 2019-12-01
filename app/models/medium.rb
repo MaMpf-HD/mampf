@@ -852,6 +852,15 @@ class Medium < ApplicationRecord
     tags.where.not(id: teachable.tag_ids)
   end
 
+  def extended_content
+    result = []
+    if lesson.details.present? && teachable_type == 'Lesson'
+      result.push I18n.t('admin.medium.lesson_details_html') + lesson.details
+    end
+    result.push content unless content.blank?
+    result
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

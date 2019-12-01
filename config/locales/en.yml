@@ -640,10 +640,10 @@ en:
       start_item: 'Start Item'
       end_item: 'End Item'
       content: >
-        MaMpf extracts the session's content from the published media that are associated
-        to the session. It utilizes tables of content from videos that have
-        been edited by THymE, content description form media and script metadata
-        (if the lecture is script based).
+        This is the content that has been extracted from the published media
+        that are associated to the session. It utilizes tables of content
+        from videos that have been edited by THymE, content description of
+        media and script metadata (if the lecture is script based).
       destroyed: 'Session Destroyed'
       tags_without_section: 'Tags without section assocation'
       info:
@@ -717,6 +717,8 @@ en:
       preview_content: 'Content preview'
       tags_without_lesson: 'Tags missing in session'
       new: 'Create new medium'
+      lesson_details_html: >
+        <p>Content description of the associated session:</p>
       info:
         locked: >
           This medium has been locked. It can be unlocked via

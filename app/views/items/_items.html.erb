@@ -10,9 +10,11 @@
                                 overflow-y: scroll;">
     <% unless content.blank? %>
       <% content.each_with_index do |c,i| %>
-        <p>
-          <%= c&.html_safe %>
-        </p>
+        <% if c.present? %>
+          <p>
+            <%= c&.html_safe %>
+          </p>
+        <% end %>
         <% unless i == content.length - 1 %>
           <hr>
         <% end %>
