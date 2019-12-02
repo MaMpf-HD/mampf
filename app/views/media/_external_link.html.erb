@@ -1,0 +1,22 @@
+<hr>
+<div class="form-group">
+  <%= f.label :external_reference_link,
+              t('basics.external_link') %>
+  <%= helpdesk(t('admin.medium.info.external_link'), false) %>
+  <div class="row">
+    <div class="col-10">
+      <%= f.text_field :external_reference_link,
+                       { class: 'form-control' } %>
+      <div class="invalid-feedback"
+           id="medium-external-reference-error">
+      </div>
+    </div>
+    <div class="col-2">
+      <button id="test-external-link"
+              type="button"
+              class="btn btn-sm btn-outline-info">
+        <%= t('buttons.test') %>
+      </button>
+    </div>
+  </div>
+</div>

@@ -6,7 +6,7 @@
   </div>
   <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <div class="form-group">
-      <%= f.label :content, t('admin.medium.content') %>
+      <%= f.label :content, "#{t('admin.medium.content')} (#{t('basics.optional')})" %>
       <%= helpdesk(t('admin.medium.info.content'), false) %>
       <%= f.trix_editor :content,
                         class: 'bg-light',
@@ -23,18 +23,23 @@
     </div>
     <div class="row mb-2">
       <div class="col-12">
-        <%= t('admin.section.extracted_content') %>
-        <%= helpdesk(t('admin.section.info.extracted_content'), false) %>
+        <%= t('admin.medium.extracted_content') %>
+        <%= helpdesk(t('admin.medium.info.extracted_content'), false) %>
       </div>
     </div>
     <div class="row">
       <div class="col-12">
-        <%= render partial: 'items/items',
-                   locals: { items: medium.proper_items_by_time,
-                             small: true,
-                             embedded: true,
-                             section_links: false,
-                             content: [] } %>
+        <% if medium.sort =='Script' %>
+          <%= render partial: 'items/items_list',
+                     locals: { items: medium.toc_items,
+                               section_links: false,
+                               content: [] } %>
+        <% else %>
+          <%= render partial: 'items/items_list',
+                     locals: { items: medium.proper_items_by_time,
+                               section_links: false,
+                               content: [] } %>
+        <% end %>
       </div>
     </div>
   </div>

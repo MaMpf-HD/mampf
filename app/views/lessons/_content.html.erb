@@ -57,10 +57,8 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <%= render partial: 'items/items',
+        <%= render partial: 'items/items_list',
                    locals: { items: lesson.content_items,
-                             small: true,
-                             embedded: true,
                              section_links: false,
                              content: lesson.media.potentially_visible
                                             .map(&:content).compact } %>

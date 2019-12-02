@@ -719,6 +719,8 @@ en:
       new: 'Create new medium'
       lesson_details_html: >
         <p>Content description of the associated session:</p>
+      extracted_content: >
+        Extracted content
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -966,6 +968,10 @@ en:
           The description is used in references to this medium.
         inspection_related_tags: >
           This is the list of all tags that are associated to this medium.
+        extracted_content: >
+          This is content that has been extracted from associated documents,
+          e.g. a table of contents of a video that has been edited by thyme
+          editor.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
@@ -2064,6 +2070,7 @@ en:
     sponsors: 'sponsors'
     since: 'since'
     documents: 'Documents'
+    optional: 'optional'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2145,6 +2152,7 @@ en:
     hide: 'Hide'
     interpret: 'Interpret'
     import_media: 'Import Media'
+    view: 'View'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

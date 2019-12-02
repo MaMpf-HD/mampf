@@ -6,7 +6,6 @@
                        new_medium: new_medium,
                        f: f } %>
   <div class="row mt-3 p-2">
-  <% if !medium.sort.in?(['Script', 'Quiz', 'Question', 'Remark']) %>
     <div class="col-12 col-lg-6 col-xl-4">
       <%= render partial: 'media/basics',
                  locals: { medium: medium,
@@ -24,74 +23,5 @@
                  locals: { medium: medium,
                            f: f } %>
     </div>
-  <% elsif medium.sort == 'Script' %>
-    <div class="col-12 col-lg-6">
-      <%= render partial: 'media/basics',
-                 locals: { medium: medium,
-                           compact: false,
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-6">
-      <%= render partial: 'media/manuscript',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
-  <% elsif medium.sort == 'Quiz' %>
-    <div class="col-12 col-lg-4">
-      <%= render partial: 'media/basics',
-                 locals: { medium: medium,
-                           compact: false,
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-8 mb-3">
-        <%= render partial: 'media/quiz',
-                 locals: { quiz: medium.becomes(Quiz),
-                           f: f } %>
-    </div>
-  <% elsif medium.sort == 'Question' %>
-    <div class="col-12 col-lg-6 col-xxxl-3 mb-3">
-      <%= render partial: 'media/basics',
-                 locals: { medium: medium,
-                           compact: false,
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-6 col-xxxl-3 mb-3">
-      <%= render partial: 'media/question',
-                 locals: { question: medium.becomes(Question),
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-6 col-xxxl-3">
-      <%= render partial: 'media/video',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-6 col-xxxl-3">
-      <%= render partial: 'media/manuscript',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
-  <% elsif medium.sort == 'Remark' %>
-    <div class="col-12 col-lg-6 col-xxxl-3 mb-3">
-      <%= render partial: 'media/basics',
-                 locals: { medium: medium,
-                           compact: false,
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-6 col-xxxl-3 mb-3">
-      <%= render partial: 'media/remark',
-                 locals: { remark: medium.becomes(Remark),
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-6 col-xxxl-3">
-      <%= render partial: 'media/video',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
-    <div class="col-12 col-lg-6 col-xxxl-3">
-      <%= render partial: 'media/manuscript',
-                 locals: { medium: medium,
-                           f: f } %>
-    </div>
-  <% end %>
   </div>
 <% end %>

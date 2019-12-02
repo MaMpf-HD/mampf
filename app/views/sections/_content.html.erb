@@ -29,10 +29,8 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <%= render partial: 'items/items',
+        <%= render partial: 'items/items_list',
                    locals: { items: @section.visible_items,
-                             small: true,
-                             embedded: true,
                              section_links: false,
                              content: [] } %>
       </div>

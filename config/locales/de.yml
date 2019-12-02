@@ -765,6 +765,8 @@ de:
       new: 'Medium anlegen'
       lesson_details_html: >
         <p>Inhaltsbeschreibung der dazugehörigen Sitzung:</p>
+      extracted_content: >
+        Extrahierter Inhalt
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -919,7 +921,7 @@ de:
           Tags, die Du diesem Medium hinzufügst, werden auch der Sitzung
           hinzugefügt.
         content: >
-          Hier kannst Du eine Inhaltsangabe machen. Du kannst LaTEX benutzen
+          Hier hast Du die Mögflichkeit, eine Inhaltsangabe machen. Du kannst LaTEX benutzen
           (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
           siehst Du unten.
         linked_media: >
@@ -1034,6 +1036,10 @@ de:
         inspection_related_tags: >
           Dies ist die Liste aller Tags, die mit diesem Medium
           verknüpft sind.
+        extracted_content: >
+          Hier steht der Inhalt, der aus den assoziierten Dokumenten
+          extrahiert wurde (z.B. aus Inhaltsverzeichnissen von Videos,
+          die mit dem THymE-Editor bearebitet wurden).
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
@@ -2191,6 +2197,7 @@ de:
     sponsors: 'Sponsoren'
     since: 'seit'
     documents: 'Dokumente'
+    optional: 'optional'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2268,6 +2275,7 @@ de:
     hide: 'Verbergen'
     interpret: 'Interpretieren'
     import_media: 'Medien importieren'
+    view: 'Ansehen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

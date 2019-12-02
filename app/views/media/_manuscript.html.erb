@@ -1,29 +1,37 @@
-<div class="card bg-light">
-  <div class="card-header">
-    <div class="row">
-      <div class="col-8">
-        <%= t('manuscript.manuscript') %>
-        <span class="badge badge-secondary">
-          pdf
-        </span>
-        <%= helpdesk(t('admin.medium.info.manuscript'), false) %>
-      </div>
-      <div class="col-4 text-right"
-           id="manuscript-uploadButton"
-           data-choosefiles="<%= t('basics.file') %>">
-        <input type="hidden"
-               name="medium[manuscript]"
-               value="<%= medium.cached_manuscript_data %>"
-               id="upload-manuscript-hidden">
-        <input type="file"
-               name="medium[manuscript]"
-               id="upload-manuscript">
-      </div>
-    </div>
+<div class="row">
+  <div class="col-4">
+    <%= t('manuscript.manuscript') %>
+    <span class="badge badge-secondary">
+      pdf
+    </span>
+    <%= helpdesk(t('admin.medium.info.manuscript'), false) %>
   </div>
-  <div class="card-body">
-    <%= render partial: 'media/upload_manuscript',
-               locals: { medium: medium } %>
-    <%= f.hidden_field :detach_manuscript, value: false %>
+  <div class="col-2 text-right"
+       id="manuscript-uploadButton"
+       data-choosefiles="<%= t('basics.file') %>">
+    <input type="hidden"
+           name="medium[manuscript]"
+           value="<%= medium.cached_manuscript_data %>"
+           id="upload-manuscript-hidden">
+    <input type="file"
+           name="medium[manuscript]"
+           id="upload-manuscript">
+  </div>
+  <div class="col-6 text-right">
+    <% if medium.manuscript.present? %>
+      <button type="button"
+              class="btn btn-sm btn-outline-secondary"
+              data-toggle="modal"
+              data-target="#snapshotModal">
+        <%= t('basics.screenshot') %>
+      </button>
+      <%= link_to t('buttons.view'),
+                  medium.manuscript_url,
+                  class: 'btn btn-sm btn-outline-secondary',
+                  target: :blank %>
+    <% end %>
   </div>
 </div>
+<%= render partial: 'media/upload_manuscript',
+           locals: { medium: medium } %>
+<%= f.hidden_field :detach_manuscript, value: false %>

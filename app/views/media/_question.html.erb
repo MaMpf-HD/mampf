@@ -1,34 +1,13 @@
-<div class="card bg-light">
-  <div class="card-header">
-    <div class="row">
-      <div class="col-8">
-        <%= t('basics.details') %>
-      </div>
-      <div class="col-4 text-right">
-        <% unless question.new_record? %>
-          <%= link_to t('basics.edit'),
-                      edit_question_path(question),
-                      class: 'btn btn-sm btn-secondary' %>
-        <% end %>
-      </div>
-    </div>
+<div class="row">
+  <div class="col-4">
+    <%= t('categories.question.singular') %>
   </div>
-  <div class="card-body">
-    <% if question.new_record? %>
-      <%= t('admin.question.info.first_save') %>
-    <% else %>
-      <%= render partial: 'quizzes/quizzable_preview',
-                 locals: { quizzable: question } %>
-      <div class="row mt-3">
-        <div class="col-12">
-          <%= t('basics.level') %>:
-          <%= level_to_word(question) %>
-        </div>
-        <div class="col-12">
-          <%= t('basics.independent') %>:
-          <%= independent_to_word(question) %>
-        </div>
-      </div>
-    <% end %>
+  <div class="col-8 text-right">
+    <%= link_to t('buttons.edit'),
+                edit_question_path(question),
+                class: 'btn btn-sm btn-outline-secondary' %>
   </div>
 </div>
+<%= render partial: 'quizzes/quizzable_preview',
+           locals: { quizzable: question } %>
+<hr>

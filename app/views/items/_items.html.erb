@@ -8,69 +8,9 @@
   <% end %>
   <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>;
                                 overflow-y: scroll;">
-    <% unless content.blank? %>
-      <% content.each_with_index do |c,i| %>
-        <% if c.present? %>
-          <p>
-            <%= c&.html_safe %>
-          </p>
-        <% end %>
-        <% unless i == content.length - 1 %>
-          <hr>
-        <% end %>
-      <% end %>
-    <% end %>
-    <% if items.present? %>
-      <ul class="list-group">
-        <% items.each do |i| %>
-          <li class="list-group-item">
-            <div class="row">
-              <div class="col-3"
-                   style="background: <%= i.background %>">
-                <%= i.short_reference %>
-              </div>
-              <div class="col-7">
-                <% if i.sort == 'section' && section_links &&
-                        Section.exists?(i.section_id) %>
-                  <%= link_to i.short_description,
-                              section_path(Section.find_by_id(i.section_id)) %>
-                <% else %>
-                  <%= i.short_description %>
-                <% end %>
-              </div>
-              <div class="col-2">
-                <% if i.medium.visible? %>
-                  <% if i.video_link %>
-                    <%= link_to i.video_link,
-                                class: ['text-secondary', 'new-in-lecture',
-                                        'material-icons', 'mr-2'],
-                                style: 'text-decoration:none; font-size: 1em',
-                                data: { toggle: "tooltip" },
-                                title: t('video.play'),
-                                target: :_blank do %>
-                      video_library
-                    <% end %>
-                  <% end %>
-                  <% if i.manuscript_link %>
-                    <%= link_to i.manuscript_link,
-                                class: ['text-secondary', 'new-in-lecture',
-                                        'material-icons'],
-                                style: 'text-decoration:none; font-size: 1em;',
-                                data: { toggle: 'tooltip' },
-                                title: t('manuscript.view'),
-                                target: :_blank do %>
-                      library_books
-                    <% end %>
-                  <% end %>
-                <% end %>
-              </div>
-            </div>
-          </li>
-        <% end%>
-      </ul>
-    <% end %>
-    <% if (content.nil? || (content - ['']).blank?) && !items.any? %>
-      <%= t('no_content') %>
-    <% end %>
+    <%= render partial: 'items/items_list',
+               locals: { items: items,
+                         section_links: section_links,
+                         content: content } %>
   </div>
 </div>
