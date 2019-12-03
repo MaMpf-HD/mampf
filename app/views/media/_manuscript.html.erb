@@ -44,19 +44,6 @@
   </div>
 <% end %>
 <% if medium.sort == 'Script' && medium.quarantine.any? %>
-  <div class="row">
-    <div class="col-6">
-      <%= t('manuscript.quarantine') %>
-      <%= ' (' + medium.quarantine.count.to_s + ') '%>
-      <%= helpdesk(t('manuscript.info.quarantined_items'), false) %>
-    </div>
-    <div class="col-6 text-right">
-      <button type="button"
-              class="btn btn-sm btn-outline-secondary"
-              data-toggle="modal"
-              data-target="#quarantineModal">
-        <%= t('buttons.details') %>
-      </button>
-    </div>
-  </div>
+    <%= render partial: 'media/quarantine_dialog',
+               locals: { medium: medium } %>
 <% end %>
