@@ -24,6 +24,7 @@
     <% unless medium.sort == 'Quiz' %>
       <%= render partial: 'media/manuscript',
                  locals: { medium: medium,
+                           manuscript: manuscript,
                            f: f } %>
     <% end %>
     <% unless medium.sort.in?(['Script', 'Quiz']) %>

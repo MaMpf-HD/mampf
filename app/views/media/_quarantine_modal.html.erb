@@ -1,0 +1,31 @@
+<div class="modal fade"
+     id="quarantineModal"
+     tabindex="-1"
+     role="dialog"
+     style="max-height: 85vh;"
+     aria-labelledby="quarantineModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="quarantineModalLabel">
+          <%= t('manuscript.quarantine') %>
+        </h5>
+        <button type="button"
+                class="close"
+                aria-label="Close"
+                data-dismiss="modal">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+      </div>
+      <div class="modal-body"
+           id="quarantine-modal-content">
+        <%= render partial: 'media/destinations_in_quarantine',
+                   locals: { quarantine: quarantine } %>
+      </div>
+    </div>
+  </div>
+</div>

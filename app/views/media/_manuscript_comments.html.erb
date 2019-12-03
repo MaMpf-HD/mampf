@@ -1,0 +1,87 @@
+<ul>
+  <% if manuscript.sections_in_unbookmarked_chapters? %>
+    <li>
+      <% if manuscript.sections_in_unbookmarked_chapters.count == 1 %>
+        <%= t('manuscript.section_in_unlabelled_chapter') %>
+      <% else %>
+        <%= t('manuscript.section_in_unlabelled_chapter',
+            count: manuscript.sections_in_unbookmarked_chapters.count) %>
+      <% end %>
+      <div class="row mt-2 mb-3">
+        <% manuscript.sections_in_unbookmarked_chapters
+                     .each do |section| %>
+          <div class="col-12">
+            &#x26a1;
+            <%= '§' + section['label'].to_s %>
+            <%= section['description'] %>
+          </div>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+  <% if manuscript.content_in_unbookmarked_locations? %>
+    <li>
+      <% if manuscript.content_in_unbookmarked_locations.count == 1 %>
+        <%= t('manuscript.label_in_unlabelled_neighbourhood') %>
+      <% else %>
+        <%= t('manuscript.labels_in_unlabelled_neighbourhood',
+            count: manuscript.content_in_unbookmarked_locations.count) %>
+      <% end %>
+      <div class="row mt-2 mb-3">
+        <% manuscript.content_in_unbookmarked_locations
+                     .each do |content| %>
+          <div class="col-12">
+            &#x26a1;
+            <%= content['sort'] %>
+            <%= content['label'] %>
+            <%= content['description'] %>
+          </div>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+  <% if manuscript.destinations_with_higher_multiplicities.present? %>
+    <li>
+      <%= t('basics.duplicate_destinations') %>
+      <div class="row mt-2 mb-3">
+        <% manuscript.destinations_with_higher_multiplicities
+                     .each do |d| %>
+          <div class="col-12">
+            &#x26a1;
+            <%= d %>
+          </div>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+  <% if manuscript.unmatched_mampf_chapters.any? %>
+    <li>
+      <span class="badge badge-info">
+        <%= t('basics.note') %>
+      </span>
+      <%= t('manuscript.unmatched_chapters') %>
+      <div class="row mb-3">
+        <% manuscript.unmatched_mampf_chapters.each do |c| %>
+          <div class="col-12 ml-3">
+            <%= c.to_label %>
+          </div>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+  <% if manuscript.unmatched_mampf_sections.any? %>
+    <li>
+      <span class="badge badge-info">
+        <%= t('basics.note') %>
+      </span>
+      <%= t('manuscript.unmatched_sections') %>
+      <div class="row">
+        <% manuscript.unmatched_mampf_sections.each do |s| %>
+          <div class="col-12 ml-3">
+            <%= s.to_label %>
+          </div>
+        <% end %>
+      </div>
+    </li>
+  <% end %>
+</ul>

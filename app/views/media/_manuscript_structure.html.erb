@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="col-6">
+    <%= t('admin.medium.manuscript.structure') %>
+    <%= ' (' + medium.manuscript_destinations.count.to_s + ') '%>
+    <%= helpdesk(t('admin.medium.info.manuscript_structure'), false) %>
+  </div>
+  <div class="col-6 text-right">
+    <button type="button"
+            class="btn btn-sm btn-outline-secondary"
+            data-toggle="modal"
+            data-target="#manuscriptModal">
+      <%= t('buttons.details') %>
+    </button>
+    <% unless manuscript.contradiction_count.positive? %>
+      <button id="import-from-manuscript"
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              data-count="<%= manuscript.count %>"
+              data-mediumid="<%= medium.id %>">
+        <%= t('buttons.import') %>
+      </button>
+    <% end %>
+  </div>
+</div>
+<% unless medium.imported_manuscript %>
+  <div class="row">
+    <div class="col-12 redtext">
+      <%= t('admin.medium.info.import_warning') %>
+    </div>
+  </div>
+<% end %>
+<div class="row mt-2">
+  <div class="col-12">
+    <% if manuscript.contradiction_count.positive? %>
+      <span class="redtext">
+        <%= t('basics.attention') %>:
+      </span>
+      <% if manuscript.contradiction_count == 1 %>
+        <%= t('manuscript.one_contradiction') %>
+      <% elsif manuscript.contradiction_count > 1 %>
+        <%= t('manuscript.more_contradictions',
+            count: manuscript.contradiction_count) %>
+      <% end %>
+    <% else %>
+      <%= t('manuscript.no_contradictions') %>
+    <% end %>
+  </div>
+</div>

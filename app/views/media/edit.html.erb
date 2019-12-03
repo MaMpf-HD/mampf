@@ -1,29 +1,8 @@
 <div id="medium-area">
   <%= render partial: 'media/form',
              locals: { medium: @medium,
+                       manuscript: @manuscript,
                        new_medium: false } %>
-</div>
-<div id="medium-manuscript-destinations">
-  <% if !@manuscript.empty? && @medium.sort == 'Script' %>
-    <div class="row mt-2 p-2">
-      <div class="col-12">
-        <%= render partial: 'media/destinations',
-                   locals: { medium: @medium,
-                             manuscript: @manuscript } %>
-      </div>
-    </div>
-  <% end %>
-</div>
-<div id="medium-manuscript-quarantine">
-  <% if @medium.quarantine.any? %>
-    <div class="row mt-2 p-2">
-      <div class="col-12">
-        <%= render partial: 'media/quarantine',
-                   locals: { medium: @medium,
-                             quarantine: @medium.quarantine } %>
-      </div>
-    </div>
-  <% end %>
 </div>
 <%= render partial: 'media/destinations_warning' %>
 <%= render partial: 'tags/modal' %>
@@ -39,4 +18,17 @@
 <% if @medium.manuscript.present? %>
   <%= render partial: 'media/snapshot_modal',
              locals: { medium: @medium } %>
+<% end %>
+<% if !@manuscript.empty? && @medium.sort == 'Script' &&
+     @medium.teachable.content_mode == 'manuscript' %>
+  <%= render partial: 'media/manuscript_modal',
+             locals: { manuscript: @manuscript } %>
+<% end %>
+<% if @medium.quarantine.any? %>
+  <div class="row mt-2 p-2">
+    <div class="col-12">
+      <%= render partial: 'media/quarantine_modal',
+                 locals: { quarantine: @medium.quarantine } %>
+    </div>
+  </div>
 <% end %>

@@ -1,0 +1,33 @@
+<div class="modal fade"
+     id="manuscriptModal"
+     tabindex="-1"
+     role="dialog"
+     style="max-height: 85vh;"
+     aria-labelledby="manuscriptModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="manuscriptModalLabel">
+          <%= t('admin.medium.manuscript.structure') %>
+        </h5>
+        <button type="button"
+                class="close"
+                aria-label="Close"
+                data-dismiss="modal">
+          <span aria-hidden="true">
+            &times;
+          </span>
+        </button>
+      </div>
+      <div class="modal-body"
+           id="manuscript-modal-content">
+        <%= render partial: 'media/destination_cards',
+                   locals: { manuscript: manuscript} %>
+        <%= render partial: 'media/manuscript_comments',
+                   locals: { manuscript: manuscript} %>
+      </div>
+    </div>
+  </div>
+</div>

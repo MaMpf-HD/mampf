@@ -639,7 +639,7 @@ de:
       exempt: 'von Gliederung ausgenommen'
       content: 'Inhalt des Abschnitts'
       extracted_content: 'Aus Medien extrahierter Inhalt'
-      no_lesson: 'Mit diesem Abschnitt ist noch keine Sitzung verknüpft.'
+      no_lessons: 'Mit diesem Abschnitt ist noch keine Sitzung verknüpft.'
       info:
         title: >
           Hier kannst Du den Titel des Abschnitts angeben.
@@ -2141,6 +2141,7 @@ de:
     new: 'neu'
     in_mampf: 'in MaMpf'
     note: 'Hinweis'
+    referenced_from: 'referenziert von'
     inspect: 'Ansehen'
     all: 'alle'
     OR: 'ODER'
