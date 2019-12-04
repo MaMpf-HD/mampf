@@ -35,16 +35,20 @@
     <% end %>
     <div class="mb-2">
       <%= t('basics.details') %>
-      <%= helpdesk(t('admin.lesson.info.details'), false) %>
+      <% unless inspection %>
+        <%= helpdesk(t('admin.lesson.info.details'), false) %>
+      <% end %>
     </div>
-    <%= f.trix_editor :details,
-                      class: 'bg-light',
-                      id: 'lesson-details-trix' %>
-    <div class="row my-2">
-      <div class="col-12">
-        <%= t('basics.preview') %>
+    <% unless inspection %>
+      <%= f.trix_editor :details,
+                        class: 'bg-light',
+                        id: 'lesson-details-trix' %>
+      <div class="row my-2">
+        <div class="col-12">
+          <%= t('basics.preview') %>
+        </div>
       </div>
-    </div>
+    <% end %>
     <div class="alert alert-dark bg-mdb-color-lighten-6"
          id="lesson-details-preview">
         <%= raw(lesson.details) %>
