@@ -1,0 +1,16 @@
+<% if posts_count&.positive? %>
+  <div class="alert alert-primary">
+    <% if posts_count == 1 %>
+      <%= t('notifications.lecture.new_post_html',
+          board: link_to(t('categories.board'),
+                         '/forum/' + course.forum.slug,
+                         target: :blank)) %>
+    <% else %>
+      <%= t('notifications.lecture.new_posts_html',
+            board: link_to(t('categories.board'),
+                           '/forum/' + course.forum.slug,
+                           target: :blank),
+            count: posts_count) %>
+    <% end %>
+  </div>
+<% end %>

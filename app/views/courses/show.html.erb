@@ -1,4 +1,4 @@
-<div class="alert alert-primary">
+<div class="alert alert-secondary">
   <% if @course.lectures.any? %>
     <%= t('course.no_subscription_html',
           subscribed: link_to(t('course.subscribed'), edit_profile_path)) %>
@@ -7,5 +7,10 @@
   <% end %>
   <%= t('course.only_course') %>
 </div>
+<% if @course.forum? %>
+  <%= render partial: 'courses/forum_news',
+           locals: { course: @course,
+                     posts_count: @course.unread_forum_topics_count(current_user) } %>
+<% end %>
 <%= render partial: 'courses/infos',
            locals: { course: @course } %>

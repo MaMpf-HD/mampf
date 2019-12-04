@@ -419,6 +419,18 @@ class Course < ApplicationRecord
     Thredded::Messageboard.find_by_id(forum_id)
   end
 
+  # extract how many posts in the course's forum have not been read
+  # by the user
+  def unread_forum_topics_count(user)
+    return unless forum?
+    forum_relation = Thredded::Messageboard.where(id: forum_id)
+    forum_view =
+      Thredded::MessageboardGroupView.grouped(forum_relation,
+                                              user: user,
+                                              with_unread_topics_counts: true)
+    forum_view.first.messageboards.first.unread_topics_count
+  end
+
   private
 
   # looks in the cache if there are any media associated *without_inheritance*
