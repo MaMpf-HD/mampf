@@ -3,7 +3,9 @@ class CoursesController < ApplicationController
   before_action :check_for_course, only: [:show]
   before_action :set_course, only: [:show, :display, :take_random_quiz,
                                     :show_random_quizzes,
-                                    :render_question_counter]
+                                    :render_question_counter,
+                                    :add_forum, :lock_forum, :unlock_forum,
+                                    :destroy_forum]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
   before_action :check_if_enough_questions, only: [:show_random_quizzes,
                                                    :take_random_quiz]
@@ -97,6 +99,37 @@ class CoursesController < ApplicationController
   def render_question_counter
     tags = Tag.where(id: tag_params[:tag_ids])
     @count = @course.question_count(tags)
+  end
+
+  # add forum for this course
+  def add_forum
+    unless @course.forum?
+      forum = Thredded::Messageboard.new(name: @course.forum_title)
+      forum.save
+      @course.update(forum_id: forum.id) if forum.valid?
+    end
+    redirect_to edit_course_path(@course)
+  end
+
+  # lock forum for this course
+  def lock_forum
+    @course.forum.update(locked: true) if @course.forum?
+    @course.touch
+    redirect_to edit_course_path(@course)
+  end
+
+  # unlock forum for this course
+  def unlock_forum
+    @course.forum.update(locked: false) if @course.forum?
+    @course.touch
+    redirect_to edit_course_path(@course)
+  end
+
+  # destroy forum for this lecture
+  def destroy_forum
+    @course.forum.destroy if @course.forum?
+    @course.update(forum_id: nil)
+    redirect_to edit_course_path(@course)
   end
 
   private

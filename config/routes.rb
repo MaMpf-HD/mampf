@@ -46,6 +46,14 @@ Rails.application.routes.draw do
                                       as: 'random_quiz'
   get 'courses/:id/render_question_counter', to: 'courses#render_question_counter',
                                              as: 'render_question_counter'
+  get 'courses/:id/add_forum', to: 'courses#add_forum',
+                                as: 'add_course_forum'
+  get 'courses/:id/lock_forum', to: 'courses#lock_forum',
+                                 as: 'lock_course_forum'
+  get 'courses/:id/unlock_forum', to: 'courses#unlock_forum',
+                                 as: 'unlock_course_forum'
+  get 'courses/:id/destroy_forum', to: 'courses#destroy_forum',
+                                 as: 'destroy_course_forum'
   resources :courses, except: [:index]
 
   get 'events/update_vertex_default', as: 'update_vertex_default'

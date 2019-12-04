@@ -104,6 +104,33 @@
   </div>
   <div class="row">
     <div class="col-12">
+      <%= t('categories.board') %>
+    </div>
+  </div>
+  <div class="row mb-2">
+    <div class="col-12 mt-2">
+      <% if course.forum? %>
+        <% if course.forum.locked %>
+          <%= link_to t('buttons.unlock_board'),
+                      unlock_course_forum_path(course),
+                      class: 'btn btn-sm btn-outline-primary' %>
+        <% else %>
+          <%= link_to t('buttons.lock_board'),
+                      lock_course_forum_path(course),
+                      class: 'btn btn-sm btn-outline-primary' %>
+        <% end %>
+          <%= link_to t('buttons.delete_board'),
+                      destroy_course_forum_path(course),
+                      class: 'btn btn-sm btn-outline-danger' %>
+      <% else %>
+        <%= link_to t('buttons.add_board'),
+                    add_course_forum_path(course),
+                    class: 'btn btn-sm btn-outline-primary' %>
+      <% end %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12">
       <%= t('basics.subscribers_count',
           count: course.users&.count) %>
       <%= helpdesk(t('admin.course.info.subscribers_count'), false) %>

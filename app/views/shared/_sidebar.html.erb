@@ -242,6 +242,23 @@
                                       params: { lecture_id: lecture&.id }),
                   class: 'nav-link' %>
     </li>
+  <% elsif course %>
+    <span class="border-top my-3">
+    </span>
+    <li class="nav-item">
+      <% if !course.forum? %>
+        <span class="nav-link disabled">
+          <%= t('categories.board') %>
+        </span>
+      <% else %>
+        <a href="<%= '/forum/' + course.forum.slug %>"
+           class="nav-link"
+           target="_blank">
+          <%= t('categories.board') %>
+          <i class="fas fa-external-link-alt fa-xs"></i>
+        </a>
+      <% end %>
+    </li>
   <% end %>
 </ul>
 <% end %>

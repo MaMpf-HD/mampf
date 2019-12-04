@@ -44,7 +44,8 @@ class Ability
            :render_question_counter], Course
 
       # editors are only allowed to edit, not to destroy courses
-      can :update, Course do |course|
+      can [:update, :add_forum, :lock_forum, :unlock_forum,
+           :destroy_forum], Course do |course|
         course.edited_by?(user)
       end
 

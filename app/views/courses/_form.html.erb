@@ -6,6 +6,13 @@
           <%= t('basics.course') %>
         </span>
         <%= course.title %>
+        <%= link_to '',
+                    course_path(course),
+                    class: 'fas fa-eye text-dark mt-3',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.show'),
+                    style: 'text-decoration: none;' %>
       </h4>
     </div>
     <div class="col-6">

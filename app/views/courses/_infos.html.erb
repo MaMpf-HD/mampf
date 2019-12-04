@@ -4,6 +4,16 @@
       <div class="card-header">
         <h4>
           <%=t('course.info', title: course.title) %>
+          <% if current_user.admin ||
+                @course.edited_by?(current_user) %>
+            <%= link_to '',
+                edit_course_path(course),
+                class: 'far fa-edit fa-sm text-dark mt-3',
+                data: { toggle: 'tooltip',
+                        placement: 'bottom' },
+                title: t('buttons.edit'),
+                style: 'text-decoration: none;' %>
+          <% end %>
         </h4>
       </div>
       <div class="card-body" id="organizationalCardBody">

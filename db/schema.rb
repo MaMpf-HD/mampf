@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_29_161025) do
+ActiveRecord::Schema.define(version: 2019_12_04_174533) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 2019_11_29_161025) do
     t.boolean "organizational"
     t.text "organizational_concept"
     t.text "locale"
+    t.integer "forum_id"
   end
 
   create_table "editable_user_joins", force: :cascade do |t|

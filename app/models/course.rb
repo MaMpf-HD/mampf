@@ -407,6 +407,17 @@ class Course < ApplicationRecord
                  .map { |t| { value: t[:id], text: t[:title] } }
   end
 
+  def forum_title
+    "#{title} [#{I18n.t('basics.course')}]"
+  end
+
+  def forum?
+    forum_id.present?
+  end
+
+  def forum
+    Thredded::Messageboard.find_by_id(forum_id)
+  end
 
   private
 

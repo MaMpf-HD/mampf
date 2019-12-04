@@ -282,12 +282,13 @@ class User < ApplicationRecord
     return Thredded::Messageboard.all if admin?
     subscribed_forums =
       Thredded::Messageboard.where(id: lectures.map(&:forum_id))
-                            .or(Thredded::Messageboard.where
-                                                      .not(id: Lecture.all
-                                                                        .map(&:forum_id)))
+        .or(Thredded::Messageboard.where(id: courses.map(&:forum_id)))
+        .or(Thredded::Messageboard.where.not(id: Lecture.all.map(&:forum_id) +
+                                                 Course.all.map(&:forum_id)))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
-                                                  .map(&:forum_id))
+                                                  .map(&:forum_id) +
+                                              edited_courses.map(&:forum_id))
                                    .or(subscribed_forums)
     end
     subscribed_forums
@@ -299,9 +300,11 @@ class User < ApplicationRecord
     return Thredded::Messageboard.all if admin?
     subscribed_forums =
       Thredded::Messageboard.where(id: lectures.map(&:forum_id))
+        .or(Thredded::Messageboard.where(id: courses.map(&:forum_id)))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
-                                                  .map(&:forum_id))
+                                                  .map(&:forum_id) +
+                                              edited_courses.map(&:forum_id))
                                    .or(subscribed_forums)
     end
     subscribed_forums
@@ -316,7 +319,8 @@ class User < ApplicationRecord
     return Thredded::Messageboard.all if admin?
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
-                                                  .map(&:forum_id))
+                                                  .map(&:forum_id) +
+                                              edited_courses.map(&:forum_id))
     end
     Thredded::Messageboard.none
   end
