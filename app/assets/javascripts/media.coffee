@@ -353,6 +353,14 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#medium-content-trix')
   if trixElement?
+    trixElement.addEventListener 'trix-initialize', ->
+      content = this.dataset.content
+      editor = trixElement.editor
+      editor.setSelectedRange([0,65535])
+      editor.deleteInDirection("forward")
+      editor.insertHTML(content)
+      document.activeElement.blur()
+      $('#medium-basics-warning').hide()
     trixElement.addEventListener 'trix-change', ->
       $('#medium-basics-warning').show()
       $('#medium-content-preview').html($('#medium-content-trix').html())

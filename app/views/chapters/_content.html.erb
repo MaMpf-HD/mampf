@@ -11,7 +11,8 @@
     </div>
     <%= f.trix_editor :details,
                       class: 'bg-light',
-                      id: 'chapter-details-trix' %>
+                      id: 'chapter-details-trix',
+                      data: { content: chapter.details } %>
     <%= f.hidden_field :lecture_id,
                        value: chapter.lecture.id %>
     <div class="row my-2">

@@ -10,7 +10,8 @@
       <%= helpdesk(t('admin.medium.info.content'), false) %>
       <%= f.trix_editor :content,
                         class: 'bg-light',
-                        id: 'medium-content-trix' %>
+                        id: 'medium-content-trix',
+                        data: { content: medium.content } %>
     </div>
     <div class="row my-2">
       <div class="col-12">

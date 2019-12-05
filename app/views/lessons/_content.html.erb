@@ -42,7 +42,8 @@
     <% unless inspection %>
       <%= f.trix_editor :details,
                         class: 'bg-light',
-                        id: 'lesson-details-trix' %>
+                        id: 'lesson-details-trix',
+                        data: { content: lesson.details } %>
       <div class="row my-2">
         <div class="col-12">
           <%= t('basics.preview') %>

@@ -13,6 +13,16 @@ $(document).on 'turbolinks:load', ->
     location.reload()
     return
 
+  $(document).on 'trix-initialize', '#chapter-details-trix', ->
+    content = this.dataset.content
+    editor = this.editor
+    editor.setSelectedRange([0,65535])
+    editor.deleteInDirection("forward")
+    editor.insertHTML(content)
+    document.activeElement.blur()
+    $('#chapter-basics-warning').hide()
+    return
+
   $(document).on 'trix-change', '#chapter-details-trix', ->
     $('#chapter-basics-warning').show()
     $('#chapter-details-preview').html($('#chapter-details-trix').html())
@@ -51,4 +61,6 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#chapter-form :input'
   $(document).off 'click', '#cancel-chapter-edit'
+  $(document).off 'trix-initialize', '#chapter-details-trix'
+  $(document).off 'trix-change', '#chapter-details-trix'
   return

@@ -40,6 +40,14 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#section-details-trix')
   if trixElement?
+    trixElement.addEventListener 'trix-initialize', ->
+      content = this.dataset.content
+      editor = trixElement.editor
+      editor.setSelectedRange([0,65535])
+      editor.deleteInDirection("forward")
+      editor.insertHTML(content)
+      document.activeElement.blur()
+      $('#section-basics-warning').hide()
     trixElement.addEventListener 'trix-change', ->
       $('#section-basics-warning').show()
       $('#section-details-preview').html($('#section-details-trix').html())

@@ -11,7 +11,8 @@
     </div>
     <%= f.trix_editor :details,
                       class: 'bg-light',
-                      id: 'section-details-trix' %>
+                      id: 'section-details-trix',
+                      data: { content: section.details } %>
     <div class="row my-2">
       <div class="col-12">
         <%= t('basics.preview') %>
