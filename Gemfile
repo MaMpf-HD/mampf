@@ -74,10 +74,7 @@ gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
 gem 'rails-i18n', '~> 6.0.0'
 gem 'kaminari-i18n'
-gem 'trix-rails',
-  require: 'trix',
-  git: 'https://github.com/king601/trix/',
-  branch: 'rails-6'
+gem 'trix-rails'
 gem 'xkcd'
 gem 'sunspot_rails'
 gem 'sunspot_solr'

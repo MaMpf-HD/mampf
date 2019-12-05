@@ -1,12 +1,4 @@
 GIT
-  remote: https://github.com/king601/trix/
-  revision: 3f96d9a5cc4789b041270da869e1951647de7e20
-  branch: rails-6
-  specs:
-    trix-rails (2.0.0)
-      rails (> 4.1, < 6.1)
-
-GIT
   remote: https://github.com/thredded/thredded.git
   revision: e6dcbd0489d1c2bdf9a71e140ee95f44d8fb2753
   branch: master
@@ -476,6 +468,8 @@ GEM
     tilt (2.0.10)
     timeago_js (3.0.2.2)
     tins (1.22.0)
+    trix-rails (2.2.0)
+      rails (> 4.1, < 6.1)
     ttfunk (1.5.1)
     turbolinks (5.2.1)
       turbolinks-source (~> 5.2)
@@ -568,7 +562,7 @@ DEPENDENCIES
   symbolic
   thredded!
   thredded-markdown_katex
-  trix-rails!
+  trix-rails
   turbolinks (~> 5)
   tzinfo-data
   web-console (>= 3.3.0)
