@@ -22,10 +22,12 @@
          style="display: none;">
     </div>
     <% if current_user.clickers.any? %>
+      <ul>
         <%= render partial: 'administration/index/clicker',
                    collection: current_user.clickers.order(:updated_at)
                                            .reverse.first(5),
                    cached: true %>
+      </ul>
     <% else %>
       <%= t('admin.main.no_edited_clickers') %>
     <% end %>
