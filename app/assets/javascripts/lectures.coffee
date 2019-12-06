@@ -38,9 +38,16 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#lecture-concept-trix')
   if trixElement?
-    trixElement.addEventListener 'trix-change', ->
-      disableExceptOrganizational()
-      return
+    trixElement.addEventListener 'trix-initialize', ->
+      content = this.dataset.content
+      editor = trixElement.editor
+      editor.setSelectedRange([0,65535])
+      editor.deleteInDirection("forward")
+      editor.insertHTML(content)
+      document.activeElement.blur()
+      trixElement.addEventListener 'trix-change', ->
+        disableExceptOrganizational()
+        return
 
   # if absolute numbering box is checked/unchecked, enable/disable selection of
   # start section

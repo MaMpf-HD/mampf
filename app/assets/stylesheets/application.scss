@@ -59,6 +59,9 @@ trix-toolbar .trix-button-row {
   flex-wrap: wrap;
 }
 
+.trix-button-group--file-tools {
+  display: none !important;
+}
 
 .kaviar-sidebar {
   padding-left: 1rem;

@@ -13,46 +13,45 @@ $(document).on 'turbolinks:load', ->
     location.reload()
     return
 
-  $(document).on 'trix-initialize', '#chapter-details-trix', ->
-    content = this.dataset.content
-    editor = this.editor
-    editor.setSelectedRange([0,65535])
-    editor.deleteInDirection("forward")
-    editor.insertHTML(content)
-    document.activeElement.blur()
-    $('#chapter-basics-warning').hide()
-    return
-
-  $(document).on 'trix-change', '#chapter-details-trix', ->
-    $('#chapter-basics-warning').show()
-    $('#chapter-details-preview').html($('#chapter-details-trix').html())
-    chapterDetails = document.getElementById('chapter-details-preview')
-    renderMathInElement chapterDetails,
-      delimiters: [
-        {
-          left: '$$'
-          right: '$$'
-          display: true
-        }
-        {
-          left: '$'
-          right: '$'
-          display: false
-        }
-        {
-          left: '\\('
-          right: '\\)'
-          display: false
-        }
-        {
-          left: '\\['
-          right: '\\]'
-          display: true
-        }
-      ]
-      throwOnError: false
-    return
-  return
+  trixElement = document.querySelector('#chapter-details-trix')
+  if trixElement?
+    trixElement.addEventListener 'trix-initialize', ->
+      content = this.dataset.content
+      editor = this.editor
+      editor.setSelectedRange([0,65535])
+      editor.deleteInDirection("forward")
+      editor.insertHTML(content)
+      document.activeElement.blur()
+      trixElement.addEventListener 'trix-change', ->
+        $('#chapter-basics-warning').show()
+        $('#chapter-details-preview').html($('#chapter-details-trix').html())
+        chapterDetails = document.getElementById('chapter-details-preview')
+        renderMathInElement chapterDetails,
+          delimiters: [
+            {
+              left: '$$'
+              right: '$$'
+              display: true
+            }
+            {
+              left: '$'
+              right: '$'
+              display: false
+            }
+            {
+              left: '\\('
+              right: '\\)'
+              display: false
+            }
+            {
+              left: '\\['
+              right: '\\]'
+              display: true
+            }
+          ]
+          throwOnError: false
+        return
+      return
 
 
   return
@@ -61,6 +60,4 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#chapter-form :input'
   $(document).off 'click', '#cancel-chapter-edit'
-  $(document).off 'trix-initialize', '#chapter-details-trix'
-  $(document).off 'trix-change', '#chapter-details-trix'
   return

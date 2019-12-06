@@ -411,7 +411,7 @@ class MediaController < ApplicationController
           m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
         end
       end
-      sort = params[:project] == 'keks' ? 'Quiz' : params[:project].capitalize
+      sort = params[:project] == 'keks' ? 'Quiz' : params[:project]&.capitalize
       search_results +=  @lecture.imported_media
                                  .where(sort: sort)
                                  .locally_visible

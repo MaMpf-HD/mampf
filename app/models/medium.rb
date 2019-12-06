@@ -207,6 +207,7 @@ class Medium < ApplicationRecord
 
   # returns the ARel of all media for the given project
   def self.media_in_project(project)
+    return Medium.none unless project.present?
     sort = project == 'keks' ? 'Quiz' : project.capitalize
     Medium.where(sort: sort).order(:id)
   end

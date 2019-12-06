@@ -64,35 +64,36 @@ $(document).on 'turbolinks:load', ->
       editor.deleteInDirection("forward")
       editor.insertHTML(content)
       document.activeElement.blur()
-      $('#lesson-basics-warning').hide()
-    trixElement.addEventListener 'trix-change', ->
-      $('#lesson-basics-warning').show()
-      $('#lesson-details-preview').html($('#lesson-details-trix').html())
-      lessonDetails = document.getElementById('lesson-details-preview')
-      renderMathInElement lessonDetails,
-        delimiters: [
-          {
-            left: '$$'
-            right: '$$'
-            display: true
-          }
-          {
-            left: '$'
-            right: '$'
-            display: false
-          }
-          {
-            left: '\\('
-            right: '\\)'
-            display: false
-          }
-          {
-            left: '\\['
-            right: '\\]'
-            display: true
-          }
-        ]
-        throwOnError: false
+      trixElement.addEventListener 'trix-change', ->
+        $('#lesson-basics-warning').show()
+        $('#lesson-details-preview').html($('#lesson-details-trix').html())
+        lessonDetails = document.getElementById('lesson-details-preview')
+        renderMathInElement lessonDetails,
+          delimiters: [
+            {
+              left: '$$'
+              right: '$$'
+              display: true
+            }
+            {
+              left: '$'
+              right: '$'
+              display: false
+            }
+            {
+              left: '\\('
+              right: '\\)'
+              display: false
+            }
+            {
+              left: '\\['
+              right: '\\]'
+              display: true
+            }
+          ]
+          throwOnError: false
+        return
+      return
 
 
   return

@@ -58,7 +58,8 @@
                 <%= lecture.organizational_concept&.html_safe %>
               <% else %>
                 <%= f.trix_editor :organizational_concept,
-                                id: 'lecture-concept-trix' %>
+                                  id: 'lecture-concept-trix',
+                                  data: { content: lecture.organizational_concept } %>
               <% end %>
             </div>
           </div>

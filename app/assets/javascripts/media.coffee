@@ -360,35 +360,36 @@ $(document).on 'turbolinks:load', ->
       editor.deleteInDirection("forward")
       editor.insertHTML(content)
       document.activeElement.blur()
-      $('#medium-basics-warning').hide()
-    trixElement.addEventListener 'trix-change', ->
-      $('#medium-basics-warning').show()
-      $('#medium-content-preview').html($('#medium-content-trix').html())
-      mediumContentDetails = document.getElementById('medium-content-preview')
-      renderMathInElement mediumContentDetails,
-        delimiters: [
-          {
-            left: '$$'
-            right: '$$'
-            display: true
-          }
-          {
-            left: '$'
-            right: '$'
-            display: false
-          }
-          {
-            left: '\\('
-            right: '\\)'
-            display: false
-          }
-          {
-            left: '\\['
-            right: '\\]'
-            display: true
-          }
-        ]
-        throwOnError: false
+      trixElement.addEventListener 'trix-change', ->
+        $('#medium-basics-warning').show()
+        $('#medium-content-preview').html($('#medium-content-trix').html())
+        mediumContentDetails = document.getElementById('medium-content-preview')
+        renderMathInElement mediumContentDetails,
+          delimiters: [
+            {
+              left: '$$'
+              right: '$$'
+              display: true
+            }
+            {
+              left: '$'
+              right: '$'
+              display: false
+            }
+            {
+              left: '\\('
+              right: '\\)'
+              display: false
+            }
+            {
+              left: '\\['
+              right: '\\]'
+              display: true
+            }
+          ]
+          throwOnError: false
+        return
+      return
 
   return
 

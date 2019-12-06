@@ -47,35 +47,36 @@ $(document).on 'turbolinks:load', ->
       editor.deleteInDirection("forward")
       editor.insertHTML(content)
       document.activeElement.blur()
-      $('#section-basics-warning').hide()
-    trixElement.addEventListener 'trix-change', ->
-      $('#section-basics-warning').show()
-      $('#section-details-preview').html($('#section-details-trix').html())
-      sectionDetails = document.getElementById('section-details-preview')
-      renderMathInElement sectionDetails,
-        delimiters: [
-          {
-            left: '$$'
-            right: '$$'
-            display: true
-          }
-          {
-            left: '$'
-            right: '$'
-            display: false
-          }
-          {
-            left: '\\('
-            right: '\\)'
-            display: false
-          }
-          {
-            left: '\\['
-            right: '\\]'
-            display: true
-          }
-        ]
-        throwOnError: false
+      trixElement.addEventListener 'trix-change', ->
+        $('#section-basics-warning').show()
+        $('#section-details-preview').html($('#section-details-trix').html())
+        sectionDetails = document.getElementById('section-details-preview')
+        renderMathInElement sectionDetails,
+          delimiters: [
+            {
+              left: '$$'
+              right: '$$'
+              display: true
+            }
+            {
+              left: '$'
+              right: '$'
+              display: false
+            }
+            {
+              left: '\\('
+              right: '\\)'
+              display: false
+            }
+            {
+              left: '\\['
+              right: '\\]'
+              display: true
+            }
+          ]
+          throwOnError: false
+        return
+      return
 
   return
 

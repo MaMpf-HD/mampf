@@ -50,7 +50,8 @@
                 <%= course.organizational_concept&.html_safe %>
               <% else %>
                 <%= f.trix_editor :organizational_concept,
-                                  id: 'course-concept-trix' %>
+                                  id: 'course-concept-trix',
+                                  data: { content: course.organizational_concept} %>
               <% end %>
             </div>
           </div>
