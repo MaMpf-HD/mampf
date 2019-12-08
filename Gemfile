@@ -81,8 +81,7 @@ gem 'sunspot_solr'
 gem 'progress_bar'
 gem 'barby'
 gem 'rqrcode'
-gem 'dentaku'
-gem 'symbolic'
+gem 'sidekiq'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
