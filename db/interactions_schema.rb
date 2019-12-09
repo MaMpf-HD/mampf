@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_09_172549) do
+ActiveRecord::Schema.define(version: 2019_12_09_182135) do
 
   create_table "interactions", force: :cascade do |t|
     t.text "session_id"
@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 2019_12_09_172549) do
     t.text "action_name"
     t.text "referrer_url"
     t.text "full_path"
+    t.datetime "created_at"
   end
 
 end
