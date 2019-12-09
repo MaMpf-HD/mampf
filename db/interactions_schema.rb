@@ -10,10 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_09_143820) do
+ActiveRecord::Schema.define(version: 2019_12_09_172549) do
 
   create_table "interactions", force: :cascade do |t|
     t.text "session_id"
+    t.text "controller_name"
+    t.text "action_name"
+    t.text "referrer_url"
+    t.text "full_path"
   end
 
 end

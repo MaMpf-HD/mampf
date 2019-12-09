@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   # will halt the filter chain and redirect before the location can be stored.
   before_action :authenticate_user!
   before_action :set_locale
+  after_action :store_interaction
 
   etag { current_user.try :id }
 
@@ -76,5 +77,14 @@ class ApplicationController < ActionController::Base
     unless user_signed_in?
       cookies[:locale] = I18n.locale
     end
+  end
+
+  def store_interaction
+    return if controller_name.in?(['sessions', 'administration', 'users'])
+    InteractionSaver.perform_async(request.session_options[:id],
+                                   request.original_fullpath,
+                                   controller_name,
+                                   action_name,
+                                   request.referrer)
   end
 end
