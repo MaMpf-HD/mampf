@@ -10,8 +10,12 @@ default: &default
   timeout: 5000
 
 development:
-  <<: *default
-  database: db/development.sqlite3
+  primary:
+    <<: *default
+    database: db/development.sqlite3
+  interactions:
+    <<: *default
+    database: db/interactions.sqlite3
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -23,10 +27,19 @@ test:
 production:
   # <<: *default
   # database: db/development.sqlite3
-  adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
-  encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
-  database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
-  username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
-  password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
-  host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
-  port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+  primary:
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
+    database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
+    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
+    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
+    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
+    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+  interactions:
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
+    database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
+    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
+    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
+    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
+    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
