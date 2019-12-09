@@ -16,6 +16,7 @@ development:
   interactions:
     <<: *default
     database: db/interactions.sqlite3
+    migrations_paths: db/interactions_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -43,3 +44,4 @@ production:
     password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
     host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
     port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+    migrations_paths: db/interactions_migrate
