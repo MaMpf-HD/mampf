@@ -419,4 +419,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancel-medium-actions'
   $(document).off 'click', '#editMediumTags'
   $(document).off 'click', '#cancelMediumTags'
+  $(document).off 'click', '.triggerDownload'
   return
