@@ -116,6 +116,7 @@ class Ability
     else
       can :read, :all
       cannot :read, [:administration, Term, User, Announcement]
+      cannot :index, Interaction
       # guest users can play/display media only when their release status
       # is 'all', logged in users can do that unless the release status is
       # 'locked'
@@ -171,6 +172,7 @@ class Ability
       cannot :show, Lesson do |lesson|
         !lesson.visible_for_user?(user)
       end
+      cannot :inex, Interaction
       can [:index, :destroy_all, :destroy_lecture_notifications,
            :destroy_news_notifications], Notification
     end
