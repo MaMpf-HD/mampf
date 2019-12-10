@@ -7,7 +7,7 @@ class InteractionsController < ApplicationController
 
     respond_to do |format|
       format.html { head :ok }
-      format.csv { send_data @interactions.to_csv, filename: "users-#{Date.today}.csv" }
+      format.csv { send_data @interactions.to_csv, filename: "interactions-#{Time.now}.csv" }
     end
   end
 end
