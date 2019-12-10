@@ -391,6 +391,17 @@ $(document).on 'turbolinks:load', ->
         return
       return
 
+  $(document).on 'click', '.triggerDownload', ->
+    console.log 'Hi'
+    mediumId = $(this).data('medium')
+    sort = $(this).data('sort')
+    $.ajax Routes.register_download_path(mediumId, { sort: sort }),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        sort:  sort
+      }
+    return
   return
 
 $(document).on 'turbolinks:before-cache', ->

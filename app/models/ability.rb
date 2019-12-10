@@ -64,7 +64,7 @@ class Ability
       end
       can [:modal, :list_sections], Lesson
 
-      can [:catalog, :search, :play, :display], Medium
+      can [:catalog, :search, :play, :display, :register_download], Medium
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot, :publish, :destroy,
@@ -125,6 +125,10 @@ class Ability
         else
           medium.free?
         end
+      end
+
+      can [:register_download], Medium do |medium|
+        !user.new_record?
       end
 
       can [:edit, :open, :close, :set_alternatives, :get_votes_count], Clicker

@@ -6,6 +6,7 @@ class InteractionSaver
                        full_path: full_path,
                        controller_name: controller_name,
                        action_name: action_name,
-                       referrer_url: referrer)
+                       referrer_url: referrer&.remove(ENV['URL_HOST'])
+                                       &.remove('https://'))
   end
 end

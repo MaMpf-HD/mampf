@@ -20,7 +20,10 @@
           </a>
           <div class="download-button">
             <a href="<%= medium.manuscript_download_url %>"
-               download="<%= manuscript_download_file(medium) %>">
+               download="<%= manuscript_download_file(medium) %>"
+               class="triggerDownload"
+               data-medium="<%= medium.id %>"
+               data-sort="manuscript">
               <span>
                 <span class="badge badge-light"
                       data-toggle="tooltip"

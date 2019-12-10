@@ -168,6 +168,8 @@ Rails.application.routes.draw do
                                      as: 'fill_media_select'
   post 'media/update_tags', to: 'media#update_tags',
                             as: 'update_tags'
+  post 'media/:id/register_download', to: 'media#register_download',
+                                      as: 'register_download'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',

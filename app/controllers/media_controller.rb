@@ -3,7 +3,7 @@ class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search,
                                       :fill_teachable_select,
-                                      :fill_media_select]
+                                      :fill_media_select, :register_download]
   before_action :set_course, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
@@ -322,6 +322,10 @@ class MediaController < ApplicationController
   end
 
   def postprocess_tags
+  end
+
+  def register_download
+    head :ok
   end
 
   private

@@ -85,7 +85,6 @@ class ApplicationController < ActionController::Base
                                    request.original_fullpath,
                                    controller_name,
                                    action_name,
-                                   request.referrer&.remove(ENV['URL_HOST'])
-                                     &.remove('https://'))
+                                   request.referrer)
   end
 end
