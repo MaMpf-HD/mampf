@@ -10,12 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_09_182135) do
+ActiveRecord::Schema.define(version: 2019_12_11_160621) do
+
+  create_table "consumptions", force: :cascade do |t|
+    t.integer "medium_id"
+    t.text "sort"
+    t.text "mode"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "interactions", force: :cascade do |t|
     t.text "session_id"
-    t.text "controller_name"
-    t.text "action_name"
     t.text "referrer_url"
     t.text "full_path"
     t.datetime "created_at"

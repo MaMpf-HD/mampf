@@ -87,8 +87,8 @@ class ApplicationController < ActionController::Base
     return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
     InteractionSaver.perform_async(request.session_options[:id],
                                    request.original_fullpath,
-                                   controller_name,
+                                   request.referrer,
                                    action_name,
-                                   request.referrer)
+                                   controller_name)
   end
 end
