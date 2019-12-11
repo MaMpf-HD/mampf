@@ -10,10 +10,6 @@ class MainController < ApplicationController
     render layout: 'application_no_sidebar'
   end
 
-  def about
-    render layout: 'application_no_sidebar'
-  end
-
   def error
     redirect_to :root, alert: I18n.t('controllers.no_page')
   end
