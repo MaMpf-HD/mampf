@@ -1,9 +1,21 @@
 <div class="card bg-light"
      style="max-height: 80vh;">
   <div class="card-header">
-    <h5>
-      <%= t('basics.documents') %>
-    </h5>
+    <div class="row">
+      <div class="col-6">
+        <h5>
+          <%= t('basics.documents') %>
+        </h5>
+      </div>
+      <div class="col-6 text-right">
+        <button type="button"
+                class="btn btn-sm btn-outline-secondary"
+                id="showMediaStatistics"
+                data-medium="<%= medium.id %>">
+          <%= t('basics.statistics') %>
+        </button>
+      </div>
+    </div>
   </div>
   <div class="card-body">
     <% if medium.sort =='Question' %>

@@ -69,7 +69,7 @@ class Ability
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot, :publish, :destroy,
            :import_manuscript, :fill_teachable_select,
-           :fill_media_select, :update_tags], Medium do |m|
+           :fill_media_select, :update_tags, :get_statistics], Medium do |m|
         m.edited_with_inheritance_by?(user)
       end
 

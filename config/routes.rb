@@ -170,6 +170,8 @@ Rails.application.routes.draw do
                             as: 'update_tags'
   post 'media/:id/register_download', to: 'media#register_download',
                                       as: 'register_download'
+  get 'media/:id/get_statistics', to: 'media#get_statistics',
+                                  as: 'get_statistics'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',

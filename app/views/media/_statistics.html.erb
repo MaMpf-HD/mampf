@@ -1,0 +1,42 @@
+<% if medium.video.present? %>
+  <div class="row">
+    <div class="col-12">
+      <strong>
+        <%= t('video.video') %>
+      </strong>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-8">
+      <%= t('statistics.video_thyme') %>
+    </div>
+    <div class="col-4 text-right">
+      <%= video_thyme %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-8">
+      <%= t('statistics.video_downloads') %>
+    </div>
+    <div class="col-4 text-right">
+      <%= video_downloads %>
+    </div>
+  </div>
+<% end %>
+<% if medium.manuscript.present? %>
+  <div class="row">
+    <div class="col-12">
+      <strong>
+        <%= t('manuscript.manuscript') %>
+      </strong>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-8">
+      <%= t('statistics.manuscript_access') %>
+    </div>
+    <div class="col-4 text-right">
+      <%= manuscript_access %>
+    </div>
+  </div>
+<% end %>

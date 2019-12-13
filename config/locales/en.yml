@@ -1946,6 +1946,10 @@ en:
     subscribe_course_html: 'You can subscribe to it in your %{profile}.'
     subscribe_course_text: >
       You can subscribe to it in your profile settings.
+  statistics:
+    video_thyme: 'Accessed by THymE'
+    video_downloads: 'Downloads'
+    manuscript_access: 'Accesses'
   basics:
     course: 'Course'
     courses: 'Courses'
@@ -2071,6 +2075,7 @@ en:
     since: 'since'
     documents: 'Documents'
     optional: 'optional'
+    statistics: 'Statistics'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

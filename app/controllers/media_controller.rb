@@ -328,6 +328,19 @@ class MediaController < ApplicationController
     head :ok
   end
 
+  def get_statistics
+    medium_consumption = Consumption.where(medium_id: @medium.id)
+    if @medium.video.present?
+      @video_downloads = medium_consumption.where(sort: 'video',
+                                                  mode: 'download').count
+      @video_thyme = medium_consumption.where(sort: 'video',
+                                              mode: 'thyme').count
+    end
+    if @medium.manuscript.present?
+      @manuscript_access = medium_consumption.where(sort: 'manuscript').count
+    end
+  end
+
   private
 
   def medium_params

@@ -80,7 +80,6 @@ class ApplicationController < ActionController::Base
   end
 
   def store_interaction
-    return unless user_signed_in?
     return if controller_name.in?(['sessions', 'administration', 'users',
                                    'events', 'interactions', 'profile'])
     return if controller_name == 'main' && action_name == 'home'
@@ -89,6 +88,7 @@ class ApplicationController < ActionController::Base
                                    request.original_fullpath,
                                    request.referrer,
                                    action_name,
-                                   controller_name)
+                                   controller_name,
+                                   user_signed_in?)
   end
 end

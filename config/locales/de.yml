@@ -2072,6 +2072,10 @@ de:
     subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
     subscribe_course_text: >
       Du kannst es über Deine Profileinstellungen abonnieren.
+  statistics:
+    video_thyme: 'THymE-Aufrufe'
+    video_downloads: 'Downloads'
+    manuscript_access: 'Zugriffe'
   basics:
     course: 'Modul'
     courses: 'Module'
@@ -2199,6 +2203,7 @@ de:
     since: 'seit'
     documents: 'Dokumente'
     optional: 'optional'
+    statistics: 'Statistik'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
