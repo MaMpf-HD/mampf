@@ -4,13 +4,13 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.5'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.1'
+gem 'rails', '~> 6.0.2'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 4.1'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5'
+gem 'sass-rails', '>= 6'
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 # gem 'webpacker', '~> 4.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -38,8 +38,8 @@ gem 'shrine', '~> 2.19.3'
 gem 'fastimage'
 gem 'streamio-ffmpeg'
 gem 'pdf-reader'
-gem 'mini_magick', '~> 4.8'
-gem 'image_processing', '~> 1.2'
+gem 'mini_magick'
+gem 'image_processing'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 gem 'filesize'
@@ -56,7 +56,7 @@ gem 'jquery_file_download-rails'
 gem 'jquery-ui-rails'
 gem 'js-routes'
 gem 'bootstrap'
-gem "bootstrap_form", '>= 4.2.0'
+gem "bootstrap_form"
 gem 'devise-bootstrap-views', '~> 1.0'
 gem 'fuzzy-string-match'
 gem 'coveralls', require: false
@@ -72,7 +72,7 @@ gem 'thredded',
   branch: 'master'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
-gem 'rails-i18n', '~> 6.0.0'
+gem 'rails-i18n'
 gem 'kaminari-i18n'
 gem 'trix-rails', require: 'trix'
 gem 'xkcd'
