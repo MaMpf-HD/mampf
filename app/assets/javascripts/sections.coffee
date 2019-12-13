@@ -35,7 +35,7 @@ $(document).on 'turbolinks:load', ->
 
   # reload page if editing of section is cancelled
   $(document).on 'click', '#cancel-section-edit', ->
-    location.reload()
+    location.reload(true)
     return
 
   trixElement = document.querySelector('#section-details-trix')

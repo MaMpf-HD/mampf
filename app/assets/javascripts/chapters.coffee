@@ -10,7 +10,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#cancel-chapter-edit', ->
-    location.reload()
+    location.reload(true)
     return
 
   trixElement = document.querySelector('#chapter-details-trix')

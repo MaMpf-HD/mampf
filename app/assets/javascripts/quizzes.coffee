@@ -272,7 +272,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#finishQuizzableEditing', ->
-    location.reload() if $(this).data('mode') == 'reassigned'
+    location.reload(true) if $(this).data('mode') == 'reassigned'
     $('#quizzableArea').empty()
     $('#quizGraphArea').show()
     $.ajax Routes.render_vertex_quizzable_path(),

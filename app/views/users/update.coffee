@@ -26,5 +26,5 @@ $('#user_homepage').addClass('is-invalid')
 
 <% else %>
 # reload page otherwise
-location.reload()
+location.reload(true)
 <% end %>

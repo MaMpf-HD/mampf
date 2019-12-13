@@ -55,14 +55,14 @@ $(document).on 'turbolinks:load', ->
   # reload page if editing of medium is cancelled
   # (relevant on media edit page)
   $('#medium-basics-cancel').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
   # reload page (thereby closing the modal) if user wants to keep
   # named destination items that point to no longer existing pdf destinations
   # (relevant on media edit page)
   $('#keep-old-destinations').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
   # trigger deletion of named destination that no longer point to existing
@@ -79,7 +79,7 @@ $(document).on 'turbolinks:load', ->
         destinations: destinations
       }
       success: ->
-        location.reload()
+        location.reload(true)
         return
     return
 

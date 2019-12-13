@@ -24,6 +24,6 @@ $('#manage-tags-modal-content').empty()
                             id: @lesson.id } %>')
 $('#manageTagsModal').modal('show')
 <% else %>
-location.reload()
+location.reload(true)
 <% end %>
 <% end %>

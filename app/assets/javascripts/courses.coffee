@@ -37,7 +37,7 @@ $(document).on 'turbolinks:load', ->
 
   # rewload current page if course editing is cancelled
   $('#course-basics-cancel').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
   # after creation of new lecture is cancelled,
@@ -45,7 +45,7 @@ $(document).on 'turbolinks:load', ->
   # clean the page up (if it happened on the admin index page)
   $(document).on 'click', '#cancel-new-lecture', ->
     if $('#course_preceding_course_ids').length == 1
-      location.reload()
+      location.reload(true)
     else
       $('#new-lecture-area').empty().hide()
       $('.admin-index-button').show()

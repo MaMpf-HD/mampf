@@ -10,5 +10,5 @@ $('#new-section-title-error')
 $('#new_section_title').addClass('is-invalid')
 <% end %>
 <% else %>
-location.reload()
+location.reload(true)
 <% end %>

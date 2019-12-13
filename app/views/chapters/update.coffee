@@ -9,5 +9,5 @@ $('#chapter-title-error').append('<%= @errors[:title].join(" ") %>').show()
 $('#chapter_title').addClass('is-invalid')
 <% end %>
 <% else %>
-location.reload()
+location.reload(true)
 <% end %>

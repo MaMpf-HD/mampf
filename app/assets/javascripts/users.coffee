@@ -32,12 +32,12 @@ $(document).on 'turbolinks:load', ->
 
   # reload page after user editing is cancelled
   $('#user-basics-cancel').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
   # relaod page after user modal is closed
   $('#genericUsersModal').on 'hide.bs.modal', ->
-    location.reload()
+    location.reload(true)
     return
   return
 

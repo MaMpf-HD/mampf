@@ -53,6 +53,6 @@ $('#manage-tags-modal-content').empty()
                             id: @medium.id } %>')
 $('#manageTagsModal').modal('show')
 <% else %>
-location.reload()
+location.reload(true)
 <% end %>
 <% end %>

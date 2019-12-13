@@ -60,17 +60,17 @@ $(document).on 'turbolinks:load', ->
 
   # rewload current page if lecture basics editing is cancelled
   $('#lecture-basics-cancel').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
   # rewload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-preferences').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
    # rewload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-organizational').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
   # hide the media tab if hide media button is clicked

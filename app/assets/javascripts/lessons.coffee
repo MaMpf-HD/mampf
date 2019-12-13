@@ -20,7 +20,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '.cancel-lesson-edit', ->
-    location.reload()
+    location.reload(true)
     return
 
   # add/remove associated tags in the tag selector

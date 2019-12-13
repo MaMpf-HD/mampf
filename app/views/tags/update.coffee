@@ -74,6 +74,6 @@ else if $('#newTagModal').data('from') == 'tag'
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else
-  location.reload()
+  location.reload(true)
 <% end %>
 <% end %>

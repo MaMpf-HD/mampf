@@ -28,7 +28,7 @@ $(document).on 'turbolinks:load', ->
 
   # reload page if tag editing is cancelled
   $('[id^="tag-basics-cancel-"]').on 'click', ->
-    location.reload()
+    location.reload(true)
     return
 
   # prepare action box when related tags are edited
@@ -150,7 +150,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '.cancel-section-association', ->
-    location.reload()
+    location.reload(true)
     return
   return
 # clean up before turbolinks caches

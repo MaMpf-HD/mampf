@@ -52,7 +52,7 @@ $(document).on 'turbolinks:load', ->
   # reload current page after quizzable edit modal is closed
 
   $(document).on 'hidden.bs.modal', '#quizzableModal', ->
-    location.reload()
+    location.reload(true)
     return
 
   # render modal for quizzable duplication dialogue
