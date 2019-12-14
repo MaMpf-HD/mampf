@@ -60,7 +60,7 @@
     <% cache [medium, from == 'tag', ref_link] do %>
       <% unless from == 'tag' %>
       <% if medium.screenshot.present? %>
-        <%= image_tag(medium.screenshot_url,
+        <%= image_tag(medium.screenshot_url_with_host,
                       alt: "Card image cap",
                       class: "card-img-top") %>
       <% elsif medium.manuscript.present? %>

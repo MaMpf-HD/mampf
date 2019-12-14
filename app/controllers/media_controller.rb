@@ -234,6 +234,10 @@ class MediaController < ApplicationController
     end
     @medium.screenshot = File.open(tempfile)
     @medium.save
+    if @medium.valid?
+      @medium.screenshot_derivatives!
+      @medium.save
+    end
     respond_to do |format|
       format.js { render :add_screenshot }
     end

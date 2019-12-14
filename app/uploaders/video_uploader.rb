@@ -9,7 +9,7 @@ class VideoUploader < Shrine
   plugin :pretty_location
 
   # add metadata to uploaded video: duration, bitrate, resolution, framerate
-  add_metadata do |io, context|
+  add_metadata do |io|
     movie = Shrine.with_file(io) { |file| FFMPEG::Movie.new(file.path) }
 
     { 'duration'   => movie.duration,

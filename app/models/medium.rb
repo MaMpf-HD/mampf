@@ -439,9 +439,18 @@ class Medium < ApplicationRecord
     manuscript[:original].metadata['pages']
   end
 
-  def screenshot_url
-    return unless screenshot.present?
-    screenshot.url(host: host)
+  # def screenshot_url
+  #   return unless screenshot.present?
+  #   # since upgrade to shrine 3, normalized versions of screenshot
+  #   # are stored in :normalized derivative
+  #   return screenshot(:normalized).url(host: host) if screenshot(:normalized)
+  #   # in older versions, normalized version overwrote raw version
+  #   screenshot.url(host: host)
+  # end
+
+  def screenshot_url_with_host
+    return screenshot_url(host: host) unless screenshot(:normalized)
+    return screenshot_url(:normalized, host: host)
   end
 
   def video_url

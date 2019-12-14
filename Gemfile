@@ -34,7 +34,7 @@ gem 'coffee-rails', '~> 5.0.0'
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
-gem 'shrine', '~> 2.19.3'
+gem 'shrine'
 gem 'fastimage'
 gem 'streamio-ffmpeg'
 gem 'pdf-reader'
@@ -57,7 +57,7 @@ gem 'jquery-ui-rails'
 gem 'js-routes'
 gem 'bootstrap'
 gem "bootstrap_form"
-gem 'devise-bootstrap-views', '~> 1.0'
+gem 'devise-bootstrap-views'
 gem 'fuzzy-string-match'
 gem 'coveralls', require: false
 gem 'kaminari'
