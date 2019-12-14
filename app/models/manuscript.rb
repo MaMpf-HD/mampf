@@ -10,12 +10,12 @@ class Manuscript
   def initialize(medium)
     unless medium && medium.sort == 'Script' &&
            medium&.teachable_type == 'Lecture' &&
-           medium.manuscript && medium.manuscript[:original]
+           medium.manuscript
       return
     end
     @medium = medium
     @lecture = medium.teachable.lecture
-    bookmarks = medium.manuscript[:original].metadata['bookmarks'] || []
+    bookmarks = medium.manuscript.metadata['bookmarks'] || []
     @chapters = get_chapters(bookmarks)
     match_mampf_chapters
     @sections = get_sections(bookmarks)
@@ -277,7 +277,7 @@ class Manuscript
 
   # pdf destinations as extracted from pdf metadata
   def destinations
-    bookmarks = @medium.manuscript[:original].metadata['bookmarks'] || []
+    bookmarks = @medium.manuscript.metadata['bookmarks'] || []
     bookmarks.map { |b| b['destination'] }
   end
 

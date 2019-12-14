@@ -96,7 +96,7 @@
         </div>
         <div class="col-2">
           <%= link_to t('buttons.view_pdf'),
-                      item.medium.manuscript[:original].url(host: host),
+                      item.medium.manuscript_url_with_host,
                       class: 'btn btn-sm btn-outline-info',
                       target: :blank %>
         </div>

@@ -108,7 +108,8 @@
             <%= helpdesk(t('admin.medium.info.external_link'), true) %>
           </div>
           <div class="col-8">
-            <%= link_to @medium.external_reference_link, @medium.external_reference_link %>
+            <%= link_to @medium.external_reference_link,
+                        @medium.external_reference_link %>
           </div>
         </div>
         <% end %>
@@ -234,9 +235,11 @@
           </div>
         </div>
       </div>
-      <%= link_to image_tag(@medium.manuscript_screenshot_url, class: 'img-fluid',
+      <%= link_to image_tag(@medium.manuscript_screenshot_url,
+                            class: 'img-fluid',
                             id: 'manuscript-preview'),
-                  @medium.manuscript_url, target: :blank %>
+                  @medium.manuscript_url_with_host,
+                  target: :blank %>
       <% else %>
         <%= t('manuscript.no_manuscript') %>
       <% end %>

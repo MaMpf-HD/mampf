@@ -431,23 +431,6 @@ class Medium < ApplicationRecord
     end
   end
 
-  # some methods to extract metadata out of video and manuscript
-
-  def manuscript_pages
-    return unless manuscript.present?
-    return manuscript.metadata['pages'] unless manuscript.is_a?(Hash)
-    manuscript[:original].metadata['pages']
-  end
-
-  # def screenshot_url
-  #   return unless screenshot.present?
-  #   # since upgrade to shrine 3, normalized versions of screenshot
-  #   # are stored in :normalized derivative
-  #   return screenshot(:normalized).url(host: host) if screenshot(:normalized)
-  #   # in older versions, normalized version overwrote raw version
-  #   screenshot.url(host: host)
-  # end
-
   def screenshot_url_with_host
     return screenshot_url(host: host) unless screenshot(:normalized)
     return screenshot_url(:normalized, host: host)
@@ -487,53 +470,38 @@ class Medium < ApplicationRecord
     TimeStamp.new(total_seconds: video_duration).hms_string
   end
 
-  def manuscript_url
-    return '' unless manuscript.present?
-    return manuscript.url(host: host) unless manuscript.is_a?(Hash)
-    manuscript[:original].url(host: host)
+  def manuscript_url_with_host
+    manuscript_url(host: host)
   end
 
   def manuscript_download_url
-    return manuscript.url(host: download_host) unless manuscript.is_a?(Hash)
-    manuscript[:original].url(host: download_host)
+    manuscript_url(host: download_host)
   end
 
   def manuscript_filename
     return unless manuscript.present?
-    return manuscript.metadata['filename'] unless manuscript.is_a?(Hash)
-    manuscript[:original].metadata['filename']
+    return manuscript.metadata['filename']
   end
 
   def manuscript_size
     return unless manuscript.present?
-    return manuscript.metadata['size'] unless manuscript.is_a?(Hash)
-    manuscript[:original].metadata['size']
+    return manuscript.metadata['size']
   end
+
+  def manuscript_pages
+    return unless manuscript.present?
+    return manuscript.metadata['pages']
+  end
+
 
   def manuscript_screenshot_url
     return '' unless manuscript.present?
-    return '' unless manuscript.is_a?(Hash)
-    manuscript[:screenshot].url(host: host)
+    manuscript_url(:screenshot, host: host)
   end
 
   def manuscript_destinations
     return [] unless manuscript.present? && sort == 'Script'
-    # if for some reason, screenshot extraction fro manuscript did not work,
-    # there will be only one file in manuscript (the pdf)
-    if manuscript.class.to_s == 'PdfUploader::UploadedFile'
-      return manuscript.metadata['destinations'] || []
-    end
-    return [] unless manuscript.class.to_s == 'Hash' &&
-                     manuscript.keys == [:original, :screenshot]
-    # usually, the manuscript upload will consist of two files:
-    # :original(the pdf) and :screenshot(the extracted screenshot from the pdf)
-    manuscript[:original].metadata['destinations'] || []
-  end
-
-  # returns all metadata for the named destination with the given title
-  def manuscript_destination(title)
-    manuscript[:original].metadata['bookmarks']
-                        &.find { |b| b['destination'] == title } || {}
+    manuscript.metadata['destinations'] || []
   end
 
   def video_width
@@ -829,14 +797,8 @@ class Medium < ApplicationRecord
                                                    .where.not(medium: nil)
                                                    .pluck(:medium_id))
     return video_links unless manuscript.present?
-    if manuscript.class.to_s == 'PdfUploader::UploadedFile'
-      manuscript_media_ids = manuscript.metadata['linked_media']
-    elsif manuscript.class.to_s == 'Hash' && manuscript.keys == [:original,
-                                                                 :screenshot]
-      manuscript_media_ids = manuscript[:original].metadata['linked_media']
-    else
-      manuscript_media_ids = []
-    end
+
+    manuscript_media_ids = manuscript.metadata['linked_media'] || []
     manuscript_links = Medium.where(id: manuscript_media_ids)
     video_links.or(manuscript_links)
   end

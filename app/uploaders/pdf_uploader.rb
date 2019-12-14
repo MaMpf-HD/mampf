@@ -6,19 +6,17 @@ class PdfUploader < Shrine
   plugin :add_metadata
   plugin :determine_mime_type
   plugin :validation_helpers
-  plugin :processing
-  plugin :versions
-  plugin :delete_raw
   plugin :pretty_location
+  plugin :derivatives, versions_compatibility: true
 
   # extract metadata from uploaded pdf:
   # - number of pages
   # - named destinations
   # - bookmarks with details (created by mampf.sty LATeX package)
   add_metadata do |io, context|
-    # no metadata extraction for the screenshot which is generated during
-    # storing
-    unless context[:action] == :store && context[:version] == :screenshot
+    if context[:action] == :upload
+      pp '####################'
+      pp 'Add metadata'
       Shrine.with_file(io) do |file|
         temp_file = Tempfile.new
         cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path}"
@@ -63,12 +61,10 @@ class PdfUploader < Shrine
   end
 
   # extract a screenshot from pdf and store it beside the pdf
-  process(:store) do |io, context|
-    original = io.download
+  Attacher.derivatives_processor do |original|
     screenshot = ImageProcessing::MiniMagick.source(original).loader(page: 0)
                                             .convert('png')
                                             .resize_to_limit!(400, 565)
-    original.close!
-    { original: io, screenshot: screenshot }
+    { screenshot: screenshot }
   end
 end

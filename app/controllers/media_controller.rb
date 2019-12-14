@@ -49,6 +49,7 @@ class MediaController < ApplicationController
 
   def update
     I18n.locale = @medium.locale_with_inheritance
+    old_manuscript_data = @medium.screenshot_data
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
@@ -61,6 +62,11 @@ class MediaController < ApplicationController
     @medium.sanitize_type!
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript
+    # create screenshot for manuscript if necessary
+    if @medium.manuscript_data != old_manuscript_data
+      @medium.manuscript_derivatives!
+      @medium.save
+    end
     if @medium.sort == 'Quiz' &&params[:medium][:create_quiz_graph] == '1'
       @medium.becomes(Quiz).update(level: 1,
                                    quiz_graph: QuizGraph.new(vertices: {},
@@ -197,13 +203,13 @@ class MediaController < ApplicationController
       return
     end
     if params[:destination].present?
-      redirect_to @medium.manuscript_url + '#' + params[:destination].to_s
+      redirect_to @medium.manuscript_url_with_host + '#' + params[:destination].to_s
       return
     elsif params[:page].present?
-      redirect_to @medium.manuscript_url + '#page=' + params[:page].to_s
+      redirect_to @medium.manuscript_url_with_host + '#page=' + params[:page].to_s
       return
     end
-    redirect_to @medium.manuscript_url
+    redirect_to @medium.manuscript_url_with_host
   end
 
   # add a toc item for the video
