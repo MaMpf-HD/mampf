@@ -6,8 +6,8 @@
                         media: 'all',
                         'data-turbolinks-track': 'reload' %>
 <link rel="stylesheet"
-      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.0/css/all.min.css"
+      integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0="
       crossorigin="anonymous">
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet">
@@ -15,19 +15,42 @@
       rel='stylesheet'>
 <%= javascript_include_tag 'application',
                            'data-turbolinks-track': 'reload' %>
-<script src="https://unpkg.com/babel-polyfill@6.26.0/dist/polyfill.min.js">
+<script src="https://cdn.jsdelivr.net/npm/babel-polyfill@6.26.0/dist/polyfill.min.js"
+        integrity="sha256-WRc/eG3R84AverJv0zmqxAmdwQxstUpqkiE+avJ3WSo="
+        crossorigin="anonymous">
 </script>
-<script src="https://cdn.jsdelivr.net/npm/uppy@1.2.0/dist/uppy.min.js">
+<script src="https://cdn.jsdelivr.net/npm/uppy@1.6.0/dist/uppy.min.js"
+        integrity="sha256-VTaZROThWnFZMapEvbriYH+QGtv4daV+Qg05jCQm4d8="
+        crossorigin="anonymous">
 </script>
-<link href="https://cdn.jsdelivr.net/npm/uppy@1.2.0/dist/uppy.min.css"
-      rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.7.2/cytoscape.min.js">
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/uppy@1.6.0/dist/uppy.min.css"
+      integrity="sha256-9JCV064MsCdQInjm5Ji6u8dEqrDU3F74ZJwJrdhQG9g="
+      crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/cytoscape@3.12.1/dist/cytoscape.min.js"
+        integrity="sha256-vaWKzwOlHpJzvE1q0q9nfurKXD8xeGaOhdMa6eea+wM="
+        crossorigin="anonymous">
 </script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css" integrity="sha384-yFRtMMDnQtDRO8rLpMIKrtPCD5jdktao2TV19YiZYWMDkUR5GQZR/NOVTdquEx1j" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.0.0/nerdamer.core.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.0.0/Algebra.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js" integrity="sha384-9Nhn55MVVN0/4OFx7EE5kpFBPsEMZxKTCnA+4fqDmg12eCTqGi6+BB2LjY8brQxJ" crossorigin="anonymous"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous"></script>
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"
+      integrity="sha256-V8SV2MO1FUb63Bwht5Wx9x6PVHNa02gv8BgH/uH3ung="
+      crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.0/nerdamer.core.min.js">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.0/Algebra.js"
+        integrity="sha256-rADF2WO6GbkNb5O9gqHdjQ/XhrfnXDtPdHdRe5KQmek="
+        crossorigin="anonymous">
+</script>
+<script defer
+        src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
+        integrity="sha256-F/Xda58SPdcUCr+xhSGz9MA2zQBPb0ASEYKohl8UCHc="
+        crossorigin="anonymous">
+</script>
+<script defer
+        src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"
+        integrity="sha256-90d2pnfw0r4K8CZAWPko4rpFXQsZvJhTBGYNkipDprI="
+        crossorigin="anonymous">
+</script>
 <!--[if lt IE 9]>
   <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js">
   </script>
