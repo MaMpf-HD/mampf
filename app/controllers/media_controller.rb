@@ -49,7 +49,7 @@ class MediaController < ApplicationController
 
   def update
     I18n.locale = @medium.locale_with_inheritance
-    old_manuscript_data = @medium.screenshot_data
+    old_manuscript_data = @medium.manuscript_data
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
@@ -63,7 +63,8 @@ class MediaController < ApplicationController
     # detach the video or manuscript if this was chosen by the user
     detach_video_or_manuscript
     # create screenshot for manuscript if necessary
-    if @medium.manuscript_data != old_manuscript_data
+    changed_manuscript = @medium.manuscript_data != old_manuscript_data
+    if @medium.manuscript.present? && changed_manuscript
       @medium.manuscript_derivatives!
       @medium.save
     end
@@ -79,7 +80,7 @@ class MediaController < ApplicationController
     # remove items that correspond to named destinations that no longer
     # exist in the manuscript, but keep those that are referenced
     # from other places
-    if @medium.sort == 'Script' && @medium.saved_change_to_manuscript_data?
+    if @medium.sort == 'Script' && changed_manuscript
       @medium.update(imported_manuscript: false)
       @quarantine_added = @medium.update_pdf_destinations!
       if @quarantine_added.any?
