@@ -3,11 +3,13 @@ class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search,
                                       :fill_teachable_select,
-                                      :fill_media_select, :register_download]
+                                      :fill_media_select]
   before_action :set_course, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
   before_action :check_for_consent, except: [:play, :display]
+  after_action :store_access, only: [:play, :display]
+  after_action :store_download, only: [:register_download]
   authorize_resource
   layout 'administration'
 
@@ -533,5 +535,15 @@ class MediaController < ApplicationController
                                      @tags_without_section.map(&:id))
       end
     end
+  end
+
+  def store_access
+    mode = action_name == 'play' ? 'thyme' : 'pdf_view'
+    sort = action_name == 'play' ? 'video' : 'manuscript'
+    ConsumptionSaver.perform_async(@medium.id, mode, sort)
+  end
+
+  def store_download
+    ConsumptionSaver.perform_async(@medium.id, 'download', params[:sort])
   end
 end

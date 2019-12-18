@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   # will halt the filter chain and redirect before the location can be stored.
   before_action :authenticate_user!
   before_action :set_locale
-  after_action :store_interaction
+  after_action :store_interaction, if: :user_signed_in?
 
   etag { current_user.try :id }
 
@@ -82,14 +82,11 @@ class ApplicationController < ActionController::Base
   def store_interaction
     return if controller_name.in?(['sessions', 'administration', 'users',
                                    'events', 'interactions', 'profile',
-                                   'clickers', 'votes'])
+                                   'clickers', 'votes', 'registrattions'])
     return if controller_name == 'main' && action_name == 'home'
     return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
     InteractionSaver.perform_async(request.session_options[:id],
                                    request.original_fullpath,
-                                   request.referrer,
-                                   action_name,
-                                   controller_name,
-                                   user_signed_in?)
+                                   request.referrer)
   end
 end
