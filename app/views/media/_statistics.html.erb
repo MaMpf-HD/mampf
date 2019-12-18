@@ -1,3 +1,59 @@
+<% if medium.sort == 'Quiz' %>
+  <div class="row">
+    <div class="col-12">
+      <strong>
+        <%= t('basics.quiz') %>
+      </strong>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-10">
+      <%= t('statistics.quiz') %>
+    </div>
+    <div class="col-2 text-right">
+      <%= quiz_access %>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <strong>
+        <%= t('statistics.quiz_questions') %>
+      </strong>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-10">
+      <%= t('statistics.question_number') %>
+    </div>
+    <div class="col-2 text-right">
+      <%= question_count %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-10">
+      <%= t('statistics.median') %>
+    </div>
+    <div class="col-2 text-right">
+      <%= success[:median] %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-10">
+      <%= t('statistics.lower_quartile') %>
+    </div>
+    <div class="col-2 text-right">
+      <%= success[:lower_quartile] %>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-10">
+      <%= t('statistics.upper_quartile') %>
+    </div>
+    <div class="col-2 text-right">
+      <%= success[:upper_quartile] %>
+    </div>
+  </div>
+<% end %>
 <% if medium.video.present? %>
   <div class="row">
     <div class="col-12">

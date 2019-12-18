@@ -352,6 +352,11 @@ class MediaController < ApplicationController
     if @medium.manuscript.present?
       @manuscript_access = medium_consumption.where(sort: 'manuscript').count
     end
+    if @medium.sort == 'Quiz'
+      @quiz_access = Probe.finished_quizzes(@medium.id)
+      @success = Probe.success_in_quiz(@medium.id)
+      @question_count = @medium.becomes(Quiz).questions_count
+    end
   end
 
   private

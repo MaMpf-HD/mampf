@@ -19,6 +19,8 @@
                      value: quiz_round.counter %>
   <%= f.hidden_field :answer_shuffle,
                      value: quiz_round.answer_shuffle.to_json %>
+  <%= f.hidden_field :session_id,
+                     value: quiz_round.session_id %>
   <div class="text-center">
     <%= f.submit t('buttons.submit'),
                  class: "send-it btn btn-secondary mt-2"  %>

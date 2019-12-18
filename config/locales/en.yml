@@ -1950,6 +1950,12 @@ en:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
     manuscript_access: 'Accesses'
+    quiz: 'Accesses (complete)'
+    median: 'Median'
+    lower_quartile: 'Lower Quartile (correctly answered questions)'
+    upper_quartile: 'Upper Quartile (correctly answered questions)'
+    quiz_questions: 'Statistics about correctly answered questions'
+    question_number: 'Number of questions'
   basics:
     course: 'Course'
     courses: 'Courses'

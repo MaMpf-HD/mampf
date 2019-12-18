@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_11_160621) do
+ActiveRecord::Schema.define(version: 2019_12_18_155355) do
 
   create_table "consumptions", force: :cascade do |t|
     t.integer "medium_id"
@@ -25,6 +25,17 @@ ActiveRecord::Schema.define(version: 2019_12_11_160621) do
     t.text "referrer_url"
     t.text "full_path"
     t.datetime "created_at"
+  end
+
+  create_table "probes", force: :cascade do |t|
+    t.integer "question_id"
+    t.integer "quiz_id"
+    t.boolean "correct"
+    t.text "session_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "progress"
+    t.integer "success"
   end
 
 end

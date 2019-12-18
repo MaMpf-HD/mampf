@@ -4,7 +4,10 @@ $('#statistics-modal-content').empty()
                         locals: { medium: @medium,
                                   video_downloads: @video_downloads,
                                   video_thyme: @video_thyme,
-                                  manuscript_access: @manuscript_access } %>').show()
+                                  manuscript_access: @manuscript_access,
+                                  quiz_access: @quiz_access,
+                                  success: @success,
+                                  question_count: @question_count } %>').show()
 
 # activate popovers
 $('[data-toggle="popover"]').popover()

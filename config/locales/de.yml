@@ -2076,6 +2076,12 @@ de:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
     manuscript_access: 'Zugriffe'
+    quiz: 'Zugriffe (vollständig)'
+    median: 'Median'
+    lower_quartile: 'Unteres Quartil'
+    upper_quartile: 'Oberes Quartil'
+    quiz_questions: 'Statistik über korrekt beantwortete Fragen'
+    question_number: 'Anzahl der Fragen'
   basics:
     course: 'Modul'
     courses: 'Module'

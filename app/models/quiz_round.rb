@@ -5,7 +5,8 @@ class QuizRound
   attr_reader :quiz, :counter, :progress, :crosses, :vertex, :is_question,
               :answer_scheme, :progress_old, :counter_old, :round_id_old,
               :input, :correct, :hide_solution, :vertex_old, :question_id,
-              :answer_shuffle, :answer_shuffle_old, :solution_input, :result
+              :answer_shuffle, :answer_shuffle_old, :solution_input, :result,
+              :session_id
 
   def initialize(params)
     @quiz = Quiz.find(params[:id])
@@ -26,7 +27,9 @@ class QuizRound
   def update
     @input = @quiz.crosses_to_input(@progress, @crosses)
     @correct = (@input == @answer_scheme)
+    create_probe if @is_question
     @progress = @quiz.next_vertex(@progress, @input)
+    create_final_probe if @progress == -1 && @quiz.sort == 'Quiz'
     @counter += 1
     @hide_solution = @quiz.quiz_graph.hide_solution
                           .include?([@progress_old, @input])
@@ -71,9 +74,11 @@ class QuizRound
     if params[:quiz].present?
       @counter = params[:quiz][:counter].to_i
       @progress = params[:quiz][:progress].to_i
+      @session_id = params[:quiz][:session_id]
     end
     @progress ||= @quiz.root
     @counter ||= 0
+    @session_id ||= SecureRandom.uuid.first(13).remove('-')
     @progress_old = @progress
     @counter_old = @counter
     @round_id_old = round_id
@@ -93,5 +98,15 @@ class QuizRound
   def update_answer_shuffle
     @answer_shuffle = Question.find_by_id(@vertex[:id])&.answers&.map(&:id)
                              &.shuffle
+  end
+
+  def create_probe
+    quiz_id = @quiz.id unless @quiz.sort == 'RandomQuiz'
+    ProbeSaver.perform_async(quiz_id, @question_id, @correct, @progress,
+                             @session_id)
+  end
+
+  def create_final_probe
+    ProbeSaver.perform_async(@quiz.id, nil, nil, -1, @session_id)
   end
 end

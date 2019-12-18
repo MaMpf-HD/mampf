@@ -43,6 +43,8 @@
                      id: 'question_quiz_solution_input' %>
   <%= f.hidden_field 'quiz[result]',
                      id: 'question_quiz_result' %>
+  <%= f.hidden_field 'quiz[session_id]',
+                     value: quiz_round.session_id %>
   <%= f.hidden_field :id,
                      value: quiz_round.quiz.id %>
 <% end %>
