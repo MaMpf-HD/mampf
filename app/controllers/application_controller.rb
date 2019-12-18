@@ -81,7 +81,8 @@ class ApplicationController < ActionController::Base
 
   def store_interaction
     return if controller_name.in?(['sessions', 'administration', 'users',
-                                   'events', 'interactions', 'profile'])
+                                   'events', 'interactions', 'profile',
+                                   'clickers', 'votes'])
     return if controller_name == 'main' && action_name == 'home'
     return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
     InteractionSaver.perform_async(request.session_options[:id],
