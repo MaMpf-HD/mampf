@@ -13,6 +13,7 @@ $('#statistics-modal-content').empty()
 # activate popovers
 $('[data-toggle="popover"]').popover()
 
+<% if @medium.sort == 'Quiz' %>
 Chart.platform.disableCSSInjection = true;
 Chart.defaults.global.elements.rectangle.backgroundColor = 'rgba(255, 99, 132, 0.2)'
 Chart.defaults.global.elements.rectangle.borderColor =  'rgba(255, 99, 132, 1)'
@@ -40,5 +41,6 @@ myChart = new Chart(ctx,
         [ticks:
           beginAtZero: true
           precision: 0] )
+<% end %>
 
 $('#statisticsModal').modal('show')
