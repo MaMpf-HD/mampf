@@ -1,0 +1,23 @@
+<div class="row mb-3">
+  <div class="col-12">
+    <%= question.description %>
+  </div>
+  <div class="col-12">
+    <% if !local_success[question.id][:rel_correct].nil? %>
+      <div class="progress">
+        <div class="progress-bar bg-success"
+             role="progressbar"
+             style="width: <%= "#{local_success[question.id][:rel_correct]}%" %>">
+          <%= "#{local_success[question.id][:rel_correct]}%" %>
+        </div>
+        <div class="progress-bar bg-danger"
+             role="progressbar"
+             style="width: <%= "#{local_success[question.id][:rel_incorrect]}%" %>">
+          <%= "#{local_success[question.id][:rel_incorrect]}%" %>
+        </div>
+      </div>
+    <% else %>
+      <%= t('statistics.no_question_statistics') %>
+    <% end %>
+  </div>
+</div>

@@ -2076,12 +2076,18 @@ de:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
     manuscript_access: 'Zugriffe'
-    quiz: 'Zugriffe (vollständig)'
+    quiz: 'vollständige Zugriffe'
     median: 'Median'
     lower_quartile: 'Unteres Quartil'
     upper_quartile: 'Oberes Quartil'
     quiz_questions: 'Statistik über korrekt beantwortete Fragen'
     question_number: 'Anzahl der Fragen'
+    question_details: 'Detailstatistik Fragen'
+    no_question_statistics: >
+      Für diese Frage liegt noch keine Statistik vor.
+    number_of_users: 'Anzahl der Nutzerinnen'
+    number_of_correct_answers: >
+      Anzahl der korrekt beantworteten Fragen
   basics:
     course: 'Modul'
     courses: 'Module'

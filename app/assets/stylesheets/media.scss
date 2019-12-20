@@ -289,3 +289,19 @@
     outline:none;
     box-shadow:none;
 }
+
+#questionStatistics
+{
+  height: 40vh;
+}
+
+#questionStatisticsBox
+{
+  overflow-y: scroll;
+  transform: scaleX(-1); // that is done in order to have the scrollbar on the left side
+  height: 40vh;
+}
+#questionStatisticsArea
+{
+  transform: scaleX(-1); // revert the mirroring from parent element
+}

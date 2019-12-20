@@ -353,9 +353,11 @@ class MediaController < ApplicationController
       @manuscript_access = medium_consumption.where(sort: 'manuscript').count
     end
     if @medium.sort == 'Quiz'
-      @quiz_access = Probe.finished_quizzes(@medium.id)
-      @success = Probe.success_in_quiz(@medium.id)
+      @quiz_access = Probe.finished_quizzes(@medium)
+      @global_success = Probe.global_success_in_quiz(@medium.becomes(Quiz))
+      @global_success_details = Probe.global_success_details(@medium.becomes(Quiz))
       @question_count = @medium.becomes(Quiz).questions_count
+      @local_success = Probe.local_success_in_quiz(@medium.becomes(Quiz))
     end
   end
 

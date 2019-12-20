@@ -26,7 +26,9 @@
       </div>
     </div>
     <% if medium.sort.in?(['Script', 'Quiz', 'Question', 'Remark']) %>
-      <%= f.hidden_field :sort, value: medium.sort %>
+      <%= f.hidden_field :sort,
+                         value: medium.sort,
+                         id: 'medium_sort_backup' %>
     <% end %>
     <div class="form-group">
       <%= f.label :teachable, t('basics.associated_to') %>

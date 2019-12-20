@@ -182,7 +182,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'mouseenter', '[id^="row-medium-"]', ->
-    if $(this).data('purpose') in ['media', 'clicker']
+    if $(this).data('purpose') in ['media', 'clicker', 'statistics']
       mediumActions = document.getElementById('mediumActions')
       unless mediumActions.dataset.filled == 'true'
         $(this).addClass('bg-orange-lighten-4')
@@ -223,10 +223,12 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'mouseleave', '[id^="row-medium-"]', ->
     $(this).removeClass('bg-orange-lighten-4')
+    if $(this).data('purpose') == 'statistics'
+      $('#mediumPreview').empty()
     return
 
   $(document).on 'click', '[id^="row-medium-"]', ->
-    if $(this).data('purpose') in ['media', 'clicker']
+    if $(this).data('purpose') in ['media', 'clicker', 'statistics']
       mediumActions = document.getElementById('mediumActions')
       if $(this).hasClass('bg-green-lighten-4')
         $(this).removeClass('bg-green-lighten-4')

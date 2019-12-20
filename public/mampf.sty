@@ -1,4 +1,4 @@
-%% LaTeX package mampf - version 1.3 (2019/09/23)
+%% LaTeX package mampf - version 1.4 (2019/12/20)
 %% Source file for mampf.sty
 %%
 %% -------------------------------------------------------------------------------------------
@@ -128,8 +128,12 @@
   \fi}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Commands defined: 	\mampfvideo[<time>]{<media number>}
-%			\mampftext[<named destination>]{<media number>}
+%Commands defined: 	\mampfvideo[<time>]{<media number>} (outdated!)
+%			\mampftext[<named destination>]{<media number>} (outdated!)
+%
+%			\mampftime{<time>}{<media number>}
+%			\mampfpage{<page>}{<media number>}
+%			\mampfdest{<page>}{<media number>}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 \newcount\@linknumber
@@ -137,27 +141,50 @@
 \def\mampflinkprotokoll#1#2{\pdfbookmark{MaMpf-Link|#1}{MaMpf-Link{#2}}\!\!}
 \DeclareRobustCommand\mampfvideo{\@ifnextchar[{\@@mampfvideo}{\@mampfvideo}}%
   \def\@@mampfvideo[#1]#2{\global\advance\@linknumber 1\relax%
+  \PackageWarning{mampf}{Outdated command '\mampfvideo'}%
   \ifnum\compileoptions>0%
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/play/?time=#1}\\[1em]\begin{center}\textup{\small \href{\@mampfurl/media/#2/play/?time=#1}{Video}}\end{center}}[-.75\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/play/?time=#1}}[-.75\marginparwidth]
     \mampflinkprotokoll{#2}{\the\@linknumber}%
   \fi}
   \def\@mampfvideo#1{\global\advance\@linknumber 1\relax%
+  \PackageWarning{mampf}{Outdated command '\mampfvideo'}%
   \ifnum\compileoptions>0%
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#1/play}\\[1em]\begin{center}\textup{\small \href{\@mampfurl/media/#1/play}{Video}}\end{center}}[-.75\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#1/play}}[-.75\marginparwidth]
     \mampflinkprotokoll{#1}{\the\@linknumber}%
   \fi}
 \DeclareRobustCommand\mampftext{\@ifnextchar[{\@@mampftext}{\@mampftext}}%
   \def\@@mampftext[#1]#2{\global\advance\@linknumber 1\relax%
+  \PackageWarning{mampf}{Outdated command '\mampftext'}%
   \ifnum\compileoptions>0%
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display/?destination=#1}\\[1em]\begin{center}\textup{\small \href{\@mampfurl/media/#2/display/?destination=#1}{Text}}\end{center}}[-.75\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display/?destination=#1}}[-.75\marginparwidth]
     \mampflinkprotokoll{#2}{\the\@linknumber}%
     \fi}
   \def\@mampftext#1{\global\advance\@linknumber 1\relax%
+  \PackageWarning{mampf}{Outdated command '\mampftext'}%
   \ifnum\compileoptions>0%
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#1/display}\\[1em]\begin{center}\textup{\small \href{\@mampfurl/media/#1/display}{Text}}\end{center}}[-.75\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#1/display}}[-.75\marginparwidth]
     \mampflinkprotokoll{#1}{\the\@linknumber}%
   \fi}
 
+\def\mampftime#1#2#3{\global\advance\@linknumber 1\relax%
+  \ifnum\compileoptions>0%
+    \href{\@mampfurl/media/#2/play/?time=#1}{#3}
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/play/?time=#1}}[-.75\marginparwidth]
+    \mampflinkprotokoll{#2}{\the\@linknumber}%
+  \fi}
+\def\mampfpage#1#2#3{\global\advance\@linknumber 1\relax%
+  \ifnum\compileoptions>0%
+    \href{\@mampfurl/media/#2/display/?page=#1}{#3}
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display/?page=#1}}[-.75\marginparwidth]
+    \mampflinkprotokoll{#2}{\the\@linknumber}%
+  \fi}
+\def\mampfdest#1#2#3{\global\advance\@linknumber 1\relax%
+  \ifnum\compileoptions>0%
+    \href{\@mampfurl/media/#2/display/?destination=#1}{#3}
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display/?destination=#1}}[-.75\marginparwidth]
+    \mampflinkprotokoll{#2}{\the\@linknumber}%
+  \fi}
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 \makeatother

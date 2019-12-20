@@ -1950,12 +1950,18 @@ en:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
     manuscript_access: 'Accesses'
-    quiz: 'Accesses (complete)'
+    quiz: 'complete accesses'
     median: 'Median'
     lower_quartile: 'Lower Quartile (correctly answered questions)'
     upper_quartile: 'Upper Quartile (correctly answered questions)'
     quiz_questions: 'Statistics about correctly answered questions'
     question_number: 'Number of questions'
+    question_details: 'Detailled statistics for questions'
+    no_question_statistics: >
+      For this question, there no data available yet.
+    number_of_correct_answers: >
+      number of correctly answered questions
+    number_of_users: 'Anzahl der Nutzerinnen'
   basics:
     course: 'Course'
     courses: 'Courses'
