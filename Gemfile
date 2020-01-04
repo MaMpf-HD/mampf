@@ -69,7 +69,7 @@ gem 'activerecord-import',
   branch: 'master'
 gem 'thredded',
   git: 'https://github.com/thredded/thredded.git',
-  branch: 'master'
+  branch: 'collection-cache'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
 gem 'rails-i18n'
