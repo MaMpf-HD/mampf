@@ -11,7 +11,7 @@
           <%= f.hidden_field :counter,
                              value: @quiz_round.counter %>
           <%= f.hidden_field :session_id,
-                             value: quiz_round.session_id %>
+                             value: @quiz_round.session_id %>
         </div>
         <% if remark.video || remark.manuscript %>
           <div class="col-12 text-center my-2 remark-infotainment-text">
