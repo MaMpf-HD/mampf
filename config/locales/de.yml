@@ -767,6 +767,9 @@ de:
         <p>Inhaltsbeschreibung der dazugehörigen Sitzung:</p>
       extracted_content: >
         Extrahierter Inhalt
+      disclaimer: >
+        Ich bestätige hiermit, dass durch die Veröffentlichung des
+        Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -1040,6 +1043,8 @@ de:
           Hier steht der Inhalt, der aus den assoziierten Dokumenten
           extrahiert wurde (z.B. aus Inhaltsverzeichnissen von Videos,
           die mit dem THymE-Editor bearebitet wurden).
+        details_warning: >
+          Es wurden Details geändert, die noch nicht übernommen wurden.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'

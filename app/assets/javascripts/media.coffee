@@ -411,6 +411,10 @@ $(document).on 'turbolinks:load', ->
       dataType: 'script'
     return
 
+  $('#manuscriptAccordion :input').on 'change', ->
+    $('.details-warning').show()
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->

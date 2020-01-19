@@ -721,6 +721,9 @@ en:
         <p>Content description of the associated session:</p>
       extracted_content: >
         Extracted content
+      disclaimer: >
+        I hereby confirm that by publishing this medium on the MaMpf platform,
+        no rights of third parties are infringed.
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -972,6 +975,8 @@ en:
           This is content that has been extracted from associated documents,
           e.g. a table of contents of a video that has been edited by thyme
           editor.
+        details_warning: >
+          Details have been changed that have not yet been imported.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'

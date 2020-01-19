@@ -31,6 +31,14 @@
             <%= render partial: 'media/quiz_rights',
                        locals: { f: f } %>
           <% end %>
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :disclaimer,
+                            class: 'custom-control-input',
+                            required: true %>
+            <%= f.label :disclaimer,
+                        t('admin.medium.disclaimer'),
+                        { class: 'custom-control-label' } %>
+          </div>
           <div class="row mt-3">
             <div class="col-12 text-center">
               <%= f.submit t('buttons.publish'),

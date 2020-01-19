@@ -88,7 +88,7 @@ class ApplicationController < ActionController::Base
     # as of Rack 2.0.8, the session_id is wrapped in a class of its own
     # it is not a string anymore
     # see https://github.com/rack/rack/issues/1433
-    InteractionSaver.perform_async(request.session_options[:id].public_id,
+    InteractionSaver.perform_async(request.session_options[:id].to_s,
                                    request.original_fullpath,
                                    request.referrer)
   end
