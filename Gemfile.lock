@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/thredded/thredded.git
-  revision: d8dc158dcf23b0f76daffff7f2fab225209ee446
-  branch: collection-cache
+  revision: 8aff13cdf97f21babc8f97f4607b8198ac9c1b6e
+  branch: master
   specs:
     thredded (0.16.15)
       active_record_union (>= 1.3.0)
