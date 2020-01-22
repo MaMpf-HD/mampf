@@ -91,7 +91,7 @@ en:
     text_html: >
       &copy; MaMpf Team 2019. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{docker}, %{basecamp}.<br>
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
     sponsors_html: >

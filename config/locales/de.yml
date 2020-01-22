@@ -77,7 +77,7 @@ de:
     text_html: >
       &copy; MaMpf Team 2019. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{docker}, %{basecamp}.<br>
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
     sponsors_html: >
