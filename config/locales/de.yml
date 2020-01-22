@@ -81,7 +81,7 @@ de:
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
     sponsors_html: >
-      MaMpf bedankt sich bei seinen %{sponsors}:
+      %{sponsors}:
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -2216,7 +2216,7 @@ de:
     parametrized: 'parametrisiert'
     synonyms: 'Synonyme'
     status: 'Status'
-    sponsors: 'Sponsoren'
+    sponsors: 'Gefördert durch'
     since: 'seit'
     documents: 'Dokumente'
     optional: 'optional'

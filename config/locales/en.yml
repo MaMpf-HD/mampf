@@ -95,7 +95,7 @@ en:
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
     sponsors_html: >
-      MaMpf thanks its %{sponsors}:
+      %{sponsors}:
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
@@ -2088,7 +2088,7 @@ en:
     parametrized: 'parametrized'
     synonyms: 'Synonyms'
     status: 'Status'
-    sponsors: 'sponsors'
+    sponsors: 'Funded by'
     since: 'since'
     documents: 'Documents'
     optional: 'optional'
