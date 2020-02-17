@@ -536,7 +536,7 @@ DEPENDENCIES
   pg
   progress_bar
   puma (~> 4.1)
-  rack (= 2.0.8)
+  rack
   rails (~> 6.0.2)
   rails-erd
   rails-i18n
