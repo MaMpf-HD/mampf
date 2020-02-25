@@ -2425,7 +2425,7 @@ de:
         item:
           attributes:
             sort:
-              inclusion: 'Der Typ ist unzuläsig.'
+              inclusion: 'Der Typ ist unzulässig.'
             description:
               blank: 'Es muss eine Beschreibung angegeben werden.'
             start_time:
