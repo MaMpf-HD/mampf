@@ -67,7 +67,7 @@
         <%= image_tag(medium.manuscript_screenshot_url,
                       alt: "Card image cap",
                       class: "card-img-top manuscript-thumbnail") %>
-      <% elsif medium.geogebra.present? %>
+      <% elsif medium.geogebra_screenshot_url.present? %>
         <%= image_tag(medium.geogebra_screenshot_url,
                       alt: 'Card image cap',
                       class: 'card-img-top') %>
