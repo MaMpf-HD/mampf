@@ -62,8 +62,8 @@ class MediaController < ApplicationController
     # touch lectures that import this medium
     @medium.importing_lectures.update_all(updated_at: Time.now)
     @medium.sanitize_type!
-    # detach the video or manuscript if this was chosen by the user
-    detach_video_or_manuscript
+    # detach components if this was chosen by the user
+    detach_components
     # create screenshot for manuscript if necessary
     changed_manuscript = @medium.manuscript_data != old_manuscript_data
     if @medium.manuscript.present? && changed_manuscript
@@ -213,6 +213,16 @@ class MediaController < ApplicationController
       return
     end
     redirect_to @medium.manuscript_url_with_host
+  end
+
+  # run the geogebra applet using Geogebra's Javascript API
+  def geogebra
+    if @medium.geogebra.nil?
+      redirect_to :root, alert: I18n.t('controllers.no_geogebra')
+      return
+    end
+    I18n.locale = @medium.locale_with_inheritance
+    render layout: 'geogebra'
   end
 
   # add a toc item for the video
@@ -365,8 +375,9 @@ class MediaController < ApplicationController
 
   def medium_params
     params.require(:medium).permit(:sort, :description, :video, :manuscript,
-                                   :external_reference_link, :teachable_type,
-                                   :teachable_id, :released, :text, :locale,
+                                   :external_reference_link, :geogebra,
+                                   :teachable_type, :teachable_id,
+                                   :released, :text, :locale,
                                    :content,
                                    editor_ids: [],
                                    tag_ids: [],
@@ -393,10 +404,13 @@ class MediaController < ApplicationController
     end
   end
 
-  def detach_video_or_manuscript
+  def detach_components
     if params[:medium][:detach_video] == 'true'
       @medium.update(video: nil)
       @medium.update(screenshot: nil)
+    end
+    if params[:medium][:detach_geogebra] == 'true'
+      @medium.update(geogebra: nil)
     end
     return unless params[:medium][:detach_manuscript] == 'true'
     @medium.update(manuscript: nil)

@@ -1,0 +1,37 @@
+<div id="geogebra-uploadArea" class="form-group">
+  <div class="row mb-2">
+    <div class="col-12"
+         id="geogebra-informer">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" id="geogebra-progressBar">
+    </div>
+  </div>
+  <div class="row p-2">
+    <div id="geogebra-meta"
+         class="col-12 meta rounded"
+         style="display:<%= show(medium.geogebra.present?) %>">
+      <div class="row">
+        <div class="col-11">
+          <%= t('basics.file') %>:
+          <span id="geogebra-file">
+            <%= medium.geogebra_filename %>
+          </span>
+        </div>
+        <i id="detach-geogebra"
+           class="material-icons detach">
+          close
+        </i>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <%= t('basics.size') %>:
+          <span id="geogebra-size">
+            <%= number_to_human_size(medium.geogebra_size) %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

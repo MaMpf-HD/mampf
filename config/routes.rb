@@ -144,6 +144,8 @@ Rails.application.routes.draw do
                         as: 'play_medium'
   get 'media/:id/display', to: 'media#display',
                            as: 'display_medium'
+  get 'media/:id/geogebra', to: 'media#geogebra',
+                            as: 'geogebra_medium'
   get 'media/:id/add_item', to: 'media#add_item',
                             as: 'add_item'
   get 'media/:id/add_reference', to: 'media#add_reference',
@@ -281,6 +283,7 @@ Rails.application.routes.draw do
   mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
+  mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
   mount Thredded::Engine => '/forum'
   get '*path', to: 'main#error'
 

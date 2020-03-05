@@ -916,6 +916,8 @@ en:
           used on 16:9 monitors.
         manuscript: >
           The manuscript should be in pdf format.
+        geogebra: >
+          The geogebra applet should be in ggb format.
         manuscript_structure: >
           This is the structure of the manuscript that was extracted from the
           pdf. You can import chapters, sections and tags to MaMpf if no
@@ -1696,6 +1698,8 @@ en:
         These are items that belong to this manuscript and are
         referenced from other places, but are not present in the current
         pdf file.
+  geogebra:
+    geogebra: Geogebra-Applet
   quiz:
     quiz: 'Quiz'
     start: 'start quiz'
@@ -2233,6 +2237,7 @@ en:
       MaMpf's homepage.
     no_video: 'There is no video for this medium.'
     no_manuscript: 'There is no manuscript for this medium.'
+    no_geogebra: 'There is no Geogebra applet for this medium.'
     no_medium: 'There is no medium with this id.'
     contradiction: 'Contradictory request.'
     no_notification: 'There is no notification with this id.'

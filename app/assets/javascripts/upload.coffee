@@ -185,10 +185,77 @@ manuscriptUpload = (fileInput) ->
 
   uppy
 
+geogebraUpload = (fileInput) ->
+  # set everything up
+  uploadArea = document.getElementById('geogebra-uploadArea')
+  uploadButton = document.getElementById('geogebra-uploadButton')
+  informer = document.getElementById('geogebra-informer')
+  progressBar = document.getElementById('geogebra-progressBar')
+  metaData = document.getElementById('geogebra-meta')
+  hiddenInput = document.getElementById('upload-geogebra-hidden')
+
+  # uppy will add its own file input
+  fileInput.style.display = 'none'
+
+  # create uppy instance
+  uppy = Uppy.Core(
+    id: fileInput.id
+    autoProceed: true
+    restrictions: allowedFileTypes: [ '.ggb' ])
+    .use(Uppy.FileInput,
+      target: uploadButton
+      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+    .use(Uppy.Informer, target: informer)
+    .use(Uppy.ProgressBar, target: progressBar)
+
+  # target the endpoint for shrine uploader
+  uppy.use Uppy.XHRUpload,
+    endpoint: '/ggbs/upload'
+    fieldName: 'file'
+
+  # add metadata to manuscript card if upload was successful
+  uppy.on 'upload-success', (file, response) ->
+    data = response.body
+    if data.metadata.mime_type == 'application/zip'
+      # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data)
+
+      # set hidden field value to the uploaded file data so that it is
+      # submitted with the form as the attachment
+      hiddenInput.value = uploadedFileData
+
+      geogebraFile = document.getElementById('geogebra-file')
+      geogebraSize = document.getElementById('geogebra-size')
+
+      # put metadata into place
+      geogebraFile.innerHTML = data.metadata.filename
+      geogebraSize.innerHTML = formatBytes(data.metadata.size)
+      $('#geogebra-meta').show()
+      $('#medium_detach_geogebra').val('false')
+      $('#medium-basics-warning').show()
+    else if data.metadata.mime_type != 'application/zip'
+      # display error message if uppy detects wrong mime type
+      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      uppy.reset()
+    else
+      # display error message if uppy detects some other problem
+      uppy.info('Die Datei ist beschädigt.', 'error', 5000)
+      uppy.reset()
+    return
+
+  # display error message on console if an upload error has ocurred
+  uppy.on 'upload-error', (file, error) ->
+    console.log('error with file:', file.id)
+    console.log('error message:', error)
+    return
+
+  uppy
+
 
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
   manuscript = document.getElementById('upload-manuscript')
+  geogebra = document.getElementById('upload-geogebra')
 
   # make uppy idempotent for turbolinks
   $('.uppy').remove()
@@ -197,6 +264,7 @@ $(document).on 'turbolinks:load', ->
   # initialize uppy
   videoUpload video if video?
   manuscriptUpload manuscript if manuscript?
+  geogebraUpload geogebra if geogebra?
 
   # make uppy upload buttons look like bootstrap
   $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')

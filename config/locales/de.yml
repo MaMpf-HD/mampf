@@ -980,6 +980,8 @@ de:
           bestmöglich ausgenutzt wird, sofern ein 16:9 Monitor verwendet wird.
         manuscript: >
           Das Manuskript sollte im pdf-Format vorliegen.
+        geogebra: >
+          Das Geogebra-Applet sollte im ggb-Format vorliegen.
         manuscript_structure: >
           Das ist die aus dem pdf extrahierte Struktur
           des Manuskripts. Du kannst Kapitel, Abschnitte und Einträge in
@@ -1805,6 +1807,8 @@ de:
         sind. Es handelt sich hierbei um Items, die an anderen Stellen
         referenziert werden und zu diesem Manuskript gehören, aber in der
         vorliegenden pdf-Datei nicht mehr vorkommen.
+  geogebra:
+    geogebra: Geogebra-Applet
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
@@ -2363,6 +2367,7 @@ de:
       MaMpf-Homepage umgeleitet.
     no_video: 'Zu diesem Medium existiert kein Video.'
     no_manuscript: 'Zu diesem Medium existiert kein Manuskript.'
+    no_geogebra: 'Zu diesem Medium existiert kein Geogebra-Applet.'
     no_medium: 'Ein Medium mit der angeforderten id existiert nicht.'
     contradiction: 'Widersprüchliche Suchanfrage.'
     no_notification: >

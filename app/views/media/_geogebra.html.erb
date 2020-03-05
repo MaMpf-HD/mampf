@@ -1,0 +1,32 @@
+<hr>
+<div class="row">
+  <div class="col-4">
+    <%= t('geogebra.geogebra') %>
+    <span class="badge badge-secondary">
+      ggb
+    </span>
+    <%= helpdesk(t('admin.medium.info.geogebra'), false) %>
+  </div>
+  <div class="col-2 text-right"
+       id="geogebra-uploadButton"
+       data-choosefiles="<%= t('basics.file') %>">
+    <input type="hidden"
+           name="medium[geogebra]"
+           value="<%= medium.cached_geogebra_data %>"
+           id="upload-geogebra-hidden">
+    <input type="file"
+           name="medium[geogebra]"
+           id="upload-geogebra">
+  </div>
+  <div class="col-6 text-right">
+    <% if medium.geogebra.present? %>
+      <%= link_to t('buttons.view'),
+                  geogebra_medium_path(medium),
+                  class: 'btn btn-outline-secondary btn-sm',
+                  target: :blank %>
+    <% end %>
+  </div>
+</div>
+<%= render partial: 'media/upload_geogebra',
+           locals: { medium: medium } %>
+<%= f.hidden_field :detach_geogebra, value: false %>

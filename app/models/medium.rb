@@ -55,6 +55,7 @@ class Medium < ApplicationRecord
   include VideoUploader[:video]
   include ScreenshotUploader[:screenshot]
   include PdfUploader[:manuscript]
+  include GeogebraUploader[:geogebra]
 
   # if an external reference is given, check if it is (at least syntactically)
   # a valid http(s) adress
@@ -468,6 +469,20 @@ class Medium < ApplicationRecord
   def video_duration_hms_string
     return unless video.present?
     TimeStamp.new(total_seconds: video_duration).hms_string
+  end
+
+  def geogebra_filename
+    return unless geogebra.present?
+    geogebra.metadata['filename']
+  end
+
+  def geogebra_size
+    return unless geogebra.present?
+    geogebra.metadata['size']
+  end
+
+  def geogebra_url_with_host
+    geogebra_url(host: host)
   end
 
   def manuscript_url_with_host
