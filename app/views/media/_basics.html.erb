@@ -6,7 +6,7 @@
   </div>
   <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <div class="form-group">
-      <%= f.label :sort, t('admin.medium.type') %>
+      <%= f.label :sort, t('admin.medium.sort') %>
       <%= helpdesk(t('admin.medium.info.sort'), true) %>
       <%= f.select :sort,
                    options_for_select(medium.select_sorts, medium.sort),
