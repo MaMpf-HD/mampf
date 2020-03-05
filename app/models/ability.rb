@@ -64,7 +64,8 @@ class Ability
       end
       can [:modal, :list_sections], Lesson
 
-      can [:catalog, :search, :play, :display, :register_download], Medium
+      can [:catalog, :search, :play, :display, :geogebra,
+           :register_download], Medium
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot, :publish, :destroy,
@@ -120,7 +121,7 @@ class Ability
       # guest users can play/display media only when their release status
       # is 'all', logged in users can do that unless the release status is
       # 'locked'
-      can [:play, :display], Medium do |medium|
+      can [:play, :display, :geogebra], Medium do |medium|
         if !user.new_record?
           medium.visible_for_user?(user)
         else

@@ -38,6 +38,12 @@
         </div>
       </div>
     </div>
+    <% if medium.geogebra_screenshot_url.present? %>
+      <%= link_to image_tag(medium.geogebra_screenshot_url,
+                            class: 'card-img-top manuscript-thumbnail'),
+                            geogebra_medium_path(medium),
+                  target: :blank %>
+    <% end %>
     <div class="card-body">
       <div class="row">
         <div class="col-12">

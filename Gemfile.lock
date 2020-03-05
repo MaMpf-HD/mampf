@@ -545,6 +545,7 @@ DEPENDENCIES
   rqrcode
   rspec-rails
   rubocop (~> 0.54.0)
+  rubyzip
   sass-rails (>= 6)
   selectize-rails
   selenium-webdriver

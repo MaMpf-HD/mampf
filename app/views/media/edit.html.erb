@@ -23,6 +23,10 @@
   <%= render partial: 'media/snapshot_modal',
              locals: { medium: @medium } %>
 <% end %>
+<% if @medium.geogebra_screenshot_url.present? %>
+  <%= render partial: 'media/geogebra_screenshot_modal',
+             locals: { medium: @medium } %>
+<% end %>
 <% if !@manuscript.empty? && @medium.sort == 'Script' &&
      @medium.teachable.content_mode == 'manuscript' %>
   <%= render partial: 'media/manuscript_modal',

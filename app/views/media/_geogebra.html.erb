@@ -19,7 +19,13 @@
            id="upload-geogebra">
   </div>
   <div class="col-6 text-right">
-    <% if medium.geogebra.present? %>
+    <% if medium.geogebra_screenshot_url.present? %>
+      <button type="button"
+              class="btn btn-sm btn-outline-secondary"
+              data-toggle="modal"
+              data-target="#geogebraScreenshotModal">
+        <%= t('basics.screenshot') %>
+      </button>
       <%= link_to t('buttons.view'),
                   geogebra_medium_path(medium),
                   class: 'btn btn-outline-secondary btn-sm',

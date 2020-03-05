@@ -489,6 +489,11 @@ class Medium < ApplicationRecord
     geogebra_url(host: download_host)
   end
 
+  def geogebra_screenshot_url
+    return '' unless geogebra.present?
+    geogebra_url(:screenshot, host: host)
+  end
+
   def manuscript_url_with_host
     manuscript_url(host: host)
   end

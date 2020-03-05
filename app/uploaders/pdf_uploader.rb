@@ -15,8 +15,6 @@ class PdfUploader < Shrine
   # - bookmarks with details (created by mampf.sty LATeX package)
   add_metadata do |io, context|
     if context[:action] == :upload
-      pp '####################'
-      pp 'Add metadata'
       Shrine.with_file(io) do |file|
         temp_file = Tempfile.new
         cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path}"
