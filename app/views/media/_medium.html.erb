@@ -127,6 +127,20 @@
               </a>
             </div>
           <% end %>
+          <% if medium.geogebra.present? %>
+            <div class="mr-2">
+              <a href="<%= geogebra_medium_path(medium) %>"
+                 class="no-deco"
+                 target="_blank">
+                <i class="material-icons text-secondary"
+                   data-toggle="tooltip"
+                   data-placement="bottom"
+                   title="<%= t('geogebra.view') %>">
+                  leak_add
+                </i>
+              </a>
+            </div>
+          <% end %>
           <% if medium.external_reference_link.present? %>
             <div class="mr-2">
               <a href="<%= medium.external_reference_link %>"

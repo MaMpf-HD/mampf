@@ -87,6 +87,12 @@
                      locals: { medium: @medium } %>
         </div>
       <% end %>
+      <% if @medium.geogebra.present? %>
+        <div class="col-6 col-lg-12 mb-2">
+          <%= render partial: 'media/geogebra_card',
+                     locals: { medium: @medium } %>
+        </div>
+      <% end %>
       <% if @medium.quiz_graph %>
         <div class="col-6 col-lg-12 mb-2">
           <%= render partial: 'media/quiz_card',

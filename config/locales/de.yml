@@ -1809,6 +1809,9 @@ de:
         vorliegenden pdf-Datei nicht mehr vorkommen.
   geogebra:
     geogebra: Geogebra-Applet
+    download: Applet herunterladen
+    view: Geogebra-Applet im Browser ansehen
+    size: Größe
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'

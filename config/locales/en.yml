@@ -1700,6 +1700,9 @@ en:
         pdf file.
   geogebra:
     geogebra: Geogebra-Applet
+    download: Download Applet
+    view: View Geogebra Applet in Browser
+    size: Size
   quiz:
     quiz: 'Quiz'
     start: 'start quiz'

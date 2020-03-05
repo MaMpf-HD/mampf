@@ -21,6 +21,10 @@ module MediaHelper
     medium.title + '.pdf'
   end
 
+  def geogebra_download_file(medium)
+    medium.title + '.ggb'
+  end
+
   def inspect_or_edit_medium_path(medium, inspection)
     inspection ? inspect_medium_path(medium) : edit_medium_path(medium)
   end

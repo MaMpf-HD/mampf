@@ -485,6 +485,10 @@ class Medium < ApplicationRecord
     geogebra_url(host: host)
   end
 
+  def geogebra_download_url
+    geogebra_url(host: download_host)
+  end
+
   def manuscript_url_with_host
     manuscript_url(host: host)
   end
