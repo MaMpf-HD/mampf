@@ -92,12 +92,13 @@ class User < ApplicationRecord
   #   (if subscription type is 1)
   # - all courses (if subscription type is 2)
   # - all courses that the user has subscribed to (if subscription type is 3)
-  def related_courses
+  def related_courses(overrule_subscription_type: false)
     return if subscription_type.nil?
-    if subscription_type == 1
+    selection_type = overrule_subscription_type || subscription_type
+    if selection_type == 1
       return Course.where(id: preceding_course_ids).includes(:lectures)
     end
-    return Course.all.includes(:lectures) if subscription_type == 2
+    return Course.all.includes(:lectures) if selection_type == 2
     courses
   end
 
@@ -161,8 +162,9 @@ class User < ApplicationRecord
     lectures.map(&:tags).flatten.uniq
   end
 
-  def visible_tags
-    related_courses.map(&:lectures).flatten.map(&:tags).flatten.uniq
+  def visible_tags(overrule_subscription_type: false)
+    related_courses(overrule_subscription_type: overrule_subscription_type)
+      .map(&:lectures).flatten.map(&:tags).flatten.uniq
   end
 
   # returns the array of those notifications of the user that are announcements

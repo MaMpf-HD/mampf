@@ -158,11 +158,13 @@ class Tag < ApplicationRecord
 
   # converts the subgraph of all tags of distance <= 2 to the given marked tag
   # into a cytoscape array representing this subgraph
-  def self.to_cytoscape(tags, marked_tag)
+  def self.to_cytoscape(tags, marked_tag, highlight_related_tags: true)
     result = []
     # add vertices
     tags.each do |t|
-      result.push(data: t.cytoscape_vertex(marked_tag))
+      result.push(data: t.cytoscape_vertex(marked_tag,
+                                           highlight_related_tags:
+                                             highlight_related_tags))
     end
     # add edges
     edges = []
@@ -241,27 +243,29 @@ class Tag < ApplicationRecord
 
   # returns the vertex title color of the tag in the neighbourhood graph of
   # the given marked tag
-  def color(marked_tag)
+  def color(marked_tag, highlight_related_tags: true)
     return '#f00' if self == marked_tag
-    return '#ff8c00' if in?(marked_tag.related_tags)
+    return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
     '#000'
   end
 
   # returns the vertex color of the tag in the neighbourhood graph of
   # the given marked tag
-  def background(marked_tag)
+  def background(marked_tag, highlight_related_tags: true)
     return '#f00' if self == marked_tag
-    return '#ff8c00' if in?(marked_tag.related_tags)
+    return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
     '#666'
   end
 
   # returns the cytoscape hash describing the tag's vertex in the neighbourhood
   # graph of the marked tag
-  def cytoscape_vertex(marked_tag)
+  def cytoscape_vertex(marked_tag, highlight_related_tags: true)
     { id: id.to_s,
       label: title,
-      color: color(marked_tag),
-      background: background(marked_tag) }
+      color: color(marked_tag,
+                   highlight_related_tags: highlight_related_tags),
+      background: background(marked_tag,
+                             highlight_related_tags: highlight_related_tags) }
   end
 
   # returns the cytoscape hash describing the edge between the tag and the

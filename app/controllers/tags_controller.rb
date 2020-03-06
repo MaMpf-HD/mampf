@@ -33,7 +33,6 @@ class TagsController < ApplicationController
                              description: @tag.notions.pluck(:title) +
                                             @tag.aliases.pluck(:title))
                       .where.not(pdf_destination: [nil, ''])
-    pp @references
     render layout: 'application_no_sidebar'
   end
 
@@ -73,7 +72,6 @@ class TagsController < ApplicationController
       return
     end
     @errors = @tag.errors
-    pp @errors
   end
 
   def create
@@ -195,13 +193,32 @@ class TagsController < ApplicationController
 
   # set up cytoscape graph data for neighbourhood subgraph of @tag,
   # using only neighbourhood tags that are allowd by the user's
-  # profile settings
+  # profile settings, depending on the parameters (selection/depth) that were
+  # specified by the user)
   def set_related_tags_for_user
-    user_tags = current_user.visible_tags
+    @depth = 2
+    depth_param = params[:depth].to_i
+    @depth = depth_param if depth_param.in?([1, 2])
+    overrule_subscription_type = false
+    selection = params[:selection].to_i
+    if selection.in?([1, 2, 3])
+      overrule_subscription_type = selection
+    end
+    @selection_type = if overrule_subscription_type
+                         selection
+                       else
+                         current_user.subscription_type
+                       end
+    user_tags = current_user.visible_tags(overrule_subscription_type: overrule_subscription_type)
     @related_tags = @tag.related_tags & user_tags
-    @tags_in_neighbourhood = Tag.related_tags(@related_tags) & user_tags
+    @tags_in_neighbourhood = if @depth == 2
+                               Tag.related_tags(@related_tags) & user_tags
+                             else
+                               []
+                             end
     @tags = [@tag] + @related_tags + @tags_in_neighbourhood
-    @graph_elements = Tag.to_cytoscape(@tags, @tag)
+    @graph_elements = Tag.to_cytoscape(@tags, @tag,
+                                       highlight_related_tags: @depth == 2)
   end
 
   # set up cytoscape graph data for neighbourhood subgraph of @tag,

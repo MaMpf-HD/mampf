@@ -108,9 +108,51 @@
               <%= t('mampf_map') %>
             </h5>
           </div>
-          <div class="col-9 text-right">
+          <div class="col-6 d-flex">
+            <div class="dropdown mr-2">
+              <button class="btn btn-sm btn-secondary dropdown-toggle"
+                      type="button"
+                      data-toggle="dropdown">
+                <%= t('admin.tag.visibility') %>
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item <%= active(@selection_type == 1) %>"
+                   href="?selection=1&depth=<%= @depth %>">
+                  <%= t('admin.tag.previous_courses') %>
+                </a>
+                <a class="dropdown-item <%= active(@selection_type == 2) %>"
+                   href="?selection=2&depth=<%= @depth %>">
+                  <%= t('admin.tag.all_courses') %>
+                </a>
+                <a class="dropdown-item <%= active(@selection_type == 3) %>"
+                   href="?selection=3&depth=<%= @depth %>">
+                  <%= t('admin.tag.subscribed_courses') %>
+                </a>
+              </div>
+            </div>
+            <div class="dropdown">
+              <button class="btn btn-sm btn-secondary dropdown-toggle"
+                      type="button"
+                      data-toggle="dropdown">
+                <%= t('admin.tag.depth') %>
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item <%= active(@depth == 1) %>"
+                   href="?selection=<%= @selection_type %>&depth=1">
+                  1
+                </a>
+                <a class="dropdown-item <%= active(@depth == 2) %>"
+                   href="?selection=<%= @selection_type %>depth=2">
+                  2
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="col-3 text-right">
             <%= link_to t('external_render'),
-                        display_cyto_tag_path(@tag),
+                        display_cyto_tag_path(@tag,
+                                              params: { selection: @selection_type,
+                                                        depth: @depth }),
                         class: 'btn btn-sm btn-outline-secondary',
                         target: :_blank%>
           </div>
