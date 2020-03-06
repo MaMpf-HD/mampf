@@ -988,7 +988,7 @@ en:
       missing_lectures: 'Missing event series'
       create: 'Create Tag'
       visibility: 'Visibility: Tags'
-      previous_courses: 'from this course and courses and preceding courses'
+      previous_courses: 'from all subscribed courses and preceding courses'
       subscribed_courses: 'from all subscribed courses'
       all_courses: 'from all courses'
       depth: 'Depth'

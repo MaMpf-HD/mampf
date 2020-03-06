@@ -120,13 +120,13 @@
                    href="?selection=1&depth=<%= @depth %>">
                   <%= t('admin.tag.previous_courses') %>
                 </a>
-                <a class="dropdown-item <%= active(@selection_type == 2) %>"
-                   href="?selection=2&depth=<%= @depth %>">
-                  <%= t('admin.tag.all_courses') %>
-                </a>
                 <a class="dropdown-item <%= active(@selection_type == 3) %>"
                    href="?selection=3&depth=<%= @depth %>">
                   <%= t('admin.tag.subscribed_courses') %>
+                </a>
+                <a class="dropdown-item <%= active(@selection_type == 2) %>"
+                   href="?selection=2&depth=<%= @depth %>">
+                  <%= t('admin.tag.all_courses') %>
                 </a>
               </div>
             </div>

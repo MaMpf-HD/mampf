@@ -1057,7 +1057,8 @@ de:
       missing_lectures: 'Fehlende Veranstaltungen'
       create: 'Tag anlegen'
       visibility: 'Sichtbarkeit: Tags'
-      previous_courses: 'aus diesem und inhaltlich davor befindlichen Modulen'
+      previous_courses: >
+        aus allen abonnierten und inhaltlich vorangehenden Modulen
       subscribed_courses: 'aus allen abonnierten Modulen'
       all_courses: 'aus allen Modulen'
       depth: 'Tiefe'
