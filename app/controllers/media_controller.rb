@@ -381,7 +381,8 @@ class MediaController < ApplicationController
 
   def medium_params
     params.require(:medium).permit(:sort, :description, :video, :manuscript,
-                                   :external_reference_link, :geogebra,
+                                   :external_reference_link,
+                                   :geogebra, :geogebra_app_name,
                                    :teachable_type, :teachable_id,
                                    :released, :text, :locale,
                                    :content,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_05_111817) do
+ActiveRecord::Schema.define(version: 2020_03_06_112006) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -245,6 +245,7 @@ ActiveRecord::Schema.define(version: 2020_03_05_111817) do
     t.text "question_sort"
     t.text "content"
     t.text "geogebra_data"
+    t.text "geogebra_app_name"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end

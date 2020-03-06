@@ -917,7 +917,9 @@ en:
         manuscript: >
           The manuscript should be in pdf format.
         geogebra: >
-          The geogebra applet should be in ggb format.
+          The geogebra applet should be in ggb format. The resolution should
+          ideally be 500x700 pixels, for an explanatory text (including LaTeX)
+          you can use the content description of the medium.
         manuscript_structure: >
           This is the structure of the manuscript that was extracted from the
           pdf. You can import chapters, sections and tags to MaMpf if no
@@ -1701,8 +1703,13 @@ en:
   geogebra:
     geogebra: Geogebra-Applet
     download: Download Applet
+    app_name: Applet Type
     view: View Geogebra Applet in Browser
     size: Size
+    attribution_html: >
+      This applet as been created using %{geogebra_link}, the above animation
+      uses the GeoGebra JavaScript API.
+      Copyright © International GeoGebra Institute, 2013
   quiz:
     quiz: 'Quiz'
     start: 'start quiz'

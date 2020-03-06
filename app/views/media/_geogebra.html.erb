@@ -33,6 +33,15 @@
     <% end %>
   </div>
 </div>
+<div class="row mt-2">
+  <div class="col-12">
+    <%= f.label :geogebra_app_name, t('geogebra.app_name') %>
+    <%= f.select :geogebra_app_name,
+                 ['classic', 'geometry', 'graphing', '3d'],
+                 {},
+                 { class: 'form-control' } %>
+  </div>
+</div>
 <%= render partial: 'media/upload_geogebra',
            locals: { medium: medium } %>
 <%= f.hidden_field :detach_geogebra, value: false %>

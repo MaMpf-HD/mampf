@@ -981,7 +981,10 @@ de:
         manuscript: >
           Das Manuskript sollte im pdf-Format vorliegen.
         geogebra: >
-          Das Geogebra-Applet sollte im ggb-Format vorliegen.
+          Das Geogebra-Applet sollte im ggb-Format vorliegen. Die Auflösung
+          ist idealerweise 500x700 Pixel, für einen erläuternden Text
+          (einschließlich LaTeX) kann in die Inhaltsbeschreibnung des Mediums
+          verwendet werden.
         manuscript_structure: >
           Das ist die aus dem pdf extrahierte Struktur
           des Manuskripts. Du kannst Kapitel, Abschnitte und Einträge in
@@ -1810,8 +1813,13 @@ de:
   geogebra:
     geogebra: Geogebra-Applet
     download: Applet herunterladen
+    app_name: Applet-Typ
     view: Geogebra-Applet im Browser ansehen
     size: Größe
+    attribution_html: >
+      Dieses Applet wurde mit %{geogebra_link} erstellt, die obige Animation
+      verwendet die GeoGebra JavaScript API.
+      Copyright © International GeoGebra Institute, 2013
   quiz:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
