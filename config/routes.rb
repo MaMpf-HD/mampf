@@ -272,7 +272,12 @@ Rails.application.routes.draw do
 
   resources :votes, only: :create
 
-  resources :examples, only: :show
+  get 'examples/:id', to: 'erdbeere#show_example',
+                      as: 'erdbeere_example'
+  get 'properties/:id', to: 'erdbeere#show_property',
+                        as: 'erdbeere_property'
+  get 'structures/:id', to: 'erdbeere#show_structure',
+                        as: 'erdbeere_structure'
 
   root 'main#home'
   get 'error', to: 'main#error'

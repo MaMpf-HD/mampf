@@ -189,3 +189,14 @@ $modal-xxl:                   1600px !default;
   }
 }
 
+.assumption {
+  text-decoration: underline;
+}
+
+.propertiesCard {
+  height: 70vh;
+}
+
+.propertiesCardBody {
+  overflow-y: scroll;
+}

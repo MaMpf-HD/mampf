@@ -28,6 +28,7 @@
 //= require chapters
 //= require clickers
 //= require courses
+//= require erdbeere
 //= require file_upload
 //= require items
 //= require katex
