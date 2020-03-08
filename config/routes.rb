@@ -272,6 +272,8 @@ Rails.application.routes.draw do
 
   resources :votes, only: :create
 
+  resources :examples, only: :show
+
   root 'main#home'
   get 'error', to: 'main#error'
   get 'main/home'
