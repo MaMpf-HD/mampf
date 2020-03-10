@@ -39,6 +39,10 @@ class Lecture < ApplicationRecord
   # a lecture has many announcements
   has_many :announcements, dependent: :destroy
 
+  # a lecture has many structure_ids, referring to the ids of structures
+  # in the erdbeere database
+  serialize :structure_ids, Array
+
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
   validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }

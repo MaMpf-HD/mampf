@@ -1986,6 +1986,8 @@ en:
     number_of_correct_answers: >
       number of correctly answered questions
     number_of_users: 'Anzahl der Nutzerinnen'
+  erdbeere:
+    show_structures: 'Structures, properties and examples'
   basics:
     course: 'Course'
     courses: 'Courses'
@@ -2112,6 +2114,7 @@ en:
     documents: 'Documents'
     optional: 'optional'
     statistics: 'Statistics'
+    loading_data: 'Loading data...'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

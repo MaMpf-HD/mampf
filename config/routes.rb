@@ -116,7 +116,11 @@ Rails.application.routes.draw do
                                          as: 'organizational'
   get 'lectures/:id/show_subscribers', to: 'lectures#show_subscribers',
                                        as: 'show_subscribers'
-  post 'lecture/:id/publish', to: 'lectures#publish',
+  get 'lectures/:id/show_structures', to: 'lectures#show_structures',
+                                      as: 'show_structures'
+  get 'lectures/:id/edit_structures', to: 'lectures#edit_structures',
+                                      as: 'edit_structures'
+  post 'lectures/:id/publish', to: 'lectures#publish',
                               as: 'publish_lecture'
   post 'lectures/:id/import_media', to: 'lectures#import_media',
                                     as: 'lecture_import_media'

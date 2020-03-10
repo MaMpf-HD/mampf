@@ -1,6 +1,7 @@
 # LecturesController
 class LecturesController < ApplicationController
   before_action :set_lecture, except: [:new, :create]
+  before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
   authorize_resource
   before_action :check_for_consent
   before_action :set_view_locale, only: [:edit, :show, :inspect]
@@ -175,6 +176,14 @@ class LecturesController < ApplicationController
     render json: user_data
   end
 
+  def show_structures
+    render layout: 'application'
+  end
+
+  def edit_structures
+    render layout: 'application'
+  end
+
   private
 
   def set_lecture
@@ -265,5 +274,20 @@ class LecturesController < ApplicationController
     @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
     @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
     @terms = Term.select_terms
+  end
+
+  def set_erdbeere_data
+    @structure_ids = @lecture.structure_ids
+    response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
+                           "api/v1/structures"
+    all_structures = if response.status == 200
+                       JSON.parse(response.body)
+                     else
+                       { 'data' => {}, 'included' => {} }
+                     end
+    @structures = all_structures['data'].select do |s|
+      s['id'].to_i.in?(@structure_ids)
+    end
+    @properties = all_structures['included']
   end
 end

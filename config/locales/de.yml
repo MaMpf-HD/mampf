@@ -2114,6 +2114,8 @@ de:
     number_of_users: 'Anzahl der Nutzerinnen'
     number_of_correct_answers: >
       Anzahl der korrekt beantworteten Fragen
+  erdbeere:
+    show_structures: Strukturen, Eigenschaften und Beispiele
   basics:
     course: 'Modul'
     courses: 'Module'
@@ -2242,6 +2244,7 @@ de:
     documents: 'Dokumente'
     optional: 'optional'
     statistics: 'Statistik'
+    loading_data: 'Laden Daten...'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

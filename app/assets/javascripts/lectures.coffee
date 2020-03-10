@@ -254,6 +254,15 @@ $(document).on 'turbolinks:load', ->
       largeDisplay()
     return
 
+  $('#erdbeere_structures_collapse_button').on 'click', ->
+    lectureId = $(this).data('lecture')
+    loading = $(this).data('loading')
+    $('#erdbeereStructuresBody').empty().append(loading)
+    $.ajax Routes.edit_structures_path(lectureId),
+      type: 'GET'
+      dataType: 'script'
+    return
+
   return
 
 # clean up everything before turbolinks caches
