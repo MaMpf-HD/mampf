@@ -25,6 +25,11 @@ class LecturesController < ApplicationController
 
   def update
     @lecture.update(lecture_params)
+    if structure_params.present?
+      structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys
+                        .map(&:to_i)
+      @lecture.update(structure_ids: structure_ids)
+    end
     @lecture.touch
     @lecture.forum&.update(name: @lecture.forum_title)
     redirect_to edit_lecture_path(@lecture) if @lecture.valid?
@@ -210,6 +215,10 @@ class LecturesController < ApplicationController
                                     editor_ids: [])
   end
 
+  def structure_params
+    params.require(:lecture).permit(structures: {})[:structures]
+  end
+
   # create notifications to all users about creation of new lecture
   def create_notifications
     notifications = []
@@ -280,14 +289,15 @@ class LecturesController < ApplicationController
     @structure_ids = @lecture.structure_ids
     response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
                            "api/v1/structures"
-    all_structures = if response.status == 200
+    response_hash = if response.status == 200
                        JSON.parse(response.body)
                      else
                        { 'data' => {}, 'included' => {} }
                      end
-    @structures = all_structures['data'].select do |s|
+    @all_structures = response_hash['data']
+    @structures = @all_structures.select do |s|
       s['id'].to_i.in?(@structure_ids)
     end
-    @properties = all_structures['included']
+    @properties = response_hash['included']
   end
 end

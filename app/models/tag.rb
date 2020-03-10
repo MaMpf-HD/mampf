@@ -31,6 +31,8 @@ class Tag < ApplicationRecord
                      dependent: :destroy
   has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
 
+  serialize :realizations, Array
+
   accepts_nested_attributes_for :notions,
     reject_if: lambda {|attributes| attributes['title'].blank?},
     allow_destroy: true
@@ -59,6 +61,12 @@ class Tag < ApplicationRecord
       title_join
     end
     integer :course_ids, multiple: true
+  end
+
+  def self.find_erdbeere_tags(sort, id)
+    Tag.where(id: Tag.pluck(:id, :realizations)
+                     .select { |x| [sort, id].in?(x.second) }
+                     .map(&:first))
   end
 
   def title
@@ -175,6 +183,12 @@ class Tag < ApplicationRecord
       end
     end
     result
+  end
+
+  def realizations_cached
+    Rails.cache.fetch("#{cache_key_with_version}/realizations") do
+      realizations
+    end
   end
 
   # returns the ARel of all tags or whose id is among a given array of ids

@@ -1,0 +1,33 @@
+<div class="row p-2">
+  <div class="col-12">
+    <h5>
+      <%= t('erdbeere.select_structures') %>
+      <%= helpdesk(t('erdbeere.info.structures'), false) %>
+    </h5>
+  </div>
+</div>
+<%= form_with model: lecture,
+              html: { id: 'lecture-structures-form' } do |f| %>
+  <% all_structures.each do |s| %>
+    <div class="custom-control custom-checkbox">
+      <%= f.check_box "structures[#{s['id']}]",
+                      class: 'custom-control-input',
+                      checked: s['id'].to_i.in?(@structure_ids) %>
+      <%= f.label "structures[#{s['id']}]",
+                  s['attributes']['name'],
+                  { class: 'custom-control-label'} %>
+    </div>
+  <% end %>
+  <div class="row mt-2">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary' %>
+      <a class="btn btn-sm btn-secondary"
+         data-toggle="collapse"
+         href="#erdbeere_structures_collapse"
+         id="erdbeere_structures_collapse_button">
+        <%= t('buttons.cancel') %>
+      </a>
+    </div>
+  </div>
+<% end %>

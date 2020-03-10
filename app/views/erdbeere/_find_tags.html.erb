@@ -1,0 +1,7 @@
+<% if tags.any? %>
+	<%= render partial: "tags/tag",
+  	         collection: tags,
+    	       cached: true %>
+<% else %>
+	<%= t('no_related_tags') %>
+<% end %>

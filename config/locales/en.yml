@@ -1988,6 +1988,11 @@ en:
     number_of_users: 'Anzahl der Nutzerinnen'
   erdbeere:
     show_structures: 'Structures, properties and examples'
+    select_structures: Select Structures
+    info:
+      structures:
+        Here you can select which structures from the ErDBeere database
+        are displayed for this lecture.
   basics:
     course: 'Course'
     courses: 'Courses'

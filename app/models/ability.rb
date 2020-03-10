@@ -51,7 +51,8 @@ class Ability
 
       can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
            :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
-           :remove_imported_medium, :show_subscribers],
+           :remove_imported_medium, :show_subscribers, :show_structures,
+           :edit_structures],
           Lecture do |lecture|
         lecture.edited_by?(user)
       end

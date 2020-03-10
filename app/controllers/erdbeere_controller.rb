@@ -34,4 +34,13 @@ class ErdbeereController < ApplicationController
 							 	 'Something went wrong.'
 							 end
 	end
+
+	def find_tags
+		sort = params[:sort]
+		id = params[:id].to_i
+		@tags = Tag.find_erdbeere_tags(sort, id)
+		pp @tags
+		pp sort
+		pp id
+	end
 end

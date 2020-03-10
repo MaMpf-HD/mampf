@@ -152,6 +152,18 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'click', '.cancel-section-association', ->
     location.reload(true)
     return
+
+  $erdbeereTags = $('#erdbeereTags')
+  if $erdbeereTags?
+    $.ajax Routes.find_erdbeere_tags_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        sort: $erdbeereTags.data('sort')
+        id: $erdbeereTags.data('id')
+      }
+    return
+
   return
 # clean up before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->

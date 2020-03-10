@@ -282,6 +282,8 @@ Rails.application.routes.draw do
                         as: 'erdbeere_property'
   get 'structures/:id', to: 'erdbeere#show_structure',
                         as: 'erdbeere_structure'
+  get 'find_erdbeere_tags', to: 'erdbeere#find_tags',
+                            as: 'find_erdbeere_tags'
 
   root 'main#home'
   get 'error', to: 'main#error'
