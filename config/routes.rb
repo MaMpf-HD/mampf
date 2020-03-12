@@ -284,6 +284,12 @@ Rails.application.routes.draw do
                         as: 'erdbeere_structure'
   get 'find_erdbeere_tags', to: 'erdbeere#find_tags',
                             as: 'find_erdbeere_tags'
+  post 'update_erdbeere_tags', to: 'erdbeere#update_tags',
+                            as: 'update_erdbeere_tags'
+  get 'edit_erdbeere_tags', to: 'erdbeere#edit_tags',
+                            as: 'edit_erdbeere_tags'
+  get 'cancel_edit_erdbeere_tags', to: 'erdbeere#cancel_edit_tags',
+                            as: 'cancel_edit_erdbeere_tags'
 
   root 'main#home'
   get 'error', to: 'main#error'

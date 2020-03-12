@@ -36,11 +36,40 @@ class ErdbeereController < ApplicationController
 	end
 
 	def find_tags
-		sort = params[:sort]
-		id = params[:id].to_i
-		@tags = Tag.find_erdbeere_tags(sort, id)
-		pp @tags
-		pp sort
-		pp id
+		@sort = params[:sort]
+		@id = params[:id].to_i
+		@tags = Tag.find_erdbeere_tags(@sort, @id)
 	end
+
+  def edit_tags
+  end
+
+  def cancel_edit_tags
+  end
+
+  def update_tags
+    tags = Tag.where(id: erdbeere_params[:tag_ids])
+    sort = erdbeere_params[:sort]
+    id = erdbeere_params[:id].to_i
+    previous_tags = Tag.find_erdbeere_tags(sort, id)
+    added_tags = tags - previous_tags
+    removed_tags = previous_tags - tags
+    added_tags.each do |t|
+      t.update(realizations: t.realizations.push([sort, id]))
+    end
+    removed_tags.each do |t|
+      t.update(realizations: t.realizations - [[sort, id]])
+    end
+    if sort == 'Structure'
+      redirect_to erdbeere_structure_path(id)
+      return
+    end
+    redirect_to erdbeere_property_path(id)
+  end
+
+  private
+
+  def erdbeere_params
+    params.require(:erdbeere).permit(:sort, :id, tag_ids: [])
+  end
 end
