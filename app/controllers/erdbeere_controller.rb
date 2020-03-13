@@ -47,6 +47,24 @@ class ErdbeereController < ApplicationController
   def cancel_edit_tags
   end
 
+  def display_info
+    @id = params[:id]
+    @sort = params[:sort]
+    response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
+                           "api/v1/#{@sort.downcase.pluralize}/#{@id}/view_info"
+    @content = JSON.parse(response.body)
+    if response.status != 200
+      @info = 'Something went wrong'
+      return
+    end
+    @info = if @sort == 'Structure'
+              @content['data']['attributes']['name']
+            else
+              "#{@content['included'][0]['attributes']['name']}:"\
+              "#{@content['data']['attributes']['name']}"
+            end
+  end
+
   def update_tags
     tags = Tag.where(id: erdbeere_params[:tag_ids])
     sort = erdbeere_params[:sort]

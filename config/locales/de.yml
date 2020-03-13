@@ -2250,6 +2250,7 @@ de:
     optional: 'optional'
     statistics: 'Statistik'
     loading_data: 'Laden Daten...'
+    realizations: 'Realisierungen'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

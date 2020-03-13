@@ -2120,6 +2120,7 @@ en:
     optional: 'optional'
     statistics: 'Statistics'
     loading_data: 'Loading data...'
+    realizations: 'Realizations'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

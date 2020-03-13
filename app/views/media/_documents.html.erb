@@ -1,5 +1,4 @@
-<div class="card bg-light"
-     style="max-height: 80vh;">
+<div class="card bg-light">
   <div class="card-header">
     <div class="row">
       <div class="col-6">
@@ -17,7 +16,7 @@
       </div>
     </div>
   </div>
-  <div class="card-body">
+  <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <% if medium.sort =='Question' %>
       <%= render partial: 'media/question',
                  locals: { question: medium.becomes(Question) } %>

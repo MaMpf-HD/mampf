@@ -1,26 +1,44 @@
 <div class="row">
-  <div class="col-10">
+  <div class="col-12">
     <h2>
       <span class="badge badge-secondary mr-3">
         <%= t('tag') %>
       </span>
       <%= @tag.title %>
+      <% if current_user.editor? %>
+        <%= link_to '',
+                    edit_tag_path(@tag),
+                    class: 'far fa-edit text-secondary',
+                    data: { toggle: 'tooltip', placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none;' %>
+      <% end %>
     </h2>
-  </div>
-  <div class="col-2 text-right">
-    <% if current_user.editor? %>
-      <%= link_to '',
-                  edit_tag_path(@tag),
-                  class: 'far fa-edit fa-lg text-secondary',
-                  data: { toggle: 'tooltip', placement: 'bottom' },
-                  title: t('buttons.edit'),
-                  style: 'text-decoration: none;' %>
-    <% end %>
   </div>
 </div>
 <div class="row mt-2 mb-2">
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
+      <% if @realizations.any? %>
+        <div class="col-12">
+          <div class="card bg-light mb-2">
+            <div class="card-header bg-generic-card-header">
+              <h5>
+                <%= t('basics.realizations') %>
+              </h5>
+            </div>
+            <div class="card-body">
+              <% @realizations.each do |r| %>
+                <%= link_to t('basics.loading_data'),
+                            realization_path(r),
+                            class: 'erdbeere-realization',
+                            data: { sort: r.first,
+                                    id: r.second } %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
       <div class="col-12">
         <div class="card bg-light mb-2">
           <div class="card-header bg-generic-card-header">

@@ -290,6 +290,8 @@ Rails.application.routes.draw do
                             as: 'edit_erdbeere_tags'
   get 'cancel_edit_erdbeere_tags', to: 'erdbeere#cancel_edit_tags',
                             as: 'cancel_edit_erdbeere_tags'
+  get 'display_erdbeere_info', to: 'erdbeere#display_info',
+                            as: 'display_erdbeere_info'
 
   root 'main#home'
   get 'error', to: 'main#error'

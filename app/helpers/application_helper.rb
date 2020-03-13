@@ -295,4 +295,8 @@ module ApplicationHelper
                           html: html },
                   title: t('info')
   end
+
+  def realization_path(realization)
+    "/#{realization.first.downcase.pluralize}/#{realization.second}"
+  end
 end

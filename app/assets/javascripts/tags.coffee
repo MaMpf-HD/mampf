@@ -154,13 +154,24 @@ $(document).on 'turbolinks:load', ->
     return
 
   $erdbeereTags = $('#erdbeereTags')
-  if $erdbeereTags?
+  if $erdbeereTags.length > 0
     $.ajax Routes.find_erdbeere_tags_path(),
       type: 'GET'
       dataType: 'script'
       data: {
         sort: $erdbeereTags.data('sort')
         id: $erdbeereTags.data('id')
+      }
+    return
+
+  $erdbeereRealizations = $('.erdbeere-realization')
+  $erdbeereRealizations.each ->
+    $.ajax Routes.display_erdbeere_info_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        sort: $(this).data('sort')
+        id: $(this).data('id')
       }
     return
 
