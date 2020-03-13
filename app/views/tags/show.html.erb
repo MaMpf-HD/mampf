@@ -29,11 +29,15 @@
             </div>
             <div class="card-body">
               <% @realizations.each do |r| %>
-                <%= link_to t('basics.loading_data'),
-                            realization_path(r),
-                            class: 'erdbeere-realization',
-                            data: { sort: r.first,
-                                    id: r.second } %>
+                <div class="row">
+                  <div class="col-12">
+                    <%= link_to t('basics.loading_data'),
+                                realization_path(r),
+                                class: 'erdbeere-realization',
+                                data: { sort: r.first,
+                                        id: r.second } %>
+                  </div>
+                </div>
               <% end %>
             </div>
           </div>

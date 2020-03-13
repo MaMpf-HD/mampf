@@ -292,6 +292,8 @@ Rails.application.routes.draw do
                             as: 'cancel_edit_erdbeere_tags'
   get 'display_erdbeere_info', to: 'erdbeere#display_info',
                             as: 'display_erdbeere_info'
+  get 'fill_realizations_select', to: 'erdbeere#fill_realizations_select',
+                                  as: 'fill_realizations_select'
 
   root 'main#home'
   get 'error', to: 'main#error'

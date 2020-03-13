@@ -85,6 +85,22 @@ class ErdbeereController < ApplicationController
     redirect_to erdbeere_property_path(id)
   end
 
+  def fill_realizations_select
+    response = Faraday.get 'https://erdbeere-dev.mathi.uni-heidelberg.de/' \
+                           'api/v1/structures/'
+    @tag = Tag.find_by_id(params[:id])
+    hash = JSON.parse(response.body)
+    @structures = hash['data'].map do |d|
+      { id: d['id'],
+        name: d['attributes']['name'],
+        properties: d['relationships']['original_properties']['data'].map { |x| x['id'] }}
+    end
+    @properties = hash['included'].map do |d|
+      { id: d['id'],
+        name: d['attributes']['name'] }
+    end
+  end
+
   private
 
   def erdbeere_params

@@ -2121,6 +2121,10 @@ de:
       structures:
         Hier kannst Du wählen, welche Strukturen aus der ErDBeere-Datenbank
         für diese Vorlesung angezeigt werden sollen.
+    structures: 'Strukturen'
+    properties: 'Eigenschaften'
+    edit_realizations: 'Realisierungen bearbeiten'
+    no_realizations: 'Es sind keine Realisierungen vorhanden.'
   basics:
     course: 'Modul'
     courses: 'Module'
@@ -2249,7 +2253,7 @@ de:
     documents: 'Dokumente'
     optional: 'optional'
     statistics: 'Statistik'
-    loading_data: 'Laden Daten...'
+    loading_data: 'Lade Daten...'
     realizations: 'Realisierungen'
   access:
     unpublished: 'unveröffentlicht'

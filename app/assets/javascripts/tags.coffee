@@ -34,15 +34,34 @@ $(document).on 'turbolinks:load', ->
   # prepare action box when related tags are edited
   $('#selectRelatedTags').on 'click', ->
     $('#selectRelatedTagsForm').show()
-    $('#tagActionType').show()
+    $('#tagActionTypeRelated').show()
     $(this).hide()
+    $('#selectTagRealizations').hide()
+    $('#tagActionHeader').hide()
+    return
+
+  # prepare action box when related tags are edited
+  $('#selectTagRealizations').on 'click', ->
+    $('#selectTagRealizationsForm').show()
+    $('#tagActionTypeRealizations').show()
+    $(this).hide()
+    $('#selectRelatedTags').hide()
     $('#tagActionHeader').hide()
     return
 
   $('#cancelSelectRelatedTags').on 'click', ->
     $('#selectRelatedTagsForm').hide()
-    $('#tagActionType').hide()
+    $('#tagActionTypeRelated').hide()
     $('#tagActionHeader').show()
+    $('#selectRelatedTags').show()
+    $('#selectTagRealizations').show()
+    return
+
+  $('#cancelSelectRealizations').on 'click', ->
+    $('#selectTagRealizationsForm').hide()
+    $('#tagActionTypeRealizations').hide()
+    $('#tagActionHeader').show()
+    $('#selectTagRealizations').show()
     $('#selectRelatedTags').show()
     return
 
@@ -174,6 +193,18 @@ $(document).on 'turbolinks:load', ->
         id: $(this).data('id')
       }
     return
+
+  $selectTagRealizations = $('#selectTagRealizationsForm')
+  if $selectTagRealizations.length > 0
+    $.ajax Routes.fill_realizations_select_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: $selectTagRealizations.data('id')
+      }
+    return
+
+
 
   return
 # clean up before turbolinks caches

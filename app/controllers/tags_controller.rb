@@ -66,6 +66,7 @@ class TagsController < ApplicationController
     return if @errors.present?
     @tag.update(tag_params)
     if @tag.valid?
+      @tag.update(realizations: realization_params)
       # make sure the tag is touched even if only some relations have been
       # modified (important for caching)
       @tag.touch
@@ -280,6 +281,12 @@ class TagsController < ApplicationController
                                 section_ids: [],
                                 lesson_ids: [],
                                 media_ids: [])
+  end
+
+  def realization_params
+    (params.require(:tag).permit(realizations: [])[:realizations] - [''])
+      .map { |r| r.split('-') }
+      .map { |x| [x.first, x.second.to_i] }
   end
 
   def check_permissions

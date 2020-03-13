@@ -1993,6 +1993,10 @@ en:
       structures:
         Here you can select which structures from the ErDBeere database
         are displayed for this lecture.
+    structures: 'Structures'
+    properties: 'Properties'
+    edit_relizations: 'Edit Realizations'
+    no_realizations: 'There are no realizations.'
   basics:
     course: 'Course'
     courses: 'Courses'
