@@ -120,6 +120,8 @@ Rails.application.routes.draw do
                                       as: 'show_structures'
   get 'lectures/:id/edit_structures', to: 'lectures#edit_structures',
                                       as: 'edit_structures'
+  get 'lectures/:id/search_examples', to: 'lectures#search_examples',
+                                      as: 'search_examples'
   post 'lectures/:id/publish', to: 'lectures#publish',
                               as: 'publish_lecture'
   post 'lectures/:id/import_media', to: 'lectures#import_media',
@@ -278,6 +280,7 @@ Rails.application.routes.draw do
 
   get 'examples/:id', to: 'erdbeere#show_example',
                       as: 'erdbeere_example'
+  post 'examples/find', to: 'erdbeere#find_example'
   get 'properties/:id', to: 'erdbeere#show_property',
                         as: 'erdbeere_property'
   get 'structures/:id', to: 'erdbeere#show_structure',

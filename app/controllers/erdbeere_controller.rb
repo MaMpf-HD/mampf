@@ -101,6 +101,10 @@ class ErdbeereController < ApplicationController
     end
   end
 
+  def find_example
+    head :ok
+  end
+
   private
 
   def erdbeere_params

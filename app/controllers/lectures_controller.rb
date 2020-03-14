@@ -189,6 +189,13 @@ class LecturesController < ApplicationController
     render layout: 'application'
   end
 
+  def search_examples
+    response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
+                           "api/v1/search"
+    @form = JSON.parse(response.body)['embedded_html']
+    render layout: 'application'
+  end
+
   private
 
   def set_lecture
