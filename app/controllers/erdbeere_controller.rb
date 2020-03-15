@@ -102,12 +102,25 @@ class ErdbeereController < ApplicationController
   end
 
   def find_example
-    head :ok
+    response = Faraday.get('https://erdbeere-dev.mathi.uni-heidelberg.de/' \
+                           'api/v1/find?' + find_params.to_query)
+    pp response
+    @content = if response.status == 200
+                 JSON.parse(response.body)['embedded_html']
+               else
+                 'Something went wrong.'
+               end
   end
 
   private
 
   def erdbeere_params
     params.require(:erdbeere).permit(:sort, :id, tag_ids: [])
+  end
+
+  def find_params
+    params.require(:find).permit(:structure_id,
+                                 satisfies: [],
+                                 violates: [])
   end
 end
