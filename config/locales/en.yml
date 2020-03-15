@@ -1997,6 +1997,7 @@ en:
     properties: 'Properties'
     edit_relizations: 'Edit Realizations'
     no_realizations: 'There are no realizations.'
+    search_examples: 'Search for Examples'
   basics:
     course: 'Course'
     courses: 'Courses'

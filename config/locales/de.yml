@@ -2125,6 +2125,7 @@ de:
     properties: 'Eigenschaften'
     edit_realizations: 'Realisierungen bearbeiten'
     no_realizations: 'Es sind keine Realisierungen vorhanden.'
+    search_examples: 'Beispiele suchen'
   basics:
     course: 'Modul'
     courses: 'Module'

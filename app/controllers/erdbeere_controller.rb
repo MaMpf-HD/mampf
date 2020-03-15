@@ -104,7 +104,6 @@ class ErdbeereController < ApplicationController
   def find_example
     response = Faraday.get('https://erdbeere-dev.mathi.uni-heidelberg.de/' \
                            'api/v1/find?' + find_params.to_query)
-    pp response
     @content = if response.status == 200
                  JSON.parse(response.body)['embedded_html']
                else
