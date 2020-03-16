@@ -1,5 +1,6 @@
 # LecturesController
 class LecturesController < ApplicationController
+  include ActionController::RequestForgeryProtection
   before_action :set_lecture, except: [:new, :create]
   before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
   authorize_resource
@@ -195,7 +196,7 @@ class LecturesController < ApplicationController
     @form = JSON.parse(response.body)['embedded_html']
     @form.gsub!('token_placeholder',
                 '<input type="hidden" name="authenticity_token" ' +
-                'value="">')
+                'value="' + form_authenticity_token + '">')
     render layout: 'application'
   end
 
