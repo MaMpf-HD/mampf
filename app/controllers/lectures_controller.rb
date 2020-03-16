@@ -193,6 +193,9 @@ class LecturesController < ApplicationController
     response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
                            "api/v1/search"
     @form = JSON.parse(response.body)['embedded_html']
+    @form.gsub!('token_placeholder',
+                '<input type="hidden" name="authenticity_token" ' +
+                'value="">')
     render layout: 'application'
   end
 
