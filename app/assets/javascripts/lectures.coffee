@@ -263,6 +263,13 @@ $(document).on 'turbolinks:load', ->
       dataType: 'script'
     return
 
+  $lectureStructures = $('#lectureStructuresInfo')
+  if $lectureStructures.length > 0
+    structures = $lectureStructures.data('structures')
+    console.log structures
+    for s in structures
+      $('#structure-item-' + s).show()
+
   return
 
 # clean up everything before turbolinks caches

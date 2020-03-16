@@ -191,12 +191,16 @@ class LecturesController < ApplicationController
   end
 
   def search_examples
-    response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
-                           "api/v1/search"
-    @form = JSON.parse(response.body)['embedded_html']
-    @form.gsub!('token_placeholder',
-                '<input type="hidden" name="authenticity_token" ' +
-                'value="' + form_authenticity_token + '">')
+    if @lecture.structure_ids.any?
+      response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
+                             "api/v1/search"
+      @form = JSON.parse(response.body)['embedded_html']
+      @form.gsub!('token_placeholder',
+                  '<input type="hidden" name="authenticity_token" ' +
+                  'value="' + form_authenticity_token + '">')
+    else
+      @form = ''
+    end
     render layout: 'application'
   end
 

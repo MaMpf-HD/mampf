@@ -1,0 +1,13 @@
+<% lecture = Lecture.includes(:course).find_by_id(params[:lecture_id]) %>
+<% lecture = nil unless lecture&.id.in?(current_user.lecture_ids) %>
+<% lecture ||= Lecture.includes(:course).find_by_id(cookies[:current_lecture]) %>
+<% lecture ||= course.primary_lecture(current_user) %>
+<div class="row p-2">
+  <div class="col-12 text-center">
+    <% if lecture.present? %>
+      <%= link_to t('erdbeere.search_examples'),
+                  search_examples_path(lecture),
+                  class: ' btn btn-outline-secondary' %>
+    <% end %>
+  </div>
+</div>
