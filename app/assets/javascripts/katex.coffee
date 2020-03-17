@@ -22,7 +22,7 @@ $(document).on 'turbolinks:load', ->
         display: true
       }
     ]
-    ignoredClasses: ['trix-content']
+    ignoredClasses: ['trix-content', 'form-control']
     throwOnError: false
 
   return
