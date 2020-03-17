@@ -1989,6 +1989,7 @@ en:
   erdbeere:
     show_structures: 'Structures, properties and examples'
     select_structures: Select Structures
+    structure_index: 'Structure Index'
     info:
       structures:
         Here you can select which structures from the ErDBeere database
@@ -1998,6 +1999,8 @@ en:
     edit_relizations: 'Edit Realizations'
     no_realizations: 'There are no realizations.'
     search_examples: 'Search for Examples'
+    no_structures: >
+      There are no structures associated to this lecture.
   basics:
     course: 'Course'
     courses: 'Courses'

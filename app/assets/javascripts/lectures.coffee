@@ -266,9 +266,18 @@ $(document).on 'turbolinks:load', ->
   $lectureStructures = $('#lectureStructuresInfo')
   if $lectureStructures.length > 0
     structures = $lectureStructures.data('structures')
-    console.log structures
     for s in structures
       $('#structure-item-' + s).show()
+
+  $('#switchGlobalStructureSearch').on 'click', ->
+    if $(this).is(':checked')
+      $('[id^="structure-item-"]').show()
+    else
+      $('[id^="structure-item-"]').hide()
+      structures = $lectureStructures.data('structures')
+      for s in structures
+        $('#structure-item-' + s).show()
+    return
 
   return
 

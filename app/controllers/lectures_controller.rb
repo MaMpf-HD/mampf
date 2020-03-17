@@ -199,7 +199,7 @@ class LecturesController < ApplicationController
                   '<input type="hidden" name="authenticity_token" ' +
                   'value="' + form_authenticity_token + '">')
     else
-      @form = ''
+      @form = I18n.t('erdbeere.no_structures')
     end
     render layout: 'application'
   end

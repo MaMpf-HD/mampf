@@ -1,3 +1,10 @@
+<div class="row p-2 mb-3">
+  <div class="col-12">
+    <%= link_to t('erdbeere.structure_index'),
+                show_structures_path(@lecture),
+                class: 'btn btn-lg btn-outline-secondary' %>
+  </div>
+</div>
 <%= raw(@form) %>
 <span id="lectureStructuresInfo"
       data-structures="<%= @lecture.structure_ids.to_json %>">

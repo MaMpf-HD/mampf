@@ -2122,10 +2122,14 @@ de:
         Hier kannst Du wählen, welche Strukturen aus der ErDBeere-Datenbank
         für diese Vorlesung angezeigt werden sollen.
     structures: 'Strukturen'
+    structure_index: 'zur Strukturenübersicht'
     properties: 'Eigenschaften'
     edit_realizations: 'Realisierungen bearbeiten'
     no_realizations: 'Es sind keine Realisierungen vorhanden.'
     search_examples: 'Beispiele suchen'
+    no_structures: >
+      Zu dieser Vorlesung sind keine Strukturen aus der Beispieldatenbank
+      assoziiert.
   basics:
     course: 'Modul'
     courses: 'Module'
