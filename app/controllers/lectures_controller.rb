@@ -192,8 +192,7 @@ class LecturesController < ApplicationController
 
   def search_examples
     if @lecture.structure_ids.any?
-      response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
-                             "api/v1/search"
+      response = Faraday.get(ENV['ERDBEERE_API'] + '/search')
       @form = JSON.parse(response.body)['embedded_html']
       @form.gsub!('token_placeholder',
                   '<input type="hidden" name="authenticity_token" ' +
@@ -302,8 +301,7 @@ class LecturesController < ApplicationController
 
   def set_erdbeere_data
     @structure_ids = @lecture.structure_ids
-    response = Faraday.get "https://erdbeere-dev.mathi.uni-heidelberg.de/" \
-                           "api/v1/structures"
+    response = Faraday.get(ENV['ERDBEERE_API'] + '/structures')
     response_hash = if response.status == 200
                        JSON.parse(response.body)
                      else

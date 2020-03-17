@@ -2,6 +2,7 @@
   <div class="col-12">
     <h4>
       <%= I18n.t('erdbeere.show_structures') %>
+      (<%= lecture.short_title %>)
       <%= link_to search_examples_path(lecture),
                   class: ' btn btn-lg btn-outline-secondary' do %>
         <span>

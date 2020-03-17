@@ -140,21 +140,14 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.erdbeere?(current_user)) ||
-            (!lecture && !course.erdbeere?(current_user)) %>
-      <a href="<%= DefaultSetting::ERDBEERE_LINK %>"
-         class="nav-link"
-         target="_blank" %>
-         <%= t('categories.erdbeere.singular') %>
-         <i class="fas fa-external-link-alt fa-xs"></i>
-      </a>
-    <% else %>
+    <% if lecture && lecture.structure_ids.any? %>
       <%= link_to t('categories.erdbeere.singular'),
-                  course_food_path(course_id: course.id,
-                                   params: { project: 'erdbeere',
-                                             lecture_id: lecture&.id }),
-                  class: "nav-link",
-                  target: :blank %>
+                  show_structures_path(lecture),
+                  class: 'nav-link' %>
+    <% else %>
+      <span class="nav-link disabled">
+        <%= t('categories.erdbeere.singular') %>
+      </span>
     <% end %>
   </li>
   <li class="nav-item">
