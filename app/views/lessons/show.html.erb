@@ -69,7 +69,8 @@
                          small: false,
                          embedded: false,
                          section_links: false,
-                         content: @lesson.content } %>
+                         content: @lesson.content,
+                         singular_medium: @lesson.singular_medium } %>
   </div>
   <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
     <%= render partial: 'media/related_media',

@@ -1,8 +1,22 @@
+<% singular_medium ||= false %>
 <div class="card bg-light">
   <% unless embedded %>
     <div class="card-header bg-generic-card-header">
       <h5>
-        <%= t('content') %>
+        <div class="row">
+          <div class="col-12 col-lg-4">
+            <%= t('content') %>
+          </div>
+          <div class="col-12 col-lg-8">
+            <% if singular_medium %>
+              <span style="display: flex; justify-content: flex-start;">
+                  <%= render partial: 'media/medium/buttons',
+                             locals: { medium: singular_medium,
+                                       ref_link: nil } %>
+              </span>
+            <% end %>
+          </div>
+        </div>
       </h5>
     </div>
   <% end %>
