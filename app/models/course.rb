@@ -1,6 +1,7 @@
 # Course class
 class Course < ApplicationRecord
   include ApplicationHelper
+
   has_many :lectures, dependent: :destroy
 
   # tags are notions that treated in the course
@@ -28,6 +29,15 @@ class Course < ApplicationRecord
   has_many :editable_user_joins, as: :editable, dependent: :destroy
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
+
+  # a course has many areas, e.g. "Algebra" and "Number Theory"
+  has_many :area_course_joins
+  has_many :areas, through: :area_course_joins
+
+  # a course has many study programs, e.g. "BSc Math (100%)" and
+  # "BSc Math (50%)"
+  has_many :area_course_joins
+  has_many :areas, through: :area_course_joins
 
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
