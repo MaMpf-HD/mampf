@@ -151,6 +151,7 @@ en:
       media_search: 'Search media'
       tags: 'Tag overview'
       terms: 'Terms'
+      classification: 'Classification'
       news: 'News'
       users: 'User administration'
       course: 'Course'
@@ -162,6 +163,9 @@ en:
         free_medium: 'This medium is free.'
         user_medium: 'This medium is only available for MaMpf users.'
         subscriber_medium: 'This medium is only available for subscribers.'
+    classification:
+      areas: 'Areas'
+      programs: 'Study Paths'
     main:
       my_lectures: 'My event series'
       type: 'type'

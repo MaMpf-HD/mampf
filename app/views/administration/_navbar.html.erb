@@ -68,6 +68,14 @@
                       data: { toggle: 'tooltip' },
                       title: t('admin.navbar.terms') %>
         </li>
+        <li class="nav-item">
+          <%= link_to '',
+                      classification_path,
+                      class: 'fas fa-clipboard-list fa-lg text-light nav-link',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip' },
+                      title: t('admin.navbar.classification') %>
+        </li>
         <li>
           <%= link_to '', announcements_path,
                       class: 'far fa-newspaper fa-lg text-light nav-link',

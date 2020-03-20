@@ -14,6 +14,8 @@ Rails.application.routes.draw do
                               as: 'exit_administration'
   get '/administration/profile', to: 'administration#profile',
                                  as: 'elevated_profile'
+  get '/administration/classification', to: 'administration#classification',
+                                        as: 'classification'
 
   resources :announcements, only: [ :index, :new, :create]
 

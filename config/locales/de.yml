@@ -143,6 +143,7 @@ de:
       media_search: 'Mediensuche'
       tags: 'Tagübersicht'
       terms: 'Semester'
+      classification: 'Systematik'
       news: 'News'
       users: 'Nutzerverwaltung'
       course: 'Modul'
@@ -156,6 +157,9 @@ de:
         subscriber_medium: >
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
+    classification:
+      areas: 'Teilgebiete'
+      programs: 'Studiengänge'
     main:
       my_lectures: 'Meine Veranstaltungen'
       type: 'Typ'

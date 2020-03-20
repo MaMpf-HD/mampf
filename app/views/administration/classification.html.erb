@@ -1,0 +1,38 @@
+<div class="row mt-3 p-2">
+	<div class="col-12">
+		<div class="card">
+			<div class="card-header">
+				<%= t('admin.navbar.classification') %>
+			</div>
+			<div class="card-body">
+				<ul>
+					<% @subjects.each do |s| %>
+						<li>
+							<%= s.name %>
+							<div class="ml-2">
+								<%= t('admin.classification.areas') %>:
+								<ul>
+									<% s.areas.each do |a| %>
+										<li>
+											<%= a.name %>
+										</li>
+									<% end %>
+								</ul>
+							</div>
+							<div class="ml-2">
+								<%= t('admin.classification.programs') %>:
+								<ul>
+									<% s.programs.each do |p| %>
+										<li>
+											<%= p.name %>
+										</li>
+									<% end %>
+								</ul>
+							</div>
+						</li>
+					<% end %>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
