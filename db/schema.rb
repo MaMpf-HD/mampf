@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_20_124830) do
+ActiveRecord::Schema.define(version: 2020_03_21_101851) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(version: 2020_03_20_124830) do
     t.integer "course_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "level"
     t.index ["area_id"], name: "index_area_course_joins_on_area_id"
     t.index ["course_id"], name: "index_area_course_joins_on_course_id"
   end
@@ -313,6 +314,7 @@ ActiveRecord::Schema.define(version: 2020_03_20_124830) do
     t.integer "course_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "level"
     t.index ["course_id"], name: "index_program_course_joins_on_course_id"
     t.index ["program_id"], name: "index_program_course_joins_on_program_id"
   end

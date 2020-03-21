@@ -21,6 +21,8 @@ Rails.application.routes.draw do
 
   resources :answers, except: [:index, :show, :edit]
 
+  resources :areas, except: [:show]
+
   get 'chapters/:id/list_sections', to: 'chapters#list_sections',
                                      as: 'list_sections'
   resources :chapters, except: [:index, :show]
@@ -200,6 +202,8 @@ Rails.application.routes.draw do
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'
 
+  resources :programs, except: [:show]
+
   patch 'questions/:id/reassign', to: 'questions#reassign',
                                   as: 'reassign_question'
   patch 'question/:id/set_solution_type', to: 'questions#set_solution_type',
@@ -233,6 +237,8 @@ Rails.application.routes.draw do
   patch 'remarks/:id/reassign', to: 'remarks#reassign',
                                 as: 'reassign_remark'
   resources :remarks, only: [:edit, :update]
+
+  resources :subjects, except: [:show]
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'

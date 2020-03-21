@@ -36,8 +36,8 @@ class Course < ApplicationRecord
 
   # a course has many study programs, e.g. "BSc Math (100%)" and
   # "BSc Math (50%)"
-  has_many :area_course_joins
-  has_many :areas, through: :area_course_joins
+  has_many :program_course_joins
+  has_many :programs, through: :program_course_joins
 
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true

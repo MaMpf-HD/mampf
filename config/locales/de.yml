@@ -1617,6 +1617,9 @@ de:
           Für diejenigen, für die du diese Rechte besitzt, werden die
           Zugriffsrechte für die NutzerInnen genauso gesetzt wie beim Quiz
           ausgewählt.
+    subject:
+      edit: 'Fach bearbeiten'
+      name: 'Bezeichnung'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2290,6 +2293,9 @@ de:
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
     create_lecture: 'Veranstaltung anlegen'
+    create_area: 'Gebiet anlegen'
+    create_program: 'Studiengang anlegen'
+    create_subject: 'Fach anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2436,6 +2442,7 @@ de:
     no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
     no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
     no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
+    no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
   activerecord:
   activerecord:
     errors:
