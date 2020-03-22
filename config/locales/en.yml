@@ -1526,10 +1526,12 @@ en:
       edit: 'Edit Study Path'
       name: 'Title'
       new: 'Create new program'
+      no_courses: 'There are no courses in this program yet.'
     division:
       edit: 'Edit Division'
       name: 'Title'
       new: 'Create new division'
+      no_courses: 'There are no courses in this division yet.'
   profile:
     account: 'Account'
     name: 'Display name'

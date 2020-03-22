@@ -11,6 +11,6 @@ class Program < ApplicationRecord
 	end
 
 	def courses
-		Course.where(division: divisions)
+		divisions.map(&:courses).flatten
 	end
 end

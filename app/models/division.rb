@@ -1,7 +1,7 @@
 class Division < ApplicationRecord
   belongs_to :program
-  has_many :divison_course_joins
-  has_many :courses, through: :divisin_course_joins
+  has_many :division_course_joins
+  has_many :courses, through: :division_course_joins
 
 	translates :name
 

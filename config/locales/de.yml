@@ -1637,6 +1637,7 @@ de:
       edit: 'Teilbereich bearbeiten'
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
+      no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
   profile:
     account: 'Account'
     name: 'Anzeigename'

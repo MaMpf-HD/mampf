@@ -1,4 +1,5 @@
-<% Program.includes(courses: [lectures: [:term, :teacher]]).each do |p| %>
+<% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
+          .select { |p| p.courses.any? }.each do |p| %>
   <div class="row">
     <div class="accordion col-12"
          id="subscriptionsAccordion">
@@ -12,8 +13,8 @@
              class="collapse"
              data-parent="#subscriptionsAccordion">
           <div class="card-body">
-            <%= render partial: 'profile/courses',
-                       locals: { courses: p.courses,
+            <%= render partial: 'profile/divisions',
+                       locals: { divisions: p.divisions.select { |p| p.courses.any? },
                                  f: f } %>
           </div>
         </div>
