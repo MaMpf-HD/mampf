@@ -1620,6 +1620,15 @@ de:
     subject:
       edit: 'Fach bearbeiten'
       name: 'Bezeichnung'
+      new: 'Fach anlegen'
+    area:
+      edit: 'Teilgebiet bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Teilgebiet anlegen'
+    program:
+      edit: 'Studiengang bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Studiengang anlegen'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2443,7 +2452,8 @@ de:
     no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
     no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
     no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
-  activerecord:
+    no_area: 'Ein Teilgebiet mit der angeforderten id existiert nicht.'
+    no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'

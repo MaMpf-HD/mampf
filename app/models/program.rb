@@ -4,4 +4,6 @@ class Program < ApplicationRecord
 	has_many :courses, through: :program_course_joins
 
 	translates :name
+	globalize_accessors locales: I18n.available_locales,
+											attributes: translated_attribute_names
 end

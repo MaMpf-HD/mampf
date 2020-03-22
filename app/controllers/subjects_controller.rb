@@ -1,9 +1,10 @@
 # SubjectsController
 class SubjectsController < ApplicationController
-  before_action :set_subject, only: [:edit, :update]
+  before_action :set_subject, only: [:edit, :update, :destroy]
   authorize_resource
 
   def new
+    @subject = Subject.new
   end
 
 	def edit
@@ -13,6 +14,17 @@ class SubjectsController < ApplicationController
 		@subject.update(subject_params)
 		redirect_to classification_path
 	end
+
+  def create
+    @subject = Subject.new(subject_params)
+    @subject.save
+    redirect_to classification_path
+  end
+
+  def destroy
+    @subject.destroy
+    redirect_to classification_path
+  end
 
   private
 

@@ -1,4 +1,4 @@
-$('#genericModalLabel').empty().append('<h5><%= t("admin.subject.name") %></h5>')
+$('#genericModalLabel').empty().append('<h5><%= t("admin.subject.edit") %></h5>')
 $('#generic-modal-content').empty()
 	.append('<%= j render partial: "subjects/edit/edit",
 												locals: { subject: @subject } %>')

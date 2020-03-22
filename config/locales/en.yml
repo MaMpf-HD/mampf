@@ -1513,6 +1513,12 @@ en:
     subject:
       edit: 'Edit Subject'
       name: 'Title'
+    area:
+      edit: 'Edit Area'
+      name: 'Title'
+    program:
+      edit: 'Edit Study Path'
+      name: 'Title'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -2308,6 +2314,8 @@ en:
     no_clicker: 'There is no clicker with this id.'
     no_clicker_access: 'You cannot to edit this clicker.'
     no_answer: 'There is no subject with this id.'
+    no_area: 'There is no area with this id.'
+    no_program: 'There is no program with this id.'
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

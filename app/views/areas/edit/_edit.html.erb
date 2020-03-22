@@ -1,8 +1,10 @@
-<%= form_with model: subject do |f| %>
+<%= form_with model: area do |f| %>
+	<%= f.hidden_field :subject_id,
+										 value: area.subject_id %>
 	<div class="row">
 		<div class="col-12">
 			<strong>
-				<%= t('admin.subject.name') %>
+				<%= t('admin.area.name') %>
 			</strong>
 		</div>
 	</div>
