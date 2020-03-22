@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_10_164147) do
+ActiveRecord::Schema.define(version: 2020_03_21_101851) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -30,6 +30,33 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
     t.datetime "updated_at", null: false
     t.integer "question_id"
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "area_course_joins", force: :cascade do |t|
+    t.integer "area_id"
+    t.integer "course_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "level"
+    t.index ["area_id"], name: "index_area_course_joins_on_area_id"
+    t.index ["course_id"], name: "index_area_course_joins_on_course_id"
+  end
+
+  create_table "area_translations", force: :cascade do |t|
+    t.integer "area_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "name"
+    t.index ["area_id"], name: "index_area_translations_on_area_id"
+    t.index ["locale"], name: "index_area_translations_on_locale"
+  end
+
+  create_table "areas", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "subject_id"
+    t.index ["subject_id"], name: "index_areas_on_subject_id"
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -282,6 +309,33 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
     t.index ["tag_id"], name: "index_notions_on_tag_id"
   end
 
+  create_table "program_course_joins", force: :cascade do |t|
+    t.integer "program_id"
+    t.integer "course_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "level"
+    t.index ["course_id"], name: "index_program_course_joins_on_course_id"
+    t.index ["program_id"], name: "index_program_course_joins_on_program_id"
+  end
+
+  create_table "program_translations", force: :cascade do |t|
+    t.integer "program_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "name"
+    t.index ["locale"], name: "index_program_translations_on_locale"
+    t.index ["program_id"], name: "index_program_translations_on_program_id"
+  end
+
+  create_table "programs", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "subject_id"
+    t.index ["subject_id"], name: "index_programs_on_subject_id"
+  end
+
   create_table "referrals", force: :cascade do |t|
     t.text "start_time"
     t.text "end_time"
@@ -324,6 +378,21 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
     t.text "tags_order"
     t.text "details"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
+  end
+
+  create_table "subject_translations", force: :cascade do |t|
+    t.integer "subject_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "name"
+    t.index ["locale"], name: "index_subject_translations_on_locale"
+    t.index ["subject_id"], name: "index_subject_translations_on_subject_id"
+  end
+
+  create_table "subjects", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "tags", force: :cascade do |t|
@@ -608,8 +677,14 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
 
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
+  add_foreign_key "area_course_joins", "areas"
+  add_foreign_key "area_course_joins", "courses"
+  add_foreign_key "areas", "subjects"
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
+  add_foreign_key "program_course_joins", "courses"
+  add_foreign_key "program_course_joins", "programs"
+  add_foreign_key "programs", "subjects"
 end

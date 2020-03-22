@@ -81,6 +81,8 @@ gem 'barby'
 gem 'rqrcode'
 gem 'sidekiq'
 gem 'faraday'
+gem 'globalize'
+gem 'globalize-accessors'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

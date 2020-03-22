@@ -21,6 +21,7 @@ class Ability
       can [:read, :inspect], :all
       cannot :index, Announcement
       can :manage, [:administration, :erdbeere, Item, Referral]
+      cannot :classification, :administration
       # :create is a cancancan alias for new and create actions
       can :create, [Chapter, Lecture, Lesson, Medium, Section]
       # :update is a cancancan alias for update and edit actions

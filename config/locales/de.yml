@@ -143,6 +143,7 @@ de:
       media_search: 'Mediensuche'
       tags: 'Tagübersicht'
       terms: 'Semester'
+      classification: 'Systematik'
       news: 'News'
       users: 'Nutzerverwaltung'
       course: 'Modul'
@@ -156,6 +157,9 @@ de:
         subscriber_medium: >
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
+    classification:
+      areas: 'Teilgebiete'
+      programs: 'Studiengänge'
     main:
       my_lectures: 'Meine Veranstaltungen'
       type: 'Typ'
@@ -1613,6 +1617,18 @@ de:
           Für diejenigen, für die du diese Rechte besitzt, werden die
           Zugriffsrechte für die NutzerInnen genauso gesetzt wie beim Quiz
           ausgewählt.
+    subject:
+      edit: 'Fach bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Fach anlegen'
+    area:
+      edit: 'Teilgebiet bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Teilgebiet anlegen'
+    program:
+      edit: 'Studiengang bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Studiengang anlegen'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2286,6 +2302,9 @@ de:
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
     create_lecture: 'Veranstaltung anlegen'
+    create_area: 'Gebiet anlegen'
+    create_program: 'Studiengang anlegen'
+    create_subject: 'Fach anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2432,7 +2451,9 @@ de:
     no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
     no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
     no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
-  activerecord:
+    no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
+    no_area: 'Ein Teilgebiet mit der angeforderten id existiert nicht.'
+    no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'
