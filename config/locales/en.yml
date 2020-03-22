@@ -164,8 +164,8 @@ en:
         user_medium: 'This medium is only available for MaMpf users.'
         subscriber_medium: 'This medium is only available for subscribers.'
     classification:
-      areas: 'Areas'
       programs: 'Study Paths'
+      divisions: 'Divisions'
     main:
       my_lectures: 'My event series'
       type: 'type'
@@ -531,7 +531,7 @@ en:
       no_lectures: 'There are no event series for this course.'
       additional_information: 'Additional information'
       additional_information_visible: 'Additional information visible'
-      areas: 'Areas'
+      divisions: 'Divisions'
       programs: 'Study Paths'
       info:
         title: >
@@ -571,8 +571,8 @@ en:
           courses to Algebra 1.
           This is relevant because users can adjust their settings so
           that they are shown related materials form preceding courses.
-        areas: >
-          Here you can choose to which areas of which subjects the course is
+        divisions: >
+          Here you can choose to which divisions of which subjects the course is
           associated to.
         programs: >
           Here you can select to ehich study paths of which subjects this course
@@ -1521,12 +1521,15 @@ en:
     subject:
       edit: 'Edit Subject'
       name: 'Title'
-    area:
-      edit: 'Edit Area'
-      name: 'Title'
+      new: 'Create new Subject'
     program:
       edit: 'Edit Study Path'
       name: 'Title'
+      new: 'Create new program'
+    division:
+      edit: 'Edit Division'
+      name: 'Title'
+      new: 'Create new division'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -2180,9 +2183,9 @@ en:
     create_medium: 'Create Medium'
     create_announcement: 'Create Announcement'
     create_lecture: 'Create Event Series'
-    create_area: 'Create Area'
     create_program: 'Create Study Path'
     create_subject: 'Create Subject'
+    create_division: 'Create Division'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -2322,8 +2325,8 @@ en:
     no_clicker: 'There is no clicker with this id.'
     no_clicker_access: 'You cannot to edit this clicker.'
     no_answer: 'There is no subject with this id.'
-    no_area: 'There is no area with this id.'
     no_program: 'There is no program with this id.'
+    no_division: 'There is no division with this id.'
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

@@ -30,14 +30,12 @@ class Course < ApplicationRecord
   has_many :editors, through: :editable_user_joins, as: :editable,
                      source: :user
 
-  # a course has many areas, e.g. "Algebra" and "Number Theory"
-  has_many :area_course_joins
-  has_many :areas, through: :area_course_joins
+  # a course has many divisions of study programs,
+  # e.g. "BSc Math (100%) Wahlpflichtbereich 1"
+  # and "BSc Math (50%) Pflichtmodule"
+  has_many :division_course_joins
+  has_many :divisions, through: :division_course_joins
 
-  # a course has many study programs, e.g. "BSc Math (100%)" and
-  # "BSc Math (50%)"
-  has_many :program_course_joins
-  has_many :programs, through: :program_course_joins
 
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true

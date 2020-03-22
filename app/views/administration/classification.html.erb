@@ -41,40 +41,6 @@
 					</h5>
 		  	</div>
 				<div class="card-body">
-					<%= t('admin.classification.areas') %>:
-					<%= link_to '',
-          				    new_area_path(params: { subject_id: s.id }),
-                  		class: 'fas fa-plus-circle text-dark',
-                  		data: { toggle: 'tooltip',
-                      		    placement: 'bottom' },
-                  		title: t('buttons.create_area'),
-                  		style: 'text-decoration: none;',
-                  		remote: true %>
-					<ul>
-						<% s.areas.each do |a| %>
-			  			<li>
-								<%= a.name %>
-		            <%= link_to '',
-                        edit_area_path(a),
-                        class: 'far fa-edit text-secondary',
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('buttons.edit'),
-                        style: 'text-decoration: none;',
-                        remote: true %>
-          			<%= link_to '',
-                			      area_path(a),
-                      			class: 'fas fa-trash-alt text-secondary ml-1',
-                      			data: { toggle: 'tooltip',
-                            			  placement: 'bottom',
-                              			confirm: t('confirmation.generic') },
-                      			title: t('buttons.delete'),
-                      			style: 'text-decoration: none;',
-                      			remote: true,
-                      			method: :delete %>
-				  		</li>
-						<% end %>
-					</ul>
 					<%= t('admin.classification.programs') %>:
 					<%= link_to '',
           				    new_program_path(params: { subject_id: s.id }),
@@ -106,6 +72,42 @@
                       			style: 'text-decoration: none;',
                       			remote: true,
                       			method: :delete %>
+                <div class="ml-2">
+                  <%= t('admin.classification.divisions') %>:
+                  <%= link_to '',
+                      new_division_path(params: { program_id: p.id }),
+                      class: 'fas fa-plus-circle text-dark',
+                      data: { toggle: 'tooltip',
+                              placement: 'bottom' },
+                      title: t('buttons.create_program'),
+                      style: 'text-decoration: none;',
+                      remote: true %>
+                </div>
+                <ul>
+                  <% p.divisions.each do |d| %>
+                    <li>
+                      <%= d.name %>
+                      <%= link_to '',
+                                  edit_division_path(d),
+                                  class: 'far fa-edit text-secondary ml-2',
+                                  data: { toggle: 'tooltip',
+                                          placement: 'bottom' },
+                                  title: t('buttons.edit'),
+                                  style: 'text-decoration: none;',
+                                  remote: true %>
+                      <%= link_to '',
+                                  division_path(d),
+                                  class: 'fas fa-trash-alt text-secondary ml-1',
+                                  data: { toggle: 'tooltip',
+                                          placement: 'bottom',
+                                          confirm: t('confirmation.generic') },
+                                  title: t('buttons.delete'),
+                                  style: 'text-decoration: none;',
+                                  remote: true,
+                                  method: :delete %>
+                    </li>
+                  <% end %>
+                </ul>
 							</li>
 						<% end %>
 					</ul>

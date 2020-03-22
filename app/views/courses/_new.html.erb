@@ -41,23 +41,12 @@
                              filled: false } } %>
     </div>
     <div class="col-12 form-group">
-      <%= f.label :area_ids,
-                  t('admin.course.areas') %>
-      <%= helpdesk(t('admin.course.info.areas'), false) %>
-      <%= f.select :area_ids,
-                   options_for_select(Area.all.map { |a| [a.name_with_subject, a.id] }),
-                   {},
-                   { class: 'selectize',
-                     multiple: true,
-                     style: 'display: none;',
-                     data: { ajax: false } } %>
-    </div>
-    <div class="col-12 form-group">
-      <%= f.label :program_ids,
-                  t('admin.course.programs') %>
-      <%= helpdesk(t('admin.course.info.programs'), false) %>
-      <%= f.select :program_ids,
-                   options_for_select(Program.all.map { |p| [p.name_with_subject, p.id] }),
+      <%= f.label :division_ids,
+                  t('admin.course.divisions') %>
+      <%= helpdesk(t('admin.course.info.divisions'), false) %>
+      <%= f.select :division_ids,
+                   options_for_select(Division.all.map { |d| [d.name_with_program, d.id] },
+                                      course.division_ids),
                    {},
                    { class: 'selectize',
                      multiple: true,

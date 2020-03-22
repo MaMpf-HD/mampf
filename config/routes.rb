@@ -66,6 +66,8 @@ Rails.application.routes.draw do
                                  as: 'destroy_course_forum'
   resources :courses, except: [:index]
 
+  resources :divisions, except: [:show]
+
   get 'events/update_vertex_default', as: 'update_vertex_default'
   get 'events/update_branching', as: 'update_branching'
   get 'events/update_vertex_body', as: 'update_vertex_body'

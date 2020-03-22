@@ -158,8 +158,8 @@ de:
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
     classification:
-      areas: 'Teilgebiete'
       programs: 'Studiengänge'
+      divisions: 'Teilbereiche'
     main:
       my_lectures: 'Meine Veranstaltungen'
       type: 'Typ'
@@ -564,8 +564,8 @@ de:
       no_lectures: 'Für diesen Kurs gibt es noch keine Veranstaltungen.'
       additional_information: 'Weitere Informationen'
       additional_information_visible: 'Weitere Informationen sichtbar'
-      areas: 'Teilgebiete'
       programs: 'Studiengänge'
+      divisions: 'Teilbereiche'
       info:
         title: >
           Hier musst Du den Titel des Moduls eintragen.
@@ -612,8 +612,8 @@ de:
           insofern relevant, als dass Nutzer in ihren Profileinstellungen
           festlegen können, ob ihnen verknüpfte Materialien auch von inhaltlich
           vorher einzuordnenden Modulen angezeigt werden sollen.
-        areas: >
-          Hier kannst Du angeben, zu welchen Teilgebieten welcher Fächer
+        divisions: >
+          Hier kannst Du angeben, zu welchen Teilbereichen welcher Fächer
           dieses Modul gehört.
         programs: >
           Hier kannst Du angeben, zu welchen Studiengängen welcher Fächer
@@ -1629,14 +1629,14 @@ de:
       edit: 'Fach bearbeiten'
       name: 'Bezeichnung'
       new: 'Fach anlegen'
-    area:
-      edit: 'Teilgebiet bearbeiten'
-      name: 'Bezeichnung'
-      new: 'Teilgebiet anlegen'
     program:
       edit: 'Studiengang bearbeiten'
       name: 'Bezeichnung'
       new: 'Studiengang anlegen'
+    division:
+      edit: 'Teilbereich bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Teilbereich anlegen'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2310,9 +2310,9 @@ de:
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
     create_lecture: 'Veranstaltung anlegen'
-    create_area: 'Gebiet anlegen'
     create_program: 'Studiengang anlegen'
     create_subject: 'Fach anlegen'
+    create_division: 'Teilbereich anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2460,8 +2460,8 @@ de:
     no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
     no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
     no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
-    no_area: 'Ein Teilgebiet mit der angeforderten id existiert nicht.'
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
+    no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'

@@ -1,7 +1,6 @@
 class Program < ApplicationRecord
 	belongs_to :subject
-	has_many :program_course_joins
-	has_many :courses, through: :program_course_joins
+	has_many :divisions, dependent: :destroy
 
 	translates :name
 	globalize_accessors locales: I18n.available_locales,
@@ -9,5 +8,9 @@ class Program < ApplicationRecord
 
 	def name_with_subject
 		"#{subject.name}:#{name}"
+	end
+
+	def courses
+		Course.where(division: divisions)
 	end
 end

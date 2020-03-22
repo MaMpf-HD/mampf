@@ -25,6 +25,6 @@ class AdministrationController < ApplicationController
   end
 
   def classification
-    @subjects = Subject.includes(:areas, :programs).all
+    @subjects = Subject.includes(programs: [:divisions]).all
   end
 end

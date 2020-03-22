@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_21_101851) do
+ActiveRecord::Schema.define(version: 2020_03_22_135411) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -32,16 +32,6 @@ ActiveRecord::Schema.define(version: 2020_03_21_101851) do
     t.index ["question_id"], name: "index_answers_on_question_id"
   end
 
-  create_table "area_course_joins", force: :cascade do |t|
-    t.integer "area_id"
-    t.integer "course_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.integer "level"
-    t.index ["area_id"], name: "index_area_course_joins_on_area_id"
-    t.index ["course_id"], name: "index_area_course_joins_on_course_id"
-  end
-
   create_table "area_translations", force: :cascade do |t|
     t.integer "area_id", null: false
     t.string "locale", null: false
@@ -50,13 +40,6 @@ ActiveRecord::Schema.define(version: 2020_03_21_101851) do
     t.text "name"
     t.index ["area_id"], name: "index_area_translations_on_area_id"
     t.index ["locale"], name: "index_area_translations_on_locale"
-  end
-
-  create_table "areas", force: :cascade do |t|
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.integer "subject_id"
-    t.index ["subject_id"], name: "index_areas_on_subject_id"
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -122,6 +105,32 @@ ActiveRecord::Schema.define(version: 2020_03_21_101851) do
     t.text "organizational_concept"
     t.text "locale"
     t.integer "forum_id"
+  end
+
+  create_table "division_course_joins", force: :cascade do |t|
+    t.integer "division_id", null: false
+    t.integer "course_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["course_id"], name: "index_division_course_joins_on_course_id"
+    t.index ["division_id"], name: "index_division_course_joins_on_division_id"
+  end
+
+  create_table "division_translations", force: :cascade do |t|
+    t.integer "division_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "name"
+    t.index ["division_id"], name: "index_division_translations_on_division_id"
+    t.index ["locale"], name: "index_division_translations_on_locale"
+  end
+
+  create_table "divisions", force: :cascade do |t|
+    t.integer "program_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["program_id"], name: "index_divisions_on_program_id"
   end
 
   create_table "editable_user_joins", force: :cascade do |t|
@@ -307,16 +316,6 @@ ActiveRecord::Schema.define(version: 2020_03_21_101851) do
     t.integer "aliased_tag_id"
     t.index ["aliased_tag_id"], name: "index_notions_on_aliased_tag_id"
     t.index ["tag_id"], name: "index_notions_on_tag_id"
-  end
-
-  create_table "program_course_joins", force: :cascade do |t|
-    t.integer "program_id"
-    t.integer "course_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.integer "level"
-    t.index ["course_id"], name: "index_program_course_joins_on_course_id"
-    t.index ["program_id"], name: "index_program_course_joins_on_program_id"
   end
 
   create_table "program_translations", force: :cascade do |t|
@@ -677,14 +676,12 @@ ActiveRecord::Schema.define(version: 2020_03_21_101851) do
 
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
-  add_foreign_key "area_course_joins", "areas"
-  add_foreign_key "area_course_joins", "courses"
-  add_foreign_key "areas", "subjects"
   add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "division_course_joins", "courses"
+  add_foreign_key "division_course_joins", "divisions"
+  add_foreign_key "divisions", "programs"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
-  add_foreign_key "program_course_joins", "courses"
-  add_foreign_key "program_course_joins", "programs"
   add_foreign_key "programs", "subjects"
 end

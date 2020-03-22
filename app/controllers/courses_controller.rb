@@ -158,8 +158,7 @@ class CoursesController < ApplicationController
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [],
-                                   area_ids: [],
-                                   program_ids: [])
+                                   division_ids: [])
   end
 
   def tag_params
