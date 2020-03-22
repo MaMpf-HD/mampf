@@ -157,7 +157,9 @@ class CoursesController < ApplicationController
                                    :organizational_concept, :locale,
                                    tag_ids: [],
                                    preceding_course_ids: [],
-                                   editor_ids: [])
+                                   editor_ids: [],
+                                   area_ids: [],
+                                   program_ids: [])
   end
 
   def tag_params

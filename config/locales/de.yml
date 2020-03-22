@@ -564,6 +564,8 @@ de:
       no_lectures: 'Für diesen Kurs gibt es noch keine Veranstaltungen.'
       additional_information: 'Weitere Informationen'
       additional_information_visible: 'Weitere Informationen sichtbar'
+      areas: 'Teilgebiete'
+      programs: 'Studiengänge'
       info:
         title: >
           Hier musst Du den Titel des Moduls eintragen.
@@ -610,6 +612,12 @@ de:
           insofern relevant, als dass Nutzer in ihren Profileinstellungen
           festlegen können, ob ihnen verknüpfte Materialien auch von inhaltlich
           vorher einzuordnenden Modulen angezeigt werden sollen.
+        areas: >
+          Hier kannst Du angeben, zu welchen Teilgebieten welcher Fächer
+          dieses Modul gehört.
+        programs: >
+          Hier kannst Du angeben, zu welchen Studiengängen welcher Fächer
+          dieses Modul gehört.
     chapter:
       edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'

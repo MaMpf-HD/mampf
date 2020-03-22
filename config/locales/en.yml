@@ -531,6 +531,8 @@ en:
       no_lectures: 'There are no event series for this course.'
       additional_information: 'Additional information'
       additional_information_visible: 'Additional information visible'
+      areas: 'Areas'
+      programs: 'Study Paths'
       info:
         title: >
           Here you can enter the title of the course. Typically, this should be
@@ -569,6 +571,12 @@ en:
           courses to Algebra 1.
           This is relevant because users can adjust their settings so
           that they are shown related materials form preceding courses.
+        areas: >
+          Here you can choose to which areas of which subjects the course is
+          associated to.
+        programs: >
+          Here you can select to ehich study paths of which subjects this course
+          is associated to.
     chapter:
       edit: 'Edit %{chapter}'
       position: 'Position after %{chapter_name}'
