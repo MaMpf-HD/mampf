@@ -1,8 +1,8 @@
-<% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
-          .select { |p| p.courses.any? }.each do |p| %>
-  <div class="row">
-    <div class="accordion col-12"
+<div class="row">
+  <div class="accordion col-12"
          id="subscriptionsAccordion">
+    <% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
+              .select { |p| p.courses.any? }.each do |p| %>
       <div class="card">
         <div class="card-header">
           <%= link_to p.name_with_subject,
@@ -19,6 +19,6 @@
           </div>
         </div>
       </div>
-    </div>
+    <% end %>
   </div>
-<% end %>
+</div>
