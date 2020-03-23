@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_22_135411) do
+ActiveRecord::Schema.define(version: 2020_03_23_192640) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -30,16 +30,6 @@ ActiveRecord::Schema.define(version: 2020_03_22_135411) do
     t.datetime "updated_at", null: false
     t.integer "question_id"
     t.index ["question_id"], name: "index_answers_on_question_id"
-  end
-
-  create_table "area_translations", force: :cascade do |t|
-    t.integer "area_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.text "name"
-    t.index ["area_id"], name: "index_area_translations_on_area_id"
-    t.index ["locale"], name: "index_area_translations_on_locale"
   end
 
   create_table "chapters", force: :cascade do |t|
