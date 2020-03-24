@@ -1,0 +1,121 @@
+<div class="row p-2">
+	<div class="col-12">
+		<h4>
+			<%= t('admin.navbar.classification') %>
+			<%= link_to '',
+       				    new_subject_path,
+	             		class: 'fas fa-plus-circle text-dark',
+               		data: { toggle: 'tooltip',
+                   		    placement: 'bottom' },
+               		title: t('buttons.create_subject'),
+              		style: 'text-decoration: none;',
+               		remote: true %>
+		</h4>
+	</div>
+</div>
+<div class="row row-cols-1 row-cols-md-2">
+	<% @subjects.each do |s| %>
+ 	 	<div class="col mb-3">
+			<div class="card">
+				<div class="card-header">
+					<h5>
+						<%= s.name %>
+            <%= link_to '',
+                        edit_subject_path(s),
+                        class: 'far fa-edit text-secondary',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('buttons.edit'),
+                        style: 'text-decoration: none;',
+                        remote: true %>
+            <%= link_to '',
+                        subject_path(s),
+                        class: 'fas fa-trash-alt text-secondary ml-1',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom',
+                                confirm: t('confirmation.generic') },
+                        title: t('buttons.delete'),
+                        style: 'text-decoration: none;',
+                        remote: true,
+                        method: :delete %>
+					</h5>
+		  	</div>
+				<div class="card-body">
+					<%= t('admin.classification.programs') %>:
+					<%= link_to '',
+          				    new_program_path(params: { subject_id: s.id }),
+                  		class: 'fas fa-plus-circle text-dark',
+                  		data: { toggle: 'tooltip',
+                      		    placement: 'bottom' },
+                  		title: t('buttons.create_program'),
+                  		style: 'text-decoration: none;',
+                  		remote: true %>
+					<ul>
+						<% s.programs.each do |p| %>
+							<li>
+					  		<%= p.name %>
+		            <%= link_to '',
+                        edit_program_path(p),
+                        class: 'far fa-edit text-secondary ml-2',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('buttons.edit'),
+                        style: 'text-decoration: none;',
+                        remote: true %>
+          			<%= link_to '',
+                			      program_path(p),
+                      			class: 'fas fa-trash-alt text-secondary ml-1',
+                      			data: { toggle: 'tooltip',
+                            			  placement: 'bottom',
+                              			confirm: t('confirmation.generic') },
+                      			title: t('buttons.delete'),
+                      			style: 'text-decoration: none;',
+                      			remote: true,
+                      			method: :delete %>
+                <div class="ml-2">
+                  <%= t('admin.classification.divisions') %>:
+                  <%= link_to '',
+                      new_division_path(params: { program_id: p.id }),
+                      class: 'fas fa-plus-circle text-dark',
+                      data: { toggle: 'tooltip',
+                              placement: 'bottom' },
+                      title: t('buttons.create_program'),
+                      style: 'text-decoration: none;',
+                      remote: true %>
+                </div>
+                <ul>
+                  <% p.divisions.each do |d| %>
+                    <li>
+                      <%= d.name %>
+                      <%= link_to '',
+                                  edit_division_path(d),
+                                  class: 'far fa-edit text-secondary ml-2',
+                                  data: { toggle: 'tooltip',
+                                          placement: 'bottom' },
+                                  title: t('buttons.edit'),
+                                  style: 'text-decoration: none;',
+                                  remote: true %>
+                      <%= link_to '',
+                                  division_path(d),
+                                  class: 'fas fa-trash-alt text-secondary ml-1',
+                                  data: { toggle: 'tooltip',
+                                          placement: 'bottom',
+                                          confirm: t('confirmation.generic') },
+                                  title: t('buttons.delete'),
+                                  style: 'text-decoration: none;',
+                                  remote: true,
+                                  method: :delete %>
+                    </li>
+                  <% end %>
+                </ul>
+							</li>
+						<% end %>
+					</ul>
+				</div>
+			</div>
+		</div>
+	<% end %>
+</div>
+<%= render partial: 'shared/generic_modal',
+					 locals: { sort: 'generic',
+					 					 title: '' } %>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_10_164147) do
+ActiveRecord::Schema.define(version: 2020_03_23_192640) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -95,6 +95,32 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
     t.text "organizational_concept"
     t.text "locale"
     t.integer "forum_id"
+  end
+
+  create_table "division_course_joins", force: :cascade do |t|
+    t.integer "division_id", null: false
+    t.integer "course_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["course_id"], name: "index_division_course_joins_on_course_id"
+    t.index ["division_id"], name: "index_division_course_joins_on_division_id"
+  end
+
+  create_table "division_translations", force: :cascade do |t|
+    t.integer "division_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "name"
+    t.index ["division_id"], name: "index_division_translations_on_division_id"
+    t.index ["locale"], name: "index_division_translations_on_locale"
+  end
+
+  create_table "divisions", force: :cascade do |t|
+    t.integer "program_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["program_id"], name: "index_divisions_on_program_id"
   end
 
   create_table "editable_user_joins", force: :cascade do |t|
@@ -282,6 +308,23 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
     t.index ["tag_id"], name: "index_notions_on_tag_id"
   end
 
+  create_table "program_translations", force: :cascade do |t|
+    t.integer "program_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "name"
+    t.index ["locale"], name: "index_program_translations_on_locale"
+    t.index ["program_id"], name: "index_program_translations_on_program_id"
+  end
+
+  create_table "programs", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "subject_id"
+    t.index ["subject_id"], name: "index_programs_on_subject_id"
+  end
+
   create_table "referrals", force: :cascade do |t|
     t.text "start_time"
     t.text "end_time"
@@ -324,6 +367,21 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
     t.text "tags_order"
     t.text "details"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
+  end
+
+  create_table "subject_translations", force: :cascade do |t|
+    t.integer "subject_id", null: false
+    t.string "locale", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "name"
+    t.index ["locale"], name: "index_subject_translations_on_locale"
+    t.index ["subject_id"], name: "index_subject_translations_on_subject_id"
+  end
+
+  create_table "subjects", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "tags", force: :cascade do |t|
@@ -609,7 +667,11 @@ ActiveRecord::Schema.define(version: 2020_03_10_164147) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "division_course_joins", "courses"
+  add_foreign_key "division_course_joins", "divisions"
+  add_foreign_key "divisions", "programs"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
+  add_foreign_key "programs", "subjects"
 end

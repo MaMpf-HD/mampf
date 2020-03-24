@@ -40,6 +40,19 @@
                              model: 'user',
                              filled: false } } %>
     </div>
+    <div class="col-12 form-group">
+      <%= f.label :division_ids,
+                  t('admin.course.divisions') %>
+      <%= helpdesk(t('admin.course.info.divisions'), false) %>
+      <%= f.select :division_ids,
+                   options_for_select(Division.all.map { |d| [d.name_with_program, d.id] },
+                                      course.division_ids),
+                   {},
+                   { class: 'selectize',
+                     multiple: true,
+                     style: 'display: none;',
+                     data: { ajax: false } } %>
+    </div>
   </div>
   <div class="row">
     <div class="col-12 text-center">

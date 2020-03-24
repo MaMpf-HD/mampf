@@ -23,4 +23,8 @@ class AdministrationController < ApplicationController
 
   def profile
   end
+
+  def classification
+    @subjects = Subject.includes(programs: [:divisions]).all
+  end
 end

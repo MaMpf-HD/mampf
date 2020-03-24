@@ -20,7 +20,8 @@ class Ability
       # :read is a cancancan alias for index and show actions
       can [:read, :inspect], :all
       cannot :index, Announcement
-      can :manage, [:administration, Item, Referral]
+      can :manage, [:administration, :erdbeere, Item, Referral]
+      cannot :classification, :administration
       # :create is a cancancan alias for new and create actions
       can :create, [Chapter, Lecture, Lesson, Medium, Section]
       # :update is a cancancan alias for update and edit actions
@@ -38,7 +39,8 @@ class Ability
       end
 
       # anyone should be able to get a sidebar and see the announcements
-      can [:render_sidebar, :organizational, :show_announcements], Lecture
+      can [:render_sidebar, :organizational, :show_announcements,
+           :show_structures, :search_examples], Lecture
 
       can [:display, :show_random_quizzes, :take_random_quiz,
            :render_question_counter], Course
@@ -51,7 +53,7 @@ class Ability
 
       can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
            :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
-           :remove_imported_medium, :show_subscribers, :show_structures,
+           :remove_imported_medium, :show_subscribers,
            :edit_structures],
           Lecture do |lecture|
         lecture.edited_by?(user)
@@ -157,7 +159,8 @@ class Ability
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
       can :teacher, User
       # anyone should be able to get a sidebar and see the announcements
-      can [:render_sidebar, :show_announcements, :organizational], Lecture
+      can [:render_sidebar, :show_announcements, :organizational,
+           :show_structures, :search_examples], Lecture
       cannot [:show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
@@ -174,9 +177,12 @@ class Ability
       cannot :show, Lesson do |lesson|
         !lesson.visible_for_user?(user)
       end
-      cannot :inex, Interaction
+      cannot :index, Interaction
       can [:index, :destroy_all, :destroy_lecture_notifications,
            :destroy_news_notifications], Notification
+
+      can [:show_example, :find_example, :show_property, :show_structure,
+           :find_tags, :display_info], :erdbeere
     end
   end
 end

@@ -14,10 +14,14 @@ Rails.application.routes.draw do
                               as: 'exit_administration'
   get '/administration/profile', to: 'administration#profile',
                                  as: 'elevated_profile'
+  get '/administration/classification', to: 'administration#classification',
+                                        as: 'classification'
 
   resources :announcements, only: [ :index, :new, :create]
 
   resources :answers, except: [:index, :show, :edit]
+
+  resources :areas, except: [:show]
 
   get 'chapters/:id/list_sections', to: 'chapters#list_sections',
                                      as: 'list_sections'
@@ -61,6 +65,8 @@ Rails.application.routes.draw do
   get 'courses/:id/destroy_forum', to: 'courses#destroy_forum',
                                  as: 'destroy_course_forum'
   resources :courses, except: [:index]
+
+  resources :divisions, except: [:show]
 
   get 'events/update_vertex_default', as: 'update_vertex_default'
   get 'events/update_branching', as: 'update_branching'
@@ -198,6 +204,8 @@ Rails.application.routes.draw do
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'
 
+  resources :programs, except: [:show]
+
   patch 'questions/:id/reassign', to: 'questions#reassign',
                                   as: 'reassign_question'
   patch 'question/:id/set_solution_type', to: 'questions#set_solution_type',
@@ -231,6 +239,8 @@ Rails.application.routes.draw do
   patch 'remarks/:id/reassign', to: 'remarks#reassign',
                                 as: 'reassign_remark'
   resources :remarks, only: [:edit, :update]
+
+  resources :subjects, except: [:show]
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
