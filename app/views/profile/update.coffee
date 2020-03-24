@@ -15,7 +15,10 @@ $('#user_pass_primary_' + '<%= c %>').addClass('is-invalid')
 $('#passphrase-error-primary-' + '<%= c %>')
   .append('<%= t('errors.profile.passphrase') %>')
 $('#course-card-' + '<%= c %>').addClass('border-danger')
+$('#collapse-course-<%= c %>').collapse('show')
 <% end %>
+$('#course-card-' + '<%= @errors[:primary_pass].first %>').closest('.programCollapse')
+  .collapse('show')
 <% end %>
 <% if @errors[:secondary_pass].present? %>
 <% @errors[:secondary_pass].each do |l| %>
@@ -24,6 +27,11 @@ $('#passphrase-error-secondary-' + '<%= l %>')
   .append('<%= t('errors.profile.passphrase') %>')
 $('#course-card-' + '<%= Lecture.find_by_id(l).course.id %>')
   .addClass('border-danger')
+$('#collapse-course-<%= Lecture.find_by_id(l).course.id %>').collapse('show')
+<% end %>
+<% unless @errors[:primary_pass].present? %>
+$('#course-card-' + '<%= Lecture.find_by_id(@errors[:secondary_pass].first).course.id %>').closest('.programCollapse')
+  .collapse('show')
 <% end %>
 <% end %>
 <% if @errors[:courses].present? %>

@@ -1,47 +1,5 @@
 <% courses.natural_sort_by(&:title).each do |c| %>
-  <% subscribed = c.subscribed_by?(@user) %>
-  <% details = CourseUserJoin.find_by(user: @user, course: c) %>
-  <div class="card"
-       id="course-card-<%= c.id %>">
-    <div class="card-header"
-         id="course-heading-<%= c.id %>">
-      <div class="row">
-        <% course = 'course-' + c.id.to_s %>
-        <div class="col-8">
-          <%= f.form_group course do %>
-            <%= f.check_box course,
-                            label: c.title,
-                            id: course,
-                            checked: subscribed,
-                            data: { course: c.id } %>
-          <% end %>
-        </div>
-        <div class="col-4 text-right">
-          <button id="details-course-<%= c.id %>"
-                  type="button"
-                  class="btn btn-sm btn-secondary rounded collapsed m-1"
-                  data-toggle="collapse"
-                  data-target="#collapse-course-<%= c.id %>"
-                  aria-expanded="true"
-                  aria-controls="collapse-course-<%= c.id %>">
-            <%= t('details') %>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div id="collapse-course-<%= c.id %>"
-         class="collapse"
-         aria-labelledby="course-heading-<%= c.id %>"
-         data-parent="#accordion"
-         data-course="<%= c.id %>">
-      <div class="card-body"
-           id="course-body-<%= c.id %>">
-        <%= render partial: 'profile/details',
-                   locals: { c: c,
-                             f: f,
-                             subscribed: subscribed,
-                             details: details } %>
-      </div>
-    </div>
+  <div class="coursePlaceholder"
+       data-course="<%= c.id %>">
   </div>
 <% end %>
