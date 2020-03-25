@@ -3,7 +3,8 @@
   <% subscribed = c.subscribed_by?(@user) %>
   <% details = CourseUserJoin.find_by(user: @user, course: c) %>
   <div class="card"
-       id="course-card-<%= c.id %>">
+       id="course-card-<%= c.id %>"
+       style="display: none;">
     <div class="card-header"
          id="course-heading-<%= c.id %>">
       <div class="row">
@@ -31,7 +32,7 @@
       </div>
     </div>
     <div id="collapse-course-<%= c.id %>"
-         class="collapse"
+         class="collapse collapseCourse"
          aria-labelledby="course-heading-<%= c.id %>"
          data-parent="#accordion"
          data-course="<%= c.id %>">
@@ -46,3 +47,30 @@
     </div>
   </div>
 <% end %>
+<div class="row">
+  <div class="accordion col-12"
+         id="subscriptionsAccordion">
+    <% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
+              .select { |p| p.courses.any? }.each do |p| %>
+      <div class="card">
+        <div class="card-header">
+          <%= link_to p.name_with_subject,
+                      '#program-' + p.id.to_s + '-collapse',
+                      class: "programCollapseButton",
+                      data: { toggle: 'collapse',
+                              project: p.id } %>
+        </div>
+        <div id="<%= 'program-' + p.id.to_s + '-collapse' %>"
+             class="collapse programCollapse"
+             data-project="<%= p.id %>"
+             data-parent="#subscriptionsAccordion">
+          <div class="card-body">
+            <%= render partial: 'profile/divisions',
+                       locals: { divisions: p.divisions.select { |p| p.courses.any? },
+                                 f: f } %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

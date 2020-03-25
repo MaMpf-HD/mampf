@@ -45,16 +45,6 @@ $(document).on 'turbolinks:load', ->
       else
         $('#pass-primary-' + courseId).hide()
     return
-  
-   $('input:checkbox[name^="user[lecture-"]').on 'change',  ->
-     courseId = this.dataset.course
-     lectureId = this.dataset.lecture
-     authRequiredLectureIds = $('#pass-primary-' + courseId).data('authorize')
-     if $(this).prop('checked') and parseInt(lectureId) in authRequiredLectureIds
-       $('#pass-lecture-' + lectureId).show()
-     else
-       $('#pass-lecture-' + lectureId).hide()
-     return
 
   $('input:checkbox[name^="user[lecture-"]').on 'change',  ->
     courseId = this.dataset.course
@@ -73,5 +63,5 @@ $(document).on 'turbolinks:load', ->
       $(this).append($('#course-card-' + course))
       $('#course-card-' + course).show()
     return
-  
+
   return
