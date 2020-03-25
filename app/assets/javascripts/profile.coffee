@@ -64,8 +64,4 @@ $(document).on 'turbolinks:load', ->
       $('#course-card-' + course).show()
     return
 
-  $('.programCollapse').on 'hide.bs.collapse', ->
-    $('.collapseCourse').collapse('hide')
-    return
-
   return
