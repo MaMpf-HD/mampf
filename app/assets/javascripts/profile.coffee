@@ -45,8 +45,7 @@ $(document).on 'turbolinks:load', ->
       else
         $('#pass-primary-' + courseId).hide()
     return
-
-<<<<<<< HEAD
+  
    $('input:checkbox[name^="user[lecture-"]').on 'change',  ->
      courseId = this.dataset.course
      lectureId = this.dataset.lecture
