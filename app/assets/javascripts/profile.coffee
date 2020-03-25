@@ -56,7 +56,7 @@ $(document).on 'turbolinks:load', ->
      else
        $('#pass-lecture-' + lectureId).hide()
      return
-=======
+
   $('input:checkbox[name^="user[lecture-"]').on 'change',  ->
     courseId = this.dataset.course
     lectureId = this.dataset.lecture
@@ -74,6 +74,5 @@ $(document).on 'turbolinks:load', ->
       $(this).append($('#course-card-' + course))
       $('#course-card-' + course).show()
     return
-
->>>>>>> master
+  
   return
