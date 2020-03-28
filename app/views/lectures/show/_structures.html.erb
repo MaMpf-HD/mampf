@@ -1,19 +1,21 @@
 <div class="row p-2">
-  <div class="col-12">
+  <div class="col-auto">
     <h4>
       <%= I18n.t('erdbeere.show_structures') %>
       (<%= lecture.short_title %>)
-      <%= link_to search_examples_path(lecture),
-                  class: ' btn btn-lg btn-outline-secondary' do %>
-        <span>
-          <i class="fa fa-search">
-          </i>
-        </span>
-        <span>
-          <%= t('erdbeere.search_examples') %>
-        </span>
-      <% end %>
     </h4>
+  </div>
+  <div class="col-auto">
+    <%= link_to search_examples_path(lecture),
+                class: ' btn btn-lg btn-outline-secondary' do %>
+      <span>
+        <i class="fa fa-search">
+        </i>
+      </span>
+      <span>
+        <%= t('erdbeere.search_examples') %>
+      </span>
+    <% end %>
   </div>
 </div>
 <div class="card-columns">
