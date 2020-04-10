@@ -12,3 +12,9 @@
             id: "commontator-thread-#{thread.id}-#{sub_string}",
             class: sub_string,
             remote: true %>
+<%= tag.i class: 'far fa-question-circle helpdesk ml-2 subscriptionInfo',
+          tabindex: -1,
+          data: { toggle: 'popover',
+                  trigger: 'focus',
+                  content: t("commontator.subscription.actions.info.#{sub_string}") },
+          title: t('info') %>

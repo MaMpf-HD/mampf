@@ -45,7 +45,7 @@ Commontator.configure do |config|
   ],
   ignoredClasses: ['form-control', 'noTexStatus'],
   throwOnError: false
-});" }
+}); $('.subscriptionInfo').popover();" }
 
 
   # User (acts_as_commontator) Configuration
@@ -269,7 +269,7 @@ Commontator.configure do |config|
   #   :m (manual subscriptions only)
   #   :b (both automatic, when commenting, and manual)
   # Default: :n
-  config.thread_subscription = :b
+  config.thread_subscription = :m
 
   # email_from_proc
   # Type: Proc
