@@ -6,6 +6,8 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  mount Commontator::Engine => '/commontator'
+
   get 'search/index'
 
   get '/administration', to: 'administration#index',

@@ -54,6 +54,9 @@ class User < ApplicationRecord
   # add timestamp for DSGVO consent
   after_create :set_consented_at
 
+  # users can comment stuff
+  acts_as_commontator
+
   # returns the array of all teachers
   def self.teachers
     User.where(id: Lecture.pluck(:teacher_id).uniq)

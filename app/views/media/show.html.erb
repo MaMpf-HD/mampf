@@ -117,7 +117,7 @@
                                small: true} %>
         </div>
       <% end %>
-      <div class="col-12">
+      <div class="col-12 mb-2">
         <% if @medium.sort == 'Script' %>
           <%= render partial: 'items/items',
                      locals: { items: @medium.toc_items,
@@ -133,6 +133,10 @@
                                section_links: false,
                                content: @medium.extended_content } %>
         <% end %>
+      </div>
+      <div class="col-12">
+        <%= render partial: 'media/comments/comments',
+                   locals: { medium: @medium } %>
       </div>
     </div>
   </div>

@@ -2285,6 +2285,7 @@ de:
     statistics: 'Statistik'
     loading_data: 'Lade Daten...'
     realizations: 'Realisierungen'
+    comments: 'Kommentare'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

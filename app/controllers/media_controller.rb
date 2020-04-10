@@ -33,6 +33,7 @@ class MediaController < ApplicationController
     current_user.notifications.where(notifiable_type: 'Medium',
                                      notifiable_id: @medium.id).each(&:destroy)
     I18n.locale = @medium.locale_with_inheritance
+    commontator_thread_show(@medium)
     render layout: 'application_no_sidebar'
   end
 
