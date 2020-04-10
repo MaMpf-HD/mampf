@@ -1004,12 +1004,12 @@ de:
         import_warning: >
           Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
         search_type: >
-          Hier kannst Du (im Sinne von
+          Hier musst Du (im Sinne von
           <i>
           ODER
           </i>
           ) auswählen,
-          was der Typ des Mediums sein soll.
+          was der Typ des Mediums sein soll. Andernfalls wird die Suche ergebnislos sein.
         search_teachable: >
           Hier kannst Du (im Sinne von
           <i>
