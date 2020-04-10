@@ -2286,6 +2286,7 @@ de:
     loading_data: 'Lade Daten...'
     realizations: 'Realisierungen'
     comments: 'Kommentare'
+    comments_for: 'Kommentare für %{subject}'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

@@ -34,6 +34,38 @@ $(document).on 'turbolinks:load', ->
     throwOnError: false
     return
 
+  $(document).on 'keyup', '.commentForm', ->
+    content = $(this).val()
+    preview = '#' + this.id + '-preview'
+    $(preview).text(content).show()
+    # run katex on preview
+    previewBox = document.getElementById(this.id + '-preview')
+    renderMathInElement previewBox,
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+    return
+
   return
 
 # clean up everything before turbolinks caches

@@ -378,6 +378,11 @@ class MediaController < ApplicationController
     end
   end
 
+  def show_comments
+    commontator_thread_show(@medium)
+    render layout: 'application_no_sidebar'
+  end
+
   private
 
   def medium_params

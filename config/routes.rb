@@ -188,6 +188,8 @@ Rails.application.routes.draw do
                                       as: 'register_download'
   get 'media/:id/get_statistics', to: 'media#get_statistics',
                                   as: 'get_statistics'
+  get 'media/:id/show_comments', to: 'media#show_comments',
+                                 as: 'show_media_comments'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',

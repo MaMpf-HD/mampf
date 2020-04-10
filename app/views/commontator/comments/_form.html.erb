@@ -36,7 +36,7 @@
 
   <div class="field">
     <%=
-      form.text_area :body, rows: '7', class: 'form-control', id: new_record ?
+      form.text_area :body, rows: '7', class: 'form-control commentForm', id: new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body" :
                               "commontator-comment-#{comment.parent.id}-reply" :
         "commontator-comment-#{comment.id}-edit-body"
@@ -54,4 +54,20 @@
       ) unless config.new_comment_style == :t && new_record && comment.parent.nil?
     %>
   </div>
+  <div class="mb-2">
+    <h6>
+      <%= t('basics.preview') %>
+    </h6>
+  </div>
+  <div id='<%= new_record ?
+        comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-preview" :
+                              "commontator-comment-#{comment.parent.id}-reply-preview" :
+        "commontator-comment-#{comment.id}-edit-body-preview" %>'
+       class="border p-2"
+       style="min-height: 3em;">
+    <%= comment.body %>
+  </div>
+  <div class="mb-2">
+  </div>
+  <hline>
 <% end %>

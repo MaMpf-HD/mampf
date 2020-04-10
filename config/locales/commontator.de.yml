@@ -48,10 +48,10 @@ de:
         not_deleted: Dieser Kommentar wurde nicht gelöscht..
         update: "Kommentar kann nicht bearbeitet werden:"
       status:
-        created_at: Veröffentlich am %{created_at}.
+        created_at: Veröffentlicht am %{created_at}.
         deleted_by: Kommentar gelöscht von %{deleter_name}.
         updated_at: Bearbeitet von %{editor_name} am %{updated_at}.
-        replying: "%{creator_name} Antworten"
+        replying: "%{creator_name} antworten"
         reply_pages: "Antwortseiten:"
     email:
       comment_created:

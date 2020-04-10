@@ -2156,6 +2156,7 @@ en:
     loading_data: 'Loading data...'
     realizations: 'Realizations'
     comments: 'Comments'
+    comments_for: 'Comments for %{subject}'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
