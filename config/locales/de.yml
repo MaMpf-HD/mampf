@@ -2296,7 +2296,7 @@ de:
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
-    save_and_edit: 'Speichern und Bearbeiten'
+    save_and_edit: 'Speichern und bearbeiten'
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
