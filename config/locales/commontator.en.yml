@@ -118,7 +118,7 @@ en:
         not_closed: This discussion is not closed.
       status:
         cannot_post: New comments cannot be posted at this time.
-        closed: Comments (Closed by %{closer_name})
+        closed: The discussion was closed by %{closer_name}.
         open: Comments
         pages: "Comment pages:"
   time:

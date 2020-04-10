@@ -129,6 +129,7 @@
           <%= render partial: 'items/items',
                      locals: { items: @medium.proper_items_by_time,
                                small: true,
+                               comments_below: true,
                                embedded: false,
                                section_links: false,
                                content: @medium.extended_content } %>

@@ -1,4 +1,5 @@
 <% singular_medium ||= false %>
+<% comments_below ||= false %>
 <div class="card bg-light">
   <% unless embedded %>
     <div class="card-header bg-generic-card-header">
@@ -20,7 +21,7 @@
       </h5>
     </div>
   <% end %>
-  <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>;
+  <div class="card-body" style="max-height: <%= items_card_size(small, comments_below) %>;
                                 overflow-y: scroll;">
     <%= render partial: 'items/items_list',
                locals: { items: items,

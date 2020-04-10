@@ -86,8 +86,8 @@ de:
         already_closed: Diese Diskussion ist bereits geschlossen.
         not_closed: Diese Diskussion ist nicht geschlossen.
       status:
-        cannot_post: Zurzeit können keine neuen Kommentare verfasst werden.
-        closed: Kommentare (geschlossen von %{closer_name})
+        cannot_post: Derzeit können keine neuen Kommentare verfasst werden.
+        closed: Die Diskussion wurde von %{closer_name} geschlossen.
         open: Kommentare
         pages: "Kommentarseiten:"
   time:
