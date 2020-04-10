@@ -19,10 +19,12 @@
         <%= helpdesk(t('admin.lecture.info.course'), false) %>
         <%= f.select :course_id,
                      options_for_select(current_user
-                                          .select_administrated_courses,
+                                          .select_administrated_courses
+                                          .natural_sort_by(&:first),
                                         lecture.course&.id),
                      {},
-                     { class: 'form-control', disabled: from == 'course' } %>
+                     { class: 'selectize',
+                       disabled: from == 'course' } %>
         <% if from == 'course' %>
           <%= f.hidden_field :course_id, value: lecture.course.id %>
         <% end %>
