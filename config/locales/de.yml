@@ -129,6 +129,7 @@ de:
     search: 'Suche'
     profile: 'Profil'
     administration: 'Administration'
+    comments: 'Kommentare'
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
@@ -2093,6 +2094,13 @@ de:
       nicht als 3,000
       </li>
       </ul>
+  comments:
+    title:
+      Kommentare zu Medien aus Deinen Veranstaltungen bzw. Modulen
+    last_change_at:
+      Letzte Änderung der Kommentare vor
+    thread_subscribed:
+      Diskussion abonniert
   locales:
     en: 'englisch'
     de: 'deutsch'

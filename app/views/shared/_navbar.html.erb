@@ -31,6 +31,14 @@
           </li>
         <% end %>
         <li class="nav-item">
+          <a href="<%= comments_path %>"
+             class="far fa-comments fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="<%= t('navbar.comments') %>">
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="<%= news_path %>"
              class="far fa-newspaper fa-lg text-light nav-link"
              style="text-decoration: none; "

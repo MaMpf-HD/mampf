@@ -5,6 +5,7 @@
 
 <%= render partial: 'commontator/comments/body', locals: { comment: @comment } %>
 
+<hr>
 <p>
   <%= t 'commontator.email.thread_link_html',
          comment_url: @comment_url, commontable_name: @commontable_name %>

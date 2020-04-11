@@ -138,6 +138,7 @@ en:
     profile: 'Profile'
     administration: 'Administration'
     news: 'News'
+    comments: 'Comments'
     blog: 'Blog'
     logout: 'Logout'
     login: 'Login'
@@ -1967,6 +1968,13 @@ en:
       3,000.
       </li>
       </ul>
+  comments:
+    title:
+      Comments on media in your event series and courses
+    last_change_at:
+      Last change at
+    thread_subscribed:
+      Diskussion abonniert
   locales:
     en: 'English'
     de: 'German'

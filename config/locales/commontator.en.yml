@@ -87,8 +87,8 @@ en:
     email:
       comment_created:
         body: "%{creator_name} commented on %{commontable_name}:"
-        subject: "%{creator_name} posted a comment on %{commontable_name}"
-      thread_link_html: <a href="%{comment_url}">Click here</a> to view all comments on %{commontable_name}.
+        subject: "MaMpf: %{creator_name} posted a comment on %{commontable_name}"
+      thread_link_html: <a href="%{comment_url}">Click here</a> to view all comments on %{commontable_name}. On this page, you can also cancel your subscription to this thread.
     require_login: You must login before you can post a comment.
     subscription:
       actions:

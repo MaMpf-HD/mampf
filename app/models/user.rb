@@ -362,6 +362,15 @@ class User < ApplicationRecord
       .or(media.where(teachable: edited_lessons))
   end
 
+  def subscribed_commentable_media_with_comments
+    lessons = Lesson.where(lecture: lectures)
+    filter_media(Medium.where.not(sort: ['RandomQuiz', 'Question', 'Erdbeere',
+                                         'Remark'])
+                       .where(teachable: courses + lectures + lessons))
+      .includes(commontator_thread: :comments)
+      .select { |m| m.commontator_thread.comments.any? }
+  end
+
   private
 
   def set_defaults

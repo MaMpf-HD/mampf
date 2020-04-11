@@ -1,0 +1,56 @@
+<h5>
+	<%= t('comments.title') %>
+</h5>
+<div class="row">
+	<div class="col-12">
+		<%= paginate @media_array, window: 2 %>
+	</div>
+</div>
+<div class="list-group my-3">
+	<div class="list-group-item">
+		<div class="row">
+			<div class="col-4">
+				<strong>
+					<%= t('basics.medium') %>
+				</strong>
+			</div>
+			<div class="col-4">
+				<strong>
+					<%= t('comments.last_change_at') %>
+				</strong>
+			</div>
+			<div class="col-4">
+				<strong>
+					<%= t('comments.thread_subscribed') %>
+				</strong>
+			</div>
+		</div>
+	</div>
+	<% @media_array.each do |m| %>
+		<div class="list-group-item">
+			<div class="row">
+				<div class="col-4">
+					<%= link_to m.first.title_for_viewers,
+											medium_path(m.first) %>
+					(<%= link_to t('basics.comments'),
+    							     show_media_comments_path(m.first) %>)
+				</div>
+				<div class="col-4">
+					<%= time_ago_in_words(m.second) %>
+				</div>
+				<div class="col-4">
+					<div class="custom-control custom-switch">
+  					<input type="checkbox"
+  								 class="custom-control-input subscriptionSwitch"
+  								 id="subscriptionSwitch-<%= m.first.commontator_thread.id %>"
+  								 data-id="<%= m.first.commontator_thread.id %>"
+  								 <%= !!m.first.commontator_thread.subscription_for(current_user) ? 'checked' : '' %>>
+  					<label class="custom-control-label"
+  					  		 for="subscriptionSwitch-<%= m.first.commontator_thread.id %>">
+  					</label>
+					</div>
+				</div>
+			</div>
+		</div>
+	<% end %>
+</ul>

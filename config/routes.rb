@@ -207,6 +207,7 @@ Rails.application.routes.draw do
   get 'profile/check_for_consent', as: 'consent_profile'
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'
+  post 'profile/toggle_thread_subscription', as: 'toggle_thread_subscription'
 
   resources :programs, except: [:show]
 
@@ -317,6 +318,8 @@ Rails.application.routes.draw do
   get 'main/home'
   get 'main/news', to: 'main#news',
                    as: 'news'
+  get 'main/comments', to: 'main#comments',
+                       as: 'comments'
   get 'main/sponsors', to: 'main#sponsors',
                        as: 'sponsors'
 

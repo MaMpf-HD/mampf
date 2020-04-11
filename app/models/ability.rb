@@ -169,7 +169,7 @@ class Ability
         n.recipient == user
       end
       cannot :show, Medium do |medium|
-        !medium.visible_for_user?(user)
+        !medium.visible_for_user?(user) || medium.sort == 'Question'
       end
 
       can :show_comments, Medium do |medium|

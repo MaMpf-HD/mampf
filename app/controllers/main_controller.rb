@@ -1,6 +1,7 @@
 # MainController
 class MainController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:home, :about, :news, :sponsors]
+  skip_before_action :authenticate_user!, only: [:home, :about, :news,
+                                                 :sponsors, :comments]
   before_action :check_for_consent
 
   def home
@@ -21,6 +22,14 @@ class MainController < ApplicationController
   end
 
   def sponsors
+    render layout: 'application_no_sidebar'
+  end
+
+  def comments
+    @media_array = Kaminari.paginate_array(current_user.subscribed_commentable_media_with_comments
+                     .map { |m| [m, m.commontator_thread.comments
+                                     .map(&:updated_at).max ] }
+                     .sort_by(&:second).reverse).page(params[:page]).per(10)
     render layout: 'application_no_sidebar'
   end
 
