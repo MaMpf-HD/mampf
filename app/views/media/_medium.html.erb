@@ -59,19 +59,19 @@
     </div>
     <% cache [medium, from == 'tag', ref_link] do %>
       <% unless from == 'tag' %>
-      <% if medium.screenshot.present? %>
-        <%= image_tag(medium.screenshot_url_with_host,
-                      alt: "Card image cap",
-                      class: "card-img-top") %>
-      <% elsif medium.manuscript.present? %>
-        <%= image_tag(medium.manuscript_screenshot_url,
-                      alt: "Card image cap",
-                      class: "card-img-top manuscript-thumbnail") %>
-      <% elsif medium.geogebra_screenshot_url.present? %>
-        <%= image_tag(medium.geogebra_screenshot_url,
-                      alt: 'Card image cap',
-                      class: 'card-img-top') %>
-      <% end %>
+        <% if medium.screenshot.present? %>
+          <%= image_tag(medium.screenshot_url_with_host,
+                        alt: "Card image cap",
+                        class: "card-img-top") %>
+        <% elsif medium.manuscript.present? %>
+          <%= image_tag(medium.manuscript_screenshot_url,
+                        alt: "Card image cap",
+                        class: "card-img-top manuscript-thumbnail") %>
+        <% elsif medium.geogebra_screenshot_url.present? %>
+          <%= image_tag(medium.geogebra_screenshot_url,
+                        alt: 'Card image cap',
+                        class: 'card-img-top') %>
+        <% end %>
       <% end %>
       <div class="card-body">
         <% unless medium.caption.nil? %>
@@ -107,7 +107,14 @@
                      locals: { medium: medium,
                                ref_link: ref_link } %>
         </div>
-      </div>
     <% end %>
+    <% if medium.commontator_thread.comments.present? %>
+      <hr>
+      <%= link_to "#{medium.commontator_thread.comments.size} " \
+                  "#{t('basics.comments')}",
+                  show_media_comments_path(medium),
+                  class: 'text-dark' %>
+    <% end %>
+      </div>
   </div>
 <% end %>

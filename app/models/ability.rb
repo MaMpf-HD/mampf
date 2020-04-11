@@ -173,7 +173,7 @@ class Ability
       end
 
       can :show_comments, Medium do |medium|
-        !medium.visible_for_user?(user)
+        medium.visible_for_user?(user)
       end
 
       cannot :show, Section do |section|

@@ -54,20 +54,30 @@
       ) unless config.new_comment_style == :t && new_record && comment.parent.nil?
     %>
   </div>
-  <div class="mb-2">
-    <h6>
+<% end %>
+  <div class="custom-control custom-switch mb-2"
+       style="padding-left: 2.5rem;">
+    <input type="checkbox"
+           class="custom-control-input commentPreviewSwitch"
+           id="<%= new_record ?
+        comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-switch" :
+                              "commontator-comment-#{comment.parent.id}-reply-switch" :
+        "commontator-comment-#{comment.id}-edit-body-switch" %>">
+    <label class="custom-control-label"
+           for="<%= new_record ?
+        comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-switch" :
+                              "commontator-comment-#{comment.parent.id}-reply-switch" :
+        "commontator-comment-#{comment.id}-edit-body-switch" %>">
       <%= t('basics.preview') %>
-    </h6>
+    </label>
   </div>
   <div id='<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-preview" :
                               "commontator-comment-#{comment.parent.id}-reply-preview" :
         "commontator-comment-#{comment.id}-edit-body-preview" %>'
        class="border p-2"
-       style="min-height: 3em;">
+       style="display: none; min-height: 3em;">
     <%= comment.body %>
   </div>
   <div class="mb-2">
   </div>
-  <hline>
-<% end %>

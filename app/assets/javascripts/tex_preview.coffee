@@ -34,10 +34,15 @@ $(document).on 'turbolinks:load', ->
     throwOnError: false
     return
 
+  $(document).on 'click', '.commentPreviewSwitch', ->
+    $('#' + this.id.replace('switch','preview')).toggle()
+    return
+
+
   $(document).on 'keyup', '.commentForm', ->
     content = $(this).val()
     preview = '#' + this.id + '-preview'
-    $(preview).text(content).show()
+    $(preview).text(content)
     # run katex on preview
     previewBox = document.getElementById(this.id + '-preview')
     renderMathInElement previewBox,
@@ -71,4 +76,6 @@ $(document).on 'turbolinks:load', ->
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'keyup', '[id^="tex-area-"]'
+  $(document).off 'keyup', '.commentForm'
+  $(document).off 'click', '.commentPreviewSwitch'
   return
