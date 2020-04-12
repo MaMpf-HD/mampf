@@ -146,6 +146,8 @@ class MediaController < ApplicationController
   def publish
     release_state = params[:medium][:released]
     @medium.update(released: release_state)
+    lock_comments = params[:medium][:lock_comments]
+    @medium.commontator_thread.close(current_user) if lock_comments.to_i == 1
     if @medium.sort == 'Quiz' && params[:medium][:publish_vertices] == '1'
       @medium.becomes(Quiz).publish_vertices!(current_user, release_state)
     end
