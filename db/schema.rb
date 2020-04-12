@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_12_083413) do
+ActiveRecord::Schema.define(version: 2020_04_12_103921) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -705,13 +705,6 @@ ActiveRecord::Schema.define(version: 2020_04_12_083413) do
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-  end
-
-  create_table "votes", force: :cascade do |t|
-    t.integer "value"
-    t.integer "clicker_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
   end
 
   add_foreign_key "announcements", "lectures"

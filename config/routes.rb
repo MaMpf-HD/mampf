@@ -293,8 +293,6 @@ Rails.application.routes.draw do
                               as: 'fill_user_select'
   resources :users, only: [:index, :edit, :update, :destroy]
 
-  resources :votes, only: :create
-
   get 'examples/:id', to: 'erdbeere#show_example',
                       as: 'erdbeere_example'
   post 'examples/find', to: 'erdbeere#find_example'
