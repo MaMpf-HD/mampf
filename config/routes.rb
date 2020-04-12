@@ -44,6 +44,8 @@ Rails.application.routes.draw do
 
   resources :clickers, except: [:index, :update]
 
+  resources :clicker_votes, only: :create
+
   get 'c/:id', to: 'clickers#show'
 
   get 'courses/:course_id/food', to: 'media#index',

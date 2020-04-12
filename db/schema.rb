@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_10_111828) do
+ActiveRecord::Schema.define(version: 2020_04_12_083413) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -42,6 +42,13 @@ ActiveRecord::Schema.define(version: 2020_04_10_111828) do
     t.boolean "hidden"
     t.text "details"
     t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
+  end
+
+  create_table "clicker_votes", force: :cascade do |t|
+    t.integer "value"
+    t.integer "clicker_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "clickers", force: :cascade do |t|
