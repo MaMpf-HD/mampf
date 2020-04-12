@@ -226,7 +226,7 @@ Commontator.configure do |config|
   # If :l is selected, the "reply to thread" form will appear before the comments
   # Otherwise, it will appear after the comments
   # Default: :e
-  config.comment_order = :l
+  config.comment_order = :vl
 
   # new_comment_style
   # Type: Symbol
