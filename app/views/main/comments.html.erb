@@ -30,11 +30,18 @@
 		<div class="list-group-item">
 			<div class="row">
 				<div class="col-4">
-					<%= link_to m.first.title_for_viewers,
-											medium_path(m.first) %>
+					<div class="row">
+						<div class="col-12">
+							<%= m.first.course.title %>
+						</div>
+						<div class="col-12">
+							<%= link_to m.first.local_title_for_viewers,
+													medium_path(m.first) %>
 					(<%= link_to "#{m.first.commontator_thread.comments.size} " \
                   "#{m.first.commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
                   show_media_comments_path(m.first) %>)
+            </div>
+          </div>
 				</div>
 				<div class="col-4">
 					<%= t('comments.who_and_when',
