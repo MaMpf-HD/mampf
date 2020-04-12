@@ -16,7 +16,7 @@
 			</div>
 			<div class="col-4">
 				<strong>
-					<%= t('comments.last_change_at') %>
+					<%= t('comments.latest_post') %>
 				</strong>
 			</div>
 			<div class="col-4">
@@ -36,7 +36,9 @@
     							     show_media_comments_path(m.first) %>)
 				</div>
 				<div class="col-4">
-					<%= time_ago_in_words(m.second) %>
+					<%= t('comments.who_and_when',
+								when: time_ago_in_words(m.second.created_at),
+								who: m.second.creator.name) %>
 				</div>
 				<div class="col-4">
 					<div class="custom-control custom-switch">

@@ -111,7 +111,7 @@
     <% if medium.commontator_thread.comments.present? %>
       <hr>
       <%= link_to "#{medium.commontator_thread.comments.size} " \
-                  "#{t('basics.comments')}",
+                  "#{medium.commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
                   show_media_comments_path(medium),
                   class: 'text-dark' %>
     <% end %>

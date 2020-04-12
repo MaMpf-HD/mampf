@@ -1971,10 +1971,12 @@ en:
   comments:
     title:
       Comments on media in your event series and courses
-    last_change_at:
-      Last change at
-    thread_subscribed:
+    latest_post: >
+      Latest post
+    thread_subscribed: >
       Diskussion abonniert
+    who_and_when: >
+      %{when} ago by %{who}
   locales:
     en: 'English'
     de: 'German'
@@ -2164,6 +2166,7 @@ en:
     loading_data: 'Loading data...'
     realizations: 'Realizations'
     comments: 'Comments'
+    comment: 'Comment'
     comments_for: 'Comments for %{subject}'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'

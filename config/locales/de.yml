@@ -2097,10 +2097,12 @@ de:
   comments:
     title:
       Kommentare zu Medien aus Deinen Veranstaltungen bzw. Modulen
-    last_change_at:
-      Letzte Änderung der Kommentare vor
+    latest_post:
+      Neuester Kommentar
     thread_subscribed:
       Diskussion abonniert
+    who_and_when:
+      vor %{when} von %{who}
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2294,6 +2296,7 @@ de:
     loading_data: 'Lade Daten...'
     realizations: 'Realisierungen'
     comments: 'Kommentare'
+    comment: 'Kommentar'
     comments_for: 'Kommentare für %{subject}'
   access:
     unpublished: 'unveröffentlicht'

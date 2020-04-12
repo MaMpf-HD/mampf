@@ -26,10 +26,12 @@ class MainController < ApplicationController
   end
 
   def comments
-    @media_array = Kaminari.paginate_array(current_user.subscribed_commentable_media_with_comments
-                     .map { |m| [m, m.commontator_thread.comments
-                                     .map(&:updated_at).max ] }
-                     .sort_by(&:second).reverse).page(params[:page]).per(10)
+    media_comments = current_user.subscribed_commentable_media_with_comments
+                       .map { |m| [m, m.commontator_thread
+                                       .ordered_comments(true).first] }
+                       .sort_by { |x| x.second.created_at }.reverse
+    @media_array = Kaminari.paginate_array(media_comments)
+                           .page(params[:page]).per(10)
     render layout: 'application_no_sidebar'
   end
 
