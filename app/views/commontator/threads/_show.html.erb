@@ -67,9 +67,7 @@
     </span>
   </div>
 
-  <% if thread.config.comment_order == :l %>
-    <%= render partial: 'commontator/threads/reply', locals: { thread: thread, user: user } %>
-  <% end %>
+  <%= render partial: 'commontator/threads/reply', locals: { thread: thread, user: user } %>
 
   <div id="commontator-thread-<%= thread.id %>-comment-list" class="comment-list">
     <%=
@@ -100,10 +98,6 @@
       %>
     </div>
   </div>
-
-  <% if thread.config.comment_order != :l %>
-    <%= render partial: 'commontator/threads/reply', locals: { thread: thread, user: user } %>
-  <% end %>
 </div>
 
 <script type="text/javascript">

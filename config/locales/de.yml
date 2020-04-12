@@ -2095,14 +2095,11 @@ de:
       </li>
       </ul>
   comments:
-    title:
-      Kommentare zu Medien aus Deinen Veranstaltungen bzw. Modulen
-    latest_post:
-      Neuester Kommentar
-    thread_subscribed:
-      Diskussion abonniert
-    who_and_when:
-      vor %{when} von %{who}
+    title: Kommentare zu Medien aus Deinen Veranstaltungen bzw. Modulen
+    latest_post: Neuester Kommentar
+    thread_subscribed: Diskussion abonniert
+    who_and_when: vor %{when} von %{who}
+    comment_verb: Kommentieren
   locales:
     en: 'englisch'
     de: 'deutsch'
