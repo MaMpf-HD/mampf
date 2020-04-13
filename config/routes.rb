@@ -239,6 +239,12 @@ Rails.application.routes.draw do
     resources :vertices, except: [:index, :show, :edit]
   end
 
+  patch 'readers/update', to: 'readers#update',
+                           as: 'update_reader'
+
+  patch 'readers/update_all', to: 'readers#update_all',
+                              as: 'update_all_readers'
+
   get 'referrals/list_items', to: 'referrals#list_items',
                               as: 'list_items'
   resources :referrals, only: [:update, :create, :edit, :destroy]

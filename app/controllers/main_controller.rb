@@ -26,11 +26,12 @@ class MainController < ApplicationController
   end
 
   def comments
-    media_comments = current_user.subscribed_commentable_media_with_comments
-                       .map { |m| [m, m.commontator_thread
-                                       .ordered_comments(true).first] }
-                       .sort_by { |x| x.second.created_at }.reverse
-    @media_array = Kaminari.paginate_array(media_comments)
+    @media_comments = current_user.media_latest_comments
+    @media_comments.select! do |m|
+      (Reader.find_by(user: current_user, thread: m[:thread])
+            &.updated_at || (Time.now - 1000.years)) < m[:latest_comment].created_at
+    end
+    @media_array = Kaminari.paginate_array(@media_comments)
                            .page(params[:page]).per(10)
     render layout: 'application_no_sidebar'
   end

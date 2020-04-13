@@ -371,6 +371,16 @@ class User < ApplicationRecord
       .select { |m| m.commontator_thread.comments.any? }
   end
 
+  def media_latest_comments
+    subscribed_commentable_media_with_comments
+      .map { |m| { medium: m,
+                   thread: m.commontator_thread,
+                   latest_comment: m.commontator_thread
+                                    .comments.sort_by(&:created_at)
+                                    .last } }
+      .sort_by { |x| x[:latest_comment].created_at }.reverse
+  end
+
   private
 
   def set_defaults

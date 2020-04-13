@@ -1584,6 +1584,7 @@ en:
   notifications:
     title: 'New notifications'
     check_notifications: 'Clear all'
+    check: Clear
     new_medium_in: 'New medium in '
     new_medium: 'New medium created:'
     new_announcement: 'New announcement:'
@@ -1975,6 +1976,9 @@ en:
     thread_subscribed: Diskussion abonniert
     who_and_when: '%{when} ago by %{who}'
     comment_verb: Add Comment
+    media_comments: >
+      Number of media in your subscribed courses and event series
+      for which there are new comments for %{count}:
   locales:
     en: 'English'
     de: 'German'
