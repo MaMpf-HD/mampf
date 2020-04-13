@@ -501,7 +501,7 @@ class Lecture < ApplicationRecord
       Thredded::MessageboardGroupView.grouped(forum_relation,
                                               user: user,
                                               with_unread_topics_counts: true)
-    forum_view.first.messageboards.first.unread_topics_count
+    forum_view&.first&.messageboards&.first&.unread_topics_count.to_i
   end
 
   # as there is no show action for lessons, this is the path to the show action

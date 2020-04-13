@@ -1,7 +1,7 @@
 # MainController
 class MainController < ApplicationController
   skip_before_action :authenticate_user!, only: [:home, :about, :news,
-                                                 :sponsors, :comments]
+                                                 :sponsors]
   before_action :check_for_consent
 
   def home
