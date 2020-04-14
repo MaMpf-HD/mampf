@@ -184,7 +184,7 @@ Commontator.configure do |config|
   #   :d (delete comments and close threads)
   #   :c (close threads only)
   # Default: :d
-  config.moderator_permissions = :e
+  config.moderator_permissions = :d
 
   # comment_voting
   # Type: Symbol
