@@ -1973,7 +1973,7 @@ en:
   comments:
     title: Comments on media in your event series and courses
     latest_post: Latest post
-    thread_subscribed: Diskussion abonniert
+    thread_subscribed: Subscribed
     who_and_when: '%{when} ago by %{who}'
     comment_verb: Add Comment
     media_comments: >

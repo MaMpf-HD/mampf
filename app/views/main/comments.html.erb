@@ -59,9 +59,10 @@
 								<div class="col-12">
 									<%= link_to m[:medium].local_title_for_viewers,
 															medium_path(m[:medium]) %>
-							(<%= link_to "#{m[:medium].commontator_thread.comments.size} " \
+									<br>
+							<%= link_to "#{m[:medium].commontator_thread.comments.size} " \
               		    "#{m[:medium].commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
-                  		show_media_comments_path(m[:medium]) %>)
+                  		show_media_comments_path(m[:medium]) %>
             		</div>
           		</div>
 						</div>
