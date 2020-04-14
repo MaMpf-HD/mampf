@@ -29,6 +29,10 @@
   ) %>");
 <% end %>
 
+<% if @update_icon %>
+$('#commentsIcon').removeClass('text-light').addClass('text-primary');
+<% end %>
+
 var commontatorComment = $("#commontator-comment-<%= @comment.id %>").hide().fadeIn();
 $('html, body').animate(
   { scrollTop: commontatorComment.offset().top - window.innerHeight/2 }, 'fast'

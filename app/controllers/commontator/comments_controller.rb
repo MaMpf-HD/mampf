@@ -50,8 +50,10 @@ class Commontator::CommentsController < Commontator::ApplicationController
           Commontator::Subscription.comment_created(@comment)
           medium = @commontator_thread.commontable
           if medium.released.in?(['all', 'users', 'subscribers'])
-            medium.teachable.media_scope.users.where(unread_comments: false)
-                  .update_all(unread_comments: true)
+            relevant_users = medium.teachable.media_scope.users
+            relevant_users.where(unread_comments: false)
+                          .update_all(unread_comments: true)
+            @update_icon = relevant_users.exists?(current_user.id)
           end
           @commontator_page = @commontator_thread.new_comment_page(
             @comment.parent_id, @commontator_show_all
