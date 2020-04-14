@@ -258,7 +258,7 @@ Commontator.configure do |config|
   # The maximum number of comments loaded at once for the default setting is:
   # 20 + 20*5 + 20*5*2 == 320
   # Default: [ 20, 5, 2 ]
-  config.comments_per_page = [ 20, 5, 5 ]
+  config.comments_per_page = [ 20, 5, 2 ]
 
   # thread_subscription
   # Type: Symbol
