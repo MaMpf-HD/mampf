@@ -2098,8 +2098,8 @@ de:
       </ul>
   comments:
     title: Neue Kommentare zu Medien aus Deinen Veranstaltungen bzw. Modulen
-    latest_post: Neuester Beitrag
-    thread_subscribed: abonniert
+    latest_post: Neuster Beitrag
+    thread_subscribed: Abo
     who_and_when: vor %{when} von %{who}
     comment_verb: Kommentieren
     media_comments: >
