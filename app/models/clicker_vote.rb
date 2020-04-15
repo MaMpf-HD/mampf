@@ -1,5 +1,5 @@
-# Vote class
-class Vote < ApplicationRecord
+# ClickerVote class
+class ClickerVote < ApplicationRecord
   belongs_to :clicker
 
   validate :clicker_open
@@ -17,3 +17,4 @@ class Vote < ApplicationRecord
     errors.add(:value, :out_of_range)
   end
 end
+

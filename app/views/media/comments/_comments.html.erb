@@ -1,0 +1,22 @@
+<div class="card bg-light"
+     id="commentsCard">
+  <div class="card-header bg-generic-card-header">
+    <div class="row">
+      <div class="col-8">
+        <h5>
+          <%= t('basics.comments') %> (<%= medium.commontator_thread.comments.count %>)
+        </h5>
+      </div>
+      <div class="col-4 text-right">
+        <%= link_to '',
+                    show_media_comments_path(medium),
+                    class: 'fas fa-expand fa-lg text-dark',
+                    style: 'text-decoration: none;' %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body"
+       style="max-height: 30vh; overflow-y: scroll;">
+    <%= commontator_thread(medium) %>
+  </div>
+</div>

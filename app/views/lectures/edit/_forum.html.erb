@@ -28,8 +28,8 @@
             <% if inspection %>
               Forum: <%= lecture.forum? ? 'Ja' : 'Nein' %>
             <% else %>
-            <% if lecture.forum? %>
-              <% if lecture.forum.locked %>
+            <% if lecture.forum? && lecture.forum %>
+              <% if lecture.forum&.locked %>
                 <%= link_to t('buttons.unlock_board'),
                             unlock_forum_path(lecture),
                             class: 'btn btn-sm btn-primary' %>

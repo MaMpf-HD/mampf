@@ -54,6 +54,9 @@ class User < ApplicationRecord
   # add timestamp for DSGVO consent
   after_create :set_consented_at
 
+  # users can comment stuff
+  acts_as_commontator
+
   # returns the array of all teachers
   def self.teachers
     User.where(id: Lecture.pluck(:teacher_id).uniq)
@@ -357,6 +360,25 @@ class User < ApplicationRecord
       .or(media.where(teachable: edited_courses))
       .or(media.where(teachable: teaching_related_lectures))
       .or(media.where(teachable: edited_lessons))
+  end
+
+  def subscribed_commentable_media_with_comments
+    lessons = Lesson.where(lecture: lectures)
+    filter_media(Medium.where.not(sort: ['RandomQuiz', 'Question', 'Erdbeere',
+                                         'Remark'])
+                       .where(teachable: courses + lectures + lessons))
+      .includes(commontator_thread: :comments)
+      .select { |m| m.commontator_thread.comments.any? }
+  end
+
+  def media_latest_comments
+    subscribed_commentable_media_with_comments
+      .map { |m| { medium: m,
+                   thread: m.commontator_thread,
+                   latest_comment: m.commontator_thread
+                                    .comments.sort_by(&:created_at)
+                                    .last } }
+      .sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
   private

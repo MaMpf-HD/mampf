@@ -68,7 +68,7 @@ class Ability
       can [:modal, :list_sections], Lesson
 
       can [:catalog, :search, :play, :display, :geogebra,
-           :register_download], Medium
+           :register_download, :show_comments], Medium
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :export_references,
            :export_screenshot, :publish, :destroy,
@@ -169,8 +169,13 @@ class Ability
         n.recipient == user
       end
       cannot :show, Medium do |medium|
-        !medium.visible_for_user?(user)
+        !medium.visible_for_user?(user) || medium.sort == 'Question'
       end
+
+      can :show_comments, Medium do |medium|
+        medium.visible_for_user?(user)
+      end
+
       cannot :show, Section do |section|
         !section.visible_for_user?(user)
       end

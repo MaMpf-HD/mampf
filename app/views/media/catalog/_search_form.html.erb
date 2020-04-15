@@ -25,7 +25,8 @@
                    {},
                    { multiple: purpose.in?(['media', 'import']),
                      class: 'selectize',
-                     disabled: purpose.in?(['media', 'clicker']) } %>
+                     disabled: purpose.in?(['media', 'clicker']),
+                     required: true } %>
       <% if purpose == 'clicker' %>
         <%= f.hidden_field :types, value: ['Question'] %>
       <% end %>
@@ -47,7 +48,8 @@
                    { prompt: t('basics.select')},
                    { multiple: true,
                      class: 'selectize',
-                     disabled: true } %>
+                     disabled: true,
+                     required: true } %>
       <div class="custom-control custom-radio custom-control-inline">
         <%= f.radio_button :teachable_inheritance,
                            '1',

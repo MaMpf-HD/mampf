@@ -6,6 +6,8 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => '/sidekiq'
   end
 
+  mount Commontator::Engine => '/commontator'
+
   get 'search/index'
 
   get '/administration', to: 'administration#index',
@@ -41,6 +43,8 @@ Rails.application.routes.draw do
                                         as: 'remove_question'
 
   resources :clickers, except: [:index, :update]
+
+  resources :clicker_votes, only: :create
 
   get 'c/:id', to: 'clickers#show'
 
@@ -186,6 +190,8 @@ Rails.application.routes.draw do
                                       as: 'register_download'
   get 'media/:id/get_statistics', to: 'media#get_statistics',
                                   as: 'get_statistics'
+  get 'media/:id/show_comments', to: 'media#show_comments',
+                                 as: 'show_media_comments'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
@@ -203,6 +209,7 @@ Rails.application.routes.draw do
   get 'profile/check_for_consent', as: 'consent_profile'
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'
+  post 'profile/toggle_thread_subscription', as: 'toggle_thread_subscription'
 
   resources :programs, except: [:show]
 
@@ -231,6 +238,12 @@ Rails.application.routes.draw do
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]
   end
+
+  patch 'readers/update', to: 'readers#update',
+                           as: 'update_reader'
+
+  patch 'readers/update_all', to: 'readers#update_all',
+                              as: 'update_all_readers'
 
   get 'referrals/list_items', to: 'referrals#list_items',
                               as: 'list_items'
@@ -286,8 +299,6 @@ Rails.application.routes.draw do
                               as: 'fill_user_select'
   resources :users, only: [:index, :edit, :update, :destroy]
 
-  resources :votes, only: :create
-
   get 'examples/:id', to: 'erdbeere#show_example',
                       as: 'erdbeere_example'
   post 'examples/find', to: 'erdbeere#find_example'
@@ -313,6 +324,8 @@ Rails.application.routes.draw do
   get 'main/home'
   get 'main/news', to: 'main#news',
                    as: 'news'
+  get 'main/comments', to: 'main#comments',
+                       as: 'comments'
   get 'main/sponsors', to: 'main#sponsors',
                        as: 'sponsors'
 

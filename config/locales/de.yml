@@ -129,6 +129,7 @@ de:
     search: 'Suche'
     profile: 'Profil'
     administration: 'Administration'
+    comments: 'Kommentare'
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
@@ -756,7 +757,7 @@ de:
         Rot eingefärbte Medien sind noch nicht veröffentlicht oder gesperrt.
       sort: 'Typ'
       edited_by: 'editiert von %{editors}'
-      publish: 'Publish Medium'
+      publish: 'Medium Veröffentlichen'
       media_search: 'Mediensuche'
       create: 'Medium anlegen'
       edit: 'Medium bearbeiten'
@@ -782,6 +783,7 @@ de:
       disclaimer: >
         Ich bestätige hiermit, dass durch die Veröffentlichung des
         Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
+      lock_comments: Kommentare für dieses Medium deaktivieren
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -1004,14 +1006,14 @@ de:
         import_warning: >
           Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
         search_type: >
-          Hier kannst Du (im Sinne von
+          Hier musst Du (im Sinne von
           <i>
           ODER
           </i>
           ) auswählen,
-          was der Typ des Mediums sein soll.
+          was der Typ des Mediums sein soll. Andernfalls wird die Suche ergebnislos sein.
         search_teachable: >
-          Hier kannst Du (im Sinne von
+          Hier musst Du (im Sinne von
           <i>
           ODER
           </i>
@@ -1690,6 +1692,7 @@ de:
   notifications:
     title: 'Neue Benachrichtigungen'
     check_notifications: 'alle erledigen'
+    check: 'erledigen'
     new_medium_in: 'Neues Medium in '
     new_medium: 'Neues Medium angelegt:'
     new_announcement: 'Neue Mitteilung:'
@@ -1742,7 +1745,7 @@ de:
   no_related_tags: 'Es liegen keine verknüpften Begriffe vor.'
   tags_in_neighbourhood: 'im weiteren Umfeld'
   related_lessons: 'Verknüpfte Sitzungen'
-  no_related_lessons: 'Es sind keine verknüpften Sizungen vorhanden.'
+  no_related_lessons: 'Es sind keine verknüpften Sitzungen vorhanden.'
   related_media: 'Verknüpfte Medien'
   related_questions: 'Verknüpfte Fragen'
   no_related_media: 'Es sind keine verknüpften Medien vorhanden.'
@@ -2093,6 +2096,15 @@ de:
       nicht als 3,000
       </li>
       </ul>
+  comments:
+    title: Neue Kommentare zu Medien aus Deinen Veranstaltungen bzw. Modulen
+    latest_post: Neuester Beitrag
+    thread_subscribed: abonniert
+    who_and_when: vor %{when} von %{who}
+    comment_verb: Kommentieren
+    media_comments: >
+      Anzahl der Medien in von den von Dir abonnierten
+      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2285,6 +2297,9 @@ de:
     statistics: 'Statistik'
     loading_data: 'Lade Daten...'
     realizations: 'Realisierungen'
+    comments: 'Kommentare'
+    comment: 'Kommentar'
+    comments_for: 'Kommentare für %{subject}'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2296,7 +2311,7 @@ de:
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
-    save_and_edit: 'Speichern und Bearbeiten'
+    save_and_edit: 'Speichern und bearbeiten'
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
