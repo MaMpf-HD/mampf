@@ -1,20 +1,20 @@
-version: '3.2'
+version: '3.5'
 services:
-  worker: &app
+  master: &app
     build:
       context: git@github.com:fosterfarrell9/mampf.git#production
       dockerfile: docker/Dockerfile
+    entrypoint: /usr/src/app/docker/entrypoint-master.sh
     image: mampf
     env_file: docker.env
     networks:
         - postgres
+        - default
         - solr
-        - workernet
     restart: always
     volumes:
       - "media_mampf:/mampf"
     depends_on:
-      - master
       - redis
       - cache
 
@@ -26,19 +26,27 @@ services:
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
     networks:
-      - workernet
+      - default
 
-  master:
+  worker:
     <<: *app
-    entrypoint: /usr/src/app/docker/entrypoint-master.sh
-  
+    entrypoint: /usr/src/app/docker/entrypoint-worker.sh
+    depends_on:
+      - master
+    environment:
+      - VIRTUAL_HOST=localhost
+
   redis:
     restart: always
     image: redis:5-alpine
+    networks:
+      - default
 
   cache:
     restart: always
     image: memcached:alpine
+    networks:
+      - default
 
   solr:
     image: solr:8.1
@@ -48,15 +56,14 @@ services:
     volumes:
       - /path/to/persistent/var_solr:/var/solr
     networks:
-      - solr
+      - default
     restart: always
 
 # Keeping the database separate from the docker setup is recommended.
 # Manually create a docker network where the server can be reached and specify it here
 networks:
     postgres:
-        external:
-            name: postgres
+        external: true
 
     workernet:
 
@@ -64,5 +71,5 @@ volumes:
     media_mampf:
         driver_opts:
             type: "nfs"
-            o: "addr=<nfs server>:/path/to/share,noatime,nolock,soft,vers=4.2,rw"
-            device: ":/docker/media_mampf"
+            o: "addr=<nfs server>,noatime,nolock,soft,vers=4.2,rw"
+            device: ":/path/to/share"
