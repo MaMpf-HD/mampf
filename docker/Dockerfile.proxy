@@ -1,2 +1,2 @@
 FROM jwilder/nginx-proxy:alpine
-RUN echo 'root /public;' > /etc/nginx/vhost.d/localhost_location
+RUN mkdir /etc/nginx/vhost.d && echo 'root /public;' > /etc/nginx/vhost.d/localhost_location
