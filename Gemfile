@@ -5,12 +5,6 @@ ruby '2.7.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.2'
-# Use dalli for caching to memcached in production
-gem 'dalli', '>= 2.7'
-# Ruby wrapper for UglifyJS JavaScript compressor
-gem 'uglifier'
-# Use nulldb adapter for assets precompilation in production
-gem 'activerecord-nulldb-adapter'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server

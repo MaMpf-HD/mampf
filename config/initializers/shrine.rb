@@ -10,7 +10,7 @@ if Rails.env.development?
 elsif Rails.env.production?
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
-    store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'), prefix: "/"),
+    store: Shrine::Storage::FileSystem.new("/" + ENV['MEDIA_FOLDER'], prefix: "/"),
   }
 elsif Rails.env.test?
   Shrine.storages = {

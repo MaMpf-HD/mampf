@@ -29,7 +29,7 @@ production:
   # <<: *default
   # database: db/development.sqlite3
   primary:
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
     encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
     database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
     username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
@@ -37,7 +37,7 @@ production:
     host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
     port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
   interactions:
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
     encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
     database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
     username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
