@@ -22,7 +22,7 @@ services:
     entrypoint: /usr/src/app/docker/entrypoint-master.sh
     volumes:
       - "media_mampf:/mampf"
-      - "public:/public"
+      - "public:/usr/src/app/public"
 
   worker:
     <<: *mampf
