@@ -1,2 +1,3 @@
 FROM jwilder/nginx-proxy:alpine
 RUN mkdir /etc/nginx/vhost.d && echo 'root /public;' > /etc/nginx/vhost.d/localhost_location
+COPY docker/mime.types /etc/nginx/mime.types
