@@ -1,50 +1,40 @@
-version: '3.4'
-x-mampf:
-  &mampf
-  build:
-    context: git@github.com:fosterfarrell9/mampf.git#production
-    dockerfile: docker/Dockerfile
-  image: mampf
-  env_file: docker.env
-  networks:
-    - solr
-    - mampf
-    - postgres
-  restart: always
-  depends_on:
-    - redis
-    - cache
-    - solr
-
+version: '3.5'
 services:
-  master:
-    <<: *mampf
-    entrypoint: /usr/src/app/docker/entrypoint-master.sh
-    volumes:
-      - "media_mampf:/mampf"
-      - "public:/usr/src/app/public"
-
-  worker:
-    <<: *mampf
-    entrypoint: /usr/src/app/docker/entrypoint-worker.sh
-    environment:
-      - VIRTUAL_HOST=localhost
-    volumes:
-      - "media_mampf:/mampf"
-
-  proxy:
+  master: &app
     build:
       context: git@github.com:fosterfarrell9/mampf.git#production
-      dockerfile: docker/Dockerfile.proxy
-    image: mampf-proxy
+      dockerfile: docker/Dockerfile
+    entrypoint: /usr/src/app/docker/entrypoint-master.sh
+    image: mampf
+    env_file: docker.env
+    networks:
+        - postgres
+        - default
+        - solr
+    restart: always
+    volumes:
+      - "media_mampf:/mampf"
+    depends_on:
+      - redis
+      - cache
+
+  proxy:
+    image: jwilder/nginx-proxy:alpine
     restart: always
     ports:
-      - "127.0.0.1:3008:80"
+      - "127.0.0.1:3000:80"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
-      - "public:/public:ro"
     networks:
-      - mampf
+      - default
+
+  worker:
+    <<: *app
+    entrypoint: /usr/src/app/docker/entrypoint-worker.sh
+    depends_on:
+      - master
+    environment:
+      - VIRTUAL_HOST=localhost
 
   redis:
     restart: always
@@ -72,18 +62,14 @@ services:
 # Keeping the database separate from the docker setup is recommended.
 # Manually create a docker network where the server can be reached and specify it here
 networks:
-  postgres:
-    external: true
-  mampf:
-  solr:
+    postgres:
+        external: true
+
+    workernet:
 
 volumes:
-  media_mampf:
-    driver_opts:
-      type: "nfs"
-      o: "addr=<nfs server>,noatime,nolock,soft,vers=4.2,rw"
-      device: ":/path/to/share"
-  public:
-    driver_opts:
-      type: "tmpfs"
-      device: "tmpfs"
+    media_mampf:
+        driver_opts:
+            type: "nfs"
+            o: "addr=<nfs server>,noatime,nolock,soft,vers=4.2,rw"
+            device: ":/path/to/share"
