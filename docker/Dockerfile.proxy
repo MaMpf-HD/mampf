@@ -1,2 +1,0 @@
-FROM jwilder/nginx-proxy:alpine
-COPY docker/nginx_vhost.conf /etc/nginx/conf.d/localhost.conf
