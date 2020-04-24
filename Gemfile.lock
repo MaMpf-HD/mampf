@@ -79,6 +79,7 @@ GEM
       activerecord (>= 4.2)
     acts_as_tree (2.9.1)
       activerecord (>= 3.0.0)
+    acts_as_votable (0.12.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
     afm (0.2.2)
@@ -124,6 +125,9 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    commontator (6.3.0)
+      rails (>= 5.2)
+      will_paginate
     concurrent-ruby (1.1.6)
     connection_pool (2.2.2)
     content_disposition (1.0.0)
@@ -497,6 +501,7 @@ GEM
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.4)
+    will_paginate (3.3.0)
     xkcd (1.1.1)
       google-search
       nokogiri (>= 1.5.0)
@@ -512,6 +517,7 @@ DEPENDENCIES
   activerecord-import!
   acts_as_list
   acts_as_tree
+  acts_as_votable
   barby
   bootsnap (>= 1.4.2)
   bootstrap
@@ -520,6 +526,7 @@ DEPENDENCIES
   cancancan
   capybara (>= 2.15)
   coffee-rails (~> 5.0.0)
+  commontator
   coveralls
   database_cleaner
   devise
@@ -578,7 +585,7 @@ DEPENDENCIES
   xkcd
 
 RUBY VERSION
-   ruby 2.7.0p0
+   ruby 2.7.1p83
 
 BUNDLED WITH
-   2.1.2
+   2.1.4

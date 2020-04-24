@@ -8,7 +8,7 @@ class Clicker < ApplicationRecord
   validates :title, uniqueness: { scope: [:editor_id] }
   validates :title, presence: true
 
-  has_many :votes, dependent: :destroy
+  has_many :votes, dependent: :destroy, class_name: 'ClickerVote'
 
   def user_link
     clicker_url(self, host: 'localhost').gsub('clickers', 'c')

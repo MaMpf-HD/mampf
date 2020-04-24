@@ -62,6 +62,18 @@ class ProfileController < ApplicationController
     redirect_to :root, notice: t('profile.consent')
   end
 
+  def toggle_thread_subscription
+    @thread = Commontator::Thread.find(params[:id])
+    if @thread && @thread.can_subscribe?(@user)
+      if params[:subscribe] == 'true'
+        @thread.subscribe(@user)
+      else
+        @thread.unsubscribe(@user)
+      end
+      @result =  !!@thread.subscription_for(@user)
+    end
+  end
+
   private
 
   def set_user

@@ -13,4 +13,19 @@ $(document).on 'turbolinks:load', ->
     $(this).remove()
     return
 
+  $(document).on 'click', '.subscriptionSwitch', ->
+    $.ajax Routes.toggle_thread_subscription_path(),
+      type: 'POST'
+      dataType: 'script'
+      data: {
+        id: $(this).data('id')
+        subscribe: $(this).is(':checked')
+      }
+
+
+  return
+
+# clean up everything before turbolinks caches
+$(document).on 'turbolinks:before-cache', ->
+  $(document).off 'click', '.subscriptionSwitch'
   return

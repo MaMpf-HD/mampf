@@ -33,6 +33,7 @@ class MediaController < ApplicationController
     current_user.notifications.where(notifiable_type: 'Medium',
                                      notifiable_id: @medium.id).each(&:destroy)
     I18n.locale = @medium.locale_with_inheritance
+    commontator_thread_show(@medium)
     render layout: 'application_no_sidebar'
   end
 
@@ -145,6 +146,8 @@ class MediaController < ApplicationController
   def publish
     release_state = params[:medium][:released]
     @medium.update(released: release_state)
+    lock_comments = params[:medium][:lock_comments]
+    @medium.commontator_thread.close(current_user) if lock_comments.to_i == 1
     if @medium.sort == 'Quiz' && params[:medium][:publish_vertices] == '1'
       @medium.becomes(Quiz).publish_vertices!(current_user, release_state)
     end
@@ -375,6 +378,11 @@ class MediaController < ApplicationController
       @question_count = @medium.becomes(Quiz).questions_count
       @local_success = Probe.local_success_in_quiz(@medium.becomes(Quiz))
     end
+  end
+
+  def show_comments
+    commontator_thread_show(@medium)
+    render layout: 'application_no_sidebar'
   end
 
   private

@@ -32,6 +32,13 @@
                        locals: { f: f } %>
           <% end %>
           <div class="custom-control custom-checkbox">
+            <%= f.check_box :lock_comments,
+                            class: 'custom-control-input' %>
+            <%= f.label :lock_comments,
+                        t('admin.medium.lock_comments'),
+                        { class: 'custom-control-label' } %>
+          </div>
+          <div class="custom-control custom-checkbox">
             <%= f.check_box :disclaimer,
                             class: 'custom-control-input',
                             required: true %>

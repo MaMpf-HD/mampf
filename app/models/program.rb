@@ -7,7 +7,7 @@ class Program < ApplicationRecord
 											attributes: translated_attribute_names
 
 	def name_with_subject
-		"#{subject.name}:#{name}"
+		"#{subject.name}: #{name}"
 	end
 
 	def courses

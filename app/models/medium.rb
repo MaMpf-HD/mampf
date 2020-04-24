@@ -101,6 +101,9 @@ class Medium < ApplicationRecord
   # keep track of copies (in particular for Questions, Remarks)
   acts_as_tree
 
+  # media can be commented on
+  acts_as_commontable dependent: :destroy
+
   # scope for published/locally visible media
   # locally visible media are published (without inheritance) and unlocked
   # (they may not be globally visible as their lecture may be unpublished)
