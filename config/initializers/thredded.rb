@@ -85,7 +85,7 @@ Thredded.layout = 'thredded/application'
 
 # ==> Model configuration
 # The range of valid messageboard name lengths. Default:
-# Thredded.messageboard_name_length_range = (1..60)
+Thredded.messageboard_name_length_range = (1..120)
 #
 # The range of valid topic title lengths. Default:
 # Thredded.topic_title_length_range = (1..200)
