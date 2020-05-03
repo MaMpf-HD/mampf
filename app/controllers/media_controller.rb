@@ -210,8 +210,7 @@ class MediaController < ApplicationController
       return
     end
     I18n.locale = @medium.locale_with_inheritance
-    @toc = @medium.toc_to_vtt.remove(Rails.root.join('public').to_s)
-    @ref = @medium.references_to_vtt.remove(Rails.root.join('public').to_s)
+    @vtt_container = @medium.create_vtt_container!
     @time = params[:time]
     render layout: 'thyme'
   end

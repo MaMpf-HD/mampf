@@ -400,6 +400,18 @@ class Medium < ApplicationRecord
     path
   end
 
+  # creates a .vtt tmp file (and returns its path), which contains
+  # all data needed by the thyme player to realize the toc
+  def toc_to_tmp_vtt
+    file = Tempfile.new(['toc-', '.vtt'], encoding: 'UTF-8')
+    file.write vtt_start
+    proper_items_by_time.reject(&:hidden).each do |i|
+      file.write i.vtt_time_span
+      file.write i.vtt_reference
+    end
+    file
+  end
+
   # creates a .vtt file (and returns its path), which contains
   # all data needed by the thyme player to realize references
   # Note: Only references to unlocked media will be incorporated.
@@ -414,6 +426,25 @@ class Medium < ApplicationRecord
       end
     end
     path
+  end
+
+  # creates a .vtt file (and returns its path), which contains
+  # all data needed by the thyme player to realize references
+  # Note: Only references to unlocked media will be incorporated.
+  def references_to_tmp_vtt
+    file = Tempfile.new(['ref-', '.vtt'], encoding: 'UTF-8')
+    file.write vtt_start
+    referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
+                     .each do |r|
+      file.write r.vtt_time_span
+      file.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
+    end
+    file
+  end
+
+  def create_vtt_container!
+    VttContainer.create(table_of_contents: toc_to_tmp_vtt,
+                        references: references_to_tmp_vtt)
   end
 
   # some plain methods for items and referrals

@@ -5,10 +5,10 @@
         <video id="video" data-paused="true" data-time="<%= @time %>">
           <source src="<%= @medium.video.url(host: host) %>">
             <track kind="chapters"
-                   src="<%= @toc %>"
+                   src="<%= @vtt_container.table_of_contents.url(host: host) %>"
                    srclang="de" default type="text/vtt" >
             <track kind="metadata"
-                   src="<%= @ref %>"
+                   src="<%= @vtt_container.references.url(host: host) %>"
                    srclang="de" default type="text/vtt" >
         </video>
         <div id="video-controlBar">
