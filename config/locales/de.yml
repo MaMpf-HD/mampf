@@ -784,6 +784,7 @@ de:
         Ich bestätige hiermit, dass durch die Veröffentlichung des
         Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
       lock_comments: Kommentare für dieses Medium deaktivieren
+      comments_locked: Kommentare deaktiviert
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
