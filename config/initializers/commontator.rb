@@ -33,14 +33,6 @@ Commontator.configure do |config|
       left: '$',
       right: '$',
       display: false
-    }, {
-      left: '\\(',
-      right: '\\)',
-      display: false
-    }, {
-      left: '\\[',
-      right: '\\]',
-      display: true
     }
   ],
   ignoredClasses: ['form-control', 'noTexStatus'],
