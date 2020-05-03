@@ -97,6 +97,14 @@ class MediaController < ApplicationController
         return
       end
     end
+    comments_locked = params[:medium][:comments_locked].to_i == 1
+    if @medium.commontator_thread.is_closed? != comments_locked
+      if comments_locked
+        @medium.commontator_thread.close(current_user)
+      else
+        @medium.commontator_thread.reopen
+      end
+    end
     @tags_without_section = []
     return unless @medium.teachable.class.to_s == 'Lesson'
     add_tags_in_lesson_and_sections

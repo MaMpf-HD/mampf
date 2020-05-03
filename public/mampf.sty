@@ -1,18 +1,18 @@
-%% LaTeX package mampf - version 1.5 (2020/4/8)
+%% LaTeX package mampf - version 1.51 (2020/4/30)
 %% Source file for mampf.sty
 %%
 %% -------------------------------------------------------------------------------------------
-%% Copyright (c) 2019 by Dr. Hendrik Kasten
+%% Copyright (c) 2019-20 by Dr. Hendrik Kasten
 %% -------------------------------------------------------------------------------------------
 %%
 %% This work may be distributed and/or modified under the
 %% conditions of the LaTeX Project Public License, either version 1.3c
 %% of this license or (at your option) any later version.
 %% The latest version of this license is in
-%%   https://www.latex-project.org/lppl.txt
+%% https://www.latex-project.org/lppl.txt
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{mampf}[2020/04/08 mampf Package]
+\ProvidesPackage{mampf}[2020/04/30 mampf Package]
 \RequirePackage{marginnote,qrcode,mathtools}
 \RequirePackage{hyperref}
 
@@ -30,7 +30,8 @@
 \makeatletter
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Command defined: 	\setmampfurl{<url>}
+%Command defined:
+%\setmampfurl{<url>}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\@mampfurl}{[UNDEFINED]}
@@ -42,7 +43,9 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Command defined: 	\checkmampftype{<type>}
+%Command defined: 
+%\checkmampftype{<type>}
+%\checkstructurenames[<description>]{<type>}	
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newif\ifmampftypeundefined
@@ -67,8 +70,48 @@
   \ifmampftypeundefined{\PackageWarning{mampf}{Type '\@checktype' not listed in MaMpf.}}\fi%
 }
 
+\DeclareRobustCommand\checkstructurenames{\@ifnextchar[{\@@checkstructurenames}{\@checkstructurenames}}%
+  \def\@@checkstructurenames[#1]#2{%
+     \def\@structuredescription{#1}%
+     \def\@structuretype{#2}%
+     \@language 1\relax%
+     \ifnum\languageoptions=\@language%
+     \@for\@structure:={Abschnitt,Kapitel}\do{%
+      \ifx\@structuretype\@structure{%
+        \ifx\@structuredescription\empty{%
+          \PackageWarning{mampf}{Missing description for '\@structure'. MaMpf will not import file structure.}%
+        }\fi%
+      }\fi}%
+    \fi%
+    \@language 2\relax%
+    \ifnum\languageoptions=\@language%
+    \@for\@structure:={chapter,section}\do{%
+      \ifx\@structuretype\@structure{%
+        \ifx\@structuredescription\empty{%
+          \PackageWarning{mampf}{Missing description for '\@structure'. MaMpf will not import file structure.}%
+        }\fi%
+      }\fi}%
+    \fi}
+  \def\@checkstructurenames#1{%
+     \def\@structuretype{#1}%
+     \@language 1\relax%
+     \ifnum\languageoptions=\@language%
+     \@for\@structure:={Abschnitt,Kapitel}\do{%
+      \ifx\@structuretype\@structure%
+        \PackageWarning{mampf}{Missing description for '\@structure'. MaMpf will not import file structure.}%
+      \fi}%
+    \fi%
+    \@language 2\relax%
+    \ifnum\languageoptions=\@language%
+    \@for\@structure:={chapter,section}\do{%
+      \ifx\@structuretype\@structure%
+        \PackageWarning{mampf}{Missing description for '\@structure'. MaMpf will not import file structure.}%
+      \fi}%
+    \fi}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Command defined: 	\crtrefnumber{<label>} (cf. package crossreftools, version 0.9)
+%Command defined:
+%\crtrefnumber{<label>} (cf. package crossreftools, version 0.9)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\crt@refundefined}{[UNDEFINED]}
@@ -92,7 +135,8 @@
 \newcommand{\crtrefnumber}[1]{\@@crtextr@ct@ref{reference}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Commands defined:	\mampflabel[<description>]{<label>}{<type>}
+%Commands defined:
+%\mampflabel[<description>]{<label>}{<type>}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \@ifundefined{c@chapter}{%
@@ -104,7 +148,8 @@
   \def\@@praemampflabel[#1]#2#3{\ifnum\compileoptions=0%
     \label{#2}%
   \else%  
-    \checkmampftype{#3}\hypertarget{#2}{}\label{#2}\pdfbookmark{MaMpf-Label|#2|#3|\crtrefnumber{#2}|#1|\thechapter|\thesection|\thesubsection|\getpagerefnumber{#2}}{MaMpf-Label{#2}}%
+    \checkmampftype{#3}\checkstructurenames[#1]{#3}%
+    \hypertarget{#2}{}\label{#2}\pdfbookmark{MaMpf-Label|#2|#3|\crtrefnumber{#2}|#1|\thechapter|\thesection|\thesubsection|\getpagerefnumber{#2}}{MaMpf-Label{#2}}%
   \fi}
   \def\@@mampflabel[#1]#2#3{\ifmmode%
     \text{\@@praemampflabel[#1]{#2}{#3}}%
@@ -114,7 +159,8 @@
   \def\@praemampflabel#1#2{\ifnum\compileoptions=0%
     \label{#1}%
   \else%  
-    \hypertarget{#1}{}\label{#1}\pdfbookmark{MaMpf-Label|\pdfstringdefPreHook{#1}|\pdfstringdefPreHook{#2}|\crtrefnumber{#1}||\thechapter|\thesection|\thesubsection|\getpagerefnumber{#1}}{MaMpf-Label{#1}}%
+    \checkmampftype{#2}\checkstructurenames{#2}%
+    \hypertarget{#1}{}\label{#1}\pdfbookmark{MaMpf-Label|#1|#2|\crtrefnumber{#1}||\thechapter|\thesection|\thesubsection|\getpagerefnumber{#1}}{MaMpf-Label{#1}}%
   \fi}
   \def\@mampflabel#1#2{\ifmmode%
     \text{\@praemampflabel{#1}{#2}}%
@@ -123,14 +169,15 @@
   \fi}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Commands defined: 	\mampfvideo[<time>]{<media number>} (outdated!)
-%			\mampftext[<named destination>]{<media number>} (outdated!)
+%Commands defined:
+%\mampfvideo[<time>]{<media number>} (outdated!)
+%\mampftext[<named destination>]{<media number>} (outdated!)
 %
-%			\mampftime{<time>}{<media number>}{<anchor text>}
-%			\mampfpage{<page>}{<media number>}{<anchor text>}
-%			\mampfdest{<named destination>}{<media number>}{<anchor text>}
-%			\mampfquiz{<media number>}{<anchor text>}
-%			\mampfgeo{<media number>}{<anchor text>}
+%\mampftime{<time>}{<media number>}{<anchor text>}
+%\mampfpage{<page>}{<media number>}{<anchor text>}
+%\mampfdest{<named destination>}{<media number>}{<anchor text>}
+%\mampfquiz{<media number>}{<anchor text>}
+%\mampfgeo{<media number>}{<anchor text>}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 \newcount\@linknumber
