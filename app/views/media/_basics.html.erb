@@ -125,6 +125,14 @@
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
                  medium: medium } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :comments_locked,
+                         class: 'custom-control-input',
+                         checked:  medium.commontator_thread.is_closed? %>
+        <%= f.label :comments_locked,
+                    t('admin.medium.comments_locked'),
+                    { class: 'custom-control-label' } %>
+      </div>
     <% end %>
     <div class="form-group">
       <%= t('basics.language') %>

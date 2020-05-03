@@ -738,6 +738,7 @@ en:
         I hereby confirm that by publishing this medium on the MaMpf platform,
         no rights of third parties are infringed.
       lock_comments: 'Disable comments for this medium'
+      comments_locked: 'Comments disabled'
       info:
         locked: >
           This medium has been locked. It can be unlocked via

@@ -15,9 +15,19 @@
         </span>
       <% end %>
       <%= @medium.caption %>
+      <% if current_user.admin ||
+            @medium.edited_with_inheritance_by?(current_user) %>
+        <%= link_to '',
+                    edit_medium_path(@medium),
+                    class: 'far fa-edit fa-sm text-dark',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none;' %>
+      <% end %>
     </h2>
   </div>
-  <div class="col-4 pt-2">
+  <div class="col-4 col-xl-6 pt-2">
     <strong>
       <%= t('from') %>:
     </strong>
@@ -57,18 +67,6 @@
           <%= @medium.teachable.to_label %>
         </span>
       <% end %>
-    <% end %>
-  </div>
-  <div class="col-12 col-xl-2 text-right">
-    <% if current_user.admin ||
-          @medium.edited_with_inheritance_by?(current_user) %>
-      <%= link_to '',
-                  edit_medium_path(@medium),
-                  class: 'far fa-edit fa-lg text-secondary',
-                  data: { toggle: 'tooltip',
-                          placement: 'bottom' },
-                  title: t('buttons.edit'),
-                  style: 'text-decoration: none;' %>
     <% end %>
   </div>
 </div>
