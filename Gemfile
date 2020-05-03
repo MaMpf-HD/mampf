@@ -59,7 +59,6 @@ gem 'bootstrap'
 gem "bootstrap_form"
 gem 'devise-bootstrap-views'
 gem 'fuzzy-string-match'
-gem 'coveralls', require: false
 gem 'kaminari'
 gem "selectize-rails"
 gem 'acts_as_list'
