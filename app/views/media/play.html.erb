@@ -2,7 +2,7 @@
   <div id="thyme">
     <figure id="hypervideo-container">
       <div id="video-container">
-        <video id="video" data-paused="true" data-time="<%= @time %>">
+        <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
           <source src="<%= @medium.video.url(host: host) %>">
             <track kind="chapters"
                    src="<%= @vtt_container.table_of_contents.url(host: host) %>"
