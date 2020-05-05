@@ -40,6 +40,8 @@
                                model: 'course_tag',
                                course: @course.id } } %>
       <% end %>
+      <div id="questionCounter">
+      </div>
       <div class="row">
         <div class="col-12 text-center">
           <%= f.submit t('test.start'),
@@ -48,8 +50,6 @@
         </div>
       </div>
     <% end %>
-    <div id="questionCounter">
-    </div>
     <div class="mt-3">
       <span class="badge badge-secondary">
         <%= t('basics.note') %>.
