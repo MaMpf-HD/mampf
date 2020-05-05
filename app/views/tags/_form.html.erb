@@ -9,13 +9,15 @@
             <%= t('basics.tag') %>
           </span>
           <%= tag.title %>
-          <%= link_to '',
-                      tag_path(tag),
-                      class: 'fas fa-eye text-dark mt-3',
-                      data: { toggle: 'tooltip',
-                              placement: 'bottom' },
-                      title: t('buttons.show'),
-                      style: 'text-decoration: none;' %>
+          <% unless new_tag %>
+            <%= link_to '',
+                        tag_path(tag),
+                        class: 'fas fa-eye text-dark mt-3',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('buttons.show'),
+                        style: 'text-decoration: none;' %>
+          <% end %>
         </h4>
       </div>
       <div class="col-6">
