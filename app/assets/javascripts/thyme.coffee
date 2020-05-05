@@ -344,7 +344,7 @@ setupHypervideo = ->
   # Originally (and more appropriately, according to the standards),
   # only the 'loadedmetadata' event was used. However, Firefox triggers this event to soon,
   # i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
-  # for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp  
+  # for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp
   initialChapters = true
   initialMetadata = true
   video.addEventListener 'loadedmetadata', ->

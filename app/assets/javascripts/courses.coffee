@@ -52,12 +52,9 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'change', '#search_tag_ids', ->
-    courseId = $('#start_random_quiz').data('course')
+    courseId = $(this).data('course')
     tagIds = $('#search_tag_ids').val()
-    count = $('#random_quiz_count').val()
     $('#questionCounter').empty()
-    $('#start_random_quiz').removeClass('disabled')
-      .prop('href', Routes.random_quiz_path(courseId, {tag_ids: tagIds, count: count}))
     return if tagIds.length == 0
     $.ajax Routes.render_question_counter_path(courseId),
       type: 'GET'
@@ -68,14 +65,6 @@ $(document).on 'turbolinks:load', ->
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
     return
-
-  $(document).on 'change', '#random_quiz_count', ->
-    courseId = $('#start_random_quiz').data('course')
-    tagIds = $('#search_tag_ids').val()
-    count = $(this).val()
-    $('#start_random_quiz').removeClass('disabled')
-      .prop('href', Routes.random_quiz_path(courseId, {tag_ids: tagIds, count: count}))
-  return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->

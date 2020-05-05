@@ -56,7 +56,7 @@ Rails.application.routes.draw do
                              as: 'display_course'
   get 'courses/:id/show_random_quizzes', to: 'courses#show_random_quizzes',
                                          as: 'show_random_quizzes'
-  get 'courses/:id/take_random_quiz', to: 'courses#take_random_quiz',
+  post 'courses/:id/take_random_quiz', to: 'courses#take_random_quiz',
                                       as: 'random_quiz'
   get 'courses/:id/render_question_counter', to: 'courses#render_question_counter',
                                              as: 'render_question_counter'

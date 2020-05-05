@@ -92,8 +92,8 @@ class CoursesController < ApplicationController
   end
 
   def take_random_quiz
-    tags = Tag.where(id: tag_params[:tag_ids])
-    random_quiz = @course.create_random_quiz!(tags, tag_params[:count].to_i)
+    tags = Tag.where(id: random_quiz_params[:search_tag_ids])
+    random_quiz = @course.create_random_quiz!(tags, random_quiz_params[:random_quiz_count].to_i)
     redirect_to take_quiz_path(random_quiz)
   end
 
@@ -163,6 +163,11 @@ class CoursesController < ApplicationController
 
   def tag_params
     params.permit(:count, tag_ids: [])
+  end
+
+  def random_quiz_params
+    params.require(:quiz).permit(:random_quiz_count,
+                                 search_tag_ids: [])
   end
 
   # create notifications to all users about creation of new course
