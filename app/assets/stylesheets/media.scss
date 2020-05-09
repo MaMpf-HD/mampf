@@ -80,8 +80,8 @@
 #video-edit {
   border: 1px solid gray;
   position: relative;
-  max-width: 600px;
-  max-height: 500px;
+  max-width: 100%;
+  max-height: calc(100% - 60px);
 }
 
 #thyme-edit {
