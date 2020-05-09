@@ -306,7 +306,10 @@ class MediaController < ApplicationController
 
   # export the video's references to a .vtt file
   def export_references
-    file = @medium.references_to_vtt
+#    file = @medium.references_to_vtt
+    @vtt_container = @medium.create_vtt_container!
+    file = Tempfile.new
+    @vtt_container.references.stream(file.path)
     cookies['fileDownload'] = 'true'
 
     send_file file,
@@ -318,8 +321,7 @@ class MediaController < ApplicationController
   # export the video's screenshot to a .vtt file
   def export_screenshot
     return if @medium.screenshot.nil?
-    path = Rails.root.join('public', 'tmp')
-    file = Tempfile.new(['screenshot', '.png'], path)
+    file = Tempfile.new
     @medium.screenshot.stream(file.path)
     cookies['fileDownload'] = 'true'
 
