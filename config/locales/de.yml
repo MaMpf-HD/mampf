@@ -146,6 +146,7 @@ de:
       terms: 'Semester'
       classification: 'Systematik'
       news: 'News'
+      stats: 'Zugriffsstatistik'
       users: 'Nutzerverwaltung'
       course: 'Modul'
       profile: 'Mein Profil'
@@ -2048,6 +2049,8 @@ de:
     interested_html:
       Neugierig geworden? Auf unserem %{blog} und auf %{researchgate} findest du weitere Informationen über
       und Neuigkeiten zu MaMpf. %{guided_tour} findest Du eine geführte Tour durch MaMpf.
+      Außerdem gelangst Du auf diesem %{resources} zu Ressourcen für EditorInnen (z.B. zum MaMpf-LaTeX-Paket).
+    resources: Weg
     blog: Blog
     researchgate: Researchgate
   math:

@@ -154,6 +154,7 @@ en:
       terms: 'Terms'
       classification: 'Classification'
       news: 'News'
+      stats: 'Access statistics'
       users: 'User administration'
       course: 'Course'
       profile: 'My Profile'
@@ -1920,8 +1921,10 @@ en:
       compiled from a large collection of multiple choice questions and calculation tasks, and
       guided proofs'
     interested_html: >
-     Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
-     %{guided_tour} you can find a guided tour of MaMpf.
+      Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
+      %{guided_tour} you can find a guided tour of MaMpf. Resources for editors
+      (e.g. the MaMpf LaTEX package) are available %{resources}.
+    resources: here
     blog: Blog
     researchgate: Researchgate
   math:

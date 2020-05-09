@@ -83,6 +83,14 @@
                       data: { toggle: 'tooltip' },
                       title: t('admin.navbar.news') %>
         </li>
+        <li>
+          <%= link_to '', sidekiq_web_path,
+                      class: 'fas fa-chart-line fa-lg text-light nav-link',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip' },
+                      title: t('admin.navbar.stats'),
+                      target: :_blank %>
+        </li>
       <% end %>
     </ul>
     <% if current_user.admin? %>
