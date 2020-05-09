@@ -292,7 +292,10 @@ class MediaController < ApplicationController
 
   # export the video's toc data to a .vtt file
   def export_toc
-    file = @medium.toc_to_vtt
+#    file = @medium.toc_to_vtt
+    @vtt_container = @medium.create_vtt_container!
+    file = Tempfile.new
+    @vtt_container.table_of_contents.stream(file.path)
     cookies['fileDownload'] = 'true'
 
     send_file file,

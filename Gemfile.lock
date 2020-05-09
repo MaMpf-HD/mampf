@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/fosterfarrell9/thredded
-  revision: 79dfac38227b8af0e772af266d1df8b6612fe737
+  revision: 0d879e671e842becb367f2162b36a73277c3e5c9
   branch: master
   specs:
     thredded (0.16.16)
