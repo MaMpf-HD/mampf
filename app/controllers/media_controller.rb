@@ -292,7 +292,6 @@ class MediaController < ApplicationController
 
   # export the video's toc data to a .vtt file
   def export_toc
-#    file = @medium.toc_to_vtt
     @vtt_container = @medium.create_vtt_container!
     file = Tempfile.new
     @vtt_container.table_of_contents.stream(file.path)
@@ -306,7 +305,6 @@ class MediaController < ApplicationController
 
   # export the video's references to a .vtt file
   def export_references
-#    file = @medium.references_to_vtt
     @vtt_container = @medium.create_vtt_container!
     file = Tempfile.new
     @vtt_container.references.stream(file.path)

@@ -386,23 +386,10 @@ class Medium < ApplicationRecord
       [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
   end
 
-  # creates a .vtt file (and returns its path), which contains
+
+  # creates a .vtt tmp file (and returns it), which contains
   # all data needed by the thyme player to realize the toc
   def toc_to_vtt
-    path = toc_path
-    File.open(path, 'w+:UTF-8') do |f|
-      f.write vtt_start
-      proper_items_by_time.reject(&:hidden).each do |i|
-        f.write i.vtt_time_span
-        f.write i.vtt_reference
-      end
-    end
-    path
-  end
-
-  # creates a .vtt tmp file (and returns its path), which contains
-  # all data needed by the thyme player to realize the toc
-  def toc_to_tmp_vtt
     file = Tempfile.new(['toc-', '.vtt'], encoding: 'UTF-8')
     file.write vtt_start
     proper_items_by_time.reject(&:hidden).each do |i|
@@ -412,23 +399,7 @@ class Medium < ApplicationRecord
     file
   end
 
-  # creates a .vtt file (and returns its path), which contains
-  # all data needed by the thyme player to realize references
-  # Note: Only references to unlocked media will be incorporated.
-  def references_to_vtt
-    path = references_path
-    File.open(path, 'w+:UTF-8') do |f|
-      f.write vtt_start
-      referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
-                       .each do |r|
-        f.write r.vtt_time_span
-        f.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
-      end
-    end
-    path
-  end
-
-  # creates a .vtt file (and returns its path), which contains
+  # creates a .vtt file (and returns it), which contains
   # all data needed by the thyme player to realize references
   # Note: Only references to unlocked media will be incorporated.
   def references_to_tmp_vtt
@@ -443,8 +414,8 @@ class Medium < ApplicationRecord
   end
 
   def create_vtt_container!
-    VttContainer.create(table_of_contents: toc_to_tmp_vtt,
-                        references: references_to_tmp_vtt)
+    VttContainer.create(table_of_contents: toc_to_vtt,
+                        references: references_to_vtt)
   end
 
   # some plain methods for items and referrals
@@ -937,14 +908,6 @@ class Medium < ApplicationRecord
     end
     return unless teachable.lesson.present? && teachable.lesson.persisted?
     teachable.lesson.touch
-  end
-
-  def toc_path
-    Rails.root.join('public', 'tmp').to_s + '/toc-' + SecureRandom.hex + '.vtt'
-  end
-
-  def references_path
-    Rails.root.join('public', 'tmp').to_s + '/ref-' + SecureRandom.hex + '.vtt'
   end
 
   def vtt_start
