@@ -84,6 +84,14 @@
                       title: t('admin.navbar.news') %>
         </li>
         <li>
+          <%= link_to '', thredded_path,
+                      class: 'fas fa-comment-alt fa-lg text-light nav-link',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip' },
+                      title: t('admin.navbar.boards'),
+                      target: :_blank %>
+        </li>
+        <li>
           <%= link_to '', sidekiq_web_path,
                       class: 'fas fa-chart-line fa-lg text-light nav-link',
                       style: 'text-decoration: none;',

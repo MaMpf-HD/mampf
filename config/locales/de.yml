@@ -146,6 +146,7 @@ de:
       terms: 'Semester'
       classification: 'Systematik'
       news: 'News'
+      boards: 'Foren'
       stats: 'Zugriffsstatistik'
       users: 'Nutzerverwaltung'
       course: 'Modul'
