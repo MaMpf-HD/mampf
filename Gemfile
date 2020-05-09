@@ -66,7 +66,9 @@ gem 'acts_as_tree'
 gem 'activerecord-import',
   git: 'https://github.com/zdennis/activerecord-import.git',
   branch: 'master'
-gem 'thredded'
+gem 'thredded',
+  git: 'https://github.com/fosterfarrell9/thredded',
+  branch: 'master'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
 gem 'rails-i18n'

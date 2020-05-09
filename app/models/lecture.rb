@@ -60,6 +60,10 @@ class Lecture < ApplicationRecord
   after_save :touch_chapters
   after_save :touch_sections
 
+  # if the lecture is destroyed, its forum (if existent) should be destroyed
+  # as well
+  before_destroy :destroy_forum
+
   # scopes for published lectures
   scope :published, -> { where.not(released: nil) }
 
@@ -610,5 +614,10 @@ class Lecture < ApplicationRecord
 
   def touch_sections
     Section.where(chapter: chapters).update_all(updated_at: Time.now)
+  end
+
+  def destroy_forum
+    return unless forum
+    forum.destroy
   end
 end

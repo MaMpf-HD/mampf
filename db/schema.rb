@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_03_120849) do
+ActiveRecord::Schema.define(version: 2020_05_09_111503) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -744,8 +744,6 @@ ActiveRecord::Schema.define(version: 2020_05_03_120849) do
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
-  add_foreign_key "division_course_joins", "courses"
-  add_foreign_key "division_course_joins", "divisions"
   add_foreign_key "divisions", "programs"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"

@@ -45,6 +45,10 @@ class Course < ApplicationRecord
   after_save :touch_media
   after_save :touch_lectures_and_lessons
 
+  # if the course is destroyed, its forum (if existent) should be destroyed
+  # as well
+  before_destroy :destroy_forum
+
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
 
@@ -479,5 +483,10 @@ class Course < ApplicationRecord
   def touch_lectures_and_lessons
     lectures.update_all(updated_at: Time.now)
     Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+  end
+
+  def destroy_forum
+    return unless forum
+    forum.destroy
   end
 end
