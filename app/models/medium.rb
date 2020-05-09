@@ -402,7 +402,7 @@ class Medium < ApplicationRecord
   # creates a .vtt file (and returns it), which contains
   # all data needed by the thyme player to realize references
   # Note: Only references to unlocked media will be incorporated.
-  def references_to_tmp_vtt
+  def references_to_vtt
     file = Tempfile.new(['ref-', '.vtt'], encoding: 'UTF-8')
     file.write vtt_start
     referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
