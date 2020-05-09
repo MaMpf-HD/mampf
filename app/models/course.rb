@@ -33,7 +33,7 @@ class Course < ApplicationRecord
   # a course has many divisions of study programs,
   # e.g. "BSc Math (100%) Wahlpflichtbereich 1"
   # and "BSc Math (50%) Pflichtmodule"
-  has_many :division_course_joins
+  has_many :division_course_joins, dependent: :destroy
   has_many :divisions, through: :division_course_joins
 
 
