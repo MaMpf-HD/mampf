@@ -878,7 +878,8 @@ class Medium < ApplicationRecord
       Item.create(start_time: TimeStamp.new(h: 0, m:0, s: 0, ms: j),
                   sort: i.sort, description: i.description,
                   medium: self, section: i.section,
-                  ref_number: i.ref_number)
+                  ref_number: i.ref_number,
+                  related_items: [i])
     end
   end
 

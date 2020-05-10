@@ -1788,6 +1788,7 @@ de:
   manuscript:
     manuscript: 'Manuskript'
     view: 'pdf im Browser betrachten'
+    view_script: 'Skript im Browser betrachten'
     download: 'Manuskript herunterladen'
     length: 'Länge'
     size: 'Größe'

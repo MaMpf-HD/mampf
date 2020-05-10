@@ -30,27 +30,15 @@
           </div>
           <div class="col-2">
             <% if i.medium.visible? %>
-              <% if i.video_link %>
-                <%= link_to i.video_link,
-                            class: ['text-secondary', 'new-in-lecture',
-                                    'material-icons', 'mr-2'],
-                            style: 'text-decoration:none; font-size: 1em',
-                            data: { toggle: "tooltip" },
-                            title: t('video.play'),
-                            target: :_blank do %>
-                  video_library
-                <% end %>
-              <% end %>
-              <% if i.manuscript_link %>
-                <%= link_to i.manuscript_link,
-                            class: ['text-secondary', 'new-in-lecture',
-                                    'material-icons'],
-                            style: 'text-decoration:none; font-size: 1em;',
-                            data: { toggle: 'tooltip' },
-                            title: t('manuscript.view'),
-                            target: :_blank do %>
-                  library_books
-                <% end %>
+              <%= render partial: 'items/item_links',
+                         locals: { item: i } %>
+            <% end %>
+            <% i.related_items.each do |j| %>
+              <span class="mr-2">
+              </span>
+              <% if j.medium.visible? %>
+                <%= render partial: 'items/item_links',
+                           locals: { item: j } %>
               <% end %>
             <% end %>
           </div>
