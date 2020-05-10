@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_10_062602) do
+ActiveRecord::Schema.define(version: 2020_05_10_104347) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -201,6 +201,13 @@ ActiveRecord::Schema.define(version: 2020_05_10_062602) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["medium_id"], name: "index_imports_on_medium_id"
     t.index ["teachable_type", "teachable_id"], name: "index_imports_on_teachable_type_and_teachable_id"
+  end
+
+  create_table "item_self_joins", force: :cascade do |t|
+    t.integer "item_id", null: false
+    t.integer "related_item_id", null: false
+    t.index ["item_id"], name: "index_item_self_joins_on_item_id"
+    t.index ["related_item_id"], name: "index_item_self_joins_on_related_item_id"
   end
 
   create_table "items", force: :cascade do |t|
