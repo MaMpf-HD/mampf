@@ -122,25 +122,31 @@
       <div>
         <span>
           <%= t('basics.screenshot') %>
+          <%= helpdesk(t('thyme_editor.info.screenshot'), false) %>
         </span>
-        <%= helpdesk(t('thyme_editor.info.screenshot'), false) %>
       </div>
       <div>
-        <%= link_to t('buttons.remove'),
+        <%= link_to '',
                     remove_screenshot_path(@medium),
                     method: :patch,
                     remote: true,
-                    data: { confirm: 'Bist Du sicher?' },
+                    data: { confirm: t('confirmation.generic'),
+                            toggle: 'tooltip',
+                            placement: 'bottom'},
+                    title: t('buttons.remove'),
                     id: 'remove-screenshot',
-                    class: 'btn btn-sm btn-outline-light',
+                    class: 'fas fa-trash-alt fa-lg mr-2 text-light',
                     style: 'display: ' +
-                              show_inline(@medium.screenshot.present?) %>
-        <%= link_to t('buttons.export'),
+                             show_inline(@medium.screenshot.present?) %>
+        <%= link_to '',
                     export_screenshot_path(@medium),
-                    class: 'btn btn-outline-light btn-sm',
+                    class: 'fas fa-download fa-lg mr-2 text-light',
                     id: 'export-screenshot',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.export'),
                     style: 'display: ' +
-                              show_inline(@medium.screenshot.present?) %>
+                             show_inline(@medium.screenshot.present?) %>
       </div>
     </div>
     <div id="screenshot-area"
@@ -151,15 +157,33 @@
   </div>
   <div id="toc-edit">
     <div class="thyme-header bg-teal-darken-2 text-light">
+      <div>
         <span>
           <%= t('thyme_editor.toc') %>
           <%= helpdesk(t('thyme_editor.info.toc'), false) %>
         </span>
-        <%= link_to t('buttons.export'),
+      </div>
+      <div>
+        <%= link_to '',
+                    import_script_items_path(@medium),
+                    class: 'fas fa-file-import fa-lg mr-2 text-light',
+                    id: 'import-script-items',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    remote: true,
+                    title: t('buttons.import_script_items'),
+                    style: 'display: ' +
+                             show_inline(@medium.script_items_importable?) %>
+        <%= link_to '',
                     export_toc_path(@medium),
-                    class: 'btn btn-outline-light btn-sm',
+                    class: 'fas fa-download fa-lg mr-2 text-light',
                     id: 'export-toc',
-                    style: 'display: ' + show(@medium.proper_items.present?) %>
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.export'),
+                    style: 'display: ' +
+                             show_inline(@medium.proper_items.present?) %>
+      </div>
     </div>
     <div id="toc-area">
       <%= render partial: 'media/toc',
@@ -172,10 +196,13 @@
         <%= t('thyme_editor.references') %>
         <%= helpdesk(t('thyme_editor.info.references'), true) %>
       </span>
-      <%= link_to t('buttons.export'),
+      <%= link_to '',
                   export_references_path(@medium),
-                  class: 'btn btn-outline-light btn-sm',
+                  class: 'fas fa-download fa-lg mr-2 text-light',
                   id: 'export-references',
+                  data: { toggle: 'tooltip',
+                          placement: 'bottom' },
+                  title: t('buttons.export'),
                   style: 'display: ' + show(@medium.referrals.present?) %>
     </div>
     <div id="meta-area">

@@ -2386,6 +2386,7 @@ de:
     interpret: 'Interpretieren'
     import_media: 'Medien importieren'
     view: 'Ansehen'
+    import_script_items: 'Inhaltsverzeichnis aus Skript übernehmen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

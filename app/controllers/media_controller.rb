@@ -290,6 +290,13 @@ class MediaController < ApplicationController
     render layout: 'enrich'
   end
 
+  # if the medium is associated to a lesson of a lecture which is in script mode
+  # and the lesson has associated script-items, it is possible to import these
+  # items into the toc of the medium
+  def import_script_items
+    @medium.import_script_items!
+  end
+
   # export the video's toc data to a .vtt file
   def export_toc
     @vtt_container = @medium.create_vtt_container!

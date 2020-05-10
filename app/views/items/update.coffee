@@ -31,7 +31,7 @@ $('#item-description-error').append('<%= @errors[:description].join(' ') %>')
 # item was updated from within edit item view
 # rerender toc box, scroll item into view and colorize it properly
 $('#toc-area').empty()
-  .append('<%= j render partial: 'media/toc',
+  .append('<%= j render partial: "media/toc",
                         locals: { medium: @item.medium } %>')
 tocArea = document.getElementById('toc-area')
 renderMathInElement tocArea,

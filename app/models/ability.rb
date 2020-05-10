@@ -70,7 +70,8 @@ class Ability
       can [:catalog, :search, :play, :display, :geogebra,
            :register_download, :show_comments], Medium
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
-           :remove_screenshot, :export_toc, :export_references,
+           :remove_screenshot, :export_toc, :import_script_items,
+           :export_references,
            :export_screenshot, :publish, :destroy,
            :import_manuscript, :fill_teachable_select,
            :fill_media_select, :update_tags, :get_statistics], Medium do |m|

@@ -2260,6 +2260,7 @@ en:
     interpret: 'Interpret'
     import_media: 'Import Media'
     view: 'View'
+    import_script_items: 'Import table of contents from manuscript'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

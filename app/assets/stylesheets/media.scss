@@ -309,3 +309,8 @@
 .details-warning {
   display: none;
 }
+
+#remove-screenshot, #export-screenshot, #export-toc, #export-references,
+#import-script-items {
+  text-decoration: none;
+}

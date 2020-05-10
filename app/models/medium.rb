@@ -862,6 +862,26 @@ class Medium < ApplicationRecord
     result
   end
 
+  def script_items_importable?
+    return unless teachable_type == 'Lesson'
+    return unless teachable.lecture.content_mode == 'manuscript'
+    return unless teachable.script_items.any?
+    true
+  end
+
+  def import_script_items!
+    return unless teachable_type == 'Lesson'
+    return unless teachable.lecture.content_mode == 'manuscript'
+    items = teachable.script_items
+    return unless items.any?
+    items.each_with_index.each do |i, j|
+      Item.create(start_time: TimeStamp.new(h: 0, m:0, s: 0, ms: j),
+                  sort: i.sort, description: i.description,
+                  medium: self, section: i.section,
+                  ref_number: i.ref_number)
+    end
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require
