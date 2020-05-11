@@ -1261,6 +1261,7 @@ de:
       take_time: 'Zeit aus Video übernehmen'
       external_references: 'Externe Referenzen'
       external_all: 'extern (alle)'
+      additional_medium: 'zusätzliches Medium'
       info:
         start_time: >
           Hier kannst Du die Zeit eingeben, an der die
@@ -1313,6 +1314,8 @@ de:
         media: >
           Hier wird Dir angezeigt, in welchen Medienformen
           der zu referenzierende Eintrag vorliegt.
+        additional_medium:
+          Der Eintrag ist mit zusätzlichen Medien verknüpft.
         explanation: >
           Hier kannst Du den zu referenzierenden Eintrag noch
           mit einer (optionalen) zusätzlichen Beschreibung versehen.

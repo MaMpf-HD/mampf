@@ -277,6 +277,11 @@ class Item < ApplicationRecord
     Referral.where(item: self).map(&:medium)
   end
 
+  def related_items_visible?
+    !!related_items&.first&.medium&.published? &&
+      !related_items&.first&.medium&.locked?
+  end
+
   private
 
   def math_items
@@ -402,7 +407,6 @@ class Item < ApplicationRecord
   def quiz_link_generic
     Rails.application.routes.url_helpers.take_quiz_path(medium.id)
   end
-
 
   # the next methods are used for validations
 

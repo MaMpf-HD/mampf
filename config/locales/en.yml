@@ -1187,6 +1187,7 @@ en:
       take_time: 'Take time from video'
       external_references: 'external references'
       external_all: 'external (all)'
+      additional_medium: 'additional_medium'
       info:
         start_time: >
           Here you can enter the time at which the reference is supposed to
@@ -1230,6 +1231,8 @@ en:
           displayed.
         media: >
           Here it is shown in which media forms the referened item occurs.
+        additional_medium:
+          This item is related to additional media.
         explanation: >
           Here you can give an optional additional explanation for the
           referenced item.

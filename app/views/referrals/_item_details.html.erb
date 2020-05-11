@@ -1,0 +1,22 @@
+<div class="form-group form-row">
+  <div class="col-2">
+  </div>
+  <div class="col-10">
+    <%= helpdesk(t('admin.referral.info.media'), false) %>
+    <%= t('basics.media') %>:
+    <%= render partial: 'referrals/item_documents',
+               locals: { item: item } %>
+  </div>
+</div>
+<% item&.related_items&.each do |i| %>
+  <div class="form-group form-row">
+    <div class="col-2">
+    </div>
+    <div class="col-10">
+      <%= helpdesk(t('admin.referral.info.additional_medium'), false) %>
+      <%= t('admin.referral.additional_medium') %>:
+      <%= render partial: 'referrals/item_documents',
+                 locals: { item: i } %>
+    </div>
+  </div>
+<% end %>

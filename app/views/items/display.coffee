@@ -21,49 +21,9 @@ $('#link_details').hide()
 
 <% if @item.medium.present? %>
 
-# if item belongs to a medium with video, show this and provide link
-# to a button that provides a test for the video link
-<% if @item.sort != 'pdf_destination' && @item.medium.video.present? %>
-$('#video-ref').prop('href', '<%= @item.video_link %>').show()
-<% else %>
-$('#video-ref').prop('href', '').hide()
-<% end %>
-
-# if item belongs to a medium with manuscript, show this and provide link
-# to a button that provides a test for the manuscript link
-<% if @item.medium.manuscript.present? %>
-$('#manuscript-ref').prop('href', '<%= @item.manuscript_link %>').show()
-<% else %>
-$('#manuscript-ref').prop('href', '').hide()
-<% end %>
-
-# if item belongs to a medium with quiz, show this and provide link
-# to a button that provides a test for the quiz link
-<% if @item.medium.quiz_graph.present? %>
-$('#quiz-ref').prop('href', '<%= @item.quiz_link %>').show()
-<% else %>
-$('#quiz-ref').prop('href', '').hide()
-<% end %>
-
-# if item belongs to a medium with an external link, show this and provide link
-# to a button that provides a test for the manuscript link
-<% if @item.sort != 'pdf_destination' &&
-        @item.medium.external_reference_link.present? %>
-$('#medium-link-ref').prop('href', '<%= @item.medium_link %>').show()
-<% else %>
-$('#medium-link-ref').prop('href', '').hide()
-<% end %>
-
-<% if @item.medium.visible? %>
-$('#unpublished_medium_item').hide()
-$('#locked_medium_item').hide()
-<% elsif !@item.medium.published? %>
-$('#unpublished_medium_item').show()
-$('#locked_medium_item').hide()
-<% else %>
-$('#unpublished_medium_item').hide()
-$('#locked_medium_item').show()
-<% end %>
+$('#item_details').empty()
+  .append('<%= j render partial: "referrals/item_details",
+                        locals: { item: @item } %>')
 
 # end of the case where the item is associated to a medium
 <% end %>
@@ -87,3 +47,6 @@ $('#link_reappearance_link').show()
 
 $('#link_details').show()
 <% end %>
+
+# activate popovers
+$('[data-toggle="popover"]').popover()
