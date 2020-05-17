@@ -73,6 +73,15 @@ en:
         undelete: Undelete
         update: Modify Comment
         reply: Reply to Comment.
+        preview: >
+          <i>
+          Note.
+          </i>
+          You can use LaTeX in your posts by writing the LaTeX code between
+          dollar signs (or double dollar signs).
+          A list of supported symbols can be found
+          <a href="https://katex.org/docs/supported.html" target="_blank">
+          here</a>.
       errors:
         already_deleted: This comment has already been deleted.
         create: "This comment could not be posted because:"

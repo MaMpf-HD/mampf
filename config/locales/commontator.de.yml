@@ -42,6 +42,15 @@ de:
         undelete: Löschen rückgängig
         update: Kommentar bearbeiten
         reply: Auf Kommentar antworten.
+        preview: >
+          <i>
+          Hinweis.
+          </i>
+          Du kannst LaTeX benutzen, indem Du den LaTeX-Code
+          zwischen Dollarzeichen schreibst (bzw. doppelte Dollarzeichen für
+          abgesetzte Inhalte). Eine Liste der unterstützten Symbole gibt es
+          <a href="https://katex.org/docs/supported.html" target="_blank">
+          hier</a>.
       errors:
         already_deleted: Dieser Kommentar wurde bereits gelöscht.
         create: "Kommentar kann nicht veröffentlicht werden:"

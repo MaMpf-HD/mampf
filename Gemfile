@@ -84,7 +84,9 @@ gem 'sidekiq'
 gem 'faraday'
 gem 'globalize'
 gem 'globalize-accessors'
-gem 'commontator'
+gem 'commontator',
+  git: 'https://github.com/fosterfarrell9/commontator',
+  branch: 'master'
 gem 'acts_as_votable'
 
 group :development, :test do

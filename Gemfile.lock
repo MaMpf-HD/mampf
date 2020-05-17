@@ -1,4 +1,13 @@
 GIT
+  remote: https://github.com/fosterfarrell9/commontator
+  revision: cfc3e47c2d9b7002738f788fb463a89f318ee63a
+  branch: master
+  specs:
+    commontator (6.3.0)
+      rails (>= 5.2)
+      will_paginate
+
+GIT
   remote: https://github.com/fosterfarrell9/thredded
   revision: 0d879e671e842becb367f2162b36a73277c3e5c9
   branch: master
@@ -27,7 +36,7 @@ GIT
 
 GIT
   remote: https://github.com/zdennis/activerecord-import.git
-  revision: c79c2534ce817d2e4236bee90a154f6236cfc8ac
+  revision: 27fff568c7debec0069142f03ce81df263bef477
   branch: master
   specs:
     activerecord-import (1.0.4)
@@ -132,7 +141,7 @@ GEM
     builder (3.2.4)
     byebug (11.1.3)
     cancancan (3.1.0)
-    capybara (3.32.1)
+    capybara (3.32.2)
       addressable
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
@@ -151,9 +160,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    commontator (6.3.0)
-      rails (>= 5.2)
-      will_paginate
     concurrent-ruby (1.1.6)
     connection_pool (2.2.2)
     content_disposition (1.0.0)
@@ -208,7 +214,7 @@ GEM
     htmlentities (4.3.4)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
-    image_processing (1.10.3)
+    image_processing (1.11.0)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
     inline_svg (1.7.1)
@@ -272,7 +278,7 @@ GEM
     mini_magick (4.10.1)
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
-    minitest (5.14.0)
+    minitest (5.14.1)
     msgpack (1.3.3)
     multi_json (1.14.1)
     multipart-post (2.1.1)
@@ -379,7 +385,7 @@ GEM
     rspec-mocks (3.9.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.9.0)
-    rspec-rails (4.0.0)
+    rspec-rails (4.0.1)
       actionpack (>= 4.2)
       activesupport (>= 4.2)
       railties (>= 4.2)
@@ -508,7 +514,7 @@ DEPENDENCIES
   cancancan
   capybara (>= 2.15)
   coffee-rails (~> 5.0.0)
-  commontator
+  commontator!
   database_cleaner
   devise
   devise-bootstrap-views
