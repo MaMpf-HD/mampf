@@ -247,6 +247,10 @@ class MediaController < ApplicationController
     @time = params[:time].to_f
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
+    if @medium.sort == 'Kaviar' &&
+        @medium.teachable_type.in?(['Lesson', 'Lecture'])
+      @item.section = @medium.teachable&.sections&.first
+    end
   end
 
   # add a reference for the video
