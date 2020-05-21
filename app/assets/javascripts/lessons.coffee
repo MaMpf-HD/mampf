@@ -95,6 +95,14 @@ $(document).on 'turbolinks:load', ->
         return
       return
 
+  $('#sortableLessonMedia').sortable()
+
+  $('#sortableLessonMedia').on 'sortupdate', ->
+    $('#lesson-basics-warning').show()
+    $('#create-new-lesson-medium').hide()
+    order = $.makeArray($('#sortableLessonMedia li a')).map (x) -> x.dataset.id
+    $('#lesson_media_order').val(JSON.stringify(order))
+    return
 
   return
 

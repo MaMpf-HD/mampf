@@ -62,15 +62,18 @@
                       style: 'text-decoration: none;',
                       remote: true %>
           <% if lesson.media.present? %>
-            <ul>
+            <ul id="sortableLessonMedia">
               <% lesson.media.each do |m| %>
                 <li>
                   <%= link_to m.sort_localized + ', ' + m.local_info,
                               edit_medium_path(m),
-                              class: textcolor(m) %>
+                              class: textcolor(m),
+                              data: { id: m.id } %>
                 </li>
               <% end %>
             </ul>
+            <%= f.hidden_field :media_order,
+                               value: lesson.media.map(&:id).to_json %>
           <% else %>
             <p>
               <%= t('admin.lesson.no_media') %>
