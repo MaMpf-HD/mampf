@@ -19,7 +19,7 @@ class Lecture < ApplicationRecord
                      after_remove: :touch_siblings
 
   # being a teachable (course/lecture/lesson), a lecture has associated media
-  has_many :media, as: :teachable
+  has_many :media, -> { order(position: :asc) }, as: :teachable
 
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
@@ -471,7 +471,8 @@ class Lecture < ApplicationRecord
                                             Lesson.where(lecture: self))
     lecture_results + lesson_results.includes(:teachable)
                                     .sort_by { |m| [m.lesson.date,
-                                                    m.lesson.id] }
+                                                    m.lesson.id,
+                                                    m.position] }
   end
 
   def begin_date

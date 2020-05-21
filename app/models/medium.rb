@@ -5,6 +5,7 @@ class Medium < ApplicationRecord
 
   # a teachable is a course/lecture/lesson
   belongs_to :teachable, polymorphic: true, optional: true
+  acts_as_list scope: [:teachable_id, :teachable_type], top_of_list: 0
 
   # a teachable may belong to a quizzable (quiz/question/remark)
   belongs_to :quizzable, polymorphic: true, optional: true

@@ -11,7 +11,7 @@ class Course < ApplicationRecord
            after_remove: :touch_tag,
            after_add: :touch_tag
 
-  has_many :media, as: :teachable
+  has_many :media, -> { order(position: :asc) }, as: :teachable
 
   # in a course, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
