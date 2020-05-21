@@ -588,8 +588,6 @@ class MediaController < ApplicationController
       if @medium.teachable.sections.count == 1
         section = @medium.teachable.sections.first
         section.tags << @tags_without_section
-        section.update(tags_order: section.tags_order +
-                                     @tags_without_section.map(&:id))
       end
     end
   end

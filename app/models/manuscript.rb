@@ -246,7 +246,6 @@ class Manuscript
   def update_tags!(filter_boxes)
     sections_with_content.each do |s|
       section = s['mampf_section']
-      added_tag_ids = []
       content_in_section(s).each do |c|
         # if tag for content already exists, add tag to the section and course
         if c['tag_id']
@@ -255,7 +254,6 @@ class Manuscript
           next unless section
           next if section.in?(tag.sections)
           tag.sections |= [section]
-          added_tag_ids.push(tag.id)
           tag.courses |= [@lecture.course]
           next
         end
@@ -267,10 +265,6 @@ class Manuscript
         tag.notions.new(title: c['description'],
                         locale: @lecture.locale || I18n.default_locale)
         tag.save
-        added_tag_ids.push(tag.id)
-      end
-      if added_tag_ids.any?
-        section.update(tags_order: section.tags_order + added_tag_ids)
       end
     end
   end

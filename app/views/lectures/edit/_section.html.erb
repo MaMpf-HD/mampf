@@ -29,7 +29,7 @@
       </div>
     <% end %>
     <div class="col-12 mt-2">
-      <% section.ordered_tags.each do |t| %>
+      <% section.tags.each do |t| %>
         <% cache t do %>
           <%= render partial: 'lectures/edit/tag',
                      locals: { tag: t } %>

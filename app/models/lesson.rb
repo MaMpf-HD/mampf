@@ -171,7 +171,7 @@ class Lesson < ApplicationRecord
   end
 
   def section_tags
-    sections.collect(&:ordered_tags).flatten
+    sections.collect(&:tags).flatten
   end
 
   def complement_of_section_tags

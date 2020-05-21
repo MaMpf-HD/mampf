@@ -51,11 +51,6 @@ class Tag < ApplicationRecord
   after_save :touch_lectures
   after_save :touch_sections
 
-  # remove tag from all section tag orderings
-  # execute this callback before all others, as otherwise associated sections
-  # will already have been deleted
-  before_destroy :remove_from_section_tags_order, prepend: true
-
   searchable do
     text :titles do
       title_join
@@ -321,12 +316,12 @@ class Tag < ApplicationRecord
     related_tags << (tag.related_tags - related_tags)
     related_tags.delete(tag)
     tag.sections.each do |s|
-      new_order = if !id.in?(s.tags_order)
-                    s.tags_order.map { |t| t == tag.id ? id : t }
-                  else
-                    s.tags_order - [tag.id]
-                  end
-      s.update(tags_order: new_order)
+      next unless self.in?(s.tags)
+      old_section_tag = SectionTagJoin.find_by(section: s, tag: tag)
+      position = old_section_tag.tag_position
+      new_section_tag = SectionTagJoin.find_by(section: s, tag: self)
+      new_section_tag.insert_at(position)
+      old_section_tag.move_to_bottom
     end
     tag.aliases.update_all(aliased_tag_id: id)
   end
@@ -361,12 +356,6 @@ class Tag < ApplicationRecord
   def destroy_relations(related_tag)
     Relation.where(tag: [self, related_tag],
                    related_tag: [self, related_tag]).delete_all
-  end
-
-  def remove_from_section_tags_order
-    sections.each do |s|
-      s.update(tags_order: s.tags_order - [id])
-    end
   end
 
   def title_join

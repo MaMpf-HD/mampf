@@ -44,8 +44,6 @@ class LessonsController < ApplicationController
     return unless @lesson.sections.count == 1 && @tags_without_section.any?
     section = @lesson.sections.first
     section.tags << @tags_without_section
-    section.update(tags_order: section.tags_order +
-                                 @tags_without_section.map(&:id))
   end
 
   def destroy

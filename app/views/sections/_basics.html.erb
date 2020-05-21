@@ -62,8 +62,8 @@
        data-from="section">
     </a>
     <%= f.select :tag_ids,
-                 options_for_select(section.tags_order
-                                           .map { |t| [Tag.find_by_id(t)&.extended_title, t] },
+                 options_for_select(section.tags
+                                           .map { |t| [t.extended_title, t.id] },
                                     section.tag_ids),
                  {},
                  { multiple: true,

@@ -86,6 +86,10 @@ class SectionsController < ApplicationController
 
   def update_tags_order
     tags_order = params[:section][:tag_ids].map(&:to_i) - [0]
-    @section.update(tags_order: tags_order)
+    SectionTagJoin.acts_as_list_no_update do
+      @section.section_tag_joins.each do |st|
+        st.update(tag_position: tags_order.index(st.tag_id))
+      end
+    end
   end
 end

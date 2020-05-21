@@ -84,9 +84,6 @@ class TagsController < ApplicationController
       return
     end
     @tag.update(tag_params)
-    # append newly created tag at the end of the *ordered* tags for
-    # the relevant sections
-    update_sections if @tag.valid? && tag_params[:section_ids]
     if @tag.valid? && !@modal
       redirect_to edit_tag_path(@tag)
       return
@@ -174,7 +171,6 @@ class TagsController < ApplicationController
         next unless section
         if !tag.in?(section.tags)
           section.tags << tag
-          section.update(tags_order: section.tags_order.push(tag.id))
         end
       end
     end
@@ -320,13 +316,6 @@ class TagsController < ApplicationController
 
   def added_courses
     Course.where(id: tag_params[:course_ids]) - @tag.courses
-  end
-
-  def update_sections
-    sections = Section.where(id: tag_params[:section_ids])
-    sections.each do |s|
-      s.update(tags_order: s.tags_order.to_a + [@tag.id])
-    end
   end
 
   def set_notions
