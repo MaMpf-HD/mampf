@@ -645,12 +645,6 @@ class Medium < ApplicationRecord
     teachable_type + '-' + teachable_id.to_s
   end
 
-  # returns the position of this medium among all media of the same sort
-  # associated to the same teachable (by id)
-  def position
-    teachable.media.where(sort: sort).order(:id).pluck(:id).index(id) + 1
-  end
-
   # media associated to the same teachable and of the same sort
   def siblings
     teachable.media.where(sort: sort)
