@@ -2,7 +2,7 @@ require 'faker'
 
 FactoryBot.define do
   factory :tag, aliases: [:related_tag] do
-    after(:create) { FactoryBot.create(:notion, :with_specified_tag, tag_id: :id)}
+    after(:build) { |t| t.notions << FactoryBot.build(:notion) }
   #  before(:build) { |n| n.notions = create_list(:notion,:with_tag_id, tag_id: :self.id, 1) }
   #  trait :with_related_tags do
   #    after(:build) { |t| t.related_tags = create_list(:tag, 2) }
