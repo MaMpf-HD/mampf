@@ -2,16 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Tag, type: :model do
   it 'has a valid factory' do
-    expect(FactoryBot.build(:tag)).to be_valid
-  end
-  it 'is invalid without a title' do
-    tag = FactoryBot.build(:tag, title: nil)
-    expect(tag).to be_invalid
-  end
-  it 'is invalid with a duplicate title' do
-    FactoryBot.create(:tag, title: 'usual BS')
-    tag = FactoryBot.build(:tag, title: 'usual BS')
-    expect(tag).to be_invalid
+    expect(FactoryBot.create(:tag)).to be_valid
   end
   describe '#tags_in_neighbourhood' do
     it 'returns the correct list of related_tags' do
