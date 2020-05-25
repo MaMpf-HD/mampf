@@ -40,7 +40,7 @@ class LessonsController < ApplicationController
     @lesson.update(lesson_params)
     @errors = @lesson.errors
     return unless @errors.blank?
-    update_media_order
+    update_media_order if params[:lesson][:media_order]
     @tags_without_section = @lesson.tags_without_section
     return unless @lesson.sections.count == 1 && @tags_without_section.any?
     section = @lesson.sections.first
@@ -87,6 +87,7 @@ class LessonsController < ApplicationController
 
   def update_media_order
     media_order = JSON.parse(params[:lesson][:media_order]).map(&:to_i) - [0]
+    return unless media_order.count == @lesson.medi.count
     Medium.acts_as_list_no_update do
       @lesson.media.each do |m|
         m.update(position: media_order.index(m.id))
