@@ -87,7 +87,7 @@ class LessonsController < ApplicationController
 
   def update_media_order
     media_order = JSON.parse(params[:lesson][:media_order]).map(&:to_i) - [0]
-    return unless media_order.count == @lesson.medi.count
+    return unless media_order&.count == @lesson.media&.count
     Medium.acts_as_list_no_update do
       @lesson.media.each do |m|
         m.update(position: media_order.index(m.id))
