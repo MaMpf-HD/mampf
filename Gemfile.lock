@@ -205,6 +205,9 @@ GEM
       request_store (~> 1.0)
     globalize-accessors (0.2.1)
       globalize (~> 5.0, >= 5.0.0)
+    goldiloader (3.1.1)
+      activerecord (>= 4.2, < 6.1)
+      activesupport (>= 4.2, < 6.1)
     google-search (1.0.3)
       json
     hashery (2.1.2)
@@ -532,6 +535,7 @@ DEPENDENCIES
   fuzzy-string-match
   globalize
   globalize-accessors
+  goldiloader
   image_processing
   jbuilder
   jquery-rails
