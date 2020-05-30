@@ -14,7 +14,8 @@ class Lecture < ApplicationRecord
   has_many :chapters, -> { order(position: :asc) }, dependent: :destroy
 
   # during the term, a lot of lessons take place for this lecture
-  has_many :lessons, dependent: :destroy,
+  has_many :lessons, -> { order(date: :asc, id: :asc) },
+                     dependent: :destroy,
                      after_add: :touch_siblings,
                      after_remove: :touch_siblings
 
@@ -538,6 +539,22 @@ class Lecture < ApplicationRecord
   def chapter_name
     return 'chapter' unless seminar?
     'talk'
+  end
+
+  def comments_closed?
+    media_with_inheritance.map(&:commontator_thread).map(&:is_closed?).all?
+  end
+
+  def close_comments!(user)
+    media_with_inheritance.each do |m|
+      m.commontator_thread.close(user)
+    end
+  end
+
+  def open_comments!(user)
+    media_with_inheritance.published
+                          .select { |m| m.commontator_thread.is_closed?}
+                          .each { |m| m.commontator_thread.reopen }
   end
 
   private

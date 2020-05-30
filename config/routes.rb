@@ -139,6 +139,10 @@ Rails.application.routes.draw do
   delete 'lectures/:id/remove_imported_medium',
          to: 'lectures#remove_imported_medium',
          as: 'lecture_remove_imported_medium'
+  get 'lectures/:id/close_comments', to: 'lectures#close_comments',
+                                     as: 'lecture_close_comments'
+  get 'lectures/:id/open_comments', to: 'lectures#open_comments',
+                                     as: 'lecture_open_comments'
 
   resources :lectures, except: [:index]
 

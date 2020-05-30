@@ -77,6 +77,7 @@ en:
       short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
+    comments: 'Comments'
     organizational: 'General Information'
     announcements: 'Announcements'
     reste:
@@ -322,6 +323,7 @@ en:
         leave all related media unpublished.
       import_media: 'Import Media'
       no_imported_media: 'There are no imported media.'
+      close_comments: 'Close all threads for related media'
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -470,6 +472,9 @@ en:
           are neither "free" nor "only registered MaMpf users". The access rights are checked at runtime,
           so the medium will become visible when the access rights are changed to one of the two admissible
           values for imported media.
+        close_comments: >
+          If you activate this switch, all threads related to media that belong
+          to this event series or its' lessons will be closed.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -2264,6 +2269,8 @@ en:
     import_media: 'Import Media'
     view: 'View'
     import_script_items: 'Import table of contents from manuscript'
+    close_comments: 'Close discussions for all related media'
+    open_comments: 'Reopen all closed discussions'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

@@ -132,11 +132,12 @@ class Lesson < ApplicationRecord
   end
 
   def previous
-    lecture.lessons.find { |l| l.number == number - 1 }
+    return unless number > 1
+    lecture.lessons[number - 2]
   end
 
   def next
-    lecture.lessons.find { |l| l.number == number + 1 }
+    lecture.lessons[number]
   end
 
   def published_media
@@ -154,8 +155,8 @@ class Lesson < ApplicationRecord
 
   # the number of a lesson is calculated by its date relative to the other
   # lessons
-  def number(all_lessons: lecture.lessons)
-    all_lessons.order(:date, :id).pluck(:id).index(id) + 1
+  def number
+    lecture.lessons.index(self) + 1
   end
 
   def date_localized

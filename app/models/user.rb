@@ -255,7 +255,7 @@ class User < ApplicationRecord
   # lectures as module editor are all lectures that belong to an edited course
   # but are neither edited lectures nor given lectures
   def lectures_as_module_editor
-    edited_courses.map(&:lectures).flatten - edited_lectures.to_a -
+    Lecture.where(course: edited_courses) - edited_lectures.to_a -
       given_lectures.to_a
   end
 

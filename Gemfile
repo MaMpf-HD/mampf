@@ -88,7 +88,6 @@ gem 'commontator',
   git: 'https://github.com/fosterfarrell9/commontator',
   branch: 'master'
 gem 'acts_as_votable'
-gem 'goldiloader'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

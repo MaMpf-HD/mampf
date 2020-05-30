@@ -203,6 +203,16 @@ class LecturesController < ApplicationController
     render layout: 'application'
   end
 
+  def close_comments
+    @lecture.close_comments!(current_user)
+    redirect_to edit_lecture_path(@lecture)
+  end
+
+  def open_comments
+    @lecture.open_comments!(current_user)
+    redirect_to edit_lecture_path(@lecture)
+  end
+
   private
 
   def set_lecture
@@ -231,6 +241,10 @@ class LecturesController < ApplicationController
 
   def structure_params
     params.require(:lecture).permit(structures: {})[:structures]
+  end
+
+  def comment_params
+    params.require(:lecture).permit(:close_comments)
   end
 
   # create notifications to all users about creation of new lecture

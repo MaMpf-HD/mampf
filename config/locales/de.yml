@@ -61,6 +61,7 @@ de:
       short: 'DB'
     muesli: 'MÜSLI'
     board: 'Forum'
+    comments: 'Kommentare'
     organizational: 'Organisatorisches'
     announcements: 'Mitteilungen'
     reste:
@@ -331,6 +332,7 @@ de:
         unveröffentlichte verknüpfte Medien weiterhin unveröffentlicht
         bleiben.
       import_media: 'Medien importieren'
+      close_comments: 'Kommentare für alle zugehörigen Medien deaktivieren'
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       info:
         course: >
@@ -500,6 +502,9 @@ de:
           gestellt sind. Die Zugriffsrechte werden hierbei zur Laufzeit ermittelt, d.h. das Medium wird
           sichtbar, sobald die Zugriffsrechte auf einen der beiden für importierte Medien zulässigen Werte
           geändert werden.
+        close_comments: >
+          Wenn du dieses Feld aktivierst, werden alle Diskussionen zu Medien,
+          die zu dieser Veranstaltung oder ihren Sitzungen gehören, geschlossen.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -2391,6 +2396,8 @@ de:
     import_media: 'Medien importieren'
     view: 'Ansehen'
     import_script_items: 'Inhaltsverzeichnis aus Skript übernehmen'
+    close_comments: 'Diskussionen für alle Medien schließen'
+    open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
