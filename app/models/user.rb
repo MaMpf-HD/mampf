@@ -186,7 +186,7 @@ class User < ApplicationRecord
   # returns the unique user notification that corresponds to the given
   # announcement
   def matching_notification(announcement)
-    notifications.find { |n| n.notifiable == announcement }
+    notifications.find_by(notifiable: announcement)
   end
 
   # a user is a teacher iff he/she has given any lecture

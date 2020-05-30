@@ -14,7 +14,8 @@ class Section < ApplicationRecord
 
   # a section has many lessons
   has_many :lesson_section_joins, dependent: :destroy
-  has_many :lessons, through: :lesson_section_joins
+  has_many :lessons, -> { order(date: :asc, id: :asc) },
+                     through: :lesson_section_joins
 
   # a section needs to have a title
   validates :title, presence: true
