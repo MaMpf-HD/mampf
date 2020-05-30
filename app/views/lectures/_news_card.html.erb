@@ -29,17 +29,11 @@
         <% end %>
       </div>
       <div class="list-group mb-2" style="max-height: 10vh; overflow-y: scroll;">
-        <% announcements.sort_by(&:created_at).reverse.each do |a| %>
-          <div class="list-group-item list-group-item-info"
-               data-listItemNotification="<%= current_user.matching_notification(a)&.id %>">
-            <div class="row">
-              <%= render partial: 'announcements/row_for_lecture',
-                         locals: { announcement: a,
-                                   lecture: lecture,
-                                   notification: current_user.matching_notification(a) } %>
-            </div>
-          </div>
-        <% end %>
+        <%= render partial: 'announcements/row_for_lecture',
+                   locals: { lecture: lecture,
+                             map: map },
+                   collection: announcements,
+                   as: :announcement %>
       </div>
     <% end %>
     <% if lecture.forum? && posts_count&.positive? %>

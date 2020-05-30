@@ -519,8 +519,8 @@ class Lecture < ApplicationRecord
 
   def active_announcements(user)
     announcements.includes(:announcer)
-                .where(id: user.notifications.where(notifiable: announcements)
-                .pluck(:notifiable_id))
+                 .where(id: user.notifications.where(notifiable: announcements)
+                                .pluck(:notifiable_id))
   end
 
   def self.sorts
