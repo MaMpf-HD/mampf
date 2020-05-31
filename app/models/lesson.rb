@@ -216,7 +216,9 @@ class Lesson < ApplicationRecord
     return [] unless start_item && end_item
     range = (start_item.position..end_item.position).to_a
     return [] unless range.present?
+    hidden_chapters = Chapter.where(hidden: true)
     hidden_sections = Section.where(hidden: true)
+                             .or(Section.where(chapter: hidden_chapters))
     Item.where(medium: lecture.manuscript,
                position: range,
                hidden: [false, nil])
