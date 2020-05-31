@@ -172,8 +172,11 @@ class User < ApplicationRecord
 
   # returns the array of those notifications of the user that are announcements
   # in the given lecture
-  def active_announcements(lecture)
+  def active_notifications(lecture)
     notifications.where(notifiable: lecture.announcements)
+                 .includes(notifiable: :announcer)
+                 .sort_by { |n| n.notifiable.created_at }
+                 .reverse
   end
 
   # returns the array of those notifications that are related to MaMpf news

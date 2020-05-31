@@ -25,7 +25,7 @@ class NotificationsController < ApplicationController
   def destroy_lecture_notifications
     lecture = Lecture.find_by_id(params[:lecture_id])
     return unless lecture.present?
-    Notification.delete(current_user.active_announcements(lecture).pluck(:id))
+    Notification.delete(current_user.active_notifications(lecture).pluck(:id))
     current_user.touch
     render :destroy_all
   end

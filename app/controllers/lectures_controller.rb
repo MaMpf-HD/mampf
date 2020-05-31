@@ -58,6 +58,8 @@ class LecturesController < ApplicationController
                                                         chapter: [:lecture],
                                                         tags: [:notions, :lessons]]])
                         .find_by_id(params[:id])
+      @notifications = current_user.active_notifications(@lecture)
+      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       render layout: 'application'
     end
   end
@@ -149,6 +151,8 @@ class LecturesController < ApplicationController
   # show all announcements for this lecture
   def show_announcements
     @announcements = @lecture.announcements.order(:created_at).reverse
+    @active_notification_count = current_user.active_notifications(@lecture)
+                                             .size
     I18n.locale = @lecture.locale_with_inheritance
     render layout: 'application'
   end

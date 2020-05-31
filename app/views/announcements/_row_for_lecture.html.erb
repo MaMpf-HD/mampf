@@ -1,23 +1,23 @@
 <div class="list-group-item list-group-item-info"
-     data-listItemNotification="<%= map[announcement.id] %>">
+     data-listItemNotification="<%= notification.id %>">
   <div class="row">
     <div class="col-2">
-      <%= human_readable_date(announcement.created_at) %>
+      <%= human_readable_date(notification.notifiable.created_at) %>
     </div>
     <div class="col-2">
-      <%= announcement.announcer.name %>
+      <%= notification.notifiable.announcer.name %>
     </div>
     <div class="col-7">
-      <%= announcement.details.html_safe %>
+      <%= notification.notifiable.details.html_safe %>
     </div>
     <div class="col-1 text-right">
-      <%= link_to notification_path(map[announcement.id]),
+      <%= link_to notification_path(notification),
                   class: 'removeLectureNotification',
                   remote: true,
                   method: :delete,
                   data:
-                    { id: map[announcement.id],
-                      lecture: announcement.lecture.id,
+                    { id: notification.id,
+                      lecture: lecture.id,
                       onenew: t('notifications.lecture.one_new'),
                       morenew: t('notifications.lecture.more_new') } do %>
         <i class="fas fa-check text-dark"

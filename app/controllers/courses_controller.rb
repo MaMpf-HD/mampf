@@ -61,10 +61,8 @@ class CoursesController < ApplicationController
       cookies[:current_lecture] = @lecture.id
       I18n.locale = @lecture.locale_with_inheritance || I18n.default_locale
       @lecture = @course.primary_lecture(current_user, eagerload: true)
-      @notifications = current_user.active_announcements(@lecture)
-      @announcements = @lecture.active_announcements(current_user)
-                               .order(created_at: :desc)
-      @map = @notifications.map { |n| [n.notifiable_id, n.id] }.to_h
+      @notifications = current_user.active_notifications(@lecture)
+      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       render template: 'lectures/show', layout: 'application'
     end
   end

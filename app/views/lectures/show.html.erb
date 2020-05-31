@@ -30,14 +30,12 @@
 <% privileged = current_user.admin ||
                   current_user.in?(@lecture.editors_with_inheritance) %>
 <div class="row">
-  <% if @announcements.present? ||
-        @lecture.unread_forum_topics_count(current_user)&.positive? %>
+  <% if @notifications.present? || @new_topics_count.positive? %>
     <div class="col-12">
       <%= render partial: 'lectures/news_card',
                  locals: { lecture: @lecture,
-                           announcements: @announcements,
-                           map: @map,
-                           posts_count:  @lecture.unread_forum_topics_count(current_user) } %>
+                           notifications: @notifications,
+                           posts_count:  @new_topics_count } %>
     </div>
   <% end %>
   <% cache @lecture do %>

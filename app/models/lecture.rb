@@ -517,12 +517,6 @@ class Lecture < ApplicationRecord
          .lecture_path(self)
   end
 
-  def active_announcements(user)
-    announcements.includes(:announcer)
-                 .where(id: user.notifications.where(notifiable: announcements)
-                                .pluck(:notifiable_id))
-  end
-
   def self.sorts
     ['lecture', 'seminar', 'proseminar', 'oberseminar']
   end
