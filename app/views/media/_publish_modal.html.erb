@@ -34,7 +34,8 @@
           <div class="custom-control custom-checkbox">
             <%= f.check_box :lock_comments,
                             class: 'custom-control-input',
-                            checked: !!medium.teachable.try(:comments_disabled) %>
+                            checked: !!medium.teachable.media_scope
+                                             .try(:comments_disabled) %>
             <%= f.label :lock_comments,
                         t('admin.medium.lock_comments'),
                         { class: 'custom-control-label' } %>
