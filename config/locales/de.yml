@@ -334,6 +334,8 @@ de:
       import_media: 'Medien importieren'
       close_comments: 'Kommentare für alle zugehörigen Medien deaktivieren'
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
+      comments_disabled: >
+        Kommentare für neue Medien sind standardmäßig deaktiviert
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -505,6 +507,10 @@ de:
         close_comments: >
           Wenn du dieses Feld aktivierst, werden alle Diskussionen zu Medien,
           die zu dieser Veranstaltung oder ihren Sitzungen gehören, geschlossen.
+        comments_disabled: >
+          Standardmäßig sind Kommentare für neu veröffentlichte Medien erlaubt,
+          Du kannst bei der Veröffentlichung aber Kommentare deaktivieren.
+          Hier kannst Du dises Verhaltenb umdrehen.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'

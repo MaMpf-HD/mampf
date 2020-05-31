@@ -31,6 +31,14 @@ $(document).on 'turbolinks:load', ->
     $('.new-in-lecture').hide()
     return
 
+  # if any input is given to the comments form, disable other input
+  $('#lecture-comments-form :input').on 'change', ->
+    $('#lecture-comments-warning').show()
+    $('[data-toggle="collapse"]').addClass('disabled')
+    $('.fa-edit').hide()
+    $('.new-in-lecture').hide()
+    return
+
   # if any input is given to the organizational form, disable other input
   $('#lecture-organizational-form :input').on 'change', ->
     disableExceptOrganizational()

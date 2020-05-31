@@ -35,6 +35,34 @@
             <% end %>
           </div>
         </div>
+        <%= form_with model: lecture,
+                      html: { id: 'lecture-comments-form' } do |f| %>
+          <div class="form-row my-3 ml-2">
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :comments_disabled,
+                              class: 'custom-control-input',
+                              disabled: inspection %>
+              <%= f.label :comments_disabled,
+                          t('admin.lecture.comments_disabled'),
+                          { class: 'custom-control-label' } %>
+              <%= helpdesk(t('admin.lecture.info.comments_disabled'),
+                       false) %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 text-center">
+              <div id="lecture-comments-warning">
+                <%= t('warnings.unsaved_changes') %>
+                <%= f.submit t('buttons.save_and_exit'),
+                             class: "btn btn-sm btn-primary" %>
+                <button type="button" id="cancel-lecture-comments"
+                        class="btn btn-sm btn-secondary">
+                  <%= t('buttons.cancel') %>
+                </button>
+              </div>
+            </div>
+          </div>
+        <% end %>
       </div>
     </div>
   </div>

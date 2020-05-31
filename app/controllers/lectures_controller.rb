@@ -240,6 +240,7 @@ class LecturesController < ApplicationController
                                     :start_section, :organizational, :locale,
                                     :organizational_concept, :muesli,
                                     :content_mode, :passphrase, :sort,
+                                    :comments_disabled,
                                     editor_ids: [])
   end
 
