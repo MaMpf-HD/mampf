@@ -216,9 +216,11 @@ class Lesson < ApplicationRecord
     return [] unless start_item && end_item
     range = (start_item.position..end_item.position).to_a
     return [] unless range.present?
+    hidden_sections = Section.where(hidden: true)
     Item.where(medium: lecture.manuscript,
                position: range,
                hidden: [false, nil])
+        .where.not(section: hidden_sections)
         .unquarantined.order(:position)
   end
 
