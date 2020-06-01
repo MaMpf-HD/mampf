@@ -86,28 +86,10 @@ module ApplicationHelper
       'reste' => t('categories.reste.singular') }
   end
 
-  # Selects all media associated to lectures and lessons from a given list
-  # of media
-  def lecture_media(media)
-    media.where(teachable_type: ['Lecture', 'Lesson'] )
-  end
-
-  # Selects all media associated to courses from a given list of media
-  def course_media(media)
-    media.where(teachable_type: 'Course')
-  end
-
   # For a given list of media, returns the array of courses and lectures
   # the given media are associated to.
   def lecture_course_teachables(media)
-    lecture_ids = Lecture.select do |l|
-      (l.media_with_inheritance.pluck(:id) & media.pluck(:id)).present?
-    end
-                         .uniq
-    course_ids = course_media(media).pluck(:teachable_id).uniq
-    lectures = Lecture.where(id: lecture_ids)
-    courses = Course.where(id: course_ids)
-    courses + lectures
+    media.map(&:scoped_teachable).uniq.sort_by { |t| t.class.to_s }
   end
 
   # For a given list of media and a given (a)course/(b)lecture,
@@ -116,14 +98,8 @@ module ApplicationHelper
   # (b) associated to the given lecture or a lesson associated to the given
   # lecture
   def relevant_media(teachable, media, limit)
-    result = []
-    if teachable.class == Course
-      return media.where(teachable: teachable).order(:created_at)
-                                              .reverse_order
-                                              .first(limit)
-    end
-    media_ids = (teachable.media_with_inheritance.pluck(:id) & media.pluck(:id))
-    Medium.where(id: media_ids).order(:created_at).reverse_order.first(limit)
+    media.select { |m| m.scoped_teachable == teachable}
+         .sort_by(&:created_at).reverse.first(limit)
   end
 
   # splits an array into smaller parts

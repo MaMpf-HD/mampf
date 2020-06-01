@@ -878,6 +878,12 @@ class Medium < ApplicationRecord
     end
   end
 
+  def scoped_teachable
+    Rails.cache.fetch("#{cache_key_with_version}/scoped_teachable") do
+      teachable&.media_scope
+    end
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require
