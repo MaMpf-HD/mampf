@@ -192,11 +192,15 @@ class Lecture < ApplicationRecord
   #   and items in quarantine
   def script_items_by_position
     return [] unless manuscript
+    hidden_chapters = Chapter.where(hidden: true)
+    hidden_sections = Section.where(hidden: true)
+                             .or(Section.where(chapter: hidden_chapters))
     Item.where(medium: lecture.manuscript)
         .where.not(sort: 'self')
         .content
         .unquarantined
         .unhidden
+        .where.not(section: hidden_sections)
         .order(:position)
   end
 
