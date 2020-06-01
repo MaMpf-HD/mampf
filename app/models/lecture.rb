@@ -550,8 +550,7 @@ class Lecture < ApplicationRecord
   end
 
   def open_comments!(user)
-    media_with_inheritance.published
-                          .select { |m| m.commontator_thread.is_closed?}
+    media_with_inheritance.select { |m| m.commontator_thread.is_closed?}
                           .each { |m| m.commontator_thread.reopen }
   end
 
