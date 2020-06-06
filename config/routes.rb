@@ -336,6 +336,8 @@ Rails.application.routes.draw do
                        as: 'comments'
   get 'main/sponsors', to: 'main#sponsors',
                        as: 'sponsors'
+  get 'main/start', to: 'main#start',
+                    as: 'start'
 
   mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"

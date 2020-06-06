@@ -384,6 +384,26 @@ class User < ApplicationRecord
       .sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
+  # lecture that are in the acive term
+  def active_lectures
+    lectures.where(term: Term.active)
+  end
+
+  def inactive_lectures
+    lectures.where.not(term: Term.active)
+  end
+
+  def courses_without_lectures
+    Course.where(id: CourseUserJoin.where(user: self,
+                                          course: courses,
+                                          primary_lecture_id: nil)
+                                   .pluck(:course_id))
+  end
+
+  def nonsubscribed_lectures
+    Lecture.where.not(id: lectures.pluck(:id))
+  end
+
   private
 
   def set_defaults

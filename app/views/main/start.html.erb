@@ -1,0 +1,32 @@
+Aktuelle Veranstaltungen
+<ul>
+	<% current_user.active_lectures.each do |l| %>
+		<li>
+			<%= link_to l.title,l %>
+		</li>
+	<% end %>
+</ul>
+Weitere abonnierte Veranstaltungen
+<ul>
+	<% current_user.inactive_lectures.each do |l| %>
+		<li>
+			<%= link_to l.title, l %>
+		</li>
+	<% end %>
+</ul>
+Abonnierte Module ohne Veranstaltung
+<ul>
+	<% current_user.courses_without_lectures.each do |c| %>
+		<li>
+			<%= link_to c.title, c %>
+		</li>
+	<% end %>
+</ul>
+Sonstige Veranstaltungen
+<ul>
+	<% current_user.nonsubscribed_lectures.each do |c| %>
+		<li>
+			<%= link_to c.title, c %>
+		</li>
+	<% end %>
+</ul>

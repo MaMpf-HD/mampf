@@ -36,6 +36,10 @@ class MainController < ApplicationController
     render layout: 'application_no_sidebar'
   end
 
+  def start
+    render layout: 'application_no_sidebar'
+  end
+
   private
 
   def check_for_consent
