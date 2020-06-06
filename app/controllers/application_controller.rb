@@ -82,7 +82,7 @@ class ApplicationController < ActionController::Base
   def store_interaction
     return if controller_name.in?(['sessions', 'administration', 'users',
                                    'events', 'interactions', 'profile',
-                                   'clickers', 'votes', 'registrations'])
+                                   'clickers', 'clicker_votes', 'registrations'])
     return if controller_name == 'main' && action_name == 'home'
     return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
     # as of Rack 2.0.8, the session_id is wrapped in a class of its own

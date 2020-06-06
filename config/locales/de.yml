@@ -335,7 +335,7 @@ de:
       close_comments: 'Kommentare für alle zugehörigen Medien deaktivieren'
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       comments_disabled: >
-        Kommentare für neue Medien sind standardmäßig deaktiviert
+        Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -1143,6 +1143,7 @@ de:
           dann eine Verknüpfung mit diesen Tags.
     term:
       index: 'Semesterübersicht'
+      active_term: 'aktuelles Semester'
     item:
       safe_delete_from_quarantine: >
         Der Eintrag wird von nirgendwo referenziert. Du kannst ihn also
@@ -2440,6 +2441,10 @@ de:
       Bist Du sicher? Die dazugehörigen Sitzungen werden nicht gelöscht,
       sondern werden - bis Du eine andere Abschnittszuordnung vornimmst -
       als "verwaist" geführt.
+    active_term: >
+      Bist Du sicher? Damit wird sich für alle NutzerInnen die Startseite
+      ändern, da die aktuellen Vorlesungen über das aktuelle Semester bestimmt
+      werden.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur
@@ -2627,6 +2632,8 @@ de:
               invalid: 'Die Angaben sind ungültig.'
         term:
           attributes:
+            active:
+              taken: 'Es kann nur ein aktives Semester geben.'
             season:
               inclusion: 'Ungültiger Typ.'
               taken: 'Dieses Semester existiert bereits.'

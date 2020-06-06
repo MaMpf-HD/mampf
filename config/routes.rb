@@ -290,6 +290,8 @@ Rails.application.routes.draw do
 
   get 'terms/cancel_term_edit', to: 'terms#cancel',
                                 as: 'cancel_term_edit'
+  post 'terms/set_active_term', to: 'terms#set_active',
+                                as: 'set_active_term'
   resources :terms, except: [:show]
 
   devise_for :users, controllers: { confirmations: 'confirmations',

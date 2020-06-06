@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_31_141619) do
+ActiveRecord::Schema.define(version: 2020_06_06_133607) do
 
   create_table "announcements", force: :cascade do |t|
     t.integer "lecture_id"
@@ -462,6 +462,7 @@ ActiveRecord::Schema.define(version: 2020_05_31_141619) do
     t.string "season"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "active", default: false
   end
 
   create_table "thredded_categories", force: :cascade do |t|

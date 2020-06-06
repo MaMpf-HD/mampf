@@ -12,12 +12,19 @@ class Term < ApplicationRecord
                    numericality: { only_integer: true,
                                    greater_than_or_equal_to: 2000 }
 
+  # only one term can be active
+  validates_uniqueness_of :active, if: :active
+
   # some information about lectures, lessons and media are cached
   # to find out whether the cache is out of date, always touch'em after saving
   after_save :touch_lectures_and_lessons
   after_save :touch_media
 
   paginates_per 8
+
+  def self.active
+    Term.find_by(active: true)
+  end
 
   def begin_date
     season == 'SS' ? Date.new(year, 4, 1) : Date.new(year, 10, 1)
@@ -44,7 +51,7 @@ class Term < ApplicationRecord
 
   # array of all terms togther with their ids for use in options_for_select
   def self.select_terms
-    Term.all.map { |t| [t.to_label, t.id] }
+    Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
   end
 
   private

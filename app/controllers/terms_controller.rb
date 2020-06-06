@@ -42,6 +42,15 @@ class TermsController < ApplicationController
     @new_action = params[:new] == 'true'
   end
 
+  def set_active
+    new_active_term = Term.find_by_id(active_term_params[:active_term])
+    if new_active_term && new_active_term != Term.active
+      Term.active.update(active: false)
+      new_active_term.update(active: true)
+    end
+    redirect_to :terms
+  end
+
   private
 
   def set_term
@@ -53,5 +62,9 @@ class TermsController < ApplicationController
 
   def term_params
     params.require(:term).permit(:year, :season)
+  end
+
+  def active_term_params
+    params.permit(:active_term)
   end
 end

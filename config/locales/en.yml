@@ -1068,6 +1068,7 @@ en:
           tags.
     term:
       index: 'Term Index'
+      active_term: 'Current Term'
     quiz:
       graph: 'Quiz Graph'
       create_graph: 'Create Quiz Graph'
@@ -2307,6 +2308,10 @@ en:
       Are you sure? The associated sessions will not be deleted, but they will
       be - until you assign them to a different section - considered
       as "orphaned".
+    active_term: >
+      Are you sure? This will in particular mean that the starting page for all
+      users will be different as the current lectures are computed from the
+      current term.
   privacy_html: >
     We care about handling your data responsibly. By
     GDPR, we need your consent for storing and processing
@@ -2492,6 +2497,8 @@ en:
               invalid: 'The input is invalid.'
         term:
           attributes:
+            active:
+              taken: 'There can be only one active term.'
             season:
               inclusion: 'Not a valid type.'
               taken: 'This term already exists.'
