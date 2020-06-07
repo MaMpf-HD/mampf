@@ -1,32 +1,32 @@
-Aktuelle Veranstaltungen
-<ul>
-	<% current_user.active_lectures.each do |l| %>
-		<li>
-			<%= link_to l.title,l %>
-		</li>
-	<% end %>
-</ul>
-Weitere abonnierte Veranstaltungen
-<ul>
-	<% current_user.inactive_lectures.each do |l| %>
-		<li>
-			<%= link_to l.title, l %>
-		</li>
-	<% end %>
-</ul>
-Abonnierte Module ohne Veranstaltung
-<ul>
-	<% current_user.courses_without_lectures.each do |c| %>
-		<li>
-			<%= link_to c.title, c %>
-		</li>
-	<% end %>
-</ul>
-Sonstige Veranstaltungen
-<ul>
-	<% current_user.nonsubscribed_lectures.each do |c| %>
-		<li>
-			<%= link_to c.title, c %>
-		</li>
-	<% end %>
-</ul>
+<h4>
+	Aktuelle Veranstaltungen
+</h4>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
+	<%= render partial: 'main/start/teachable',
+						 collection: @active_lectures,
+						 as: :teachable %>
+</div>
+<h4>
+	Weitere abonnierte Veranstaltungen
+</h4>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
+	<%= render partial: 'main/start/teachable',
+						 collection: @inactive_lectures,
+						 as: :teachable %>
+</div>
+<h4>
+	Abonnierte Module ohne Veranstaltung
+</h4>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
+	<%= render partial: 'main/start/teachable',
+						 collection: @courses_without_lectures,
+						 as: :teachable %>
+</div>
+<h4>
+	Sonstige Veranstaltungen
+</h4>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
+	<%= render partial: 'main/start/teachable',
+						 collection: @nonsubscribed_lectures.sort_by(&:begin_date).reverse,
+						 as: :teachable %>
+</div>

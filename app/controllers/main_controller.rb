@@ -37,6 +37,13 @@ class MainController < ApplicationController
   end
 
   def start
+    @active_lectures = current_user.active_lectures.includes(:course, :term)
+    @inactive_lectures = current_user.inactive_lectures.includes(:course, :term)
+                                     .sort_by(&:begin_date).reverse
+    @courses_without_lectures = current_user.courses_without_lectures
+    @nonsubscribed_lectures = current_user.nonsubscribed_lectures
+                                          .includes(:term, :course)
+                                          .sort_by(&:begin_date).reverse
     render layout: 'application_no_sidebar'
   end
 
