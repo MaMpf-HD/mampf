@@ -44,8 +44,11 @@ class TermsController < ApplicationController
 
   def set_active
     new_active_term = Term.find_by_id(active_term_params[:active_term])
-    if new_active_term && new_active_term != Term.active
-      Term.active.update(active: false)
+    old_active_term = Term.active
+    if old_active_term && new_active_term && new_active_term != old_active_term
+      old_active_term.update(active: false)
+      new_active_term.update(active: true)
+    elsif old_active_term.nil? && new_active_term
       new_active_term.update(active: true)
     end
     redirect_to :terms
