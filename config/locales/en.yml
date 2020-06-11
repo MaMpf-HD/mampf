@@ -157,6 +157,7 @@ en:
       news: 'News'
       boards: 'Messageboards'
       stats: 'Access statistics'
+      export_stats: 'Export statistics'
       users: 'User administration'
       course: 'Course'
       profile: 'My Profile'
@@ -1551,6 +1552,11 @@ en:
       name: 'Title'
       new: 'Create new division'
       no_courses: 'There are no courses in this division yet.'
+    interaction:
+      export_interactions: Export Interactions
+      export_probes: Export Probes
+      start: Start Date
+      end: End Date
   profile:
     account: 'Account'
     name: 'Display name'

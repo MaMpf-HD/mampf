@@ -99,6 +99,13 @@
                       title: t('admin.navbar.stats'),
                       target: :_blank %>
         </li>
+        <li>
+          <%= link_to '', interactions_path,
+                      class: 'fas fa-download fa-lg text-light nav-link',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip' },
+                      title: t('admin.navbar.export_stats') %>
+        </li>
       <% end %>
     </ul>
     <% if current_user.admin? %>

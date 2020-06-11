@@ -85,11 +85,13 @@ class ApplicationController < ActionController::Base
                                    'clickers', 'clicker_votes', 'registrations'])
     return if controller_name == 'main' && action_name == 'home'
     return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
+    study_participant = current_user.anonymized_id if current_user.study_participant
     # as of Rack 2.0.8, the session_id is wrapped in a class of its own
     # it is not a string anymore
     # see https://github.com/rack/rack/issues/1433
     InteractionSaver.perform_async(request.session_options[:id].public_id,
                                    request.original_fullpath,
-                                   request.referrer)
+                                   request.referrer,
+                                   study_participant)
   end
 end

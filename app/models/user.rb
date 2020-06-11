@@ -404,6 +404,10 @@ class User < ApplicationRecord
     Lecture.where.not(id: lectures.pluck(:id))
   end
 
+  def anonymized_id
+    Digest::SHA2.hexdigest(id.to_s + created_at.to_s).first(20)
+  end
+
   private
 
   def set_defaults

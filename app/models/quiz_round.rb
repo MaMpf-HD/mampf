@@ -6,7 +6,7 @@ class QuizRound
               :answer_scheme, :progress_old, :counter_old, :round_id_old,
               :input, :correct, :hide_solution, :vertex_old, :question_id,
               :answer_shuffle, :answer_shuffle_old, :solution_input, :result,
-              :session_id
+              :session_id, :study_participant
 
   def initialize(params)
     @quiz = Quiz.find(params[:id])
@@ -22,6 +22,7 @@ class QuizRound
     @answer_scheme ||= {}
     @answer_shuffle ||= []
     @answer_shuffle_old = []
+    @study_participant = params[:study_participant]
   end
 
   def update
@@ -102,11 +103,15 @@ class QuizRound
 
   def create_probe
     quiz_id = @quiz.id unless @quiz.sort == 'RandomQuiz'
+    input = @input.to_s if @study_participant
+    answer_scheme = @answer_scheme.to_s if @study_participant
     ProbeSaver.perform_async(quiz_id, @question_id, @correct, @progress,
-                             @session_id)
+                             @session_id, @study_participant, input,
+                             answer_scheme)
   end
 
   def create_final_probe
-    ProbeSaver.perform_async(@quiz.id, nil, nil, -1, @session_id)
+    ProbeSaver.perform_async(@quiz.id, nil, nil, -1, @session_id,
+                             @study_participant, nil, nil)
   end
 end

@@ -98,6 +98,9 @@ Rails.application.routes.draw do
   get 'events/render_import_media', as: 'render_import_media'
   get 'events/cancel_import_media', as: 'cancel_import_media'
 
+  get 'interactions/export_interactions', as: 'export_interactions'
+  get 'interactions/export_probes', as: 'export_probes'
+
   resources :interactions, only: [:index]
 
   get 'items/:id/display', to: 'items#display',

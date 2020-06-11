@@ -149,6 +149,7 @@ de:
       news: 'News'
       boards: 'Foren'
       stats: 'Zugriffsstatistik'
+      export_stats: 'Statistiken exportieren'
       users: 'Nutzerverwaltung'
       course: 'Modul'
       profile: 'Mein Profil'
@@ -1658,6 +1659,11 @@ de:
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
       no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
+    interaction:
+      export_interactions: Interaktionen exportieren
+      export_probes: Quizdaten exportieren
+      start: Startdatum
+      end: Enddatum
   profile:
     account: 'Account'
     name: 'Anzeigename'
