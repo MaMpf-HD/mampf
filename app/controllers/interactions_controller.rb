@@ -18,8 +18,8 @@ class InteractionsController < ApplicationController
   end
 
   def export_probes
-  	start_date = interaction_params[:start_date]
-		end_date = interaction_params[:end_date]
+  	start_date = interaction_params[:start_date].to_date
+		end_date = interaction_params[:end_date].to_date
   	@probes = Probe.created_between(start_date, end_date)
     respond_to do |format|
       format.html { head :ok }

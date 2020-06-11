@@ -1,6 +1,6 @@
 class Interaction < ApplicationRecord
   connects_to database: { writing: :interactions, reading: :interactions }
-  scope :created_between, lambda {|start_date, end_date| where("created_at >= ? AND created_at <= ?", start_date, end_date )}
+  scope :created_between, lambda {|start_date, end_date| where(created_at: start_date.beginning_of_day..end_date.end_of_day)}
   require 'csv'
 
   def self.to_csv
