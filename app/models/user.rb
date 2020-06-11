@@ -386,7 +386,7 @@ class User < ApplicationRecord
 
   # lecture that are in the acive term
   def active_lectures
-    lectures.where(term: Term.active)
+    lectures.where(term: Term.active).includes(:course, :term)
   end
 
   def inactive_lectures

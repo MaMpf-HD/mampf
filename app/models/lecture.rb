@@ -554,6 +554,10 @@ class Lecture < ApplicationRecord
                           .each { |m| m.commontator_thread.reopen }
   end
 
+  def self.in_current_term
+    Lecture.where(term: Term.active)
+  end
+
   private
 
   # used for after save callback
