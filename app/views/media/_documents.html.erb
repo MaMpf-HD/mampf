@@ -42,7 +42,7 @@
       <%= render partial: 'media/external_link',
                  locals: { f: f } %>
     <% end %>
-    <% if medium.sort == 'Sesam' %>
+    <% if medium.sort.in?(['Sesam', 'Remark']) %>
       <%= render partial: 'media/geogebra',
                  locals: { medium: medium,
                            f: f } %>

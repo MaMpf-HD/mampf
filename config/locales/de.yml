@@ -953,7 +953,7 @@ de:
           Tags, die Du diesem Medium hinzufügst, werden auch der Sitzung
           hinzugefügt.
         content: >
-          Hier hast Du die Mögflichkeit, eine Inhaltsangabe machen. Du kannst LaTEX benutzen
+          Hier hast Du die Möglichkeit, eine Inhaltsangabe machen. Du kannst LaTEX benutzen
           (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
           siehst Du unten.
         linked_media: >
@@ -1519,7 +1519,20 @@ de:
       edit: 'Bemerkung bearbeiten'
       initial_text: 'Dummytext'
       copy_marker: '-KOPIE-'
+      text_input: Texteingabefeld aktiv
+      input: 'Eingabe'
+      preview: 'Vorschau'
+      documents: 'Zu dieser Erläuterung gibt es die folgenden Dokumente:'
       info:
+        preview: >
+          <i>
+          Hinweis.
+          </i>
+          Du kannst LaTeX benutzen, indem Du den LaTeX-Code
+          zwischen Dollarzeichen schreibst (bzw. doppelte Dollarzeichen für
+          abgesetzte Inhalte). Eine Liste der unterstützten Symbole gibt es
+          <a href="https://katex.org/docs/supported.html" target="_blank">
+          hier</a>.
         about: >
           Eine Bemerkung korrespondiert zu einem Passus im Quiz,
           in dem man der NutzerIn Dinge erklärt, Sachverhalte einordnet oder
@@ -1555,6 +1568,8 @@ de:
       video_info: 'Erklärvideo im THymE-Player'
       manuscript: 'Manuskript'
       manuscript_info: 'Manuskript als pdf'
+      geogebra: 'Geogebra-Applet'
+      geogebra_info: 'Geogebra-Applet in neuem Tab'
       medium_for_remark_html: >
         Es gibt ein %{medium} zu dieser Erläuterung.
       media_for_remark_html: >

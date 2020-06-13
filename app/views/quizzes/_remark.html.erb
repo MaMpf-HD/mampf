@@ -6,6 +6,19 @@
       <div class="row p-2 mb-2">
         <div class="col-12">
           <%= remark.text %>
+          <% if remark.text_input %>
+            <%= f.text_area :input_text,
+                            class: 'type-it mt-2',
+                            id: "tex-area-quiz_input-#{@quiz_round.round_id}",
+                            hide_label: true %>
+            <div class="type-it-label">
+              <%= t('admin.remark.preview') %>
+              <%= helpdesk(t('admin.remark.info.preview'), true) %>
+            </div>
+            <div id="tex-preview-quiz_input-<%= @quiz_round.round_id %>"
+                 class="bg-remark border px-2 py-3 mb-3">
+            </div>
+          <% end %>
           <%= f.hidden_field :progress,
                              value: @quiz_round.progress %>
           <%= f.hidden_field :counter,
@@ -13,26 +26,26 @@
           <%= f.hidden_field :session_id,
                              value: @quiz_round.session_id %>
         </div>
-        <% if remark.video || remark.manuscript %>
+        <% if remark.video || remark.manuscript || remark.geogebra %>
           <div class="col-12 text-center my-2 remark-infotainment-text">
-            <% if remark.video && remark.manuscript %>
-              <%= t('admin.quiz.media_for_remark_html',
-                    medium_1: link_to(t('admin.quiz.video'),
-                                      play_medium_path(remark),
-                                      target: :_blank),
-                    medium_2: link_to(t('admin.quiz.manuscript'),
-                                      display_medium_path(remark),
-                                      target: :_blank)) %>
-            <% elsif remark.video %>
-              <%= t('admin.quiz.medium_for_remark_html',
-                    medium: link_to(t('admin.quiz.video'),
-                                      play_medium_path(remark),
-                                      target: :_blank)) %>
-            <% elsif remark.manuscript %>
-              <%= t('admin.quiz.medium_for_remark_html',
-                    medium: link_to(t('admin.quiz.manuskript'),
-                                    display_medium_path(remark),
-                                    target: :_blank)) %>
+            <%= t('admin.remark.documents') %>
+            <% if remark.video %>
+              <%= link_to t('admin.quiz.video'),
+                          play_medium_path(remark),
+                          target: :_blank,
+                          class: 'mx-2' %>
+            <% end %>
+            <% if remark.manuscript %>
+              <%= link_to t('admin.quiz.manuskript'),
+                          display_medium_path(remark),
+                          target: :_blank,
+                          class: 'mx-2' %>
+            <% end %>
+            <% if remark.geogebra %>
+              <%= link_to t('admin.quiz.geogebra'),
+                          geogebra_medium_path(remark),
+                          target: :_blank,
+                          class: 'mx-2' %>
             <% end %>
           </div>
           <div class="col-12 text-center my-2 remark-infotainment-icons"
@@ -52,6 +65,15 @@
                  data-toggle="tooltip"
                  data-placement="bottom"
                  title="<%= t('admin.quiz.manuscript_info') %>"
+                 target="_blank">
+              </a>
+            <% end %>
+            <% if remark.geogebra %>
+              <a href="<%= geogebra_medium_path(remark) %>"
+                 class="no-deco ml-3 fas fa-draw-polygon fa-2x text-info"
+                 data-toggle="tooltip"
+                 data-placement="bottom"
+                 title="<%= t('admin.quiz.geogebra_info') %>"
                  target="_blank">
               </a>
             <% end %>

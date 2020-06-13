@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_11_140423) do
+ActiveRecord::Schema.define(version: 2020_06_13_112557) do
 
   create_table "consumptions", force: :cascade do |t|
     t.integer "medium_id"
@@ -38,8 +38,8 @@ ActiveRecord::Schema.define(version: 2020_06_11_140423) do
     t.integer "progress"
     t.integer "success"
     t.string "study_participant"
-    t.text "answer_scheme"
     t.text "input"
+    t.integer "remark_id"
   end
 
 end

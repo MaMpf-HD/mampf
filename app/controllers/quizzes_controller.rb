@@ -89,7 +89,7 @@ class QuizzesController < ApplicationController
                           params
                         end
     if current_user.study_participant
-      params[:study_participant] = current_user.anonymized_id
+      quiz_round_params[:study_participant] = current_user.anonymized_id
     end
     @quiz_round = QuizRound.new(quiz_round_params)
   end

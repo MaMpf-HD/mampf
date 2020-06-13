@@ -4,6 +4,9 @@ removeResidues = ->
   $('.send-it').prop 'disabled', true
   $('.send-it').addClass 'no_display'
   $('.click-it').prop 'disabled', true
+  $('.type-it').prop 'disabled', true
+  $('.type-it').addClass 'no_display'
+  $('.type-it-label').remove()
   $('.remark-infotainment-text').remove()
   $('.remark-infotainment-icons').show()
   return

@@ -1420,7 +1420,20 @@ en:
       edit: 'Edit Remark'
       initial_text: 'Initial text'
       copy_marker: '-COPY-'
+      text_input: Text Input active
+      input: 'Input'
+      preview: 'Preview'
+      documents: 'For this remark there are the following documents:'
       info:
+        preview: >
+          <i>
+          Note.
+          </i>
+          You can use LaTeX in your posts by writing the LaTeX code between
+          dollar signs (or double dollar signs).
+          A list of supported symbols can be found
+          <a href="https://katex.org/docs/supported.html" target="_blank">
+          here</a>.
         about: >
           A remark corresponds to a passage in a quiz in which you explain
           material to the user, often as a link between successive questions.
@@ -1453,6 +1466,8 @@ en:
       video_info: 'Explanation Video in THymEPlayer'
       manuscript: 'Manuscript'
       manuscript_info: 'Manuskript as pdf'
+      geogebra: 'Geogebra Applet'
+      geogebra_info: 'Geogebra Applet in new tab'
       medium_for_remark_html: >
         There is a %{medium} for this remark.
       media_for_remark_html: >
