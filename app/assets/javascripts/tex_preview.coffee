@@ -50,6 +50,7 @@ $(document).on 'turbolinks:load', ->
         'p'
         'blockquote'
         'code'
+        'pre'
       ])
     preview = '#' + this.id + '-preview'
     $(preview).html(content)

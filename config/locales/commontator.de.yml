@@ -51,7 +51,7 @@ de:
           abgesetzte Inhalte). Eine Liste der unterstützten Symbole gibt es
           <a href="https://katex.org/docs/supported.html" target="_blank">
           hier</a>. Außerdem kannst Du die folgenden HTML-Tags verwenden:
-          'b','em','strong', 'i', 'br', 'p', 'blockquote', 'code'.
+          'b','em','strong', 'i', 'br', 'p', 'blockquote', 'code', 'pre'.
       errors:
         already_deleted: Dieser Kommentar wurde bereits gelöscht.
         create: "Kommentar kann nicht veröffentlicht werden:"
