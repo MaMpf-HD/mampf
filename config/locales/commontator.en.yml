@@ -82,7 +82,7 @@ en:
           A list of supported symbols can be found
           <a href="https://katex.org/docs/supported.html" target="_blank">
           here</a>. You can use the following HTML Tags:
-          'b','em','strong', 'i', 'br', 'p', 'blockquote', 'code', 'pre'.
+          'b','em','strong', 'i', 'br', 'p', 'code', 'pre'.
       errors:
         already_deleted: This comment has already been deleted.
         create: "This comment could not be posted because:"

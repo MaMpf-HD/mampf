@@ -48,7 +48,6 @@ $(document).on 'turbolinks:load', ->
         'i'
         'br'
         'p'
-        'blockquote'
         'code'
         'pre'
       ])
