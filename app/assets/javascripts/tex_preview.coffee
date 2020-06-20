@@ -40,7 +40,17 @@ $(document).on 'turbolinks:load', ->
 
 
   $(document).on 'keyup', '.commentForm', ->
-    content = sanitizeHtml($(this).val())
+    content = sanitizeHtml($(this).val(),
+      allowedTags: [
+        'b',
+        'em'
+        'strong'
+        'i'
+        'br'
+        'p'
+        'blockquote'
+        'code'
+      ])
     preview = '#' + this.id + '-preview'
     $(preview).html(content)
     # run katex on preview

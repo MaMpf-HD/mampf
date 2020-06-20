@@ -50,7 +50,8 @@ de:
           zwischen Dollarzeichen schreibst (bzw. doppelte Dollarzeichen für
           abgesetzte Inhalte). Eine Liste der unterstützten Symbole gibt es
           <a href="https://katex.org/docs/supported.html" target="_blank">
-          hier</a>.
+          hier</a>. Außerdem kannst Du die folgenden HTML-Tags verwenden:
+          'b','em','strong', 'i', 'br', 'p', 'blockquote', 'code'.
       errors:
         already_deleted: Dieser Kommentar wurde bereits gelöscht.
         create: "Kommentar kann nicht veröffentlicht werden:"
