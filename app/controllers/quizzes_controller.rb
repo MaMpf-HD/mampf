@@ -88,7 +88,7 @@ class QuizzesController < ApplicationController
                         else
                           params
                         end
-    if current_user.study_participant
+    if user_signed_in? && current_user.study_participant
       quiz_round_params[:study_participant] = current_user.anonymized_id
     end
     @quiz_round = QuizRound.new(quiz_round_params)
