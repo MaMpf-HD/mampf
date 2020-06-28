@@ -1,29 +1,45 @@
+---
 version: '3'
 services:
+  redis:
+    image: "redis:alpine"
+  solr:
+    image: "solr:8.1"
   db:
     image: postgres
     environment:
-      POSTGRES_USER: mampf
-      POSTGRES_DB: mampf
+      - POSTGRES_USER=mampf
+      - POSTGRES_DB=mampf
+      - POSTGRES_HOST_AUTH_METHOD=trust
   mampf:
-    build: .
+    build:
+      context: ./../..
+      dockerfile: docker/developement/Dockerfile
+    image: mampf:developement
     ports:
       - 3000:3000
-    entrypoint: /entrypoint.sh
+    entrypoint: ./entrypoint.sh
     environment:
       RAILS_ENV: development
       PRODUCTION_DATABASE_ADAPTER: postgresql
       PRODUCTION_DATABASE_DATABASE: mampf
       PRODUCTION_DATABASE_USERNAME: mampf
-#      PRODUCTION_DATABASE_PASSWORD: $DATABASE_PASSWORD
+      # PRODUCTION_DATABASE_PASSWORD: $DATABASE_PASSWORD
       PRODUCTION_DATABASE_HOST: db
       PRODUCTION_DATABASE_PORT: 5432
       MAILSERVER: localhost
       FROM_ADDRESS: mampf@localhost
       URL_HOST: localhost
-#      RAILS_MASTER_KEY: $MASTER_KEY
+      # RAILS_MASTER_KEY: $MASTER_KEY
       KEKS_SERVER: your_keks_server
       ERDBEERE_SERVER: your_erdbeere_server
       MUESLI_SERVER: your_muesli_server
       PROJECT_EMAIL: project@localhost
       MEDIA_FOLDER: mampf
+      REDIS_URL: redis://redis:6379/1
+      SOLR_PATH: /solr/mampf-dev
+    depends_on:
+      - db
+      - solr
+      - redis
+
