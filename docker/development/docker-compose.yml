@@ -1,5 +1,5 @@
 ---
-version: '3'
+version: '3.2'
 services:
   redis:
     image: "redis:alpine"
@@ -8,10 +8,14 @@ services:
     ports:
       - "127.0.0.1:8983:8983"
     volumes:
-      - solr-data:/var/solr
-    command:
-      - solr-precreate
-      - development
+      - type: volume
+        source: solr-data
+        target: /var/solr
+      - type: bind
+        source: ../../solr/development/conf/
+        target: /solrconfig/
+        read_only: true
+    command: ["solr-precreate", "development", "/solrconfig"]
   db:
     image: postgres
     environment:
@@ -19,7 +23,9 @@ services:
       - POSTGRES_DB=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
   mailcatcher:
     restart: on-failure:10
     image: dockage/mailcatcher:latest

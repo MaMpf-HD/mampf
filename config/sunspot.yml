@@ -10,7 +10,7 @@ production:
 development:
   solr:
     hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
-    port: 8982
+    port: 8983
     log_level: INFO
     path: /solr/development
 
