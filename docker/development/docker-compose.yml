@@ -64,9 +64,6 @@ services:
       - type: bind
         source: ../../app/
         target: /usr/src/app/app/
-      - type: bind
-        source: ../../log/
-        target: /usr/src/app/log/
     depends_on:
       - db
       - solr
