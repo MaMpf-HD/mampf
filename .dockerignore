@@ -1,5 +1,6 @@
-docker/**/*
-docker*
+docker/developement
+docker/run_tests/docker-compose.yml
+docker/run_tests/Dockerfile
 .git/**/*
 .git*
 .travis*
