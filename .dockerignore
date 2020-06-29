@@ -1,5 +1,9 @@
 docker/**/*
-docker
+docker*
+.git/**/*
+.git*
+.travis*
 LICENSE
 README.md
 mampf-gui-transparent.png
+.dockerignore
