@@ -56,5 +56,5 @@ git clone -b master git@github.com:fosterfarrell9/mampf.git
 cd mampf/docker/development/
 docker-compose up
 ```
-For mor information visit [INSTALLATION.md](./INSTALLATION.md)
+For more information about that visit [INSTALLATION.md](./INSTALLATION.md).
 

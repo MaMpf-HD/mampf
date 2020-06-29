@@ -1,12 +1,16 @@
 ## Installation (with docker-compose)
 
-To simply try out mampf you can use docker-compose. Simply clone the mampf repository and run docker-compose by executing
+To simply try out mampf you can use `docker-compose. Simply clone the mampf repository and run docker-compose by executing
 ```
 git clone -b master git@github.com:fosterfarrell9/mampf.git
 cd mampf/docker/development/
 docker-compose up
 ```
-For mor information visit [INSTALLATION.md](./INSTALLATION.md)
+
+You now have the following things ready:
+* The MaMpf server on [localhost:3000](http://localhost:3000)
+* The mailcatcher service on [localhost:1080](http://localhost:1080)
+* The webinterface for ApacheSolr on [localhost:8983](http://localhost:8983)
 
 ## Installation in production mode (with Docker)
 
