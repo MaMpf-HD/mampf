@@ -5,7 +5,6 @@ service:
 
 before_install:
   - cd docker/run_tests/
-  - docker-compose pull
 
 install:
   - docker-compose build
