@@ -12,6 +12,15 @@ You now have the following things ready:
 * The mailcatcher service on [localhost:1080](http://localhost:1080)
 * The webinterface for ApacheSolr on [localhost:8983](http://localhost:8983)
 
+Now you are just a few steps away from having an admin account on your local MaMpf instance:
+1. register via GUI
+2. visist the mailcatcher webinterface and confirm your account
+3. make your account admin
+   ```
+   # docker-compose exec mampf rails r "User.first.update(admin: true)"
+   ```
+4. There you go :tada:
+
 ## Installation in production mode (with Docker)
 
  1. Install Database Server (e.g. PostgreSQL) and create Database.
