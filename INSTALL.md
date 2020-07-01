@@ -1,6 +1,6 @@
 ## Installation (with docker-compose)
 
-To simply try out mampf you can use `docker-compose. Simply clone the mampf repository and run docker-compose by executing
+To simply try out mampf you can use `docker-compose` ([needs docker](https://docs.docker.com/engine/install/ubuntu/)). Simply clone the mampf repository and run docker-compose by executing
 ```
 $ git clone -b master git@github.com:fosterfarrell9/mampf.git
 $ cd mampf/docker/development/
@@ -20,6 +20,16 @@ Now you are just a few steps away from having an admin account on your local MaM
    # docker-compose exec mampf rails r "User.first.update(admin: true)"
    ```
 4. There you go :tada:
+
+A few common commands for `docker-compose` are:
+
+| command                          | action                                                         |
+|----------------------------------|----------------------------------------------------------------|
+| docker-compose up                | runs the mampf stack                                           |
+| docker-compose up -d             | runs the mampf stack in the background                         |
+| docker-compose down              | deletes all the created containers                             |
+| docker-compose down --volumes    | deletes all the associated containers and volumes (full reset) |
+| docker-compose exec mampf <exec> | run an executable in the container
 
 ## Installation in production mode (with Docker)
 
