@@ -1,6 +1,6 @@
 ## Installation (with docker-compose)
 
-To simply try out mampf you can use `docker-compose` ([needs docker](https://docs.docker.com/engine/install/ubuntu/)). Simply clone the mampf repository and run docker-compose by executing
+To simply try out mampf you can use `docker-compose` ([needs docker](https://docs.docker.com/engine/install/ubuntu/) && `apt install docker-compose`). Simply clone the mampf repository and run docker-compose by executing
 ```
 $ git clone -b master git@github.com:fosterfarrell9/mampf.git
 $ cd mampf/docker/development/
