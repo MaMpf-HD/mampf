@@ -8,13 +8,13 @@ $ cd mampf/docker/development/
 ```
 
 You now have the following things ready:
-* The MaMpf server on [localhost:3000](http://localhost:3000)
-* The mailcatcher service on [localhost:1080](http://localhost:1080)
-* The webinterface for ApacheSolr on [localhost:8983](http://localhost:8983)
+* The MaMpf server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>
+* The mailcatcher service on <a href="http://localhost:1080/" target="_blank">localhost:1080</a>
+* The webinterface for ApacheSolr on <a href="http://localhost:8983/" target="_blank">localhost:8983</a>
 
 Now you are just a few steps away from having an admin account on your local MaMpf instance:
-1. register via GUI
-2. visist the mailcatcher webinterface and confirm your account
+1. register via <a href="http://localhost:3000/users/sign_up?" target="_blank">MaMpf-GUI</a>
+2. visit the <a href="http://localhost:1080/" target="_blank">mailcatcher webinterface</a> and confirm your account
 3. make your account admin
    ```
    # docker-compose exec mampf rails r "User.first.update(admin: true)"
@@ -23,13 +23,14 @@ Now you are just a few steps away from having an admin account on your local MaM
 
 A few common commands for `docker-compose` are:
 
-| command                          | action                                                         |
-|----------------------------------|----------------------------------------------------------------|
-| docker-compose up                | runs the mampf stack                                           |
-| docker-compose up -d             | runs the mampf stack in the background                         |
-| docker-compose down              | deletes all the created containers                             |
-| docker-compose down --volumes    | deletes all the associated containers and volumes (full reset) |
-| docker-compose exec mampf <exec> | run an executable in the container
+| command                            | action                                                         |
+|------------------------------------|----------------------------------------------------------------|
+| `docker-compose up`                | runs the mampf stack                                           |
+| `docker-compose up -d`             | runs the mampf stack in the background                         |
+| `docker-compose logs -f`           | shows you continuos logs from the container                    |
+| `docker-compose down`              | deletes all the created containers                             |
+| `docker-compose down --volumes`    | deletes all the associated containers and volumes (full reset) |
+| `docker-compose exec mampf <exec>` | run an executable in the container
 
 ## Installation in production mode (with Docker)
 
