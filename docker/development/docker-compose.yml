@@ -53,6 +53,7 @@ services:
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
+      SECRET_KEY_BASE: testenvironment
       # KEKS_SERVER: your_keks_server
       # ERDBEERE_SERVER: your_erdbeere_server
       # MUESLI_SERVER: your_muesli_server

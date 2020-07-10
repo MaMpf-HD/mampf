@@ -18,6 +18,28 @@ development:
     database: db/interactions.sqlite3
     migrations_paths: db/interactions_migrate
 
+
+docker-development:
+  primary:
+    <<: *default
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
+    database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
+    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
+    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
+    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
+    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+  interactions:
+    <<: *default
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
+    database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
+    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
+    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
+    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
+    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+    migrations_paths: db/interactions_migrate
+
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
