@@ -44,7 +44,7 @@ services:
       - "127.0.0.1:3000:3000"
     entrypoint: ./entrypoint.sh
     environment:
-      RAILS_ENV: docker-development
+      RAILS_ENV: docker_development
       PRODUCTION_DATABASE_ADAPTER: postgresql
       PRODUCTION_DATABASE_DATABASE: mampf
       PRODUCTION_DATABASE_USERNAME: mampf

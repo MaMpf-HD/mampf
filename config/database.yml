@@ -19,7 +19,7 @@ development:
     migrations_paths: db/interactions_migrate
 
 
-docker-development:
+docker_development:
   primary:
     <<: *default
     adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>

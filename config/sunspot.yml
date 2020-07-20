@@ -14,7 +14,7 @@ development:
     log_level: INFO
     path: /solr/development
 
-docker-development:
+docker_development:
   solr:
     hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
     port: 8983
