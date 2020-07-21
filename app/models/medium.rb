@@ -331,6 +331,7 @@ class Medium < ApplicationRecord
   def vanished_items
     return [] unless sort == 'Script'
     Item.where(medium: self)
+        .where.not(sort: 'self')
         .where.not(pdf_destination: manuscript_destinations)
   end
 
