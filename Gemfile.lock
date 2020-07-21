@@ -35,6 +35,16 @@ GIT
       timeago_js (>= 3.0.2.2)
 
 GIT
+  remote: https://github.com/rails/sprockets-rails
+  revision: c269f5e01fdffa5c41350e855183d94ff33d318a
+  branch: master
+  specs:
+    sprockets-rails (3.2.1)
+      actionpack (>= 4.0)
+      activesupport (>= 4.0)
+      sprockets (>= 3.0.0)
+
+GIT
   remote: https://github.com/zdennis/activerecord-import.git
   revision: 2b14474592201a9ef287f913d797120ecb6c8ed3
   branch: master
@@ -446,10 +456,6 @@ GEM
       babel-source (>= 5.8.11)
       babel-transpiler
       sprockets (>= 3.0.0)
-    sprockets-rails (3.2.1)
-      actionpack (>= 4.0)
-      activesupport (>= 4.0)
-      sprockets (>= 3.0.0)
     sqlite3 (1.4.2)
     stream (0.5.2)
     streamio-ffmpeg (3.0.2)
@@ -497,9 +503,6 @@ GEM
       nokogiri (>= 1.5.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    yaml_db (0.7.0)
-      rails (>= 3.0)
-      rake (>= 0.8.7)
     zeitwerk (2.4.0)
 
 PLATFORMS
@@ -564,6 +567,7 @@ DEPENDENCIES
   simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
+  sprockets-rails!
   sqlite3 (~> 1.4)
   streamio-ffmpeg
   sunspot_rails
@@ -575,7 +579,6 @@ DEPENDENCIES
   web-console (>= 3.3.0)
   webdrivers
   xkcd
-  yaml_db
 
 RUBY VERSION
    ruby 2.7.1p83
