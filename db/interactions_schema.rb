@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2020_06_13_112557) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "consumptions", force: :cascade do |t|
     t.integer "medium_id"
     t.text "sort"

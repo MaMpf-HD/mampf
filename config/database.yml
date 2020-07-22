@@ -5,17 +5,27 @@
 #   gem 'sqlite3'
 #
 default: &default
-  adapter: sqlite3
+  adapter: postgresql
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
 development:
   primary:
     <<: *default
-    database: db/development.sqlite3
+    database: mampf
+    adapter: postgresql
+    encoding: unicode
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    template: template0
   interactions:
     <<: *default
-    database: db/interactions.sqlite3
+    adapter: postgresql
+    encoding: unicode
+    database: interactions
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    template: template0
     migrations_paths: db/interactions_migrate
 
 
@@ -45,6 +55,7 @@ docker_development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
+  adapter: sqlite3
   database: db/test.sqlite3
 
 production:
