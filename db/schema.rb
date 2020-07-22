@@ -12,9 +12,12 @@
 
 ActiveRecord::Schema.define(version: 2020_06_13_090342) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "announcements", force: :cascade do |t|
-    t.integer "lecture_id"
-    t.integer "announcer_id"
+    t.bigint "lecture_id"
+    t.bigint "announcer_id"
     t.text "details"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -65,18 +68,18 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "commontator_comments", force: :cascade do |t|
-    t.integer "thread_id", null: false
+    t.bigint "thread_id", null: false
     t.string "creator_type", null: false
-    t.integer "creator_id", null: false
+    t.bigint "creator_id", null: false
     t.string "editor_type"
-    t.integer "editor_id"
+    t.bigint "editor_id"
     t.text "body", null: false
     t.datetime "deleted_at"
     t.integer "cached_votes_up", default: 0
     t.integer "cached_votes_down", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "parent_id"
+    t.bigint "parent_id"
     t.index ["cached_votes_down"], name: "index_commontator_comments_on_cached_votes_down"
     t.index ["cached_votes_up"], name: "index_commontator_comments_on_cached_votes_up"
     t.index ["creator_id", "creator_type", "thread_id"], name: "index_commontator_comments_on_c_id_and_c_type_and_t_id"
@@ -86,9 +89,9 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "commontator_subscriptions", force: :cascade do |t|
-    t.integer "thread_id", null: false
+    t.bigint "thread_id", null: false
     t.string "subscriber_type", null: false
-    t.integer "subscriber_id", null: false
+    t.bigint "subscriber_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["subscriber_id", "subscriber_type", "thread_id"], name: "index_commontator_subscriptions_on_s_id_and_s_type_and_t_id", unique: true
@@ -97,9 +100,9 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
 
   create_table "commontator_threads", force: :cascade do |t|
     t.string "commontable_type"
-    t.integer "commontable_id"
+    t.bigint "commontable_id"
     t.string "closer_type"
-    t.integer "closer_id"
+    t.bigint "closer_id"
     t.datetime "closed_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -108,8 +111,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "course_self_joins", force: :cascade do |t|
-    t.integer "course_id"
-    t.integer "preceding_course_id"
+    t.bigint "course_id"
+    t.bigint "preceding_course_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id", "preceding_course_id"], name: "index_course_self_joins_on_course_id_and_preceding_course_id", unique: true
@@ -127,8 +130,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "course_user_joins", force: :cascade do |t|
-    t.integer "course_id"
-    t.integer "user_id"
+    t.bigint "course_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "primary_lecture_id"
@@ -148,8 +151,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "division_course_joins", force: :cascade do |t|
-    t.integer "division_id", null: false
-    t.integer "course_id", null: false
+    t.bigint "division_id", null: false
+    t.bigint "course_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["course_id"], name: "index_division_course_joins_on_course_id"
@@ -157,7 +160,7 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "division_translations", force: :cascade do |t|
-    t.integer "division_id", null: false
+    t.bigint "division_id", null: false
     t.string "locale", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -167,7 +170,7 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "divisions", force: :cascade do |t|
-    t.integer "program_id"
+    t.bigint "program_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["program_id"], name: "index_divisions_on_program_id"
@@ -194,9 +197,9 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "imports", force: :cascade do |t|
-    t.integer "medium_id", null: false
+    t.bigint "medium_id", null: false
     t.string "teachable_type", null: false
-    t.integer "teachable_id", null: false
+    t.bigint "teachable_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["medium_id"], name: "index_imports_on_medium_id"
@@ -204,8 +207,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "item_self_joins", force: :cascade do |t|
-    t.integer "item_id", null: false
-    t.integer "related_item_id", null: false
+    t.bigint "item_id", null: false
+    t.bigint "related_item_id", null: false
     t.index ["item_id"], name: "index_item_self_joins_on_item_id"
     t.index ["related_item_id"], name: "index_item_self_joins_on_related_item_id"
   end
@@ -217,8 +220,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
     t.text "description"
     t.text "link"
     t.text "explanation"
-    t.integer "medium_id"
-    t.integer "section_id"
+    t.bigint "medium_id"
+    t.bigint "section_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "ref_number"
@@ -231,8 +234,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "lecture_user_joins", force: :cascade do |t|
-    t.integer "lecture_id"
-    t.integer "user_id"
+    t.bigint "lecture_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["lecture_id"], name: "index_lecture_user_joins_on_lecture_id"
@@ -293,8 +296,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "links", force: :cascade do |t|
-    t.integer "medium_id"
-    t.integer "linked_medium_id"
+    t.bigint "medium_id"
+    t.bigint "linked_medium_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["linked_medium_id"], name: "index_links_on_linked_medium_id"
@@ -309,14 +312,14 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
     t.string "sort"
     t.string "description"
     t.string "teachable_type"
-    t.integer "teachable_id"
+    t.bigint "teachable_id"
     t.text "video_data"
     t.text "screenshot_data"
     t.text "manuscript_data"
     t.text "released"
     t.boolean "imported_manuscript"
     t.string "quizzable_type"
-    t.integer "quizzable_id"
+    t.bigint "quizzable_id"
     t.text "hint"
     t.integer "parent_id"
     t.text "quiz_graph"
@@ -338,8 +341,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|
-    t.integer "medium_id"
-    t.integer "tag_id"
+    t.bigint "medium_id"
+    t.bigint "tag_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["medium_id"], name: "index_medium_tag_joins_on_medium_id"
@@ -369,7 +372,7 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "program_translations", force: :cascade do |t|
-    t.integer "program_id", null: false
+    t.bigint "program_id", null: false
     t.string "locale", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -381,7 +384,7 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   create_table "programs", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "subject_id"
+    t.bigint "subject_id"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
@@ -396,8 +399,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
     t.text "start_time"
     t.text "end_time"
     t.text "explanation"
-    t.integer "item_id"
-    t.integer "medium_id"
+    t.bigint "item_id"
+    t.bigint "medium_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["item_id"], name: "index_referrals_on_item_id"
@@ -438,7 +441,7 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "subject_translations", force: :cascade do |t|
-    t.integer "subject_id", null: false
+    t.bigint "subject_id", null: false
     t.string "locale", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -467,15 +470,15 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_categories", force: :cascade do |t|
-    t.integer "messageboard_id", null: false
+    t.bigint "messageboard_id", null: false
     t.text "name", null: false
     t.text "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "slug", null: false
+    t.index "lower(name) text_pattern_ops", name: "thredded_categories_name_ci"
     t.index ["messageboard_id", "slug"], name: "index_thredded_categories_on_messageboard_id_and_slug", unique: true
     t.index ["messageboard_id"], name: "index_thredded_categories_on_messageboard_id"
-    t.index ["name"], name: "thredded_categories_name_ci"
   end
 
   create_table "thredded_messageboard_groups", force: :cascade do |t|
@@ -486,16 +489,16 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_messageboard_notifications_for_followed_topics", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "messageboard_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "messageboard_id", null: false
     t.string "notifier_key", limit: 90, null: false
     t.boolean "enabled", default: true, null: false
     t.index ["user_id", "messageboard_id", "notifier_key"], name: "thredded_messageboard_notifications_for_followed_topics_unique", unique: true
   end
 
   create_table "thredded_messageboard_users", force: :cascade do |t|
-    t.integer "thredded_user_detail_id", null: false
-    t.integer "thredded_messageboard_id", null: false
+    t.bigint "thredded_user_detail_id", null: false
+    t.bigint "thredded_messageboard_id", null: false
     t.datetime "last_seen_at", null: false
     t.index ["thredded_messageboard_id", "last_seen_at"], name: "index_thredded_messageboard_users_for_recently_active"
     t.index ["thredded_messageboard_id", "thredded_user_detail_id"], name: "index_thredded_messageboard_users_primary", unique: true
@@ -508,8 +511,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
     t.integer "topics_count", default: 0
     t.integer "posts_count", default: 0
     t.integer "position", null: false
-    t.integer "last_topic_id"
-    t.integer "messageboard_group_id"
+    t.bigint "last_topic_id"
+    t.bigint "messageboard_group_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "locked", default: false, null: false
@@ -518,26 +521,26 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_notifications_for_followed_topics", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.string "notifier_key", limit: 90, null: false
     t.boolean "enabled", default: true, null: false
     t.index ["user_id", "notifier_key"], name: "thredded_notifications_for_followed_topics_unique", unique: true
   end
 
   create_table "thredded_notifications_for_private_topics", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.string "notifier_key", limit: 90, null: false
     t.boolean "enabled", default: true, null: false
     t.index ["user_id", "notifier_key"], name: "thredded_notifications_for_private_topics_unique", unique: true
   end
 
   create_table "thredded_post_moderation_records", force: :cascade do |t|
-    t.integer "post_id"
-    t.integer "messageboard_id"
-    t.text "post_content", limit: 65535
-    t.integer "post_user_id"
+    t.bigint "post_id"
+    t.bigint "messageboard_id"
+    t.text "post_content"
+    t.bigint "post_user_id"
     t.text "post_user_name"
-    t.integer "moderator_id"
+    t.bigint "moderator_id"
     t.integer "moderation_state", null: false
     t.integer "previous_moderation_state", null: false
     t.datetime "created_at", null: false
@@ -545,14 +548,15 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_posts", force: :cascade do |t|
-    t.integer "user_id"
-    t.text "content", limit: 65535
+    t.bigint "user_id"
+    t.text "content"
     t.string "source", limit: 191, default: "web"
-    t.integer "postable_id", null: false
-    t.integer "messageboard_id", null: false
+    t.bigint "postable_id", null: false
+    t.bigint "messageboard_id", null: false
     t.integer "moderation_state", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "to_tsvector('english'::regconfig, content)", name: "thredded_posts_content_fts", using: :gist
     t.index ["messageboard_id"], name: "index_thredded_posts_on_messageboard_id"
     t.index ["moderation_state", "updated_at"], name: "index_thredded_posts_for_display"
     t.index ["postable_id", "created_at"], name: "index_thredded_posts_on_postable_id_and_created_at"
@@ -561,17 +565,17 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_private_posts", force: :cascade do |t|
-    t.integer "user_id"
-    t.text "content", limit: 65535
-    t.integer "postable_id", null: false
+    t.bigint "user_id"
+    t.text "content"
+    t.bigint "postable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["postable_id", "created_at"], name: "index_thredded_private_posts_on_postable_id_and_created_at"
   end
 
   create_table "thredded_private_topics", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "last_user_id"
+    t.bigint "user_id"
+    t.bigint "last_user_id"
     t.text "title", null: false
     t.text "slug", null: false
     t.integer "posts_count", default: 0
@@ -585,8 +589,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_private_users", force: :cascade do |t|
-    t.integer "private_topic_id"
-    t.integer "user_id"
+    t.bigint "private_topic_id"
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["private_topic_id"], name: "index_thredded_private_users_on_private_topic_id"
@@ -594,18 +598,18 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_topic_categories", force: :cascade do |t|
-    t.integer "topic_id", null: false
-    t.integer "category_id", null: false
+    t.bigint "topic_id", null: false
+    t.bigint "category_id", null: false
     t.index ["category_id"], name: "index_thredded_topic_categories_on_category_id"
     t.index ["topic_id"], name: "index_thredded_topic_categories_on_topic_id"
   end
 
   create_table "thredded_topics", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "last_user_id"
+    t.bigint "user_id"
+    t.bigint "last_user_id"
     t.text "title", null: false
     t.text "slug", null: false
-    t.integer "messageboard_id", null: false
+    t.bigint "messageboard_id", null: false
     t.integer "posts_count", default: 0, null: false
     t.boolean "sticky", default: false, null: false
     t.boolean "locked", default: false, null: false
@@ -614,6 +618,7 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
     t.datetime "last_post_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index "to_tsvector('english'::regconfig, title)", name: "thredded_topics_title_fts", using: :gist
     t.index ["hash_id"], name: "index_thredded_topics_on_hash_id"
     t.index ["last_post_at"], name: "index_thredded_topics_on_last_post_at"
     t.index ["messageboard_id"], name: "index_thredded_topics_on_messageboard_id"
@@ -623,7 +628,7 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_user_details", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "latest_activity_at"
     t.integer "posts_count", default: 0
     t.integer "topics_count", default: 0
@@ -638,8 +643,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_user_messageboard_preferences", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "messageboard_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "messageboard_id", null: false
     t.boolean "follow_topics_on_mention", default: true, null: false
     t.boolean "auto_follow_topics", default: false, null: false
     t.datetime "created_at", null: false
@@ -648,15 +653,15 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_user_post_notifications", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "post_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "post_id", null: false
     t.datetime "notified_at", null: false
     t.index ["post_id"], name: "index_thredded_user_post_notifications_on_post_id"
     t.index ["user_id", "post_id"], name: "index_thredded_user_post_notifications_on_user_id_and_post_id", unique: true
   end
 
   create_table "thredded_user_preferences", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.boolean "follow_topics_on_mention", default: true, null: false
     t.boolean "auto_follow_topics", default: false, null: false
     t.datetime "created_at", null: false
@@ -665,8 +670,8 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_user_private_topic_read_states", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "postable_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "postable_id", null: false
     t.integer "unread_posts_count", default: 0, null: false
     t.integer "read_posts_count", default: 0, null: false
     t.integer "integer", default: 0, null: false
@@ -675,17 +680,17 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   end
 
   create_table "thredded_user_topic_follows", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "topic_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "topic_id", null: false
     t.datetime "created_at", null: false
-    t.integer "reason", limit: 1
+    t.integer "reason", limit: 2
     t.index ["user_id", "topic_id"], name: "thredded_user_topic_follows_user_topic", unique: true
   end
 
   create_table "thredded_user_topic_read_states", force: :cascade do |t|
-    t.integer "messageboard_id", null: false
-    t.integer "user_id", null: false
-    t.integer "postable_id", null: false
+    t.bigint "messageboard_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "postable_id", null: false
     t.integer "unread_posts_count", default: 0, null: false
     t.integer "read_posts_count", default: 0, null: false
     t.integer "integer", default: 0, null: false
@@ -730,9 +735,9 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
 
   create_table "votes", force: :cascade do |t|
     t.string "votable_type"
-    t.integer "votable_id"
+    t.bigint "votable_id"
     t.string "voter_type"
-    t.integer "voter_id"
+    t.bigint "voter_id"
     t.boolean "vote_flag"
     t.string "vote_scope"
     t.integer "vote_weight"
@@ -756,9 +761,24 @@ ActiveRecord::Schema.define(version: 2020_06_13_090342) do
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "course_user_joins", "courses"
+  add_foreign_key "course_user_joins", "users"
   add_foreign_key "divisions", "programs"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
+  add_foreign_key "lecture_user_joins", "lectures"
+  add_foreign_key "lecture_user_joins", "users"
+  add_foreign_key "links", "media"
+  add_foreign_key "links", "media", column: "linked_medium_id"
+  add_foreign_key "medium_tag_joins", "media"
+  add_foreign_key "medium_tag_joins", "tags"
   add_foreign_key "programs", "subjects"
+  add_foreign_key "referrals", "items"
+  add_foreign_key "referrals", "media"
+  add_foreign_key "thredded_messageboard_users", "thredded_messageboards", on_delete: :cascade
+  add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
+  add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
+  add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
 end
