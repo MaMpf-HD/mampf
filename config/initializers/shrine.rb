@@ -2,7 +2,7 @@ require "shrine"
 require "shrine/storage/file_system"
 require "shrine/storage/memory" if Rails.env.test?
 
-if Rails.env.development?
+if Rails.env.development? || Rails.env == 'docker_development'
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::FileSystem.new("public", prefix: "uploads/store"),
