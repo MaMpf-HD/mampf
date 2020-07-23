@@ -54,9 +54,9 @@ services:
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
       SECRET_KEY_BASE: testenvironment
-      # KEKS_SERVER: your_keks_server
-      # ERDBEERE_SERVER: your_erdbeere_server
-      # MUESLI_SERVER: your_muesli_server
+      ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
+      ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
+      MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
       PROJECT_EMAIL: project@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
