@@ -22,7 +22,6 @@ services:
     image: postgres
     environment:
       - POSTGRES_USER=mampf
-      - POSTGRES_DB=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - type: volume
