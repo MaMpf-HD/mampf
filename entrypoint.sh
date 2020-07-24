@@ -5,7 +5,7 @@ if ! [ -f completed_initial_run ]
 then
     echo 'Initialising mampf' &> >(tee -a /usr/src/app/log/initialisation.log)
     echo running: bundle exec rails db:create &> >(tee -a /usr/src/app/log/initialisation.log)
-    if [ "$RAILS_ENV" = "docker_development"]
+    if [ "$RAILS_ENV" = "docker_development" ]
     then
         bundle exec rails db:create &> >(tee -a /usr/src/app/log/initialisation.log)
         echo running: bundle exec rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
