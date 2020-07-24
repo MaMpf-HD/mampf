@@ -1,0 +1,82 @@
+---
+version: '3.2'
+services:
+  redis:
+    image: "redis:alpine"
+
+  solr:
+    image: "solr:8"
+    ports:
+      - "127.0.0.1:8983:8983"
+    volumes:
+      - type: volume
+        source: solr-data
+        target: /var/solr
+      - type: bind
+        source: ../../solr/development/conf/
+        target: /solrconfig/
+        read_only: true
+    command: ["solr-precreate", "development", "/solrconfig"]
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=mampf
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
+
+  mailcatcher:
+    restart: on-failure:10
+    image: dockage/mailcatcher:latest
+    ports:
+      - "127.0.0.1:1080:1080"
+
+  mampf:
+    build:
+      context: ./../..
+      dockerfile: docker/development/Dockerfile
+    image: mampf:development
+    ports:
+      - "127.0.0.1:3000:3000"
+    entrypoint: ./entrypoint.sh
+    environment:
+      RAILS_ENV: docker_development
+      PRODUCTION_DATABASE_ADAPTER: postgresql
+      PRODUCTION_DATABASE_DATABASE: mampf
+      PRODUCTION_DATABASE_INTERACTIONS: interactions
+      PRODUCTION_DATABASE_USERNAME: mampf
+      PRODUCTION_DATABASE_HOST: db
+      PRODUCTION_DATABASE_PORT: 5432
+      MAILSERVER: mailcatcher
+      FROM_ADDRESS: development@localhost
+      URL_HOST: localhost
+      SECRET_KEY_BASE: testenvironment
+      ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
+      ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
+      MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
+      PROJECT_EMAIL: project@localhost
+      MEDIA_FOLDER: mampf
+      REDIS_URL: redis://redis:6379/1
+      SOLR_PATH: /solr/mampf-dev
+      SPROCKETS_CACHE: /cache
+    volumes:
+      - type: bind
+        source: ../../
+        target: /usr/src/app/
+      - type: volume
+        source: sprockets-cache
+        target: /cache
+      - /usr/src/app/completed_initial_run
+    depends_on:
+      - db
+      - solr
+      - redis
+      - mailcatcher
+
+volumes:
+  db-data:
+  solr-data:
+  sprockets-cache:
