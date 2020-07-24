@@ -20,10 +20,12 @@ Rails.application.config.assets.precompile += %w( edit_clicker_assets.js)
 # Allow overriding of the sprockets cache path
 # This is done to fix this problem:
 # (https://github.com/rails/sprockets/issues/283#issuecomment-578728257)
-Rails.application.config.assets.configure do |env|
-  env.cache = Sprockets::Cache::FileStore.new(
-    ENV.fetch("SPROCKETS_CACHE", "#{env.root}/tmp/cache/assets"),
-    Rails.application.config.assets.cache_limit,
-    env.logger
-  )
+if Rails.env == 'docker_development'
+  Rails.application.config.assets.configure do |env|
+    env.cache = Sprockets::Cache::FileStore.new(
+      ENV.fetch("SPROCKETS_CACHE", "#{env.root}/tmp/cache/assets"),
+      Rails.application.config.assets.cache_limit,
+      env.logger
+    )
+  end
 end
