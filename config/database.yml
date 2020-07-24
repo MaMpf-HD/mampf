@@ -13,14 +13,13 @@ development:
   primary:
     <<: *default
     database: mampf
-    adapter: postgresql
     encoding: unicode
     username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
     password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
     template: template0
   interactions:
     <<: *default
-    adapter: postgresql
+    database: interactions
     encoding: unicode
     database: interactions
     username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
