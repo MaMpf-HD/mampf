@@ -88,6 +88,10 @@ class Course < ApplicationRecord
     title
   end
 
+  def title_no_term
+    title
+  end
+
   def locale_with_inheritance
     locale
   end

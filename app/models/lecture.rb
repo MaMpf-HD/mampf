@@ -90,6 +90,10 @@ class Lecture < ApplicationRecord
     "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
   end
 
+  def title_no_term
+    "(#{sort_localized_short}) #{course.title}"
+  end
+
   def to_label
     title
   end
