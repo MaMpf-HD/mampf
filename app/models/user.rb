@@ -179,6 +179,12 @@ class User < ApplicationRecord
                  .reverse
   end
 
+  def active_media_notifications(lecture)
+    notifications.where(notifiable_type: 'Medium')
+                 .where(notifiable_id: lecture.media_with_inheritance
+                                              .pluck(:id))
+  end
+
   # returns the array of those notifications that are related to MaMpf news
   # (i.e. announcements without a lecture)
   def active_news

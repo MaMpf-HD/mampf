@@ -1,20 +1,70 @@
 <div class="col mb-4">
 	<div class="card h-100">
-		<div class="card-header">Header
+		<div class="card-header">
+      <% if current %>
+        <%= link_to teachable.title_no_term,
+                    teachable,
+                    class: 'text-dark' %>
+      <% else %>
+        <%= link_to teachable.title_no_term,
+                   teachable,
+                   class: 'text-dark' %>
+        <% if teachable.is_a?(Lecture) %>
+          <br>
+          <%= teachable.term.to_label_short %>
+        <% end %>
+      <% end %>
+      <% if teachable.is_a?(Lecture) %>
+        <div>
+          <%= teachable.teacher.name %>
+        </div>
+      <% end %>
 		</div>
   	<img src="/thyme.png" class="card-img-top" alt="Hier könnte ein Bild sein.">
   	<div class="card-body">
-    	<h5 class="card-title">
-    		<%= link_to teachable.title,
-    								teachable %>
-    	</h5>
-    	<p class="card-text">
-    		This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.
-    	</p>
+      <% if subscribed && teachable.is_a?(Lecture) %>
+        <% if current_user.active_notifications(teachable).size.positive? %>
+          <%= current_user.active_notifications(teachable).size %>
+          neue Mitteilung(en)
+          <br>
+        <% end %>
+        <% if current_user.active_media_notifications(teachable).size.positive? %>
+          <%= current_user.active_media_notifications(teachable).size %>
+          neue Medien
+          <br>
+        <% end %>
+        <% if teachable.unread_forum_topics_count(current_user)&.positive? %>
+          <%= teachable.unread_forum_topics_count(current_user) %>
+          neue Forenbeiträge
+        <% end %>
+        <% if current_user.active_notifications(teachable).size.zero? &&
+            current_user.active_media_notifications(teachable).size.zero? &&
+            (teachable.unread_forum_topics_count(current_user) || 0).zero? %>
+          Du bist auf dem neuesten Stand.
+        <% end %>
+      <% end %>
+      <% if subscribed && teachable.is_a?(Course) %>
+        Du bist auf dem neuesten Stand.
+      <% end %>
+      <% unless subscribed %>
+        <% teachable.course.divisions.each do |d| %>
+          <div class="small">
+          <%= "#{d.program.subject.name} #{d.program.name} #{d.name}" %>
+          </div>
+        <% end %>
+      <% end %>
   	</div>
   	<div class="card-footer">
     	<small class="text-muted">
-    		Footer-Text
+    		<% if subscribed %>
+          <%= link_to 'abbestellen',
+                      '',
+                      class: 'text-dark' %>
+        <% else %>
+          <%= link_to 'abonnieren',
+                      '',
+                      class: 'text-dark' %>
+        <% end %>
     	</small>
   	</div>
 	</div>
