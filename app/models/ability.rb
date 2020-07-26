@@ -67,6 +67,8 @@ class Ability
       end
       can [:modal, :list_sections], Lesson
 
+      can :start, :main
+
       can [:catalog, :search, :play, :display, :geogebra,
            :register_download, :show_comments], Medium
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
@@ -169,6 +171,7 @@ class Ability
       can :destroy, Notification do |n|
         n.recipient == user
       end
+
       cannot :show, Medium do |medium|
         !medium.visible_for_user?(user) || medium.sort == 'Question'
       end

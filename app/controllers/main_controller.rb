@@ -3,6 +3,7 @@ class MainController < ApplicationController
   skip_before_action :authenticate_user!, only: [:home, :about, :news,
                                                  :sponsors]
   before_action :check_for_consent
+  authorize_resource class: false, only: :start
 
   def home
     if user_signed_in?
