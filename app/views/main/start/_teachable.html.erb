@@ -1,26 +1,31 @@
 <div class="col mb-4">
-	<div class="card h-100">
-		<div class="card-header">
+	<div class="card h-100 bg-mdb-color-lighten-7">
+		<div class="card-header bg-mdb-color-lighten-1 text-light">
       <% if current %>
         <%= link_to teachable.title_no_term,
                     teachable,
-                    class: 'text-dark' %>
+                    class: 'text-light' %>
       <% else %>
         <%= link_to teachable.title_no_term,
                    teachable,
-                   class: 'text-dark' %>
+                   class: 'text-light' %>
         <% if teachable.is_a?(Lecture) %>
           <br>
           <%= teachable.term.to_label_short %>
         <% end %>
       <% end %>
-      <% if teachable.is_a?(Lecture) %>
-        <div>
+      <div>
+        <% if teachable.is_a?(Lecture) %>
           <%= teachable.teacher.name %>
-        </div>
-      <% end %>
+        <% else %>
+          (Modul)
+        <% end %>
+      </div>
 		</div>
-  	<img src="/thyme.png" class="card-img-top" alt="Hier könnte ein Bild sein.">
+    <%= link_to image_tag('/thyme.png',
+                          class: 'card-img-top',
+                          alt: 'Card image cap'),
+                teachable %>
   	<div class="card-body">
       <% if subscribed && teachable.is_a?(Lecture) %>
         <% if current_user.active_notifications(teachable).size.positive? %>
