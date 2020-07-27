@@ -1,4 +1,33 @@
-# https://gist.github.com/joelvh/f50b8462611573cf9015e17d491a8a92
+# from https://gist.github.com/joelvh/f50b8462611573cf9015e17d491a8a92
+# Original source: https://gist.github.com/hopsoft/56ba6f55fe48ad7f8b90
+# Merged with: https://gist.github.com/kofronpi/37130f5ed670465b1fe2d170f754f8c6
+#
+# Usage:
+#
+# # dump the development db
+# rake db:dump
+#
+# # dump the db in a specific format
+# rake db:dump format=sql
+#
+# # dump a table (e.g. users table)
+# rake db:dump:table table=users
+#
+# # dump a table in a specific format
+# rake db:dump:table table=users format=sql
+#
+# # list dumps
+# rake db:dumps
+#
+# # dump the production db
+# RAILS_ENV=production rake db:dump
+#
+# # restore db based on a backup file pattern (e.g. timestamp)
+# rake db:restore pattern=20170101
+#
+# # note: config/database.yml is used for database configuration,
+# #       but you will be prompted for the database user's password
+#
 # Original source: https://gist.github.com/hopsoft/56ba6f55fe48ad7f8b90
 # Merged with: https://gist.github.com/kofronpi/37130f5ed670465b1fe2d170f754f8c6
 namespace :db do
@@ -12,7 +41,7 @@ namespace :db do
 
     with_config do |app, host, db, user|
       full_path = "#{backup_dir}/#{Time.now.strftime('%Y%m%d%H%M%S')}_#{db}.#{dump_sfx}"
-      cmd       = "pg_dump -F #{dump_fmt} -v -O -o -U '#{user}' -h '#{host}' -d '#{db}' -f '#{full_path}'"
+      cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -f '#{full_path}'"
     end
 
     puts cmd
@@ -36,7 +65,7 @@ namespace :db do
 
         with_config do |app, host, db, user|
           full_path = "#{backup_dir}/#{Time.now.strftime('%Y%m%d%H%M%S')}_#{db}.#{table_name.parameterize.underscore}.#{dump_sfx}"
-          cmd       = "pg_dump -F #{dump_fmt} -v -O -o -U '#{user}' -h '#{host}' -d '#{db}' -t '#{table_name}' -f '#{full_path}'"
+          cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -t '#{table_name}' -f '#{full_path}'"
         end
 
         puts cmd
