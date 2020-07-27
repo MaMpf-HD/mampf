@@ -71,4 +71,12 @@ Rails.application.configure do
   #   Bullet.enable = true
   #   Bullet.bullet_logger = true
   # end
+
+  # Use the lowest log level to ensure availability of diagnostic information
+  # when problems arise.
+  config.log_level = :debug
+
+  logger           = ActiveSupport::Logger.new(STDOUT)
+  logger.formatter = config.log_formatter
+  config.logger    = ActiveSupport::TaggedLogging.new(logger)
 end
