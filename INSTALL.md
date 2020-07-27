@@ -32,6 +32,17 @@ A few common commands for `docker-compose` are:
 | `docker-compose down --volumes`    | deletes all the associated containers and volumes (full reset) |
 | `docker-compose exec mampf <exec>` | run an executable in the container
 
+### Notes for the installation on windows
+
+Before you clone the repository, set 
+```
+git config --global core.autocrlf false   
+```
+Clone the repository and follow the instructions for docker. Then revert the above setting:
+```
+git config --global core.autocrlf true   
+```
+
 ## Installation in production mode (with Docker)
 
  1. Install Database Server (e.g. PostgreSQL) and create Database.
