@@ -30,7 +30,7 @@ and put it in the `db/backups/docker_development` folder in your project directo
 	 your project directory.
 5. Call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for three users
 that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu` and `student@mampf.edu` (with the obvious roles). Each of these have `docker_development` as password.
-6. There you go :tada
+6. There you go :tada:
 
 If you want to set up your own database from scratch instead of using the prepopulated database, you need to register an admin account:
 1. register via <a href="http://localhost:3000/users/sign_up?" target="_blank">MaMpf-GUI</a>
