@@ -25,7 +25,8 @@
                  locals: { remark: medium.becomes(Remark) } %>
     <% elsif medium.sort == 'Quiz' %>
       <%= render partial: 'media/quiz',
-                 locals: { quiz: medium.becomes(Quiz) } %>
+                 locals: { quiz: medium.becomes(Quiz),
+                           f: f } %>
     <% end %>
     <% unless medium.sort.in?(['Script', 'Quiz']) %>
       <%= render partial: 'media/video',
