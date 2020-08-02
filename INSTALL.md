@@ -14,26 +14,6 @@ You now have the following things ready:
 
 ### Database setup
 
-#### Use a prefilled database
-
-1. Download the latest version of the docker development database from <a href="https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/" target="_blank">here</a>
-and put it in the `db/backups/docker_development` folder in your project directory. The file should have a timestamp in its name, e.g. `20200801131654_mampf.sql`
-2. Restore the data from the downloaded database using the appropriate timestamp, e.g.:
-   ```
-   # docker-compose exec mampf rails db:restore pattern=20200801131654
-   ```
-3. Restore the empty interactions database and execute database migrations:
-   ```
-   # docker-compose exec mampf rails db:create:interactions
-   # docker-compose exec mampf rails db:migrate
-   ```
-4. Download the sample videos and sample manuscripts that match the data in the prepopulated
-	 database <a href="https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/" target="_blank">here</a> and extract the .zip file into the public folder of
-	 your project directory.
-5. Call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for three users
-that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu` and `student@mampf.edu` (with the obvious roles). Each of these have `dockermampf` as password.
-6. There you go :tada:
-
 #### Use an empty database
 
 1. register via <a href="http://localhost:3000/users/sign_up?" target="_blank">MaMpf-GUI</a>
@@ -57,6 +37,27 @@ A few common commands for `docker-compose` are:
 | `docker-compose down`              | deletes all the created containers                             |
 | `docker-compose down --volumes`    | deletes all the associated containers and volumes (full reset) |
 | `docker-compose exec mampf <exec>` | run an executable in the container
+
+#### Use a prefilled database
+
+1. Download the latest version of the docker development database from <a href="https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/" target="_blank">here</a>
+and put it in the `db/backups/docker_development` folder in your project directory. The file should have a timestamp in its name, e.g. `20200801131654_mampf.sql`
+2. Restore the data from the downloaded database using the appropriate timestamp, e.g.:
+   ```
+   # docker-compose exec mampf rails db:restore pattern=20200801131654
+   ```
+3. Restore the empty interactions database and execute database migrations:
+   ```
+   # docker-compose exec mampf rails db:create:interactions
+   # docker-compose exec mampf rails db:migrate
+   ```
+4. Download the sample videos and sample manuscripts that match the data in the prepopulated
+	 database <a href="https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/" target="_blank">here</a> and extract the .zip file into the `public/` folder of your project directory.
+5. Call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for three users
+that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu` and `student@mampf.edu` (with the obvious roles). Each of these have `dockermampf` as password.
+6. There you go :tada:
+
+
 
 ### Notes for the installation on windows
 
