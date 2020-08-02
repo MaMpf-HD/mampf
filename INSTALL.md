@@ -24,20 +24,6 @@ You now have the following things ready:
    ```
 4. There you go :tada:
 
-Note that in both cases, the first start of the MaMpf server can take a while, as
-all assets have to provided.
-
-A few common commands for `docker-compose` are:
-
-| command                            | action                                                         |
-|------------------------------------|----------------------------------------------------------------|
-| `docker-compose up`                | runs the mampf stack                                           |
-| `docker-compose up -d`             | runs the mampf stack in the background                         |
-| `docker-compose logs -f`           | shows you continuos logs from the container                    |
-| `docker-compose down`              | deletes all the created containers                             |
-| `docker-compose down --volumes`    | deletes all the associated containers and volumes (full reset) |
-| `docker-compose exec mampf <exec>` | run an executable in the container
-
 #### Use a prefilled database
 
 1. Download the latest version of the docker development database from <a href="https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/" target="_blank">here</a>
@@ -57,6 +43,20 @@ and put it in the `db/backups/docker_development` folder in your project directo
 that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu` and `student@mampf.edu` (with the obvious roles). Each of these have `dockermampf` as password.
 6. There you go :tada:
 
+
+Note that in both cases, the first start of the MaMpf server can take a while, as
+all assets have to provided.
+
+A few common commands for `docker-compose` are:
+
+| command                            | action                                                         |
+|------------------------------------|----------------------------------------------------------------|
+| `docker-compose up`                | runs the mampf stack                                           |
+| `docker-compose up -d`             | runs the mampf stack in the background                         |
+| `docker-compose logs -f`           | shows you continuous logs from the container                    |
+| `docker-compose down`              | deletes all the created containers                             |
+| `docker-compose down --volumes`    | deletes all the associated containers and volumes (full reset) |
+| `docker-compose exec mampf <exec>` | run an executable in the container
 
 
 ### Notes for the installation on windows
