@@ -12,7 +12,9 @@ You now have the following things ready:
 * The mailcatcher service on <a href="http://localhost:1080/" target="_blank">localhost:1080</a>
 * The webinterface for ApacheSolr on <a href="http://localhost:8983/" target="_blank">localhost:8983</a>
 
-If you want to use a prepopulated database provied by the MaMpf team, proceed as follows:
+### Database setup
+
+#### Use a prefilled database
 
 1. Download the latest version of the docker development database from <a href="https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/" target="_blank">here</a>
 and put it in the `db/backups/docker_development` folder in your project directory. The file should have a timestamp in its name, e.g. `20200801131654_mampf.sql`
@@ -29,10 +31,11 @@ and put it in the `db/backups/docker_development` folder in your project directo
 	 database <a href="https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/" target="_blank">here</a> and extract the .zip file into the public folder of
 	 your project directory.
 5. Call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for three users
-that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu` and `student@mampf.edu` (with the obvious roles). Each of these have `docker_development` as password.
+that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu` and `student@mampf.edu` (with the obvious roles). Each of these have `dockermampf` as password.
 6. There you go :tada:
 
-If you want to set up your own database from scratch instead of using the prepopulated database, you need to register an admin account:
+#### Use an empty database
+
 1. register via <a href="http://localhost:3000/users/sign_up?" target="_blank">MaMpf-GUI</a>
 2. visit the <a href="http://localhost:1080/" target="_blank">mailcatcher webinterface</a> and confirm your account
 3. make your account admin
@@ -41,7 +44,7 @@ If you want to set up your own database from scratch instead of using the prepop
    ```
 4. There you go :tada:
 
-Note that in both cases, the first start of the MaMpf server can take while, as
+Note that in both cases, the first start of the MaMpf server can take a while, as
 all assets have to provided.
 
 A few common commands for `docker-compose` are:
