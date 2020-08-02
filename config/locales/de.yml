@@ -337,6 +337,9 @@ de:
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       comments_disabled: >
         Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
+      new_notifications: 'neue Benachrichtigungen'
+      new_media: 'neue Medien'
+      new_posts: 'neue Forenbeiträge'
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -2342,6 +2345,8 @@ de:
     comments: 'Kommentare'
     comment: 'Kommentar'
     comments_for: 'Kommentare für %{subject}'
+    unsubscribe: 'abbestellen'
+    subscribe: 'abonnieren'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

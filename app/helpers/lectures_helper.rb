@@ -90,4 +90,9 @@ module LecturesHelper
     end
     'bg-grey'
   end
+
+  def news_color(news_count)
+    return '' unless news_count.positive?
+    'text-primary'
+  end
 end

@@ -327,6 +327,9 @@ en:
       close_comments: 'Close all threads for related media'
       comments_disabled: >
         Comments for newly published media are disabled by default
+      new_notifications: 'new notifications'
+      new_media: 'new media'
+      new_posts: 'new forum posts'
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -2210,6 +2213,8 @@ en:
     comments: 'Comments'
     comment: 'Comment'
     comments_for: 'Comments for %{subject}'
+    unsubscribe: 'Unsubscribe'
+    subscribe: 'Subscribe'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
