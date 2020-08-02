@@ -1,24 +1,44 @@
 <div class="col mb-4">
 	<div class="card h-100 bg-mdb-color-lighten-7">
 		<div class="card-header bg-mdb-color-lighten-1 text-light">
-      <% if current %>
-        <%= link_to teachable.title_no_term,
-                    teachable,
-                    class: 'text-light' %>
-      <% else %>
-        <%= link_to teachable.title_no_term,
-                   teachable,
-                   class: 'text-light' %>
+      <div class="row">
+        <div class="col-10">
+          <%= link_to teachable.title_no_term,
+                      teachable,
+                      class: 'text-light' %>
+        </div>
+        <div class="col-2">
+          <% if subscribed %>
+            <%= link_to '',
+                        '',
+                        class: 'far fa-minus-square text-light no-decoration',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('basics.unsubscribe') %>
+          <% else %>
+            <%= link_to '',
+                        '',
+                        class: 'far fa-plus-square text-light no-decoration',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('basics.subscribe') %>
+          <% end %>
+        </div>
+      </div>
+      <div class="row">
         <% if teachable.is_a?(Lecture) %>
-          <br>
-          <%= teachable.term.to_label_short %>
-        <% end %>
-      <% end %>
-      <div>
-        <% if teachable.is_a?(Lecture) %>
-          <%= teachable.teacher.name %>
+          <% unless current %>
+            <div class="col-12">
+              <%= teachable.term.to_label_short %>
+            </div>
+          <% end %>
+          <div class="col-12">
+            <%= teachable.teacher.name %>
+          </div>
         <% else %>
-          (<%= t('categories.course') %>)
+          <div class="col-12">
+            (<%= t('categories.course') %>)
+          </div>
         <% end %>
       </div>
 		</div>
@@ -26,6 +46,7 @@
                           class: 'card-img-top',
                           alt: 'Card image cap'),
                 teachable %>
+
   	<div class="card-body">
       <% unless subscribed %>
         <% teachable.course.divisions.each do |d| %>
@@ -64,23 +85,6 @@
                       title: t('admin.lecture.new_posts') %>
           <% end %>
         <% end %>
-        <div>
-        	<% if subscribed %>
-            <%= link_to '',
-                        '',
-                        class: 'far fa-minus-square text-dark ml-3 no-decoration',
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('basics.unsubscribe') %>
-          <% else %>
-            <%= link_to '',
-                        '',
-                        class: 'far fa-plus-square text-dark ml-3 no-decoration',
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('basics.subscribe') %>
-          <% end %>
-        </div>
       </div>
   	</div>
 	</div>
