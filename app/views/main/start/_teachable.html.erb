@@ -18,7 +18,7 @@
         <% if teachable.is_a?(Lecture) %>
           <%= teachable.teacher.name %>
         <% else %>
-          (Modul)
+          (<%= t('categories.course') %>)
         <% end %>
       </div>
 		</div>
@@ -27,30 +27,6 @@
                           alt: 'Card image cap'),
                 teachable %>
   	<div class="card-body">
-      <% if subscribed && teachable.is_a?(Lecture) %>
-        <% if current_user.active_notifications(teachable).size.positive? %>
-          <%= current_user.active_notifications(teachable).size %>
-          neue Mitteilung(en)
-          <br>
-        <% end %>
-        <% if current_user.active_media_notifications(teachable).size.positive? %>
-          <%= current_user.active_media_notifications(teachable).size %>
-          neue Medien
-          <br>
-        <% end %>
-        <% if teachable.unread_forum_topics_count(current_user)&.positive? %>
-          <%= teachable.unread_forum_topics_count(current_user) %>
-          neue Forenbeiträge
-        <% end %>
-        <% if current_user.active_notifications(teachable).size.zero? &&
-            current_user.active_media_notifications(teachable).size.zero? &&
-            (teachable.unread_forum_topics_count(current_user) || 0).zero? %>
-          Du bist auf dem neuesten Stand.
-        <% end %>
-      <% end %>
-      <% if subscribed && teachable.is_a?(Course) %>
-        Du bist auf dem neuesten Stand.
-      <% end %>
       <% unless subscribed %>
         <% teachable.course.divisions.each do |d| %>
           <div class="small">
@@ -58,19 +34,54 @@
           </div>
         <% end %>
       <% end %>
-  	</div>
-  	<div class="card-footer">
-    	<small class="text-muted">
-    		<% if subscribed %>
-          <%= link_to 'abbestellen',
-                      '',
-                      class: 'text-dark' %>
-        <% else %>
-          <%= link_to 'abonnieren',
-                      '',
-                      class: 'text-dark' %>
+      <div class="teachable-body">
+        <% if subscribed && teachable.is_a?(Lecture) %>
+          <%= tag.div class: news_color(current_user
+                                          .active_notifications(teachable)
+                                          .size) do %>
+            <%= current_user.active_notifications(teachable).size %>
+            <%= tag.i class: 'far fa-envelope mr-3',
+                      data: { toggle: 'tooltip',
+                              placement: 'bottom' },
+                      title: t('admin.lecture.new_notifications') %>
+          <% end %>
+          <%= tag.div class: news_color(current_user
+                                          .active_media_notifications(teachable)
+                                          .size) do %>
+            <%= current_user.active_media_notifications(teachable).size %>
+            <%= tag.i class: 'far fa-folder mr-3',
+                      data: { toggle: 'tooltip',
+                              placement: 'bottom' },
+                      title: t('admin.lecture.new_media') %>
+          <% end %>
+          <%= tag.div class: news_color(teachable
+                                          .unread_forum_topics_count(current_user)
+                                          .to_i) do %>
+            <%= teachable.unread_forum_topics_count(current_user).to_i %>
+            <%= tag.i class: 'far fa-comment-alt mr-3',
+                      data: { toggle: 'tooltip',
+                              placement: 'bottom' },
+                      title: t('admin.lecture.new_posts') %>
+          <% end %>
         <% end %>
-    	</small>
+        <div>
+        	<% if subscribed %>
+            <%= link_to '',
+                        '',
+                        class: 'far fa-minus-square text-dark ml-3 no-decoration',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('basics.unsubscribe') %>
+          <% else %>
+            <%= link_to '',
+                        '',
+                        class: 'far fa-plus-square text-dark ml-3 no-decoration',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('basics.subscribe') %>
+          <% end %>
+        </div>
+      </div>
   	</div>
 	</div>
 </div>
