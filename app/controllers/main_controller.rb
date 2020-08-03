@@ -38,16 +38,18 @@ class MainController < ApplicationController
   end
 
   def start
-    @current_stuff = current_user.active_lectures.includes(:course, :term) +
+    @current_stuff = current_user.active_lectures.includes(:course, :term)
+                                 .natural_sort_by(&:title) +
                        current_user.courses_without_lectures
+                                   .natural_sort_by(&:title)
     @inactive_lectures = current_user.inactive_lectures.includes(:course, :term)
-                                     .sort_by(&:begin_date).reverse
-    @other_current_lectures = Lecture.published.in_current_term.includes(:course, :term) -
-                                current_user.active_lectures
+                                     .sort
+    @other_current_lectures = (Lecture.published.in_current_term.includes(:course, :term) -
+                                current_user.active_lectures).sort
     @nonsubscribed_lectures = current_user.nonsubscribed_lectures.published
                                           .where.not(term: Term.active)
                                           .includes(:term, :course)
-                                          .sort_by(&:begin_date).reverse
+                                          .sort
     render layout: 'application_no_sidebar'
   end
 

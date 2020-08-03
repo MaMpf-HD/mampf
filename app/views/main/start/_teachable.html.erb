@@ -2,10 +2,14 @@
 	<div class="card h-100 bg-mdb-color-lighten-7">
 		<div class="card-header bg-mdb-color-lighten-1 text-light">
       <div class="row">
-        <div class="col-10">
-          <%= link_to teachable.title_no_term,
-                      teachable,
-                      class: 'text-light' %>
+        <div class="col-10 font-weight-bold">
+          <% if subscribed %>
+            <%= link_to teachable.title_no_term,
+                        teachable,
+                        class: 'text-light' %>
+          <% else %>
+            <%= teachable.title_no_term %>
+          <% end %>
         </div>
         <div class="col-2 text-right">
           <% if subscribed %>
@@ -26,27 +30,28 @@
         </div>
       </div>
       <div class="row">
-        <% if teachable.is_a?(Lecture) %>
-          <% unless current %>
-            <div class="col-12">
-              <%= teachable.term.to_label_short %>
-            </div>
-          <% end %>
-          <div class="col-12">
+        <div class="col-12">
+          <% if teachable.is_a?(Lecture) %>
+            <% unless current %>
+              <%= teachable.term.to_label_short %>,
+            <% end %>
             <%= teachable.teacher.name %>
-          </div>
-        <% else %>
-          <div class="col-12">
+          <% else %>
             (<%= t('categories.course') %>)
-          </div>
-        <% end %>
-      </div>
-		</div>
-    <%= link_to image_tag('/thyme.png',
-                          class: 'card-img-top',
-                          alt: 'Card image cap'),
-                teachable %>
-
+          <% end %>
+        </div>
+		  </div>
+    </div>
+    <% if subscribed %>
+      <%= link_to image_tag('/thyme.png',
+                            class: 'card-img-top',
+                            alt: 'Card image cap'),
+                  teachable %>
+    <% else %>
+      <%= image_tag('/thyme.png',
+                            class: 'card-img-top',
+                            alt: 'Card image cap') %>
+    <% end %>
   	<div class="card-body">
       <% unless subscribed %>
         <% teachable.course.divisions.each do |d| %>
