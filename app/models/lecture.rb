@@ -562,6 +562,18 @@ class Lecture < ApplicationRecord
     Lecture.where(term: Term.active)
   end
 
+  def <=>(other)
+    return 0 if self == other
+    return 1 if self.begin_date < other.begin_date
+    return 1 if self.term == other.term &&
+                  ActiveSupport::Inflector.transliterate(self.course.title) >
+                    ActiveSupport::Inflector.transliterate(other.course.title)
+    return 1 if self.term == other.term && self.course == other.course &&
+                  self.sort_localized < other.sort_localized
+    -1
+  end
+
+
   private
 
   # used for after save callback
