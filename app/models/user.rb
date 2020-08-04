@@ -437,11 +437,18 @@ class User < ApplicationRecord
         courses.delete(teachable.course)
         return
       end
+      pp '*******************'
       course_join = CourseUserJoin.find_by(course: teachable.course,
                                            user: self)
       return unless course_join&.primary_lecture_id == teachable.id
+      pp 'primary_lecture_id:'
+      pp course_join&.primary_lecture_id
+      pp 'teachable_id:'
+      pp teachable.id
+      pp '------------------------'
+      pp remaining_lectures_in_course.map(&:id)
       course_join.update(primary_lecture_id: remaining_lectures_in_course
-                                               .sort.first)
+                                               .sort.first.id)
       return
     end
     return unless lectures.where(course: teachable).empty?
