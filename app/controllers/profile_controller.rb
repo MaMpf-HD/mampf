@@ -2,6 +2,8 @@
 class ProfileController < ApplicationController
   before_action :set_user
   before_action :set_basics, only: [:update]
+  before_action :set_teachable, only: [:subscribe_teachable,
+                                       :unsubscribe_teachable]
 
   def edit
     # ensure that users do not have a blank name and a locale
@@ -74,6 +76,16 @@ class ProfileController < ApplicationController
     end
   end
 
+  def subscribe_teachable
+    current_user.subscribe_teachable!(@teachable)
+    redirect_to start_path
+  end
+
+  def unsubscribe_teachable
+    current_user.unsubscribe_teachable!(@teachable)
+    redirect_to start_path
+  end
+
   private
 
   def set_user
@@ -90,6 +102,17 @@ class ProfileController < ApplicationController
     @courses = Course.where(id: course_ids)
     @lectures = Lecture.where(id: lecture_ids)
     @locale = params[:user][:locale]
+  end
+
+  def set_teachable
+    return unless teachable_params[:teachable_type].in?(['Lecture', 'Course'])
+    @teachable = teachable_params[:teachable_type]
+                   .constantize.find_by_id(teachable_params[:teachable_id])
+    redirect_to start_path unless @teachable
+  end
+
+  def teachable_params
+    params.permit(:teachable_type, :teachable_id)
   end
 
   # extracts all course ids from user params

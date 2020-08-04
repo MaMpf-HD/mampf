@@ -414,6 +414,40 @@ class User < ApplicationRecord
     Digest::SHA2.hexdigest(id.to_s + created_at.to_s).first(20)
   end
 
+  def subscribe_teachable!(teachable)
+    return unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
+    return if teachable.in?(lectures) || teachable.in?(courses)
+    if teachable.is_a?(Lecture)
+      lectures << teachable
+      return if teachable.course.in?(courses)
+      CourseUserJoin.create(user: self, course: teachable.course,
+                            primary_lecture_id: teachable.id)
+      return
+    end
+    courses << teachable
+  end
+
+  def unsubscribe_teachable!(teachable)
+    return unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
+    return unless teachable.in?(courses) || teachable.in?(lectures)
+    if teachable.is_a?(Lecture)
+      lectures.delete(teachable)
+      remaining_lectures_in_course = lectures.where(course: teachable.course)
+      if remaining_lectures_in_course.empty?
+        courses.delete(teachable.course)
+        return
+      end
+      course_join = CourseUserJoin.find_by(course: teachable.course,
+                                           user: self)
+      return unless course_join&.primary_lecture_id == teachable.id
+      course_join.update(primary_lecture_id: remaining_lectures_in_course
+                                               .sort.first)
+      return
+    end
+    return unless lectures.where(course: teachable).empty?
+    courses.delete(teachable)
+  end
+
   private
 
   def set_defaults
