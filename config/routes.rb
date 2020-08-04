@@ -219,6 +219,8 @@ Rails.application.routes.draw do
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'
   post 'profile/toggle_thread_subscription', as: 'toggle_thread_subscription'
+  patch 'profile/subscribe_teachable', as: 'subscribe_teachable'
+  patch 'profile/unsubscribe_teachable', as: 'unsubscribe_teachable'
 
   resources :programs, except: [:show]
 

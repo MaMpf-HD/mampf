@@ -14,15 +14,25 @@
         <div class="col-2 text-right">
           <% if subscribed %>
             <%= link_to '',
-                        '',
+                        unsubscribe_teachable_path(params:
+                                                   { teachable_type:
+                                                       teachable.class.to_s,
+                                                     teachable_id:
+                                                       teachable.id }),
                         class: 'far fa-minus-square text-light no-decoration',
+                        method: :patch,
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
                         title: t('basics.unsubscribe') %>
           <% else %>
             <%= link_to '',
-                        '',
+                        subscribe_teachable_path(params:
+                                                   { teachable_type:
+                                                       teachable.class.to_s,
+                                                     teachable_id:
+                                                       teachable.id }),
                         class: 'far fa-plus-square text-light no-decoration',
+                        method: :patch,
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
                         title: t('basics.subscribe') %>
