@@ -2,7 +2,7 @@
 	<div class="card h-100 bg-mdb-color-lighten-7">
 		<div class="card-header bg-mdb-color-lighten-1 text-light">
       <div class="row">
-        <div class="col-10 font-weight-bold">
+        <div class="col-9 col-md-10 font-weight-bold">
           <% if subscribed %>
             <%= link_to teachable.title_no_term,
                         teachable,
@@ -11,7 +11,7 @@
             <%= teachable.title_no_term %>
           <% end %>
         </div>
-        <div class="col-2 text-right">
+        <div class="col-3 col-md-2 text-right">
           <% if subscribed %>
             <%= link_to '',
                         unsubscribe_teachable_path(params:
