@@ -1734,7 +1734,7 @@ de:
     my_term: Mein Semester - %{term}
     inactive_lectures: Weitere abonnierte Veranstaltungen
     active_nonsubscribed_lectures: Aktuelle Veranstaltungen - %{term}
-    nonsubscribed_lectures: Sonstige Veranstaltungen
+    lecture_search: Veranstaltungssuche
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

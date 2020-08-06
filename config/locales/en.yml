@@ -1625,7 +1625,7 @@ en:
     my_term: My Term - %{term}
     inactive_lectures: Futher subscribed event series
     active_nonsubscribed_lectures: Current event series - %{term}
-    nonsubscribed_lectures: Other event series
+    lecture_search: Search for event series
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'

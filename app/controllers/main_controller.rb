@@ -46,10 +46,7 @@ class MainController < ApplicationController
                                      .sort
     @other_current_lectures = (Lecture.published.in_current_term.includes(:course, :term) -
                                 current_user.active_lectures).sort
-    @nonsubscribed_lectures = current_user.nonsubscribed_lectures.published
-                                          .where.not(term: Term.active)
-                                          .includes(:term, :course)
-                                          .sort
+
     render layout: 'application_no_sidebar'
   end
 

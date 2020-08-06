@@ -79,24 +79,22 @@
 	<div class="card mb-3">
 		<div class="card-header">
 			<h4>
-				<%= link_to t('profile.nonsubscribed_lectures'),
-										'#collapseNonsubscribedLectures',
+				<%= link_to t('profile.lecture_search'),
+										'#collapseLectureSearch',
 										class: 'text-dark',
-										id: 'nonsubscribedLecturesLink',
+										id: 'lectureSearchLink',
 										data: { toggle: 'collapse',
-														target: '#collapseNonsubscribedLectures' } %>
+														target: '#collapseLectureSearch' } %>
 			</h4>
 		</div>
-		<div class="collapse subscriptionsCollapse" id="collapseNonsubscribedLectures"
+		<div class="collapse subscriptionsCollapse" id="collapseLectureSearch"
 				 data-parent="#subscriptionsAccordion"
-				 data-link="#nonsubscribedLecturesLink">
+				 data-link="#lectureSearchLink">
 			<div class="card-body">
 				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6 mt-3">
-					<%= render partial: 'main/start/teachable',
-										 collection: @nonsubscribed_lectures,
-										 locals: { current: false,
-								 							 subscribed: false },
-							 			 as: :teachable %>
+					<div class="col">
+						Hier wird eine Suchmaske hinkommen.
+					</div>
 				</div>
 			</div>
 		</div>
