@@ -1727,6 +1727,10 @@ de:
     no_consent:
       Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
+    subscribe_lecture: 'Veranstaltung abonnieren'
+    passphrase_required: >
+      Du möchtest die Veranstaltung %{teachable_title} abonnieren. Diese ist
+      durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

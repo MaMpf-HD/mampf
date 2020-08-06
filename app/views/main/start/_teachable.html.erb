@@ -15,27 +15,29 @@
           <% if subscribed %>
             <%= link_to '',
                         unsubscribe_teachable_path(params:
-                                                   { teachable_type:
-                                                       teachable.class.to_s,
-                                                     teachable_id:
-                                                       teachable.id }),
+                                                   { teachable:
+                                                       { type: teachable.class
+                                                                        .to_s,
+                                                         id: teachable.id } }),
                         class: 'far fa-minus-square text-light no-decoration',
                         method: :patch,
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
-                        title: t('basics.unsubscribe') %>
+                        title: t('basics.unsubscribe'),
+                        remote: true %>
           <% else %>
             <%= link_to '',
                         subscribe_teachable_path(params:
-                                                   { teachable_type:
-                                                       teachable.class.to_s,
-                                                     teachable_id:
-                                                       teachable.id }),
+                                                   { teachable:
+                                                       { type:
+                                                           teachable.class.to_s,
+                                                         id: teachable.id } }),
                         class: 'far fa-plus-square text-light no-decoration',
                         method: :patch,
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
-                        title: t('basics.subscribe') %>
+                        title: t('basics.subscribe'),
+                        remote: true %>
           <% end %>
         </div>
       </div>
