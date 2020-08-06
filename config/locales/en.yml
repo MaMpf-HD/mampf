@@ -1618,6 +1618,10 @@ en:
       You have not consented to our privacy policy.
     sure: 'Are you sure?'
     locale: 'Language'
+    suscribe_lecture: 'Subscribe event series'
+    passphrase_required: >
+      You want to subscribe the event series %{teachable_title}. It is protected
+      by a pass phrase. Please enter it here.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'

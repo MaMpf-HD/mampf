@@ -77,6 +77,9 @@ class ProfileController < ApplicationController
   end
 
   def subscribe_teachable
+    return if @teachable.is_a?(Lecture) && @teachable.passphrase.present? &&
+                !@teachable.in?(current_user.lectures) &&
+                @teachable.passphrase != @passphrase
     current_user.subscribe_teachable!(@teachable)
     redirect_to start_path
   end
@@ -105,14 +108,15 @@ class ProfileController < ApplicationController
   end
 
   def set_teachable
-    return unless teachable_params[:teachable_type].in?(['Lecture', 'Course'])
-    @teachable = teachable_params[:teachable_type]
-                   .constantize.find_by_id(teachable_params[:teachable_id])
+    return unless teachable_params[:type].in?(['Lecture', 'Course'])
+    @teachable = teachable_params[:type]
+                   .constantize.find_by_id(teachable_params[:id])
+    @passphrase = teachable_params[:passphrase]
     redirect_to start_path unless @teachable
   end
 
   def teachable_params
-    params.permit(:teachable_type, :teachable_id)
+    params.require(:teachable).permit(:type, :id, :passphrase)
   end
 
   # extracts all course ids from user params
