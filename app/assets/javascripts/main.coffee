@@ -22,6 +22,13 @@ $(document).on 'turbolinks:load', ->
         subscribe: $(this).is(':checked')
       }
 
+  $('.subscriptionsCollapse').on 'show.bs.collapse', ->
+     $($(this).data('link')).removeClass('text-dark')
+     return
+
+  $('.subscriptionsCollapse').on 'hide.bs.collapse', ->
+     $($(this).data('link')).addClass('text-dark')
+     return
 
   return
 
