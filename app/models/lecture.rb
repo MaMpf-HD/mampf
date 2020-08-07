@@ -573,6 +573,9 @@ class Lecture < ApplicationRecord
     -1
   end
 
+  def subscribed_by?(user)
+    in?(user.lectures)
+  end
 
   private
 

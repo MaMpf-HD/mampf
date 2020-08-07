@@ -221,6 +221,7 @@ Rails.application.routes.draw do
   post 'profile/toggle_thread_subscription', as: 'toggle_thread_subscription'
   patch 'profile/subscribe_teachable', as: 'subscribe_teachable'
   patch 'profile/unsubscribe_teachable', as: 'unsubscribe_teachable'
+  get 'profile/show_accordion', as: 'show_accordion'
 
   resources :programs, except: [:show]
 
