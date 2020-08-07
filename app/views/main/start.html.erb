@@ -16,13 +16,19 @@
 				<div class="card-body">
 					<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
 							 id="collapseCurrentStuffContent">
-						<%= render partial: 'main/start/teachable',
-											 collection: @current_stuff,
-											 locals: { current: true,
-									 							 subscribed: true,
-									 							 parent: 'current_subscribed' },
-									 		 as: :teachable %>
+						<% if @current_stuff.any? %>
+							<%= render partial: 'main/start/teachable',
+												 collection: @current_stuff,
+												 locals: { current: true,
+										 							 subscribed: true,
+									 								 parent: 'current_subscribed' },
+									 		 	 as: :teachable %>
+						<% end %>
 					</div>
+					<%= tag.div id: 'emptyCurrentStuff',
+											style: @current_stuff.any? ? 'display: none;' : ''  do %>
+						<%= t('profile.no_current_stuff') %>
+					<% end %>
 				</div>
 			</div>
 		</div>
@@ -45,14 +51,20 @@
 			<div class="card-body">
 				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
 						 id="collapseInactiveLecturesContent">
-					<%= render partial: 'main/start/teachable',
-										 collection: @inactive_lectures,
-										 locals: { current: false,
-								 							 subscribed: true,
-								 							 parent: 'inactive' },
-		  						 	 as: :teachable %>
+					<% if @current_stuff.empty? %>
+						<%= render partial: 'main/start/teachable',
+											 collection: @inactive_lectures,
+											 locals: { current: false,
+									 							 subscribed: true,
+									 							 parent: 'inactive' },
+		  							 	 as: :teachable %>
+		  		<% end %>
 				</div>
 			</div>
+			<%= tag.div id: 'emptyInactiveLectures',
+									style: @inactive_lectures&.any? ? 'display: none;' : ''  do %>
+				<%= t('profile.no_inactive_stuff') %>
+			<% end %>
 		</div>
 	</div>
 	<% if Term.active %>
@@ -73,14 +85,11 @@
 				<div class="card-body">
 					<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
 							 id="collapseAllCurrentContent">
-						<% @all_current_lectures.each do |l| %>
-							<%= render partial: 'main/start/teachable',
-												 locals: { teachable: l,
-												 					 current: true,
-										 							 subscribed: l.subscribed_by?(current_user),
-										 							 parent: 'all_current' } %>
-						<% end %>
 					</div>
+					<%= tag.div id: 'emptyAllCurrent',
+											style: 'display: none;' do %>
+						<%= t('profile.no_current_at_all') %>
+					<% end %>
 				</div>
 			</div>
 		</div>

@@ -1735,6 +1735,13 @@ de:
     inactive_lectures: Weitere abonnierte Veranstaltungen
     active_nonsubscribed_lectures: Aktuelle Veranstaltungen - %{term}
     lecture_search: Veranstaltungssuche
+    no_current_stuff: >
+      Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
+    no_inactive_Stuff: >
+      Du hast keine Veranstaltungen außerhalb des aktuellen Semesters abonniert.
+    no_current_at_all: >
+      Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
+      worden.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

@@ -86,6 +86,10 @@ class ProfileController < ApplicationController
 
   def unsubscribe_teachable
     @success = current_user.unsubscribe_teachable!(@teachable)
+    @none_left = case @parent
+      when 'current_subscribed' then current_user.current_teachables.empty?
+      when 'inactive' then current_user.inactive_lectures.empty?
+    end
   end
 
   def show_accordion
