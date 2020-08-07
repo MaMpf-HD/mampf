@@ -38,14 +38,11 @@ class MainController < ApplicationController
   end
 
   def start
-    @current_stuff = current_user.active_lectures.includes(:course, :term)
-                                 .natural_sort_by(&:title) +
-                       current_user.courses_without_lectures
-                                   .natural_sort_by(&:title)
+    @current_stuff = current_user.current_teachables
     @inactive_lectures = current_user.inactive_lectures.includes(:course, :term)
                                      .sort
-    @other_current_lectures = (Lecture.published.in_current_term.includes(:course, :term) -
-                                current_user.active_lectures).sort
+    @all_current_lectures = Lecture.published.in_current_term
+                                   .includes(:course, :term).sort
 
     render layout: 'application_no_sidebar'
   end

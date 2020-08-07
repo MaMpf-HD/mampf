@@ -77,16 +77,27 @@ class ProfileController < ApplicationController
   end
 
   def subscribe_teachable
+    @success = false
     return if @teachable.is_a?(Lecture) && @teachable.passphrase.present? &&
                 !@teachable.in?(current_user.lectures) &&
                 @teachable.passphrase != @passphrase
-    current_user.subscribe_teachable!(@teachable)
-    redirect_to start_path
+    @success = current_user.subscribe_teachable!(@teachable)
   end
 
   def unsubscribe_teachable
-    current_user.unsubscribe_teachable!(@teachable)
-    redirect_to start_path
+    @success = current_user.unsubscribe_teachable!(@teachable)
+  end
+
+  def show_accordion
+    @collapse_id = params[:id]
+    @teachables = case @collapse_id
+      when 'collapseCurrentStuff' then current_user.current_teachables
+      when 'collapseInactiveLectures' then current_user.inactive_lectures
+                                                       .includes(:course, :term)
+                                                       .sort
+      when 'collapseAllCurrent' then Lecture.published.in_current_term
+                                            .includes(:course, :term).sort
+    end
   end
 
   private
@@ -112,11 +123,12 @@ class ProfileController < ApplicationController
     @teachable = teachable_params[:type]
                    .constantize.find_by_id(teachable_params[:id])
     @passphrase = teachable_params[:passphrase]
+    @parent = teachable_params[:parent]
     redirect_to start_path unless @teachable
   end
 
   def teachable_params
-    params.require(:teachable).permit(:type, :id, :passphrase)
+    params.require(:teachable).permit(:type, :id, :passphrase, :parent)
   end
 
   # extracts all course ids from user params

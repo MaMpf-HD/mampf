@@ -5,19 +5,22 @@
 				<h4>
 					<%= link_to t('profile.my_term', term: Term.active.to_label),
 											'#collapseCurrentStuff',
+											class: text_dark(@current_stuff.any?),
 											id: 'currentStuffLink',
 											data: { toggle: 'collapse',
 															target: '#collapseCurrentStuff'} %>
 				</h4>
 			</div>
-			<div class="collapse subscriptionsCollapse show" id="collapseCurrentStuff"
+			<div class="subscriptionsCollapse <%= show_collapse(@current_stuff.any?) %>" id="collapseCurrentStuff"
 				 	 data-parent="#subscriptionsAccordion" data-link="#currentStuffLink">
 				<div class="card-body">
-					<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6">
+					<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
+							 id="collapseCurrentStuffContent">
 						<%= render partial: 'main/start/teachable',
 											 collection: @current_stuff,
 											 locals: { current: true,
-									 							 subscribed: true },
+									 							 subscribed: true,
+									 							 parent: 'current_subscribed' },
 									 		 as: :teachable %>
 					</div>
 				</div>
@@ -29,21 +32,24 @@
 			<h4>
 				<%= link_to t('profile.inactive_lectures'),
 										'#collapseInactiveLectures',
-										class: 'text-dark',
+										class: text_dark(@current_stuff.empty?),
 										id: 'inactiveLecturesLink',
 										data: { toggle: 'collapse',
 														target: '#collapseInactiveLectures' } %>
 
 			</h4>
 		</div>
-		<div class="collapse subscriptionsCollapse" id="collapseInactiveLectures"
+		<div class="subscriptionsCollapse <%= show_collapse(@current_stuff.empty?) %>"
+				 id="collapseInactiveLectures"
 				 data-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
 			<div class="card-body">
-				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6">
+				<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
+						 id="collapseInactiveLecturesContent">
 					<%= render partial: 'main/start/teachable',
 										 collection: @inactive_lectures,
 										 locals: { current: false,
-								 							 subscribed: true },
+								 							 subscribed: true,
+								 							 parent: 'inactive' },
 		  						 	 as: :teachable %>
 				</div>
 			</div>
@@ -55,22 +61,25 @@
 				<h4>
 					<%= link_to t('profile.active_nonsubscribed_lectures',
 												term: Term.active.to_label),
-											'#collapseOtherCurrent',
+											'#collapseAllCurrent',
 											class: 'text-dark',
-											id: 'otherCurrentLink',
+											id: 'allCurrentLink',
 											data: { toggle: 'collapse',
-															target: '#collapseOtherCurrent' } %>
+															target: '#collapseAllCurrent' } %>
 				</h4>
 			</div>
-			<div class="collapse subscriptionsCollapse" id="collapseOtherCurrent"
-					 data-parent="#subscriptionsAccordion" data-link="#otherCurrentLink">
+			<div class="collapse subscriptionsCollapse" id="collapseAllCurrent"
+					 data-parent="#subscriptionsAccordion" data-link="#allCurrentLink">
 				<div class="card-body">
-					<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6">
-						<%= render partial: 'main/start/teachable',
-											 collection: @other_current_lectures,
-											 locals: { current: true,
-									 							 subscribed: false },
-							 				 as: :teachable %>
+					<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
+							 id="collapseAllCurrentContent">
+						<% @all_current_lectures.each do |l| %>
+							<%= render partial: 'main/start/teachable',
+												 locals: { teachable: l,
+												 					 current: true,
+										 							 subscribed: l.subscribed_by?(current_user),
+										 							 parent: 'all_current' } %>
+						<% end %>
 					</div>
 				</div>
 			</div>

@@ -415,39 +415,46 @@ class User < ApplicationRecord
   end
 
   def subscribe_teachable!(teachable)
-    return unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
-    return if teachable.in?(lectures) || teachable.in?(courses)
+    return false unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
+    return false if teachable.in?(lectures) || teachable.in?(courses)
     if teachable.is_a?(Lecture)
       lectures << teachable
-      return if teachable.course.in?(courses) &&
+      return true if teachable.course.in?(courses) &&
                   CourseUserJoin.find_by(course: teachable.course, user: self)
                                 .primary_lecture_id
       CourseUserJoin.find_or_create_by(user: self, course: teachable.course)
                     .update(primary_lecture_id: teachable.id)
-      return
+      return true
     end
     courses << teachable
+    true
   end
 
   def unsubscribe_teachable!(teachable)
-    return unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
-    return unless teachable.in?(courses) || teachable.in?(lectures)
+    return false unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
+    return false unless teachable.in?(courses) || teachable.in?(lectures)
     if teachable.is_a?(Lecture)
       lectures.delete(teachable)
       remaining_lectures_in_course = lectures.where(course: teachable.course)
       if remaining_lectures_in_course.empty?
         courses.delete(teachable.course)
-        return
+        return true
       end
       course_join = CourseUserJoin.find_by(course: teachable.course,
                                            user: self)
-      return unless course_join&.primary_lecture_id == teachable.id
+      return true unless course_join&.primary_lecture_id == teachable.id
       course_join.update(primary_lecture_id: remaining_lectures_in_course
                                                .sort.first.id)
-      return
+      return true
     end
-    return unless lectures.where(course: teachable).empty?
+    return false unless lectures.where(course: teachable).empty?
     courses.delete(teachable)
+    true
+  end
+
+  def current_teachables
+    active_lectures.includes(:course, :term).natural_sort_by(&:title) +
+      courses_without_lectures.natural_sort_by(&:title)
   end
 
   private
