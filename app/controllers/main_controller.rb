@@ -39,10 +39,10 @@ class MainController < ApplicationController
 
   def start
     @current_stuff = current_user.current_teachables
-    @inactive_lectures = current_user.inactive_lectures.includes(:course, :term)
-                                     .sort
-    @all_current_lectures = Lecture.published.in_current_term
-                                   .includes(:course, :term).sort
+    if @current_stuff.empty?
+      @inactive_lectures = current_user.inactive_lectures.includes(:course, :term)
+                                       .sort
+    end
 
     render layout: 'application_no_sidebar'
   end

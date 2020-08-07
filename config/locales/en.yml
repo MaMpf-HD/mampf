@@ -1626,6 +1626,12 @@ en:
     inactive_lectures: Futher subscribed event series
     active_nonsubscribed_lectures: Current event series - %{term}
     lecture_search: Search for event series
+    no_current_stuff: >
+      You have not yet subscribed any event series of the current term.
+    no_inactive_Stuff: >
+      You have not yet subscribed any event series outside of the current term.
+    no_current_at_all: >
+      In the current term, no event series have yet been published.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
