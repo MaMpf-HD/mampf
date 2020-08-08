@@ -1,7 +1,7 @@
 # LecturesController
 class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
-  before_action :set_lecture, except: [:new, :create]
+  before_action :set_lecture, except: [:new, :create, :search]
   before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
   authorize_resource
   before_action :check_for_consent
@@ -217,6 +217,15 @@ class LecturesController < ApplicationController
     redirect_to edit_lecture_path(@lecture)
   end
 
+  def search
+    search = Lecture.search_by(search_params, params[:page])
+    search.execute
+    results = search.results
+    @total = search.total
+    @lectures = Kaminari.paginate_array(results, total_count: @total)
+                        .page(params[:page]).per(search_params[:per])
+  end
+
   private
 
   def set_lecture
@@ -331,5 +340,19 @@ class LecturesController < ApplicationController
       s['id'].to_i.in?(@structure_ids)
     end
     @properties = response_hash['included']
+  end
+
+  def search_params
+    types = params[:search][:types]
+    types = [types] if types && !types.kind_of?(Array)
+    types -= [''] if types
+    types = nil if types == []
+    params[:search][:types] = types
+    params.require(:search).permit(:all_types, :all_terms, :all_programs,
+                                   :all_teachers, :fulltext, :per,
+                                   types: [],
+                                   term_ids: [],
+                                   program_ids: [],
+                                   teacher_ids: [])
   end
 end

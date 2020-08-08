@@ -484,6 +484,35 @@ en:
         comments_disabled: >
           By default, comments for newly published media are enabled, and you
           can disable them upon publishing. Here you can reverse this.
+        search_type: >
+          Here you have to select (in the sense of
+          <i>
+          OR
+          </i>
+          ) of what type the event series is.
+        search_program: >
+          Here you have to select (in the sense of
+          <i>
+          OR
+          </i>
+          ) to which program the event series belongs to.
+        search_teacher: >
+          Here you can select the teacher of the event series (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        search_term: >
+          Here you can select in which term the event series took places or
+          takes place, respectively (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        search_fulltext: >
+          Here you can enter text that will be searched for in the title of the
+          event series. If you leave the text field empty (or enter less than two letters),
+          it will be ignored.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -2101,6 +2130,7 @@ en:
     courses: 'Courses'
     term: 'Term'
     teacher: 'Teacher'
+    teachers: 'Teachers'
     title: 'Title'
     short_title: 'Short title'
     editors: 'Editors'
@@ -2229,6 +2259,7 @@ en:
     comments_for: 'Comments for %{subject}'
     unsubscribe: 'Unsubscribe'
     subscribe: 'Subscribe'
+    programs: 'Programs'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

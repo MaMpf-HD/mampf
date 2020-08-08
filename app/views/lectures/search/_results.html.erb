@@ -1,0 +1,28 @@
+<% if total.positive? %>
+  <div class="row mx-2 py-3">
+    <div class="col-2">
+      <strong>
+      <%= t('basics.hits') %>:
+    </strong>
+      <%= total %>
+    </div>
+    <div class="col-10">
+      <%= paginate lectures, remote: true %>
+    </div>
+  </div>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6">
+    <% lectures.each do |l| %>
+      <%= render partial: 'main/start/teachable',
+                 locals: { teachable: l,
+                           current: l.term.active?,
+                           subscribed: l.subscribed_by?(current_user),
+                           parent: 'lectureSearch' } %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= t('basics.no_hits') %>
+    </div>
+  </div>
+<% end %>

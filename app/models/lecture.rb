@@ -68,6 +68,19 @@ class Lecture < ApplicationRecord
   # scopes for published lectures
   scope :published, -> { where.not(released: nil) }
 
+  searchable do
+    integer :term_id
+    integer :teacher_id
+    string :sort
+    text :text do
+      course.title
+    end
+    integer :program_ids, multiple: true do
+      course.divisions.pluck(:program_id).uniq
+    end
+  end
+
+
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
 
@@ -533,6 +546,10 @@ class Lecture < ApplicationRecord
     Lecture.sorts.map { |s| [s, I18n.t("admin.lecture.#{s}")] }.to_h
   end
 
+  def self.select_sorts
+    Lecture.sort_localized.invert.to_a
+  end
+
   def seminar?
     return true unless sort == 'lecture'
     false
@@ -575,6 +592,29 @@ class Lecture < ApplicationRecord
 
   def subscribed_by?(user)
     in?(user.lectures)
+  end
+
+  def self.search_by(search_params, page)
+    search_params[:types] = [] if search_params[:all_types] == '1'
+    search_params[:term_ids] = [] if search_params[:all_terms] == '1'
+    search_params[:teacher_ids] = [] if search_params[:all_teachers] == '1'
+    search_params[:program_ids] = [] if search_params[:all_programs] == '1'
+    search = Sunspot.new_search(Lecture)
+    search.build do
+      with(:sort, search_params[:types])
+      with(:teacher_id, search_params[:teacher_ids])
+      with(:program_ids, search_params[:program_ids])
+      with(:term_id, search_params[:term_ids])
+    end
+    if search_params[:fulltext].present?
+      search.build do
+        fulltext search_params[:fulltext]
+      end
+    end
+    search.build do
+      paginate page: page, per_page: search_params[:per]
+    end
+    search
   end
 
   private

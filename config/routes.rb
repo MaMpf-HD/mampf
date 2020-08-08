@@ -135,6 +135,8 @@ Rails.application.routes.draw do
                                       as: 'edit_structures'
   get 'lectures/:id/search_examples', to: 'lectures#search_examples',
                                       as: 'search_examples'
+  get 'lectures/search', to: 'lectures#search',
+                         as: 'search_lectures'
   post 'lectures/:id/publish', to: 'lectures#publish',
                               as: 'publish_lecture'
   post 'lectures/:id/import_media', to: 'lectures#import_media',
