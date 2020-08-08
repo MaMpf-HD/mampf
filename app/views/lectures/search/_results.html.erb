@@ -14,7 +14,7 @@
     <% lectures.each do |l| %>
       <%= render partial: 'main/start/teachable',
                  locals: { teachable: l,
-                           current: l.term.active?,
+                           current: false,
                            subscribed: l.subscribed_by?(current_user),
                            parent: 'lectureSearch' } %>
     <% end %>
