@@ -1,4 +1,3 @@
-console.log '<%= @collapse_id %>'
 <% if @collapse_id == 'collapseCurrentStuff' %>
 <% if @teachables.any? %>
 $('#<%= "#{@collapse_id}Content" %>').empty()

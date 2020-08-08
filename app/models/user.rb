@@ -62,6 +62,10 @@ class User < ApplicationRecord
     User.where(id: Lecture.pluck(:teacher_id).uniq)
   end
 
+  def self.select_teachers
+    User.teachers.map { |u| [u.name, u.id] }
+  end
+
   # returns the array of all editors
   def self.editors
     User.where(id: EditableUserJoin.pluck(:user_id).uniq)

@@ -515,6 +515,36 @@ de:
           Standardmäßig sind Kommentare für neu veröffentlichte Medien erlaubt,
           Du kannst bei der Veröffentlichung aber Kommentare deaktivieren.
           Hier kannst Du dises Verhaltenb umdrehen.
+        search_type: >
+          Hier musst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen,
+          was der Typ der Veranstaltung sein soll. Andernfalls wird die Suche ergebnislos sein.
+        search_program: >
+          Hier musst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, zu welchen Studiengängen die Veranstaltung gehören soll.
+        search_teacher: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, wer die DozentInnen der Veranstaltung sein sollen.
+        search_term: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, in welchem Semester die Veranstaltungen stattgefunden
+          oder stattfinden.
+        search_fulltext: >
+          Hier kannst Du Text eingeben, nach dem im Titel der Veranstaltung
+          gesucht wird. Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
+          eingibst), wird es bei der Suche ignoriert.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -2233,6 +2263,7 @@ de:
     courses: 'Module'
     term: 'Semester'
     teacher: 'DozentIn'
+    teachers: 'DozentInnen'
     title: 'Titel'
     short_title: 'Kurztitel'
     editors: 'EditorInnen'
@@ -2363,6 +2394,7 @@ de:
     comments_for: 'Kommentare für %{subject}'
     unsubscribe: 'abbestellen'
     subscribe: 'abonnieren'
+    programs: 'Studiengänge'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
