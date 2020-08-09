@@ -78,6 +78,13 @@ class Lecture < ApplicationRecord
     integer :program_ids, multiple: true do
       course.divisions.pluck(:program_id).uniq
     end
+    # these two are for ordering
+    time :sort_date do
+      begin_date
+    end
+    string :sort_title do
+      ActiveSupport::Inflector.transliterate(course.title).downcase
+    end
   end
 
 
@@ -612,6 +619,8 @@ class Lecture < ApplicationRecord
       end
     end
     search.build do
+      order_by(:sort_date, :desc)
+      order_by(:sort_title, :asc)
       paginate page: page, per_page: search_params[:per]
     end
     search
