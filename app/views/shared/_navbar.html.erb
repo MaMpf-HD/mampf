@@ -6,9 +6,9 @@
 <nav class="navbar navbar-expand navbar-dark bg-dark" id="firstnav">
   <%= link_to image_tag('/MaMpf-Logo_32x32.png',
                         class: 'img-fluid mr-2'),
-              home_path %>
+              start_path %>
   <%= link_to "MaMpf",
-              home_path,
+              start_path,
               class: 'navbar-brand' %>
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>

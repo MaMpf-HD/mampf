@@ -2,7 +2,7 @@
 <% current_course ||= current_user.courses&.first %>
 <% active = cookies[:current_lecture] %>
 <li class="nav-item">
-  <% if courses.size > 1 then %>
+  <% if courses.size > 1 && !current_user.new_design then %>
     <div class="btn-group">
       <%= link_to current_course.title,
                   course_path(current_course),

@@ -1661,6 +1661,11 @@ en:
       You have not yet subscribed any event series outside of the current term.
     no_current_at_all: >
       In the current term, no event series have yet been published.
+    new_design: >
+      Use the new *experimental* design (personalized start page, no dropdown
+      menu for lecture selection)
+    other_preferences: >
+      Other Preferences
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
