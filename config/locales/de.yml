@@ -1772,6 +1772,11 @@ de:
     no_current_at_all: >
       Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
       worden.
+    new_design: >
+      Neues *experimentelles* Design verwenden (personalisierte Startseite, kein Dropdown-Menü
+      für Veranstaltungswahl)
+    other_preferences: >
+      Sonstige Einstellungen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

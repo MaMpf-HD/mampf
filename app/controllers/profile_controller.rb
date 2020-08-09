@@ -28,6 +28,7 @@ class ProfileController < ApplicationController
                     email_for_teachable: @email_for_teachable,
                     email_for_announcement: @email_for_announcement,
                     email_for_news: @email_for_news,
+                    new_design: @new_design,
                     locale: @locale,
                     edited_profile: true)
       # remove notifications that have become obsolete
@@ -117,6 +118,7 @@ class ProfileController < ApplicationController
     @email_for_announcement = params[:user][:email_for_announcement] == '1'
     @email_for_teachable = params[:user][:email_for_teachable] == '1'
     @email_for_news = params[:user][:email_for_news] == '1'
+    @new_design = params[:user][:new_design] == '1'
     @courses = Course.where(id: course_ids)
     @lectures = Lecture.where(id: lecture_ids)
     @locale = params[:user][:locale]
