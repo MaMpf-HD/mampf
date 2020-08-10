@@ -29,7 +29,7 @@ module LecturesHelper
   def lecture_notification_card_text(lecture)
     t('notifications.new_lecture_created_html',
       title: lecture.course.title,
-      term: lecture.term.to_label,
+      term: lecture.term_to_label,
       teacher: lecture.teacher.name)
   end
 
@@ -50,7 +50,7 @@ module LecturesHelper
 
   # add a star to lecture's term if it is a user's primary lecture
   def starred_term(lecture, user)
-    term = lecture.term.to_label_short
+    term = lecture.term_to_label_short
     return "(#{lecture.sort_localized_short}) #{term}" unless lecture.primary?(user)
     ('&starf; (' + lecture.sort_localized_short + ') ' + term).html_safe
   end

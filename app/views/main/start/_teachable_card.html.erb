@@ -48,7 +48,7 @@
       <div class="col-12">
         <% if teachable.is_a?(Lecture) %>
           <% unless current %>
-            <%= teachable.term.to_label_short %>,
+            <%= teachable.term_to_label_short %>,
           <% end %>
           <%= teachable.teacher.name %>
         <% else %>

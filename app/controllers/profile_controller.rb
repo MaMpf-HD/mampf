@@ -101,7 +101,8 @@ class ProfileController < ApplicationController
                                                        .includes(:course, :term)
                                                        .sort
       when 'collapseAllCurrent' then Lecture.published.in_current_term
-                                            .includes(:course, :term).sort
+                                            .includes(:course, :term).sort +
+                                       Lecture.where(term: nil).sort
     end
   end
 

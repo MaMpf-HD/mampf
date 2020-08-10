@@ -7,8 +7,9 @@ class Lecture < ApplicationRecord
   # teacher is the user that gives the lecture
   belongs_to :teacher, class_name: 'User', foreign_key: 'teacher_id'
 
-  # a lecture takes place in a certain term
-  belongs_to :term
+  # a lecture takes place in a certain term, except those where the course
+  # is marked as term_independent
+  belongs_to :term, optional: true
 
   # a lecture has many chapters, who have positions
   has_many :chapters, -> { order(position: :asc) }, dependent: :destroy
@@ -49,6 +50,8 @@ class Lecture < ApplicationRecord
   validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
 
   validates :content_mode, inclusion: { in: ['video', 'manuscript'] }
+
+  validates_presence_of :term, unless: :term_independent?
 
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
@@ -107,7 +110,7 @@ class Lecture < ApplicationRecord
   end
 
   def title
-    "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
+    "(#{sort_localized_short}) #{course.title}, #{term_to_label}"
   end
 
   def title_no_term
@@ -119,7 +122,7 @@ class Lecture < ApplicationRecord
   end
 
   def compact_title
-    "#{sort_localized_short}.#{course.compact_title}.#{term.compact_title}"
+    "#{sort_localized_short}.#{course.compact_title}.#{term_compact_title}"
   end
 
   def title_for_viewers
@@ -307,7 +310,7 @@ class Lecture < ApplicationRecord
   # term, title) in various combinations
 
   def short_title
-    "(#{sort_localized_short}) #{course.short_title} #{term.to_label_short}"
+    "(#{sort_localized_short}) #{course.short_title} #{term_to_label_short}"
   end
 
   def short_title_release
@@ -316,7 +319,7 @@ class Lecture < ApplicationRecord
   end
 
   def short_title_brackets
-    "(#{sort_localized_short}) #{course.short_title} (#{term.to_label_short})"
+    "(#{sort_localized_short}) #{course.short_title} (#{term_to_label_short})"
   end
 
   def title_with_teacher
@@ -325,13 +328,13 @@ class Lecture < ApplicationRecord
   end
 
   def title_with_teacher_no_type
-    "#{course.title}, #{term.to_label} (#{teacher.name})"
+    "#{course.title}, #{term_to_label} (#{teacher.name})"
   end
 
   def term_teacher_info
-    return term.to_label unless teacher.present?
-    return term.to_label unless teacher.name.present?
-    "(#{sort_localized_short}) #{term.to_label}, #{teacher.name}"
+    return term_to_label unless teacher.present?
+    return term_to_label unless teacher.name.present?
+    "(#{sort_localized_short}) #{term_to_label}, #{teacher.name}"
   end
 
   def term_teacher_published_info
@@ -340,11 +343,11 @@ class Lecture < ApplicationRecord
   end
 
   def title_term_info
-    "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
+    "(#{sort_localized_short}) #{course.title}, #{term_to_label}"
   end
 
   def title_term_info_no_type
-    "#{course.title}, #{term.to_label}"
+    "#{course.title}, #{term_to_label}"
   end
 
   def title_teacher_info
@@ -506,7 +509,7 @@ class Lecture < ApplicationRecord
 
   def begin_date
     Rails.cache.fetch("#{cache_key_with_version}/begin_date") do
-      term&.begin_date
+      term&.begin_date || Term.active.begin_date || Date.today
     end
   end
 
@@ -626,6 +629,23 @@ class Lecture < ApplicationRecord
     search
   end
 
+  def term_to_label
+    return term.to_label if term
+    '*'
+    # I18n.t('basics.course')
+  end
+
+  def term_to_label_short
+    return term.to_label_short if term
+    '*'
+    # I18n.t('basics.course')
+  end
+
+  def term_compact_title
+    return term.compact_title if term
+    ''
+  end
+
   private
 
   # used for after save callback
@@ -706,5 +726,9 @@ class Lecture < ApplicationRecord
   def destroy_forum
     return unless forum
     forum.destroy
+  end
+
+  def term_independent?
+    course.term_independent
   end
 end

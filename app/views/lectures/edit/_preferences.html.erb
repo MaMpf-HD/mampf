@@ -32,7 +32,7 @@
               <%= helpdesk(t('admin.lecture.info.term'), false) %>
               <%= f.select :term_id,
                            options_for_select(@terms,
-                                              lecture.term.id),
+                                              lecture.term&.id),
                            {},
                            { class: 'form-control',
                              disabled: inspection } %>
