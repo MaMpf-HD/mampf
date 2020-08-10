@@ -152,16 +152,12 @@ class User < ApplicationRecord
 
   # array of the user's subscribed lectures sorted by date
   def lectures_by_date
-    lectures.to_a.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
-    end
+    lectures.sort
   end
 
   # array of the lectures the user has given as a teacher sorted by date
   def given_lectures_by_date
-    given_lectures.to_a.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
-    end
+    given_lectures.sort
   end
 
   # array of all tags related to the users subscribed lectures
@@ -394,7 +390,7 @@ class User < ApplicationRecord
       .sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
-  # lecture that are in the acive term
+  # lecture that are in the active term
   def active_lectures
     lectures.where(term: Term.active).includes(:course, :term)
   end
@@ -458,7 +454,7 @@ class User < ApplicationRecord
 
   def current_teachables
     active_lectures.includes(:course, :term).natural_sort_by(&:title) +
-      courses_without_lectures.natural_sort_by(&:title)
+      lectures.where(term: nil).natural_sort_by(&:title)
   end
 
   private

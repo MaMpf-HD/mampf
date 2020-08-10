@@ -127,9 +127,7 @@ class Course < ApplicationRecord
   end
 
   def subscribable_lectures_by_date(user)
-    subscribable_lectures(user).to_a.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
-    end
+    subscribable_lectures(user).sort
   end
 
   def restricted?
@@ -173,15 +171,11 @@ class Course < ApplicationRecord
   end
 
   def lectures_by_date
-    lectures.to_a.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
-    end
+    lectures.sort
   end
 
   def published_lectures_by_date
-    published_lectures.to_a.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
-    end
+    published_lectures.sort
   end
 
   # returns the array of all tags (sorted by title) together with
@@ -240,9 +234,7 @@ class Course < ApplicationRecord
   end
 
   def subscribed_lectures_by_date(user)
-    subscribed_lectures(user).to_a.sort do |i, j|
-      j.term.begin_date <=> i.term.begin_date
-    end
+    subscribed_lectures(user).sort
   end
 
   def subscribed_by?(user)
