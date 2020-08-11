@@ -301,4 +301,10 @@ module ApplicationHelper
   def realization_path(realization)
     "/#{realization.first.downcase.pluralize}/#{realization.second}"
   end
+
+  def first_course_independent?
+    current_user.administrated_courses
+                .natural_sort_by(&:title)
+               &.first&.term_independent
+  end
 end

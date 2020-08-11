@@ -310,6 +310,9 @@ en:
       oberseminar: 'Research Seminar'
       oberseminar_short: 'RS'
       oberseminar_content: 'Research Seminar Contents'
+      special: 'Special'
+      special_short: ''
+      special_content: 'Content'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'
       no_terms_yet: 'You have to create a term first.'
@@ -579,6 +582,8 @@ en:
       additional_information_visible: 'Additional information visible'
       divisions: 'Divisions'
       programs: 'Study Paths'
+      term_independent: 'independent of terms'
+      term_independence: 'This course is independent of terms.'
       info:
         title: >
           Here you can enter the title of the course. Typically, this should be
@@ -623,6 +628,12 @@ en:
         programs: >
           Here you can select to ehich study paths of which subjects this course
           is associated to.
+        term_independent: >
+          Check this box for courses that do not match the usual pattern of
+          courses that have lectures, seminars and so on by the semester, but
+          are independent of the term. This might be useful for things like
+          a Help Deks for students. This setting can only be changed as long
+          as there is no event series associated to this course.
     chapter:
       edit: 'Edit %{chapter}'
       position: 'Position after %{chapter_name}'
@@ -1657,7 +1668,7 @@ en:
     lecture_search: Search for event series
     no_current_stuff: >
       You have not yet subscribed any event series of the current term.
-    no_inactive_Stuff: >
+    no_inactive_stuff: >
       You have not yet subscribed any event series outside of the current term.
     no_current_at_all: >
       In the current term, no event series have yet been published.
@@ -2498,10 +2509,15 @@ en:
                 An event series with the same combination of course, term and teacher
                 already exists.
               required: 'You need to give a course.'
+              already_present: >
+                For courses that are term independent there can be only one
+                'event series'.
             content_mode:
               inclusion: 'Invalid mode.'
             term:
               required: 'You need to give a term.'
+              present: >
+                Term was given, but associated course is independent of terms
             teacher:
               required: 'You need to give a teacher.'
         lesson:

@@ -1,5 +1,5 @@
 <div class="card h-100 <%= subscribed ? 'bg-mdb-color-lighten-7' : '' %>">
-  <div class="card-header <%= subscribed ? 'bg-mdb-color-lighten-1 text-light' : '' %>">
+  <div class="card-header <%= teachable_header_color(subscribed, teachable) %>">
     <div class="row">
       <div class="col-9 col-sm-10 font-weight-bold">
         <% if subscribed %>
@@ -47,8 +47,8 @@
     <div class="row">
       <div class="col-12">
         <% if teachable.is_a?(Lecture) %>
-          <% unless current %>
-            <%= teachable.term_to_label_short %>,
+          <% if !current && teachable.term %>
+            <%= teachable.term.to_label_short %>,
           <% end %>
           <%= teachable.teacher.name %>
         <% else %>

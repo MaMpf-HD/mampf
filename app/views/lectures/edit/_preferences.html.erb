@@ -26,33 +26,37 @@
         <%= form_with model: lecture,
                       html: { id: 'lecture-preferences-form' } do |f| %>
           <div class="form-row">
-            <div class="col-2 form-group">
-              <%= f.label :term_id,
-                          t('basics.term') %>
-              <%= helpdesk(t('admin.lecture.info.term'), false) %>
-              <%= f.select :term_id,
-                           options_for_select(@terms,
-                                              lecture.term&.id),
-                           {},
-                           { class: 'form-control',
-                             disabled: inspection } %>
-              <div class="invalid-feedback"
-                   id="lecture-term-error">
+            <% unless lecture.course.term_independent %>
+              <div class="col-2 form-group">
+                <%= f.label :term_id,
+                            t('basics.term') %>
+                <%= helpdesk(t('admin.lecture.info.term'), false) %>
+                <%= f.select :term_id,
+                             options_for_select(@terms,
+                                                lecture.term&.id),
+                             {},
+                             { class: 'form-control',
+                               disabled: inspection } %>
+                <div class="invalid-feedback"
+                     id="lecture-term-error">
+                </div>
               </div>
-            </div>
-            <div class="col-3 form-group">
-              <%= f.label :sort,
-                          t('basics.type') %>
-              <%= f.select :sort,
-                           options_for_select(Lecture.sort_localized.invert.to_a,
-                                              lecture.sort),
-                           {},
-                           { class: 'form-control',
-                             disabled: inspection } %>
-              <div class="invalid-feedback"
-                   id="lecture-term-error">
+            <% end %>
+            <% unless lecture.course.term_independent %>
+              <div class="col-3 form-group">
+                <%= f.label :sort,
+                            t('basics.type') %>
+                <%= f.select :sort,
+                             options_for_select(Lecture.sort_localized.invert.to_a,
+                                                lecture.sort),
+                             {},
+                             { class: 'form-control',
+                               disabled: inspection } %>
+                <div class="invalid-feedback"
+                     id="lecture-term-error">
+                </div>
               </div>
-            </div>
+            <% end %>
             <div class="col-2 form-group">
               <%= f.label :start_chapter, t('admin.lecture.first_chapter') %>
               <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>

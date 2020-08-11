@@ -60,11 +60,11 @@
 		  							 	 as: :teachable %>
 		  		<% end %>
 				</div>
-			</div>
-			<%= tag.div id: 'emptyInactiveLectures',
+				<%= tag.div id: 'emptyInactiveLectures',
 									style: @current_stuff.empty? && @inactive_lectures&.empty? ? '' : 'display: none;' do %>
 				<%= t('profile.no_inactive_stuff') %>
 			<% end %>
+			</div>
 		</div>
 	</div>
 	<% if Term.active %>

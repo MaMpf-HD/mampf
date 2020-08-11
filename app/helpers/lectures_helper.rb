@@ -95,4 +95,14 @@ module LecturesHelper
     return '' unless news_count.positive?
     'text-primary'
   end
+
+  def teachable_header_color(subscribed, lecture)
+    return '' unless subscribed
+    result = 'text-light '
+    result += if lecture.term
+                'bg-mdb-color-lighten-1'
+              else
+                'bg-info'
+              end
+  end
 end

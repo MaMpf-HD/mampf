@@ -157,6 +157,7 @@ class CoursesController < ApplicationController
   def course_params
     params.require(:course).permit(:title, :short_title, :organizational,
                                    :organizational_concept, :locale,
+                                   :term_independent,
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [],

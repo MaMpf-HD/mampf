@@ -287,10 +287,27 @@ $(document).on 'turbolinks:load', ->
         $('#structure-item-' + s).show()
     return
 
+  $(document).on 'change', '#lecture_course_id', ->
+    $('#lecture_term_id').removeClass('is-invalid')
+    $('#new-lecture-term-error').empty()
+    courseId = parseInt($(this).val())
+    termInfo = $(this).data('terminfo').filter (x) -> x[0] == courseId
+    console.log termInfo[0]
+    if termInfo[0][1]
+      $('#newLectureTerm').hide()
+      $('#lecture_term_id').prop('disabled', true)
+      $('#newLectureSort').hide()
+    else
+      $('#newLectureTerm').show()
+      $('#lecture_term_id').prop('disabled', false)
+      $('#newLectureSort').hide()
+    return
+
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
   $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
+  $(document).off 'change', '#lecture_course_id'
   return
