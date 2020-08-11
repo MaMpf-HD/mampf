@@ -78,6 +78,7 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new(lecture_params)
     @lecture.save
     if @lecture.valid?
+      @lecture.update(sort: 'special') if @lecture.course.term_independent
       # set organizational_concept to default
       set_organizational_defaults
       # set lenguage to default language
@@ -222,6 +223,7 @@ class LecturesController < ApplicationController
     search.execute
     results = search.results
     @total = search.total
+    pp
     @lectures = Kaminari.paginate_array(results, total_count: @total)
                         .page(params[:page]).per(search_params[:per])
   end

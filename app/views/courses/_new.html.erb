@@ -53,6 +53,16 @@
                      style: 'display: none;',
                      data: { ajax: false } } %>
     </div>
+    <div class="col-12 form-group">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :term_independent,
+                        class: 'custom-control-input' %>
+        <%= f.label :term_independent,
+                    t('admin.course.term_independent'),
+                    { class: 'custom-control-label' } %>
+        <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+      </div>
+    </div>
   </div>
   <div class="row">
     <div class="col-12 text-center">

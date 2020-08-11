@@ -77,14 +77,16 @@
     <div class="col-12">
       <%= t('basics.lectures') %>
       <%= helpdesk(t('admin.course.info.lectures'), false) %>
-      <%= link_to '',
-                  new_lecture_path(params: { from: 'course',
-                                             course: course.id }),
-                  class: 'fas fa-plus-circle text-dark',
-                  id: 'new-lecture-button',
-                  data: { remote: true,
-                          toggle: 'tooltip' },
-                  title: t('buttons.create_lecture') %>
+      <% unless course.term_independent && course.lectures.any? %>
+        <%= link_to '',
+                    new_lecture_path(params: { from: 'course',
+                                               course: course.id }),
+                    class: 'fas fa-plus-circle text-dark',
+                    id: 'new-lecture-button',
+                    data: { remote: true,
+                            toggle: 'tooltip' },
+                    title: t('buttons.create_lecture') %>
+      <% end %>
     </div>
     <div class="col-12">
       <% if course.lectures.exists? %>
@@ -97,8 +99,20 @@
             </li>
           <% end %>
         </ul>
+        <% if course.term_independent %>
+          <%= t('admin.course.term_independence') %>
+          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+        <% end %>
       <% else %>
         <%= t('admin.course.no_lectures') %>
+        <div class="custom-control custom-checkbox">
+          <%= f.check_box :term_independent,
+                          class: 'custom-control-input' %>
+          <%= f.label :term_independent,
+                      t('admin.course.term_independent'),
+                      { class: 'custom-control-label' } %>
+          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+        </div>
       <% end %>
     </div>
   </div>

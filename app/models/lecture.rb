@@ -53,6 +53,10 @@ class Lecture < ApplicationRecord
 
   validates_presence_of :term, unless: :term_independent?
 
+  validate :absence_of_term, if: :term_independent?
+
+  validate :only_one_lecture, if: :term_independent?, on: :create
+
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
   after_save :remove_teacher_as_editor
@@ -72,7 +76,9 @@ class Lecture < ApplicationRecord
   scope :published, -> { where.not(released: nil) }
 
   searchable do
-    integer :term_id
+    integer :term_id do
+      term_id || 0
+    end
     integer :teacher_id
     string :sort
     text :text do
@@ -110,10 +116,12 @@ class Lecture < ApplicationRecord
   end
 
   def title
-    "(#{sort_localized_short}) #{course.title}, #{term_to_label}"
+    return course.title unless term
+    "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
   end
 
   def title_no_term
+    return course.title unless term
     "(#{sort_localized_short}) #{course.title}"
   end
 
@@ -122,7 +130,8 @@ class Lecture < ApplicationRecord
   end
 
   def compact_title
-    "#{sort_localized_short}.#{course.compact_title}.#{term_compact_title}"
+    return course.compact_title unless term
+    "#{sort_localized_short}.#{course.compact_title}.#{term.compact_title}"
   end
 
   def title_for_viewers
@@ -310,7 +319,8 @@ class Lecture < ApplicationRecord
   # term, title) in various combinations
 
   def short_title
-    "(#{sort_localized_short}) #{course.short_title} #{term_to_label_short}"
+    return course.short_title unless term
+    "(#{sort_localized_short}) #{course.short_title} #{term.to_label_short}"
   end
 
   def short_title_release
@@ -319,7 +329,8 @@ class Lecture < ApplicationRecord
   end
 
   def short_title_brackets
-    "(#{sort_localized_short}) #{course.short_title} (#{term_to_label_short})"
+    return course.short_title unless term
+    "(#{sort_localized_short}) #{course.short_title} (#{term.to_label_short})"
   end
 
   def title_with_teacher
@@ -328,12 +339,14 @@ class Lecture < ApplicationRecord
   end
 
   def title_with_teacher_no_type
-    "#{course.title}, #{term_to_label} (#{teacher.name})"
+    return "#{course.title}, (#{teacher.name})" unless term
+    "#{course.title}, #{term.to_label} (#{teacher.name})"
   end
 
   def term_teacher_info
     return term_to_label unless teacher.present?
     return term_to_label unless teacher.name.present?
+    return "#{course.title}, #{teacher.name}" unless term
     "(#{sort_localized_short}) #{term_to_label}, #{teacher.name}"
   end
 
@@ -561,7 +574,7 @@ class Lecture < ApplicationRecord
   end
 
   def seminar?
-    return true unless sort == 'lecture'
+    return true if sort.in?(['seminar', 'proseminar', 'oberseminar'])
     false
   end
 
@@ -610,6 +623,10 @@ class Lecture < ApplicationRecord
     search_params[:teacher_ids] = [] if search_params[:all_teachers] == '1'
     search_params[:program_ids] = [] if search_params[:all_programs] == '1'
     search = Sunspot.new_search(Lecture)
+    # add lectures without term to current term
+    if Term.active.id.to_s.in?(search_params[:term_ids])
+      search_params[:term_ids].push('0')
+    end
     search.build do
       with(:sort, search_params[:types])
       with(:teacher_id, search_params[:teacher_ids])
@@ -631,18 +648,11 @@ class Lecture < ApplicationRecord
 
   def term_to_label
     return term.to_label if term
-    '*'
-    # I18n.t('basics.course')
+    ''
   end
 
   def term_to_label_short
     return term.to_label_short if term
-    '*'
-    # I18n.t('basics.course')
-  end
-
-  def term_compact_title
-    return term.compact_title if term
     ''
   end
 
@@ -730,5 +740,15 @@ class Lecture < ApplicationRecord
 
   def term_independent?
     course.term_independent
+  end
+
+  def absence_of_term
+    return unless term
+    errors.add(:term, :present)
+  end
+
+  def only_one_lecture
+    return unless Lecture.where(course: course).any?
+    errors.add(:course, :already_present)
   end
 end

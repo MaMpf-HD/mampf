@@ -114,8 +114,11 @@ class User < ApplicationRecord
   # - all courses if the user is an admin,
   # - all courses edited by the user otherwise
   def select_administrated_courses
-    relevant = admin ? Course.all : edited_courses
-    relevant.map { |c| [c.title, c.id] }
+    administrated_courses.map { |c| [c.title, c.id] }
+  end
+
+  def administrated_courses
+    admin ? Course.all : edited_courses
   end
 
   # related lectures are lectures associated to related courses (see above)

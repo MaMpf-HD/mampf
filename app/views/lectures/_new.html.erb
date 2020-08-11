@@ -13,6 +13,8 @@
   <%= t('admin.lecture.no_terms_yet') %>
 <% else %>
   <%= form_with model: lecture do |f| %>
+    <% term_independent = (from != 'course' && first_course_independent?) ||
+                            (from == 'course' && lecture.course.term_independent) %>
     <div class="form-row">
       <div class="col-8 form-group">
         <%= f.label :course_id, t('basics.course') %>
@@ -24,7 +26,8 @@
                                         lecture.course&.id),
                      {},
                      { class: 'selectize',
-                       disabled: from == 'course' } %>
+                       disabled: from == 'course',
+                       data: { terminfo: Course.pluck(:id, :term_independent) } } %>
         <% if from == 'course' %>
           <%= f.hidden_field :course_id, value: lecture.course.id %>
         <% end %>
@@ -32,14 +35,19 @@
              id="new-lecture-course-error">
         </div>
       </div>
-      <div class="col-4 form-group">
+      <div class="col-4 form-group" id="newLectureTerm"
+           style="<%= term_independent ? 'display: none;' : '' %>">
         <%= f.label :term_id,
                     t('basics.term') %>
         <%= helpdesk(t('admin.lecture.info.term'), false) %>
         <%= f.select :term_id,
                      options_for_select(Term.select_terms),
                      {},
-                     { class: 'form-control' } %>
+                     { class: 'form-control',
+                       disabled: term_independent } %>
+        <div class="invalid-feedback"
+             id="new-lecture-term-error">
+        </div>
       </div>
       <div class="col-12 form-group">
         <%= f.label :teacher_id,
@@ -52,7 +60,8 @@
                      { class: 'selectize',
                        data: { current: current_user.id } } %>
       </div>
-      <div class="col-12 form-group">
+      <div class="col-12 form-group" id="newLectureSort"
+           style="<%= term_independent ? 'display: none;' : '' %>">
         <%= f.label :sort,
                     t('basics.type') %>
         <%= f.select :sort,

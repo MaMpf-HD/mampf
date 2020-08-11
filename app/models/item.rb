@@ -147,7 +147,8 @@ class Item < ApplicationRecord
   def title_within_course
     return '' unless medium.present? && medium.proper?
     return local_reference if medium.teachable_type == 'Course'
-    medium.teachable.media_scope.term_to_label_short + ', ' + local_reference
+    return local_reference unless medium.teachable.media_scope.term
+    medium.teachable.media_scope.term.to_label_short + ', ' + local_reference
   end
 
   # returns the title of the item *within* a given lecture

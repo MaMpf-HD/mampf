@@ -319,6 +319,9 @@ de:
       oberseminar: 'Oberseminar'
       oberseminar_short: 'OS'
       oberseminar_content: 'Oberseminarinhalt'
+      special: 'Special'
+      special_short: ''
+      special_content: 'Inhalt'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
@@ -614,6 +617,8 @@ de:
       additional_information_visible: 'Weitere Informationen sichtbar'
       programs: 'Studiengänge'
       divisions: 'Teilbereiche'
+      term_independent: 'semesterunabhängig'
+      term_independence: 'Dieses Modul ist semesterunabhängig.'
       info:
         title: >
           Hier musst Du den Titel des Moduls eintragen.
@@ -666,6 +671,12 @@ de:
         programs: >
           Hier kannst Du angeben, zu welchen Studiengängen welcher Fächer
           dieses Modul gehört.
+        term_independent: >
+          Semesterunabhängige Module sind Module, die nicht in das "klassische"
+          Schema passen, in dem Sinne, das semesterabhängig Veranstaltungen
+          dazu angeboten werden. Das kann z.B. Help-Desks oder Lernlandschaften
+          betreffen. Diese Eigenschaft kann nur geändert werden, solange
+          es in diesem Modul noch keine Veranstaltungen gibt.
     chapter:
       edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
@@ -1767,7 +1778,7 @@ de:
     lecture_search: Veranstaltungssuche
     no_current_stuff: >
       Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
-    no_inactive_Stuff: >
+    no_inactive_stuff: >
       Du hast keine Veranstaltungen außerhalb des aktuellen Semesters abonniert.
     no_current_at_all: >
       Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
@@ -2634,10 +2645,16 @@ de:
                 Eine Veranstaltung mit derselben Kombination aus Modul, Semester
                 DozentIn und Typ existiert bereits.
               required: 'Es muss ein Modul angegeben werden.'
+              already_present: >
+                Für Module mit der Eigenschaft 'semesterunabhängig' kann es
+                höchstens eine Veranstaltung geben.
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:
               required: 'Es muss ein Semester angegeben werden.'
+              present: >
+                Semester angeben, assoziiertes Modul ist jedoch
+                semesterunabhängig
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
         link:
