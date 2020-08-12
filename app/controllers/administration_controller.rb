@@ -11,6 +11,10 @@ class AdministrationController < ApplicationController
   end
 
   def exit
+    if current_user.new_design
+      redirect_to start_path
+      return
+    end
     course_id = cookies[:current_course]
     # redirect to course view of the course that was selected
     # before admin mode was entered
