@@ -16,8 +16,7 @@ class ApplicationController < ActionController::Base
     end
     @current_user ||= super.tap do |user|
       ::ActiveRecord::Associations::Preloader.new
-                                             .preload(user, [:courses,
-                                                             :lectures,
+                                             .preload(user, [:lectures,
                                                              :edited_media,
                                                              :clickers,
                                                              edited_courses: [:editors, lectures: [:term, :teacher]],

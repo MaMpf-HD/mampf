@@ -105,4 +105,9 @@ module LecturesHelper
                 'bg-info'
               end
   end
+
+  def circle_icon(subscribed)
+    return 'fas fa-check-circle' if subscribed
+    'far fa-circle'
+  end
 end
