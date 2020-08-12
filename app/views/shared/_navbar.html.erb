@@ -3,12 +3,13 @@
 <% current_course ||= current_user&.courses&.first %>
 <% home_path = root_path(params: { locale: I18n.locale}) %>
 <% home_path = course_path(current_course) if user_signed_in? && current_course %>
+<% home_path = start_path if user_signed_in? && current_user.new_design %>
 <nav class="navbar navbar-expand navbar-dark bg-dark" id="firstnav">
   <%= link_to image_tag('/MaMpf-Logo_32x32.png',
                         class: 'img-fluid mr-2'),
-              start_path %>
+              home_path %>
   <%= link_to "MaMpf",
-              start_path,
+              home_path,
               class: 'navbar-brand' %>
     <ul class="navbar-nav mr-auto">
       <% if user_signed_in? %>
