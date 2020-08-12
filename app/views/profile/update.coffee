@@ -3,36 +3,21 @@ $('#username-error').empty().hide()
 $('#user_name').removeClass('is-invalid')
 $('#js-messages').empty().hide()
 $('#accordion').removeClass('border-danger')
-$('[id^="user_pass_primary_"]').removeClass('is-invalid')
-$('[id^="passphrase-error-primary-"]').empty()
 $('[id^="course-card-"]').removeClass('border-danger')
 $('[id^="user_pass_lecture-"]').removeClass('is-invalid')
-$('[id^="passphrase-error-secondary-"]').empty()
+$('[id^="passphrase-error-"]').empty()
 # display error messages
-<% if @errors[:primary_pass].present? %>
-<% @errors[:primary_pass].each do |c| %>
-$('#user_pass_primary_' + '<%= c %>').addClass('is-invalid')
-$('#passphrase-error-primary-' + '<%= c %>')
-  .append('<%= t('errors.profile.passphrase') %>')
-$('#course-card-' + '<%= c %>').addClass('border-danger')
-$('#collapse-course-<%= c %>').collapse('show')
-<% end %>
-$('#course-card-' + '<%= @errors[:primary_pass].first %>').closest('.programCollapse')
-  .collapse('show')
-<% end %>
-<% if @errors[:secondary_pass].present? %>
-<% @errors[:secondary_pass].each do |l| %>
-$('#user_pass_lecture-' + '<%= l %>').addClass('is-invalid')
-$('#passphrase-error-secondary-' + '<%= l %>')
+<% if @errors[:passphrase].present? %>
+<% @errors[:passphrase].each do |l| %>
+$('#user_pass_lecture\\[' + '<%= l %>' + '\\]').addClass('is-invalid')
+$('#passphrase-error-' + '<%= l %>')
   .append('<%= t('errors.profile.passphrase') %>')
 $('#course-card-' + '<%= Lecture.find_by_id(l).course.id %>')
   .addClass('border-danger')
 $('#collapse-course-<%= Lecture.find_by_id(l).course.id %>').collapse('show')
 <% end %>
-<% unless @errors[:primary_pass].present? %>
-$('#course-card-' + '<%= Lecture.find_by_id(@errors[:secondary_pass].first).course.id %>').closest('.programCollapse')
+$('#course-card-' + '<%= Lecture.find_by_id(@errors[:passphrase].first).course.id %>').closest('.programCollapse')
   .collapse('show')
-<% end %>
 <% end %>
 <% if @errors[:courses].present? %>
 $('#js-messages').append('<%= @errors[:courses].join("") %>').show()

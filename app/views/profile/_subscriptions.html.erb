@@ -1,33 +1,19 @@
 <% Course.includes(lectures: [:term, :teacher]).all.natural_sort_by(&:title)
          .each do |c| %>
   <% subscribed = c.subscribed_by?(@user) %>
-  <% details = CourseUserJoin.find_by(user: @user, course: c) %>
   <div class="card"
        id="course-card-<%= c.id %>"
        style="display: none;">
     <div class="card-header"
          id="course-heading-<%= c.id %>">
       <div class="row">
-        <% course = 'course-' + c.id.to_s %>
-        <div class="col-8">
-          <%= f.form_group course do %>
-            <%= f.check_box course,
-                            label: c.title,
-                            id: course,
-                            checked: subscribed,
-                            data: { course: c.id } %>
-          <% end %>
-        </div>
-        <div class="col-4 text-right">
-          <button id="details-course-<%= c.id %>"
-                  type="button"
-                  class="btn btn-sm btn-secondary rounded collapsed m-1"
-                  data-toggle="collapse"
-                  data-target="#collapse-course-<%= c.id %>"
-                  aria-expanded="true"
-                  aria-controls="collapse-course-<%= c.id %>">
-            <%= t('details') %>
-          </button>
+        <div class="col-12">
+          <%= tag.i class: [circle_icon(subscribed), 'mr-2', 'text-dark'] %>
+          <%= link_to c.title,
+                      "#collapse-course-#{c.id}",
+                      class: 'text-dark',
+                      data: { toggle: 'collapse',
+                              target: "#collapse-course-#{c.id}" } %>
         </div>
       </div>
     </div>
@@ -41,15 +27,14 @@
         <%= render partial: 'profile/details',
                    locals: { c: c,
                              f: f,
-                             subscribed: subscribed,
-                             details: details } %>
+                             subscribed: subscribed } %>
       </div>
     </div>
   </div>
 <% end %>
 <div class="row">
   <div class="accordion col-12"
-         id="subscriptionsAccordion">
+       id="subscriptionsAccordion">
     <% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
               .select { |p| p.courses.any? }.each do |p| %>
       <div class="card">

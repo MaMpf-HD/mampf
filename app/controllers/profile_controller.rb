@@ -22,7 +22,8 @@ class ProfileController < ApplicationController
   def update
     check_passphrases
     return if @errors.present?
-    if @user.update(lectures: @lectures, courses: @courses, name: @name,
+    if @user.update(lectures: @lectures,
+                    name: @name,
                     subscription_type: @subscription_type,
                     email_for_medium: @email_for_medium,
                     email_for_teachable: @email_for_teachable,
@@ -33,8 +34,6 @@ class ProfileController < ApplicationController
                     edited_profile: true)
       # remove notifications that have become obsolete
       clean_up_notifications
-      # add details about users's subscribed courses to CourseUserJoin
-      add_details
       # update course and lecture cookies
       update_course_cookie
       update_lecture_cookie
@@ -120,8 +119,8 @@ class ProfileController < ApplicationController
     @email_for_teachable = params[:user][:email_for_teachable] == '1'
     @email_for_news = params[:user][:email_for_news] == '1'
     @new_design = params[:user][:new_design] == '1'
-    @courses = Course.where(id: course_ids)
     @lectures = Lecture.where(id: lecture_ids)
+    @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
     @locale = params[:user][:locale]
   end
 
@@ -138,42 +137,9 @@ class ProfileController < ApplicationController
     params.require(:teachable).permit(:type, :id, :passphrase, :parent)
   end
 
-  # extracts all course ids from user params
-  def course_ids
-    filter_by('course')
-  end
-
-  # extracts all lecture ids (primary and secondary) from user params
+  # extracts all lecture ids from user params
   def lecture_ids
-    primary + secondary
-  end
-
-  # extracts primary lecture from user params
-  def primary
-    params[:user].keys.select { |k| k.start_with?('primary_lecture-') }
-                 .reject { |c| params[:user][c] == '0' }
-                 .map { |c| params[:user][c] }.map(&:to_i)
-  end
-
-  # extracts secondary lectures from user params
-  def secondary
-    filter_by('lecture') - primary
-  end
-
-  # extracts selected (secondary) lectures/courses (given as type)
-  # from user params
-  def filter_by(type)
-    params[:user].keys.select { |k| k.start_with?(type + '-') }
-                 .select { |c| params[:user][c] == '1' }
-                 .map { |c| c.remove(type + '-').to_i }
-  end
-
-  # for each subscribed course, add details about current user's extras
-  def add_details
-    @courses.each do |c|
-      details = CourseUserJoin.where(user: @user, course: c).first
-      details.update(c.extras(params[:user]))
-    end
+    params[:user][:lecture].select { |k, v| v == '1' }.keys.map(&:to_i)
   end
 
   def clean_up_notifications
@@ -195,41 +161,27 @@ class ProfileController < ApplicationController
   end
 
   # if user unsubscribed the lecture the current lecture cookie refers to,
-  # update the lecture cookie to contain the course's primary lecture id
+  # set the lectures cookie to nil
   def update_lecture_cookie
-    @course = Course.find_by_id(cookies[:current_course])
-    @current_lecture = Lecture.find_by_id(cookies[:current_lecture])
     unless @current_lecture.in?(@user.lectures)
-      cookies[:current_lecture] = @course&.primary_lecture(@user)&.id
+      cookies[:current_lecture] = nil
     end
   end
 
-  # stop the update if any of passphrases for newly subscribed primary/secondary
+  # stop the update if any of passphrases for newly subscribed
   # lectures is incorrect
   def check_passphrases
     @errors = {}
-    restricted_primaries = Lecture.where(id: primary)
-                                  .select do |l|
-                                    l.in?(l.course
-                                           .to_be_authorized_lectures(current_user))
-                                  end
-    restricted_primaries.each do |l|
-      given_passphrase = params[:user]['pass_primary_' + l.course.id.to_s]
-      unless given_passphrase == l.passphrase
-        @errors[:primary_pass] ||= []
-        @errors[:primary_pass].push l.course.id
-      end
-    end
-    restricted_secondaries = Lecture.where(id: secondary)
+    restricted_lectures = Lecture.where(id: lecture_ids)
                                     .select do |l|
                                       l.in?(l.course
                                              .to_be_authorized_lectures(current_user))
                                     end
-    restricted_secondaries.each do |l|
-      given_passphrase = params[:user]['pass_lecture-' + l.id.to_s]
+    restricted_lectures.each do |l|
+      given_passphrase = params[:user][:pass_lecture][l.id.to_s]
       unless given_passphrase == l.passphrase
-        @errors[:secondary_pass] ||= []
-        @errors[:secondary_pass].push l.id
+        @errors[:passphrase] ||= []
+        @errors[:passphrase].push l.id
       end
     end
   end

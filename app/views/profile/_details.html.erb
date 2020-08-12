@@ -4,97 +4,38 @@
       <%= t('profile.no_lectures') %>
     </div>
   </div>
-<% end %>
-<% if c.subscribable_lectures(current_user).any? %>
+<% else %>
   <div class="row">
-    <div class="col-12">
-      <%= t('profile.primary_lecture') %>:
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <% primary_lecture = 'primary_lecture-' + c.id.to_s %>
-      <%= f.form_group primary_lecture do %>
-        <% c.subscribable_lectures_by_date(current_user).each do |l| %>
-          <%= f.radio_button primary_lecture,
-                             l.id,
-                             label: l.term_teacher_info,
-                             data: { course: c.id },
-                             checked: l.checked_as_primary_by?(current_user),
-                             disabled: !subscribed,
-                             inline: true %>
-        <% end %>
-        <%= f.radio_button primary_lecture,
-                           0,
-                           label: t('none'),
-                           data: { course: c.id },
-                           checked: c.primary_lecture(current_user).nil?,
-                           disabled: !subscribed,
-                           inline: true %>
-      <% end %>
-    </div>
-  </div>
-  <div id="pass-primary-<%= c.id %>" style="display: none;"
-       data-authorize="<%= c.to_be_authorized_lectures(current_user).map(&:id)
-                            .to_json %>">
-    <% if c.to_be_authorized_lectures(current_user).any? %>
-      <div class="row mb-2">
-        <div class="col-12">
-            <%= f.label 'pass_primary_' + c.id.to_s, 'Zugangsschlüssel' %>
-            <%= f.text_field_without_bootstrap 'pass_primary_' + c.id.to_s,
-                                               class: 'form-control' %>
-            <div class="invalid-feedback"
-                 id="passphrase-error-primary-<%= c.id %>" >
-            </div>
-        </div>
-      </div>
-    <% end %>
-  </div>
-<% end %>
-<% if c.subscribable_lectures(current_user).count > 1 %>
-  <div id="secondaries-course-<%= c.id %>"
-       style="display: <%= show(c.primary_lecture(current_user).present?) %>">
-    <div class="row">
-      <div class="col-12">
-        <%= t('profile.secondary_lectures') %>:
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12"
-           id="secondaries-course-<%= c.id %>">
-        <% c.subscribable_lectures_by_date(current_user).each do |l| %>
-          <% lecture = 'lecture-' + l.id.to_s %>
-          <% if subscribed %>
-            <% show_box = hide(l.primary?(current_user)) %>
-          <% else %>
-            <% show_box = hide(false) %>
-          <% end %>
-          <div id="<%= 'course-' + c.id.to_s + '-' + l.id.to_s %>"
-               style="display: <%= show_box %>">
-            <%= f.check_box lecture,
-                            label: l.term_teacher_info,
-                            checked: l.checked_as_secondary_by?(current_user),
-                            disabled: !subscribed,
-                            data: { course: c.id,
-                                    lecture: l.id } %>
-            <div id="pass-lecture-<%= l.id.to_s %>"
-                 style="display: none;">
-              <% if l.restricted? %>
-                <div class="row mb-2">
-                  <div class="col-12">
-                    <%= f.label 'pass_' + lecture, t('profile.passphrase') %>
-                    <%= f.text_field_without_bootstrap 'pass_' + lecture,
-                                                       class: 'form-control' %>
-                    <div class="invalid-feedback"
-                         id="passphrase-error-secondary-<%= l.id %>" >
-                    </div>
+    <div class="col-12"
+         id="lectures-for-course-<%= c.id %>"
+         data-authorize="<%= c.to_be_authorized_lectures(current_user).map(&:id)
+                              .to_json %>">
+      <% c.subscribable_lectures_by_date(current_user).each do |l| %>
+        <% lecture = "lecture[#{l.id}]" %>
+        <div id="<%= 'course-' + c.id.to_s + '-' + l.id.to_s %>">
+          <%= f.check_box lecture,
+                          label: l.term_teacher_info,
+                          checked: l.in?(current_user.lectures),
+                          data: { course: c.id,
+                                  lecture: l.id } %>
+          <div id="pass-lecture-<%= l.id.to_s %>"
+               style="display: none;">
+            <% if l.restricted? %>
+              <div class="row mb-2">
+                <div class="col-12">
+                  <%= f.label 'pass_' + lecture,
+                              t('profile.passphrase') %>
+                  <%= f.text_field_without_bootstrap 'pass_' + lecture,
+                                                     class: 'form-control' %>
+                  <div class="invalid-feedback"
+                       id="passphrase-error-<%= l.id %>" >
                   </div>
                 </div>
-              <% end %>
-            </div>
+              </div>
+            <% end %>
           </div>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
   </div>
 <% end %>

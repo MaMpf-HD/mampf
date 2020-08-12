@@ -10,7 +10,7 @@ class User < ApplicationRecord
 
   # a user has many subscribed courses
   has_many :course_user_joins, dependent: :destroy
-  has_many :courses, -> { distinct }, through: :course_user_joins
+#  has_many :courses, -> { distinct }, through: :course_user_joins
 
   # a user has many courses as an editor
   has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy
@@ -92,6 +92,10 @@ class User < ApplicationRecord
   def self.select_editors
     User.pluck(:name, :email, :id)
         .map { |u| [ "#{u.first} (#{u.second})", u.third] }
+  end
+
+  def courses
+    Course.where(id: lectures.pluck(:course_id).uniq)
   end
 
   # related courses for user are
@@ -400,13 +404,6 @@ class User < ApplicationRecord
 
   def inactive_lectures
     lectures.where.not(term: Term.active)
-  end
-
-  def courses_without_lectures
-    Course.where(id: CourseUserJoin.where(user: self,
-                                          course: courses,
-                                          primary_lecture_id: nil)
-                                   .pluck(:course_id))
   end
 
   def nonsubscribed_lectures
