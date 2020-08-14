@@ -186,42 +186,9 @@ class Course < ApplicationRecord
         .map { |t| [t[:title], t[:id]] }
   end
 
-  # extracts  the id of the lecture that the user has chosen as
-  # primary lecture for this module
-  # (that is the one that has the first position in the lectures carousel in
-  # the course view)
-  # Example:
-  # course.extras({"name"=>"John Smith", "course-3"=>"1",
-  #  "primary_lecture-3"=>"3", "lecture-3"=>"1"})
-  # {"primary_lecture_id"=>3}
-  def extras(user_params)
-    modules = {}
-    primary_id = user_params['primary_lecture-' + id.to_s]
-    modules['primary_lecture_id'] = primary_id.to_i.zero? ? nil : primary_id.to_i
-    modules
-  end
-
   # returns all items related to all lectures associated to this course
   def items
     lectures.collect(&:items).flatten
-  end
-
-  def primary_lecture(user, eagerload: false)
-    user_join = CourseUserJoin.where(course: self, user: user)
-    return unless user_join.any?
-    unless eagerload
-      return Lecture.find_by_id(user_join.first.primary_lecture_id)
-    end
-    Lecture.includes(:teacher, :term, :editors, :users,
-                     :announcements, :imported_media,
-                     course: [:editors],
-                     media: [:teachable, :tags],
-                     lessons: [media: [:tags]],
-                     chapters: [:lecture,
-                                sections: [lessons: [:tags],
-                                           chapter: [:lecture],
-                                           tags: [:notions, :lessons]]])
-           .find_by_id(user_join.first.primary_lecture_id)
   end
 
   def subscribed_lectures(user)

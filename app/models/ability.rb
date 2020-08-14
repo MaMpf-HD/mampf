@@ -122,6 +122,7 @@ class Ability
       end
     else
       can :read, :all
+      can :start, :main
       cannot :read, [:administration, Term, User, Announcement]
       cannot :index, Interaction
       # guest users can play/display media only when their release status

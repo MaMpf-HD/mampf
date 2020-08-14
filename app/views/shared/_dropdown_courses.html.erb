@@ -1,6 +1,6 @@
 <% current_course = Course.find_by_id(cookies[:current_course]) %>
 <% current_course ||= current_user.courses&.first %>
-<% active = cookies[:current_lecture] %>
+<% current_lecture = Lecture.find_by_id(cookies[:current_lecture]) %>
 <li class="nav-item">
   <% if courses.size > 1 && !current_user.new_design then %>
     <div class="btn-group">
@@ -36,9 +36,14 @@
         <% end %>
       </div>
     </div>
-  <% else %>
+  <% elsif courses.size == 1 && !curent_user.new_design %>
     <%= link_to current_course.title,
                 current_course,
+                class: 'btn btn-primary text-light' %>
+  <% elsif current_user.new_design && current_lecture &&
+            !(controller_name == 'main' && action_name == 'start') %>
+    <%= link_to current_lecture.title_for_viewers,
+                current_lecture,
                 class: 'btn btn-primary text-light' %>
   <% end %>
 </li>

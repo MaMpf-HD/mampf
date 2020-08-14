@@ -5,14 +5,20 @@
 $(document).on 'turbolinks:load', ->
 
   $('input:checkbox[name^="user[lecture"]').on 'change',  ->
-    console.log 'Hi'
     courseId = this.dataset.course
     lectureId = this.dataset.lecture
+    checkedCount = $('input:checked[data-course="'+courseId+'"]').length
     authRequiredLectureIds = $('#lectures-for-course-' + courseId).data('authorize')
     if $(this).prop('checked') and parseInt(lectureId) in authRequiredLectureIds
       $('#pass-lecture-' + lectureId).show()
     else
       $('#pass-lecture-' + lectureId).hide()
+      if checkedCount == 0
+        $('.courseSubInfo[data-course="'+courseId+'"]').removeClass('fas fa-check-circle')
+          .addClass('far fa-circle')
+      else
+        $('.courseSubInfo[data-course="'+courseId+'"]').removeClass('far fa-circle')
+          .addClass('fas fa-check-circle')
     return
 
   $('.programCollapse').on 'show.bs.collapse', ->

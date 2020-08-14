@@ -10,7 +10,6 @@ class User < ApplicationRecord
 
   # a user has many subscribed courses
   has_many :course_user_joins, dependent: :destroy
-#  has_many :courses, -> { distinct }, through: :course_user_joins
 
   # a user has many courses as an editor
   has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy
@@ -36,9 +35,6 @@ class User < ApplicationRecord
 
   # a user has many clickers as editor
   has_many :clickers, foreign_key: 'editor_id', dependent: :destroy
-
-  # at least one course must be subscribed (if there are courses)
-  validates :courses, presence: true, if: :courses_exist?
 
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
@@ -415,40 +411,16 @@ class User < ApplicationRecord
   end
 
   def subscribe_teachable!(teachable)
-    return false unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
-    return false if teachable.in?(lectures) || teachable.in?(courses)
-    if teachable.is_a?(Lecture)
-      lectures << teachable
-      return true if teachable.course.in?(courses) &&
-                  CourseUserJoin.find_by(course: teachable.course, user: self)
-                                .primary_lecture_id
-      CourseUserJoin.find_or_create_by(user: self, course: teachable.course)
-                    .update(primary_lecture_id: teachable.id)
-      return true
-    end
-    courses << teachable
+    return false unless teachable.is_a?(Lecture)
+    return false if teachable.in?(lectures)
+    lectures << teachable
     true
   end
 
   def unsubscribe_teachable!(teachable)
-    return false unless teachable.is_a?(Course) || teachable.is_a?(Lecture)
-    return false unless teachable.in?(courses) || teachable.in?(lectures)
-    if teachable.is_a?(Lecture)
-      lectures.delete(teachable)
-      remaining_lectures_in_course = lectures.where(course: teachable.course)
-      if remaining_lectures_in_course.empty?
-        courses.delete(teachable.course)
-        return true
-      end
-      course_join = CourseUserJoin.find_by(course: teachable.course,
-                                           user: self)
-      return true unless course_join&.primary_lecture_id == teachable.id
-      course_join.update(primary_lecture_id: remaining_lectures_in_course
-                                               .sort.first.id)
-      return true
-    end
-    return false unless lectures.where(course: teachable).empty?
-    courses.delete(teachable)
+    return false unless teachable.is_a?(Lecture)
+    return false unless teachable.in?(lectures)
+    lectures.delete(teachable)
     true
   end
 

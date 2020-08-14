@@ -40,30 +40,19 @@ class CoursesController < ApplicationController
 
   def show
     cookies[:current_course] = @course.id
-    @lecture = @course.primary_lecture(current_user)
     # deactivate http caching for the moment
     # "refused to execute script because its mime type is not executable
     #  error in Chrome"...
-    if stale?(etag: @lecture || @course,
+    if stale?(etag: @course,
               last_modified: [current_user.updated_at, @course.updated_at,
                               Time.parse(ENV['RAILS_CACHE_ID']),
-                              @lecture&.updated_at || current_user.updated_at,
                               Thredded::UserDetail.find_by(user_id: current_user.id)
                                                   &.last_seen_at || current_user.updated_at,
-                              @lecture&.forum&.updated_at || current_user.updated_at,
                               @course&.forum&.updated_at || current_user.updated_at].max)
-      unless @course.in?(current_user.courses) && @lecture
-        cookies[:current_lecture] = nil
-        I18n.locale = @course.locale || I18n.default_locale
-        render layout: 'application'
-        return
-      end
-      cookies[:current_lecture] = @lecture.id
-      I18n.locale = @lecture.locale_with_inheritance || I18n.default_locale
-      @lecture = @course.primary_lecture(current_user, eagerload: true)
-      @notifications = current_user.active_notifications(@lecture)
-      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-      render template: 'lectures/show', layout: 'application'
+      cookies[:current_lecture] = nil
+      I18n.locale = @course.locale || I18n.default_locale
+      render layout: 'application'
+      return
     end
   end
 
