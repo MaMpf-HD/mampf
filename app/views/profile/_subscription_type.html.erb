@@ -46,14 +46,6 @@
                       custom: true %>
     <% end %>
   </div>
-  <% if @user.admin || @user.editor? %>
-    <div class="col-12">
-      <%= f.form_group :email_notifications,
-                        label: { text: t('profile.other_preferences') } do %>
-        <%= f.check_box :new_design,
-                        label: t('profile.new_design'),
-                        custom: true %>
-      <% end %>
-    </div>
-  <% end %>
+  <%= f.hidden_field :new_design,
+                     value: '1' %>
 </div>

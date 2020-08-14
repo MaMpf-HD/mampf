@@ -125,6 +125,10 @@ class Lecture < ApplicationRecord
     "(#{sort_localized_short}) #{course.title}"
   end
 
+  def title_term_short
+    "(#{sort_localized_short}) #{term_to_label_short}"
+  end
+
   def to_label
     title
   end
@@ -452,40 +456,6 @@ class Lecture < ApplicationRecord
   def edited_by?(user)
     return true if editors_with_inheritance.include?(user) || user == teacher
     false
-  end
-
-  # is it the user's chosen primary lecture among the course's lectures?
-  # returns nil if course is not subscribed
-  def primary?(user)
-    course_join = user.course_user_joins.find { |j| j.course == lecture.course }
-    return if course_join.nil?
-    course_join.primary_lecture_id == id
-  end
-
-  # is it the user's chosen primary lecture among the course's lectures?
-  def checked_as_primary_by?(user)
-    return primary?(user) if course.subscribed_by?(user)
-    false
-  end
-
-  # is it one of the user's chosen secondary lecture among the
-  # course's lectures?
-  def checked_as_secondary_by?(user)
-    return false unless course.subscribed_by?(user)
-    course.subscribed_lectures(user).include?(self)
-  end
-
-  # returns true if
-  # - this lecture coincides with the given preselected lecture, and the
-  #   preselected lecture is subscribed by the user
-  # OR
-  # - this lecture is the user's primary lecture for this course
-  def active?(user, preselected_lecture_id)
-    if course.subscribed_lectures(user).map(&:id)
-             .include?(preselected_lecture_id)
-      return id == preselected_lecture_id
-    end
-    primary?(user)
   end
 
   # returns path for show action of the lecture's course,

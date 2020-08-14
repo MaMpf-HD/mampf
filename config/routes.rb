@@ -303,7 +303,8 @@ Rails.application.routes.draw do
   resources :terms, except: [:show]
 
   devise_for :users, controllers: { confirmations: 'confirmations',
-                                    registrations: 'registrations' }
+                                    registrations: 'registrations',
+                                    sessions: 'sessions' }
 
   get 'users/elevate', to: 'users#elevate',
                        as: 'elevate_user'

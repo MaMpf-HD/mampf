@@ -8,7 +8,9 @@
          id="course-heading-<%= c.id %>">
       <div class="row">
         <div class="col-12">
-          <%= tag.i class: [circle_icon(subscribed), 'mr-2', 'text-dark'] %>
+          <%= tag.i class: [circle_icon(subscribed), 'mr-2', 'text-dark',
+                            'courseSubInfo'],
+                    data: { course: c.id } %>
           <%= link_to c.title,
                       "#collapse-course-#{c.id}",
                       class: 'text-dark',
