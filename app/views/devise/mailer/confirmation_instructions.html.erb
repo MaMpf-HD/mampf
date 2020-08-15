@@ -1,43 +1,33 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset='utf-8'>
-    <%= stylesheet_link_tag :email %>
-  </head>
-  <body>
-    <div class='container text-center'>
-      <%= email_image_tag('/MaMpf-Logo_96x96.png',
-                          class: 'img-fluid mb-2 pt-4 pb-3') %>
-      <div class="jumbotron">
-        <p class="h1">
-          <%= t('.greeting',
-                recipient: @resource.email,
-                locale: @resource.locale,
-                default: "Welcome #{@resource.email}!") %>
-        </p>
+<div class='container text-center'>
+  <%= email_image_tag('/MaMpf-Logo_96x96.png',
+                      class: 'img-fluid mb-2 pt-4 pb-3') %>
+  <div class="jumbotron">
+    <p class="h1">
+      <%= t('.greeting',
+            recipient: @resource.email,
+            locale: @resource.locale,
+            default: "Welcome #{@resource.email}!") %>
+    </p>
 
-        <p>
-          <%= t('.instruction',
-                locale: @resource.locale,
-                default: 'You can confirm your account email through the link below:') %>
-        </p>
+    <p>
+      <%= t('.instruction',
+            locale: @resource.locale,
+            default: 'You can confirm your account email through the link below:') %>
+    </p>
 
-        <p>
-          <%= link_to t('.action',
-                        locale: @resource.locale,
-                        default: 'Confirm my account'),
-                        confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale),
-                        :class => "btn btn-primary" %>
-        </p>
-      </div>
-    </div>
+    <p>
+      <%= link_to t('.action',
+                    locale: @resource.locale,
+                    default: 'Confirm my account'),
+                    confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale),
+                    :class => "btn btn-primary" %>
+    </p>
+  </div>
+</div>
 
-    <div class="small text-center">
-      <small class="text-muted">
-        <%= t('.reason',
-              locale: @resource.locale) %>
-      </small>
-    </div>
-
-  </body>
-</html>
+<div class="small text-center">
+  <small class="text-muted">
+    <%= t('.reason',
+          locale: @resource.locale) %>
+  </small>
+</div>
