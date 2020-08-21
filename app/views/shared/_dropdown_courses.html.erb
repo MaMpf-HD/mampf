@@ -36,7 +36,7 @@
         <% end %>
       </div>
     </div>
-  <% elsif courses.size == 1 && !curent_user.new_design %>
+  <% elsif courses.size == 1 && !current_user.new_design %>
     <%= link_to current_course.title,
                 current_course,
                 class: 'btn btn-primary text-light' %>
