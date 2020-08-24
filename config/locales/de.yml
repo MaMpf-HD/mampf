@@ -1740,6 +1740,7 @@ de:
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
     subscribe_course: 'Abonniere es in Deinem Profil.'
     subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
+    goto: "Zu deinen %{profile}"
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'

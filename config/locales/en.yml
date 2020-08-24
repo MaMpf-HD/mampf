@@ -1632,6 +1632,7 @@ en:
     subscribe_course: 'You can subscribe it via your profile.'
     subscribe_course_html: 'You can subscribe it via your %{profile}.'
     profile: 'profile'
+    goto: "Visit your %{profile}"
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
