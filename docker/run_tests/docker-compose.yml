@@ -14,7 +14,7 @@ services:
         source: ../../solr/development/conf/
         target: /solrconfig/
         read_only: true
-    command: ["solr-precreate", "development", "/solrconfig"]
+    command: ["solr-precreate", "test", "/solrconfig"]
 
   db:
     image: postgres
@@ -48,12 +48,11 @@ services:
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
-      # KEKS_SERVER: your_keks_server
-      # ERDBEERE_SERVER: your_erdbeere_server
-      # MUESLI_SERVER: your_muesli_server
       PROJECT_EMAIL: project@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
       SOLR_PATH: /solr/mampf-dev
     volumes:
       - type: bind
