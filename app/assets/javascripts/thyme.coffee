@@ -703,6 +703,14 @@ $(document).on 'turbolinks:load', ->
     ' #2497E3, #2497E3 ' + value*100 + '%, #ffffff ' + value*100 + '%, #ffffff)'
     return
 
+  video.addEventListener 'click', ->
+    if video.paused == true
+      video.play()
+    else
+      video.pause()
+    showControlBar()
+    return
+
   # thyme can be used by keyboard as well
   # Arrow up - next chapter
   # Arrow down - previous chapter
