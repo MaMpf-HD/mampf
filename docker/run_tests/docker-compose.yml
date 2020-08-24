@@ -51,6 +51,7 @@ services:
       - type: bind
         source: ../../app/
         target: /usr/src/app/app/
+      - /usr/src/app/completed_initial_run
     depends_on:
       - db
       - solr
