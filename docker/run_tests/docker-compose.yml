@@ -7,9 +7,6 @@ services:
   solr:
     image: "solr:8"
     volumes:
-      - type: volume
-        source: solr-data
-        target: /var/solr
       - type: bind
         source: ../../solr/development/conf/
         target: /solrconfig/
@@ -22,10 +19,6 @@ services:
       - POSTGRES_USER=mampf
       - POSTGRES_DB=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
-    volumes:
-      - type: volume
-        source: db-data
-        target: /var/lib/postgresql/data
 
   mailcatcher:
     restart: on-failure:10
@@ -63,7 +56,3 @@ services:
       - solr
       - redis
       - mailcatcher
-
-volumes:
-  db-data:
-  solr-data:
