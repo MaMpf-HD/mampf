@@ -39,11 +39,12 @@ services:
     entrypoint: ./docker/run_tests/run_tests.sh
     environment:
       RAILS_ENV: test
-      PRODUCTION_DATABASE_ADAPTER: postgresql
-      PRODUCTION_DATABASE_DATABASE: mampf
-      PRODUCTION_DATABASE_USERNAME: mampf
-      PRODUCTION_DATABASE_HOST: db
-      PRODUCTION_DATABASE_PORT: 5432
+      TEST_DATABASE_ADAPTER: postgresql
+      TEST_DATABASE_DATABASE: mampf
+      TEST_DATABASE_INTERACTIONS: interactions
+      TEST_DATABASE_USERNAME: mampf
+      TEST_DATABASE_HOST: db
+      TEST_DATABASE_PORT: 5432
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
