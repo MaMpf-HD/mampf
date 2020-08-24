@@ -705,9 +705,9 @@ $(document).on 'turbolinks:load', ->
 
   video.addEventListener 'click', ->
     if video.paused == true
-        video.play()
-      else
-        video.pause()
+      video.play()
+    else
+      video.pause()
     showControlBar()
     return
 
