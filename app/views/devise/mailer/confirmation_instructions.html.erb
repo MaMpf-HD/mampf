@@ -2,7 +2,6 @@
   <%= t('.greeting',
         recipient: @resource.email,
         locale: @resource.locale,
-        name: name.present ? name : t('no_name_fallback'),
         default: "Welcome #{@resource.email}!")  %>
 </p>
 
