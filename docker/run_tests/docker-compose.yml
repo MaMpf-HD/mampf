@@ -6,6 +6,7 @@ services:
 
   solr:
     image: "solr:8"
+    container_name: mampf_solr_test
     volumes:
       - type: bind
         source: ../../solr/development/conf/
@@ -15,6 +16,7 @@ services:
 
   db:
     image: postgres
+    container_name: mampf_db_test
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_DB=mampf
@@ -29,6 +31,7 @@ services:
       context: ./../..
       dockerfile: docker/run_tests/Dockerfile
     image: mampf:tests
+    container_name: mampf_mampf_test
     entrypoint: ./docker/run_tests/run_tests.sh
     environment:
       RAILS_ENV: test
