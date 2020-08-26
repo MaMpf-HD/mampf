@@ -1,10 +1,9 @@
-<%= t('mailer.new_course', title: @lecture.title_with_teacher) %>
+<%= t('mailer.new_course', title: @course.title) %>
 <br>
-<%= t('mailer.subscribe_course_html',
+<%= t('mailer.subscribe_course',
       profile: t('notifications.profile')) %>
 <p class="pt-2">
-  <%= link_to(t('notifications.goto',
-                profile: t('notifications.profile')),
+  <%= link_to(t('notifications.goto_profile'),
               edit_profile_url,
-              :class => "btn btn-primary") %>
+              class: 'btn btn-primary') %>
 </p>
