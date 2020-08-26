@@ -1,12 +1,12 @@
 <% if total.positive? %>
   <div class="row mx-2 py-3">
-    <div class="col-2">
+    <div class="col-12 col-lg-2">
       <strong>
       <%= t('basics.hits') %>:
     </strong>
       <%= total %>
     </div>
-    <div class="col-10">
+    <div class="col-12 col-lg-10">
       <%= paginate lectures, remote: true %>
     </div>
   </div>

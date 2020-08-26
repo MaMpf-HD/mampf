@@ -40,3 +40,10 @@ $('#emptyAllCurrent').show()
 $('#emptyAllCurrent').hide()
 <% end %>
 <% end %>
+
+# hide course thumbnails if screen is (very) small
+if window.matchMedia("screen and (max-width: 767px)").matches
+  $('.teachableThumbnail').hide()
+
+if window.matchMedia("screen and (max-device-width: 767px)").matches
+  $('.teachableThumbnail').hide()

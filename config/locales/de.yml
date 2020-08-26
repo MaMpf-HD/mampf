@@ -1772,9 +1772,10 @@ de:
     passphrase_required: >
       Du möchtest die Veranstaltung %{teachable_title} abonnieren. Diese ist
       durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
-    my_term: Mein Semester - %{term}
+    my_term_html: Mein Semester &ndash; %{term}
     inactive_lectures: Weitere abonnierte Veranstaltungen
-    active_nonsubscribed_lectures: Aktuelle Veranstaltungen - %{term}
+    active_nonsubscribed_lectures_html: >
+      Aktuelle Veranstaltungen &ndash; %{term}
     lecture_search: Veranstaltungssuche
     no_current_stuff: >
       Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
