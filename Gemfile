@@ -122,4 +122,3 @@ group :test do
   gem 'simplecov', require: false
 end
 
-gem 'premailer-rails'

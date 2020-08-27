@@ -1,8 +1,8 @@
-<p class="h1">
+<p>
   <%= t('.greeting',
         recipient: @resource.email,
         locale: @resource.locale,
-        default: "Welcome #{@resource.email}!")  %>
+        default: "Welcome #{@resource.email}!") %>
 </p>
 
 <p>
@@ -15,6 +15,8 @@
   <%= link_to t('.action',
                 locale: @resource.locale,
                 default: 'Confirm my account'),
-                confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale),
-                :class => "btn btn-primary" %>
+                confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale) %>
 </p>
+<hr>
+<%= t('.reason',
+      locale: @resource.locale) %>

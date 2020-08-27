@@ -47,4 +47,3 @@ if window.matchMedia("screen and (max-width: 767px)").matches
 
 if window.matchMedia("screen and (max-device-width: 767px)").matches
   $('.teachableThumbnail').hide()
- 
