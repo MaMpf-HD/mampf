@@ -31,6 +31,7 @@ en:
       reset_password_instructions:
         subject: "Reset MaMpf password instructions"
         greetings: 'Hi, %{name}!'
+        no_name_fallback: "there"
         change_password: 'Change password'
         instruction: >
           Someone has requested a link in order to change your MaMpf password.
@@ -40,6 +41,10 @@ en:
         instruction_3: >
           Your MaMpf password will not be changed unless you click the above
           link and set a valid new password.
+        reason: >
+          You’re receiving this email because recently a MaMpf password reset
+          for an account linked to this email adress was issued. If this wasn’t
+          you, please ignore this email.
       unlock_instructions:
         subject: "Unlock instructions"
       email_changed:
