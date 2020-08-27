@@ -1662,9 +1662,10 @@ en:
     passphrase_required: >
       You want to subscribe the event series %{teachable_title}. It is protected
       by a pass phrase. Please enter it here.
-    my_term: My Term - %{term}
+    my_term_html: My Term &ndash; %{term}
     inactive_lectures: Futher subscribed event series
-    active_nonsubscribed_lectures: Current event series - %{term}
+    active_nonsubscribed_lectures_html: >
+      Current event series &ndash; %{term}
     lecture_search: Search for event series
     no_current_stuff: >
       You have not yet subscribed any event series of the current term.

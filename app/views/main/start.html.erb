@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-header">
 				<h4>
-					<%= link_to t('profile.my_term', term: Term.active.to_label),
+					<%= link_to t('profile.my_term_html', term: Term.active.to_label),
 											'#collapseCurrentStuff',
 											class: text_dark(@current_stuff.any?),
 											id: 'currentStuffLink',
@@ -71,7 +71,7 @@
 		<div class="card">
 			<div class="card-header">
 				<h4>
-					<%= link_to t('profile.active_nonsubscribed_lectures',
+					<%= link_to t('profile.active_nonsubscribed_lectures_html',
 												term: Term.active.to_label),
 											'#collapseAllCurrent',
 											class: 'text-dark',
@@ -117,4 +117,3 @@
 	</div>
 </div>
 <%= render partial: 'profile/subscription_modal' %>
-

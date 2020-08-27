@@ -31,31 +31,47 @@ development:
 docker_development:
   primary:
     <<: *default
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
-    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
-    database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
-    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
-    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
-    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
-    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+    adapter: <%= ENV['DEVELOPMENT_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['DEVELOPMENT_DATABASE_ENCODING'] %>
+    database: <%= ENV['DEVELOPMENT_DATABASE_DATABASE'] %>
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    host: <%= ENV['DEVELOPMENT_DATABASE_HOST'] %>
+    port: <%= ENV['DEVELOPMENT_DATABASE_PORT'] %>
   interactions:
     <<: *default
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
-    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
-    database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
-    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
-    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
-    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
-    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+    adapter: <%= ENV['DEVELOPMENT_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['DEVELOPMENT_DATABASE_ENCODING'] %>
+    database: <%= ENV['DEVELOPMENT_DATABASE_INTERACTIONS'] %>
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    host: <%= ENV['DEVELOPMENT_DATABASE_HOST'] %>
+    port: <%= ENV['DEVELOPMENT_DATABASE_PORT'] %>
     migrations_paths: db/interactions_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  adapter: sqlite3
-  database: db/test.sqlite3
+  primary:
+    <<: *default
+    adapter: <%= ENV['TEST_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
+    database: <%= ENV['TEST_DATABASE_DATABASE'] %>
+    username: <%= ENV['TEST_DATABASE_USERNAME'] %>
+    password: <%= ENV['TEST_DATABASE_PASSWORD'] %>
+    host: <%= ENV['TEST_DATABASE_HOST'] %>
+    port: <%= ENV['TEST_DATABASE_PORT'] %>
+  interactions:
+    <<: *default
+    adapter: <%= ENV['TEST_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
+    database: <%= ENV['TEST_DATABASE_INTERACTIONS'] %>
+    username: <%= ENV['TEST_DATABASE_USERNAME'] %>
+    password: <%= ENV['TEST_DATABASE_PASSWORD'] %>
+    host: <%= ENV['TEST_DATABASE_HOST'] %>
+    port: <%= ENV['TEST_DATABASE_PORT'] %>
+    migrations_paths: db/interactions_migrate
 
 production:
   # <<: *default
