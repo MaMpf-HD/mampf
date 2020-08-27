@@ -1,5 +1,8 @@
 <%= t('mailer.new_course', title: @course.title) %>
 <br>
-<%= t('mailer.subscribe_course_html',
-      profile: link_to(t('notifications.profile'),
-                       edit_profile_url)) %>
+<%= t('mailer.subscribe_course') %>
+<p class="pt-2">
+  <%= link_to(t('notifications.goto_profile'),
+              edit_profile_url,
+              class: 'btn btn-primary') %>
+</p>

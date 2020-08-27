@@ -1,7 +1,10 @@
-<%= "#{t('mailer.new_announcement')} #{@announcement_details}:" %>
-<p>
-  <%= "#{t('mailer.author')}: #{@announcement.announcer.name}" %>
-  <br>
-  <%= "#{t('mailer.text')}: " %>
-  <%= @announcement.details.html_safe %>
-</p>
+<div class="container">
+  <div class="blockquote text-left">
+    <p>
+      <%= @announcement.details.html_safe %>
+    </p>
+    <footer>
+      &mdash; <%= "#{@announcement.announcer.name}" %> <cite><%= "#{@announcement_details}" %></cite>
+    </footer>
+  </div>
+</div>
