@@ -1805,7 +1805,6 @@ de:
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
     subscribe_course: 'Abonniere es in Deinem Profil.'
     subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
-    goto_profile: 'Zu deinen Profileinstellungen'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
@@ -2235,13 +2234,12 @@ de:
     text: 'Text'
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
-    subscribe_lecture: >
-      Du kannst sie über Deine Profileinstellungen abonnieren.
+    subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
     subscribe_lecture_text: >
       Du kannst sie über Deine Profileinstellungen abonnieren.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
-    subscribe_course: 'Du kannst es über Deine Profileinstellungen abonnieren.'
+    subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
     subscribe_course_text: >
       Du kannst es über Deine Profileinstellungen abonnieren.
   statistics:
