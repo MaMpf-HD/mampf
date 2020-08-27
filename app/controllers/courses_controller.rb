@@ -30,8 +30,6 @@ class CoursesController < ApplicationController
     if @course.valid?
       # set organizational_concept to default
       set_organizational_defaults
-      create_notifications
-      send_notification_email
       redirect_to administration_path
       return
     end
@@ -160,31 +158,6 @@ class CoursesController < ApplicationController
   def random_quiz_params
     params.require(:quiz).permit(:random_quiz_count,
                                  search_tag_ids: [])
-  end
-
-  # create notifications to all users about creation of new course
-  def create_notifications
-    notifications = []
-    User.find_each do |u|
-      notifications << Notification.new(recipient: u,
-                                        notifiable_id: @course.id,
-                                        notifiable_type: 'Course',
-                                        action: 'create')
-    end
-    Notification.import notifications
-  end
-
-  def send_notification_email
-    recipients = User.where(email_for_teachable: true)
-    I18n.available_locales.each do |l|
-      local_recipients = recipients.where(locale: l)
-      if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients,
-                                locale: l,
-                                course: @course)
-                          .new_course_email.deliver_now
-      end
-    end
   end
 
   # destroy all notifications related to this course
