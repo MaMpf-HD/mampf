@@ -44,12 +44,12 @@ services:
     entrypoint: ./entrypoint.sh
     environment:
       RAILS_ENV: docker_development
-      PRODUCTION_DATABASE_ADAPTER: postgresql
-      PRODUCTION_DATABASE_DATABASE: mampf
-      PRODUCTION_DATABASE_INTERACTIONS: interactions
-      PRODUCTION_DATABASE_USERNAME: mampf
-      PRODUCTION_DATABASE_HOST: db
-      PRODUCTION_DATABASE_PORT: 5432
+      DEVELOPMENT_DATABASE_ADAPTER: postgresql
+      DEVELOPMENT_DATABASE_DATABASE: mampf
+      DEVELOPMENT_DATABASE_INTERACTIONS: interactions
+      DEVELOPMENT_DATABASE_USERNAME: mampf
+      DEVELOPMENT_DATABASE_HOST: db
+      DEVELOPMENT_DATABASE_PORT: 5432
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost

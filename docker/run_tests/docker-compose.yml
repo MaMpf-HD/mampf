@@ -6,26 +6,21 @@ services:
 
   solr:
     image: "solr:8"
+    container_name: mampf_solr_test
     volumes:
-      - type: volume
-        source: solr-data
-        target: /var/solr
       - type: bind
         source: ../../solr/development/conf/
         target: /solrconfig/
         read_only: true
-    command: ["solr-precreate", "development", "/solrconfig"]
+    command: ["solr-precreate", "test", "/solrconfig"]
 
   db:
     image: postgres
+    container_name: mampf_db_test
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_DB=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
-    volumes:
-      - type: volume
-        source: db-data
-        target: /var/lib/postgresql/data
 
   mailcatcher:
     restart: on-failure:10
@@ -34,36 +29,34 @@ services:
   mampf:
     build:
       context: ./../..
-      dockerfile: docker/development/Dockerfile
+      dockerfile: docker/run_tests/Dockerfile
     image: mampf:tests
+    container_name: mampf_mampf_test
     entrypoint: ./docker/run_tests/run_tests.sh
     environment:
-      RAILS_ENV: development
-      PRODUCTION_DATABASE_ADAPTER: postgresql
-      PRODUCTION_DATABASE_DATABASE: mampf
-      PRODUCTION_DATABASE_USERNAME: mampf
-      PRODUCTION_DATABASE_HOST: db
-      PRODUCTION_DATABASE_PORT: 5432
+      RAILS_ENV: test
+      TEST_DATABASE_ADAPTER: postgresql
+      TEST_DATABASE_DATABASE: mampf
+      TEST_DATABASE_INTERACTIONS: interactions
+      TEST_DATABASE_USERNAME: mampf
+      TEST_DATABASE_HOST: db
+      TEST_DATABASE_PORT: 5432
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
-      # KEKS_SERVER: your_keks_server
-      # ERDBEERE_SERVER: your_erdbeere_server
-      # MUESLI_SERVER: your_muesli_server
       PROJECT_EMAIL: project@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
       SOLR_PATH: /solr/mampf-dev
     volumes:
       - type: bind
         source: ../../app/
         target: /usr/src/app/app/
+      - /usr/src/app/completed_initial_run
     depends_on:
       - db
       - solr
       - redis
       - mailcatcher
-
-volumes:
-  db-data:
-  solr-data:

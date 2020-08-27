@@ -23,8 +23,8 @@ docker_development:
 
 test:
   solr:
-    hostname: localhost
-    port: 8981
+    hostname: <%= ENV.fetch('SOLR_HOST', 'localhost') %>
+    port: <%= ENV.fetch('SOLR_PORT', '8981') %>
     log_level: WARNING
     path: /solr/test
 
