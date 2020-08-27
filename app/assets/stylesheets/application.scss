@@ -50,7 +50,20 @@ $container-max-widths: (
 /* override the !default vars with the values we set above */
 @import "bootstrap";
 @import "rails_bootstrap_forms";
-@import "*";
+@import "chapters";
+@import "clickers";
+@import "colors";
+@import "courses";
+@import "lectures";
+@import "lessons";
+@import "main";
+@import "media";
+@import "notifications";
+@import "sections";
+@import "tags";
+@import "thyme";
+@import "users";
+@import "vertices";
 @import 'selectize';
 @import 'selectize.default';
 @import "trix";
