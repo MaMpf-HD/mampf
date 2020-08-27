@@ -231,7 +231,7 @@ $(document).on 'turbolinks:load', ->
     $('#mampfbrand').show()
     return
 
-    # highlight tagbadges if screen is very small
+  # highlight tagbadges if screen is very small
   if window.matchMedia("screen and (max-width: 767px)").matches
     mobileDisplay()
 

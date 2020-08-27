@@ -103,6 +103,7 @@ class ProfileController < ApplicationController
                                             .includes(:course, :term).sort +
                                        Lecture.where(term: nil).sort
     end
+    @link = @collapse_id.remove('collapse').camelize(:lower) + 'Link'
   end
 
   private
