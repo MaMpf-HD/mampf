@@ -208,7 +208,6 @@ $(document).on 'turbolinks:load', ->
     $('#adminHome').css('padding-right', '0.5rem')
     $('#adminCurrentLecture').css('padding-right', '0.5rem')
     $('#mampfbrand').hide()
-    $('.teachableThumbnail').hide()
     return
 
     # on large display, use normal tag badges and course titles
@@ -230,7 +229,6 @@ $(document).on 'turbolinks:load', ->
     $('#adminHome').removeAttr('style')
     $('#adminCurrentLecture').removeAttr('style')
     $('#mampfbrand').show()
-    $('.teachableThumbnail').show()
     return
 
     # highlight tagbadges if screen is very small

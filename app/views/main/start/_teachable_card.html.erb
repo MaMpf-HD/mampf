@@ -59,12 +59,12 @@
   </div>
   <% if subscribed %>
      <%= link_to image_tag('/teachable_thumbnail.png',
-                          class: 'card-img-top teachableThumbnail',
+                          class: 'card-img-top teachableThumbnail border-bottom',
                           alt: 'Card image cap'),
                 teachable %>
   <% else %>
     <%= image_tag('/teachable_thumbnail.png',
-                  class: 'card-img-top teachableThumbnail',
+                  class: 'card-img-top teachableThumbnail border-bottom',
                   alt: 'Card image cap') %>
   <% end %>
   <div class="card-body">

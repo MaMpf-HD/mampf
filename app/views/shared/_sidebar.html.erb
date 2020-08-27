@@ -171,12 +171,12 @@
     </span>
     <li class="nav-item">
       <% if lecture.organizational %>
-        <%= link_to t('categories.organizational'),
+        <%= link_to t('categories.organizational_html'),
                     organizational_path(lecture),
                     class: 'nav-link' %>
       <% else %>
         <span class="nav-link disabled">
-          <%= t('categories.organizational') %>
+          <%= t('categories.organizational_html') %>
         </span>
       <% end %>
     </li>

@@ -62,7 +62,7 @@ de:
     muesli: 'MÜSLI'
     board: 'Forum'
     comments: 'Kommentare'
-    organizational: 'Organisatorisches'
+    organizational_html: 'Organisa&shy;torisches'
     announcements: 'Mitteilungen'
     reste:
       singular: 'Sonstiges'
