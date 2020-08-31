@@ -1,12 +1,3 @@
-<div class="alert alert-secondary">
-  <% if @course.lectures.any? %>
-    <%= t('course.no_subscription_html',
-          subscribed: link_to(t('course.subscribed'), edit_profile_path)) %>
-  <% else %>
-    <%= t('course.no_lectures') %>
-  <% end %>
-  <%= t('course.only_course') %>
-</div>
 <% if @course.forum? %>
   <%= render partial: 'courses/forum_news',
            locals: { course: @course,

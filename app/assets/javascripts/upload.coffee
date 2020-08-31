@@ -251,11 +251,86 @@ geogebraUpload = (fileInput) ->
 
   uppy
 
+imageUpload = (fileInput) ->
+  # set everything up
+  uploadArea = document.getElementById('image-uploadArea')
+  uploadButton = document.getElementById('image-uploadButton')
+  informer = document.getElementById('image-informer')
+  progressBar = document.getElementById('image-progressBar')
+  metaData = document.getElementById('image-meta')
+  hiddenInput = document.getElementById('upload-image-hidden')
+  imagePreview = document.getElementById('image-preview')
+
+  # uppy will add its own file input
+  fileInput.style.display = 'none'
+
+  # create uppy instance
+  uppy = Uppy.Core(
+    id: fileInput.id
+    autoProceed: true
+    restrictions: allowedFileTypes: [
+      '.png'
+      '.jpg'
+      '.gif'
+    ])
+    .use(Uppy.FileInput,
+      target: uploadButton
+      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+    .use(Uppy.Informer, target: informer)
+    .use(Uppy.ProgressBar, target: progressBar)
+
+  # target the endpoint for shrine uploader
+  uppy.use Uppy.XHRUpload,
+    endpoint: '/screenshots/upload'
+    fieldName: 'file'
+
+  # add metadata to manuscript card if upload was successful
+  uppy.on 'upload-success', (file, response) ->
+    data = response.body
+    if data.metadata.mime_type in ['image/png', 'image/jpeg', 'image/gif']
+      # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data)
+
+      # set hidden field value to the uploaded file data so that it is
+      # submitted with the form as the attachment
+      hiddenInput.value = uploadedFileData
+
+      #show image preview
+      imagePreview.src = URL.createObjectURL(file.data)
+
+      imageFile = document.getElementById('image-file')
+      imageSize = document.getElementById('image-size')
+      imageResolution = document.getElementById('image-resolution')
+
+      # put metadata into place
+      imageFile.innerHTML = data.metadata.filename
+      imageSize.innerHTML = formatBytes(data.metadata.size)
+      imageResolution.innerHTML = data.metadata.width + 'x' + data.metadata.height
+      $(metaData).show()
+      $(imagePreview).show()
+      $('#course_detach_image').val('false')
+      $('#course-basics-warning').show()
+      $('#image-none').hide()
+    else
+      # display error message if uppy detects wrong mime type
+      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      uppy.reset()
+    return
+
+  # display error message on console if an upload error has ocurred
+  uppy.on 'upload-error', (file, error) ->
+    console.log('error with file:', file.id)
+    console.log('error message:', error)
+    return
+
+  uppy
+
 
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
   manuscript = document.getElementById('upload-manuscript')
   geogebra = document.getElementById('upload-geogebra')
+  image = document.getElementById('upload-image')
 
   # make uppy idempotent for turbolinks
   $('.uppy').remove()
@@ -265,6 +340,7 @@ $(document).on 'turbolinks:load', ->
   videoUpload video if video?
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
+  imageUpload image if image?
 
   # make uppy upload buttons look like bootstrap
   $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')

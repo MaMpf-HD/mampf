@@ -58,12 +58,14 @@
     </div>
   </div>
   <% if subscribed %>
-     <%= link_to image_tag('/teachable_thumbnail.png',
+     <%= link_to image_tag(teachable.course.normalized_image_url_with_host ||
+                             '/teachable_thumbnail.png',
                           class: 'card-img-top teachableThumbnail border-bottom',
                           alt: 'Card image cap'),
                 teachable %>
   <% else %>
-    <%= image_tag('/teachable_thumbnail.png',
+    <%= image_tag(teachable.course.normalized_image_url_with_host ||
+                    '/teachable_thumbnail.png',
                   class: 'card-img-top teachableThumbnail border-bottom',
                   alt: 'Card image cap') %>
   <% end %>

@@ -619,6 +619,10 @@ de:
       divisions: 'Teilbereiche'
       term_independent: 'semesterunabhängig'
       term_independence: 'Dieses Modul ist semesterunabhängig.'
+      image: 'Bild'
+      no_image: >
+        Es wurde noch kein Bild hochgeladen. Deshalb wird für die
+        Veranstaltungs-Cards das Standard-Bild verwendet.
       info:
         title: >
           Hier musst Du den Titel des Moduls eintragen.
@@ -677,6 +681,10 @@ de:
           dazu angeboten werden. Das kann z.B. Help-Desks oder Lernlandschaften
           betreffen. Diese Eigenschaft kann nur geändert werden, solange
           es in diesem Modul noch keine Veranstaltungen gibt.
+        image: >
+          Du kannst ein Bild zu diesem Modul hochladen. Dieses wird für
+          Visualisierungen verwendet, z.B. in den Cards auf der
+          MaMpf-Startseite.
     chapter:
       edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
@@ -1887,6 +1895,8 @@ de:
     length: 'Länge'
     resolution: 'Auflösung'
     size: 'Größe'
+  image:
+    resolution: 'Abmessungen'
   manuscript:
     manuscript: 'Manuskript'
     view: 'pdf im Browser betrachten'

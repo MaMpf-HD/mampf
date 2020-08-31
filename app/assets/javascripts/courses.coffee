@@ -66,6 +66,16 @@ $(document).on 'turbolinks:load', ->
         console.log("AJAX Error: #{textStatus}")
     return
 
+  # if user detaches image, adjust hidden values
+  # (relevant on media edit page)
+  $('#detach-image').on 'click', ->
+    $('#upload-image-hidden').val('')
+    $('#image-meta').hide()
+    $('#image-preview').hide()
+    $('#course_detach_image').val('true')
+    $('#course-basics-warning').show()
+    return
+
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'

@@ -584,6 +584,10 @@ en:
       programs: 'Study Paths'
       term_independent: 'independent of terms'
       term_independence: 'This course is independent of terms.'
+      image: 'Image'
+      no_image: >
+        No image has been uploaded yet. Therefore, the generic image will be
+        used for event cards.
       info:
         title: >
           Here you can enter the title of the course. Typically, this should be
@@ -634,6 +638,9 @@ en:
           are independent of the term. This might be useful for things like
           a Help Deks for students. This setting can only be changed as long
           as there is no event series associated to this course.
+        image: >
+          You can upload an image that visualizes this course. It will be used
+          in the cards that appear in MaMpf's start page.
     chapter:
       edit: 'Edit %{chapter}'
       position: 'Position after %{chapter_name}'
@@ -1775,6 +1782,8 @@ en:
     length: 'Length'
     resolution: 'Resolution'
     size: 'Size'
+  image:
+    resolution: 'Resolution'
   manuscript:
     manuscript: 'Manuscript'
     no_manuscript: 'There is no manuscript present.'

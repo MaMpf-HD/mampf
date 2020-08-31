@@ -1,0 +1,62 @@
+<div id="image_accordion"
+     role="tablist">
+  <div class="card bg-light">
+    <div class="card-header"
+         role="tab"
+         id="image_heading">
+      <div class="row">
+        <div class="col-6">
+          <h5>
+            <%= t('admin.course.image') %>
+            <%= helpdesk(t('admin.course.info.image'), false ) %>
+          </h5>
+        </div>
+        <div class="col-6 text-right">
+          <a class="btn btn-sm btn-outline-primary"
+             data-toggle="collapse"
+             href="#image_collapse"
+             id="image_collapse_button"
+             aria-expanded="false" aria-controls="image_collapse">
+            <%= t('buttons.toggle') %>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div id="image_collapse"
+         class="<%= show_collapse(course.image) %>"
+         role="tabpanel"
+         aria-labelledby="image_heading"
+         data-parent="#image_accordion">
+      <div class="card-body">
+        <div class="row mb-3">
+          <div class="col-12">
+            <%= image_tag(course.image_url_with_host.presence ||
+                            '/teachable_thumbnail.png',
+                          class: 'img-fluid',
+                          id: 'image-preview') %>
+          </div>
+          <div class="col-12 mt-2" id="image-none">
+            <% unless course.image %>
+              <%= t('admin.course.no_image') %>
+            <% end %>
+          </div>
+        </div>
+        <% unless inspection %>
+          <div class="row">
+            <div class="col-12" id="image-uploadButton"
+                 data-choosefiles="<%= t('basics.file') %>">
+              <%= f.hidden_field :image,
+                                 value: course.cached_image_data,
+                                 id: 'upload-image-hidden' %>
+              <%= f.file_field :image,
+                               id: 'upload-image' %>
+              <%= f.hidden_field :detach_image, value: false %>
+            </div>
+          </div>
+          <%= render partial: 'courses/upload_image',
+                     locals: { course: course } %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

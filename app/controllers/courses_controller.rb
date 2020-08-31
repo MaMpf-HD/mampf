@@ -20,7 +20,16 @@ class CoursesController < ApplicationController
 
   def update
     I18n.locale = @course.locale || I18n.default_locale
+    old_image_data = @course.image_data
     @course.update(course_params)
+    @errors = @course.errors
+    return unless @errors.empty?
+    @course.update(image: nil) if params[:course][:detach_image] == 'true'
+    changed_image = @course.image_data != old_image_data
+    if @course.image.present? && changed_image
+      @course.image_derivatives!
+      @course.save
+    end
     @errors = @course.errors
   end
 
@@ -144,7 +153,7 @@ class CoursesController < ApplicationController
   def course_params
     params.require(:course).permit(:title, :short_title, :organizational,
                                    :organizational_concept, :locale,
-                                   :term_independent,
+                                   :term_independent, :image,
                                    tag_ids: [],
                                    preceding_course_ids: [],
                                    editor_ids: [],
