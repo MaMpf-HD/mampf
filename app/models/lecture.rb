@@ -75,6 +75,8 @@ class Lecture < ApplicationRecord
   # scopes for published lectures
   scope :published, -> { where.not(released: nil) }
 
+  scope :no_term, -> { where(term: nil) }
+
   searchable do
     integer :term_id do
       term_id || 0
@@ -86,6 +88,10 @@ class Lecture < ApplicationRecord
     end
     integer :program_ids, multiple: true do
       course.divisions.pluck(:program_id).uniq
+    end
+    integer :editor_ids, multiple: true
+    boolean :is_published do
+      published?
     end
     # these two are for ordering
     time :sort_date do
@@ -602,6 +608,16 @@ class Lecture < ApplicationRecord
       with(:teacher_id, search_params[:teacher_ids])
       with(:program_ids, search_params[:program_ids])
       with(:term_id, search_params[:term_ids])
+    end
+    admin = User.find_by_id(search_params[:user_id])&.admin
+    unless admin
+      search.build do
+        any_of do
+          with(:is_published, true)
+          with(:teacher_id, search_params[:user_id])
+          with(:editor_ids, search_params[:user_id])
+        end
+      end
     end
     if search_params[:fulltext].present?
       search.build do

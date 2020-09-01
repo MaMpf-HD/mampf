@@ -343,6 +343,8 @@ de:
       new_notifications: 'neue Benachrichtigungen'
       new_media: 'neue Medien'
       new_posts: 'neue Forenbeiträge'
+      no_rights: >
+        Du hast keine Berechtigung, diese Veranstaltung zu abonnieren.
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -2118,8 +2120,11 @@ de:
       Aufgrund deiner %{profile} wurde(n) %{count} Treffer aus der
       Datenbank nicht berücksichtigt.
     settings: 'Profileinstellungen'
-    alternative: 'Meintest Du vielleicht etwas anderes?'
+    alternative: 'Meintest du vielleicht etwas anderes?'
     similar: 'Zum Suchbegriff %{search_string} ähnliche Begriffe'
+    courses_with_similar_titles: >
+      Du könntest es mit folgenden Volltext-Suchbegriffen probieren und die
+      Suche anschließend neu starten:
   errors:
     profile:
       passphrase: 'Falscher Zugangsschlüssel'

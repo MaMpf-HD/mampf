@@ -78,6 +78,10 @@ class ProfileController < ApplicationController
 
   def subscribe_teachable
     @success = false
+    if !@teachable.published? && !@teachable.edited_by?(current_user)
+      @unpublished = true
+      return
+    end
     return if @teachable.is_a?(Lecture) && @teachable.passphrase.present? &&
                 !@teachable.in?(current_user.lectures) &&
                 @teachable.passphrase != @passphrase
@@ -99,9 +103,7 @@ class ProfileController < ApplicationController
       when 'collapseInactiveLectures' then current_user.inactive_lectures
                                                        .includes(:course, :term)
                                                        .sort
-      when 'collapseAllCurrent' then Lecture.published.in_current_term
-                                            .includes(:course, :term).sort +
-                                       Lecture.where(term: nil).sort
+      when 'collapseAllCurrent' then current_user.current_subscribable_lectures
     end
     @link = @collapse_id.remove('collapse').camelize(:lower) + 'Link'
   end

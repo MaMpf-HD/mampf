@@ -7,6 +7,8 @@ $card.empty()
                                   subscribed: true,
                                   parent: @parent } %>')
 $('#subscriptionModal').modal('hide')
+<% elsif @unpublished %>
+alert('<%= t("admin.lecture.no_rights") %>')
 <% else %>
 $('#subscriptionModal').modal('show')
 <% if @passphrase %>

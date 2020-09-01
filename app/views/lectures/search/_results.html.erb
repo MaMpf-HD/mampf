@@ -23,6 +23,16 @@
   <div class="row">
     <div class="col-12 text-center">
       <%= t('basics.no_hits') %>
+      <% if @similar_titles&.any? %>
+        <%= t('search.alternative') %>
+        <%= t('search.courses_with_similar_titles') %>
+        <% @similar_titles.each do |t| %>
+          <span class="badge badge-secondary clickable courseAlternativeSearch"
+                data-title="<%= t %>">
+            <%= t %>
+          </span>
+        <% end %>
+      <% end %>
     </div>
   </div>
 <% end %>

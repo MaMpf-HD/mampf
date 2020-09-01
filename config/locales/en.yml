@@ -333,6 +333,7 @@ en:
       new_notifications: 'new notifications'
       new_media: 'new media'
       new_posts: 'new forum posts'
+      no_rights: 'You are not authorized to subscribe this event series.'
       info:
         course: >
           Here you can select the course to which this event series belongs.

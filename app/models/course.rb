@@ -435,6 +435,15 @@ class Course < ApplicationRecord
     "#{image.metadata['width']}x#{image.metadata['height']}"
   end
 
+  # returns all courses whose title is close to the given search string
+  # wrt to the JaroWinkler metric
+  def self.similar_courses(search_string)
+    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
+    titles = Course.pluck(:title)
+    titles.select { |t| jarowinkler.getDistance(t.downcase,
+                                                search_string.downcase) > 0.8 }
+  end
+
   private
 
   # looks in the cache if there are any media associated *without_inheritance*

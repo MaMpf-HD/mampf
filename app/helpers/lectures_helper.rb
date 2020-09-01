@@ -96,4 +96,9 @@ module LecturesHelper
     return 'fas fa-check-circle' if subscribed
     'far fa-circle'
   end
+
+  def lecture_border(lecture)
+    return '' if lecture.published?
+    'border-danger'
+  end
 end
