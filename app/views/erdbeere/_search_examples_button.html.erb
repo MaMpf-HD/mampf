@@ -1,4 +1,3 @@
-<% course = Course.includes(lectures: [:term]).find_by_id(course_id_from_cookie) || Course.first %>
 <% lecture = Lecture.includes(:course).find_by_id(params[:lecture_id]) %>
 <% lecture = nil unless lecture&.id.in?(current_user.lecture_ids) %>
 <% lecture ||= Lecture.includes(:course).find_by_id(cookies[:current_lecture]) %>

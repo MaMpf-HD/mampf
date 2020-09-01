@@ -4,12 +4,12 @@ class MainController < ApplicationController
                                                  :sponsors]
   before_action :check_for_consent
   authorize_resource class: false, only: :start
+  layout 'application_no_sidebar'
 
   def home
     if user_signed_in?
       cookies[:locale] = current_user.locale
     end
-    render layout: 'application_no_sidebar'
   end
 
   def error
@@ -19,11 +19,9 @@ class MainController < ApplicationController
   def news
     @announcements = Announcement.where(lecture: nil).order(:created_at)
                                  .reverse
-    render layout: 'application_no_sidebar'
   end
 
   def sponsors
-    render layout: 'application_no_sidebar'
   end
 
   def comments
@@ -34,7 +32,6 @@ class MainController < ApplicationController
     end
     @media_array = Kaminari.paginate_array(@media_comments)
                            .page(params[:page]).per(10)
-    render layout: 'application_no_sidebar'
   end
 
   def start
@@ -43,8 +40,6 @@ class MainController < ApplicationController
       @inactive_lectures = current_user.inactive_lectures.includes(:course, :term)
                                        .sort
     end
-
-    render layout: 'application_no_sidebar'
   end
 
   private

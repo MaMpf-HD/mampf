@@ -1,5 +1,12 @@
 # ApplicationHelper module
 module ApplicationHelper
+
+  #returns the path that is associated to the MaMpf brand in the navbar
+  def home_path
+    return start_path if user_signed_in?
+    root_path(params: { locale: I18n.locale})
+  end
+
   # Returns the complete url for the media upload folder if in production
   def host
     Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['MEDIA_FOLDER'] : ''
@@ -137,14 +144,6 @@ module ApplicationHelper
     tail = groups.pop(diff).first(diff).flatten
     groups.last.concat(tail)
     groups
-  end
-
-  # Determines current course id form cookie.
-  # Is used for the rendering of the sidebar.
-  def course_id_from_cookie
-    return cookies[:current_course].to_i unless cookies[:current_course].nil?
-    return if current_user.nil?
-    return current_user.courses.first.id unless current_user.courses.empty?
   end
 
   # returns true for 'media#enrich' action

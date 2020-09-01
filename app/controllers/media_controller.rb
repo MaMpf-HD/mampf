@@ -14,7 +14,6 @@ class MediaController < ApplicationController
   layout 'administration'
 
   def index
-    cookies[:current_course] = params[:course_id]
     cookies[:current_lecture] = params[:lecture_id]
     @media = paginated_results
     render layout: 'application'

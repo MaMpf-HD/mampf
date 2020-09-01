@@ -46,7 +46,6 @@ class CoursesController < ApplicationController
   end
 
   def show
-    cookies[:current_course] = @course.id
     # deactivate http caching for the moment
     # "refused to execute script because its mime type is not executable
     #  error in Chrome"...

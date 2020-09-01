@@ -29,13 +29,11 @@ class ProfileController < ApplicationController
                     email_for_teachable: @email_for_teachable,
                     email_for_announcement: @email_for_announcement,
                     email_for_news: @email_for_news,
-                    new_design: @new_design,
                     locale: @locale,
                     edited_profile: true)
       # remove notifications that have become obsolete
       clean_up_notifications
-      # update course and lecture cookies
-      update_course_cookie
+      # update lecture cookie
       update_lecture_cookie
       I18n.locale = @locale
       cookies[:locale] = @locale
@@ -121,7 +119,6 @@ class ProfileController < ApplicationController
     @email_for_announcement = params[:user][:email_for_announcement] == '1'
     @email_for_teachable = params[:user][:email_for_teachable] == '1'
     @email_for_news = params[:user][:email_for_news] == '1'
-    @new_design = params[:user][:new_design] == '1'
     @lectures = Lecture.where(id: lecture_ids)
     @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
     @locale = params[:user][:locale]
@@ -154,13 +151,6 @@ class ProfileController < ApplicationController
       n.teachable.present? && !n.teachable.in?(subscribed_teachables)
     end
     Notification.where(id: irrelevant_notifications.map(&:id)).delete_all
-  end
-
-  # if user unsubscribed the course to which the course cookie refers to,
-  # update the course cookie to contain the first of the user's courses
-  def update_course_cookie
-    return if @user.courses.map(&:id).include?(cookies[:current_course].to_i)
-    cookies[:current_course] = @courses&.first&.id
   end
 
   # if user unsubscribed the lecture the current lecture cookie refers to,

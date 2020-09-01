@@ -38,7 +38,6 @@ class LecturesController < ApplicationController
   end
 
   def show
-    cookies[:current_course] = @lecture.course.id
     cookies[:current_lecture] = @lecture.id
     # deactivate http caching for the moment
     if stale?(etag: @lecture,
@@ -160,7 +159,6 @@ class LecturesController < ApplicationController
 
   def organizational
     cookies[:current_lecture] = @lecture.id
-    cookies[:current_course] = @lecture.course.id
     I18n.locale = @lecture.locale_with_inheritance
     render layout: 'application'
   end

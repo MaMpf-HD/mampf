@@ -1,0 +1,8 @@
+<li class="nav-item">
+  <% if current_lecture &&
+          !(controller_name == 'main' && action_name == 'start') %>
+    <%= link_to current_lecture.title_for_viewers,
+                current_lecture,
+                class: 'btn btn-primary text-light' %>
+  <% end %>
+</li>

@@ -42,13 +42,11 @@ class ApplicationController < ActionController::Base
     # see https://github.com/heartcombo/devise/wiki/How-To:-Redirect-back-to-current-page-after-sign-in,-sign-out,-sign-up,-update
     # see https://www.rubydoc.info/github/plataformatec/devise/Devise%2FControllers%2FHelpers:after_sign_in_path_for
     stored = stored_location_for(resource_or_scope)
-    target = if stored.present? && stored != super
-               stored
-             elsif resource_or_scope.new_design
-               start_path
-             else
-               super
-             end
+    if stored.present? && stored != super
+      stored
+    else
+      start_path
+    end
   end
 
 #  def self.default_url_options(options={})

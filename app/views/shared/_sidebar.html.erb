@@ -1,6 +1,7 @@
+<% lecture = @lecture %>
 <% lecture ||= Lecture.includes(:course).find_by_id(params[:lecture_id]) %>
-<% lecture = nil unless lecture&.id.in?(current_user.lecture_ids) %>
 <% lecture ||= Lecture.includes(:course).find_by_id(cookies[:current_lecture]) %>
+<% course = @course || lecture.course %>
 <% I18n.with_locale(lecture&.locale_with_inheritance || course.locale) do %>
 <% if lecture && lecture.in?(current_user.lectures) &&
         course.subscribed_lectures(current_user).count > 1 %>

@@ -11,18 +11,7 @@ class AdministrationController < ApplicationController
   end
 
   def exit
-    if current_user.new_design
-      redirect_to start_path
-      return
-    end
-    course_id = cookies[:current_course]
-    # redirect to course view of the course that was selected
-    # before admin mode was entered
-    if course_id.present?
-      redirect_to course_path(course_id)
-      return
-    end
-    redirect_to root_path
+    redirect_to start_path
   end
 
   def profile
