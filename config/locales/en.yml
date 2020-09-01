@@ -1993,6 +1993,10 @@ en:
     settings: 'profile settings'
     alternative: 'Did you mean something else?'
     similar: 'Tags similar to %{search_string}'
+    courses_with_similar_titles: >
+      You might try the following fulltext terms and start the search again.
+    click_and_paste: >
+      If you click this term, it will be copied to the "fulltext" field.
   errors:
     profile:
       passphrase: 'Incorrect pass phrase'

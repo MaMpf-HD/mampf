@@ -28,7 +28,10 @@
         <%= t('search.courses_with_similar_titles') %>
         <% @similar_titles.each do |t| %>
           <span class="badge badge-secondary clickable courseAlternativeSearch"
-                data-title="<%= t %>">
+                data-title="<%= t %>"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="<%= t('search.click_and_paste') %>">
             <%= t %>
           </span>
         <% end %>

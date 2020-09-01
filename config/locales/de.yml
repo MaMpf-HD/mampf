@@ -2125,6 +2125,8 @@ de:
     courses_with_similar_titles: >
       Du könntest es mit folgenden Volltext-Suchbegriffen probieren und die
       Suche anschließend neu starten:
+    click_and_paste: >
+      Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
   errors:
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
