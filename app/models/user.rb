@@ -129,7 +129,8 @@ class User < ApplicationRecord
   # returns ARel of all those tags from the given tags that belong to
   # the user's related lectures
   def filter_tags(tags)
-    Tag.where(id: tags.select { |t| t.in_lectures?(related_lectures) }
+    Tag.where(id: tags.select { |t| t.in_lectures?(related_lectures) ||
+                                      t.in_courses?(related_courses) }
                       .map(&:id))
   end
 
