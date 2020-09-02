@@ -482,14 +482,25 @@ class MediaController < ApplicationController
     search_arel = Medium.where(id: search_results.pluck(:id))
     visible_search_results = current_user.filter_visible_media(search_arel)
     search_results &= visible_search_results
+    total = search_results.size
     # add imported media in case of a lecture
     if params[:lecture_id].present?
       @lecture = Lecture.find_by_id(params[:lecture_id])
       # filter out stuff from course level for generic users
-      unless current_user.admin || @lecture.edited_by?(current_user)
-        lecture_tags = @lecture.tags_including_media_tags
-        search_results.reject! do |m|
-          m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
+      if params[:visibility] == 'lecture'
+        search_results.reject! { |m| m.teachable_type == 'Course' }
+        # yields only lecture media and course media
+      elsif params[:visibility] == 'all'
+        # yields all lecture media and course media
+      else
+        # this is the default setting: 'thematic' selection of media
+        # yields all lecture media and course media whose tags have
+        # already been dealt with in the lecture
+        unless current_user.admin || @lecture.edited_by?(current_user)
+          lecture_tags = @lecture.tags_including_media_tags
+          search_results.reject! do |m|
+            m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
+          end
         end
       end
       sort = params[:project] == 'keks' ? 'Quiz' : params[:project]&.capitalize
@@ -497,6 +508,7 @@ class MediaController < ApplicationController
                                  .where(sort: sort)
                                  .locally_visible
       search_results.uniq!
+      @hidden = search_results.empty? && total.positive?
     end
     return search_results unless params[:reverse]
     search_results.reverse

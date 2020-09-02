@@ -650,7 +650,7 @@ class Lecture < ApplicationRecord
   end
 
   # looks in the cache if there are any media associated *with inheritance*
-  # to this lecture and a given project (kaviar, semsam etc.)
+  # to this lecture and a given project (kaviar, sesam etc.)
   def project_as_user?(project)
     Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
       Medium.where(sort: medium_sort[project],
@@ -659,12 +659,9 @@ class Lecture < ApplicationRecord
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: lessons).exists? ||
-      Medium.includes(:tags)
-            .where(sort: medium_sort[project],
+      Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
-                   teachable: course)
-            .select { |m| (m.tags & tags).any? }
-            .any?
+                   teachable: course).exists?
     end
   end
 

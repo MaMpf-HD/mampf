@@ -1768,6 +1768,12 @@ en:
     unpublished: 'This medium is unpublished.'
     locked: 'This medium is locked.'
     imported: 'This medium has been imported.'
+    theme_based: 'theme based'
+    lecture_only: 'only event series'
+    improve_visibility: >
+      By setting the visibility to "all" you can see media at the level of the
+      course %{course} whose cxontents have not yet been treated in the current
+      event series.
     waiting_for_tag: >
       This medium ist situated at course level and refers to tags,
       that have not (yet) been treated in the current event series.
@@ -1775,6 +1781,36 @@ en:
       moment. It will become visible for subscribers as soon as at least one
       tag of this medium will be assciated to at least one section of this
       lecture or to a published medium associated to this event series.
+    info:
+      visibility_html: >
+        Here you can adjust which media will be displayed. You have the
+        following options
+        <ul>
+        <li>
+        <i>
+        theme based:
+        </i>
+        This is the default setting and also the recommended setting.
+        All media from the current event series will be displayed.
+        Furthermore, all media that are associated to the course
+        will be displayed (which should fit, no matter who the teacher of the
+        event series is), but only those whose content has already been
+        treated in the current event series.
+        </li>
+        <li>
+        <i>
+        only event series:
+        </i>
+        All media from the current event series will be displayed.
+        </li>
+        <li>
+        <i>
+        all:
+        </i>
+        All media from the current event series and all media associated to the
+        course will be displayed.
+        </li>
+        </ul>
   video:
     video: 'Video'
     no_video: 'There is no video present.'
@@ -2094,6 +2130,7 @@ en:
     thread_subscribed: Subscribed
     who_and_when: '%{when} ago by %{who}'
     comment_verb: Add Comment
+    no_comments: There are no new comments.
     media_comments: >
       Number of media in your subscribed courses and event series
       for which there are new comments for %{count}:
@@ -2292,6 +2329,7 @@ en:
     unsubscribe: 'Unsubscribe'
     subscribe: 'Subscribe'
     programs: 'Programs'
+    visibility: 'Visibility'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

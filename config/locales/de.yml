@@ -1883,13 +1883,50 @@ de:
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
     locked: 'Dieses Medium ist gesperrt.'
     imported: 'Dieses Medium wurde importiert.'
+    theme_based: 'thematisch'
+    lecture_only: 'nur Vorlesung'
+    improve_visibility: >
+      Indem du die Sichtbarkeit auf "alle" stellst, kannst du auch Medien
+      anzeigen, die auf der Ebene des Moduls %{course} angesiedelt sind,
+      deren Inhalte in der aktuellen Vorlesung aber noch nicht behandelt wurden.
     waiting_for_tag: >
       Dieses Medium ist auf Modulebene angesiedelt und bezieht sich auf Tags,
       die in der vorliegenden Veranstaltung (noch) nicht behandelt wurden.
       Es ist für AbonnentInnen dieser Veranstaltung deshalb im Augenblick nicht
-      sichtbar. Es wird erst dann sichtbar, wenn mindestens einer der
+      sichtbar in der Sichtbarkeits-Standardeinstellung "thematisch".
+      Es wird in dieser erst dann sichtbar, wenn mindestens einer der
       assoziierten Tags in einem Abschnitt dieser Vorlesung auftaucht oder
       zu einem veröffentlichten Medium auf Veranstaltungsebene assoziiert ist.
+    info:
+      visibility_html: >
+        Hier kannst Du einstellen, welche Medien angezeigt werden sollen.
+        Du hast die folgenden Möglichkeiten:
+        <ul>
+        <li>
+        <i>
+        thematisch:
+        </i>
+        Das ist die Standardeinstellung und auch die empfohlene
+        Einstellung. Du bekommst alle Medien aus der aktuellen Veranstaltun
+        angezeigt. Darüber hinaus werden Medien angezeigt, die zu dem Modul
+        gehören (die also unabhängig davon, wer die Veranstaltung hält, passen
+        sollten), jedoch nur solche, deren Inhalt bereits in der aktuellen
+        Veranstaltung behandelt wurde.
+        </li>
+        <li>
+        <i>
+        nur Vorlesung:
+        </i>
+        Du bekommst alle Medien aus der aktuellen Veranstaltung angezeigt.
+        </li>
+        <li>
+        <i>
+        alle:
+        </i>
+        Du bekommst alle Medien aus der aktuellen Veranstaltung und alle Medien,
+        die zu dem Modul gehören, angezeigt.
+        </li>
+        </ul>
   video:
     video: 'Video'
     play: 'THymE-Player'
@@ -2227,6 +2264,7 @@ de:
     thread_subscribed: Abo
     who_and_when: vor %{when} von %{who}
     comment_verb: Kommentieren
+    no_comments: Es liegen keine neuen Kommentare vor.
     media_comments: >
       Anzahl der Medien in von den von Dir abonnierten
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
@@ -2430,6 +2468,7 @@ de:
     unsubscribe: 'abbestellen'
     subscribe: 'abonnieren'
     programs: 'Studiengänge'
+    visibility: 'Sichtbarkeit'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
