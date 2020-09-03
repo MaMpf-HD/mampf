@@ -84,7 +84,7 @@ class Lecture < ApplicationRecord
     integer :teacher_id
     string :sort
     text :text do
-      course.title
+      "#{course.title} #{course.short_title}"
     end
     integer :program_ids, multiple: true do
       course.divisions.pluck(:program_id).uniq
