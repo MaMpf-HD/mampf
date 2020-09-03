@@ -7,6 +7,11 @@ module ApplicationHelper
     root_path(params: { locale: I18n.locale})
   end
 
+  # get current lecture from session object
+  def current_lecture
+    Lecture.find_by_id(cookies[:current_lecture_id])
+  end
+
   # Returns the complete url for the media upload folder if in production
   def host
     Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['MEDIA_FOLDER'] : ''

@@ -109,8 +109,6 @@ Rails.application.routes.draw do
                                  as: 'unlock_forum'
   get 'lectures/:id/destroy_forum', to: 'lectures#destroy_forum',
                                  as: 'destroy_forum'
-  get 'lectures/:id/render_sidebar', to: 'lectures#render_sidebar',
-                                     as: 'render_sidebar'
   get 'lectures/:id/show_announcements', to: 'lectures#show_announcements',
                                          as: 'show_announcements'
   get 'lectures/:id/organizational', to: 'lectures#organizational',

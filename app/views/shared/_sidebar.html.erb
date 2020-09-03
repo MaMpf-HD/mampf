@@ -1,10 +1,6 @@
-<% lecture = @lecture %>
-<% lecture ||= Lecture.includes(:course).find_by_id(params[:lecture_id]) %>
-<% lecture ||= Lecture.includes(:course).find_by_id(cookies[:current_lecture]) %>
-<% course = @course || lecture.course %>
-<% I18n.with_locale(lecture&.locale_with_inheritance || course.locale) do %>
+<% I18n.with_locale(lecture&.locale_with_inheritance) do %>
 <% if lecture && lecture.in?(current_user.lectures) &&
-        course.subscribed_lectures(current_user).count > 1 %>
+        lecture.course.subscribed_lectures(current_user).count > 1 %>
   <ul class="navbar-nav"
       id="termDropdown">
     <li class="nav-item">
@@ -25,7 +21,7 @@
                 data-toggle="dropdown">
         </button>
         <div class="dropdown-menu">
-          <% (course.subscribed_lectures(current_user) - [lecture]).each do |l| %>
+          <% (lecture.course.subscribed_lectures(current_user) - [lecture]).each do |l| %>
             <%= link_to lecture_path(l),
                         class: 'dropdown-item' do %>
               <%= l.title_term_short %>
@@ -45,8 +41,7 @@
 <% end %>
 <ul class="nav nav-pills flex-column">
   <li class="nav-item">
-    <% if (lecture && !lecture.kaviar?(current_user)) ||
-          (!lecture && !course.kaviar?(current_user)) %>
+    <% if !lecture || !lecture.kaviar?(current_user) %>
       <span class="nav-link disabled">
         <%= t('categories.kaviar.plural') %>
       </span>
@@ -59,8 +54,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.script?(current_user)) ||
-          (!lecture && !course.script?(current_user)) %>
+    <% if !lecture || !lecture.script?(current_user) %>
       <span class="nav-link disabled">
         <%= t('categories.script.singular') %>
       </span>
@@ -72,8 +66,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.nuesse?(current_user)) ||
-          (!lecture && !course.nuesse?(current_user)) %>
+    <% if !lecture || !lecture.nuesse?(current_user) %>
       <span class="nav-link disabled">
         <%= t('categories.exercises.plural') %>
       </span>
@@ -86,8 +79,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.keks?(current_user)) ||
-            (!lecture && !course.keks?(current_user)) %>
+    <% if !lecture || !lecture.keks?(current_user) %>
       <span class="nav-link disabled">
         <%= t('categories.quiz.plural') %>
       </span>
@@ -99,7 +91,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if !course.enough_questions? %>
+    <% if !lecture || !lecture.course.enough_questions? %>
       <span class="nav-link disabled">
         <%= t('categories.test.singular') %>
       </span>
@@ -110,8 +102,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.sesam?(current_user)) ||
-            (!lecture && !course.sesam?(current_user)) %>
+    <% if !lecture || !lecture.sesam?(current_user) %>
       <span class="nav-link disabled">
         <%= t('categories.sesam.plural') %>
       </span>
@@ -123,19 +114,18 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if lecture && lecture.structure_ids.any? %>
-      <%= link_to t('categories.erdbeere.singular'),
-                  show_structures_path(lecture),
-                  class: 'nav-link' %>
-    <% else %>
+    <% if !lecture || !lecture.structure_ids.any? %>
       <span class="nav-link disabled">
         <%= t('categories.erdbeere.singular') %>
       </span>
+    <% else %>
+      <%= link_to t('categories.erdbeere.singular'),
+                  show_structures_path(lecture),
+                  class: 'nav-link' %>
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.kiwi?(current_user)) ||
-         (!lecture && !course.kiwi?(current_user)) %>
+    <% if !lecture || !lecture.kiwi?(current_user) %>
       <span class="nav-link disabled">
         <%= t('categories.kiwi.singular') %>
       </span>
@@ -147,8 +137,7 @@
     <% end %>
   </li>
   <li class="nav-item">
-    <% if (lecture && !lecture.reste?(current_user)) ||
-         (!lecture && !course.reste?(current_user)) %>
+    <% if !lecture || !lecture.reste?(current_user) %>
       <span class="nav-link disabled">
         <%= t('categories.reste.singular') %>
       </span>

@@ -9,7 +9,8 @@
       <div class="row">
         <nav id="sidebar"
              class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
-          <%= render partial: 'shared/sidebar' %>
+          <%= render partial: 'shared/sidebar',
+                     locals: { lecture: @lecture || current_lecture } %>
         </nav>
         <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
           <div class="alert alert-danger" id="js-messages" role="alert"

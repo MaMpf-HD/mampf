@@ -2,6 +2,8 @@
 class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
   before_action :set_lecture, except: [:new, :create, :search]
+  before_action :set_lecture_cookie, only: [:show, :organizational,
+                                            :show_announcements]
   before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
   authorize_resource
   before_action :check_for_consent
@@ -40,7 +42,6 @@ class LecturesController < ApplicationController
   end
 
   def show
-    cookies[:current_lecture] = @lecture.id
     # deactivate http caching for the moment
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at,
@@ -115,10 +116,6 @@ class LecturesController < ApplicationController
     redirect_to administration_path
   end
 
-  def render_sidebar
-    @course = @lecture.course
-  end
-
   # add forum for this lecture
   def add_forum
     unless @lecture.forum?
@@ -160,7 +157,6 @@ class LecturesController < ApplicationController
   end
 
   def organizational
-    cookies[:current_lecture] = @lecture.id
     I18n.locale = @lecture.locale_with_inheritance
     render layout: 'application'
   end
@@ -247,6 +243,10 @@ class LecturesController < ApplicationController
     @lecture = Lecture.find_by_id(params[:id])
     return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
+  def set_lecture_cookie
+    cookies[:current_lecture_id] = @lecture.id
   end
 
   def set_view_locale

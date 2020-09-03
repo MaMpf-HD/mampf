@@ -156,7 +156,7 @@ class ProfileController < ApplicationController
   # set the lectures cookie to nil
   def update_lecture_cookie
     unless @current_lecture.in?(@user.lectures)
-      cookies[:current_lecture] = nil
+      cookies[:current_lecture_id] = nil
     end
   end
 

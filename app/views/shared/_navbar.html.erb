@@ -92,8 +92,7 @@
       <% unless current_user.courses.empty? %>
         <ul class="navbar-nav mr-auto" id="lectureButton">
           <%= render partial: 'shared/lecture_button',
-                     locals: { current_lecture:
-                                 Lecture.find_by_id(cookies[:current_lecture]) } %>
+                     locals: { current_lecture: @lecture || current_lecture } %>
         </ul>
       <% end %>
       <%= render partial: 'shared/dropdown_notifications'%>

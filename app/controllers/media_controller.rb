@@ -14,7 +14,6 @@ class MediaController < ApplicationController
   layout 'administration'
 
   def index
-    cookies[:current_lecture] = params[:lecture_id]
     @media = paginated_results
     render layout: 'application'
   end
@@ -422,7 +421,11 @@ class MediaController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
-    return if @lecture.present?
+    # store curent lecture in cookie
+    if @lecture
+      cookies[:current_lecture_id] = @lecture.id
+      return
+    end
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 

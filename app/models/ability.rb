@@ -39,7 +39,7 @@ class Ability
       end
 
       # anyone should be able to get a sidebar and see the announcements
-      can [:render_sidebar, :organizational, :show_announcements,
+      can [:organizational, :show_announcements,
            :show_structures, :search_examples, :search, :show_random_quizzes,
            :display_course],
           Lecture
@@ -155,8 +155,7 @@ class Ability
       cannot [:index, :update, :create], Tag
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
       can :teacher, User
-      # anyone should be able to get a sidebar and see the announcements
-      can [:render_sidebar, :show_announcements, :organizational,
+      can [:show_announcements, :organizational,
            :show_structures, :search_examples, :search, :show_random_quizzes,
            :display_course],
           Lecture
