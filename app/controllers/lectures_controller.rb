@@ -263,6 +263,7 @@ class LecturesController < ApplicationController
                                     :start_chapter, :absolute_numbering,
                                     :start_section, :organizational, :locale,
                                     :organizational_concept, :muesli,
+                                    :organizational_on_top,
                                     :content_mode, :passphrase, :sort,
                                     :comments_disabled,
                                     editor_ids: [])

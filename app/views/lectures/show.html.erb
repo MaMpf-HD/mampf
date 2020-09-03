@@ -39,9 +39,17 @@
     </div>
   <% end %>
   <% cache @lecture do %>
-    <div class="col-12">
-      <%= render partial: 'lectures/show/content',
-                 locals: { lecture: @lecture } %>
-    </div>
+    <% if @lecture.term ||  !@lecture.organizational ||
+            !@lecture.organizational_on_top %>
+      <div class="col-12">
+        <%= render partial: 'lectures/show/content',
+                   locals: { lecture: @lecture } %>
+      </div>
+    <% else %>
+      <div class="col-12">
+        <%= render partial: 'lectures/organizational/organizational',
+             locals: { lecture: @lecture } %>
+      </div>
+    <% end %>
   <% end %>
 </div>

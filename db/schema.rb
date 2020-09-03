@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_03_105622) do
+ActiveRecord::Schema.define(version: 2020_09_03_152249) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -263,6 +263,7 @@ ActiveRecord::Schema.define(version: 2020_09_03_105622) do
     t.integer "forum_id"
     t.text "structure_ids"
     t.boolean "comments_disabled"
+    t.boolean "organizational_on_top"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end

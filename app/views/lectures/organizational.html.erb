@@ -1,14 +1,2 @@
-<div class="row mb-2">
-  <div class="col-12">
-    <div class="card">
-      <div class="card-header">
-        <h4>
-          <%= t('categories.organizational_html') %>
-        </h4>
-      </div>
-      <div class="card-body" id="organizationalCardBody">
-        <%= @lecture.organizational_concept&.html_safe %>
-      </div>
-    </div>
-  </div>
-</div>
+<%= render partial: 'lectures/organizational/organizational',
+           locals: { lecture: @lecture } %>

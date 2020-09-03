@@ -469,6 +469,9 @@ de:
           stehende Text. Als Vorschlag gibt es von uns einen
           Mustertext, den Du beliebig editieren kannst
           (und solltest).
+        organizational_on_top: >
+          Wenn du diesen Haken setzt, wird die Seite "Organisatorisches"
+          als Startseite für diese Veranstaltung erscheinen.
         muesli: >
           Wenn Du diesen Haken setzt, wird in der
           Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
@@ -576,6 +579,7 @@ de:
         eingetragen.
       imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
+      organizational_on_top: 'Organisatorisches als Startseite'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
       first_chapter: 'Nummer des ersten Kapitels/Vortrags'
       first_section: 'Nummer des ersten Abschnitts'

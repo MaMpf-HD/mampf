@@ -439,6 +439,9 @@ en:
           the sidebar).
           The text they see will be the text below. As a suggestion, we have
           a default text that you may edit as you wish.
+        organizational_on_top: >
+          If you check this box, the page for general information will be the
+          starting page for this event series.
         muesli: >
           If you check this box, the link to MUESLI will be activated in the
           sidebar for this event series.
@@ -540,6 +543,7 @@ en:
         There are no additional event series editors.
       imported_media: 'Imported Media'
       organizational_visible: 'General information visible'
+      organizational_on_top: 'General Information as start page'
       uses_muesli: 'Event series uses MUESLI'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'

@@ -37,7 +37,6 @@
                             t('admin.lecture.organizational_visible'),
                             { class: 'custom-control-label' } %>
                 <%= helpdesk(t('admin.lecture.info.organizational'), false) %>
-                </i>
               </div>
             </div>
             <div class="col-6">
@@ -51,6 +50,20 @@
                 <%= helpdesk(t('admin.lecture.info.muesli'), false) %>
               </div>
             </div>
+            <% if !lecture.term && lecture.organizational %>
+              <div class="col-6">
+                <div class="custom-control custom-checkbox">
+                  <%= f.check_box :organizational_on_top,
+                                  class: 'custom-control-input',
+                                  disabled: inspection %>
+                  <%= f.label :organizational_on_top,
+                              t('admin.lecture.organizational_on_top'),
+                                { class: 'custom-control-label' } %>
+                  <%= helpdesk(t('admin.lecture.info.organizational_on_top'),
+                               false) %>
+                </div>
+              </div>
+            <% end %>
           </div>
           <div class="row">
             <div class="col-12">
