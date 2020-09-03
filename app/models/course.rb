@@ -45,10 +45,6 @@ class Course < ApplicationRecord
   after_save :touch_media
   after_save :touch_lectures_and_lessons
 
-  # if the course is destroyed, its forum (if existent) should be destroyed
-  # as well
-  before_destroy :destroy_forum
-
   # include uploader to realize screenshot upload
   # this makes use of the shrine gem
   include ScreenshotUploader[:image]
@@ -109,8 +105,6 @@ class Course < ApplicationRecord
   end
 
   def card_header_path(user)
-    return unless user.courses.include?(self)
-    course_path
   end
 
   # only irrelevant courses can be deleted
@@ -386,30 +380,6 @@ class Course < ApplicationRecord
                  .map { |t| { value: t[:id], text: t[:title] } }
   end
 
-  def forum_title
-    "#{title} [#{I18n.t('basics.course')}]"
-  end
-
-  def forum?
-    forum_id.present?
-  end
-
-  def forum
-    Thredded::Messageboard.find_by_id(forum_id)
-  end
-
-  # extract how many posts in the course's forum have not been read
-  # by the user
-  def unread_forum_topics_count(user)
-    return unless forum?
-    forum_relation = Thredded::Messageboard.where(id: forum_id)
-    forum_view =
-      Thredded::MessageboardGroupView.grouped(forum_relation,
-                                              user: user,
-                                              with_unread_topics_counts: true)
-    forum_view.first.messageboards.first.unread_topics_count
-  end
-
   def image_url_with_host
     return unless image
     image_url(host: host)
@@ -468,10 +438,6 @@ class Course < ApplicationRecord
       'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste'] }
   end
 
-  def course_path
-    Rails.application.routes.url_helpers.course_path(self)
-  end
-
   def touch_media
     media_with_inheritance.update_all(updated_at: Time.now)
   end
@@ -484,10 +450,5 @@ class Course < ApplicationRecord
   def touch_lectures_and_lessons
     lectures.update_all(updated_at: Time.now)
     Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
-  end
-
-  def destroy_forum
-    return unless forum
-    forum.destroy
   end
 end

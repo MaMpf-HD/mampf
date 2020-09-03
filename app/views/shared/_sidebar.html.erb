@@ -52,10 +52,9 @@
       </span>
     <% else %>
       <%= link_to t('categories.kaviar.plural'),
-                  course_food_path(course_id: course.id,
-                                   params:
-                                     { project: 'kaviar',
-                                       lecture_id: lecture&.id }),
+                  lecture_food_path(lecture,
+                                    params:
+                                      { project: 'kaviar' }),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -67,9 +66,8 @@
       </span>
     <% else %>
       <%= link_to t('categories.script.singular'),
-                  course_food_path(course_id: course.id,
-                                   params: { project: 'script',
-                                             lecture_id: lecture&.id }),
+                  lecture_food_path(lecture,
+                                    params: { project: 'script' }),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -81,10 +79,9 @@
       </span>
     <% else %>
       <%= link_to t('categories.exercises.plural'),
-                  course_food_path(course_id: course.id,
-                                   params:
-                                     { project: 'nuesse',
-                                       lecture_id: lecture&.id }),
+                  lecture_food_path(lecture,
+                                    params:
+                                      { project: 'nuesse' }),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -96,9 +93,8 @@
       </span>
     <% else %>
       <%= link_to t('categories.quiz.plural'),
-                    course_food_path(course_id: course.id,
-                                     params: { project: 'keks',
-                                               lecture_id: lecture&.id }),
+                    lecture_food_path(lecture,
+                                      params: { project: 'keks' }),
                     class: 'nav-link' %>
     <% end %>
   </li>
@@ -109,8 +105,7 @@
       </span>
     <% else %>
       <%= link_to t('categories.test.singular'),
-                  show_random_quizzes_path(course,
-                                           params: { lecture_id: lecture&.id }),
+                  show_random_quizzes_path(lecture),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -122,9 +117,8 @@
       </span>
     <% else %>
       <%= link_to t('categories.sesam.plural'),
-                  course_food_path(course_id: course.id,
-                                   params: { project: 'sesam',
-                                             lecture_id: lecture&.id }),
+                  lecture_food_path(lecture,
+                                    params: { project: 'sesam' }),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -147,9 +141,8 @@
       </span>
     <% else %>
       <%= link_to t('categories.kiwi.singular'),
-                  course_food_path(course_id: course.id,
-                                   params: { project: 'kiwi',
-                                             lecture_id: lecture&.id }),
+                  lecture_food_path(lecture,
+                                    params: { project: 'kiwi' }),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -161,9 +154,8 @@
       </span>
     <% else %>
       <%= link_to t('categories.reste.singular'),
-                  course_food_path(course_id: course.id,
-                                   params: { project: 'reste',
-                                             lecture_id: lecture&.id }),
+                  lecture_food_path(lecture,
+                                    params: { project: 'reste' }),
                   class: 'nav-link' %>
     <% end %>
   </li>
@@ -220,26 +212,8 @@
     </li>
     <li class="nav-item">
       <%= link_to t('categories.course'),
-                  display_course_path(lecture.course,
-                                      params: { lecture_id: lecture&.id }),
+                  display_course_path(lecture),
                   class: 'nav-link' %>
-    </li>
-  <% elsif course %>
-    <span class="border-top my-3">
-    </span>
-    <li class="nav-item">
-      <% if !course.forum? %>
-        <span class="nav-link disabled">
-          <%= t('categories.board') %>
-        </span>
-      <% else %>
-        <a href="<%= '/forum/' + course.forum.slug %>"
-           class="nav-link"
-           target="_blank">
-          <%= t('categories.board') %>
-          <i class="fas fa-external-link-alt fa-xs"></i>
-        </a>
-      <% end %>
     </li>
   <% end %>
 </ul>

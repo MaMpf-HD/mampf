@@ -1,14 +1,8 @@
 # CoursesController
 class CoursesController < ApplicationController
-  before_action :check_for_course, only: [:show]
-  before_action :set_course, only: [:show, :display, :take_random_quiz,
-                                    :show_random_quizzes,
-                                    :render_question_counter,
-                                    :add_forum, :lock_forum, :unlock_forum,
-                                    :destroy_forum]
+  before_action :set_course, only: [:take_random_quiz, :render_question_counter]
   before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
-  before_action :check_if_enough_questions, only: [:show_random_quizzes,
-                                                   :take_random_quiz]
+  before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent
   authorize_resource
   layout 'administration'
@@ -45,23 +39,6 @@ class CoursesController < ApplicationController
     @errors = @course.errors
   end
 
-  def show
-    # deactivate http caching for the moment
-    # "refused to execute script because its mime type is not executable
-    #  error in Chrome"...
-    if stale?(etag: @course,
-              last_modified: [current_user.updated_at, @course.updated_at,
-                              Time.parse(ENV['RAILS_CACHE_ID']),
-                              Thredded::UserDetail.find_by(user_id: current_user.id)
-                                                  &.last_seen_at || current_user.updated_at,
-                              @course&.forum&.updated_at || current_user.updated_at].max)
-      cookies[:current_lecture] = nil
-      I18n.locale = @course.locale || I18n.default_locale
-      render layout: 'application'
-      return
-    end
-  end
-
   def inspect
     I18n.locale = @course.locale || I18n.default_locale
   end
@@ -71,21 +48,6 @@ class CoursesController < ApplicationController
     # destroy all notifications related to this course
     destroy_notifications
     redirect_to administration_path
-  end
-
-  def display
-    I18n.locale = @course.locale || I18n.default_locale
-    render layout: 'application'
-  end
-
-  def show_random_quizzes
-    lecture = Lecture.find_by_id(params[:lecture_id])
-    I18n.locale = if lecture
-                    lecture.locale_with_inheritance
-                  else
-                    @course.locale
-                  end
-    render layout: 'application'
   end
 
   def take_random_quiz
@@ -99,43 +61,7 @@ class CoursesController < ApplicationController
     @count = @course.question_count(tags)
   end
 
-  # add forum for this course
-  def add_forum
-    unless @course.forum?
-      forum = Thredded::Messageboard.new(name: @course.forum_title)
-      forum.save
-      @course.update(forum_id: forum.id) if forum.valid?
-    end
-    redirect_to edit_course_path(@course)
-  end
-
-  # lock forum for this course
-  def lock_forum
-    @course.forum.update(locked: true) if @course.forum?
-    @course.touch
-    redirect_to edit_course_path(@course)
-  end
-
-  # unlock forum for this course
-  def unlock_forum
-    @course.forum.update(locked: false) if @course.forum?
-    @course.touch
-    redirect_to edit_course_path(@course)
-  end
-
-  # destroy forum for this lecture
-  def destroy_forum
-    @course.forum.destroy if @course.forum?
-    @course.update(forum_id: nil)
-    redirect_to edit_course_path(@course)
-  end
-
   private
-
-  def check_for_course
-    return if Course.exists?(params[:id])
-    redirect_to :root, alert: I18n.t('controllers.no_course')
-  end
 
   def set_course
     @course = Course.find_by_id(params[:id])

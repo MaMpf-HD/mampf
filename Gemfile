@@ -91,6 +91,7 @@ gem 'acts_as_votable'
 gem 'sprockets-rails',
   git: 'https://github.com/rails/sprockets-rails',
   branch: 'master'
+gem 'premailer-rails'
 
 group :development, :docker_development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -121,5 +122,3 @@ group :test do
   gem 'launchy'
   gem 'simplecov', require: false
 end
-
-gem 'premailer-rails'

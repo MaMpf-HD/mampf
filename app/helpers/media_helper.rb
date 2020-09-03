@@ -43,9 +43,7 @@ module MediaHelper
   def medium_notification_card_header(medium)
     teachable = medium.teachable
     if teachable.media_scope.class.to_s == 'Course'
-      return link_to(teachable.media_scope.title_for_viewers,
-                     course_path(medium.teachable.media_scope),
-                     class: 'text-dark')
+      return teachable.media_scope.title_for_viewers
     end
     link_to(teachable.media_scope.title_for_viewers,
             medium.teachable.media_scope.path(current_user),

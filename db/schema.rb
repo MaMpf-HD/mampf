@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_01_131834) do
+ActiveRecord::Schema.define(version: 2020_09_03_105622) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -147,7 +147,6 @@ ActiveRecord::Schema.define(version: 2020_09_01_131834) do
     t.boolean "organizational"
     t.text "organizational_concept"
     t.text "locale"
-    t.integer "forum_id"
     t.boolean "term_independent", default: false
     t.text "image_data"
   end

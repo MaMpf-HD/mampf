@@ -191,21 +191,17 @@ class Medium < ApplicationRecord
   end
 
   # returns the array of all media subject to the conditions
-  # provided by the params hash (keys: :course_id, :lecture_id, :project)
+  # provided by the params hash (keys: :id, :project)
+  # :id represents the lecture id
   def self.search_all(params)
-    course = Course.find_by_id(params[:course_id])
-    return Medium.none if course.nil?
+    lecture = Lecture.find_by_id(params[:id])
+    return Medium.none if lecture.nil?
     media_in_project = Medium.media_in_project(params[:project])
-    # first case: media sitting at course level (no lecture_id given)
+    # media sitting at course level
     course_media_in_project = media_in_project.includes(:tags)
-                                              .where(teachable: course)
+                                              .where(teachable: lecture.course)
                                               .natural_sort_by(&:caption)
-    unless params[:lecture_id].present?
-      return course_media_in_project
-    end
-    # second case: media sitting at lecture level
-    lecture = Lecture.find_by_id(params[:lecture_id].to_i)
-    return Medium.none unless course.lectures.include?(lecture)
+    # media sitting at lecture level
     # append results at course level to lecture/lesson level results
     lecture.lecture_lesson_results(media_in_project) + course_media_in_project
   end

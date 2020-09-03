@@ -1668,7 +1668,7 @@ en:
     locale: 'Language'
     suscribe_lecture: 'Subscribe event series'
     passphrase_required: >
-      You want to subscribe the event series %{teachable_title}. It is protected
+      You want to subscribe the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
     my_term_html: My Term &ndash; %{term}
     inactive_lectures: Futher subscribed event series

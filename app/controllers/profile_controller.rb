@@ -2,8 +2,8 @@
 class ProfileController < ApplicationController
   before_action :set_user
   before_action :set_basics, only: [:update]
-  before_action :set_teachable, only: [:subscribe_teachable,
-                                       :unsubscribe_teachable]
+  before_action :set_lecture, only: [:subscribe_lecture,
+                                     :unsubscribe_lecture]
 
   def edit
     # ensure that users do not have a blank name and a locale
@@ -74,30 +74,31 @@ class ProfileController < ApplicationController
     end
   end
 
-  def subscribe_teachable
+  def subscribe_lecture
     @success = false
-    if !@teachable.published? && !@teachable.edited_by?(current_user)
+    if !@lecture.published? && !@lecture.edited_by?(current_user)
       @unpublished = true
       return
     end
-    return if @teachable.is_a?(Lecture) && @teachable.passphrase.present? &&
-                !@teachable.in?(current_user.lectures) &&
-                @teachable.passphrase != @passphrase
-    @success = current_user.subscribe_teachable!(@teachable)
+    return if @lecture.passphrase.present? &&
+                !@lecture.in?(current_user.lectures) &&
+                @lecture.passphrase != @passphrase
+    @success = current_user.subscribe_lecture!(@lecture)
   end
 
-  def unsubscribe_teachable
-    @success = current_user.unsubscribe_teachable!(@teachable)
+  def unsubscribe_lecture
+    @success = current_user.unsubscribe_lecture!(@lecture)
     @none_left = case @parent
-      when 'current_subscribed' then current_user.current_teachables.empty?
+      when 'current_subscribed' then current_user.current_subscribed_lectures
+                                                 .empty?
       when 'inactive' then current_user.inactive_lectures.empty?
     end
   end
 
   def show_accordion
     @collapse_id = params[:id]
-    @teachables = case @collapse_id
-      when 'collapseCurrentStuff' then current_user.current_teachables
+    @lectures = case @collapse_id
+      when 'collapseCurrentStuff' then current_user.current_subscribed_lectures
       when 'collapseInactiveLectures' then current_user.inactive_lectures
                                                        .includes(:course, :term)
                                                        .sort
@@ -124,17 +125,15 @@ class ProfileController < ApplicationController
     @locale = params[:user][:locale]
   end
 
-  def set_teachable
-    return unless teachable_params[:type].in?(['Lecture', 'Course'])
-    @teachable = teachable_params[:type]
-                   .constantize.find_by_id(teachable_params[:id])
-    @passphrase = teachable_params[:passphrase]
-    @parent = teachable_params[:parent]
-    redirect_to start_path unless @teachable
+  def set_lecture
+    @lecture = Lecture.find_by_id(lecture_params[:id])
+    @passphrase = lecture_params[:passphrase]
+    @parent = lecture_params[:parent]
+    redirect_to start_path unless @lecture
   end
 
-  def teachable_params
-    params.require(:teachable).permit(:type, :id, :passphrase, :parent)
+  def lecture_params
+    params.require(:lecture).permit(:id, :passphrase, :parent)
   end
 
   # extracts all lecture ids from user params

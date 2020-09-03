@@ -3,25 +3,25 @@
       <ul class="nav">
         <li class="nav-item pr-1">
           <%= link_to t('reverse_order'),
-                      course_food_path(@course,
-                                       params: { project: params[:project],
-                                                 lecture_id: params[:lecture_id],
-                                                 reverse: !params[:reverse],
-                                                 all: params[:all],
-                                                 per: params[:per],
-                                                 visibility: params[:visibility] }),
+                      lecture_food_path(@lecture,
+                                        params: { project: params[:project],
+                                                  lecture_id: params[:lecture_id],
+                                                  reverse: !params[:reverse],
+                                                  all: params[:all],
+                                                  per: params[:per],
+                                                  visibility: params[:visibility] }),
                       class: 'nav-link btn btn-sm bg-grey-lighten-4' %>
         </li>
         <li class="nav-item pl-1 pr-1">
           <% unless @media.page(1).total_pages == 1 || params[:all] %>
             <%= link_to t('all'),
-                        course_food_path(@course,
-                                         params: { project: params[:project],
-                                                   lecture_id: params[:lecture_id],
-                                                   reverse: params[:reverse],
-                                                   all: true,
-                                                   per: params[:per],
-                                                   visibility: params[:visibility] }),
+                        lecture_food_path(@lecture,
+                                          params: { project: params[:project],
+                                                    lecture_id: params[:lecture_id],
+                                                    reverse: params[:reverse],
+                                                    all: true,
+                                                    per: params[:per],
+                                                    visibility: params[:visibility] }),
                         class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
           <% end %>
         </li>
@@ -35,13 +35,13 @@
             <div class="dropdown-menu">
               <% [3,4,8,12,24,48].each do |hits| %>
                 <%= link_to hits.to_s,
-                            course_food_path(@course,
-                                             params: { page: 1,
-                                                       project: params[:project],
-                                                       lecture_id: params[:lecture_id],
-                                                       reverse: params[:reverse],
-                                                       per: hits,
-                                                       visibility: params[:visibility] }),
+                            lecture_food_path(@lecture,
+                                              params: { page: 1,
+                                                        project: params[:project],
+                                                        lecture_id: params[:lecture_id],
+                                                        reverse: params[:reverse],
+                                                        per: hits,
+                                                        visibility: params[:visibility] }),
                             class: ['dropdown-item',
                                     params[:per] == hits ? 'active' : ''] %>
               <% end %>
@@ -59,33 +59,33 @@
             <%= helpdesk(t('medium.info.visibility_html'), true) %>
             <div class="dropdown-menu">
               <%= link_to t('medium.theme_based'),
-                          course_food_path(@course,
-                                           params: { project: params[:project],
-                                                     lecture_id: params[:lecture_id],
-                                                     reverse: params[:reverse],
-                                                     all: params[:all],
-                                                     per: params[:per],
-                                                     visibility: 'thematic' }),
+                          lecture_food_path(@lecture,
+                                            params: { project: params[:project],
+                                                      lecture_id: params[:lecture_id],
+                                                      reverse: params[:reverse],
+                                                      all: params[:all],
+                                                      per: params[:per],
+                                                      visibility: 'thematic' }),
                           class: ['dropdown-item',
                                   !params[:visibility].in?(['lecture', 'all']) ? 'active' : ''] %>
               <%= link_to t('medium.lecture_only'),
-                          course_food_path(@course,
-                                           params: { project: params[:project],
-                                                     lecture_id: params[:lecture_id],
-                                                     reverse: params[:reverse],
-                                                     all: params[:all],
-                                                     per: params[:per],
-                                                     visibility: 'lecture' }),
+                          lecture_food_path(@lecture,
+                                            params: { project: params[:project],
+                                                      lecture_id: params[:lecture_id],
+                                                      reverse: params[:reverse],
+                                                      all: params[:all],
+                                                      per: params[:per],
+                                                      visibility: 'lecture' }),
                           class: ['dropdown-item',
                                   params[:visibility] == 'lecture' ? 'active' : ''] %>
               <%= link_to t('basics.all'),
-                          course_food_path(@course,
-                                           params: { project: params[:project],
-                                                     lecture_id: params[:lecture_id],
-                                                     reverse: params[:reverse],
-                                                     all: params[:all],
-                                                     per: params[:per],
-                                                     visibility: 'all' }),
+                          lecture_food_path(@lecture,
+                                            params: { project: params[:project],
+                                                      lecture_id: params[:lecture_id],
+                                                      reverse: params[:reverse],
+                                                      all: params[:all],
+                                                      per: params[:per],
+                                                      visibility: 'all' }),
                           class: ['dropdown-item',
                                   params[:visibility] == 'all' ? 'active' : ''] %>
             </div>
@@ -108,7 +108,7 @@
     <div class="alert alert-secondary mt-2 pr-2">
       <%= t('admin.medium.no_media') %>
       <% if @hidden %>
-        <%= t('medium.improve_visibility', course: @course.title) %>
+        <%= t('medium.improve_visibility', course: @lecture.course.title) %>
       <% end %>
     </div>
   <% end %>

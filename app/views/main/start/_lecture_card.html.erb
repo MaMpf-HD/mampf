@@ -1,24 +1,22 @@
 <div class="card h-100 <%= subscribed ? 'bg-mdb-color-lighten-7' : '' %>
-            <%= lecture_border(teachable) %>">
-  <div class="card-header <%= teachable_header_color(subscribed, teachable) %>">
+            <%= lecture_border(lecture) %>">
+  <div class="card-header <%= lecture_header_color(subscribed, lecture) %>">
     <div class="row">
       <div class="col-9 col-sm-10 font-weight-bold">
         <% if subscribed %>
-          <%= link_to teachable.title_no_term,
-                      teachable,
+          <%= link_to lecture.title_no_term,
+                      lecture,
                       class: 'text-light' %>
         <% else %>
-          <%= teachable.title_no_term %>
+          <%= lecture.title_no_term %>
         <% end %>
       </div>
       <div class="col-3 col-sm-2 text-right">
         <% if subscribed %>
           <%= link_to '',
-                      unsubscribe_teachable_path(params:
-                                                 { teachable:
-                                                     { type: teachable.class
-                                                                      .to_s,
-                                                       id: teachable.id,
+                      unsubscribe_lecture_path(params:
+                                                 { lecture:
+                                                     { id: lecture.id,
                                                        parent: parent } }),
                       class: 'far fa-minus-square text-light',
                       style: 'text-decoration: none;',
@@ -27,13 +25,12 @@
                               placement: 'bottom' },
                       title: t('basics.unsubscribe'),
                       remote: true %>
-        <% elsif current_user.admin || teachable.published? || teachable.edited_by?(current_user) %>
+        <% elsif current_user.admin || lecture.published? ||
+                   lecture.edited_by?(current_user) %>
           <%= link_to '',
-                      subscribe_teachable_path(params:
-                                                 { teachable:
-                                                     { type:
-                                                         teachable.class.to_s,
-                                                       id: teachable.id,
+                      subscribe_lecture_path(params:
+                                                 { lecture:
+                                                     { id: lecture.id,
                                                        parent: parent } }),
                       class: 'far fa-plus-square text-dark',
                       style: 'text-decoration: none;',
@@ -47,61 +44,57 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <% if teachable.is_a?(Lecture) %>
-          <% if !current && teachable.term %>
-            <%= teachable.term.to_label_short %>,
+          <% if !current && lecture.term %>
+            <%= lecture.term.to_label_short %>,
           <% end %>
-          <%= teachable.teacher.name %>
-        <% else %>
-          (<%= t('categories.course') %>)
-        <% end %>
+          <%= lecture.teacher.name %>
       </div>
     </div>
   </div>
   <% if subscribed %>
-     <%= link_to image_tag(teachable.course.normalized_image_url_with_host ||
+     <%= link_to image_tag(lecture.course.normalized_image_url_with_host ||
                              '/teachable_thumbnail.png',
                           class: 'card-img-top teachableThumbnail border-bottom',
                           alt: 'Card image cap'),
-                teachable %>
+                 lecture %>
   <% else %>
-    <%= image_tag(teachable.course.normalized_image_url_with_host ||
+    <%= image_tag(lecture.course.normalized_image_url_with_host ||
                     '/teachable_thumbnail.png',
                   class: 'card-img-top teachableThumbnail border-bottom',
                   alt: 'Card image cap') %>
   <% end %>
   <div class="card-body">
     <% unless subscribed %>
-      <% teachable.course.divisions.each do |d| %>
+      <% lecture.course.divisions.each do |d| %>
         <div class="small">
           <%= "#{d.program.subject.name} #{d.program.name} #{d.name}" %>
         </div>
       <% end %>
     <% end %>
     <div class="teachable-body">
-      <% if subscribed && teachable.is_a?(Lecture) %>
+      <% if subscribed %>
         <%= tag.div class: news_color(current_user
-                                        .active_notifications(teachable)
+                                        .active_notifications(lecture)
                                         .size) do %>
-          <%= current_user.active_notifications(teachable).size %>
+          <%= current_user.active_notifications(lecture).size %>
           <%= tag.i class: 'far fa-envelope mr-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('admin.lecture.new_notifications') %>
         <% end %>
         <%= tag.div class: news_color(current_user
-                                        .active_media_notifications(teachable)
+                                        .active_media_notifications(lecture)
                                         .size) do %>
-          <%= current_user.active_media_notifications(teachable).size %>
+          <%= current_user.active_media_notifications(lecture).size %>
           <%= tag.i class: 'far fa-folder mr-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('admin.lecture.new_media') %>
         <% end %>
-        <%= tag.div class: news_color(teachable
+        <%= tag.div class: news_color(lecture
                                         .unread_forum_topics_count(current_user)
                                         .to_i) do %>
-          <%= teachable.unread_forum_topics_count(current_user).to_i %>
+          <%= lecture.unread_forum_topics_count(current_user).to_i %>
           <%= tag.i class: 'far fa-comment-alt mr-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },

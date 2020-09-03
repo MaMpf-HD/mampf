@@ -35,9 +35,10 @@ class MainController < ApplicationController
   end
 
   def start
-    @current_stuff = current_user.current_teachables
+    @current_stuff = current_user.current_subscribed_lectures
     if @current_stuff.empty?
-      @inactive_lectures = current_user.inactive_lectures.includes(:course, :term)
+      @inactive_lectures = current_user.inactive_lectures.includes(:course,
+                                                                   :term)
                                        .sort
     end
   end

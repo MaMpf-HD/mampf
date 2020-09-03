@@ -48,26 +48,12 @@ Rails.application.routes.draw do
 
   get 'c/:id', to: 'clickers#show'
 
-  get 'courses/:course_id/food', to: 'media#index',
-                                 as: 'course_food'
   get 'courses/:id/inspect', to: 'courses#inspect',
                              as: 'inspect_course'
-  get 'courses/:id/display', to: 'courses#display',
-                             as: 'display_course'
-  get 'courses/:id/show_random_quizzes', to: 'courses#show_random_quizzes',
-                                         as: 'show_random_quizzes'
   post 'courses/:id/take_random_quiz', to: 'courses#take_random_quiz',
                                       as: 'random_quiz'
   get 'courses/:id/render_question_counter', to: 'courses#render_question_counter',
                                              as: 'render_question_counter'
-  get 'courses/:id/add_forum', to: 'courses#add_forum',
-                                as: 'add_course_forum'
-  get 'courses/:id/lock_forum', to: 'courses#lock_forum',
-                                 as: 'lock_course_forum'
-  get 'courses/:id/unlock_forum', to: 'courses#unlock_forum',
-                                 as: 'unlock_course_forum'
-  get 'courses/:id/destroy_forum', to: 'courses#destroy_forum',
-                                 as: 'destroy_course_forum'
   resources :courses, except: [:index]
 
   resources :divisions, except: [:show]
@@ -107,6 +93,8 @@ Rails.application.routes.draw do
                            as: 'display_item'
   resources :items, only: [:update, :create, :edit, :destroy]
 
+  get 'lectures/:id/food', to: 'media#index',
+                           as: 'lecture_food'
   get 'lectures/:id/inspect', to: 'lectures#inspect',
                                as: 'inspect_lecture'
   get 'lectures/:id/update_teacher', to: 'lectures#update_teacher',
@@ -127,6 +115,8 @@ Rails.application.routes.draw do
                                          as: 'show_announcements'
   get 'lectures/:id/organizational', to: 'lectures#organizational',
                                          as: 'organizational'
+  get 'lectures/:id/show_random_quizzes', to: 'lectures#show_random_quizzes',
+                                         as: 'show_random_quizzes'
   get 'lectures/:id/show_subscribers', to: 'lectures#show_subscribers',
                                        as: 'show_subscribers'
   get 'lectures/:id/show_structures', to: 'lectures#show_structures',
@@ -137,6 +127,8 @@ Rails.application.routes.draw do
                                       as: 'search_examples'
   get 'lectures/search', to: 'lectures#search',
                          as: 'search_lectures'
+  get 'lectures/:id/display_course', to: 'lectures#display_course',
+                                     as: 'display_course'
   post 'lectures/:id/publish', to: 'lectures#publish',
                               as: 'publish_lecture'
   post 'lectures/:id/import_media', to: 'lectures#import_media',
@@ -221,8 +213,8 @@ Rails.application.routes.draw do
   patch 'profile/add_consent', as: 'add_consent'
   put 'profile/add_consent'
   post 'profile/toggle_thread_subscription', as: 'toggle_thread_subscription'
-  patch 'profile/subscribe_teachable', as: 'subscribe_teachable'
-  patch 'profile/unsubscribe_teachable', as: 'unsubscribe_teachable'
+  patch 'profile/subscribe_lecture', as: 'subscribe_lecture'
+  patch 'profile/unsubscribe_lecture', as: 'unsubscribe_lecture'
   get 'profile/show_accordion', as: 'show_accordion'
 
   resources :programs, except: [:show]

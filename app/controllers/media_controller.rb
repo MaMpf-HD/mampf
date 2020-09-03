@@ -4,7 +4,7 @@ class MediaController < ApplicationController
   before_action :set_medium, except: [:index, :catalog, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select]
-  before_action :set_course, only: [:index]
+  before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
   before_action :check_for_consent, except: [:play, :display]
@@ -420,10 +420,10 @@ class MediaController < ApplicationController
     redirect_to :root, alert: I18n.t('controllers.no_medium')
   end
 
-  def set_course
-    @course = Course.find_by_id(params[:course_id])
-    return if @course.present?
-    redirect_to :root, alert: I18n.t('controllers.no_course')
+  def set_lecture
+    @lecture = Lecture.find_by_id(params[:id])
+    return if @lecture.present?
+    redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 
   def set_teachable
@@ -483,33 +483,30 @@ class MediaController < ApplicationController
     visible_search_results = current_user.filter_visible_media(search_arel)
     search_results &= visible_search_results
     total = search_results.size
-    # add imported media in case of a lecture
-    if params[:lecture_id].present?
-      @lecture = Lecture.find_by_id(params[:lecture_id])
-      # filter out stuff from course level for generic users
-      if params[:visibility] == 'lecture'
-        search_results.reject! { |m| m.teachable_type == 'Course' }
-        # yields only lecture media and course media
-      elsif params[:visibility] == 'all'
-        # yields all lecture media and course media
-      else
-        # this is the default setting: 'thematic' selection of media
-        # yields all lecture media and course media whose tags have
-        # already been dealt with in the lecture
-        unless current_user.admin || @lecture.edited_by?(current_user)
-          lecture_tags = @lecture.tags_including_media_tags
-          search_results.reject! do |m|
-            m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
-          end
+    @lecture = Lecture.find_by_id(params[:id])
+    # filter out stuff from course level for generic users
+    if params[:visibility] == 'lecture'
+      search_results.reject! { |m| m.teachable_type == 'Course' }
+      # yields only lecture media and course media
+    elsif params[:visibility] == 'all'
+      # yields all lecture media and course media
+    else
+      # this is the default setting: 'thematic' selection of media
+      # yields all lecture media and course media whose tags have
+      # already been dealt with in the lecture
+      unless current_user.admin || @lecture.edited_by?(current_user)
+        lecture_tags = @lecture.tags_including_media_tags
+        search_results.reject! do |m|
+          m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
         end
       end
-      sort = params[:project] == 'keks' ? 'Quiz' : params[:project]&.capitalize
-      search_results +=  @lecture.imported_media
-                                 .where(sort: sort)
-                                 .locally_visible
-      search_results.uniq!
-      @hidden = search_results.empty? && total.positive?
     end
+    sort = params[:project] == 'keks' ? 'Quiz' : params[:project]&.capitalize
+    search_results +=  @lecture.imported_media
+                               .where(sort: sort)
+                               .locally_visible
+    search_results.uniq!
+    @hidden = search_results.empty? && total.positive?
     return search_results unless params[:reverse]
     search_results.reverse
   end

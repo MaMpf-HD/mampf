@@ -5,7 +5,9 @@ class LecturesController < ApplicationController
   before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
   authorize_resource
   before_action :check_for_consent
-  before_action :set_view_locale, only: [:edit, :show, :inspect]
+  before_action :set_view_locale, only: [:edit, :show, :inspect,
+                                         :show_random_quizzes]
+  before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout 'administration'
 
   def edit
@@ -228,6 +230,17 @@ class LecturesController < ApplicationController
     @similar_titles = Course.similar_courses(search_params[:fulltext])
   end
 
+  def show_random_quizzes
+    @course = @lecture.course
+    render layout: 'application'
+  end
+
+  def display_course
+    @course = @lecture.course
+    I18n.locale = @course.locale || @lecture.locale
+    render layout: 'application'
+  end
+
   private
 
   def set_lecture
@@ -357,5 +370,10 @@ class LecturesController < ApplicationController
                                    term_ids: [],
                                    program_ids: [],
                                    teacher_ids: [])
+  end
+
+  def check_if_enough_questions
+    return if @lecture.course.enough_questions?
+    redirect_to :root, alert: I18n.t('controllers.no_test')
   end
 end

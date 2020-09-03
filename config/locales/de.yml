@@ -1780,7 +1780,7 @@ de:
     locale: 'Sprache'
     subscribe_lecture: 'Veranstaltung abonnieren'
     passphrase_required: >
-      Du möchtest die Veranstaltung %{teachable_title} abonnieren. Diese ist
+      Du möchtest die Veranstaltung %{lecture_title} abonnieren. Diese ist
       durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
     my_term_html: Mein Semester &ndash; %{term}
     inactive_lectures: Weitere abonnierte Veranstaltungen
@@ -1907,7 +1907,7 @@ de:
         thematisch:
         </i>
         Das ist die Standardeinstellung und auch die empfohlene
-        Einstellung. Du bekommst alle Medien aus der aktuellen Veranstaltun
+        Einstellung. Du bekommst alle Medien aus der aktuellen Veranstaltung
         angezeigt. Darüber hinaus werden Medien angezeigt, die zu dem Modul
         gehören (die also unabhängig davon, wer die Veranstaltung hält, passen
         sollten), jedoch nur solche, deren Inhalt bereits in der aktuellen

@@ -40,14 +40,14 @@ class Ability
 
       # anyone should be able to get a sidebar and see the announcements
       can [:render_sidebar, :organizational, :show_announcements,
-           :show_structures, :search_examples, :search], Lecture
+           :show_structures, :search_examples, :search, :show_random_quizzes,
+           :display_course],
+          Lecture
 
-      can [:display, :show_random_quizzes, :take_random_quiz,
-           :render_question_counter], Course
+      can [:take_random_quiz, :render_question_counter], Course
 
       # editors are only allowed to edit, not to destroy courses
-      can [:update, :add_forum, :lock_forum, :unlock_forum,
-           :destroy_forum], Course do |course|
+      can :update, Course do |course|
         course.edited_by?(user)
       end
 
@@ -148,14 +148,7 @@ class Ability
         !lecture.in?(user.lectures)
       end
 
-      cannot :show, Course  do |course|
-        !course.in?(user.courses)
-      end
-
-      can :display, Course
-
-      can [:show_random_quizzes, :render_question_counter,
-           :take_random_quiz],Course do |course|
+      can [:render_question_counter, :take_random_quiz], Course do |course|
         course.subscribed_by?(user)
       end
 
@@ -164,7 +157,9 @@ class Ability
       can :teacher, User
       # anyone should be able to get a sidebar and see the announcements
       can [:render_sidebar, :show_announcements, :organizational,
-           :show_structures, :search_examples, :search], Lecture
+           :show_structures, :search_examples, :search, :show_random_quizzes,
+           :display_course],
+          Lecture
       cannot [:show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
