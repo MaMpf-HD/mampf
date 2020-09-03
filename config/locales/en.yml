@@ -1765,18 +1765,18 @@ en:
   next_lesson: 'next session'
   previous_lesson: 'previous session'
   mampf_map: 'MaMpf Map'
-  external_render: 'render in external tab'
+  external_render: 'render in an external tab'
   medium:
     details: 'view details'
     different_language: 'This medium is in %{language}.'
     unpublished: 'This medium is unpublished.'
     locked: 'This medium is locked.'
     imported: 'This medium has been imported.'
-    theme_based: 'theme based'
-    lecture_only: 'only event series'
+    theme_based: 'on topics dealt with'
+    lecture_only: 'no'
     improve_visibility: >
-      By setting the visibility to "all" you can see media at the level of the
-      course %{course} whose cxontents have not yet been treated in the current
+      Set additional material to "all" to see see media at the level of the
+      course %{course} dealing with topics that have not been addressed in the current
       event series.
     waiting_for_tag: >
       This medium ist situated at course level and refers to tags,
@@ -1787,23 +1787,23 @@ en:
       lecture or to a published medium associated to this event series.
     info:
       visibility_html: >
-        Here you can adjust which media will be displayed. You have the
+        Here you can adjust which additional material will be displayed. You have the
         following options
         <ul>
         <li>
         <i>
-        theme based:
+        on topics dealt with:
         </i>
-        This is the default setting and also the recommended setting.
+        This is the default setting and also recommended.
         All media from the current event series will be displayed.
         Furthermore, all media that are associated to the course
-        will be displayed (which should fit, no matter who the teacher of the
-        event series is), but only those whose content has already been
+        will be displayed (which should fit no matter who the teacher of the
+        event series is), but only those dealing with topics
         treated in the current event series.
         </li>
         <li>
         <i>
-        only event series:
+        no:
         </i>
         All media from the current event series will be displayed.
         </li>
@@ -1817,7 +1817,7 @@ en:
         </ul>
   video:
     video: 'Video'
-    no_video: 'There is no video present.'
+    no_video: 'There is no video.'
     play: 'THymE Player'
     download: 'download video'
     length: 'Length'
@@ -2333,7 +2333,7 @@ en:
     unsubscribe: 'Unsubscribe'
     subscribe: 'Subscribe'
     programs: 'Programs'
-    visibility: 'Visibility'
+    visibility: 'Additional material'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
