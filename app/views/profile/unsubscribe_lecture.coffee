@@ -13,7 +13,7 @@ $('#emptyInactiveLectures').show()
 $card.empty()
   .append('<%= j render partial: "main/start/lecture_card",
                         locals: { lecture: @lecture,
-                                  current: @lecture.term&.active,
+                                  current: @current,
                                   subscribed: false,
                                   parent: @parent } %>')
 <% end %>
