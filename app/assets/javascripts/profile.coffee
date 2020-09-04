@@ -4,6 +4,11 @@
 
 $(document).on 'turbolinks:load', ->
 
+  $('#profileForm').on 'change', ->
+    console.log 'Änderung'
+    $('#profileChange').show()
+    return
+
   $('input:checkbox[name^="user[lecture"]').on 'change',  ->
     courseId = this.dataset.course
     lectureId = this.dataset.lecture

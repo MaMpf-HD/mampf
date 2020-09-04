@@ -1,4 +1,16 @@
-<%= bootstrap_form_with url: profile_update_path, scope: 'user' do |f| %>
+<%= bootstrap_form_with url: profile_update_path, scope: 'user',
+                        html: { id: 'profileForm'} do |f| %>
+  <div class="alert alert-secondary" id="profileChange">
+    <div class="profileChangeWarning" style="display: flex; justify-content: space-between;">
+      <div>
+        <%= t('profile.changes_made') %>
+      </div>
+      <div>
+        <%= f.submit t('profile.update'),
+                     class: 'btn btn-info' %>
+      </div>
+    </div>
+  </div>
   <div class="row mb-3">
     <div class="col-12">
       <div class="card">
@@ -74,8 +86,6 @@
   </div>
   <div class="row mb-3">
     <div class="col-12 text-center">
-      <%= f.submit t('profile.update'),
-                   class: 'btn btn-info' %>
     </div>
   </div>
 <% end %>

@@ -1803,6 +1803,9 @@ de:
       für Veranstaltungswahl)
     other_preferences: >
       Sonstige Einstellungen
+    changes_made: >
+      Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
+      damit die Änderungen wirksam werden.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -1897,7 +1900,7 @@ de:
       Dieses Medium ist auf Modulebene angesiedelt und bezieht sich auf Tags,
       die in der vorliegenden Veranstaltung (noch) nicht behandelt wurden.
       Es ist für AbonnentInnen dieser Veranstaltung deshalb nicht
-      sichtbar, wenn die Standardeinstellung für die Zusatzmaterialien 
+      sichtbar, wenn die Standardeinstellung für die Zusatzmaterialien
       "zu bereits Behandeltem" ausgewählt ist.
       Es wird bei dieser Auswahl erst dann sichtbar, wenn mindestens einer der
       assoziierten Tags in einem Abschnitt dieser Vorlesung auftaucht oder

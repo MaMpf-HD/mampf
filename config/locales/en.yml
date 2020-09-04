@@ -1690,6 +1690,9 @@ en:
       menu for lecture selection)
     other_preferences: >
       Other Preferences
+    changes_made: >
+      There are unsaved changes. In order to make them apply you have to save
+      them.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
