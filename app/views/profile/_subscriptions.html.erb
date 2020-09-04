@@ -4,18 +4,16 @@
   <div class="card"
        id="course-card-<%= c.id %>"
        style="display: none;">
-    <div class="card-header"
-         id="course-heading-<%= c.id %>">
+    <div class="card-header clickable"
+         id="course-heading-<%= c.id %>"
+         data-toggle="collapse"
+         data-target="#collapse-course-<%= c.id %>">
       <div class="row">
         <div class="col-12">
           <%= tag.i class: [circle_icon(subscribed), 'mr-2', 'text-dark',
                             'courseSubInfo'],
                     data: { course: c.id } %>
-          <%= link_to c.title,
-                      "#collapse-course-#{c.id}",
-                      class: 'text-dark',
-                      data: { toggle: 'collapse',
-                              target: "#collapse-course-#{c.id}" } %>
+          <%= c.title %>
         </div>
       </div>
     </div>
@@ -40,16 +38,14 @@
     <% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
               .select { |p| p.courses.any? }.each do |p| %>
       <div class="card">
-        <div class="card-header">
-          <%= link_to p.name_with_subject,
-                      '#program-' + p.id.to_s + '-collapse',
-                      class: "programCollapseButton",
-                      data: { toggle: 'collapse',
-                              project: p.id } %>
+        <div class="card-header clickable"
+             data-toggle="collapse"
+             data-target="#program-<%= p.id %>-collapse">
+          <%= p.name_with_subject %>
         </div>
         <div id="<%= 'program-' + p.id.to_s + '-collapse' %>"
              class="collapse programCollapse"
-             data-project="<%= p.id %>"
+             data-program="<%= p.id %>"
              data-parent="#subscriptionsAccordion">
           <div class="card-body">
             <%= render partial: 'profile/divisions',

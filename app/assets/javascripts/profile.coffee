@@ -22,7 +22,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $('.programCollapse').on 'show.bs.collapse', ->
-    program = $(this).data('project')
+    program = $(this).data('program')
     $('#program-' + program + '-collapse').find('.coursePlaceholder').each ->
       course = $(this).data('course')
       $(this).append($('#course-card-' + course))
