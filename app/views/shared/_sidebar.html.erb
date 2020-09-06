@@ -1,44 +1,4 @@
 <% I18n.with_locale(lecture&.locale_with_inheritance) do %>
-<% if lecture && lecture.in?(current_user.lectures) &&
-        lecture.course.subscribed_lectures(current_user).count > 1 %>
-  <ul class="navbar-nav"
-      id="termDropdown">
-    <li class="nav-item">
-      <div class="btn-group dropright">
-        <%= link_to lecture_path(lecture),
-                    class: 'btn btn-primary btn-sm' do %>
-          <%= lecture.title_for_viewers %>
-          <% unless lecture.published? %>
-            <i class="fas fa-eye-slash redtext"
-               tabindex="-1"
-               data-toggle="tooltip"
-               title="<%=t('lecture.unpublished') %>">
-            </i>
-          <% end %>
-        <% end %>
-        <button class="btn btn-primary btn-sm dropdown-toggle mr-3"
-                type="button"
-                data-toggle="dropdown">
-        </button>
-        <div class="dropdown-menu">
-          <% (lecture.course.subscribed_lectures(current_user) - [lecture]).each do |l| %>
-            <%= link_to lecture_path(l),
-                        class: 'dropdown-item' do %>
-              <%= l.title_term_short %>
-              <% unless l.published? %>
-                <i class="fas fa-eye-slash redtext"
-                   tabindex="-1"
-                   data-toggle="tooltip"
-                   title="<%=t('lecture.unpublished') %>">
-                </i>
-              <% end %>
-            <% end %>
-          <% end %>
-        </div>
-      </div>
-    </li>
-  </ul>
-<% end %>
 <ul class="nav nav-pills flex-column">
   <li class="nav-item">
     <% if !lecture || !lecture.kaviar?(current_user) %>

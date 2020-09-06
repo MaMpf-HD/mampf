@@ -89,10 +89,10 @@
       <% end %>
     </ul>
     <% if user_signed_in? %>
-      <% unless current_user.courses.empty? %>
+      <% unless current_user.lectures.empty? %>
         <ul class="navbar-nav mr-auto" id="lectureButton">
           <%= render partial: 'shared/lecture_button',
-                     locals: { current_lecture: @lecture || current_lecture } %>
+                     locals: { lecture: @lecture || current_lecture } %>
         </ul>
       <% end %>
       <%= render partial: 'shared/dropdown_notifications'%>
