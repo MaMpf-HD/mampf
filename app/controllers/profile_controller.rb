@@ -76,7 +76,8 @@ class ProfileController < ApplicationController
 
   def subscribe_lecture
     @success = false
-    if !@lecture.published? && !@lecture.edited_by?(current_user)
+    if !@lecture.published? && !current_user.admin &&
+      !@lecture.edited_by?(current_user)
       @unpublished = true
       return
     end
