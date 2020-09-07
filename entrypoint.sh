@@ -4,10 +4,17 @@ check_for_preseeds() {
   if [[ "${DB_SQL_PRESEED_URL}" ]]; then
     echo "Found DB Preseed with URL: $DB_SQL_PRESEED_URL"&> >(tee -a /usr/src/app/log/initialisation.log)
     mkdir -pv db/backups/docker_development
-    wget --content-disposition --directory-prefix=db/backups/docker_development/ $DB_SQL_PRESEED_URL
-    rails db:restore pattern=$(ls db/backups/20200801131654_mampf.sql | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
-    rails db:create:interactions
-    rails db:migrate
+    wget --content-disposition --directory-prefix=db/backups/docker_development/ --timestamping $DB_SQL_PRESEED_URL
+    rails db:restore pattern=$(ls db/backups/docker_development/ | rev | cut -d "/" -f1 | rev | cut -d "_" -f1) &> >(tee -a /usr/src/app/log/initialisation.log)
+    rails db:create:interactions &> >(tee -a /usr/src/app/log/initialisation.log)
+    rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
+  fi
+  if [[ "${UPLOADS_PRESEED_URL}" ]]; then
+    echo "Found Upload Preseed with URL: $UPLOAD_PRESEED_URL"&> >(tee -a /usr/src/app/log/initialisation.log)
+    mkdir -pv db/backups/docker_development
+    wget --content-disposition --directory-prefix=public/ --timestamping $UPLOADS_PRESEED_URL
+    mkdir -p public/uploads
+    bsdtar -xf public/uploads.zip -s'|[^/]*/||' -C public/uploads
   fi
 }
 
@@ -28,8 +35,11 @@ then
         bundle exec rails assets:precompile &> >(tee -a /usr/src/app/log/initialisation.log)
     fi
     bundle exec rake sunspot:solr:reindex &
-    echo 'checking for preseeds' &> >(tee -a /usr/src/app/log/initialisation.log)
-    check_for_preseeds
+    if [ "$RAILS_ENV" = "docker_development" ]
+    then
+        echo 'checking for preseeds' &> >(tee -a /usr/src/app/log/initialisation.log)
+        check_for_preseeds
+    fi
     echo 'finished initialisation' &> >(tee -a /usr/src/app/log/initialisation.log)
     touch completed_initial_run
 fi

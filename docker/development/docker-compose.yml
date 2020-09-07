@@ -63,6 +63,7 @@ services:
       SOLR_PATH: /solr/mampf-dev
       SPROCKETS_CACHE: /cache
       DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20200907123000_mampf.sql&dl=1"
+      UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/?dl=1"
     volumes:
       - type: bind
         source: ../../
