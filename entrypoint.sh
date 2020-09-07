@@ -11,7 +11,6 @@ check_for_preseeds() {
   fi
   if [[ "${UPLOADS_PRESEED_URL}" ]]; then
     echo "Found Upload Preseed with URL: ${UPLOAD_PRESEED_URL}"&> >(tee -a /usr/src/app/log/initialisation.log)
-    mkdir -pv db/backups/docker_development
     wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
     mkdir -p public/uploads
     bsdtar -xf public/uploads.zip -s'|[^/]*/||' -C public/uploads
