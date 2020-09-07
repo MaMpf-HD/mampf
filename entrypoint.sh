@@ -10,16 +10,16 @@ check_for_preseeds() {
     rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
   fi
   if [[ "${UPLOADS_PRESEED_URL}" ]]; then
-    echo "Found Upload Preseed with URL: $UPLOAD_PRESEED_URL"&> >(tee -a /usr/src/app/log/initialisation.log)
+    echo "Found Upload Preseed with URL: ${UPLOAD_PRESEED_URL}"&> >(tee -a /usr/src/app/log/initialisation.log)
     mkdir -pv db/backups/docker_development
-    wget --content-disposition --directory-prefix=public/ --timestamping $UPLOADS_PRESEED_URL
+    wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
     mkdir -p public/uploads
     bsdtar -xf public/uploads.zip -s'|[^/]*/||' -C public/uploads
   fi
 }
 
 cd /usr/src/app
-if ! [ -f completed_initial_run ]
+if ! [ -f /completed_initial_run ]
 then
     echo 'Initialising mampf' &> >(tee -a /usr/src/app/log/initialisation.log)
     echo running: bundle exec rails db:create &> >(tee -a /usr/src/app/log/initialisation.log)
@@ -41,7 +41,7 @@ then
         check_for_preseeds
     fi
     echo 'finished initialisation' &> >(tee -a /usr/src/app/log/initialisation.log)
-    touch completed_initial_run
+    touch /completed_initial_run
 fi
 rm -f tmp/pids/server.pid
 echo "running mampf"
