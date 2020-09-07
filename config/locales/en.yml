@@ -334,6 +334,7 @@ en:
       new_media: 'new media'
       new_posts: 'new forum posts'
       no_rights: 'You are not authorized to subscribe this event series.'
+      disable_teacher_display: disable the display of the teacher's name
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -520,6 +521,11 @@ en:
           Here you can enter text that will be searched for in the title of the
           event series. If you leave the text field empty (or enter less than two letters),
           it will be ignored.
+        disable_teacher_display: >
+          If you check this box, the teacher's name will be omitted from the
+          lecture card on the start page and from the lecture page for generic
+          users. This could make sense e.g. if a lecture that is term
+          independent is only administratively supervised by a "teacher".
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'

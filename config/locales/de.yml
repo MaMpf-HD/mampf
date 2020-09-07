@@ -345,6 +345,7 @@ de:
       new_posts: 'neue Forenbeiträge'
       no_rights: >
         Du hast keine Berechtigung, diese Veranstaltung zu abonnieren.
+      disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -553,6 +554,12 @@ de:
           Hier kannst Du Text eingeben, nach dem im Titel der Veranstaltung
           gesucht wird. Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
           eingibst), wird es bei der Suche ignoriert.
+        disable_teacher_display: >
+          Wenn Du dieses Feld aktivierst, wird auf der Vorlesungs-Karten auf der
+          Startseite und auf der Vorlesungsseite für generische Nutzer
+          der DozentInnen-Name nicht angezeigt. Das macht z.B. Sinn, wenn
+          eine semesterunabhängige Veranstaltung von jemandem nur administrativ
+          als "DozentIn" begleitet wird.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'

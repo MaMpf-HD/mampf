@@ -146,6 +146,22 @@
               </div>
             </div>
           </div>
+          <% if !lecture.term %>
+            <div class="row">
+              <div class="col-12">
+                <div class="custom-control custom-checkbox">
+                  <%= f.check_box :disable_teacher_display,
+                                  class: 'custom-control-input',
+                                  disabled: inspection %>
+                  <%= f.label :disable_teacher_display,
+                              t('admin.lecture.disable_teacher_display'),
+                              { class: 'custom-control-label' } %>
+                  <%= helpdesk(t('admin.lecture.info.disable_teacher_display'),
+                             false) %>
+                </div>
+              </div>
+            </div>
+          <% end %>
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">

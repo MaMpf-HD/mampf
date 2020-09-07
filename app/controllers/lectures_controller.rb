@@ -264,6 +264,7 @@ class LecturesController < ApplicationController
                                     :start_section, :organizational, :locale,
                                     :organizational_concept, :muesli,
                                     :organizational_on_top,
+                                    :disable_teacher_display,
                                     :content_mode, :passphrase, :sort,
                                     :comments_disabled,
                                     editor_ids: [])

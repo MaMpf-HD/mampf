@@ -7,12 +7,14 @@
       <span id="lecture-title" class="mr-3">
         <%= @lecture.title_term_info_no_type %>
       </span>
-      <span>
-        <%= link_to @lecture.teacher.name,
-                    teacher_path(@lecture.teacher),
-                    id: 'lecture-teacher',
-                    class: 'text-dark' %>
-      </span>
+      <% if @lecture.term || !@lecture.disable_teacher_display %>
+        <span>
+          <%= link_to @lecture.teacher.name,
+                      teacher_path(@lecture.teacher),
+                      id: 'lecture-teacher',
+                      class: 'text-dark' %>
+        </span>
+      <% end %>
       <% privileged = current_user.admin ||
                       current_user.in?(@lecture.editors_with_inheritance) %>
       <%= link_to '',

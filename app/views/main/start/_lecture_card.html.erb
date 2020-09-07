@@ -47,19 +47,23 @@
           <% if !current && lecture.term %>
             <%= lecture.term.to_label_short %>,
           <% end %>
-          <%= lecture.teacher.name %>
+          <% if lecture.term || !lecture.disable_teacher_display %>
+            <%= lecture.teacher.name %>
+          <% else %>
+            <br>
+          <% end %>
       </div>
     </div>
   </div>
   <% if subscribed %>
      <%= link_to image_tag(lecture.course.normalized_image_url_with_host ||
-                             '/teachable_thumbnail.png',
+                             '/no_course_information.png',
                           class: 'card-img-top teachableThumbnail border-bottom',
                           alt: 'Card image cap'),
                  lecture %>
   <% else %>
     <%= image_tag(lecture.course.normalized_image_url_with_host ||
-                    '/teachable_thumbnail.png',
+                    '/no_course_information.png',
                   class: 'card-img-top teachableThumbnail border-bottom',
                   alt: 'Card image cap') %>
   <% end %>

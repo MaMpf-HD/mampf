@@ -370,6 +370,7 @@ class Lecture < ApplicationRecord
   end
 
   def title_term_info_no_type
+    return course.title unless term
     "#{course.title}, #{term_to_label}"
   end
 
