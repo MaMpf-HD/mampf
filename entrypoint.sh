@@ -1,5 +1,16 @@
 #!/usr/bin/env bash
 
+check_for_preseeds() {
+  if [[ "${DB_SQL_PRESEED_URL}" ]]; then
+    echo "Found DB Preseed with URL: $DB_SQL_PRESEED_URL"&> >(tee -a /usr/src/app/log/initialisation.log)
+    mkdir -pv db/backups/docker_development
+    wget --content-disposition --directory-prefix=db/backups/docker_development/ $DB_SQL_PRESEED_URL
+    rails db:restore pattern=$(ls db/backups/20200801131654_mampf.sql | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
+    rails db:create:interactions
+    rails db:migrate
+  fi
+}
+
 cd /usr/src/app
 if ! [ -f completed_initial_run ]
 then
@@ -17,6 +28,8 @@ then
         bundle exec rails assets:precompile &> >(tee -a /usr/src/app/log/initialisation.log)
     fi
     bundle exec rake sunspot:solr:reindex &
+    echo 'checking for preseeds' &> >(tee -a /usr/src/app/log/initialisation.log)
+    check_for_preseeds
     echo 'finished initialisation' &> >(tee -a /usr/src/app/log/initialisation.log)
     touch completed_initial_run
 fi
