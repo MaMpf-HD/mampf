@@ -104,6 +104,13 @@ class Ability
 
       cannot :read, Term
 
+      can :new, Tutorial
+
+      can [:edit, :create, :update, :destroy,
+           :cancel_edit_tutorial], Tutorial do |tutorial|
+        tutorial.lecture.edited_by?(user)
+      end
+
       cannot :read, User
       can :update, User do |u|
         user == u

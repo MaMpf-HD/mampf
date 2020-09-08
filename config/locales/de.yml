@@ -1744,6 +1744,8 @@ de:
       export_probes: Quizdaten exportieren
       start: Startdatum
       end: Enddatum
+    tutorial:
+      new: 'Neues Tutorium anlegen'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2485,6 +2487,7 @@ de:
     programs: 'Studiengänge'
     visibility: 'Zusatzmaterialien'
     exercise_classes: 'Übungsbetrieb'
+    tutor: 'TutorIn'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2670,6 +2673,7 @@ de:
     no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
     no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
+    no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'

@@ -19,6 +19,36 @@
        aria-labelledby="heading"
        data-parent="#lectureAccordion">
     <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-12 text-center">
+          <%= link_to t('admin.tutorial.new'),
+                      new_tutorial_path(params: { lecture_id: lecture.id }),
+                      class: 'btn btn-sm btn-primary',
+                      remote: true %>
+        </div>
+      </div>
+      <div class="row border border-botttom py-2 mx-3"
+           id="tutorialListHeader">
+        <div class="col-4">
+          <h6>
+            <%= t('basics.title') %>
+          </h6>
+        </div>
+        <div class="col-4">
+          <h6>
+            <%= t('basics.tutor') %>
+          </h6>
+        </div>
+        <div class="col-4">
+          <h6>
+            <%= t('basics.action') %>
+          </h6>
+        </div>
+      </div>
+      <% lecture.tutorials.each do |t| %>
+        <%= render partial: 'tutorials/row',
+                   locals: { tutorial: t } %>
+      <% end %>
     </div>
   </div>
 </div>

@@ -1633,6 +1633,8 @@ en:
       export_probes: Export Probes
       start: Start Date
       end: End Date
+    tutorial:
+      new: 'Add tutorial'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -2344,6 +2346,7 @@ en:
     programs: 'Programs'
     visibility: 'Additional material'
     exercise_classes: 'Exercise Classes'
+    tutor: 'Tutor'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2525,6 +2528,7 @@ en:
     no_answer: 'There is no subject with this id.'
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
+    no_tutorial: 'There is no tutorial with this id.'
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

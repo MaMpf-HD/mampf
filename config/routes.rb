@@ -280,6 +280,11 @@ Rails.application.routes.draw do
                            as: 'postprocess_tags'
   resources :tags
 
+  get 'tutorials/:id/cancel_edit', to: 'tutorials#cancel_edit',
+                                   as: 'cancel_edit_tutorial'
+
+  resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
+
   get 'sections/list_tags', to: 'sections#list_tags',
                              as: 'list_section_tags'
   get 'sections/:id/display', to: 'sections#display',

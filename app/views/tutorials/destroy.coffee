@@ -1,0 +1,1 @@
+$('.tutorialRow[data-id="<%= @tutorial.id %>"').remove()
