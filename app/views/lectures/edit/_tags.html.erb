@@ -1,20 +1,17 @@
   <div class="card bg-light">
-    <div class="card-header"
-         role="tab" id="tags_heading">
+    <div class="card-header clickable"
+         role="tab"
+         id="tags_heading"
+         data-toggle="collapse"
+         data-target="#tags_collapse"
+         aria-expanded="false"
+         aria-controls="tags_collapse">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h5 class="text-dark">
             <%= t('admin.lecture.related_tags') %>
             <%= ' (' + lecture.tags.size.to_s + ') '%>
           </h5>
-        </div>
-        <div class="col-6 text-right">
-          <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
-             href="#tags_collapse"
-             aria-expanded="false" aria-controls="tags_collapse">
-            <%= t('buttons.toggle') %>
-          </a>
         </div>
       </div>
     </div>

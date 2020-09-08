@@ -6,7 +6,7 @@ disableExceptOrganizational = ->
   $('#lecture-organizational-warning').show()
   $('.fa-edit').hide()
   $('.new-in-lecture').hide()
-  $('[data-toggle="collapse"]').addClass('disabled')
+  $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
   return
 
 $(document).on 'turbolinks:load', ->
@@ -20,13 +20,13 @@ $(document).on 'turbolinks:load', ->
     $('#lecture-basics-warning').show()
     $('.fa-edit:not(#update-teacher-button,#update-editors-button)').hide()
     $('.new-in-lecture').hide()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     return
 
   # if any input is given to the preferences form, disable other input
   $('#lecture-preferences-form :input').on 'change', ->
     $('#lecture-preferences-warning').show()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()
     return
@@ -34,7 +34,7 @@ $(document).on 'turbolinks:load', ->
   # if any input is given to the comments form, disable other input
   $('#lecture-comments-form :input').on 'change', ->
     $('#lecture-comments-warning').show()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()
     return
@@ -264,7 +264,7 @@ $(document).on 'turbolinks:load', ->
       largeDisplay()
     return
 
-  $('#erdbeere_structures_collapse_button').on 'click', ->
+  $('#erdbeere_structures_heading').on 'click', ->
     lectureId = $(this).data('lecture')
     loading = $(this).data('loading')
     $('#erdbeereStructuresBody').empty().append(loading)

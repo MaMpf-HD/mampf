@@ -2343,6 +2343,7 @@ en:
     subscribe: 'Subscribe'
     programs: 'Programs'
     visibility: 'Additional material'
+    exercise_classes: 'Exercise Classes'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

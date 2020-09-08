@@ -2484,6 +2484,7 @@ de:
     subscribe: 'abonnieren'
     programs: 'Studiengänge'
     visibility: 'Zusatzmaterialien'
+    exercise_classes: 'Übungsbetrieb'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

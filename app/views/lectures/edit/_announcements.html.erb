@@ -1,20 +1,16 @@
   <div class="card bg-light">
-    <div class="card-header" role="tab" id="announcements_heading">
+    <div class="card-header clickable"
+         role="tab"
+         id="announcements_heading"
+         data-toggle="collapse"
+         data-target="#announcements_collapse"
+         aria-expanded="false" aria-controls="announcements_collapse">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h5>
             <%= t('categories.announcements') %>
             (<%= lecture.announcements.size %>)
           </h5>
-        </div>
-        <div class="col-6 text-right">
-          <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
-             href="#announcements_collapse"
-             id="announcements_collapse_button"
-             aria-expanded="false" aria-controls="announcements_collapse">
-            <%= t('buttons.toggle') %>
-          </a>
         </div>
       </div>
     </div>
