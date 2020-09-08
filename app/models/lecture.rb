@@ -41,6 +41,9 @@ class Lecture < ApplicationRecord
   # a lecture has many announcements
   has_many :announcements, dependent: :destroy
 
+  # a lecture has many tutorials
+  has_many :tutorials
+
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
   serialize :structure_ids, Array
@@ -641,6 +644,10 @@ class Lecture < ApplicationRecord
   def term_to_label_short
     return term.to_label_short if term
     ''
+  end
+
+  def tutors
+    User.where(id: tutorials.pluck(:tutor_id))
   end
 
   private

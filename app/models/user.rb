@@ -27,6 +27,9 @@ class User < ApplicationRecord
   # a user has many lectures as a teacher
   has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
 
+  # a user has many tutorials as a tutor
+  has_many :given_tutorials, class_name: 'Tutorial', foreign_key: 'tutor_id'
+
   # a user has many notifications as recipient
   has_many :notifications, foreign_key: 'recipient_id'
 
