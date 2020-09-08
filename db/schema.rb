@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_07_113337) do
+ActiveRecord::Schema.define(version: 2020_09_08_112756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -703,6 +703,16 @@ ActiveRecord::Schema.define(version: 2020_09_07_113337) do
     t.index ["user_id", "postable_id"], name: "thredded_user_topic_read_states_user_postable", unique: true
   end
 
+  create_table "tutorials", force: :cascade do |t|
+    t.text "title"
+    t.bigint "tutor_id", null: false
+    t.bigint "lecture_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
+    t.index ["tutor_id"], name: "index_tutorials_on_tutor_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -784,4 +794,5 @@ ActiveRecord::Schema.define(version: 2020_09_07_113337) do
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
+  add_foreign_key "tutorials", "lectures"
 end
