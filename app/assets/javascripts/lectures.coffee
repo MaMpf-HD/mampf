@@ -305,6 +305,10 @@ $(document).on 'turbolinks:load', ->
       $('#newLectureSort').hide()
     return
 
+  $(document).on 'click', '#cancelNewTutorial', ->
+    $('.tutorialRow[data-id="0"]').remove()
+    return
+
   return
 
 # clean up everything before turbolinks caches
@@ -312,4 +316,5 @@ $(document).on 'turbolinks:before-cache', ->
   $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
   $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
   $(document).off 'change', '#lecture_course_id'
+  $(document).off 'click', '#cancelNewTutorial'
   return
