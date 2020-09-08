@@ -34,6 +34,9 @@
         <%= render partial: 'lectures/edit/organizational_concept',
                    locals: { lecture: lecture,
                              inspection: inspection } %>
+        <%= render partial: 'lectures/edit/exercise_classes',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
         <%= render partial: 'lectures/edit/announcements',
                    locals: { lecture: lecture,
                              announcements: announcements,
