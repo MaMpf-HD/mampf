@@ -19,6 +19,8 @@
 //= require selectize
 //= require jquery.fileDownload
 //= require jquery-ui
+//= require select2
+//= require select2_locale_de
 //= require trix
 //= require _selectize_turbolinks_fix
 //= require administration

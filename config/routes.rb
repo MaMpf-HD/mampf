@@ -309,6 +309,8 @@ Rails.application.routes.draw do
                                   as: 'list_generic_users'
   get 'users/fill_user_select', to: 'users#fill_user_select',
                               as: 'fill_user_select'
+  get 'users/list', to: 'users#list',
+                    as: 'list_users'
   resources :users, only: [:index, :edit, :update, :destroy]
 
   get 'examples/:id', to: 'erdbeere#show_example',

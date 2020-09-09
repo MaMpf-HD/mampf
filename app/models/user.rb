@@ -56,6 +56,11 @@ class User < ApplicationRecord
   # users can comment stuff
   acts_as_commontator
 
+  searchable do
+    text :name
+  end
+
+
   # returns the array of all teachers
   def self.teachers
     User.where(id: Lecture.pluck(:teacher_id).uniq)
