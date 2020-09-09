@@ -2345,7 +2345,7 @@ en:
     subscribe: 'Subscribe'
     programs: 'Programs'
     visibility: 'Additional material'
-    exercise_classes: 'Exercise Classes'
+    tutorials: 'Tutorials'
     tutor: 'Tutor'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
@@ -2666,6 +2666,11 @@ en:
             season:
               inclusion: 'Not a valid type.'
               taken: 'This term already exists.'
+        tutorial:
+          attributes:
+            title:
+              taken: >
+                This tutorium title is already taken for this event series.
         user:
           attributes:
             courses:

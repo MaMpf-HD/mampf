@@ -2486,8 +2486,8 @@ de:
     subscribe: 'abonnieren'
     programs: 'Studiengänge'
     visibility: 'Zusatzmaterialien'
-    exercise_classes: 'Übungsbetrieb'
     tutor: 'TutorIn'
+    tutorials: 'Tutorien'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2811,6 +2811,12 @@ de:
             season:
               inclusion: 'Ungültiger Typ.'
               taken: 'Dieses Semester existiert bereits.'
+        tutorial:
+          attributes:
+            title:
+              taken: >
+                Dieser Tutoriumstitel ist für diese Veranstaltung bereits
+                vergeben.
         user:
           attributes:
             courses:
