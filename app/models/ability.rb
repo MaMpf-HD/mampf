@@ -107,7 +107,7 @@ class Ability
       can :new, Tutorial
 
       can [:edit, :create, :update, :destroy,
-           :cancel_edit_tutorial], Tutorial do |tutorial|
+           :cancel_edit_tutorial, :cancel_new_tutorial], Tutorial do |tutorial|
         tutorial.lecture.edited_by?(user)
       end
 

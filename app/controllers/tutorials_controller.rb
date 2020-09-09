@@ -24,10 +24,16 @@ class TutorialsController < ApplicationController
   end
 
   def destroy
+    @lecture = @tutorial.lecture
     @tutorial.destroy
   end
 
   def cancel_edit
+  end
+
+  def cancel_new
+    @lecture = Lecture.find_by_id(params[:lecture])
+    @none_left = @lecture&.tutorials&.none?
   end
 
   private
