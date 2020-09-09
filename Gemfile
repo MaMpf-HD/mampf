@@ -91,6 +91,11 @@ gem 'globalize'
 gem 'globalize-accessors'
 gem 'commontator'
 gem 'acts_as_votable'
+gem 'sprockets-rails',
+  git: 'https://github.com/rails/sprockets-rails',
+  branch: 'master'
+gem 'premailer-rails'
+gem 'select2-rails'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

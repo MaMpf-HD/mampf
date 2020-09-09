@@ -439,6 +439,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
+    select2-rails (4.0.13)
     selectize-rails (0.12.6)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
@@ -570,6 +571,7 @@ DEPENDENCIES
   rspec-rails
   rubocop (~> 0.54.0)
   sass-rails (>= 6)
+  select2-rails
   selectize-rails
   selenium-webdriver
   shrine

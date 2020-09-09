@@ -11,8 +11,8 @@
     </div>
     <div class="form-group col-4">
       <%= f.select :tutor_id,
-                   options_for_select(User.select_editors, tutorial&.tutor_id),
-                   { prompt: t('basics.select') },
+                   [[]],
+                   {},
                    { class: 'form-control' } %>
     </div>
     <div class="form-group col-4">
