@@ -1,14 +1,18 @@
-<%= form_with model: tutorial do |f| %>
-  <div class="form-row tutorialRow py-2 mx-3 border"
+<div class="list-group-item tutorialRow"
        data-id="<%= tutorial.id.to_i %>">
+<%= form_with model: tutorial do |f| %>
+  <div class="form-row">
     <div class="form-group col-4">
       <%= f.text_field :title,
                        class: 'form-control' %>
+      <div class="invalid-feedback"
+           id="tutorial-title-error">
+      </div>
     </div>
     <div class="form-group col-4">
       <%= f.select :tutor_id,
-                   options_for_select(User.select_editors, tutorial.tutor_id),
-                   {},
+                   options_for_select(User.select_editors, tutorial&.tutor_id),
+                   { prompt: t('basics.select') },
                    { class: 'form-control' } %>
     </div>
     <div class="form-group col-4">
@@ -21,8 +25,7 @@
                     remote: true %>
       <% else %>
         <button class="btn btn-sm btn-secondary"
-                id="cancelNewTutorial"
-                role="button">
+                id="cancelNewTutorial">
           <%= t('buttons.cancel') %>
         </button>
       <% end %>
@@ -31,3 +34,4 @@
   <%= f.hidden_field :lecture_id,
                      value: tutorial.lecture.id %>
 <% end %>
+</div>

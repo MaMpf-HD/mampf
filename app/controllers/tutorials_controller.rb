@@ -1,7 +1,7 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit]
-  authorize_resource
+  # authorize_resource
 
   def new
     @tutorial = Tutorial.new
@@ -12,6 +12,7 @@ class TutorialsController < ApplicationController
   def create
     @tutorial = Tutorial.new(tutorial_params)
     @tutorial.save
+    @errors = @tutorial.errors
   end
 
   def edit
@@ -19,6 +20,7 @@ class TutorialsController < ApplicationController
 
   def update
     @tutorial.update(tutorial_params)
+    @errors = @tutorial.errors
   end
 
   def destroy
@@ -32,7 +34,7 @@ class TutorialsController < ApplicationController
 
   def set_tutorial
     @tutorial = Tutorial.find_by_id(params[:id])
-    return if @tutorial.present?
+    return if @tutorial
     redirect_to :root, alert: I18n.t('controllers.no_tutorial')
   end
 

@@ -1,9 +1,11 @@
-<div class="row tutorialRow py-2 mx-3 border" data-id="<%= tutorial.id.to_i %>">
+<div class="list-group-item tutorialRow"
+     data-id="<%= tutorial.id.to_i %>">
+<div class="row">
   <div class="col-4">
     <%= tutorial.title %>
   </div>
   <div class="col-4">
-    <%= tutorial.tutor.name %>
+    <%= tutorial.tutor&.name %>
   </div>
   <div class="col-4">
     <%= link_to edit_tutorial_path(tutorial),
@@ -29,4 +31,5 @@
       </i>
     <% end %>
   </div>
+</div>
 </div>

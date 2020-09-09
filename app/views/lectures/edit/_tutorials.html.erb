@@ -8,7 +8,7 @@
     <div class="row">
       <div class="col-12">
         <h5>
-          <%= t('basics.exercise_classes') %>
+          <%= t('basics.tutorials') %>
         </h5>
       </div>
     </div>
@@ -27,8 +27,10 @@
                       remote: true %>
         </div>
       </div>
-      <div class="row border border-botttom py-2 mx-3"
+      <div class="list-group">
+      <div class="list-group-item"
            id="tutorialListHeader">
+      <div class="row">
         <div class="col-4">
           <h6>
             <%= t('basics.title') %>
@@ -44,6 +46,7 @@
             <%= t('basics.action') %>
           </h6>
         </div>
+      </div>
       </div>
       <% lecture.tutorials.each do |t| %>
         <%= render partial: 'tutorials/row',
