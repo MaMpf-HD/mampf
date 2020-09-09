@@ -11,24 +11,17 @@
     </div>
     <div class="form-group col-4">
       <%= f.select :tutor_id,
-                   [[]],
+                   tutorial_preselection(tutorial),
                    {},
                    { class: 'form-control' } %>
     </div>
     <div class="form-group col-4">
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary ml-2' %>
-      <% if tutorial.persisted? %>
-        <%= link_to t('buttons.cancel'),
-                    cancel_edit_tutorial_path(tutorial),
-                    class: 'btn btn-sm btn-secondary',
-                    remote: true %>
-      <% else %>
-        <button class="btn btn-sm btn-secondary"
-                id="cancelNewTutorial">
-          <%= t('buttons.cancel') %>
-        </button>
-      <% end %>
+      <%= link_to t('buttons.cancel'),
+                  cancel_editing_path(tutorial),
+                  class: 'btn btn-sm btn-secondary',
+                  remote: true %>
     </div>
   </div>
   <%= f.hidden_field :lecture_id,
