@@ -25,6 +25,13 @@ Rails.application.routes.draw do
 
   resources :areas, except: [:show]
 
+  get 'assignments/:id/cancel_edit', to: 'assignments#cancel_edit',
+                                   as: 'cancel_edit_assignment'
+  get 'assignments/cancel_new', to: 'assignments#cancel_new',
+                              as: 'cancel_new_assignment'
+
+  resources :assignments, only: [ :new, :edit, :create, :update, :destroy]
+
   get 'chapters/:id/list_sections', to: 'chapters#list_sections',
                                      as: 'list_sections'
   resources :chapters, except: [:index, :show]

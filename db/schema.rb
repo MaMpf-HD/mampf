@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_09_104314) do
+ActiveRecord::Schema.define(version: 2020_09_10_101127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,17 @@ ActiveRecord::Schema.define(version: 2020_09_09_104314) do
     t.datetime "updated_at", null: false
     t.integer "question_id"
     t.index ["question_id"], name: "index_answers_on_question_id"
+  end
+
+  create_table "assignments", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.bigint "medium_id"
+    t.text "title"
+    t.datetime "deadline"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
+    t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -771,6 +782,7 @@ ActiveRecord::Schema.define(version: 2020_09_09_104314) do
 
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
+  add_foreign_key "assignments", "lectures"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade

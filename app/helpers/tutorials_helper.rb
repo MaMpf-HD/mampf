@@ -1,6 +1,6 @@
 # Tutorials Helper
 module TutorialsHelper
-  def cancel_editing_path(tutorial)
+  def cancel_editing_tutorial_path(tutorial)
     return cancel_edit_tutorial_path(tutorial) if tutorial.persisted?
     cancel_new_tutorial_path(params: { lecture: tutorial.lecture })
   end

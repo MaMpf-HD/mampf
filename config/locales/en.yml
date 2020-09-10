@@ -1635,6 +1635,8 @@ en:
       end: End Date
     tutorial:
       new: 'Add tutorial'
+    assignment:
+      new: 'Add assignment'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -2347,6 +2349,8 @@ en:
     visibility: 'Additional material'
     tutorials: 'Tutorials'
     tutor: 'Tutor'
+    assignments: 'Assignments'
+    deadline: 'Due Date'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2537,6 +2541,12 @@ en:
           attributes:
             details:
               blank: 'You need to give a text.'
+        assignment:
+          attributes:
+            title:
+              taken: >
+                This assignment title is already taken for this event series.
+              blank: You need to giv a title.
         chapter:
           attributes:
             title:
@@ -2671,6 +2681,7 @@ en:
             title:
               taken: >
                 This tutorium title is already taken for this event series.
+              blank: You need to giv a title.
         user:
           attributes:
             courses:
