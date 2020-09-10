@@ -1746,6 +1746,8 @@ de:
       end: Enddatum
     tutorial:
       new: 'Neues Tutorium anlegen'
+    assignment:
+      new: 'Neue Hausaufgabe anlegen'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2488,6 +2490,8 @@ de:
     visibility: 'Zusatzmaterialien'
     tutor: 'TutorIn'
     tutorials: 'Tutorien'
+    assignments: 'Hausaufgaben'
+    deadline: 'Frist'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2682,6 +2686,14 @@ de:
           attributes:
             details:
               blank: 'Es muss ein Text angegeben werden.'
+        assignment:
+          attributes:
+            title:
+              taken: >
+                Dieser Hausaufgabentitel ist für diese Veranstaltung bereits
+                vergeben.
+              blank: >
+                Es muss ein Titel angegeben werden.
         chapter:
           attributes:
             title:
@@ -2817,6 +2829,8 @@ de:
               taken: >
                 Dieser Tutoriumstitel ist für diese Veranstaltung bereits
                 vergeben.
+              blank: >
+                Es muss ein Titel angegeben werden.
         user:
           attributes:
             courses:

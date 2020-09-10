@@ -37,6 +37,9 @@
         <%= render partial: 'lectures/edit/tutorials',
                    locals: { lecture: lecture,
                              inspection: inspection } %>
+        <%= render partial: 'lectures/edit/assignments',
+                   locals: { lecture: lecture,
+                             inspection: inspection } %>
         <%= render partial: 'lectures/edit/announcements',
                    locals: { lecture: lecture,
                              announcements: announcements,

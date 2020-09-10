@@ -32,6 +32,14 @@ class Ability
         answer.question.edited_with_inheritance_by?(user)
       end
 
+      can :new, Assignment
+
+      can [:edit, :create, :update, :destroy,
+           :cancel_edit_assignment,
+           :cancel_new_assignment], Assignment do |assignment|
+        assignment.lecture.edited_by?(user)
+      end
+
       # only users who are editors of a chapter's lecture can edit, update
       # or destroy them
       can [:update, :destroy], Chapter do |chapter|

@@ -1,0 +1,63 @@
+<div class="card bg-light">
+  <div class="card-header clickable"
+       role="tab"
+       id="assignments_heading"
+       data-toggle="collapse"
+       data-target="#assignments_collapse"
+       aria-expanded="false" aria-controls="assignments_collapse">
+    <div class="row">
+      <div class="col-12">
+        <h5>
+          <%= t('basics.assignments') %>
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div id="assignments_collapse"
+       class="collapse"
+       role="tabpanel"
+       aria-labelledby="heading"
+       data-parent="#lectureAccordion">
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-12 text-center">
+          <%= link_to t('admin.assignment.new'),
+                      new_assignment_path(params: { lecture_id: lecture.id }),
+                      class: 'btn btn-sm btn-primary',
+                      remote: true %>
+        </div>
+      </div>
+      <div class="list-group">
+      <div class="list-group-item"
+           id="assignmentListHeader"
+           style="display: <%= show(lecture.assignments.any?) %>">
+        <div class="row">
+          <div class="col-3">
+            <h6>
+              <%= t('basics.title') %>
+            </h6>
+          </div>
+          <div class="col-3">
+            <h6>
+              <%= t('basics.deadline') %>
+            </h6>
+          </div>
+          <div class="col-3">
+            <h6>
+              <%= t('basics.medium') %>
+            </h6>
+          </div>
+          <div class="col-3">
+            <h6>
+              <%= t('basics.action') %>
+            </h6>
+          </div>
+        </div>
+      </div>
+      <% lecture.assignments.each do |a| %>
+        <%= render partial: 'assignments/row',
+                   locals: { assignment: a } %>
+      <% end %>
+    </div>
+  </div>
+</div>

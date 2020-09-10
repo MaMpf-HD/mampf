@@ -44,6 +44,9 @@ class Lecture < ApplicationRecord
   # a lecture has many tutorials
   has_many :tutorials
 
+  # a lecture has many assignments (e.g. exercises with deadlines)
+  has_many :assignments
+
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
   serialize :structure_ids, Array
