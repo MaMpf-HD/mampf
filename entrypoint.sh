@@ -5,7 +5,10 @@ check_for_preseeds() {
     echo "Found DB Preseed with URL: $DB_SQL_PRESEED_URL"&> >(tee -a /usr/src/app/log/initialisation.log)
     mkdir -pv db/backups/docker_development
     wget --content-disposition --directory-prefix=db/backups/docker_development/ --timestamping $DB_SQL_PRESEED_URL
-    rails db:restore pattern=$(ls db/backups/docker_development/ | rev | cut -d "/" -f1 | rev | cut -d "_" -f1) &> >(tee -a /usr/src/app/log/initialisation.log)
+    for file in db/backups/docker_development/*.sql; do
+      [[ $file -nt $latest ]] && latest=$file
+    done
+    rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1) &> >(tee -a /usr/src/app/log/initialisation.log)
     rails db:create:interactions &> >(tee -a /usr/src/app/log/initialisation.log)
     rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
   fi
@@ -13,7 +16,7 @@ check_for_preseeds() {
     echo "Found Upload Preseed with URL: ${UPLOAD_PRESEED_URL}"&> >(tee -a /usr/src/app/log/initialisation.log)
     wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
     mkdir -p public/uploads
-    bsdtar -xf public/uploads.zip -s'|[^/]*/||' -C public/uploads
+    bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
   fi
 }
 
