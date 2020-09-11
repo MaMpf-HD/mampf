@@ -2491,7 +2491,7 @@ de:
     tutor: 'TutorIn'
     tutorials: 'Tutorien'
     assignments: 'Hausaufgaben'
-    deadline: 'Frist'
+    deadline: 'Abgabetermin'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
