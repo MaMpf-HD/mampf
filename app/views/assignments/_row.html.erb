@@ -5,7 +5,9 @@
     <%= assignment.title %>
   </div>
   <div class="col-3">
-    <%= I18n.l(assignment.deadline, format: :long, locale: :'de') %>
+    <% if assignment.deadline %>
+      <%= I18n.l(assignment.deadline, format: :long, locale: :'de') %>
+    <% end %>
   </div>
   <div class="col-3">
     <% if assignment.medium %>
