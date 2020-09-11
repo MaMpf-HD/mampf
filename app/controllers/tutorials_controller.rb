@@ -21,6 +21,8 @@ class TutorialsController < ApplicationController
   def update
     @tutorial.update(tutorial_params)
     @errors = @tutorial.errors
+    return if @errors.present?
+    @tutorial.update(tutor: nil) if tutorial_params[:tutor_id].blank?
   end
 
   def destroy
