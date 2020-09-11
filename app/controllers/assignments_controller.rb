@@ -21,6 +21,8 @@ class AssignmentsController < ApplicationController
   def update
     @assignment.update(assignment_params)
     @errors = @assignment.errors
+    return if @errors.present?
+    @assignment.update(medium: nil) if assignment_params[:medium_id].blank?
   end
 
   def destroy
