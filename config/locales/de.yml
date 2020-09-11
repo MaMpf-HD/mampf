@@ -69,6 +69,7 @@ de:
       short: 'Sns'
     course: 'Modul'
     mampf_news: 'MaMpf-News'
+    submissions: 'Abgaben'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.

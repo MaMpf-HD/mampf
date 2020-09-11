@@ -39,6 +39,10 @@ class User < ApplicationRecord
   # a user has many clickers as editor
   has_many :clickers, foreign_key: 'editor_id', dependent: :destroy
 
+  # a user has many submissions (of assignments)
+  has_many :user_submission_joins
+  has_many :submissions, through: :user_submission_joins
+
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
 
