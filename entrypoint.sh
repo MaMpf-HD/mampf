@@ -13,7 +13,7 @@ check_for_preseeds() {
     rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
   fi
   if [[ "${UPLOADS_PRESEED_URL}" ]]; then
-    echo "Found Upload Preseed with URL: ${UPLOAD_PRESEED_URL}"&> >(tee -a /usr/src/app/log/initialisation.log)
+    echo "Found Upload Preseed with URL: $UPLOAD_PRESEED_URL"&> >(tee -a /usr/src/app/log/initialisation.log)
     wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
     mkdir -p public/uploads
     bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
