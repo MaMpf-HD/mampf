@@ -146,6 +146,17 @@
       <% end %>
     </li>
     <li class="nav-item">
+      <% if lecture.assignments.any? %>
+        <%= link_to t('categories.submissions'),
+                    submissions_path(params: { lecture_id: lecture.id }),
+                    class: 'nav-link' %>
+      <% else %>
+        <span class="nav-link disabled">
+          <%= t('categories.submissions') %>
+        </span>
+      <% end %>
+    </li>
+    <li class="nav-item">
       <% if lecture.muesli %>
         <a href="<%= DefaultSetting::MUESLI_LINK %>"
            class="nav-link"

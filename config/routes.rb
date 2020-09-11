@@ -266,6 +266,8 @@ Rails.application.routes.draw do
 
   resources :subjects, except: [:show]
 
+  resources :submissions
+
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
   get 'tags/:id/inspect', to: 'tags#inspect',

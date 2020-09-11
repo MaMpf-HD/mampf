@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_10_101127) do
+ActiveRecord::Schema.define(version: 2020_09_11_144948) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -469,6 +469,16 @@ ActiveRecord::Schema.define(version: 2020_09_10_101127) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "submissions", force: :cascade do |t|
+    t.bigint "tutorial_id", null: false
+    t.bigint "assignment_id", null: false
+    t.text "token"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
+    t.index ["tutorial_id"], name: "index_submissions_on_tutorial_id"
+  end
+
   create_table "tags", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -724,6 +734,15 @@ ActiveRecord::Schema.define(version: 2020_09_10_101127) do
     t.index ["tutor_id"], name: "index_tutorials_on_tutor_id"
   end
 
+  create_table "user_submission_joins", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "submission_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["submission_id"], name: "index_user_submission_joins_on_submission_id"
+    t.index ["user_id"], name: "index_user_submission_joins_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -802,9 +821,13 @@ ActiveRecord::Schema.define(version: 2020_09_10_101127) do
   add_foreign_key "programs", "subjects"
   add_foreign_key "referrals", "items"
   add_foreign_key "referrals", "media"
+  add_foreign_key "submissions", "assignments"
+  add_foreign_key "submissions", "tutorials"
   add_foreign_key "thredded_messageboard_users", "thredded_messageboards", on_delete: :cascade
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
   add_foreign_key "tutorials", "lectures"
+  add_foreign_key "user_submission_joins", "submissions"
+  add_foreign_key "user_submission_joins", "users"
 end

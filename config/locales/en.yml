@@ -84,6 +84,7 @@ en:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
+    submissions: 'Submissions'
   unauthorized:
     default: >
       You are not authorized to access this page.
