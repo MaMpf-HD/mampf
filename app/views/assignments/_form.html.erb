@@ -18,7 +18,7 @@
                      options_for_select(Medium.where(teachable: assignment.lecture,
                                                      sort: 'Nuesse')
                                               .map { |m| [m.local_title_for_viewers, m.id] },
-                                        assignment.medium&.id ),
+                                        assignment.medium_id ),
                      {},
                      { class: 'form-control' } %>
       </div>
