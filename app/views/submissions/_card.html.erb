@@ -1,0 +1,57 @@
+<div class="card">
+	<div class="card-header">
+		<div class="row">
+			<div class="col-3">
+				<h6>
+					<%= assignment.title %>
+				</h6>
+			</div>
+			<div class="col-5">
+				bis
+		    <% if assignment.deadline %>
+    		  <%= I18n.l(assignment.deadline, format: :short, locale: :'de') %>
+    		<% end %>
+			</div>
+			<% if assignment.medium %>
+				<div class="col-4">
+					<%= link_to assignment.medium.local_title_for_viewers,
+											assignment.medium %>
+				</div>
+			<% end %>
+		</div>
+	</div>
+	<div class="card-body">
+		<div class="row mb-3 submissionButtons"
+				 data-id="<%= assignment.id %>">
+			<div class="col-12 text-center">
+				<% if submission %>
+					<button class="btn btn-sm btn-danger">
+						<%= t('buttons.delete') %>
+					</button>
+				<% else %>
+					<%= link_to t('buttons.create'),
+											new_submission_path(params:
+											  									 { assignment: assignment.id }),
+											class: 'btn btn-sm btn-primary',
+											remote: true %>
+					<button class="btn btn-sm btn-primary">
+						<%= t('buttons.join') %>
+					</button>
+				<% end %>
+			</div>
+		</div>
+		<% if submission %>
+			<div class="row">
+				<div class="col-4">
+					abgegebene Datei: Link
+				</div>
+				<div class="col-4">
+					Korrektur: Link
+				</div>
+				<div class="col-4">
+					PartnerInnen: Liste
+				</div>
+			</div>
+		<% end %>
+	</div>
+</div>

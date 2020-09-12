@@ -2522,6 +2522,7 @@ de:
     create_program: 'Studiengang anlegen'
     create_subject: 'Fach anlegen'
     create_division: 'Teilbereich anlegen'
+    create: 'Anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2577,6 +2578,7 @@ de:
     import_script_items: 'Inhaltsverzeichnis aus Skript übernehmen'
     close_comments: 'Diskussionen für alle Medien schließen'
     open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
+    join: 'Beitreten'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -2809,6 +2811,10 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        submission:
+          lecture_not_matching: >
+            Die zum Tutorium assoziierte Vorlesung sollte mit der zur
+            Hausaufgabe assoziierten Vorlesung übereinstimmen.
         tag:
           attributes:
             notions:
@@ -2838,6 +2844,9 @@ de:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
               blank: 'Es muss ein Anzeigename angegeben werden.'
+        user_submission_join:
+          only_one_per_assignment: >
+            Jede NutzerIn darf pro Hausaufgabe nur eine Abgabe vornehmen.
         vote:
           attributes:
             clicker:
