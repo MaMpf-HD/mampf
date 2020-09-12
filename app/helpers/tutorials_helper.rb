@@ -10,4 +10,8 @@ module TutorialsHelper
     options_for_select([[tutorial.tutor.info, tutorial.tutor_id]],
                        tutorial.tutor_id)
   end
+
+  def tutorials_selection(lecture)
+  	lecture.tutorials.map { |t| [t.title_with_tutor, t.id] }
+  end
 end

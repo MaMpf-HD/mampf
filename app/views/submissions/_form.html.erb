@@ -1,0 +1,15 @@
+<%= form_with model: submission do |f| %>
+	<div class="form-row">
+		<div class="col-auto">
+			<%= f.select :tutorial_id,
+									 options_for_select(tutorials_selection(@lecture)),
+									 {},
+									 { class: 'form-control' } %>
+			<%= f.hidden_field :lecture_id,
+										value: @lecture.id %>
+		</div>
+		<div class="col-auto">
+			<%= f.submit t('buttons.save'),
+									 class: 'btn btn-sm btn-primary' %>
+		</div>
+<% end %>

@@ -28,36 +28,37 @@
         </div>
       </div>
       <div class="list-group">
-      <div class="list-group-item"
-           id="assignmentListHeader"
-           style="display: <%= show(lecture.assignments.any?) %>">
-        <div class="row">
-          <div class="col-3">
-            <h6>
-              <%= t('basics.title') %>
-            </h6>
-          </div>
-          <div class="col-3">
-            <h6>
-              <%= t('basics.deadline') %>
-            </h6>
-          </div>
-          <div class="col-3">
-            <h6>
-              <%= t('basics.medium') %>
-            </h6>
-          </div>
-          <div class="col-3">
-            <h6>
-              <%= t('basics.action') %>
-            </h6>
+        <div class="list-group-item"
+             id="assignmentListHeader"
+             style="display: <%= show(lecture.assignments.any?) %>">
+          <div class="row">
+            <div class="col-3">
+              <h6>
+                <%= t('basics.title') %>
+              </h6>
+            </div>
+            <div class="col-3">
+              <h6>
+                <%= t('basics.deadline') %>
+              </h6>
+            </div>
+            <div class="col-3">
+              <h6>
+                <%= t('basics.medium') %>
+              </h6>
+            </div>
+            <div class="col-3">
+              <h6>
+                <%= t('basics.action') %>
+              </h6>
+            </div>
           </div>
         </div>
+        <% lecture.assignments.each do |a| %>
+          <%= render partial: 'assignments/row',
+                     locals: { assignment: a } %>
+        <% end %>
       </div>
-      <% lecture.assignments.each do |a| %>
-        <%= render partial: 'assignments/row',
-                   locals: { assignment: a } %>
-      <% end %>
     </div>
   </div>
 </div>

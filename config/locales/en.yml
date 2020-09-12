@@ -2385,6 +2385,7 @@ en:
     create_program: 'Create Study Path'
     create_subject: 'Create Subject'
     create_division: 'Create Division'
+    create: 'Create'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -2440,6 +2441,7 @@ en:
     import_script_items: 'Import table of contents from manuscript'
     close_comments: 'Close discussions for all related media'
     open_comments: 'Reopen all closed discussions'
+    join: 'Join'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -2664,6 +2666,9 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        submission:
+          lecture_not_matching: >
+            The tutorial should belong to the same lecture as the assignment.
         tag:
           attributes:
             notions:
@@ -2689,6 +2694,9 @@ en:
               blank: 'You need to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
+        user_submission_join:
+          only_one_per_assignment: >
+            Each user is only allowed one submission per assignment.
         vote:
           attributes:
             clicker:
