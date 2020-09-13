@@ -132,5 +132,9 @@ group :test do
   gem 'faker'
   gem 'database_cleaner'
   gem 'launchy'
+  gem 'simplecov', require: false
 end
 
+group :test, :development, :docker_development do
+  gem 'cypress-on-rails', '~> 1.0'
+end
