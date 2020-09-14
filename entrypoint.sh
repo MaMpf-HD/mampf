@@ -17,6 +17,7 @@ then
         bundle exec rails assets:precompile &> >(tee -a /usr/src/app/log/initialisation.log)
     fi
     bundle exec rake sunspot:solr:reindex &
+    sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
     echo 'finished initialisation' &> >(tee -a /usr/src/app/log/initialisation.log)
     touch completed_initial_run
 fi
