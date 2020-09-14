@@ -1,85 +1,22 @@
 <%= form_with model: submission do |f| %>
-	<div class="card-body submissionBody"
-			 data-id="<%= assignment.id %>">
-		<div class="row mb-3">
-			<div class="col-12">
-				<%= f.label :tutorial_id,
-										t('basics.tutorial') %>
-				<%= f.select :tutorial_id,
-										 options_for_select(tutorials_selection(lecture),
-										 										submission.tutorial_id ||
-										 											assignment.previous
-										 														 	 &.tutorial(current_user)&.id),
-										 {},
-										 { class: 'form-control' } %>
-				<%= f.hidden_field :lecture_id,
-		  										 value: lecture.id %>
-		  	<%= f.hidden_field :assignment_id,
-		  										 value: assignment.id %>
-			</div>
-		</div>
-		<% unless submission.persisted? %>
-			<div class="row">
-				<div class="col-12">
-					<%= f.label :invitee_ids,
-										 t('submission.invitations_to') %>
-					<%= f.select :invitee_ids,
-											 options_for_select(partner_selection(current_user,
-											 																			lecture),
-											 										preceding_partner_ids(assignment,
-											 																					current_user)),
-											 {},
-											 { multiple: true,
-											 	 class: 'form-control' } %>
-				</div>
-			</div>
-		<% end %>
-		<div class="row">
-			<div class="col-12">
-				<%= f.label :manuscript, 'Abgabe' %>
-			</div>
-			<div class="col-3" id="userManuscript-uploadButton"
-					 data-choosefiles="<%= t('basics.file') %>">
-			  <%= f.hidden_field :manuscript,
-			  									 value: submission.cached_manuscript_data,
-			  									 id: 'upload-userManuscript-hidden' %>
-			  <%= f.file_field :manuscript,
-			  								 class: 'form-control-file',
-			  								 id: 'upload-userManuscript' %>
-			  <%= f.hidden_field :detach_user_manuscript,
-			  									 value: false %>
-			</div>
-			<div class="col-9">
-			  <i class="fas fa-lg fa-trash-alt mr-2 clickable"
-			  	 id="removeUserManuscript">
-     		</i>
-     		<span id="userManuscriptMetadata"
-     					style="display: <%= show_inline(submission.manuscript) %>">
-					<%= submission.manuscript_filename %>
-					(<%= number_to_human_size(submission.manuscript_size) %>)
-				</span>
-				<span id="noUserManuscript"
-							style="display: <%= show_inline(!submission.manuscript) %>">
-					<%= t('submission.no_manuscript_yet') %>
-				</span>
-			</div>
-	    <div class="col-12" id="userManuscript-informer">
-  	  </div>
-	    <div class="col-12" id="userManuscript-statusBar">
-  	  </div>
+	<div class="row mb-2">
+		<div class="col-12">
+			<%= f.label :tutorial_id,
+									t('basics.tutorial') %>
+			<%= f.select :tutorial_id,
+									 options_for_select(tutorials_selection(@lecture)),
+									 {},
+									 { class: 'form-control' } %>
+			<%= f.hidden_field :lecture_id,
+		  									 value: @lecture.id %>
+		  <%= f.hidden_field :assignment_id,
+		  									 value: @assignment.id %>
 		</div>
 	</div>
-	<div class="card-footer submissionFooter"
-			 data-id="<%= assignment.id %>">
-		<div class="row">
-			<div class="col-12 text-center">
-				<%= f.submit t('buttons.save'),
-										 class: 'btn btn-sm btn-primary' %>
-      	<%= link_to t('buttons.cancel'),
-        	          cancel_editing_submission_path(submission),
-          	        class: 'btn btn-sm btn-secondary',
-            	      remote: true %>
-			</div>
+	<div class="row">
+		<div class="col-12">
+			<%= f.submit t('buttons.save'),
+									 class: 'btn btn-sm btn-primary' %>
 		</div>
 	</div>
 <% end %>
