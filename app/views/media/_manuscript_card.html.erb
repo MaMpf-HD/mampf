@@ -38,7 +38,8 @@
       </div>
     </div>
   </div>
-  <%= link_to image_tag(medium.manuscript_screenshot_url,
+  <%= link_to image_tag(medium.manuscript_screenshot_url ||
+                          '/no_course_information.png',
                         class: 'card-img-top manuscript-thumbnail'),
               display_medium_path(medium),
               target: :blank %>
