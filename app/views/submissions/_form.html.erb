@@ -1,15 +1,22 @@
 <%= form_with model: submission do |f| %>
-	<div class="form-row">
-		<div class="col-auto">
+	<div class="row mb-2">
+		<div class="col-12">
+			<%= f.label :tutorial_id,
+									t('basics.tutorial') %>
 			<%= f.select :tutorial_id,
 									 options_for_select(tutorials_selection(@lecture)),
 									 {},
 									 { class: 'form-control' } %>
 			<%= f.hidden_field :lecture_id,
-										value: @lecture.id %>
+		  									 value: @lecture.id %>
+		  <%= f.hidden_field :assignment_id,
+		  									 value: @assignment.id %>
 		</div>
-		<div class="col-auto">
+	</div>
+	<div class="row">
+		<div class="col-12">
 			<%= f.submit t('buttons.save'),
 									 class: 'btn btn-sm btn-primary' %>
 		</div>
+	</div>
 <% end %>

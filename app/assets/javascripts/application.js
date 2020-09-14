@@ -22,6 +22,7 @@
 //= require select2
 //= require select2_locale_de
 //= require trix
+//= require clipboard
 //= require _selectize_turbolinks_fix
 //= require administration
 //= require announcements

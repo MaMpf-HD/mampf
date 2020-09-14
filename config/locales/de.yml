@@ -2493,6 +2493,7 @@ de:
     tutorials: 'Tutorien'
     assignments: 'Hausaufgaben'
     deadline: 'Abgabetermin'
+    tutorial: 'Tutorium'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

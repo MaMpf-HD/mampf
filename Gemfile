@@ -93,6 +93,7 @@ gem 'sprockets-rails',
   branch: 'master'
 gem 'premailer-rails'
 gem 'select2-rails'
+gem 'clipboard-rails'
 
 group :development, :docker_development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
