@@ -21,7 +21,6 @@ then
     touch completed_initial_run
 fi
 rm -f tmp/pids/server.pid
-sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 echo "running mampf"
 bundle exec sidekiq &
 exec bundle exec rails s -p 3000 -b '0.0.0.0' &> >(tee -a /usr/src/app/log/runtime.log)
