@@ -16,7 +16,7 @@ services:
         source: ../../solr/development/conf/
         target: /solrconfig/
         read_only: true
-    command: ["solr-precreate", "development", "/solrconfig"]
+    command: ["solr-precreate", "test", "/solrconfig"]
 
   db:
     image: postgres
