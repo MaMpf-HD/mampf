@@ -2352,6 +2352,7 @@ en:
     tutor: 'Tutor'
     assignments: 'Assignments'
     deadline: 'Due Date'
+    tutorial: 'Tutorial'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

@@ -1,6 +1,6 @@
 <div class="row">
 	<% @assignments.each do |a| %>
-		<div class="col-12 col-lg-6 mb-3"
+		<div class="col-12 col-lg-6 mb-3 submissionArea"
 				 data-id="<%= a.id %>">
 			<%= render partial: 'submissions/card',
 								 locals: { assignment: a,
