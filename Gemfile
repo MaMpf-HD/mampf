@@ -5,6 +5,12 @@ ruby '2.7.1'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.3'
+# Use dalli for caching to memcached in production
+gem 'dalli', '>= 2.7'
+# Ruby wrapper for UglifyJS JavaScript compressor
+gem 'uglifier'
+# Use nulldb adapter for assets precompilation in production
+gem 'activerecord-nulldb-adapter'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
 # Use Puma as the app server
@@ -59,6 +65,7 @@ gem 'bootstrap'
 gem "bootstrap_form"
 gem 'devise-bootstrap-views'
 gem 'fuzzy-string-match'
+gem 'coveralls', require: false
 gem 'kaminari'
 gem "selectize-rails"
 gem 'acts_as_list'
@@ -66,9 +73,7 @@ gem 'acts_as_tree'
 gem 'activerecord-import',
   git: 'https://github.com/zdennis/activerecord-import.git',
   branch: 'master'
-gem 'thredded',
-  git: 'https://github.com/fosterfarrell9/thredded',
-  branch: 'master'
+gem 'thredded'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
 gem 'rails-i18n'
@@ -84,26 +89,21 @@ gem 'sidekiq'
 gem 'faraday'
 gem 'globalize'
 gem 'globalize-accessors'
-gem 'commontator',
-  git: 'https://github.com/fosterfarrell9/commontator',
-  branch: 'master'
+gem 'commontator'
 gem 'acts_as_votable'
-gem 'sprockets-rails',
-  git: 'https://github.com/rails/sprockets-rails',
-  branch: 'master'
-gem 'premailer-rails'
 
-group :development, :docker_development, :test do
+group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'rspec-rails'
   gem 'factory_bot_rails'
 end
 
-group :development, :docker_development do
+group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'rails-erd'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
@@ -120,5 +120,5 @@ group :test do
   gem 'faker'
   gem 'database_cleaner'
   gem 'launchy'
-  gem 'simplecov', require: false
 end
+

@@ -1,0 +1,3 @@
+FROM jwilder/nginx-proxy:alpine
+COPY docker/production/proxy_location_config.txt /etc/nginx/vhost.d/localhost_location
+COPY docker/production/mime.types /etc/nginx/mime.types

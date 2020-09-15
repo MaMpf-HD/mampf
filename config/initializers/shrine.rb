@@ -10,7 +10,7 @@ if Rails.env.development? || Rails.env == 'docker_development'
 elsif Rails.env.production?
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
-    store: Shrine::Storage::FileSystem.new("/" + ENV['MEDIA_FOLDER'], prefix: "/"),
+    store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'), prefix: "/"),
   }
 elsif Rails.env.test?
   Shrine.storages = {

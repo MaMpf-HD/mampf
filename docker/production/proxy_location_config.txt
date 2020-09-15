@@ -1,0 +1,8 @@
+proxy_set_header  X-Accel-Mapping       /usr/src/app/public=/__accel_redirect;
+
+location /__accel_redirect {
+    internal;
+    alias   /public;
+    add_header Content-Encoding $upstream_http_content_encoding;
+    gzip off;
+}

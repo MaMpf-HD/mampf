@@ -1,0 +1,89 @@
+version: '3.4'
+x-mampf:
+  &mampf
+  build:
+    context: git@github.com:fosterfarrell9/mampf.git#production
+    dockerfile: docker/production/Dockerfile
+  image: mampf
+  env_file: docker.env
+  networks:
+    - solr
+    - mampf
+    - postgres
+  restart: always
+  depends_on:
+    - redis
+    - cache
+    - solr
+
+services:
+  master:
+    <<: *mampf
+    entrypoint: /usr/src/app/docker/production/entrypoint-master.sh
+    volumes:
+      - "media_mampf:/mampf"
+      - "public:/public"
+
+  worker:
+    <<: *mampf
+    entrypoint: /usr/src/app/docker/production/entrypoint-worker.sh
+    environment:
+      - VIRTUAL_HOST=localhost
+    volumes:
+      - "media_mampf:/mampf"
+
+  proxy:
+    build:
+      context: git@github.com:fosterfarrell9/mampf.git#production
+      dockerfile: docker/production/Dockerfile.proxy
+    image: mampf-proxy
+    restart: always
+    ports:
+      - "127.0.0.1:3008:80"
+    volumes:
+      - "/var/run/docker.sock:/tmp/docker.sock"
+      - "public:/public:ro"
+    networks:
+      - mampf
+
+  redis:
+    restart: always
+    image: redis:5-alpine
+    networks:
+      - default
+
+  cache:
+    restart: always
+    image: memcached:alpine
+    networks:
+      - default
+
+  solr:
+    image: solr:8.1
+    container_name: solr
+    ports:
+      - "127.0.0.1:8983:8983"
+    volumes:
+      - /path/to/persistent/var_solr:/var/solr
+    networks:
+      - default
+    restart: always
+
+# Keeping the database separate from the docker setup is recommended.
+# Manually create a docker network where the server can be reached and specify it here
+networks:
+  postgres:
+    external: true
+  mampf:
+  solr:
+
+volumes:
+  media_mampf:
+    driver_opts:
+      type: "nfs"
+      o: "addr=<nfs server>,noatime,nolock,soft,vers=4.2,rw"
+      device: ":/path/to/share"
+  public:
+    driver_opts:
+      type: "tmpfs"
+      device: "tmpfs"
