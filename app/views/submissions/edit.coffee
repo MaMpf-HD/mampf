@@ -1,9 +1,8 @@
 $('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
-	.append('<%= j render partial: "submissions/form",
-												locals: { submission: @submission,
+  .append('<%= j render partial: "submissions/form",
+                        locals: { submission: @submission,
                                   assignment: @assignment,
                                   lecture: @lecture } %>')
-
 $('#submission_tutorial_id').select2
   theme: 'bootstrap'
 $('.submissionFooter[data-id!="<%= @assignment.id %>"] .btn')

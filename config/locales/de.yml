@@ -2288,6 +2288,20 @@ de:
     media_comments: >
       Anzahl der Medien in von den von Dir abonnierten
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
+  submission:
+    invalid_code: Der eingegebene Code ist ungültig für %{assignment}.
+    assignment_expired: Die Frist für diese Hausaufgabe ist bereits abgelaufen.
+    already_in: Bei dieser Abgabe bist Du schon dabei.
+    no_partners_no_leave: >
+      Du kannst nicht austreten, da Du die einzige Person in der Abgabegruppe
+      bist. Dafür kannst Du die Abgabe löschen.
+    nothing_here: >
+      Hier ist noch nichts hinterlegt - lege eine Abgabe an oder tritt einer
+      bei.
+    nothing_here_past: >
+      Zu dieser Hausaufgabe wurde nichts hinterlegt.
+  assignment:
+    expired: Die Abgabefrist ist abgelaufen.
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2451,7 +2465,7 @@ de:
     question: 'Frage'
     answer: 'Antwort'
     answers: 'Antworten'
-    none: 'none'
+    none: 'keine'
     remark: 'Bemerkung'
     latex: 'LaTeX'
     quiz: 'Quiz'
@@ -2494,6 +2508,10 @@ de:
     assignments: 'Hausaufgaben'
     deadline: 'Abgabetermin'
     tutorial: 'Tutorium'
+    code: 'Code'
+    files: 'Dateien'
+    partners: 'PartnerInnen'
+    expired: 'abgelaufen'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2580,6 +2598,8 @@ de:
     close_comments: 'Diskussionen für alle Medien schließen'
     open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
     join: 'Beitreten'
+    copy_to_clipboard: 'in die Zwischenablage kopieren'
+    leave: 'Austreten'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -2682,6 +2702,8 @@ de:
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
     no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
     no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
+    no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
+    no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'

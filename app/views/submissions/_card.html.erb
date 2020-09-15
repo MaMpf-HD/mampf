@@ -1,67 +1,29 @@
-<div class="card">
+<div class="card <%= assignment.active? ? 'bg-light' : 'bg-mdb-color-lighten-7' %>">
 	<div class="card-header">
 		<div class="row">
-			<div class="col-3">
-				<h6>
-					<%= assignment.title %>
-				</h6>
+			<div class="col-12">
+				<h5>
+					<% if assignment.medium %>
+						<%= link_to assignment.title,
+												assignment.medium,
+												class: 'text-dark' %>
+					<% else %>
+						<%= assignment.title %>
+					<% end %>
+				</h5>
 			</div>
-			<div class="col-5">
+			<div class="col-12">
 				bis
 		    <% if assignment.deadline %>
     		  <%= I18n.l(assignment.deadline, format: :short, locale: :'de') %>
     		<% end %>
 			</div>
-			<% if assignment.medium %>
-				<div class="col-4">
-					<%= link_to assignment.medium.local_title_for_viewers,
-											assignment.medium %>
-				</div>
-			<% end %>
 		</div>
 	</div>
-	<div class="card-body">
-		<div class="row mb-3 submissionButtons"
-				 data-id="<%= assignment.id %>">
-			<div class="col-12 text-center">
-				<% if submission %>
-					<%= link_to t('buttons.delete'),
-											submission_path(submission),
-											class: 'btn btn-sm btn-danger',
-											method: :delete,
-											remote: true %>
-				<% else %>
-					<%= link_to t('buttons.create'),
-											new_submission_path(params:
-											  									 { assignment: assignment.id }),
-											class: 'btn btn-sm btn-primary',
-											remote: true %>
-					<button class="btn btn-sm btn-primary">
-						<%= t('buttons.join') %>
-					</button>
-				<% end %>
-			</div>
-		</div>
-		<% if submission %>
-			<div class="row">
-				<div class="col-4">
-					<%= t('basics.tutorial') %>:
-					<%= submission.tutorial.title_with_tutor %>
-				</div>
-				<div class="col-4">
-					Code:
-					<%= submission.token %>
-				</div>
-				<div class="col-4">
-					abgegebene Datei: Link
-				</div>
-				<div class="col-4">
-					Korrektur: Link
-				</div>
-				<div class="col-4">
-					PartnerInnen: Liste
-				</div>
-			</div>
-		<% end %>
+	<div class="submissionMain"
+			 data-id="<%= assignment.id %>">
+		<%= render partial: 'submissions/card_main',
+							 locals: { submission: submission,
+							 					 assignment: assignment } %>
 	</div>
 </div>

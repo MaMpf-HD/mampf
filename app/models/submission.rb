@@ -9,6 +9,11 @@ class Submission < ApplicationRecord
 
   before_create :set_token
 
+  def partners_of_user(user)
+    return unless user.in?(users)
+    users - [user]
+  end
+
   private
 
 	def matching_lecture

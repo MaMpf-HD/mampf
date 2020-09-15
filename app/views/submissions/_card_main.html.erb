@@ -1,0 +1,117 @@
+<div class="card-body submissionBody"
+     data-id="<%= assignment.id %>">
+  <% if submission %>
+    <table class="table table-bordered">
+      <tbody>
+        <tr>
+          <th scope="row">
+            <%= t('basics.tutorial') %>
+          </th>
+          <td>
+            <%= submission.tutorial.title_with_tutor %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <%= t('basics.code') %>
+          </th>
+          <td>
+            <% if assignment.active? %>
+              <%= submission.token %>
+              <span class="badge badge-secondary clickable clipboard-btn"
+                data-clipboard-text="<%= submission.token %>"
+                data-toggle="tooltip"
+                title="<%= t('buttons.copy_to_clipboard') %>">
+                <i class="fas fa-copy">
+                </i>
+              </span>
+            <% else %>
+              <%= submission.token %>
+              <%= t('basics.expired') %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <%= t('basics.files') %>
+          </th>
+          <td>
+            Abgabe
+            <% unless assignment.active? %>
+              Korrektur
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <%= t('basics.partners') %>
+          </th>
+          <td>
+            <% if submission.users.count == 1 %>
+              <%= t('basics.none') %>
+            <% else %>
+              <%= submission.partners_of_user(current_user).map(&:name)
+                            .join(', ') %>
+            <% end %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  <% else %>
+    <% if assignment.active? %>
+      <%= t('submission.nothing_here') %>
+    <% else %>
+      <%= t('submission.nothing_here_past') %>
+    <% end %>
+  <% end %>
+</div>
+<div class="card-footer submissionFooter"
+     data-id="<%= assignment.id %>">
+  <div class="row">
+    <div class="col-12 text-center">
+      <% if assignment.active? %>
+        <% if submission %>
+          <%= link_to t('buttons.edit'),
+                      edit_submission_path(submission),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary'} %>
+          <% if submission.users.count == 1 %>
+            <%= link_to t('buttons.delete'),
+                        submission_path(submission),
+                        class: 'btn btn-sm btn-outline-danger',
+                        method: :delete,
+                        remote: true,
+                        data: { confirm: t('confirmation.generic'),
+                                color: 'btn-outline-danger' } %>
+          <% else %>
+            <%= link_to t('buttons.leave'),
+                        leave_submission_path(submission),
+                        class: 'btn btn-sm btn-outline-danger',
+                        method: :delete,
+                        remote: true,
+                        data: { confirm: t('confirmation.generic'),
+                                color: 'btn-outline-danger' } %>
+          <% end %>
+        <% else %>
+          <%= link_to t('buttons.create'),
+                      new_submission_path(params:
+                                            { assignment_id: assignment.id }),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary' } %>
+          <%= link_to t('buttons.join'),
+                      enter_submission_code_path(submission,
+                                                  params:
+                                                    { assignment_id:
+                                                        assignment.id }),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary' } %>
+        <% end %>
+      <% else %>
+          <%= t('assignment.expired') %>
+      <% end %>
+    </div>
+  </div>
+</div>
