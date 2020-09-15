@@ -1,22 +1,32 @@
 <%= form_with model: submission do |f| %>
-	<div class="row mb-2">
-		<div class="col-12">
-			<%= f.label :tutorial_id,
-									t('basics.tutorial') %>
-			<%= f.select :tutorial_id,
-									 options_for_select(tutorials_selection(@lecture)),
-									 {},
-									 { class: 'form-control' } %>
-			<%= f.hidden_field :lecture_id,
-		  									 value: @lecture.id %>
-		  <%= f.hidden_field :assignment_id,
-		  									 value: @assignment.id %>
+	<div class="card-body submissionBody"
+			 data-id="<%= assignment.id %>">
+		<div class="row mb-2">
+			<div class="col-12">
+				<%= f.label :tutorial_id,
+										t('basics.tutorial') %>
+				<%= f.select :tutorial_id,
+										 options_for_select(tutorials_selection(lecture)),
+										 {},
+										 { class: 'form-control' } %>
+				<%= f.hidden_field :lecture_id,
+		  										 value: lecture.id %>
+		  	<%= f.hidden_field :assignment_id,
+		  										 value: assignment.id %>
+			</div>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-12">
-			<%= f.submit t('buttons.save'),
-									 class: 'btn btn-sm btn-primary' %>
+	<div class="card-footer submissionFooter"
+			 data-id="<%= assignment.id %>">
+		<div class="row">
+			<div class="col-12 text-center">
+				<%= f.submit t('buttons.save'),
+										 class: 'btn btn-sm btn-primary' %>
+      	<%= link_to t('buttons.cancel'),
+        	          cancel_editing_submission_path(submission),
+          	        class: 'btn btn-sm btn-secondary',
+            	      remote: true %>
+			</div>
 		</div>
 	</div>
 <% end %>

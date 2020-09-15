@@ -47,6 +47,7 @@
 //= require registration
 //= require remarks
 //= require sections
+//= require submissions
 //= require tags
 //= require terms
 //= require tex_preview

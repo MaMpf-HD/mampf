@@ -2155,6 +2155,21 @@ en:
   locales:
     en: 'English'
     de: 'German'
+  submission:
+    invalid_code: The code you entered is invalid for %{assignment}.
+    assignment_expired: >
+      The due date for this homework assignment has already
+      expired.
+    already_in: You are already a partner for this assgnment.
+    no_partners_no_leave: >
+      You cannot leave as you are the only person in this group (but you
+      you can delete this submission).
+    nothing_here: >
+      There is nothing here yet. Create a new submission or join one.
+    nothing_here_past: >
+      Nothing was submitted for this assignment.
+  assignment:
+    expired: The due date has expired.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -2353,6 +2368,10 @@ en:
     assignments: 'Assignments'
     deadline: 'Due Date'
     tutorial: 'Tutorial'
+    code: 'Code'
+    files: 'Files'
+    partners: 'Partners'
+    expired: 'expired'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2443,6 +2462,8 @@ en:
     close_comments: 'Close discussions for all related media'
     open_comments: 'Reopen all closed discussions'
     join: 'Join'
+    copy_to_clipboard: 'Copy to Clipboard'
+    leave: 'Leave'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -2537,6 +2558,8 @@ en:
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
     no_tutorial: 'There is no tutorial with this id.'
+    no_submission: There is no submission with this id.
+    no_assignment: There is no assignment with this id.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

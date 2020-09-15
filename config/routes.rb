@@ -266,6 +266,17 @@ Rails.application.routes.draw do
 
   resources :subjects, except: [:show]
 
+  post 'submissions/join', to: 'submissions#join',
+                            as: 'join_submission'
+  get 'submissions/enter_code', to: 'submissions#enter_code',
+                                as: 'enter_submission_code'
+
+  delete 'submissions/:id/leave', to: 'submissions#leave',
+                                  as: 'leave_submission'
+  get 'submissions/:id/cancel_edit', to: 'submissions#cancel_edit',
+                                   as: 'cancel_edit_submission'
+  get 'submissions/cancel_new', to: 'submissions#cancel_new',
+                              as: 'cancel_new_submission'
   resources :submissions
 
   get 'tags/modal', to: 'tags#modal',
