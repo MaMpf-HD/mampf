@@ -26,7 +26,6 @@
                 </i>
               </span>
             <% else %>
-              <%= submission.token %>
               <%= t('basics.expired') %>
             <% end %>
           </td>
@@ -36,9 +35,15 @@
             <%= t('basics.files') %>
           </th>
           <td>
-            Abgabe
-            <% unless assignment.active? %>
-              Korrektur
+            <% if submission.manuscript %>
+              <%= link_to 'Abgabe',
+                          show_submission_manuscript_path(submission),
+                          target: :_blank %>
+              <% unless assignment.active? %>
+                Korrektur
+              <% end %>
+            <% else %>
+              noch nichts hochgeladen
             <% end %>
           </td>
         </tr>

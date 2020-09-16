@@ -1,6 +1,7 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
-  before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit]
+  before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit,
+                                        :update, :show_manuscript]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
 
   def index
@@ -17,6 +18,12 @@ class SubmissionsController < ApplicationController
   def edit
     @assignment = @submission.assignment
     @lecture = @assignment.lecture
+  end
+
+  def update
+    @submission.update(submission_params)
+    @assignment = @submission.assignment
+    render :create
   end
 
   def create
@@ -71,6 +78,12 @@ class SubmissionsController < ApplicationController
   def cancel_new
   end
 
+  def show_manuscript
+    file = Tempfile.new
+    @submission.manuscript.stream(file.path)
+    send_file file, type: 'application/pdf', disposition: 'inline'
+  end
+
   private
 
   def set_submission
@@ -81,7 +94,8 @@ class SubmissionsController < ApplicationController
   end
 
   def submission_params
-    params.require(:submission).permit(:tutorial_id, :assignment_id)
+    params.require(:submission).permit(:tutorial_id, :assignment_id,
+                                       :manuscript)
   end
 
   def set_assignment

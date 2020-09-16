@@ -277,6 +277,8 @@ Rails.application.routes.draw do
                                    as: 'cancel_edit_submission'
   get 'submissions/cancel_new', to: 'submissions#cancel_new',
                               as: 'cancel_new_submission'
+  get 'submissions/:id/show_manuscript', to: 'submissions#show_manuscript',
+                                         as: 'show_submission_manuscript'
   resources :submissions
 
   get 'tags/modal', to: 'tags#modal',
@@ -371,6 +373,7 @@ Rails.application.routes.draw do
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
   mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
+  mount UserPdfUploader.upload_endpoint(:cache) => "/user_pdfs/upload"
   mount Thredded::Engine => '/forum'
   get '*path', to: 'main#error'
 

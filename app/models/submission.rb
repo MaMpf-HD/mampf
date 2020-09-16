@@ -5,6 +5,8 @@ class Submission < ApplicationRecord
   has_many :user_submission_joins, dependent: :destroy
   has_many :users, through: :user_submission_joins
 
+  include UserPdfUploader[:manuscript]
+
   validate :matching_lecture
 
   before_create :set_token
@@ -12,6 +14,16 @@ class Submission < ApplicationRecord
   def partners_of_user(user)
     return unless user.in?(users)
     users - [user]
+  end
+
+  def manuscript_filename
+    return unless manuscript.present?
+    manuscript.metadata['filename']
+  end
+
+  def manuscript_size
+    return unless manuscript.present?
+    manuscript.metadata['size']
   end
 
   private

@@ -1,7 +1,7 @@
 <%= form_with model: submission do |f| %>
 	<div class="card-body submissionBody"
 			 data-id="<%= assignment.id %>">
-		<div class="row mb-2">
+		<div class="row mb-3">
 			<div class="col-12">
 				<%= f.label :tutorial_id,
 										t('basics.tutorial') %>
@@ -14,6 +14,28 @@
 		  	<%= f.hidden_field :assignment_id,
 		  										 value: assignment.id %>
 			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<%= f.label :manuscript, 'Abgabe' %>
+			</div>
+			<div class="col-3" id="userManuscript-uploadButton"
+					 data-choosefiles="<%= t('basics.file') %>">
+			  <%= f.hidden_field :manuscript,
+			  									 value: submission.cached_manuscript_data,
+			  									 id: 'upload-userManuscript-hidden' %>
+			  <%= f.file_field :manuscript,
+			  								 class: 'form-control-file',
+			  								 id: 'upload-userManuscript' %>
+			</div>
+			<div class="col-9" id="userManuscriptMetadata">
+				<% if submission.manuscript %>
+					<%= submission.manuscript_filename %>
+					(<%= number_to_human_size(submission.manuscript_size) %>)
+				<% end %>
+			</div>
+	    <div class="col-12" id="userManuscript-statusBar">
+  	  </div>
 		</div>
 	</div>
 	<div class="card-footer submissionFooter"

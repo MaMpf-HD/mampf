@@ -325,6 +325,63 @@ imageUpload = (fileInput) ->
 
   uppy
 
+@userManuscriptUpload = (fileInput) ->
+  # set everything up
+  uploadButton = document.getElementById('userManuscript-uploadButton')
+  statusBar = document.getElementById('userManuscript-statusBar')
+  hiddenInput = document.getElementById('upload-userManuscript-hidden')
+  userManuscriptMetadata = document.getElementById('userManuscriptMetadata')
+
+  # uppy will add its own file input
+  fileInput.style.display = 'none'
+
+  # create uppy instance
+  uppy = Uppy.Core(
+    id: fileInput.id
+    autoProceed: true
+    restrictions:
+      allowedFileTypes: [ '.pdf' ]
+      maxFileSize: 10485760)
+    .use(Uppy.FileInput,
+      target: uploadButton
+      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+    .use(Uppy.StatusBar, target: statusBar)
+
+  # target the endpoint for shrine uploader
+  uppy.use Uppy.XHRUpload,
+    endpoint: '/user_pdfs/upload'
+    fieldName: 'file'
+
+  # add metadata to manuscript card if upload was successful
+  uppy.on 'upload-success', (file, response) ->
+    data = response.body
+    if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
+      # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data)
+
+      # set hidden field value to the uploaded file data so that it is
+      # submitted with the form as the attachment
+      hiddenInput.value = uploadedFileData
+      userManuscriptMetadata.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+
+      $('#medium_detach_manuscript').val('false')
+    else if data.metadata.mime_type != 'application/pdf'
+      # display error message if uppy detects wrong mime type
+      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      uppy.reset()
+    else
+      # display error message if uppy detects some other problem
+      uppy.info('Die Datei ist beschädigt.', 'error', 5000)
+      uppy.reset()
+    return
+
+  # display error message on console if an upload error has ocurred
+  uppy.on 'upload-error', (file, error) ->
+    console.log('error with file:', file.id)
+    console.log('error message:', error)
+    return
+
+  uppy
 
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
