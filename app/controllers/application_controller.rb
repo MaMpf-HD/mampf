@@ -73,11 +73,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    if params[:locale].in?(I18n.available_locales.map(&:to_s))
-      locale_param = params[:locale]
-    end
     I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookies[:locale] || I18n.default_locale
+                    cookie_param || I18n.default_locale
     unless user_signed_in?
       cookies[:locale] = I18n.locale
     end
@@ -97,5 +94,19 @@ class ApplicationController < ActionController::Base
                                    request.original_fullpath,
                                    request.referrer,
                                    study_participant)
+  end
+
+  def locale_param
+    return unless params[:locale].in?(available_locales)
+    params[:locale]
+  end
+
+  def cookie_param
+    return unless cookies[:locale].in?(available_locales)
+    cookies[:locale]
+  end
+
+  def available_locales
+    I18n.available_locales.map(&:to_s)
   end
 end
