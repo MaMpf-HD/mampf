@@ -69,11 +69,19 @@ class LecturesController < ApplicationController
   def new
     @lecture = Lecture.new
     @from = params[:from]
-    return unless @from == 'course'
-    # if new action was triggered from inside a course view, add the course
-    # info to the lecture
-    @lecture.course = Course.find_by_id(params[:course])
-    I18n.locale = @lecture.course.locale
+    if @from == 'course'
+      # if new action was triggered from inside a course view, add the course
+      # info to the lecture
+      course = Course.find_by_id(params[:course])
+      @lecture.course = course
+      I18n.locale = course.locale if course
+    end
+
+    respond_to do |format|
+      format.js
+      format.html { redirect_to :root,
+                                alert: I18n.t('controllers.no_html_action') }
+    end
   end
 
   def create

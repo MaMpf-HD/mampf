@@ -2704,6 +2704,7 @@ de:
     no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
     no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
     no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
+    no_html_action: Diese Aktion funktioniert nicht via HTML.
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'
