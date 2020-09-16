@@ -328,6 +328,7 @@ imageUpload = (fileInput) ->
 @userManuscriptUpload = (fileInput) ->
   # set everything up
   uploadButton = document.getElementById('userManuscript-uploadButton')
+  informer = document.getElementById('userManuscript-informer')
   statusBar = document.getElementById('userManuscript-statusBar')
   hiddenInput = document.getElementById('upload-userManuscript-hidden')
   userManuscriptMetadata = document.getElementById('userManuscriptMetadata')
@@ -345,6 +346,7 @@ imageUpload = (fileInput) ->
     .use(Uppy.FileInput,
       target: uploadButton
       locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+    .use(Uppy.Informer, target: informer)
     .use(Uppy.StatusBar, target: statusBar)
 
   # target the endpoint for shrine uploader
