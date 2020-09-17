@@ -1,2 +1,1 @@
-User.create(name: "Max Mustermann",email:"max@mampf.edu",password:"test123456",  consents:true).confirm()
-p FactoryBot.create_list(:course,10)
+User.create(name: "Max Mustermann",email:"max@mampf.edu",password:"test123456",  consents:true, locale: I18n.default_locale).confirm()
