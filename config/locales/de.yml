@@ -2300,6 +2300,7 @@ de:
       bei.
     nothing_here_past: >
       Zu dieser Hausaufgabe wurde nichts hinterlegt.
+    invitations_to: Einladungen an
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
   locales:
@@ -2333,6 +2334,8 @@ de:
     subscribe_course: 'Du kannst es über Deine Profileinstellungen abonnieren.'
     subscribe_course_text: >
       Du kannst es über Deine Profileinstellungen abonnieren.
+    submission_invitation_subject: >
+      Einladung zu Abgabe für %{assignment} in %{lecture}
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'

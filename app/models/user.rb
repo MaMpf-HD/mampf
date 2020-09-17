@@ -447,6 +447,16 @@ class User < ApplicationRecord
       no_term_lectures.select { |l| l.edited_by?(self) || l.published? }.sort
   end
 
+  def submission_partners(lecture)
+    lecture_submissions = Submission.where(assignment: lecture.assignments)
+    own_submissions = UserSubmissionJoin.where(user: self,
+                                               submission: lecture_submissions)
+                                        .pluck(:submission_id)
+    partner_ids = UserSubmissionJoin.where(submission: own_submissions)
+                                    .pluck(:user_id)
+    User.where(id: partner_ids - [id])
+  end
+
   private
 
   def set_defaults

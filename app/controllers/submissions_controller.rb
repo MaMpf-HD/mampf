@@ -31,6 +31,8 @@ class SubmissionsController < ApplicationController
     @submission.users << current_user
     @submission.save
     @assignment = @submission.assignment
+    return unless @submission.valid?
+    send_invitation_emails
   end
 
   def destroy
@@ -108,5 +110,20 @@ class SubmissionsController < ApplicationController
 
   def join_params
     params.require(:join).permit(:code, :assignment_id)
+  end
+
+  def invitation_params
+    params.require(:submission).permit(invitee_ids: [])
+  end
+
+  def send_invitation_emails
+    invitees = User.where(id: invitation_params[:invitee_ids])
+    invitees.each do |i|
+      NotificationMailer.with(recipient: i,
+                              locale: i.locale,
+                              assignment: @assignment,
+                              code: @submission.token)
+                        .submission_invitation_email.deliver_now
+    end
   end
 end

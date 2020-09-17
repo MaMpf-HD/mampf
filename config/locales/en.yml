@@ -2168,6 +2168,7 @@ en:
       There is nothing here yet. Create a new submission or join one.
     nothing_here_past: >
       Nothing was submitted for this assignment.
+    invitations_to: Invitations to
   assignment:
     expired: The due date has expired.
   mailer:
@@ -2196,6 +2197,8 @@ en:
     subscribe_course: 'You can subscribe to it in your profile settings.'
     subscribe_course_text: >
       You can subscribe to it in your profile settings.
+    submission_invitation_subject: >
+      Invitation to submission of %{assignment} in %{lecture}
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'

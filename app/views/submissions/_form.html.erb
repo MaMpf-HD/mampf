@@ -6,7 +6,10 @@
 				<%= f.label :tutorial_id,
 										t('basics.tutorial') %>
 				<%= f.select :tutorial_id,
-										 options_for_select(tutorials_selection(lecture)),
+										 options_for_select(tutorials_selection(lecture),
+										 										submission.tutorial_id ||
+										 											assignment.previous
+										 														 	 &.tutorial(current_user)&.id),
 										 {},
 										 { class: 'form-control' } %>
 				<%= f.hidden_field :lecture_id,
@@ -15,6 +18,22 @@
 		  										 value: assignment.id %>
 			</div>
 		</div>
+		<% unless submission.persisted? %>
+			<div class="row">
+				<div class="col-12">
+					<%= f.label :invitee_ids,
+										 t('submission.invitations_to') %>
+					<%= f.select :invitee_ids,
+											 options_for_select(partner_selection(current_user,
+											 																			lecture),
+											 										preceding_partner_ids(assignment,
+											 																					current_user)),
+											 {},
+											 { multiple: true,
+											 	 class: 'form-control' } %>
+				</div>
+			</div>
+		<% end %>
 		<div class="row">
 			<div class="col-12">
 				<%= f.label :manuscript, 'Abgabe' %>

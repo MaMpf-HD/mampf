@@ -26,6 +26,10 @@ class Submission < ApplicationRecord
     manuscript.metadata['size']
   end
 
+  def preceding_tutorial(user)
+    assignment.previous.submission(user)
+  end
+
   private
 
 	def matching_lecture

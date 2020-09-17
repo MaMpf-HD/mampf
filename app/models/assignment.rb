@@ -6,7 +6,7 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
 
-  def find_submission(user)
+  def submission(user)
   	UserSubmissionJoin.where(submission: Submission.where(assignment: self),
   													 user: user)
   									 &.first&.submission
@@ -14,5 +14,22 @@ class Assignment < ApplicationRecord
 
   def active?
     deadline > Time.now
+  end
+
+  def previous
+    siblings = lecture.assignments.order(:deadline)
+    position = siblings.find_index(self)
+    return unless position.positive?
+    siblings[position - 1]
+  end
+
+  def submission_partners(user)
+    submission = submission(user)
+    return unless submission
+    submission.users - [user]
+  end
+
+  def tutorial(user)
+    submission(user).tutorial
   end
 end

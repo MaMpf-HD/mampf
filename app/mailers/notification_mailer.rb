@@ -1,5 +1,6 @@
 class NotificationMailer < ApplicationMailer
-  before_action :set_up
+  before_action :set_sender_and_locale
+  before_action :set_recipients, except: :submission_invitation_email
 
   def medium_email
     @medium = params[:medium]
@@ -39,11 +40,25 @@ class NotificationMailer < ApplicationMailer
                     title: @course.title))
   end
 
+  def submission_invitation_email
+    @recipient = params[:recipient]
+    @assignment = params[:assignment]
+    @code = params[:code]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_invitation_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
   private
 
-  def set_up
-    I18n.locale = params[:locale]
-    @recipients = params[:recipients]
+  def set_sender_and_locale
     @sender = "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_EMAIL}>"
+    I18n.locale = params[:locale]
+  end
+
+  def set_recipients
+    @recipients = params[:recipients]
   end
 end
