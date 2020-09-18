@@ -49,10 +49,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-#  def self.default_url_options(options={})
-#    options.merge({ :locale => I18n.locale })
-#  end
-
   private
 
   # It's important that the location is NOT stored if:
@@ -101,7 +97,7 @@ class ApplicationController < ActionController::Base
     params[:locale]
   end
 
-  def cookie_param
+  def cookie_locale_param
     return unless cookies[:locale].in?(available_locales)
     cookies[:locale]
   end
