@@ -70,7 +70,7 @@ class ApplicationController < ActionController::Base
 
   def set_locale
     I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookie_param || I18n.default_locale
+                    cookie_locale_param || I18n.default_locale
     unless user_signed_in?
       cookies[:locale] = I18n.locale
     end
