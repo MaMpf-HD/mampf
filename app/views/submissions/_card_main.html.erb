@@ -11,12 +11,12 @@
             <%= submission.tutorial.title_with_tutor %>
           </td>
         </tr>
-        <tr>
-          <th scope="row">
-            <%= t('basics.code') %>
-          </th>
-          <td>
-            <% if assignment.active? %>
+        <% if assignment.active? %>
+          <tr>
+            <th scope="row">
+              <%= t('basics.code') %>
+            </th>
+            <td>
               <%= submission.token %>
               <span class="badge badge-secondary clickable clipboard-btn"
                 data-clipboard-text="<%= submission.token %>"
@@ -25,11 +25,9 @@
                 <i class="fas fa-copy">
                 </i>
               </span>
-            <% else %>
-              <%= t('basics.expired') %>
-            <% end %>
-          </td>
-        </tr>
+            </td>
+          </tr>
+        <% end %>
         <tr>
           <th scope="row">
             <%= t('basics.files') %>
@@ -70,6 +68,7 @@
     <% end %>
   <% end %>
 </div>
+<% if assignment.active? %>
 <div class="card-footer submissionFooter"
      data-id="<%= assignment.id %>">
   <div class="row">
@@ -120,3 +119,4 @@
     </div>
   </div>
 </div>
+<% end %>

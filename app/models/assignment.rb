@@ -6,6 +6,14 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
 
+  scope :active, -> { where('deadline >= ?', Time.now) }
+
+  scope :expired, -> { where('deadline < ?', Time.now) }
+
+  def self.current_in_lecture(lecture)
+    Assignment.where(lecture: lecture).active.order(:deadline)&.first
+  end
+
   def submission(user)
   	UserSubmissionJoin.where(submission: Submission.where(assignment: self),
   													 user: user)

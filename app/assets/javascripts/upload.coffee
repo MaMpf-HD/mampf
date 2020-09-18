@@ -365,8 +365,11 @@ imageUpload = (fileInput) ->
       # submitted with the form as the attachment
       hiddenInput.value = uploadedFileData
       userManuscriptMetadata.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+      userManuscriptMetadata.style.display = 'inline'
 
-      $('#medium_detach_manuscript').val('false')
+      $('#removeUserManuscript').show()
+      $('#submission_detach_user_manuscript').val('false')
+      $('#noUserManuscript').hide()
     else if data.metadata.mime_type != 'application/pdf'
       # display error message if uppy detects wrong mime type
       uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)

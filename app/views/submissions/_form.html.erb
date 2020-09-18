@@ -46,12 +46,22 @@
 			  <%= f.file_field :manuscript,
 			  								 class: 'form-control-file',
 			  								 id: 'upload-userManuscript' %>
+			  <%= f.hidden_field :detach_user_manuscript,
+			  									 value: false %>
 			</div>
-			<div class="col-9" id="userManuscriptMetadata">
-				<% if submission.manuscript %>
+			<div class="col-9">
+			  <i class="fas fa-lg fa-trash-alt mr-2 clickable"
+			  	 id="removeUserManuscript">
+     		</i>
+     		<span id="userManuscriptMetadata"
+     					style="display: <%= show_inline(submission.manuscript) %>">
 					<%= submission.manuscript_filename %>
 					(<%= number_to_human_size(submission.manuscript_size) %>)
-				<% end %>
+				</span>
+				<span id="noUserManuscript"
+							style="display: <%= show_inline(!submission.manuscript) %>">
+					<%= t('submission.no_manuscript_yet') %>
+				</span>
 			</div>
 	    <div class="col-12" id="userManuscript-informer">
   	  </div>

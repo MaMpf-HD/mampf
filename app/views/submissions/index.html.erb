@@ -1,12 +1,106 @@
-<div class="row">
-	<% @assignments.each do |a| %>
-		<div class="col-12 col-xl-6 col-xxl-4 mb-3 submissionArea"
-				 data-id="<%= a.id %>">
-			<%= render partial: 'submissions/card',
-								 locals: { assignment: a,
-								 					 submission: a.submission(current_user) } %>
-		</div>
-	<% end %>
-</div>
-
-
+<% if @assignments.any? %>
+  <div class="row mb-3">
+    <div class="col-12 col-md-6">
+      <h4 class="mb-3">
+        <%= t('submission.current') %>
+      </h4>
+      <% if @current_assignment %>
+        <%= render partial: 'submissions/card',
+                   locals: { assignment: @current_assignment,
+                             submission: @current_assignment
+                                           .submission(current_user) } %>
+      <% else %>
+        <%= t('assignment.no_current') %>
+      <% end %>
+    </div>
+    <div class="col-12 col-md-6">
+      <h4 class="mb-3">
+        <%= t('submission.previous') %>
+      </h4>
+      <% if @current_assignment %>
+        <%= render partial: 'submissions/card',
+                   locals: { assignment: @previous_assignment,
+                             submission: @previous_assignment
+                                           .submission(current_user) } %>
+      <% else %>
+        <%= t('assignment.no_previous') %>
+      <% end %>
+    </div>
+  </div>
+  <div class="accordion mb-3" id="submissionsAccordion">
+    <div class="card">
+      <div class="card-header clickable"
+           role="tab"
+           id="old_submissions_heading"
+           data-toggle="collapse"
+           data-target="#old_submissions_collapse"
+           aria-expanded="false"
+           aria-controls="old_submissions_collapse">
+        <h4>
+          <%= t('submission.old_ones') %>
+        </h4>
+      </div>
+      <div id="old_submissions_collapse"
+           class="collapse"
+           role="tabpanel"
+           data-parent="#submissionsAccordion"
+           aria-labelledby="old_submissions_heading">
+        <div class="row p-3">
+          <% if @old_assignments %>
+            <% @old_assignments.each do |a| %>
+              <div class="col-12 col-lg-6 col-xl-4 col-xxl-3 mb-3 submissionArea"
+    	             data-id="<%= a.id %>">
+	              <%= render partial: 'submissions/card',
+	  	               			 locals: { assignment: a,
+				  	            	 					 submission: a.submission(current_user) } %>
+		          </div>
+            <% end %>
+          <% else %>
+            <div class="col-12">
+              <%= t('submission.no_old_ones') %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header clickable"
+           role="tab"
+           id="future_submissions_heading"
+           data-toggle="collapse"
+           data-target="#future_submissions_collapse"
+           aria-expanded="false"
+           aria-controls="future_submissions_collapse">
+        <h4>
+          <%= t('submission.future_ones') %>
+        </h4>
+      </div>
+      <div id="future_submissions_collapse"
+           class="collapse"
+           role="tabpanel"
+           data-parent="#submissionsAccordion"
+           aria-labelledby="future_submissions_heading">
+        <div class="row p-3">
+          <% if @future_assignments %>
+            <% @future_assignments.each do |a| %>
+              <div class="col-12 col-lg-6 col-xl-4 col-xxl-3 mb-3 submissionArea"
+                   data-id="<%= a.id %>">
+                <%= render partial: 'submissions/card',
+                           locals: { assignment: a,
+                                     submission: a.submission(current_user) } %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="col-12">
+              <%= t('submission.no_future_ones') %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class="jumbotron">
+    <%= t('assignment.not_in_this_lecture') %>
+  </div>
+<% end %>

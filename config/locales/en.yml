@@ -2177,8 +2177,23 @@ en:
       You successfully joind the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
+    current: Current submission
+    previous: Previous Submission
+    old_ones: Old Submissions
+    future_ones: Future Submissions
+    no_old_ones: Nothing has been submitted yet.
+    no_future_ones: >
+      There are no assignments beyond the current one.
+    no_manuscript_yet: No file has yet been uploaded.
   assignment:
     expired: The due date has expired.
+    not_in_this_lecture: >
+      In this lecture, no assignments have yet been created. Therefore, there
+      are no submissions.
+    no_current: >
+      Currently, there is no assignment for which something could be submitted.
+    no_previous: >
+      Nothing has yet been submitted.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'

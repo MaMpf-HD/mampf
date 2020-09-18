@@ -7,7 +7,12 @@ class SubmissionsController < ApplicationController
   authorize_resource
 
   def index
-    @assignments = @lecture.assignments.order(:deadline)
+    @assignments = @lecture.assignments
+    return unless @assignments
+    @current_assignment = Assignment.current_in_lecture(@lecture)
+    @previous_assignment = @current_assignment&.previous
+    @old_assignments = @assignments.expired.order('deadline DESC') - [@previous_assignment]
+    @future_assignments = @assignments.active.order(:deadline) - [@current_assignment]
   end
 
   def new
@@ -24,6 +29,10 @@ class SubmissionsController < ApplicationController
   def update
     @submission.update(submission_params)
     @assignment = @submission.assignment
+    if @submission.valid? &&
+         params[:submission][:detach_user_manuscript] == 'true'
+      @submission.update(manuscript: nil)
+    end
     render :create
   end
 

@@ -2302,14 +2302,29 @@ de:
       Hier ist noch nichts hinterlegt - lege eine Abgabe an oder tritt einer
       bei.
     nothing_here_past: >
-      Zu dieser Hausaufgabe wurde nichts hinterlegt.
+      Zu dieser Hausaufgabe hast Du nichts abgegeben.
     invitations_to: Einladungen an
     joined_successfully: >
       Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
     failed_redemption: >
       Die Einlösung des Codes ist fehlgeschlagen: %{message}
+    current: Aktuelle Abgabe
+    previous: Vorige Abgabe
+    old_ones: Ältere Abgaben
+    future_ones: Zukünftige Abgaben
+    no_old_ones: Es wurde noch nichts abgegeben.
+    no_future_ones: >
+      Es sind keine Hausauafgaben jenseits der aktuellen vorhanden.
+    no_manuscript_yet: Es wurde noch keine Datei hochgeladen.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
+    not_in_this_lecture: >
+      In dieser Vorlesung wurden noch keine Hausaufgaben
+      angelegt. Deswegen gibt es auch keine Abgaben.
+    no_current: >
+      Aktuell steht nichts zur Abgabe an.
+    no_previous: >
+      Es wurde noch nichts abgegeben.
   locales:
     en: 'englisch'
     de: 'deutsch'
