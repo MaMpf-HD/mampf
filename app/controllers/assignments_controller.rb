@@ -1,7 +1,7 @@
 # AssignmentsController
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: [:edit, :destroy, :update, :cancel_edit]
-  # authorize_resource
+  authorize_resource
 
   def new
     @assignment = Assignment.new

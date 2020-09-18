@@ -2156,11 +2156,15 @@ en:
     en: 'English'
     de: 'German'
   submission:
-    invalid_code: The code you entered is invalid for %{assignment}.
+    invalid_code_for_assignment: >
+      The code you entered is invalid for %{assignment}.
+    invalid_code: The code you entered is invalid.
     assignment_expired: >
       The due date for this homework assignment has already
       expired.
     already_in: You are already a partner for this assgnment.
+    lecture_not_subscribed: >
+      You are not subscribed to the coresponding event series.
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).
@@ -2169,6 +2173,10 @@ en:
     nothing_here_past: >
       Nothing was submitted for this assignment.
     invitations_to: Invitations to
+    joined_successfully: >
+      You successfully joind the submission to %{assignment}.
+    failed_redemption: >
+      Redemption of submission code failed: %{message}.
   assignment:
     expired: The due date has expired.
   mailer:
@@ -2199,6 +2207,10 @@ en:
       You can subscribe to it in your profile settings.
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
+    submission_invitation: >
+      %{issuer} issuer has invited you to join a submission to %{assignment}
+      in %{lecture}. The code to join is: %{code}. You can enter and redeem
+      it in MaMpf manually or follow this %{link}.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
@@ -2563,6 +2575,7 @@ en:
     no_tutorial: 'There is no tutorial with this id.'
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
+    no_lecture_given: Invalid or no lecture was given.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

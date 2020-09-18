@@ -2289,9 +2289,12 @@ de:
       Anzahl der Medien in von den von Dir abonnierten
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
   submission:
-    invalid_code: Der eingegebene Code ist ungültig für %{assignment}.
+    invalid_code: Der eingegebene Code ist ungültig.
+    invalid_code_for_assignment: >
+      Der eingegebene Code ist ungültig für %{assignment}.
     assignment_expired: Die Frist für diese Hausaufgabe ist bereits abgelaufen.
     already_in: Bei dieser Abgabe bist Du schon dabei.
+    lecture_not_subscribed: Du hast die zugehörige Veranstaltung icht abonniert.
     no_partners_no_leave: >
       Du kannst nicht austreten, da Du die einzige Person in der Abgabegruppe
       bist. Dafür kannst Du die Abgabe löschen.
@@ -2301,6 +2304,10 @@ de:
     nothing_here_past: >
       Zu dieser Hausaufgabe wurde nichts hinterlegt.
     invitations_to: Einladungen an
+    joined_successfully: >
+      Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
+    failed_redemption: >
+      Die Einlösung des Codes ist fehlgeschlagen: %{message}
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
   locales:
@@ -2336,6 +2343,10 @@ de:
       Du kannst es über Deine Profileinstellungen abonnieren.
     submission_invitation_subject: >
       Einladung zu Abgabe für %{assignment} in %{lecture}
+    submission_invitation_html: >
+      %{issuer} hat Dich eingeladen, einer Abgabe zu %{assignment} in %{lecture}
+      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn MaMpf
+      selbst eingeben und einlösen oder diesen %{link} benutzen.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
@@ -2707,6 +2718,7 @@ de:
     no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
     no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
     no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
+    no_lecture_given: Es wurde keine oder eine ungültige Vorlesung angegeben.
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'

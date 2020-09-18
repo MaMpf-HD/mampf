@@ -3,9 +3,10 @@ class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit,
                                         :update, :show_manuscript]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
+  before_action :set_lecture, only: :index
+  authorize_resource
 
   def index
-    @lecture = Lecture.find_by_id(params[:lecture_id])
     @assignments = @lecture.assignments.order(:deadline)
   end
 
@@ -43,23 +44,29 @@ class SubmissionsController < ApplicationController
   def enter_code
   end
 
+  def redeem_code
+    code = params[:code]
+    @submission = Submission.find_by(token: code)
+    check_code_validity
+    unless @error
+      @submission.users << current_user
+      redirect_to submissions_path(params:
+                                   { lecture_id: @submission.tutorial
+                                                            .lecture_id }),
+                  notice: t('submission.joined_successfully',
+                            assignment: @submission.assignment.title)
+      return
+    end
+    redirect_to :start, alert: t('submission.failed_redemption',
+                                 message: @error)
+  end
+
   def join
     @assignment = Assignment.find_by_id(join_params[:assignment_id])
     code = join_params[:code]
     @submission = Submission.find_by(token: code, assignment: @assignment)
-    if !@submission
-      @error = I18n.t('submission.invalid_code',
-                      assignment: @assignment.title)
-      return
-    end
-    if current_user.in?(@submission.users)
-      @error = I18n.t('submission.already_in')
-      return
-    end
-    if !@assignment.active?
-      @error = I18n.t('submission.assignment_expired')
-      return
-    end
+    check_code_validity
+    return if @error
     @submission.users << current_user
   end
 
@@ -108,6 +115,12 @@ class SubmissionsController < ApplicationController
     return
   end
 
+  def set_lecture
+    @lecture = Lecture.find_by_id(params[:lecture_id])
+    return if @lecture
+    redirect_to :root, alert: I18n.t('controllers.no_lecture_given')
+  end
+
   def join_params
     params.require(:join).permit(:code, :assignment_id)
   end
@@ -122,8 +135,24 @@ class SubmissionsController < ApplicationController
       NotificationMailer.with(recipient: i,
                               locale: i.locale,
                               assignment: @assignment,
-                              code: @submission.token)
+                              code: @submission.token,
+                              issuer: current_user)
                         .submission_invitation_email.deliver_now
+    end
+  end
+
+  def check_code_validity
+    if !@submission && @assignment
+      @error = I18n.t('submission.invalid_code_for_assignment',
+                      assignment: @assignment.title)
+    elsif !@submission
+      @error = I18n.t('submission.invalid_code')
+    elsif @assignment && !@assignment.active?
+      @error = I18n.t('submission.assignment_expired')
+    elsif current_user.in?(@submission.users)
+      @error = I18n.t('submission.already_in')
+    elsif !@submission.tutorial.lecture.in?(current_user.lectures)
+      @error = I18n.t('submission.lecture_not_subscribed')
     end
   end
 end

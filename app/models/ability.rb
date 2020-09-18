@@ -106,6 +106,19 @@ class Ability
 
       can [:list_tags, :list_sections, :display], Section
 
+      can [:index, :new, :redeem_code], Submission
+
+      # an editor might still be a student in some other course
+      can [:edit, :update, :create, :destroy, :enter_code, :join, :leave,
+           :cancel_edit, :cancel_new], Submission do |submission|
+        user.in?(submission.users)
+      end
+
+      can :show_manuscript do |submission|
+        user.in?(submission.users) ||
+          submission.tutorial.lecture.edited_by?(user)
+      end
+
       can :manage, Tag
       can [:display_cyto, :fill_tag_select, :fill_course_tags,
            :take_random_quiz, :postprocess], Tag
@@ -138,7 +151,7 @@ class Ability
     else
       can :read, :all
       can :start, :main
-      cannot :read, [:administration, Term, User, Announcement]
+      cannot :read, [:administration, Term, User, Announcement, Assignment]
       cannot :index, Interaction
       # guest users can play/display media only when their release status
       # is 'all', logged in users can do that unless the release status is
@@ -202,6 +215,15 @@ class Ability
 
       can [:show_example, :find_example, :show_property, :show_structure,
            :find_tags, :display_info], :erdbeere
+
+      can [:index, :new], Submission
+
+      # an editor might still be a student in some other course
+      can [:edit, :update, :create, :destroy, :enter_code, :join, :leave,
+           :cancel_edit, :cancel_new, :show_manuscript,
+           :redeem_code], Submission do |submission|
+        user.in?(submission.users)
+      end
     end
   end
 end

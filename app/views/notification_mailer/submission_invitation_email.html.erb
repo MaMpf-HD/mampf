@@ -1,4 +1,7 @@
-<%= t('mailer.submission_invitation',
+<%= t('mailer.submission_invitation_html',
       code: @code,
       assignment: @assignment.title,
-      lecture: @assignment.lecture.short_title) %>
+      lecture: @assignment.lecture.short_title,
+      issuer: @issuer.name,
+      link: link_to(t('basics.link'),
+                    redeem_submission_code_url(params: { code: @code }))) %>

@@ -44,6 +44,7 @@ class NotificationMailer < ApplicationMailer
     @recipient = params[:recipient]
     @assignment = params[:assignment]
     @code = params[:code]
+    @issuer = params[:issuer]
     mail(from: @sender,
          to: @recipient.email,
          subject: t('mailer.submission_invitation_subject',

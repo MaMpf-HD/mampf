@@ -1,7 +1,7 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit]
-  # authorize_resource
+  authorize_resource
 
   def new
     @tutorial = Tutorial.new

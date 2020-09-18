@@ -270,6 +270,8 @@ Rails.application.routes.draw do
                             as: 'join_submission'
   get 'submissions/enter_code', to: 'submissions#enter_code',
                                 as: 'enter_submission_code'
+  get 'submissions/redeem_code', to: 'submissions#redeem_code',
+                                 as: 'redeem_submission_code'
 
   delete 'submissions/:id/leave', to: 'submissions#leave',
                                   as: 'leave_submission'
