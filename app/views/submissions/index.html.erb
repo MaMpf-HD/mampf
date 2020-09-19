@@ -17,7 +17,7 @@
       <h4 class="mb-3">
         <%= t('submission.previous') %>
       </h4>
-      <% if @current_assignment %>
+      <% if @previous_assignment %>
         <%= render partial: 'submissions/card',
                    locals: { assignment: @previous_assignment,
                              submission: @previous_assignment
@@ -46,7 +46,7 @@
            data-parent="#submissionsAccordion"
            aria-labelledby="old_submissions_heading">
         <div class="row p-3">
-          <% if @old_assignments %>
+          <% if @old_assignments.any? %>
             <% @old_assignments.each do |a| %>
               <div class="col-12 col-lg-6 col-xl-4 col-xxl-3 mb-3 submissionArea"
     	             data-id="<%= a.id %>">
@@ -81,7 +81,7 @@
            data-parent="#submissionsAccordion"
            aria-labelledby="future_submissions_heading">
         <div class="row p-3">
-          <% if @future_assignments %>
+          <% if @future_assignments.any? %>
             <% @future_assignments.each do |a| %>
               <div class="col-12 col-lg-6 col-xl-4 col-xxl-3 mb-3 submissionArea"
                    data-id="<%= a.id %>">

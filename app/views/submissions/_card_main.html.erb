@@ -36,6 +36,9 @@
             <% if submission.manuscript %>
               <%= link_to 'Abgabe',
                           show_submission_manuscript_path(submission),
+                          target: :_blank %> (kaputt)
+              <%= link_to 'Abgabe (Downloadlink)',
+                          submission.manuscript_url(host: host),
                           target: :_blank %>
               <% unless assignment.active? %>
                 Korrektur

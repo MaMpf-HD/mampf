@@ -8,7 +8,6 @@ class SubmissionsController < ApplicationController
 
   def index
     @assignments = @lecture.assignments
-    return unless @assignments
     @current_assignment = Assignment.current_in_lecture(@lecture)
     @previous_assignment = @current_assignment&.previous
     @old_assignments = @assignments.expired.order('deadline DESC') - [@previous_assignment]
