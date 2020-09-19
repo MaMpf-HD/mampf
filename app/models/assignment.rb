@@ -38,6 +38,6 @@ class Assignment < ApplicationRecord
   end
 
   def tutorial(user)
-    submission(user).tutorial
+    submission(user)&.tutorial
   end
 end
