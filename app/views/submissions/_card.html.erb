@@ -20,48 +20,10 @@
 			</div>
 		</div>
 	</div>
-	<div class="card-body">
-		<div class="row mb-3 submissionButtons"
-				 data-id="<%= assignment.id %>">
-			<div class="col-12 text-center">
-				<% if submission %>
-					<%= link_to t('buttons.delete'),
-											submission_path(submission),
-											class: 'btn btn-sm btn-danger',
-											method: :delete,
-											remote: true %>
-				<% else %>
-					<%= link_to t('buttons.create'),
-											new_submission_path(params:
-											  									 { assignment: assignment.id }),
-											class: 'btn btn-sm btn-primary',
-											remote: true %>
-					<button class="btn btn-sm btn-primary">
-						<%= t('buttons.join') %>
-					</button>
-				<% end %>
-			</div>
-		</div>
-		<% if submission %>
-			<div class="row">
-				<div class="col-4">
-					<%= t('basics.tutorial') %>:
-					<%= submission.tutorial.title_with_tutor %>
-				</div>
-				<div class="col-4">
-					Code:
-					<%= submission.token %>
-				</div>
-				<div class="col-4">
-					abgegebene Datei: Link
-				</div>
-				<div class="col-4">
-					Korrektur: Link
-				</div>
-				<div class="col-4">
-					PartnerInnen: Liste
-				</div>
-			</div>
-		<% end %>
+	<div class="submissionMain"
+			 data-id="<%= assignment.id %>">
+		<%= render partial: 'submissions/card_main',
+							 locals: { submission: submission,
+							 					 assignment: assignment } %>
 	</div>
 </div>

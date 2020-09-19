@@ -162,10 +162,5 @@ class SubmissionsController < ApplicationController
     elsif !@submission.tutorial.lecture.in?(current_user.lectures)
       @error = I18n.t('submission.lecture_not_subscribed')
     end
-    redirect_to :root, alert: I18n.t('controllers.no_submission')
-  end
-
-  def submission_params
-    params.require(:submission).permit(:tutorial_id, :assignment_id)
   end
 end
