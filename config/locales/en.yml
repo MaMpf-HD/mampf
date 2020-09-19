@@ -2604,7 +2604,9 @@ en:
             title:
               taken: >
                 This assignment title is already taken for this event series.
-              blank: You need to giv a title.
+              blank: You need to give a title.
+            deadline:
+              blank: You need to give a due date.
         chapter:
           attributes:
             title:

@@ -32,11 +32,9 @@ class Ability
         answer.question.edited_with_inheritance_by?(user)
       end
 
-      can :new, Assignment
+      can [:new, :cancel_edit, :cancel_new], Assignment
 
-      can [:edit, :create, :update, :destroy,
-           :cancel_edit_assignment,
-           :cancel_new_assignment], Assignment do |assignment|
+      can [:edit, :create, :update, :destroy], Assignment do |assignment|
         assignment.lecture.edited_by?(user)
       end
 
@@ -114,7 +112,7 @@ class Ability
         user.in?(submission.users)
       end
 
-      can :show_manuscript do |submission|
+      can :show_manuscript, Submission do |submission|
         user.in?(submission.users) ||
           submission.tutorial.lecture.edited_by?(user)
       end
@@ -125,10 +123,9 @@ class Ability
 
       cannot :read, Term
 
-      can :new, Tutorial
+      can [:new, :create, :cancel_edit_tutorial, :cancel_new_tutorial], Tutorial
 
-      can [:edit, :create, :update, :destroy,
-           :cancel_edit_tutorial, :cancel_new_tutorial], Tutorial do |tutorial|
+      can [:edit, :update, :destroy], Tutorial do |tutorial|
         tutorial.lecture.edited_by?(user)
       end
 
@@ -151,7 +148,7 @@ class Ability
     else
       can :read, :all
       can :start, :main
-      cannot :read, [:administration, Term, User, Announcement, Assignment]
+      cannot :read, [:administration, Term, User, Announcement]
       cannot :index, Interaction
       # guest users can play/display media only when their release status
       # is 'all', logged in users can do that unless the release status is
@@ -216,12 +213,12 @@ class Ability
       can [:show_example, :find_example, :show_property, :show_structure,
            :find_tags, :display_info], :erdbeere
 
-      can [:index, :new], Submission
+      can [:index, :new, :create, :join,:cancel_edit, :cancel_new,
+           :redeem_code, :enter_code], Submission
 
       # an editor might still be a student in some other course
-      can [:edit, :update, :create, :destroy, :enter_code, :join, :leave,
-           :cancel_edit, :cancel_new, :show_manuscript,
-           :redeem_code], Submission do |submission|
+      can [:edit, :update, :destroy, :leave,
+           :show_manuscript], Submission do |submission|
         user.in?(submission.users)
       end
     end

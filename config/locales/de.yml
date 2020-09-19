@@ -2750,6 +2750,9 @@ de:
                 vergeben.
               blank: >
                 Es muss ein Titel angegeben werden.
+            deadline:
+              blank: >
+                Es muss ein Abgabetermin angegeben werden.
         chapter:
           attributes:
             title:
