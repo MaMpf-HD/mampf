@@ -1,40 +1,4 @@
 GIT
-  remote: https://github.com/fosterfarrell9/commontator
-  revision: cfc3e47c2d9b7002738f788fb463a89f318ee63a
-  branch: master
-  specs:
-    commontator (6.3.0)
-      rails (>= 5.2)
-      will_paginate
-
-GIT
-  remote: https://github.com/fosterfarrell9/thredded
-  revision: 0d879e671e842becb367f2162b36a73277c3e5c9
-  branch: master
-  specs:
-    thredded (0.16.16)
-      active_record_union (>= 1.3.0)
-      autoprefixer-rails
-      db_text_search (~> 0.3.0)
-      friendly_id
-      html-pipeline
-      htmlentities
-      inline_svg (>= 1.6.0)
-      kaminari
-      kramdown (>= 2.0.0)
-      kramdown-parser-gfm
-      nokogiri
-      onebox (~> 1.8, >= 1.8.99)
-      pundit (>= 1.1.0)
-      rails (>= 4.2.10, != 6.0.0.rc2)
-      rb-gravatar
-      rinku
-      sanitize
-      sassc-rails (>= 2.0.0)
-      sprockets-es6
-      timeago_js (>= 3.0.2.2)
-
-GIT
   remote: https://github.com/rails/sprockets-rails
   revision: c269f5e01fdffa5c41350e855183d94ff33d318a
   branch: master
@@ -110,6 +74,8 @@ GEM
     activerecord (6.0.3.2)
       activemodel (= 6.0.3.2)
       activesupport (= 6.0.3.2)
+    activerecord-nulldb-adapter (0.4.0)
+      activerecord (>= 2.0.0)
     activestorage (6.0.3.2)
       actionpack (= 6.0.3.2)
       activejob (= 6.0.3.2)
@@ -162,6 +128,7 @@ GEM
     case_transform (0.2)
       activesupport
     childprocess (3.0.0)
+    choice (0.2.0)
     chunky_png (1.3.11)
     clipboard-rails (1.7.1)
     coffee-rails (5.0.0)
@@ -171,12 +138,22 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    commontator (6.3.0)
+      rails (>= 5.2)
+      will_paginate
     concurrent-ruby (1.1.6)
     connection_pool (2.2.3)
     content_disposition (1.0.0)
+    coveralls (0.8.23)
+      json (>= 1.8, < 3)
+      simplecov (~> 0.16.1)
+      term-ansicolor (~> 1.3)
+      thor (>= 0.19.4, < 2.0)
+      tins (~> 1.6)
     crass (1.0.6)
     css_parser (1.7.1)
       addressable
+    dalli (2.7.10)
     database_cleaner (1.8.5)
     db_text_search (0.3.1)
       activerecord (>= 4.1.15, < 7.0)
@@ -206,7 +183,7 @@ GEM
     fastimage (2.1.7)
     ffi (1.13.1)
     filesize (0.2.0)
-    friendly_id (5.3.0)
+    friendly_id (5.4.0)
       activerecord (>= 4.0.0)
     fuzzy-string-match (1.0.1)
       RubyInline (>= 3.8.6)
@@ -222,7 +199,7 @@ GEM
       json
     hashery (2.1.2)
     highline (2.0.3)
-    html-pipeline (2.13.0)
+    html-pipeline (2.14.0)
       activesupport (>= 2)
       nokogiri (>= 1.4)
     htmlentities (4.3.4)
@@ -361,6 +338,11 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
+    rails-erd (1.6.0)
+      activerecord (>= 4.2)
+      activesupport (>= 4.2)
+      choice (~> 0.2.0)
+      ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.3.0)
       loofah (~> 2.3)
     rails-i18n (6.0.0)
@@ -421,6 +403,8 @@ GEM
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.0, >= 1.0.1)
+    ruby-graphviz (1.2.5)
+      rexml
     ruby-progressbar (1.10.1)
     ruby-rc4 (0.1.5)
     ruby-vips (2.0.17)
@@ -453,10 +437,11 @@ GEM
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
-    simplecov (0.18.5)
+    simplecov (0.16.1)
       docile (~> 1.1)
-      simplecov-html (~> 0.11)
-    simplecov-html (0.12.2)
+      json (>= 1.8, < 3)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.2)
     spring (2.1.0)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -479,13 +464,39 @@ GEM
       rails (>= 3)
       sunspot (= 2.5.0)
     sunspot_solr (2.5.0)
+    sync (0.5.0)
+    term-ansicolor (1.7.1)
+      tins (~> 1.0)
     thor (1.0.1)
     thread_safe (0.3.6)
+    thredded (0.16.16)
+      active_record_union (>= 1.3.0)
+      autoprefixer-rails
+      db_text_search (~> 0.3.0)
+      friendly_id
+      html-pipeline
+      htmlentities
+      inline_svg (>= 1.6.0)
+      kaminari
+      kramdown (>= 2.0.0)
+      kramdown-parser-gfm
+      nokogiri
+      onebox (~> 1.8, >= 1.8.99)
+      pundit (>= 1.1.0)
+      rails (>= 4.2.10, != 6.0.0.rc2)
+      rb-gravatar
+      rinku
+      sanitize
+      sassc-rails (>= 2.0.0)
+      sprockets-es6
+      timeago_js (>= 3.0.2.2)
     thredded-markdown_katex (0.4.2)
       katex (>= 0.4.3)
       kramdown-math-katex
     tilt (2.0.10)
     timeago_js (3.0.2.2)
+    tins (1.25.0)
+      sync
     trix-rails (2.2.0)
       rails (> 4.1, < 6.1)
     ttfunk (1.6.2.1)
@@ -494,6 +505,8 @@ GEM
     turbolinks-source (5.2.0)
     tzinfo (1.2.7)
       thread_safe (~> 0.1)
+    uglifier (4.2.0)
+      execjs (>= 0.3.0, < 3)
     unicode-display_width (1.7.0)
     warden (1.2.8)
       rack (>= 2.0.6)
@@ -523,6 +536,7 @@ PLATFORMS
 DEPENDENCIES
   active_model_serializers
   activerecord-import!
+  activerecord-nulldb-adapter
   acts_as_list
   acts_as_tree
   acts_as_votable
@@ -535,7 +549,9 @@ DEPENDENCIES
   capybara (>= 2.15)
   clipboard-rails
   coffee-rails (~> 5.0.0)
-  commontator!
+  commontator
+  coveralls
+  dalli (>= 2.7)
   database_cleaner
   devise
   devise-bootstrap-views
@@ -569,6 +585,7 @@ DEPENDENCIES
   puma (~> 4.1)
   rack
   rails (~> 6.0.3)
+  rails-erd
   rails-i18n
   responders
   rgl
@@ -581,7 +598,6 @@ DEPENDENCIES
   selenium-webdriver
   shrine
   sidekiq
-  simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
   sprockets-rails!
@@ -589,10 +605,11 @@ DEPENDENCIES
   streamio-ffmpeg
   sunspot_rails
   sunspot_solr
-  thredded!
+  thredded
   thredded-markdown_katex
   trix-rails
   turbolinks (~> 5)
+  uglifier
   web-console (>= 3.3.0)
   webdrivers
   xkcd
