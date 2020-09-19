@@ -73,7 +73,9 @@ gem 'acts_as_tree'
 gem 'activerecord-import',
   git: 'https://github.com/zdennis/activerecord-import.git',
   branch: 'master'
-gem 'thredded'
+gem 'thredded',
+  git: 'https://github.com/fosterfarrell9/thredded',
+  branch: 'master'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
 gem 'rails-i18n'
@@ -89,7 +91,9 @@ gem 'sidekiq'
 gem 'faraday'
 gem 'globalize'
 gem 'globalize-accessors'
-gem 'commontator'
+gem 'commontator',
+  git: 'https://github.com/fosterfarrell9/commontator',
+  branch: 'master'
 gem 'acts_as_votable'
 gem 'sprockets-rails',
   git: 'https://github.com/rails/sprockets-rails',
