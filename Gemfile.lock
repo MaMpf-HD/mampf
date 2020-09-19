@@ -153,9 +153,9 @@ GEM
     crass (1.0.6)
     css_parser (1.7.1)
       addressable
-    dalli (2.7.10)
     cypress-on-rails (1.8.0)
       rack
+    dalli (2.7.10)
     database_cleaner (1.8.5)
     db_text_search (0.3.1)
       activerecord (>= 4.1.15, < 7.0)
@@ -553,8 +553,8 @@ DEPENDENCIES
   coffee-rails (~> 5.0.0)
   commontator
   coveralls
-  dalli (>= 2.7)
   cypress-on-rails (~> 1.0)
+  dalli (>= 2.7)
   database_cleaner
   devise
   devise-bootstrap-views
@@ -601,6 +601,7 @@ DEPENDENCIES
   selenium-webdriver
   shrine
   sidekiq
+  simplecov
   spring
   spring-watcher-listen (~> 2.0.0)
   sprockets-rails!
