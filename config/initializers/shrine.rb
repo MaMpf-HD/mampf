@@ -6,16 +6,27 @@ if Rails.env.development? || Rails.env == 'docker_development'
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::FileSystem.new("public", prefix: "uploads/store"),
+    user_cache: Shrine::Storage::FileSystem.new("public",
+                                                prefix: "uploads/users/cache"),
+    user_store: Shrine::Storage::FileSystem.new("public",
+                                                prefix: "uploads/users/store"),
   }
 elsif Rails.env.production?
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
-    store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'), prefix: "/"),
+    store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'),
+                                           prefix: "/"),
+    user_cache: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'),
+                                                prefix: "users/cache"),
+    user_store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'),
+                                                prefix: "users/store"),
   }
 elsif Rails.env.test?
   Shrine.storages = {
     cache: Shrine::Storage::Memory.new,
     store: Shrine::Storage::Memory.new,
+    user_cache: Shrine::Storage::Memory.new,
+    user_store: Shrine::Storage::Memory.new
   }
 end
 
@@ -24,4 +35,3 @@ Shrine.plugin :determine_mime_type
 Shrine.plugin :cached_attachment_data # for forms
 Shrine.plugin :restore_cached_data
 Shrine.plugin :instrumentation
-Shrine.plugin :upload_endpoint

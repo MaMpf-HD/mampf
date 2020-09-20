@@ -96,9 +96,9 @@ class SubmissionsController < ApplicationController
   end
 
   def show_manuscript
-    file = Tempfile.new
-    @submission.manuscript.stream(file.path)
-    send_file file, type: 'application/pdf', disposition: 'inline'
+    send_file @submission.manuscript.to_io,
+    					type: 'application/pdf',
+    					disposition: 'inline'
   end
 
   private
