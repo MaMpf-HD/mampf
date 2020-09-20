@@ -19,7 +19,6 @@ $('#tutorial_tutor_id').select2
   }
   language: '<%= I18n.locale %>'
   theme: 'bootstrap'
-  escapeMarkup: (markup) -> markup
   minimumInputLength: 2
-  templateResult: (item) -> item.name
-  templateSelection: (item) -> item.name
+  placeholder: '<%= t("basics.select") %>'
+  allowClear: true
