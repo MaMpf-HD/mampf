@@ -2902,6 +2902,7 @@ de:
               blank: 'Es muss ein Anzeigename angegeben werden.'
         user_submission_join:
           only_one_per_assignment: >
+            Es wurde schon eine Abgabe zu dieser Hausaufgabe angelegt.
             Jede NutzerIn darf pro Hausaufgabe nur eine Abgabe vornehmen.
         vote:
           attributes:

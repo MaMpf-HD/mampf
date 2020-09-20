@@ -2,7 +2,7 @@ class UserSubmissionJoin < ApplicationRecord
   belongs_to :user
   belongs_to :submission
 
-  validate :only_one_per_assignment
+  validate :only_one_per_assignment, on: :create
 
   def assignment
   	submission.assignment

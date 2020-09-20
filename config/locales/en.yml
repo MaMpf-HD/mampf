@@ -2753,6 +2753,7 @@ en:
               blank: 'You need to give a display name.'
         user_submission_join:
           only_one_per_assignment: >
+            A submission to this assignment has already been created.
             Each user is only allowed one submission per assignment.
         vote:
           attributes:

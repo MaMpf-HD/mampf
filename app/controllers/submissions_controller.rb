@@ -55,9 +55,8 @@ class SubmissionsController < ApplicationController
   def redeem_code
     code = params[:code]
     @submission = Submission.find_by(token: code)
-    check_code_validity
+    check_code_and_join
     unless @error
-      @submission.users << current_user
       redirect_to submissions_path(params:
                                    { lecture_id: @submission.tutorial
                                                             .lecture_id }),
@@ -73,9 +72,7 @@ class SubmissionsController < ApplicationController
     @assignment = Assignment.find_by_id(join_params[:assignment_id])
     code = join_params[:code]
     @submission = Submission.find_by(token: code, assignment: @assignment)
-    check_code_validity
-    return if @error
-    @submission.users << current_user
+    check_code_and_join
   end
 
   def leave
@@ -161,6 +158,18 @@ class SubmissionsController < ApplicationController
       @error = I18n.t('submission.already_in')
     elsif !@submission.tutorial.lecture.in?(current_user.lectures)
       @error = I18n.t('submission.lecture_not_subscribed')
+    end
+  end
+
+  def check_code_and_join
+  	check_code_validity
+  	unless @error
+    	@join = UserSubmissionJoin.new(user: current_user,
+    														 		 submission: @submission)
+    	@join.save
+    	unless @join.valid?
+    		@error = @join.errors[:base].join(', ')
+    	end
     end
   end
 end
