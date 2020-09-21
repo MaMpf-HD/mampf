@@ -90,6 +90,7 @@ class SubmissionsController < ApplicationController
       return
     end
     @submission.users.delete(current_user)
+    send_leave_email
   end
 
   def cancel_edit
@@ -204,9 +205,31 @@ class SubmissionsController < ApplicationController
     	@join = UserSubmissionJoin.new(user: current_user,
     														 		 submission: @submission)
     	@join.save
-    	unless @join.valid?
+    	if @join.valid?
+        send_join_email
+      else
     		@error = @join.errors[:base].join(', ')
     	end
+    end
+  end
+
+  def send_join_email
+    (@submission.users - [current_user]).each do |u|
+      NotificationMailer.with(recipient: u,
+                              locale: u.locale,
+                              submission: @submission,
+                              user: current_user)
+                        .submission_join_email.deliver_now
+    end
+  end
+
+  def send_leave_email
+    (@submission.users - [current_user]).each do |u|
+      NotificationMailer.with(recipient: u,
+                              locale: u.locale,
+                              submission: @submission,
+                              user: current_user)
+                        .submission_leave_email.deliver_now
     end
   end
 end

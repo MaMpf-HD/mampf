@@ -2241,6 +2241,14 @@ en:
     submission_upload_by_others_info_html: >
       %{remover} has removed the file "%{filename}" for the submission
       to %{assignment} in %{lecture}.
+    submission_join_subject: >
+      %{user} has joined the submission for %{assignment} in %{lecture}
+    submission_join: >
+      %{user} has joined the submission for %{assignment} in %{lecture}.
+    submission_leave_subject: >
+      %{user} has left the submission for %{assignment} in %{lecture}
+    submission_join: >
+      %{user} has left the submission for %{assignment} in %{lecture}.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'

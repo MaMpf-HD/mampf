@@ -1,11 +1,18 @@
 class NotificationMailer < ApplicationMailer
   before_action :set_sender_and_locale
-  before_action :set_recipients, except: [:submission_invitation_email,
-                                          :submission_upload_email,
-                                          :submission_upload_removal_email]
+  before_action :set_recipients
   before_action :set_recipient_and_submission,
                 only: [:submission_upload_email,
+                       :submission_upload_removal_email,
+                       :submission_join_email,
+                       :submission_leave_email]
+  before_action :set_filename,
+                only: [:submission_upload_email,
                        :submission_upload_removal_email]
+  before_action :set_user,
+                only: [:submission_join_email,
+                       :submission_leave_email]
+
 
   def medium_email
     @medium = params[:medium]
@@ -75,6 +82,24 @@ class NotificationMailer < ApplicationMailer
                     lecture: @assignment.lecture.short_title))
   end
 
+  def submission_join_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_join_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title,
+                    user: @user.name))
+  end
+
+  def submission_leave_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_leave_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title,
+                    user: @user.name))
+  end
+
   private
 
   def set_sender_and_locale
@@ -89,7 +114,14 @@ class NotificationMailer < ApplicationMailer
   def set_recipient_and_submission
     @recipient = params[:recipient]
     @submission = params[:submission]
-    @filename = params[:filename]
     @assignment = @submission.assignment
+  end
+
+  def set_filename
+    @filename = params[:filename]
+  end
+
+  def set_user
+    @user = params[:user]
   end
 end

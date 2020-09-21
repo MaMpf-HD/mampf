@@ -2381,6 +2381,15 @@ de:
     submission_upload_removal_by_others_html: >
       %{remover} hat die Datei "%{filename}" für die Abgabe zu %{assignment} in
       %{lecture} entfernt.
+    submission_join_subject: >
+      %{user} beigetreten zu Abgabe zu %{assignment} in %{lecture}
+    submission_join: >
+      %{user} ist der Abgabe zu %{assignment} in %{lecture}
+      beigetreten.
+    submission_leave_subject: >
+      %{user} hat Abgabe zu %{assignment} in %{lecture} verlassen
+    submission_leave: >
+      %{user} hat die Abgabe zu %{assignment} in %{lecture} verlassen.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
