@@ -2186,6 +2186,18 @@ en:
       There are no assignments beyond the current one.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
+    no_manuscript_yet: No file has yet been uploaded.
+    correct_file_size: The filesize does not exceed the limit.
+    file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
+    file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
+    optimization_help: >
+      <b>Optimizing:</b> Use this button to optimize your file with your browser.
+      This process takes about 1-2 minutes.
+    assure_third_party: >
+      I assure you that the file does not infringe any rights of third parties.
+    removal_notice: >
+      <b>Notice:</b> Files will be deleted at the end of the semester.
+       We do not assume any liability for possible data loss.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

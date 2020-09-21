@@ -148,7 +148,7 @@ manuscriptUpload = (fileInput) ->
     if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
       # read uploaded file data from the upload endpoint response
       uploadedFileData = JSON.stringify(data)
-
+      console.log uploadedFileData
       # set hidden field value to the uploaded file data so that it is
       # submitted with the form as the attachment
       hiddenInput.value = uploadedFileData
@@ -324,70 +324,96 @@ imageUpload = (fileInput) ->
     return
 
   uppy
-
+###
+@param fileInput: dom element to listen to. 
+###
+@result = undefined
 @userManuscriptUpload = (fileInput) ->
-  # set everything up
-  uploadButton = document.getElementById('userManuscript-uploadButton')
-  informer = document.getElementById('userManuscript-informer')
-  statusBar = document.getElementById('userManuscript-statusBar')
+#hide
   hiddenInput = document.getElementById('upload-userManuscript-hidden')
-  userManuscriptMetadata = document.getElementById('userManuscriptMetadata')
-
-  # uppy will add its own file input
+  hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
   fileInput.style.display = 'none'
-
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions:
-      allowedFileTypes: [ '.pdf' ]
-      maxFileSize: 10485760)
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.StatusBar, target: statusBar)
-
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/submissions/upload'
-    fieldName: 'file'
-
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-      userManuscriptMetadata.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
-      userManuscriptMetadata.style.display = 'inline'
-
-      $('#removeUserManuscript').show()
-      $('#submission_detach_user_manuscript').val('false')
-      $('#noUserManuscript').hide()
-    else if data.metadata.mime_type != 'application/pdf'
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
+  result = undefined
+  $('#userManuscript-status').hide()
+  uploadButton = $('#userManuscript-uploadButton-btn')
+  $('#userManuscript-uploadButton-call').on 'click', (e)=>
+    e.preventDefault()
+    if result== undefined
+      result =document.getElementById('upload-userManuscript').files[0]
+    if $("#file-permission-checkbox").is(":checked")
+      #Upload blob
+      formData = new FormData()
+      file = document.getElementById('upload-userManuscript').files[0]
+      formData.append("file", result, file.name)
+      xhr = new XMLHttpRequest()
+      xhr.open('POST', '/submissions/upload', true)
+      xhr.onload =  () ->
+        if (xhr.status == 200)
+          hiddenInput.value = xhr.responseText
+          $('#upload-userManuscript').val("")
+          $('#submission_detach_user_manuscript').val('false')
+          $('#userManuscript-uploadButton-call').text("Upload sucessfull")
+          console.log(xhr.responseText)
+        else
+          alert "Fehler beim Upload " + xhr.responseText
+      xhr.upload.onprogress = (e) ->
+        percentUpload = Math.floor(100 * e.loaded / e.total)
+        $('#userManuscript-uploadButton-call').text(percentUpload+" %")
+        return
+      xhr.send formData
     else
-      # display error message if uppy detects some other problem
-      uppy.info('Die Datei ist beschädigt.', 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
-
+      alert("You must consent.")
+  $("#log-btn").on 'click',()->
+    $("#userManuscript-optimize-log").toggle()
+  $('#userManuscript-optimize-btn').on 'click',(e)->
+    e.preventDefault()
+    file = document.getElementById('upload-userManuscript').files[0]
+    console.log file
+    $('#userManuscript-optimize-btn').text("Working...")
+    reader = new FileReader()
+    reader.onload = ()->
+      arrayBuffer = this.result
+      array = new Uint8Array(arrayBuffer);
+      l={l:0}
+      worker = new Worker('pdfcomprezzor/worker.js')
+      worker.addEventListener 'message', ((e) ->
+        console.log 'Worker said: ', e
+        if e.data.type == 'log'
+          $('#userManuscript-optimize-log').append($("<div><small>"+e.data.message+"</div></small>"))
+        else if e.data.type == 'result'
+          $('#userManuscript-optimize-btn').text(formatBytes(e.data.result.length))
+          result = new Blob([e.data.result],{type: 'application/pdf'})
+          if e.data.result.length> 10000000
+            alert "Optimization not strict enough"
+        return
+      ), false
+      worker.postMessage
+        array: array
+        l: l
+    reader.readAsArrayBuffer(file)
+  $('#upload-userManuscript').change ()->
+    file = this.files[0]
+    # rerender all
+    $('#userManuscript-status').show(400)
+    $('#file-size-correct').hide()
+    $('#file-size-way-too-big').hide()
+    $('#file-size-too-big').hide()
+    $('#file-optimize').hide()
+    $('#userManuscript-uploadButton-call').prop('disabled',true)
+    if file.size < 5000000
+      $('#userManuscript-uploadButton-call').prop('disabled',false)
+      $('#file-size-correct').show()
+      $('#userManuscript-uploadCenter').show()
+    else
+      if file.size > 10000000
+        $('#file-size-way-too-big').show()
+      else
+        $('#file-size-too-big').show()
+        $('#userManuscript-uploadButton-call').prop('disabled',false)
+      $('#file-optimize').show()
+  uploadButton.on 'click', (e)->
+    e.preventDefault()
+    $('#upload-userManuscript').trigger('click')
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
   manuscript = document.getElementById('upload-manuscript')

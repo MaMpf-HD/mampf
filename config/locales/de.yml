@@ -2317,6 +2317,18 @@ de:
       Es sind keine Hausauafgaben jenseits der aktuellen vorhanden.
     no_manuscript_yet: Aktuell ist keine Datei hinterlegt.
     exists_no_longer: Diese Abgabe existiert nicht.
+    no_manuscript_yet: Es wurde noch keine Datei hochgeladen.
+    correct_file_size: Die Datei hat die richtige Größe.
+    file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
+    file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
+    optimization_help: >
+      <b>Optimieren:</b>Verwende diesen Knopf, um automatisch 
+      im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten.
+    assure_third_party: >
+      Ich versichere, dass durch die Datei keine Rechte Dritter verletzt werden.
+    removal_notice: >
+      <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
+      Wir übernehmen keine Haftung für mögliche Datenverluste.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
