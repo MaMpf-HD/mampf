@@ -2184,7 +2184,8 @@ en:
     no_old_ones: Nothing has been submitted yet.
     no_future_ones: >
       There are no assignments beyond the current one.
-    no_manuscript_yet: No file has yet been uploaded.
+    no_manuscript_yet: Currently, no file is stored.
+    exists_no_longer: This submission does not exist.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2226,6 +2227,20 @@ en:
       %{issuer} issuer has invited you to join a submission to %{assignment}
       in %{lecture}. The code to join is: %{code}. You can enter and redeem
       it in MaMpf manually or follow this %{link}.
+    submission_upload_info_html: >
+      You have succesfully uploaded the file "%{filename}" to submission
+      to %{assignment} in %{lecture}.
+    submission_upload_by_others_info_html: >
+      %{uploader} ha succesfully uploaded the file "%{filename}" to submission
+      to %{assignment} in %{lecture}.
+    submission_upload_removal_subject: >
+      File for submission to %{assignment} in %{lecture} removed
+    submission_upload_info_html: >
+      You have removed the file "%{filename}" for the submission
+      to %{assignment} in %{lecture}.
+    submission_upload_by_others_info_html: >
+      %{remover} has removed the file "%{filename}" for the submission
+      to %{assignment} in %{lecture}.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'

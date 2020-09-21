@@ -1,7 +1,7 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit,
-                                        :update, :show_manuscript]
+                                        :update]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   authorize_resource
@@ -26,11 +26,17 @@ class SubmissionsController < ApplicationController
   end
 
   def update
+    old_manuscript = @submission.manuscript_data
+    @old_filename = @submission.manuscript_filename
     @submission.update(submission_params)
     @assignment = @submission.assignment
-    if @submission.valid? &&
-         params[:submission][:detach_user_manuscript] == 'true'
-      @submission.update(manuscript: nil)
+    if @submission.valid?
+      if params[:submission][:detach_user_manuscript] == 'true'
+        @submission.update(manuscript: nil)
+        send_upload_removal_email(@submission.users)
+      elsif @submission.manuscript != old_manuscript
+        send_upload_email(@submission.users)
+      end
     end
     render :create
   end
@@ -42,6 +48,8 @@ class SubmissionsController < ApplicationController
     @assignment = @submission.assignment
     return unless @submission.valid?
     send_invitation_emails
+    return unless @submission.manuscript
+    send_upload_email([current_user])
   end
 
   def destroy
@@ -93,9 +101,16 @@ class SubmissionsController < ApplicationController
   end
 
   def show_manuscript
-    send_file @submission.manuscript.to_io,
-    					type: 'application/pdf',
-    					disposition: 'inline'
+    @submission = Submission.find_by_id(params[:id])
+    if @submission && @submission.manuscript
+      send_file @submission.manuscript.to_io,
+      					type: 'application/pdf',
+      					disposition: 'inline'
+    elsif @submission
+      redirect_to :start, alert: t('submission.no_manuscript_yet')
+    else
+      redirect_to :start, alert: t('submission.exists_no_longer')
+    end
   end
 
   private
@@ -143,6 +158,28 @@ class SubmissionsController < ApplicationController
                               code: @submission.token,
                               issuer: current_user)
                         .submission_invitation_email.deliver_now
+    end
+  end
+
+  def send_upload_email(users)
+    users.each do |u|
+      NotificationMailer.with(recipient: u,
+                              locale: u.locale,
+                              submission: @submission,
+                              uploader: current_user,
+                              filename: @submission.manuscript_filename)
+                        .submission_upload_email.deliver_now
+    end
+  end
+
+  def send_upload_removal_email(users)
+    users.each do |u|
+      NotificationMailer.with(recipient: u,
+                              locale: u.locale,
+                              submission: @submission,
+                              remover: current_user,
+                              filename: @old_filename)
+                        .submission_upload_removal_email.deliver_now
     end
   end
 

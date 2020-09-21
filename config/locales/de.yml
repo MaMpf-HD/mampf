@@ -2315,7 +2315,8 @@ de:
     no_old_ones: Es wurde noch nichts abgegeben.
     no_future_ones: >
       Es sind keine Hausauafgaben jenseits der aktuellen vorhanden.
-    no_manuscript_yet: Es wurde noch keine Datei hochgeladen.
+    no_manuscript_yet: Aktuell ist keine Datei hinterlegt.
+    exists_no_longer: Diese Abgabe existiert nicht.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
@@ -2362,6 +2363,24 @@ de:
       %{issuer} hat Dich eingeladen, einer Abgabe zu %{assignment} in %{lecture}
       beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn MaMpf
       selbst eingeben und einlösen oder diesen %{link} benutzen.
+    submission_upload_subject: >
+      Erfolgreicher Upload für Abgabe zu %{assignment} in %{lecture}
+    submission_upload_html: >
+      Du hast erfolgreich die Datei "%{filename}" für die Abgabe zu
+      %{assignment} in %{lecture} hochgeladen. Du kannst die aktuelle Datei
+      unter diesem %{link} einsehen.
+    submission_upload_by_others_html: >
+      %{uploader} hat erfolgreich die Datei "%{filename}" für die Abgabe zu
+      %{assignment} in %{lecture} hochgeladen. Du kannst die aktuelle Datei
+      unter diesem %{link} einsehen.
+    submission_upload_removal_subject: >
+      Datei für Abgabe zu %{assignment} in %{lecture} entfernt
+    submission_upload_removal_html: >
+      Du hast die Datei "%{filename}" für die Abgabe zu %{assignment} in
+      %{lecture} entfernt.
+    submission_upload_removal_by_others_html: >
+      %{remover} hat die Datei "%{filename}" für die Abgabe zu %{assignment} in
+      %{lecture} entfernt.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'

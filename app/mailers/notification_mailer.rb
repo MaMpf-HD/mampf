@@ -1,6 +1,11 @@
 class NotificationMailer < ApplicationMailer
   before_action :set_sender_and_locale
-  before_action :set_recipients, except: :submission_invitation_email
+  before_action :set_recipients, except: [:submission_invitation_email,
+                                          :submission_upload_email,
+                                          :submission_upload_removal_email]
+  before_action :set_recipient_and_submission,
+                only: [:submission_upload_email,
+                       :submission_upload_removal_email]
 
   def medium_email
     @medium = params[:medium]
@@ -52,6 +57,24 @@ class NotificationMailer < ApplicationMailer
                     lecture: @assignment.lecture.short_title))
   end
 
+  def submission_upload_email
+    @uploader = params[:uploader]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_upload_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_upload_removal_email
+    @remover = params[:remover]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_upload_removal_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
   private
 
   def set_sender_and_locale
@@ -61,5 +84,12 @@ class NotificationMailer < ApplicationMailer
 
   def set_recipients
     @recipients = params[:recipients]
+  end
+
+  def set_recipient_and_submission
+    @recipient = params[:recipient]
+    @submission = params[:submission]
+    @filename = params[:filename]
+    @assignment = @submission.assignment
   end
 end
