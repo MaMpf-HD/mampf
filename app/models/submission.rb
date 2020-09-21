@@ -5,7 +5,7 @@ class Submission < ApplicationRecord
   has_many :user_submission_joins, dependent: :destroy
   has_many :users, through: :user_submission_joins
 
-  include UserPdfUploader[:manuscript]
+  include SubmissionUploader[:manuscript]
 
   validate :matching_lecture
 

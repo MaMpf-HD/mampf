@@ -375,7 +375,7 @@ Rails.application.routes.draw do
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
   mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
-  mount UserPdfUploader.upload_endpoint(:user_cache) => "/user_pdfs/upload"
+  mount SubmissionUploader.upload_endpoint(:submission_cache) => "/submissions/upload"
   mount Thredded::Engine => '/forum'
   get '*path', to: 'main#error'
 

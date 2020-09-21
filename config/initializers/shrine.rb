@@ -6,27 +6,27 @@ if Rails.env.development? || Rails.env == 'docker_development'
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::FileSystem.new("public", prefix: "uploads/store"),
-    user_cache: Shrine::Storage::FileSystem.new("public",
-                                                prefix: "uploads/users/cache"),
-    user_store: Shrine::Storage::FileSystem.new("public",
-                                                prefix: "uploads/users/store"),
+    submission_cache: Shrine::Storage::FileSystem.new("public",
+                                                prefix: "uploads/submissions/cache"),
+    submission_store: Shrine::Storage::FileSystem.new("public",
+                                                prefix: "uploads/submissions/store"),
   }
 elsif Rails.env.production?
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'),
                                            prefix: "/"),
-    user_cache: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'),
-                                                prefix: "users/cache"),
-    user_store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'),
-                                                prefix: "users/store"),
+    submission_cache: Shrine::Storage::FileSystem.new("/" + (ENV['SUBMISSION_FOLDER'] || 'submission'),
+                                                      prefix: "cache"),
+    submission_store: Shrine::Storage::FileSystem.new("/" + (ENV['SUBMISSION_FOLDER'] || 'submission'),
+                                                      prefix: "store"),
   }
 elsif Rails.env.test?
   Shrine.storages = {
     cache: Shrine::Storage::Memory.new,
     store: Shrine::Storage::Memory.new,
-    user_cache: Shrine::Storage::Memory.new,
-    user_store: Shrine::Storage::Memory.new
+    submission_cache: Shrine::Storage::Memory.new,
+    submission_store: Shrine::Storage::Memory.new
   }
 end
 

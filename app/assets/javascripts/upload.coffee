@@ -351,7 +351,7 @@ imageUpload = (fileInput) ->
 
   # target the endpoint for shrine uploader
   uppy.use Uppy.XHRUpload,
-    endpoint: '/user_pdfs/upload'
+    endpoint: '/submissions/upload'
     fieldName: 'file'
 
   # add metadata to manuscript card if upload was successful
