@@ -2193,6 +2193,9 @@ en:
     optimization_help: >
       <b>Optimizing:</b> Use this button to optimize your file with your browser.
       This process takes about 1-2 minutes.
+    optimization_info: >
+      For this purpose, a small additional program is downloaded and executed <i> in the browser </i>.
+        Your file will remain on your device until you have uploaded them.
     assure_third_party: >
       I assure you that the file does not infringe any rights of third parties.
     removal_notice: >

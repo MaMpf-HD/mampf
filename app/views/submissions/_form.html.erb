@@ -72,7 +72,7 @@
 			<div class="col-12" id="file-size-too-big" style="display:none"> <i class="fas fa-exclamation-triangle"></i> <%=t('submission.file_size_too_big')%></div>
 			<div class="col-12" id="file-size-way-too-big" style="display:none"><i class="fas fa-bomb"></i> <%=t('submission.file_size_way_too_big')%></div>
 			<div class="col-12" id="file-optimize" style="display:none">
-			<small><%=raw t("submission.optimization_help")%><%= helpdesk("Verwendet WASM",true)%></small>
+			<small><%=raw t("submission.optimization_help")%><%= helpdesk(t('submission.optimization_info'),true)%></small>
 			<div class="col-12">
 			<button id="userManuscript-optimize-btn" class="btn btn-sm btn-outline-secondary"><%= t('submission.optimize') %></button>
 			</div>

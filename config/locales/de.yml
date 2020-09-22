@@ -2324,6 +2324,9 @@ de:
     optimization_help: >
       <b>Optimieren:</b>Verwende diesen Knopf, um automatisch 
       im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten.
+    optimization_info: >
+      Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
+       So bleiben die Daten auf deinem Gerät, bis Du sie hochgeladen hast.
     assure_third_party: >
       Ich versichere, dass durch die Datei keine Rechte Dritter verletzt werden.
     removal_notice: >

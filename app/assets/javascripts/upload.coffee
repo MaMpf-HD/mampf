@@ -148,7 +148,6 @@ manuscriptUpload = (fileInput) ->
     if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
       # read uploaded file data from the upload endpoint response
       uploadedFileData = JSON.stringify(data)
-      console.log uploadedFileData
       # set hidden field value to the uploaded file data so that it is
       # submitted with the form as the attachment
       hiddenInput.value = uploadedFileData
@@ -329,11 +328,13 @@ imageUpload = (fileInput) ->
 ###
 @result = undefined
 @userManuscriptUpload = (fileInput) ->
-#hide
+  # update helpdesk 
+  $('[data-toggle="popover"]').popover()
   hiddenInput = document.getElementById('upload-userManuscript-hidden')
   hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
   fileInput.style.display = 'none'
   result = undefined
+  progressOptimize=0
   $('#userManuscript-status').hide()
   uploadButton = $('#userManuscript-uploadButton-btn')
   $('#userManuscript-uploadButton-call').on 'click', (e)=>
@@ -351,6 +352,7 @@ imageUpload = (fileInput) ->
         if (xhr.status == 200)
           hiddenInput.value = xhr.responseText
           $('#upload-userManuscript').val("")
+          $('input[type="submit"]').prop('disabled',false)
           $('#submission_detach_user_manuscript').val('false')
           $('#userManuscript-uploadButton-call').text("Upload sucessfull")
           console.log(xhr.responseText)
@@ -379,12 +381,16 @@ imageUpload = (fileInput) ->
       worker.addEventListener 'message', ((e) ->
         console.log 'Worker said: ', e
         if e.data.type == 'log'
+          $('#userManuscript-optimize-btn').html("Working"+".".repeat(progressOptimize+1)+"&nbsp;".repeat(2-progressOptimize))
+          progressOptimize = (progressOptimize+1)%3
           $('#userManuscript-optimize-log').append($("<div><small>"+e.data.message+"</div></small>"))
         else if e.data.type == 'result'
           $('#userManuscript-optimize-btn').text(formatBytes(e.data.result.length))
           result = new Blob([e.data.result],{type: 'application/pdf'})
           if e.data.result.length> 10000000
             alert "Optimization not strict enough"
+          else
+            $('#userManuscript-uploadButton-call').prop('disabled',false)
         return
       ), false
       worker.postMessage
@@ -392,7 +398,9 @@ imageUpload = (fileInput) ->
         l: l
     reader.readAsArrayBuffer(file)
   $('#upload-userManuscript').change ()->
+    $('input[type="submit"]').prop('disabled',true)
     file = this.files[0]
+    $("#userManuscriptMetadata").text(file.name+"("+formatBytes(file.size)+")")
     # rerender all
     $('#userManuscript-status').show(400)
     $('#file-size-correct').hide()
