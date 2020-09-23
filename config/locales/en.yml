@@ -2187,10 +2187,16 @@ en:
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
     no_manuscript_yet: No file has yet been uploaded.
+    missing_consent: You must consent to upload file.
+    optimize: Optimize
+    optimization_log: Log (show)
+    optimization_failed: >
+      Optimization failed: File is still to big.
+    upload_failure: "Error while uploading! Please try again."
     correct_file_size: The filesize does not exceed the limit.
     file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
     file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
-    optimization_help: >
+    optimization_help_html: >
       <b>Optimizing:</b> Use this button to optimize your file with your browser.
       This process takes about 1-2 minutes.
     optimization_info: >
@@ -2198,9 +2204,10 @@ en:
         Your file will remain on your device until you have uploaded them.
     assure_third_party: >
       I assure you that the file does not infringe any rights of third parties.
-    removal_notice: >
+    removal_notice_html: >
       <b>Notice:</b> Files will be deleted at the end of the semester.
        We do not assume any liability for possible data loss.
+    working: Arbeite
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2532,6 +2539,8 @@ en:
     join: 'Join'
     copy_to_clipboard: 'Copy to Clipboard'
     leave: 'Leave'
+    upload: 'Upload'
+    upload_success: 'Upload successfull'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

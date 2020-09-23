@@ -324,20 +324,20 @@ imageUpload = (fileInput) ->
 
   uppy
 ###
-@param fileInput: dom element to listen to. 
+@param fileInput: dom element to listen to.
 ###
 @result = undefined
 @userManuscriptUpload = (fileInput) ->
-  # update helpdesk 
+  # update helpdesk
   $('[data-toggle="popover"]').popover()
   hiddenInput = document.getElementById('upload-userManuscript-hidden')
   hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
   fileInput.style.display = 'none'
   result = undefined
-  progressOptimize=0
+  progressOptimize = 0
   $('#userManuscript-status').hide()
   uploadButton = $('#userManuscript-uploadButton-btn')
-  $('#userManuscript-uploadButton-call').on 'click', (e)=>
+  $('#userManuscript-uploadButton-call').on 'click', (e) ->
     e.preventDefault()
     if result== undefined
       result =document.getElementById('upload-userManuscript').files[0]
@@ -354,50 +354,87 @@ imageUpload = (fileInput) ->
           $('#upload-userManuscript').val("")
           $('input[type="submit"]').prop('disabled',false)
           $('#submission_detach_user_manuscript').val('false')
-          $('#userManuscript-uploadButton-call').text("Upload sucessfull")
-          console.log(xhr.responseText)
+          $('#userManuscript-uploadButton-call').text(
+            $('#userManuscript-uploadButton-call').data 'tr-success'
+          )
+          $('#userManuscript-uploadButton-call')
+              .removeClass('btn-primary')
+              .addClass 'btn-outline-secondary'
         else
-          alert "Fehler beim Upload " + xhr.responseText
+          alert(
+            $('#userManuscript-uploadButton-call').data('tr-failure')
+            + xhr.responseText
+          )
+      xhr.onerror = (e) ->
+        alert(
+          $('#userManuscript-uploadButton-call').data('tr-failure')
+        )
       xhr.upload.onprogress = (e) ->
         percentUpload = Math.floor(100 * e.loaded / e.total)
         $('#userManuscript-uploadButton-call').text(percentUpload+" %")
         return
       xhr.send formData
     else
-      alert("You must consent.")
-  $("#log-btn").on 'click',()->
+      alert(
+        $('#userManuscript-uploadButton-call').data 'tr-missing-consent'
+      )
+  $("#log-btn").on 'click',() ->
     $("#userManuscript-optimize-log").toggle()
-  $('#userManuscript-optimize-btn').on 'click',(e)->
+  $('#userManuscript-optimize-btn').on 'click',(e) ->
     e.preventDefault()
     file = document.getElementById('upload-userManuscript').files[0]
     console.log file
-    $('#userManuscript-optimize-btn').text("Working...")
+    workingText = $('#userManuscript-optimize-btn').data('tr-working')
+    $('#userManuscript-optimize-btn').text(workingText)
+    $('#userManuscript-optimize-btn').prop("disabled", true)
+    $('#userManuscript-optimize-btn').removeClass('btn-primary')
+    .addClass 'btn-outline-secondary'
     reader = new FileReader()
-    reader.onload = ()->
+    reader.onload = () ->
       arrayBuffer = this.result
-      array = new Uint8Array(arrayBuffer);
-      l={l:0}
+      array = new Uint8Array(arrayBuffer)
+      l = l:0
       worker = new Worker('pdfcomprezzor/worker.js')
       worker.addEventListener 'message', ((e) ->
         console.log 'Worker said: ', e
         if e.data.type == 'log'
-          $('#userManuscript-optimize-btn').html("Working"+".".repeat(progressOptimize+1)+"&nbsp;".repeat(2-progressOptimize))
+          $('#userManuscript-optimize-btn').html(
+            workingText +
+            ".".repeat(progressOptimize + 1) +
+            "&nbsp;".repeat(2-progressOptimize)
+          )
           progressOptimize = (progressOptimize+1)%3
-          $('#userManuscript-optimize-log').append($("<div><small>"+e.data.message+"</div></small>"))
+          $('#userManuscript-optimize-log').append(
+            $("<div><small>" + e.data.message + "</div></small>")
+          )
         else if e.data.type == 'result'
-          $('#userManuscript-optimize-btn').text(formatBytes(e.data.result.length))
-          result = new Blob([e.data.result],{type: 'application/pdf'})
+          $('#userManuscript-optimize-btn').text(
+            formatBytes(e.data.result.length)
+          )
+          result = new Blob([e.data.result], type: 'application/pdf')
           if e.data.result.length> 10000000
-            alert "Optimization not strict enough"
+            alert(
+              $('#userManuscript-optimize-btn').data 'tr-failed'
+            )
           else
             $('#userManuscript-uploadButton-call').prop('disabled',false)
+            file = document.getElementById('upload-userManuscript').files[0]
+            $("#userManuscriptMetadata").text(
+              file.name + "(" + formatBytes(result.size) + ")"
+            )
+            $('#userManuscript-uploadButton-call')
+              .removeClass('btn-outline-secondary')
+              .addClass 'btn-primary'
+            $('#file-size-correct').show()
+            $('#file-size-way-too-big').hide()
+            $('#file-size-too-big').hide()
         return
       ), false
       worker.postMessage
         array: array
         l: l
     reader.readAsArrayBuffer(file)
-  $('#upload-userManuscript').change ()->
+  $('#upload-userManuscript').change () ->
     $('input[type="submit"]').prop('disabled',true)
     file = this.files[0]
     $("#userManuscriptMetadata").text(file.name+"("+formatBytes(file.size)+")")
@@ -412,6 +449,9 @@ imageUpload = (fileInput) ->
       $('#userManuscript-uploadButton-call').prop('disabled',false)
       $('#file-size-correct').show()
       $('#userManuscript-uploadCenter').show()
+      $('#userManuscript-uploadButton-call')
+        .removeClass('btn-outline-secondary')
+        .addClass 'btn-primary'
     else
       if file.size > 10000000
         $('#file-size-way-too-big').show()
@@ -419,7 +459,7 @@ imageUpload = (fileInput) ->
         $('#file-size-too-big').show()
         $('#userManuscript-uploadButton-call').prop('disabled',false)
       $('#file-optimize').show()
-  uploadButton.on 'click', (e)->
+  uploadButton.on 'click', (e) ->
     e.preventDefault()
     $('#upload-userManuscript').trigger('click')
 $(document).on 'turbolinks:load', ->

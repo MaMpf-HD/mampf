@@ -49,7 +49,10 @@
 											   accept: 'application/pdf' %>
 			  <%= f.hidden_field :detach_user_manuscript,
 			  									 value: false %>
-			  <button id="userManuscript-uploadButton-btn" class="btn btn-sm btn-outline-secondary"><%= t('basics.file') %></button>
+			  <button id="userManuscript-uploadButton-btn"
+			   class="btn btn-sm btn-outline-secondary">
+			   	<%= t('basics.file') %>
+			   </button>
 			</div>
 			
 			<div class="col-9">
@@ -67,24 +70,59 @@
 					<%= t('submission.no_manuscript_yet') %>
 				</span>
 			</div>
-	    <div class="col-12" id="userManuscript-status">
-			<div class="col-12" id="file-size-correct" style="display:none"><i class="fas fa-check"></i> <%=t('submission.correct_file_size')%></div>
-			<div class="col-12" id="file-size-too-big" style="display:none"> <i class="fas fa-exclamation-triangle"></i> <%=t('submission.file_size_too_big')%></div>
-			<div class="col-12" id="file-size-way-too-big" style="display:none"><i class="fas fa-bomb"></i> <%=t('submission.file_size_way_too_big')%></div>
-			<div class="col-12" id="file-optimize" style="display:none">
-			<small><%=raw t("submission.optimization_help")%><%= helpdesk(t('submission.optimization_info'),true)%></small>
+	    <div class="col-12 mt-2" id="userManuscript-status">
+			<div class="col-12" id="file-size-correct" class="submission-initially-hidden">
+				<i class="fas fa-check"></i>
+				<%=t('submission.correct_file_size')%>
+			</div>
+			<div class="col-12" id="file-size-too-big" class="submission-initially-hidden">
+				<i class="fas fa-exclamation-triangle"></i>
+				<%=t('submission.file_size_too_big')%>
+			</div>
+			<div class="col-12" id="file-size-way-too-big" class="submission-initially-hidden">
+				<i class="fas fa-bomb"></i>
+				<%=t('submission.file_size_way_too_big')%>
+			</div>
+			<div class="col-12" id="file-optimize" class="submission-initially-hidden">
+				<small>
+					<%= t("submission.optimization_help_html")%>
+					<%= helpdesk(t('submission.optimization_info'),true)%>
+				</small>
+				<div class="col-12 my-1">
+					<button id="userManuscript-optimize-btn"
+						class="btn btn-sm btn-primary"
+						data-tr-working="<%= t('submission.working')%>"
+						data-tr-failed="<%= t('submission.optimization_failed')%>"
+						>
+						<%= t('submission.optimize') %>
+					</button>
+				</div>
+			<!--<div class="col-1"></div>-->
+				<div class="col-11">
+					<b id="log-btn"><%=t('submission.optimization_log')%></b>
+					<div id="userManuscript-optimize-log" class="submission-initially-hidden">
+					</div>
+				</div>
+			</div>
+			<div class="col-12 my-1">
+				<input type="checkbox" id="file-permission-checkbox"/>
+				<%= t('submission.assure_third_party') %>
+			</div>
 			<div class="col-12">
-			<button id="userManuscript-optimize-btn" class="btn btn-sm btn-outline-secondary"><%= t('submission.optimize') %></button>
-			</div>
-			<div class="col-1"></div>
-			<div class="col-11"><b id="log-btn">Log (show)</b>
-			<div id="userManuscript-optimize-log" style="display:none"></div>
-			</div>
-			</div>
-			<div class="col-12"><input type="checkbox" id="file-permission-checkbox"/> <%= t('submission.assure_third_party') %></div>
-			<div class="col-12">
-			<div class="col-3"><button id="userManuscript-uploadButton-call" class="btn btn-sm btn-outline-secondary" disabled=true><%= t('basics.upload') %></button></div>
-			<div class="col-9"><small><%=raw t('submission.removal_notice')%></small></div>
+				<div class="col-3">
+					<button id="userManuscript-uploadButton-call"
+						data-tr-success="<%= t('buttons.upload_success') %>"
+						data-tr-failure="<%= t('submission.upload_failure')%>"
+						data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+						class="btn btn-sm btn-outline-secondary" disabled=true>
+							<%= t('buttons.upload') %>
+						</button>
+				</div>
+				<div class="col-9">
+					<small>
+						<%= t('submission.removal_notice_html')%>
+					</small>
+				</div>
 			</div>
 		</div>
 	    <div class="col-12" id="userManuscript-statusBar">
