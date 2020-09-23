@@ -84,7 +84,7 @@
 				<%=t('submission.file_size_way_too_big')%>
 			</div>
 			<div class="col-12" id="file-optimize" class="submission-initially-hidden">
-				<small>
+				<small id="optimization-help-text">
 					<%= t("submission.optimization_help_html")%>
 					<%= helpdesk(t('submission.optimization_info'),true)%>
 				</small>
@@ -97,10 +97,13 @@
 						<%= t('submission.optimize') %>
 					</button>
 				</div>
-			<!--<div class="col-1"></div>-->
-				<div class="col-11">
-					<b id="log-btn"><%=t('submission.optimization_log')%></b>
-					<div id="userManuscript-optimize-log" class="submission-initially-hidden">
+				<div class="col-12">
+					<span id="log-btn" class="badge badge-light clickable">
+  						<%=t('submission.optimization_log')%>
+					</span>
+					<div id="userManuscript-optimize-log"
+					 	class="submission-initially-hidden border bg-light p-2"
+						style="display:none">
 					</div>
 				</div>
 			</div>
@@ -121,6 +124,11 @@
 				<div class="col-9">
 					<small>
 						<%= t('submission.removal_notice_html')%>
+					</small>
+				</div>
+				<div class="col-9">
+					<small class="text-warning">
+						<%= t('submission.submission_upload_notice_html')%>
 					</small>
 				</div>
 			</div>

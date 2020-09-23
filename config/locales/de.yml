@@ -2329,7 +2329,7 @@ de:
     file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
     file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
     optimization_help_html: >
-      <b>Optimieren:</b>Verwende diesen Knopf, um automatisch 
+      <b>Optimieren:</b> Verwende diesen Knopf, um automatisch 
       im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten.
     optimization_info: >
       Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
@@ -2339,6 +2339,9 @@ de:
     removal_notice_html: >
       <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
       Wir übernehmen keine Haftung für mögliche Datenverluste.
+    submission_upload_notice_html: >
+      <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
+       Änderungen verworfen, wenn du die Seite verlässt.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >

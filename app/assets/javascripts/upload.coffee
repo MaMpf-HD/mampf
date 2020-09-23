@@ -412,6 +412,7 @@ imageUpload = (fileInput) ->
             formatBytes(e.data.result.length)
           )
           result = new Blob([e.data.result], type: 'application/pdf')
+          $('optimization-help-text').hide()
           if e.data.result.length> 10000000
             alert(
               $('#userManuscript-optimize-btn').data 'tr-failed'
