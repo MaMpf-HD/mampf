@@ -26,6 +26,4 @@ self.addEventListener('message', function (e) {
             time: b - a
         });
     });
-    console.log(e);
-    console.log(self);
 }, false);
