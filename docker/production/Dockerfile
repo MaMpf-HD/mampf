@@ -16,6 +16,7 @@ RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xm
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
       mkdir /mampf && mkdir /public && chown app:app /public
 VOLUME /public
+VOLUME /submissions
 WORKDIR /usr/src/app
 USER app
 
