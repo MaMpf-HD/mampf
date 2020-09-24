@@ -31,6 +31,8 @@ services:
       - VIRTUAL_HOST=localhost
     volumes:
       - "media_mampf:/mampf"
+      - "submissions:/submissions"
+      - "upload_cache:/usr/src/app/public/uploads/cache"
 
   proxy:
     build:
@@ -42,6 +44,7 @@ services:
       - "127.0.0.1:3008:80"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
+      - "submissions:/submissions:ro"
       - "public:/public:ro"
     networks:
       - mampf
@@ -83,7 +86,13 @@ volumes:
       type: "nfs"
       o: "addr=<nfs server>,noatime,nolock,soft,vers=4.2,rw"
       device: ":/path/to/share"
+  submissions:
+    driver_opts:
+      type: "nfs"
+      o: "addr=<nfs server>,noatime,nolock,soft,vers=4.2,rw"
+      device: ":/path/to/submissions/share"
   public:
     driver_opts:
       type: "tmpfs"
       device: "tmpfs"
+  upload_cache:

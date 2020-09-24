@@ -16,9 +16,9 @@ elsif Rails.env.production?
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::FileSystem.new("/" + (ENV['MEDIA_FOLDER'] || 'mampf'),
                                            prefix: "/"),
-    submission_cache: Shrine::Storage::FileSystem.new("/" + (ENV['SUBMISSION_FOLDER'] || 'submission'),
+    submission_cache: Shrine::Storage::FileSystem.new((ENV['SUBMISSION_PATH'] || '/submissions'),
                                                       prefix: "cache"),
-    submission_store: Shrine::Storage::FileSystem.new("/" + (ENV['SUBMISSION_FOLDER'] || 'submission'),
+    submission_store: Shrine::Storage::FileSystem.new((ENV['SUBMISSION_PATH'] || '/submissions'),
                                                       prefix: "store"),
   }
 elsif Rails.env.test?
