@@ -44,7 +44,9 @@
                 Korrektur
               <% end %>
             <% else %>
-              noch nichts hochgeladen
+              <span class="redtext">
+                <%= t('submission.no_manuscript_yet') %>
+              </span>
             <% end %>
           </td>
         </tr>
@@ -65,7 +67,9 @@
     </table>
   <% else %>
     <% if assignment.active? %>
-      <%= t('submission.nothing_here') %>
+      <span class="redtext">
+        <%= t('submission.nothing_here') %>
+      </span>
     <% else %>
       <%= t('submission.nothing_here_past') %>
     <% end %>
