@@ -19,6 +19,7 @@
             <td>
               <%= submission.token %>
               <span class="badge badge-secondary clickable clipboard-btn"
+                id="clipboard-button"
                 data-clipboard-text="<%= submission.token %>"
                 data-toggle="tooltip"
                 title="<%= t('buttons.copy_to_clipboard') %>">
@@ -37,9 +38,6 @@
               <%= link_to 'Abgabe',
                           show_submission_manuscript_path(submission),
                           target: :_blank %> (kaputt)
-              <%= link_to 'Abgabe (Downloadlink)',
-                          submission.manuscript_url(host: host),
-                          target: :_blank %>
               <% unless assignment.active? %>
                 Korrektur
               <% end %>
