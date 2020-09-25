@@ -1,9 +1,18 @@
+# First build the PDF compressor Web assembly binary
+FROM golang:1.15 AS build-pdfcomprezzor
+WORKDIR /go/src
+COPY pdfcomprezzor/go.mod .
+COPY pdfcomprezzor/go.sum .
+COPY pdfcomprezzor/main.go .
+RUN go mod vendor
+RUN sed -i 's/init(/init2(/g' vendor/github.com/pdfcpu/pdfcpu/pkg/font/metrics.go
+RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
+
+
+# Now build the actual mampf application
 FROM ruby:2.7.1
-
 ENV RAILS_ENV=production
-
 EXPOSE 3000
-
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 
 # https://github.com/nodesource/distributions#installation-instructions
@@ -14,5 +23,6 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
 
 WORKDIR /usr/src/app
 
+COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
 COPY ./Gemfile ./Gemfile.lock /usr/src/app/
 RUN bundle install
