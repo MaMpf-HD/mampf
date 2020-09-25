@@ -2317,6 +2317,31 @@ de:
       Es sind keine Hausauafgaben jenseits der aktuellen vorhanden.
     no_manuscript_yet: Aktuell ist keine Datei hinterlegt.
     exists_no_longer: Diese Abgabe existiert nicht.
+    no_manuscript_yet: Es wurde noch keine Datei hochgeladen.
+    correct_file_size: Die Datei hat die richtige Größe.
+    optimize: Optimieren
+    missing_consent: Du musst den Bedingungen zustimmen.
+    working: Arbeite
+    optimization_log: Log (anzeigen)
+    optimization_failed: >
+      Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
+    upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
+    file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
+    optimization_help_html: >
+      <b>Optimieren:</b> Verwende diesen Knopf, um automatisch 
+      im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten.
+    optimization_info: >
+      Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
+       So bleiben die Daten auf deinem Gerät, bis Du sie hochgeladen hast.
+    assure_third_party: >
+      Ich versichere, dass durch die Datei keine Rechte Dritter verletzt werden.
+    removal_notice_html: >
+      <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
+      Wir übernehmen keine Haftung für mögliche Datenverluste.
+    submission_upload_notice_html: >
+      <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
+       Änderungen verworfen, wenn du die Seite verlässt.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
@@ -2657,6 +2682,8 @@ de:
     join: 'Beitreten'
     copy_to_clipboard: 'in die Zwischenablage kopieren'
     leave: 'Austreten'
+    upload: 'Hochladen'
+    upload_success: 'Erfolgreich hochgeladen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
