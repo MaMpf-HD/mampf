@@ -337,6 +337,7 @@ imageUpload = (fileInput) ->
   progressOptimize = 0
   $('#userManuscript-status').hide()
   uploadButton = $('#userManuscript-uploadButton-btn')
+
   $('#userManuscript-uploadButton-call').on 'click', (e) ->
     e.preventDefault()
     if result== undefined
@@ -353,6 +354,7 @@ imageUpload = (fileInput) ->
           hiddenInput.value = xhr.responseText
           $('#upload-userManuscript').val("")
           $('input[type="submit"]').prop('disabled',false)
+          $('#userManuscript-upload-notice').show()
           $('#submission_detach_user_manuscript').val('false')
           $('#userManuscript-uploadButton-call').text(
             $('#userManuscript-uploadButton-call').data 'tr-success'
@@ -378,8 +380,10 @@ imageUpload = (fileInput) ->
       alert(
         $('#userManuscript-uploadButton-call').data 'tr-missing-consent'
       )
+
   $("#log-btn").on 'click',() ->
     $("#userManuscript-optimize-log").toggle()
+
   $('#userManuscript-optimize-btn').on 'click',(e) ->
     e.preventDefault()
     file = document.getElementById('upload-userManuscript').files[0]
@@ -389,6 +393,7 @@ imageUpload = (fileInput) ->
     $('#userManuscript-optimize-btn').prop("disabled", true)
     $('#userManuscript-optimize-btn').removeClass('btn-primary')
     .addClass 'btn-outline-secondary'
+
     reader = new FileReader()
     reader.onload = () ->
       arrayBuffer = this.result
@@ -412,7 +417,7 @@ imageUpload = (fileInput) ->
             formatBytes(e.data.result.length)
           )
           result = new Blob([e.data.result], type: 'application/pdf')
-          $('optimization-help-text').hide()
+          $('#optimization-help-text').hide()
           if e.data.result.length> 10000000
             alert(
               $('#userManuscript-optimize-btn').data 'tr-failed'
@@ -435,6 +440,7 @@ imageUpload = (fileInput) ->
         array: array
         l: l
     reader.readAsArrayBuffer(file)
+
   $('#upload-userManuscript').change () ->
     $('input[type="submit"]').prop('disabled',true)
     file = this.files[0]
@@ -445,6 +451,7 @@ imageUpload = (fileInput) ->
     $('#file-size-way-too-big').hide()
     $('#file-size-too-big').hide()
     $('#file-optimize').hide()
+    $('#userManuscript-upload-notice').hide()
     $('#userManuscript-uploadButton-call').prop('disabled',true)
     if file.size < 5000000
       $('#userManuscript-uploadButton-call').prop('disabled',false)
@@ -460,9 +467,11 @@ imageUpload = (fileInput) ->
         $('#file-size-too-big').show()
         $('#userManuscript-uploadButton-call').prop('disabled',false)
       $('#file-optimize').show()
+
   uploadButton.on 'click', (e) ->
     e.preventDefault()
     $('#upload-userManuscript').trigger('click')
+
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
   manuscript = document.getElementById('upload-manuscript')
