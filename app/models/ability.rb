@@ -104,11 +104,12 @@ class Ability
 
       can [:list_tags, :list_sections, :display], Section
 
-      can [:index, :new, :redeem_code], Submission
+      can [:index, :new, :create, :join,:cancel_edit, :cancel_new,
+           :redeem_code, :enter_code], Submission
 
       # an editor might still be a student in some other course
-      can [:edit, :update, :create, :destroy, :enter_code, :join, :leave,
-           :cancel_edit, :cancel_new], Submission do |submission|
+      can [:edit, :update, :destroy, :leave,
+           :refresh_token], Submission do |submission|
         user.in?(submission.users)
       end
 
@@ -216,9 +217,8 @@ class Ability
       can [:index, :new, :create, :join,:cancel_edit, :cancel_new,
            :redeem_code, :enter_code], Submission
 
-      # an editor might still be a student in some other course
       can [:edit, :update, :destroy, :leave,
-           :show_manuscript], Submission do |submission|
+           :show_manuscript, :refresh_token], Submission do |submission|
         user.in?(submission.users)
       end
     end

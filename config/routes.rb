@@ -281,6 +281,8 @@ Rails.application.routes.draw do
                               as: 'cancel_new_submission'
   get 'submissions/:id/show_manuscript', to: 'submissions#show_manuscript',
                                          as: 'show_submission_manuscript'
+  patch 'submissions/:id/refresh_token', to: 'submissions#refresh_token',
+                                         as: 'refresh_submission_token'
   resources :submissions
 
   get 'tags/modal', to: 'tags#modal',

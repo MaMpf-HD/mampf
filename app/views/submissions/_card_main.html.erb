@@ -17,15 +17,24 @@
               <%= t('basics.code') %>
             </th>
             <td>
-              <%= submission.token %>
-              <span class="badge badge-secondary clickable clipboard-btn"
+              <span class="submissionToken" data-id="<%= submission.id %>">
+                <%= submission.token %>
+              </span>
+              <i class="far fa-copy clickable text-secondary clipboard-btn ml-3"
                 id="clipboard-button"
                 data-clipboard-text="<%= submission.token %>"
                 data-toggle="tooltip"
                 title="<%= t('buttons.copy_to_clipboard') %>">
-                <i class="fas fa-copy">
-                </i>
-              </span>
+              </i>
+              <%= link_to '',
+                          refresh_submission_token_path(submission),
+                          class: 'fas fa-sync-alt text-secondary ml-2',
+                          data: { toggle: 'tooltip',
+                                  placement: 'bottom' },
+                          title: t('buttons.edit'),
+                          style: 'text-decoration: none;',
+                          remote: true,
+                          method: :patch %>
             </td>
           </tr>
         <% end %>

@@ -38,6 +38,13 @@ class Submission < ApplicationRecord
   	User.where(id: invited_user_ids)
   end
 
+  def self.generate_token
+    loop do
+      random_token = SecureRandom.base58(6)
+      break random_token unless Submission.exists?(token: random_token)
+    end
+  end
+
   private
 
 	def matching_lecture
@@ -46,13 +53,6 @@ class Submission < ApplicationRecord
 	end
 
   def set_token
-    self.token = generate_token
-  end
-
-  def generate_token
-    loop do
-      random_token = SecureRandom.base58(6)
-      break random_token unless Submission.exists?(token: random_token)
-    end
+    self.token = Submission.generate_token
   end
 end

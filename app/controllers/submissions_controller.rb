@@ -1,7 +1,8 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit,
-                                        :update]
+                                        :update, :set_submission,
+                                        :refresh_token]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   authorize_resource
@@ -112,6 +113,10 @@ class SubmissionsController < ApplicationController
     else
       redirect_to :start, alert: t('submission.exists_no_longer')
     end
+  end
+
+  def refresh_token
+  	@submission.update(token: Submission.generate_token)
   end
 
   private
