@@ -2551,6 +2551,7 @@ en:
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successfull'
+    refresh_token: 'Refresh Code'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

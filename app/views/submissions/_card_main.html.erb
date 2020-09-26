@@ -29,9 +29,10 @@
               <%= link_to '',
                           refresh_submission_token_path(submission),
                           class: 'fas fa-sync-alt text-secondary ml-2',
+                          id: 'refreshTokenButton',
                           data: { toggle: 'tooltip',
                                   placement: 'bottom' },
-                          title: t('buttons.edit'),
+                          title: t('buttons.refresh_token'),
                           style: 'text-decoration: none;',
                           remote: true,
                           method: :patch %>
