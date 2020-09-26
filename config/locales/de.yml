@@ -2596,6 +2596,8 @@ de:
     expired: 'abgelaufen'
     you: 'Du'
     and_you: 'und Du'
+    invited: 'Eingeladen'
+    nobody: 'niemand'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

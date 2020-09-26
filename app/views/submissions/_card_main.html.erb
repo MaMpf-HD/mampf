@@ -42,7 +42,7 @@
                 Korrektur
               <% end %>
             <% else %>
-              <span class="darkredtext">
+              <span class="<%= assignment.current? ? 'darkredtext' : '' %>">
                 <%= t('submission.no_manuscript_yet') %>
               </span>
             <% end %>
@@ -61,10 +61,25 @@
             <% end %>
           </td>
         </tr>
+        <% if assignment.active? %>
+          <tr>
+            <th scope="row">
+              <%= t('basics.invited') %>
+            </th>
+            <td>
+              <% if submission.invited_users.any? %>
+                <%= submission.invited_users.map(&:name)
+                              .join(', ') %>
+              <% else %>
+                <%= t('basics.nobody') %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
       </tbody>
     </table>
   <% else %>
-    <% if assignment.active? %>
+    <% if assignment.current? %>
       <span class="darkredtext">
         <%= t('submission.nothing_here') %>
       </span>

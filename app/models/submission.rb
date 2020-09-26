@@ -34,6 +34,10 @@ class Submission < ApplicationRecord
     Time.zone.at((tutorial.lecture.term.end_date + 15.days).to_time).to_datetime
   end
 
+  def invited_users
+  	User.where(id: invited_user_ids)
+  end
+
   private
 
 	def matching_lecture

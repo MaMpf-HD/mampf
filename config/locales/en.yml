@@ -2455,6 +2455,8 @@ en:
     expired: 'expired'
     you: 'You'
     and_you: 'and You'
+    invited: 'Invited'
+    nobody: 'nobody'
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

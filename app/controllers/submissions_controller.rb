@@ -160,6 +160,8 @@ class SubmissionsController < ApplicationController
                               issuer: current_user)
                         .submission_invitation_email.deliver_now
     end
+    @submission.update(invited_user_ids: @submission.invited_user_ids |
+    																			 invitees.pluck(:id))
   end
 
   def send_upload_email(users)
@@ -207,6 +209,7 @@ class SubmissionsController < ApplicationController
     	@join.save
     	if @join.valid?
         send_join_email
+        remove_invitee_status
       else
     		@error = @join.errors[:base].join(', ')
     	end
@@ -231,5 +234,10 @@ class SubmissionsController < ApplicationController
                               user: current_user)
                         .submission_leave_email.deliver_now
     end
+  end
+
+  def remove_invitee_status
+  	@submission.update(invited_user_ids: @submission.invited_user_ids -
+  																				 [current_user.id])
   end
 end
