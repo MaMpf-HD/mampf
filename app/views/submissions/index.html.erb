@@ -8,7 +8,8 @@
         <%= render partial: 'submissions/card',
                    locals: { assignment: @current_assignment,
                              submission: @current_assignment
-                                           .submission(current_user) } %>
+                                           .submission(current_user),
+                             current: true } %>
       <% else %>
         <%= t('assignment.no_current') %>
       <% end %>
@@ -21,7 +22,8 @@
         <%= render partial: 'submissions/card',
                    locals: { assignment: @previous_assignment,
                              submission: @previous_assignment
-                                           .submission(current_user) } %>
+                                           .submission(current_user),
+                             current: false } %>
       <% else %>
         <%= t('assignment.no_previous') %>
       <% end %>
@@ -52,7 +54,8 @@
     	             data-id="<%= a.id %>">
 	              <%= render partial: 'submissions/card',
 	  	               			 locals: { assignment: a,
-				  	            	 					 submission: a.submission(current_user) } %>
+				  	            	 					 submission: a.submission(current_user),
+				  	            	 					 current: false } %>
 		          </div>
             <% end %>
           <% else %>
@@ -87,7 +90,8 @@
                    data-id="<%= a.id %>">
                 <%= render partial: 'submissions/card',
                            locals: { assignment: a,
-                                     submission: a.submission(current_user) } %>
+                                     submission: a.submission(current_user),
+                                     current: false } %>
               </div>
             <% end %>
           <% else %>

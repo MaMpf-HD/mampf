@@ -2315,9 +2315,8 @@ de:
     no_old_ones: Es wurde noch nichts abgegeben.
     no_future_ones: >
       Es sind keine Hausauafgaben jenseits der aktuellen vorhanden.
-    no_manuscript_yet: Aktuell ist keine Datei hinterlegt.
+    no_manuscript_yet: Es ist keine Datei hinterlegt.
     exists_no_longer: Diese Abgabe existiert nicht.
-    no_manuscript_yet: Es wurde noch keine Datei hochgeladen.
     correct_file_size: Die Datei hat die richtige Größe.
     optimize: Optimieren
     missing_consent: Du musst den Bedingungen zustimmen.
@@ -2329,7 +2328,7 @@ de:
     file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
     file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
     optimization_help_html: >
-      <b>Optimieren:</b> Verwende diesen Knopf, um automatisch 
+      <b>Optimieren:</b> Verwende diesen Knopf, um automatisch
       im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten.
     optimization_info: >
       Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
@@ -2593,7 +2592,10 @@ de:
     code: 'Code'
     files: 'Dateien'
     partners: 'PartnerInnen'
+    team: 'Team'
     expired: 'abgelaufen'
+    you: 'Du'
+    and_you: 'und Du'
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

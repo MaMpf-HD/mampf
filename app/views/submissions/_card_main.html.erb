@@ -1,7 +1,7 @@
 <div class="card-body submissionBody"
      data-id="<%= assignment.id %>">
   <% if submission %>
-    <table class="table table-bordered">
+    <table class="table table-bordered rs-table-bordered">
       <tbody>
         <tr>
           <th scope="row">
@@ -42,7 +42,7 @@
                 Korrektur
               <% end %>
             <% else %>
-              <span class="redtext">
+              <span class="darkredtext">
                 <%= t('submission.no_manuscript_yet') %>
               </span>
             <% end %>
@@ -50,14 +50,14 @@
         </tr>
         <tr>
           <th scope="row">
-            <%= t('basics.partners') %>
+            <%= t('basics.team') %>
           </th>
           <td>
             <% if submission.users.count == 1 %>
-              <%= t('basics.none') %>
+              <%= t('basics.you') %>
             <% else %>
               <%= submission.partners_of_user(current_user).map(&:name)
-                            .join(', ') %>
+                            .join(', ') + ' ' + t('basics.and_you') %>
             <% end %>
           </td>
         </tr>
@@ -65,7 +65,7 @@
     </table>
   <% else %>
     <% if assignment.active? %>
-      <span class="redtext">
+      <span class="darkredtext">
         <%= t('submission.nothing_here') %>
       </span>
     <% else %>

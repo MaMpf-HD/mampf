@@ -7,6 +7,9 @@ $('.submissionFooter .btn').prop('disabled', false)
   .removeClass('btn-outline-secondary')
 $('.submissionFooter .btn').each ->
   $(this).addClass($(this).data('color'))
+$('#submissionCard')
+	.removeClass('bg-submission-red bg-submission-yellow bg-submission-green')
+	.addClass('<%= submission_color(@submission, @assignment) %>')
 <% else %>
 $('#join_code').addClass('is-invalid')
 $('#submission-code-error').empty().append('<%= @error %>').show()

@@ -24,6 +24,11 @@ class Assignment < ApplicationRecord
     deadline > Time.now
   end
 
+  def current?
+  	return false unless active?
+  	!previous.active?
+  end
+
   def previous
     siblings = lecture.assignments.order(:deadline)
     position = siblings.find_index(self)

@@ -8,4 +8,11 @@ module SubmissionsHelper
   def partner_selection(user,lecture)
     user.submission_partners(lecture).map { |u| [u.name, u.id] }
   end
+
+  def submission_color(submission, assignment)
+  	return 'bg-mdb-color-lighten-7' unless assignment.current?
+  	return 'bg-submission-green' if submission&.manuscript
+  	return 'bg-submission-yellow' if submission
+  	'bg-submission-red'
+  end
 end
