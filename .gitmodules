@@ -1,4 +1,4 @@
 [submodule "pdfcomprezzor"]
 	path = pdfcomprezzor
-	url = git@github.com:henrixapp/pdfcomprezzor.git
+	url = https://github.com/henrixapp/pdfcomprezzor.git
 	branch = master
