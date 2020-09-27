@@ -60,6 +60,14 @@ class User < ApplicationRecord
   # users can comment stuff
   acts_as_commontator
 
+  scope :email_for_submission_upload,
+        -> { where(email_for_submission_upload: true) }
+  scope :email_for_submission_removal,
+        -> { where(email_for_submission_removal: true) }
+  scope :email_for_submission_join,
+        -> { where(email_for_submission_join: true) }
+  scope :email_for_submission_leave,
+        -> { where(email_for_submission_leave: true) }
   searchable do
     text :name
   end

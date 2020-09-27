@@ -47,7 +47,7 @@ class SubmissionsController < ApplicationController
     return unless @submission.valid?
     send_invitation_emails
     return unless @submission.manuscript
-    send_upload_email([current_user])
+    send_upload_email(User.where(id: current_user.id))
   end
 
   def destroy
@@ -173,7 +173,7 @@ class SubmissionsController < ApplicationController
   end
 
   def send_upload_email(users)
-    users.each do |u|
+    users.email_for_submission_upload.each do |u|
       NotificationMailer.with(recipient: u,
                               locale: u.locale,
                               submission: @submission,
@@ -184,7 +184,7 @@ class SubmissionsController < ApplicationController
   end
 
   def send_upload_removal_email(users)
-    users.each do |u|
+    users.email_for_submission_removal.each do |u|
       NotificationMailer.with(recipient: u,
                               locale: u.locale,
                               submission: @submission,
@@ -225,7 +225,7 @@ class SubmissionsController < ApplicationController
   end
 
   def send_join_email
-    (@submission.users - [current_user]).each do |u|
+    (@submission.users.email_for_submission_join - [current_user]).each do |u|
       NotificationMailer.with(recipient: u,
                               locale: u.locale,
                               submission: @submission,
@@ -235,7 +235,7 @@ class SubmissionsController < ApplicationController
   end
 
   def send_leave_email
-    (@submission.users - [current_user]).each do |u|
+    (@submission.users.email_for_submission_leave - [current_user]).each do |u|
       NotificationMailer.with(recipient: u,
                               locale: u.locale,
                               submission: @submission,

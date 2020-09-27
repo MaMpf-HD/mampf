@@ -1704,6 +1704,17 @@ en:
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    email_for_submissions: >
+      Regarding the submission of homework assignments I wand to be notified by
+      MaMpf via email if
+    email_for_submission_upload: >
+      a team member successfully uploaded a file for a submission.
+    email_for_submission_removal: >
+      a team member removed a file for a submission.
+    email_for_submission_join: >
+      someone joined your team for a submission.
+    email_for_submission_leave: >
+      someone left your team for a submission.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
