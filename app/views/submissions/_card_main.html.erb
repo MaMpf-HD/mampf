@@ -20,11 +20,15 @@
               <span class="submissionToken" data-id="<%= submission.id %>">
                 <%= submission.token %>
               </span>
-              <i class="far fa-copy clickable text-secondary clipboard-btn ml-3"
+              <i class="clipboardpopup far fa-copy clickable
+                        text-secondary clipboard-btn ml-3"
                 id="clipboard-button"
                 data-clipboard-text="<%= submission.token %>"
                 data-toggle="tooltip"
                 title="<%= t('buttons.copy_to_clipboard') %>">
+                <span class="clipboardpopuptext" id="token-clipboard-popup">
+                  <%= t('submission.code_copied_to_clipboard') %>
+                </span>
               </i>
               <%= link_to '',
                           refresh_submission_token_path(submission),

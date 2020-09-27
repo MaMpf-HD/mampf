@@ -2223,7 +2223,8 @@ en:
         Changes are discarded when you leave the site.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
-    working: Arbeite
+    working: Working
+    code_copied_to_clipboard: Code has been copied to the clipboard.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
