@@ -347,6 +347,7 @@ de:
       no_rights: >
         Du hast keine Berechtigung, diese Veranstaltung zu abonnieren.
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
+      submission_max_team_size: maximale Größe von Abgabegruppen
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -561,6 +562,13 @@ de:
           der DozentInnen-Name nicht angezeigt. Das macht z.B. Sinn, wenn
           eine semesterunabhängige Veranstaltung von jemandem nur administrativ
           als "DozentIn" begleitet wird.
+        submission_max_team_size: >
+          Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
+          gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.
+          Änderungen werden sofort wirksam.
+          Beachte aber: Eine Reduktion dieser Zahl gilt nicht rückwirkend
+          - bereits erstellte Abgaben von Teams mit mehr Mitgliedern bleiben
+          gültig.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -2979,6 +2987,9 @@ de:
           only_one_per_assignment: >
             Es wurde schon eine Abgabe zu dieser Hausaufgabe angelegt.
             Jede NutzerIn darf pro Hausaufgabe nur eine Abgabe vornehmen.
+          team_size: >
+            Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
+            hätte als erlaubt.
         vote:
           attributes:
             clicker:

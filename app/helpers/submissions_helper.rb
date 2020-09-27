@@ -18,6 +18,13 @@ module SubmissionsHelper
   		(submission.users + submission.invited_users)).map(&:id)
   end
 
+  def invitations_possible?(submission, user)
+  	return false if submission.admissible_invitees(user).empty?
+  	return true unless submission.assignment.lecture.submission_max_team_size
+		submission.users.size <
+			submission.assignment.lecture.submission_max_team_size
+  end
+
   def submission_color(submission, assignment)
   	return 'bg-mdb-color-lighten-7' unless assignment.current?
   	return 'bg-submission-green' if submission&.manuscript

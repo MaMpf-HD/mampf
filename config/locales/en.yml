@@ -336,6 +336,8 @@ en:
       new_posts: 'new forum posts'
       no_rights: 'You are not authorized to subscribe this event series.'
       disable_teacher_display: disable the display of the teacher's name
+      submission_max_team_size: >
+        maximal team size for submissions
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -527,6 +529,13 @@ en:
           lecture card on the start page and from the lecture page for generic
           users. This could make sense e.g. if a lecture that is term
           independent is only administratively supervised by a "teacher".
+        submission_max_team_size: >
+          Here you can enter how many persons are maximally allowed for
+          one submission. If you enter nothing, there will be no restriction on
+          the team size. Changes will apply imediately. Note however
+          that a reduction of this number does not hold retroactively:
+          Already existing submissions of teams with more members will remain
+          valid.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -2827,6 +2836,9 @@ en:
           only_one_per_assignment: >
             A submission to this assignment has already been created.
             Each user is only allowed one submission per assignment.
+          team_size: >
+            You are not allowed to join as otherwise the submission team would
+            have more members than allowed.
         vote:
           attributes:
             clicker:

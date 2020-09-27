@@ -116,7 +116,7 @@
                         class: 'btn btn-sm btn-outline-primary',
                         remote: true,
                         data: { color: 'btn-outline-primary'} %>
-            <% if submission.admissible_invitees(current_user).any? %>
+            <% if invitations_possible?(submission, current_user) %>
               <%= link_to t('buttons.invite'),
                           enter_submission_invitees_path(submission),
                           class: 'btn btn-sm btn-outline-primary',

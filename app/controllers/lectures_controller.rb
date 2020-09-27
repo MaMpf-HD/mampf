@@ -267,6 +267,7 @@ class LecturesController < ApplicationController
                                     :disable_teacher_display,
                                     :content_mode, :passphrase, :sort,
                                     :comments_disabled,
+                                    :submission_max_team_size,
                                     editor_ids: [])
   end
 

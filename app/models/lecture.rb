@@ -63,6 +63,11 @@ class Lecture < ApplicationRecord
 
   validate :only_one_lecture, if: :term_independent?, on: :create
 
+  validates :submission_max_team_size,
+            numericality: { only_integer: true,
+                            greater_than: 0 },
+            allow_nil: true
+
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
   after_save :remove_teacher_as_editor

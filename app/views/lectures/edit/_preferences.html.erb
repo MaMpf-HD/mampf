@@ -142,6 +142,23 @@
               </div>
             </div>
           </div>
+          <div class="form-group">
+            <%= f.label :submission_max_team_size,
+                        t('admin.lecture.submission_max_team_size') %>
+              <%= helpdesk t('admin.lecture.info.submission_max_team_size'),
+                           false %>
+              <div class="row">
+                <div class="col-1">
+                  <%= f.number_field :submission_max_team_size,
+                                 min: 1,
+                                 class: 'form-control',
+                                 disabled: inspection,
+                                 data:
+                                   { original:
+                                       lecture.submission_max_team_size } %>
+                </div>
+              </div>
+          </div>
           <% if !lecture.term %>
             <div class="row">
               <div class="col-12">
