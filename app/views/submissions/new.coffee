@@ -6,9 +6,11 @@ $('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
 
 $('#submission_tutorial_id').select2
   theme: 'bootstrap'
+  language: '<%= I18n.locale %>'
 
 $('#submission_invitee_ids').select2
   theme: 'bootstrap'
+  language: '<%= I18n.locale %>'
 
 $('.submissionFooter[data-id!="<%= @assignment.id %>"] .btn')
   .prop('disabled', true).removeClass('btn-outline-primary')

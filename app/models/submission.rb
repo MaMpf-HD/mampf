@@ -45,6 +45,10 @@ class Submission < ApplicationRecord
     end
   end
 
+  def admissible_invitees(user)
+  	user.submission_partners(assignment.lecture) - users
+  end
+
   private
 
 	def matching_lecture

@@ -93,60 +93,69 @@
       <span class="darkredtext">
         <%= t('submission.nothing_here') %>
       </span>
+    <% elsif assignment.active? %>
+      <%= t('submission.nothing_here') %>
     <% else %>
       <%= t('submission.nothing_here_past') %>
     <% end %>
   <% end %>
 </div>
 <% if assignment.active? %>
-<div class="card-footer submissionFooter"
-     data-id="<%= assignment.id %>">
-  <div class="row">
-    <div class="col-12 text-center">
-      <% if assignment.active? %>
-        <% if submission %>
-          <%= link_to t('buttons.edit'),
-                      edit_submission_path(submission),
-                      class: 'btn btn-sm btn-outline-primary',
-                      remote: true,
-                      data: { color: 'btn-outline-primary'} %>
-          <% if submission.users.count == 1 %>
-            <%= link_to t('buttons.delete'),
-                        submission_path(submission),
-                        class: 'btn btn-sm btn-outline-danger',
-                        method: :delete,
+  <div class="card-footer submissionFooter"
+       data-id="<%= assignment.id %>">
+    <div class="row">
+      <div class="col-12 text-center">
+        <% if assignment.active? %>
+          <% if submission %>
+            <%= link_to t('buttons.edit'),
+                        edit_submission_path(submission),
+                        class: 'btn btn-sm btn-outline-primary',
                         remote: true,
-                        data: { confirm: t('confirmation.generic'),
-                                color: 'btn-outline-danger' } %>
+                        data: { color: 'btn-outline-primary'} %>
+            <% if submission.admissible_invitees(current_user).any? %>
+              <%= link_to t('buttons.invite'),
+                          enter_submission_invitees_path(submission),
+                          class: 'btn btn-sm btn-outline-primary',
+                          remote: true,
+                          data: { color: 'btn-outline-primary'} %>
+            <% end %>
+            <% if submission.users.count == 1 %>
+              <%= link_to t('buttons.delete'),
+                          submission_path(submission),
+                          class: 'btn btn-sm btn-outline-danger',
+                          method: :delete,
+                          remote: true,
+                          data: { confirm: t('confirmation.generic'),
+                                  color: 'btn-outline-danger' } %>
+            <% else %>
+              <%= link_to t('buttons.leave'),
+                          leave_submission_path(submission),
+                          class: 'btn btn-sm btn-outline-danger',
+                          method: :delete,
+                          remote: true,
+                          data: { confirm: t('confirmation.generic'),
+                                  color: 'btn-outline-danger' } %>
+            <% end %>
           <% else %>
-            <%= link_to t('buttons.leave'),
-                        leave_submission_path(submission),
-                        class: 'btn btn-sm btn-outline-danger',
-                        method: :delete,
+            <%= link_to t('buttons.create'),
+                        new_submission_path(params:
+                                              { assignment_id: assignment.id }),
+                        class: 'btn btn-sm btn-outline-primary',
                         remote: true,
-                        data: { confirm: t('confirmation.generic'),
-                                color: 'btn-outline-danger' } %>
+                        data: { color: 'btn-outline-primary' } %>
+            <%= link_to t('buttons.join'),
+                        enter_submission_code_path(submission,
+                                                    params:
+                                                      { assignment_id:
+                                                          assignment.id }),
+                        class: 'btn btn-sm btn-outline-primary',
+                        remote: true,
+                        data: { color: 'btn-outline-primary' } %>
           <% end %>
         <% else %>
-          <%= link_to t('buttons.create'),
-                      new_submission_path(params:
-                                            { assignment_id: assignment.id }),
-                      class: 'btn btn-sm btn-outline-primary',
-                      remote: true,
-                      data: { color: 'btn-outline-primary' } %>
-          <%= link_to t('buttons.join'),
-                      enter_submission_code_path(submission,
-                                                  params:
-                                                    { assignment_id:
-                                                        assignment.id }),
-                      class: 'btn btn-sm btn-outline-primary',
-                      remote: true,
-                      data: { color: 'btn-outline-primary' } %>
-        <% end %>
-      <% else %>
           <%= t('assignment.expired') %>
-      <% end %>
+        <% end %>
+      </div>
     </div>
   </div>
-</div>
 <% end %>

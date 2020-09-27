@@ -2689,6 +2689,8 @@ de:
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
     refresh_token: 'Code erneuern'
+    invite: 'Einladen'
+    send: 'Versenden'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

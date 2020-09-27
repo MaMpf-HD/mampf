@@ -109,7 +109,7 @@ class Ability
 
       # an editor might still be a student in some other course
       can [:edit, :update, :destroy, :leave,
-           :refresh_token], Submission do |submission|
+           :refresh_token, :enter_invitees, :invite], Submission do |submission|
         user.in?(submission.users)
       end
 
@@ -181,10 +181,10 @@ class Ability
       cannot [:index, :update, :create], Tag
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
       can :teacher, User
+
       can [:show_announcements, :organizational,
            :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course],
-          Lecture
+           :display_course], Lecture
       cannot [:show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
@@ -218,7 +218,8 @@ class Ability
            :redeem_code, :enter_code], Submission
 
       can [:edit, :update, :destroy, :leave,
-           :show_manuscript, :refresh_token], Submission do |submission|
+           :show_manuscript, :refresh_token, :enter_invitees,
+           :invite], Submission do |submission|
         user.in?(submission.users)
       end
     end

@@ -283,6 +283,10 @@ Rails.application.routes.draw do
                                          as: 'show_submission_manuscript'
   patch 'submissions/:id/refresh_token', to: 'submissions#refresh_token',
                                          as: 'refresh_submission_token'
+  get 'submissions/:id/enter_invitees', to: 'submissions#enter_invitees',
+                                        as: 'enter_submission_invitees'
+  post 'submissions/:id/invite', to: 'submissions#invite',
+                                 as: 'invite_to_submission'
   resources :submissions
 
   get 'tags/modal', to: 'tags#modal',

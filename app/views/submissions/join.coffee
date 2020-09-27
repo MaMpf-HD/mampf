@@ -7,7 +7,7 @@ $('.submissionFooter .btn').prop('disabled', false)
   .removeClass('btn-outline-secondary')
 $('.submissionFooter .btn').each ->
   $(this).addClass($(this).data('color'))
-$('#submissionCard')
+$('.submissionCard[data-id="<%= @assignment.id %>"]')
 	.removeClass('bg-submission-red bg-submission-yellow bg-submission-green')
 	.addClass('<%= submission_color(@submission, @assignment) %>')
 <% else %>

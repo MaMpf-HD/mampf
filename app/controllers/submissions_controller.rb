@@ -1,8 +1,8 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit,
-                                        :update, :set_submission,
-                                        :refresh_token]
+                                        :update, :refresh_token,
+                                        :enter_invitees, :invite]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   authorize_resource
@@ -22,15 +22,12 @@ class SubmissionsController < ApplicationController
   end
 
   def edit
-    @assignment = @submission.assignment
-    @lecture = @assignment.lecture
   end
 
   def update
     old_manuscript = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     @submission.update(submission_params)
-    @assignment = @submission.assignment
     if @submission.valid?
       if params[:submission][:detach_user_manuscript] == 'true'
         @submission.update(manuscript: nil)
@@ -54,7 +51,6 @@ class SubmissionsController < ApplicationController
   end
 
   def destroy
-    @assignment = @submission.assignment
     @submission.destroy
   end
 
@@ -85,7 +81,6 @@ class SubmissionsController < ApplicationController
   end
 
   def leave
-    @assignment = @submission.assignment
     if @submission.users.count == 1
       @error = I18n.t('submission.no_partners_no_leave')
       return
@@ -95,8 +90,6 @@ class SubmissionsController < ApplicationController
   end
 
   def cancel_edit
-    @assignment = @submission.assignment
-    @lecture = @assignment.lecture
   end
 
   def cancel_new
@@ -119,10 +112,20 @@ class SubmissionsController < ApplicationController
   	@submission.update(token: Submission.generate_token)
   end
 
+  def enter_invitees
+  end
+
+  def invite
+  	send_invitation_emails
+  	render :create
+  end
+
   private
 
   def set_submission
     @submission = Submission.find_by_id(params[:id])
+    @assignment = @submission&.assignment
+    @lecture = @assignment&.lecture
     return if @submission
     flash[:alert] = I18n.t('controllers.no_submission')
     render js: "window.location='#{root_path}'"

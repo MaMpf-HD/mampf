@@ -2,8 +2,7 @@ $(document).on 'turbolinks:load', ->
   clipboard = new Clipboard('.clipboard-btn')
 
   restoreClipboardButton = ->
-    $('#clipboard-button').removeClass('text-dark')
-      .addClass('text-secondary')
+    $('#clipboard-button').css('border-style', 'none')
 
   $(document).on 'click', '#removeUserManuscript', ->
     $('#userManuscriptMetadata').hide()
@@ -14,7 +13,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#clipboard-button', ->
-    $(this).removeClass('text-secondary').addClass('text-dark')
+    $(this).css('border-style', 'ridge')
     setTimeout(restoreClipboardButton, 200)
     return
 

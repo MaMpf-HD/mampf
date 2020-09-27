@@ -2552,6 +2552,8 @@ en:
     upload: 'Upload'
     upload_success: 'Upload successfull'
     refresh_token: 'Refresh Code'
+    invite: 'Invite'
+    send: 'Send'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
