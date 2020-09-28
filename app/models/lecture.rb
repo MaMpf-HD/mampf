@@ -658,6 +658,12 @@ class Lecture < ApplicationRecord
     User.where(id: tutorials.pluck(:tutor_id))
   end
 
+  def submission_deletion_date
+    Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
+      term.end_date + 15.days
+    end
+  end
+
   private
 
   # used for after save callback

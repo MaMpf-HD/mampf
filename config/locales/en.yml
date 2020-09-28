@@ -2234,6 +2234,7 @@ en:
     exists_no_longer: This submission does not exist.
     working: Working
     code_copied_to_clipboard: Code has been copied to the clipboard.
+    deletion_date: Deletion Date
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

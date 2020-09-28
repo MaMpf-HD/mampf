@@ -2362,6 +2362,7 @@ de:
       <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
        Änderungen verworfen, wenn du die Seite verlässt.
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
+    deletion_date: Löschdatum
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >

@@ -64,6 +64,15 @@
         </tr>
         <tr>
           <th scope="row">
+            <%= t('submission.deletion_date') %>
+          </th>
+          <td>
+            <%= I18n.l(assignment.lecture.submission_deletion_date,
+                       format: :long) %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
             <%= t('basics.team') %>
           </th>
           <td>
