@@ -393,6 +393,8 @@ imageUpload = (fileInput) ->
 
   $('#userManuscript-uploadButton-call').on 'click', (e) ->
     e.preventDefault()
+    if merged != undefined
+      result = merged
     if result== undefined
       result =document.getElementById('upload-userManuscript').files[0]
     if $("#file-permission-checkbox").is(":checked")
