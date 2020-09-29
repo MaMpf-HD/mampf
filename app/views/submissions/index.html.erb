@@ -49,11 +49,11 @@
           <% if @old_assignments.any? %>
             <% @old_assignments.each do |a| %>
               <div class="col-12 col-lg-6 col-xl-4 col-xxl-3 mb-3 submissionArea"
-    	             data-id="<%= a.id %>">
-	              <%= render partial: 'submissions/card',
-	  	               			 locals: { assignment: a,
-				  	            	 					 submission: a.submission(current_user) } %>
-		          </div>
+                   data-id="<%= a.id %>">
+                <%= render partial: 'submissions/card',
+                           locals: { assignment: a,
+                                     submission: a.submission(current_user) } %>
+              </div>
             <% end %>
           <% else %>
             <div class="col-12">

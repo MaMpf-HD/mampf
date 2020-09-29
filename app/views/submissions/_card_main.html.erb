@@ -56,9 +56,7 @@
                 Korrektur
               <% end %>
             <% else %>
-              <span class="<%= assignment.current? ? 'darkredtext' : '' %>">
-                <%= t('submission.no_manuscript_yet') %>
-              </span>
+              <%= t('submission.no_manuscript_yet') %>
             <% end %>
           </td>
         </tr>
@@ -103,9 +101,7 @@
     </table>
   <% else %>
     <% if assignment.current? %>
-      <span class="darkredtext">
-        <%= t('submission.nothing_here') %>
-      </span>
+      <%= t('submission.nothing_here') %>
     <% elsif assignment.active? %>
       <%= t('submission.nothing_here') %>
     <% else %>
