@@ -24,5 +24,6 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
 WORKDIR /usr/src/app
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
+COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /pdfcomprezzor.wasm
 COPY ./Gemfile ./Gemfile.lock /usr/src/app/
 RUN bundle install
