@@ -26,7 +26,7 @@ class Assignment < ApplicationRecord
 
   def current?
   	return false unless active?
-  	!previous.active?
+  	!previous&.active?
   end
 
   def previous
