@@ -46,12 +46,13 @@
         <%= f.file_field :manuscript,
                          class: 'form-control-file',
                          id: 'upload-userManuscript',
+                         multiple: true,
                          accept: 'application/pdf' %>
         <%= f.hidden_field :detach_user_manuscript,
                            value: false %>
         <button id="userManuscript-uploadButton-btn"
          class="btn btn-sm btn-outline-secondary">
-          <%= t('basics.file') %>
+          <%= t('basics.files') %>
          </button>
       </div>
 
@@ -78,6 +79,15 @@
             <%=t('submission.correct_file_size')%>
         </div>
         <div class="col-12 submission-initially-hidden"
+             id="multiple-files-selected">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%=t('submission.multiple_files_selected')%>
+          <div class="col-12"
+             id="files-display">
+        </div>
+        </div>
+         
+        <div class="col-12 submission-initially-hidden"
              id="file-size-too-big">
           <i class="fas fa-exclamation-triangle"></i>
           <%=t('submission.file_size_too_big')%>
@@ -86,6 +96,30 @@
              id="file-size-way-too-big">
           <i class="fas fa-bomb"></i>
           <%=t('submission.file_size_way_too_big')%>
+        </div>
+        <div class="col-12 submission-initially-hidden"
+             id="files-merge">
+          <small id="merging-help-text">
+            <%= t("submission.merging_help_html")%>
+            <%= helpdesk(t('submission.merging_info'), true)%>
+          </small>
+          <div class="col-12 my-1">
+            <button id="userManuscript-merge-btn"
+                    class="btn btn-sm btn-primary"
+                    data-tr-working="<%= t('submission.working')%>"
+                    data-tr-failed="<%= t('submission.merging_failed')%>"
+            >
+              <%= t('submission.merge') %>
+            </button>
+          </div>
+          <div class="col-12">
+            <span id="log-merge-btn" class="badge badge-light clickable">
+              <%=t('submission.optimization_log')%>
+            </span>
+            <div id="userManuscript-merge-log"
+                 class="submission-initially-hidden border bg-light p-2">
+            </div>
+          </div>
         </div>
         <div class="col-12 submission-initially-hidden"
              id="file-optimize">

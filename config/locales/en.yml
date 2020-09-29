@@ -2218,7 +2218,8 @@ en:
     file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
     optimization_help_html: >
       <b>Optimizing:</b> Use this button to optimize your file with your browser.
-      This process takes about 1-2 minutes.
+      This process takes about 1-2 minutes. We strongly suggest downloading the resulting
+      pdf as this feature is marked experimental.
     optimization_info: >
       For this purpose, a small additional program is downloaded and executed <i> in the browser </i>.
         Your file will remain on your device until you have uploaded them.
@@ -2235,6 +2236,14 @@ en:
     working: Working
     code_copied_to_clipboard: Code has been copied to the clipboard.
     deletion_date: Deletion Date
+    multiple_files_selected: Multiple files have been selected.
+    merging_help_html: >
+      <b>Merging:</b> Use this button to merge the files in the order given above.
+    merging_info: >
+      In order to do so, a small programm will be loaded by your browser. Your files
+      are kept on your device until you upload them.
+    merge: Merge
+    merging_failed: Merging failed
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

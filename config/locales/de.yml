@@ -2349,7 +2349,9 @@ de:
     file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
     optimization_help_html: >
       <b>Optimieren:</b> Verwende diesen Knopf, um automatisch
-      im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten.
+      im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten. Wir 
+      empfehlen bei der Nutzung dieses experimentellen Features die Abgabe nach dem Speichern 
+      herunterzuladen und zu überprüfen.
     optimization_info: >
       Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
        So bleiben die Daten auf deinem Gerät, bis Du sie hochgeladen hast.
@@ -2363,6 +2365,15 @@ de:
        Änderungen verworfen, wenn du die Seite verlässt.
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
     deletion_date: Löschdatum
+    multiple_files_selected: Es wurden mehrere Dateien ausgewählt.
+    merging_help_html: >
+      <b>Zusammenführen:</b> Verwende diesen Knopf um die Dateien in der obigen
+      Reihenfolge zusammenzuführen.
+    merging_info: >
+      Dazu wird ein kleines Zusatzprogramm heruntergeladen und in deinem Browser
+      ausgeführt. Deine Dateien bleiben also auf deinem Gerät für diesen Vorgang.
+    merge: Zusammenführen
+    merging_failed: Zusammenführen fehlgeschlagen.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >

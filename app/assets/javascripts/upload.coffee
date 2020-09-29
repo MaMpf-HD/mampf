@@ -334,9 +334,62 @@ imageUpload = (fileInput) ->
   hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
   fileInput.style.display = 'none'
   result = undefined
+  merged = undefined
+  files = []
+  filez= []
   progressOptimize = 0
   $('#userManuscript-status').hide()
   uploadButton = $('#userManuscript-uploadButton-btn')
+  swapInFiles = (i,j,r) ->
+    return () ->
+      x = filez[i]
+      filez[i] = filez[j]
+      filez[j] = x
+      r()
+  renderMultipleFiles = ->
+    i =0
+    $("#files-display").empty()
+    console.log filez
+    for f in filez
+      fDisplay = $("<li>"+f.name+"</li>")
+      if i!=0
+        toggleUp = $("<button class='btn fas fa-sort-up'></button>")
+        toggleUp.on 'click', swapInFiles(i-1,i,renderMultipleFiles)
+        fDisplay.append(toggleUp)
+      if i!= filez.length-1
+        toggleDown = $("<button class='btn fas fa-sort-down'></button>")
+        toggleDown.on 'click', swapInFiles(i,i+1,renderMultipleFiles)
+        fDisplay.append(toggleDown)
+      $("#files-display").append(fDisplay)
+      console.log(i)
+      i++
+
+  renderOptimization = (file) ->
+    $('#multiple-files-selected').hide()
+    $('#files-merge').hide()
+    $("#userManuscriptMetadata").text(file.name+"("+formatBytes(file.size)+")")
+    # rerender all
+    $('#userManuscript-status').show(400)
+    $('#file-size-correct').hide()
+    $('#file-size-way-too-big').hide()
+    $('#file-size-too-big').hide()
+    $('#file-optimize').hide()
+    $('#userManuscript-upload-notice').hide()
+    $('#userManuscript-uploadButton-call').prop('disabled',true)
+    if file.size < 5000000
+      $('#userManuscript-uploadButton-call').prop('disabled',false)
+      $('#file-size-correct').show()
+      $('#userManuscript-uploadCenter').show()
+      $('#userManuscript-uploadButton-call')
+        .removeClass('btn-outline-secondary')
+        .addClass 'btn-primary'
+    else
+      if file.size > 10000000
+        $('#file-size-way-too-big').show()
+      else
+        $('#file-size-too-big').show()
+        $('#userManuscript-uploadButton-call').prop('disabled',false)
+      $('#file-optimize').show()
 
   $('#userManuscript-uploadButton-call').on 'click', (e) ->
     e.preventDefault()
@@ -383,6 +436,52 @@ imageUpload = (fileInput) ->
 
   $("#log-btn").on 'click',() ->
     $("#userManuscript-optimize-log").toggle()
+  $("#log-merge-btn").on 'click',() ->
+    $("#userManuscript-merge-log").toggle()
+  $('#userManuscript-merge-btn').on 'click',(e) ->
+    e.preventDefault()
+
+    workingText = $('#userManuscript-merge-btn').data('tr-working')
+    $('#userManuscript-merge-btn').text(workingText)
+    $('#userManuscript-merge-btn').prop("disabled", true)
+    $('#userManuscript-merge-btn').removeClass('btn-primary')
+    .addClass 'btn-outline-secondary'
+
+    reader = new FileReader()
+    readFileIntoFiles = ->
+      if @result
+        arrayBuffer = @result
+        array = new Uint8Array(arrayBuffer)
+        console.log files.push(array)
+        reader.onload = readFileIntoFiles
+        if files.length < filez.length
+          reader.readAsArrayBuffer filez[files.length]
+        else
+          worker = new Worker('pdfcomprezzor/worker.js')
+          worker.addEventListener 'message', ((e) ->
+            console.log(e.data)
+            if e.data.type == 'log'
+              $('#userManuscript-merge-btn').html(
+                workingText +
+                ".".repeat(progressOptimize + 1) +
+                "&nbsp;".repeat(2-progressOptimize)
+              )
+              progressOptimize = (progressOptimize+1)%3
+              $('#userManuscript-merge-log').append(
+                $("<div><small>" + e.data.message + "</div></small>")
+              )
+            if e.data.type == "result"
+              merged = new Blob([e.data.result], type: 'application/pdf')
+              $('#merging-help-text').hide()
+              renderOptimization(merged)
+          ), false
+          action = if files.length > 1 then 'merge' else 'compress'
+          r = worker.postMessage(
+            array: files
+            action: action)
+      return
+    reader.onload = readFileIntoFiles
+    reader.readAsArrayBuffer(filez[0])
 
   $('#userManuscript-optimize-btn').on 'click',(e) ->
     e.preventDefault()
@@ -398,7 +497,6 @@ imageUpload = (fileInput) ->
     reader.onload = () ->
       arrayBuffer = this.result
       array = new Uint8Array(arrayBuffer)
-      l = l:0
       worker = new Worker('pdfcomprezzor/worker.js')
       worker.addEventListener 'message', ((e) ->
         console.log 'Worker said: ', e
@@ -437,36 +535,29 @@ imageUpload = (fileInput) ->
         return
       ), false
       worker.postMessage
-        array: array
-        l: l
-    reader.readAsArrayBuffer(file)
+        array: [array]
+    if merged
+      reader.readAsArrayBuffer(merged)
+    else
+      reader.readAsArrayBuffer(file)
 
   $('#upload-userManuscript').change () ->
     $('input[type="submit"]').prop('disabled',true)
-    file = this.files[0]
-    $("#userManuscriptMetadata").text(file.name+"("+formatBytes(file.size)+")")
-    # rerender all
-    $('#userManuscript-status').show(400)
-    $('#file-size-correct').hide()
-    $('#file-size-way-too-big').hide()
-    $('#file-size-too-big').hide()
-    $('#file-optimize').hide()
-    $('#userManuscript-upload-notice').hide()
-    $('#userManuscript-uploadButton-call').prop('disabled',true)
-    if file.size < 5000000
-      $('#userManuscript-uploadButton-call').prop('disabled',false)
-      $('#file-size-correct').show()
-      $('#userManuscript-uploadCenter').show()
-      $('#userManuscript-uploadButton-call')
-        .removeClass('btn-outline-secondary')
-        .addClass 'btn-primary'
+    if this.files.length > 1
+      $('#userManuscript-status').show(400)
+      $('#multiple-files-selected').show()
+      $('#files-merge').show()
+      $('#file-size-correct').hide()
+      $('#file-size-way-too-big').hide()
+      $('#file-size-too-big').hide()
+      $('#file-optimize').hide()
+      filez = Array.prototype.slice.call(
+        document.getElementById('upload-userManuscript').files
+      )
+      renderMultipleFiles()
     else
-      if file.size > 10000000
-        $('#file-size-way-too-big').show()
-      else
-        $('#file-size-too-big').show()
-        $('#userManuscript-uploadButton-call').prop('disabled',false)
-      $('#file-optimize').show()
+      renderOptimization(this.files[0])
+      merged = undefined
 
   uploadButton.on 'click', (e) ->
     e.preventDefault()

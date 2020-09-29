@@ -1,5 +1,5 @@
 importScripts("wasm_exec.js")
-
+//expects an array of uintArray if merge or compress, will only compress first.
 self.addEventListener('message', function (e) {
     if (!WebAssembly.instantiateStreaming) { // polyfill
         WebAssembly.instantiateStreaming = async (resp, importObject) => {
@@ -11,19 +11,40 @@ self.addEventListener('message', function (e) {
     WebAssembly.instantiateStreaming(fetch("pdfcomprezzor.wasm"), go.importObject).then((result) => {
         go.run(result.instance);
         var a = performance.now();
-        compress(e.data.array, e.data.l, (err, message) => {
+        if (e.data.action == "merge") {
+            console.log(e.data.array)
+            bytesCount = merge(e.data.array, (err, message) => {
+                self.postMessage({
+                    err,
+                    message,
+                    type: "log"
+                })
+            });
+            bytes = new Uint8Array(bytesCount);
+            readBack(bytes);
+            var b = performance.now();
             self.postMessage({
-                err,
-                message,
-                type: "log"
-            })
-        });
-        var b = performance.now();
-        let result2 = e.data.array.slice(0, e.data.l.l);
-        self.postMessage({
-            result: result2,
-            type: "result",
-            time: b - a
-        });
+                result: bytes,
+                type: "result",
+                time: b - a
+            });
+            return;
+        } else {
+            let bytesCount = compress(e.data.array[0], (err, message) => {
+                self.postMessage({
+                    err,
+                    message,
+                    type: "log"
+                })
+            });
+            bytes = new Uint8Array(bytesCount);
+            readBack(bytes);
+            var b = performance.now();
+            self.postMessage({
+                result: bytes,
+                type: "result",
+                time: b - a
+            });
+        }
     });
 }, false);
