@@ -367,8 +367,12 @@ imageUpload = (fileInput) ->
   renderOptimization = (file) ->
     $('#multiple-files-selected').hide()
     $('#files-merge').hide()
-    $("#userManuscriptMetadata").text(file.name+"("+formatBytes(file.size)+")")
+    name= file.name
+    if file.name == undefined
+      name =[f.name for f in filez].join(".")
+    $("#userManuscriptMetadata").text(name+"("+formatBytes(file.size)+")")
     # rerender all
+    $("#removeUserManuscript").hide()
     $('#userManuscript-status').show(400)
     $('#file-size-correct').hide()
     $('#file-size-way-too-big').hide()
@@ -400,8 +404,8 @@ imageUpload = (fileInput) ->
     if $("#file-permission-checkbox").is(":checked")
       #Upload blob
       formData = new FormData()
-      file = document.getElementById('upload-userManuscript').files[0]
-      formData.append("file", result, file.name)
+      name =[f.name for f in filez].join(".")
+      formData.append("file", result, name)
       xhr = new XMLHttpRequest()
       xhr.open('POST', '/submissions/upload', true)
       xhr.onload =  () ->
@@ -524,9 +528,9 @@ imageUpload = (fileInput) ->
             )
           else
             $('#userManuscript-uploadButton-call').prop('disabled',false)
-            file = document.getElementById('upload-userManuscript').files[0]
+            name =[f.name for f in filez].join(".")
             $("#userManuscriptMetadata").text(
-              file.name + "(" + formatBytes(result.size) + ")"
+              name + "(" + formatBytes(result.size) + ")"
             )
             $('#userManuscript-uploadButton-call')
               .removeClass('btn-outline-secondary')
@@ -545,6 +549,9 @@ imageUpload = (fileInput) ->
 
   $('#upload-userManuscript').change () ->
     $('input[type="submit"]').prop('disabled',true)
+    filez = Array.prototype.slice.call(
+        document.getElementById('upload-userManuscript').files
+      )
     if this.files.length > 1
       $('#userManuscript-status').show(400)
       $('#multiple-files-selected').show()
@@ -553,9 +560,6 @@ imageUpload = (fileInput) ->
       $('#file-size-way-too-big').hide()
       $('#file-size-too-big').hide()
       $('#file-optimize').hide()
-      filez = Array.prototype.slice.call(
-        document.getElementById('upload-userManuscript').files
-      )
       renderMultipleFiles()
     else
       renderOptimization(this.files[0])
