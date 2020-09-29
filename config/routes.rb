@@ -145,6 +145,10 @@ Rails.application.routes.draw do
                                      as: 'lecture_close_comments'
   get 'lectures/:id/open_comments', to: 'lectures#open_comments',
                                      as: 'lecture_open_comments'
+  get 'lectures/:id/submissions', to: 'submissions#index',
+                                  as: 'lecture_submissions'
+  get 'lectures/:id/tutorials', to: 'tutorials#index',
+                                as: 'lecture_tutorials'
 
   resources :lectures, except: [:index]
 
@@ -287,7 +291,7 @@ Rails.application.routes.draw do
                                         as: 'enter_submission_invitees'
   post 'submissions/:id/invite', to: 'submissions#invite',
                                  as: 'invite_to_submission'
-  resources :submissions
+  resources :submissions, except: :index
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'

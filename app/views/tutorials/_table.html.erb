@@ -1,0 +1,42 @@
+<ul class="list-group mt-3">
+  <li class="list-group-item">
+    <div class="row">
+      <div class="col-4">
+        Team
+      </div>
+      <div class="col-4">
+        Abgabe
+      </div>
+      <div class="col-4">
+        Korrektur
+      </div>
+    </div>
+  </li>
+  <% assignment.submissions.each do |s| %>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-4">
+          <%= s.users.map(&:name).join(', ') %>
+        </div>
+        <div class="col-4">
+          <%= link_to t('buttons.show'),
+                      show_submission_manuscript_path(s),
+                      class: 'btn btn-sm btn-outline-secondary',
+                      data: { turbolinks: false } %>
+          <%= link_to t('buttons.download'),
+                      show_submission_manuscript_path(s,
+                                                      params:
+                                                        { download: 'true' }),
+                      class: 'btn btn-sm btn-outline-secondary',
+                      data: { turbolinks: false } %>
+        </div>
+        <div class="col-4">
+          <%= link_to t('buttons.upload'),
+                      '#',
+                      class: 'btn btn-sm btn-outline-secondary',
+                      data: { turbolinks: false } %>
+        </div>
+      </div>
+    </li>
+  <% end %>
+</ul>

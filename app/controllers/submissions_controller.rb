@@ -10,9 +10,11 @@ class SubmissionsController < ApplicationController
   def index
     @assignments = @lecture.assignments
     @current_assignment = Assignment.current_in_lecture(@lecture)
-    @previous_assignment = @current_assignment&.previous
-    @old_assignments = @assignments.expired.order('deadline DESC') - [@previous_assignment]
-    @future_assignments = @assignments.active.order(:deadline) - [@current_assignment]
+    @previous_assignment = Assignment.previous_in_lecture(@lecture)
+    @old_assignments = @assignments.expired.order('deadline DESC') -
+                         [@previous_assignment]
+    @future_assignments = @assignments.active.order(:deadline) -
+                            [@current_assignment]
   end
 
   def new
@@ -96,11 +98,12 @@ class SubmissionsController < ApplicationController
   end
 
   def show_manuscript
+    disposition = params[:download] == 'true' ? 'attachment' : 'inline'
     @submission = Submission.find_by_id(params[:id])
     if @submission && @submission.manuscript
       send_file @submission.manuscript.to_io,
       					type: 'application/pdf',
-      					disposition: 'inline'
+      					disposition: disposition
     elsif @submission
       redirect_to :start, alert: t('submission.no_manuscript_yet')
     else
@@ -145,9 +148,9 @@ class SubmissionsController < ApplicationController
   end
 
   def set_lecture
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by_id(params[:id])
     return if @lecture
-    redirect_to :root, alert: I18n.t('controllers.no_lecture_given')
+    redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 
   def join_params

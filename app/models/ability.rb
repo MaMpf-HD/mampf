@@ -126,6 +126,10 @@ class Ability
 
       can [:new, :create, :cancel_edit_tutorial, :cancel_new_tutorial], Tutorial
 
+      can :index, Tutorial do |tutorial|
+        user.tutor?
+      end
+
       can [:edit, :update, :destroy], Tutorial do |tutorial|
         tutorial.lecture.edited_by?(user)
       end
@@ -221,6 +225,10 @@ class Ability
            :show_manuscript, :refresh_token, :enter_invitees,
            :invite], Submission do |submission|
         user.in?(submission.users)
+      end
+
+      can :index, Tutorial do |tutorial|
+        user.tutor?
       end
     end
   end

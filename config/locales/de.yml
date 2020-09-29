@@ -70,6 +70,7 @@ de:
     course: 'Modul'
     mampf_news: 'MaMpf-News'
     submissions: 'Abgaben'
+    tutorials: 'Tutorien'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.
@@ -2349,8 +2350,8 @@ de:
     file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
     optimization_help_html: >
       <b>Optimieren:</b> Verwende diesen Knopf, um automatisch
-      im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten. Wir 
-      empfehlen bei der Nutzung dieses experimentellen Features die Abgabe nach dem Speichern 
+      im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten. Wir
+      empfehlen bei der Nutzung dieses experimentellen Features die Abgabe nach dem Speichern
       herunterzuladen und zu überprüfen.
     optimization_info: >
       Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
@@ -2383,6 +2384,8 @@ de:
       Aktuell steht nichts zur Abgabe an.
     no_previous: >
       Es wurde noch nichts abgegeben.
+    nothing_yet_in_lecture: >
+      In dieser Vorlesung war bisher noch nichts abzugeben.
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2724,6 +2727,7 @@ de:
     refresh_token: 'Code erneuern'
     invite: 'Einladen'
     send: 'Versenden'
+    download: 'Herunterladen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -2829,6 +2833,7 @@ de:
     no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
     no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
     no_lecture_given: Es wurde keine oder eine ungültige Vorlesung angegeben.
+    no_tutor_in_this_lecture: In dieser Verasnatltung bist Du kein Tutor.
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'

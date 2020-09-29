@@ -85,6 +85,7 @@ en:
       short: 'Misc'
     course: 'Course'
     submissions: 'Submissions'
+    tutorials: 'Tutorials'
   unauthorized:
     default: >
       You are not authorized to access this page.
@@ -2253,6 +2254,8 @@ en:
       Currently, there is no assignment for which something could be submitted.
     no_previous: >
       Nothing has yet been submitted.
+    nothing_yet_in_lecture: >
+      In this lecture nothing had yet to be submitted.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -2585,6 +2588,7 @@ en:
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'
+    download: 'Download'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -2682,6 +2686,7 @@ en:
     no_submission: There is no submission with this id.
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
+    no_tutor_in_this_lecture: You are not a tutor in this lecture.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

@@ -14,6 +14,10 @@ class Assignment < ApplicationRecord
     Assignment.where(lecture: lecture).active.order(:deadline)&.first
   end
 
+  def self.previous_in_lecture(lecture)
+    Assignment.where(lecture: lecture).expired.order(:deadline)&.last
+  end
+
   def submission(user)
   	UserSubmissionJoin.where(submission: Submission.where(assignment: self),
   													 user: user)

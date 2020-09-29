@@ -465,6 +465,10 @@ class User < ApplicationRecord
     User.where(id: partner_ids - [id])
   end
 
+  def tutor?
+    given_tutorials.any?
+  end
+
   private
 
   def set_defaults

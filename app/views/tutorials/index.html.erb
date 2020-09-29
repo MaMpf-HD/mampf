@@ -1,0 +1,10 @@
+<% if @submitted_assignment %>
+<%= "#{@submitted_assignment.title}, #{@tutorial.title}" %>
+  <%= render partial: 'tutorials/table',
+             locals: { assignment: @submitted_assignment,
+                       tutorial: @tutorial } %>
+<% else %>
+  <div class="jumbotron">
+    <%= t('assignment.nothing_yet_in_lecture') %>
+  </div>
+<% end %>

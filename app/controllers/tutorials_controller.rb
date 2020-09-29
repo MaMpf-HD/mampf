@@ -1,7 +1,18 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit]
+  before_action :set_lecture, only: :index
+  before_action :check_tutor_status, only: :index
   authorize_resource
+
+  def index
+    @assignments = @lecture.assignments
+    @submitted_assignment = Assignment.previous_in_lecture(@lecture)
+    @old_assignments = @assignments.expired.order('deadline DESC') -
+                         [@previous_assignment]
+    @tutorial = current_user.given_tutorials.where(lecture: @lecture)
+                            .order(:title).first
+  end
 
   def new
     @tutorial = Tutorial.new
@@ -44,6 +55,17 @@ class TutorialsController < ApplicationController
     @tutorial = Tutorial.find_by_id(params[:id])
     return if @tutorial
     redirect_to :root, alert: I18n.t('controllers.no_tutorial')
+  end
+
+  def set_lecture
+    @lecture = Lecture.find_by_id(params[:id])
+    return if @lecture
+    redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
+  def check_tutor_status
+    return if current_user.in?(@lecture.tutors)
+    redirect_to :root, alert: I18n.t('controllers.no_tutor_in_this_lecture')
   end
 
   def tutorial_params
