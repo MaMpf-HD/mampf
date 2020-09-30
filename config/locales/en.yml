@@ -2245,6 +2245,8 @@ en:
       are kept on your device until you upload them.
     merge: Merge
     merging_failed: Merging failed
+    no_correction_yet: Currently, no file is stored.
+    move_to_tutorial: move to tutorial
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

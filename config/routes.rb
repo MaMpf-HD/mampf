@@ -291,6 +291,21 @@ Rails.application.routes.draw do
                                         as: 'enter_submission_invitees'
   post 'submissions/:id/invite', to: 'submissions#invite',
                                  as: 'invite_to_submission'
+  post 'submissions/:id/add_correction', to: 'submissions#add_correction',
+                                         as: 'add_correction'
+  get 'submissions/:id/show_correction', to: 'submissions#show_correction',
+                                         as: 'show_correction'
+  get 'submissions/:id/select_tutorial', to: 'submissions#select_tutorial',
+                                         as: 'select_tutorial'
+  patch 'submissions/:id/move', to: 'submissions#move',
+                              as: 'move_submission'
+  get 'submissions/:id/cancel_action', to: 'submissions#cancel_action',
+                                         as: 'cancel_submission_action'
+
+  delete 'submissions/:id/delete_correction',
+         to: 'submissions#delete_correction',
+         as: 'delete_correction'
+
   resources :submissions, except: :index
 
   get 'tags/modal', to: 'tags#modal',

@@ -2,7 +2,10 @@
 class SubmissionsController < ApplicationController
   before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit,
                                         :update, :refresh_token,
-                                        :enter_invitees, :invite]
+                                        :enter_invitees, :invite,
+                                        :add_correction, :show_manuscript,
+                                        :show_correction, :delete_correction,
+                                        :select_tutorial, :move, :cancel_action]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   authorize_resource
@@ -99,13 +102,25 @@ class SubmissionsController < ApplicationController
 
   def show_manuscript
     disposition = params[:download] == 'true' ? 'attachment' : 'inline'
-    @submission = Submission.find_by_id(params[:id])
     if @submission && @submission.manuscript
       send_file @submission.manuscript.to_io,
       					type: 'application/pdf',
       					disposition: disposition
     elsif @submission
       redirect_to :start, alert: t('submission.no_manuscript_yet')
+    else
+      redirect_to :start, alert: t('submission.exists_no_longer')
+    end
+  end
+
+  def show_correction
+    disposition = params[:download] == 'true' ? 'attachment' : 'inline'
+    if @submission && @submission.correction
+      send_file @submission.correction.to_io,
+                type: 'application/pdf',
+                disposition: disposition
+    elsif @submission
+      redirect_to :start, alert: t('submission.no_correction_yet')
     else
       redirect_to :start, alert: t('submission.exists_no_longer')
     end
@@ -121,6 +136,29 @@ class SubmissionsController < ApplicationController
   def invite
   	send_invitation_emails
   	render :create
+  end
+
+  def add_correction
+    @submission.update(correction_params)
+  end
+
+  def delete_correction
+    @submission.update(correction: nil)
+    render :add_correction
+  end
+
+  def select_tutorial
+    @tutorial = @submission.tutorial
+    @lecture = @submission.assignment.lecture
+  end
+
+  def cancel_action
+  end
+
+  def move
+    @old_tutorial = @submission.tutorial
+    @submission.update(move_params)
+    @tutorial = @submission.tutorial
   end
 
   private
@@ -159,6 +197,14 @@ class SubmissionsController < ApplicationController
 
   def invitation_params
     params.require(:submission).permit(invitee_ids: [])
+  end
+
+  def correction_params
+    params.require(:submission).permit(:correction)
+  end
+
+  def move_params
+    params.require(:submission).permit(:tutorial_id)
   end
 
   def send_invitation_emails

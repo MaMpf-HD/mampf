@@ -12,6 +12,7 @@ class TutorialsController < ApplicationController
                          [@previous_assignment]
     @tutorial = current_user.given_tutorials.where(lecture: @lecture)
                             .order(:title).first
+    @stack = @submitted_assignment.submissions.where(tutorial: @tutorial)
   end
 
   def new

@@ -7,7 +7,7 @@
                     t('basics.tutorial') %>
         <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
-                                        submission.tutorial_id ||
+                                        submission.tutorial&.id ||
                                           assignment.previous
                                                    &.tutorial(current_user)&.id),
                      {},
@@ -86,7 +86,7 @@
              id="files-display">
         </div>
         </div>
-         
+
         <div class="col-12 submission-initially-hidden"
              id="file-size-too-big">
           <i class="fas fa-exclamation-triangle"></i>

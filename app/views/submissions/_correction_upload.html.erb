@@ -1,0 +1,27 @@
+<%= form_with url: add_correction_path(submission),
+              scope: 'submission',
+              html: { class: 'correction-upload',
+                      data: { id: submission.id } } do |f| %>
+  <div class="row">
+    <div class="col-12">
+      <%= f.hidden_field :correction,
+                         value: submission.cached_correction_data,
+                         id: "upload-correction-hidden-#{submission.id}" %>
+      <%= f.file_field :correction,
+                       class: 'form-control-file',
+                       id: "upload-correction-#{submission.id}",
+                       accept: 'application/pdf' %>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary' %>
+      <button class="btn btn-sm btn-secondary correction-upload-cancel"
+              data-id="<%= submission.id %>"
+              type="button">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>

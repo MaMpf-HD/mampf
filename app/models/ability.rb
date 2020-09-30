@@ -113,6 +113,12 @@ class Ability
         user.in?(submission.users)
       end
 
+      can [:add_correction, :delete_correction, :select_tutorial, :move,
+           :cancel_action],
+          Submission do |submission|
+        user == submission.tutorial.tutor
+      end
+
       can :show_manuscript, Submission do |submission|
         user.in?(submission.users) ||
           submission.tutorial.lecture.edited_by?(user)
@@ -225,6 +231,16 @@ class Ability
            :show_manuscript, :refresh_token, :enter_invitees,
            :invite], Submission do |submission|
         user.in?(submission.users)
+      end
+
+      can :show_correction, Submission do |submission|
+        user.in?(submission.users) || user == submission.tutorial.tutor
+      end
+
+      can [:add_correction, :delete_correction, :select_tutorial, :move,
+           :cancel_action],
+          Submission do |submission|
+        user == submission.tutorial.tutor
       end
 
       can :index, Tutorial do |tutorial|

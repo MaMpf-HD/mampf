@@ -2375,6 +2375,8 @@ de:
       ausgeführt. Deine Dateien bleiben also auf deinem Gerät für diesen Vorgang.
     merge: Zusammenführen
     merging_failed: Zusammenführen fehlgeschlagen.
+    no_correction_yet: Es ist keine Datei hinterlegt.
+    move_to_tutorial: verschieben in Tutorium
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >

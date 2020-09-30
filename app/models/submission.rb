@@ -6,6 +6,7 @@ class Submission < ApplicationRecord
   has_many :users, through: :user_submission_joins
 
   include SubmissionUploader[:manuscript]
+  include CorrectionUploader[:correction]
 
   validate :matching_lecture
 
