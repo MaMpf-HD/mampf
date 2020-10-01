@@ -1,0 +1,29 @@
+<li class="list-group-item submission-row"
+    data-id="<%= submission.id %>">
+  <div class="row">
+    <div class="col-3">
+      <%= submission.users.map(&:name).join(', ') %>
+    </div>
+    <div class="col-3">
+      <%= link_to t('buttons.download'),
+                  show_submission_manuscript_path(submission,
+                                                  params: { download: 'true' }),
+                  class: 'btn btn-sm btn-outline-secondary',
+                  data: { turbolinks: false } %>
+      <%= link_to t('buttons.show'),
+                  show_submission_manuscript_path(submission),
+                  class: 'btn btn-sm btn-outline-secondary',
+                  data: { turbolinks: false } %>
+    </div>
+    <div class="col-3 correction-column"
+         data-id="<%= submission.id %>">
+      <%= render partial: 'submissions/correction',
+                 locals: { submission: submission } %>
+    </div>
+    <div class="col-3 submission-actions"
+         data-id="<%= submission.id %>">
+      <%= render partial: 'submissions/other_actions',
+                 locals: { submission: submission } %>
+    </div>
+  </div>
+</li>

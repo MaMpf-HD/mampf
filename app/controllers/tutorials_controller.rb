@@ -6,13 +6,13 @@ class TutorialsController < ApplicationController
   authorize_resource
 
   def index
-    @assignments = @lecture.assignments
-    @submitted_assignment = Assignment.previous_in_lecture(@lecture)
-    @old_assignments = @assignments.expired.order('deadline DESC') -
-                         [@previous_assignment]
-    @tutorial = current_user.given_tutorials.where(lecture: @lecture)
-                            .order(:title).first
-    @stack = @submitted_assignment.submissions.where(tutorial: @tutorial)
+    @assignments = @lecture.assignments.expired.order('deadline DESC')
+    @assignment = Assignment.find_by_id(params[:assignment]) ||
+                    @assignments&.first
+    @tutorials = current_user.given_tutorials.where(lecture: @lecture)
+                             .order(:title)
+    @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
+    @stack = @assignment.submissions.where(tutorial: @tutorial)
   end
 
   def new
