@@ -2188,7 +2188,7 @@ de:
         Dein Browser wird von ThymE leider nicht unterstützt.
         Du kannst das Video nur mit dem Browser-Player anschauen.
   sign_up_html: >
-    Du hast noch keinen Account? Dann kannst Du dich mit Deiner Emailadresse
+    Du hast noch keinen Account? Dann kannst Du Dich mit Deiner Emailadresse
     %{path}.
   sign_up: 'registrieren'
   main:
@@ -2220,8 +2220,8 @@ de:
       zusammengestellt aus einer umfangreichen Sammlung von Multiple-Choice-Fragen und
       Rechenaufgaben sowie angeleitete Beweise'
     interested_html:
-      Neugierig geworden? Auf unserem %{blog} und auf %{researchgate} findest du weitere Informationen über
-      und Neuigkeiten zu MaMpf. %{guided_tour} findest Du eine geführte Tour durch MaMpf.
+      Neugierig geworden? Auf unserem %{blog} und auf %{researchgate} findest Du weitere Informationen über
+      und Neuigkeiten zu MaMpf. %{guided_tour} gibt es eine geführte Tour durch MaMpf.
       Außerdem gelangst Du auf diesem %{resources} zu Ressourcen für EditorInnen (z.B. zum MaMpf-LaTeX-Paket).
     resources: Weg
     blog: Blog
