@@ -5,6 +5,8 @@ class Submission < ApplicationRecord
   has_many :user_submission_joins, dependent: :destroy
   has_many :users, through: :user_submission_joins
 
+  self.implicit_order_column = "created_at"
+
   include SubmissionUploader[:manuscript]
   include CorrectionUploader[:correction]
 

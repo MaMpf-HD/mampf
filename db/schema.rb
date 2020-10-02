@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_30_101924) do
+ActiveRecord::Schema.define(version: 2020_10_02_095520) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   create_table "announcements", force: :cascade do |t|
@@ -470,7 +471,8 @@ ActiveRecord::Schema.define(version: 2020_09_30_101924) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "submissions", force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "integer_id", default: -> { "nextval('submissions_id_seq'::regclass)" }, null: false
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"
@@ -741,9 +743,9 @@ ActiveRecord::Schema.define(version: 2020_09_30_101924) do
 
   create_table "user_submission_joins", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.bigint "submission_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.uuid "submission_id"
     t.index ["submission_id"], name: "index_user_submission_joins_on_submission_id"
     t.index ["user_id"], name: "index_user_submission_joins_on_user_id"
   end
@@ -837,6 +839,5 @@ ActiveRecord::Schema.define(version: 2020_09_30_101924) do
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
   add_foreign_key "tutorials", "lectures"
-  add_foreign_key "user_submission_joins", "submissions"
   add_foreign_key "user_submission_joins", "users"
 end
