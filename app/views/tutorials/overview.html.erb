@@ -1,0 +1,66 @@
+<% if @assignments.size > 1 %>
+  <span class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle"
+            data-toggle="dropdown"
+            type="button">
+      <%= @assignment.title %>
+    </button>
+    <div class="dropdown-menu">
+      <% (@assignments - [@assignment]).each do |a| %>
+        <%= link_to a.title,
+                    lecture_tutorial_overview_path(@lecture,
+                                                   params: { assignment: a.id }),
+                    class: 'dropdown-item' %>
+      <% end %>
+    </div>
+  </span>
+<% else %>
+  <button class="btn btn-secondary" disabled>
+    <%= @assignment.title %>
+  </button>
+<% end %>
+<% if current_user.in?(@lecture.tutors) %>
+  <%= link_to t('basics.submissions'),
+              lecture_tutorials_path(@lecture),
+              class: 'btn btn-primary ml-3' %>
+<% end %>
+<ul class="list-group mt-3">
+  <li class="list-group-item bg-light">
+    <div class="row">
+      <div class="col-3">
+        <%= t('basics.tutorial') %>
+      </div>
+      <div class="col-3">
+        <%= t('basics.tutor') %>
+      </div>
+      <div class="col-3">
+        <%= t('basics.submissions') %>
+      </div>
+      <div class="col-3">
+        <%= t('basics.corrections') %>
+      </div>
+    </div>
+  </li>
+  <div class="tutorialTableContent">
+    <% @lecture.tutorials.natural_sort_by(&:title).each do |t| %>
+      <li class="list-group-item">
+        <div class="row">
+          <div class="col-3">
+            <%= t.title %>
+          </div>
+          <div class="col-3">
+            <%= t.tutor&.name || t('basics.nobody') %>
+          </div>
+          <div class="col-3">
+            <%= Submission.where(tutorial: t, assignment: @assignment)
+                          .where.not(manuscript_data: nil).size %>
+          </div>
+          <div class="col-3">
+            <%= Submission.where(tutorial: t, assignment: @assignment)
+                          .where.not(correction_data: nil).size %>
+          </div>
+        </div>
+      </li>
+    <% end %>
+  </div>
+</ul>

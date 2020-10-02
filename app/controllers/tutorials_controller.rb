@@ -1,8 +1,9 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit]
-  before_action :set_lecture, only: :index
+  before_action :set_lecture, only: [:index, :overview]
   before_action :check_tutor_status, only: :index
+  before_action :check_editor_status, only: :overview
   authorize_resource
 
   def index
@@ -13,6 +14,12 @@ class TutorialsController < ApplicationController
                              .order(:title)
     @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
     @stack = @assignment.submissions.where(tutorial: @tutorial)
+  end
+
+  def overview
+    @assignments = @lecture.assignments.expired.order('deadline DESC')
+    @assignment = Assignment.find_by_id(params[:assignment]) ||
+                    @assignments&.first
   end
 
   def new
@@ -67,6 +74,11 @@ class TutorialsController < ApplicationController
   def check_tutor_status
     return if current_user.in?(@lecture.tutors)
     redirect_to :root, alert: I18n.t('controllers.no_tutor_in_this_lecture')
+  end
+
+  def check_editor_status
+    return if current_user.editor_or_teacher_in?(@lecture)
+    redirect_to :root, alert: I18n.t('controllers.no_editor_or_teacher')
   end
 
   def tutorial_params

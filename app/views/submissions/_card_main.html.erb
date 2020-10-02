@@ -49,11 +49,15 @@
           </th>
           <td>
             <% if submission.manuscript %>
-              <%= link_to 'Abgabe',
+              <%= link_to t('basics.submission'),
                           show_submission_manuscript_path(submission),
-                          target: :_blank %> (kaputt)
-              <% unless assignment.active? %>
-                Korrektur
+                          target: :_blank,
+                          class: 'badge badge-secondary' %>
+              <% if submission.correction %>
+                <%= link_to t('basics.correction'),
+                          show_correction_path(submission),
+                          target: :_blank,
+                          class: 'badge badge-secondary' %>
               <% end %>
             <% else %>
               <%= t('submission.no_manuscript_yet') %>

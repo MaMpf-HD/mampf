@@ -469,6 +469,10 @@ class User < ApplicationRecord
     given_tutorials.any?
   end
 
+  def editor_or_teacher_in?(lecture)
+    in?(lecture.editors) || self == lecture.teacher
+  end
+
   private
 
   def set_defaults

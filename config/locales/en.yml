@@ -2258,6 +2258,9 @@ en:
       Nothing has yet been submitted.
     nothing_yet_in_lecture: >
       In this lecture nothing had yet to be submitted.
+  tutorial:
+    no_submissions_for_assignment: >
+      There are no submissions for this assignment.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -2493,6 +2496,11 @@ en:
     and_you: 'and You'
     invited: 'Invited'
     nobody: 'nobody'
+    submission: 'Submission'
+    correction: 'Correction'
+    submissions: 'Submissions'
+    corrections: 'Corrections'
+    overview: Overview
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2689,6 +2697,8 @@ en:
     no_assignment: There is no assignment with this id.
     no_lecture_given: Invalid or no lecture was given.
     no_tutor_in_this_lecture: You are not a tutor in this lecture.
+    no_editor_or_teacher: >
+      In this event series you are neither teacher nor editor.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

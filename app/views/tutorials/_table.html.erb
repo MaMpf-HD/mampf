@@ -1,22 +1,30 @@
-<ul class="list-group mt-3">
-  <li class="list-group-item bg-light">
-    <div class="row">
-      <b class="col-3">
-        Team
-      </b>
-      <b class="col-3">
-        Abgabe
-      </b>
-      <b class="col-3">
-        Korrektur
-      </b>
-      <b class="col-3">
-        Aktionen
-      </b>
+<% if stack.any? %>
+  <ul class="list-group mt-3">
+    <li class="list-group-item bg-light">
+      <div class="row">
+        <b class="col-3">
+          <%= t('basics.team') %>
+        </b>
+        <b class="col-3">
+          <%= t('basics.submission') %>
+        </b>
+        <b class="col-3">
+          <%= t('basics.correction') %>
+        </b>
+        <b class="col-3">
+          <%= t('basics.actions') %>
+        </b>
+      </div>
+    </li>
+    <div class="tutorialTableContent">
+      <%= render partial: 'tutorials/submission_row',
+                 collection: stack,
+                 as: :submission,
+                 cached: true %>
     </div>
-  </li>
-  <%= render partial: 'tutorials/submission_row',
-             collection: stack,
-             as: :submission,
-             cached: true %>
-</ul>
+  </ul>
+<% else %>
+  <div class="jumbotron mt-3">
+    <%= t('tutorial.no_submissions_for_assignment') %>
+  </div>
+<% end %>

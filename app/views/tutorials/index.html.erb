@@ -1,39 +1,56 @@
 <% if @assignments %>
   <div class="row">
     <div class="col-12">
-      <span class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle"
-                data-toggle="dropdown"
-                type="button">
+      <% if @assignments.size > 1 %>
+        <span class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle"
+                  data-toggle="dropdown"
+                  type="button">
+            <%= @assignment.title %>
+          </button>
+          <div class="dropdown-menu">
+            <% (@assignments - [@assignment]).each do |a| %>
+              <%= link_to a.title,
+                          lecture_tutorials_path(@lecture,
+                                                 params: { assignment: a.id,
+                                                           tutorial: @tutorial.id }),
+                          class: 'dropdown-item' %>
+            <% end %>
+          </div>
+        </span>
+      <% else %>
+        <button class="btn btn-secondary" disabled>
           <%= @assignment.title %>
         </button>
-        <div class="dropdown-menu">
-          <% (@assignments - [@assignment]).each do |a| %>
-            <%= link_to a.title,
-                        lecture_tutorials_path(@lecture,
-                                               params: { assignment: a.id,
-                                                         tutorial: @tutorial.id }),
-                        class: 'dropdown-item' %>
-          <% end %>
-        </div>
-      </span>
-      <span class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle"
-                data-toggle="dropdown"
-                type="button">
+      <% end %>
+      <% if @tutorials.size > 1 %>
+        <span class="dropdown ml-3">
+          <button class="btn btn-secondary dropdown-toggle"
+                  data-toggle="dropdown"
+                  type="button">
+            <%= @tutorial.title %>
+          </button>
+          <div class="dropdown-menu">
+            <% (@tutorials - [@tutorial]).each do |t| %>
+              <%= link_to t.title,
+                          lecture_tutorials_path(@lecture,
+                                                 params:
+                                                   { assignment: @assignment.id,
+                                                     tutorial: t.id }),
+                         class: 'dropdown-item' %>
+            <% end %>
+          </div>
+        </span>
+      <% else %>
+        <button class="btn btn-secondary ml-3" disabled>
           <%= @tutorial.title %>
         </button>
-        <div class="dropdown-menu">
-          <% (@tutorials - [@tutorial]).each do |t| %>
-            <%= link_to t.title,
-                        lecture_tutorials_path(@lecture,
-                                               params:
-                                                 { assignment: @assignment.id,
-                                                   tutorial: t.id }),
-                        class: 'dropdown-item' %>
-          <% end %>
-        </div>
-      </span>
+      <% end %>
+      <% if current_user.editor_or_teacher_in?(@lecture) %>
+        <%= link_to t('basics.overview'),
+                    lecture_tutorial_overview_path(@lecture),
+                    class: 'btn btn-primary ml-3' %>
+      <% end %>
     </div>
   </div>
   <%= render partial: 'tutorials/table',

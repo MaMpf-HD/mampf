@@ -119,9 +119,8 @@ class Ability
         user == submission.tutorial.tutor
       end
 
-      can :show_manuscript, Submission do |submission|
-        user.in?(submission.users) ||
-          submission.tutorial.lecture.edited_by?(user)
+      can [:show_manuscript, :show_correction], Submission do |submission|
+          user.in?(submission.users) || user == submission.tutorial.tutor
       end
 
       can :manage, Tag
@@ -130,7 +129,8 @@ class Ability
 
       cannot :read, Term
 
-      can [:new, :create, :cancel_edit_tutorial, :cancel_new_tutorial], Tutorial
+      can [:new, :create, :cancel_edit_tutorial, :cancel_new_tutorial,
+           :overview], Tutorial
 
       can :index, Tutorial do |tutorial|
         user.tutor?
@@ -228,12 +228,12 @@ class Ability
            :redeem_code, :enter_code], Submission
 
       can [:edit, :update, :destroy, :leave,
-           :show_manuscript, :refresh_token, :enter_invitees,
+           :refresh_token, :enter_invitees,
            :invite], Submission do |submission|
         user.in?(submission.users)
       end
 
-      can :show_correction, Submission do |submission|
+      can [:show_correction, :show_manuscript], Submission do |submission|
         user.in?(submission.users) || user == submission.tutorial.tutor
       end
 

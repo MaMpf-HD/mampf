@@ -149,6 +149,8 @@ Rails.application.routes.draw do
                                   as: 'lecture_submissions'
   get 'lectures/:id/tutorials', to: 'tutorials#index',
                                 as: 'lecture_tutorials'
+  get 'lectures/:id/tutorial_overview', to: 'tutorials#overview',
+                                        as: 'lecture_tutorial_overview'
 
   resources :lectures, except: [:index]
 
