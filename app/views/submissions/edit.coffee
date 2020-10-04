@@ -1,3 +1,4 @@
+<% if !@too_late %>
 $('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
   .append('<%= j render partial: "submissions/form",
                         locals: { submission: @submission,
@@ -12,3 +13,6 @@ $('.submissionFooter[data-id!="<%= @assignment.id %>"] .btn')
 
 userManuscript = document.getElementById('upload-userManuscript')
 userManuscriptUpload userManuscript
+<% else %>
+alert('<%= t("submission.too_late_no_editing") %>')
+<% end %>

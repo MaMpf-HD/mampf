@@ -5,7 +5,8 @@ class NotificationMailer < ApplicationMailer
                 only: [:submission_upload_email,
                        :submission_upload_removal_email,
                        :submission_join_email,
-                       :submission_leave_email]
+                       :submission_leave_email,
+                       :correction_upload_email]
   before_action :set_filename,
                 only: [:submission_upload_email,
                        :submission_upload_removal_email]
@@ -98,6 +99,15 @@ class NotificationMailer < ApplicationMailer
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title,
                     user: @user.name))
+  end
+
+  def correction_upload_email
+    @tutor = params[:tutor]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.correction_upload_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
   end
 
   private

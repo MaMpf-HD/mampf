@@ -12,7 +12,7 @@ class Submission < ApplicationRecord
 
   scope :proper, -> { where.not(manuscript_data: nil) }
 
-  validate :matching_lecture
+  validate :matching_lecture, if: :tutorial
 
   before_create :set_token
 
@@ -53,7 +53,7 @@ class Submission < ApplicationRecord
   private
 
 	def matching_lecture
-		return true if tutorial.lecture == assignment.lecture
+		return true if tutorial&.lecture == assignment.lecture
 		errors.add(:tutorial, :lecture_not_matching)
 	end
 

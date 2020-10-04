@@ -9,7 +9,11 @@ class CorrectionUploader < Shrine
   plugin :default_storage, cache: :submission_cache, store: :submission_store
 
   Attacher.validate do
-    validate_mime_type_inclusion %w[application/pdf]
-    validate_max_size 15*1024*1024  # maximum size of 10 MB
+    validate_mime_type_inclusion %w[application/pdf],
+															   message:
+															   	I18n.t('submission.manuscript_no_pdf')
+		# maximum size of 15 MB
+    validate_max_size 15*1024*1024,
+    									message: I18n.t('submission.correction_size_too_big')
   end
 end

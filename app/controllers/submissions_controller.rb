@@ -27,12 +27,18 @@ class SubmissionsController < ApplicationController
   end
 
   def edit
+  	@too_late = true if @submission.assignment.expired?
   end
 
   def update
+  	if @submission.assignment.expired?
+  		@too_late = true
+  		render :create
+  		return
+  	end
     old_manuscript = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
-    @submission.update(submission_params)
+    @submission.update(submission_update_params)
     if @submission.valid?
       if params[:submission][:detach_user_manuscript] == 'true'
         @submission.update(manuscript: nil)
@@ -41,14 +47,20 @@ class SubmissionsController < ApplicationController
         send_upload_email(@submission.users)
       end
     end
+    @errors = @submission.errors
     render :create
   end
 
   def create
   	@submission = Submission.new(submission_params)
+  	if @submission.assignment.expired?
+  		@too_late = true
+  		return
+  	end
     @submission.users << current_user
     @submission.save
     @assignment = @submission.assignment
+    @errors = @submission.errors
     return unless @submission.valid?
     send_invitation_emails
     return unless @submission.manuscript
@@ -56,6 +68,10 @@ class SubmissionsController < ApplicationController
   end
 
   def destroy
+  	if @submission.assignment.expired?
+  		@too_late = true
+  		return
+  	end
     @submission.destroy
   end
 
@@ -131,15 +147,24 @@ class SubmissionsController < ApplicationController
   end
 
   def enter_invitees
+  	@too_late = @submission.assignment.expired?
   end
 
   def invite
+  	if @submission.assignment.expired?
+  		@too_late = true
+  		render :create
+  		return
+  	end
   	send_invitation_emails
   	render :create
   end
 
   def add_correction
     @submission.update(correction_params)
+    @errors = @submission.errors
+    return if @errors.present?
+    send_correction_upload_email(@submission.users)
   end
 
   def delete_correction
@@ -175,6 +200,11 @@ class SubmissionsController < ApplicationController
   def submission_params
     params.require(:submission).permit(:tutorial_id, :assignment_id,
                                        :manuscript)
+  end
+
+  # disallow modification of assignment
+  def submission_update_params
+    params.require(:submission).permit(:tutorial_id, :manuscript)
   end
 
   def set_assignment
@@ -240,6 +270,16 @@ class SubmissionsController < ApplicationController
                               remover: current_user,
                               filename: @old_filename)
                         .submission_upload_removal_email.deliver_now
+    end
+  end
+
+  def send_correction_upload_email(users)
+    users.email_for_correction_upload.each do |u|
+      NotificationMailer.with(recipient: u,
+                              locale: u.locale,
+                              submission: @submission,
+                              tutor: current_user)
+                        .correction_upload_email.deliver_now
     end
   end
 

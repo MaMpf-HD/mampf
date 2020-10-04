@@ -1725,6 +1725,8 @@ en:
       someone joined your team for a submission.
     email_for_submission_leave: >
       someone left your team for a submission.
+    email_for_correction_upload: >
+      your tutor uploaded the correction for a submission.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2247,6 +2249,21 @@ en:
     merging_failed: Merging failed
     no_correction_yet: Currently, no file is stored.
     move_to_tutorial: move to tutorial
+    manuscript_no_pdf: The uploaded file is not a valid pdf file.
+    manuscript_size_too_big: >
+      The uploaded file is too big (maximum allowed size is 10 MB).
+    too_late_no_saving:
+      The due date for this assignment has expired, therefore this change
+      cannot be saved.
+    too_late_no_editing:
+      The due date for this assignment has expired, therefore this submission
+      cannot be edited.
+    too_late_no_inviting:
+      The due date for this assignment has expired, therefore invitations to
+      this submission are no longer possible.
+    too_late_no_destroying:
+      The due date for this assignment has expired, therefore this submission
+      cannot be deleted.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2305,18 +2322,22 @@ en:
       %{issuer} issuer has invited you to join a submission to %{assignment}
       in %{lecture}. The code to join is: %{code}. You can enter and redeem
       it in MaMpf manually or follow this %{link}.
-    submission_upload_info_html: >
+    submission_upload_subject: >
+      Successful upload for submission to %{assignment} in %{lecture}
+    submission_upload_html: >
       You have succesfully uploaded the file "%{filename}" to submission
-      to %{assignment} in %{lecture}.
+      to %{assignment} in %{lecture}. You can view the current file via this
+      %{link}.
     submission_upload_by_others_info_html: >
-      %{uploader} ha succesfully uploaded the file "%{filename}" to submission
-      to %{assignment} in %{lecture}.
+      %{uploader} has succesfully uploaded the file "%{filename}" to submission
+      to %{assignment} in %{lecture}. You can view the current file via this
+      %{link}
     submission_upload_removal_subject: >
       File for submission to %{assignment} in %{lecture} removed
-    submission_upload_info_html: >
+    submission_upload_removal_html: >
       You have removed the file "%{filename}" for the submission
       to %{assignment} in %{lecture}.
-    submission_upload_by_others_info_html: >
+    submission_upload_removal_by_others_info_html: >
       %{remover} has removed the file "%{filename}" for the submission
       to %{assignment} in %{lecture}.
     submission_join_subject: >
@@ -2325,8 +2346,13 @@ en:
       %{user} has joined the submission for %{assignment} in %{lecture}.
     submission_leave_subject: >
       %{user} has left the submission for %{assignment} in %{lecture}
-    submission_join: >
+    submission_leave: >
       %{user} has left the submission for %{assignment} in %{lecture}.
+    correction_upload_subject: >
+      Correction added to %{assignment} in %{lecture}
+    correction_upload_html: >
+      %{tutor} has uploaded the correction for the submission to
+      %{assignment} in %{lecture}. You can view it via this %{link}.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
@@ -2855,6 +2881,9 @@ en:
         submission:
           lecture_not_matching: >
             The tutorial should belong to the same lecture as the assignment.
+          attributes:
+            tutorial:
+              blank: A valid tutorial has to be supplied.
         tag:
           attributes:
             notions:

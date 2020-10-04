@@ -68,6 +68,9 @@ class User < ApplicationRecord
         -> { where(email_for_submission_join: true) }
   scope :email_for_submission_leave,
         -> { where(email_for_submission_leave: true) }
+  scope :email_for_correction_upload,
+        -> { where(email_for_correction_upload: true) }
+
   searchable do
     text :name
   end

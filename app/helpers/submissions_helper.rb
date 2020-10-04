@@ -26,9 +26,15 @@ module SubmissionsHelper
   end
 
   def submission_color(submission, assignment)
-  	return 'bg-mdb-color-lighten-7' unless assignment.current?
-  	return 'bg-submission-green' if submission&.manuscript
-  	return 'bg-submission-yellow' if submission
-  	'bg-submission-red'
+  	if assignment.current?
+  		return 'bg-submission-green' if submission&.manuscript
+  		return 'bg-submission-yellow' if submission
+  		return 'bg-submission-red'
+  	elsif assignment.previous?
+  		return 'bg-submission-darker-green' if submission&.correction
+  		return 'bg-submission-green' if submission&.manuscript
+  		return 'bg-submission-red'
+  	end
+	  'bg-mdb-color-lighten-7'
   end
 end

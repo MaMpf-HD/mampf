@@ -13,7 +13,7 @@ class TutorialsController < ApplicationController
     @tutorials = current_user.given_tutorials.where(lecture: @lecture)
                              .order(:title)
     @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
-    @stack = @assignment.submissions.where(tutorial: @tutorial)
+    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
   end
 
   def overview

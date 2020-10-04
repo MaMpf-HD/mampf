@@ -12,6 +12,9 @@
                                                    &.tutorial(current_user)&.id),
                      {},
                      { class: 'form-control' } %>
+        <div class="invalid-feedback"
+             id="submission-tutorial-error">
+        </div>
         <%= f.hidden_field :lecture_id,
                            value: lecture.id %>
         <%= f.hidden_field :assignment_id,

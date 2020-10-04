@@ -1839,6 +1839,8 @@ de:
       jemand meinem Team für eine Abgabe beigetreten ist.
     email_for_submission_leave: >
       jemand aus meinem Team für eine Abgabe ausgetreten ist.
+    email_for_correction_upload: >
+      von deiner TutorIn die Korrektur zu einer Abgabe hochladen wurde.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2377,6 +2379,23 @@ de:
     merging_failed: Zusammenführen fehlgeschlagen.
     no_correction_yet: Es ist keine Datei hinterlegt.
     move_to_tutorial: verschieben in Tutorium
+    manuscript_no_pdf: Die hochgeladene Datei ist keine gültige pdf-Datei.
+    manuscript_size_too_big: >
+      Die hochgeladene Datei ist zu groß (sie darf höchstens 10 MB groß sein).
+    correction_size_too_big: >
+      Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    too_late_no_saving:
+      Die Abgabefrist ist leider überschritten. Damit kann diese Änderung nicht
+      mehr gespeichert werden.
+    too_late_no_editing:
+      Die Abgabefrist ist leider überschritten. Damit kann diese Abgabe nicht
+      mehr bearbeitet werden.
+    too_late_no_inviting:
+      Die Abgabefrist ist leider überschritten. Damit können zu dieser Abgabe
+      keine Einladungen mehr versandt werden.
+    too_late_no_destroying:
+      Die Abgabefrist ist leider überschritten. Damit kann diese Abgabe
+      nicht mehr gelöscht werden.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
@@ -2467,6 +2486,11 @@ de:
       %{user} hat Abgabe zu %{assignment} in %{lecture} verlassen
     submission_leave: >
       %{user} hat die Abgabe zu %{assignment} in %{lecture} verlassen.
+    correction_upload_subject: >
+      Korrektur zu %{assignment} in %{lecture} hinzugefügt
+    correction_upload_html: >
+      %{tutor} hat die Korrektur für die Abgabe zu %{assignment} in %{lecture}
+      hochgeladen. Du kannst sie unter diesem %{link} einsehen.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
@@ -3006,6 +3030,9 @@ de:
           lecture_not_matching: >
             Die zum Tutorium assoziierte Vorlesung sollte mit der zur
             Hausaufgabe assoziierten Vorlesung übereinstimmen.
+          attributes:
+            tutorial:
+              blank: Es muss ein gültiges Tutorium angegeben werden.
         tag:
           attributes:
             notions:

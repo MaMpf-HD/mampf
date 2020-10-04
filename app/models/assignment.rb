@@ -27,12 +27,19 @@ class Assignment < ApplicationRecord
   end
 
   def active?
-    deadline > Time.now
+    Time.now <= deadline
+  end
+
+  def expired?
+  	!active?
   end
 
   def current?
-  	return false unless active?
-  	!previous&.active?
+  	self == Assignment.current_in_lecture(lecture)
+  end
+
+  def previous?
+  	self == Assignment.previous_in_lecture(lecture)
   end
 
   def previous
