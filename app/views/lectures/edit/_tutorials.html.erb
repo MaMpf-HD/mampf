@@ -28,31 +28,33 @@
         </div>
       </div>
       <div class="list-group">
-      <div class="list-group-item"
-           id="tutorialListHeader"
-           style="display: <%= show(lecture.tutorials.any?) %>">
-      <div class="row">
-        <div class="col-4">
-          <h6>
-            <%= t('basics.title') %>
-          </h6>
+        <div class="list-group-item bg-light"
+             id="tutorialListHeader"
+             style="display: <%= show(lecture.tutorials.any?) %>">
+          <div class="row">
+            <div class="col-4">
+              <h6>
+                <%= t('basics.title') %>
+              </h6>
+            </div>
+            <div class="col-4">
+              <h6>
+                <%= t('basics.tutor') %>
+              </h6>
+            </div>
+            <div class="col-4">
+              <h6>
+                <%= t('basics.action') %>
+                <%= helpdesk(t('tutorial.destruction_info'), true) %>
+              </h6>
+            </div>
+          </div>
         </div>
-        <div class="col-4">
-          <h6>
-            <%= t('basics.tutor') %>
-          </h6>
-        </div>
-        <div class="col-4">
-          <h6>
-            <%= t('basics.action') %>
-          </h6>
-        </div>
+        <% lecture.tutorials.each do |t| %>
+          <%= render partial: 'tutorials/row',
+                     locals: { tutorial: t } %>
+        <% end %>
       </div>
-      </div>
-      <% lecture.tutorials.each do |t| %>
-        <%= render partial: 'tutorials/row',
-                   locals: { tutorial: t } %>
-      <% end %>
     </div>
   </div>
 </div>

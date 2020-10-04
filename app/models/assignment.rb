@@ -1,7 +1,9 @@
 class Assignment < ApplicationRecord
   belongs_to :lecture, touch: true
   belongs_to :medium, optional: true
-  has_many :submissions
+  has_many :submissions, dependent: :destroy
+
+  before_destroy :check_destructibility, prepend: true
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
@@ -48,5 +50,14 @@ class Assignment < ApplicationRecord
 
   def tutorial(user)
     submission(user)&.tutorial
+  end
+
+  def destructible?
+  	submissions.proper.none?
+  end
+
+  def check_destructibility
+  	throw(:abort) unless destructible?
+  	true
   end
 end

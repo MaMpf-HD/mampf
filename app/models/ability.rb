@@ -129,8 +129,7 @@ class Ability
 
       cannot :read, Term
 
-      can [:new, :create, :cancel_edit_tutorial, :cancel_new_tutorial,
-           :overview], Tutorial
+      can [:new, :create, :cancel_edit, :cancel_new, :overview], Tutorial
 
       can :index, Tutorial do |tutorial|
         user.tutor?

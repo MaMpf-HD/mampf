@@ -10,6 +10,8 @@ class Submission < ApplicationRecord
   include SubmissionUploader[:manuscript]
   include CorrectionUploader[:correction]
 
+  scope :proper, -> { where.not(manuscript_data: nil) }
+
   validate :matching_lecture
 
   before_create :set_token

@@ -2388,9 +2388,21 @@ de:
       Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
+    destruction_info:
+      <i>
+      Hinweis.
+      </i>
+      Eine Hausaufgabe kann nur dann gelöscht werden, wenn keine Abgaben, die
+      Dateiuploads beinhalten, dafür hochgeladen wurden.
   tutorial:
     no_submissions_for_assignment: >
       Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
+    destruction_info:
+      <i>
+      Hinweis.
+      </i>
+      Ein Tutorium kann nur dann gelöscht werden, wenn keine Abgaben, die
+      Dateiuploads beinhalten, dafür hochgeladen wurden.
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2644,6 +2656,7 @@ de:
     submissions: 'Abgaben'
     corrections: 'Korrekturen'
     overview: Übersicht
+    tba: N.N.
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2847,6 +2860,15 @@ de:
       In dieser Veranstaltung bist Du keine TutorIn.
     no_editor_or_teacher: >
       In dieser Veranstaltung bist Du weder DozentIn noch EditorIn.
+    tutorials:
+      destruction_failed: >
+        Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
+        dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen wurden.
+    assignments:
+      destruction_failed: >
+        Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
+        liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
+        wurden.
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'

@@ -5,7 +5,7 @@
     <%= tutorial.title %>
   </div>
   <div class="col-4">
-    <%= tutorial.tutor&.name %>
+    <%= tutorial.tutor&.name || t('basics.tba') %>
   </div>
   <div class="col-4">
     <%= link_to edit_tutorial_path(tutorial),
@@ -18,17 +18,19 @@
       <i class="far fa-lg fa-edit mr-2">
       </i>
     <% end %>
-    <%= link_to tutorial_path(tutorial),
-                class: 'text-dark',
-                data: { toggle: 'tooltip',
-                        placement: 'botttom',
-                        confirm: t('confirmation.generic') },
-                style: 'text-decoration: none;',
-                title: t('buttons.delete'),
-                method: :delete,
-                remote: true do %>
-      <i class="fas fa-lg fa-trash-alt">
-      </i>
+    <% if tutorial.destructible? %>
+      <%= link_to tutorial_path(tutorial),
+                  class: 'text-dark',
+                  data: { toggle: 'tooltip',
+                          placement: 'botttom',
+                          confirm: t('confirmation.generic') },
+                  style: 'text-decoration: none;',
+                  title: t('buttons.delete'),
+                  method: :delete,
+                  remote: true do %>
+        <i class="fas fa-lg fa-trash-alt">
+        </i>
+      <% end %>
     <% end %>
   </div>
 </div>

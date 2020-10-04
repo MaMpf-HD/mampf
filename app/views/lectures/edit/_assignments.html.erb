@@ -28,7 +28,7 @@
         </div>
       </div>
       <div class="list-group">
-        <div class="list-group-item"
+        <div class="list-group-item bg-light"
              id="assignmentListHeader"
              style="display: <%= show(lecture.assignments.any?) %>">
           <div class="row">
@@ -50,6 +50,7 @@
             <div class="col-3">
               <h6>
                 <%= t('basics.action') %>
+                <%= helpdesk(t('assignment.destruction_info'), true) %>
               </h6>
             </div>
           </div>
