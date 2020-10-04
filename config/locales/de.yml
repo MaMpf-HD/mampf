@@ -846,7 +846,7 @@ de:
         Rot eingefärbte Medien sind noch nicht veröffentlicht oder gesperrt.
       sort: 'Typ'
       edited_by: 'editiert von %{editors}'
-      publish: 'Medium Veröffentlichen'
+      publish: 'Medium veröffentlichen'
       media_search: 'Mediensuche'
       create: 'Medium anlegen'
       edit: 'Medium bearbeiten'
@@ -2054,7 +2054,7 @@ de:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
     compile_tags: >
-      Inhalts-Spezifikation
+      Inhaltsspezifikation
     question_tags_info: >
       Hier ist eine Übersicht aller Begriffe des Moduls, zu denen
       Fragen existieren:
@@ -2300,7 +2300,7 @@ de:
       </li>
       </ul>
   comments:
-    title: Neue Kommentare zu Medien aus Deinen Veranstaltungen bzw. Modulen
+    title: Neue Kommentare zu Medien aus Deinen Veranstaltungen
     latest_post: Neuster Beitrag
     thread_subscribed: Abo
     who_and_when: vor %{when} von %{who}
