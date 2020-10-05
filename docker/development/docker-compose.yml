@@ -53,6 +53,7 @@ services:
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
+      URL_HOST_SHORT: localhost
       SECRET_KEY_BASE: testenvironment
       ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
