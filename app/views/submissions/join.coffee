@@ -10,6 +10,7 @@ $('.submissionFooter .btn').each ->
 $('.submissionHeader[data-id="<%= @assignment.id %>"]')
 	.removeClass('bg-submission-red bg-submission-yellow bg-submission-green')
 	.addClass('<%= submission_color(@submission, @assignment) %>')
+$('#late-submission-warning').popover()
 <% else %>
 $('#join_code').addClass('is-invalid')
 $('#submission-code-error').empty().append('<%= @error %>').show()

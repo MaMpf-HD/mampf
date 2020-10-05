@@ -27,11 +27,11 @@ class SubmissionsController < ApplicationController
   end
 
   def edit
-  	@too_late = true if @submission.assignment.expired?
+  	@too_late = true if @submission.assignment.totally_expired?
   end
 
   def update
-  	if @submission.assignment.expired?
+  	if @submission.assignment.totally_expired?
   		@too_late = true
   		render :create
   		return
@@ -53,7 +53,7 @@ class SubmissionsController < ApplicationController
 
   def create
   	@submission = Submission.new(submission_params)
-  	if @submission.assignment.expired?
+  	if @submission.assignment.totally_expired?
   		@too_late = true
   		return
   	end
@@ -68,7 +68,7 @@ class SubmissionsController < ApplicationController
   end
 
   def destroy
-  	if @submission.assignment.expired?
+  	if @submission.assignment.totally_expired?
   		@too_late = true
   		return
   	end
@@ -147,11 +147,11 @@ class SubmissionsController < ApplicationController
   end
 
   def enter_invitees
-  	@too_late = @submission.assignment.expired?
+  	@too_late = @submission.assignment.totally_expired?
   end
 
   def invite
-  	if @submission.assignment.expired?
+  	if @submission.assignment.totally_expired?
   		@too_late = true
   		render :create
   		return
@@ -289,7 +289,7 @@ class SubmissionsController < ApplicationController
                       assignment: @assignment.title)
     elsif !@submission
       @error = I18n.t('submission.invalid_code')
-    elsif @assignment && !@assignment.active?
+    elsif @assignment&.totally_expired?
       @error = I18n.t('submission.assignment_expired')
     elsif current_user.in?(@submission.users)
       @error = I18n.t('submission.already_in')

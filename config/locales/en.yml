@@ -339,6 +339,8 @@ en:
       disable_teacher_display: disable the display of the teacher's name
       submission_max_team_size: >
         maximal team size for submissions
+      submission_grace_period: >
+        grace period for submissions (in minutes)
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -537,6 +539,11 @@ en:
           that a reduction of this number does not hold retroactively:
           Already existing submissions of teams with more members will remain
           valid.
+        submission_grace_period: >
+          Here you can enter what the grace period (in minutes) is for
+          submissions. Files that are uploaded after the deadline but before the
+          grace period is expired will be accepted by the system, but will be
+          timestamped and marked as "too late".
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -2264,6 +2271,12 @@ en:
     too_late_no_destroying:
       The due date for this assignment has expired, therefore this submission
       cannot be deleted.
+    late_submission_warning_html: >
+      You can make changes within the grace period until %{friendly_deadline}.
+      However, if you do so, the submission will be declared as
+      <b>'too late'</b>.
+      It is within the discretion of the teacher and the tutor if and how the
+      submission will be graded.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

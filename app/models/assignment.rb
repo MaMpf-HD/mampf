@@ -30,8 +30,25 @@ class Assignment < ApplicationRecord
     Time.now <= deadline
   end
 
+  def semiactive?
+    Time.now <= friendly_deadline
+  end
+
   def expired?
   	!active?
+  end
+
+  def totally_expired?
+    !semiactive?
+  end
+
+  def in_grace_period?
+    semiactive? && !active?
+  end
+
+  def friendly_deadline
+    return deadline unless lecture.submission_grace_period
+    deadline + lecture.submission_grace_period.minutes
   end
 
   def current?

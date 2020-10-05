@@ -268,6 +268,7 @@ class LecturesController < ApplicationController
                                     :content_mode, :passphrase, :sort,
                                     :comments_disabled,
                                     :submission_max_team_size,
+                                    :submission_grace_period,
                                     editor_ids: [])
   end
 

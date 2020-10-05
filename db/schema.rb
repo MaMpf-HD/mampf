@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_04_141237) do
+ActiveRecord::Schema.define(version: 2020_10_05_135129) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -278,6 +278,7 @@ ActiveRecord::Schema.define(version: 2020_10_04_141237) do
     t.boolean "organizational_on_top"
     t.boolean "disable_teacher_display", default: false
     t.integer "submission_max_team_size"
+    t.integer "submission_grace_period", default: 15
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end

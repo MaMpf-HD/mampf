@@ -2,7 +2,7 @@
   display: none;
 }
 
-#clipboard-button:hover {
+.clipboard-button:hover {
 	color: #494f54 !important;
 }
 
@@ -46,4 +46,9 @@
 .tutorialTableContent {
   overflow-y: scroll;
   max-height: 75vh;
+}
+
+#late-submission-warning {
+  position: relative;
+  top: 0.25em;
 }

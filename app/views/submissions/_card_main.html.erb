@@ -11,7 +11,7 @@
             <%= submission.tutorial.title_with_tutor %>
           </td>
         </tr>
-        <% if assignment.active? %>
+        <% if assignment.semiactive? %>
           <tr>
             <th scope="row">
               <%= t('basics.code') %>
@@ -21,12 +21,14 @@
                 <%= submission.token %>
               </span>
               <i class="clipboardpopup far fa-copy clickable
-                        text-secondary clipboard-btn ml-3"
-                id="clipboard-button"
+                        text-secondary clipboard-btn ml-3
+                        clipboard-button"
                 data-clipboard-text="<%= submission.token %>"
                 data-toggle="tooltip"
+                data-id="<%= assignment.id %>"
                 title="<%= t('buttons.copy_to_clipboard') %>">
-                <span class="clipboardpopuptext" id="token-clipboard-popup">
+                <span class="clipboardpopuptext token-clipboard-popup"
+                      data-id="<%= assignment.id %>">
                   <%= t('submission.code_copied_to_clipboard') %>
                 </span>
               </i>
@@ -113,60 +115,68 @@
     <% end %>
   <% end %>
 </div>
-<% if assignment.active? %>
+<% if assignment.semiactive? %>
   <div class="card-footer submissionFooter"
        data-id="<%= assignment.id %>">
     <div class="row">
       <div class="col-12 text-center">
-        <% if assignment.active? %>
-          <% if submission %>
-            <%= link_to t('buttons.edit'),
-                        edit_submission_path(submission),
+        <% if submission %>
+          <%= link_to t('buttons.edit'),
+                      edit_submission_path(submission),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary'} %>
+          <% if invitations_possible?(submission, current_user) %>
+            <%= link_to t('buttons.invite'),
+                        enter_submission_invitees_path(submission),
                         class: 'btn btn-sm btn-outline-primary',
                         remote: true,
                         data: { color: 'btn-outline-primary'} %>
-            <% if invitations_possible?(submission, current_user) %>
-              <%= link_to t('buttons.invite'),
-                          enter_submission_invitees_path(submission),
-                          class: 'btn btn-sm btn-outline-primary',
-                          remote: true,
-                          data: { color: 'btn-outline-primary'} %>
-            <% end %>
-            <% if submission.users.count == 1 %>
-              <%= link_to t('buttons.delete'),
-                          submission_path(submission),
-                          class: 'btn btn-sm btn-outline-danger',
-                          method: :delete,
-                          remote: true,
-                          data: { confirm: t('confirmation.generic'),
-                                  color: 'btn-outline-danger' } %>
-            <% else %>
-              <%= link_to t('buttons.leave'),
-                          leave_submission_path(submission),
-                          class: 'btn btn-sm btn-outline-danger',
-                          method: :delete,
-                          remote: true,
-                          data: { confirm: t('confirmation.generic'),
-                                  color: 'btn-outline-danger' } %>
-            <% end %>
+          <% end %>
+          <% if submission.users.count == 1 %>
+            <%= link_to t('buttons.delete'),
+                        submission_path(submission),
+                        class: 'btn btn-sm btn-outline-danger',
+                        method: :delete,
+                        remote: true,
+                        data: { confirm: t('confirmation.generic'),
+                                color: 'btn-outline-danger' } %>
           <% else %>
-            <%= link_to t('buttons.create'),
-                        new_submission_path(params:
-                                              { assignment_id: assignment.id }),
-                        class: 'btn btn-sm btn-outline-primary',
+            <%= link_to t('buttons.leave'),
+                        leave_submission_path(submission),
+                        class: 'btn btn-sm btn-outline-danger',
+                        method: :delete,
                         remote: true,
-                        data: { color: 'btn-outline-primary' } %>
-            <%= link_to t('buttons.join'),
-                        enter_submission_code_path(submission,
-                                                    params:
-                                                      { assignment_id:
-                                                          assignment.id }),
-                        class: 'btn btn-sm btn-outline-primary',
-                        remote: true,
-                        data: { color: 'btn-outline-primary' } %>
+                        data: { confirm: t('confirmation.generic'),
+                                color: 'btn-outline-danger' } %>
           <% end %>
         <% else %>
-          <%= t('assignment.expired') %>
+          <%= link_to t('buttons.create'),
+                      new_submission_path(params:
+                                            { assignment_id: assignment.id }),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary' } %>
+          <%= link_to t('buttons.join'),
+                      enter_submission_code_path(submission,
+                                                  params:
+                                                    { assignment_id:
+                                                        assignment.id }),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary' } %>
+        <% end %>
+        <% if assignment.in_grace_period? %>
+          <i class="fas fa-2x fa-exclamation-circle clickable"
+             id="late-submission-warning"
+             data-toggle="popover"
+             data-content="<%= t('submission.late_submission_warning_html',
+                          friendly_deadline: l(assignment.friendly_deadline,
+                                               format: :short)) %>"
+             data-html="true"
+             data-trigger="hover"
+             title="<%= t('basics.attention') %>">
+          </i>
         <% end %>
       </div>
     </div>

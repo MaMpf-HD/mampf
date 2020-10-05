@@ -68,6 +68,12 @@ class Lecture < ApplicationRecord
                             greater_than: 0 },
             allow_nil: true
 
+  validates :submission_grace_period,
+            numericality: { only_integer: true,
+                            greater_than: -1 },
+            allow_nil: true
+
+
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
   after_save :remove_teacher_as_editor
