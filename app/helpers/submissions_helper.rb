@@ -32,9 +32,57 @@ module SubmissionsHelper
   		return 'bg-submission-red'
   	elsif assignment.previous?
   		return 'bg-submission-darker-green' if submission&.correction
+      return 'bg-submission-orange' if submission&.manuscript && submission.too_late?
   		return 'bg-submission-green' if submission&.manuscript
   		return 'bg-submission-red'
   	end
 	  'bg-mdb-color-lighten-7'
+  end
+
+  def submission_status_icon(submission, assignment)
+    return unless assignment.current? || assignment.previous?
+    if assignment.current?
+      return 'far fa-smile' if submission&.manuscript
+      return 'fas fa-exclamation-triangle'
+    elsif assignment.previous?
+      return 'far fa-smile' if submission&.correction
+      return 'fas fa-exclamation-triangle' if submission&.manuscript && submission.too_late?
+      return 'fas fa-hourglass-start' if submission&.manuscript
+      return 'fas fa-exclamation-triangle'
+    end
+  end
+
+  def submission_status_text(submission, assignment)
+    return unless assignment.current? || assignment.previous?
+    if assignment.current?
+      return t('submission.okay') if submission&.manuscript
+      return t('submission.no_file') if submission
+      return t('submission.nothing')
+    elsif assignment.previous?
+      return t('submission.with_correction') if submission&.correction
+      return t('submission.too_late') if submission&.manuscript && submission.too_late?
+      return t('submission.under_review') if submission&.manuscript
+      return t('submission.no_file') if submission
+      return t('submission.nothing')
+    end
+  end
+
+  def submission_status(submission, assignment)
+    return unless assignment.current? || assignment.previous?
+    tag.i class: [submission_status_icon(submission, assignment), 'fa-lg'],
+          data: { toggle: 'tooltip'},
+          title: submission_status_text(submission, assignment)
+  end
+
+  def show_submission_footer?(submission, assignment)
+    return true if assignment.active?
+    return false if assignment.totally_expired?
+    return false if submission&.correction
+    true
+  end
+
+  def submission_late_color(submission)
+    return '' unless submission.too_late?
+    'bg-submission-orange'
   end
 end

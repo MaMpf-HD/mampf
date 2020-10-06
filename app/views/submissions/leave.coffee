@@ -1,8 +1,9 @@
-$('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
-  .append('<%= j render partial: "submissions/card_main",
+<% if !@too_late %>
+$('.submissionArea[data-id="<%= @assignment.id %>"]').empty()
+  .append('<%= j render partial: "submissions/card",
                         locals: { assignment: @assignment,
                                   submission: nil } %>')
-$('.submissionHeader[data-id="<%= @assignment.id %>"]')
-	.removeClass('bg-submission-yellow bg-submission-green')
-	.addClass('bg-submission-red')
-$('#late-submission-warning').popover()
+$('[data-toggle="popover"]').popover()
+<% else %>
+alert('<%= t("submission.too_late_no_saving") %>')
+<% end %>

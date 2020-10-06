@@ -8,6 +8,7 @@ class SubmissionsController < ApplicationController
                                         :select_tutorial, :move, :cancel_action]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
+  before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
   authorize_resource
 
   def index
@@ -27,23 +28,23 @@ class SubmissionsController < ApplicationController
   end
 
   def edit
-  	@too_late = true if @submission.assignment.totally_expired?
   end
 
   def update
-  	if @submission.assignment.totally_expired?
-  		@too_late = true
+  	if @too_late
   		render :create
   		return
   	end
-    old_manuscript = @submission.manuscript_data
+    old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     @submission.update(submission_update_params)
     if @submission.valid?
       if params[:submission][:detach_user_manuscript] == 'true'
-        @submission.update(manuscript: nil)
+        @submission.update(manuscript: nil,
+                           last_modification_by_users_at: Time.now)
         send_upload_removal_email(@submission.users)
-      elsif @submission.manuscript != old_manuscript
+      elsif @submission.manuscript_data != old_manuscript_data
+        @submission.update(last_modification_by_users_at: Time.now)
         send_upload_email(@submission.users)
       end
     end
@@ -53,25 +54,21 @@ class SubmissionsController < ApplicationController
 
   def create
   	@submission = Submission.new(submission_params)
-  	if @submission.assignment.totally_expired?
-  		@too_late = true
-  		return
-  	end
+    @too_late = @submission.not_updatable?
+  	return if @too_late
     @submission.users << current_user
     @submission.save
     @assignment = @submission.assignment
     @errors = @submission.errors
     return unless @submission.valid?
     send_invitation_emails
+    @submission.update(last_modification_by_users_at: Time.now)
     return unless @submission.manuscript
     send_upload_email(User.where(id: current_user.id))
   end
 
   def destroy
-  	if @submission.assignment.totally_expired?
-  		@too_late = true
-  		return
-  	end
+    return if @too_late
     @submission.destroy
   end
 
@@ -102,11 +99,13 @@ class SubmissionsController < ApplicationController
   end
 
   def leave
+    return if @too_late
     if @submission.users.count == 1
       @error = I18n.t('submission.no_partners_no_leave')
       return
     end
     @submission.users.delete(current_user)
+    @submission.update(last_modification_by_users_at: Time.now)
     send_leave_email
   end
 
@@ -151,8 +150,7 @@ class SubmissionsController < ApplicationController
   end
 
   def invite
-  	if @submission.assignment.totally_expired?
-  		@too_late = true
+  	if @too_late
   		render :create
   		return
   	end
@@ -219,6 +217,10 @@ class SubmissionsController < ApplicationController
     @lecture = Lecture.find_by_id(params[:id])
     return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
+  def set_too_late
+    @too_late = @submission.not_updatable?
   end
 
   def join_params
@@ -291,6 +293,8 @@ class SubmissionsController < ApplicationController
       @error = I18n.t('submission.invalid_code')
     elsif @assignment&.totally_expired?
       @error = I18n.t('submission.assignment_expired')
+#    elsif @submission.correction
+#      @error = I18n.t('submission.already_corrected')
     elsif current_user.in?(@submission.users)
       @error = I18n.t('submission.already_in')
     elsif !@submission.tutorial.lecture.in?(current_user.lectures)
@@ -305,6 +309,7 @@ class SubmissionsController < ApplicationController
     														 		 submission: @submission)
     	@join.save
     	if @join.valid?
+        @submission.update(last_modification_by_users_at: Time.now)
         send_join_email
         remove_invitee_status
       else

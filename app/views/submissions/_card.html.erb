@@ -2,7 +2,7 @@
 	<div class="card-header submissionHeader <%= submission_color(submission, assignment) %>"
 			 data-id="<%= assignment.id %>">
 		<div class="row">
-			<div class="col-12">
+			<div class="col-10">
 				<h5>
 					<% if assignment.medium %>
 						<%= link_to assignment.title,
@@ -12,6 +12,9 @@
 						<%= assignment.title %>
 					<% end %>
 				</h5>
+			</div>
+			<div class="col-2 text-right">
+				<%= submission_status(submission, assignment) %>
 			</div>
 			<div class="col-12">
 				bis

@@ -1,8 +1,14 @@
-<li class="list-group-item submission-row"
+<li class="list-group-item submission-row <%= submission_late_color(submission) %>"
     data-id="<%= submission.id %>">
   <div class="row">
     <div class="col-3">
       <%= submission.users.map(&:name).join(', ') %>
+      <% if submission.too_late? %>
+        <i class="fas fa-exclamation-triangle"
+           data-toggle="tooltip"
+           title="<%= t('submission.late') %>">
+        </i>
+      <% end %>
     </div>
     <div class="col-3">
       <%= link_to t('buttons.download'),

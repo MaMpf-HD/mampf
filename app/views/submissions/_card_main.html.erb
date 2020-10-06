@@ -68,6 +68,17 @@
         </tr>
         <tr>
           <th scope="row">
+            <%= t('submission.last_modification') %>
+            <%= helpdesk(t('submission.last_modification_info_html'), true) %>
+          </th>
+          <td>
+            <%= I18n.l(submission.last_modification_by_users_at ||
+                         submission.created_at,
+                       format: :short) %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
             <%= t('submission.deletion_date') %>
           </th>
           <td>
@@ -115,7 +126,7 @@
     <% end %>
   <% end %>
 </div>
-<% if assignment.semiactive? %>
+<% if show_submission_footer?(submission, assignment) %>
   <div class="card-footer submissionFooter"
        data-id="<%= assignment.id %>">
     <div class="row">

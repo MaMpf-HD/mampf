@@ -11,18 +11,15 @@ $('#submission-tutorial-error')
 alert('<%= @errors[:manuscript].join(" ") %>')
 <% end %>
 <% else %>
-$('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
-  .append('<%= j render partial: "submissions/card_main",
+$('.submissionArea[data-id="<%= @assignment.id %>"]').empty()
+  .append('<%= j render partial: "submissions/card",
                         locals: { assignment: @assignment,
                                   submission: @submission } %>')
-$('.submissionHeader[data-id="<%= @assignment.id %>"]')
-	.removeClass('bg-submission-red bg-submission-yellow bg-submission-green')
-	.addClass('<%= submission_color(@submission, @assignment) %>')
 $('.submissionFooter .btn').prop('disabled', false)
   .removeClass('btn-outline-secondary')
 $('.submissionFooter .btn').each ->
   $(this).addClass($(this).data('color'))
-$('#late-submission-warning').popover()
+$('[data-toggle="popover"]').popover()
 <% end %>
 <% else %>
 alert('<%= t("submission.too_late_no_saving") %>')

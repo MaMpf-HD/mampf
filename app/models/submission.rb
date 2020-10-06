@@ -31,7 +31,7 @@ class Submission < ApplicationRecord
     manuscript.metadata['size']
   end
 
-  def preceding_tutorial(user)
+  def preceding_tutorial(user)subm
     assignment.previous.submission(user)
   end
 
@@ -48,6 +48,18 @@ class Submission < ApplicationRecord
 
   def admissible_invitees(user)
   	user.submission_partners(assignment.lecture) - users
+  end
+
+  def in_time?
+    (last_modification_by_users_at || created_at) <= assignment.deadline
+  end
+
+  def too_late?
+    !in_time?
+  end
+
+  def not_updatable?
+    assignment.totally_expired? || correction.present?
   end
 
   private

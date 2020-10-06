@@ -2277,6 +2277,31 @@ en:
       <b>'too late'</b>.
       It is within the discretion of the teacher and the tutor if and how the
       submission will be graded.
+    last_modification: >
+      last modification
+    last_modification_info: >
+      It is logged when the last change to the submission by a team member took
+      place. The following is taken into account:
+      <ul>
+      <li>
+      creation of the submission
+      </li>
+      <li>
+      successful first upload or replacement of the file
+      </li>
+      <li>
+      the joining of a team member
+      </li>
+      <li>
+      the leaving of a team member
+      </li>
+      </ul>
+      If the last modification ist before the due date, the submission is valid.
+      Otherwise it will be marked as <b>too late</b>.
+    already_corrected: >
+      For this assignment a correction was already uploaded. Therefore you
+      cannot join anymore.
+    late: late submission
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

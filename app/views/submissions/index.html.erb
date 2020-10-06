@@ -5,10 +5,13 @@
         <%= t('submission.current') %>
       </h4>
       <% if @current_assignment %>
-        <%= render partial: 'submissions/card',
-                   locals: { assignment: @current_assignment,
-                             submission: @current_assignment
-                                           .submission(current_user) }%>
+        <div class="submissionArea"
+             data-id="<%= @current_assignment.id %>">
+          <%= render partial: 'submissions/card',
+                     locals: { assignment: @current_assignment,
+                               submission: @current_assignment
+                                             .submission(current_user) }%>
+        </div>
       <% else %>
         <%= t('assignment.no_current') %>
       <% end %>
@@ -18,10 +21,13 @@
         <%= t('submission.previous') %>
       </h4>
       <% if @previous_assignment %>
-        <%= render partial: 'submissions/card',
-                   locals: { assignment: @previous_assignment,
-                             submission: @previous_assignment
+        <div class="submissionArea"
+             data-id="<%= @previous_assignment.id %>">
+          <%= render partial: 'submissions/card',
+                     locals: { assignment: @previous_assignment,
+                               submission: @previous_assignment
                                            .submission(current_user) } %>
+        </div>
       <% else %>
         <%= t('assignment.no_previous') %>
       <% end %>
