@@ -33,11 +33,14 @@
       <div class="col-3">
         <%= t('basics.tutor') %>
       </div>
-      <div class="col-3">
+      <div class="col-2">
         <%= t('basics.submissions') %>
       </div>
-      <div class="col-3">
+      <div class="col-2">
         <%= t('basics.corrections') %>
+      </div>
+      <div class="col-2">
+        <%= t('submission.late_submissions') %>
       </div>
     </div>
   </li>
@@ -51,13 +54,18 @@
           <div class="col-3">
             <%= t.tutor&.name || t('basics.nobody') %>
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <%= Submission.where(tutorial: t, assignment: @assignment)
                           .where.not(manuscript_data: nil).size %>
           </div>
-          <div class="col-3">
+          <div class="col-2">
             <%= Submission.where(tutorial: t, assignment: @assignment)
                           .where.not(correction_data: nil).size %>
+          </div>
+          <div class="col-2">
+            <%= Submission.where(tutorial: t, assignment: @assignment)
+                          .where.not(manuscript_data: nil)
+                          .select { |s| s.too_late? }.size %>
           </div>
         </div>
       </li>

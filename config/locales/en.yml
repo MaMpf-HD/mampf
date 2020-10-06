@@ -2302,6 +2302,7 @@ en:
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
     late: late submission
+    late_submissions: late submissions
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

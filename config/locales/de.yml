@@ -2467,6 +2467,7 @@ de:
       Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
       kannst Du nicht mehr beitreten.
     late: verspätete Abgabe
+    late_submissions: verspätetete Abgaben
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
