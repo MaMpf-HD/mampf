@@ -14,7 +14,7 @@ module ApplicationHelper
 
   # Returns the complete url for the media upload folder if in production
   def host
-    Rails.env.production? ? ENV['MEDIA_SERVER'] + ENV['MEDIA_PATH'] : ''
+    Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['INSTANCE_NAME'] : ''
   end
 
   # The HTML download attribute only works for files within the domain of
