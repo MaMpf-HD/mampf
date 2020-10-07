@@ -45,7 +45,7 @@ services:
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
       PROJECT_EMAIL: project@localhost
-      MEDIA_FOLDER: mampf
+      INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1
       SOLR_HOST: solr
       SOLR_PORT: 8983
