@@ -246,7 +246,7 @@ class LecturesController < ApplicationController
   end
 
   def set_lecture_cookie
-    cookies[:current_lecture_id] = @lecture.id
+    cookies[:current_lecture_id] = strict_cookie(@lecture.id)
   end
 
   def set_view_locale

@@ -299,12 +299,11 @@ class MediaController < ApplicationController
     @vtt_container = @medium.create_vtt_container!
     file = Tempfile.new
     @vtt_container.table_of_contents.stream(file.path)
-    cookies['fileDownload'] = 'true'
 
     send_file file,
               filename: 'toc-' + @medium.title + '.vtt',
-              type: 'content-type',
-              x_sendfile: true
+              type: 'text/vtt',
+              disposition: 'attachment'
   end
 
   # export the video's references to a .vtt file
@@ -312,12 +311,11 @@ class MediaController < ApplicationController
     @vtt_container = @medium.create_vtt_container!
     file = Tempfile.new
     @vtt_container.references.stream(file.path)
-    cookies['fileDownload'] = 'true'
 
     send_file file,
               filename: 'references-' + @medium.title + '.vtt',
-              type: 'content-type',
-              x_sendfile: true
+              type: 'text/vtt',
+              disposition: 'attachment'
   end
 
   # export the video's screenshot to a .vtt file
@@ -325,12 +323,11 @@ class MediaController < ApplicationController
     return if @medium.screenshot.nil?
     file = Tempfile.new
     @medium.screenshot.stream(file.path)
-    cookies['fileDownload'] = 'true'
 
     send_file file,
               filename: 'screenshot-' + @medium.title + '.png',
-              type: 'content-type',
-              x_sendfile: true
+              type: 'image/png',
+              disposition: 'attachment'
   end
 
   # imports all of manuscript destinations, bookmarks as chpters, sections etc.
@@ -421,9 +418,9 @@ class MediaController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
-    # store curent lecture in cookie
+    # store current lecture in cookie
     if @lecture
-      cookies[:current_lecture_id] = @lecture.id
+      cookies[:current_lecture_id] = strict_cookie(@lecture.id)
       return
     end
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
@@ -454,8 +451,8 @@ class MediaController < ApplicationController
     sanitize_page!
     sanitize_per!
     params[:all] = (params[:all] == 'true') || (cookies[:all] == 'true')
-    cookies[:all] = params[:all]
-    cookies[:per] = false if cookies[:all]
+    cookies[:all] = strict_cookie(params[:all])
+    cookies[:per] = strict_cookie(false) if cookies[:all]
     params[:reverse] = params[:reverse] == 'true'
   end
 
@@ -525,7 +522,9 @@ class MediaController < ApplicationController
   end
 
   def sanitize_per!
-    cookies[:all] = 'false' if (params[:per] || cookies[:per].to_i.positive?)
+    if params[:per] || cookies[:per].to_i.positive?
+      cookies[:all] = strict_cookie('false')
+    end
     params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
                      params[:per].to_i
                    elsif cookies[:per].to_i.positive?
@@ -533,7 +532,7 @@ class MediaController < ApplicationController
                    else
                      8
                    end
-    cookies[:per] = params[:per]
+    cookies[:per] = strict_cookie(params[:per])
   end
 
   def search_params
