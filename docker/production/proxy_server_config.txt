@@ -1,6 +1,7 @@
 root /public;
 
 location / {
+    client_max_body_size 4G;
     # try_files $uri $uri/ @rails;
     try_files $uri @rails;
 }
