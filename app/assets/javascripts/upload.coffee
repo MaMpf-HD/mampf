@@ -463,7 +463,7 @@ imageUpload = (fileInput) ->
         if files.length < filez.length
           reader.readAsArrayBuffer filez[files.length]
         else
-          worker = new Worker('pdfcomprezzor/worker.js')
+          worker = new Worker('/pdfcomprezzor/worker.js')
           worker.addEventListener 'message', ((e) ->
             console.log(e.data)
             if e.data.type == 'log'
@@ -503,7 +503,7 @@ imageUpload = (fileInput) ->
     reader.onload = () ->
       arrayBuffer = this.result
       array = new Uint8Array(arrayBuffer)
-      worker = new Worker('pdfcomprezzor/worker.js')
+      worker = new Worker('/pdfcomprezzor/worker.js')
       worker.addEventListener 'message', ((e) ->
         console.log 'Worker said: ', e
         if e.data.type == 'log'
