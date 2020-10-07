@@ -2,8 +2,7 @@ docker/developement/docker-compose.yml
 docker/developement/Dockerfile
 docker/run_tests/docker-compose.yml
 docker/run_tests/Dockerfile
-.git/**/*
-.git*
+**/.git
 .travis*
 LICENSE
 README.md

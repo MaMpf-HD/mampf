@@ -26,10 +26,7 @@ RUN apt-get update && apt-get install -y nodejs yarn ffmpeg imagemagick pdftk gh
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
-      mkdir /mampf && mkdir /public && chown app:app /public && \
-      mkdir /submissions && chown app:app /submissions
-VOLUME /public
-VOLUME /submissions
+      mkdir /private /caches && chown app:app /private /caches
 WORKDIR /usr/src/app
 USER app
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm

@@ -21,8 +21,9 @@ services:
     <<: *mampf
     entrypoint: /usr/src/app/docker/production/entrypoint-master.sh
     volumes:
-      - "media_mampf:/mampf"
-      - "public:/public"
+      - "media_mampf:/private/media"
+      - "public:/usr/src/app/public"
+      - "caches:/caches"
 
   worker:
     <<: *mampf
@@ -30,9 +31,9 @@ services:
     environment:
       - VIRTUAL_HOST=localhost
     volumes:
-      - "media_mampf:/mampf"
-      - "submissions:/submissions"
-      - "upload_cache:/usr/src/app/public/uploads/cache"
+      - "media_mampf:/private/media"
+      - "submissions:/private/submissions"
+      - "caches:/caches"
 
   proxy:
     build:
@@ -44,8 +45,8 @@ services:
       - "127.0.0.1:3008:80"
     volumes:
       - "/var/run/docker.sock:/tmp/docker.sock"
-      - "submissions:/submissions:ro"
-      - "public:/public:ro"
+      - "submissions:/private/submissions:ro"
+      - "public:/public:ro,nocopy"
     networks:
       - mampf
 
@@ -95,4 +96,4 @@ volumes:
     driver_opts:
       type: "tmpfs"
       device: "tmpfs"
-  upload_cache:
+  caches:
