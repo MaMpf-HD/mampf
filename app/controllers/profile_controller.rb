@@ -126,7 +126,8 @@ class ProfileController < ApplicationController
                                  :email_for_submission_removal,
                                  :email_for_submission_join,
                                  :email_for_submission_leave,
-                                 :email_for_correction_upload)
+                                 :email_for_correction_upload,
+                                 :email_for_submission_decision)
   end
 
   def set_lecture

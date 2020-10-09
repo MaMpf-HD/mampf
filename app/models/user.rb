@@ -70,6 +70,8 @@ class User < ApplicationRecord
         -> { where(email_for_submission_leave: true) }
   scope :email_for_correction_upload,
         -> { where(email_for_correction_upload: true) }
+  scope :email_for_submission_decision,
+        -> { where(email_for_submission_decision: true) }
 
   searchable do
     text :name

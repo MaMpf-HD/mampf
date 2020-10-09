@@ -1734,6 +1734,9 @@ en:
       someone left your team for a submission.
     email_for_correction_upload: >
       your tutor uploaded the correction for a submission.
+    email_for_submission_decision: >
+      a decision about the acceptance or rejection of late submission has been
+      made
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2412,6 +2415,16 @@ en:
     correction_upload_html: >
       %{tutor} has uploaded the correction for the submission to
       %{assignment} in %{lecture}. You can view it via this %{link}.
+    submission_acceptance_subject: >
+      Late submission for %{assignment} in %{lecture} accepted
+    submission_acceptance_subject: >
+      Your late submission for %{assignment} in %{lecture} has been accepted
+      and will be graded.
+    submission_rejection_subject: >
+      Late submission to %{assignment} in %{lecture} rejected
+    submission_rejection: >
+      Your late submission to %{assignment} in %{lecture} has been rejected
+      and will not be graded.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'

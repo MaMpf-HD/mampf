@@ -6,7 +6,9 @@ class NotificationMailer < ApplicationMailer
                        :submission_upload_removal_email,
                        :submission_join_email,
                        :submission_leave_email,
-                       :correction_upload_email]
+                       :correction_upload_email,
+                       :submission_acceptance_email,
+                       :submission_rejection_email]
   before_action :set_filename,
                 only: [:submission_upload_email,
                        :submission_upload_removal_email]
@@ -106,6 +108,22 @@ class NotificationMailer < ApplicationMailer
     mail(from: @sender,
          to: @recipient.email,
          subject: t('mailer.correction_upload_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_acceptance_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_acceptance_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_rejection_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_rejection_subject',
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end

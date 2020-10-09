@@ -188,10 +188,12 @@ class SubmissionsController < ApplicationController
 
   def accept
     @submission.update(accepted: true)
+    send_acceptance_email(@submission.users)
   end
 
   def reject
     @submission.update(accepted: false)
+    send_rejection_email(@submission.users)
   end
 
   private
@@ -292,6 +294,24 @@ class SubmissionsController < ApplicationController
                               submission: @submission,
                               tutor: current_user)
                         .correction_upload_email.deliver_now
+    end
+  end
+
+  def send_acceptance_email(users)
+    users.email_for_submission_decision.each do |u|
+      NotificationMailer.with(recipient: u,
+                              locale: u.locale,
+                              submission: @submission)
+                        .submission_acceptance_email.deliver_now
+    end
+  end
+
+  def send_rejection_email(users)
+    users.email_for_submission_decision.each do |u|
+      NotificationMailer.with(recipient: u,
+                              locale: u.locale,
+                              submission: @submission)
+                        .submission_rejection_email.deliver_now
     end
   end
 

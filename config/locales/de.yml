@@ -1846,6 +1846,9 @@ de:
       jemand aus meinem Team für eine Abgabe ausgetreten ist.
     email_for_correction_upload: >
       von deiner TutorIn die Korrektur zu einer Abgabe hochladen wurde.
+    email_for_submission_decision: >
+      eine Entscheidung über das Akzeptieren oder die Ablehnung einer
+      verspäteten Abgabe getroffen wurde
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2571,6 +2574,16 @@ de:
     correction_upload_html: >
       %{tutor} hat die Korrektur für die Abgabe zu %{assignment} in %{lecture}
       hochgeladen. Du kannst sie unter diesem %{link} einsehen.
+    submission_acceptance_subject: >
+      Verspätete Abgabe zu %{assignment} in %{lecture} akzeptiert
+    submission_acceptance: >
+      Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde akzeptiert
+      und wird korrigiert und gewertet werden.
+    submission_rejection_subject: >
+      Verspätete Abgabe zu %{assignment} in %{lecture} abgelehnt
+    submission_rejection: >
+      Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde abgelehnt
+      und wird nicht korrigiert und nicht gewertet werden.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
