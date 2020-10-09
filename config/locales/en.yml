@@ -1659,7 +1659,11 @@ en:
     account: 'Account'
     name: 'Display name'
     name_information: >
-      This name will be displayed in your board posts.
+      This name will be displayed in your board posts and comments.
+    name_in_tutorials: 'Name in tutorials'
+    name_in_tutorials_information: >
+      This name will be displayed to your tutor for your submissions.
+      If you leave this field empty, your display name will be used for that.
     change_data: 'Change login data'
     delete_account: 'Delete Account'
     courses: 'Courses'

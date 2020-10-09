@@ -10,7 +10,7 @@ class Tutorial < ApplicationRecord
 
   def title_with_tutor
   	return "#{title}, #{I18n.t('basics.tba')}" unless tutor
-  	"#{title}, #{tutor.name}"
+  	"#{title}, #{tutor.tutorial_name}"
   end
 
   def destructible?

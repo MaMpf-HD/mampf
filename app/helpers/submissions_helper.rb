@@ -6,11 +6,11 @@ module SubmissionsHelper
   end
 
   def partner_selection(user, lecture)
-    user.submission_partners(lecture).map { |u| [u.name, u.id] }
+    user.submission_partners(lecture).map { |u| [u.tutorial_name, u.id] }
   end
 
   def admissible_invitee_selection(user, submission, lecture)
-  	submission.admissible_invitees(user).map { |u| [u.name, u.id] }
+  	submission.admissible_invitees(user).map { |u| [u.tutorial_name, u.id] }
   end
 
   def probable_invitee_ids(user, submission)

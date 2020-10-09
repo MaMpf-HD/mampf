@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-3">
-    <%= submission.users.map(&:name).join(', ') %>
+    <%= submission.users.map(&:tutorial_name).join(', ') %>
     <% if submission.too_late? %>
       <i class="fas fa-exclamation-triangle"
          data-toggle="tooltip"

@@ -5,7 +5,7 @@
     <%= tutorial.title %>
   </div>
   <div class="col-4">
-    <%= tutorial.tutor&.name || t('basics.tba') %>
+    <%= tutorial.tutor&.tutorial_name || t('basics.tba') %>
   </div>
   <div class="col-4">
     <%= link_to edit_tutorial_path(tutorial),

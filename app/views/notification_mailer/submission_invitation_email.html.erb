@@ -2,6 +2,6 @@
       code: @code,
       assignment: @assignment.title,
       lecture: @assignment.lecture.short_title,
-      issuer: @issuer.name,
+      issuer: @issuer.tutorial_name,
       link: link_to(t('basics.link'),
                     redeem_submission_code_url(params: { code: @code }))) %>

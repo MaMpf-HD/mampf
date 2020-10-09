@@ -91,7 +91,7 @@ class NotificationMailer < ApplicationMailer
          subject: t('mailer.submission_join_subject',
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title,
-                    user: @user.name))
+                    user: @user.tutorial_name))
   end
 
   def submission_leave_email
@@ -100,7 +100,7 @@ class NotificationMailer < ApplicationMailer
          subject: t('mailer.submission_leave_subject',
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title,
-                    user: @user.name))
+                    user: @user.tutorial_name))
   end
 
   def correction_upload_email

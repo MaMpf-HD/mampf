@@ -74,7 +74,7 @@ class User < ApplicationRecord
         -> { where(email_for_submission_decision: true) }
 
   searchable do
-    text :name
+    text :tutorial_name
   end
 
 
@@ -252,9 +252,24 @@ class User < ApplicationRecord
     end
   end
 
+  def tutorial_info_uncached
+    return email unless tutorial_name.present?
+    tutorial_name + ' (' + email + ')'
+  end
+
+  def tutorial_info
+    Rails.cache.fetch("#{cache_key_with_version}/user_info") do
+      tutorial_info_uncached
+    end
+  end
+
   def name_or_email
     return name unless name.blank?
     email
+  end
+
+  def tutorial_name
+    name_in_tutorials.presence || name
   end
 
   def short_info

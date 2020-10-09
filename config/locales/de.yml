@@ -1767,7 +1767,12 @@ de:
     account: 'Account'
     name: 'Anzeigename'
     name_information: >
-      Bei Deinen Forenbeiträgen wird dieser Name angezeigt werden.
+      Bei Deinen Forenbeiträgen und Kommentaren wird dieser Name angezeigt
+      werden.
+    name_in_tutorials: Name in Übungsgruppen
+    name_in_tutorials_information: >
+      Dieser Name wird Deinem Tutor bei Deinen Abgaben angezeigt. Wenn
+      Du dieses Feld leerlässt, wird dafür der Anzeigename verwendet.
     change_data: 'Zugangsdaten ändern'
     delete_account: 'Account löschen'
     courses: 'Module'

@@ -1,6 +1,6 @@
 <%= t('mailer.correction_upload_html',
       assignment: @assignment.title,
       lecture: @assignment.lecture.short_title,
-      tutor: @tutor.name,
+      tutor: @tutor.tutorial_name,
       link: link_to(t('basics.link'),
                       show_correction_url(@submission))) %>

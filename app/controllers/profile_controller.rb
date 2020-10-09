@@ -24,6 +24,7 @@ class ProfileController < ApplicationController
     return if @errors.present?
     if @user.update(lectures: @lectures,
                     name: @name,
+                    name_in_tutorials: @name_in_tutorials,
                     subscription_type: @subscription_type,
                     locale: @locale,
                     edited_profile: true)
@@ -114,6 +115,7 @@ class ProfileController < ApplicationController
   def set_basics
     @subscription_type = params[:user][:subscription_type].to_i
     @name = params[:user][:name]
+    @name_in_tutorials = params[:user][:name_in_tutorials]
     @lectures = Lecture.where(id: lecture_ids)
     @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
     @locale = params[:user][:locale]

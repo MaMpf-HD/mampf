@@ -94,7 +94,7 @@
             <% if submission.users.count == 1 %>
               <%= t('basics.you') %>
             <% else %>
-              <%= submission.partners_of_user(current_user).map(&:name)
+              <%= submission.partners_of_user(current_user).map(&:tutorial_name)
                             .join(', ') + ' ' + t('basics.and_you') %>
             <% end %>
           </td>
@@ -106,7 +106,7 @@
             </th>
             <td>
               <% if submission.invited_users.any? %>
-                <%= submission.invited_users.map(&:name)
+                <%= submission.invited_users.map(&:tutorial_name)
                               .join(', ') %>
               <% else %>
                 <%= t('basics.nobody') %>
