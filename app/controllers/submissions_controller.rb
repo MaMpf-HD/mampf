@@ -1,12 +1,7 @@
 # SubmissionsController
 class SubmissionsController < ApplicationController
-  before_action :set_submission, only: [:edit, :destroy, :leave, :cancel_edit,
-                                        :update, :refresh_token,
-                                        :enter_invitees, :invite,
-                                        :add_correction, :show_manuscript,
-                                        :show_correction, :delete_correction,
-                                        :select_tutorial, :move, :cancel_action,
-                                        :accept, :reject]
+  before_action :set_submission, except: [:index, :new, :create, :enter_code,
+                                          :redeem_code, :join, :cancel_new]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
@@ -157,6 +152,12 @@ class SubmissionsController < ApplicationController
   	end
   	send_invitation_emails
   	render :create
+  end
+
+  def edit_correction
+  end
+
+  def cancel_edit_correction
   end
 
   def add_correction

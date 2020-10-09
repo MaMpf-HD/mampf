@@ -314,6 +314,13 @@ Rails.application.routes.draw do
   patch 'submissions/:id/reject', to: 'submissions#reject',
                                   as: 'reject_submission'
 
+  get 'submissions/:id/edit_correction', to: 'submissions#edit_correction',
+                                         as: 'edit_correction'
+
+  get 'submissions/:id/cancel_edit_correction',
+      to: 'submissions#cancel_edit_correction',
+      as: 'cancel_edit_correction'
+
   resources :submissions, except: :index
 
   get 'tags/modal', to: 'tags#modal',
@@ -409,6 +416,7 @@ Rails.application.routes.draw do
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
   mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
   mount SubmissionUploader.upload_endpoint(:submission_cache) => "/submissions/upload"
+  mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
   mount Thredded::Engine => '/forum'
   get '*path', to: 'main#error'
 

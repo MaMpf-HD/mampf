@@ -31,6 +31,17 @@ class Submission < ApplicationRecord
     manuscript.metadata['size']
   end
 
+  def correction_filename
+    return unless correction.present?
+    correction.metadata['filename']
+  end
+
+  def correction_size
+    return unless correction.present?
+    correction.metadata['size']
+  end
+
+
   def preceding_tutorial(user)subm
     assignment.previous.submission(user)
   end

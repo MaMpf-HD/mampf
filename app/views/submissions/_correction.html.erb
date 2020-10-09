@@ -1,9 +1,9 @@
 <div class="row">
   <div class="col-12">
-    <button class="btn btn-sm btn-outline-secondary correction-upload-button"
-            data-id="<%= submission.id %>">
-      <%= t('buttons.upload') %>
-    </button>
+    <%= link_to t('buttons.upload'),
+                edit_correction_path(submission),
+                class: 'btn btn-sm btn-outline-secondary',
+                remote: true %>
     <span class="correction-action-area"
          data-id="<%= submission.id %>">
       <% if submission.correction %>
@@ -14,16 +14,10 @@
         <%= link_to t('buttons.delete'),
                     delete_correction_path(submission),
                     class: 'btn btn-sm btn-outline-secondary',
-                    data: { turbolinks: false,
-                            confirm: t('confirmation.generic') },
+                    data: { confirm: t('confirmation.generic') },
                     method: :delete,
                     remote: true %>
       <% end %>
     </span>
   </div>
-</div>
-<div class="correction-upload-area"
-     data-id="<%= submission.id %>">
-  <%= render partial: 'submissions/correction_upload',
-             locals: { submission: submission } %>
 </div>
