@@ -2279,7 +2279,7 @@ en:
       submission will be graded.
     last_modification: >
       last modification
-    last_modification_info: >
+    last_modification_info_html: >
       It is logged when the last change to the submission by a team member took
       place. The following is taken into account:
       <ul>
@@ -2298,11 +2298,29 @@ en:
       </ul>
       If the last modification ist before the due date, the submission is valid.
       Otherwise it will be marked as <b>too late</b>.
+    okay: Everything is fine.
+    no_file: No file is stored.
+    nothing: No submission was created.
+    with_correction: >
+      Everything is fine. You tutor has uploaded the correction to this
+      submission.
+    too_late: >
+      The submission is marked as "late", because the last change was after
+      the due date. It is at the discretion of the teacher and the tutor
+      if and how it is graded.
+    too_late_accepted: >
+      You tutor accepted the submission that was marked as "late" and is now
+      working on the correction.
+    too_late_rejected: >
+      Your submission that was marked as "late" was rejected.
+    under_review: >
+      Your tutor is currently reviewing the submission.
     already_corrected: >
       For this assignment a correction was already uploaded. Therefore you
       cannot join anymore.
     late: late submission
     late_submissions: late submissions
+    rejected: rejected
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2329,6 +2347,8 @@ en:
       </i>
       A tutorial can only be deleted if there are no submissions for it that
       include uploaded files.
+    late_submission_decision: >
+      You can decide whether you accept it or reject it.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -2677,6 +2697,9 @@ en:
     invite: 'Invite'
     send: 'Send'
     download: 'Download'
+    move: 'Move'
+    accept: 'Accept'
+    reject: 'Reject'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

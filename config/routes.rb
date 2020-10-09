@@ -308,6 +308,12 @@ Rails.application.routes.draw do
          to: 'submissions#delete_correction',
          as: 'delete_correction'
 
+  patch 'submissions/:id/accept', to: 'submissions#accept',
+                                  as: 'accept_submission'
+
+  patch 'submissions/:id/reject', to: 'submissions#reject',
+                                  as: 'reject_submission'
+
   resources :submissions, except: :index
 
   get 'tags/modal', to: 'tags#modal',

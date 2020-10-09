@@ -32,7 +32,11 @@ module SubmissionsHelper
   		return 'bg-submission-red'
   	elsif assignment.previous?
   		return 'bg-submission-darker-green' if submission&.correction
-      return 'bg-submission-orange' if submission&.manuscript && submission.too_late?
+      if submission&.manuscript && submission.too_late?
+        return 'bg-submission-orange' if submission.accepted.nil?
+        return 'bg-submission-green' if submission.accepted
+        return 'bg-submission-red'
+      end
   		return 'bg-submission-green' if submission&.manuscript
   		return 'bg-submission-red'
   	end
@@ -46,7 +50,10 @@ module SubmissionsHelper
       return 'fas fa-exclamation-triangle'
     elsif assignment.previous?
       return 'far fa-smile' if submission&.correction
-      return 'fas fa-exclamation-triangle' if submission&.manuscript && submission.too_late?
+      if submission&.manuscript && submission.too_late?
+        return 'fas fa-hourglass-start' if submission.accepted
+        return 'fas fa-exclamation-triangle'
+      end
       return 'fas fa-hourglass-start' if submission&.manuscript
       return 'fas fa-exclamation-triangle'
     end
@@ -60,7 +67,11 @@ module SubmissionsHelper
       return t('submission.nothing')
     elsif assignment.previous?
       return t('submission.with_correction') if submission&.correction
-      return t('submission.too_late') if submission&.manuscript && submission.too_late?
+      if submission&.manuscript && submission.too_late?
+        return t('submission.too_late') if submission.accepted.nil?
+        return t('submission.too_late_accepted') if submission.accepted
+        return t('submission.too_late_rejected')
+      end
       return t('submission.under_review') if submission&.manuscript
       return t('submission.no_file') if submission
       return t('submission.nothing')
@@ -83,6 +94,13 @@ module SubmissionsHelper
 
   def submission_late_color(submission)
     return '' unless submission.too_late?
+    return '' unless submission.accepted.nil?
     'bg-submission-orange'
+  end
+
+  def late_submission_info(submission)
+    text = t('submission.late')
+    return text unless submission.accepted.nil?
+    "#{text} (#{t('tutorial.late_submission_decision')})"
   end
 end

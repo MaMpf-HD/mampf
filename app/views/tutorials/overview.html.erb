@@ -24,51 +24,70 @@
               lecture_tutorials_path(@lecture),
               class: 'btn btn-primary ml-3' %>
 <% end %>
-<ul class="list-group mt-3">
-  <li class="list-group-item bg-light">
-    <div class="row">
-      <div class="col-3">
+<table class="table table-bordered mt-3">
+  <thead class="thead-light">
+    <tr>
+      <th sope="col">
         <%= t('basics.tutorial') %>
-      </div>
-      <div class="col-3">
+      </th>
+      <th scope="col">
         <%= t('basics.tutor') %>
-      </div>
-      <div class="col-2">
+      </th>
+      <th scope="col">
         <%= t('basics.submissions') %>
-      </div>
-      <div class="col-2">
+      </th>
+      <th scope="col">
         <%= t('basics.corrections') %>
-      </div>
-      <div class="col-2">
+      </th>
+      <th scope="col">
         <%= t('submission.late_submissions') %>
-      </div>
-    </div>
-  </li>
-  <div class="tutorialTableContent">
+      </th>
+    </tr>
+  </thead>
+  <tbody style="max-height: 50px; overflow-y: scroll;">
     <% @lecture.tutorials.natural_sort_by(&:title).each do |t| %>
-      <li class="list-group-item">
-        <div class="row">
-          <div class="col-3">
-            <%= t.title %>
-          </div>
-          <div class="col-3">
-            <%= t.tutor&.name || t('basics.nobody') %>
-          </div>
-          <div class="col-2">
-            <%= Submission.where(tutorial: t, assignment: @assignment)
-                          .where.not(manuscript_data: nil).size %>
-          </div>
-          <div class="col-2">
-            <%= Submission.where(tutorial: t, assignment: @assignment)
-                          .where.not(correction_data: nil).size %>
-          </div>
-          <div class="col-2">
-            <%= Submission.where(tutorial: t, assignment: @assignment)
-                          .where.not(manuscript_data: nil)
-                          .select { |s| s.too_late? }.size %>
-          </div>
-        </div>
-      </li>
+      <tr>
+        <td>
+          <%= t.title %>
+        </td>
+        <td>
+          <%= t.tutor&.name || t('basics.nobody') %>
+        </td>
+        <td>
+          <%= Submission.where(tutorial: t, assignment: @assignment)
+                        .where.not(manuscript_data: nil).size %>
+        </td>
+        <td>
+          <%= Submission.where(tutorial: t, assignment: @assignment)
+                        .where.not(correction_data: nil).size %>
+        </td>
+        <td>
+          <%= Submission.where(tutorial: t, assignment: @assignment)
+                        .where.not(manuscript_data: nil)
+                        .select { |s| s.too_late? }.size %>
+        </td>
+      </tr>
     <% end %>
-  </div>
-</ul>
+    <% if @lecture.tutorials.size > 1 %>
+      <tr>
+        <td>
+        </td>
+        <td>
+        </td>
+        <td class="table-secondary">
+          <%= Submission.where(assignment: @assignment)
+                        .where.not(manuscript_data: nil).size %>
+        </td>
+        <td class="table-secondary">
+          <%= Submission.where(assignment: @assignment)
+                        .where.not(correction_data: nil).size %>
+        </td>
+        <td  class="table-secondary">
+          <%= Submission.where(assignment: @assignment)
+                        .where.not(manuscript_data: nil)
+                        .select { |s| s.too_late? }.size %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

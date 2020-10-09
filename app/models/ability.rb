@@ -114,7 +114,7 @@ class Ability
       end
 
       can [:add_correction, :delete_correction, :select_tutorial, :move,
-           :cancel_action],
+           :cancel_action, :accept, :reject],
           Submission do |submission|
         user == submission.tutorial.tutor
       end
@@ -237,7 +237,7 @@ class Ability
       end
 
       can [:add_correction, :delete_correction, :select_tutorial, :move,
-           :cancel_action],
+           :cancel_action, :accept, :reject],
           Submission do |submission|
         user == submission.tutorial.tutor
       end

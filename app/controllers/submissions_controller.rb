@@ -5,7 +5,8 @@ class SubmissionsController < ApplicationController
                                         :enter_invitees, :invite,
                                         :add_correction, :show_manuscript,
                                         :show_correction, :delete_correction,
-                                        :select_tutorial, :move, :cancel_action]
+                                        :select_tutorial, :move, :cancel_action,
+                                        :accept, :reject]
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
@@ -184,6 +185,14 @@ class SubmissionsController < ApplicationController
     @tutorial = @submission.tutorial
   end
 
+  def accept
+    @submission.update(accepted: true)
+  end
+
+  def reject
+    @submission.update(accepted: false)
+  end
+
   private
 
   def set_submission
@@ -293,8 +302,8 @@ class SubmissionsController < ApplicationController
       @error = I18n.t('submission.invalid_code')
     elsif @assignment&.totally_expired?
       @error = I18n.t('submission.assignment_expired')
-#    elsif @submission.correction
-#      @error = I18n.t('submission.already_corrected')
+    elsif @submission.correction
+      @error = I18n.t('submission.already_corrected')
     elsif current_user.in?(@submission.users)
       @error = I18n.t('submission.already_in')
     elsif !@submission.tutorial.lecture.in?(current_user.lectures)

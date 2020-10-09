@@ -59,6 +59,7 @@ class Submission < ApplicationRecord
   end
 
   def not_updatable?
+    return false if assignment.active?
     assignment.totally_expired? || correction.present?
   end
 

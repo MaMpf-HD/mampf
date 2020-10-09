@@ -1,5 +1,16 @@
-<%= link_to 'Verschieben',
+<%= link_to t('buttons.move'),
             select_tutorial_path(submission),
             class: 'btn btn-sm btn-outline-secondary',
-            data: { turbolinks: false },
             remote: true %>
+<% if submission.too_late? && submission.accepted.nil? %>
+  <%= link_to t('buttons.accept'),
+              accept_submission_path(submission),
+              class: 'btn btn-sm btn-outline-secondary',
+              method: :patch,
+              remote: true %>
+  <%= link_to t('buttons.reject'),
+              reject_submission_path(submission),
+              class: 'btn btn-sm btn-outline-secondary',
+              method: :patch,
+              remote: true %>
+<% end %>

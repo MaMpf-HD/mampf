@@ -1,0 +1,5 @@
+<li class="list-group-item submission-row <%= submission_late_color(submission) %>"
+    data-id="<%= submission.id %>">
+  <%= render partial: 'tutorials/submission_row',
+             locals: { submission: submission } %>
+</li>

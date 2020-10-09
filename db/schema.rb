@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_06_113955) do
+ActiveRecord::Schema.define(version: 2020_10_08_135825) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -483,6 +483,7 @@ ActiveRecord::Schema.define(version: 2020_10_06_113955) do
     t.integer "invited_user_ids", default: [], array: true
     t.text "correction_data"
     t.datetime "last_modification_by_users_at"
+    t.boolean "accepted"
     t.index ["assignment_id"], name: "index_submissions_on_assignment_id"
     t.index ["token"], name: "index_submissions_on_token", unique: true
     t.index ["tutorial_id"], name: "index_submissions_on_tutorial_id"

@@ -1,35 +1,38 @@
-<li class="list-group-item submission-row <%= submission_late_color(submission) %>"
-    data-id="<%= submission.id %>">
-  <div class="row">
-    <div class="col-3">
-      <%= submission.users.map(&:name).join(', ') %>
-      <% if submission.too_late? %>
-        <i class="fas fa-exclamation-triangle"
-           data-toggle="tooltip"
-           title="<%= t('submission.late') %>">
-        </i>
-      <% end %>
-    </div>
-    <div class="col-3">
-      <%= link_to t('buttons.download'),
-                  show_submission_manuscript_path(submission,
-                                                  params: { download: 'true' }),
-                  class: 'btn btn-sm btn-outline-secondary',
-                  data: { turbolinks: false } %>
-      <%= link_to t('buttons.show'),
-                  show_submission_manuscript_path(submission),
-                  class: 'btn btn-sm btn-outline-secondary',
-                  data: { turbolinks: false } %>
-    </div>
-    <div class="col-3 correction-column"
-         data-id="<%= submission.id %>">
+<div class="row">
+  <div class="col-3">
+    <%= submission.users.map(&:name).join(', ') %>
+    <% if submission.too_late? %>
+      <i class="fas fa-exclamation-triangle"
+         data-toggle="tooltip"
+         title="<%= late_submission_info(submission) %>">
+      </i>
+    <% end %>
+  </div>
+  <div class="col-3">
+    <%= link_to t('buttons.download'),
+                show_submission_manuscript_path(submission,
+                                                params: { download: 'true' }),
+                class: 'btn btn-sm btn-outline-secondary',
+                data: { turbolinks: false } %>
+    <%= link_to t('buttons.show'),
+                show_submission_manuscript_path(submission),
+                class: 'btn btn-sm btn-outline-secondary',
+                data: { turbolinks: false } %>
+  </div>
+  <div class="col-3 correction-column"
+       data-id="<%= submission.id %>">
+    <% if submission.in_time? || submission.accepted %>
       <%= render partial: 'submissions/correction',
                  locals: { submission: submission } %>
-    </div>
-    <div class="col-3 submission-actions"
-         data-id="<%= submission.id %>">
-      <%= render partial: 'submissions/other_actions',
-                 locals: { submission: submission } %>
-    </div>
+    <% elsif submission.accepted == false %>
+      <span class="badge badge-danger">
+        <%= t('submission.rejected') %>
+      </span>
+    <% end %>
   </div>
-</li>
+  <div class="col-3 submission-actions"
+       data-id="<%= submission.id %>">
+    <%= render partial: 'submissions/other_actions',
+               locals: { submission: submission } %>
+  </div>
+</div>

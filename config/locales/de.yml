@@ -2460,6 +2460,11 @@ de:
       Die Abgabe ist als "zu spät" markiert, da die letzte Änderung
       nach dem Abgabeschluss erfolgte. Es liegt im Ermessen
       der DozentIn und der der TutorInnen, ob und wie sie gewertet wird.
+    too_late_accepted: >
+      Deine TutorIn hat die als "zu spät" gekennzeichnete Abgabe akzeptiert
+      und ist jetzt mit der Korrektur beschäftigt.
+    too_late_rejected: >
+      Deine als "zu spät" gekennzeichnete Abgabe wurde abgelehnt.
     under_review: >
       Die Abgabe wurde erfolgreich übermittelt, Deine TutorIn ist mit der
       Korrektur beschäftigt.
@@ -2468,6 +2473,7 @@ de:
       kannst Du nicht mehr beitreten.
     late: verspätete Abgabe
     late_submissions: verspätetete Abgaben
+    rejected: abgelehnt
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
@@ -2494,6 +2500,8 @@ de:
       </i>
       Ein Tutorium kann nur dann gelöscht werden, wenn keine Abgaben, die
       Dateiuploads beinhalten, dafür hochgeladen wurden.
+    late_submission_decision: >
+      Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2847,6 +2855,9 @@ de:
     invite: 'Einladen'
     send: 'Versenden'
     download: 'Herunterladen'
+    move: 'Verschieben'
+    accept: 'Akzeptieren'
+    reject: 'Ablehnen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
