@@ -2,7 +2,7 @@
   display: none;
 }
 
-.clipboard-button:hover {
+#clipboard-button:hover {
 	color: #494f54 !important;
 }
 
@@ -48,7 +48,6 @@
   max-height: 75vh;
 }
 
-#late-submission-warning {
-  position: relative;
-  top: 0.25em;
+#bulk-upload-area, #bulk-upload-report {
+	display: none;
 }

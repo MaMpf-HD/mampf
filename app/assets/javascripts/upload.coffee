@@ -373,6 +373,64 @@ imageUpload = (fileInput) ->
 
   uppy
 
+bulkCorrectionUpload = (fileInput) ->
+
+  uploadButton = document.getElementById('upload-bulk-correction-button')
+  informer = document.getElementById('upload-bulk-correction-informer')
+  statusBar = document.getElementById('upload-bulk-correction-statusBar')
+  hiddenInput = document.getElementById('upload-bulk-correction-hidden')
+  metaData = document.getElementById('upload-bulk-correction-metadata')
+
+  # uppy will add its own file input
+  fileInput.style.display = 'none'
+
+  # create uppy instance
+  uppy = Uppy.Core(
+    id: fileInput.id
+    autoProceed: true
+    restrictions:
+      allowedFileTypes: ['.zip']
+      maxFileSize: 1073741824)
+    .use(Uppy.FileInput,
+      target: uploadButton
+      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+    .use(Uppy.Informer, target: informer)
+    .use(Uppy.StatusBar, target: statusBar)
+
+  # target the endpoint for shrine uploader
+  uppy.use Uppy.XHRUpload,
+    endpoint: '/corrections/upload'
+    fieldName: 'file'
+
+  # add metadata to manuscript card if upload was successful
+  uppy.on 'upload-success', (file, response) ->
+    data = response.body
+    if data.metadata.mime_type in ['application/zip']
+      # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data)
+
+      # set hidden field value to the uploaded file data so that it is
+      # submitted with the form as the attachment
+      hiddenInput.value = uploadedFileData
+
+      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+      metaData.style.display = 'inline'
+      $('#upload-bulk-correction-save').prop('disabled', false)
+    else
+      # display error message if uppy detects wrong mime type
+      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      uppy.reset()
+    return
+
+  # display error message on console if an upload error has ocurred
+  uppy.on 'upload-error', (file, error) ->
+    console.log('error with file:', file.id)
+    console.log('error message:', error)
+    return
+
+  uppy
+
+
 ###
 @param fileInput: dom element to listen to.
 ###
@@ -624,6 +682,7 @@ $(document).on 'turbolinks:load', ->
   manuscript = document.getElementById('upload-manuscript')
   geogebra = document.getElementById('upload-geogebra')
   image = document.getElementById('upload-image')
+  bulkCorrection = document.getElementById('upload-bulk-correction')
 
   # make uppy idempotent for turbolinks
   $('.uppy').remove()
@@ -634,6 +693,7 @@ $(document).on 'turbolinks:load', ->
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
   imageUpload image if image?
+  bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
   # make uppy upload buttons look like bootstrap
   $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')

@@ -349,6 +349,14 @@ Rails.application.routes.draw do
   get 'tutorials/cancel_new', to: 'tutorials#cancel_new',
                               as: 'cancel_new_tutorial'
 
+  get 'tutorials/:id/assignments/:ass_id/bulk_download',
+      to: 'tutorials#bulk_download',
+      as: 'bulk_download_submissions'
+
+  patch 'tutorials/:id/assignments/:ass_id/bulk_upload',
+        to: 'tutorials#bulk_upload',
+        as: 'bulk_upload_corrections'
+
   resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 
   get 'sections/list_tags', to: 'sections#list_tags',
@@ -417,6 +425,7 @@ Rails.application.routes.draw do
   mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
   mount SubmissionUploader.upload_endpoint(:submission_cache) => "/submissions/upload"
   mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
+  mount ZipUploader.upload_endpoint(:submission_cache) => "/packages/upload"
   mount Thredded::Engine => '/forum'
   get '*path', to: 'main#error'
 

@@ -100,6 +100,7 @@ gem 'sprockets-rails',
 gem 'premailer-rails'
 gem 'select2-rails'
 gem 'clipboard-rails'
+gem 'rubyzip'
 
 group :development, :docker_development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

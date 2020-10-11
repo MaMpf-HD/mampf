@@ -1,0 +1,133 @@
+<div class="card">
+	<div class="card-header">
+		<h5>
+			<%= t('tutorial.bulk_upload.report') %>
+			<button class="btn btn-sm btn-secondary"
+							id="dismiss-bulk-upload-report">
+				<%= t('buttons.dismiss') %>
+			</button>
+		</h5>
+	</div>
+	<div class="card-body">
+		<table class="table table-bordered mt-3">
+			<tbody>
+				<tr class="d-flex">
+					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.number_of_submissions') %>
+					</th>
+					<td class="col">
+						<%= report[:submissions] %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.successfully_extracted') %>
+					</th>
+					<td class="col">
+						<%= report[:successful_extractions] %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.invalid_filenames') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.invalid_filenames'),
+												 false) %>
+					</th>
+					<td class="col">
+						<% if report[:invalid_filenames].any? %>
+							<ul>
+								<% report[:invalid_filenames].each do |f| %>
+									<li>
+										<%= f %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.invalid_files') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.invalid_files'),
+												 false) %>
+					</th>
+					<td class="col">
+						<% if report[:invalid_file].any? %>
+							<ul>
+								<% report[:invalid_file].each do |f| %>
+									<li>
+										<%= f %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.invalid_submission_id') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.invalid_submission_id'),
+												 false) %>
+					</th>
+					<td class="col">
+						<% if report[:invalid_id].any? %>
+							<ul>
+								<% report[:invalid_id].each do |f| %>
+									<li>
+										<%= f %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.no_decision') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.no_decision'),
+												 false) %>
+					</th>
+					<td class="col">
+						<% if report[:no_decision].any? %>
+							<ul>
+								<% report[:no_decision].each do |f| %>
+									<li>
+										<%= f %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.rejected') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.rejected'),
+												 false) %>
+					</th>
+					<td class="col">
+						<% if report[:rejected].any? %>
+							<ul>
+								<% report[:rejected].each do |f| %>
+									<li>
+										<%= f %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

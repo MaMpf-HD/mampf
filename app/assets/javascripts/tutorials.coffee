@@ -1,22 +1,26 @@
+@clearBulkUploadArea = ->
+  $('#bulk-upload-area').hide()
+  $('#show-bulk-upload-area').show()
+  $('#upload-bulk-correction-hidden').val('')
+  $('#upload-bulk-correction-metadata').empty()
+  $('#upload-bulk-errors').empty().hide()
+  $('#upload-bulk-correction-save').prop('disabled', true)
+  return
+
 $(document).on 'turbolinks:load', ->
 
-  $(document).on 'click', '.correction-upload-button', ->
+  $('#show-bulk-upload-area').on 'click', ->
     $(this).hide()
-    id = $(this).data('id')
-    $('.correction-upload-area[data-id='+id+']').show()
-    $('.correction-action-area[data-id='+id+']').hide()
+    $('#bulk-upload-area').show()
     return
 
-  $(document).on 'click', '.correction-upload-cancel', ->
-    id = $(this).data('id')
-    $('.correction-upload-area[data-id='+id+']').hide()
-    $('.correction-action-area[data-id='+id+']').show()
-    $('.correction-upload-button[data-id='+id+']').show()
+  $('#cancel-bulk-upload').on 'click', ->
+    clearBulkUploadArea()
+    return
+
+  $(document).on 'click', '#dismiss-bulk-upload-report', ->
+    $('#bulk-upload-report').empty().hide()
     return
 
   return
 
-# clean up for turbolinks
-$(document).on 'turbolinks:before-cache', ->
-  $(document).off 'click', '.correction-upload-button'
-  return

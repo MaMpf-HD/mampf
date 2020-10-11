@@ -7,10 +7,12 @@
               accept_submission_path(submission),
               class: 'btn btn-sm btn-outline-secondary',
               method: :patch,
-              remote: true %>
+              remote: true,
+              data: { confirm: t('confirmation.generic') } %>
   <%= link_to t('buttons.reject'),
               reject_submission_path(submission),
               class: 'btn btn-sm btn-outline-secondary',
               method: :patch,
-              remote: true %>
+              remote: true,
+              data: { confirm: t('confirmation.generic') } %>
 <% end %>

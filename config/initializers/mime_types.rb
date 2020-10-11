@@ -4,4 +4,5 @@
 # Mime::Type.register "text/richtext", :rtf
 
 Rack::Mime::MIME_TYPES[".vtt"]="text/vtt"
+Rack::Mime::MIME_TYPES[".zip"]="application/zip"
 Rack::Mime::MIME_TYPES[".wasm"]="application/wasm"

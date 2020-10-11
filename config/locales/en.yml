@@ -2328,6 +2328,8 @@ en:
     late: late submission
     late_submissions: late submissions
     rejected: rejected
+    bulk_download: Bulk download of submissions
+    bulk_upload: Bulk upload of corrections
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2356,6 +2358,40 @@ en:
       include uploaded files.
     late_submission_decision: >
       You can decide whether you accept it or reject it.
+    bulk_upload:
+      report: Report on the bulk upload of the corrections
+      number_of_submissions: Number of submissions
+      successfully_extracted: Number of successfully extracted corrections
+      invalid_filenames: invalid filenames
+      invalid_files: invalid files
+      invalid_submission_id: invalid submision id
+      no_decision: no decision abou acceptance yet
+      rejected: correction already rejected
+      info:
+        invalid_filenames: >
+          This is the list of all the files form the zip archive that do not
+          fit into the naming scheme that is provided by MaMpf.
+        invalid_files: >
+          This is the list of all the files form the zip archive that can be
+          matched to a submission but whose upload fails because they violate
+          some rule (e.g. size is too large or they are not of the right file
+          type).
+        invalid_submission_id: >
+          This is the list of the files from the zip archive that fit into
+          the naming schem provided by MaMpf, but whose submission ids do not
+          match any submissions.
+        no_decision: >
+          This is the list of submission teams for which you uploaded a
+          correction but have not yet made a decision on whether to accept the
+          late  submission. The corresponding corrections have not been
+          uploaded.
+        rejected: >
+          This is the list of submission teams for which you uploaded a correction
+          but have already decided to reject the submission. The corresponding
+          corrections have not been uploaded.
+  package:
+    no_zip: This file is not a .zip archive.
+    to_big: This file is too big.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -2717,6 +2753,7 @@ en:
     move: 'Move'
     accept: 'Accept'
     reject: 'Reject'
+    dismiss: 'Dismiss'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

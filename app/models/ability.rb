@@ -140,6 +140,10 @@ class Ability
         tutorial.lecture.edited_by?(user)
       end
 
+      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+        tutorial.tutor == user
+      end
+
       cannot :read, User
       can :update, User do |u|
         user == u
@@ -246,6 +250,10 @@ class Ability
 
       can :index, Tutorial do |tutorial|
         user.tutor?
+      end
+
+      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+        tutorial.tutor == user
       end
     end
   end

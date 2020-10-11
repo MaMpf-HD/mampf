@@ -2482,6 +2482,8 @@ de:
     late: verspätete Abgabe
     late_submissions: verspätetete Abgaben
     rejected: abgelehnt
+    bulk_download: Paketdownload der Abgaben
+    bulk_upload: Paketupload der Korrekturen
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
@@ -2510,6 +2512,42 @@ de:
       Dateiuploads beinhalten, dafür hochgeladen wurden.
     late_submission_decision: >
       Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
+    bulk_upload:
+      report: Bericht zum Paketupload der Korrekturen
+      number_of_submissions: Anzahl der Abgaben
+      successfully_extracted: Anzahl der erfolgreich extrahierten Korrrekturen
+      invalid_filenames: ungültige Dateinamen
+      invalid_files: ungültige Dateien
+      invalid_submission_id: ungültige Abgabe-ID
+      no_decision: noch keine Entscheidung über Akzeptanz getroffen
+      rejected: Korrektur bereits abgelehnt
+      info:
+        invalid_filenames: >
+          Hier sind die Namen derjenigen Dateien aus dem Zip-Archiv aufgelistet,
+          die nicht in das von MaMpf vorgegebene Namensschema passen.
+        invalid_files: >
+          Hier sind die Namen derjenigen Dateien aus dem Zip-Archiv aufgelistet,
+          die zwar einer Abgabe zugeordnet werden konnten, deren Hochladen aber
+          daran scheitert, dass sie nicht den Anforderungen genügen, die MaMpf
+          an Korrekturdateien stellt (z.B. falscher Dateityp, Überschreiten der
+          Größenbeschränkung etc.)
+        invalid_submission_id: >
+          Hier sind die Namen derjenigen Dateien aus dem Zip-Archiv aufgelistet,
+          die zwar in das von MaMpf vorgegebene Namensschema passen, deren dort
+          entahltene Abgaben-ID aber zu keiner Abgabe passt.
+        no_decision: >
+          Hier sind diejenigen Abgabeteams aufgelistet, für die Du eine
+          Korrektur hochgeladen hast, aber noch keine Entscheidung darüber
+          getroffen hast, ob die verspätete Abgabe akzeptiert wird. Die
+          entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
+        rejected: >
+          Hier sind diejenigen Abgabeteams aufgelistet, für die Du eine
+          Korrektur hochgeladen hast, aber bereits entschieden hast,
+          dass die verspätete Abgabe nicht akzeptiert wird. Die
+          entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
+  package:
+    no_zip: Die Datei ist kein .zip-Archiv.
+    to_big: Die Datei ist zu groß.
   locales:
     en: 'englisch'
     de: 'deutsch'
@@ -2876,6 +2914,7 @@ de:
     move: 'Verschieben'
     accept: 'Akzeptieren'
     reject: 'Ablehnen'
+    dismiss: 'Ausblenden'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
