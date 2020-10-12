@@ -152,9 +152,9 @@ class Submission < ApplicationRecord
           report[:successful_extractions] += 1
         end
       end
-      rescue => e
-        report[:errors].push "#{e.message}"
-      end
+    rescue => e
+      report[:errors] = "#{e.message}"
+    end
     report
   end
 

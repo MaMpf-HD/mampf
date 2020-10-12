@@ -34,14 +34,8 @@
 												 false) %>
 					</th>
 					<td class="col">
-						<% if report[:errors].any? %>
-							<ul>
-								<% report[:errors].each do |f| %>
-									<li>
-										<%= f %>
-									</li>
-								<% end %>
-							</ul>
+						<% if report[:errors].present? %>
+							<%= report[:errors] %>
 						<% else %>
 							<%= t('basics.none') %>
 						<% end %>
