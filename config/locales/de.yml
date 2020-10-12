@@ -2517,6 +2517,7 @@ de:
       number_of_submissions: Anzahl der Abgaben
       successfully_extracted: Anzahl der erfolgreich extrahierten Korrrekturen
       invalid_filenames: ungültige Dateinamen
+      in_subfolder: nicht im Basisverzeichnis
       invalid_files: ungültige Dateien
       invalid_submission_id: ungültige Abgabe-ID
       no_decision: noch keine Entscheidung über Akzeptanz getroffen
@@ -2525,6 +2526,9 @@ de:
         invalid_filenames: >
           Hier sind die Namen derjenigen Dateien aus dem Zip-Archiv aufgelistet,
           die nicht in das von MaMpf vorgegebene Namensschema passen.
+        in_subfolder: >
+          Hier sind die Namen derjenigen Dateien aus dem Zip-Archiv aufgelistet,
+          die in Unterverzeichnissen liegen. Diese werden von MaMpf ignoriert.
         invalid_files: >
           Hier sind die Namen derjenigen Dateien aus dem Zip-Archiv aufgelistet,
           die zwar einer Abgabe zugeordnet werden konnten, deren Hochladen aber

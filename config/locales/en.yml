@@ -2363,16 +2363,20 @@ en:
       number_of_submissions: Number of submissions
       successfully_extracted: Number of successfully extracted corrections
       invalid_filenames: invalid filenames
+      in_subfolder: not in the root directory
       invalid_files: invalid files
       invalid_submission_id: invalid submision id
       no_decision: no decision abou acceptance yet
       rejected: correction already rejected
       info:
         invalid_filenames: >
-          This is the list of all the files form the zip archive that do not
+          This is the list of all the files from the zip archive that do not
           fit into the naming scheme that is provided by MaMpf.
+        in_subfolder: >
+          This is the list of all the files from the zip archive that do not
+          belong to the roor directory and are therefore ignored by MaMpf.
         invalid_files: >
-          This is the list of all the files form the zip archive that can be
+          This is the list of all the files from the zip archive that can be
           matched to a submission but whose upload fails because they violate
           some rule (e.g. size is too large or they are not of the right file
           type).

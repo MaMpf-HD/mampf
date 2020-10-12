@@ -112,11 +112,15 @@ class Submission < ApplicationRecord
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
     report = { successful_extractions: 0, submissions: submissions.size,
-    					 invalid_filenames: [], invalid_id: [], no_decision: [],
-    					 rejected: [], invalid_file: [] }
+    					 invalid_filenames: [], invalid_id: [], in_subfolder: [],
+               no_decision: [], rejected: [], invalid_file: [] }
     tmp_folder = Dir.mktmpdir
     Zip::File.open(zipfile) do |zip_file|
       zip_file.each do |entry|
+        if File.basename(entry.name) != entry.name
+          report[:in_subfolder].push(entry.name)
+          next
+        end
       	if !'-ID-'.in?(entry.name)
       		report[:invalid_filenames].push(entry.name)
         	next

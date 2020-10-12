@@ -49,6 +49,26 @@
 				</tr>
 				<tr class="d-flex">
 					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.in_subfolder') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.in_subfolder'),
+												 false) %>
+					</th>
+					<td class="col">
+						<% if report[:in_subfolder].any? %>
+							<ul>
+								<% report[:in_subfolder].each do |f| %>
+									<li>
+										<%= f %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
 						<%= t('tutorial.bulk_upload.invalid_files') %>
 						<%= helpdesk(t('tutorial.bulk_upload.info.invalid_files'),
 												 false) %>
