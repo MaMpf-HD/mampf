@@ -3035,6 +3035,8 @@ de:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
         dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen wurden.
+      bulk_download_failed: >
+        Es gab ein Problem beim Erstellen der Zip-Datei: %{message}
     assignments:
       destruction_failed: >
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran

@@ -98,13 +98,17 @@ class Submission < ApplicationRecord
   def self.zip_submissions!(tutorial, assignment)
 		submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
-    archived_filestream = Zip::OutputStream.write_buffer do |stream|
-      submissions.each do |s|
-        stream.put_next_entry(s.filename_in_zip)
-        stream.write IO.read(s.file_path)
+    begin
+      archived_filestream = Zip::OutputStream.write_buffer do |stream|
+        submissions.each do |s|
+          stream.put_next_entry(s.filename_in_zip)
+          stream.write IO.read(s.file_path)
+        end
       end
+      archived_filestream.rewind
+    rescue => e
+      archived_filestream = e.message
     end
-    archived_filestream.rewind
     archived_filestream
   end
 
@@ -113,8 +117,7 @@ class Submission < ApplicationRecord
                                    assignment: assignment).proper
     report = { successful_extractions: 0, submissions: submissions.size,
     					 invalid_filenames: [], invalid_id: [], in_subfolder: [],
-               no_decision: [], rejected: [], invalid_file: [],
-               errors: [] }
+               no_decision: [], rejected: [], invalid_file: [] }
     tmp_folder = Dir.mktmpdir
     begin
       Zip::File.open(zipfile) do |zip_file|

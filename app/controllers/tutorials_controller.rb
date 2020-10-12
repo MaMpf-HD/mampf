@@ -64,11 +64,20 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_download
-    zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
-    send_data zipped_submissions.read,
+    @zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
+    if @zipped_submissions.is_a?(StringIO)
+    send_data @zipped_submissions.read,
               filename: @assignment.title + '@' + @tutorial.title + '.zip',
               type: 'application/zip',
               disposition: 'attachment'
+    else
+      flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
+                             message: @zipped_submissions)
+      redirect_to lecture_tutorials_path(@tutorial.lecture,
+                                         params:
+                                          { assignment: @assignment.id,
+                                            tutorial: @tutorial.id })
+    end
   end
 
   def bulk_upload

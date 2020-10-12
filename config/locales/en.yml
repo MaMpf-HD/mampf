@@ -2865,6 +2865,8 @@ en:
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
         submissions for it that include uploaded files.
+      bulk_download_failed: >
+        An error happened in the creation of the zip archive: %{message}
     assignments:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
