@@ -29,6 +29,26 @@
 				</tr>
 				<tr class="d-flex">
 					<th scope="row" class="col">
+						<%= t('tutorial.bulk_upload.errors') %>
+						<%= helpdesk(t('tutorial.bulk_upload.info.errors'),
+												 false) %>
+					</th>
+					<td class="col">
+						<% if report[:errors].any? %>
+							<ul>
+								<% report[:errors].each do |f| %>
+									<li>
+										<%= f %>
+									</li>
+								<% end %>
+							</ul>
+						<% else %>
+							<%= t('basics.none') %>
+						<% end %>
+					</td>
+				</tr>
+				<tr class="d-flex">
+					<th scope="row" class="col">
 						<%= t('tutorial.bulk_upload.invalid_filenames') %>
 						<%= helpdesk(t('tutorial.bulk_upload.info.invalid_filenames'),
 												 false) %>

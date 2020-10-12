@@ -2362,6 +2362,7 @@ en:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
       successfully_extracted: Number of successfully extracted corrections
+      errors: Error messages
       invalid_filenames: invalid filenames
       in_subfolder: not in the root directory
       invalid_files: invalid files
@@ -2380,6 +2381,8 @@ en:
           matched to a submission but whose upload fails because they violate
           some rule (e.g. size is too large or they are not of the right file
           type).
+        errors: >
+          These are the error messages that were shown during the extraction.
         invalid_submission_id: >
           This is the list of the files from the zip archive that fit into
           the naming schem provided by MaMpf, but whose submission ids do not

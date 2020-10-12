@@ -113,43 +113,48 @@ class Submission < ApplicationRecord
                                    assignment: assignment).proper
     report = { successful_extractions: 0, submissions: submissions.size,
     					 invalid_filenames: [], invalid_id: [], in_subfolder: [],
-               no_decision: [], rejected: [], invalid_file: [] }
+               no_decision: [], rejected: [], invalid_file: [],
+               errors: [] }
     tmp_folder = Dir.mktmpdir
-    Zip::File.open(zipfile) do |zip_file|
-      zip_file.each do |entry|
-        if File.basename(entry.name) != entry.name
-          report[:in_subfolder].push(entry.name)
-          next
+    begin
+      Zip::File.open(zipfile) do |zip_file|
+        zip_file.each do |entry|
+          if File.basename(entry.name) != entry.name
+            report[:in_subfolder].push(entry.name)
+            next
+          end
+      	  if !'-ID-'.in?(entry.name)
+      	 	  report[:invalid_filenames].push(entry.name)
+        	  next
+      	  end
+          submission = Submission.find_by_id(entry.name.split('-ID-').last
+                                                  .remove('.pdf'))
+          if !submission
+        	  report[:invalid_id].push(entry.name)
+        	  next
+          end
+          if submission.too_late? && submission.accepted.nil?
+        	  report[:no_decision].push(submission.team)
+        	  next
+          end
+          if submission.too_late? && submission.accepted == false
+					  report[:rejected].push(submission.team)
+        	  next
+          end
+          puts "Extracting #{entry.name}"
+          extracted_file = File.join(tmp_folder, entry.name)
+          entry.extract(extracted_file)
+          submission.update(correction: File.open(extracted_file))
+          if !submission.valid?
+        	  report[:invalid_file].push(entry.name)
+        	  next
+          end
+          report[:successful_extractions] += 1
         end
-      	if !'-ID-'.in?(entry.name)
-      		report[:invalid_filenames].push(entry.name)
-        	next
-      	end
-        submission = Submission.find_by_id(entry.name.split('-ID-').last
-                                                .remove('.pdf'))
-        if !submission
-        	report[:invalid_id].push(entry.name)
-        	next
-        end
-        if submission.too_late? && submission.accepted.nil?
-        	report[:no_decision].push(submission.team)
-        	next
-        end
-        if submission.too_late? && submission.accepted == false
-					report[:rejected].push(submission.team)
-        	next
-        end
-        puts "Extracting #{entry.name}"
-        extracted_file = File.join(tmp_folder, entry.name)
-        entry.extract(extracted_file)
-        submission.update(correction: File.open(extracted_file))
-        if !submission.valid?
-        	report[:invalid_file].push(entry.name)
-        	next
-        end
-        report[:successful_extractions] += 1
       end
-    end
+      rescue => e
+        report[:errors].push "#{e.message}"
+      end
     report
   end
 

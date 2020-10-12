@@ -2516,6 +2516,7 @@ de:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
       successfully_extracted: Anzahl der erfolgreich extrahierten Korrrekturen
+      errors: Fehlermeldungen
       invalid_filenames: ungültige Dateinamen
       in_subfolder: nicht im Basisverzeichnis
       invalid_files: ungültige Dateien
@@ -2535,6 +2536,8 @@ de:
           daran scheitert, dass sie nicht den Anforderungen genügen, die MaMpf
           an Korrekturdateien stellt (z.B. falscher Dateityp, Überschreiten der
           Größenbeschränkung etc.)
+        errors: >
+          Das sind die Fehlermeldungen, die beim Entpacken aufgetreten sind.
         invalid_submission_id: >
           Hier sind die Namen derjenigen Dateien aus dem Zip-Archiv aufgelistet,
           die zwar in das von MaMpf vorgegebene Namensschema passen, deren dort
