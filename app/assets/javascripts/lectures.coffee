@@ -320,7 +320,7 @@ $(document).on 'turbolinks:load', ->
     else
       $('#newLectureTerm').show()
       $('#lecture_term_id').prop('disabled', false)
-      $('#newLectureSort').hide()
+      $('#newLectureSort').show()
     return
 
   return
