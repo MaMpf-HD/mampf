@@ -7,8 +7,6 @@ then
   bundle exec rails db:migrate
   echo 'running: bundle exec rake sunspot:solr:reindex'
   bundle exec rake sunspot:solr:reindex
-  echo 'copying public assets to volume'
-  rsync -av --delete public/ /public/
   echo 'finished initialisation'
   touch completed_initial_run
 fi
