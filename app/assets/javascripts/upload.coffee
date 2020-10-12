@@ -399,7 +399,7 @@ bulkCorrectionUpload = (fileInput) ->
 
   # target the endpoint for shrine uploader
   uppy.use Uppy.XHRUpload,
-    endpoint: '/corrections/upload'
+    endpoint: '/packages/upload'
     fieldName: 'file'
 
   # add metadata to manuscript card if upload was successful
