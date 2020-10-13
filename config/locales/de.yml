@@ -2556,8 +2556,8 @@ de:
     no_zip: Die Datei ist kein .zip-Archiv.
     to_big: Die Datei ist zu groß.
   locales:
-    en: 'englisch'
-    de: 'deutsch'
+    en: 'Englisch'
+    de: 'Deutsch'
   mailer:
     notification: 'MaMpf-Benachrichtigung'
     notification_header: 'Benachrichtigung von MaMpf'
@@ -2685,7 +2685,7 @@ de:
     course_editors: 'ModuleditorInnen'
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
-    email: 'E-Mail-Addresse'
+    email: 'E-Mail-Adresse'
     preferences: 'Einstellungen'
     language: 'Sprache'
     date: 'Datum'
