@@ -246,7 +246,7 @@ class LecturesController < ApplicationController
   end
 
   def set_lecture_cookie
-    cookies[:current_lecture_id] = @lecture.id
+    cookies[:current_lecture_id] = strict_cookie(@lecture.id)
   end
 
   def set_view_locale
@@ -267,6 +267,8 @@ class LecturesController < ApplicationController
                                     :disable_teacher_display,
                                     :content_mode, :passphrase, :sort,
                                     :comments_disabled,
+                                    :submission_max_team_size,
+                                    :submission_grace_period,
                                     editor_ids: [])
   end
 

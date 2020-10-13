@@ -1,21 +1,15 @@
   <div class="card bg-light">
-    <div class="card-header"
+    <div class="card-header clickable"
          role="tab"
-         id="organizational_heading">
+         id="organizational_heading"
+         data-toggle="collapse"
+         data-target="#organizational_collapse"
+         aria-expanded="false" aria-controls="organizational_collapse">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h5>
             <%= t('categories.organizational_html') %>
           </h5>
-        </div>
-        <div class="col-6 text-right">
-          <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
-             href="#organizational_collapse"
-             id="organizational_collapse_button"
-             aria-expanded="false" aria-controls="organizational_collapse">
-            <%= t('buttons.toggle') %>
-          </a>
         </div>
       </div>
     </div>

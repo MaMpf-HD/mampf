@@ -84,6 +84,8 @@ en:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
+    submissions: 'Submissions'
+    tutorials: 'Tutorials'
   unauthorized:
     default: >
       You are not authorized to access this page.
@@ -335,6 +337,10 @@ en:
       new_posts: 'new forum posts'
       no_rights: 'You are not authorized to subscribe this event series.'
       disable_teacher_display: disable the display of the teacher's name
+      submission_max_team_size: >
+        maximal team size for submissions
+      submission_grace_period: >
+        grace period for submissions (in minutes)
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -526,6 +532,18 @@ en:
           lecture card on the start page and from the lecture page for generic
           users. This could make sense e.g. if a lecture that is term
           independent is only administratively supervised by a "teacher".
+        submission_max_team_size: >
+          Here you can enter how many persons are maximally allowed for
+          one submission. If you enter nothing, there will be no restriction on
+          the team size. Changes will apply imediately. Note however
+          that a reduction of this number does not hold retroactively:
+          Already existing submissions of teams with more members will remain
+          valid.
+        submission_grace_period: >
+          Here you can enter what the grace period (in minutes) is for
+          submissions. Files that are uploaded after the deadline but before the
+          grace period is expired will be accepted by the system, but will be
+          timestamped and marked as "too late".
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -1633,11 +1651,19 @@ en:
       export_probes: Export Probes
       start: Start Date
       end: End Date
+    tutorial:
+      new: 'Add tutorial'
+    assignment:
+      new: 'Add assignment'
   profile:
     account: 'Account'
     name: 'Display name'
     name_information: >
-      This name will be displayed in your board posts.
+      This name will be displayed in your board posts and comments.
+    name_in_tutorials: 'Name in tutorials'
+    name_in_tutorials_information: >
+      This name will be displayed to your tutor for your submissions.
+      If you leave this field empty, your display name will be used for that.
     change_data: 'Change login data'
     delete_account: 'Delete Account'
     courses: 'Courses'
@@ -1699,6 +1725,22 @@ en:
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    email_for_submissions: >
+      Regarding the submission of homework assignments I wand to be notified by
+      MaMpf via email if
+    email_for_submission_upload: >
+      a team member successfully uploaded a file for a submission.
+    email_for_submission_removal: >
+      a team member removed a file for a submission.
+    email_for_submission_join: >
+      someone joined your team for a submission.
+    email_for_submission_leave: >
+      someone left your team for a submission.
+    email_for_correction_upload: >
+      your tutor uploaded the correction for a submission.
+    email_for_submission_decision: >
+      a decision about the acceptance or rejection of late submission has been
+      made
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2150,6 +2192,213 @@ en:
   locales:
     en: 'English'
     de: 'German'
+  submission:
+    invalid_code_for_assignment: >
+      The code you entered is invalid for %{assignment}.
+    invalid_code: The code you entered is invalid.
+    assignment_expired: >
+      The due date for this homework assignment has already
+      expired.
+    already_in: You are already a partner for this assgnment.
+    lecture_not_subscribed: >
+      You are not subscribed to the coresponding event series.
+    no_partners_no_leave: >
+      You cannot leave as you are the only person in this group (but you
+      you can delete this submission).
+    nothing_here: >
+      There is nothing here yet. Create a new submission or join one.
+    nothing_here_past: >
+      Nothing was submitted for this assignment.
+    invitations_to: Invitations to
+    joined_successfully: >
+      You successfully joind the submission to %{assignment}.
+    failed_redemption: >
+      Redemption of submission code failed: %{message}.
+    current: Current submission
+    previous: Previous Submission
+    old_ones: Old Submissions
+    future_ones: Future Submissions
+    no_old_ones: Nothing has been submitted yet.
+    no_future_ones: >
+      There are no assignments beyond the current one.
+    no_manuscript_yet: Currently, no file is stored.
+    exists_no_longer: This submission does not exist.
+    no_manuscript_yet: No file has yet been uploaded.
+    missing_consent: You must consent to upload file.
+    optimize: Optimize
+    optimization_log: Log (show)
+    optimization_failed: >
+      Optimization failed: File is still to big.
+    upload_failure: "Error while uploading! Please try again."
+    correct_file_size: The filesize does not exceed the limit.
+    file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
+    file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
+    optimization_help_html: >
+      <b>Optimizing:</b> Use this button to optimize your file with your browser.
+      This process takes about 1-2 minutes. We strongly suggest downloading the resulting
+      pdf as this feature is marked experimental.
+    optimization_info: >
+      For this purpose, a small additional program is downloaded and executed <i> in the browser </i>.
+        Your file will remain on your device until you have uploaded them.
+    assure_third_party: >
+      I assure you that the file does not infringe any rights of third parties.
+    removal_notice_html: >
+      <b>Notice:</b> Files will be deleted at the end of the semester.
+       We do not assume any liability for possible data loss.
+    submission_upload_notice_html: >
+      <b> Important </b>: Please press "Save", otherwise your
+        Changes are discarded when you leave the site.
+    no_manuscript_yet: Currently, no file is stored.
+    exists_no_longer: This submission does not exist.
+    working: Working
+    code_copied_to_clipboard: Code has been copied to the clipboard.
+    deletion_date: Deletion Date
+    multiple_files_selected: Multiple files have been selected.
+    merging_help_html: >
+      <b>Merging:</b> Use this button to merge the files in the order given above.
+    merging_info: >
+      In order to do so, a small programm will be loaded by your browser. Your files
+      are kept on your device until you upload them.
+    merge: Merge
+    merging_failed: Merging failed
+    no_correction_yet: Currently, no file is stored.
+    move_to_tutorial: move to tutorial
+    manuscript_no_pdf: The uploaded file is not a valid pdf file.
+    manuscript_size_too_big: >
+      The uploaded file is too big (maximum allowed size is 10 MB).
+    too_late_no_saving:
+      The due date for this assignment has expired, therefore this change
+      cannot be saved.
+    too_late_no_editing:
+      The due date for this assignment has expired, therefore this submission
+      cannot be edited.
+    too_late_no_inviting:
+      The due date for this assignment has expired, therefore invitations to
+      this submission are no longer possible.
+    too_late_no_destroying:
+      The due date for this assignment has expired, therefore this submission
+      cannot be deleted.
+    late_submission_warning_html: >
+      You can make changes within the grace period until %{friendly_deadline}.
+      However, if you do so, the submission will be declared as
+      <b>'too late'</b>.
+      It is within the discretion of the teacher and the tutor if and how the
+      submission will be graded.
+    last_modification: >
+      last modification
+    last_modification_info_html: >
+      It is logged when the last change to the submission by a team member took
+      place. The following is taken into account:
+      <ul>
+      <li>
+      creation of the submission
+      </li>
+      <li>
+      successful first upload or replacement of the file
+      </li>
+      <li>
+      the joining of a team member
+      </li>
+      <li>
+      the leaving of a team member
+      </li>
+      </ul>
+      If the last modification ist before the due date, the submission is valid.
+      Otherwise it will be marked as <b>too late</b>.
+    okay: Everything is fine.
+    no_file: No file is stored.
+    nothing: No submission was created.
+    with_correction: >
+      Everything is fine. You tutor has uploaded the correction to this
+      submission.
+    too_late: >
+      The submission is marked as "late", because the last change was after
+      the due date. It is at the discretion of the teacher and the tutor
+      if and how it is graded.
+    too_late_accepted: >
+      You tutor accepted the submission that was marked as "late" and is now
+      working on the correction.
+    too_late_rejected: >
+      Your submission that was marked as "late" was rejected.
+    under_review: >
+      Your tutor is currently reviewing the submission.
+    already_corrected: >
+      For this assignment a correction was already uploaded. Therefore you
+      cannot join anymore.
+    late: late submission
+    late_submissions: late submissions
+    rejected: rejected
+    bulk_download: Bulk download of submissions
+    bulk_upload: Bulk upload of corrections
+  assignment:
+    expired: The due date has expired.
+    not_in_this_lecture: >
+      In this lecture, no assignments have yet been created. Therefore, there
+      are no submissions.
+    no_current: >
+      Currently, there is no assignment for which something could be submitted.
+    no_previous: >
+      Nothing has yet been submitted.
+    nothing_yet_in_lecture: >
+      In this lecture nothing had yet to be submitted.
+    destruction_info: >
+      <i>
+      Note.
+      </i>
+      An assignment can only be deleted if there are no submissions for it that
+      include uploaded files.
+  tutorial:
+    no_submissions_for_assignment: >
+      There are no submissions for this assignment.
+    destruction_info: >
+      <i>
+      Note.
+      </i>
+      A tutorial can only be deleted if there are no submissions for it that
+      include uploaded files.
+    late_submission_decision: >
+      You can decide whether you accept it or reject it.
+    bulk_upload:
+      report: Report on the bulk upload of the corrections
+      number_of_submissions: Number of submissions
+      successfully_extracted: Number of successfully extracted corrections
+      errors: Error messages
+      invalid_filenames: invalid filenames
+      in_subfolder: not in the root directory
+      invalid_files: invalid files
+      invalid_submission_id: invalid submision id
+      no_decision: no decision abou acceptance yet
+      rejected: correction already rejected
+      info:
+        invalid_filenames: >
+          This is the list of all the files from the zip archive that do not
+          fit into the naming scheme that is provided by MaMpf.
+        in_subfolder: >
+          This is the list of all the files from the zip archive that do not
+          belong to the roor directory and are therefore ignored by MaMpf.
+        invalid_files: >
+          This is the list of all the files from the zip archive that can be
+          matched to a submission but whose upload fails because they violate
+          some rule (e.g. size is too large or they are not of the right file
+          type).
+        errors: >
+          These are the error messages that were shown during the extraction.
+        invalid_submission_id: >
+          This is the list of the files from the zip archive that fit into
+          the naming schem provided by MaMpf, but whose submission ids do not
+          match any submissions.
+        no_decision: >
+          This is the list of submission teams for which you uploaded a
+          correction but have not yet made a decision on whether to accept the
+          late  submission. The corresponding corrections have not been
+          uploaded.
+        rejected: >
+          This is the list of submission teams for which you uploaded a correction
+          but have already decided to reject the submission. The corresponding
+          corrections have not been uploaded.
+  package:
+    no_zip: This file is not a .zip archive.
+    to_big: This file is too big.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -2176,6 +2425,53 @@ en:
     subscribe_course: 'You can subscribe to it in your profile settings.'
     subscribe_course_text: >
       You can subscribe to it in your profile settings.
+    submission_invitation_subject: >
+      Invitation to submission of %{assignment} in %{lecture}
+    submission_invitation: >
+      %{issuer} issuer has invited you to join a submission to %{assignment}
+      in %{lecture}. The code to join is: %{code}. You can enter and redeem
+      it in MaMpf manually or follow this %{link}.
+    submission_upload_subject: >
+      Successful upload for submission to %{assignment} in %{lecture}
+    submission_upload_html: >
+      You have succesfully uploaded the file "%{filename}" to submission
+      to %{assignment} in %{lecture}. You can view the current file via this
+      %{link}.
+    submission_upload_by_others_info_html: >
+      %{uploader} has succesfully uploaded the file "%{filename}" to submission
+      to %{assignment} in %{lecture}. You can view the current file via this
+      %{link}
+    submission_upload_removal_subject: >
+      File for submission to %{assignment} in %{lecture} removed
+    submission_upload_removal_html: >
+      You have removed the file "%{filename}" for the submission
+      to %{assignment} in %{lecture}.
+    submission_upload_removal_by_others_info_html: >
+      %{remover} has removed the file "%{filename}" for the submission
+      to %{assignment} in %{lecture}.
+    submission_join_subject: >
+      %{user} has joined the submission for %{assignment} in %{lecture}
+    submission_join: >
+      %{user} has joined the submission for %{assignment} in %{lecture}.
+    submission_leave_subject: >
+      %{user} has left the submission for %{assignment} in %{lecture}
+    submission_leave: >
+      %{user} has left the submission for %{assignment} in %{lecture}.
+    correction_upload_subject: >
+      Correction added to %{assignment} in %{lecture}
+    correction_upload_html: >
+      %{tutor} has uploaded the correction for the submission to
+      %{assignment} in %{lecture}. You can view it via this %{link}.
+    submission_acceptance_subject: >
+      Late submission for %{assignment} in %{lecture} accepted
+    submission_acceptance_subject: >
+      Your late submission for %{assignment} in %{lecture} has been accepted
+      and will be graded.
+    submission_rejection_subject: >
+      Late submission to %{assignment} in %{lecture} rejected
+    submission_rejection: >
+      Your late submission to %{assignment} in %{lecture} has been rejected
+      and will not be graded.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
@@ -2343,6 +2639,26 @@ en:
     subscribe: 'Subscribe'
     programs: 'Programs'
     visibility: 'Additional material'
+    tutorials: 'Tutorials'
+    tutor: 'Tutor'
+    assignments: 'Assignments'
+    deadline: 'Due Date'
+    tutorial: 'Tutorial'
+    code: 'Code'
+    files: 'Files'
+    partners: 'Partners'
+    team: 'Team'
+    expired: 'expired'
+    you: 'You'
+    and_you: 'and You'
+    invited: 'Invited'
+    nobody: 'nobody'
+    submission: 'Submission'
+    correction: 'Correction'
+    submissions: 'Submissions'
+    corrections: 'Corrections'
+    overview: Overview
+    tba: tba
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2376,6 +2692,7 @@ en:
     create_program: 'Create Study Path'
     create_subject: 'Create Subject'
     create_division: 'Create Division'
+    create: 'Create'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -2431,6 +2748,19 @@ en:
     import_script_items: 'Import table of contents from manuscript'
     close_comments: 'Close discussions for all related media'
     open_comments: 'Reopen all closed discussions'
+    join: 'Join'
+    copy_to_clipboard: 'Copy to Clipboard'
+    leave: 'Leave'
+    upload: 'Upload'
+    upload_success: 'Upload successfull'
+    refresh_token: 'Refresh Code'
+    invite: 'Invite'
+    send: 'Send'
+    download: 'Download'
+    move: 'Move'
+    accept: 'Accept'
+    reject: 'Reject'
+    dismiss: 'Dismiss'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -2466,6 +2796,12 @@ en:
       Are you sure? This will in particular mean that the starting page for all
       users will be different as the current lectures are computed from the
       current term.
+    delete_account_with_submissions: >
+      Are you sure? ATTENTION: There are %{submissions} for assignments from
+      you in the systen, %{single_submissions} of which were made by you alone.
+      The last ones and their corresponding corrections will be deleted, while
+      the submissions where you were part of a teams whose members still
+      have an account will remain in the system until the planned deltion date.
   privacy_html: >
     We care about handling your data responsibly. By
     GDPR, we need your consent for storing and processing
@@ -2524,6 +2860,23 @@ en:
     no_answer: 'There is no subject with this id.'
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
+    no_tutorial: 'There is no tutorial with this id.'
+    no_submission: There is no submission with this id.
+    no_assignment: There is no assignment with this id.
+    no_lecture_given: Invalid or no lecture was given.
+    no_tutor_in_this_lecture: You are not a tutor in this lecture.
+    no_editor_or_teacher: >
+      In this event series you are neither teacher nor editor.
+    tutorials:
+      destruction_failed: >
+        The tutorial could not be deleted. That may be because there are already
+        submissions for it that include uploaded files.
+      bulk_download_failed: >
+        An error happened in the creation of the zip archive: %{message}
+    assignments:
+      destruction_failed: >
+        The assignment could not be deleted. That may be because there are
+        already submissions for it that include uploaded files.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'
@@ -2532,6 +2885,14 @@ en:
           attributes:
             details:
               blank: 'You need to give a text.'
+        assignment:
+          attributes:
+            title:
+              taken: >
+                This assignment title is already taken for this event series.
+              blank: You need to give a title.
+            deadline:
+              blank: You need to give a due date.
         chapter:
           attributes:
             title:
@@ -2648,6 +3009,12 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        submission:
+          lecture_not_matching: >
+            The tutorial should belong to the same lecture as the assignment.
+          attributes:
+            tutorial:
+              blank: A valid tutorial has to be supplied.
         tag:
           attributes:
             notions:
@@ -2661,12 +3028,25 @@ en:
             season:
               inclusion: 'Not a valid type.'
               taken: 'This term already exists.'
+        tutorial:
+          attributes:
+            title:
+              taken: >
+                This tutorium title is already taken for this event series.
+              blank: You need to giv a title.
         user:
           attributes:
             courses:
               blank: 'You need to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
+        user_submission_join:
+          only_one_per_assignment: >
+            A submission to this assignment has already been created.
+            Each user is only allowed one submission per assignment.
+          team_size: >
+            You are not allowed to join as otherwise the submission team would
+            have more members than allowed.
         vote:
           attributes:
             clicker:

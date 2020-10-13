@@ -58,7 +58,6 @@ gem 'devise'
 gem 'erubis'
 gem 'cancancan'
 gem 'jquery-rails'
-gem 'jquery_file_download-rails'
 gem 'jquery-ui-rails'
 gem 'js-routes'
 gem 'bootstrap'
@@ -73,7 +72,9 @@ gem 'acts_as_tree'
 gem 'activerecord-import',
   git: 'https://github.com/zdennis/activerecord-import.git',
   branch: 'master'
-gem 'thredded'
+gem 'thredded',
+  git: 'https://github.com/fosterfarrell9/thredded',
+  branch: 'master'
 gem 'kramdown-parser-gfm'
 gem 'thredded-markdown_katex'
 gem 'rails-i18n'
@@ -89,8 +90,17 @@ gem 'sidekiq'
 gem 'faraday'
 gem 'globalize'
 gem 'globalize-accessors'
-gem 'commontator'
+gem 'commontator',
+  git: 'https://github.com/fosterfarrell9/commontator',
+  branch: 'master'
 gem 'acts_as_votable'
+gem 'sprockets-rails',
+  git: 'https://github.com/rails/sprockets-rails',
+  branch: 'master'
+gem 'premailer-rails'
+gem 'select2-rails'
+gem 'clipboard-rails'
+gem 'rubyzip'
 
 group :development, :docker_development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -108,6 +118,8 @@ group :development, :docker_development do
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'rubocop', '~> 0.54.0', require: false
+  gem 'pgreset'
+  gem 'marcel'
 #  gem 'bullet'
 end
 

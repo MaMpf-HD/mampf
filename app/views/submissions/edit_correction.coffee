@@ -1,0 +1,10 @@
+$('.correction-column[data-id="<%= @submission.id %>"]').empty()
+  .append('<%= j render partial: "submissions/correction_upload",
+                        locals: { submission: @submission } %>')
+fileInput = document.getElementById('upload-correction-<%= @submission.id %>')
+uploadButton = document.getElementById('correction-uploadButton-<%= @submission.id %>')
+informer = document.getElementById('upload-correction-informer-<%= @submission.id %>')
+statusBar = document.getElementById('upload-correction-statusBar-<%= @submission.id %>')
+hiddenInput = document.getElementById('upload-correction-hidden-<%= @submission.id %>')
+metaData = document.getElementById('upload-correction-metadata-<%= @submission.id %>')
+correctionUpload(fileInput, uploadButton, informer, statusBar, hiddenInput, metaData)

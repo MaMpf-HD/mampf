@@ -1,0 +1,14 @@
+root /public;
+
+location / {
+    client_max_body_size 4G;
+    # try_files $uri $uri/ @rails;
+    try_files $uri @rails;
+}
+
+location /__accel_redirect {
+    internal;
+    alias   /private/;
+    add_header Content-Encoding $upstream_http_content_encoding;
+    gzip off;
+}

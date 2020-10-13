@@ -1,5 +1,21 @@
 class NotificationMailer < ApplicationMailer
-  before_action :set_up
+  before_action :set_sender_and_locale
+  before_action :set_recipients
+  before_action :set_recipient_and_submission,
+                only: [:submission_upload_email,
+                       :submission_upload_removal_email,
+                       :submission_join_email,
+                       :submission_leave_email,
+                       :correction_upload_email,
+                       :submission_acceptance_email,
+                       :submission_rejection_email]
+  before_action :set_filename,
+                only: [:submission_upload_email,
+                       :submission_upload_removal_email]
+  before_action :set_user,
+                only: [:submission_join_email,
+                       :submission_leave_email]
+
 
   def medium_email
     @medium = params[:medium]
@@ -39,11 +55,101 @@ class NotificationMailer < ApplicationMailer
                     title: @course.title))
   end
 
+  def submission_invitation_email
+    @recipient = params[:recipient]
+    @assignment = params[:assignment]
+    @code = params[:code]
+    @issuer = params[:issuer]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_invitation_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_upload_email
+    @uploader = params[:uploader]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_upload_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_upload_removal_email
+    @remover = params[:remover]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_upload_removal_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_join_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_join_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title,
+                    user: @user.tutorial_name))
+  end
+
+  def submission_leave_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_leave_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title,
+                    user: @user.tutorial_name))
+  end
+
+  def correction_upload_email
+    @tutor = params[:tutor]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.correction_upload_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_acceptance_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_acceptance_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_rejection_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_rejection_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
   private
 
-  def set_up
-    I18n.locale = params[:locale]
-    @recipients = params[:recipients]
+  def set_sender_and_locale
     @sender = "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_EMAIL}>"
+    I18n.locale = params[:locale]
+  end
+
+  def set_recipients
+    @recipients = params[:recipients]
+  end
+
+  def set_recipient_and_submission
+    @recipient = params[:recipient]
+    @submission = params[:submission]
+    @assignment = @submission.assignment
+  end
+
+  def set_filename
+    @filename = params[:filename]
+  end
+
+  def set_user
+    @user = params[:user]
   end
 end

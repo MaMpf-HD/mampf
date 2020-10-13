@@ -1,0 +1,38 @@
+<%= form_with url: add_correction_path(submission),
+              scope: 'submission',
+              html: { class: 'correction-upload',
+                      data: { id: submission.id } } do |f| %>
+  <div class="row">
+    <div class="col-12"
+         id="correction-uploadButton-<%= submission.id %>"
+         data-choosefiles="<%= t('basics.file') %>">
+      <%= f.hidden_field :correction,
+                         value: submission.cached_correction_data,
+                         id: "upload-correction-hidden-#{submission.id}" %>
+      <%= f.file_field :correction,
+                       class: 'form-control-file',
+                       id: "upload-correction-#{submission.id}",
+                       accept: 'application/pdf' %>
+    </div>
+    <div class="col-12" id="upload-correction-metadata-<%= submission.id %>">
+      <% if submission.correction %>
+          <%= submission.correction_filename %>
+          (<%= number_to_human_size(submission.correction_size) %>)
+      <% end %>
+    </div>
+    <div class="col-12" id="upload-correction-informer-<%= submission.id %>">
+    </div>
+    <div class="col-12" id="upload-correction-statusBar-<%= submission.id %>">
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary' %>
+      <%= link_to t('buttons.cancel'),
+                  cancel_edit_correction_path(submission),
+                  class: 'btn btn-sm btn-secondary',
+                  remote: true %>
+    </div>
+  </div>
+<% end %>

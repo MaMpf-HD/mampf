@@ -24,19 +24,17 @@ class ProfileController < ApplicationController
     return if @errors.present?
     if @user.update(lectures: @lectures,
                     name: @name,
+                    name_in_tutorials: @name_in_tutorials,
                     subscription_type: @subscription_type,
-                    email_for_medium: @email_for_medium,
-                    email_for_teachable: @email_for_teachable,
-                    email_for_announcement: @email_for_announcement,
-                    email_for_news: @email_for_news,
                     locale: @locale,
                     edited_profile: true)
+      @user.update(email_params)
       # remove notifications that have become obsolete
       clean_up_notifications
       # update lecture cookie
       update_lecture_cookie
       I18n.locale = @locale
-      cookies[:locale] = @locale
+      cookies[:locale] = strict_cookie(@locale)
       @user.touch
       redirect_to :start, notice: t('profile.success')
     else
@@ -117,13 +115,21 @@ class ProfileController < ApplicationController
   def set_basics
     @subscription_type = params[:user][:subscription_type].to_i
     @name = params[:user][:name]
-    @email_for_medium = params[:user][:email_for_medium] == '1'
-    @email_for_announcement = params[:user][:email_for_announcement] == '1'
-    @email_for_teachable = params[:user][:email_for_teachable] == '1'
-    @email_for_news = params[:user][:email_for_news] == '1'
+    @name_in_tutorials = params[:user][:name_in_tutorials]
     @lectures = Lecture.where(id: lecture_ids)
     @courses = Course.where(id: @lectures.pluck(:course_id).uniq)
     @locale = params[:user][:locale]
+  end
+
+  def email_params
+    params.require(:user).permit(:email_for_medium, :email_for_announcement,
+                                 :email_for_teachable, :email_for_news,
+                                 :email_for_submission_upload,
+                                 :email_for_submission_removal,
+                                 :email_for_submission_join,
+                                 :email_for_submission_leave,
+                                 :email_for_correction_upload,
+                                 :email_for_submission_decision)
   end
 
   def set_lecture

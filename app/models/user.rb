@@ -27,6 +27,9 @@ class User < ApplicationRecord
   # a user has many lectures as a teacher
   has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
 
+  # a user has many tutorials as a tutor
+  has_many :given_tutorials, class_name: 'Tutorial', foreign_key: 'tutor_id'
+
   # a user has many notifications as recipient
   has_many :notifications, foreign_key: 'recipient_id'
 
@@ -35,6 +38,10 @@ class User < ApplicationRecord
 
   # a user has many clickers as editor
   has_many :clickers, foreign_key: 'editor_id', dependent: :destroy
+
+  # a user has many submissions (of assignments)
+  has_many :user_submission_joins, dependent: :destroy
+  has_many :submissions, through: :user_submission_joins
 
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
@@ -47,11 +54,31 @@ class User < ApplicationRecord
   # set some default values before saving if they are not set
   before_save :set_defaults
 
+  before_destroy :destroy_single_submissions, prepend: true
+
   # add timestamp for DSGVO consent
   after_create :set_consented_at
 
   # users can comment stuff
   acts_as_commontator
+
+  scope :email_for_submission_upload,
+        -> { where(email_for_submission_upload: true) }
+  scope :email_for_submission_removal,
+        -> { where(email_for_submission_removal: true) }
+  scope :email_for_submission_join,
+        -> { where(email_for_submission_join: true) }
+  scope :email_for_submission_leave,
+        -> { where(email_for_submission_leave: true) }
+  scope :email_for_correction_upload,
+        -> { where(email_for_correction_upload: true) }
+  scope :email_for_submission_decision,
+        -> { where(email_for_submission_decision: true) }
+
+  searchable do
+    text :tutorial_name
+  end
+
 
   # returns the array of all teachers
   def self.teachers
@@ -227,9 +254,24 @@ class User < ApplicationRecord
     end
   end
 
+  def tutorial_info_uncached
+    return email unless tutorial_name.present?
+    tutorial_name + ' (' + email + ')'
+  end
+
+  def tutorial_info
+    Rails.cache.fetch("#{cache_key_with_version}/user_info") do
+      tutorial_info_uncached
+    end
+  end
+
   def name_or_email
     return name unless name.blank?
     email
+  end
+
+  def tutorial_name
+    name_in_tutorials.presence || name
   end
 
   def short_info
@@ -435,6 +477,24 @@ class User < ApplicationRecord
       no_term_lectures.select { |l| l.edited_by?(self) || l.published? }.sort
   end
 
+  def submission_partners(lecture)
+    lecture_submissions = Submission.where(assignment: lecture.assignments)
+    own_submissions = UserSubmissionJoin.where(user: self,
+                                               submission: lecture_submissions)
+                                        .pluck(:submission_id)
+    partner_ids = UserSubmissionJoin.where(submission: own_submissions)
+                                    .pluck(:user_id)
+    User.where(id: partner_ids - [id])
+  end
+
+  def tutor?
+    given_tutorials.any?
+  end
+
+  def editor_or_teacher_in?(lecture)
+    in?(lecture.editors) || self == lecture.teacher
+  end
+
   private
 
   def set_defaults
@@ -460,5 +520,10 @@ class User < ApplicationRecord
   def admin_or_editor?
     return true if admin? || editor?
     false
+  end
+
+  def destroy_single_submissions
+    Submission.where(id: submissions.select { |s| s.users.count == 1 }
+                                    .map(&:id)).destroy_all
   end
 end

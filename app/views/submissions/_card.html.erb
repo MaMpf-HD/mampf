@@ -1,0 +1,33 @@
+<div class="card bg-light">
+	<div class="card-header submissionHeader <%= submission_color(submission, assignment) %>"
+			 data-id="<%= assignment.id %>">
+		<div class="row">
+			<div class="col-10">
+				<h5>
+					<% if assignment.medium %>
+						<%= link_to assignment.title,
+												assignment.medium,
+												class: 'text-dark' %>
+					<% else %>
+						<%= assignment.title %>
+					<% end %>
+				</h5>
+			</div>
+			<div class="col-2 text-right">
+				<%= submission_status(submission, assignment) %>
+			</div>
+			<div class="col-12">
+				bis
+		    <% if assignment.deadline %>
+    		  <%= I18n.l(assignment.deadline, format: :short) %>
+    		<% end %>
+			</div>
+		</div>
+	</div>
+	<div class="submissionMain"
+			 data-id="<%= assignment.id %>">
+		<%= render partial: 'submissions/card_main',
+							 locals: { submission: submission,
+							 					 assignment: assignment } %>
+	</div>
+</div>

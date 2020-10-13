@@ -32,6 +32,12 @@ class Ability
         answer.question.edited_with_inheritance_by?(user)
       end
 
+      can [:new, :cancel_edit, :cancel_new], Assignment
+
+      can [:edit, :create, :update, :destroy], Assignment do |assignment|
+        assignment.lecture.edited_by?(user)
+      end
+
       # only users who are editors of a chapter's lecture can edit, update
       # or destroy them
       can [:update, :destroy], Chapter do |chapter|
@@ -98,17 +104,51 @@ class Ability
 
       can [:list_tags, :list_sections, :display], Section
 
+      can [:index, :new, :create, :join,:cancel_edit, :cancel_new,
+           :redeem_code, :enter_code], Submission
+
+      # an editor might still be a student in some other course
+      can [:edit, :update, :destroy, :leave,
+           :refresh_token, :enter_invitees, :invite], Submission do |submission|
+        user.in?(submission.users)
+      end
+
+      can [:add_correction, :delete_correction, :select_tutorial, :move,
+           :cancel_action, :accept, :reject, :edit_correction,
+           :cancel_edit_correction],
+          Submission do |submission|
+        user == submission.tutorial.tutor
+      end
+
+      can [:show_manuscript, :show_correction], Submission do |submission|
+          user.in?(submission.users) || user == submission.tutorial.tutor
+      end
+
       can :manage, Tag
       can [:display_cyto, :fill_tag_select, :fill_course_tags,
            :take_random_quiz, :postprocess], Tag
 
       cannot :read, Term
 
+      can [:new, :create, :cancel_edit, :cancel_new, :overview], Tutorial
+
+      can :index, Tutorial do |tutorial|
+        user.tutor?
+      end
+
+      can [:edit, :update, :destroy], Tutorial do |tutorial|
+        tutorial.lecture.edited_by?(user)
+      end
+
+      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+        tutorial.tutor == user
+      end
+
       cannot :read, User
       can :update, User do |u|
         user == u
       end
-      can [:teacher, :fill_user_select], User
+      can [:teacher, :fill_user_select, :list], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
       can [:new, :create, :edit, :open, :close, :set_alternatives,
@@ -155,10 +195,10 @@ class Ability
       cannot [:index, :update, :create], Tag
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
       can :teacher, User
+
       can [:show_announcements, :organizational,
            :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course],
-          Lecture
+           :display_course], Lecture
       cannot [:show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
@@ -187,6 +227,34 @@ class Ability
 
       can [:show_example, :find_example, :show_property, :show_structure,
            :find_tags, :display_info], :erdbeere
+
+      can [:index, :new, :create, :join,:cancel_edit, :cancel_new,
+           :redeem_code, :enter_code], Submission
+
+      can [:edit, :update, :destroy, :leave,
+           :refresh_token, :enter_invitees,
+           :invite], Submission do |submission|
+        user.in?(submission.users)
+      end
+
+      can [:show_correction, :show_manuscript], Submission do |submission|
+        user.in?(submission.users) || user == submission.tutorial.tutor
+      end
+
+      can [:add_correction, :delete_correction, :select_tutorial, :move,
+           :cancel_action, :accept, :reject, :edit_correction,
+           :cancel_edit_correction],
+          Submission do |submission|
+        user == submission.tutorial.tutor
+      end
+
+      can :index, Tutorial do |tutorial|
+        user.tutor?
+      end
+
+      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+        tutorial.tutor == user
+      end
     end
   end
 end

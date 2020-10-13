@@ -49,10 +49,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-#  def self.default_url_options(options={})
-#    options.merge({ :locale => I18n.locale })
-#  end
-
   private
 
   # It's important that the location is NOT stored if:
@@ -72,14 +68,18 @@ class ApplicationController < ActionController::Base
     store_location_for(:user, request.fullpath)
   end
 
+  def strict_cookie(val)
+    {
+      value: val,
+      same_site: "Strict"
+    }
+  end
+
   def set_locale
-    if params[:locale].in?(I18n.available_locales.map(&:to_s))
-      locale_param = params[:locale]
-    end
     I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookies[:locale] || I18n.default_locale
+                    cookie_locale_param || I18n.default_locale
     unless user_signed_in?
-      cookies[:locale] = I18n.locale
+      cookies[:locale] = strict_cookie(I18n.locale)
     end
   end
 
@@ -97,5 +97,19 @@ class ApplicationController < ActionController::Base
                                    request.original_fullpath,
                                    request.referrer,
                                    study_participant)
+  end
+
+  def locale_param
+    return unless params[:locale].in?(available_locales)
+    params[:locale]
+  end
+
+  def cookie_locale_param
+    return unless cookies[:locale].in?(available_locales)
+    cookies[:locale]
+  end
+
+  def available_locales
+    I18n.available_locales.map(&:to_s)
   end
 end

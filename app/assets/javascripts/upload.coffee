@@ -148,7 +148,6 @@ manuscriptUpload = (fileInput) ->
     if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
       # read uploaded file data from the upload endpoint response
       uploadedFileData = JSON.stringify(data)
-
       # set hidden field value to the uploaded file data so that it is
       # submitted with the form as the attachment
       hiddenInput.value = uploadedFileData
@@ -325,12 +324,365 @@ imageUpload = (fileInput) ->
 
   uppy
 
+@correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData) ->
+  # uppy will add its own file input
+  fileInput.style.display = 'none'
+
+  # create uppy instance
+  uppy = Uppy.Core(
+    id: fileInput.id
+    autoProceed: true
+    restrictions:
+      allowedFileTypes: ['.pdf']
+      maxFileSize: 15728640)
+    .use(Uppy.FileInput,
+      target: uploadButton
+      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+    .use(Uppy.Informer, target: informer)
+    .use(Uppy.StatusBar, target: statusBar)
+
+  # target the endpoint for shrine uploader
+  uppy.use Uppy.XHRUpload,
+    endpoint: '/corrections/upload'
+    fieldName: 'file'
+
+  # add metadata to manuscript card if upload was successful
+  uppy.on 'upload-success', (file, response) ->
+    data = response.body
+    if data.metadata.mime_type in ['application/pdf']
+      # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data)
+
+      # set hidden field value to the uploaded file data so that it is
+      # submitted with the form as the attachment
+      hiddenInput.value = uploadedFileData
+
+      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+      metaData.style.display = 'inline'
+    else
+      # display error message if uppy detects wrong mime type
+      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      uppy.reset()
+    return
+
+  # display error message on console if an upload error has ocurred
+  uppy.on 'upload-error', (file, error) ->
+    console.log('error with file:', file.id)
+    console.log('error message:', error)
+    return
+
+  uppy
+
+bulkCorrectionUpload = (fileInput) ->
+
+  uploadButton = document.getElementById('upload-bulk-correction-button')
+  informer = document.getElementById('upload-bulk-correction-informer')
+  statusBar = document.getElementById('upload-bulk-correction-statusBar')
+  hiddenInput = document.getElementById('upload-bulk-correction-hidden')
+  metaData = document.getElementById('upload-bulk-correction-metadata')
+
+  # uppy will add its own file input
+  fileInput.style.display = 'none'
+
+  # create uppy instance
+  uppy = Uppy.Core(
+    id: fileInput.id
+    autoProceed: true
+    restrictions:
+      allowedFileTypes: ['.zip']
+      maxFileSize: 1073741824)
+    .use(Uppy.FileInput,
+      target: uploadButton
+      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+    .use(Uppy.Informer, target: informer)
+    .use(Uppy.StatusBar, target: statusBar)
+
+  # target the endpoint for shrine uploader
+  uppy.use Uppy.XHRUpload,
+    endpoint: '/packages/upload'
+    fieldName: 'file'
+
+  # add metadata to manuscript card if upload was successful
+  uppy.on 'upload-success', (file, response) ->
+    data = response.body
+    if data.metadata.mime_type in ['application/zip']
+      # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data)
+
+      # set hidden field value to the uploaded file data so that it is
+      # submitted with the form as the attachment
+      hiddenInput.value = uploadedFileData
+
+      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+      metaData.style.display = 'inline'
+      $('#upload-bulk-correction-save').prop('disabled', false)
+    else
+      # display error message if uppy detects wrong mime type
+      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      uppy.reset()
+    return
+
+  # display error message on console if an upload error has ocurred
+  uppy.on 'upload-error', (file, error) ->
+    console.log('error with file:', file.id)
+    console.log('error message:', error)
+    return
+
+  uppy
+
+
+###
+@param fileInput: dom element to listen to.
+###
+@result = undefined
+@userManuscriptUpload = (fileInput) ->
+  # update helpdesk
+  $('[data-toggle="popover"]').popover()
+  hiddenInput = document.getElementById('upload-userManuscript-hidden')
+  hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
+  fileInput.style.display = 'none'
+  result = undefined
+  merged = undefined
+  files = []
+  filez= []
+  progressOptimize = 0
+  $('#userManuscript-status').hide()
+  uploadButton = $('#userManuscript-uploadButton-btn')
+  swapInFiles = (i,j,r) ->
+    return () ->
+      x = filez[i]
+      filez[i] = filez[j]
+      filez[j] = x
+      r()
+  renderMultipleFiles = ->
+    i =0
+    $("#files-display").empty()
+    console.log filez
+    for f in filez
+      fDisplay = $("<li>"+f.name+"</li>")
+      if i!=0
+        toggleUp = $("<button class='btn fas fa-sort-up'></button>")
+        toggleUp.on 'click', swapInFiles(i-1,i,renderMultipleFiles)
+        fDisplay.append(toggleUp)
+      if i!= filez.length-1
+        toggleDown = $("<button class='btn fas fa-sort-down'></button>")
+        toggleDown.on 'click', swapInFiles(i,i+1,renderMultipleFiles)
+        fDisplay.append(toggleDown)
+      $("#files-display").append(fDisplay)
+      console.log(i)
+      i++
+
+  renderOptimization = (file) ->
+    $('#multiple-files-selected').hide()
+    $('#files-merge').hide()
+    name= file.name
+    if file.name == undefined
+      name =[f.name for f in filez].join(".")
+    $("#userManuscriptMetadata").text(name+"("+formatBytes(file.size)+")")
+    # rerender all
+    $("#removeUserManuscript").hide()
+    $('#userManuscript-status').show(400)
+    $('#file-size-correct').hide()
+    $('#file-size-way-too-big').hide()
+    $('#file-size-too-big').hide()
+    $('#file-optimize').hide()
+    $('#userManuscript-upload-notice').hide()
+    $('#userManuscript-uploadButton-call').prop('disabled',true)
+    if file.size < 5000000
+      $('#userManuscript-uploadButton-call').prop('disabled',false)
+      $('#file-size-correct').show()
+      $('#userManuscript-uploadCenter').show()
+      $('#userManuscript-uploadButton-call')
+        .removeClass('btn-outline-secondary')
+        .addClass 'btn-primary'
+    else
+      if file.size > 10000000
+        $('#file-size-way-too-big').show()
+      else
+        $('#file-size-too-big').show()
+        $('#userManuscript-uploadButton-call').prop('disabled',false)
+      $('#file-optimize').show()
+
+  $('#userManuscript-uploadButton-call').on 'click', (e) ->
+    e.preventDefault()
+    if merged != undefined && result == undefined
+      result = merged
+    if result== undefined
+      result =document.getElementById('upload-userManuscript').files[0]
+    if $("#file-permission-checkbox").is(":checked")
+      #Upload blob
+      formData = new FormData()
+      name =[f.name for f in filez].join(".")
+      formData.append("file", result, name)
+      xhr = new XMLHttpRequest()
+      xhr.open('POST', '/submissions/upload', true)
+      xhr.onload =  () ->
+        if (xhr.status == 200)
+          hiddenInput.value = xhr.responseText
+          $('#upload-userManuscript').val("")
+          $('input[type="submit"]').prop('disabled',false)
+          $('#userManuscript-upload-notice').show()
+          $('#submission_detach_user_manuscript').val('false')
+          $('#userManuscript-uploadButton-call').text(
+            $('#userManuscript-uploadButton-call').data 'tr-success'
+          )
+          $('#userManuscript-uploadButton-call')
+              .removeClass('btn-primary')
+              .addClass 'btn-outline-secondary'
+        else
+          alert(
+            $('#userManuscript-uploadButton-call').data('tr-failure')
+            + xhr.responseText
+          )
+      xhr.onerror = (e) ->
+        alert(
+          $('#userManuscript-uploadButton-call').data('tr-failure')
+        )
+      xhr.upload.onprogress = (e) ->
+        percentUpload = Math.floor(100 * e.loaded / e.total)
+        $('#userManuscript-uploadButton-call').text(percentUpload+" %")
+        return
+      xhr.send formData
+    else
+      alert(
+        $('#userManuscript-uploadButton-call').data 'tr-missing-consent'
+      )
+
+  $("#log-btn").on 'click',() ->
+    $("#userManuscript-optimize-log").toggle()
+  $("#log-merge-btn").on 'click',() ->
+    $("#userManuscript-merge-log").toggle()
+  $('#userManuscript-merge-btn').on 'click',(e) ->
+    e.preventDefault()
+
+    workingText = $('#userManuscript-merge-btn').data('tr-working')
+    $('#userManuscript-merge-btn').text(workingText)
+    $('#userManuscript-merge-btn').prop("disabled", true)
+    $('#userManuscript-merge-btn').removeClass('btn-primary')
+    .addClass 'btn-outline-secondary'
+
+    reader = new FileReader()
+    readFileIntoFiles = ->
+      if @result
+        arrayBuffer = @result
+        array = new Uint8Array(arrayBuffer)
+        console.log files.push(array)
+        reader.onload = readFileIntoFiles
+        if files.length < filez.length
+          reader.readAsArrayBuffer filez[files.length]
+        else
+          worker = new Worker('/pdfcomprezzor/worker.js')
+          worker.addEventListener 'message', ((e) ->
+            console.log(e.data)
+            if e.data.type == 'log'
+              $('#userManuscript-merge-btn').html(
+                workingText +
+                ".".repeat(progressOptimize + 1) +
+                "&nbsp;".repeat(2-progressOptimize)
+              )
+              progressOptimize = (progressOptimize+1)%3
+              $('#userManuscript-merge-log').append(
+                $("<div><small>" + e.data.message + "</div></small>")
+              )
+            if e.data.type == "result"
+              merged = new Blob([e.data.result], type: 'application/pdf')
+              $('#merging-help-text').hide()
+              renderOptimization(merged)
+          ), false
+          action = if files.length > 1 then 'merge' else 'compress'
+          r = worker.postMessage(
+            array: files
+            action: action)
+      return
+    reader.onload = readFileIntoFiles
+    reader.readAsArrayBuffer(filez[0])
+
+  $('#userManuscript-optimize-btn').on 'click',(e) ->
+    e.preventDefault()
+    file = document.getElementById('upload-userManuscript').files[0]
+    console.log file
+    workingText = $('#userManuscript-optimize-btn').data('tr-working')
+    $('#userManuscript-optimize-btn').text(workingText)
+    $('#userManuscript-optimize-btn').prop("disabled", true)
+    $('#userManuscript-optimize-btn').removeClass('btn-primary')
+    .addClass 'btn-outline-secondary'
+
+    reader = new FileReader()
+    reader.onload = () ->
+      arrayBuffer = this.result
+      array = new Uint8Array(arrayBuffer)
+      worker = new Worker('/pdfcomprezzor/worker.js')
+      worker.addEventListener 'message', ((e) ->
+        console.log 'Worker said: ', e
+        if e.data.type == 'log'
+          $('#userManuscript-optimize-btn').html(
+            workingText +
+            ".".repeat(progressOptimize + 1) +
+            "&nbsp;".repeat(2-progressOptimize)
+          )
+          progressOptimize = (progressOptimize+1)%3
+          $('#userManuscript-optimize-log').append(
+            $("<div><small>" + e.data.message + "</div></small>")
+          )
+        else if e.data.type == 'result'
+          $('#userManuscript-optimize-btn').text(
+            formatBytes(e.data.result.length)
+          )
+          result = new Blob([e.data.result], type: 'application/pdf')
+          $('#optimization-help-text').hide()
+          if e.data.result.length> 10000000
+            alert(
+              $('#userManuscript-optimize-btn').data 'tr-failed'
+            )
+          else
+            $('#userManuscript-uploadButton-call').prop('disabled',false)
+            name =[f.name for f in filez].join(".")
+            $("#userManuscriptMetadata").text(
+              name + "(" + formatBytes(result.size) + ")"
+            )
+            $('#userManuscript-uploadButton-call')
+              .removeClass('btn-outline-secondary')
+              .addClass 'btn-primary'
+            $('#file-size-correct').show()
+            $('#file-size-way-too-big').hide()
+            $('#file-size-too-big').hide()
+        return
+      ), false
+      worker.postMessage
+        array: [array]
+    if merged
+      reader.readAsArrayBuffer(merged)
+    else
+      reader.readAsArrayBuffer(file)
+
+  $('#upload-userManuscript').change () ->
+    $('input[type="submit"]').prop('disabled',true)
+    filez = Array.prototype.slice.call(
+        document.getElementById('upload-userManuscript').files
+      )
+    if this.files.length > 1
+      $('#userManuscript-status').show(400)
+      $('#multiple-files-selected').show()
+      $('#files-merge').show()
+      $('#file-size-correct').hide()
+      $('#file-size-way-too-big').hide()
+      $('#file-size-too-big').hide()
+      $('#file-optimize').hide()
+      renderMultipleFiles()
+    else
+      renderOptimization(this.files[0])
+      merged = undefined
+
+  uploadButton.on 'click', (e) ->
+    e.preventDefault()
+    $('#upload-userManuscript').trigger('click')
 
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
   manuscript = document.getElementById('upload-manuscript')
   geogebra = document.getElementById('upload-geogebra')
   image = document.getElementById('upload-image')
+  bulkCorrection = document.getElementById('upload-bulk-correction')
 
   # make uppy idempotent for turbolinks
   $('.uppy').remove()
@@ -341,6 +693,7 @@ $(document).on 'turbolinks:load', ->
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
   imageUpload image if image?
+  bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
   # make uppy upload buttons look like bootstrap
   $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
