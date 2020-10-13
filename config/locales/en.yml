@@ -669,7 +669,9 @@ en:
           as there is no event series associated to this course.
         image: >
           You can upload an image that visualizes this course. It will be used
-          in the cards that appear in MaMpf's start page.
+          in the cards that appear in MaMpf's start page. The suggested
+          aspect ratio is 3:2. The uploaded image will be downscaled by MaMpf
+          (maximal width 405 pixels, maximal height 270 pixels).
     chapter:
       edit: 'Edit %{chapter}'
       position: 'Position after %{chapter_name}'

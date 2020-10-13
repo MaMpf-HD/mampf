@@ -712,7 +712,9 @@ de:
         image: >
           Du kannst ein Bild zu diesem Modul hochladen. Dieses wird für
           Visualisierungen verwendet, z.B. in den Cards auf der
-          MaMpf-Startseite.
+          MaMpf-Startseite. Das Seitenverhältnis sollte idealerweise 3:2
+          betragen, das hochgeladene Bild wird dann von MaMpf herunterskaliert
+          (auf maximal 405 Pixel Breite, 270 Pixel Höhe).
     chapter:
       edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
