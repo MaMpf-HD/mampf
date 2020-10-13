@@ -429,6 +429,101 @@ bulkCorrectionUpload = (fileInput) ->
 
 
 ###
+directUpload provides an interface to upload (multiple) files to an endpoint
+
+@param fileInputElement name of the file element that is hidden and this all is 
+       based on.
+@param uploadStatusElement name of the element were the upload status is posted
+@param uploadButtonElement name of the button were the upload is triggered
+@param actualUploadButtonElement name of the button that triggers the upload
+@param permissionElement checkbox to be confirmed (optional,  null for skip)
+@param endpoint place to put the files '/submissions/upload'
+@param progressBarElement element to write percentage in.
+       requires data attribute tr-success,tr-failure, tr-missing-consent
+@param successCallback will be called, if request was sucessful (optional)
+@param fileChangeCallBack will be called, if selected files have changed
+###
+@directUpload = (
+  fileInputElement
+  uploadStatusElement
+  uploadButtonElement
+  actualUploadButtonElement
+  permissionElement
+  endpoint
+  progressBarElement
+  successCallback
+  fileChangeCallBack) ->
+    # update helpdesk
+    $('[data-toggle="popover"]').popover()
+    hiddenInput = document.getElementById('upload-userManuscript-hidden')
+    hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
+    fileInput =document.getElementById(fileInputElement)
+    fI = $(fileInputElement)
+    fileInput.style.display = 'none'
+    result = undefined
+    merged = undefined
+    files = []
+    filez= []
+    progressOptimize = 0
+    $(uploadStatusElement).hide()
+    uploadButton = $(uploadButtonElement)
+    $(actualUploadButtonElement).on 'click', (e) ->
+      e.preventDefault()
+      if permissionElement == null || $(permissionElement).is(":checked")
+        #Upload blob
+        formData = new FormData()
+        i=0
+        if fileInput.files.length>1
+          for f in fileInput.files
+            formData.append("file"+(i++), f, f.name)
+        else
+          formData.append("file",fileInput.files[0],fileInput.files[0].name)
+        xhr = new XMLHttpRequest()
+        xhr.open('POST', endpoint, true)
+        xhr.onload =  () ->
+          if (xhr.status == 200)
+            hiddenInput.value = xhr.responseText
+            if successCallback != undefined
+              successCallback()
+            $(progressBarElement).text(
+              $(progressBarElement).data 'tr-success'
+            )
+            $(progressBarElement)
+                .removeClass('btn-primary')
+                .addClass 'btn-outline-secondary'
+          else
+            alert(
+              $(progressBarElement).data('tr-failure')
+              + xhr.responseText
+            )
+        xhr.onerror = (e) ->
+          alert(
+            $(progressBarElement).data('tr-failure')
+          )
+        xhr.upload.onprogress = (e) ->
+          percentUpload = Math.floor(100 * e.loaded / e.total)
+          $(progressBarElement).text(percentUpload+" %")
+          return
+        xhr.send formData
+      else
+        alert(
+          $(progressBarElement).data 'tr-missing-consent'
+        )
+    
+
+    fI.change () ->
+      if fileChangeCallBack != undefined
+        fileChangeCallBack(fI.files)
+      $(actualUploadButtonElement)
+        .show()
+        .removeClass('btn-outline-secondary')
+        .addClass 'btn-primary'
+
+    uploadButton.on 'click', (e) ->
+      e.preventDefault()
+      fI.trigger('click')
+
+###
 @param fileInput: dom element to listen to.
 ###
 @result = undefined
