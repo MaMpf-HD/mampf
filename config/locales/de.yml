@@ -2962,6 +2962,13 @@ de:
       Bist Du sicher? Damit wird sich für alle NutzerInnen die Startseite
       ändern, da die aktuellen Vorlesungen über das aktuelle Semester bestimmt
       werden.
+    delete_account_with_submissions: >
+      Bist Du sicher? ACHTUNG: Es sind %{submissions} Abgaben zu Hausaufgaben
+      von Dir im System, davon %{single_submissions} als Einzelabgabe.
+      Die Einzelabgaben und zugehörigen Korrekturen werden alle gelöscht,
+      die Abgaben und zugehörigen Korrekturen, bei denen Du Mitglied
+      eines größeren Teams warst, dessen Mitglieder noch einen Account haben,
+      bleiben im System bis zum vorgesehenen Löschdatum.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur

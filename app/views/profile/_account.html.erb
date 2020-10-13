@@ -6,5 +6,5 @@
 <%= link_to t('profile.delete_account'),
             user_registration_path,
             class: "btn btn-outline-danger mb-2",
-            data: { confirm: t('sure') },
+            data: { confirm: confirm_user_deletion_text(current_user) },
             method: :delete %>

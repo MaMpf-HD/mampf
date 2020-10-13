@@ -40,7 +40,7 @@ class User < ApplicationRecord
   has_many :clickers, foreign_key: 'editor_id', dependent: :destroy
 
   # a user has many submissions (of assignments)
-  has_many :user_submission_joins
+  has_many :user_submission_joins, dependent: :destroy
   has_many :submissions, through: :user_submission_joins
 
   # if a homepage is given it should at leat be a valid address
@@ -53,6 +53,8 @@ class User < ApplicationRecord
 
   # set some default values before saving if they are not set
   before_save :set_defaults
+
+  before_destroy :destroy_single_submissions, prepend: true
 
   # add timestamp for DSGVO consent
   after_create :set_consented_at
@@ -518,5 +520,10 @@ class User < ApplicationRecord
   def admin_or_editor?
     return true if admin? || editor?
     false
+  end
+
+  def destroy_single_submissions
+    Submission.where(id: submissions.select { |s| s.users.count == 1 }
+                                    .map(&:id)).destroy_all
   end
 end
