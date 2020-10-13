@@ -1459,8 +1459,8 @@ de:
           Hier kannst Du den Anzeigename eingeben. Der Anzeigename
           wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.
         email: >
-          Hier kannst Du die Emailadresse eingeben. Mit dieser erfolgt
-          dann auch die Nutzeranmeldung, außerdem werden Emails bezüglich
+          Hier kannst Du die E-Mail-Adresse eingeben. Mit dieser erfolgt
+          dann auch die Nutzeranmeldung, außerdem werden E-Mails bezüglich
           Passwortzurücksetzung dorthin geschickt.
         administrator: >
           Hier kannst Du anklicken, ob die NutzerIn
@@ -1795,7 +1795,7 @@ de:
       neue Mitteilungen oder neue Features über das MaMpf-interne
       Benachrichtigungssystem erhalten und in MaMpf angezeigt bekommen.
     email_notifications: >
-      Ich möchte per Email über Folgendes benachrichtigt werden:
+      Ich möchte per E-Mail über Folgendes benachrichtigt werden:
     email_for_announcement:
       neue Mitteilungen in von mir abonnierten Veranstaltungen.
     email_for_medium:
@@ -2229,7 +2229,7 @@ de:
         Dein Browser wird von ThymE leider nicht unterstützt.
         Du kannst das Video nur mit dem Browser-Player anschauen.
   sign_up_html: >
-    Du hast noch keinen Account? Dann kannst Du Dich mit Deiner Emailadresse
+    Du hast noch keinen Account? Dann kannst Du dich mit Deiner E-Mail-Adresse
     %{path}.
   sign_up: 'registrieren'
   main:
@@ -2564,10 +2564,10 @@ de:
     medium_subject: 'Neues Medium'
     new_medium: 'Es wurde ein neues Medium veröffentlicht: %{title}'
     unsubscribe_html: >
-      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf erhalten
+      Wenn Du in Zukunft keine E-Mails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen %{profile} deaktivieren.
     unsubscribe_text: >
-      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf erhalten
+      Wenn Du in Zukunft keine E-Mails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen Profileinstellungen
       deaktivieren.
     announcement_subject: 'Neue Mitteilung'
