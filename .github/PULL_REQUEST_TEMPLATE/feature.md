@@ -1,7 +1,10 @@
+This pull request questionaire is for features and bugs
+
 * **Please check if the PR fulfills these requirements**
 
-- [ ] E2E Tests for the changes have been added (for bug fixes / features) via Cypress
-- [ ] Docs have been added / updated (for bug fixes / features)
+- [ ] E2E Tests for the changes have been added  via Cypress
+- [ ] Meaningful rspec tests have been added
+- [ ] Docs have been added / updated 
 - Linter
     - [ ] `rubocop` reports equal or less errors and warnings **in total**
     - [ ] `yarn lint` reports equal or less errors and warnings **in total**
