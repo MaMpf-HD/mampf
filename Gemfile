@@ -121,7 +121,7 @@ group :development, :docker_development do
   gem "rubocop-packaging", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails", require: false
-  gem 'erb_lint', require: false
+  gem "erb_lint", require: false
   gem "pgreset"
   gem "marcel"
   #  gem 'bullet'
