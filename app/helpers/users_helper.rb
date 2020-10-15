@@ -9,7 +9,7 @@ module UsersHelper
     submission_count = user.submissions.proper.size
     single_submission_count = user.submissions.proper
                                   .select { |s| s.users.size == 1}.size
-    t('confirmation.delete_account_with_submissions',
+    t('confirmation.delete_account_with_submissions_html',
       submissions: submission_count,
       single_submissions: single_submission_count)
   end

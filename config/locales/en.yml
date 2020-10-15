@@ -1719,9 +1719,6 @@ en:
       You have not yet subscribed any event series outside of the current term.
     no_current_at_all: >
       In the current term, no event series have yet been published.
-    new_design: >
-      Use the new *experimental* design (personalized start page, no dropdown
-      menu for lecture selection)
     other_preferences: >
       Other Preferences
     changes_made: >
@@ -1743,6 +1740,20 @@ en:
     email_for_submission_decision: >
       a decision about the acceptance or rejection of late submission has been
       made
+    delete_account: Delete Account
+    stored_submissions: >
+      There are %{submissions} submissions to assignments from you in the
+      system.
+    single_submissions: >
+      %{single_submissions} single submissions (i.e. submissions in which you
+      had no partners)
+    team_submissions: '%{team_submissions} team submissions'
+    submission_deletion: >
+      The single submissions and their corresponding corrections will be
+      deleted, while the team submissions will remain in the system until the
+      scheduled deletion date.
+    confirm_account_deletion: >
+      Please confirm the deletion of your account by pushing the red button.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2798,12 +2809,6 @@ en:
       Are you sure? This will in particular mean that the starting page for all
       users will be different as the current lectures are computed from the
       current term.
-    delete_account_with_submissions: >
-      Are you sure? ATTENTION: There are %{submissions} for assignments from
-      you in the systen, %{single_submissions} of which were made by you alone.
-      The last ones and their corresponding corrections will be deleted, while
-      the submissions where you were part of a teams whose members still
-      have an account will remain in the system until the planned deltion date.
   privacy_html: >
     We care about handling your data responsibly. By
     GDPR, we need your consent for storing and processing

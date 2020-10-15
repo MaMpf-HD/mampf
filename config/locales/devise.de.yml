@@ -63,6 +63,7 @@ de:
         confirm_new_password: 'Neues Passwort bestätigen'
     registrations:
       destroyed: "Dein Account wurde gelöscht."
+      not_destroyed: "Es gab ein Problem bei der Löschung Deines Accounts. Bitte wende Dich an die MaMpf-Administratoren."
       signed_up: "Du hast dich erfolgreich registriert. Bitte nimm Dir eine Minute, um Dein Profil zu vervollständigen"
       signed_up_but_inactive: "Du hast dich erfolgreich registriert. Wir konnten Dich noch nicht anmelden, da Dein Account inaktiv ist."
       signed_up_but_locked: "Du hast dich erfolgreich registriert. Wir konnten Dich noch nicht anmelden, da Dein Account gesperrt ist."
