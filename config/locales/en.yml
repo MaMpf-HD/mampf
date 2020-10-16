@@ -1754,6 +1754,16 @@ en:
       scheduled deletion date.
     confirm_account_deletion: >
       Please confirm the deletion of your account by pushing the red button.
+    thanks_for_contributions: >
+      Thank you for being a contributor to MaMpf! Your contributions include
+    given_lectures: '%{lectures} event series as teacher'
+    edited_media: '%{media} meia as media editor'
+    contributions_remain: >
+      The defalut setting is that these remain in MaMpf. Here you can enter
+      under which name they will be shown in the future:
+    manual_deletion: >
+      If you do not want these materials to remain in MaMpf you can delete them
+      manually.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
