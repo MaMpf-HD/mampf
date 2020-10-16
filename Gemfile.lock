@@ -203,6 +203,10 @@ GEM
       addressable (~> 2.5)
     erubi (1.9.0)
     erubis (2.7.0)
+    exception_handler (0.8.0.0)
+      bundler
+      rails (>= 4.2.0)
+      responders
     execjs (2.7.0)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
@@ -566,6 +570,7 @@ DEPENDENCIES
   devise
   devise-bootstrap-views
   erubis
+  exception_handler (~> 0.8.0.0)
   factory_bot_rails
   faker
   faraday
