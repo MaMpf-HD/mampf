@@ -1873,8 +1873,9 @@ de:
     given_lectures: '%{lectures} Vorlesung als DozentIn'
     edited_media: '%{media} Medien als MedieneditorIn'
     contributions_remain: >
-      Diese würden wir gerne in MaMpf belassen. Hier kannst Du eingeben,
-      unter welchem Namen diese künftig angezeigt werden sollen:
+      Die Standardeinstellung sieht vor, dass diese in MaMpf belassen werden.
+      Hier kannst Du eingeben, unter welchem Namen diese künftig angezeigt
+      werden sollen:
     manual_deletion: >
       Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, kannst
       Du die entsprechenden Vorlesungen und Medien manuell löschen.

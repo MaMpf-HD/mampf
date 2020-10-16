@@ -523,7 +523,7 @@ class User < ApplicationRecord
     destroy
   end
 
-  # private
+  private
 
   def set_defaults
     self.subscription_type = 1 if subscription_type.nil?
