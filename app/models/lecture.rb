@@ -670,6 +670,18 @@ class Lecture < ApplicationRecord
     end
   end
 
+  def assignments_by_deadline
+    assignments.group_by(&:deadline).sort
+  end
+
+  def current_assignments
+    assignments_by_deadline.select { |x| x.first >= Time.now }.first&.second
+  end
+
+  def previous_assignments
+    assignments_by_deadline.select { |x| x.first < Time.now }.last&.second
+  end
+
   private
 
   # used for after save callback

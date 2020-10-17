@@ -487,6 +487,18 @@ class User < ApplicationRecord
     User.where(id: partner_ids - [id])
   end
 
+  def recent_submission_partners(lecture)
+    recent_submissions = Submission.where(assignment:
+                                            lecture.current_assignments +
+                                              lecture.previous_assignments)
+    own_submissions = UserSubmissionJoin.where(user: self,
+                                               submission: recent_submissions)
+                                        .pluck(:submission_id)
+    partner_ids = UserSubmissionJoin.where(submission: own_submissions)
+                                    .pluck(:user_id)
+    User.where(id: partner_ids - [id])
+  end
+
   def tutor?
     given_tutorials.any?
   end

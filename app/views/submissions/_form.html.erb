@@ -8,8 +8,9 @@
         <%= f.select :tutorial_id,
                      options_for_select(tutorials_selection(lecture),
                                         submission.tutorial&.id ||
-                                          assignment.previous
-                                                   &.tutorial(current_user)&.id),
+                                          submission
+                                            .preceding_tutorial(current_user)
+                                           &.id),
                      {},
                      { class: 'form-control' } %>
         <div class="invalid-feedback"
@@ -29,8 +30,8 @@
           <%= f.select :invitee_ids,
                        options_for_select(partner_selection(current_user,
                                                             lecture),
-                                          preceding_partner_ids(assignment,
-                                                                current_user)),
+                                          partner_preselection(current_user,
+                                                               lecture)),
                        {},
                        { multiple: true,
                          class: 'form-control' } %>

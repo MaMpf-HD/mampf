@@ -1,36 +1,44 @@
 <% if @assignments.any? %>
   <div class="row mb-3">
     <div class="col-12 col-md-6">
-      <h4 class="mb-3">
-        <%= t('submission.current') %>
-      </h4>
-      <% if @current_assignment %>
-        <div class="submissionArea"
-             data-id="<%= @current_assignment.id %>">
-          <%= render partial: 'submissions/card',
-                     locals: { assignment: @current_assignment,
-                               submission: @current_assignment
-                                             .submission(current_user) }%>
+      <div class="row">
+        <div class="col-12">
+          <h4 class="mb-3">
+            <%= t('submission.current') %>
+          </h4>
         </div>
-      <% else %>
-        <%= t('assignment.no_current') %>
-      <% end %>
+        <% @current_assignments.each do |a| %>
+          <div class="col-12 mb-3 submissionArea"
+               data-id="<%= a.id %>">
+            <%= render partial: 'submissions/card',
+                       locals: { assignment: a,
+                                 submission: a.submission(current_user) }%>
+          </div>
+        <% end %>
+        <% unless @current_assignments %>
+          <%= t('assignment.no_current') %>
+        <% end %>
+      </div>
     </div>
     <div class="col-12 col-md-6">
-      <h4 class="mb-3">
-        <%= t('submission.previous') %>
-      </h4>
-      <% if @previous_assignment %>
-        <div class="submissionArea"
-             data-id="<%= @previous_assignment.id %>">
-          <%= render partial: 'submissions/card',
-                     locals: { assignment: @previous_assignment,
-                               submission: @previous_assignment
-                                           .submission(current_user) } %>
+      <div class="row">
+        <div class="col-12">
+          <h4 class="mb-3">
+            <%= t('submission.previous') %>
+          </h4>
         </div>
-      <% else %>
-        <%= t('assignment.no_previous') %>
-      <% end %>
+        <% @previous_assignments.each do |a| %>
+          <div class="col-12 mb-3 submissionArea"
+               data-id="<%= a.id %>">
+            <%= render partial: 'submissions/card',
+                       locals: { assignment: a,
+                                 submission: a.submission(current_user) } %>
+          </div>
+        <% end %>
+        <% unless @previous_assignments %>
+          <%= t('assignment.no_previous') %>
+        <% end %>
+      </div>
     </div>
   </div>
   <div class="accordion mb-3" id="submissionsAccordion">

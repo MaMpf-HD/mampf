@@ -12,14 +12,6 @@ class Assignment < ApplicationRecord
 
   scope :expired, -> { where('deadline < ?', Time.now) }
 
-  def self.current_in_lecture(lecture)
-    Assignment.where(lecture: lecture).active.order(:deadline)&.first
-  end
-
-  def self.previous_in_lecture(lecture)
-    Assignment.where(lecture: lecture).expired.order(:deadline)&.last
-  end
-
   def submission(user)
   	UserSubmissionJoin.where(submission: Submission.where(assignment: self),
   													 user: user)
@@ -52,18 +44,18 @@ class Assignment < ApplicationRecord
   end
 
   def current?
-  	self == Assignment.current_in_lecture(lecture)
+  	self.in?(lecture.current_assignments)
   end
 
   def previous?
-  	self == Assignment.previous_in_lecture(lecture)
+  	self.in?(lecture.previous_assignments)
   end
 
   def previous
-    siblings = lecture.assignments.order(:deadline)
-    position = siblings.find_index(self)
+    siblings = lecture.assignments_by_deadline
+    position = siblings.map(&:first).find_index(deadline)
     return unless position.positive?
-    siblings[position - 1]
+    siblings[position - 1].second
   end
 
   def submission_partners(user)
