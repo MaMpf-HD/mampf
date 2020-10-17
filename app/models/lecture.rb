@@ -661,7 +661,8 @@ class Lecture < ApplicationRecord
   end
 
   def tutors
-    User.where(id: tutorials.pluck(:tutor_id))
+    User.where(id: TutorTutorialJoin.where(tutorial: tutorials)
+                                    .pluck(:tutor_id).uniq)
   end
 
   def submission_deletion_date
