@@ -28,7 +28,9 @@ class User < ApplicationRecord
   has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
 
   # a user has many tutorials as a tutor
-  has_many :given_tutorials, class_name: 'Tutorial', foreign_key: 'tutor_id'
+
+  has_many :tutor_tutorial_joins, foreign_key: 'tutor_id', dependent: :destroy
+  has_many :given_tutorials, through: :tutor_tutorial_joins, source: :tutorial
 
   # a user has many notifications as recipient
   has_many :notifications, foreign_key: 'recipient_id'
@@ -481,6 +483,18 @@ class User < ApplicationRecord
     lecture_submissions = Submission.where(assignment: lecture.assignments)
     own_submissions = UserSubmissionJoin.where(user: self,
                                                submission: lecture_submissions)
+                                        .pluck(:submission_id)
+    partner_ids = UserSubmissionJoin.where(submission: own_submissions)
+                                    .pluck(:user_id)
+    User.where(id: partner_ids - [id])
+  end
+
+  def recent_submission_partners(lecture)
+    recent_submissions = Submission.where(assignment:
+                                            lecture.current_assignments +
+                                              lecture.previous_assignments)
+    own_submissions = UserSubmissionJoin.where(user: self,
+                                               submission: recent_submissions)
                                         .pluck(:submission_id)
     partner_ids = UserSubmissionJoin.where(submission: own_submissions)
                                     .pluck(:user_id)

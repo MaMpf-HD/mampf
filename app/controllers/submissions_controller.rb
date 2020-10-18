@@ -9,12 +9,12 @@ class SubmissionsController < ApplicationController
 
   def index
     @assignments = @lecture.assignments
-    @current_assignment = Assignment.current_in_lecture(@lecture)
-    @previous_assignment = Assignment.previous_in_lecture(@lecture)
+    @current_assignments = @lecture.current_assignments
+    @previous_assignments = @lecture.previous_assignments
     @old_assignments = @assignments.expired.order('deadline DESC') -
-                         [@previous_assignment]
+                         @previous_assignments
     @future_assignments = @assignments.active.order(:deadline) -
-                            [@current_assignment]
+                            @current_assignments
   end
 
   def new

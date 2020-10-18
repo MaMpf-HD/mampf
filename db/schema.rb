@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_09_160756) do
+ActiveRecord::Schema.define(version: 2020_10_17_133345) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -734,6 +734,15 @@ ActiveRecord::Schema.define(version: 2020_10_09_160756) do
     t.index ["user_id", "postable_id"], name: "thredded_user_topic_read_states_user_postable", unique: true
   end
 
+  create_table "tutor_tutorial_joins", force: :cascade do |t|
+    t.bigint "tutorial_id", null: false
+    t.bigint "tutor_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["tutor_id"], name: "index_tutor_tutorial_joins_on_tutor_id"
+    t.index ["tutorial_id"], name: "index_tutor_tutorial_joins_on_tutorial_id"
+  end
+
   create_table "tutorials", force: :cascade do |t|
     t.text "title"
     t.bigint "tutor_id"
@@ -844,6 +853,8 @@ ActiveRecord::Schema.define(version: 2020_10_09_160756) do
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "users", on_delete: :cascade
+  add_foreign_key "tutor_tutorial_joins", "tutorials"
+  add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
   add_foreign_key "tutorials", "lectures"
   add_foreign_key "user_submission_joins", "users"
 end

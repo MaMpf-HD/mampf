@@ -2352,7 +2352,7 @@ de:
     future_ones: Zukünftige Abgaben
     no_old_ones: Es wurde noch nichts abgegeben.
     no_future_ones: >
-      Es sind keine Hausauafgaben jenseits der aktuellen vorhanden.
+      Es sind keine Hausaufgaben jenseits der aktuellen vorhanden.
     no_manuscript_yet: Es ist keine Datei hinterlegt.
     exists_no_longer: Diese Abgabe existiert nicht.
     correct_file_size: Die Datei hat die richtige Größe.
@@ -2545,13 +2545,13 @@ de:
           die zwar in das von MaMpf vorgegebene Namensschema passen, deren dort
           entahltene Abgaben-ID aber zu keiner Abgabe passt.
         no_decision: >
-          Hier sind diejenigen Abgabeteams aufgelistet, für die Du eine
-          Korrektur hochgeladen hast, aber noch keine Entscheidung darüber
-          getroffen hast, ob die verspätete Abgabe akzeptiert wird. Die
+          Hier sind diejenigen Abgabeteams aufgelistet, für die eine
+          Korrektur hochgeladen wurde, aber noch keine Entscheidung darüber
+          getroffen wurde, ob die verspätete Abgabe akzeptiert wird. Die
           entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
         rejected: >
-          Hier sind diejenigen Abgabeteams aufgelistet, für die Du eine
-          Korrektur hochgeladen hast, aber bereits entschieden hast,
+          Hier sind diejenigen Abgabeteams aufgelistet, für die eine
+          Korrektur hochgeladen wurde, aber bereits entschieden wurde,
           dass die verspätete Abgabe nicht akzeptiert wird. Die
           entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
   package:
@@ -2807,6 +2807,7 @@ de:
     programs: 'Studiengänge'
     visibility: 'Zusatzmaterialien'
     tutor: 'TutorIn'
+    tutors: 'TutorInnen'
     tutorials: 'Tutorien'
     assignments: 'Hausaufgaben'
     deadline: 'Abgabetermin'

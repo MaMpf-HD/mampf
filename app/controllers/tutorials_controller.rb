@@ -47,7 +47,6 @@ class TutorialsController < ApplicationController
     @tutorial.update(tutorial_params)
     @errors = @tutorial.errors
     return if @errors.present?
-    @tutorial.update(tutor: nil) if tutorial_params[:tutor_id].blank?
   end
 
   def destroy
@@ -124,6 +123,6 @@ class TutorialsController < ApplicationController
   end
 
   def tutorial_params
-    params.require(:tutorial).permit(:title, :tutor_id, :lecture_id)
+    params.require(:tutorial).permit(:title, :lecture_id, tutor_ids: [])
   end
 end

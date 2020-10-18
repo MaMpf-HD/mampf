@@ -46,8 +46,8 @@ class Submission < ApplicationRecord
   end
 
 
-  def preceding_tutorial(user)subm
-    assignment.previous.submission(user)
+  def preceding_tutorial(user)
+    assignment.previous&.map { |a| a.tutorial(user) }&.compact&.first
   end
 
   def invited_users

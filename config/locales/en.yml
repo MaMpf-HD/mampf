@@ -2643,6 +2643,7 @@ en:
     visibility: 'Additional material'
     tutorials: 'Tutorials'
     tutor: 'Tutor'
+    tutors: 'Tutors'
     assignments: 'Assignments'
     deadline: 'Due Date'
     tutorial: 'Tutorial'

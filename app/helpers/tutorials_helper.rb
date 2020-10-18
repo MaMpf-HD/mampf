@@ -6,12 +6,12 @@ module TutorialsHelper
   end
 
   def tutorial_preselection(tutorial)
-    return [[]] unless tutorial.persisted? && tutorial.tutor
-    options_for_select([[tutorial.tutor.tutorial_info, tutorial.tutor_id]],
-                       tutorial.tutor_id)
+    return [[]] unless tutorial.persisted? && tutorial.tutors.any?
+    options_for_select(tutorial.tutors.map { |t| [t.tutorial_info, t.id] },
+                       tutorial.tutor_ids)
   end
 
   def tutorials_selection(lecture)
-  	lecture.tutorials.map { |t| [t.title_with_tutor, t.id] }
+  	lecture.tutorials.map { |t| [t.title_with_tutors, t.id] }
   end
 end
