@@ -15,8 +15,10 @@
                                  submission: a.submission(current_user) }%>
           </div>
         <% end %>
-        <% unless @current_assignments %>
-          <%= t('assignment.no_current') %>
+        <% if @current_assignments.none? %>
+        	<div class="col-12">
+	          <%= t('assignment.no_current') %>
+	        </div>
         <% end %>
       </div>
     </div>
@@ -35,8 +37,10 @@
                                  submission: a.submission(current_user) } %>
           </div>
         <% end %>
-        <% unless @previous_assignments %>
-          <%= t('assignment.no_previous') %>
+        <% if @previous_assignments.none? %>
+        	<div class="col-12">
+	          <%= t('assignment.no_previous') %>
+	        </div>
         <% end %>
       </div>
     </div>
