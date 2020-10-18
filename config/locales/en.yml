@@ -2880,6 +2880,14 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+  exception:
+    exception: Exception on %{host}
+    exception_report: 'There was an exception on %{host}:'
+    user_text: >
+      Oops, that should not have happened. This is a bug in MaMpf.
+    infos_wanted_html: >
+      You can report the bug via mail to %{mail} or on %{github}.
+      We will then try to fix it as soon as possible.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'
