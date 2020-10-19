@@ -1,6 +1,9 @@
 <%= form_with url: user_registration_path,
               method: :delete do |f| %>
 <%= t('profile.confirm_account_deletion') %>
+<%= f.password_field :password,
+                     class: 'form-control my-2',
+                     required: true %>
 <% if current_user.contributor? %>
   <div class="row mt-2">
     <div class="col-12">

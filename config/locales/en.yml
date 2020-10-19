@@ -1753,7 +1753,8 @@ en:
       deleted, while the team submissions will remain in the system until the
       scheduled deletion date.
     confirm_account_deletion: >
-      Please confirm the deletion of your account by pushing the red button.
+      Please confirm the deletion of your account by entering your password and
+      pushing the red button.
     thanks_for_contributions: >
       Thank you for being a contributor to MaMpf! Your contributions include
     given_lectures: '%{lectures} event series as teacher'

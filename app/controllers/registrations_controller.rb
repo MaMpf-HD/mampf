@@ -2,6 +2,12 @@
 class RegistrationsController < Devise::RegistrationsController
 
   def destroy
+    password_correct = resource.valid_password?(deletion_params[:password])
+    if !password_correct
+      set_flash_message :alert, :password_incorrect
+      respond_with_navigational(resource){ redirect_to after_sign_up_path_for(resource_name) }
+      return
+    end
     success = resource.archive_and_destroy(deletion_params[:archive_name])
     if !success
       set_flash_message :alert, :not_destroyed
@@ -26,6 +32,6 @@ class RegistrationsController < Devise::RegistrationsController
   end
 
   def deletion_params
-    params.permit(:archive_name)
+    params.permit(:archive_name, :password)
   end
 end
