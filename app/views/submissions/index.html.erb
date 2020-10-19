@@ -24,10 +24,22 @@
     </div>
     <div class="col-12 col-md-6">
       <div class="row">
-        <div class="col-12">
+        <div class="col-10">
           <h4 class="mb-3">
             <%= t('submission.previous') %>
           </h4>
+        </div>
+        <div class="col-2 text-right">
+          <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ml-2',
+                    tabindex: -1,
+                    data: { toggle: 'popover',
+                            trigger: 'focus',
+                            content: t('submission.profile_info_html',
+                                       profile:
+                                         link_to(t('notifications.profile'),
+                                                 edit_profile_path)),
+                            html: true },
+                    title: t('info') %>
         </div>
         <% @previous_assignments.each do |a| %>
           <div class="col-12 mb-3 submissionArea"

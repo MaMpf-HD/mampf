@@ -2332,6 +2332,20 @@ en:
     rejected: rejected
     bulk_download: Bulk download of submissions
     bulk_upload: Bulk upload of corrections
+    code_explanation: >
+      By knowledge and input of this code, other persons can join this
+      submission. Joining via a code is particularly recommended when the
+      other person has not yet cooperated with you in this event series.
+      Perosns that you have already cooperated with can be invited using
+      the "Invite" button (this button only exists in the case that such persons
+      exist, are not yet a member of this team and the team size is below
+      the maximal allowed size for teams).
+    profile_info: >
+      In your %{profile} you can set your preferences about which events in the
+      context of submissions you want to be notified about via email. This
+      includes successful upload and removal of files, joining or leaving of
+      team members, decisions about the acceptance of late submissions and
+      upload of corrections by your tutor.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >

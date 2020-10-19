@@ -2485,6 +2485,21 @@ de:
     rejected: abgelehnt
     bulk_download: Paketdownload der Abgaben
     bulk_upload: Paketupload der Korrekturen
+    code_explanation: >
+      Durch Kenntnis und Eingabe dieses Code können andere Personen dieser
+      Abgabe beitreten. Das Beitreten über einen Code bietet sich insbesondere
+      dann an, wenn die entsprechende Person in dieser Veranstaltung noch keine
+      Abgabe zusammen mit Dir hatte. Personen, mit denen Du schon
+      zusammengearbeitet hast, kannst Du über den "Einladen"-Button eine
+      Einladung zu dieser Abgabe zukommen lassen (diesen Button gibt es nur in
+      dem Fall, dass entsprechende Personen existieren, nicht schon Teammitglied
+      sind und die Teamgröße unterhalb der Schranke für die Teamgröße liegt).
+    profile_info_html: >
+      In Deinen %{profile} kannst Du diverse Einstellungen vornehmen, über
+      welche Ereignisse im Hinblick auf Abgaben Du per Email informiert werden
+      möchtest. Das beinhaltet erfolgreichen Upload oder Entfernen von Dateien,
+      Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
+      Abgaben und den Upload von Korrekturen durch Deine TutorIn.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
