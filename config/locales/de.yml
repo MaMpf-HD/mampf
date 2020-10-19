@@ -78,7 +78,7 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2019. MaMpf ist auf %{github}.
+      &copy; MaMpf Team 2020. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs meldest Du am besten %{bugs}.
@@ -116,8 +116,7 @@ de:
       Im Rahmen des Projekts heiSTART2.0 haben
       %{hendrik}, %{oli} und %{denis} zusammen mit der %{fs_mathphysinfo}
       Mittel zur Einrichtung eines MaMpf-unterstützten Mathematik-Helpdesks für
-      die Studieneingangsphase eingeworben. Der Helpdesk kommt im laufenden
-      Wintersemester 2019/20 bereits zum Einsatz.
+      die Studieneingangsphase eingeworben.
     physics_html: >
       Die %{physics_faculty} unterstützte MaMpf durch die Anschaffung
       medientechnischer Ausstatttung.
