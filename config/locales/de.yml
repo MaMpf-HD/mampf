@@ -3057,9 +3057,9 @@ de:
     exception_report: 'Es gab eine Exception auf %{host}:'
     user_text: >
       Ups, das hätte nicht passieren sollen. Das ist ein Bug in MaMpf.
-    infos_wanted_html: >
-      Du kannst den Bug gerne melden (per Mail an %{mail} oder auf %{github}).
-      Wir werden dann versuchen, ihn so schnell wie möglich zu beheben.
+    will_be_repaired: >
+      Das MaMpf-Team hat eine Benachrichtigung über diesen Bug erhalten, wir
+      werden versuchen, ihn so schnell wie möglich zu beheben.
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'
