@@ -81,6 +81,7 @@
         <tr>
           <th scope="row">
             <%= t('submission.deletion_date') %>
+            <%= helpdesk(t('submission.deletion_date_info'), false) %>
           </th>
           <td>
             <%= I18n.l(assignment.lecture.submission_deletion_date,
@@ -90,6 +91,7 @@
         <tr>
           <th scope="row">
             <%= t('basics.team') %>
+            <%= helpdesk(t('submission.team_info'), false) %>
           </th>
           <td>
             <% if submission.users.count == 1 %>

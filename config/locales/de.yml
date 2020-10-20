@@ -2500,6 +2500,18 @@ de:
       möchtest. Das beinhaltet erfolgreichen Upload oder Entfernen von Dateien,
       Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
       Abgaben und den Upload von Korrekturen durch Deine TutorIn.
+    deletion_date_info: >
+      Bei der Abgabe handelt es sich um persönliche Daten, die wir aus Gründen
+      des Datenschutzes zwei Wochen nach Ablauf des Semesters löschen.
+      Du wirst darüber vorher per Mail informiert werden, so dass Du die Daten
+      sichern kannst.
+    team_info: >
+      Hier sieht Du Dein Abgabeteam. Du kannst Dein Team vergrößern, indem Du
+      anderen Personen den Abgabecode weitergibst, so dass diese beitreten
+      können, oder indem Du Personen, mit denen Du in dieser Veranstaltung schon
+      gemeinsame Abgaben hattest, einlädst, so dass diese beitreten können.
+      Das Team kann aber nur so groß werden wie die maximale Teamgröße, die
+      in der Veranstaltung gilt.
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
@@ -2841,6 +2853,7 @@ de:
     corrections: 'Korrekturen'
     overview: Übersicht
     tba: N.N.
+    due: bis
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

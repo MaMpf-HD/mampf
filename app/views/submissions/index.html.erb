@@ -78,7 +78,7 @@
         <div class="row p-3">
           <% if @old_assignments.any? %>
             <% @old_assignments.each do |a| %>
-              <div class="col-12 col-lg-6 col-xl-4 col-xxl-3 mb-3 submissionArea"
+              <div class="col-12 col-lg-6 col-xl-4 mb-3 submissionArea"
                    data-id="<%= a.id %>">
                 <%= render partial: 'submissions/card',
                            locals: { assignment: a,
@@ -113,7 +113,7 @@
         <div class="row p-3">
           <% if @future_assignments.any? %>
             <% @future_assignments.each do |a| %>
-              <div class="col-12 col-lg-6 col-xl-4 col-xxl-3 mb-3 submissionArea"
+              <div class="col-12 col-lg-6 col-xl-4 mb-3 submissionArea"
                    data-id="<%= a.id %>">
                 <%= render partial: 'submissions/card',
                            locals: { assignment: a,

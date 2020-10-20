@@ -2346,6 +2346,16 @@ en:
       includes successful upload and removal of files, joining or leaving of
       team members, decisions about the acceptance of late submissions and
       upload of corrections by your tutor.
+    deletion_date: >
+      YOur submission includes personal data which we will delete two weeks
+      after the end of this term due to protection of data privacy. You will be
+      notified ahead via email so that you can save them.
+    team_info: >
+      Here you can see your submission team. You can enlarge
+      your team by giving other persons the submission code so that they can
+      join or by inviting persons that you have already had submissions with in
+      this event series, so that they can join. The team can become only as
+      large as the maximal team size allowed in this event series.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2676,6 +2686,7 @@ en:
     corrections: 'Corrections'
     overview: Overview
     tba: tba
+    due: due
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
