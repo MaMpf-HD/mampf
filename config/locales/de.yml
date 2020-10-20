@@ -3053,6 +3053,7 @@ de:
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
   exception:
+    title: Fehler
     exception: Exception auf %{host}
     exception_report: 'Es gab eine Exception auf %{host}:'
     user_text: >

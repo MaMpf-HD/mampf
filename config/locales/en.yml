@@ -2881,6 +2881,7 @@ en:
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
   exception:
+    title: Error
     exception: Exception on %{host}
     exception_report: 'There was an exception on %{host}:'
     user_text: >
