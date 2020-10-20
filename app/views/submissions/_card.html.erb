@@ -4,7 +4,7 @@
 		<div class="row">
 			<div class="col-10">
 				<h5>
-					<% if assignment.medium %>
+					<% if assignment.medium&.visible_for_user?(current_user) %>
 						<%= link_to assignment.title,
 												assignment.medium,
 												class: 'text-dark' %>
@@ -24,7 +24,7 @@
 			</div>
 		</div>
 	</div>
-	<% if assignment&.medium &&
+	<% if assignment&.medium&.visible_for_user?(current_user) &&
   	      (assignment.medium.tags.present? || assignment.has_documents?) %>
   	<ul class="list-group">
     	<li class="list-group-item submissionSubHeader">
@@ -40,7 +40,7 @@
         	</div>
       	<% end %>
       	<% if assignment.has_documents? %>
-        	<div style="display: flex; justify-content: flex-end;" class="mt-2">
+        	<div class="flexdiv mt-2">
           	<%= render partial: 'media/medium/buttons',
             	         locals: { medium: assignment.medium,
               	                 ref_link: nil } %>
