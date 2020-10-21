@@ -1,4 +1,5 @@
 $('#upload-bulk-errors').empty().hide()
+#directUpload('upload-bulk-correction',)
 <% if @errors.present? %>
 $('#upload-bulk-errors').append('<%= @errors.join(", ") %>').show()
 <% else %>

@@ -452,18 +452,21 @@ directUpload provides an interface to upload (multiple) files to an endpoint
   endpoint
   progressBarElement
   successCallback
-  fileChangeCallBack) ->
+  fileChangeCallBack
+  hiddenInputElement
+  ) ->
     # update helpdesk
     $('[data-toggle="popover"]').popover()
-    hiddenInput = document.getElementById('upload-userManuscript-hidden')
+    hiddenInput = document.getElementById(hiddenInputElement)
     hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
     fileInput =document.getElementById(fileInputElement)
-    fI = $(fileInputElement)
+    fI = $("#"+fileInputElement)
     fileInput.style.display = 'none'
     result = undefined
     merged = undefined
     files = []
     filez= []
+    uploadedFiles = []
     progressOptimize = 0
     $(uploadStatusElement).hide()
     uploadButton = $(uploadButtonElement)
@@ -471,40 +474,40 @@ directUpload provides an interface to upload (multiple) files to an endpoint
       e.preventDefault()
       if permissionElement == null || $(permissionElement).is(":checked")
         #Upload blob
-        formData = new FormData()
         i=0
-        if fileInput.files.length>1
-          for f in fileInput.files
-            formData.append("file"+(i++), f, f.name)
-        else
-          formData.append("file",fileInput.files[0],fileInput.files[0].name)
-        xhr = new XMLHttpRequest()
-        xhr.open('POST', endpoint, true)
-        xhr.onload =  () ->
-          if (xhr.status == 200)
-            hiddenInput.value = xhr.responseText
-            if successCallback != undefined
-              successCallback()
-            $(progressBarElement).text(
-              $(progressBarElement).data 'tr-success'
-            )
-            $(progressBarElement)
-                .removeClass('btn-primary')
-                .addClass 'btn-outline-secondary'
-          else
+        for f in fileInput.files
+          formData = new FormData()
+          formData.append("file", f, f.name)
+          xhr = new XMLHttpRequest()
+          xhr.open('POST', endpoint, true)
+          xhr.onload =  () ->
+            if (xhr.status == 200)
+              i++
+              uploadedFiles.push JSON.parse(xhr.responseText)
+              if  i == (fileInput.files.length)
+                if successCallback != undefined 
+                  successCallback()
+                $(progressBarElement).text(
+                  $(progressBarElement).data 'tr-success'
+                )
+                hiddenInput.value = JSON.stringify uploadedFiles
+                $(progressBarElement)
+                    .removeClass('btn-primary')
+                    .addClass 'btn-outline-secondary'
+            else
+              alert(
+                $(progressBarElement).data('tr-failure')
+                + xhr.responseText
+              )
+          xhr.onerror = (e) ->
             alert(
               $(progressBarElement).data('tr-failure')
-              + xhr.responseText
             )
-        xhr.onerror = (e) ->
-          alert(
-            $(progressBarElement).data('tr-failure')
-          )
-        xhr.upload.onprogress = (e) ->
-          percentUpload = Math.floor(100 * e.loaded / e.total)
-          $(progressBarElement).text(percentUpload+" %")
-          return
-        xhr.send formData
+          xhr.upload.onprogress = (e) ->
+            percentUpload = Math.floor(100/fileInput.files.length * e.loaded / e.total+100*(i)/fileInput.files.length)
+            $(progressBarElement).text(percentUpload+" %")
+            return
+          xhr.send formData
       else
         alert(
           $(progressBarElement).data 'tr-missing-consent'
@@ -798,7 +801,22 @@ $(document).on 'turbolinks:load', ->
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
   imageUpload image if image?
-  bulkCorrectionUpload bulkCorrection if bulkCorrection?
+  #bulkCorrectionUpload bulkCorrection if bulkCorrection?
+  if bulkCorrection?
+    directUpload(
+      'upload-bulk-correction'
+      '#upload-bulk-correction-uploadButton-call'
+      '#upload-bulk-Files'
+      '#upload-bulk-correction-uploadButton-call'
+      null
+      '/corrections/upload'
+      '#upload-bulk-correction-uploadButton-call'
+      () ->
+        alert("Success")
+      () ->
+        alert("file changed")
+      'upload-bulk-correction-hidden'
+      )
 
   # make uppy upload buttons look like bootstrap
   $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
