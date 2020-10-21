@@ -2395,6 +2395,10 @@ en:
       rejected: correction already rejected
       files_in_cache: file(s) successfully uploaded to temporary storage
       info:
+        general_info: >
+          Here you can upload several corrections. In order that MaMpf can
+          associate them to the correct submissions it would be ideal if
+          the filenames would match the filenames of the submissions.
         invalid_filenames: >
           This is the list of all uploaded files that do not
           fit into the naming scheme that is provided by MaMpf.

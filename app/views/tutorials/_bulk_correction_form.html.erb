@@ -4,11 +4,12 @@
               method: :patch do |f| %>
       <h5>
         <%= t('submission.bulk_upload') %>
+        <%= helpdesk(t('tutorial.bulk_upload.info.general_info'), false) %>
       </h5>
   <div class="row mt-3">
     <div class="col-12"
          id="upload-bulk-correction-button"
-         data-choosefiles="<%= t('basics.file') %>">
+         data-choosefiles="<%= t('basics.files') %>">
       <%= f.hidden_field :package,
                          id: 'upload-bulk-correction-hidden',
                          value: [] %>

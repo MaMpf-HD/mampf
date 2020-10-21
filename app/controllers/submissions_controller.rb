@@ -116,7 +116,8 @@ class SubmissionsController < ApplicationController
     if @submission && @submission.manuscript
       send_file @submission.manuscript.to_io,
       					type: 'application/pdf',
-      					disposition: disposition
+      					disposition: disposition,
+                filename: @submission.filename_for_tutorial
     elsif @submission
       redirect_to :start, alert: t('submission.no_manuscript_yet')
     else

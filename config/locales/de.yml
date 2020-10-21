@@ -2551,6 +2551,10 @@ de:
       rejected: Korrektur bereits abgelehnt
       files_in_cache: Datei(en) erfolgreich in den Zwischenspeicher hochgeladen.
       info:
+        general_info: >
+          Hier kannst Du mehrere Korrekturen gleichzeitig hochladen.
+          Damit diese von MaMpf zugeordnet werden können, sollten die Dateinamen
+          idealerweise mit den Dateinamen der Abgaben übereinstimmen.
         invalid_filenames: >
           Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
           die nicht in das von MaMpf vorgegebene Namensschema passen.
