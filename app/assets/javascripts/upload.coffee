@@ -380,6 +380,7 @@ bulkCorrectionUpload = (fileInput) ->
   statusBar = document.getElementById('upload-bulk-correction-statusBar')
   hiddenInput = document.getElementById('upload-bulk-correction-hidden')
   metaData = document.getElementById('upload-bulk-correction-metadata')
+  fileCount = 0
 
   # uppy will add its own file input
   fileInput.style.display = 'none'
@@ -388,9 +389,10 @@ bulkCorrectionUpload = (fileInput) ->
   uppy = Uppy.Core(
     id: fileInput.id
     autoProceed: true
+    allowMultipleUploads: false
     restrictions:
-      allowedFileTypes: ['.zip']
-      maxFileSize: 1073741824)
+      allowedFileTypes: ['.pdf']
+      maxFileSize: 15*1024*1024)
     .use(Uppy.FileInput,
       target: uploadButton
       locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
@@ -402,30 +404,35 @@ bulkCorrectionUpload = (fileInput) ->
     endpoint: '/packages/upload'
     fieldName: 'file'
 
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type in ['application/zip']
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-
-      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
-      metaData.style.display = 'inline'
-      $('#upload-bulk-correction-save').prop('disabled', false)
-    else
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    return
-
   # display error message on console if an upload error has ocurred
   uppy.on 'upload-error', (file, error) ->
     console.log('error with file:', file.id)
     console.log('error message:', error)
+    return
+
+  uppy.on 'complete', (result) ->
+    console.log('successful files:', result.successful)
+    console.log('failed files:', result.failed)
+    if result.successful.length > 0
+      uploaded_files = result.successful.map (file) -> file.response.body
+      console.log uploaded_files
+      hiddenInput.value = JSON.stringify(uploaded_files)
+      $('#upload-bulk-correction-save').prop('disabled', false)
+      $(metaData).empty()
+        .append(result.successful.length + ' ' +$(metaData).data('tr-uploads'))
+      $(uploadButton).hide()
+    return
+
+  $('#cancel-bulk-upload').on 'click', ->
+    clearBulkUploadArea()
+    uppy.reset()
+    return
+
+  $('#show-bulk-upload-area').on 'click', ->
+    $(this).hide()
+    uppy.reset()
+    $('#upload-bulk-correction-button').show()
+    $('#bulk-upload-area').show()
     return
 
   uppy

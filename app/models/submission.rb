@@ -83,8 +83,8 @@ class Submission < ApplicationRecord
   	manuscript.to_io.path
   end
 
-  def filename_in_zip
-		(users.map(&:tutorial_name).join('-') +
+  def filename_for_tutorial
+		(users.map(&:tutorial_name).join('-') + '-' +
 			I18n.l(last_modification_by_users_at, format: :short) +
 			(too_late? ? '-LATE-' : '') +
 			+ '-ID-' + id +
@@ -101,7 +101,7 @@ class Submission < ApplicationRecord
     begin
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
         submissions.each do |s|
-          stream.put_next_entry(s.filename_in_zip)
+          stream.put_next_entry(s.filename_for_tutorial)
           stream.write IO.read(s.file_path)
         end
       end
@@ -110,55 +110,6 @@ class Submission < ApplicationRecord
       archived_filestream = e.message
     end
     archived_filestream
-  end
-
-  def self.unzip_corrections!(tutorial, assignment, zipfile)
-    submissions = Submission.where(tutorial: tutorial,
-                                   assignment: assignment).proper
-    report = { successful_extractions: 0, submissions: submissions.size,
-    					 invalid_filenames: [], invalid_id: [], in_subfolder: [],
-               no_decision: [], rejected: [], invalid_file: [] }
-    tmp_folder = Dir.mktmpdir
-    begin
-      Zip::File.open(zipfile) do |zip_file|
-        zip_file.each do |entry|
-          if File.basename(entry.name) != entry.name
-            report[:in_subfolder].push(entry.name)
-            next
-          end
-      	  if !'-ID-'.in?(entry.name)
-      	 	  report[:invalid_filenames].push(entry.name)
-        	  next
-      	  end
-          submission = Submission.find_by_id(entry.name.split('-ID-').last
-                                                  .remove('.pdf'))
-          if !submission
-        	  report[:invalid_id].push(entry.name)
-        	  next
-          end
-          if submission.too_late? && submission.accepted.nil?
-        	  report[:no_decision].push(submission.team)
-        	  next
-          end
-          if submission.too_late? && submission.accepted == false
-					  report[:rejected].push(submission.team)
-        	  next
-          end
-          puts "Extracting #{entry.name}"
-          extracted_file = File.join(tmp_folder, entry.name)
-          entry.extract(extracted_file)
-          submission.update(correction: File.open(extracted_file))
-          if !submission.valid?
-        	  report[:invalid_file].push(entry.name)
-        	  next
-          end
-          report[:successful_extractions] += 1
-        end
-      end
-    rescue => e
-      report[:errors] = "#{e.message}"
-    end
-    report
   end
 
   private

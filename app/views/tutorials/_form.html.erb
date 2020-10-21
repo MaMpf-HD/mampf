@@ -4,7 +4,8 @@
     <div class="form-row">
       <div class="form-group col-4">
         <%= f.text_field :title,
-                         class: 'form-control' %>
+                         class: 'form-control',
+                         id: "tutorial_title_#{tutorial.id}" %>
         <div class="invalid-feedback"
              id="tutorial-title-error">
         </div>
@@ -14,7 +15,8 @@
                      tutorial_preselection(tutorial),
                      {},
                      { class: 'form-control',
-                       multiple: true } %>
+                       multiple: true,
+                       id: "tutorial_tutor_ids_#{tutorial.id}" } %>
       </div>
       <div class="form-group col-4">
         <%= f.submit t('buttons.save'),

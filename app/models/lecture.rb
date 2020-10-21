@@ -677,10 +677,11 @@ class Lecture < ApplicationRecord
 
   def current_assignments
     assignments_by_deadline.select { |x| x.first >= Time.now }.first&.second
+                           .to_a
   end
 
   def previous_assignments
-    assignments_by_deadline.select { |x| x.first < Time.now }.last&.second
+    assignments_by_deadline.select { |x| x.first < Time.now }.last&.second.to_a
   end
 
   private

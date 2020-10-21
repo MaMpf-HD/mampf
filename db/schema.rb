@@ -797,6 +797,7 @@ ActiveRecord::Schema.define(version: 2020_10_17_133345) do
     t.boolean "email_for_correction_upload"
     t.boolean "email_for_submission_decision"
     t.text "name_in_tutorials"
+    t.boolean "archived"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

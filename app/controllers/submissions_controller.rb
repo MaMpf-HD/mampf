@@ -116,7 +116,8 @@ class SubmissionsController < ApplicationController
     if @submission && @submission.manuscript
       send_file @submission.manuscript.to_io,
       					type: 'application/pdf',
-      					disposition: disposition
+      					disposition: disposition,
+                filename: @submission.filename_for_tutorial
     elsif @submission
       redirect_to :start, alert: t('submission.no_manuscript_yet')
     else
@@ -259,7 +260,7 @@ class SubmissionsController < ApplicationController
                               assignment: @assignment,
                               code: @submission.token,
                               issuer: current_user)
-                        .submission_invitation_email.deliver_now
+                        .submission_invitation_email.deliver_later
     end
     @submission.update(invited_user_ids: @submission.invited_user_ids |
     																			 invitees.pluck(:id))
@@ -272,7 +273,7 @@ class SubmissionsController < ApplicationController
                               submission: @submission,
                               uploader: current_user,
                               filename: @submission.manuscript_filename)
-                        .submission_upload_email.deliver_now
+                        .submission_upload_email.deliver_later
     end
   end
 
@@ -283,7 +284,7 @@ class SubmissionsController < ApplicationController
                               submission: @submission,
                               remover: current_user,
                               filename: @old_filename)
-                        .submission_upload_removal_email.deliver_now
+                        .submission_upload_removal_email.deliver_later
     end
   end
 
@@ -293,7 +294,7 @@ class SubmissionsController < ApplicationController
                               locale: u.locale,
                               submission: @submission,
                               tutor: current_user)
-                        .correction_upload_email.deliver_now
+                        .correction_upload_email.deliver_later
     end
   end
 
@@ -302,7 +303,7 @@ class SubmissionsController < ApplicationController
       NotificationMailer.with(recipient: u,
                               locale: u.locale,
                               submission: @submission)
-                        .submission_acceptance_email.deliver_now
+                        .submission_acceptance_email.deliver_later
     end
   end
 
@@ -311,7 +312,7 @@ class SubmissionsController < ApplicationController
       NotificationMailer.with(recipient: u,
                               locale: u.locale,
                               submission: @submission)
-                        .submission_rejection_email.deliver_now
+                        .submission_rejection_email.deliver_later
     end
   end
 
@@ -354,7 +355,7 @@ class SubmissionsController < ApplicationController
                               locale: u.locale,
                               submission: @submission,
                               user: current_user)
-                        .submission_join_email.deliver_now
+                        .submission_join_email.deliver_later
     end
   end
 
@@ -364,7 +365,7 @@ class SubmissionsController < ApplicationController
                               locale: u.locale,
                               submission: @submission,
                               user: current_user)
-                        .submission_leave_email.deliver_now
+                        .submission_leave_email.deliver_later
     end
   end
 

@@ -76,4 +76,11 @@ class Assignment < ApplicationRecord
   	throw(:abort) unless destructible?
   	true
   end
+
+  def has_documents?
+    return false unless medium
+    medium.video || medium.manuscript || medium.geogebra ||
+      medium.external_reference_link.present? ||
+      (medium.sort == 'Quiz' && medium.quiz_graph)
+  end
 end
