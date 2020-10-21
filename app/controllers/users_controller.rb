@@ -67,6 +67,9 @@ class UsersController < ApplicationController
     render json: result
   end
 
+  def delete_account
+  end
+
   private
 
   def elevate_params

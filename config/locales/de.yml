@@ -1830,9 +1830,6 @@ de:
     no_current_at_all: >
       Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
       worden.
-    new_design: >
-      Neues *experimentelles* Design verwenden (personalisierte Startseite, kein Dropdown-Menü
-      für Veranstaltungswahl)
     other_preferences: >
       Sonstige Einstellungen
     changes_made: >
@@ -1855,6 +1852,32 @@ de:
     email_for_submission_decision: >
       eine Entscheidung über das Akzeptieren oder die Ablehnung einer
       verspäteten Abgabe getroffen wurde
+    delete_account: Account löschen
+    stored_submissions: >
+      Von Dir sind %{submissions} Abgaben zu Hausaufgaben im System gespeichert,
+      bei denen eine Datei hochgeladen wurde. Diese teilen sich auf in:
+    single_submissions: '%{single_submissions} Einzelabgaben'
+    team_submissions: '%{team_submissions} Teamabgaben'
+    submission_deletion: >
+      Die Einzelabgaben und zugehörigen Korrekturen werden alle gelöscht,
+      die Abgaben und zugehörigen Korrekturen, bei denen Du Mitglied
+      eines größeren Teams warst, dessen Mitglieder noch einen Account haben,
+      bleiben im System bis zum vorgesehenen Löschdatum.
+    confirm_account_deletion: >
+      Bitte bestätige die Löschung Deines Accounts, indem Du Dein Passwort
+      eingibst und den roten Button drückst.
+    thanks_for_contributions: >
+      Vielen Dank dafür, dass Du auf MaMpf als Editor tätig warst!
+      Von Dir gibt es auf MaMpf
+    given_lectures: '%{lectures} Vorlesung als DozentIn'
+    edited_media: '%{media} Medien als MedieneditorIn'
+    contributions_remain: >
+      Die Standardeinstellung sieht vor, dass diese in MaMpf belassen werden.
+      Hier kannst Du eingeben, unter welchem Namen diese künftig angezeigt
+      werden sollen:
+    manual_deletion: >
+      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, kannst
+      Du die entsprechenden Vorlesungen und Medien manuell löschen.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2990,13 +3013,6 @@ de:
       Bist Du sicher? Damit wird sich für alle NutzerInnen die Startseite
       ändern, da die aktuellen Vorlesungen über das aktuelle Semester bestimmt
       werden.
-    delete_account_with_submissions: >
-      Bist Du sicher? ACHTUNG: Es sind %{submissions} Abgaben zu Hausaufgaben
-      von Dir im System, davon %{single_submissions} als Einzelabgabe.
-      Die Einzelabgaben und zugehörigen Korrekturen werden alle gelöscht,
-      die Abgaben und zugehörigen Korrekturen, bei denen Du Mitglied
-      eines größeren Teams warst, dessen Mitglieder noch einen Account haben,
-      bleiben im System bis zum vorgesehenen Löschdatum.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur

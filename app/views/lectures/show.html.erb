@@ -9,10 +9,14 @@
       </span>
       <% if @lecture.term || !@lecture.disable_teacher_display %>
         <span>
-          <%= link_to @lecture.teacher.name,
-                      teacher_path(@lecture.teacher),
-                      id: 'lecture-teacher',
-                      class: 'text-dark' %>
+          <% if !@lecture.teacher.archived %>
+            <%= link_to @lecture.teacher.name,
+                        teacher_path(@lecture.teacher),
+                        id: 'lecture-teacher',
+                        class: 'text-dark' %>
+          <% else %>
+            <%= @lecture.teacher.name %>
+          <% end %>
         </span>
       <% end %>
       <% privileged = current_user.admin ||

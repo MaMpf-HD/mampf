@@ -29,12 +29,14 @@
                           class: 'text-dark' %>
             </li>
           <% end %>
-          <li>
-            <%= t('basics.email') %>:
-            <%= mail_to @teacher.email,
-                        nil,
-                        class: 'text-dark' %>
-          </li>
+          <% unless @teacher.archived %>
+            <li>
+              <%= t('basics.email') %>:
+              <%= mail_to @teacher.email,
+                          nil,
+                          class: 'text-dark' %>
+            </li>
+          <% end %>
         </ul>
       </div>
     </div>

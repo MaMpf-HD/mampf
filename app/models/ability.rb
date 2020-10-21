@@ -148,7 +148,7 @@ class Ability
       can :update, User do |u|
         user == u
       end
-      can [:teacher, :fill_user_select, :list], User
+      can [:teacher, :fill_user_select, :list, :delete_account], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
       can [:new, :create, :edit, :open, :close, :set_alternatives,
@@ -255,6 +255,8 @@ class Ability
       can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
       end
+
+      can :delete_account, User
     end
   end
 end
