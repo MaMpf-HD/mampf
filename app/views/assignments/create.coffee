@@ -20,4 +20,5 @@ $('#assignment_deadline').addClass('is-invalid')
 $('.assignmentRow[data-id="0"')
   .replaceWith('<%= j render partial: "assignments/row",
                       locals: { assignment: @assignment } %>')
+$('#newTutorialButton').show()
 <% end %>
