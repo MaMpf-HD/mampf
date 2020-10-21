@@ -1,4 +1,4 @@
-<% if @assignments %>
+<% if @assignments.present? %>
   <div class="row">
     <div class="col-12">
       <% if @assignments.size > 1 %>
@@ -51,7 +51,7 @@
                     lecture_tutorial_overview_path(@lecture),
                     class: 'btn btn-primary ml-3' %>
       <% end %>
-      <% if @stack.any? %>
+      <% if @stack.present? %>
         <%= link_to t('submission.bulk_download'),
                     bulk_download_submissions_path(id: @tutorial.id,
                                                    ass_id: @assignment.id),
@@ -67,7 +67,7 @@
   <div class="row m-2 p-2 border border-round bg-light"
        id="bulk-upload-area">
     <div class="col-12">
-      <% if @stack.any? %>
+      <% if @stack.present? %>
         <%= render partial: 'tutorials/bulk_correction_form',
                    locals: { tutorial: @tutorial,
                              assignment: @assignment } %>

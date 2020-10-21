@@ -31,7 +31,7 @@
         <%= t('basics.tutorial') %>
       </th>
       <th scope="col">
-        <%= t('basics.tutor') %>
+        <%= t('basics.tutors') %>
       </th>
       <th scope="col">
         <%= t('basics.submissions') %>
@@ -51,7 +51,7 @@
           <%= t.title %>
         </td>
         <td>
-          <%= t.tutor&.name || t('basics.nobody') %>
+          <%= t.tutor_names || t('basics.tba') %>
         </td>
         <td>
           <%= Submission.where(tutorial: t, assignment: @assignment)

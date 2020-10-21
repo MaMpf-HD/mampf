@@ -233,3 +233,18 @@ table.submission-table-bordered th {
 table.submission-table-bordered td {
   border:1px solid #c5ccd3;
 }
+
+.exceptionBox {
+  background-color: #f8d7da;
+}
+
+.error-jumbo {
+  margin: auto;
+  text-align: center;
+  padding: 10px;
+}
+
+.flexdiv {
+  display: flex;
+  justify-content: flex-end;
+}

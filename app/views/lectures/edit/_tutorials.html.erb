@@ -24,6 +24,7 @@
           <%= link_to t('admin.tutorial.new'),
                       new_tutorial_path(params: { lecture_id: lecture.id }),
                       class: 'btn btn-sm btn-primary',
+                      id: 'newTutorialButton',
                       remote: true %>
         </div>
       </div>
@@ -39,7 +40,7 @@
             </div>
             <div class="col-4">
               <h6>
-                <%= t('basics.tutor') %>
+                <%= t('basics.tutors') %>
               </h6>
             </div>
             <div class="col-4">

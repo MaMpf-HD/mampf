@@ -9,13 +9,17 @@ module SubmissionsHelper
     user.submission_partners(lecture).map { |u| [u.tutorial_name, u.id] }
   end
 
+  def partner_preselection(user, lecture)
+    user.recent_submission_partners(lecture).map(&:id)
+  end
+
   def admissible_invitee_selection(user, submission, lecture)
   	submission.admissible_invitees(user).map { |u| [u.tutorial_name, u.id] }
   end
 
-  def probable_invitee_ids(user, submission)
-  	(submission.assignment.previous&.submission_partners(user).to_a -
-  		(submission.users + submission.invited_users)).map(&:id)
+  def probable_invitee_ids(user, submission, lecture)
+  	partner_preselection(user, lecture) -
+  		(submission.users + submission.invited_users).map(&:id)
   end
 
   def invitations_possible?(submission, user)

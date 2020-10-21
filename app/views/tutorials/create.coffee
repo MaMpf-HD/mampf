@@ -14,4 +14,5 @@ $('#tutorial_title').addClass('is-invalid')
 $('.tutorialRow[data-id="0"')
   .replaceWith('<%= j render partial: "tutorials/row",
                       locals: { tutorial: @tutorial } %>')
+$('#newTutorialButton').show()
 <% end %>

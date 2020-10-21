@@ -4,19 +4,23 @@
               method: :patch do |f| %>
       <h5>
         <%= t('submission.bulk_upload') %>
+        <%= helpdesk(t('tutorial.bulk_upload.info.general_info'), false) %>
       </h5>
   <div class="row mt-3">
     <div class="col-12"
          id="upload-bulk-correction-button"
-         data-choosefiles="<%= t('basics.file') %>">
+         data-choosefiles="<%= t('basics.files') %>">
       <%= f.hidden_field :package,
-                         id: 'upload-bulk-correction-hidden' %>
+                         id: 'upload-bulk-correction-hidden',
+                         value: [] %>
       <%= f.file_field :package,
                        class: 'form-control-file mb-2',
                        id: 'upload-bulk-correction',
-                       accept: 'application/zip' %>
+                       accept: 'application/pdf',
+                       multiple: true %>
     </div>
-    <div class="col-12" id="upload-bulk-correction-metadata">
+    <div class="col-12" id="upload-bulk-correction-metadata"
+         data-tr-uploads="<%= t('tutorial.bulk_upload.files_in_cache') %>">
     </div>
     <div class="col-12" id="upload-bulk-correction-informer">
     </div>

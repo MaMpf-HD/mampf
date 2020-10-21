@@ -661,13 +661,27 @@ class Lecture < ApplicationRecord
   end
 
   def tutors
-    User.where(id: tutorials.pluck(:tutor_id))
+    User.where(id: TutorTutorialJoin.where(tutorial: tutorials)
+                                    .pluck(:tutor_id).uniq)
   end
 
   def submission_deletion_date
     Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
       term.end_date + 15.days
     end
+  end
+
+  def assignments_by_deadline
+    assignments.group_by(&:deadline).sort
+  end
+
+  def current_assignments
+    assignments_by_deadline.select { |x| x.first >= Time.now }.first&.second
+                           .to_a
+  end
+
+  def previous_assignments
+    assignments_by_deadline.select { |x| x.first < Time.now }.last&.second.to_a
   end
 
   private

@@ -92,7 +92,7 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2019. MaMpf is on %{github}.
+      &copy; MaMpf Team 2020. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs can be reported %{bugs}.
@@ -2354,6 +2354,30 @@ en:
     rejected: rejected
     bulk_download: Bulk download of submissions
     bulk_upload: Bulk upload of corrections
+    code_explanation: >
+      By knowledge and input of this code, other persons can join this
+      submission. Joining via a code is particularly recommended when the
+      other person has not yet cooperated with you in this event series.
+      Perosns that you have already cooperated with can be invited using
+      the "Invite" button (this button only exists in the case that such persons
+      exist, are not yet a member of this team and the team size is below
+      the maximal allowed size for teams).
+    profile_info: >
+      In your %{profile} you can set your preferences about which events in the
+      context of submissions you want to be notified about via email. This
+      includes successful upload and removal of files, joining or leaving of
+      team members, decisions about the acceptance of late submissions and
+      upload of corrections by your tutor.
+    deletion_date: >
+      YOur submission includes personal data which we will delete two weeks
+      after the end of this term due to protection of data privacy. You will be
+      notified ahead via email so that you can save them.
+    team_info: >
+      Here you can see your submission team. You can enlarge
+      your team by giving other persons the submission code so that they can
+      join or by inviting persons that you have already had submissions with in
+      this event series, so that they can join. The team can become only as
+      large as the maximal team size allowed in this event series.
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2385,30 +2409,28 @@ en:
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
-      successfully_extracted: Number of successfully extracted corrections
-      errors: Error messages
+      successfully_saved: Number of successfully saved corrections
       invalid_filenames: invalid filenames
-      in_subfolder: not in the root directory
       invalid_files: invalid files
       invalid_submission_id: invalid submision id
       no_decision: no decision abou acceptance yet
       rejected: correction already rejected
+      files_in_cache: file(s) successfully uploaded to temporary storage
       info:
+        general_info: >
+          Here you can upload several corrections. In order that MaMpf can
+          associate them to the correct submissions it would be ideal if
+          the filenames would match the filenames of the submissions.
         invalid_filenames: >
-          This is the list of all the files from the zip archive that do not
+          This is the list of all uploaded files that do not
           fit into the naming scheme that is provided by MaMpf.
-        in_subfolder: >
-          This is the list of all the files from the zip archive that do not
-          belong to the roor directory and are therefore ignored by MaMpf.
         invalid_files: >
-          This is the list of all the files from the zip archive that can be
-          matched to a submission but whose upload fails because they violate
+          This is the list of all uploaded files that can be
+          matched to a submission but whose saving fails because they violate
           some rule (e.g. size is too large or they are not of the right file
           type).
-        errors: >
-          These are the error messages that were shown during the extraction.
         invalid_submission_id: >
-          This is the list of the files from the zip archive that fit into
+          This is the list of all uploaded files that fit into
           the naming schem provided by MaMpf, but whose submission ids do not
           match any submissions.
         no_decision: >
@@ -2665,6 +2687,7 @@ en:
     visibility: 'Additional material'
     tutorials: 'Tutorials'
     tutor: 'Tutor'
+    tutors: 'Tutors'
     assignments: 'Assignments'
     deadline: 'Due Date'
     tutorial: 'Tutorial'
@@ -2683,6 +2706,7 @@ en:
     corrections: 'Corrections'
     overview: Overview
     tba: tba
+    due: due
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2895,6 +2919,15 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+  exception:
+    title: Error
+    exception: Exception on %{host}
+    exception_report: 'There was an exception on %{host}:'
+    user_text: >
+      Oops, that should not have happened. This is a bug in MaMpf.
+    will_be_repaired: >
+      The MaMpf Team has been notified about this bug, we will try to fix it as
+      soon as possible.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'

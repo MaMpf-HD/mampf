@@ -5,7 +5,11 @@ module AssignmentsHelper
     cancel_new_assignment_path(params: { lecture: assignment.lecture })
   end
 
-  def preceding_partner_ids(assignment, user)
-    assignment.previous&.submission_partners(user)&.map(&:id) || []
-  end
+  def has_documents?(assignment)
+    return false unless assignment.medium
+    assignment.medium.video || assignment.medium.manuscript ||
+      assignment.medium.geogebra ||
+      assignment.medium.external_reference_link.present? ||
+      (assignment.medium.sort == 'Quiz' && assignment.medium.quiz_graph)
+    end
 end

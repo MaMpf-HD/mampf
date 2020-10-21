@@ -117,11 +117,11 @@ class Ability
            :cancel_action, :accept, :reject, :edit_correction,
            :cancel_edit_correction],
           Submission do |submission|
-        user == submission.tutorial.tutor
+        user.in?(submission.tutorial.tutors)
       end
 
       can [:show_manuscript, :show_correction], Submission do |submission|
-          user.in?(submission.users) || user == submission.tutorial.tutor
+          user.in?(submission.users) || user.in?(submission.tutorial.tutors)
       end
 
       can :manage, Tag
@@ -141,7 +141,7 @@ class Ability
       end
 
       can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
-        tutorial.tutor == user
+        user.in?(tutorial.tutors)
       end
 
       cannot :read, User
@@ -238,14 +238,14 @@ class Ability
       end
 
       can [:show_correction, :show_manuscript], Submission do |submission|
-        user.in?(submission.users) || user == submission.tutorial.tutor
+        user.in?(submission.users) || user.in?(submission.tutorial.tutors)
       end
 
       can [:add_correction, :delete_correction, :select_tutorial, :move,
            :cancel_action, :accept, :reject, :edit_correction,
            :cancel_edit_correction],
           Submission do |submission|
-        user == submission.tutorial.tutor
+        user.in?(submission.tutorial.tutors)
       end
 
       can :index, Tutorial do |tutorial|
@@ -253,7 +253,7 @@ class Ability
       end
 
       can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
-        tutorial.tutor == user
+        user.in?(tutorial.tutors)
       end
 
       can :delete_account, User

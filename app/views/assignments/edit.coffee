@@ -2,7 +2,7 @@ $('.assignmentRow[data-id="<%= @assignment.id %>"')
   .replaceWith('<%= j render partial: "assignments/form",
                       locals: { assignment: @assignment } %>')
 
-$('#assignment_medium_id').select2
+$('#assignment_medium_id_<%= @assignment.id %>').select2
   placeholder: '<%= t("basics.select") %>'
   allowClear: true
   language: '<%= I18n.locale %>'
@@ -10,5 +10,5 @@ $('#assignment_medium_id').select2
 
 <% unless @assignment.medium %>
 # make sure that no medium is preselected
-$('#assignment_medium_id').val(null).trigger('change')
+$('#assignment_medium_id_<%= @assignment.id %>').val(null).trigger('change')
 <% end %>

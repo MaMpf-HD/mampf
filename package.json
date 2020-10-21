@@ -1,5 +1,11 @@
 {
   "name": "mampf",
   "private": true,
-  "dependencies": {}
+  "dependencies": {},
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^7.11.0"
+  }
 }

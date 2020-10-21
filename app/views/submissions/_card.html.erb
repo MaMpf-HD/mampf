@@ -4,7 +4,7 @@
 		<div class="row">
 			<div class="col-10">
 				<h5>
-					<% if assignment.medium %>
+					<% if assignment.medium&.visible_for_user?(current_user) %>
 						<%= link_to assignment.title,
 												assignment.medium,
 												class: 'text-dark' %>
@@ -17,13 +17,38 @@
 				<%= submission_status(submission, assignment) %>
 			</div>
 			<div class="col-12">
-				bis
+				<%= t('basics.due') %>
 		    <% if assignment.deadline %>
     		  <%= I18n.l(assignment.deadline, format: :short) %>
     		<% end %>
 			</div>
 		</div>
 	</div>
+	<% if assignment&.medium&.visible_for_user?(current_user) &&
+  	      (assignment.medium.tags.present? || assignment.has_documents?) %>
+  	<ul class="list-group">
+    	<li class="list-group-item submissionSubHeader">
+      	<% if assignment.medium.tags.present? %>
+        	<div>
+          	Inhalt:
+          	<% assignment.medium.tags.each do |t| %>
+            	<%= link_to t.title,
+              	          t,
+                	        class: 'badge badge-light',
+                  	      style: 'background-color: #f8f9fa;' %>
+          	<% end %>
+        	</div>
+      	<% end %>
+      	<% if assignment.has_documents? %>
+        	<div class="flexdiv mt-2">
+          	<%= render partial: 'media/medium/buttons',
+            	         locals: { medium: assignment.medium,
+              	                 ref_link: nil } %>
+        	</div>
+      	<% end %>
+    	</li>
+  	</ul>
+	<% end %>
 	<div class="submissionMain"
 			 data-id="<%= assignment.id %>">
 		<%= render partial: 'submissions/card_main',

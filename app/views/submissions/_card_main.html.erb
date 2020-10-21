@@ -8,13 +8,14 @@
             <%= t('basics.tutorial') %>
           </th>
           <td>
-            <%= submission.tutorial.title_with_tutor %>
+            <%= submission.tutorial.title_with_tutors %>
           </td>
         </tr>
         <% if assignment.semiactive? %>
           <tr>
             <th scope="row">
               <%= t('basics.code') %>
+              <%= helpdesk(t('submission.code_explanation'), false) %>
             </th>
             <td>
               <span class="submissionToken" data-id="<%= submission.id %>">
@@ -80,6 +81,7 @@
         <tr>
           <th scope="row">
             <%= t('submission.deletion_date') %>
+            <%= helpdesk(t('submission.deletion_date_info'), false) %>
           </th>
           <td>
             <%= I18n.l(assignment.lecture.submission_deletion_date,
@@ -89,6 +91,7 @@
         <tr>
           <th scope="row">
             <%= t('basics.team') %>
+            <%= helpdesk(t('submission.team_info'), false) %>
           </th>
           <td>
             <% if submission.users.count == 1 %>

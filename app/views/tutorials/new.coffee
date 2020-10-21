@@ -1,8 +1,9 @@
+$('#newTutorialButton').hide()
 $('#tutorialListHeader').show()
   .after('<%= j render partial: "tutorials/form",
                        locals: { tutorial: @tutorial } %>')
 
-$('#tutorial_tutor_id').select2
+$('#tutorial_tutor_ids_').select2
   ajax: {
     url: Routes.list_users_path()
     data: (params) ->

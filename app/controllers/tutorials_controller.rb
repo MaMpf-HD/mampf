@@ -18,8 +18,8 @@ class TutorialsController < ApplicationController
     @tutorials = current_user.given_tutorials.where(lecture: @lecture)
                              .order(:title)
     @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
-    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
-                        .order(:last_modification_by_users_at)
+    @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
+                        &.order(:last_modification_by_users_at)
   end
 
   def overview
@@ -47,7 +47,6 @@ class TutorialsController < ApplicationController
     @tutorial.update(tutorial_params)
     @errors = @tutorial.errors
     return if @errors.present?
-    @tutorial.update(tutor: nil) if tutorial_params[:tutor_id].blank?
   end
 
   def destroy
@@ -81,16 +80,11 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_upload
-    attacher = ZipUploader::Attacher.new(cache: :submission_cache)
-    attacher.assign(params[:package])
-    @errors = attacher.errors
-    return if @errors.present?
-    return unless attacher.file
-    zipfile = attacher.file.to_io
-    @report = Submission.unzip_corrections!(@tutorial, @assignment, zipfile)
-    attacher.destroy
+    files = JSON.parse(params[:package])
+    @report =@tutorial.add_bulk_corrections!(@assignment, files)
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)
+    send_correction_upload_emails
   end
 
   private
@@ -124,6 +118,22 @@ class TutorialsController < ApplicationController
   end
 
   def tutorial_params
-    params.require(:tutorial).permit(:title, :tutor_id, :lecture_id)
+    params.require(:tutorial).permit(:title, :lecture_id, tutor_ids: [])
+  end
+
+  def bulk_params
+    params.permit(:package)
+  end
+
+  def send_correction_upload_emails
+    @report[:successful_saves].each do |submission|
+      submission.users.email_for_correction_upload.each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: submission,
+                                tutor: current_user)
+                          .correction_upload_email.deliver_later
+      end
+    end
   end
 end
