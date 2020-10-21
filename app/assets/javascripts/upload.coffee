@@ -466,6 +466,8 @@ directUpload provides an interface to upload (multiple) files to an endpoint
     merged = undefined
     files = []
     filez= []
+    
+
     uploadedFiles = []
     progressOptimize = 0
     $(uploadStatusElement).hide()
@@ -475,39 +477,56 @@ directUpload provides an interface to upload (multiple) files to an endpoint
       if permissionElement == null || $(permissionElement).is(":checked")
         #Upload blob
         i=0
-        for f in fileInput.files
-          formData = new FormData()
-          formData.append("file", f, f.name)
-          xhr = new XMLHttpRequest()
-          xhr.open('POST', endpoint, true)
-          xhr.onload =  () ->
-            if (xhr.status == 200)
-              i++
-              uploadedFiles.push JSON.parse(xhr.responseText)
-              if  i == (fileInput.files.length)
-                if successCallback != undefined 
-                  successCallback()
-                $(progressBarElement).text(
-                  $(progressBarElement).data 'tr-success'
-                )
-                hiddenInput.value = JSON.stringify uploadedFiles
-                $(progressBarElement)
-                    .removeClass('btn-primary')
-                    .addClass 'btn-outline-secondary'
-            else
-              alert(
-                $(progressBarElement).data('tr-failure')
-                + xhr.responseText
-              )
-          xhr.onerror = (e) ->
-            alert(
-              $(progressBarElement).data('tr-failure')
-            )
-          xhr.upload.onprogress = (e) ->
+        xhr = new XMLHttpRequest()
+        onerror = (e) ->
+          console.log(e)
+          alert(
+            $(progressBarElement).data('tr-failure')
+          )
+        onprogress = (e) ->
             percentUpload = Math.floor(100/fileInput.files.length * e.loaded / e.total+100*(i)/fileInput.files.length)
             $(progressBarElement).text(percentUpload+" %")
             return
-          xhr.send formData
+        onload = (xhr) -> () ->
+          console.log xhr.status
+          if (xhr.status == 200)
+            i++
+            uploadedFiles.push JSON.parse(xhr.responseText)
+            if  i == (fileInput.files.length)
+              if successCallback != undefined 
+                successCallback()
+              $(progressBarElement).text(
+                $(progressBarElement).data 'tr-success'
+              )
+              hiddenInput.value = JSON.stringify uploadedFiles
+              $(progressBarElement)
+                  .removeClass('btn-primary')
+                  .addClass 'btn-outline-secondary'
+            else
+              f = fileInput.files[i]
+              formData = new FormData()
+              formData.append("file", f, f.name)
+              xhr2 = new XMLHttpRequest()
+              xhr2.onload= onload(xhr2)
+              xhr2.onerror =onerror
+              xhr.upload.onprogress = onprogress
+              xhr2.open('POST', endpoint, true)
+              xhr2.send(formData)
+          else
+            console.log(xhr)
+            alert(
+              $(progressBarElement).data('tr-failure')
+              + xhr.responseText
+            )
+        xhr.onload = onload(xhr)
+        
+        xhr.onerror = onerror
+        xhr.upload.onprogress = onprogress
+        f = fileInput.files[0]
+        formData = new FormData()
+        formData.append("file", f, f.name)
+        xhr.open('POST', endpoint, true)
+        xhr.send formData
       else
         alert(
           $(progressBarElement).data 'tr-missing-consent'
@@ -812,9 +831,7 @@ $(document).on 'turbolinks:load', ->
       '/corrections/upload'
       '#upload-bulk-correction-uploadButton-call'
       () ->
-        alert("Success")
       () ->
-        alert("file changed")
       'upload-bulk-correction-hidden'
       )
 
