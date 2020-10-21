@@ -36,7 +36,7 @@ class User < ApplicationRecord
   has_many :notifications, foreign_key: 'recipient_id'
 
   # a user has many announcements as announcer
-  has_many :announcements, foreign_key: 'announcer_id'
+  has_many :announcements, foreign_key: 'announcer_id', dependent: :destroy
 
   # a user has many clickers as editor
   has_many :clickers, foreign_key: 'editor_id', dependent: :destroy
@@ -509,6 +509,34 @@ class User < ApplicationRecord
     in?(lecture.editors) || self == lecture.teacher
   end
 
+  def proper_submissions_count
+    submissions.proper.size
+  end
+
+  def proper_single_submissions_count
+    submissions.proper.select { |s| s.users.size == 1 }.size
+  end
+
+  def proper_team_submissions_count
+    proper_submissions_count - proper_single_submissions_count
+  end
+
+  def media_editor?
+    edited_media.any?
+  end
+
+  def contributor?
+    teacher? || media_editor?
+  end
+
+  def archive_and_destroy(archive_name)
+    if contributor?
+      success = transfer_contributions_to(archive_user(archive_name))
+      return false unless success
+    end
+    destroy
+  end
+
   private
 
   def set_defaults
@@ -539,5 +567,27 @@ class User < ApplicationRecord
   def destroy_single_submissions
     Submission.where(id: submissions.select { |s| s.users.count == 1 }
                                     .map(&:id)).destroy_all
+  end
+
+  def archive_email
+    splitting = DefaultSetting::PROJECT_EMAIL.split('@')
+    "#{splitting.first}-archive-#{id}@#{splitting.second}"
+  end
+
+  def transfer_contributions_to(user)
+    return false unless user && user.valid? && user != self
+    given_lectures.update_all(teacher_id: user.id)
+    EditableUserJoin.where(user: self, editable_type: 'Medium')
+                    .update_all(user_id: user.id)
+  end
+
+  def archive_user(archive_name)
+    User.create(name: archive_name,
+                email: archive_email,
+                password: SecureRandom.base58(12),
+                consents: true,
+                consented_at: Time.now,
+                confirmed_at: Time.now,
+                archived: true)
   end
 end

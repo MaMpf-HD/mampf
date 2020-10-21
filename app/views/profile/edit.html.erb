@@ -101,3 +101,6 @@
     </div>
   </div>
 <% end %>
+<%= render partial: 'shared/generic_modal',
+           locals: { sort: 'deleteAccount',
+                     title: t('profile.delete_account') } %>
