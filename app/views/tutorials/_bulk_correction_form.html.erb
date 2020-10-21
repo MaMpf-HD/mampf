@@ -10,13 +10,16 @@
          id="upload-bulk-correction-button"
          data-choosefiles="<%= t('basics.file') %>">
       <%= f.hidden_field :package,
-                         id: 'upload-bulk-correction-hidden' %>
+                         id: 'upload-bulk-correction-hidden',
+                         value: [] %>
       <%= f.file_field :package,
                        class: 'form-control-file mb-2',
                        id: 'upload-bulk-correction',
-                       accept: 'application/zip' %>
+                       accept: 'application/pdf',
+                       multiple: true %>
     </div>
-    <div class="col-12" id="upload-bulk-correction-metadata">
+    <div class="col-12" id="upload-bulk-correction-metadata"
+         data-tr-uploads="<%= t('tutorial.bulk_upload.files_in_cache') %>">
     </div>
     <div class="col-12" id="upload-bulk-correction-informer">
     </div>

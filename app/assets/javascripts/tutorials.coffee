@@ -9,15 +9,6 @@
 
 $(document).on 'turbolinks:load', ->
 
-  $('#show-bulk-upload-area').on 'click', ->
-    $(this).hide()
-    $('#bulk-upload-area').show()
-    return
-
-  $('#cancel-bulk-upload').on 'click', ->
-    clearBulkUploadArea()
-    return
-
   $(document).on 'click', '#dismiss-bulk-upload-report', ->
     $('#bulk-upload-report').empty().hide()
     return

@@ -161,6 +161,43 @@ class Submission < ApplicationRecord
     report
   end
 
+  def self.bulk_corrections!(tutorial, assignment, files)
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
+    report = { successful_saves: 0, submissions: submissions.size,
+               invalid_filenames: [], invalid_id: [],
+               no_decision: [], rejected: [], invalid_file: [] }
+    files.each do |file_shrine|
+      filename = file_shrine["metadata"]["filename"]
+      if !'-ID-'.in?(filename)
+        report[:invalid_filenames].push(filename)
+        next
+      end
+      submission = Submission.find_by_id(filename.split('-ID-').last
+                                              .remove('.pdf'))
+      if !submission
+        report[:invalid_id].push(filename)
+        next
+      end
+      if submission.too_late? && submission.accepted.nil?
+        report[:no_decision].push(submission.team)
+        next
+      end
+      if submission.too_late? && submission.accepted == false
+        report[:rejected].push(submission.team)
+        next
+      end
+      submission.update(correction: file_shrine.to_json)
+      if !submission.valid?
+        report[:invalid_file].push(filename)
+        next
+      end
+      report[:successful_saves] += 1
+    end
+    report
+  end
+
+
   private
 
 	def matching_lecture
