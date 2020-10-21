@@ -5,6 +5,7 @@ class SubmissionsController < ApplicationController
   before_action :set_assignment, only: [:new, :enter_code, :cancel_new]
   before_action :set_lecture, only: :index
   before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
+  before_action :prevent_caching, only: :show_manuscript
   authorize_resource
 
   def index
