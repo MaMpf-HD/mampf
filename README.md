@@ -52,7 +52,7 @@ MaMpf is implemented in Ruby on Rails.
 
 To simply try out mampf you can use docker-compose. Simply clone the mampf repository and run docker-compose by executing
 ```
-git clone -b master git@github.com:fosterfarrell9/mampf.git
+git clone -b main --recursive git@github.com:fosterfarrell9/mampf.git
 cd mampf/docker/development/
 docker-compose up
 ```

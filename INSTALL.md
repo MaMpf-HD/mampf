@@ -2,9 +2,17 @@
 
 To simply try out mampf you can use `docker-compose` ([needs docker](https://docs.docker.com/engine/install/ubuntu/) && `apt install docker-compose`). Simply clone the mampf repository and run docker-compose by executing
 ```
-$ git clone -b master git@github.com:fosterfarrell9/mampf.git
+$ git clone -b main --recursive git@github.com:fosterfarrell9/mampf.git
 $ cd mampf/docker/development/
 # docker-compose up
+```
+
+NOTE: Please make sure to clone recursivly as the pdf compression feature is in an extra repository.
+If you have an already checked out version simply run: 
+
+```sh
+git submodule init
+git submodule update
 ```
 
 You now have the following things ready:
@@ -88,7 +96,7 @@ INSTANCE_PATH=mampf
 ```
  3. Execute the following commands to install and run the service:
 ```
-git clone -b master git@github.com:fosterfarrell9/mampf.git
+git clone -b main git@github.com:fosterfarrell9/mampf.git
 docker build --label "mampf" mampf
 docker create --name mampf --env-file $ENVFILE -p $OUTSIDEPORT:3000 $IMAGEID
 docker run --rm --env-file $ENVFILE $IMAGEID 'rm config/credentials.yml.enc && bundle exec rails credentials:edit'
