@@ -30,11 +30,11 @@ module SubmissionsHelper
   end
 
   def submission_color(submission, assignment)
-  	if assignment.current?
+  	if assignment.active?
   		return 'bg-submission-green' if submission&.manuscript
   		return 'bg-submission-yellow' if submission
   		return 'bg-submission-red'
-  	elsif assignment.previous?
+  	else
   		return 'bg-submission-darker-green' if submission&.correction
       if submission&.manuscript && submission.too_late?
         return 'bg-submission-orange' if submission.accepted.nil?
@@ -44,15 +44,13 @@ module SubmissionsHelper
   		return 'bg-submission-green' if submission&.manuscript
   		return 'bg-submission-red'
   	end
-	  'bg-mdb-color-lighten-7'
   end
 
   def submission_status_icon(submission, assignment)
-    return unless assignment.current? || assignment.previous?
-    if assignment.current?
+    if assignment.active?
       return 'far fa-smile' if submission&.manuscript
       return 'fas fa-exclamation-triangle'
-    elsif assignment.previous?
+    else
       return 'far fa-smile' if submission&.correction
       if submission&.manuscript && submission.too_late?
         return 'fas fa-hourglass-start' if submission.accepted
@@ -64,12 +62,11 @@ module SubmissionsHelper
   end
 
   def submission_status_text(submission, assignment)
-    return unless assignment.current? || assignment.previous?
-    if assignment.current?
+    if assignment.active?
       return t('submission.okay') if submission&.manuscript
       return t('submission.no_file') if submission
       return t('submission.nothing')
-    elsif assignment.previous?
+    else
       return t('submission.with_correction') if submission&.correction
       if submission&.manuscript && submission.too_late?
         return t('submission.too_late') if submission.accepted.nil?
@@ -83,7 +80,6 @@ module SubmissionsHelper
   end
 
   def submission_status(submission, assignment)
-    return unless assignment.current? || assignment.previous?
     tag.i class: [submission_status_icon(submission, assignment), 'fa-lg'],
           data: { toggle: 'tooltip'},
           title: submission_status_text(submission, assignment)
