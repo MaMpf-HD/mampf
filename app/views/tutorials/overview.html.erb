@@ -1,93 +1,113 @@
-<% if @assignments.size > 1 %>
-  <span class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle"
-            data-toggle="dropdown"
-            type="button">
-      <%= @assignment.title %>
-    </button>
-    <div class="dropdown-menu">
-      <% (@assignments - [@assignment]).each do |a| %>
-        <%= link_to a.title,
-                    lecture_tutorial_overview_path(@lecture,
-                                                   params: { assignment: a.id }),
-                    class: 'dropdown-item' %>
-      <% end %>
+<% if @lecture.tutorials.present? %>
+  <% if @assignments.present? %>
+    <% if @assignments.size > 1 %>
+      <span class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle"
+                data-toggle="dropdown"
+                type="button">
+          <%= @assignment.title %>
+        </button>
+        <div class="dropdown-menu">
+          <% (@assignments - [@assignment]).each do |a| %>
+            <%= link_to a.title,
+                        lecture_tutorial_overview_path(@lecture,
+                                                       params: { assignment: a.id }),
+                        class: 'dropdown-item' %>
+          <% end %>
+        </div>
+      </span>
+    <% else %>
+      <button class="btn btn-secondary" disabled>
+        <%= @assignment.title %>
+      </button>
+    <% end %>
+    <% if current_user.in?(@lecture.tutors) %>
+      <%= link_to t('basics.submissions'),
+                  lecture_tutorials_path(@lecture),
+                  class: 'btn btn-primary ml-3' %>
+    <% end %>
+    <table class="table table-bordered mt-3">
+      <thead class="thead-light">
+        <tr>
+          <th sope="col">
+            <%= t('basics.tutorial') %>
+          </th>
+          <th scope="col">
+            <%= t('basics.tutors') %>
+          </th>
+          <th scope="col">
+            <%= t('basics.submissions') %>
+          </th>
+          <th scope="col">
+            <%= t('basics.corrections') %>
+          </th>
+          <th scope="col">
+            <%= t('submission.late_submissions') %>
+          </th>
+        </tr>
+      </thead>
+      <tbody style="max-height: 50px; overflow-y: scroll;">
+        <% @lecture.tutorials.natural_sort_by(&:title).each do |t| %>
+          <tr>
+            <td>
+              <%= t.title %>
+            </td>
+            <td>
+              <%= t.tutor_names || t('basics.tba') %>
+            </td>
+            <td>
+              <%= Submission.where(tutorial: t, assignment: @assignment)
+                            .where.not(manuscript_data: nil).size %>
+            </td>
+            <td>
+              <%= Submission.where(tutorial: t, assignment: @assignment)
+                            .where.not(correction_data: nil).size %>
+            </td>
+            <td>
+              <%= Submission.where(tutorial: t, assignment: @assignment)
+                            .where.not(manuscript_data: nil)
+                            .select { |s| s.too_late? }.size %>
+            </td>
+          </tr>
+        <% end %>
+        <% if @lecture.tutorials.size > 1 %>
+          <tr>
+            <td>
+            </td>
+            <td>
+            </td>
+            <td class="table-secondary">
+              <%= Submission.where(assignment: @assignment)
+                            .where.not(manuscript_data: nil).size %>
+            </td>
+            <td class="table-secondary">
+              <%= Submission.where(assignment: @assignment)
+                            .where.not(correction_data: nil).size %>
+            </td>
+            <td  class="table-secondary">
+              <%= Submission.where(assignment: @assignment)
+                            .where.not(manuscript_data: nil)
+                            .select { |s| s.too_late? }.size %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="jumbotron">
+      <%= t('lecture.tutorials') %>
+      <ul>
+        <% @lecture.tutorials.each do |t| %>
+          <li>
+            <%= t.title_with_tutors %>
+          </li>
+        <% end %>
+      </ul>
+      <%= t('lecture.no_submissions_yet') %>
     </div>
-  </span>
+  <% end %>
 <% else %>
-  <button class="btn btn-secondary" disabled>
-    <%= @assignment.title %>
-  </button>
+    <div class="jumbotron">
+      <%= t('lecture.no_tutorials_yet') %>
+  </div>
 <% end %>
-<% if current_user.in?(@lecture.tutors) %>
-  <%= link_to t('basics.submissions'),
-              lecture_tutorials_path(@lecture),
-              class: 'btn btn-primary ml-3' %>
-<% end %>
-<table class="table table-bordered mt-3">
-  <thead class="thead-light">
-    <tr>
-      <th sope="col">
-        <%= t('basics.tutorial') %>
-      </th>
-      <th scope="col">
-        <%= t('basics.tutors') %>
-      </th>
-      <th scope="col">
-        <%= t('basics.submissions') %>
-      </th>
-      <th scope="col">
-        <%= t('basics.corrections') %>
-      </th>
-      <th scope="col">
-        <%= t('submission.late_submissions') %>
-      </th>
-    </tr>
-  </thead>
-  <tbody style="max-height: 50px; overflow-y: scroll;">
-    <% @lecture.tutorials.natural_sort_by(&:title).each do |t| %>
-      <tr>
-        <td>
-          <%= t.title %>
-        </td>
-        <td>
-          <%= t.tutor_names || t('basics.tba') %>
-        </td>
-        <td>
-          <%= Submission.where(tutorial: t, assignment: @assignment)
-                        .where.not(manuscript_data: nil).size %>
-        </td>
-        <td>
-          <%= Submission.where(tutorial: t, assignment: @assignment)
-                        .where.not(correction_data: nil).size %>
-        </td>
-        <td>
-          <%= Submission.where(tutorial: t, assignment: @assignment)
-                        .where.not(manuscript_data: nil)
-                        .select { |s| s.too_late? }.size %>
-        </td>
-      </tr>
-    <% end %>
-    <% if @lecture.tutorials.size > 1 %>
-      <tr>
-        <td>
-        </td>
-        <td>
-        </td>
-        <td class="table-secondary">
-          <%= Submission.where(assignment: @assignment)
-                        .where.not(manuscript_data: nil).size %>
-        </td>
-        <td class="table-secondary">
-          <%= Submission.where(assignment: @assignment)
-                        .where.not(correction_data: nil).size %>
-        </td>
-        <td  class="table-secondary">
-          <%= Submission.where(assignment: @assignment)
-                        .where.not(manuscript_data: nil)
-                        .select { |s| s.too_late? }.size %>
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>

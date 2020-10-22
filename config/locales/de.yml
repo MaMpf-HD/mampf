@@ -1920,6 +1920,12 @@ de:
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
+    no_tutorials_yet: >
+      Für diese Veranstaltung wurden noch keine Tutorien angelegt.
+    tutorials: >
+      Für diese Veranstaltung gibt es die folgenden Tutorien:
+    no_submissions_yet: >
+      Es waren bisher noch keine Hausaufgaben abzugeben.
   sure: 'Bist Du sicher?'
   details: 'Details'
   none: 'keine'

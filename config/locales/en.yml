@@ -1806,6 +1806,12 @@ en:
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
+    no_tutorials_yet: >
+      For this event series, no tutorials have been created yet.
+    tutorials: >
+      For this event series there are the following tutorials:
+    no_submissions_yet: >
+      No assignments have been due yet.
   details: 'Details'
   none: 'none'
   back: 'Back'
