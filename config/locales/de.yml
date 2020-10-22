@@ -1836,13 +1836,14 @@ de:
       Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
       damit die Änderungen wirksam werden.
     email_for_submissions: >
-      Bezüglich der Abgabe von Übungsblättern möchte ich per Email von MaMpf
+      Bezüglich der Abgabe von Übungsblättern möchte ich per E-Mail von MaMpf
       benachrichtigt werden, wenn:
     email_for_submission_upload: >
       erfolgreich von einem Teammitglied eine Datei für eine Abgabe
       hochgeladen wurde.
     email_for_submission_removal: >
-      von einem Teammitglied die Datei zu einer Abgabe entfernt wurde.
+      von einem Teammitglied die Datei zu einer Abgabe entfernt wurde, es sei
+      denn, das war ich selbst.
     email_for_submission_join: >
       jemand meinem Team für eine Abgabe beigetreten ist.
     email_for_submission_leave: >
@@ -1878,6 +1879,10 @@ de:
     manual_deletion: >
       Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, kannst
       Du die entsprechenden Vorlesungen und Medien manuell löschen.
+    email_notifications_header: E-Mail-Benachrichtigungen
+    lectures_and_courses: Veranstaltungen und Module
+    submissions: Abgabe von Übungsaufgaben
+    miscellaneous: Sonstiges
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

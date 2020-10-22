@@ -97,7 +97,22 @@
     </div>
   </div>
   <div class="row mb-3">
-    <div class="col-12 text-center">
+    <div class="col-12">
+      <div class="card bg-light">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-12">
+              <h5>
+                <%= t('profile.email_notifications_header') %>
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'profile/email_notifications',
+                     locals: { f: f } %>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>

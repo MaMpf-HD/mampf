@@ -1730,7 +1730,7 @@ en:
     email_for_submission_upload: >
       a team member successfully uploaded a file for a submission.
     email_for_submission_removal: >
-      a team member removed a file for a submission.
+      a team member removed a file for a submission, exceot if it was me.
     email_for_submission_join: >
       someone joined your team for a submission.
     email_for_submission_leave: >
@@ -1765,6 +1765,10 @@ en:
     manual_deletion: >
       If you do not want these materials to remain in MaMpf you can delete them
       manually.
+    email_notifications_header: E-Mail Notifications
+    lectures_and_courses: Lectures and courses
+    submissions: Submission of homework assignments
+    miscellaneous: Miscellaneous
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
