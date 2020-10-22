@@ -151,9 +151,15 @@
                     lecture_tutorials_path(lecture),
                     class: 'nav-link' %>
       <% elsif current_user.editor_or_teacher_in?(lecture) %>
-        <%= link_to t('categories.tutorials'),
-                    lecture_tutorial_overview_path(lecture),
-                    class: 'nav-link' %>
+        <% if lecture.tutorials.any? %>
+          <%= link_to t('categories.tutorials'),
+                      lecture_tutorial_overview_path(lecture),
+                      class: 'nav-link' %>
+        <% else %>
+          <span class="nav-link disabled">
+            <%= t('categories.tutorials') %>
+          </span>
+        <% end %>
       <% else %>
         <% if lecture.assignments.any? && lecture.tutorials.any? %>
           <%= link_to t('categories.submissions'),

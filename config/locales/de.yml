@@ -3093,6 +3093,13 @@ de:
       In dieser Veranstaltung bist Du keine TutorIn.
     no_editor_or_teacher: >
       In dieser Veranstaltung bist Du weder DozentIn noch EditorIn.
+    no_student_status_in_lecture: >
+      In dieser Veranstaltung bist Du nicht abgabeberechtigt.
+    no_tutorials_in_lecture: >
+      In dieser Veranstaltung gibt es keine Tutorien, deswegen kann auch nichts
+      abgegeben werden.
+    no_assignments_in_lecture: >
+      In dieser Veranstaltung gibt es bisher keine Hausaufgaben.
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,

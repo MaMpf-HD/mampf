@@ -6,7 +6,9 @@ class SubmissionsController < ApplicationController
   before_action :set_lecture, only: :index
   before_action :set_too_late, only: [:edit, :update, :invite, :destroy, :leave]
   before_action :prevent_caching, only: :show_manuscript
-  authorize_resource
+  before_action :check_if_tutorials, only: :index
+  before_action :check_if_assignments, only: :index
+  before_action :check_student_status, only: :index
 
   def index
     @assignments = @lecture.assignments
@@ -373,5 +375,20 @@ class SubmissionsController < ApplicationController
   def remove_invitee_status
   	@submission.update(invited_user_ids: @submission.invited_user_ids -
   																				 [current_user.id])
+  end
+
+  def check_student_status
+    return if current_user.proper_student_in?(@lecture)
+    redirect_to :root, alert: I18n.t('controllers.no_student_status_in_lecture')
+  end
+
+  def check_if_tutorials
+    return if @lecture.tutorials.any?
+    redirect_to :root, alert: I18n.t('controllers.no_tutorials_in_lecture')
+  end
+
+  def check_if_assignments
+    return if @lecture.assignments.any?
+    redirect_to :root, alert: I18n.t('controllers.no_assignments_in_lecture')
   end
 end

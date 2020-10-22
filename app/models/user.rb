@@ -537,6 +537,11 @@ class User < ApplicationRecord
     destroy
   end
 
+  def proper_student_in?(lecture)
+    lecture.in?(lectures) && !in?(lecture.tutors) && !in?(lecture.editors) &&
+      self != lecture.teacher
+  end
+
   private
 
   def set_defaults

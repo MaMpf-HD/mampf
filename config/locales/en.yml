@@ -2919,6 +2919,13 @@ en:
     no_tutor_in_this_lecture: You are not a tutor in this lecture.
     no_editor_or_teacher: >
       In this event series you are neither teacher nor editor.
+    no_student_status_in_lecture: >
+      In this event series you are allowed to submit.
+    no_tutorials_in_lecture: >
+      In this event series there are no tutorials, hence no submissions can be
+      made.
+    no_assignments_in_lecture: >
+      In this event series there are no assigments yet.
     tutorials:
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
