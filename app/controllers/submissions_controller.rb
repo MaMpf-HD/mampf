@@ -79,9 +79,7 @@ class SubmissionsController < ApplicationController
     @submission = Submission.find_by(token: code)
     check_code_and_join
     unless @error
-      redirect_to submissions_path(params:
-                                   { lecture_id: @submission.tutorial
-                                                            .lecture_id }),
+      redirect_to lecture_submissions_path(@submission.tutorial.lecture),
                   notice: t('submission.joined_successfully',
                             assignment: @submission.assignment.title)
       return

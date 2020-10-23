@@ -2574,6 +2574,8 @@ de:
       Dateiuploads beinhalten, dafür hochgeladen wurden.
     late_submission_decision: >
       Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
+    own_tutorials: >
+      Eigene Tutorien
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben

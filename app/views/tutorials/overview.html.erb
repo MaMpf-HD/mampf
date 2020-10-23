@@ -22,7 +22,7 @@
       </button>
     <% end %>
     <% if current_user.in?(@lecture.tutors) %>
-      <%= link_to t('basics.submissions'),
+      <%= link_to t('tutorial.own_tutorials'),
                   lecture_tutorials_path(@lecture),
                   class: 'btn btn-primary ml-3' %>
     <% end %>

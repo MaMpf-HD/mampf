@@ -24,6 +24,7 @@
           <%= link_to t('admin.assignment.new'),
                       new_assignment_path(params: { lecture_id: lecture.id }),
                       class: 'btn btn-sm btn-primary',
+                      id: 'newAssignmentButton',
                       remote: true %>
         </div>
       </div>
