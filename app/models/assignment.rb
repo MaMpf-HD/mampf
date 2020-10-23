@@ -8,6 +8,13 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
 
+  def self.accepted_file_types
+    ['.pdf', '.tar.gz', '.cc', '.hh', '.zip']
+  end
+
+  validates :accepted_file_type,
+            inclusion: { in: Assignment.accepted_file_types }
+
   scope :active, -> { where('deadline >= ?', Time.now) }
 
   scope :expired, -> { where('deadline < ?', Time.now) }
@@ -82,5 +89,28 @@ class Assignment < ApplicationRecord
     medium.video || medium.manuscript || medium.geogebra ||
       medium.external_reference_link.present? ||
       (medium.sort == 'Quiz' && medium.quiz_graph)
+  end
+
+  def self.accepted_mime_types
+    { '.pdf' => ['application/pdf'],
+      '.tar.gz' => ['application/gzip', 'application/x-gzip',
+                    'application/x-gunzip', 'application/gzipped',
+                    'application/gzip-compressed', 'application/x-compressed',
+                    'application/x-compress', 'gzip/document',
+                    'application/octet-stream'],
+      '.cc' => ['text/*'],
+      '.hh' => ['text/*'],
+      '.zip' => ['application/zip', 'application/x-zip',
+                 'application/x-zip-compressed', 'application/octet-stream',
+                 'application/x-compress', 'application/x-compressed',
+                 'multipart/x-zip'] }
+  end
+
+  def self.non_inline_file_types
+    ['.tar.gz', '.zip']
+  end
+
+  def accepted_mime_types
+    Assignment.accepted_mime_types[accepted_file_type]
   end
 end

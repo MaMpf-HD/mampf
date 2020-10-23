@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 2020_10_17_133345) do
+ActiveRecord::Schema.define(version: 2020_10_22_163956) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -44,6 +43,7 @@ ActiveRecord::Schema.define(version: 2020_10_17_133345) do
     t.datetime "deadline"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "accepted_file_type", default: ".pdf"
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end

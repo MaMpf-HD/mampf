@@ -2,7 +2,7 @@
        data-id="<%= assignment.id.to_i %>">
   <%= form_with model: assignment do |f| %>
     <div class="form-row">
-      <div class="form-group col-3">
+      <div class="form-group col-2">
         <%= f.text_field :title,
                          class: 'form-control',
                          id: "assignment_title_#{assignment.id}" %>
@@ -28,7 +28,16 @@
                      { class: 'form-control',
                        id: "assignment_medium_id_#{assignment.id}" } %>
       </div>
-      <div class="form-group col-3">
+      <div class="form-group col-2">
+        <%= f.select :accepted_file_type,
+                     options_for_select(Assignment.accepted_file_types
+                                                  .map { |t| [t,t] },
+                                        assignment.accepted_file_type),
+                     {},
+                     { class: 'form-control',
+                       id: "assignment_medium_id_#{assignment.id}" } %>
+      </div>
+      <div class="form-group col-2">
         <%= f.submit t('buttons.save'),
                      class: 'btn btn-sm btn-primary ml-2' %>
         <%= link_to t('buttons.cancel'),

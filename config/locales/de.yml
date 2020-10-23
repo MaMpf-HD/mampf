@@ -2429,7 +2429,14 @@ de:
     move_to_tutorial: verschieben in Tutorium
     manuscript_no_pdf: Die hochgeladene Datei ist keine gültige pdf-Datei.
     manuscript_size_too_big: >
-      Die hochgeladene Datei ist zu groß (sie darf höchstens 10 MB groß sein).
+      Die hochgeladene Datei ist zu groß (sie darf höchstens %{max_size} groß
+      sein).
+    wrong_file_type: >
+      Die Datei hat den falschen Dateityp %{file_type}. Erwartet wird eine Datei
+      vom Typ %{accepted_file_type}.
+    wrong_mime_type: >
+      Die Datei hat den falschen MIME Type %{mime_type}. Erwartet wird eine
+      Datei vom MIME Type %{accepted_mime_types}.
     correction_size_too_big: >
       Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
     too_late_no_saving: >
@@ -2546,6 +2553,7 @@ de:
       gemeinsame Abgaben hattest, einlädst, so dass diese beitreten können.
       Das Team kann aber nur so groß werden wie die maximale Teamgröße, die
       in der Veranstaltung gilt.
+    file_format: Abgabeformat
   assignment:
     expired: Die Abgabefrist ist abgelaufen.
     not_in_this_lecture: >
@@ -2886,6 +2894,8 @@ de:
     overview: Übersicht
     tba: N.N.
     due: bis
+    as: als
+    file_with_hyphen: -Datei
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

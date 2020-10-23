@@ -30,12 +30,18 @@ class SubmissionsController < ApplicationController
   end
 
   def update
-  	if @too_late
-  		render :create
-  		return
-  	end
+  	return if @too_late
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
+    if submission_manuscript_params[:manuscript].present?
+      @submission.manuscript = submission_manuscript_params[:manuscript]
+      @errors = @submission.check_file_properties(@submission.manuscript
+                                                             .metadata)
+      return if @errors.present?
+      @submission.save
+      @errors = @submission.errors
+      return unless @submission.valid?
+    end
     @submission.update(submission_update_params)
     if @submission.valid?
       if params[:submission][:detach_user_manuscript] == 'true'
@@ -48,13 +54,18 @@ class SubmissionsController < ApplicationController
       end
     end
     @errors = @submission.errors
-    render :create
   end
 
   def create
-  	@submission = Submission.new(submission_params)
+  	@submission = Submission.new(submission_create_params)
     @too_late = @submission.not_updatable?
   	return if @too_late
+    if submission_manuscript_params[:manuscript].present?
+      @submission.manuscript = submission_manuscript_params[:manuscript]
+      @errors = @submission.check_file_properties(@submission.manuscript
+                                                             .metadata)
+      return if @errors.present?
+    end
     @submission.users << current_user
     @submission.save
     @assignment = @submission.assignment
@@ -116,11 +127,14 @@ class SubmissionsController < ApplicationController
 
   def show_manuscript
     disposition = params[:download] == 'true' ? 'attachment' : 'inline'
+    if @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types)
+      disposition = 'attachment'
+    end
     if @submission && @submission.manuscript
       send_file @submission.manuscript.to_io,
-      					type: 'application/pdf',
+      					type: @submission.manuscript_mime_type,
       					disposition: disposition,
-                filename: @submission.filename_for_tutorial
+                filename: @submission.manuscript_filename
     elsif @submission
       redirect_to :start, alert: t('submission.no_manuscript_yet')
     else
@@ -211,14 +225,18 @@ class SubmissionsController < ApplicationController
     render js: "window.location='#{root_path}'"
   end
 
-  def submission_params
-    params.require(:submission).permit(:tutorial_id, :assignment_id,
-                                       :manuscript)
+  def submission_create_params
+    params.require(:submission).permit(:tutorial_id, :assignment_id)
   end
 
   # disallow modification of assignment
   def submission_update_params
-    params.require(:submission).permit(:tutorial_id, :manuscript)
+    params.require(:submission).permit(:tutorial_id)
+  end
+
+  # disallow modification of assignment
+  def submission_manuscript_params
+    params.require(:submission).permit(:manuscript)
   end
 
   def set_assignment

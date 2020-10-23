@@ -35,6 +35,11 @@ class Submission < ApplicationRecord
     manuscript.metadata['size']
   end
 
+  def manuscript_mime_type
+return unless manuscript.present?
+    manuscript.metadata['mime_type']
+  end
+
   def correction_filename
     return unless correction.present?
     correction.metadata['filename']
@@ -110,6 +115,39 @@ class Submission < ApplicationRecord
       archived_filestream = e.message
     end
     archived_filestream
+  end
+
+  def check_file_properties(metadata)
+    errors = []
+    if metadata['size'] > 10*1024*1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '10 MB')
+    end
+    file_name = metadata['filename']
+    file_type = File.extname(file_name)
+    if file_type != assignment.accepted_file_type &&
+      assignment.accepted_file_type != '.tar.gz'
+      errors.push I18n.t('submission.wrong_file_type',
+                         file_type: file_type,
+                         accepted_file_type: assignment.accepted_file_type)
+    end
+    if file_type == '.gz' && assignment.accepted_file_type == '.tar.gz' &&
+      File.extname(File.basename(file_name)) != '.tar'
+      errors.push I18n.t('submission.wrong_file_type',
+                         file_type: File.extname(File.basename(file_name)),
+                         accepted_file_type: '.tar.gz')
+    end
+    if (!assignment.accepted_file_type.in?(['.cc', '.hh']) &&
+      !metadata['mime_type'].in?(assignment.accepted_mime_types)) ||
+      (assignment.accepted_file_type.in?(['.cc', '.hh']) &&
+        !metadata['mime_type'].starts_with?('text/'))
+      errors.push I18n.t('submission.wrong_mime_type',
+                          mime_type: metadata['mime_type'],
+                          accepted_mime_types: assignment.accepted_mime_types
+                                                         .join(', '))
+    end
+    return {} unless errors.present?
+    { manuscript: errors }
   end
 
   private

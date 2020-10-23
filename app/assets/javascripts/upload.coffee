@@ -489,6 +489,8 @@ bulkCorrectionUpload = (fileInput) ->
     # rerender all
     $("#removeUserManuscript").hide()
     $('#userManuscript-status').show(400)
+    $('#file-permission-field').show()
+    $('#submission-final-upload-dialogue').show()
     $('#file-size-correct').hide()
     $('#file-size-way-too-big').hide()
     $('#file-size-too-big').hide()
@@ -502,13 +504,17 @@ bulkCorrectionUpload = (fileInput) ->
       $('#userManuscript-uploadButton-call')
         .removeClass('btn-outline-secondary')
         .addClass 'btn-primary'
-    else
+    else if file.type == 'application/pdf'
       if file.size > 10000000
         $('#file-size-way-too-big').show()
       else
         $('#file-size-too-big').show()
         $('#userManuscript-uploadButton-call').prop('disabled',false)
       $('#file-optimize').show()
+    else
+      $('#file-size-way-too-big').show()
+      $('#file-permission-field').hide()
+      $('#submission-final-upload-dialogue').hide()
 
   $('#userManuscript-uploadButton-call').on 'click', (e) ->
     e.preventDefault()

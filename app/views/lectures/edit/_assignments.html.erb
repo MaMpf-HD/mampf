@@ -32,7 +32,7 @@
              id="assignmentListHeader"
              style="display: <%= show(lecture.assignments.any?) %>">
           <div class="row">
-            <div class="col-3">
+            <div class="col-2">
               <h6>
                 <%= t('basics.title') %>
               </h6>
@@ -47,7 +47,12 @@
                 <%= t('basics.medium') %>
               </h6>
             </div>
-            <div class="col-3">
+            <div class="col-2">
+              <h6>
+                <%= t('submission.file_format') %>
+              </h6>
+            </div>
+            <div class="col-2">
               <h6>
                 <%= t('basics.action') %>
                 <%= helpdesk(t('assignment.destruction_info'), true) %>
