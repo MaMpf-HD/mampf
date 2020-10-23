@@ -63,6 +63,9 @@ services:
       REDIS_URL: redis://redis:6379/1
       SOLR_PATH: /solr/mampf-dev
       SPROCKETS_CACHE: /cache
+      # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
+      # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20200907123000_mampf.sql&dl=1"
+      # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/?dl=1"
     volumes:
       - type: bind
         source: ../../
@@ -70,7 +73,6 @@ services:
       - type: volume
         source: sprockets-cache
         target: /cache
-      - /usr/src/app/completed_initial_run
     depends_on:
       - db
       - solr
