@@ -95,8 +95,8 @@ class Submission < ApplicationRecord
 
   def filename_for_bulk_download
 		(users.map(&:tutorial_name).join('-') + '-' +
-			I18n.l(last_modification_by_users_at, format: :short) +
-			(too_late? ? '-LATE-' : '') +
+			last_modification_by_users_at.strftime("%F-%H%M") +
+			(too_late? ? '-LATE' : '') +
 			+ '-ID-' + id +
 			assignment.accepted_file_type)
 			.gsub(/[\x00\/\\:\*\?\"<>\|]/, '_')
