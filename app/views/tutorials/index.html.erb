@@ -64,6 +64,16 @@
       <%end %>
     </div>
   </div>
+  <div class="row my-3">
+    <div class="col-12">
+      <span class="badge badge-danger">
+        <%= t('basics.attention') %>
+      </span>
+      <%= t('tutorial.grace_period_warning',
+            friendly_deadline: l(@assignment.friendly_deadline,
+                                 format: :short)) %>
+    </div>
+  </div>
   <div class="row m-2 p-2 border border-round bg-light"
        id="bulk-upload-area">
     <div class="col-12">

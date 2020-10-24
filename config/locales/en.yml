@@ -2419,6 +2419,10 @@ en:
       You can decide whether you accept it or reject it.
     own_tutorials: >
       Own Tutorials
+    grace_period_warning: >
+      The grace period lasts until %{friendly_deadline}. Within the grace
+      period, submisions and retrospective changes by the students are possible
+      (the corresponding submissions will be marked as late.)
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions

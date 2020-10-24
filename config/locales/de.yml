@@ -2584,6 +2584,11 @@ de:
       Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
     own_tutorials: >
       Eigene Tutorien
+    grace_period_warning: >
+      Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
+      Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
+      sind (was jedoch zur Einstufung der entsprechenden Abgaben als
+      verspätet führt).
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
