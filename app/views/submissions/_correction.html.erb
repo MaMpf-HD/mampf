@@ -7,7 +7,7 @@
     <span class="correction-action-area"
          data-id="<%= submission.id %>">
       <% if submission.correction %>
-        <%= link_to t('buttons.show'),
+        <%= link_to correction_display_mode(submission),
                     show_correction_path(submission),
                     class: 'btn btn-sm btn-outline-secondary',
                     data: { turbolinks: false } %>

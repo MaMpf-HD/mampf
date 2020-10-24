@@ -9,6 +9,7 @@ class SubmissionsController < ApplicationController
   before_action :check_if_tutorials, only: :index
   before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
+  before_action :set_disposition, only: [:show_manuscript, :show_correction]
 
   def index
     @assignments = @lecture.assignments
@@ -36,7 +37,8 @@ class SubmissionsController < ApplicationController
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
       @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata)
+                                                             .metadata,
+                                                  :manuscript)
       return if @errors.present?
       @submission.save
       @errors = @submission.errors
@@ -63,7 +65,8 @@ class SubmissionsController < ApplicationController
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
       @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata)
+                                                             .metadata,
+                                                  :manuscript)
       return if @errors.present?
     end
     @submission.users << current_user
@@ -126,14 +129,10 @@ class SubmissionsController < ApplicationController
   end
 
   def show_manuscript
-    disposition = params[:download] == 'true' ? 'attachment' : 'inline'
-    if @submission.assignment.accepted_file_type.in?(Assignment.non_inline_file_types)
-      disposition = 'attachment'
-    end
     if @submission && @submission.manuscript
       send_file @submission.manuscript.to_io,
       					type: @submission.manuscript_mime_type,
-      					disposition: disposition,
+      					disposition: @disposition,
                 filename: @submission.manuscript_filename
     elsif @submission
       redirect_to :start, alert: t('submission.no_manuscript_yet')
@@ -143,11 +142,11 @@ class SubmissionsController < ApplicationController
   end
 
   def show_correction
-    disposition = params[:download] == 'true' ? 'attachment' : 'inline'
     if @submission && @submission.correction
       send_file @submission.correction.to_io,
-                type: 'application/pdf',
-                disposition: disposition
+                type: @submission.correction_mime_type,
+                disposition: @disposition,
+                filename: @submission.correction_filename
     elsif @submission
       redirect_to :start, alert: t('submission.no_correction_yet')
     else
@@ -179,6 +178,16 @@ class SubmissionsController < ApplicationController
   end
 
   def add_correction
+  	if correction_params[:correction].present?
+      @submission.correction = correction_params[:correction]
+      @errors = @submission.check_file_properties(@submission.correction
+                                                             .metadata,
+                                                  :correction)
+      return if @errors.present?
+      @submission.save
+      @errors = @submission.errors
+      return unless @submission.valid?
+    end
     @submission.update(correction_params)
     @errors = @submission.errors
     return if @errors.present?
@@ -408,5 +417,12 @@ class SubmissionsController < ApplicationController
   def check_if_assignments
     return if @lecture.assignments.any?
     redirect_to :root, alert: I18n.t('controllers.no_assignments_in_lecture')
+  end
+
+  def set_disposition
+    @disposition = params[:download] == 'true' ? 'attachment' : 'inline'
+    accepted = @submission.assignment.accepted_file_type
+    return unless accepted.in?(Assignment.non_inline_file_types)
+    @disposition = 'attachment'
   end
 end

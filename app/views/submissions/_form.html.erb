@@ -51,7 +51,7 @@
                          class: 'form-control-file',
                          id: 'upload-userManuscript',
                          multiple: assignment.accepted_file_type == '.pdf',
-                         accept: assignment.accepted_file_type %>
+                         accept: assignment.accepted_for_file_input %>
         <%= f.hidden_field :detach_user_manuscript,
                            value: false %>
         <button id="userManuscript-uploadButton-btn"

@@ -8,16 +8,16 @@ class Assignment < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
 
+  scope :active, -> { where('deadline >= ?', Time.now) }
+
+  scope :expired, -> { where('deadline < ?', Time.now) }
+
   def self.accepted_file_types
     ['.pdf', '.tar.gz', '.cc', '.hh', '.zip']
   end
 
   validates :accepted_file_type,
             inclusion: { in: Assignment.accepted_file_types }
-
-  scope :active, -> { where('deadline >= ?', Time.now) }
-
-  scope :expired, -> { where('deadline < ?', Time.now) }
 
   def submission(user)
   	UserSubmissionJoin.where(submission: Submission.where(assignment: self),
@@ -112,5 +112,13 @@ class Assignment < ApplicationRecord
 
   def accepted_mime_types
     Assignment.accepted_mime_types[accepted_file_type]
+  end
+
+  # some browsers have issues when the accept attribute of a file input
+  # is set to .tar.gz
+  # see e.g. https://bugs.chromium.org/p/chromium/issues/detail?id=521781
+  def accepted_for_file_input
+  	return accepted_file_type unless accepted_file_type == '.tar.gz'
+  	'.gz'
   end
 end

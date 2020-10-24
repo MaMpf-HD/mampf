@@ -11,8 +11,7 @@
                          id: "upload-correction-hidden-#{submission.id}" %>
       <%= f.file_field :correction,
                        class: 'form-control-file',
-                       id: "upload-correction-#{submission.id}",
-                       accept: 'application/pdf' %>
+                       id: "upload-correction-#{submission.id}" %>
     </div>
     <div class="col-12" id="upload-correction-metadata-<%= submission.id %>">
       <% if submission.correction %>

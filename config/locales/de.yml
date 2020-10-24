@@ -2895,7 +2895,7 @@ de:
     tba: N.N.
     due: bis
     as: als
-    file_with_hyphen: -Datei
+    as_file_type: als %{type}-Datei
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

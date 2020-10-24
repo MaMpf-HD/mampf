@@ -327,13 +327,13 @@ imageUpload = (fileInput) ->
 @correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData) ->
   # uppy will add its own file input
   fileInput.style.display = 'none'
+  allowedInput = fileInput.dataset.accept
 
   # create uppy instance
   uppy = Uppy.Core(
     id: fileInput.id
     autoProceed: true
     restrictions:
-      allowedFileTypes: ['.pdf']
       maxFileSize: 15728640)
     .use(Uppy.FileInput,
       target: uploadButton
@@ -349,20 +349,15 @@ imageUpload = (fileInput) ->
   # add metadata to manuscript card if upload was successful
   uppy.on 'upload-success', (file, response) ->
     data = response.body
-    if data.metadata.mime_type in ['application/pdf']
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
+    # read uploaded file data from the upload endpoint response
+    uploadedFileData = JSON.stringify(data)
 
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
+    # set hidden field value to the uploaded file data so that it is
+    # submitted with the form as the attachment
+    hiddenInput.value = uploadedFileData
 
-      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
-      metaData.style.display = 'inline'
-    else
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
+    metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+    metaData.style.display = 'inline'
     return
 
   # display error message on console if an upload error has ocurred
@@ -391,7 +386,6 @@ bulkCorrectionUpload = (fileInput) ->
     autoProceed: true
     allowMultipleUploads: false
     restrictions:
-      allowedFileTypes: ['.pdf']
       maxFileSize: 15*1024*1024)
     .use(Uppy.FileInput,
       target: uploadButton

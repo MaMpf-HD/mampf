@@ -2719,7 +2719,7 @@ en:
     tba: tba
     due: due
     as: as
-    fie_with_hypen: ' file'
+    as_file_type: as %{type} file
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

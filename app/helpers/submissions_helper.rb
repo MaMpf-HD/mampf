@@ -103,4 +103,11 @@ module SubmissionsHelper
     return text unless submission.accepted.nil?
     "#{text} (#{t('tutorial.late_submission_decision')})"
   end
+
+  def correction_display_mode(submission)
+  	accepted = submission.assignment.accepted_file_type
+  	non_inline = Assignment.non_inline_file_types
+  	return t('buttons.show') unless accepted.in?(non_inline)
+  	t('buttons.download')
+  end
 end

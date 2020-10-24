@@ -21,9 +21,8 @@
 		    <% if assignment.deadline %>
     		  <%= I18n.l(assignment.deadline, format: :short) %>
     		<% end %>
-    		<%= t('basics.as') %>
-    		<%= assignment.accepted_file_type %>
-    		<%= t('basics.file_with_hyphen') %>
+    		<%= t('basics.as_file_type',
+    					type: assignment.accepted_file_type) %>
 			</div>
 		</div>
 	</div>

@@ -36,13 +36,18 @@ class Submission < ApplicationRecord
   end
 
   def manuscript_mime_type
-return unless manuscript.present?
+		return unless manuscript.present?
     manuscript.metadata['mime_type']
   end
 
   def correction_filename
     return unless correction.present?
     correction.metadata['filename']
+  end
+
+  def correction_mime_type
+		return unless correction.present?
+    correction.metadata['mime_type']
   end
 
   def correction_size
@@ -88,12 +93,12 @@ return unless manuscript.present?
   	manuscript.to_io.path
   end
 
-  def filename_for_tutorial
+  def filename_for_bulk_download
 		(users.map(&:tutorial_name).join('-') + '-' +
 			I18n.l(last_modification_by_users_at, format: :short) +
 			(too_late? ? '-LATE-' : '') +
 			+ '-ID-' + id +
-			'.pdf')
+			assignment.accepted_file_type)
 			.gsub(/[\x00\/\\:\*\?\"<>\|]/, '_')
 	   	.gsub(/^.*(\\|\/)/, '')
    		# Strip out the non-ascii characters
@@ -106,7 +111,7 @@ return unless manuscript.present?
     begin
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
         submissions.each do |s|
-          stream.put_next_entry(s.filename_for_tutorial)
+          stream.put_next_entry(s.filename_for_bulk_download)
           stream.write IO.read(s.file_path)
         end
       end
@@ -117,11 +122,15 @@ return unless manuscript.present?
     archived_filestream
   end
 
-  def check_file_properties(metadata)
+  def check_file_properties(metadata, sort)
     errors = []
-    if metadata['size'] > 10*1024*1024
+    if sort == :submission && metadata['size'] > 10*1024*1024
       errors.push I18n.t('submission.manuscript_size_too_big',
                          max_size: '10 MB')
+    end
+    if sort == :correction && metadata['size'] > 15*1024*1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '15 MB')
     end
     file_name = metadata['filename']
     file_type = File.extname(file_name)
@@ -147,7 +156,7 @@ return unless manuscript.present?
                                                          .join(', '))
     end
     return {} unless errors.present?
-    { manuscript: errors }
+    { sort => errors }
   end
 
   private
