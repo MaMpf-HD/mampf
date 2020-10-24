@@ -12,13 +12,13 @@
     <%= link_to t('buttons.download'),
                 show_submission_manuscript_path(submission,
                                                 params: { download: 'true' }),
-                class: 'btn btn-sm btn-outline-secondary',
+                class: 'btn btn-sm btn-outline-secondary mb-2',
                 data: { turbolinks: false } %>
     <% unless submission.assignment.accepted_file_type
                         .in?(Assignment.non_inline_file_types) %>
       <%= link_to t('buttons.show'),
                   show_submission_manuscript_path(submission),
-                  class: 'btn btn-sm btn-outline-secondary',
+                  class: 'btn btn-sm btn-outline-secondary mb-2',
                   data: { turbolinks: false } %>
     <% end %>
   </div>

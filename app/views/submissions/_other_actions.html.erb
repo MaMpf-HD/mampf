@@ -1,17 +1,17 @@
 <%= link_to t('buttons.move'),
             select_tutorial_path(submission),
-            class: 'btn btn-sm btn-outline-secondary',
+            class: 'btn btn-sm btn-outline-secondary mb-2',
             remote: true %>
 <% if submission.too_late? && submission.accepted.nil? %>
   <%= link_to t('buttons.accept'),
               accept_submission_path(submission),
-              class: 'btn btn-sm btn-outline-secondary',
+              class: 'btn btn-sm btn-outline-secondary mb-2',
               method: :patch,
               remote: true,
               data: { confirm: t('confirmation.generic') } %>
   <%= link_to t('buttons.reject'),
               reject_submission_path(submission),
-              class: 'btn btn-sm btn-outline-secondary',
+              class: 'btn btn-sm btn-outline-secondary mb-2',
               method: :patch,
               remote: true,
               data: { confirm: t('confirmation.generic') } %>
