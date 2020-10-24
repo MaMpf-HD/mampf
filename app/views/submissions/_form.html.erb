@@ -43,20 +43,20 @@
         <%= f.label :manuscript, 'Abgabe' %>
       </div>
       <div class="col-3" id="userManuscript-uploadButton"
-           data-choosefiles="<%= t('basics.file') %>">
+           data-choosefiles="<%= file_button_text(assignment) %>">
         <%= f.hidden_field :manuscript,
                            value: submission.cached_manuscript_data,
                            id: 'upload-userManuscript-hidden' %>
         <%= f.file_field :manuscript,
                          class: 'form-control-file',
                          id: 'upload-userManuscript',
-                         multiple: true,
-                         accept: 'application/pdf' %>
+                         multiple: assignment.accepted_file_type == '.pdf',
+                         accept: assignment.accepted_for_file_input %>
         <%= f.hidden_field :detach_user_manuscript,
                            value: false %>
         <button id="userManuscript-uploadButton-btn"
          class="btn btn-sm btn-outline-secondary">
-          <%= t('basics.files') %>
+          <%= file_button_text(assignment) %>
          </button>
       </div>
 
@@ -149,12 +149,12 @@
             </div>
           </div>
         </div>
-        <div class="col-12 my-1">
+        <div class="col-12 my-1" id="file-permission-field">
           <input type="checkbox"
                  id="file-permission-checkbox"/>
           <%= t('submission.assure_third_party') %>
         </div>
-        <div class="col-12">
+        <div class="col-12" id="submission-final-upload-dialogue">
           <div class="col-12">
             <button id="userManuscript-uploadButton-call"
                     data-tr-success="<%= t('buttons.upload_success') %>"

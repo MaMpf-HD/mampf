@@ -327,13 +327,13 @@ imageUpload = (fileInput) ->
 @correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData) ->
   # uppy will add its own file input
   fileInput.style.display = 'none'
+  allowedInput = fileInput.dataset.accept
 
   # create uppy instance
   uppy = Uppy.Core(
     id: fileInput.id
     autoProceed: true
     restrictions:
-      allowedFileTypes: ['.pdf']
       maxFileSize: 15728640)
     .use(Uppy.FileInput,
       target: uploadButton
@@ -349,20 +349,15 @@ imageUpload = (fileInput) ->
   # add metadata to manuscript card if upload was successful
   uppy.on 'upload-success', (file, response) ->
     data = response.body
-    if data.metadata.mime_type in ['application/pdf']
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
+    # read uploaded file data from the upload endpoint response
+    uploadedFileData = JSON.stringify(data)
 
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
+    # set hidden field value to the uploaded file data so that it is
+    # submitted with the form as the attachment
+    hiddenInput.value = uploadedFileData
 
-      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
-      metaData.style.display = 'inline'
-    else
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
+    metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+    metaData.style.display = 'inline'
     return
 
   # display error message on console if an upload error has ocurred
@@ -391,7 +386,6 @@ bulkCorrectionUpload = (fileInput) ->
     autoProceed: true
     allowMultipleUploads: false
     restrictions:
-      allowedFileTypes: ['.pdf']
       maxFileSize: 15*1024*1024)
     .use(Uppy.FileInput,
       target: uploadButton
@@ -489,6 +483,8 @@ bulkCorrectionUpload = (fileInput) ->
     # rerender all
     $("#removeUserManuscript").hide()
     $('#userManuscript-status').show(400)
+    $('#file-permission-field').show()
+    $('#submission-final-upload-dialogue').show()
     $('#file-size-correct').hide()
     $('#file-size-way-too-big').hide()
     $('#file-size-too-big').hide()
@@ -502,13 +498,17 @@ bulkCorrectionUpload = (fileInput) ->
       $('#userManuscript-uploadButton-call')
         .removeClass('btn-outline-secondary')
         .addClass 'btn-primary'
-    else
+    else if file.type == 'application/pdf'
       if file.size > 10000000
         $('#file-size-way-too-big').show()
       else
         $('#file-size-too-big').show()
         $('#userManuscript-uploadButton-call').prop('disabled',false)
       $('#file-optimize').show()
+    else
+      $('#file-size-way-too-big').show()
+      $('#file-permission-field').hide()
+      $('#submission-final-upload-dialogue').hide()
 
   $('#userManuscript-uploadButton-call').on 'click', (e) ->
     e.preventDefault()

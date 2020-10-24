@@ -1,7 +1,7 @@
 <div class="list-group-item assignmentRow"
      data-id="<%= assignment.id.to_i %>">
   <div class="row">
-    <div class="col-3">
+    <div class="col-2">
       <%= assignment.title %>
     </div>
     <div class="col-3">
@@ -15,7 +15,10 @@
                     assignment.medium %>
       <% end %>
     </div>
-    <div class="col-3">
+    <div class="col-2">
+      <%= assignment.accepted_file_type %>
+    </div>
+    <div class="col-2">
       <%= link_to edit_assignment_path(assignment),
                   class: 'text-dark',
                   data: { toggle: 'tooltip',

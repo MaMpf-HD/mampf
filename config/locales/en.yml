@@ -2388,6 +2388,7 @@ en:
       join or by inviting persons that you have already had submissions with in
       this event series, so that they can join. The team can become only as
       large as the maximal team size allowed in this event series.
+    file_format: Submission format
   assignment:
     expired: The due date has expired.
     not_in_this_lecture: >
@@ -2719,6 +2720,8 @@ en:
     overview: Overview
     tba: tba
     due: due
+    as: as
+    as_file_type: as %{type} file
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

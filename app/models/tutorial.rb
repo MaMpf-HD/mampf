@@ -37,7 +37,7 @@ class Tutorial < ApplicationRecord
         next
       end
       submission = Submission.find_by_id(filename.split('-ID-').last
-                                              .remove('.pdf'))
+                                              	 .split('.')&.first)
       if !submission
         report[:invalid_id].push(filename)
         next
@@ -50,6 +50,14 @@ class Tutorial < ApplicationRecord
         report[:rejected].push(submission.team)
         next
       end
+      submission.correction = file_shrine.to_json
+			errors = submission.check_file_properties(submission.correction
+                                                           .metadata,
+                                                :correction)
+			if errors.present?
+        report[:invalid_file].push(filename)
+        next
+			end
       submission.update(correction: file_shrine.to_json)
       if !submission.valid?
         report[:invalid_file].push(filename)
