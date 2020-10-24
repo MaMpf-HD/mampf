@@ -24,7 +24,8 @@
         <ul>
           <% if @teacher.homepage.present? %>
             <li>
-              <%= link_to t('admin.user.homepage'),
+              <%= t('admin.user.homepage') %>:
+              <%= link_to @teacher.homepage,
                           @teacher.homepage,
                           class: 'text-dark' %>
             </li>
