@@ -2474,9 +2474,6 @@ de:
       <li>
       Beitritt eines Teammitglieds
       </li>
-      <li>
-      Austritt eines Teammitglieds
-      </li>
       </ul>
     last_modification: >
       letzte Änderung
@@ -2493,9 +2490,6 @@ de:
       </li>
       <li>
       Beitritt eines Teammitglieds
-      </li>
-      <li>
-      Austritt eines Teammitglieds
       </li>
       </ul>
       Liegt die letzte Änderung vor dem Abgabetermin, ist die Abgabe gültig.

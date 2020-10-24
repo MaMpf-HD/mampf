@@ -116,7 +116,6 @@ class SubmissionsController < ApplicationController
       return
     end
     @submission.users.delete(current_user)
-    @submission.update(last_modification_by_users_at: Time.now)
     send_leave_email
   end
 
