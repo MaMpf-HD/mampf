@@ -1798,13 +1798,13 @@ de:
     email_notifications: >
       Ich möchte per E-Mail über Folgendes benachrichtigt werden:
     email_for_announcement:
-      neue Mitteilungen in von mir abonnierten Veranstaltungen.
+      neue Mitteilungen in von mir abonnierten Veranstaltungen
     email_for_medium:
-      neue Medien in von mir abonnierten Veranstaltungen oder Modulen.
+      neue Medien in von mir abonnierten Veranstaltungen oder Modulen
     email_for_teachable:
-      neue angelegte Veranstaltungen oder Module.
+      neue angelegte Veranstaltungen oder Module
     email_for_news:
-      Neuigkeiten über MaMpf.
+      Neuigkeiten über MaMpf
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
     please_update: >
@@ -1839,20 +1839,17 @@ de:
       Bezüglich der Abgabe von Übungsblättern möchte ich per E-Mail von MaMpf
       benachrichtigt werden, wenn:
     email_for_submission_upload: >
-      erfolgreich von einem Teammitglied eine Datei für eine Abgabe
-      hochgeladen wurde.
+      erfolgreiches Hochladen einer Datei durch ein Teammitglied
     email_for_submission_removal: >
-      von einem Teammitglied die Datei zu einer Abgabe entfernt wurde, es sei
-      denn, das war ich selbst.
+      Löschen einer Datei durch ein anderes Teammitglied
     email_for_submission_join: >
-      jemand meinem Team für eine Abgabe beigetreten ist.
+      Beitritt eines Teammitglieds
     email_for_submission_leave: >
-      jemand aus meinem Team für eine Abgabe ausgetreten ist.
+      Austritt eines Teammitglieds
     email_for_correction_upload: >
-      von deiner TutorIn die Korrektur zu einer Abgabe hochladen wurde.
+      Verfügbarkeit der Korrektur
     email_for_submission_decision: >
-      eine Entscheidung über das Akzeptieren oder die Ablehnung einer
-      verspäteten Abgabe getroffen wurde
+      Annahme oder Ablehnung einer verspäteten Korrektur
     delete_account: Account löschen
     stored_submissions: >
       Von Dir sind %{submissions} Abgaben zu Hausaufgaben im System gespeichert,

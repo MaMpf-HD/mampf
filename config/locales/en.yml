@@ -1687,13 +1687,13 @@ en:
     email_notifications: >
       I want to receive email notifications about:
     email_for_announcement:
-      new announcements in event series I have subscribed to.
+      new announcements in event series I have subscribed to
     email_for_medium:
-      new media in event series or courses I have subscribed to.
+      new media in event series or courses I have subscribed to
     email_for_teachable:
-      new event series or courses.
+      new event series or courses
     email_for_news:
-      news about MaMpf.
+      news about MaMpf
     update: 'Update profile'
     success: 'Profil was updated successfully.'
     please_update: >
@@ -1728,18 +1728,17 @@ en:
       Regarding the submission of homework assignments I wand to be notified by
       MaMpf via email if
     email_for_submission_upload: >
-      a team member successfully uploaded a file for a submission.
+      succesful upload of a file by a team member
     email_for_submission_removal: >
-      a team member removed a file for a submission, exceot if it was me.
+      removal of a files by another team member
     email_for_submission_join: >
-      someone joined your team for a submission.
+      joining of a new team member
     email_for_submission_leave: >
-      someone left your team for a submission.
+      leaving of a team member
     email_for_correction_upload: >
-      your tutor uploaded the correction for a submission.
+      availability of correction
     email_for_submission_decision: >
-      a decision about the acceptance or rejection of late submission has been
-      made
+      acceptance or rejection of a late submission
     delete_account: Delete Account
     stored_submissions: >
       There are %{submissions} submissions to assignments from you in the
