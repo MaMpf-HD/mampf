@@ -140,11 +140,19 @@ class Submission < ApplicationRecord
                          file_type: file_type,
                          accepted_file_type: assignment.accepted_file_type)
     end
-    if file_type == '.gz' && assignment.accepted_file_type == '.tar.gz' &&
-      File.extname(File.basename(file_name)) != '.tar'
-      errors.push I18n.t('submission.wrong_file_type',
-                         file_type: File.extname(File.basename(file_name)),
-                         accepted_file_type: '.tar.gz')
+    if assignment.accepted_file_type == '.tar.gz'
+    	if file_type == '.gz'
+    		reduced_type = File.extname(File.basename(file_name, '.gz'))
+    		if reduced_type != '.tar'
+					errors.push I18n.t('submission.wrong_file_type',
+                      			 file_type: '.gz',
+                      			 accepted_file_type: '.tar.gz')
+        end
+      else
+				errors.push I18n.t('submission.wrong_file_type',
+                      		 file_type: file_type,
+                     	 		 accepted_file_type: '.tar.gz')
+			end
     end
     if (!assignment.accepted_file_type.in?(['.cc', '.hh']) &&
       !metadata['mime_type'].in?(assignment.accepted_mime_types)) ||
