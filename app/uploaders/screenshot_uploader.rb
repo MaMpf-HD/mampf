@@ -3,6 +3,7 @@ require 'image_processing/mini_magick'
 # used for storing video thumbnails
 class ScreenshotUploader < Shrine
   # shrine plugins
+  plugin :upload_endpoint
   plugin :store_dimensions
   plugin :determine_mime_type
   plugin :validation_helpers

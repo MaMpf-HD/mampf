@@ -6,7 +6,7 @@ disableExceptOrganizational = ->
   $('#lecture-organizational-warning').show()
   $('.fa-edit').hide()
   $('.new-in-lecture').hide()
-  $('[data-toggle="collapse"]').addClass('disabled')
+  $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
   return
 
 $(document).on 'turbolinks:load', ->
@@ -20,13 +20,13 @@ $(document).on 'turbolinks:load', ->
     $('#lecture-basics-warning').show()
     $('.fa-edit:not(#update-teacher-button,#update-editors-button)').hide()
     $('.new-in-lecture').hide()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     return
 
   # if any input is given to the preferences form, disable other input
   $('#lecture-preferences-form :input').on 'change', ->
     $('#lecture-preferences-warning').show()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()
     return
@@ -34,8 +34,15 @@ $(document).on 'turbolinks:load', ->
   # if any input is given to the comments form, disable other input
   $('#lecture-comments-form :input').on 'change', ->
     $('#lecture-comments-warning').show()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.fa-edit').hide()
+    $('.new-in-lecture').hide()
+    return
+
+  # if any input is given to the assignments form, disable other input
+  $('#lecture-assignments-form :input').on 'change', ->
+    $('#lecture-assignments-warning').show()
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.new-in-lecture').hide()
     return
 
@@ -66,19 +73,30 @@ $(document).on 'turbolinks:load', ->
       $('#lecture_start_section').prop('disabled', true)
     return
 
-  # rewload current page if lecture basics editing is cancelled
+  # reload current page if lecture basics editing is cancelled
   $('#lecture-basics-cancel').on 'click', ->
     location.reload(true)
     return
 
-  # rewload current page if lecture preferences editing is cancelled
+  # reload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-preferences').on 'click', ->
     location.reload(true)
     return
 
-   # rewload current page if lecture preferences editing is cancelled
+   # reload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-organizational').on 'click', ->
     location.reload(true)
+    return
+
+  # restore assignments form if lecture assignments editing is cancelled
+  $('#cancel-lecture-assignments').on 'click', ->
+    $('#lecture-assignments-warning').hide()
+    $('[data-toggle="collapse"]').prop('disabled', false).addClass('clickable')
+    $('.new-in-lecture').show()
+    maxSize = $('#lecture_submission_max_team_size').data('value')
+    $('#lecture_submission_max_team_size').val(maxSize)
+    gracePeriod = $('#lecture_submission_grace_period').data('value')
+    $('#lecture_submission_grace_period').val(gracePeriod)
     return
 
   # hide the media tab if hide media button is clicked
@@ -264,7 +282,7 @@ $(document).on 'turbolinks:load', ->
       largeDisplay()
     return
 
-  $('#erdbeere_structures_collapse_button').on 'click', ->
+  $('#erdbeere_structures_heading').on 'click', ->
     lectureId = $(this).data('lecture')
     loading = $(this).data('loading')
     $('#erdbeereStructuresBody').empty().append(loading)

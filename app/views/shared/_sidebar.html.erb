@@ -146,6 +146,33 @@
       <% end %>
     </li>
     <li class="nav-item">
+      <% if current_user.in?(lecture.tutors) %>
+        <%= link_to t('categories.tutorials'),
+                    lecture_tutorials_path(lecture),
+                    class: 'nav-link' %>
+      <% elsif current_user.editor_or_teacher_in?(lecture) %>
+        <% if lecture.tutorials.any? %>
+          <%= link_to t('categories.tutorials'),
+                      lecture_tutorial_overview_path(lecture),
+                      class: 'nav-link' %>
+        <% else %>
+          <span class="nav-link disabled">
+            <%= t('categories.tutorials') %>
+          </span>
+        <% end %>
+      <% else %>
+        <% if lecture.assignments.any? && lecture.tutorials.any? %>
+          <%= link_to t('categories.submissions'),
+                      lecture_submissions_path(lecture),
+                      class: 'nav-link' %>
+        <% else %>
+          <span class="nav-link disabled">
+            <%= t('categories.submissions') %>
+          </span>
+        <% end %>
+      <% end %>
+    </li>
+    <li class="nav-item">
       <% if lecture.muesli %>
         <a href="<%= DefaultSetting::MUESLI_LINK %>"
            class="nav-link"

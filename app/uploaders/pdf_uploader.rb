@@ -3,6 +3,7 @@ require 'image_processing/mini_magick'
 # PdfUploader Class
 class PdfUploader < Shrine
   # shrine plugins
+  plugin :upload_endpoint
   plugin :add_metadata
   plugin :determine_mime_type
   plugin :validation_helpers

@@ -47,6 +47,8 @@ class Medium < ApplicationRecord
   has_many :importing_courses, through: :imports,
            source: :teachable, source_type: 'Course'
 
+  has_one :assignment
+
   serialize :quiz_graph, QuizGraph
 
   serialize :solution, Solution

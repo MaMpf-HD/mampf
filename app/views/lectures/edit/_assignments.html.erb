@@ -1,0 +1,116 @@
+<div class="card bg-light">
+  <div class="card-header clickable"
+       role="tab"
+       id="assignments_heading"
+       data-toggle="collapse"
+       data-target="#assignments_collapse"
+       aria-expanded="false" aria-controls="assignments_collapse">
+    <div class="row">
+      <div class="col-12">
+        <h5>
+          <%= t('basics.assignments') %>
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div id="assignments_collapse"
+       class="collapse"
+       role="tabpanel"
+       aria-labelledby="heading"
+       data-parent="#lectureAccordion">
+    <div class="card-body">
+      <% unless inspection %>
+        <div class="row mb-3">
+          <div class="col-12 text-center">
+            <%= link_to t('admin.assignment.new'),
+                        new_assignment_path(params: { lecture_id: lecture.id }),
+                        class: 'btn btn-sm btn-primary',
+                        id: 'newAssignmentButton',
+                        remote: true %>
+          </div>
+        </div>
+      <% end %>
+      <div class="list-group">
+        <div class="list-group-item bg-light"
+             id="assignmentListHeader"
+             style="display: <%= show(lecture.assignments.any?) %>">
+          <div class="row">
+            <div class="col-2">
+              <h6>
+                <%= t('basics.title') %>
+              </h6>
+            </div>
+            <div class="col-3">
+              <h6>
+                <%= t('basics.deadline') %>
+              </h6>
+            </div>
+            <div class="col-3">
+              <h6>
+                <%= t('basics.medium') %>
+              </h6>
+            </div>
+            <div class="col-2">
+              <h6>
+                <%= t('submission.file_format') %>
+              </h6>
+            </div>
+            <div class="col-2">
+              <% unless inspection %>
+                <h6>
+                  <%= t('basics.action') %>
+                  <%= helpdesk(t('assignment.destruction_info'), true) %>
+                </h6>
+              <% end %>
+            </div>
+          </div>
+        </div>
+        <% lecture.assignments.order('deadline DESC').each do |a| %>
+          <%= render partial: 'assignments/row',
+                     locals: { assignment: a,
+                               inspection: inspection } %>
+        <% end %>
+      </div>
+      <%= form_with model: lecture,
+                    html: { id: 'lecture-assignments-form',
+                            class: 'mt-4 px-2' } do |f| %>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <%= f.label :submission_max_team_size,
+                        t('admin.lecture.submission_max_team_size') %>
+            <%= helpdesk t('admin.lecture.info.submission_max_team_size'),
+                         false %>
+            <%= f.number_field :submission_max_team_size,
+                               min: 1,
+                               max: 10000,
+                               class: 'form-control mx-2',
+                               disabled: inspection,
+                               data:
+                                { value: lecture.submission_max_team_size } %>
+          </div>
+          <div class="form-group col-md-6">
+            <%= f.label :submission_grace_period,
+                        t('admin.lecture.submission_grace_period') %>
+            <%= helpdesk t('admin.lecture.info.submission_grace_period'),
+                         false %>
+            <%= f.number_field :submission_grace_period,
+                               min: 0,
+                               max: 262800,
+                               class: 'form-control mx-2',
+                               disabled: inspection,
+                               data: { value: lecture.submission_grace_period } %>
+          </div>
+        </div>
+        <div id="lecture-assignments-warning" class="mt-3">
+          <%= t('warnings.unsaved_changes') %>
+          <%= f.submit t('buttons.save_and_exit'),
+                       class: "btn btn-sm btn-primary" %>
+          <button type="button" id="cancel-lecture-assignments"
+                  class="btn btn-sm btn-secondary">
+            <%= t('buttons.cancel') %>
+          </button>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

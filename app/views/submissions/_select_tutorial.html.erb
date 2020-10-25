@@ -1,0 +1,27 @@
+<%= form_with url: move_submission_path(submission),
+              method: :patch,
+              scope: 'submission' do |f| %>
+  <div class="row">
+    <div class="col-12">
+      <%= f.label :tutorial_id,
+                  t('submission.move_to_tutorial') %>
+      <%= f.select :tutorial_id,
+                    options_for_select(tutorials_selection(lecture),
+                                       tutorial.id),
+                                       {},
+                                       { class: 'form-control',
+                                         id: 'submission_tutorial_id-' +
+                                               submission.id.to_s } %>
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary' %>
+      <%= link_to t('buttons.cancel'),
+                  cancel_submission_action_path(submission),
+                  class: 'btn btn-sm btn-secondary',
+                  remote: true %>
+    </div>
+  </div>
+<% end %>

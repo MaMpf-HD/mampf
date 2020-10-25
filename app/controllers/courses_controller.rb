@@ -9,7 +9,6 @@ class CoursesController < ApplicationController
 
   def edit
     I18n.locale = @course.locale || I18n.default_locale
-    cookies[:edited_course] = params[:id]
   end
 
   def update

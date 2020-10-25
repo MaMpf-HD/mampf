@@ -1,0 +1,65 @@
+<div class="card bg-light">
+	<div class="card-header submissionHeader <%= submission_color(submission, assignment) %>"
+			 data-id="<%= assignment.id %>">
+		<div class="row">
+			<div class="col-10">
+				<h5>
+					<% if assignment.medium&.visible_for_user?(current_user) %>
+						<%= link_to assignment.title,
+												assignment.medium,
+												class: 'text-dark' %>
+					<% else %>
+						<%= assignment.title %>
+					<% end %>
+				</h5>
+			</div>
+			<div class="col-2 text-right">
+				<%= submission_status(submission, assignment) %>
+			</div>
+			<div class="col-12">
+				<%= t('basics.due') %>
+		    <% if assignment.deadline %>
+    		  <%= I18n.l(assignment.deadline, format: :short) %>
+    		<% end %>
+    		<%= t('basics.as_file_type',
+    					type: assignment.accepted_file_type) %>
+			</div>
+		</div>
+	</div>
+	<% if assignment&.medium&.visible_for_user?(current_user) &&
+  	      (assignment.medium.tags.present? || assignment.has_documents?) %>
+  	<ul class="list-group list-group-flush">
+    	<li class="list-group-item submissionSubHeader">
+    		<div class="row">
+    			<div class="col-12">
+      			<% if assignment.medium.tags.present? %>
+        			<div>
+          			<% assignment.medium.tags.each do |t| %>
+            			<%= link_to t.title,
+              	  		        t,
+                	    		    class: 'badge badge-light',
+                  	      		style: 'background-color: #f8f9fa;' %>
+          			<% end %>
+        			</div>
+      			<% end %>
+      		</div>
+      		<div class="col-12">
+      			<% if assignment.has_documents? %>
+        			<div class="flexdiv mt-2">
+          			<%= render partial: 'media/medium/buttons',
+            	  		       locals: { medium: assignment.medium,
+              	    		             ref_link: nil } %>
+        			</div>
+      			<% end %>
+      		</div>
+      	</div>
+    	</li>
+  	</ul>
+	<% end %>
+	<div class="submissionMain"
+			 data-id="<%= assignment.id %>">
+		<%= render partial: 'submissions/card_main',
+							 locals: { submission: submission,
+							 					 assignment: assignment } %>
+	</div>
+</div>

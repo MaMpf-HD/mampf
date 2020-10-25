@@ -1,19 +1,15 @@
   <div class="card bg-light">
-    <div class="card-header" role="tab" id="comments_heading">
+    <div class="card-header clickable"
+         role="tab"
+         id="comments_heading"
+         data-toggle="collapse"
+         data-target="#comments_collapse"
+         aria-expanded="false" aria-controls="comments_collapse">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h5>
             <%= t('categories.comments') %>
           </h5>
-        </div>
-        <div class="col-6 text-right">
-          <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
-             href="#comments_collapse"
-             id="comments_collapse_button"
-             aria-expanded="false" aria-controls="comments_collapse">
-            <%= t('buttons.toggle') %>
-          </a>
         </div>
       </div>
     </div>

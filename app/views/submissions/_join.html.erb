@@ -1,0 +1,31 @@
+<%= form_with url: join_submission_path,
+              method: :post,
+              scope: 'join' do |f| %>
+  <div class="card-body submissionBody"
+       data-id="<%= assignment.id %>">
+    <div class="row mb-2">
+      <div class="col-12">
+        <%= f.label :code, t('basics.code') %>
+        <%= f.text_field :code, class: 'form-control' %>
+        <div class="invalid-feedback"
+             id="submission-code-error">
+        </div>
+        <%= f.hidden_field :assignment_id,
+                           value: assignment.id %>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer submissionFooter"
+       data-id="<%= assignment.id %>">
+    <div class="row">
+      <div class="col-12 text-center">
+        <%= f.submit t('buttons.join'),
+                     class: 'btn btn-sm btn-primary mr-2' %>
+        <%= link_to t('buttons.cancel'),
+                    cancel_new_submission_path(params: { assignment_id: assignment.id }),
+                    class: 'btn btn-sm btn-secondary',
+                    remote: true %>
+      </div>
+    </div>
+  </div>
+<% end %>

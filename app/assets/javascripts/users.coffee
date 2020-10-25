@@ -25,7 +25,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   # open an external tab with the user homepage
-  $(document).on 'click', '#test-link', ->
+  $(document).on 'click', '#test-homepage', ->
     url = $('#user_homepage').val()
     window.open(url, '_blank')
     return
@@ -45,6 +45,6 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#generic_user_id'
   $(document).off 'change', '#generic_user_admin'
-  $(document).off 'click', '#test-link'
+  $(document).off 'click', '#test-homepage'
   $(document).off 'click', '#open-generic-users-modal'
   return

@@ -41,6 +41,12 @@ class Lecture < ApplicationRecord
   # a lecture has many announcements
   has_many :announcements, dependent: :destroy
 
+  # a lecture has many tutorials
+  has_many :tutorials
+
+  # a lecture has many assignments (e.g. exercises with deadlines)
+  has_many :assignments
+
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
   serialize :structure_ids, Array
@@ -56,6 +62,17 @@ class Lecture < ApplicationRecord
   validate :absence_of_term, if: :term_independent?
 
   validate :only_one_lecture, if: :term_independent?, on: :create
+
+  validates :submission_max_team_size,
+            numericality: { only_integer: true,
+                            greater_than: 0 },
+            allow_nil: true
+
+  validates :submission_grace_period,
+            numericality: { only_integer: true,
+                            greater_than: -1 },
+            allow_nil: true
+
 
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
@@ -641,6 +658,30 @@ class Lecture < ApplicationRecord
   def term_to_label_short
     return term.to_label_short if term
     ''
+  end
+
+  def tutors
+    User.where(id: TutorTutorialJoin.where(tutorial: tutorials)
+                                    .pluck(:tutor_id).uniq)
+  end
+
+  def submission_deletion_date
+    Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
+      term.end_date + 15.days
+    end
+  end
+
+  def assignments_by_deadline
+    assignments.group_by(&:deadline).sort
+  end
+
+  def current_assignments
+    assignments_by_deadline.select { |x| x.first >= Time.now }.first&.second
+                           .to_a
+  end
+
+  def previous_assignments
+    assignments_by_deadline.select { |x| x.first < Time.now }.last&.second.to_a
   end
 
   private

@@ -24,17 +24,20 @@
         <ul>
           <% if @teacher.homepage.present? %>
             <li>
-              <%= link_to t('admin.user.homepage'),
+              <%= t('admin.user.homepage') %>:
+              <%= link_to @teacher.homepage,
                           @teacher.homepage,
                           class: 'text-dark' %>
             </li>
           <% end %>
-          <li>
-            <%= t('basics.email') %>:
-            <%= mail_to @teacher.email,
-                        nil,
-                        class: 'text-dark' %>
-          </li>
+          <% unless @teacher.archived %>
+            <li>
+              <%= t('basics.email') %>:
+              <%= mail_to @teacher.email,
+                          nil,
+                          class: 'text-dark' %>
+            </li>
+          <% end %>
         </ul>
       </div>
     </div>

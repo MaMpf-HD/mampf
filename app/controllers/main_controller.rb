@@ -8,7 +8,7 @@ class MainController < ApplicationController
 
   def home
     if user_signed_in?
-      cookies[:locale] = current_user.locale
+      cookies[:locale] = strict_cookie(current_user.locale)
     end
   end
 

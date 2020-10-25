@@ -135,42 +135,6 @@ $(document).on 'turbolinks:load', ->
     $('#' + this.dataset.timer).val(fancyTimeFormat(video.currentTime))
     return
 
-  # trigger file download for toc .vtt file
-  # (relevant on media enrich page)
-  $('#export-toc').on 'click', (e) ->
-    e.preventDefault()
-    $.fileDownload $(this).prop('href'),
-      successCallback: (url) ->
-        return
-      failCallback: (url) ->
-        console.log 'Download failed'
-        return
-    return
-
-  # trigger file download for video screenshot .png file
-  # (relevant on media enrich page)
-  $('#export-screenshot').on 'click', (e) ->
-    e.preventDefault()
-    $.fileDownload $(this).prop('href'),
-      successCallback: (url) ->
-        return
-      failCallback: (url) ->
-        console.log 'Download failed'
-        return
-    return
-
-  # trigger file download for references .vtt file
-  # (relevant on media enrich page)
-  $('#export-references').on 'click', (e) ->
-    e.preventDefault()
-    $.fileDownload $(this).prop('href'),
-      successCallback: (url) ->
-        return
-      failCallback: (url) ->
-        console.log 'Download failed'
-        return
-    return
-
   $('#import-from-manuscript').on 'click', ->
     mediumId = $(this).data('mediumid')
     okay = confirm('Bist Du sicher?')

@@ -1,3 +1,15 @@
+# First build the PDF compressor Web assembly binary
+FROM golang:1.15 AS build-pdfcomprezzor
+WORKDIR /go/src
+COPY pdfcomprezzor/go.mod .
+COPY pdfcomprezzor/go.sum .
+COPY pdfcomprezzor/main.go .
+RUN go mod vendor
+RUN sed -i 's/init(/init2(/g' vendor/github.com/pdfcpu/pdfcpu/pkg/font/metrics.go
+RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
+
+
+# Now build the actual mampf application
 FROM ruby:2.7.1
 
 ENV RAILS_ENV=production
@@ -14,10 +26,10 @@ RUN apt-get update && apt-get install -y nodejs yarn ffmpeg imagemagick pdftk gh
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
-      mkdir /mampf && mkdir /public && chown app:app /public
-VOLUME /public
+      mkdir /private /caches && chown app:app /private /caches
 WORKDIR /usr/src/app
 USER app
+COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock /usr/src/app/
 RUN bundle install

@@ -1,0 +1,50 @@
+<div class="list-group-item assignmentRow"
+     data-id="<%= assignment.id.to_i %>">
+  <div class="row">
+    <div class="col-2">
+      <%= assignment.title %>
+    </div>
+    <div class="col-3">
+      <% if assignment.deadline %>
+        <%= I18n.l(assignment.deadline, format: :long, locale: :'de') %>
+      <% end %>
+    </div>
+    <div class="col-3">
+      <% if assignment.medium %>
+        <%= link_to assignment.medium.local_title_for_viewers,
+                    assignment.medium %>
+      <% end %>
+    </div>
+    <div class="col-2">
+      <%= assignment.accepted_file_type %>
+    </div>
+    <div class="col-2">
+      <% unless inspection %>
+        <%= link_to edit_assignment_path(assignment),
+                    class: 'text-dark',
+                    data: { toggle: 'tooltip',
+                            placement: 'botttom' },
+                    style: 'text-decoration: none;',
+                    title: t('buttons.edit'),
+                    remote: true do %>
+          <i class="far fa-lg fa-edit mr-2">
+          </i>
+        <% end %>
+        <% if assignment.destructible? %>
+          <%= link_to assignment_path(assignment),
+                      class: 'text-dark',
+                      data: { toggle: 'tooltip',
+                              placement: 'botttom',
+                              confirm: t('confirmation.generic') },
+                      style: 'text-decoration: none;',
+                      title: t('buttons.delete'),
+                      method: :delete,
+                      remote: true do %>
+            <i class="fas fa-lg fa-trash-alt">
+            </i>
+          <% end %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</div>

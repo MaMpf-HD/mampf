@@ -3,6 +3,7 @@ require 'zip'
 # GeogebraUploader class
 # used for storing geogebra files
 class GeogebraUploader < Shrine
+  plugin :upload_endpoint
   plugin :determine_mime_type
   plugin :validation_helpers
   plugin :derivatives

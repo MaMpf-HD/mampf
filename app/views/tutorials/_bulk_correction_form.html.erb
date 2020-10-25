@@ -1,0 +1,44 @@
+<%= form_with url: bulk_upload_corrections_path(id: @tutorial.id,
+                                                ass_id: @assignment.id),
+              html: { id: 'bulk-upload-form' },
+              method: :patch do |f| %>
+      <h5>
+        <%= t('submission.bulk_upload') %>
+        <%= helpdesk(t('tutorial.bulk_upload.info.general_info'), false) %>
+      </h5>
+  <div class="row mt-3">
+    <div class="col-12"
+         id="upload-bulk-correction-button"
+         data-choosefiles="<%= t('basics.files') %>">
+      <%= f.hidden_field :package,
+                         id: 'upload-bulk-correction-hidden',
+                         value: [] %>
+      <%= f.file_field :package,
+                       class: 'form-control-file mb-2',
+                       id: 'upload-bulk-correction',
+                       multiple: true %>
+    </div>
+    <div class="col-12" id="upload-bulk-correction-metadata"
+         data-tr-uploads="<%= t('tutorial.bulk_upload.files_in_cache') %>">
+    </div>
+    <div class="col-12" id="upload-bulk-correction-informer">
+    </div>
+    <div class="col-12" id="upload-bulk-correction-statusBar">
+    </div>
+    <div class="invalid-feedback" id="upload-bulk-errors">
+    </div>
+  </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary',
+                   id: 'upload-bulk-correction-save',
+                   disabled: true %>
+      <button class="btn btn-sm btn-secondary"
+              id="cancel-bulk-upload"
+              type="button">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>

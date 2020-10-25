@@ -1,0 +1,33 @@
+<div class="list-group-item tutorialRow"
+       data-id="<%= tutorial.id.to_i %>">
+  <%= form_with model: tutorial do |f| %>
+    <div class="form-row">
+      <div class="form-group col-4">
+        <%= f.text_field :title,
+                         class: 'form-control',
+                         id: "tutorial_title_#{tutorial.id}" %>
+        <div class="invalid-feedback"
+             id="tutorial-title-error">
+        </div>
+      </div>
+      <div class="form-group col-4">
+        <%= f.select :tutor_ids,
+                     tutorial_preselection(tutorial),
+                     {},
+                     { class: 'form-control',
+                       multiple: true,
+                       id: "tutorial_tutor_ids_#{tutorial.id}" } %>
+      </div>
+      <div class="form-group col-4">
+        <%= f.submit t('buttons.save'),
+                     class: 'btn btn-sm btn-primary ml-2' %>
+        <%= link_to t('buttons.cancel'),
+                    cancel_editing_tutorial_path(tutorial),
+                    class: 'btn btn-sm btn-secondary',
+                    remote: true %>
+      </div>
+    </div>
+    <%= f.hidden_field :lecture_id,
+                      value: tutorial.lecture.id %>
+  <% end %>
+</div>

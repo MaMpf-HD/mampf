@@ -1,0 +1,198 @@
+<%= form_with model: submission do |f| %>
+  <div class="card-body submissionBody"
+       data-id="<%= assignment.id %>">
+    <div class="row mb-3">
+      <div class="col-12">
+        <%= f.label :tutorial_id,
+                    t('basics.tutorial') %>
+        <%= f.select :tutorial_id,
+                     options_for_select(tutorials_selection(lecture),
+                                        submission.tutorial&.id ||
+                                          submission
+                                            .preceding_tutorial(current_user)
+                                           &.id),
+                     {},
+                     { class: 'form-control' } %>
+        <div class="invalid-feedback"
+             id="submission-tutorial-error">
+        </div>
+        <%= f.hidden_field :lecture_id,
+                           value: lecture.id %>
+        <%= f.hidden_field :assignment_id,
+                           value: assignment.id %>
+      </div>
+    </div>
+    <% unless submission.persisted? %>
+      <div class="row">
+        <div class="col-12">
+          <%= f.label :invitee_ids,
+                     t('submission.invitations_to') %>
+          <%= f.select :invitee_ids,
+                       options_for_select(partner_selection(current_user,
+                                                            lecture),
+                                          partner_preselection(current_user,
+                                                               lecture)),
+                       {},
+                       { multiple: true,
+                         class: 'form-control' } %>
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="col-12">
+        <%= f.label :manuscript, 'Abgabe' %>
+      </div>
+      <div class="col-3" id="userManuscript-uploadButton"
+           data-choosefiles="<%= file_button_text(assignment) %>">
+        <%= f.hidden_field :manuscript,
+                           value: submission.cached_manuscript_data,
+                           id: 'upload-userManuscript-hidden' %>
+        <%= f.file_field :manuscript,
+                         class: 'form-control-file',
+                         id: 'upload-userManuscript',
+                         multiple: assignment.accepted_file_type == '.pdf',
+                         accept: assignment.accepted_for_file_input %>
+        <%= f.hidden_field :detach_user_manuscript,
+                           value: false %>
+        <button id="userManuscript-uploadButton-btn"
+         class="btn btn-sm btn-outline-secondary">
+          <%= file_button_text(assignment) %>
+         </button>
+      </div>
+
+      <div class="col-9">
+        <i class="fas fa-lg fa-trash-alt mr-2 clickable"
+           id="removeUserManuscript">
+        </i>
+
+        <span id="userManuscriptMetadata"
+              style="display: <%= show_inline(submission.manuscript) %>">
+          <%= submission.manuscript_filename %>
+          (<%= number_to_human_size(submission.manuscript_size) %>)
+        </span>
+        <span id="noUserManuscript"
+              style="display: <%= show_inline(!submission.manuscript) %>">
+          <%= t('submission.no_manuscript_yet') %>
+        </span>
+      </div>
+      <div class="col-12 mt-2"
+           id="userManuscript-status">
+        <div class="col-12 submission-initially-hidden"
+             id="file-size-correct">
+          <i class="fas fa-check"></i>
+            <%=t('submission.correct_file_size')%>
+        </div>
+        <div class="col-12 submission-initially-hidden"
+             id="multiple-files-selected">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%=t('submission.multiple_files_selected')%>
+          <div class="col-12"
+             id="files-display">
+        </div>
+        </div>
+
+        <div class="col-12 submission-initially-hidden"
+             id="file-size-too-big">
+          <i class="fas fa-exclamation-triangle"></i>
+          <%=t('submission.file_size_too_big')%>
+        </div>
+        <div class="col-12 submission-initially-hidden"
+             id="file-size-way-too-big">
+          <i class="fas fa-bomb"></i>
+          <%=t('submission.file_size_way_too_big')%>
+        </div>
+        <div class="col-12 submission-initially-hidden"
+             id="files-merge">
+          <small id="merging-help-text">
+            <%= t("submission.merging_help_html")%>
+            <%= helpdesk(t('submission.merging_info'), true)%>
+          </small>
+          <div class="col-12 my-1">
+            <button id="userManuscript-merge-btn"
+                    class="btn btn-sm btn-primary"
+                    data-tr-working="<%= t('submission.working')%>"
+                    data-tr-failed="<%= t('submission.merging_failed')%>"
+            >
+              <%= t('submission.merge') %>
+            </button>
+          </div>
+          <div class="col-12">
+            <span id="log-merge-btn" class="badge badge-light clickable">
+              <%=t('submission.optimization_log')%>
+            </span>
+            <div id="userManuscript-merge-log"
+                 class="submission-initially-hidden border bg-light p-2">
+            </div>
+          </div>
+        </div>
+        <div class="col-12 submission-initially-hidden"
+             id="file-optimize">
+          <small id="optimization-help-text">
+            <%= t("submission.optimization_help_html")%>
+            <%= helpdesk(t('submission.optimization_info'), true)%>
+          </small>
+          <div class="col-12 my-1">
+            <button id="userManuscript-optimize-btn"
+                    class="btn btn-sm btn-primary"
+                    data-tr-working="<%= t('submission.working')%>"
+                    data-tr-failed="<%= t('submission.optimization_failed')%>"
+            >
+              <%= t('submission.optimize') %>
+            </button>
+          </div>
+          <div class="col-12">
+            <span id="log-btn" class="badge badge-light clickable">
+              <%=t('submission.optimization_log')%>
+            </span>
+            <div id="userManuscript-optimize-log"
+                 class="submission-initially-hidden border bg-light p-2">
+            </div>
+          </div>
+        </div>
+        <div class="col-12 my-1" id="file-permission-field">
+          <input type="checkbox"
+                 id="file-permission-checkbox"/>
+          <%= t('submission.assure_third_party') %>
+        </div>
+        <div class="col-12" id="submission-final-upload-dialogue">
+          <div class="col-12">
+            <button id="userManuscript-uploadButton-call"
+                    data-tr-success="<%= t('buttons.upload_success') %>"
+                    data-tr-failure="<%= t('submission.upload_failure')%>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    class="btn btn-sm btn-outline-secondary"
+                    disabled=true>
+              <%= t('buttons.upload') %>
+            </button>
+          </div>
+          <div class="col-12">
+            <small>
+              <%= t('submission.removal_notice_html')%>
+            </small>
+          </div>
+          <div class="col-12">
+            <small class="text-danger submission-initially-hidden"
+                   id="userManuscript-upload-notice">
+              <%= t('submission.submission_upload_notice_html')%>
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="col-12" id="userManuscript-statusBar">
+      </div>
+    </div>
+  </div>
+  <div class="card-footer submissionFooter"
+       data-id="<%= assignment.id %>">
+    <div class="row">
+      <div class="col-12 text-center">
+        <%= f.submit t('buttons.save'),
+                     class: 'btn btn-sm btn-primary' %>
+        <%= link_to t('buttons.cancel'),
+                    cancel_editing_submission_path(submission),
+                    class: 'btn btn-sm btn-secondary',
+                    remote: true %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -25,6 +25,13 @@ Rails.application.routes.draw do
 
   resources :areas, except: [:show]
 
+  get 'assignments/:id/cancel_edit', to: 'assignments#cancel_edit',
+                                   as: 'cancel_edit_assignment'
+  get 'assignments/cancel_new', to: 'assignments#cancel_new',
+                              as: 'cancel_new_assignment'
+
+  resources :assignments, only: [ :new, :edit, :create, :update, :destroy]
+
   get 'chapters/:id/list_sections', to: 'chapters#list_sections',
                                      as: 'list_sections'
   resources :chapters, except: [:index, :show]
@@ -138,6 +145,12 @@ Rails.application.routes.draw do
                                      as: 'lecture_close_comments'
   get 'lectures/:id/open_comments', to: 'lectures#open_comments',
                                      as: 'lecture_open_comments'
+  get 'lectures/:id/submissions', to: 'submissions#index',
+                                  as: 'lecture_submissions'
+  get 'lectures/:id/tutorials', to: 'tutorials#index',
+                                as: 'lecture_tutorials'
+  get 'lectures/:id/tutorial_overview', to: 'tutorials#overview',
+                                        as: 'lecture_tutorial_overview'
 
   resources :lectures, except: [:index]
 
@@ -259,6 +272,57 @@ Rails.application.routes.draw do
 
   resources :subjects, except: [:show]
 
+  post 'submissions/join', to: 'submissions#join',
+                            as: 'join_submission'
+  get 'submissions/enter_code', to: 'submissions#enter_code',
+                                as: 'enter_submission_code'
+  get 'submissions/redeem_code', to: 'submissions#redeem_code',
+                                 as: 'redeem_submission_code'
+
+  delete 'submissions/:id/leave', to: 'submissions#leave',
+                                  as: 'leave_submission'
+  get 'submissions/:id/cancel_edit', to: 'submissions#cancel_edit',
+                                   as: 'cancel_edit_submission'
+  get 'submissions/cancel_new', to: 'submissions#cancel_new',
+                              as: 'cancel_new_submission'
+  get 'submissions/:id/show_manuscript', to: 'submissions#show_manuscript',
+                                         as: 'show_submission_manuscript'
+  patch 'submissions/:id/refresh_token', to: 'submissions#refresh_token',
+                                         as: 'refresh_submission_token'
+  get 'submissions/:id/enter_invitees', to: 'submissions#enter_invitees',
+                                        as: 'enter_submission_invitees'
+  post 'submissions/:id/invite', to: 'submissions#invite',
+                                 as: 'invite_to_submission'
+  post 'submissions/:id/add_correction', to: 'submissions#add_correction',
+                                         as: 'add_correction'
+  get 'submissions/:id/show_correction', to: 'submissions#show_correction',
+                                         as: 'show_correction'
+  get 'submissions/:id/select_tutorial', to: 'submissions#select_tutorial',
+                                         as: 'select_tutorial'
+  patch 'submissions/:id/move', to: 'submissions#move',
+                              as: 'move_submission'
+  get 'submissions/:id/cancel_action', to: 'submissions#cancel_action',
+                                         as: 'cancel_submission_action'
+
+  delete 'submissions/:id/delete_correction',
+         to: 'submissions#delete_correction',
+         as: 'delete_correction'
+
+  patch 'submissions/:id/accept', to: 'submissions#accept',
+                                  as: 'accept_submission'
+
+  patch 'submissions/:id/reject', to: 'submissions#reject',
+                                  as: 'reject_submission'
+
+  get 'submissions/:id/edit_correction', to: 'submissions#edit_correction',
+                                         as: 'edit_correction'
+
+  get 'submissions/:id/cancel_edit_correction',
+      to: 'submissions#cancel_edit_correction',
+      as: 'cancel_edit_correction'
+
+  resources :submissions, except: :index
+
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
   get 'tags/:id/inspect', to: 'tags#inspect',
@@ -279,6 +343,21 @@ Rails.application.routes.draw do
   post 'tags/postprocess', to: 'tags#postprocess',
                            as: 'postprocess_tags'
   resources :tags
+
+  get 'tutorials/:id/cancel_edit', to: 'tutorials#cancel_edit',
+                                   as: 'cancel_edit_tutorial'
+  get 'tutorials/cancel_new', to: 'tutorials#cancel_new',
+                              as: 'cancel_new_tutorial'
+
+  get 'tutorials/:id/assignments/:ass_id/bulk_download',
+      to: 'tutorials#bulk_download',
+      as: 'bulk_download_submissions'
+
+  patch 'tutorials/:id/assignments/:ass_id/bulk_upload',
+        to: 'tutorials#bulk_upload',
+        as: 'bulk_upload_corrections'
+
+  resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 
   get 'sections/list_tags', to: 'sections#list_tags',
                              as: 'list_section_tags'
@@ -304,6 +383,10 @@ Rails.application.routes.draw do
                                   as: 'list_generic_users'
   get 'users/fill_user_select', to: 'users#fill_user_select',
                               as: 'fill_user_select'
+  get 'users/list', to: 'users#list',
+                    as: 'list_users'
+  get 'users/delete_account', to: 'users#delete_account',
+                              as: 'delete_account'
   resources :users, only: [:index, :edit, :update, :destroy]
 
   get 'examples/:id', to: 'erdbeere#show_example',
@@ -342,6 +425,9 @@ Rails.application.routes.draw do
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
   mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
+  mount SubmissionUploader.upload_endpoint(:submission_cache) => "/submissions/upload"
+  mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
+  mount ZipUploader.upload_endpoint(:submission_cache) => "/packages/upload"
   mount Thredded::Engine => '/forum'
   get '*path', to: 'main#error'
 

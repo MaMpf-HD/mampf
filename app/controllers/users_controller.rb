@@ -33,6 +33,11 @@ class UsersController < ApplicationController
     end
   end
 
+  def list
+    search = User.search { fulltext params[:term] }
+    @users = search.results
+  end
+
   def list_generic_users
     result = User.where.not(id: @elevated_users.pluck(:id))
                  .map { |u| { value: u.id, text: u.info }}
@@ -60,6 +65,9 @@ class UsersController < ApplicationController
                  .map { |u| { value: u.third,
                               text: "#{u.first} (#{u.second})" } }
     render json: result
+  end
+
+  def delete_account
   end
 
   private

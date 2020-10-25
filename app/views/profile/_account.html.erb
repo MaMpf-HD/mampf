@@ -4,7 +4,7 @@
               class: "btn btn-outline-secondary mb-2" %>
 <% end %>
 <%= link_to t('profile.delete_account'),
-            user_registration_path,
+            delete_account_path,
             class: "btn btn-outline-danger mb-2",
-            data: { confirm: t('sure') },
-            method: :delete %>
+            remote: true %>
+
