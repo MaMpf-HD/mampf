@@ -157,7 +157,8 @@ class Submission < ApplicationRecord
     if (!assignment.accepted_file_type.in?(['.cc', '.hh']) &&
       !metadata['mime_type'].in?(assignment.accepted_mime_types)) ||
       (assignment.accepted_file_type.in?(['.cc', '.hh']) &&
-        !metadata['mime_type'].starts_with?('text/'))
+        (!metadata['mime_type'].starts_with?('text/') &&
+         metadata['mime_type'] != 'application/octet-stream'))
       errors.push I18n.t('submission.wrong_mime_type',
                           mime_type: metadata['mime_type'],
                           accepted_mime_types: assignment.accepted_mime_types
