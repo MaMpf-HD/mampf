@@ -21,5 +21,5 @@ $('.assignmentRow[data-id="0"')
   .replaceWith('<%= j render partial: "assignments/row",
                       locals: { assignment: @assignment,
                       					inspection: false } %>')
-$('#newTutorialButton').show()
+$('#newAssignmentButton').show()
 <% end %>
