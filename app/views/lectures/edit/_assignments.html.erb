@@ -19,15 +19,17 @@
        aria-labelledby="heading"
        data-parent="#lectureAccordion">
     <div class="card-body">
-      <div class="row mb-3">
-        <div class="col-12 text-center">
-          <%= link_to t('admin.assignment.new'),
-                      new_assignment_path(params: { lecture_id: lecture.id }),
-                      class: 'btn btn-sm btn-primary',
-                      id: 'newAssignmentButton',
-                      remote: true %>
+      <% unless inspection %>
+        <div class="row mb-3">
+          <div class="col-12 text-center">
+            <%= link_to t('admin.assignment.new'),
+                        new_assignment_path(params: { lecture_id: lecture.id }),
+                        class: 'btn btn-sm btn-primary',
+                        id: 'newAssignmentButton',
+                        remote: true %>
+          </div>
         </div>
-      </div>
+      <% end %>
       <div class="list-group">
         <div class="list-group-item bg-light"
              id="assignmentListHeader"
@@ -54,16 +56,19 @@
               </h6>
             </div>
             <div class="col-2">
-              <h6>
-                <%= t('basics.action') %>
-                <%= helpdesk(t('assignment.destruction_info'), true) %>
-              </h6>
+              <% unless inspection %>
+                <h6>
+                  <%= t('basics.action') %>
+                  <%= helpdesk(t('assignment.destruction_info'), true) %>
+                </h6>
+              <% end %>
             </div>
           </div>
         </div>
         <% lecture.assignments.order('deadline DESC').each do |a| %>
           <%= render partial: 'assignments/row',
-                     locals: { assignment: a } %>
+                     locals: { assignment: a,
+                               inspection: inspection } %>
         <% end %>
       </div>
       <%= form_with model: lecture,

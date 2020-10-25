@@ -13,5 +13,6 @@ $('#tutorial_title').addClass('is-invalid')
 <% else %>
 $('.tutorialRow[data-id="<%= @tutorial.id %>')
   .replaceWith('<%= j render partial: "tutorials/row",
-                      locals: { tutorial: @tutorial } %>')
+                      locals: { tutorial: @tutorial,
+                      					inspection: false } %>')
 <% end %>

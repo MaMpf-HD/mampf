@@ -4,8 +4,9 @@ class TutorialsController < ApplicationController
                                       :bulk_download, :bulk_upload]
   before_action :set_assignment, only: [:bulk_download, :bulk_upload]
   before_action :set_lecture, only: [:index, :overview]
+  before_action :set_lecture_from_form, only: [:create]
   before_action :check_tutor_status, only: :index
-  before_action :check_editor_status, only: :overview
+  before_action :check_editor_status, only: [:overview, :create]
   authorize_resource
 
   require 'rubygems'
@@ -103,6 +104,12 @@ class TutorialsController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
+    return if @lecture
+    redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
+  def set_lecture_from_form
+    @lecture = Lecture.find_by_id(tutorial_params[:lecture_id])
     return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end

@@ -1,3 +1,4 @@
 $('.assignmentRow[data-id="<%= @assignment.id %>')
   .replaceWith('<%= j render partial: "assignments/row",
-                      locals: { assignment: @assignment } %>')
+                      locals: { assignment: @assignment,
+                      					inspection: false } %>')

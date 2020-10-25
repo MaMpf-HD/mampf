@@ -1,37 +1,39 @@
 <div class="list-group-item tutorialRow"
      data-id="<%= tutorial.id.to_i %>">
-<div class="row">
-  <div class="col-4">
-    <%= tutorial.title %>
-  </div>
-  <div class="col-4">
-    <%= tutorial.tutor_names || t('basics.tba') %>
-  </div>
-  <div class="col-4">
-    <%= link_to edit_tutorial_path(tutorial),
-                class: 'text-dark',
-                data: { toggle: 'tooltip',
-                        placement: 'botttom' },
-                style: 'text-decoration: none;',
-                title: t('buttons.edit'),
-                remote: true do %>
-      <i class="far fa-lg fa-edit mr-2">
-      </i>
-    <% end %>
-    <% if tutorial.destructible? %>
-      <%= link_to tutorial_path(tutorial),
-                  class: 'text-dark',
-                  data: { toggle: 'tooltip',
-                          placement: 'botttom',
-                          confirm: t('confirmation.generic') },
-                  style: 'text-decoration: none;',
-                  title: t('buttons.delete'),
-                  method: :delete,
-                  remote: true do %>
-        <i class="fas fa-lg fa-trash-alt">
-        </i>
+  <div class="row">
+    <div class="col-4">
+      <%= tutorial.title %>
+    </div>
+    <div class="col-4">
+      <%= tutorial.tutor_names || t('basics.tba') %>
+    </div>
+    <div class="col-4">
+      <% unless inspection %>
+        <%= link_to edit_tutorial_path(tutorial),
+                    class: 'text-dark',
+                    data: { toggle: 'tooltip',
+                            placement: 'botttom' },
+                    style: 'text-decoration: none;',
+                    title: t('buttons.edit'),
+                    remote: true do %>
+          <i class="far fa-lg fa-edit mr-2">
+          </i>
+        <% end %>
+        <% if tutorial.destructible? %>
+          <%= link_to tutorial_path(tutorial),
+                      class: 'text-dark',
+                      data: { toggle: 'tooltip',
+                              placement: 'botttom',
+                              confirm: t('confirmation.generic') },
+                      style: 'text-decoration: none;',
+                      title: t('buttons.delete'),
+                      method: :delete,
+                      remote: true do %>
+            <i class="fas fa-lg fa-trash-alt">
+            </i>
+          <% end %>
+        <% end %>
       <% end %>
-    <% end %>
+    </div>
   </div>
-</div>
 </div>

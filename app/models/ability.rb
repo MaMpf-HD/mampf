@@ -18,7 +18,13 @@ class Ability
       end
     elsif user.editor? || user.teacher?
       # :read is a cancancan alias for index and show actions
-      can [:read, :inspect], :all
+      can [:read], :all
+
+      can :inspect, [Course, Lecture, Lesson, Tag]
+      can :inspect, Medium do |medium|
+        medium.visible_for_user?(user)
+      end
+
       cannot :index, Announcement
       can :manage, [:administration, :erdbeere, Item, Referral]
       cannot :classification, :administration
@@ -32,9 +38,9 @@ class Ability
         answer.question.edited_with_inheritance_by?(user)
       end
 
-      can [:new, :cancel_edit, :cancel_new], Assignment
+      can [:new, :cancel_edit, :cancel_new, :create], Assignment
 
-      can [:edit, :create, :update, :destroy], Assignment do |assignment|
+      can [:edit, :update, :destroy], Assignment do |assignment|
         assignment.lecture.edited_by?(user)
       end
 

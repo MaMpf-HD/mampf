@@ -1,6 +1,8 @@
 # AssignmentsController
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: [:edit, :destroy, :update, :cancel_edit]
+  before_action :set_lecture, only: :create
+  before_action :check_editor_status, only: :create
   authorize_resource
 
   def new
@@ -46,8 +48,19 @@ class AssignmentsController < ApplicationController
     redirect_to :root, alert: I18n.t('controllers.no_assignment')
   end
 
+  def set_lecture
+    @lecture = Lecture.find_by_id(assignment_params[:lecture_id])
+    return if @lecture
+    redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
   def assignment_params
     params.require(:assignment).permit(:title, :medium_id, :lecture_id,
                                        :deadline, :accepted_file_type)
+  end
+
+  def check_editor_status
+    return if current_user.editor_or_teacher_in?(@lecture)
+    redirect_to :root, alert: I18n.t('controllers.no_editor_or_teacher')
   end
 end
