@@ -509,9 +509,17 @@ class Lecture < ApplicationRecord
     lesson_results = filtered_media.where(teachable:
                                             Lesson.where(lecture: self))
     lecture_results + lesson_results.includes(:teachable)
-                                    .sort_by { |m| [m.lesson.date,
-                                                    m.lesson.id,
-                                                    m.position] }
+                                    .sort_by do |m|
+                                      [order_factor*m.lesson.date.jd,
+                                       order_factor*m.lesson.id,
+                                       m.position]
+                                    end
+  end
+
+  def order_factor
+    return -1 unless lecture.term.present?
+    return -1 if lecture.term.active
+    1
   end
 
   def begin_date
