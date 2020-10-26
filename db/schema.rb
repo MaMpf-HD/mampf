@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_22_163956) do
+ActiveRecord::Schema.define(version: 2020_10_26_151550) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -746,12 +746,10 @@ ActiveRecord::Schema.define(version: 2020_10_22_163956) do
 
   create_table "tutorials", force: :cascade do |t|
     t.text "title"
-    t.bigint "tutor_id"
     t.bigint "lecture_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
-    t.index ["tutor_id"], name: "index_tutorials_on_tutor_id"
   end
 
   create_table "user_submission_joins", force: :cascade do |t|
@@ -775,7 +773,6 @@ ActiveRecord::Schema.define(version: 2020_10_22_163956) do
     t.integer "subscription_type"
     t.boolean "consents"
     t.datetime "consented_at"
-    t.boolean "edited_profile"
     t.text "name"
     t.text "homepage"
     t.boolean "no_notifications", default: false
