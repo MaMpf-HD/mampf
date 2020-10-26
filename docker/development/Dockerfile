@@ -8,9 +8,8 @@ RUN go mod vendor
 RUN sed -i 's/init(/init2(/g' vendor/github.com/pdfcpu/pdfcpu/pkg/font/metrics.go
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 
-
 # Now build the actual mampf application
-FROM ruby:2.7.1
+FROM ruby:2.7.2
 ENV RAILS_ENV=production
 EXPOSE 3000
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
