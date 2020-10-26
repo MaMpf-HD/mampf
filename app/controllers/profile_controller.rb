@@ -6,9 +6,6 @@ class ProfileController < ApplicationController
                                      :unsubscribe_lecture]
 
   def edit
-    # ensure that users do not have a blank name and a locale
-    @user.update(name: @user.name || @user.email.split('@').first,
-                 locale: @user.locale || I18n.default_locale.to_s)
     unless @user.consents
       redirect_to consent_profile_path
       return
@@ -26,8 +23,7 @@ class ProfileController < ApplicationController
                     name: @name,
                     name_in_tutorials: @name_in_tutorials,
                     subscription_type: @subscription_type,
-                    locale: @locale,
-                    edited_profile: true)
+                    locale: @locale)
       @user.update(email_params)
       # remove notifications that have become obsolete
       clean_up_notifications
@@ -45,7 +41,7 @@ class ProfileController < ApplicationController
   # this is triggered after every sign in
   # if profile has never been edited user is redirected
   def check_for_consent
-    if @user.consents && @user.edited_profile
+    if @user.consents
       redirect_to :root
       return
     end

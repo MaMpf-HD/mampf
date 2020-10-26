@@ -49,9 +49,7 @@ class User < ApplicationRecord
   validates :homepage, http_url: true, if: :homepage?
 
   # a user needs to give a display name
-  validates :name,
-            presence: true,
-            if: :edited_profile?
+  validates :name, presence: true, if: :persisted?
 
   # set some default values before saving if they are not set
   before_save :set_defaults
@@ -545,17 +543,15 @@ class User < ApplicationRecord
   private
 
   def set_defaults
-    self.subscription_type = 1 if subscription_type.nil?
-    self.admin = false if admin.nil?
+    self.subscription_type ||= 1
+    self.admin ||= false
+    self.name ||= email.split('@').first
+    self.locale ||= I18n.default_locale.to_s
   end
 
   # sets time for DSGVO consent to current time
   def set_consented_at
     update(consented_at: Time.now)
-  end
-
-  def courses_exist?
-    return true if Course.all.any? && edited_profile?
   end
 
   # returns array of ids of all courses that preced the subscribed courses
