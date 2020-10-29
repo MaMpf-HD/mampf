@@ -222,7 +222,7 @@ class LecturesController < ApplicationController
     @lectures = Kaminari.paginate_array(results, total_count: @total)
                         .page(params[:page]).per(search_params[:per])
     return unless @total.zero?
-    return unless search_params[:fulltext]&.length > 1
+    return unless search_params[:fulltext]&.length.to_i > 1
     @similar_titles = Course.similar_courses(search_params[:fulltext])
   end
 
