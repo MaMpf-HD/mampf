@@ -88,6 +88,9 @@ class TutorialsController < ApplicationController
     send_correction_upload_emails
   end
 
+  def validate_certificate
+  end
+
   private
 
   def set_tutorial

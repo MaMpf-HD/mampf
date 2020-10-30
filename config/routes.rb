@@ -236,6 +236,12 @@ Rails.application.routes.draw do
                                           as: 'set_solution_type'
   resources :questions, only: [:edit, :update]
 
+  post 'quiz_certificates/:id/claim', to: 'quiz_certificates#claim',
+                                     as: 'claim_quiz_certificate'
+
+  get 'quiz_certificates/validate', to: 'quiz_certificates#validate',
+                                    as: 'validate_certificate'
+
   get 'quizzes/:id/take', to: 'quizzes#take',
                           as: 'take_quiz'
   patch 'quizzes/:id/take', to: 'quizzes#proceed'
@@ -356,6 +362,10 @@ Rails.application.routes.draw do
   patch 'tutorials/:id/assignments/:ass_id/bulk_upload',
         to: 'tutorials#bulk_upload',
         as: 'bulk_upload_corrections'
+
+  get 'tutorials/validate_certificate',
+      to: 'tutorials#validate_certificate',
+      as: 'validate_certificate_as_tutor'
 
   resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 
