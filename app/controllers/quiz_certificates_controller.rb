@@ -27,6 +27,6 @@ class QuizCertificatesController < ApplicationController
   end
 
   def certificate_params
-    params.require(:certificate).permit(:code)
+    params.permit(:code)
   end
 end

@@ -1,6 +1,5 @@
 <%= form_with url: validate_certificate_path,
-              method: :get,
-              scope: 'certificate' do |f| %>
+              method: :post do |f| %>
   <%= f.label :code, t('basics.code') %>
   <%= helpdesk(t('tutorial.certificate_check_info'), false) %>
   <%= f.text_field :code,

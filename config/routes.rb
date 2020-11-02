@@ -239,8 +239,8 @@ Rails.application.routes.draw do
   post 'quiz_certificates/:id/claim', to: 'quiz_certificates#claim',
                                      as: 'claim_quiz_certificate'
 
-  get 'quiz_certificates/validate', to: 'quiz_certificates#validate',
-                                    as: 'validate_certificate'
+  post 'quiz_certificates/validate', to: 'quiz_certificates#validate',
+                                     as: 'validate_certificate'
 
   get 'quizzes/:id/take', to: 'quizzes#take',
                           as: 'take_quiz'
