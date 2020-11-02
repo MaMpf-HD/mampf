@@ -12,7 +12,7 @@ RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 FROM ruby:2.7.2
 ENV RAILS_ENV=production
 EXPOSE 3000
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+#ENTRYPOINT [""]
 
 # https://github.com/nodesource/distributions#installation-instructions
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
@@ -20,7 +20,8 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
     sed -i "s/deb\.debian\.org/ftp.halifax\.rwth-aachen.de/g" /etc/apt/sources.list && \
     apt-get update && apt-get install -y ffmpeg ghostscript imagemagick libarchive-tools nodejs pdftk postgresql-client-12 sqlite3 wget yarn --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/* && apt-get clean
+    rm -rf /var/lib/apt/lists/* && apt-get clean \
+    && curl -o- -L https://yarnpkg.com/install.sh | bash
 
 WORKDIR /usr/src/app
 

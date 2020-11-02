@@ -63,6 +63,7 @@ services:
       REDIS_URL: redis://redis:6379/1
       SOLR_PATH: /solr/mampf-dev
       SPROCKETS_CACHE: /cache
+      WEBPACKER_DEV_SERVER_HOST: webpacker
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
       # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20200907123000_mampf.sql&dl=1"
       # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/?dl=1"
@@ -78,7 +79,29 @@ services:
       - solr
       - redis
       - mailcatcher
-
+  webpacker:
+    build:
+      context: ./../..
+      dockerfile: docker/development/Dockerfile
+    environment:
+      - NODE_ENV=development
+      - RAILS_ENV=development
+      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+    command: ./bin/webpack-dev-server
+    volumes:
+      - type: bind
+        source: ../../
+        target: /usr/src/app/
+      - type: volume
+        source: sprockets-cache
+        target: /cache
+    ports:
+      - '127.0.0.1:3035:3035'
+    depends_on:
+      - db
+      - solr
+      - redis
+      - mailcatcher
 volumes:
   db-data:
   solr-data:
