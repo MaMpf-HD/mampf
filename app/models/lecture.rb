@@ -772,6 +772,7 @@ class Lecture < ApplicationRecord
   end
 
   def term_independent?
+    return false unless course
     course.term_independent
   end
 
