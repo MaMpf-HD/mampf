@@ -429,7 +429,7 @@ Rails.application.routes.draw do
   mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
   mount ZipUploader.upload_endpoint(:submission_cache) => "/packages/upload"
   mount Thredded::Engine => '/forum'
-  get '*path', to: 'main#error'
+  match '*path', to: 'main#error', via: :all
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
