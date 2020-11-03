@@ -24,6 +24,7 @@ changeBackground = ->
 
 renderFinale = (finale) ->
   $('#<%= quiz_id%>').append finale
+  $('[data-toggle="popover"]').popover()
   $('#finale').delay(1000).slideDown 'slow'
   $('html, body').delay(500)
     .animate { scrollTop: document.body.scrollHeight }, 2000
@@ -70,7 +71,9 @@ renderNext = (round) ->
 displayNext = ->
   <% if @quiz_round.progress == -1 %>
   renderFinale('<%= j render partial: "quizzes/finale",
-                             locals: { xkcd: XKCD.img } %>')
+                             locals: { xkcd: XKCD.img,
+                                       certificate:
+                                         @quiz_round.certificate } %>')
   <% elsif @quiz_round.progress == 0 %>
   renderError('<%= j render partial: "quizzes/error" %>')
   <% else %>

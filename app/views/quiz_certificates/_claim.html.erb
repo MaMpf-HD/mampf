@@ -1,0 +1,15 @@
+<%= t('quiz.obtained_certificate',
+      code: certificate.code) %>
+<i class="clipboardpopup far fa-copy clickable
+          text-secondary clipboard-btn ml-3
+          clipboard-button"
+   data-clipboard-text="<%= certificate.code %>"
+   data-toggle="tooltip"
+   data-id="<%= certificate.id %>"
+   title="<%= t('buttons.copy_to_clipboard') %>">
+  <span class="clipboardpopuptext token-clipboard-popup"
+        data-id="<%= certificate.id %>">
+    <%= t('basics.code_copied_to_clipboard') %>
+  </span>
+</i>
+<%= helpdesk(t('quiz.certificate_info_on_use'), false) %>

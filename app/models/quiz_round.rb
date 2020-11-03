@@ -7,7 +7,7 @@ class QuizRound
               :input, :correct, :hide_solution, :vertex_old, :question_id,
               :answer_shuffle, :answer_shuffle_old, :solution_input, :result,
               :session_id, :study_participant, :is_remark, :remark_id,
-              :input_text
+              :input_text, :certificate
 
   def initialize(params)
     @quiz = Quiz.find(params[:id])
@@ -34,7 +34,7 @@ class QuizRound
     create_question_probe if @is_question
     create_remark_probe if @is_remark && @study_participant
     @progress = @quiz.next_vertex(@progress, @input)
-    create_final_probe if @progress == -1 && @quiz.sort == 'Quiz'
+    create_certificate_final_probe if @progress == -1 && @quiz.sort == 'Quiz'
     @counter += 1
     @hide_solution = @quiz.quiz_graph.hide_solution
                           .include?([@progress_old, @input])
@@ -123,7 +123,8 @@ class QuizRound
                              @session_id, @study_participant, @input_text)
   end
 
-  def create_final_probe
+  def create_certificate_final_probe
+    @certificate = QuizCertificate.create(quiz: @quiz)
     ProbeSaver.perform_async(@quiz.id, nil, nil, nil, -1, @session_id,
                              @study_participant, nil)
   end

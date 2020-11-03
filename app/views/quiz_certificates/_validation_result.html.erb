@@ -1,0 +1,7 @@
+<% if certificate %>
+  <%= t('tutorial.certificate_valid',
+        user: certificate.user.tutorial_name,
+        quiz: certificate.quiz.title) %>
+<% else %>
+  <%= t('tutorial.certificate_invalid') %>
+<% end %>

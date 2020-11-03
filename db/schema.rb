@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_26_151550) do
+ActiveRecord::Schema.define(version: 2020_10_30_104932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -404,6 +404,16 @@ ActiveRecord::Schema.define(version: 2020_10_26_151550) do
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "subject_id"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
+  end
+
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.bigint "quiz_id", null: false
+    t.bigint "user_id"
+    t.text "code"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["quiz_id"], name: "index_quiz_certificates_on_quiz_id"
+    t.index ["user_id"], name: "index_quiz_certificates_on_user_id"
   end
 
   create_table "readers", force: :cascade do |t|
@@ -844,6 +854,8 @@ ActiveRecord::Schema.define(version: 2020_10_26_151550) do
   add_foreign_key "medium_tag_joins", "media"
   add_foreign_key "medium_tag_joins", "tags"
   add_foreign_key "programs", "subjects"
+  add_foreign_key "quiz_certificates", "media", column: "quiz_id"
+  add_foreign_key "quiz_certificates", "users"
   add_foreign_key "referrals", "items"
   add_foreign_key "referrals", "media"
   add_foreign_key "submissions", "assignments"

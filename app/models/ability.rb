@@ -138,7 +138,7 @@ class Ability
 
       can [:new, :create, :cancel_edit, :cancel_new, :overview], Tutorial
 
-      can :index, Tutorial do |tutorial|
+      can [:index, :validate_certificate], Tutorial do |tutorial|
         user.tutor?
       end
 
@@ -165,6 +165,12 @@ class Ability
       can [:linearize, :set_root, :set_level,
            :update_default_target, :delete_edge], Quiz do |quiz|
         quiz.edited_with_inheritance_by?(user)
+      end
+
+      can :claim, QuizCertificate
+
+      can :validate, QuizCertificate do |quiz_certificate|
+        user.tutor?
       end
     else
       can :read, :all
@@ -254,12 +260,18 @@ class Ability
         user.in?(submission.tutorial.tutors)
       end
 
-      can :index, Tutorial do |tutorial|
+      can [:index, :validate_certificate], Tutorial do |tutorial|
         user.tutor?
       end
 
       can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
+      end
+
+      can :claim, QuizCertificate
+
+      can :validate, QuizCertificate do |quiz_certificate|
+        user.tutor?
       end
 
       can :delete_account, User
