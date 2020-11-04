@@ -11,5 +11,4 @@ then
   touch completed_initial_run
 fi
 echo "running mampf master"
-cp -r /usr/local/bundle/gems/sidekiq-6.1.2/web/assets public/sidekiq
 exec bundle exec sidekiq &> >(tee -a /usr/src/app/log/runtime.log)
