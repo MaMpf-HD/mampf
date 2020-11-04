@@ -620,20 +620,20 @@ class Lecture < ApplicationRecord
   end
 
   def self.search_by(search_params, page)
-    search_params[:types] = [] if search_params[:all_types] == '1'
-    search_params[:term_ids] = [] if search_params[:all_terms] == '1'
-    search_params[:teacher_ids] = [] if search_params[:all_teachers] == '1'
-    search_params[:program_ids] = [] if search_params[:all_programs] == '1'
+    search_params[:types] = [] if search_params[:all_types] == '1' || search_params[:types].nil?
+    search_params[:term_ids] = [] if search_params[:all_terms] == '1' || search_params[:term_ids].nil?
+    search_params[:teacher_ids] = [] if search_params[:all_teachers] == '1' || search_params[:teacher_ids].nil?
+    search_params[:program_ids] = [] if search_params[:all_programs] == '1' || search_params[:program_ids].nil?
     search = Sunspot.new_search(Lecture)
     # add lectures without term to current term
-    if Term.active.id.to_s.in?(search_params[:term_ids])
+    if Term.active.try(:id).to_i.to_s.in?(search_params[:term_ids])
       search_params[:term_ids].push('0')
     end
     search.build do
-      with(:sort, search_params[:types])
-      with(:teacher_id, search_params[:teacher_ids])
-      with(:program_ids, search_params[:program_ids])
-      with(:term_id, search_params[:term_ids])
+      with(:sort, search_params[:types]) unless search_params[:types].empty?
+      with(:teacher_id, search_params[:teacher_ids]) unless search_params[:teacher_ids].empty?
+      with(:program_ids, search_params[:program_ids]) unless search_params[:program_ids].empty?
+      with(:term_id, search_params[:term_ids]) unless search_params[:term_ids].empty?
     end
     admin = User.find_by_id(search_params[:user_id])&.admin
     unless admin
