@@ -43,6 +43,6 @@ COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
 RUN yarn  install --production=false
-RUN ls node_modules
+RUN ls -lah node_modules
 COPY --chown=app:app . /usr/src/app
 RUN SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb   bundle exec rails assets:precompile
