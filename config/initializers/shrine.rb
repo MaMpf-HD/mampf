@@ -37,5 +37,5 @@ Shrine.plugin :restore_cached_data
 Shrine.plugin :instrumentation
 
 # use mv instead of cp when promoting files from cache to store
-Shrine.plugin :upload_options, cache: { move: !Rails.env.test? },
-                               store: { move: !Rails.env.test? }
+# Shrine.plugin :upload_options, cache: { move: !Rails.env.test? },
+#                                store: { move: !Rails.env.test? }
