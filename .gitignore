@@ -47,3 +47,6 @@ coverage
 completed_initial_run
 /public/uploads.zip
 /public/pdfcomprezzor/pdfcomprezzor.wasm
+
+# mac specific
+.DS_Store
