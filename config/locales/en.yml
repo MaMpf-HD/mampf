@@ -2295,6 +2295,9 @@ en:
     submission_upload_notice_html: >
       <b> Important </b>: Please press "Save", otherwise your
         Changes are discarded when you leave the site.
+    submission_not_upload_notice_html: >
+      <b>Important </b>: Please press "Upload" and then "Save", otherwise your
+        Changes are discarded when you leave the site.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
     working: Working

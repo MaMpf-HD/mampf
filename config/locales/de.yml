@@ -2423,6 +2423,9 @@ de:
     removal_notice_html: >
       <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
       Wir übernehmen keine Haftung für mögliche Datenverluste.
+    submission_not_upload_notice_html: >
+      <b>Wichtig</b>: Bitte drücke auf "Hochladen" und dann auf "Speichern", ansonsten werden deine
+       Änderungen verworfen, wenn du die Seite verlässt.
     submission_upload_notice_html: >
       <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
        Änderungen verworfen, wenn du die Seite verlässt.
