@@ -2012,7 +2012,7 @@ en:
       characters.
     certify: Request Certificate
     obtained_certificate: >
-      you obtained the following certificate code for this quiz: %{code}
+      You obtained the following certificate code for this quiz: %{code}
     certificate_info_on_use: >
       If your lecture uses certified MaMpf quizzes in the tutorials
       you will have to give present this code in some form (e.g. your homework
@@ -2288,7 +2288,7 @@ en:
       For this purpose, a small additional program is downloaded and executed <i> in the browser </i>.
         Your file will remain on your device until you have uploaded them.
     assure_third_party: >
-      I assure you that the file does not infringe any rights of third parties.
+      I assure that the file does not infringe any rights of third parties.
     removal_notice_html: >
       <b>Notice:</b> Files will be deleted at the end of the semester.
        We do not assume any liability for possible data loss.
@@ -2393,7 +2393,7 @@ en:
       includes successful upload and removal of files, joining or leaving of
       team members, decisions about the acceptance of late submissions and
       upload of corrections by your tutor.
-    deletion_date: >
+    deletion_date_info: >
       Your submission contains personal data which we will delete two weeks
       after the end of this term due to protection of data privacy. You will be
       notified ahead via email so that you can save them.
@@ -2446,7 +2446,7 @@ en:
       informed about the user and the quiz that this certificate belongs to.
     certificate_valid: >
       The code is valid. It belongs to user %{user} and quiz %{quiz}.
-    certificate_invalid: Der Code ist ungültig.
+    certificate_invalid: This code is invalid.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
@@ -2844,7 +2844,7 @@ en:
     copy_to_clipboard: 'Copy to Clipboard'
     leave: 'Leave'
     upload: 'Upload'
-    upload_success: 'Upload successfull'
+    upload_success: 'Upload successful'
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'

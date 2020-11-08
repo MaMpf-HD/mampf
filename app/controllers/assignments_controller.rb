@@ -7,14 +7,17 @@ class AssignmentsController < ApplicationController
 
   def new
     @assignment = Assignment.new
-    lecture = Lecture.find_by_id(params[:lecture_id])
-    @assignment.lecture = lecture
+    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @assignment.lecture = @lecture
+    set_assignment_locale
   end
 
   def create
     @assignment = Assignment.new(assignment_params)
     @assignment.save
     @errors = @assignment.errors
+    @lecture = @assignment.lecture
+    set_assignment_locale
   end
 
   def edit
@@ -28,7 +31,6 @@ class AssignmentsController < ApplicationController
   end
 
   def destroy
-    @lecture = @assignment.lecture
     @assignment.destroy
   end
 
@@ -37,6 +39,7 @@ class AssignmentsController < ApplicationController
 
   def cancel_new
     @lecture = Lecture.find_by_id(params[:lecture])
+    set_assignment_locale
     @none_left = @lecture&.assignments&.none?
   end
 
@@ -44,7 +47,8 @@ class AssignmentsController < ApplicationController
 
   def set_assignment
     @assignment = Assignment.find_by_id(params[:id])
-    return if @assignment
+    @lecture = @assignment&.lecture
+    set_assignment_locale and return if @assignment
     redirect_to :root, alert: I18n.t('controllers.no_assignment')
   end
 
@@ -52,6 +56,11 @@ class AssignmentsController < ApplicationController
     @lecture = Lecture.find_by_id(assignment_params[:lecture_id])
     return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
+  def set_assignment_locale
+    I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
   end
 
   def assignment_params

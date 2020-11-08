@@ -63,7 +63,9 @@
         </button>
       <% end %>
       <%= link_to t('tutorial.certificate_check'),
-                  validate_certificate_as_tutor_path,
+                  validate_certificate_as_tutor_path(params:
+                                                       { lecture_id:
+                                                           @lecture.id }),
                   class: 'btn btn-primary ml-3',
                   remote: true %>
     </div>
