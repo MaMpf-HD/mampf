@@ -32,6 +32,6 @@ USER app
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
 COPY --chown=app:app ./Gemfile ./Gemfile.lock /usr/src/app/
 RUN bundle install
-RUN cp -r /usr/local/bundle/gems/sidekiq-6.1.2/web/assets /usr/src/app/public/sidekiq
 COPY --chown=app:app . /usr/src/app
+RUN cp -r /usr/local/bundle/gems/sidekiq-6.1.2/web/assets /usr/src/app/public/sidekiq
 RUN SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb   bundle exec rails assets:precompile
