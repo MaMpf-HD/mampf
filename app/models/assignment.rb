@@ -13,7 +13,7 @@ class Assignment < ApplicationRecord
   scope :expired, -> { where('deadline < ?', Time.now) }
 
   def self.accepted_file_types
-    ['.pdf', '.tar.gz', '.cc', '.hh', '.m', '.zip']
+    ['.pdf', '.tar.gz', '.cc', '.hh', '.m', '.mlx', '.zip']
   end
 
   validates :accepted_file_type,
@@ -101,6 +101,10 @@ class Assignment < ApplicationRecord
       '.cc' => ['text/*'],
       '.hh' => ['text/*'],
       '.m' => ['text/*'],
+      '.mlx' => ['application/zip', 'application/x-zip',
+                 'application/x-zip-compressed', 'application/octet-stream',
+                 'application/x-compress', 'application/x-compressed',
+                 'multipart/x-zip'],
       '.zip' => ['application/zip', 'application/x-zip',
                  'application/x-zip-compressed', 'application/octet-stream',
                  'application/x-compress', 'application/x-compressed',
@@ -108,7 +112,7 @@ class Assignment < ApplicationRecord
   end
 
   def self.non_inline_file_types
-    ['.tar.gz', '.zip']
+    ['.tar.gz', '.zip', '.mlx']
   end
 
   def accepted_mime_types
