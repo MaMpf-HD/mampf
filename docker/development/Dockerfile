@@ -27,5 +27,5 @@ WORKDIR /usr/src/app
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /pdfcomprezzor.wasm
-COPY ./Gemfile ./Gemfile.lock /usr/src/app/
+COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
