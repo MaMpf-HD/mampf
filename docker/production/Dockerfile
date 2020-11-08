@@ -30,8 +30,8 @@ RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
 WORKDIR /usr/src/app
 USER app
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
-
 COPY --chown=app:app ./Gemfile ./Gemfile.lock /usr/src/app/
 RUN bundle install
 COPY --chown=app:app . /usr/src/app
+RUN cp -r /usr/local/bundle/gems/sidekiq-6.1.2/web/assets /usr/src/app/public/sidekiq
 RUN SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb   bundle exec rails assets:precompile
