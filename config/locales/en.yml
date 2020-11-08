@@ -2261,7 +2261,7 @@ en:
       You successfully joind the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
-    current: Current submission
+    current: Current Submission
     previous: Previous Submission
     old_ones: Old Submissions
     future_ones: Future Submissions
@@ -2394,7 +2394,7 @@ en:
       team members, decisions about the acceptance of late submissions and
       upload of corrections by your tutor.
     deletion_date: >
-      YOur submission includes personal data which we will delete two weeks
+      Your submission contains personal data which we will delete two weeks
       after the end of this term due to protection of data privacy. You will be
       notified ahead via email so that you can save them.
     team_info: >
