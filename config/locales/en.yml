@@ -2387,7 +2387,7 @@ en:
       the "Invite" button (this button only exists in the case that such persons
       exist, are not yet a member of this team and the team size is below
       the maximal allowed size for teams).
-    profile_info: >
+    profile_info_html: >
       In your %{profile} you can set your preferences about which events in the
       context of submissions you want to be notified about via email. This
       includes successful upload and removal of files, joining or leaving of
