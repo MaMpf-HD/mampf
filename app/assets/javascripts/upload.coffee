@@ -66,7 +66,7 @@ videoUpload = (fileInput) ->
   uppy.use Uppy.XHRUpload,
     endpoint: '/videos/upload'
     fieldName: 'file'
-    timeout: 120 * 1000
+    timeout: 600 * 1000
 
   # give the user feedback after upload has started
   uppy.on 'upload', (data) ->
