@@ -9,6 +9,15 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: recursive
+      - run: docker-compose pull
+      - uses: satackey/action-docker-layer-caching@v0.0.8
+      # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
       - name: Test
         working-directory: docker/run_cypress_tests
-        run: docker-compose  run cypress_runner cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: docker-compose  run cypress_runner cypress run --record
