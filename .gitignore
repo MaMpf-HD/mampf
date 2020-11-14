@@ -48,5 +48,7 @@ completed_initial_run
 /public/uploads.zip
 /public/pdfcomprezzor/pdfcomprezzor.wasm
 
+/cypress/videos
+/cypress/screenshots
 # mac specific
 .DS_Store

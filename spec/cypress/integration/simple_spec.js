@@ -5,5 +5,6 @@ describe('My First Test', function() {
       cy.visit('/')
   
       cy.contains("MaMpf")
+      cy.screenshot()
     })
   })
