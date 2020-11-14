@@ -76,8 +76,8 @@ services:
       - ../../spec/cypress/integration:/cypress/integration:ro
       - ../../spec/cypress/support:/cypress/support:ro
       - ../../spec/cypress.json:/cypress.json:ro
-      # cypress outputs are saved here
-      - ../../cypress/videos:/cypress/videos
-      - ../../cypress/screenshots:/cypress/screenshots
+      # cypress outputs are saved here (needed only locally)
+      #- ../../cypress/videos:/cypress/videos
+      #- ../../cypress/screenshots:/cypress/screenshots
     depends_on:
       - mampf
