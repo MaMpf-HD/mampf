@@ -76,6 +76,7 @@ services:
       - ../../spec/cypress/integration:/cypress/integration:ro
       - ../../spec/cypress/support:/cypress/support:ro
       - ../../spec/cypress.json:/cypress.json:ro
+      - ../../.git:/.git:ro
       # cypress outputs are saved here (needed only locally)
       #- ../../cypress/videos:/cypress/videos
       #- ../../cypress/screenshots:/cypress/screenshots
