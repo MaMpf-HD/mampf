@@ -42,7 +42,7 @@ class Lecture < ApplicationRecord
   has_many :announcements, dependent: :destroy
 
   # a lecture has many tutorials
-  has_many :tutorials
+  has_many :tutorials, -> { order(:title) }
 
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
