@@ -10,6 +10,9 @@ $('#submission-tutorial-error')
 <% if @errors[:manuscript].present? %>
 alert('<%= @errors[:manuscript].join(" ") %>')
 <% end %>
+<% if @errors[:user_submission_joins].present? %>
+alert('<%= @errors[:user_submission_joins].join(" ") %>')
+<% end %>
 <% else %>
 $('.submissionArea[data-id="<%= @assignment.id %>"]').empty()
   .append('<%= j render partial: "submissions/card",
