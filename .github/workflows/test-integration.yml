@@ -21,4 +21,4 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: docker-compose  run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} cypress_runner cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
+        run: docker-compose  run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} -e DEBUG=commit-info,cypress:server:record cypress_runner cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
