@@ -9,9 +9,6 @@ services:
     ports:
       - "127.0.0.1:8983:8983"
     volumes:
-      - type: volume
-        source: solr-data
-        target: /var/solr
       - type: bind
         source: ../../solr/development/conf/
         target: /solrconfig/
@@ -23,10 +20,6 @@ services:
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
-    volumes:
-      - type: volume
-        source: db-data
-        target: /var/lib/postgresql/data
 
   mailcatcher:
     restart: on-failure:10
@@ -41,6 +34,8 @@ services:
     image: mampf:development
     ports:
       - "127.0.0.1:3000:3000"
+    # TODO: Use this
+    # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
     entrypoint: ./entrypoint.sh
     environment:
       RAILS_ENV: test
@@ -66,17 +61,23 @@ services:
       - type: bind
         source: ../../
         target: /usr/src/app/
-      - type: volume
-        source: sprockets-cache
-        target: /cache
-      - /usr/src/app/completed_initial_run
     depends_on:
       - db
       - solr
       - redis
       - mailcatcher
 
-volumes:
-  db-data:
-  solr-data:
-  sprockets-cache:
+  cypress_runner:
+    image: cypress/included:5.2.0
+    environment:
+      CYPRESS_baseUrl: http://mampf:3000
+    entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done; npx cypress run"
+    volumes:
+      - ../../spec/cypress/integration:/cypress/integration:ro
+      - ../../spec/cypress/support:/cypress/support:ro
+      - ../../spec/cypress.json:/cypress.json:ro
+      # cypress outputs are saved here
+      - ../../cypress/videos:/cypress/videos
+      - ../../cypress/screenshots:/cypress/screenshots
+    depends_on:
+      - mampf
