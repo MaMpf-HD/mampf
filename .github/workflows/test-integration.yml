@@ -9,4 +9,4 @@ jobs:
         uses: actions/checkout@v2
       - name: Test
         working-directory: docker/run_cypress_tests
-        run: docker-compose -f run cypress_runner cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
+        run: docker-compose  run cypress_runner cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
