@@ -1,6 +1,6 @@
 # RegistrationsController
 class RegistrationsController < Devise::RegistrationsController
-
+  prepend_before_action :check_registration_limit, only: [:create]
   def destroy
     password_correct = resource.valid_password?(deletion_params[:password])
     if !password_correct
@@ -26,6 +26,15 @@ class RegistrationsController < Devise::RegistrationsController
 
   private
 
+  def check_registration_limit
+    if User.where("users.confirmed_at is NULL and users.created_at > '#{(DateTime.now()-(ENV['MAMPF_REGISTRATION_TIMEFRAME']||15).to_i.minutes)}'").count > (ENV['MAMPF_MAX_REGISTRATION_PER_TIMEFRAME'] || 40).to_i
+      self.resource = resource_class.new sign_up_params
+      resource.validate # Look for any other validation errors besides reCAPTCHA
+      set_flash_message :alert, :too_many_registrations
+      set_minimum_password_length
+      respond_with_navigational(resource) { render :new }
+    end
+  end
   def sign_up_params
     params.require(:user).permit(:email, :password, :password_confirmation,
                                  :locale, :consents)
