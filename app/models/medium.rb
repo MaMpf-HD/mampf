@@ -204,7 +204,8 @@ class Medium < ApplicationRecord
     # media sitting at course level
     course_media_in_project = media_in_project.includes(:tags)
                                               .where(teachable: lecture.course)
-                                              .natural_sort_by(&:caption)
+                                              .order(boost: :desc,
+                                                     description: :asc)
     # media sitting at lecture level
     # append results at course level to lecture/lesson level results
     lecture.lecture_lesson_results(media_in_project) + course_media_in_project
@@ -214,7 +215,7 @@ class Medium < ApplicationRecord
   def self.media_in_project(project)
     return Medium.none unless project.present?
     sort = project == 'keks' ? 'Quiz' : project.capitalize
-    Medium.where(sort: sort).order(:id)
+    Medium.where(sort: sort)
   end
 
   # returns the array of all media (by title), together with their ids

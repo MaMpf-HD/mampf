@@ -880,6 +880,7 @@ de:
         Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
       lock_comments: Kommentare für dieses Medium deaktivieren
       comments_locked: Kommentare deaktiviert
+      boost: Boost
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -1160,6 +1161,13 @@ de:
           die mit dem THymE-Editor bearbeitet wurden).
         details_warning: >
           Es wurden Details geändert, die noch nicht übernommen wurden.
+        boost: >
+          Über den Boost kannst Du die Reihenfolge überschreiben, in der
+          standardmäßig Medien angeordnet werden, die zu Modulen bzw.
+          Veranstaltungen gehören (der Boost wirkt sich nicht auf Medien aus,
+          die zu einer Sitzung assoziiert sind). Der Standardwert ist 0,
+          Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
+          niedrigerem Boost weiter hinten.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
