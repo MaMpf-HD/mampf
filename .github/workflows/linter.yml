@@ -55,27 +55,27 @@ jobs:
         errors_regexp: \d+ errors
         warnings_regexp: \d+ warnings
         compare_branch: mampf-next
-  erblint:
-    runs-on: ubuntu-latest
-    name: A job to check erblint linter errors
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby 2.7
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 2.7
-    - name: Install gems # usual step to install the gems.
-      run: |
-        bin/bundle config path vendor/bundle
-        bin/bundle config set without 'default doc job cable storage ujs test db'
-        bin/bundle install --jobs 4 --retry 3
-    - name: Linter count
-      id: hello
-      uses: henrixapp/linter-less-or-equal-action@v1.1
-      with:
-        name: Erblint
-        command:  bin/bundle exec erblint  . 
-        total_regexp: \d+ error(s)
-        errors_regexp: \d+ error(s)
-        warnings_regexp: \d+ error(s)
-        compare_branch: mampf-next
+  # erblint:
+  #   runs-on: ubuntu-latest
+  #   name: A job to check erblint linter errors
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Set up Ruby 2.7
+  #     uses: ruby/setup-ruby@v1
+  #     with:
+  #       ruby-version: 2.7
+  #   - name: Install gems # usual step to install the gems.
+  #     run: |
+  #       bin/bundle config path vendor/bundle
+  #       bin/bundle config set without 'default doc job cable storage ujs test db'
+  #       bin/bundle install --jobs 4 --retry 3
+  #   - name: Linter count
+  #     id: hello
+  #     uses: henrixapp/linter-less-or-equal-action@v1.1
+  #     with:
+  #       name: Erblint
+  #       command:  bin/bundle exec erblint  . 
+  #       total_regexp: \d+ error(s)
+  #       errors_regexp: \d+ error(s)
+  #       warnings_regexp: \d+ error(s)
+  #       compare_branch: mampf-next
