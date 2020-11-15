@@ -88,6 +88,8 @@ en:
           I consent to the storing and processing of my data according to the
           %{policy} of Heidelberg University.
         policy: 'Privacy Policy'
+      user:
+        too_many_registrations: There were too many registrations in the last few minutes. Please try again later.
     sessions:
       signed_in: "Signed in successfully."
       signed_out: "Signed out successfully."

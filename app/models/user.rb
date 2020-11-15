@@ -45,6 +45,10 @@ class User < ApplicationRecord
   has_many :user_submission_joins, dependent: :destroy
   has_many :submissions, through: :user_submission_joins
 
+  # a user has many quiz certificates that are obtained by solving quizzes
+  # and claiming the certificate
+  has_many :quiz_certificates, dependent: :destroy
+
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
 

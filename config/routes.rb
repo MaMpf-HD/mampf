@@ -236,6 +236,12 @@ Rails.application.routes.draw do
                                           as: 'set_solution_type'
   resources :questions, only: [:edit, :update]
 
+  post 'quiz_certificates/:id/claim', to: 'quiz_certificates#claim',
+                                     as: 'claim_quiz_certificate'
+
+  post 'quiz_certificates/validate', to: 'quiz_certificates#validate',
+                                     as: 'validate_certificate'
+
   get 'quizzes/:id/take', to: 'quizzes#take',
                           as: 'take_quiz'
   patch 'quizzes/:id/take', to: 'quizzes#proceed'
@@ -357,6 +363,10 @@ Rails.application.routes.draw do
         to: 'tutorials#bulk_upload',
         as: 'bulk_upload_corrections'
 
+  get 'tutorials/validate_certificate',
+      to: 'tutorials#validate_certificate',
+      as: 'validate_certificate_as_tutor'
+
   resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 
   get 'sections/list_tags', to: 'sections#list_tags',
@@ -429,7 +439,7 @@ Rails.application.routes.draw do
   mount CorrectionUploader.upload_endpoint(:submission_cache) => "/corrections/upload"
   mount ZipUploader.upload_endpoint(:submission_cache) => "/packages/upload"
   mount Thredded::Engine => '/forum'
-  get '*path', to: 'main#error'
+  match '*path', to: 'main#error', via: :all
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end

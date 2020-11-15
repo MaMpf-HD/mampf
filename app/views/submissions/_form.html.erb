@@ -40,7 +40,7 @@
     <% end %>
     <div class="row">
       <div class="col-12">
-        <%= f.label :manuscript, 'Abgabe' %>
+        <%= f.label :manuscript, t('basics.submission') %>
       </div>
       <div class="col-3" id="userManuscript-uploadButton"
            data-choosefiles="<%= file_button_text(assignment) %>">
@@ -168,6 +168,12 @@
           <div class="col-12">
             <small>
               <%= t('submission.removal_notice_html')%>
+            </small>
+          </div>
+          <div class="col-12">
+            <small class="text-danger submission-initially-hidden"
+                   id="userManuscript-not-upload-notice">
+              <%= t('submission.submission_not_upload_notice_html')%>
             </small>
           </div>
           <div class="col-12">

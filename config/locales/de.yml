@@ -2118,6 +2118,21 @@ de:
     number_of_questions: 'Anzahl der Fragen: %{count}'
     quiz_level: 'Schwierigkeitsgrad: %{level}'
     number_of_questions_label: 'Anzahl der Fragen'
+    certificate_info: >
+      Du kannst ein Zertifikat dafür bekommen, dass Du dieses Quiz vollständig
+      absolviert hast. Wenn Du den Buton drückst, erhältst Du das Zertifikat in
+      Form eines Codes aus 6 Zeichen.
+    certify: Zertifikat anfordern
+    obtained_certificate: >
+      Du hast für dieses Quiz folgenden Zertifikatscode bekommen: %{code}
+    certificate_info_on_use: >
+      Falls Deine Vorlesung zertifizierte MaMpf-Quizzes im Übungsbetrieb
+      verwendet, wirst Du den Code an geeigneter Stelle angeben müssen
+      (z.B. auf Deinem Übungsblatt), Deine TutorIn wird ihn später validieren.
+      Bei der Validierung kann die TutorIn Deinen Namen
+      einsehen (und zwar denjenigen, den Du unter "Name in Übungsgruppen"
+      angegeben hast), nicht jedoch Informationen darüber, inwieweit Du die
+      Fragen korrekt oder inkorrekt beantwortet hast.
     level:
       not_set: 'nicht gesetzt'
       easy: 'leicht'
@@ -2408,10 +2423,12 @@ de:
     removal_notice_html: >
       <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
       Wir übernehmen keine Haftung für mögliche Datenverluste.
+    submission_not_upload_notice_html: >
+      <b>Wichtig</b>: Bitte drücke auf "Hochladen" und dann auf "Speichern", ansonsten werden deine
+       Änderungen verworfen, wenn du die Seite verlässt.
     submission_upload_notice_html: >
       <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
        Änderungen verworfen, wenn du die Seite verlässt.
-    code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
     deletion_date: Löschdatum
     multiple_files_selected: Es wurden mehrere Dateien ausgewählt.
     merging_help_html: >
@@ -2580,6 +2597,15 @@ de:
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
       sind (was jedoch zur Einstufung der entsprechenden Abgaben als
       verspätet führt).
+    certificate_check: Quiz-Zertifikat validieren
+    certificate_check_info: >
+      Hier kannst Du Zertifikats-Codes überprüfen, die NutzerInnen nach dem
+      vollständigen Absolvieren eines Quizzes erhalten haben. Bei Eingabe eines
+      gültigen Codes erhältst Du Informationen darüber, zu welcher NutzerIn und
+      welchem Quiz das Zertifikat gehört.
+    certificate_valid: >
+      Der Code ist gültig. Er gehört zu NutzerIn %{user} und zum Quiz %{quiz}.
+    certificate_invalid: Der Code ist ungültig.
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
@@ -2894,6 +2920,7 @@ de:
     due: bis
     as: als
     as_file_type: als %{type}-Datei
+    code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -2992,6 +3019,7 @@ de:
     accept: 'Akzeptieren'
     reject: 'Ablehnen'
     dismiss: 'Ausblenden'
+    validate: 'Validieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -3119,6 +3147,8 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    certificate_already_claimed: >
+      Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
   exception:
     title: Fehler
     exception: Exception auf %{host}

@@ -66,7 +66,7 @@ videoUpload = (fileInput) ->
   uppy.use Uppy.XHRUpload,
     endpoint: '/videos/upload'
     fieldName: 'file'
-    timeout: 120 * 1000
+    timeout: 3600 * 1000
 
   # give the user feedback after upload has started
   uppy.on 'upload', (data) ->
@@ -529,6 +529,7 @@ bulkCorrectionUpload = (fileInput) ->
           $('#upload-userManuscript').val("")
           $('input[type="submit"]').prop('disabled',false)
           $('#userManuscript-upload-notice').show()
+          $('#userManuscript-not-upload-notice').hide()
           $('#submission_detach_user_manuscript').val('false')
           $('#userManuscript-uploadButton-call').text(
             $('#userManuscript-uploadButton-call').data 'tr-success'
@@ -663,6 +664,7 @@ bulkCorrectionUpload = (fileInput) ->
       reader.readAsArrayBuffer(file)
 
   $('#upload-userManuscript').change () ->
+    $('#userManuscript-not-upload-notice').show()
     $('input[type="submit"]').prop('disabled',true)
     filez = Array.prototype.slice.call(
         document.getElementById('upload-userManuscript').files

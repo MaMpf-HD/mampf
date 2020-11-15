@@ -20,7 +20,7 @@ module Mampf
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
     config.exception_handler = {
-      email:      ENV['PROJECT_EMAIL'], # sends exception emails to a listed email (string // "you@email.com")
+      email:      ENV['ERROR_EMAIL'], # sends exception emails to a listed email (string // "you@email.com")
 
       # All keys interpolated as strings, so you can use symbols, strings or integers where necessary
       exceptions: {

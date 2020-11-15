@@ -2,6 +2,21 @@
   <div class="row justify-content-center px-2">
     <div class="col-sm-12 col-md-12 col-lg-10">
       <div class="card bg-remark border-secondary mt-2">
+        <% if user_signed_in? && certificate %>
+          <div class="card-header">
+            <div class="row">
+              <div class="col-12 my-2 text-center" id="quizCertificateArea">
+                <%= link_to t('quiz.certify'),
+                            claim_quiz_certificate_path(certificate),
+                            class: 'btn btn-primary',
+                            method: :post,
+                            remote: true %>
+                <%= helpdesk(t('quiz.certificate_info') + ' ' +
+                             t('quiz.certificate_info_on_use'), false) %>
+              </div>
+            </div>
+          </div>
+        <% end %>
         <div class="card-body">
           <%= t('admin.quiz.finale_html',
                 xkcd_link: link_to(t('admin.quiz.xkcd'),

@@ -2006,6 +2006,20 @@ en:
       easy: 'easy'
       medium: 'medium'
       difficult: 'difficult'
+    certificate_info: >
+      You can get a certificate for the completion of this quiz. If you click
+      the button you will get a certificate in form of a code consisting of 6
+      characters.
+    certify: Request Certificate
+    obtained_certificate: >
+      You obtained the following certificate code for this quiz: %{code}
+    certificate_info_on_use: >
+      If your lecture uses certified MaMpf quizzes in the tutorials
+      you will have to give present this code in some form (e.g. your homework
+      solutions), your tutor will later validate it. Upon validation your tutor
+      can see your name (the one you gave as "name in turorials"), but no
+      information about whether you answered the questions correctly or
+      incorrectly.
     info:
       compile_tags: >
         Here you can specify which contents are relevant for the quiz.
@@ -2247,7 +2261,7 @@ en:
       You successfully joind the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
-    current: Current submission
+    current: Current Submission
     previous: Previous Submission
     old_ones: Old Submissions
     future_ones: Future Submissions
@@ -2274,17 +2288,19 @@ en:
       For this purpose, a small additional program is downloaded and executed <i> in the browser </i>.
         Your file will remain on your device until you have uploaded them.
     assure_third_party: >
-      I assure you that the file does not infringe any rights of third parties.
+      I assure that the file does not infringe any rights of third parties.
     removal_notice_html: >
       <b>Notice:</b> Files will be deleted at the end of the semester.
        We do not assume any liability for possible data loss.
     submission_upload_notice_html: >
       <b> Important </b>: Please press "Save", otherwise your
         Changes are discarded when you leave the site.
+    submission_not_upload_notice_html: >
+      <b>Important </b>: Please press "Upload" and then "Save", otherwise your
+        Changes are discarded when you leave the site.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
     working: Working
-    code_copied_to_clipboard: Code has been copied to the clipboard.
     deletion_date: Deletion Date
     multiple_files_selected: Multiple files have been selected.
     merging_help_html: >
@@ -2371,14 +2387,14 @@ en:
       the "Invite" button (this button only exists in the case that such persons
       exist, are not yet a member of this team and the team size is below
       the maximal allowed size for teams).
-    profile_info: >
+    profile_info_html: >
       In your %{profile} you can set your preferences about which events in the
       context of submissions you want to be notified about via email. This
       includes successful upload and removal of files, joining or leaving of
       team members, decisions about the acceptance of late submissions and
       upload of corrections by your tutor.
-    deletion_date: >
-      YOur submission includes personal data which we will delete two weeks
+    deletion_date_info: >
+      Your submission contains personal data which we will delete two weeks
       after the end of this term due to protection of data privacy. You will be
       notified ahead via email so that you can save them.
     team_info: >
@@ -2422,6 +2438,15 @@ en:
       The grace period lasts until %{friendly_deadline}. Within the grace
       period, submisions and retrospective changes by the students are possible
       (the corresponding submissions will be marked as late.)
+    certificate_check: >
+      Validate Quiz Certificate
+    certificate_check_info: >
+      Here you can validate certificate codes that users have obtained after
+      successfully completing a quiz. If the entered code is valid will be
+      informed about the user and the quiz that this certificate belongs to.
+    certificate_valid: >
+      The code is valid. It belongs to user %{user} and quiz %{quiz}.
+    certificate_invalid: This code is invalid.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
@@ -2725,6 +2750,7 @@ en:
     due: due
     as: as
     as_file_type: as %{type} file
+    code_copied_to_clipboard: Code has been copied to the clipboard.
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2818,7 +2844,7 @@ en:
     copy_to_clipboard: 'Copy to Clipboard'
     leave: 'Leave'
     upload: 'Upload'
-    upload_success: 'Upload successfull'
+    upload_success: 'Upload successful'
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'
@@ -2827,6 +2853,7 @@ en:
     accept: 'Accept'
     reject: 'Reject'
     dismiss: 'Dismiss'
+    validate: 'Validate'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -2944,6 +2971,8 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+    certificate_already_claimed: >
+      The certificate has already been claimed by another user.
   exception:
     title: Error
     exception: Exception on %{host}

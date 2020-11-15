@@ -31,12 +31,15 @@ class TutorialsController < ApplicationController
 
   def new
     @tutorial = Tutorial.new
-    lecture = Lecture.find_by_id(params[:lecture_id])
-    @tutorial.lecture = lecture
+    @lecture = Lecture.find_by_id(params[:lecture_id])
+    set_tutorial_locale
+    @tutorial.lecture = @lecture
   end
 
   def create
     @tutorial = Tutorial.new(tutorial_params)
+    @lecture = @tutorial&.lecture
+    set_tutorial_locale
     @tutorial.save
     @errors = @tutorial.errors
   end
@@ -51,7 +54,6 @@ class TutorialsController < ApplicationController
   end
 
   def destroy
-    @lecture = @tutorial.lecture
     @tutorial.destroy
   end
 
@@ -60,6 +62,7 @@ class TutorialsController < ApplicationController
 
   def cancel_new
     @lecture = Lecture.find_by_id(params[:lecture])
+    set_tutorial_locale
     @none_left = @lecture&.tutorials&.none?
   end
 
@@ -88,11 +91,17 @@ class TutorialsController < ApplicationController
     send_correction_upload_emails
   end
 
+  def validate_certificate
+    @lecture = Lecture.find_by_id(params[:lecture_id])
+    set_tutorial_locale
+  end
+
   private
 
   def set_tutorial
     @tutorial = Tutorial.find_by_id(params[:id])
-    return if @tutorial
+    @lecture = @tutorial&.lecture
+    set_tutorial_locale and return if @tutorial
     redirect_to :root, alert: I18n.t('controllers.no_tutorial')
   end
 
@@ -104,7 +113,7 @@ class TutorialsController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
-    return if @lecture
+    set_tutorial_locale and return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 
@@ -112,6 +121,11 @@ class TutorialsController < ApplicationController
     @lecture = Lecture.find_by_id(tutorial_params[:lecture_id])
     return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
+  def set_tutorial_locale
+    I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
   end
 
   def check_tutor_status

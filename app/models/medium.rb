@@ -47,6 +47,8 @@ class Medium < ApplicationRecord
   has_many :importing_courses, through: :imports,
            source: :teachable, source_type: 'Course'
 
+  has_many :quiz_certificates, foreign_key: 'quiz_id', dependent: :destroy
+
   has_one :assignment
 
   serialize :quiz_graph, QuizGraph

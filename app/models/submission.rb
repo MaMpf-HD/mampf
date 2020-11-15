@@ -154,9 +154,9 @@ class Submission < ApplicationRecord
                      	 		 accepted_file_type: '.tar.gz')
 			end
     end
-    if (!assignment.accepted_file_type.in?(['.cc', '.hh']) &&
+    if (!assignment.accepted_file_type.in?(['.cc', '.hh', '.m']) &&
       !metadata['mime_type'].in?(assignment.accepted_mime_types)) ||
-      (assignment.accepted_file_type.in?(['.cc', '.hh']) &&
+      (assignment.accepted_file_type.in?(['.cc', '.hh', '.m']) &&
         (!metadata['mime_type'].starts_with?('text/') &&
          metadata['mime_type'] != 'application/octet-stream'))
       errors.push I18n.t('submission.wrong_mime_type',

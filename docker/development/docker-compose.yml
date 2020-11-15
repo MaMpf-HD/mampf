@@ -59,11 +59,14 @@ services:
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
       MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
       PROJECT_EMAIL: project@localhost
+      ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
       INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1
       SOLR_PATH: /solr/mampf-dev
       SPROCKETS_CACHE: /cache
       WEBPACKER_DEV_SERVER_HOST: webpacker
+      MAMPF_REGISTRATION_TIMEFRAME: 25
+      MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
       # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20200907123000_mampf.sql&dl=1"
       # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/?dl=1"
