@@ -11,7 +11,7 @@ jobs:
       uses: henrixapp/linter-less-or-equal-action@v1
       with:
         name: Rubocop
-        command: rubocop
+        command: bin/bundle exec rubocop
         total_regexp: \d+ offenses detected
         errors_regexp: \d+ offenses detected
         warnings_regexp: \d+ offenses detected
@@ -55,8 +55,8 @@ jobs:
       id: hello
       uses: henrixapp/linter-less-or-equal-action@v1
       with:
-        name: Coffee
-        command: erblint  . 
+        name: Erblint
+        command: bin/bundle exec erblint  . 
         total_regexp: \d+ error(s)
         errors_regexp: \d+ error(s)
         warnings_regexp: \d+ error(s)
