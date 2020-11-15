@@ -2,7 +2,7 @@ on: [push]
 
 jobs:
   rubocop:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: A job to check rubocop linter errors
     steps:
     - uses: actions/checkout@v2
@@ -17,7 +17,7 @@ jobs:
         bin/bundle install --jobs 4 --retry 3
     - name: Linter count
       id: hello
-      uses: henrixapp/linter-less-or-equal-action@v1
+      uses: henrixapp/linter-less-or-equal-action@v1.1
       with:
         name: Rubocop
         command:  bin/bundle exec rubocop
@@ -26,7 +26,7 @@ jobs:
         warnings_regexp: \d+ offenses detected
         compare_branch: mampf-next
   eslint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: A job to check eslint linter errors
     steps:
     - uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
         warnings_regexp: \d+ warnings
         compare_branch: mampf-next
   coffee:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: A job to check coffee linter errors
     steps:
     - uses: actions/checkout@v2
@@ -56,7 +56,7 @@ jobs:
         warnings_regexp: \d+ warnings
         compare_branch: mampf-next
   erblint:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: A job to check erblint linter errors
     steps:
     - uses: actions/checkout@v2
@@ -71,7 +71,7 @@ jobs:
         bin/bundle install --jobs 4 --retry 3
     - name: Linter count
       id: hello
-      uses: henrixapp/linter-less-or-equal-action@v1
+      uses: henrixapp/linter-less-or-equal-action@v1.1
       with:
         name: Erblint
         command:  bin/bundle exec erblint  . 
