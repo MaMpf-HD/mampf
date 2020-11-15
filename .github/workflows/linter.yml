@@ -6,12 +6,15 @@ jobs:
     name: A job to check rubocop linter errors
     steps:
     - uses: actions/checkout@v2
+    - name: Install gems # usual step to install the gems.
+      run: |
+        gem install rubocop
     - name: Linter count
       id: hello
       uses: henrixapp/linter-less-or-equal-action@v1
       with:
         name: Rubocop
-        command: gem install rubocop && bin/bundle exec rubocop
+        command:  rubocop
         total_regexp: \d+ offenses detected
         errors_regexp: \d+ offenses detected
         warnings_regexp: \d+ offenses detected
@@ -51,12 +54,15 @@ jobs:
     name: A job to check erblint linter errors
     steps:
     - uses: actions/checkout@v2
+    - name: Install gems # usual step to install the gems.
+      run: |
+        gem install erblint
     - name: Linter count
       id: hello
       uses: henrixapp/linter-less-or-equal-action@v1
       with:
         name: Erblint
-        command: gem install erblint && bin/bundle exec erblint  . 
+        command:  bin/bundle exec erblint  . 
         total_regexp: \d+ error(s)
         errors_regexp: \d+ error(s)
         warnings_regexp: \d+ error(s)
