@@ -11,7 +11,7 @@ jobs:
       uses: henrixapp/linter-less-or-equal-action@v1
       with:
         name: Rubocop
-        command: bin/bundle exec rubocop
+        command: gem install rubocop && bin/bundle exec rubocop
         total_regexp: \d+ offenses detected
         errors_regexp: \d+ offenses detected
         warnings_regexp: \d+ offenses detected
@@ -56,7 +56,7 @@ jobs:
       uses: henrixapp/linter-less-or-equal-action@v1
       with:
         name: Erblint
-        command: bin/bundle exec erblint  . 
+        command: gem install erblint && bin/bundle exec erblint  . 
         total_regexp: \d+ error(s)
         errors_regexp: \d+ error(s)
         warnings_regexp: \d+ error(s)
