@@ -66,3 +66,10 @@
 #submission-team-size-buttons {
   display: none;
 }
+
+.teachableThumbnail {
+  width: 100%;
+  height: 180px;
+  object-fit: scale-down;
+  /* Center and scale the image nicely */
+}
