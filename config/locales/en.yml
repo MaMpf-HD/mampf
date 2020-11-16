@@ -3120,6 +3120,10 @@ en:
           attributes:
             tutorial:
               blank: A valid tutorial has to be supplied.
+            user_submission_joins:
+              invalid: >
+                There is already a submission from you or the team has already
+                reached its maximal size.
         tag:
           attributes:
             notions:

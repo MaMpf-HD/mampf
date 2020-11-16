@@ -3298,6 +3298,10 @@ de:
           attributes:
             tutorial:
               blank: Es muss ein gültiges Tutorium angegeben werden.
+            user_submission_joins:
+              invalid: >
+                Es gibt schon eine Abgabe von Dir oder die Teamgröße ist
+                überschritten.
         tag:
           attributes:
             notions:
