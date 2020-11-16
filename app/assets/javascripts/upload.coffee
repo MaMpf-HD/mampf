@@ -88,14 +88,10 @@ videoUpload = (fileInput) ->
 
       videoFile = document.getElementById('video-file')
       videoSize = document.getElementById('video-size')
-      videoResolution = document.getElementById('video-resolution')
-      videoDuration = document.getElementById('video-duration')
 
       # put metadata into place
       videoFile.innerHTML = data.metadata.filename
       videoSize.innerHTML = formatBytes(data.metadata.size)
-      videoResolution.innerHTML = data.metadata.resolution
-      videoDuration.innerHTML = fancyTimeFormat(Math.round(data.metadata.duration))
       $(metaData).show()
       $(videoPreviewArea).show()
       $('#medium_detach_video').val('false')

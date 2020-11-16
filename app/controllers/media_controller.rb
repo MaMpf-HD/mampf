@@ -73,11 +73,10 @@ class MediaController < ApplicationController
     end
     changed_video = @medium.video_data != old_video_data
     if @medium.video.present? && changed_video
-      # MetadataExtractor.perform_async(@medium.id)
-      @medium.video.refresh_metadata!(action: :store)
-      pp @medium.video
-      @medium.save
-      pp @medium.video
+      MetadataExtractor.perform_async(@medium.id)
+      # @medium.video.refresh_metadata!(action: :store)
+      # refreshed_video = @medium.video
+      # @medium.update(video_data: refreshed_video.to_json)
     end
     if @medium.sort == 'Quiz' &&params[:medium][:create_quiz_graph] == '1'
       @medium.becomes(Quiz).update(level: 1,
