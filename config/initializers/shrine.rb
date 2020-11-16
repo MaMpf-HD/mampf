@@ -33,7 +33,7 @@ end
 Shrine.plugin :activerecord
 Shrine.plugin :determine_mime_type
 Shrine.plugin :cached_attachment_data # for forms
-Shrine.plugin :restore_cached_data
+# Shrine.plugin :restore_cached_data
 Shrine.plugin :instrumentation
 
 # use mv instead of cp when promoting files from cache to store

@@ -46,6 +46,7 @@ class MediaController < ApplicationController
   def update
     I18n.locale = @medium.locale_with_inheritance
     old_manuscript_data = @medium.manuscript_data
+    old_video_data = @medium.video_data
     old_geogebra_data = @medium.geogebra_data
     @medium.update(medium_params)
     @errors = @medium.errors
@@ -69,6 +70,14 @@ class MediaController < ApplicationController
     if @medium.geogebra.present? && changed_geogebra
       @medium.geogebra_derivatives!
       @medium.save
+    end
+    changed_video = @medium.video_data != old_video_data
+    if @medium.video.present? && changed_video
+      # MetadataExtractor.perform_async(@medium.id)
+      @medium.video.refresh_metadata!(action: :store)
+      pp @medium.video
+      @medium.save
+      pp @medium.video
     end
     if @medium.sort == 'Quiz' &&params[:medium][:create_quiz_graph] == '1'
       @medium.becomes(Quiz).update(level: 1,
