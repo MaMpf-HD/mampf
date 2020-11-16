@@ -404,7 +404,7 @@ class MediaController < ApplicationController
                                    :geogebra, :geogebra_app_name,
                                    :teachable_type, :teachable_id,
                                    :released, :text, :locale,
-                                   :content,
+                                   :content, :boost,
                                    editor_ids: [],
                                    tag_ids: [],
                                    linked_medium_ids: [])

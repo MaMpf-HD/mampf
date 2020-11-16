@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_30_104932) do
+ActiveRecord::Schema.define(version: 2020_11_14_125010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -354,6 +354,7 @@ ActiveRecord::Schema.define(version: 2020_10_30_104932) do
     t.text "geogebra_app_name"
     t.integer "position"
     t.boolean "text_input", default: false
+    t.float "boost", default: 0.0
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
