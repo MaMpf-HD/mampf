@@ -1614,6 +1614,9 @@ en:
         Questions that only make sense in the context of a
         certain quiz (e.g., because special assumptions have been made
         in the questions before)
+      course_disclaimer: >
+        This quiz is located at the level of the course %{course}, in particular
+        it covers material from different semesters and from different teachers.
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.

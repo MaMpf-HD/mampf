@@ -1720,6 +1720,10 @@ de:
         typischerweise Quiz-Fragen, die nur im Kontext eines konkreten Quizzes
         Sinn ergeben (beispielsweise, weil in vorangegangenen Fragen spezielle
         Voraussetzungen festgelegt wurden).
+      course_disclaimer: >
+        Dieses Quiz ist semesterübergreifend auf der Ebene des Moduls
+        %{course} angesiedelt, das Material stammt also aus verschiedenen
+        Veranstaltungen und von verschiedenen DozentInnen.
       info:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem
@@ -2120,7 +2124,7 @@ de:
     number_of_questions_label: 'Anzahl der Fragen'
     certificate_info: >
       Du kannst ein Zertifikat dafür bekommen, dass Du dieses Quiz vollständig
-      absolviert hast. Wenn Du den Buton drückst, erhältst Du das Zertifikat in
+      absolviert hast. Wenn Du den Button drückst, erhältst Du das Zertifikat in
       Form eines Codes aus 6 Zeichen.
     certify: Zertifikat anfordern
     obtained_certificate: >
