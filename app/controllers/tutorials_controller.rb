@@ -17,7 +17,6 @@ class TutorialsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                     @assignments&.first
     @tutorials = current_user.given_tutorials.where(lecture: @lecture)
-                             .order(:title)
     @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
