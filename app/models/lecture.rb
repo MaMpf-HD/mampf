@@ -42,7 +42,7 @@ class Lecture < ApplicationRecord
   has_many :announcements, dependent: :destroy
 
   # a lecture has many tutorials
-  has_many :tutorials
+  has_many :tutorials, -> { order(:title) }
 
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
@@ -502,10 +502,12 @@ class Lecture < ApplicationRecord
   end
 
   # for a given list of media, sorts them as follows:
-  # 1) media associated to the lecture
+  # 1) media associated to the lecture, sorted first by boost and second
+  # by creation date
   # 2) media associated to lessons of the lecture, sorted by lesson numbers
   def lecture_lesson_results(filtered_media)
     lecture_results = filtered_media.where(teachable: self)
+                                    .order(boost: :desc, created_at: :desc)
     lesson_results = filtered_media.where(teachable:
                                             Lesson.where(lecture: self))
     lecture_results + lesson_results.includes(:teachable)

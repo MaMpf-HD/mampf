@@ -71,12 +71,11 @@ class SubmissionsController < ApplicationController
                                                   :manuscript)
       return if @errors.present?
     end
+    @submission.user_submission_joins.build(user: current_user)
     @submission.save
     @assignment = @submission.assignment
     @errors = @submission.errors
     return unless @submission.valid?
-    UserSubmissionJoin.create(user: current_user,
-                              submission: @submission)
     send_invitation_emails
     @submission.update(last_modification_by_users_at: Time.now)
     return unless @submission.manuscript

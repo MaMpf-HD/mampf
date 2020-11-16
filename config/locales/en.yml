@@ -833,6 +833,7 @@ en:
         no rights of third parties are infringed.
       lock_comments: 'Disable comments for this medium'
       comments_locked: 'Comments disabled'
+      boost: 'Boost'
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -1090,6 +1091,12 @@ en:
           editor.
         details_warning: >
           Details have been changed that have not yet been imported.
+        boost: >
+          Via the boost you can override the way in ehich media are ordered
+          by default (for media that belong to a course or an event series,
+          it does not affect media associated to a session). The default value
+          is 0, Media with a higher boost will be displayed in the first places,
+          media with lower boost at the end.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
@@ -1614,6 +1621,9 @@ en:
         Questions that only make sense in the context of a
         certain quiz (e.g., because special assumptions have been made
         in the questions before)
+      course_disclaimer: >
+        This quiz is located at the level of the course %{course}, in particular
+        it covers material from different semesters and from different teachers.
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
@@ -3120,6 +3130,10 @@ en:
           attributes:
             tutorial:
               blank: A valid tutorial has to be supplied.
+            user_submission_joins:
+              invalid: >
+                There is already a submission from you or the team has already
+                reached its maximal size.
         tag:
           attributes:
             notions:

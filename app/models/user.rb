@@ -30,7 +30,8 @@ class User < ApplicationRecord
   # a user has many tutorials as a tutor
 
   has_many :tutor_tutorial_joins, foreign_key: 'tutor_id', dependent: :destroy
-  has_many :given_tutorials, through: :tutor_tutorial_joins, source: :tutorial
+  has_many :given_tutorials, -> { order(:title) },
+           through: :tutor_tutorial_joins, source: :tutorial
 
   # a user has many notifications as recipient
   has_many :notifications, foreign_key: 'recipient_id'
