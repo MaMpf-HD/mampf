@@ -18,3 +18,6 @@
                 confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale),
                 :class => "btn btn-primary" %>
 </p>
+<p>
+  <small><%= t('.link_broken_html',url:confirmation_url(@resource, confirmation_token: @token, locale: I18n.locale))%>
+</p>

@@ -24,6 +24,9 @@ en:
         instruction: "You can confirm your MaMpf account through the link below:"
         subject: "Instructions on the confirmation of your MaMpf account"
         action: 'Confirm account'
+        link_broken_html: >
+          If the link does not work, copy  <code>%{url}</code> into your
+          browser.
         reason: >
           You’re receiving this email because recently a MaMpf account
           was linked to this email adress. If this wasn’t you, please ignore

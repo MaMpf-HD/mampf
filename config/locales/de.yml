@@ -2695,7 +2695,9 @@ de:
     submission_invitation_html: >
       %{issuer} hat Dich eingeladen, einer Abgabe zu %{assignment} in %{lecture}
       beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn MaMpf
-      selbst eingeben und einlösen oder diesen %{link} benutzen.
+      selbst eingeben und einlösen oder diesen %{link}  benutzen. Falls der Link
+       nicht funktioniert kopiere den folgenden Link und gib ihn in die Browserzeile
+       ein: <code>%{copy_link}</code>
     submission_upload_subject: >
       Erfolgreicher Upload für Abgabe zu %{assignment} in %{lecture}
     submission_upload_html: >

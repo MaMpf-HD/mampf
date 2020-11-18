@@ -2524,10 +2524,11 @@ en:
       You can subscribe to it in your profile settings.
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
-    submission_invitation: >
+    submission_invitation_html: >
       %{issuer} issuer has invited you to join a submission to %{assignment}
       in %{lecture}. The code to join is: %{code}. You can enter and redeem
-      it in MaMpf manually or follow this %{link}.
+      it in MaMpf manually or follow this %{link}. If the link is broken,
+      you could copy and enter it manually: <code>%{copy_link}</code>.
     submission_upload_subject: >
       Successful upload for submission to %{assignment} in %{lecture}
     submission_upload_html: >
