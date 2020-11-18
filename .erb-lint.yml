@@ -5,7 +5,7 @@ linters:
 #    enabled: true
 #    better_html_config: .better-html.yml
   Rubocop:
-    enabled: true
+    enabled: false
     rubocop_config:
       inherit_from:
         - .rubocop.yml
