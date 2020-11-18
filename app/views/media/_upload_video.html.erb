@@ -37,15 +37,15 @@
           </span>
         </div>
       </div>
-      <div class="row">
+      <div class="row" style="display: <%= show(medium.video_resolution) %>">
         <div class="col-12">
           <%= t('video.resolution') %>:
           <span id="video-resolution">
             <%= medium.video_resolution %>
           </span>
-        </div>
+       </div>
       </div>
-      <div class="row">
+      <div class="row" style="display: <%= show(medium.video_duration) %>">
         <div class="col-12">
           <%= t('video.length') %>:
           <span id="video-duration">

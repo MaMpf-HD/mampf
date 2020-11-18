@@ -5,18 +5,22 @@ class VideoUploader < Shrine
   # shrine plugins
   plugin :upload_endpoint
   plugin :add_metadata
-  plugin :determine_mime_type
+  # plugin :determine_mime_type
   plugin :validation_helpers
   plugin :pretty_location
+  plugin :refresh_metadata
 
   # add metadata to uploaded video: duration, bitrate, resolution, framerate
-  add_metadata do |io|
-    movie = Shrine.with_file(io) { |file| FFMPEG::Movie.new(file.path) }
+  add_metadata do |io, **options|
+    pp options[:action]
+    if options[:action] != :upload
+      movie = Shrine.with_file(io) { |file| FFMPEG::Movie.new(file.path) }
 
-    { 'duration'   => movie.duration,
-      'bitrate'    => movie.bitrate,
-      'resolution' => movie.resolution,
-      'frame_rate' => movie.frame_rate }
+      { 'duration'   => movie.duration,
+        'bitrate'    => movie.bitrate,
+        'resolution' => movie.resolution,
+        'frame_rate' => movie.frame_rate }
+    end
   end
 
   Attacher.validate do
