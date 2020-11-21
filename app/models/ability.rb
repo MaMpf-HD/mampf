@@ -81,8 +81,11 @@ class Ability
 
       can :start, :main
 
-      can [:catalog, :search, :play, :display, :geogebra,
-           :register_download, :show_comments], Medium
+      can [:catalog, :search, :register_download, :show_comments], Medium
+      cannot :show, Medium
+      can [:play, :display, :geogebra, :show], Medium do |medium|
+        medium.visible_for_user?(user)
+      end
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :import_script_items,
            :export_references,
