@@ -327,7 +327,7 @@ Rails.application.routes.draw do
       to: 'submissions#cancel_edit_correction',
       as: 'cancel_edit_correction'
 
-  resources :submissions, except: :index
+  resources :submissions, except: [:index, :show]
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
