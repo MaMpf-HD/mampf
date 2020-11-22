@@ -94,7 +94,7 @@ class Submission < ApplicationRecord
   end
 
   def filename_for_bulk_download
-		(users.map(&:tutorial_name).join('-') + '-' +
+		(team.first(180) + '-' +
 			last_modification_by_users_at.strftime("%F-%H%M") +
 			(too_late? ? '-LATE' : '') +
 			+ '-ID-' + id +
