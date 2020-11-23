@@ -27,6 +27,23 @@
             </a>
           </li>
         <% end %>
+          <li class="nav-item dropdown">
+            <a href="#"
+               role="button"
+               id="favoriteLecturesMenu"
+               class="fas fa-star fa-lg text-light nav-link"
+               style="text-decoration: none; "
+               data-toggle="dropdown"
+               title="Schnellzugriff Veranstaltungen">
+            </a>
+            <div class="dropdown-menu" aria-labelledby="favoriteLecturesMenu">
+              <% current_user.lectures.each do |l| %>
+                <%= link_to l.short_title,
+                            lecture_path(l),
+                            class: 'dropdown-item' %>
+              <% end %>
+            </div>
+          </li>
         <li class="nav-item">
           <a href="<%= comments_path %>"
              id="commentsIcon"
