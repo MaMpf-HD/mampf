@@ -367,6 +367,10 @@ Rails.application.routes.draw do
       to: 'tutorials#validate_certificate',
       as: 'validate_certificate_as_tutor'
 
+  get 'tutorials/:id/assignments/:ass_id/export_teams',
+      to: 'tutorials#export_teams',
+      as: 'export_teams_to_csv'
+
   resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 
   get 'sections/list_tags', to: 'sections#list_tags',

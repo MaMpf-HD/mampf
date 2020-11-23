@@ -68,6 +68,16 @@ class Tutorial < ApplicationRecord
     report
   end
 
+  def teams_to_csv(assignment)
+    submissions = Submission.where(tutorial: self, assignment: assignment)
+
+    CSV.generate(headers: false) do |csv|
+      submissions.each do |s|
+        csv << [s.team]
+      end
+    end
+  end
+
   private
 
   def check_destructibility
