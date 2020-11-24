@@ -1,5 +1,7 @@
 # Tutorial model
 class Tutorial < ApplicationRecord
+  require 'csv'
+
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
