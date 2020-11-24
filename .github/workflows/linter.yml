@@ -20,7 +20,7 @@ jobs:
       uses: henrixapp/linter-less-or-equal-action@v1.1
       with:
         name: Rubocop
-        command:  bin/bundle exec rubocop
+        command:  bin/bundle exec rubocop app config lib spec
         total_regexp: \d+ offenses detected
         errors_regexp: \d+ offenses detected
         warnings_regexp: \d+ offenses detected
