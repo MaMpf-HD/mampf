@@ -34,14 +34,11 @@
                class="fas fa-star fa-lg text-light nav-link"
                style="text-decoration: none; "
                data-toggle="dropdown"
-               title="Schnellzugriff Veranstaltungen">
+               title="<%= t('navbar.favorite_lectures') %>">
             </a>
-            <div class="dropdown-menu" aria-labelledby="favoriteLecturesMenu">
-              <% current_user.lectures.each do |l| %>
-                <%= link_to l.short_title,
-                            lecture_path(l),
-                            class: 'dropdown-item' %>
-              <% end %>
+            <div class="dropdown-menu" aria-labelledby="favoriteLecturesMenu"
+                 id="favoriteLecturesDropdown">
+              <%= render partial: 'shared/dropdown_favorite_lectures' %>
             </div>
           </li>
         <li class="nav-item">

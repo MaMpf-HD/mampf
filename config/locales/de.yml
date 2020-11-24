@@ -136,6 +136,9 @@ de:
     blog: 'Blog'
     logout: 'Logout'
     login: 'Login'
+    favorite_lectures: 'Schnellzugriff Veranstaltungen'
+    no_favorite_lectures_yet: >
+      Du hast dem Schnellzugriff noch keine Veranstaltung hinzugefügt.
   info: 'Info'
   admin:
     navbar:
@@ -1892,6 +1895,8 @@ de:
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
     miscellaneous: Sonstiges
+    star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
+    unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
