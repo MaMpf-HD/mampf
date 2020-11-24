@@ -60,3 +60,8 @@
 	position: relative;
 	top: 0.25em;
 }
+
+#export-teams:focus, #export-teams:active:focus, #export-teams.active:focus {
+    outline:none;
+    box-shadow:none;
+}

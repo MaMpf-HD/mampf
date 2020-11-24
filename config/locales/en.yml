@@ -2456,6 +2456,7 @@ en:
       informed about the user and the quiz that this certificate belongs to.
     certificate_valid: >
       The code is valid. It belongs to user %{user} and quiz %{quiz}.
+    teams_as_csv: Teams as .csv
     certificate_invalid: This code is invalid.
     bulk_upload:
       report: Report on the bulk upload of the corrections
