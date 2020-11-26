@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   get '/administration/classification', to: 'administration#classification',
                                         as: 'classification'
 
+  post 'announcements/:id/propagate', to: 'announcements#propagate',
+                                      as: 'propagate_announcement'
+  post 'announcements/:id/expel', to: 'announcements#expel',
+                                  as: 'expel_announcement'
   resources :announcements, only: [ :index, :new, :create]
 
   resources :answers, except: [:index, :show, :edit]

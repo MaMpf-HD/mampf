@@ -7,6 +7,12 @@
           new_user_registration_path(params: {locale: I18n.locale}))) %>
   </div>
 <% end %>
+<% if @announcements.present? %>
+  <div class="alert alert-secondary"
+       role="alert">
+    <%= @announcements.html_safe %>
+  </div>
+<% end %>
 <div class="jumbotron bg-mdb-color-lighten-6">
   <h1>
     <%= image_tag '/MaMpf-Logo_96x96.png', class: 'img-fluid mr-2' %>

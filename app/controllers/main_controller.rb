@@ -10,6 +10,8 @@ class MainController < ApplicationController
     if user_signed_in?
       cookies[:locale] = strict_cookie(current_user.locale)
     end
+    @announcements = Announcement.where(on_main_page: true,
+                                        lecture: nil).pluck(:details).join
   end
 
   def error
@@ -41,6 +43,8 @@ class MainController < ApplicationController
                                                                    :term)
                                        .sort
     end
+    @announcements = Announcement.where(on_main_page: true,
+                                        lecture: nil).pluck(:details).join
   end
 
   private
