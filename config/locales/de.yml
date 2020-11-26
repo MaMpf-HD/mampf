@@ -2628,6 +2628,7 @@ de:
     certificate_valid: >
       Der Code ist gültig. Er gehört zu NutzerIn %{user} und zum Quiz %{quiz}.
     certificate_invalid: Der Code ist ungültig.
+    teams_as_csv: Teams als .csv
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
