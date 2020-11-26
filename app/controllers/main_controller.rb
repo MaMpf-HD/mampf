@@ -43,6 +43,8 @@ class MainController < ApplicationController
                                                                    :term)
                                        .sort
     end
+    @announcements = Announcement.where(on_main_page: true,
+                                        lecture: nil).pluck(:details).join
   end
 
   private
