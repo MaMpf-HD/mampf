@@ -8,12 +8,6 @@ class User < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :lectures, -> { distinct }, through: :lecture_user_joins
 
-  # a user has many favorite lectures
-  has_many :user_favorite_lecture_joins, dependent: :destroy
-  has_many :favorite_lectures, -> { distinct },
-           through: :user_favorite_lecture_joins,
-           source: :lecture
-
   # a user has many subscribed courses
   has_many :course_user_joins, dependent: :destroy
 
@@ -469,7 +463,6 @@ class User < ApplicationRecord
     return false unless lecture.is_a?(Lecture)
     return false unless lecture.in?(lectures)
     lectures.delete(lecture)
-    favorite_lectures.delete(lecture)
     true
   end
 

@@ -20,7 +20,7 @@
 			<div class="subscriptionsCollapse <%= show_collapse(@current_stuff.any?) %>" id="collapseCurrentStuff"
 				 	 data-parent="#subscriptionsAccordion" data-link="#currentStuffLink">
 				<div class="card-body">
-					<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
+					<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
 							 id="collapseCurrentStuffContent">
 						<% if @current_stuff.any? %>
 							<%= render partial: 'main/start/lecture',
@@ -55,7 +55,7 @@
 				 id="collapseInactiveLectures"
 				 data-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
 			<div class="card-body">
-				<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
+				<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
 						 id="collapseInactiveLecturesContent">
 					<% if @current_stuff.empty? %>
 						<%= render partial: 'main/start/lecture',
@@ -89,7 +89,7 @@
 			<div class="collapse subscriptionsCollapse" id="collapseAllCurrent"
 					 data-parent="#subscriptionsAccordion" data-link="#allCurrentLink">
 				<div class="card-body">
-					<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
+					<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6"
 							 id="collapseAllCurrentContent">
 					</div>
 					<%= tag.div id: 'emptyAllCurrent',

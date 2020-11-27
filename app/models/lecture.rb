@@ -31,11 +31,6 @@ class Lecture < ApplicationRecord
   has_many :lecture_user_joins, dependent: :destroy
   has_many :users, -> { distinct }, through: :lecture_user_joins
 
-  # a lecture has many users who have starred it (fans)
-  has_many :user_favorite_lecture_joins, dependent: :destroy
-  has_many :fans, -> { distinct }, through: :user_favorite_lecture_joins,
-           source: :user
-
   # a lecture has many editors
   # these are users different from the teacher who have the right to
   # modify lecture contents
