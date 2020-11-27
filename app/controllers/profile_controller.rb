@@ -2,8 +2,8 @@
 class ProfileController < ApplicationController
   before_action :set_user
   before_action :set_basics, only: [:update]
-  before_action :set_lecture, only: [:subscribe_lecture,
-                                     :unsubscribe_lecture]
+  before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
+                                     :star_lecture, :unstar_lecture]
 
   def edit
     unless @user.consents
@@ -90,6 +90,24 @@ class ProfileController < ApplicationController
     end
   end
 
+  def star_lecture
+    return unless @lecture&.in?(current_user.lectures)
+    if !@lecture.in?(current_user.favorite_lectures)
+      current_user.favorite_lectures << @lecture
+    end
+    # as favorite lectures appear in the navbar which is cached e.g. in
+    # the lecture show action, make sure the cache is invalidated by
+    # touching the user
+    current_user.touch
+    @success = true
+  end
+
+  def unstar_lecture
+    return unless @lecture
+    current_user.favorite_lectures.delete(@lecture)
+    current_user.touch
+  end
+
   def show_accordion
     @collapse_id = params[:id]
     @lectures = case @collapse_id
@@ -132,7 +150,7 @@ class ProfileController < ApplicationController
     @lecture = Lecture.find_by_id(lecture_params[:id])
     @passphrase = lecture_params[:passphrase]
     @parent = lecture_params[:parent]
-    @current =  !@parent.in?(['lectureSearch', 'inactive'])
+    @current = !@parent.in?(['lectureSearch', 'inactive'])
     redirect_to start_path unless @lecture
   end
 
