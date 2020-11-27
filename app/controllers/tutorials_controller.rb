@@ -1,8 +1,10 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
-                                      :bulk_download, :bulk_upload]
-  before_action :set_assignment, only: [:bulk_download, :bulk_upload]
+                                      :bulk_download, :bulk_upload,
+                                      :export_teams]
+  before_action :set_assignment, only: [:bulk_download, :bulk_upload,
+                                        :export_teams]
   before_action :set_lecture, only: [:index, :overview]
   before_action :set_lecture_from_form, only: [:create]
   before_action :check_tutor_status, only: :index
@@ -93,6 +95,14 @@ class TutorialsController < ApplicationController
   def validate_certificate
     @lecture = Lecture.find_by_id(params[:lecture_id])
     set_tutorial_locale
+  end
+
+  def export_teams
+    respond_to do |format|
+      format.html { head :ok }
+      format.csv { send_data @tutorial.teams_to_csv(@assignment),
+                             filename: "#{@tutorial.title}-#{@assignment.title}.csv" }
+    end
   end
 
   private

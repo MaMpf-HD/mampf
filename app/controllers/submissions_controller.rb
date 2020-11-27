@@ -93,6 +93,7 @@ class SubmissionsController < ApplicationController
   def redeem_code
     code = params[:code]
     @submission = Submission.find_by(token: code)
+    @assignment = @submission&.assignment
     check_code_and_join
     unless @error
       redirect_to lecture_submissions_path(@submission.tutorial.lecture),

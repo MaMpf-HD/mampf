@@ -1,5 +1,7 @@
 # Tutorial model
 class Tutorial < ApplicationRecord
+  require 'csv'
+
   belongs_to :lecture, touch: true
 
   has_many :tutor_tutorial_joins, dependent: :destroy
@@ -66,6 +68,16 @@ class Tutorial < ApplicationRecord
       report[:successful_saves].push(submission)
     end
     report
+  end
+
+  def teams_to_csv(assignment)
+    submissions = Submission.where(tutorial: self, assignment: assignment)
+                            .proper.order(:last_modification_by_users_at)
+    CSV.generate(headers: false) do |csv|
+      submissions.each do |s|
+        csv << [s.team]
+      end
+    end
   end
 
   private

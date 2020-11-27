@@ -2,6 +2,7 @@
 class AnnouncementsController < ApplicationController
   authorize_resource
   layout 'administration'
+  before_action :set_announcement, only: [:propagate, :expel]
 
   def index
     @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
@@ -35,10 +36,20 @@ class AnnouncementsController < ApplicationController
     @errors = @announcement.errors[:details].join(', ')
   end
 
+  def propagate
+    @announcement.update(on_main_page: true)
+    redirect_to announcements_path
+  end
+
+  def expel
+    @announcement.update(on_main_page: false)
+    redirect_to announcements_path
+  end
+
   private
 
   def announcement_params
-    params.require(:announcement).permit(:details, :lecture_id)
+    params.require(:announcement).permit(:details, :lecture_id, :on_main_page)
   end
 
   def create_notifications
@@ -75,5 +86,11 @@ class AnnouncementsController < ApplicationController
                           .announcement_email.deliver_now
       end
     end
+  end
+
+  def set_announcement
+    @announcement = Announcement.find_by_id(params[:id])
+    return if @announcement.present?
+    redirect_to :root, alert: I18n.t('controllers.no_announcement')
   end
 end

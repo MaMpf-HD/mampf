@@ -302,6 +302,17 @@ en:
         Here you can enter the text. You may use LaTEX (by putting the
         corresponding expression inside $...$). You can see a preview of your
         text below.
+      on_main_page: >
+        Display on home page
+      main_page: >
+        On Home Page
+      propagate: set on home page
+      expel: remove from home page
+      info:
+        on_main_page: >
+          If you check this box, the announcement will be displayed on the MaMpf
+          homepage. This can be useful if it is an announcement of a server
+          downtime.
     lecture:
       lecture: 'Lecture'
       lecture_short: 'L'
@@ -2461,6 +2472,7 @@ en:
       informed about the user and the quiz that this certificate belongs to.
     certificate_valid: >
       The code is valid. It belongs to user %{user} and quiz %{quiz}.
+    teams_as_csv: Teams as .csv
     certificate_invalid: This code is invalid.
     bulk_upload:
       report: Report on the bulk upload of the corrections
@@ -2988,6 +3000,7 @@ en:
         already submissions for it that include uploaded files.
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
+    no_announcement: There is no announcement with this id.
   exception:
     title: Error
     exception: Exception on %{host}

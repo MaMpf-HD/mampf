@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   get '/administration/classification', to: 'administration#classification',
                                         as: 'classification'
 
+  post 'announcements/:id/propagate', to: 'announcements#propagate',
+                                      as: 'propagate_announcement'
+  post 'announcements/:id/expel', to: 'announcements#expel',
+                                  as: 'expel_announcement'
   resources :announcements, only: [ :index, :new, :create]
 
   resources :answers, except: [:index, :show, :edit]
@@ -369,6 +373,10 @@ Rails.application.routes.draw do
   get 'tutorials/validate_certificate',
       to: 'tutorials#validate_certificate',
       as: 'validate_certificate_as_tutor'
+
+  get 'tutorials/:id/assignments/:ass_id/export_teams',
+      to: 'tutorials#export_teams',
+      as: 'export_teams_to_csv'
 
   resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 

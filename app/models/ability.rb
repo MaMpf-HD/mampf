@@ -149,7 +149,7 @@ class Ability
         tutorial.lecture.edited_by?(user)
       end
 
-      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+      can [:bulk_download, :bulk_upload, :export_teams], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
       end
 
@@ -267,7 +267,7 @@ class Ability
         user.tutor?
       end
 
-      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+      can [:bulk_download, :bulk_upload, :export_teams], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
       end
 

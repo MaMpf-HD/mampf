@@ -61,6 +61,12 @@
                 id="show-bulk-upload-area">
           <%= t('submission.bulk_upload') %>
         </button>
+        <%= link_to t('tutorial.teams_as_csv'),
+                    export_teams_to_csv_path(id: @tutorial.id,
+                                             ass_id: @assignment.id,
+                                             format: 'csv'),
+                    class: 'btn btn-primary ml-3',
+                    id: 'export-teams' %>
       <% end %>
       <%= link_to t('tutorial.certificate_check'),
                   validate_certificate_as_tutor_path(params:

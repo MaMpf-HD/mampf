@@ -22,7 +22,7 @@ class Submission < ApplicationRecord
   end
 
   def team
-  	users.map(&:tutorial_name).join(', ')
+  	users.map(&:tutorial_name).natural_sort.join(', ')
   end
 
   def manuscript_filename
