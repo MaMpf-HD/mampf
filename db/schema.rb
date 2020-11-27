@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_21_151659) do
+ActiveRecord::Schema.define(version: 2020_11_24_223030) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -764,6 +764,15 @@ ActiveRecord::Schema.define(version: 2020_11_21_151659) do
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
   end
 
+  create_table "user_favorite_lecture_joins", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "lecture_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["lecture_id"], name: "index_user_favorite_lecture_joins_on_lecture_id"
+    t.index ["user_id"], name: "index_user_favorite_lecture_joins_on_user_id"
+  end
+
   create_table "user_submission_joins", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -869,5 +878,7 @@ ActiveRecord::Schema.define(version: 2020_11_21_151659) do
   add_foreign_key "tutor_tutorial_joins", "tutorials"
   add_foreign_key "tutor_tutorial_joins", "users", column: "tutor_id"
   add_foreign_key "tutorials", "lectures"
+  add_foreign_key "user_favorite_lecture_joins", "lectures"
+  add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
 end
