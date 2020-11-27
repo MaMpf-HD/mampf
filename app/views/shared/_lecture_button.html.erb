@@ -3,7 +3,7 @@
   	<% if lecture.course.subscribed_lectures(current_user).count == 1 %>
 	    <%= link_to lecture.title_for_viewers,
   	              lecture,
-    	            class: 'btn btn-sm btn-primary text-light' %>
+    	            class: 'btn btn-primary text-light' %>
     <% else %>
       <div class="btn-group dropdown">
         <%= link_to lecture_path(lecture),
