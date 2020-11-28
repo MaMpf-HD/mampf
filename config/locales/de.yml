@@ -139,6 +139,7 @@ de:
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
       Du hast dem Schnellzugriff noch keine Veranstaltung hinzugefügt.
+    quick_access: 'Schnellzugriff'
   info: 'Info'
   admin:
     navbar:

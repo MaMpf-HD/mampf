@@ -5,5 +5,6 @@ $card.empty()
                                   current: @current,
                                   subscribed: true,
                                   parent: @parent } %>')
-$('#favoriteLecturesDropdown').empty()
-	.append('<%= j render partial: "shared/dropdown_favorite_lectures" %>')
+$('#lecturesDropdown').empty()
+	.append('<%= j render partial: "shared/dropdown_lectures",
+												locals: { lecture: nil } %>')
