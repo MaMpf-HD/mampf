@@ -8,7 +8,7 @@ $ cd mampf/docker/development/
 ```
 
 NOTE: Please make sure to clone recursivly as the pdf compression feature is in an extra repository.
-If you have an already checked out version simply run: 
+If you have an already checked out version simply run:
 
 ```sh
 git submodule init
@@ -35,10 +35,10 @@ You now have the following things ready:
 #### Use a prefilled database
 
 1. Download the latest version of the docker development database from <a href="https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/" target="_blank">here</a>
-and put it in the `db/backups/docker_development` folder in your project directory. The file should have a timestamp in its name, e.g. `20200801131654_mampf.sql`
+and put it in the `db/backups/docker_development` folder in your project directory. The file should have a timestamp in its name, e.g. `20201128165713_mampf.sql`
 2. Restore the data from the downloaded database using the appropriate timestamp, e.g.:
    ```
-   # docker-compose exec mampf rails db:restore pattern=20200801131654
+   # docker-compose exec mampf rails db:restore pattern=20201128165713
    ```
 3. Restore the empty interactions database and execute database migrations:
    ```
