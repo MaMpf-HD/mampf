@@ -47,8 +47,8 @@ and put it in the `db/backups/docker_development` folder in your project directo
    ```
 4. Download the sample videos and sample manuscripts that match the data in the prepopulated
 	 database <a href="https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/" target="_blank">here</a> and extract the .zip file into the `public/` folder of your project directory.
-5. Call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for three users
-that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu` and `student@mampf.edu` (with the obvious roles). Each of these have `dockermampf` as password.
+5. Call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for several users
+that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu`, `tutor@mampf.edu` and `student1@mampf.edu`,..., `student5@mampf.edu` (with the obvious roles). Each of these have `dockermampf` as password.
 6. There you go :tada:
 
 
