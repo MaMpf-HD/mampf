@@ -148,6 +148,7 @@ en:
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
       You have not yet added any lectures as favorites.
+    quick_access: 'Quick Access'
   info: 'Info'
   admin:
     navbar:

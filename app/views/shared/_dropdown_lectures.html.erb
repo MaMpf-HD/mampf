@@ -1,0 +1,53 @@
+<li class="nav-item">
+  <div class="btn-group dropdown">
+    <% if lecture.nil? ||
+          (controller_name == 'main' && action_name == 'start') %>
+      <button class="btn btn-sm btn-primary">
+        <%= t('navbar.quick_access') %>
+      </button>
+    <% else %>
+      <%= link_to lecture_path(lecture),
+                  class: 'btn btn-primary btn-sm' do %>
+      <%= lecture.title_for_viewers %>
+        <% unless lecture.published? %>
+          <i class="fas fa-eye-slash redtext"
+             tabindex="-1"
+             data-toggle="tooltip"
+             title="<%=t('lecture.unpublished') %>">
+          </i>
+        <% end %>
+      <% end %>
+    <% end %>
+    <button class="btn btn-primary btn-sm dropdown-toggle mr-3"
+            type="button"
+            data-toggle="dropdown">
+    </button>
+    <div class="dropdown-menu">
+      <% unless lecture.nil? || (controller_name == 'main' && action_name == 'start') %>
+        <h6 class="dropdown-header">
+          <%= t('navbar.quick_access') %>
+        </h6>
+      <% end %>
+      <% if current_user.favorite_lectures.any? %>
+        <% current_user.favorite_lectures.natural_sort_by(&:short_title)
+                       .each do |l| %>
+          <%= link_to lecture_path(l),
+                      class: 'dropdown-item' do %>
+          <%= l.short_title %>
+            <% unless l.published? %>
+              <i class="fas fa-eye-slash redtext"
+                 tabindex="-1"
+                 data-toggle="tooltip"
+                 title="<%=t('lecture.unpublished') %>">
+              </i>
+            <% end %>
+          <% end %>
+        <% end %>
+      <% else %>
+        <div class="dropdown-item">
+          <%= t('navbar.no_favorite_lectures_yet') %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</li>
