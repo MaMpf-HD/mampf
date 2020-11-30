@@ -231,6 +231,9 @@ Rails.application.routes.draw do
   patch 'profile/subscribe_lecture', as: 'subscribe_lecture'
   patch 'profile/unsubscribe_lecture', as: 'unsubscribe_lecture'
   get 'profile/show_accordion', as: 'show_accordion'
+  patch 'profile/star_lecture', as: 'star_lecture'
+  patch 'profile/unstar_lecture', as: 'unstar_lecture'
+
 
   resources :programs, except: [:show]
 

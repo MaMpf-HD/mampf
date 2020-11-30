@@ -1,0 +1,12 @@
+<% if current_user.favorite_lectures.any? %>
+  <% current_user.favorite_lectures
+                 .natural_sort_by(&:short_title).each do |l| %>
+    <%= link_to l.short_title,
+                lecture_path(l),
+                class: 'dropdown-item' %>
+  <% end %>
+<% else %>
+  <div class="dropdown-item">
+    <%= t('navbar.no_favorite_lectures_yet') %>
+  </div>
+<% end %>

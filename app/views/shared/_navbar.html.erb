@@ -93,6 +93,20 @@
         <ul class="navbar-nav mr-auto" id="lectureButton">
           <%= render partial: 'shared/lecture_button',
                      locals: { lecture: @lecture || current_lecture } %>
+          <li class="nav-item dropdown">
+            <a href="#"
+               role="button"
+               id="favoriteLecturesMenu"
+               class="fas fa-bookmark fa-lg text-light nav-link"
+               style="text-decoration: none; "
+               data-toggle="dropdown"
+               title="<%= t('navbar.favorite_lectures') %>">
+            </a>
+            <div class="dropdown-menu" aria-labelledby="favoriteLecturesMenu"
+                 id="favoriteLecturesDropdown">
+              <%= render partial: 'shared/dropdown_favorite_lectures' %>
+            </div>
+          </li>
         </ul>
       <% end %>
       <%= render partial: 'shared/dropdown_notifications'%>
