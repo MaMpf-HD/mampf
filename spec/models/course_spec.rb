@@ -31,10 +31,4 @@ RSpec.describe Course, type: :model do
       expect(course.to_label).to eq('usual bs')
     end
   end
-  describe '#description' do
-    it 'returns the correct description' do
-      course = FactoryBot.build(:course, title: 'usual bs')
-      expect(course.description).to eq({ general: 'usual bs' })
-    end
-  end
 end

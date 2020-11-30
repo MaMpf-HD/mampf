@@ -1,18 +1,12 @@
 require 'faker'
 
 FactoryBot.define do
-  factory :notion, aliases: [:realated_notion] do
-    locale { "de"}
-    sequence(:title) { |n| "notionNr.#{n}" }
-    #association :tag, factory: :tag
+  factory :notion, aliases: [:related_notion] do
+    locale { ['de', 'en'].sample }
+    title { Faker::Book.title + ' ' +
+            Faker::Number.between(from: 1, to: 9999).to_s }
     trait :with_tag do
       after(:build) { |t| t.tag = build(:tag) }
-    end
-    trait :with_specified_tag do
-      tag_id {1}
-    end
-    trait :with_aliased_tag do
-      aliased_tag_id {2}
     end
   end
 end

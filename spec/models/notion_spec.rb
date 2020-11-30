@@ -17,8 +17,4 @@ RSpec.describe Notion, type: :model do
     notion = FactoryBot.build(:notion, title: "usual BS")
     expect(notion).to be_invalid
   end
-  it 'can have a specified tag id' do
-    expect(FactoryBot.build(:notion, :with_specified_tag, tag_id: 1)).to be_valid
-  end
-
 end
