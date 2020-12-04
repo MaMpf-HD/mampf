@@ -145,6 +145,10 @@ en:
     blog: 'Blog'
     logout: 'Logout'
     login: 'Login'
+    favorite_lectures: 'Fast access to favorite lectures'
+    no_favorite_lectures_yet: >
+      You have not yet added any lectures as favorites.
+    quick_access: 'Quick Access'
   info: 'Info'
   admin:
     navbar:
@@ -1789,6 +1793,8 @@ en:
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments
     miscellaneous: Miscellaneous
+    star_lecture: Add Lecture to Fast Access
+    unstar_lecture: Remove Lecture from Fast Access
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
