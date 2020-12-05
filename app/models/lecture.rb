@@ -682,7 +682,8 @@ class Lecture < ApplicationRecord
 
   def submission_deletion_date
     Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
-      term.end_date + 15.days
+      (term&.end_date || Term.active&.end_date || (Date.today + 180.days)) +
+        15.days
     end
   end
 
