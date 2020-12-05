@@ -23,7 +23,7 @@ $(document).on 'turbolinks:load', ->
       }
 
   $(document).on 'show.bs.collapse', '.subscriptionsCollapse', ->
-    $($(this).data('link')).removeClass('text-dark')
+    $($(this).data('link')).removeClass('text-dark').addClass('text-primary')
     $.ajax Routes.show_accordion_path(),
       type: 'GET'
       dataType: 'script'
@@ -33,7 +33,7 @@ $(document).on 'turbolinks:load', ->
      return
 
   $('.subscriptionsCollapse').on 'hide.bs.collapse', ->
-     $($(this).data('link')).addClass('text-dark')
+     $($(this).data('link')).removeClass('text-primary').addClass('text-dark')
      return
 
   return
