@@ -300,7 +300,7 @@ class LecturesController < ApplicationController
         NotificationMailer.with(recipients: local_recipients,
                                 locale: l,
                                 lecture: @lecture)
-                          .new_lecture_email.deliver_now
+                          .new_lecture_email.deliver_later
       end
     end
   end

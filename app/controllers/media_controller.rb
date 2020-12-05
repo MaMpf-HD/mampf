@@ -582,7 +582,7 @@ class MediaController < ApplicationController
         NotificationMailer.with(recipients: local_recipients,
                                 locale: l,
                                 medium: @medium)
-                          .medium_email.deliver_now
+                          .medium_email.deliver_later
       end
     end
   end

@@ -83,7 +83,7 @@ class AnnouncementsController < ApplicationController
         NotificationMailer.with(recipients: local_recipients,
                                 locale: l,
                                 announcement: @announcement)
-                          .announcement_email.deliver_now
+                          .announcement_email.deliver_later
       end
     end
   end
