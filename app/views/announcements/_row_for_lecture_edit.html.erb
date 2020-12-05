@@ -1,0 +1,9 @@
+<div class="col-2">
+  <%= human_readable_date(announcement.created_at) %>
+</div>
+<div class="col-2">
+  <%= announcement.announcer.name %>
+</div>
+<div class="col-8">
+  <%= announcement.details.html_safe %>
+</div>

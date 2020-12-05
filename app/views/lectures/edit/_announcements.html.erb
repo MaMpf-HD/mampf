@@ -34,7 +34,7 @@
         <% announcements.each do |a| %>
           <div class="row border-bottom mx-2 px-4 py-2"
                id="row-announcement-<%= a.id %>">
-            <%= render partial: 'announcements/row',
+            <%= render partial: 'announcements/row_for_lecture_edit',
                        locals: { announcement: a }%>
           </div>
         <% end %>
