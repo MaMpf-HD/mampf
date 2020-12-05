@@ -80,7 +80,7 @@ class AnnouncementsController < ApplicationController
     I18n.available_locales.each do |l|
       local_recipients = recipients.where(locale: l)
       if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients,
+        NotificationMailer.with(recipients: local_recipients.pluck(:id),
                                 locale: l,
                                 announcement: @announcement)
                           .announcement_email.deliver_later
