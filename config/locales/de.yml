@@ -2691,6 +2691,10 @@ de:
       Wenn Du in Zukunft keine E-Mails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen Profileinstellungen
       deaktivieren.
+    non_working_links: >
+      Falls ein Link aus dieser Mail nicht funktioniert, wenn Du ihn aus Deinem
+      Mailclient heraus aufrufst, kannst Du versuchen, ihn per Copy and Paste
+      die Adresszeile Deines Browsers zu kopieren und dann aufzurufen.
     announcement_subject: 'Neue Mitteilung'
     mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
