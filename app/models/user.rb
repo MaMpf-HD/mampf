@@ -2,7 +2,7 @@
 class User < ApplicationRecord
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable
+         :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
   # a user has many subscribed lectures
   has_many :lecture_user_joins, dependent: :destroy
