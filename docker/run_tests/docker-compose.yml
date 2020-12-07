@@ -50,7 +50,7 @@ services:
       REDIS_URL: redis://redis:6379/1
       SOLR_HOST: solr
       SOLR_PORT: 8983
-      SOLR_PATH: /solr/mampf-dev
+      SOLR_PATH: /solr/test
     volumes:
       - type: bind
         source: ../../app/
