@@ -55,7 +55,7 @@ services:
       PROJECT_EMAIL: project@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
-      SOLR_PATH: /solr/development
+      SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
     volumes:
       - type: bind
