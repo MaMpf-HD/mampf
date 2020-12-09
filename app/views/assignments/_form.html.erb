@@ -1,3 +1,6 @@
+ <script> 
+  <%= render(:partial => 'assignments/form', :formats => [:coffee] ) %>
+  </script>
 <div class="list-group-item assignmentRow"
        data-id="<%= assignment.id.to_i %>">
   <%= form_with model: assignment do |f| %>
@@ -14,11 +17,6 @@
         <%= f.text_field :deadline,
                              class: 'form-control',
                              id: "assignment_deadline_#{assignment.id}" %>
-        <script type="text/javascript">
-         $("#assignment_deadline_<%= @assignment.id %>").datetimepicker({ format:'d.m.Y H:i',
-  inline:false,
-});
-        </script>
         <div class="invalid-feedback"
              id="assignment-deadline-error">
         </div>
