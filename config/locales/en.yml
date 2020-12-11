@@ -145,6 +145,10 @@ en:
     blog: 'Blog'
     logout: 'Logout'
     login: 'Login'
+    favorite_lectures: 'Fast access to favorite lectures'
+    no_favorite_lectures_yet: >
+      You have not yet added any lectures as favorites.
+    quick_access: 'Quick Access'
   info: 'Info'
   admin:
     navbar:
@@ -299,6 +303,17 @@ en:
         Here you can enter the text. You may use LaTEX (by putting the
         corresponding expression inside $...$). You can see a preview of your
         text below.
+      on_main_page: >
+        Display on home page
+      main_page: >
+        On Home Page
+      propagate: set on home page
+      expel: remove from home page
+      info:
+        on_main_page: >
+          If you check this box, the announcement will be displayed on the MaMpf
+          homepage. This can be useful if it is an announcement of a server
+          downtime.
     lecture:
       lecture: 'Lecture'
       lecture_short: 'L'
@@ -833,6 +848,7 @@ en:
         no rights of third parties are infringed.
       lock_comments: 'Disable comments for this medium'
       comments_locked: 'Comments disabled'
+      boost: 'Boost'
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -1090,6 +1106,12 @@ en:
           editor.
         details_warning: >
           Details have been changed that have not yet been imported.
+        boost: >
+          Via the boost you can override the way in ehich media are ordered
+          by default (for media that belong to a course or an event series,
+          it does not affect media associated to a session). The default value
+          is 0, Media with a higher boost will be displayed in the first places,
+          media with lower boost at the end.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
@@ -1614,6 +1636,9 @@ en:
         Questions that only make sense in the context of a
         certain quiz (e.g., because special assumptions have been made
         in the questions before)
+      course_disclaimer: >
+        This quiz is located at the level of the course %{course}, in particular
+        it covers material from different semesters and from different teachers.
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
@@ -1768,6 +1793,8 @@ en:
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments
     miscellaneous: Miscellaneous
+    star_lecture: Add Lecture to Fast Access
+    unstar_lecture: Remove Lecture from Fast Access
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2012,7 +2039,7 @@ en:
       characters.
     certify: Request Certificate
     obtained_certificate: >
-      you obtained the following certificate code for this quiz: %{code}
+      You obtained the following certificate code for this quiz: %{code}
     certificate_info_on_use: >
       If your lecture uses certified MaMpf quizzes in the tutorials
       you will have to give present this code in some form (e.g. your homework
@@ -2261,7 +2288,7 @@ en:
       You successfully joind the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
-    current: Current submission
+    current: Current Submission
     previous: Previous Submission
     old_ones: Old Submissions
     future_ones: Future Submissions
@@ -2288,12 +2315,15 @@ en:
       For this purpose, a small additional program is downloaded and executed <i> in the browser </i>.
         Your file will remain on your device until you have uploaded them.
     assure_third_party: >
-      I assure you that the file does not infringe any rights of third parties.
+      I assure that the file does not infringe any rights of third parties.
     removal_notice_html: >
       <b>Notice:</b> Files will be deleted at the end of the semester.
        We do not assume any liability for possible data loss.
     submission_upload_notice_html: >
       <b> Important </b>: Please press "Save", otherwise your
+        Changes are discarded when you leave the site.
+    submission_not_upload_notice_html: >
+      <b>Important </b>: Please press "Upload" and then "Save", otherwise your
         Changes are discarded when you leave the site.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
@@ -2384,14 +2414,14 @@ en:
       the "Invite" button (this button only exists in the case that such persons
       exist, are not yet a member of this team and the team size is below
       the maximal allowed size for teams).
-    profile_info: >
+    profile_info_html: >
       In your %{profile} you can set your preferences about which events in the
       context of submissions you want to be notified about via email. This
       includes successful upload and removal of files, joining or leaving of
       team members, decisions about the acceptance of late submissions and
       upload of corrections by your tutor.
-    deletion_date: >
-      YOur submission includes personal data which we will delete two weeks
+    deletion_date_info: >
+      Your submission contains personal data which we will delete two weeks
       after the end of this term due to protection of data privacy. You will be
       notified ahead via email so that you can save them.
     team_info: >
@@ -2443,7 +2473,8 @@ en:
       informed about the user and the quiz that this certificate belongs to.
     certificate_valid: >
       The code is valid. It belongs to user %{user} and quiz %{quiz}.
-    certificate_invalid: Der Code ist ungültig.
+    teams_as_csv: Teams as .csv
+    certificate_invalid: This code is invalid.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
@@ -2494,6 +2525,10 @@ en:
     unsubscribe_text:
       If you do not want to receive emails about activities in MaMpf,
       you can disable that feature in your profile settings.
+    non_working_links: >
+      If a link from this mail does not work when you click it form your mail
+      client you can try to copy and paste the link to the address bar of your
+      browser and open it afterwards.
     announcement_subject: 'New announcement'
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
@@ -2841,7 +2876,7 @@ en:
     copy_to_clipboard: 'Copy to Clipboard'
     leave: 'Leave'
     upload: 'Upload'
-    upload_success: 'Upload successfull'
+    upload_success: 'Upload successful'
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'
@@ -2970,6 +3005,7 @@ en:
         already submissions for it that include uploaded files.
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
+    no_announcement: There is no announcement with this id.
   exception:
     title: Error
     exception: Exception on %{host}
@@ -3117,6 +3153,10 @@ en:
           attributes:
             tutorial:
               blank: A valid tutorial has to be supplied.
+            user_submission_joins:
+              invalid: >
+                There is already a submission from you or the team has already
+                reached its maximal size.
         tag:
           attributes:
             notions:

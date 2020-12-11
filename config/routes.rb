@@ -19,6 +19,10 @@ Rails.application.routes.draw do
   get '/administration/classification', to: 'administration#classification',
                                         as: 'classification'
 
+  post 'announcements/:id/propagate', to: 'announcements#propagate',
+                                      as: 'propagate_announcement'
+  post 'announcements/:id/expel', to: 'announcements#expel',
+                                  as: 'expel_announcement'
   resources :announcements, only: [ :index, :new, :create]
 
   resources :answers, except: [:index, :show, :edit]
@@ -227,6 +231,9 @@ Rails.application.routes.draw do
   patch 'profile/subscribe_lecture', as: 'subscribe_lecture'
   patch 'profile/unsubscribe_lecture', as: 'unsubscribe_lecture'
   get 'profile/show_accordion', as: 'show_accordion'
+  patch 'profile/star_lecture', as: 'star_lecture'
+  patch 'profile/unstar_lecture', as: 'unstar_lecture'
+
 
   resources :programs, except: [:show]
 
@@ -327,7 +334,7 @@ Rails.application.routes.draw do
       to: 'submissions#cancel_edit_correction',
       as: 'cancel_edit_correction'
 
-  resources :submissions, except: :index
+  resources :submissions, except: [:index, :show]
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
@@ -366,6 +373,10 @@ Rails.application.routes.draw do
   get 'tutorials/validate_certificate',
       to: 'tutorials#validate_certificate',
       as: 'validate_certificate_as_tutor'
+
+  get 'tutorials/:id/assignments/:ass_id/export_teams',
+      to: 'tutorials#export_teams',
+      as: 'export_teams_to_csv'
 
   resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 

@@ -66,7 +66,7 @@ videoUpload = (fileInput) ->
   uppy.use Uppy.XHRUpload,
     endpoint: '/videos/upload'
     fieldName: 'file'
-    timeout: 120 * 1000
+    timeout: 240 * 1000
 
   # give the user feedback after upload has started
   uppy.on 'upload', (data) ->
@@ -88,14 +88,10 @@ videoUpload = (fileInput) ->
 
       videoFile = document.getElementById('video-file')
       videoSize = document.getElementById('video-size')
-      videoResolution = document.getElementById('video-resolution')
-      videoDuration = document.getElementById('video-duration')
 
       # put metadata into place
       videoFile.innerHTML = data.metadata.filename
       videoSize.innerHTML = formatBytes(data.metadata.size)
-      videoResolution.innerHTML = data.metadata.resolution
-      videoDuration.innerHTML = fancyTimeFormat(Math.round(data.metadata.duration))
       $(metaData).show()
       $(videoPreviewArea).show()
       $('#medium_detach_video').val('false')
@@ -529,6 +525,7 @@ bulkCorrectionUpload = (fileInput) ->
           $('#upload-userManuscript').val("")
           $('input[type="submit"]').prop('disabled',false)
           $('#userManuscript-upload-notice').show()
+          $('#userManuscript-not-upload-notice').hide()
           $('#submission_detach_user_manuscript').val('false')
           $('#userManuscript-uploadButton-call').text(
             $('#userManuscript-uploadButton-call').data 'tr-success'
@@ -663,6 +660,7 @@ bulkCorrectionUpload = (fileInput) ->
       reader.readAsArrayBuffer(file)
 
   $('#upload-userManuscript').change () ->
+    $('#userManuscript-not-upload-notice').show()
     $('input[type="submit"]').prop('disabled',true)
     filez = Array.prototype.slice.call(
         document.getElementById('upload-userManuscript').files

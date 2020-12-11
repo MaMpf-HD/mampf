@@ -81,8 +81,11 @@ class Ability
 
       can :start, :main
 
-      can [:catalog, :search, :play, :display, :geogebra,
-           :register_download, :show_comments], Medium
+      can [:catalog, :search, :register_download, :show_comments], Medium
+      cannot :show, Medium
+      can [:play, :display, :geogebra, :show], Medium do |medium|
+        medium.visible_for_user?(user)
+      end
       can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
            :remove_screenshot, :export_toc, :import_script_items,
            :export_references,
@@ -146,7 +149,7 @@ class Ability
         tutorial.lecture.edited_by?(user)
       end
 
-      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+      can [:bulk_download, :bulk_upload, :export_teams], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
       end
 
@@ -264,7 +267,7 @@ class Ability
         user.tutor?
       end
 
-      can [:bulk_download, :bulk_upload], Tutorial do |tutorial|
+      can [:bulk_download, :bulk_upload, :export_teams], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
       end
 

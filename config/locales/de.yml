@@ -136,6 +136,10 @@ de:
     blog: 'Blog'
     logout: 'Logout'
     login: 'Login'
+    favorite_lectures: 'Schnellzugriff Veranstaltungen'
+    no_favorite_lectures_yet: >
+      Du hast dem Schnellzugriff noch keine Veranstaltung hinzugefügt.
+    quick_access: 'Schnellzugriff'
   info: 'Info'
   admin:
     navbar:
@@ -307,6 +311,16 @@ de:
         Hier kannst Du den Text eingeben. Du kannst LaTEX benutzen
         (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
         siehst Du unten.
+      on_main_page: >
+        auf Startseite anzeigen
+      main_page: auf Startseite
+      propagate: auf Startseite setzen
+      expel: von Startseite nehmen
+      info:
+        on_main_page: >
+          Wenn Du diesen Haken setzt, wir die Mitteilung auf der
+          MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
+          eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
       lecture: 'Vorlesung'
       lecture_short: 'V'
@@ -880,6 +894,7 @@ de:
         Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
       lock_comments: Kommentare für dieses Medium deaktivieren
       comments_locked: Kommentare deaktiviert
+      boost: Boost
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -1160,6 +1175,13 @@ de:
           die mit dem THymE-Editor bearbeitet wurden).
         details_warning: >
           Es wurden Details geändert, die noch nicht übernommen wurden.
+        boost: >
+          Über den Boost kannst Du die Reihenfolge überschreiben, in der
+          standardmäßig Medien angeordnet werden, die zu Modulen bzw.
+          Veranstaltungen gehören (der Boost wirkt sich nicht auf Medien aus,
+          die zu einer Sitzung assoziiert sind). Der Standardwert ist 0,
+          Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
+          niedrigerem Boost weiter hinten.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
@@ -1720,6 +1742,10 @@ de:
         typischerweise Quiz-Fragen, die nur im Kontext eines konkreten Quizzes
         Sinn ergeben (beispielsweise, weil in vorangegangenen Fragen spezielle
         Voraussetzungen festgelegt wurden).
+      course_disclaimer: >
+        Dieses Quiz ist semesterübergreifend auf der Ebene des Moduls
+        %{course} angesiedelt, das Material stammt also aus verschiedenen
+        Veranstaltungen und von verschiedenen DozentInnen.
       info:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem
@@ -1880,6 +1906,8 @@ de:
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
     miscellaneous: Sonstiges
+    star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
+    unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2120,7 +2148,7 @@ de:
     number_of_questions_label: 'Anzahl der Fragen'
     certificate_info: >
       Du kannst ein Zertifikat dafür bekommen, dass Du dieses Quiz vollständig
-      absolviert hast. Wenn Du den Buton drückst, erhältst Du das Zertifikat in
+      absolviert hast. Wenn Du den Button drückst, erhältst Du das Zertifikat in
       Form eines Codes aus 6 Zeichen.
     certify: Zertifikat anfordern
     obtained_certificate: >
@@ -2423,6 +2451,9 @@ de:
     removal_notice_html: >
       <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
       Wir übernehmen keine Haftung für mögliche Datenverluste.
+    submission_not_upload_notice_html: >
+      <b>Wichtig</b>: Bitte drücke auf "Hochladen" und dann auf "Speichern", ansonsten werden deine
+       Änderungen verworfen, wenn du die Seite verlässt.
     submission_upload_notice_html: >
       <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
        Änderungen verworfen, wenn du die Seite verlässt.
@@ -2603,6 +2634,7 @@ de:
     certificate_valid: >
       Der Code ist gültig. Er gehört zu NutzerIn %{user} und zum Quiz %{quiz}.
     certificate_invalid: Der Code ist ungültig.
+    teams_as_csv: Teams als .csv
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
@@ -2659,6 +2691,10 @@ de:
       Wenn Du in Zukunft keine E-Mails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen Profileinstellungen
       deaktivieren.
+    non_working_links: >
+      Falls ein Link aus dieser Mail nicht funktioniert, wenn Du ihn aus Deinem
+      Mailclient heraus aufrufst, kannst Du versuchen, ihn per Copy and Paste
+      die Adresszeile Deines Browsers zu kopieren und dann aufzurufen.
     announcement_subject: 'Neue Mitteilung'
     mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
@@ -3081,7 +3117,7 @@ de:
     no_lecture: 'Eine Veranstaltung mit der angeforderten id existiert nicht.'
     no_lesson: 'Eine Sitzung mit der angeforderten id existiert nicht.'
     no_page: >
-      Die angeforderte Seit existiert nicht. Du wurdest auf die
+      Die angeforderte Seite existiert nicht. Du wurdest auf die
       MaMpf-Homepage umgeleitet.
     no_video: 'Zu diesem Medium existiert kein Video.'
     no_manuscript: 'Zu diesem Medium existiert kein Manuskript.'
@@ -3146,6 +3182,8 @@ de:
         wurden.
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
+    no_announcement: >
+      Eine Mitteilung mit dieser id existiert nicht.
   exception:
     title: Fehler
     exception: Exception auf %{host}
@@ -3295,6 +3333,10 @@ de:
           attributes:
             tutorial:
               blank: Es muss ein gültiges Tutorium angegeben werden.
+            user_submission_joins:
+              invalid: >
+                Es gibt schon eine Abgabe von Dir oder die Teamgröße ist
+                überschritten.
         tag:
           attributes:
             notions:

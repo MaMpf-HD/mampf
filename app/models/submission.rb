@@ -22,7 +22,7 @@ class Submission < ApplicationRecord
   end
 
   def team
-  	users.map(&:tutorial_name).join(', ')
+  	users.map(&:tutorial_name).natural_sort.join(', ')
   end
 
   def manuscript_filename
@@ -94,7 +94,7 @@ class Submission < ApplicationRecord
   end
 
   def filename_for_bulk_download
-		(users.map(&:tutorial_name).join('-') + '-' +
+		(team.first(180) + '-' +
 			last_modification_by_users_at.strftime("%F-%H%M") +
 			(too_late? ? '-LATE' : '') +
 			+ '-ID-' + id +
@@ -154,9 +154,9 @@ class Submission < ApplicationRecord
                      	 		 accepted_file_type: '.tar.gz')
 			end
     end
-    if (!assignment.accepted_file_type.in?(['.cc', '.hh']) &&
+    if (!assignment.accepted_file_type.in?(['.cc', '.hh', '.m']) &&
       !metadata['mime_type'].in?(assignment.accepted_mime_types)) ||
-      (assignment.accepted_file_type.in?(['.cc', '.hh']) &&
+      (assignment.accepted_file_type.in?(['.cc', '.hh', '.m']) &&
         (!metadata['mime_type'].starts_with?('text/') &&
          metadata['mime_type'] != 'application/octet-stream'))
       errors.push I18n.t('submission.wrong_mime_type',

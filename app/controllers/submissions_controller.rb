@@ -24,7 +24,7 @@ class SubmissionsController < ApplicationController
   def new
   	@submission = Submission.new
     @submission.assignment = @assignment
-  	@lecture = @assignment.lecture
+    set_submission_locale
   end
 
   def edit
@@ -60,6 +60,8 @@ class SubmissionsController < ApplicationController
 
   def create
   	@submission = Submission.new(submission_create_params)
+    @lecture = @submission&.assignment&.lecture
+    set_submission_locale
     @too_late = @submission.not_updatable?
   	return if @too_late
     if submission_manuscript_params[:manuscript].present?
@@ -69,7 +71,7 @@ class SubmissionsController < ApplicationController
                                                   :manuscript)
       return if @errors.present?
     end
-    @submission.users << current_user
+    @submission.user_submission_joins.build(user: current_user)
     @submission.save
     @assignment = @submission.assignment
     @errors = @submission.errors
@@ -91,6 +93,7 @@ class SubmissionsController < ApplicationController
   def redeem_code
     code = params[:code]
     @submission = Submission.find_by(token: code)
+    @assignment = @submission&.assignment
     check_code_and_join
     unless @error
       redirect_to lecture_submissions_path(@submission.tutorial.lecture),
@@ -104,6 +107,8 @@ class SubmissionsController < ApplicationController
 
   def join
     @assignment = Assignment.find_by_id(join_params[:assignment_id])
+    @lecture = @assignment.lecture
+    set_submission_locale
     code = join_params[:code]
     @submission = Submission.find_by(token: code, assignment: @assignment)
     check_code_and_join
@@ -226,6 +231,7 @@ class SubmissionsController < ApplicationController
     @submission = Submission.find_by_id(params[:id])
     @assignment = @submission&.assignment
     @lecture = @assignment&.lecture
+    set_submission_locale
     return if @submission
     flash[:alert] = I18n.t('controllers.no_submission')
     render js: "window.location='#{root_path}'"
@@ -247,6 +253,8 @@ class SubmissionsController < ApplicationController
 
   def set_assignment
     @assignment = Assignment.find_by_id(params[:assignment_id])
+    @lecture = @assignment&.lecture
+    set_submission_locale
     return if @assignment
     flash[:alert] = I18n.t('controllers.no_assignment')
     render js: "window.location='#{root_path}'"
@@ -255,12 +263,17 @@ class SubmissionsController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
-    return if @lecture
+    set_submission_locale and return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 
   def set_too_late
     @too_late = @submission.not_updatable?
+  end
+
+  def set_submission_locale
+    I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
   end
 
   def join_params

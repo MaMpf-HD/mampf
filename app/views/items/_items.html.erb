@@ -9,7 +9,7 @@
             <%= t('content') %>
           </div>
           <div class="col-12 col-lg-8">
-            <% if singular_medium %>
+            <% if singular_medium && singular_medium.visible_for_user?(current_user) %>
               <span style="display: flex; justify-content: flex-start;">
                   <%= render partial: 'media/medium/buttons',
                              locals: { medium: singular_medium,

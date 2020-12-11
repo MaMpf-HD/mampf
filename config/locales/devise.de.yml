@@ -80,6 +80,8 @@ de:
           Ich stimme der Speicherung und Verarbeitung meiner Daten gemäß der
           %{policy} der Universität Heidelberg zu.
         policy: 'Datenschutzerklärung'
+      user:
+        too_many_registrations: In letzter Zeit sind zu viele Registrierungen versucht worden, bitte versuche es später erneut.
     sessions:
       signed_in: "Du hast Dich erfolgreich angemeldet."
       signed_out: "Du hast Dich erfolgreich abgemeldet."

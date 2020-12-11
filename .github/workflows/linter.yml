@@ -1,0 +1,81 @@
+on: [push]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    name: A job to check rubocop linter errors
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby 2.7
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+    - name: Install gems # usual step to install the gems.
+      run: |
+        bin/bundle config path vendor/bundle
+        bin/bundle config set without 'default doc job cable storage ujs test db'
+        bin/bundle install --jobs 4 --retry 3
+    - name: Linter count
+      id: hello
+      uses: henrixapp/linter-less-or-equal-action@v1.1
+      with:
+        name: Rubocop
+        command:  bin/bundle exec rubocop app config lib spec
+        total_regexp: \d+ offenses detected
+        errors_regexp: \d+ offenses detected
+        warnings_regexp: \d+ offenses detected
+        compare_branch: mampf-next
+  eslint:
+    runs-on: ubuntu-latest
+    name: A job to check eslint linter errors
+    steps:
+    - uses: actions/checkout@v2
+    - name: Linter count
+      id: hello
+      uses: henrixapp/linter-less-or-equal-action@v1
+      with:
+        name: EsLint
+        command: npx eslint  . 
+        total_regexp: \d+ problems
+        errors_regexp: \d+ errors
+        warnings_regexp: \d+ warnings
+        compare_branch: mampf-next
+  coffee:
+    runs-on: ubuntu-latest
+    name: A job to check coffee linter errors
+    steps:
+    - uses: actions/checkout@v2
+    - name: Linter count
+      id: hello
+      uses: henrixapp/linter-less-or-equal-action@v1
+      with:
+        name: Coffee
+        command: npx coffeelint  . 
+        total_regexp: \d+ errors
+        errors_regexp: \d+ errors
+        warnings_regexp: \d+ warnings
+        compare_branch: mampf-next
+  # erblint:
+  #   runs-on: ubuntu-latest
+  #   name: A job to check erblint linter errors
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Set up Ruby 2.7
+  #     uses: ruby/setup-ruby@v1
+  #     with:
+  #       ruby-version: 2.7
+  #   - name: Install gems # usual step to install the gems.
+  #     run: |
+  #       bin/bundle config path vendor/bundle
+  #       bin/bundle config set without 'default doc job cable storage ujs test db'
+  #       bin/bundle install --jobs 4 --retry 3
+  #   - name: Linter count
+  #     id: hello
+  #     uses: henrixapp/linter-less-or-equal-action@v1.1
+  #     with:
+  #       name: Erblint
+  #       command:  bin/bundle exec erblint  . 
+  #       total_regexp: \d+ error(s)
+  #       errors_regexp: \d+ error(s)
+  #       warnings_regexp: \d+ error(s)
+  #       compare_branch: mampf-next

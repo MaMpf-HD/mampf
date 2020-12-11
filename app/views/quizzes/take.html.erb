@@ -1,3 +1,7 @@
+<% if @quiz.sort == 'Quiz' && @quiz.teachable.is_a?(Course) %>
+  <%= render partial: 'quizzes/disclaimer',
+             locals: { course: @quiz.teachable } %>
+<% end %>
 <div id="<%= quiz_id %>" class="quiz">
   <%= render partial: 'quizzes/quiz_round',
              locals: { hidden: false } %>

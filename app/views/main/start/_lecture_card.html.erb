@@ -2,7 +2,7 @@
             <%= lecture_border(lecture) %>">
   <div class="card-header <%= lecture_header_color(subscribed, lecture) %>">
     <div class="row">
-      <div class="col-9 col-sm-10 font-weight-bold">
+      <div class="col-8 col-sm-7 col-lg-8 col-xl-8 font-weight-bold">
         <% if subscribed %>
           <%= link_to lecture.title_no_term,
                       lecture,
@@ -11,8 +11,35 @@
           <%= lecture.title_no_term %>
         <% end %>
       </div>
-      <div class="col-3 col-sm-2 text-right">
+      <div class="col-4 col-sm-5 col-lg-4 col-xl-4 text-right">
         <% if subscribed %>
+          <% if lecture.in?(current_user.favorite_lectures) %>
+            <%= link_to '',
+                        unstar_lecture_path(params:
+                                              { lecture:
+                                                  { id: lecture.id,
+                                                    parent: parent } }),
+                        class: 'fas fa-bookmark text-light mr-2',
+                        style: 'text-decoration: none;',
+                        method: :patch,
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('profile.unstar_lecture'),
+                        remote: true %>
+          <% else %>
+            <%= link_to '',
+                        star_lecture_path(params:
+                                            { lecture:
+                                                { id: lecture.id,
+                                                  parent: parent } }),
+                        class: 'far fa-bookmark text-light mr-2',
+                        style: 'text-decoration: none;',
+                        method: :patch,
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('profile.star_lecture'),
+                        remote: true %>
+          <% end %>
           <%= link_to '',
                       unsubscribe_lecture_path(params:
                                                  { lecture:

@@ -1,8 +1,10 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
-                                      :bulk_download, :bulk_upload]
-  before_action :set_assignment, only: [:bulk_download, :bulk_upload]
+                                      :bulk_download, :bulk_upload,
+                                      :export_teams]
+  before_action :set_assignment, only: [:bulk_download, :bulk_upload,
+                                        :export_teams]
   before_action :set_lecture, only: [:index, :overview]
   before_action :set_lecture_from_form, only: [:create]
   before_action :check_tutor_status, only: :index
@@ -17,7 +19,6 @@ class TutorialsController < ApplicationController
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                     @assignments&.first
     @tutorials = current_user.given_tutorials.where(lecture: @lecture)
-                             .order(:title)
     @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
@@ -31,12 +32,15 @@ class TutorialsController < ApplicationController
 
   def new
     @tutorial = Tutorial.new
-    lecture = Lecture.find_by_id(params[:lecture_id])
-    @tutorial.lecture = lecture
+    @lecture = Lecture.find_by_id(params[:lecture_id])
+    set_tutorial_locale
+    @tutorial.lecture = @lecture
   end
 
   def create
     @tutorial = Tutorial.new(tutorial_params)
+    @lecture = @tutorial&.lecture
+    set_tutorial_locale
     @tutorial.save
     @errors = @tutorial.errors
   end
@@ -51,7 +55,6 @@ class TutorialsController < ApplicationController
   end
 
   def destroy
-    @lecture = @tutorial.lecture
     @tutorial.destroy
   end
 
@@ -60,6 +63,7 @@ class TutorialsController < ApplicationController
 
   def cancel_new
     @lecture = Lecture.find_by_id(params[:lecture])
+    set_tutorial_locale
     @none_left = @lecture&.tutorials&.none?
   end
 
@@ -89,13 +93,24 @@ class TutorialsController < ApplicationController
   end
 
   def validate_certificate
+    @lecture = Lecture.find_by_id(params[:lecture_id])
+    set_tutorial_locale
+  end
+
+  def export_teams
+    respond_to do |format|
+      format.html { head :ok }
+      format.csv { send_data @tutorial.teams_to_csv(@assignment),
+                             filename: "#{@tutorial.title}-#{@assignment.title}.csv" }
+    end
   end
 
   private
 
   def set_tutorial
     @tutorial = Tutorial.find_by_id(params[:id])
-    return if @tutorial
+    @lecture = @tutorial&.lecture
+    set_tutorial_locale and return if @tutorial
     redirect_to :root, alert: I18n.t('controllers.no_tutorial')
   end
 
@@ -107,7 +122,7 @@ class TutorialsController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(params[:id])
-    return if @lecture
+    set_tutorial_locale and return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
   end
 
@@ -115,6 +130,11 @@ class TutorialsController < ApplicationController
     @lecture = Lecture.find_by_id(tutorial_params[:lecture_id])
     return if @lecture
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
+  end
+
+  def set_tutorial_locale
+    I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
   end
 
   def check_tutor_status

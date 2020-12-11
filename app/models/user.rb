@@ -2,11 +2,17 @@
 class User < ApplicationRecord
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :validatable, :confirmable
+         :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
   # a user has many subscribed lectures
   has_many :lecture_user_joins, dependent: :destroy
   has_many :lectures, -> { distinct }, through: :lecture_user_joins
+
+  # a user has many favorite lectures
+  has_many :user_favorite_lecture_joins, dependent: :destroy
+  has_many :favorite_lectures, -> { distinct },
+           through: :user_favorite_lecture_joins,
+           source: :lecture
 
   # a user has many subscribed courses
   has_many :course_user_joins, dependent: :destroy
@@ -30,7 +36,8 @@ class User < ApplicationRecord
   # a user has many tutorials as a tutor
 
   has_many :tutor_tutorial_joins, foreign_key: 'tutor_id', dependent: :destroy
-  has_many :given_tutorials, through: :tutor_tutorial_joins, source: :tutorial
+  has_many :given_tutorials, -> { order(:title) },
+           through: :tutor_tutorial_joins, source: :tutorial
 
   # a user has many notifications as recipient
   has_many :notifications, foreign_key: 'recipient_id'
@@ -464,6 +471,7 @@ class User < ApplicationRecord
     return false unless lecture.is_a?(Lecture)
     return false unless lecture.in?(lectures)
     lectures.delete(lecture)
+    favorite_lectures.delete(lecture)
     true
   end
 
