@@ -13,3 +13,15 @@ that can be called by `cy.appScenario("setup")` for example. Always try to
 create as much as you can in the scenario and then test the interaction!
 
 For more information visit [cypress-documentation](https://docs.cypress.io) and the used gem [cypress-on-rails](https://github.com/shakacode/cypress-on-rails) 
+
+# Testing rspec
+
+## In docker development container
+
+Make sure that the seperate test db exist:
+
+```sh
+ docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:create"
+  docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:migrate"
+```
+
