@@ -26,5 +26,5 @@ test:
     hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
     port: <%= ENV.fetch('SOLR_PORT', '8983') %>
     log_level: WARNING
-    path: <%= ENV.fetch('SOLR_PATH', '/solr/test') %>
+    path: <%= ENV.fetch('SOLR_TEST_PATH', '/solr/test') %>
 

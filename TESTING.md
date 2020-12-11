@@ -18,10 +18,19 @@ For more information visit [cypress-documentation](https://docs.cypress.io) and 
 
 ## In docker development container
 
+Start the development version as usual. All commands are executed 
+in `docker/development`
+
 Make sure that the seperate test db exist:
 
 ```sh
  docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:create"
   docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:migrate"
+    docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:test:prepare"
 ```
 
+Now you can run the tests:
+
+```sh
+docker-compose exec mampf  sh -c "RAILS_ENV=test rails spec"
+```
