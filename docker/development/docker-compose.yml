@@ -20,7 +20,7 @@ services:
     entrypoint:
     - bash
     - "-c"
-    - "precreate-core development; precreate-core test; exec solr -f"
+    - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
     image: postgres
