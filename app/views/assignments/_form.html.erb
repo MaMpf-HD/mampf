@@ -1,6 +1,3 @@
- <script> 
-  <%= render(:partial => 'assignments/form', :formats => [:coffee] ) %>
-  </script>
 <div class="list-group-item assignmentRow"
        data-id="<%= assignment.id.to_i %>">
   <%= form_with model: assignment do |f| %>
