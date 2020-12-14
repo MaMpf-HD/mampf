@@ -10,7 +10,7 @@ describe("Courses", function () {
             cy.get('input[type="email"]').type("administrator@mampf.edu");
             cy.get('input[type="password"]').type("test123456");
             cy.get('input[type="submit"]').click();
-        })
+        });
         it("can create module", () => {
              cy.visit('/administration');
              cy.get('i[title="Modul anlegen"]').click();
@@ -25,17 +25,17 @@ describe("Courses", function () {
                 ['create', 'course'],
                 ['create', 'term']
             ]).then((records) => {
-                cy.server()
+                cy.server();
                 cy.route('**/new').as('new');
                 cy.route('POST', '/lectures').as('courses');
                 cy.visit('/administration');
                 cy.get('a[title="Veranstaltung anlegen"]').click();
                 //cy.wait('@new');
-                cy.get("div#new-lecture-area").contains("Speichern").click()
+                cy.get("div#new-lecture-area").contains("Speichern").click();
                 cy.wait('@courses');
                 cy.contains(records[0].title).should("exist");
                 cy.contains(`${records[1].season} ${records[1].year}`).should("exist");
-            })
+            });
         });
 
     });

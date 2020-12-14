@@ -1,6 +1,6 @@
 // CypressOnRails: dont remove these command
 Cypress.Commands.add('appCommands', function (body) {
-  cy.log("APP: " + JSON.stringify(body))
+  cy.log("APP: " + JSON.stringify(body));
   return cy.request({
     method: 'POST',
     url: "/__cypress__/command",
@@ -8,30 +8,30 @@ Cypress.Commands.add('appCommands', function (body) {
     log: true,
     failOnStatusCode: true
   }).then((response) => {
-    return response.body
+    return response.body;
   });
 });
 
 Cypress.Commands.add('app', function (name, command_options) {
   return cy.appCommands({name: name, options: command_options}).then((body) => {
-    return body[0]
+    return body[0];
   });
 });
 
 Cypress.Commands.add('appScenario', function (name, options = {}) {
-  return cy.app('scenarios/' + name, options)
+  return cy.app('scenarios/' + name, options);
 });
 
 Cypress.Commands.add('appEval', function (code) {
-  return cy.app('eval', code)
+  return cy.app('eval', code);
 });
 
 Cypress.Commands.add('appFactories', function (options) {
-  return cy.app('factory_bot', options)
+  return cy.app('factory_bot', options);
 });
 
 Cypress.Commands.add('appFixtures', function (options) {
-  cy.app('activerecord_fixtures', options)
+  cy.app('activerecord_fixtures', options);
 });
 // CypressOnRails: end
 
