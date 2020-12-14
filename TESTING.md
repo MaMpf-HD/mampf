@@ -29,6 +29,12 @@ Make sure that the seperate test db exist:
     docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:test:prepare"
 ```
 
+And make sure that the sunspot is uptodate:
+```sh
+docker-compose exec mampf  sh -c "RAILS_ENV=test  rake sunspot:reindex"
+
+```
+
 Now you can run the tests:
 
 ```sh
