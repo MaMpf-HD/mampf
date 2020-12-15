@@ -1,4 +1,5 @@
 <% if !@too_late %>
+
 $('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
   .append('<%= j render partial: "submissions/form",
                         locals: { submission: @submission,

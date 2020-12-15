@@ -59,6 +59,8 @@ class User < ApplicationRecord
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
 
+  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }, if: :locale?
+
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
 

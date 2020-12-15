@@ -24,13 +24,14 @@ cd /usr/src/app
 if ! [ -f /completed_initial_run ]
 then
     echo 'Initialising mampf' &> >(tee -a /usr/src/app/log/initialisation.log)
-    echo running: bundle exec rails db:create &> >(tee -a /usr/src/app/log/initialisation.log)
-    if [ "$RAILS_ENV" = "docker_development" ]
+    if [ "$RAILS_ENV" = "docker_development" ] | [ "$RAILS_ENV" = "test" ]
     then
+        echo running: bundle exec rails db:create &> >(tee -a /usr/src/app/log/initialisation.log)
+        bundle exec rails db:create:interactions &> >(tee -a /usr/src/app/log/initialisation.log)
         bundle exec rails db:create &> >(tee -a /usr/src/app/log/initialisation.log)
-        echo running: bundle exec rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
     fi
-    bundle exec rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
+    echo running: bundle exec rails db:migrate &> >(tee -a /usr/src/app/log/initialisation.log)
+    bundle exec rails db:migrate > /dev/null 2>&1 >(tee -a /usr/src/app/log/initialisation.log)
     if [ "$RAILS_ENV" = "production" ]
     then
         echo running: bundle exec rails assets:precompile &> >(tee -a /usr/src/app/log/initialisation.log)
