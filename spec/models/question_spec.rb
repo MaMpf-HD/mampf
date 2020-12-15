@@ -1,5 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe Question, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'has a valid factory' do
+    expect(FactoryBot.build(:valid_question)).to be_valid
+  end
+
+  # test validations - this is done one the level of the parent Medium model
+
+  # test traits
+
+  describe 'with stuff' do
+    before :all do
+      @question = FactoryBot.build(:with_stuff)
+    end
+    it 'has a text' do
+      expect(@question.text).to be_truthy
+    end
+    it 'has a hint' do
+      expect(@question.hint).to be_truthy
+    end
+    it 'has a level' do
+      expect(@question.level).not_to be_nil
+    end
+    it 'is a multiple choice question' do
+      expect(@question.question_sort).to eq 'mc'
+    end
+    it 'is independent' do
+      expect(@question.independent).to be true
+    end
+  end
+
+  # test methods - NEEDS TO BE IMPLEMENTED
 end
