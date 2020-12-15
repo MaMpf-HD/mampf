@@ -14,9 +14,6 @@ class User < ApplicationRecord
            through: :user_favorite_lecture_joins,
            source: :lecture
 
-  # a user has many subscribed courses
-  has_many :course_user_joins, dependent: :destroy
-
   # a user has many courses as an editor
   has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy
   has_many :edited_courses, through: :editable_user_joins,
