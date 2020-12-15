@@ -1,6 +1,7 @@
 class NotificationMailer < ApplicationMailer
   before_action :set_sender_and_locale
-  before_action :set_recipients
+  before_action :set_recipients, only: [:medium_email, :announcement_email,
+                                        :new_lecture_email]
   before_action :set_recipient_and_submission,
                 only: [:submission_upload_email,
                        :submission_upload_removal_email,
@@ -45,14 +46,6 @@ class NotificationMailer < ApplicationMailer
          bcc: @recipients.pluck(:email),
          subject: t('mailer.new_lecture_subject',
                     title: @lecture.title_for_viewers))
-  end
-
-  def new_course_email
-    @course = params[:course]
-    mail(from: @sender,
-         bcc: @recipients.pluck(:email),
-         subject: t('mailer.new_course_subject',
-                    title: @course.title))
   end
 
   def submission_invitation_email
@@ -136,7 +129,7 @@ class NotificationMailer < ApplicationMailer
   end
 
   def set_recipients
-    @recipients = params[:recipients]
+    @recipients = User.where(id: params[:recipients])
   end
 
   def set_recipient_and_submission
