@@ -7,14 +7,13 @@
 <div class="accordion" id="subscriptionsAccordion">
 	<% if Term.active %>
 		<div class="card">
-			<div class="card-header">
-				<h4>
-					<%= link_to t('profile.my_term_html', term: Term.active.to_label),
-											'#collapseCurrentStuff',
-											class: text_dark(@current_stuff.any?),
-											id: 'currentStuffLink',
-											data: { toggle: 'collapse',
-															target: '#collapseCurrentStuff'} %>
+			<div class="card-header clickable"
+					 role="tab"
+					 data-toggle="collapse"
+					 data-target="#collapseCurrentStuff">
+				<h4 class="<%= text_dark_link(@current_stuff.any?) %>"
+						id="currentStuffLink">
+					<%= t('profile.my_term_html', term: Term.active.to_label) %>
 				</h4>
 			</div>
 			<div class="subscriptionsCollapse <%= show_collapse(@current_stuff.any?) %>" id="collapseCurrentStuff"
@@ -40,15 +39,13 @@
 		</div>
 	<% end %>
 	<div class="card">
-		<div class="card-header">
-			<h4>
-				<%= link_to t('profile.inactive_lectures'),
-										'#collapseInactiveLectures',
-										class: text_dark(@current_stuff.empty?),
-										id: 'inactiveLecturesLink',
-										data: { toggle: 'collapse',
-														target: '#collapseInactiveLectures' } %>
-
+		<div class="card-header clickable"
+				 role="tab"
+				 data-toggle="collapse"
+				 data-target="#collapseInactiveLectures">
+			<h4 class="<%= text_dark_link(@current_stuff.empty?) %>"
+					id="inactiveLecturesLink">
+				<%= t('profile.inactive_lectures') %>
 			</h4>
 		</div>
 		<div class="subscriptionsCollapse <%= show_collapse(@current_stuff.empty?) %>"
@@ -75,15 +72,14 @@
 	</div>
 	<% if Term.active %>
 		<div class="card">
-			<div class="card-header">
-				<h4>
-					<%= link_to t('profile.active_nonsubscribed_lectures_html',
-												term: Term.active.to_label),
-											'#collapseAllCurrent',
-											class: 'text-dark',
-											id: 'allCurrentLink',
-											data: { toggle: 'collapse',
-															target: '#collapseAllCurrent' } %>
+			<div class="card-header clickable"
+					 role="tab"
+					 data-toggle="collapse"
+					 data-target="#collapseAllCurrent">
+				<h4 class="text-dark"
+						id="allCurrentLink">
+					<%= t('profile.active_nonsubscribed_lectures_html',
+								term: Term.active.to_label) %>
 				</h4>
 			</div>
 			<div class="collapse subscriptionsCollapse" id="collapseAllCurrent"
@@ -101,14 +97,13 @@
 		</div>
 	<% end %>
 	<div class="card mb-3">
-		<div class="card-header">
-			<h4>
-				<%= link_to t('profile.lecture_search'),
-										'#collapseLectureSearch',
-										class: 'text-dark',
-										id: 'lectureSearchLink',
-										data: { toggle: 'collapse',
-														target: '#collapseLectureSearch' } %>
+		<div class="card-header clickable"
+				 role="tab"
+				 data-toggle="collapse"
+				 data-target="#collapseLectureSearch">
+			<h4 class="text-dark"
+					id="lectureSearchLink">
+				<%= t('profile.lecture_search') %>
 			</h4>
 		</div>
 		<div class="collapse subscriptionsCollapse" id="collapseLectureSearch"
