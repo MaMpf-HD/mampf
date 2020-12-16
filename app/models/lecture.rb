@@ -62,6 +62,9 @@ class Lecture < ApplicationRecord
 
   validates :content_mode, inclusion: { in: ['video', 'manuscript'] }
 
+  validates :sort, inclusion: { in: ['lecture', 'seminar', 'oberseminar',
+                                     'proseminar', 'special'] }
+
   validates_presence_of :term, unless: :term_independent?
 
   validate :absence_of_term, if: :term_independent?
@@ -682,7 +685,8 @@ class Lecture < ApplicationRecord
 
   def submission_deletion_date
     Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
-      term.end_date + 15.days
+      (term&.end_date || Term.active&.end_date || (Date.today + 180.days)) +
+        15.days
     end
   end
 

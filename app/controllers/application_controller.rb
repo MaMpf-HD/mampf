@@ -22,7 +22,6 @@ class ApplicationController < ActionController::Base
                                                              edited_courses: [:editors, lectures: [:term, :teacher]],
                                                              edited_lectures: [:course, :term, :teacher],
                                                              given_lectures: [:course, :term, :teacher],
-                                                             course_user_joins: [:course],
                                                              notifications: [:notifiable]])
     end
   end

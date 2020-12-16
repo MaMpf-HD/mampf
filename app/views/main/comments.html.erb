@@ -104,9 +104,10 @@
 				</div>
 			<% end %>
 		</div>
-	<% else %>
-		<div class="alert alert-secondary mt-2 pr-2">
-      <%= t('comments.no_comments') %>
-    </div>
 	<% end %>
+	<div class="alert alert-secondary mt-2 pr-2"
+			 id="noCommentsAlert"
+			 style="display: <%= hide(@media_array.size.positive?) %>">
+    <%= t('comments.no_comments') %>
+  </div>
 </div>

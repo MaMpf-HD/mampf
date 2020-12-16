@@ -2525,6 +2525,10 @@ en:
     unsubscribe_text:
       If you do not want to receive emails about activities in MaMpf,
       you can disable that feature in your profile settings.
+    non_working_links: >
+      If a link from this mail does not work when you click it form your mail
+      client you can try to copy and paste the link to the address bar of your
+      browser and open it afterwards.
     announcement_subject: 'New announcement'
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'

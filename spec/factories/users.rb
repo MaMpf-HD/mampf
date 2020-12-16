@@ -3,6 +3,7 @@ FactoryBot.define do
     email { Faker::Internet.email }
     password {Faker::Internet.password}
     name { Faker::Name.name }
+    locale { I18n.available_locales.map(&:to_s).sample }
 
     transient do
       lecture_count { 2 }
@@ -15,6 +16,7 @@ FactoryBot.define do
     trait :auto_confirmed do
       after(:create) { |user| user.confirm }
     end
+
 
     # call it with build(:user, :with_lectures, lecture_count: n) if you want
     # n subscribed lectures associated to the user

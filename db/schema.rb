@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_29_133117) do
+ActiveRecord::Schema.define(version: 2020_12_13_123754) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -141,16 +141,6 @@ ActiveRecord::Schema.define(version: 2020_11_29_133117) do
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_course_tag_joins_on_course_id"
     t.index ["tag_id"], name: "index_course_tag_joins_on_tag_id"
-  end
-
-  create_table "course_user_joins", force: :cascade do |t|
-    t.bigint "course_id"
-    t.bigint "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "primary_lecture_id"
-    t.index ["course_id"], name: "index_course_user_joins_on_course_id"
-    t.index ["user_id"], name: "index_course_user_joins_on_user_id"
   end
 
   create_table "courses", force: :cascade do |t|
@@ -816,6 +806,7 @@ ActiveRecord::Schema.define(version: 2020_11_29_133117) do
     t.boolean "email_for_submission_decision"
     t.text "name_in_tutorials"
     t.boolean "archived"
+    t.datetime "locked_at"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -851,8 +842,6 @@ ActiveRecord::Schema.define(version: 2020_11_29_133117) do
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
-  add_foreign_key "course_user_joins", "courses"
-  add_foreign_key "course_user_joins", "users"
   add_foreign_key "divisions", "programs"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"

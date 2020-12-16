@@ -1,3 +1,4 @@
+ENV['RAILS_ENV'] ||= 'test'
 #simplecov
 
 require 'simplecov'

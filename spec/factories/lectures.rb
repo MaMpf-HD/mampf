@@ -3,6 +3,7 @@ FactoryBot.define do
     association :course
     association :teacher, factory: :confirmed_user
     association :term
+
     content_mode { 'video' }
     sort { 'lecture' }
 
@@ -10,9 +11,14 @@ FactoryBot.define do
       chapter_count { 3 }
     end
 
+
     trait :with_organizational_stuff do
       organizational { true }
       organizational_concept { Faker::ChuckNorris.fact }
+    end
+
+    trait :published_to_all do
+      released {'all'}
     end
 
     trait :released_for_all do
