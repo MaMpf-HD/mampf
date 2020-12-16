@@ -23,7 +23,7 @@ FactoryBot.define do
 
     trait :with_editors do
       after(:build) do |m, evaluator|
-        m.editors = build_list(:user, evaluator.editors_count)
+        m.editors = build_list(:confirmed_user, evaluator.editors_count)
       end
     end
 

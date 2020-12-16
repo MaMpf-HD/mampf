@@ -4,6 +4,14 @@ FactoryBot.define do
 
     transient do
       teachable_sort { :course }
+      questions_count { 3 }
+    end
+
+    trait :with_quiz_graph do
+      after :build do |q, evaluator|
+        q.quiz_graph = build(:quiz_graph, :linear,
+                             questions_count: evaluator.questions_count)
+      end
     end
 
     factory :valid_quiz, traits: [:with_description, :with_editors,
