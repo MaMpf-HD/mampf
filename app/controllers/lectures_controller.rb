@@ -297,10 +297,10 @@ class LecturesController < ApplicationController
     I18n.available_locales.each do |l|
       local_recipients = recipients.where(locale: l)
       if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients,
+        NotificationMailer.with(recipients: local_recipients.pluck(:id),
                                 locale: l,
                                 lecture: @lecture)
-                          .new_lecture_email.deliver_now
+                          .new_lecture_email.deliver_later
       end
     end
   end

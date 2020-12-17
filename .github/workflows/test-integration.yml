@@ -1,0 +1,24 @@
+name: test-integration
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest 
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - run: docker-compose pull
+        working-directory: docker/run_cypress_tests
+      - uses: satackey/action-docker-layer-caching@v0.0.8
+      # Ignore the failure of a step and avoid terminating the job.
+        continue-on-error: true
+      - name: Test
+        working-directory: docker/run_cypress_tests
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: docker-compose  run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}  cypress_runner cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}

@@ -1,7 +1,7 @@
 production:
   solr:
     hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
-    port: 8983
+    port: <%= ENV.fetch('SOLR_PORT', '8983') %>
     log_level: WARNING
     path: <%= ENV['SOLR_PATH'] %>
     # read_timeout: 2
@@ -10,21 +10,21 @@ production:
 development:
   solr:
     hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
-    port: 8983
+    port: <%= ENV.fetch('SOLR_PORT', '8983') %>
     log_level: INFO
-    path: /solr/development
+    path: <%= ENV.fetch('SOLR_PATH', '/solr/development') %>
 
 docker_development:
   solr:
     hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
-    port: 8983
+    port: <%= ENV.fetch('SOLR_PORT', '8983') %>
     log_level: INFO
-    path: /solr/development
+    path:  <%= ENV.fetch('SOLR_PATH', '/solr/development') %>
 
 test:
   solr:
-    hostname: <%= ENV.fetch('SOLR_HOST', 'localhost') %>
-    port: <%= ENV.fetch('SOLR_PORT', '8981') %>
+    hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
+    port: <%= ENV.fetch('SOLR_PORT', '8983') %>
     log_level: WARNING
-    path: /solr/test
+    path: <%= ENV.fetch('SOLR_TEST_PATH', '/solr/test') %>
 

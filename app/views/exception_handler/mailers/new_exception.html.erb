@@ -7,3 +7,7 @@
 	<%= @exception.message %>
 </p>
 <div><pre><%= @exception.trace %></pre></div>
+<div>
+<h3>Request Params</h3>
+<%= @exception.request.params.to_s
+%></div>

@@ -6,6 +6,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "eslint": "^7.11.0"
+    "eslint": "^7.11.0",
+    "cypress": "5.2.0"
   }
 }

@@ -72,6 +72,10 @@ module ApplicationHelper
     value ? '' : 'text-dark'
   end
 
+  def text_dark_link(value)
+    value ? 'text-primary' : 'text-dark'
+  end
+
   # media_sort -> database fields
   def media_types
     { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],

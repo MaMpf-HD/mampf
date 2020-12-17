@@ -14,9 +14,6 @@ class User < ApplicationRecord
            through: :user_favorite_lecture_joins,
            source: :lecture
 
-  # a user has many subscribed courses
-  has_many :course_user_joins, dependent: :destroy
-
   # a user has many courses as an editor
   has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy
   has_many :edited_courses, through: :editable_user_joins,
@@ -58,6 +55,8 @@ class User < ApplicationRecord
 
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
+
+  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }, if: :locale?
 
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
