@@ -22,7 +22,16 @@ ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -y nodejs yarn ffmpeg imagemagick pdftk ghostscript sqlite3 rsync --no-install-recommends && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y nodejs yarn ffmpeg imagemagick pdftk ghostscript sqlite3 rsync --no-install-recommends && rm -rf /var/lib/apt/lists/* 
+
+
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash \
+ && apt-get update && apt-get install -y nodejs && rm -rf /var/lib/apt/lists/* \
+ && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+ && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
+ && apt-get update && apt-get install -y yarn && rm -rf /var/lib/apt/lists/*
+
+
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
@@ -30,8 +39,11 @@ RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
 WORKDIR /usr/src/app
 USER app
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
-COPY --chown=app:app ./Gemfile ./Gemfile.lock /usr/src/app/
+
+COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+
 RUN bundle install
+RUN yarn  install --production=false
 COPY --chown=app:app . /usr/src/app
 RUN cp -r /usr/local/bundle/gems/sidekiq-6.1.2/web/assets /usr/src/app/public/sidekiq
 RUN SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb   bundle exec rails assets:precompile
