@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :division_course_join do
-    division { nil }
-    course { nil }
+    association :division
+    association :course
   end
 end

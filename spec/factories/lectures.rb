@@ -17,10 +17,6 @@ FactoryBot.define do
       organizational_concept { Faker::ChuckNorris.fact }
     end
 
-    trait :published_to_all do
-      released {'all'}
-    end
-
     trait :released_for_all do
       released { 'all' }
     end

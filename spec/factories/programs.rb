@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :program do
-    name { "MyText" }
+    association :subject
+    name { Faker::IndustrySegments.sector }
   end
 end

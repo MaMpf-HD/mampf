@@ -3221,6 +3221,12 @@ de:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
               taken: 'Dieser Titel ist bereits vergeben.'
+        clicker_vote:
+          attributes:
+            clicker:
+              clicker_closed: 'Der zugehörige Clicker ist geschlossen.'
+            value:
+              out_of_range: 'Der Wert ist außerhalb des zulässigen Bereichs.'
         course:
           attributes:
             title:
