@@ -1,7 +1,7 @@
 require 'faker'
 
 FactoryBot.define do
-  factory :medium, aliases: [:linked_medium] do
+  factory :medium do
     # the generic factory for medium will just produce an empty medium
     # as it is rather expensive to build a valid medium from scratch
     # (and in most tests you will probably start with an empty medium and

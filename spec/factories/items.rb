@@ -1,13 +1,15 @@
-# FactoryBot.define do
-#   factory :item do
-#     start_time "MyText"
-#     sort "MyText"
-#     page 1
-#     description "MyText"
-#     number 1
-#     link "MyText"
-#     explanation "MyText"
-#     medium nil
-#     section nil
-#   end
-# end
+FactoryBot.define do
+  factory :item do
+    sort { ['remark', 'example', 'theorem', 'definition'].sample }
+
+    trait :with_start_time do
+      after :build do |i|
+        i.start_time = build(:time_stamp)
+      end
+    end
+
+    trait :with_medium do
+      association :medium, factory: :valid_medium
+    end
+  end
+end
