@@ -45,6 +45,7 @@ services:
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
       PROJECT_EMAIL: project@localhost
+      PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
       ERROR_EMAIL: error@localhost
       INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1

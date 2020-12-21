@@ -92,6 +92,7 @@ RAILS_MASTER_KEY=$MASTER_KEY
 ERDBEERE_SERVER = your_erdbeere_server
 MUESLI_SERVER = your_muesli_server
 PROJECT_EMAIL = your_project_email
+PROJECT_NOTIFICATION_EMAIL= your_project_notification_email
 INSTANCE_PATH=mampf
 ```
  3. Execute the following commands to install and run the service:
