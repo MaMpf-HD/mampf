@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :reader do
-    user_id { 1 }
-    thread_id { 1 }
+    association :user, factory: :confirmed_user
+    thread { Commontator::Thread.new }
   end
 end

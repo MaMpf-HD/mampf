@@ -1,5 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Submission, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it 'has a valid factory' do
+    expect(FactoryBot.build(:valid_submission)).to be_valid
+  end
 end
