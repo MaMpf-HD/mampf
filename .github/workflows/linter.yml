@@ -17,7 +17,7 @@ jobs:
         bin/bundle install --jobs 4 --retry 3
     - name: Linter count
       id: hello
-      uses: henrixapp/linter-less-or-equal-action@v1.16
+      uses: henrixapp/linter-less-or-equal-action@v1.17
       with:
         name: Rubocop
         command:  bin/bundle exec rubocop app config lib spec
@@ -34,7 +34,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Linter count
       id: hello
-      uses: henrixapp/linter-less-or-equal-action@v1.16
+      uses: henrixapp/linter-less-or-equal-action@v1.17
       with:
         name: EsLint
         command: npx eslint 
@@ -51,7 +51,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Linter count
       id: hello
-      uses: henrixapp/linter-less-or-equal-action@v1.16
+      uses: henrixapp/linter-less-or-equal-action@v1.17
       with:
         name: Coffee
         command: npx coffeelint   
