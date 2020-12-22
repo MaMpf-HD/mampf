@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Clicker, type: :model do
@@ -24,14 +26,14 @@ RSpec.describe Clicker, type: :model do
   describe 'with editor' do
     it 'has an editor' do
       clicker = FactoryBot.build(:clicker, :with_editor)
-      expect(clicker.editor.is_a?(User)).to be true
+      expect(clicker.editor).to be_kind_of(User)
     end
   end
 
   describe 'with question' do
     it 'has a question' do
       clicker = FactoryBot.build(:clicker, :with_question)
-      expect(clicker.question.is_a?(Question)).to be true
+      expect(clicker.question).to be_kind_of(Question)
     end
   end
 

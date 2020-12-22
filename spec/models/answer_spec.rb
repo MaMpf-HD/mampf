@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Answer, type: :model do
@@ -22,7 +24,7 @@ RSpec.describe Answer, type: :model do
       expect(@answer.text).to be_truthy
     end
     it 'has a value' do
-      expect(@answer.value).not_to be_nil
+      expect(@answer.value).to be_in([true, false])
     end
     it 'has an explanation' do
       expect(@answer.explanation).to be_truthy

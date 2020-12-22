@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :probe do
     trait :with_stuff do
@@ -5,7 +7,7 @@ FactoryBot.define do
       quiz_id { Faker::Number.number }
       correct { [true, false].sample }
       session_id { Faker::Crypto.md5 }
-      progress { [-1,1,2,3].sample }
+      progress { [-1, 1, 2, 3].sample }
       success do
         if progress == -1
           [1, 2, 3].sample

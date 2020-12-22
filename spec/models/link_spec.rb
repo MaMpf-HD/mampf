@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Link, type: :model do
@@ -30,7 +32,8 @@ RSpec.describe Link, type: :model do
     first_medium = FactoryBot.create(:valid_medium)
     second_medium = FactoryBot.create(:valid_medium)
     FactoryBot.create(:link, medium: first_medium, linked_medium: second_medium)
-    expect(Link.exists?(medium: second_medium, linked_medium: first_medium)).to be true
+    expect(Link.exists?(medium: second_medium, linked_medium: first_medium))
+      .to be true
   end
 
   it 'destroys the inverse after deletion if link is not self-inverse' do
@@ -39,6 +42,7 @@ RSpec.describe Link, type: :model do
     link = FactoryBot.create(:link, medium: first_medium,
                                     linked_medium: second_medium)
     link.destroy
-    expect(Link.exists?(medium: second_medium, linked_medium: first_medium)).to be false
+    expect(Link.exists?(medium: second_medium, linked_medium: first_medium))
+      .to be false
   end
 end

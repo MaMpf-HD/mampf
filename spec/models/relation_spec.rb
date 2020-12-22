@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Relation, type: :model do
@@ -47,6 +49,7 @@ RSpec.describe Relation, type: :model do
     relation = FactoryBot.create(:relation, tag: first_tag,
                                             related_tag: second_tag)
     relation.destroy
-    expect(Relation.exists?(tag: second_tag, related_tag: first_tag)).to be false
+    expect(Relation.exists?(tag: second_tag, related_tag: first_tag))
+      .to be false
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe EditableUserJoin, type: :model do
@@ -20,14 +22,14 @@ RSpec.describe EditableUserJoin, type: :model do
   describe 'with course' do
     it 'is associated to a course' do
       course_join = FactoryBot.build(:editable_user_join, :with_course)
-      expect(course_join.editable.is_a?(Course)).to be true
+      expect(course_join.editable).to be_kind_of(Course)
     end
   end
 
   describe 'with lecture' do
     it 'is associated to a lecture' do
       lecture_join = FactoryBot.build(:editable_user_join, :with_lecture)
-      expect(lecture_join.editable.is_a?(Lecture)).to be true
+      expect(lecture_join.editable).to be_kind_of(Lecture)
     end
   end
 end

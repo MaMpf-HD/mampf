@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Question, type: :model do
@@ -20,7 +22,7 @@ RSpec.describe Question, type: :model do
       expect(@question.hint).to be_truthy
     end
     it 'has a level' do
-      expect(@question.level).not_to be_nil
+      expect(@question.level).to be_kind_of(Integer)
     end
     it 'is a multiple choice question' do
       expect(@question.question_sort).to eq 'mc'
@@ -35,7 +37,7 @@ RSpec.describe Question, type: :model do
       question = FactoryBot.build(:valid_question, :with_answers)
       expect(question.answers.size).to eq 3
     end
-    it 'has the correct amount of answers when the answers_count parameter is given' do
+    it 'has the correct amount of answers with answers_count param' do
       question = FactoryBot.build(:valid_question, :with_answers,
                                   answers_count: 4)
       expect(question.answers.size).to eq 4

@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'faker'
 
 FactoryBot.define do
   factory :chapter do
     association :lecture, factory: [:lecture]
     title { Faker::Book.title + ' ' +
-              Faker::Number.between(from: 1, to: 99).to_s }
+              Faker::Number.between(from: 1, to: 9999).to_s }
 
     transient do
       section_count { 3 }

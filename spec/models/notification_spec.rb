@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Notification, type: :model do
@@ -22,7 +24,7 @@ RSpec.describe Notification, type: :model do
     it 'has a notifiable of the correct sort' do
       notification = FactoryBot.build(:notification, :with_notifiable,
                                       notifiable_sort: 'Lecture')
-      expect(notification.notifiable.is_a?(Lecture)).to be true
+      expect(notification.notifiable).to be_kind_of(Lecture)
     end
   end
 end

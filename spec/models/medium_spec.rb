@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Medium, type: :model do
@@ -57,7 +59,7 @@ RSpec.describe Medium, type: :model do
                                 linked_media_count: 3)
       expect(medium.linked_media.size).to eq 3
     end
-    it 'has two linked media when called without linked_media_count parameter' do
+    it 'has two linked media when called without linked_media_count param' do
       medium = FactoryBot.build(:medium, :with_linked_media)
       expect(medium.linked_media.size).to eq 2
     end
@@ -66,17 +68,17 @@ RSpec.describe Medium, type: :model do
   describe 'with teachable' do
     it 'has an associated lecture if no parameter is given' do
       medium = FactoryBot.build(:medium, :with_teachable)
-      expect(medium.teachable.is_a?(Lecture)).to be true
+      expect(medium.teachable).to be_kind_of(Lecture)
     end
-    it 'has an associated lesson if teachable_sort parameter is set to :lesson' do
+    it 'has an associated lesson if teachable_sort param is set to :lesson' do
       medium = FactoryBot.build(:medium, :with_teachable,
                                 teachable_sort: :lesson)
-      expect(medium.teachable.is_a?(Lesson)).to be true
+      expect(medium.teachable).to be_kind_of(Lesson)
     end
-    it 'has an associated course if teachable_sort parameter is set to :course' do
+    it 'has an associated course if teachable_sort param is set to :course' do
       medium = FactoryBot.build(:medium, :with_teachable,
                                 teachable_sort: :course)
-      expect(medium.teachable.is_a?(Course)).to be true
+      expect(medium.teachable).to be_kind_of(Course)
     end
   end
 
@@ -88,7 +90,7 @@ RSpec.describe Medium, type: :model do
       expect(@medium).to be_valid
     end
     it 'is associated to a lesson' do
-      expect(@medium.teachable.is_a?(Lesson)).to be true
+      expect(@medium.teachable).to be_kind_of(Lesson)
     end
     it 'has an editor that matches the teacher of the lecture to the lesson' do
       expect(@medium.editors).to include @medium.teachable.lecture.teacher
@@ -103,7 +105,7 @@ RSpec.describe Medium, type: :model do
       expect(@medium).to be_valid
     end
     it 'is associated to a lecture' do
-      expect(@medium.teachable.is_a?(Lecture)).to be true
+      expect(@medium.teachable).to be_kind_of(Lecture)
     end
     it 'has an editor that matches the teacher of the lecture' do
       expect(@medium.editors).to include @medium.teachable.teacher
@@ -118,7 +120,7 @@ RSpec.describe Medium, type: :model do
       expect(@medium).to be_valid
     end
     it 'is associated to a course' do
-      expect(@medium.teachable.is_a?(Course)).to be true
+      expect(@medium.teachable).to be_kind_of(Course)
     end
   end
 
@@ -129,10 +131,14 @@ RSpec.describe Medium, type: :model do
   #   it 'returns the correct search results' do
   #     lesson = FactoryBot.create(:lesson)
   #     course = lesson.course
-  #     kaviar_medium = FactoryBot.create(:medium, teachable: lesson, sort: 'Kaviar')
-  #     sesam_medium = FactoryBot.create(:medium, teachable: lesson.lecture, sort: 'Sesam')
-  #     params = { course_id: course.id.to_s, lecture_id: lesson.lecture.id.to_s, project: 'kaviar'}
-  #     expect(Medium.search_all(lesson.lecture, params)).to match_array([kaviar_medium])
+  #     kaviar_medium = FactoryBot.create(:medium, teachable: lesson,
+  #                                       sort: 'Kaviar')
+  #     sesam_medium = FactoryBot.create(:medium, teachable: lesson.lecture,
+  #                                      sort: 'Sesam')
+  #     params = { course_id: course.id.to_s,
+  #                lecture_id: lesson.lecture.id.to_s, project: 'kaviar'}
+  #     expect(Medium.search_all(lesson.lecture, params))
+  #       .to match_array([kaviar_medium])
   #   end
   # end
 
@@ -154,9 +160,12 @@ RSpec.describe Medium, type: :model do
   #   it 'returns the correct caption' do
   #     lecture = FactoryBot.create(:lecture)
   #     chapter = FactoryBot.create(:chapter, lecture: lecture)
-  #     first_section = FactoryBot.create(:section, chapter: chapter, title: 'Unsinn')
-  #     second_section = FactoryBot.create(:section, chapter: chapter, title: 'schon wieder')
-  #     lesson = FactoryBot.build(:lesson, lecture: lecture, sections: [first_section, second_section])
+  #     first_section = FactoryBot.create(:section, chapter: chapter,
+  #                                       title: 'Unsinn')
+  #     second_section = FactoryBot.create(:section, chapter: chapter,
+  #                                        title: 'schon wieder')
+  #     lesson = FactoryBot.build(:lesson, lecture: lecture,
+  #                               sections: [first_section, second_section])
   #     medium = FactoryBot.create(:medium, teachable: lesson, sort: 'Kaviar')
   #     expect(medium.caption).to eq('Unsinn, schon wieder')
   #   end
@@ -198,14 +207,16 @@ RSpec.describe Medium, type: :model do
   #   context 'if medium belongs to a lesson' do
   #     it 'returns the correct subheader' do
   #       lesson = FactoryBot.create(:lesson)
-  #       medium = FactoryBot.build(:medium, teachable: lesson, description: nil)
+  #       medium = FactoryBot.build(:medium, teachable: lesson,
+  #                                 description: nil)
   #       expect(medium.card_subheader).to eq lesson.title
   #     end
   #   end
   #   context 'if medium does not belong to a lesson' do
   #     it 'returns the correct subheader' do
   #       lecture = FactoryBot.create(:lecture)
-  #       medium = FactoryBot.build(:medium, teachable: lecture, description: nil, sort: 'Sesam')
+  #       medium = FactoryBot.build(:medium, teachable: lecture,
+  #                                 description: nil, sort: 'Sesam')
   #       expect(medium.card_subheader).to eq('SeSAM Video')
   #     end
   #   end

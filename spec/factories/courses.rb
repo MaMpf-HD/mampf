@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :course do
     title { Faker::Book.title + ' ' +
@@ -19,7 +21,7 @@ FactoryBot.define do
     end
 
     trait :locale_de do
-      locale { 'de'}
+      locale { 'de' }
     end
 
     # call it with build(:course, :with_tags, tag_count: n) if you want

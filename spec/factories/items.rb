@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :item do
     sort { ['remark', 'example', 'theorem', 'definition'].sample }

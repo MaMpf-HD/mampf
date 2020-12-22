@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :answer do
-
     trait :with_question do
       after(:build) do |answer|
         answer.question = build(:valid_question)

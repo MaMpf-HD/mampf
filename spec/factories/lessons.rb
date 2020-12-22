@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faker'
 
 FactoryBot.define do
@@ -10,8 +12,8 @@ FactoryBot.define do
     # factory
     trait :with_lecture_and_date do
       association :lecture, factory: :lecture_with_sparse_toc
-      date { Faker::Date.between(from:lecture.term.begin_date,
-                                 to:lecture.term.end_date) }
+      date { Faker::Date.between(from: lecture.term.begin_date,
+                                 to: lecture.term.end_date) }
     end
 
     trait :with_lecture_date_and_section do

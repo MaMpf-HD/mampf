@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :import do
-
     transient do
       teachable_sort { :lecture }
     end

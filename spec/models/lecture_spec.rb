@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Lecture, type: :model do
@@ -71,7 +73,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture.chapters.size).to eq 3
     end
     it 'has 3 sections in each chapter' do
-      expect(@lecture.chapters.map { |c| c.sections.size}).to eq [3,3,3]
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [3, 3, 3]
     end
   end
   describe 'with sparse table of contents' do
@@ -82,7 +84,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture.chapters.size).to eq 1
     end
     it 'has one sections in each chapter' do
-      expect(@lecture.chapters.map { |c| c.sections.size}).to eq [1]
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [1]
     end
   end
 
@@ -104,8 +106,10 @@ RSpec.describe Lecture, type: :model do
   # describe '#sections' do
   #   it 'returns the correct sections' do
   #     lecture = FactoryBot.build(:lecture)
-  #     first_chapter = FactoryBot.create(:chapter, :with_sections, lecture: lecture)
-  #     second_chapter = FactoryBot.create(:chapter, :with_sections, lecture: lecture)
+  #     first_chapter = FactoryBot.create(:chapter, :with_sections,
+  #                                       lecture: lecture)
+  #     second_chapter = FactoryBot.create(:chapter, :with_sections,
+  #                                        lecture: lecture)
   #     sections = first_chapter.sections + second_chapter.sections
   #     expect(lecture.sections.to_a).to match_array(sections)
   #   end
@@ -139,7 +143,8 @@ RSpec.describe Lecture, type: :model do
   #     term =   FactoryBot.create(:term)
   #     teacher = FactoryBot.create(:user, name: 'Luke Skywalker')
   #     lecture = FactoryBot.build(:lecture, teacher: teacher, term: term)
-  #     expect(lecture.term_teacher_info).to eq(term.to_label + ', Luke Skywalker')
+  #     expect(lecture.term_teacher_info).to eq(term.to_label +
+  #                                               ', Luke Skywalker')
   #   end
   # end
   # describe '#description' do
@@ -147,7 +152,8 @@ RSpec.describe Lecture, type: :model do
   #     course = FactoryBot.create(:course, title: 'Usual bs')
   #     term =   FactoryBot.create(:term)
   #     lecture = FactoryBot.build(:lecture, course: course, term: term)
-  #     expect(lecture.description).to eq({ general: 'Usual bs, ' + term.to_label })
+  #     expect(lecture.description).to eq({ general: 'Usual bs, ' +
+  #                                                     term.to_label })
   #   end
   # end
 end

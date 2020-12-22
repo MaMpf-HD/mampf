@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Tag, type: :model do
@@ -57,8 +59,10 @@ RSpec.describe Tag, type: :model do
   #     @tags[3].related_tags << [@tags[4], @tags[5]]
   #     @tags[4].related_tags << [@tags[5], @tags[6]]
   #     @tags[7].related_tags << [@tags[8]]
-  #     expect(@tags[0].tags_in_neighbourhood).to match_array([@tags[3], @tags[6]])
-  #     expect(@tags[6].tags_in_neighbourhood).to match_array([@tags[0], @tags[3], @tags[5]])
+  #     expect(@tags[0].tags_in_neighbourhood)
+  #       .to match_array([@tags[3], @tags[6]])
+  #     expect(@tags[6].tags_in_neighbourhood)
+  #        .to match_array([@tags[0], @tags[3], @tags[5]])
   #     expect(@tags[7].tags_in_neighbourhood).to match_array([])
   #     expect(@tags[9].tags_in_neighbourhood).to match_array([])
   #   end
@@ -93,7 +97,7 @@ RSpec.describe Tag, type: :model do
   # end
 
   # describe '#lectures' do
-  #   it 'returns the correct list of lectures to which the tag is associated' do
+  #   it 'returns the correct list of associated lectures' do
   #     course = FactoryBot.create(:course)
   #     tag = FactoryBot.create(:tag)
   #     course.tags << tag

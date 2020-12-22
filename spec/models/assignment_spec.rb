@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Assignment, type: :model do
@@ -34,7 +36,7 @@ RSpec.describe Assignment, type: :model do
   describe 'with lecture' do
     it 'has a lecture' do
       assignment = FactoryBot.build(:assignment, :with_lecture)
-      expect(assignment.lecture.is_a?(Lecture)).to be true
+      expect(assignment.lecture).to be_kind_of(Lecture)
     end
   end
 

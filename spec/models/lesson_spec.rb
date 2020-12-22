@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Lesson, type: :model do
@@ -31,7 +33,7 @@ RSpec.describe Lesson, type: :model do
       expect(@lesson).to be_invalid
     end
     it 'has a lecture' do
-      expect(@lesson.lecture).not_to be_nil
+      expect(@lesson.lecture).to be_kind_of(Lecture)
     end
   end
 
@@ -43,7 +45,7 @@ RSpec.describe Lesson, type: :model do
       expect(@lesson).to be_valid
     end
     it 'has a lecture' do
-      expect(@lesson.lecture).not_to be_nil
+      expect(@lesson.lecture).to be_kind_of(Lecture)
     end
     it 'has one section' do
       expect(@lesson.sections.size).to eq 1
@@ -73,7 +75,8 @@ RSpec.describe Lesson, type: :model do
   #   it 'returns the correct date in german spelling' do
   #     term = FactoryBot.create(:term, year: 2199, season: 'SS')
   #     lecture = FactoryBot.create(:lecture, term: term)
-  #     lesson = FactoryBot.build(:lesson, lecture: lecture, date: Date.new(2199, 7, 5))
+  #     lesson = FactoryBot.build(:lesson, lecture: lecture,
+  #                               date: Date.new(2199, 7, 5))
   #     expect(lesson.date_localized).to eq('5.7.2199')
   #   end
   # end
@@ -81,7 +84,8 @@ RSpec.describe Lesson, type: :model do
   #   it 'returns the correct label' do
   #     term = FactoryBot.create(:term, year: 2199, season: 'SS')
   #     lecture = FactoryBot.create(:lecture, term: term)
-  #     lesson = FactoryBot.build(:lesson, lecture: lecture, number: 8, date: Date.new(2199, 7, 5))
+  #     lesson = FactoryBot.build(:lesson, lecture: lecture, number: 8,
+  #                               date: Date.new(2199, 7, 5))
   #     expect(lesson.to_label).to eq('Nr. 8, 5.7.2199')
   #   end
   # end
@@ -89,7 +93,8 @@ RSpec.describe Lesson, type: :model do
   #   it 'returns the correct title' do
   #     term = FactoryBot.create(:term, year: 2199, season: 'SS')
   #     lecture = FactoryBot.create(:lecture, term: term)
-  #     lesson = FactoryBot.build(:lesson, lecture: lecture, number: 8, date: Date.new(2199, 7, 5))
+  #     lesson = FactoryBot.build(:lesson, lecture: lecture, number: 8,
+  #                               date: Date.new(2199, 7, 5))
   #     expect(lesson.title).to eq('Sitzung 8, 5.7.2199')
   #   end
   # end
@@ -97,9 +102,12 @@ RSpec.describe Lesson, type: :model do
   #   it 'returns the correct section_titles' do
   #     lecture = FactoryBot.create(:lecture)
   #     chapter = FactoryBot.create(:chapter, lecture: lecture)
-  #     first_section = FactoryBot.create(:section, chapter: chapter, title: 'Unsinn')
-  #     second_section = FactoryBot.create(:section, chapter: chapter, title: 'schon wieder')
-  #     lesson = FactoryBot.build(:lesson, lecture: lecture, sections: [first_section, second_section])
+  #     first_section = FactoryBot.create(:section, chapter: chapter,
+  #                                       title: 'Unsinn')
+  #     second_section = FactoryBot.create(:section, chapter: chapter,
+  #                                        title: 'schon wieder')
+  #     lesson = FactoryBot.build(:lesson, lecture: lecture,
+  #                               sections: [first_section, second_section])
   #     expect(lesson.section_titles).to eq('Unsinn, schon wieder')
   #   end
   # end
@@ -108,8 +116,10 @@ RSpec.describe Lesson, type: :model do
   #     course = FactoryBot.create(:course, title: 'Usual bs')
   #     term = FactoryBot.create(:term, year: 2199, season: 'SS')
   #     lecture = FactoryBot.create(:lecture, course: course, term: term)
-  #     lesson = FactoryBot.build(:lesson, lecture: lecture, number: 8, date: Date.new(2199, 7, 5))
-  #     expect(lesson.description).to eq({ general: 'Usual bs, SS 2199', specific: 'Sitzung 8, 5.7.2199' })
+  #     lesson = FactoryBot.build(:lesson, lecture: lecture, number: 8
+  #                               date: Date.new(2199, 7, 5))
+  #     expect(lesson.description).to eq({ general: 'Usual bs, SS 2199',
+  #                                        specific: 'Sitzung 8, 5.7.2199' })
   #   end
   # end
 end

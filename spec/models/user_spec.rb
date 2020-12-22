@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
@@ -43,10 +45,10 @@ RSpec.describe User, type: :model do
     it 'has subscribed lectures' do
       expect(@user.lectures).not_to be_nil
     end
-    it 'has 2 subscribed lectures when called without lecture_count parameter' do
+    it 'has 2 subscribed lectures when called without lecture_count param' do
       expect(@user.lectures.size).to eq 2
     end
-    it 'has correct number of lectures when called with lecture_count parameter' do
+    it 'has correct number of lectures when called with lecture_count param' do
       user = FactoryBot.build(:user, :with_lectures, lecture_count: 3)
       expect(user.lectures.size).to eq 3
     end
@@ -82,7 +84,8 @@ RSpec.describe User, type: :model do
   #   context 'if subscription type is 1' do
   #     it 'gives the correct list of related courses' do
   #       @user.update(subscription_type: 1)
-  #       expect(@user.related_courses.to_a).to match_array([@course, @preceding_course])
+  #       expect(@user.related_courses.to_a)
+  #         .to match_array([@course, @preceding_course])
   #     end
   #   end
   #   context 'if subscription type is 2' do

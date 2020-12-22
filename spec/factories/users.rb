@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :user, aliases: [:teacher] do
     email { Faker::Internet.email }
-    password {Faker::Internet.password}
+    password { Faker::Internet.password }
     name { Faker::Name.name }
     locale { I18n.available_locales.map(&:to_s).sample }
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'faker'
 
 FactoryBot.define do
@@ -6,7 +8,7 @@ FactoryBot.define do
     year { Faker::Number.between(from: 2000, to: 100000) }
 
     trait :summer do
-      season  {'SS'}
+      season  { 'SS' }
     end
   end
 end
