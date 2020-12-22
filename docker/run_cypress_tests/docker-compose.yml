@@ -36,7 +36,7 @@ services:
       - "127.0.0.1:3000:3000"
     # TODO: Use this
     # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
-    entrypoint: ./entrypoint.sh
+    entrypoint: /usr/src/app/entrypoint.sh
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
