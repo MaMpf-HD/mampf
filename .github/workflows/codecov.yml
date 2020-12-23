@@ -1,0 +1,28 @@
+on: [push]
+
+jobs:
+  rubocop:
+    runs-on: ubuntu-latest
+    name: A job to codecov report.
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - run: docker-compose pull
+      working-directory: docker/development
+    - uses: satackey/action-docker-layer-caching@v0.0.11
+      continue-on-error: true
+    - name: Install dependencies
+      run: |
+          docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:create"
+          docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:migrate"
+          docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:test:prepare"
+    - name: Create database
+      run: |
+          docker-compose exec mampf  sh -c "RAILS_ENV=test  rake sunspot:reindex"
+    - name: Run tests
+      run: docker-compose exec mampf  sh -c "RAILS_ENV=test rails spec"
+    - name: Send test coverage report to codecov.io
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage/.resultset.json
