@@ -24,5 +24,4 @@ RSpec.describe VttContainer, type: :model do
         .to be_kind_of(VttUploader::UploadedFile)
     end
   end
-
 end
