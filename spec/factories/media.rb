@@ -53,6 +53,18 @@ FactoryBot.define do
       end
     end
 
+    trait :with_manuscript do
+      after(:build) do |m|
+        m.manuscript = File.open('spec/files/manuscript.pdf', 'rb')
+      end
+    end
+
+    trait :with_video do
+      after(:build) do |m|
+        m.video = File.open('spec/files/talk.mp4', 'rb')
+      end
+    end
+
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
       sort { 'Kaviar' }
