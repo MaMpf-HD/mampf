@@ -272,7 +272,7 @@ Commontator.configure do |config|
   #   "no-reply@#{Rails.application.class.module_parent.to_s.downcase}.com"
   # end
   config.email_from_proc = ->(thread) do
-    DefaultSetting::PROJECT_EMAIL
+    DefaultSetting::PROJECT_NOTIFICATION_EMAIL
   end
 
   # commontable_name_proc

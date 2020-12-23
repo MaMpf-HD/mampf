@@ -69,6 +69,7 @@ services:
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
       MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
       PROJECT_EMAIL: project@localhost
+      PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
       ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
       INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1
