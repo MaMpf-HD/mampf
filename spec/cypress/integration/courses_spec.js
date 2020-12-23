@@ -49,9 +49,9 @@ describe("Courses", function () {
         });
         it("can subscribe", () => {
             //call a scenario in app_commands/scenarios
-            
+
             cy.appFactories([
-                ['create_list', 'lecture', 6, 'published_to_all']
+                ['create_list', 'lecture', 6, 'released_for_all']
             ]).then((records) => {
                 cy.visit("/main/start");
                 cy.contains("Veranstaltungssuche").click();
@@ -60,7 +60,7 @@ describe("Courses", function () {
                 cy.get('[title="abonnieren"]').first().click();
                 cy.get('[title="abbestellen"]').should("exist");
             });
-            
+
         });
     });
 });
