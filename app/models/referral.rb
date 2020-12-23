@@ -129,7 +129,7 @@ class Referral < ApplicationRecord
   end
 
   def start_time_not_too_late
-    return true if medium.nil?
+    return true if medium.nil? || !medium.video
     return true unless start_time.valid?
     return true if start_time.total_seconds <= medium.video_duration
     errors.add(:start_time, :too_late)
@@ -137,7 +137,7 @@ class Referral < ApplicationRecord
   end
 
   def end_time_not_too_late
-    return true if medium.nil?
+    return true if medium.nil? || !medium.video
     return true unless end_time.valid?
     return true if end_time.total_seconds <= medium.video_duration
     errors.add(:end_time, :too_late)
@@ -145,8 +145,8 @@ class Referral < ApplicationRecord
   end
 
   def end_time_not_too_soon
-    return true unless start_time.valid?
-    return true unless end_time.valid?
+    return true unless start_time&.valid?
+    return true unless end_time&.valid?
     return true if start_time.total_seconds < end_time.total_seconds
     errors.add(:end_time, :too_soon)
     false

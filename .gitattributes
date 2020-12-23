@@ -6,3 +6,5 @@
 *.ico binary
 *.gif binary
 *.wasm binary
+*.pdf binary
+*.mp4 binary

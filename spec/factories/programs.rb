@@ -1,5 +1,8 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :program do
-    name { "MyText" }
+    association :subject
+    name { Faker::IndustrySegments.sector }
   end
 end
