@@ -2,7 +2,10 @@ FROM jwilder/nginx-proxy:alpine
 
 # Change the uid of nginx to the same as mampf-container
 RUN sed -i 's/^nginx.\+/nginx\:x\:501\:501\:nginx\:\/var\/cache\/nginx\:\/sbin\/nologin/' /etc/passwd
+# We need to manually configure the root location, so the actual proxy pass needs to be inside a special location we can
+# redirect to
 RUN sed -i 's/^\(\s*\)location \/ {\(\s*\)$/\1location @rails {\2/' /app/nginx.tmpl
+
 RUN mkdir /private /public
 
 
