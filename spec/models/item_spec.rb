@@ -37,9 +37,9 @@ RSpec.describe Item, type: :model do
     end
   end
 
-  describe 'real item (with a medium with a video and a valid start time)' do
+  describe 'item for sample video' do
     it 'has a valid factory' do
-      expect(FactoryBot.build(:real_item)).to be_valid
+      expect(FactoryBot.build(:item_for_sample_video)).to be_valid
     end
   end
 end

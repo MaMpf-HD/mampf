@@ -17,7 +17,7 @@ RSpec.describe Referral, type: :model do
     expect(FactoryBot.build(:referral, medium: nil)).to be_invalid
   end
 
-  # test traits
+  # test traits and subfactories
 
   describe 'with times' do
     before :all do
@@ -31,6 +31,12 @@ RSpec.describe Referral, type: :model do
     end
     it 'has an end time' do
       expect(@referral.end_time).to be_kind_of(TimeStamp)
+    end
+  end
+
+  describe 'referral for sample video' do
+    it 'has a valid factory' do
+      expect(FactoryBot.build(:referral_for_sample_video)).to be_valid
     end
   end
 end

@@ -19,5 +19,15 @@ FactoryBot.define do
                            total_seconds: evaluator.end_time_in_s)
       end
     end
+
+    factory :referral_for_sample_video, traits: [:with_times] do
+      transient do
+        start_time_in_s { Faker::Number.between(from: 0, to: 30000) / 1000.0 }
+        end_time_in_s do
+          start_time_in_s + Faker::Number.between(from: 1, to: 10)
+        end
+      end
+      medium { association :valid_medium, :with_video }
+    end
   end
 end

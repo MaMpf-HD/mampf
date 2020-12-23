@@ -50,4 +50,20 @@ RSpec.describe Submission, type: :model do
       expect(submission.users.size).to eq 4
     end
   end
+
+  describe 'with manuscript' do
+    it 'has a manuscript' do
+      submission = FactoryBot.build(:valid_submission, :with_manuscript)
+      expect(submission.manuscript)
+        .to be_kind_of(SubmissionUploader::UploadedFile)
+    end
+  end
+
+  describe 'with correction' do
+    it 'has a correction' do
+      submission = FactoryBot.build(:valid_submission, :with_correction)
+      expect(submission.correction)
+        .to be_kind_of(CorrectionUploader::UploadedFile)
+    end
+  end
 end

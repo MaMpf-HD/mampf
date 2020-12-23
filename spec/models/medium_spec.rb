@@ -83,20 +83,16 @@ RSpec.describe Medium, type: :model do
   end
 
   describe 'with manuscript' do
-    before :all do
-      @medium = FactoryBot.build(:medium, :with_manuscript)
-    end
     it 'has a manuscript' do
-      expect(@medium.manuscript).to be_kind_of(PdfUploader::UploadedFile)
+      medium = FactoryBot.build(:medium, :with_manuscript)
+      expect(medium.manuscript).to be_kind_of(PdfUploader::UploadedFile)
     end
   end
 
   describe 'with video' do
-    before :all do
-      @medium = FactoryBot.build(:medium, :with_video)
-    end
     it 'has a video' do
-      expect(@medium.video).to be_kind_of(VideoUploader::UploadedFile)
+      medium = FactoryBot.build(:medium, :with_video)
+      expect(medium.video).to be_kind_of(VideoUploader::UploadedFile)
     end
   end
 

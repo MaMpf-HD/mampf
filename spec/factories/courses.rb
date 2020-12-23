@@ -24,6 +24,12 @@ FactoryBot.define do
       locale { 'de' }
     end
 
+    trait :with_image do
+      after(:build) do |c|
+        c.image = File.open('spec/files/image.png', 'rb')
+      end
+    end
+
     # call it with build(:course, :with_tags, tag_count: n) if you want
     # n tags associated to the course
     # omitting tag_count yields default of 3 tags

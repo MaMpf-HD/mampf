@@ -82,6 +82,13 @@ RSpec.describe Course, type: :model do
     end
   end
 
+  describe 'with image' do
+    it 'has an image' do
+      course = FactoryBot.build(:course, :with_image)
+      expect(course.image).to be_kind_of(ScreenshotUploader::UploadedFile)
+    end
+  end
+
   # Test methods -- NEEDS TO BE REFACTORED
 
   # describe '#to_label' do

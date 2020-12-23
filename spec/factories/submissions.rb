@@ -21,6 +21,18 @@ FactoryBot.define do
       end
     end
 
+    trait :with_manuscript do
+      after(:build) do |s|
+        s.manuscript = File.open('spec/files/manuscript.pdf', 'rb')
+      end
+    end
+
+    trait :with_correction do
+      after(:build) do |s|
+        s.correction = File.open('spec/files/manuscript.pdf', 'rb')
+      end
+    end
+
     factory :valid_submission, traits: [:with_assignment, :with_tutorial]
   end
 end
