@@ -30,13 +30,13 @@ services:
   mampf:
     build:
       context: ./../..
-      dockerfile: docker/development/Dockerfile
+      dockerfile: docker/run_cypress_tests/Dockerfile
     image: mampf:development
     ports:
       - "127.0.0.1:3000:3000"
     # TODO: Use this
     # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
-    entrypoint: ./entrypoint.sh
+    entrypoint: /usr/src/app/entrypoint.sh
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
@@ -57,10 +57,6 @@ services:
       REDIS_URL: redis://redis:6379/1
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
-    volumes:
-      - type: bind
-        source: ../../
-        target: /usr/src/app/
     depends_on:
       - db
       - solr
