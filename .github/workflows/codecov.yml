@@ -15,16 +15,16 @@ jobs:
     - name: Install dependencies
       working-directory: docker/development
       run: |
-          docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:create"
-          docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:migrate"
-          docker-compose exec mampf  sh -c "RAILS_ENV=test  rails db:test:prepare"
+          docker-compose run mampf  sh -c "RAILS_ENV=test  rails db:create"
+          docker-compose run mampf  sh -c "RAILS_ENV=test  rails db:migrate"
+          docker-compose run mampf  sh -c "RAILS_ENV=test  rails db:test:prepare"
     - name: Create database
       working-directory: docker/development
       run: |
-          docker-compose exec mampf  sh -c "RAILS_ENV=test  rake sunspot:reindex"
+          docker-compose run mampf  sh -c "RAILS_ENV=test  rake sunspot:reindex"
     - name: Run tests
       working-directory: docker/development
-      run: docker-compose exec mampf  sh -c "RAILS_ENV=test rails spec"
+      run: docker-compose run mampf  sh -c "RAILS_ENV=test rails spec"
     - name: Send test coverage report to codecov.io
       uses: codecov/codecov-action@v1
       with:
