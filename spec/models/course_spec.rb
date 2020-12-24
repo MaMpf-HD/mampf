@@ -175,4 +175,89 @@ RSpec.describe Course, type: :model do
       expect(course.compact_title).to eq('BS')
     end
   end
+
+  describe '#title_for_viewers' do
+    it 'returns the correct title for viewers' do
+      course = FactoryBot.build(:course, short_title: 'BS')
+      expect(course.title_for_viewers).to eq('BS')
+    end
+  end
+
+  describe '#long_title' do
+    it 'returns the correct long title' do
+      course = FactoryBot.build(:course, title: 'usual BS')
+      expect(course.long_title).to eq('usual BS')
+    end
+  end
+
+  describe '#title_no_term' do
+    it 'returns the correct title' do
+      course = FactoryBot.build(:course, title: 'usual BS')
+      expect(course.title_no_term).to eq('usual BS')
+    end
+  end
+
+  describe '#locale_with_inheritance' do
+    it 'returns the correct locale' do
+      course = FactoryBot.build(:course, locale: 'br')
+      expect(course.locale_with_inheritance).to eq('br')
+    end
+  end
+
+  describe '#card_header' do
+    it 'returns the correct card header' do
+      course = FactoryBot.build(:course, title: 'usual BS')
+      expect(course.card_header).to eq('usual BS')
+    end
+  end
+
+  describe '#published?' do
+    it 'returns true' do
+      course = FactoryBot.build(:course, title: 'usual BS')
+      expect(course.published?).to be true
+    end
+  end
+
+  describe '#card_header_path' do
+    it 'returns nil' do
+      course = FactoryBot.build(:course)
+      user = FactoryBot.build(:confirmed_user)
+      expect(course.card_header_path(user)).to be_nil
+    end
+  end
+
+  describe '#irrelevant?' do
+    before :each do
+      @course = FactoryBot.build(:course)
+    end
+
+    it 'returns false if the course has lectures' do
+      FactoryBot.build(:lecture, course: @course)
+      expect(@course.irrelevant?).to be false
+    end
+
+    it 'returns false if the course has media' do
+      FactoryBot.build(:course_medium, teachable: @course)
+      expect(@course.irrelevant?).to be false
+    end
+
+    it 'returns false if the course is not persisted' do
+      expect(@course.irrelevant?).to be false
+    end
+
+    it 'returns true if the course is persisted and has no lectures or media' do
+      @course.save
+      expect(@course.irrelevant?).to be true
+    end
+  end
+
+  describe '#published_lectures' do
+    it 'returns the published lectures' do
+      course = FactoryBot.create(:course)
+      published_lectures = FactoryBot.create_list(:lecture, 3, :released_for_all,
+                                                 course: course)
+      unpublished_lectures = FactoryBot.create_list(:lecture, 2, course: course)
+      expect(course.published_lectures).to match_array(published_lectures)
+    end
+  end
 end
