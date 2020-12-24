@@ -17,6 +17,7 @@ FactoryBot.define do
       tags_count { 2 }
       linked_media_count { 2 }
       editors_count { 1 }
+      prescribed_teachable { build(teachable_sort) }
     end
 
     trait :with_description do
@@ -42,15 +43,7 @@ FactoryBot.define do
     end
 
     trait :with_teachable do
-      after(:build) do |m, evaluator|
-        if evaluator.teachable_sort == :course
-          m.teachable = build(:course)
-        elsif evaluator.teachable_sort == :lecture
-          m.teachable = build(:lecture)
-        else
-          m.teachable = build(:valid_lesson)
-        end
-      end
+      teachable { prescribed_teachable }
     end
 
     trait :with_manuscript do
@@ -68,7 +61,7 @@ FactoryBot.define do
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
       sort { 'Kaviar' }
-      teachable_sort { :lesson }
+      teachable_sort { :valid_lesson }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
     end
 
