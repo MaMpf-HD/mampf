@@ -254,9 +254,10 @@ RSpec.describe Course, type: :model do
   describe '#published_lectures' do
     it 'returns the published lectures' do
       course = FactoryBot.create(:course)
-      published_lectures = FactoryBot.create_list(:lecture, 3, :released_for_all,
-                                                 course: course)
-      unpublished_lectures = FactoryBot.create_list(:lecture, 2, course: course)
+      published_lectures = FactoryBot.create_list(:lecture, 3,
+                                                  :released_for_all,
+                                                  course: course)
+      FactoryBot.create_list(:lecture, 2, course: course)
       expect(course.published_lectures).to match_array(published_lectures)
     end
   end
