@@ -269,64 +269,64 @@ RSpec.describe Course, type: :model do
       @teacher = FactoryBot.create(:confirmed_user)
       @generic_user = FactoryBot.create(:confirmed_user)
       @course = FactoryBot.create(:course)
-      year = Faker::Number.between(from: 1000001, to: 100000000)
-      term_1 = FactoryBot.create(:term, year: year, season: 'SS')
-      term_2 = FactoryBot.create(:term, year: year, season: 'WS')
-      term_3 = FactoryBot.create(:term, year: year + 1)
-      term_4 = FactoryBot.create(:term, year: year + 2)
-      @lecture_1 = FactoryBot.create(:lecture, course: @course,
-                                     teacher: @teacher, term: term_1)
-      @lecture_2 = FactoryBot.create(:lecture, course: @course,
-                                     editors: [@editor], term: term_2)
-      @lecture_3 = FactoryBot.create(:lecture, :released_for_all,
-                                     course: @course, term: term_3)
-      @lecture_4 = FactoryBot.create(:lecture, :released_for_all,
-                                     course: @course, term: term_4)
+      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
+      term1 = FactoryBot.create(:term, year: year, season: 'SS')
+      term2 = FactoryBot.create(:term, year: year, season: 'WS')
+      term3 = FactoryBot.create(:term, year: year + 1)
+      term4 = FactoryBot.create(:term, year: year + 2)
+      @lecture1 = FactoryBot.create(:lecture, course: @course,
+                                              teacher: @teacher, term: term1)
+      @lecture2 = FactoryBot.create(:lecture, course: @course,
+                                              editors: [@editor], term: term2)
+      @lecture3 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term3)
+      @lecture4 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term4)
     end
 
     describe '#subscribable_lectures' do
       it 'returns all lectures for admins' do
         expect(@course.subscribable_lectures(@admin))
-          .to match_array([@lecture_1, @lecture_2, @lecture_3,@lecture_4])
+          .to match_array([@lecture1, @lecture2, @lecture3, @lecture4])
       end
 
       it 'returns all given lectures and published lectures for teachers' do
         expect(@course.subscribable_lectures(@teacher))
-          .to match_array([@lecture_1, @lecture_3, @lecture_4])
+          .to match_array([@lecture1, @lecture3, @lecture4])
       end
 
       it 'returns all edited lectures and published lectures for editors' do
         expect(@course.subscribable_lectures(@editor))
-          .to match_array([@lecture_2, @lecture_3, @lecture_4])
+          .to match_array([@lecture2, @lecture3, @lecture4])
       end
 
       it 'returns all published lectures for generic users' do
         expect(@course.subscribable_lectures(@generic_user))
-          .to match_array([@lecture_3, @lecture_4])
+          .to match_array([@lecture3, @lecture4])
       end
     end
 
     describe '#subscribable_lectures_by_date' do
       it 'returns all lectures (sorted) for admins' do
         expect(@course.subscribable_lectures_by_date(@admin).to_a)
-          .to eq([@lecture_4, @lecture_3, @lecture_2, @lecture_1])
+          .to eq([@lecture4, @lecture3, @lecture2, @lecture1])
       end
 
       it 'returns all given lectures and published lectures (sorted) for '\
          'teachers' do
         expect(@course.subscribable_lectures_by_date(@teacher).to_a)
-          .to eq([@lecture_4, @lecture_3, @lecture_1])
+          .to eq([@lecture4, @lecture3, @lecture1])
       end
 
       it 'returns all edited lectures and published lectures (sorted) for '\
          'editors' do
         expect(@course.subscribable_lectures_by_date(@editor).to_a)
-          .to eq([@lecture_4, @lecture_3, @lecture_2])
+          .to eq([@lecture4, @lecture3, @lecture2])
       end
 
       it 'returns all published lectures (sorted) for generic users' do
         expect(@course.subscribable_lectures_by_date(@generic_user).to_a)
-          .to eq([@lecture_4, @lecture_3])
+          .to eq([@lecture4, @lecture3])
       end
     end
   end
@@ -338,15 +338,222 @@ RSpec.describe Course, type: :model do
     end
   end
 
+  context 'lecture sorting' do
+    before :all do
+      @course = FactoryBot.create(:course)
+      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
+      term1 = FactoryBot.create(:term, year: year, season: 'SS')
+      term2 = FactoryBot.create(:term, year: year, season: 'WS')
+      term3 = FactoryBot.create(:term, year: year + 1)
+      term4 = FactoryBot.create(:term, year: year + 2)
+      @lecture1 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term1)
+      @lecture2 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term2)
+      @lecture3 = FactoryBot.create(:lecture, course: @course, term: term3)
+      @lecture4 = FactoryBot.create(:lecture, course: @course, term: term4)
+    end
+
+    describe '#lectures_by_date' do
+      it 'returns the lectures sorted by date' do
+        expect(@course.lectures_by_date.to_a)
+          .to eq([@lecture4, @lecture3, @lecture2, @lecture1])
+      end
+    end
+
+    describe '#published_lectures_by_date' do
+      it 'returns the published lectures sorted by date' do
+        expect(@course.published_lectures_by_date.to_a)
+          .to eq([@lecture2, @lecture1])
+      end
+    end
+  end
+
   describe '#select_tags_by_title' do
     it 'returns the correct list' do
       course = FactoryBot.create(:course)
-      tag_1 = FactoryBot.create(:tag, title: 'Xperience', courses: [course])
-      id_1 = tag_1.id
-      tag_2 = FactoryBot.create(:tag, title: 'Adventure', courses: [course])
-      id_2 = tag_2.id
-      expect(course.select_tags_by_title).to eq [['Adventure', id_2],
-                                                 ['Xperience', id_1]]
+      tag1 = FactoryBot.create(:tag, title: 'Xperience', courses: [course])
+      id1 = tag1.id
+      tag2 = FactoryBot.create(:tag, title: 'Adventure', courses: [course])
+      id2 = tag2.id
+      expect(course.select_tags_by_title).to eq [['Adventure', id2],
+                                                 ['Xperience', id1]]
+    end
+  end
+
+  describe '#items' do
+    it 'returns all items from the lectures of the course' do
+      course = FactoryBot.create(:course)
+      lecture1 = FactoryBot.create(:lecture_with_sparse_toc, course: course)
+      lecture2 = FactoryBot.create(:lecture_with_sparse_toc, course: course)
+      section1 = lecture1.sections.first
+      section2 = lecture2.sections.first
+      item1 = FactoryBot.create(:item, section: section1)
+      item2 = FactoryBot.create(:item, section: section2)
+      expect(course.items).to match_array([item1, item2])
+    end
+  end
+
+  context 'lecture subscriptions' do
+    before :all do
+      @course = FactoryBot.create(:course)
+      year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
+      term1 = FactoryBot.create(:term, year: year, season: 'SS')
+      term2 = FactoryBot.create(:term, year: year, season: 'WS')
+      term3 = FactoryBot.create(:term, year: year + 1)
+      term4 = FactoryBot.create(:term, year: year + 2)
+      @lecture1 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term1)
+      @lecture2 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term2)
+      @lecture3 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term3)
+      @lecture4 = FactoryBot.create(:lecture, :released_for_all,
+                                    course: @course, term: term4,
+                                    passphrase: 'test123')
+      @user = FactoryBot.create(:confirmed_user,
+                                lectures: [@lecture1, @lecture2, @lecture3])
+    end
+
+    describe '#subscribed_lectures' do
+      it 'returns all the subscribed lectures of the user' do
+        expect(@course.subscribed_lectures(@user))
+          .to match_array([@lecture1, @lecture2, @lecture3])
+      end
+    end
+
+    describe '#subscribed_lectures_by_date' do
+      it 'returns all the subscribed lectures (sorted) of the user' do
+        expect(@course.subscribed_lectures_by_date(@user).to_a)
+          .to eq([@lecture3, @lecture2, @lecture1])
+      end
+    end
+
+    describe '#to_be_authorized_lectures' do
+      it 'returns all the nonsubscribed lectures of the user with passphrase' do
+        expect(@course.to_be_authorized_lectures(@user))
+          .to match_array([@lecture4])
+      end
+    end
+
+    describe '#subscribed_by?' do
+      before :each do
+        @user = FactoryBot.create(:confirmed_user)
+        @course = FactoryBot.create(:course)
+      end
+
+      it 'returns true if a lecture of the course was subscribed by user' do
+        lecture = FactoryBot.create(:lecture, course: @course)
+        @user.lectures << lecture
+        expect(@course.subscribed_by?(@user)).to be true
+      end
+
+      it 'returns false if no lecture of the course was subscribed by user' do
+        expect(@course.subscribed_by?(@user)).to be false
+      end
+    end
+
+    describe '#edited_by?' do
+      before :all do
+        @user = FactoryBot.create(:confirmed_user)
+      end
+      it 'returns true if the course is edited by user' do
+        course = FactoryBot.create(:course, editors: [@user])
+        expect(course.edited_by?(@user)).to be true
+      end
+      it 'returns false if course is not edited by user' do
+        course = FactoryBot.create(:course)
+        expect(course.edited_by?(@user)).to be false
+      end
+    end
+
+    describe '#addable_by?' do
+      before :each do
+        @user = FactoryBot.create(:confirmed_user)
+      end
+      it 'returns true if the course is edited by user' do
+        course = FactoryBot.create(:course, editors: [@user])
+        expect(course.addable_by?(@user)).to be true
+      end
+      it 'returns true if a lecture of the course is edited by user' do
+        course = FactoryBot.create(:course)
+        FactoryBot.create(:lecture, course: course, editors: [@user])
+        expect(course.addable_by?(@user)).to be true
+      end
+      it 'returns true if a lecture of the course has the user as teacher' do
+        course = FactoryBot.create(:course)
+        FactoryBot.create(:lecture, course: course, teacher: @user)
+        expect(course.addable_by?(@user)).to be true
+      end
+      it 'returns false if none of the above is true' do
+        course = FactoryBot.create(:course)
+        FactoryBot.create(:lecture, course: course)
+        expect(course.addable_by?(@user)).to be false
+      end
+    end
+
+    describe '#removable_by?' do
+      before :all do
+        @user = FactoryBot.create(:confirmed_user)
+      end
+      it 'returns true if the course is edited by user' do
+        course = FactoryBot.create(:course, editors: [@user])
+        expect(course.removable_by?(@user)).to be true
+      end
+      it 'returns false if no lecture of the course is not edited by user' do
+        course = FactoryBot.create(:course)
+        expect(course.removable_by?(@user)).to be false
+      end
+    end
+
+    context 'media and their items with inheritance' do
+      before :all do
+        DatabaseCleaner.clean
+        @course = FactoryBot.create(:course, short_title: 'LA2')
+        term = FactoryBot.create(:term, year: 2020, season: 'SS')
+        lecture = FactoryBot.create(:lecture_with_sparse_toc, course: @course,
+                                                              term: term)
+        lesson = FactoryBot.create(:valid_lesson, lecture: lecture)
+        @course_medium = FactoryBot.create(:course_medium,
+                                           teachable: @course,
+                                           description: 'p-adische Zahlen')
+        @lecture_medium = FactoryBot.create(:lecture_medium,
+                                            teachable: lecture,
+                                            description: 'Gruppenring')
+        @lesson_medium = FactoryBot.create(:lesson_medium,
+                                           teachable: lesson,
+                                           description: 'exakte Folge')
+      end
+
+      describe '#media_with_inheritance' do
+        it 'returns all media form course and associated lectures, lessons' do
+          expect(@course.media_with_inheritance)
+            .to match_array([@course_medium, @lecture_medium, @lesson_medium])
+        end
+      end
+
+      describe '#media_items_with_inheritance' do
+        it 'returns all items with their title and id' do
+          item1 = FactoryBot.create(:item, sort: 'remark', ref_number: '1.2',
+                                           medium: @course_medium)
+          item2 = FactoryBot.create(:item, sort: 'theorem', ref_number: '3.4',
+                                           medium: @lecture_medium)
+          item3 = FactoryBot.create(:item, sort: 'example', ref_number: '5.6',
+                                           medium: @lesson_medium)
+          self_item1 = Item.find_by(sort: 'self', medium: @course_medium)
+          self_item2 = Item.find_by(sort: 'self', medium: @lecture_medium)
+          self_item3 = Item.find_by(sort: 'self', medium: @lesson_medium)
+          expect(@course.media_items_with_inheritance)
+            .to match_array([['Bem. 1.2 ', item1.id],
+                             ['SS 20, Satz 3.4 ', item2.id],
+                             ['SS 20, Bsp. 5.6 ', item3.id],
+                             ['Worked Example, p-adische Zahlen',
+                              self_item1.id],
+                             ['SS 20, Worked Example, Gruppenring',
+                              self_item2.id],
+                             ['SS 20, Lektion, exakte Folge', self_item3.id]])
+        end
+      end
     end
   end
 end

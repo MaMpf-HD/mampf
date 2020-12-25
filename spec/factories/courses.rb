@@ -3,9 +3,9 @@
 FactoryBot.define do
   factory :course do
     title { Faker::Book.title + ' ' +
-            Faker::Number.between(from: 1, to: 999).to_s }
+            Faker::Number.between(from: 1, to: 9999).to_s }
     short_title { Faker::Book.title + ' ' +
-                  Faker::Number.between(from: 1, to: 999).to_s }
+                  Faker::Number.between(from: 1, to: 9999).to_s }
 
     transient do
       tag_count { 3 }

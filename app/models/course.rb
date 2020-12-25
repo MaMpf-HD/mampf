@@ -166,6 +166,7 @@ class Course < ApplicationRecord
     user.courses.include?(self)
   end
 
+  # REFACTOR
   def edited_by?(user)
     return true if editors.include?(user)
     false
@@ -177,6 +178,7 @@ class Course < ApplicationRecord
     in?(user.edited_or_given_courses_with_inheritance)
   end
 
+  # REFACTOR
   # a course is removable by the user if the user is an editor of this course
   def removable_by?(user)
     in?(user.edited_courses)
