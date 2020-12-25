@@ -261,4 +261,92 @@ RSpec.describe Course, type: :model do
       expect(course.published_lectures).to match_array(published_lectures)
     end
   end
+
+  context 'subscribable lectures' do
+    before :all do
+      @admin = FactoryBot.create(:confirmed_user, admin: true)
+      @editor = FactoryBot.create(:confirmed_user)
+      @teacher = FactoryBot.create(:confirmed_user)
+      @generic_user = FactoryBot.create(:confirmed_user)
+      @course = FactoryBot.create(:course)
+      year = Faker::Number.between(from: 1000001, to: 100000000)
+      term_1 = FactoryBot.create(:term, year: year, season: 'SS')
+      term_2 = FactoryBot.create(:term, year: year, season: 'WS')
+      term_3 = FactoryBot.create(:term, year: year + 1)
+      term_4 = FactoryBot.create(:term, year: year + 2)
+      @lecture_1 = FactoryBot.create(:lecture, course: @course,
+                                     teacher: @teacher, term: term_1)
+      @lecture_2 = FactoryBot.create(:lecture, course: @course,
+                                     editors: [@editor], term: term_2)
+      @lecture_3 = FactoryBot.create(:lecture, :released_for_all,
+                                     course: @course, term: term_3)
+      @lecture_4 = FactoryBot.create(:lecture, :released_for_all,
+                                     course: @course, term: term_4)
+    end
+
+    describe '#subscribable_lectures' do
+      it 'returns all lectures for admins' do
+        expect(@course.subscribable_lectures(@admin))
+          .to match_array([@lecture_1, @lecture_2, @lecture_3,@lecture_4])
+      end
+
+      it 'returns all given lectures and published lectures for teachers' do
+        expect(@course.subscribable_lectures(@teacher))
+          .to match_array([@lecture_1, @lecture_3, @lecture_4])
+      end
+
+      it 'returns all edited lectures and published lectures for editors' do
+        expect(@course.subscribable_lectures(@editor))
+          .to match_array([@lecture_2, @lecture_3, @lecture_4])
+      end
+
+      it 'returns all published lectures for generic users' do
+        expect(@course.subscribable_lectures(@generic_user))
+          .to match_array([@lecture_3, @lecture_4])
+      end
+    end
+
+    describe '#subscribable_lectures_by_date' do
+      it 'returns all lectures (sorted) for admins' do
+        expect(@course.subscribable_lectures_by_date(@admin).to_a)
+          .to eq([@lecture_4, @lecture_3, @lecture_2, @lecture_1])
+      end
+
+      it 'returns all given lectures and published lectures (sorted) for '\
+         'teachers' do
+        expect(@course.subscribable_lectures_by_date(@teacher).to_a)
+          .to eq([@lecture_4, @lecture_3, @lecture_1])
+      end
+
+      it 'returns all edited lectures and published lectures (sorted) for '\
+         'editors' do
+        expect(@course.subscribable_lectures_by_date(@editor).to_a)
+          .to eq([@lecture_4, @lecture_3, @lecture_2])
+      end
+
+      it 'returns all published lectures (sorted) for generic users' do
+        expect(@course.subscribable_lectures_by_date(@generic_user).to_a)
+          .to eq([@lecture_4, @lecture_3])
+      end
+    end
+  end
+
+  describe '#restricted?' do
+    it 'returns false' do
+      course = FactoryBot.build(:course)
+      expect(course.restricted?).to be false
+    end
+  end
+
+  describe '#select_tags_by_title' do
+    it 'returns the correct list' do
+      course = FactoryBot.create(:course)
+      tag_1 = FactoryBot.create(:tag, title: 'Xperience', courses: [course])
+      id_1 = tag_1.id
+      tag_2 = FactoryBot.create(:tag, title: 'Adventure', courses: [course])
+      id_2 = tag_2.id
+      expect(course.select_tags_by_title).to eq [['Adventure', id_2],
+                                                 ['Xperience', id_1]]
+    end
+  end
 end

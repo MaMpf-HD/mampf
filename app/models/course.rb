@@ -128,42 +128,6 @@ class Course < ApplicationRecord
     false
   end
 
-  # The next methods return if there are any media in the Kaviar, Sesam etc.
-  # projects that are associated to this course *without inheritance*
-  # These methods make use of caching.
-
-  def kaviar?(user)
-    project?('kaviar',user)
-  end
-
-  def sesam?(user)
-    project?('sesam', user)
-  end
-
-  def keks?(user)
-    project?('keks', user)
-  end
-
-  def erdbeere?(user)
-    project?('erdbeere', user)
-  end
-
-  def kiwi?(user)
-    project?('kiwi', user)
-  end
-
-  def nuesse?(user)
-    project?('nuesse', user)
-  end
-
-  def script?(user)
-    project?('script', user)
-  end
-
-  def reste?(user)
-    project?('reste', user)
-  end
-
   def lectures_by_date
     lectures.sort
   end
@@ -411,28 +375,6 @@ class Course < ApplicationRecord
   end
 
   private
-
-  # looks in the cache if there are any media associated *without_inheritance*
-  # to this course and a given project (kaviar, sesam etc.)
-  def project_as_user?(project)
-    Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
-      Medium.where(sort: sort[project],
-                   released: ['all', 'users', 'subscribers'],
-                   teachable: self).exists?
-    end
-  end
-
-  def project?(project, user)
-    return project_as_user?(project) unless edited_by?(user)
-    Medium.where(sort: sort[project],
-                 teachable: self).exists?
-  end
-
-  def sort
-    { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
-      'keks' => ['Quiz'], 'nuesse' => ['Nuesse'],
-      'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste'] }
-  end
 
   def touch_media
     media_with_inheritance.update_all(updated_at: Time.now)
