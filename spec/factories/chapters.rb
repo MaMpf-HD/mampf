@@ -14,7 +14,7 @@ FactoryBot.define do
 
     trait :with_sections do
       after(:build) do |chapter, evaluator|
-        chapter.sections = build_list(:section, evaluator.section_count)
+        chapter.sections = create_list(:section, evaluator.section_count)
       end
     end
   end

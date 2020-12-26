@@ -30,6 +30,14 @@ FactoryBot.define do
       end
     end
 
+    trait :with_image_and_normalization do
+      with_image
+
+      after :build do |c|
+        c.image_derivatives!
+      end
+    end
+
     # call it with build(:course, :with_tags, tag_count: n) if you want
     # n tags associated to the course
     # omitting tag_count yields default of 3 tags

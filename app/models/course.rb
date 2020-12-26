@@ -210,7 +210,9 @@ class Course < ApplicationRecord
   # search_params is a hash with keys :all_teachables, :teachable_ids
   # teachable ids is an array made up of strings composed of 'lecture-'
   # or 'course-' followed by the id
-  # search is done with inheritance
+  # search is done with inheritance:
+  # it returns all courses, lectures and lessons that are associated
+  # (with inheritance) to the geiven list of teachables
   def self.search_teachables(search_params)
     if search_params[:all_teachables] == '1'
       return Course.all + Lecture.all + Lesson.all
@@ -241,7 +243,7 @@ class Course < ApplicationRecord
     self.search_teachables(search_params).map { |t| "#{t.class}-#{t.id}" }
   end
 
-  # returns the array of courses that can be edited by the given user,
+  # returns the array of titles of courses that can be edited by the given user,
   # together with a string made up of 'Course-' and their id
   # Is used in options_for_select in form helpers.
   def self.editable_selection(user)
@@ -260,6 +262,8 @@ class Course < ApplicationRecord
     Course.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
+
+  # REFACTOR: Use questions_with_inheritance for that
   def questions_count
     Rails.cache.fetch("#{cache_key_with_version}/questions_count") do
       Question.where(teachable: [self] + [lectures.published],
@@ -367,8 +371,8 @@ class Course < ApplicationRecord
     "#{image.metadata['width']}x#{image.metadata['height']}"
   end
 
-  # returns all courses whose title is close to the given search string
-  # wrt to the JaroWinkler metric
+  # returns all titles of courses whose title is close to the given search
+  # string wrt to the JaroWinkler metric
   def self.similar_courses(search_string)
     jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
     titles = Course.pluck(:title)
