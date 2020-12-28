@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Course class
 class Course < ApplicationRecord
   include ApplicationHelper
@@ -7,7 +9,8 @@ class Course < ApplicationRecord
   # tags are notions that treated in the course
   # e.g.: vector space, linear map are tags for the course 'Linear Algebra 1'
   has_many :course_tag_joins, dependent: :destroy
-  has_many :tags, through: :course_tag_joins,
+  has_many :tags,
+           through: :course_tag_joins,
            after_remove: :touch_tag,
            after_add: :touch_tag
 
@@ -32,7 +35,6 @@ class Course < ApplicationRecord
   has_many :division_course_joins, dependent: :destroy
   has_many :divisions, through: :division_course_joins
 
-
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
 
@@ -52,14 +54,12 @@ class Course < ApplicationRecord
     self
   end
 
+  alias media_scope course
+
   def lecture
   end
 
   def lesson
-  end
-
-  def media_scope
-    self
   end
 
   def selector_value
@@ -69,6 +69,10 @@ class Course < ApplicationRecord
   def to_label
     title
   end
+
+  alias long_title to_label
+  alias title_no_term to_label
+  alias card_header to_label
 
   def compact_title
     short_title
@@ -80,20 +84,8 @@ class Course < ApplicationRecord
     end
   end
 
-  def long_title
-    title
-  end
-
-  def title_no_term
-    title
-  end
-
   def locale_with_inheritance
     locale
-  end
-
-  def card_header
-    title
   end
 
   def published?
@@ -108,16 +100,13 @@ class Course < ApplicationRecord
     lectures.empty? && media.empty? && id.present?
   end
 
-  def published_lectures
-    lectures.published
-  end
-
   def subscribable_lectures(user)
-    return lectures if user.admin
-    return published_lectures unless user.editor? || user.teacher?
-    lectures.where(id: lectures.select { |l| l.edited_by?(user) ||
-                                               l.published? }
-                               .map(&:id))
+    return lectures if user.admin || user.in?(editors)
+    return lectures.published unless user.edited_lectures.any? || user.teacher?
+
+    lectures.left_outer_joins(:editable_user_joins)
+            .where('released IS NOT NULL OR editable_user_joins.user_id = ?'\
+                   ' OR teacher_id = ?', user.id, user.id).distinct
   end
 
   def subscribable_lectures_by_date(user)
@@ -132,15 +121,10 @@ class Course < ApplicationRecord
     lectures.sort
   end
 
-  def published_lectures_by_date
-    published_lectures.sort
-  end
-
   # returns the array of all tags (sorted by title) together with
   # their ids
   def select_tags_by_title
-    tags.map { |t| t.title_id_hash }
-        .natural_sort_by { |t| t[:title] }
+    tags.map(&:title_id_hash).natural_sort_by { |t| t[:title] }
         .map { |t| [t[:title], t[:id]] }
   end
 
@@ -166,10 +150,8 @@ class Course < ApplicationRecord
     user.courses.include?(self)
   end
 
-  # REFACTOR
   def edited_by?(user)
-    return true if editors.include?(user)
-    false
+    user.in?(editors)
   end
 
   def users
@@ -183,11 +165,7 @@ class Course < ApplicationRecord
     in?(user.edited_or_given_courses_with_inheritance)
   end
 
-  # REFACTOR
-  # a course is removable by the user if the user is an editor of this course
-  def removable_by?(user)
-    in?(user.edited_courses)
-  end
+  alias removable_by? edited_by?
 
   # returns the ARel of all media that are associated to the course
   # by inheritance (i.e. directly and media which are associated to lectures or
@@ -195,8 +173,8 @@ class Course < ApplicationRecord
   def media_with_inheritance
     Rails.cache.fetch("#{cache_key_with_version}/media_with_inheritance") do
       Medium.proper.where(teachable: self)
-        .or(Medium.proper.where(teachable: self.lectures))
-        .or(Medium.proper.where(teachable: Lesson.where(lecture: self.lectures)))
+            .or(Medium.proper.where(teachable: lectures))
+            .or(Medium.proper.where(teachable: Lesson.where(lecture: lectures)))
     end
   end
 
@@ -209,43 +187,6 @@ class Course < ApplicationRecord
 
   def sections
     lectures.collect(&:sections).flatten
-  end
-
-  # returns an array of teachables determined  by the search params
-  # search_params is a hash with keys :all_teachables, :teachable_ids
-  # teachable ids is an array made up of strings composed of 'lecture-'
-  # or 'course-' followed by the id
-  # search is done with inheritance:
-  # it returns all courses, lectures and lessons that are associated
-  # (with inheritance) to the geiven list of teachables
-  def self.search_teachables(search_params)
-    if search_params[:all_teachables] == '1'
-      return Course.all + Lecture.all + Lesson.all
-    end
-    courses = Course.where(id: Course.search_course_ids(search_params))
-    inherited_lectures = Lecture.where(course: courses)
-    selected_lectures = Lecture.where(id: Course
-                                            .search_lecture_ids(search_params))
-    lectures = (inherited_lectures + selected_lectures).uniq
-    lessons = lectures.collect(&:lessons).flatten
-    courses + lectures + lessons
-  end
-
-  def self.search_lecture_ids(search_params)
-    teachable_ids = search_params[:teachable_ids] || []
-    teachable_ids.select { |t| t.start_with?('Lecture') }
-                 .map { |t| t.remove('Lecture-') }
-  end
-
-  def self.search_course_ids(search_params)
-    teachable_ids = search_params[:teachable_ids] || []
-    teachable_ids.select { |t| t.start_with?('Course') }
-                 .map { |t| t.remove('Course-') }
-  end
-
-  def self.search_inherited_teachables(search_params)
-    return unless search_params[:teachable_ids]
-    self.search_teachables(search_params).map { |t| "#{t.class}-#{t.id}" }
   end
 
   # returns the array of titles of courses that can be edited by the given user,
@@ -267,14 +208,15 @@ class Course < ApplicationRecord
     Course.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
+  def questions_with_inheritance
+    Question.where(teachable: [self] + [lectures.published],
+                   independent: true)
+            .locally_visible
+  end
 
-  # REFACTOR: Use questions_with_inheritance for that
   def questions_count
     Rails.cache.fetch("#{cache_key_with_version}/questions_count") do
-      Question.where(teachable: [self] + [lectures.published],
-                     independent: true,
-                     released: ['all', 'users'])
-              .pluck(:id).count
+      questions_with_inheritance.size
     end
   end
 
@@ -283,33 +225,18 @@ class Course < ApplicationRecord
   end
 
   def create_random_quiz!(tags, count)
-    count = 5 unless count.in?([5,10,15])
+    count = 5 unless count.in?([5, 10, 15])
     if tags.any?
       tagged_questions = questions(tags)
-      if tagged_questions.count > count
-        # we use the following algorithm for one-pass weighted sampling:
-        # http://utopia.duth.gr/~pefraimi/research/data/2007EncOfAlg.pdf
-        # see also https://gist.github.com/O-I/3e0654509dd8057b539a
-        weighted_questions = weighted_question_ids(tagged_questions, tags)
-        sample = weighted_questions.max_by(count) do
-          |_, weight| rand ** (1.0 / weight)
-        end
-        question_ids = sample.map(&:first)
+      question_ids = if tagged_questions.count > count
+        QuestionSampler.new(tagged_questions, tags, count).sample!
       else
-        question_ids = tagged_questions.map(&:id).shuffle
+        tagged_questions.map(&:id).shuffle
       end
     else
       question_ids = questions_with_inheritance.pluck(:id).sample(count)
     end
-    quiz_graph = QuizGraph.build_from_questions(question_ids)
-    quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{course.title} #{Time.now}",
-                    level: 1,
-                    quiz_graph: quiz_graph,
-                    sort: 'RandomQuiz',
-                    locale: locale)
-    quiz.save
-    return quiz.errors unless quiz.valid?
-    quiz
+    create_quiz_by_questions!(question_ids)
   end
 
   def question_tags
@@ -318,26 +245,13 @@ class Course < ApplicationRecord
     Tag.where(id: tag_ids)
   end
 
-  def questions_with_inheritance
-    Question.where(teachable: [self] + [lectures.published],
-                   independent: true)
-            .locally_visible
-  end
-
   def question_count(tags)
     questions(tags).count
   end
 
-  def weighted_question_ids(questions, tags)
-    tag_ids = tags.pluck(:id)
-    weighted_questions = questions(tags).includes(:tags).map do |q|
-      [q.id, (q.tag_ids & tag_ids).count]
-    end
-    weighted_questions.to_h
-  end
-
   def questions(tags)
     return questions_with_inheritance unless tags.any?
+
     tagged_ids = MediumTagJoin.where(medium: questions_with_inheritance,
                                      tag: tags)
                               .pluck(:medium_id)
@@ -346,33 +260,37 @@ class Course < ApplicationRecord
   end
 
   def select_question_tags_by_title
-    question_tags.map { |t| t.title_id_hash }
-                 .natural_sort_by { |t| t[:title] }
+    question_tags.map(&:title_id_hash).natural_sort_by { |t| t[:title] }
                  .map { |t| { value: t[:id], text: t[:title] } }
   end
 
   def image_url_with_host
     return unless image
+
     image_url(host: host)
   end
 
   def normalized_image_url_with_host
     return unless image && image(:normalized)
+
     image_url(:normalized, host: host)
   end
 
   def image_filename
     return unless image
+
     image.metadata['filename']
   end
 
   def image_size
     return unless image
+
     image.metadata['size']
   end
 
   def image_resolution
     return unless image
+
     "#{image.metadata['width']}x#{image.metadata['height']}"
   end
 
@@ -381,8 +299,9 @@ class Course < ApplicationRecord
   def self.similar_courses(search_string)
     jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
     titles = Course.pluck(:title)
-    titles.select { |t| jarowinkler.getDistance(t.downcase,
-                                                search_string.downcase) > 0.8 }
+    titles.select do |t|
+      jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
+    end
   end
 
   private
@@ -399,5 +318,19 @@ class Course < ApplicationRecord
   def touch_lectures_and_lessons
     lectures.update_all(updated_at: Time.now)
     Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+  end
+
+  def create_quiz_by_questions!(question_ids)
+    quiz_graph = QuizGraph.build_from_questions(question_ids)
+    quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} "\
+                                 "#{course.title} #{Time.now}",
+                    level: 1,
+                    quiz_graph: quiz_graph,
+                    sort: 'RandomQuiz',
+                    locale: locale)
+    quiz.save
+    return quiz.errors unless quiz.valid?
+
+    quiz
   end
 end

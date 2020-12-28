@@ -241,7 +241,8 @@ class Medium < ApplicationRecord
   def self.search_by(search_params, page)
     search_params[:types] = [] if search_params[:all_types] == '1'
     if search_params[:teachable_inheritance] == '1'
-      search_params[:teachable_ids] = Course.search_inherited_teachables(search_params)
+      search_params[:teachable_ids] =
+        TeachableParser.new(search_params).inherited_teachables_as_strings
     end
     search_params[:teachable_ids] = [] if search_params[:all_teachables] == '1'
     search_params[:editor_ids] = [] if search_params[:all_editors] == '1'
