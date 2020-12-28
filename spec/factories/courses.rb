@@ -3,9 +3,9 @@
 FactoryBot.define do
   factory :course do
     title { Faker::Book.title + ' ' +
-            Faker::Number.between(from: 1, to: 999).to_s }
+            Faker::Number.between(from: 1, to: 9999).to_s }
     short_title { Faker::Book.title + ' ' +
-                  Faker::Number.between(from: 1, to: 999).to_s }
+                  Faker::Number.between(from: 1, to: 9999).to_s }
 
     transient do
       tag_count { 3 }
@@ -27,6 +27,14 @@ FactoryBot.define do
     trait :with_image do
       after(:build) do |c|
         c.image = File.open('spec/files/image.png', 'rb')
+      end
+    end
+
+    trait :with_image_and_normalization do
+      with_image
+
+      after :build do |c|
+        c.image_derivatives!
       end
     end
 

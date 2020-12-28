@@ -8,10 +8,12 @@ FactoryBot.define do
       notions_count { 1 }
       related_tags_count { 2 }
       courses_count { 2 }
+      title { Faker::Book.title + ' ' +
+              Faker::Number.between(from: 1, to: 9999).to_s }
     end
 
-    after(:build) do |tag|
-      tag.notions << build(:notion)
+    after(:build) do |tag, evaluator|
+      tag.notions << build(:notion, title: evaluator.title)
     end
 
     trait :with_several_notions do

@@ -538,6 +538,8 @@ class Lecture < ApplicationRecord
     end
   end
 
+  # this is depracated in favor of <=>
+  # REPLACE all occurences and delete this method
   def self.sort_by_date(lectures)
     lectures.sort_by(&:begin_date).reverse
   end
