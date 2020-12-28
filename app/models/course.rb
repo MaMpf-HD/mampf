@@ -207,6 +207,11 @@ class Course < ApplicationRecord
     false
   end
 
+  def users
+    User.where(id: LectureUserJoin.where(lecture: lectures)
+                                  .pluck(:user_id).uniq)
+  end
+
   # a course is addable by the user if the user is an editor or teacher of
   # this course or a lecture of this course
   def addable_by?(user)

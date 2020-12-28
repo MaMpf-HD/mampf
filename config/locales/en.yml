@@ -653,8 +653,8 @@ en:
           This is the list of event series for this course.
           Unpublished event series are displayed in red.
         subscribers_count: >
-          This is the number of all users who have subscribed this event series in
-          their profile settings.
+          This is the number of all users who have subscribed event series
+          associated to this course.
         tags: >
           This is the list of all tags that are associated to this course.
           Typically they correspond to the content of the module handbook.
