@@ -688,8 +688,8 @@ de:
           Dies ist die Liste aller Veranstaltungen zu diesem Modul.
           Unveröffentlichte Veranstaltungen sind in rötlicher Farbe gekennzeichnet.
         subscribers_count: >
-          Das ist die Zahl aller NutzerInnen, die diese
-          Veranstaltung in ihrem Profil abonniert haben.
+          Das ist die Zahl aller NutzerInnen, die Veranstaltungen aus
+          diesem Modul abonniert haben.
         tags: >
           Das ist die Liste aller zu diesem Modul
           assoziierten Tags. Diese korrespondieren typischerweise
@@ -3221,6 +3221,12 @@ de:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
               taken: 'Dieser Titel ist bereits vergeben.'
+        clicker_vote:
+          attributes:
+            clicker:
+              clicker_closed: 'Der zugehörige Clicker ist geschlossen.'
+            value:
+              out_of_range: 'Der Wert ist außerhalb des zulässigen Bereichs.'
         course:
           attributes:
             title:

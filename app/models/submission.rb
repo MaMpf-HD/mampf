@@ -171,7 +171,7 @@ class Submission < ApplicationRecord
   private
 
 	def matching_lecture
-		return true if tutorial&.lecture == assignment.lecture
+		return true if tutorial&.lecture == assignment&.lecture
 		errors.add(:tutorial, :lecture_not_matching)
 	end
 

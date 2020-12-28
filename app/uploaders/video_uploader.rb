@@ -5,7 +5,7 @@ class VideoUploader < Shrine
   # shrine plugins
   plugin :upload_endpoint
   plugin :add_metadata
-  # plugin :determine_mime_type
+  plugin :determine_mime_type, analyzer: :file if Rails.env.test?
   plugin :validation_helpers
   plugin :pretty_location
   plugin :refresh_metadata

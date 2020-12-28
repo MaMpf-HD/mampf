@@ -1,53 +1,81 @@
+# frozen_string_literal: true
+
 require 'faker'
 
 FactoryBot.define do
-  factory :medium, aliases: [:linked_medium] do
-    # sort %w[Kaviar Erdbeere Sesam Kiwi Reste].sample
-    author { Faker::Name.name }
-    title { Faker::Book.title + ' ' + Faker::Number.between(1, 999).to_s }
-    association :teachable, factory: [:lesson, :with_tags]
-    description { Faker::TwinPeaks.quote }
-    video_stream_link do
-      Faker::Internet.url +
-        Faker::Lorem.word +
-        '.html'
+  factory :medium do
+    # the generic factory for medium will just produce an empty medium
+    # as it is rather expensive to build a valid medium from scratch
+    # (and in most tests you will probably start with an empty medium and
+    # add an already existing teachable etc.)
+    # if you want a valid medium with all that is needed use the valid_medium
+    # factory (for a medium at lecture level), or the lesson_medium or
+    # course_medium factories
+
+    transient do
+      teachable_sort { :lecture }
+      tags_count { 2 }
+      linked_media_count { 2 }
+      editors_count { 1 }
+      prescribed_teachable { build(teachable_sort) }
     end
-    video_file_link do
-      Faker::Internet.url +
-        Faker::Lorem.word +
-        '.mp4'
+
+    trait :with_description do
+      description { Faker::Restaurant.name }
     end
-    video_thumbnail_link do
-      Faker::Internet.url +
-        Faker::Lorem.word +
-        '.png'
+
+    trait :with_editors do
+      after(:build) do |m, evaluator|
+        m.editors = build_list(:confirmed_user, evaluator.editors_count)
+      end
     end
-    manuscript_link do
-      Faker::Internet.url +
-        Faker::Lorem.word +
-        '.pdf'
-    end
-    external_reference_link do
-      Faker::Internet.url +
-        Faker::Lorem.word +
-        '.html'
-    end
-    # width Faker::Number.between(800, 1800)
-    # height Faker::Number.between(500, 1300)
-    # embedded_width Faker::Number.between(800, 1800)
-    # embedded_height Faker::Number.between(500, 1300)
-    # length Faker::Number.between(0, 9).to_s + 'h' + Faker::Number.between(0, 5).to_s +
-           # Faker::Number.between(0, 9).to_s + 'm' + Faker::Number.between(0, 5).to_s +
-           # Faker::Number.between(0, 9).to_s + 's'
-    # video_size Faker::Number.decimal(3,2).to_s + ' MiB'
-    # pages  Faker::Number.between(1, 100)
-    # manuscript_size Faker::Number.decimal(3,2).to_s + ' KiB'
-    # authoring_software 'Camtasia ' + [*8..9].sample.to_s
+
     trait :with_tags do
-      after(:build) { |m| m.tags = FactoryBot.create_list(:tag,2) }
+      after(:build) do |m, evaluator|
+        m.tags = build_list(:tag, evaluator.tags_count)
+      end
     end
+
     trait :with_linked_media do
-      after(:build) { |m| m.linked_media = FactoryBot.create_list(:medium,2) }
+      after(:build) do |m, evaluator|
+        m.linked_media = build_list(:valid_medium, evaluator.linked_media_count)
+      end
+    end
+
+    trait :with_teachable do
+      teachable { prescribed_teachable }
+    end
+
+    trait :with_manuscript do
+      after(:build) do |m|
+        m.manuscript = File.open('spec/files/manuscript.pdf', 'rb')
+      end
+    end
+
+    trait :with_video do
+      after(:build) do |m|
+        m.video = File.open('spec/files/talk.mp4', 'rb')
+      end
+    end
+
+    factory :lesson_medium,
+            traits: [:with_description, :with_teachable] do
+      sort { 'Kaviar' }
+      teachable_sort { :valid_lesson }
+      after(:build) { |m| m.editors << m.teachable.lecture.teacher }
+    end
+
+    factory :lecture_medium,
+            traits: [:with_description, :with_teachable],
+            aliases: [:valid_medium] do
+      sort { 'Sesam' }
+      after(:build) { |m| m.editors << m.teachable.teacher }
+    end
+
+    factory :course_medium,
+            traits: [:with_description, :with_teachable, :with_editors] do
+      sort { 'Sesam' }
+      teachable_sort { :course }
     end
   end
 end

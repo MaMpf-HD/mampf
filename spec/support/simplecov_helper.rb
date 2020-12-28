@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # spec/support/simplecov_helper.rb
 # Credit goes to https://gitlab.com/gitlab-org/gitlab-foss/blob/master/spec/simplecov_env.rb
 
@@ -38,4 +40,3 @@ module SimpleCovHelper
     SimpleCov.start
   end
 end
-

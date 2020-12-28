@@ -653,8 +653,8 @@ en:
           This is the list of event series for this course.
           Unpublished event series are displayed in red.
         subscribers_count: >
-          This is the number of all users who have subscribed this event series in
-          their profile settings.
+          This is the number of all users who have subscribed event series
+          associated to this course.
         tags: >
           This is the list of all tags that are associated to this course.
           Typically they correspond to the content of the module handbook.
@@ -3040,6 +3040,12 @@ en:
             title:
               blank: 'You need to give a title.'
               taken: 'This title is already taken.'
+        clicker_vote:
+          attributes:
+            clicker:
+              clicker_closed: 'The associated clicker is closed.'
+            value:
+              out_of_range: 'The value is out of the admissible range.'
         course:
           attributes:
             title:

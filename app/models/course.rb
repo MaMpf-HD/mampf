@@ -128,42 +128,6 @@ class Course < ApplicationRecord
     false
   end
 
-  # The next methods return if there are any media in the Kaviar, Sesam etc.
-  # projects that are associated to this course *without inheritance*
-  # These methods make use of caching.
-
-  def kaviar?(user)
-    project?('kaviar',user)
-  end
-
-  def sesam?(user)
-    project?('sesam', user)
-  end
-
-  def keks?(user)
-    project?('keks', user)
-  end
-
-  def erdbeere?(user)
-    project?('erdbeere', user)
-  end
-
-  def kiwi?(user)
-    project?('kiwi', user)
-  end
-
-  def nuesse?(user)
-    project?('nuesse', user)
-  end
-
-  def script?(user)
-    project?('script', user)
-  end
-
-  def reste?(user)
-    project?('reste', user)
-  end
-
   def lectures_by_date
     lectures.sort
   end
@@ -202,9 +166,15 @@ class Course < ApplicationRecord
     user.courses.include?(self)
   end
 
+  # REFACTOR
   def edited_by?(user)
     return true if editors.include?(user)
     false
+  end
+
+  def users
+    User.where(id: LectureUserJoin.where(lecture: lectures)
+                                  .pluck(:user_id).uniq)
   end
 
   # a course is addable by the user if the user is an editor or teacher of
@@ -213,6 +183,7 @@ class Course < ApplicationRecord
     in?(user.edited_or_given_courses_with_inheritance)
   end
 
+  # REFACTOR
   # a course is removable by the user if the user is an editor of this course
   def removable_by?(user)
     in?(user.edited_courses)
@@ -244,7 +215,9 @@ class Course < ApplicationRecord
   # search_params is a hash with keys :all_teachables, :teachable_ids
   # teachable ids is an array made up of strings composed of 'lecture-'
   # or 'course-' followed by the id
-  # search is done with inheritance
+  # search is done with inheritance:
+  # it returns all courses, lectures and lessons that are associated
+  # (with inheritance) to the geiven list of teachables
   def self.search_teachables(search_params)
     if search_params[:all_teachables] == '1'
       return Course.all + Lecture.all + Lesson.all
@@ -275,7 +248,7 @@ class Course < ApplicationRecord
     self.search_teachables(search_params).map { |t| "#{t.class}-#{t.id}" }
   end
 
-  # returns the array of courses that can be edited by the given user,
+  # returns the array of titles of courses that can be edited by the given user,
   # together with a string made up of 'Course-' and their id
   # Is used in options_for_select in form helpers.
   def self.editable_selection(user)
@@ -294,6 +267,8 @@ class Course < ApplicationRecord
     Course.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
   end
 
+
+  # REFACTOR: Use questions_with_inheritance for that
   def questions_count
     Rails.cache.fetch("#{cache_key_with_version}/questions_count") do
       Question.where(teachable: [self] + [lectures.published],
@@ -401,8 +376,8 @@ class Course < ApplicationRecord
     "#{image.metadata['width']}x#{image.metadata['height']}"
   end
 
-  # returns all courses whose title is close to the given search string
-  # wrt to the JaroWinkler metric
+  # returns all titles of courses whose title is close to the given search
+  # string wrt to the JaroWinkler metric
   def self.similar_courses(search_string)
     jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
     titles = Course.pluck(:title)
@@ -411,28 +386,6 @@ class Course < ApplicationRecord
   end
 
   private
-
-  # looks in the cache if there are any media associated *without_inheritance*
-  # to this course and a given project (kaviar, sesam etc.)
-  def project_as_user?(project)
-    Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
-      Medium.where(sort: sort[project],
-                   released: ['all', 'users', 'subscribers'],
-                   teachable: self).exists?
-    end
-  end
-
-  def project?(project, user)
-    return project_as_user?(project) unless edited_by?(user)
-    Medium.where(sort: sort[project],
-                 teachable: self).exists?
-  end
-
-  def sort
-    { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
-      'keks' => ['Quiz'], 'nuesse' => ['Nuesse'],
-      'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste'] }
-  end
 
   def touch_media
     media_with_inheritance.update_all(updated_at: Time.now)

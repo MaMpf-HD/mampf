@@ -37,14 +37,7 @@ class Section < ApplicationRecord
   before_destroy :touch_media
 
   def lecture
-    Rails.cache.fetch("#{cache_key_with_version}/lecture") do
-      lecture_uncached
-    end
-  end
-
-  def lecture_uncached
-    return unless chapter.present?
-    chapter.lecture
+    chapter&.lecture
   end
 
   def reference_number

@@ -420,7 +420,7 @@ class Item < ApplicationRecord
 
   def start_time_not_required
     medium.nil? || medium.sort == 'Script' || sort == 'self' ||
-      sort == 'pdf_destination' || !start_time.valid?
+      sort == 'pdf_destination' || !start_time&.valid? || !medium.video
   end
 
   def start_time_not_too_late

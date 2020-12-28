@@ -11,7 +11,7 @@ jobs:
           submodules: recursive
       - run: docker-compose pull
         working-directory: docker/run_cypress_tests
-      - uses: satackey/action-docker-layer-caching@v0.0.8
+      - uses: satackey/action-docker-layer-caching@v0.0.11
       # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
       - name: Test

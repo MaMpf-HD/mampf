@@ -69,11 +69,13 @@ services:
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
       MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
       PROJECT_EMAIL: project@localhost
+      PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
       ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
       INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1
       SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
+      WEBPACKER_DEV_SERVER_HOST: webpacker
       MAMPF_REGISTRATION_TIMEFRAME: 25
       MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
@@ -91,7 +93,29 @@ services:
       - solr
       - redis
       - mailcatcher
-
+  webpacker:
+    build:
+      context: ./../..
+      dockerfile: docker/development/Dockerfile
+    environment:
+      - NODE_ENV=development
+      - RAILS_ENV=development
+      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+    command: sh -c "yarn  && ./bin/webpack-dev-server"
+    volumes:
+      - type: bind
+        source: ../../
+        target: /usr/src/app/
+      - type: volume
+        source: sprockets-cache
+        target: /cache
+    ports:
+      - '127.0.0.1:3035:3035'
+    depends_on:
+      - db
+      - solr
+      - redis
+      - mailcatcher
 volumes:
   db-data:
   solr-data:
