@@ -503,6 +503,20 @@ RSpec.describe Course, type: :model do
     end
   end
 
+  describe '#users' do
+    it 'returns the correct users' do
+      course = FactoryBot.create(:course)
+      special_user = FactoryBot.create(:confirmed_user)
+      users1 = FactoryBot.create_list(:confirmed_user, 3)
+      users2 = FactoryBot.create_list(:confirmed_user, 3)
+      lecture1 = FactoryBot.create(:lecture, course: course,
+                                             users: users1 + [special_user])
+      lecture2 = FactoryBot.create(:lecture, course: course,
+                                             users: users2 + [special_user])
+      expect(course.users).to match_array(users1 + users2 + [special_user])
+    end
+  end
+
   describe '#addable_by?' do
     before :each do
       @user = FactoryBot.create(:confirmed_user)
