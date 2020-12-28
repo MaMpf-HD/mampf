@@ -13,6 +13,6 @@ FactoryBot.define do
     end
 
     factory :valid_remark, traits: [:with_description, :with_editors,
-                                      :with_teachable]
+                                    :with_teachable]
   end
 end

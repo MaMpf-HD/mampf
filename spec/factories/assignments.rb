@@ -2,8 +2,10 @@
 
 FactoryBot.define do
   factory :assignment do
-    title { Faker::Marketing.buzzwords +
-            Faker::Number.between(from: 1, to: 9999).to_s}
+    title do
+      Faker::Marketing.buzzwords +
+        Faker::Number.between(from: 1, to: 9999).to_s
+    end
     deadline { Faker::Time.forward(days: 30) }
     accepted_file_type { '.pdf' }
 

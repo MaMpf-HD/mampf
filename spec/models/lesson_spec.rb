@@ -52,7 +52,6 @@ RSpec.describe Lesson, type: :model do
     end
   end
 
-
   # Test methods -- NEEDS TO BE REFACTORED
 
   # describe '#term' do

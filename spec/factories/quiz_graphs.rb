@@ -11,7 +11,7 @@ FactoryBot.define do
         questions = create_list(:valid_question, evaluator.questions_count,
                                 :with_answers)
         question_list = questions.map.with_index do |question, i|
-          [ i + 1, { type: 'Question', id: question.id } ]
+          [i + 1, { type: 'Question', id: question.id }]
         end
         q.vertices = Hash[question_list]
         q.edges = {}

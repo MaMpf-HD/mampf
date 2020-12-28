@@ -8,12 +8,12 @@ FactoryBot.define do
 
     trait :with_teachable do
       after(:build) do |i, evaluator|
-        if evaluator.teachable_sort == :course
-          i.teachable = build(:course)
+        i.teachable = if evaluator.teachable_sort == :course
+          build(:course)
         elsif evaluator.teachable_sort == :lecture
-          i.teachable = build(:lecture)
+          build(:lecture)
         else
-          i.teachable = build(:valid_lesson)
+          build(:valid_lesson)
         end
       end
     end
