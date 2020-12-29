@@ -97,7 +97,7 @@ class Course < ApplicationRecord
 
   # only irrelevant courses can be deleted
   def irrelevant?
-    lectures.empty? && media.empty? && id.present?
+    lectures.empty? && media.empty? && persisted?
   end
 
   def subscribable_lectures(user)
@@ -107,10 +107,6 @@ class Course < ApplicationRecord
     lectures.left_outer_joins(:editable_user_joins)
             .where('released IS NOT NULL OR editable_user_joins.user_id = ?'\
                    ' OR teacher_id = ?', user.id, user.id).distinct
-  end
-
-  def subscribable_lectures_by_date(user)
-    subscribable_lectures(user).sort
   end
 
   def restricted?
@@ -138,12 +134,7 @@ class Course < ApplicationRecord
   end
 
   def to_be_authorized_lectures(user)
-    subscribable_lectures(user).select(&:restricted?) -
-      subscribed_lectures(user)
-  end
-
-  def subscribed_lectures_by_date(user)
-    subscribed_lectures(user).sort
+    subscribable_lectures(user).restricted - subscribed_lectures(user)
   end
 
   def subscribed_by?(user)
@@ -193,22 +184,17 @@ class Course < ApplicationRecord
   # together with a string made up of 'Course-' and their id
   # Is used in options_for_select in form helpers.
   def self.editable_selection(user)
-    if user.admin?
-      return Course.order(:title)
-                   .map { |c| [c.title_for_viewers, 'Course-' + c.id.to_s] }
-    end
-    Course.includes(:editors, :editable_user_joins)
-          .order(:title).select { |c| c.edited_by?(user) }
-          .map { |c| [c.title_for_viewers, 'Course-' + c.id.to_s] }
+    user.editable_courses.pluck(:short_title, :id)
+        .natural_sort_by(&:first).map { |c| [c[0], "Course-#{c[1]}"] }
   end
 
   # returns the array of all tags (sorted by title) together with
   # their ids
   def self.select_by_title
-    Course.all.to_a.natural_sort_by(&:title).map { |t| [t.title, t.id] }
+    Course.pluck(:title, :id).natural_sort_by(&:first)
   end
 
-  def questions_with_inheritance
+  def questions_w_inheritance
     Question.where(teachable: [self] + [lectures.published],
                    independent: true)
             .locally_visible
@@ -216,7 +202,7 @@ class Course < ApplicationRecord
 
   def questions_count
     Rails.cache.fetch("#{cache_key_with_version}/questions_count") do
-      questions_with_inheritance.size
+      questions_w_inheritance.size
     end
   end
 
@@ -226,21 +212,11 @@ class Course < ApplicationRecord
 
   def create_random_quiz!(tags, count)
     count = 5 unless count.in?([5, 10, 15])
-    if tags.any?
-      tagged_questions = questions(tags)
-      question_ids = if tagged_questions.count > count
-        QuestionSampler.new(tagged_questions, tags, count).sample!
-      else
-        tagged_questions.map(&:id).shuffle
-      end
-    else
-      question_ids = questions_with_inheritance.pluck(:id).sample(count)
-    end
-    create_quiz_by_questions!(question_ids)
+    create_quiz_by_questions!(question_ids_for_quiz(tags, count))
   end
 
   def question_tags
-    tag_ids = MediumTagJoin.where(medium: questions_with_inheritance)
+    tag_ids = MediumTagJoin.where(medium: questions_w_inheritance)
                            .pluck(:tag_id).uniq
     Tag.where(id: tag_ids)
   end
@@ -250,9 +226,9 @@ class Course < ApplicationRecord
   end
 
   def questions(tags)
-    return questions_with_inheritance unless tags.any?
+    return questions_w_inheritance unless tags.any?
 
-    tagged_ids = MediumTagJoin.where(medium: questions_with_inheritance,
+    tagged_ids = MediumTagJoin.where(medium: questions_w_inheritance,
                                      tag: tags)
                               .pluck(:medium_id)
                               .uniq
@@ -306,31 +282,38 @@ class Course < ApplicationRecord
 
   private
 
-  def touch_media
-    media_with_inheritance.update_all(updated_at: Time.now)
-  end
+    def touch_media
+      media_with_inheritance.update_all(updated_at: Time.now)
+    end
 
-  def touch_tag(tag)
-    tag.touch
-    Sunspot.index! tag
-  end
+    def touch_tag(tag)
+      tag.touch
+      Sunspot.index! tag
+    end
 
-  def touch_lectures_and_lessons
-    lectures.update_all(updated_at: Time.now)
-    Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
-  end
+    def touch_lectures_and_lessons
+      lectures.update_all(updated_at: Time.now)
+      Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+    end
 
-  def create_quiz_by_questions!(question_ids)
-    quiz_graph = QuizGraph.build_from_questions(question_ids)
-    quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} "\
-                                 "#{course.title} #{Time.now}",
-                    level: 1,
-                    quiz_graph: quiz_graph,
-                    sort: 'RandomQuiz',
-                    locale: locale)
-    quiz.save
-    return quiz.errors unless quiz.valid?
+    def create_quiz_by_questions!(question_ids)
+      quiz_graph = QuizGraph.build_from_questions(question_ids)
+      Quiz.create(description: "#{I18n.t('categories.randomquiz.singular')} "\
+                               "#{course.title} #{Time.now}",
+                  level: 1,
+                  quiz_graph: quiz_graph,
+                  sort: 'RandomQuiz',
+                  locale: locale)
+    end
 
-    quiz
-  end
+    def question_ids_for_quiz(tags, count)
+      return questions_w_inheritance.pluck(:id).sample(count) unless tags.any?
+
+      tagged_questions = questions(tags)
+      question_ids = if tagged_questions.count > count
+        QuestionSampler.new(tagged_questions, tags, count).sample!
+      else
+        tagged_questions.map(&:id).shuffle
+      end
+    end
 end

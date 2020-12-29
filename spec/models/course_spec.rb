@@ -333,30 +333,6 @@ RSpec.describe Course, type: :model do
           .to match_array([@lecture3, @lecture4])
       end
     end
-
-    describe '#subscribable_lectures_by_date' do
-      it 'returns all lectures (sorted) for admins' do
-        expect(@course.subscribable_lectures_by_date(@admin).to_a)
-          .to eq([@lecture4, @lecture3, @lecture2, @lecture1])
-      end
-
-      it 'returns all given lectures and published lectures (sorted) for '\
-         'teachers' do
-        expect(@course.subscribable_lectures_by_date(@teacher).to_a)
-          .to eq([@lecture4, @lecture3, @lecture1])
-      end
-
-      it 'returns all edited lectures and published lectures (sorted) for '\
-         'editors' do
-        expect(@course.subscribable_lectures_by_date(@editor).to_a)
-          .to eq([@lecture4, @lecture3, @lecture2])
-      end
-
-      it 'returns all published lectures (sorted) for generic users' do
-        expect(@course.subscribable_lectures_by_date(@generic_user).to_a)
-          .to eq([@lecture4, @lecture3])
-      end
-    end
   end
 
   describe '#restricted?' do
@@ -440,13 +416,6 @@ RSpec.describe Course, type: :model do
       it 'returns all the subscribed lectures of the user' do
         expect(@course.subscribed_lectures(@user))
           .to match_array([@lecture1, @lecture2, @lecture3])
-      end
-    end
-
-    describe '#subscribed_lectures_by_date' do
-      it 'returns all the subscribed lectures (sorted) of the user' do
-        expect(@course.subscribed_lectures_by_date(@user).to_a)
-          .to eq([@lecture3, @lecture2, @lecture1])
       end
     end
 
@@ -601,84 +570,6 @@ RSpec.describe Course, type: :model do
     end
   end
 
-  # context 'class methods for searching' do
-  #   before :all do
-  #     Course.destroy_all
-  #     @course1 = FactoryBot.create(:course)
-  #     @lecture1 = FactoryBot.create(:lecture, course: @course1)
-  #     chapter = FactoryBot.create(:chapter, lecture: @lecture1)
-  #     section = FactoryBot.create(:section, chapter: chapter)
-  #     @lecture2 = FactoryBot.create(:lecture, course: @course1)
-  #     @lesson1 = FactoryBot.create(:lesson, :with_lecture_and_date,
-  #                                  lecture: @lecture1, sections: [section])
-  #     @course2 = FactoryBot.create(:course)
-  #   end
-
-  #   describe 'self.search_teachables' do
-  #     it 'returns all teachables if :all_teachables flag is set' do
-  #       expect(Course.search_teachables({ all_teachables: '1' }))
-  #         .to match_array([@course1, @course2, @lecture1, @lecture2, @lesson1])
-  #     end
-
-  #     it 'returns course and all associated lectures and lessons to a course' do
-  #       expect(Course.search_teachables({ teachable_ids:
-  #                                           ["Course-#{@course1.id}"] }))
-  #         .to match_array([@course1, @lecture1, @lecture2, @lesson1])
-  #     end
-
-  #     it 'returns all selected lectures and their lessons' do
-  #       expect(Course.search_teachables({ teachable_ids:
-  #                                           ["Lecture-#{@lecture1.id}",
-  #                                            "Lecture-#{@lecture2.id}"] }))
-  #         .to match_array([@lecture1, @lecture2, @lesson1])
-  #     end
-  #   end
-
-  #   describe 'self.search_lecture_ids' do
-  #     it 'returns the ids of the lectures' do
-  #       search_params = { teachable_ids: ['Course-1', 'Lecture-77', 'Lesson-3',
-  #                                         'Lecture-25'] }
-  #       expect(Course.search_lecture_ids(search_params))
-  #         .to match_array(['77', '25'])
-  #     end
-  #   end
-
-  #   describe 'self.search_course_ids' do
-  #     it 'returns the ids of the lectures' do
-  #       search_params = { teachable_ids: ['Course-10', 'Lecture-77', 'Lesson-3',
-  #                                         'Lecture-25', 'Course-39'] }
-  #       expect(Course.search_course_ids(search_params))
-  #         .to match_array(['10', '39'])
-  #     end
-  #   end
-
-  #   describe 'self.search_inherited_teachables' do
-  #     it 'returns nil if no teachable_ids param is given' do
-  #       expect(Course.search_inherited_teachables({ foo: 'bar' })).to be_nil
-  #     end
-
-  #     it 'returns course and all associated lectures and lessons to a course'\
-  #        'encoded as strings' do
-  #       expect(Course.search_inherited_teachables({ teachable_ids:
-  #                                           ["Course-#{@course1.id}"] }))
-  #         .to match_array(["Course-#{@course1.id}", "Lecture-#{@lecture1.id}",
-  #                          "Lecture-#{@lecture2.id}", "Lesson-#{@lesson1.id}"])
-  #     end
-
-  #     it 'returns all selected lectures and their lessons encoded as strings' do
-  #       expect(Course
-  #                .search_inherited_teachables(
-  #                  { teachable_ids:
-  #                      ["Lecture-#{@lecture1.id}",
-  #                       "Lecture-#{@lecture2.id}"] }
-  #                ))
-  #         .to match_array(["Lecture-#{@lecture1.id}",
-  #                          "Lecture-#{@lecture2.id}",
-  #                          "Lesson-#{@lesson1.id}"])
-  #     end
-  #   end
-  # end
-
   context 'class methods for select forms' do
     before :all do
       Course.destroy_all
@@ -795,9 +686,9 @@ RSpec.describe Course, type: :model do
       end
     end
 
-    describe '#questions_with_inheritance' do
+    describe '#questions_w_inheritance' do
       it 'returns the correct questions' do
-        expect(@course.questions_with_inheritance)
+        expect(@course.questions_w_inheritance)
           .to match_array(@course_questions + @lecture1_questions)
       end
     end
@@ -834,20 +725,6 @@ RSpec.describe Course, type: :model do
           .to match_array(@course_tags + @lecture1_tags + [@special_tag1])
       end
     end
-
-    # describe '#weighted_question_ids' do
-    #   it 'returns the correct hash with questions and their tag count (#1)' do
-    #     expect(@course.weighted_question_ids(@questions,
-    #                                          [@course_tags[4], @special_tag1]))
-    #       .to eq({ @course_questions[4].id => 2,
-    #                @lecture1_questions[1].id => 1 })
-    #   end
-    #   it 'returns the correct hash with questions and their tag count (#2)' do
-    #     expect(@course.weighted_question_ids(@questions,
-    #                                          [@course_tags[4]]))
-    #       .to eq({ @course_questions[4].id => 1 })
-    #   end
-    # end
 
     describe '#select_question_tags_by_title' do
       it 'returns the correct question tags as a array of hashes' do
