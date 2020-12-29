@@ -79,7 +79,6 @@ Layout/EmptyLineAfterMagicComment:
 
 Layout/EmptyLinesAroundAccessModifier:
   Enabled: true
-  EnforcedStyle: only_before
 
 Layout/EmptyLinesAroundBlockBody:
   Enabled: true
@@ -167,6 +166,9 @@ Style/ConditionalAssignment:
 Style/DefWithParentheses:
   Enabled: true
 
+Style/Documentation:
+  Enabled: true
+
 # Defining a method with parameters needs parentheses.
 Style/MethodDefParentheses:
   Enabled: true
@@ -188,6 +190,9 @@ Style/FrozenStringLiteralComment:
     - 'actiontext/db/migrate/**/*.rb'
 
 Style/NumericLiterals:
+  Enabled: true
+
+Style/NumericPredicate:
   Enabled: true
 
 Style/RedundantFreeze:
