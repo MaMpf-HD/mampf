@@ -31,7 +31,7 @@ class TeachableParser
 
     def lecture_ids
       @teachable_ids.select { |t| t.start_with?('Lecture') }
-                    .map { |t| t.remove('Lecture-') }
+                    .map { |t| t.remove('Lecture-') }.map(&:to_i)
     end
 
     def lectures
@@ -40,7 +40,7 @@ class TeachableParser
 
     def course_ids
       @teachable_ids.select { |t| t.start_with?('Course') }
-                    .map { |t| t.remove('Course-') }
+                    .map { |t| t.remove('Course-') }.map(&:to_i)
     end
 
     def courses
