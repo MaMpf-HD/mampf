@@ -31,5 +31,13 @@ RSpec.describe Probe, type: :model do
     it 'has a success' do
       expect(@probe.success).to be_kind_of(Integer)
     end
+    it 'has a success that is between 1 and 3 if progress is -1' do
+      probe = FactoryBot.build(:probe, :with_stuff, progress: -1)
+      expect(probe.success.in?([1, 2, 3])).to be true
+    end
+    it 'has a success that is between 1 and progress' do
+      probe = FactoryBot.build(:probe, :with_stuff, progress: 10)
+      expect(probe.success.in?((1..10).to_a)).to be true
+    end
   end
 end
