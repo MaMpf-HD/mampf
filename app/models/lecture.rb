@@ -97,10 +97,12 @@ class Lecture < ApplicationRecord
   # as well
   before_destroy :destroy_forum
 
-  # scopes for published lectures
+  # scopes
   scope :published, -> { where.not(released: nil) }
 
   scope :no_term, -> { where(term: nil) }
+
+  scope :restricted, -> { where.not(passphrase: ['', nil]) }
 
   searchable do
     integer :term_id do

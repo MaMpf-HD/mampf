@@ -240,10 +240,8 @@ class Medium < ApplicationRecord
   # by the controller
   def self.search_by(search_params, page)
     search_params[:types] = [] if search_params[:all_types] == '1'
-    if search_params[:teachable_inheritance] == '1'
-      search_params[:teachable_ids] = Course.search_inherited_teachables(search_params)
-    end
-    search_params[:teachable_ids] = [] if search_params[:all_teachables] == '1'
+    search_params[:teachable_ids] = TeachableParser.new(search_params)
+                                                   .teachables_as_strings
     search_params[:editor_ids] = [] if search_params[:all_editors] == '1'
     if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
       search_params[:tag_ids] = Tag.pluck(:id)

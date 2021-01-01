@@ -10,7 +10,7 @@
          id="lectures-for-course-<%= c.id %>"
          data-authorize="<%= c.to_be_authorized_lectures(current_user).map(&:id)
                               .to_json %>">
-      <% c.subscribable_lectures_by_date(current_user).each do |l| %>
+      <% c.subscribable_lectures(current_user).sort.each do |l| %>
         <% lecture = "lecture[#{l.id}]" %>
         <div id="<%= 'course-' + c.id.to_s + '-' + l.id.to_s %>">
           <%= f.check_box lecture,
