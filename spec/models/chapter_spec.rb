@@ -32,7 +32,6 @@ RSpec.describe Chapter, type: :model do
     end
   end
 
-
   # test methods - NEEDS TO BE REFACTORED
 
   # describe '#to_label' do

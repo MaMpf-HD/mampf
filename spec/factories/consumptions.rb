@@ -6,10 +6,10 @@ FactoryBot.define do
       medium_id { Faker::Number.number }
       sort { ['video', 'manuscript'].sample }
       after :build do |consumption|
-        if consumption.sort == 'video'
-          consumption.mode = ['thyme', 'download'].sample
+        consumption.mode = if consumption.sort == 'video'
+          ['thyme', 'download'].sample
         else
-          consumption.mode = ['pdf_view', 'download'].sample
+          ['pdf_view', 'download'].sample
         end
       end
     end

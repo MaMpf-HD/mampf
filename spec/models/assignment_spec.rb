@@ -23,7 +23,7 @@ RSpec.describe Assignment, type: :model do
     assignment = FactoryBot.create(:valid_assignment, title: 'usual BS')
     lecture = assignment.lecture
     new_assignment = FactoryBot.build(:valid_assignment, lecture: lecture,
-                                      title: 'usual BS')
+                                                         title: 'usual BS')
     expect(new_assignment).to be_invalid
   end
 

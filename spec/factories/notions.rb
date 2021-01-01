@@ -8,8 +8,10 @@ FactoryBot.define do
     # in order to avoid loops in the creation of tags (which need a notion)
     # the adding of a tag is done in the valid_notion factory
     locale { 'de' }
-    title { Faker::Book.title + ' ' +
-            Faker::Number.between(from: 1, to: 9999).to_s }
+    title do
+      Faker::Book.title + ' ' +
+        Faker::Number.between(from: 1, to: 9999).to_s
+    end
 
     trait :with_tag do
       after(:build) { |t| t.tag = build(:tag) }

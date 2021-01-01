@@ -29,7 +29,6 @@ RSpec.describe QuizCertificate, type: :model do
     end
   end
 
-
   # test callbacks
 
   it 'gets a code afeter being created' do

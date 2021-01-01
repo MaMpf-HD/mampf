@@ -17,7 +17,7 @@ RSpec.describe Clicker, type: :model do
     clicker = FactoryBot.create(:valid_clicker, title: 'usual BS')
     editor = clicker.editor
     new_clicker = FactoryBot.build(:valid_clicker, editor: editor,
-                                   title: 'usual BS')
+                                                   title: 'usual BS')
     expect(new_clicker).to be_invalid
   end
 

@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Announcement, type: :model do
   it 'has a valid factory' do
-     expect(FactoryBot.build(:announcement)).to be_valid
-   end
+    expect(FactoryBot.build(:announcement)).to be_valid
+  end
 
   # test validations
 

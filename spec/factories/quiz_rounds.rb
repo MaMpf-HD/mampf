@@ -12,12 +12,14 @@ FactoryBot.define do
       session_id { Faker::Crypto.md5 }
     end
 
-    initialize_with { new({ id: quiz.id,
-                            quiz: { crosses: crosses,
-                                    progress: progress,
-                                    counter: counter,
-                                    answer_shuffle: answer_shuffle.to_s,
-                                    session_id: session_id } }) }
+    initialize_with do
+      new({ id: quiz.id,
+            quiz: { crosses: crosses,
+                    progress: progress,
+                    counter: counter,
+                    answer_shuffle: answer_shuffle.to_s,
+                    session_id: session_id } })
+    end
   end
 
   # TO DO

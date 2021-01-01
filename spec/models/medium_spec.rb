@@ -138,7 +138,6 @@ RSpec.describe Medium, type: :model do
     end
   end
 
-
   # test methods - NEEDS TO BE REFACTORED
 
   # describe '#search' do

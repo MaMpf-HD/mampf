@@ -2,10 +2,14 @@
 
 FactoryBot.define do
   factory :course do
-    title { Faker::Book.title + ' ' +
-            Faker::Number.between(from: 1, to: 9999).to_s }
-    short_title { Faker::Book.title + ' ' +
-                  Faker::Number.between(from: 1, to: 9999).to_s }
+    title do
+      Faker::Book.title + ' ' +
+        Faker::Number.between(from: 1, to: 9999).to_s
+    end
+    short_title do
+      Faker::Book.title + ' ' +
+        Faker::Number.between(from: 1, to: 9999).to_s
+    end
 
     transient do
       tag_count { 3 }
@@ -33,9 +37,7 @@ FactoryBot.define do
     trait :with_image_and_normalization do
       with_image
 
-      after :build do |c|
-        c.image_derivatives!
-      end
+      after :build, &:image_derivatives!
     end
 
     # call it with build(:course, :with_tags, tag_count: n) if you want
