@@ -26,6 +26,42 @@ RSpec.describe Lecture, type: :model do
                                          term: term)
     expect(lecture).to be_invalid
   end
+  it 'is invalid if content mode is illegal' do
+    expect(FactoryBot.build(:lecture, content_mode: 'bs')).to be_invalid
+  end
+  it 'is invalid if sort is illegal' do
+    expect(FactoryBot.build(:lecture, sort: 'bs')).to be_invalid
+  end
+  it 'is invalid if there is no term but course is term dependent' do
+    expect(FactoryBot.build(:lecture, term: nil)).to be_invalid
+  end
+  it 'is invalid if there is a term but course is term independent' do
+    expect(FactoryBot.build(:lecture, :term_independent,
+                            term: FactoryBot.build(:term))).to be_invalid
+  end
+  it 'is invalid if there is more than one lecture on a term independent '\
+     'course' do
+    lecture = FactoryBot.create(:lecture, :term_independent)
+    new_lecture = FactoryBot.build(:lecture, term: nil,
+                                    course: lecture.course)
+    expect(new_lecture).to be_invalid
+  end
+  it 'is invalid if submission_max_team_size is not an integer' do
+    expect(FactoryBot.build(:lecture, submission_max_team_size: 3.5))
+      .to be_invalid
+  end
+  it 'is invalid if submission_max_team_size is < 1' do
+    expect(FactoryBot.build(:lecture, submission_max_team_size: 0))
+      .to be_invalid
+  end
+  it 'is invalid if submission_grace_period is not an integer' do
+    expect(FactoryBot.build(:lecture, submission_grace_period: 3.5))
+      .to be_invalid
+  end
+  it 'is invalid if submission_grace_period is < 0' do
+    expect(FactoryBot.build(:lecture, submission_grace_period: -1))
+      .to be_invalid
+  end
 
   # Test traits
 
@@ -43,6 +79,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture.organizational_concept).to be_truthy
     end
   end
+
   describe 'lecture which is released for all' do
     before :all do
       @lecture = FactoryBot.build(:lecture, :released_for_all)
@@ -54,6 +91,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture.released).to eq 'all'
     end
   end
+
   describe 'term independent lecture' do
     before :all do
       @lecture = FactoryBot.build(:lecture, :term_independent)
@@ -65,6 +103,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture.term).to be_nil
     end
   end
+
   describe 'with table of contents' do
     before :all do
       @lecture = FactoryBot.build(:lecture, :with_toc)
@@ -76,6 +115,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture.chapters.map { |c| c.sections.size }).to eq [3, 3, 3]
     end
   end
+
   describe 'with sparse table of contents' do
     before :all do
       @lecture = FactoryBot.build(:lecture, :with_sparse_toc)
@@ -88,7 +128,323 @@ RSpec.describe Lecture, type: :model do
     end
   end
 
+  describe 'with forum' do
+    before :all do
+      @lecture = FactoryBot.build(:lecture, :with_forum)
+    end
+    it 'has a forum_id' do
+      expect(@lecture.forum_id).not_to be_nil
+    end
+    it 'has an actual forum' do
+      expect(Thredded::Messageboard.find_by_id(@lecture.forum_id))
+        .not_to be_nil
+    end
+  end
+
+  # test callbacks
+
+  describe 'after adding/removing a lesson' do
+    before :each do
+      @medium = FactoryBot.create(:lesson_medium)
+      @lesson1 = @medium.teachable
+      @lecture = @lesson1.lecture
+      @lesson2 = FactoryBot.create(:valid_lesson, lecture: @lecture)
+      @updated_ats = [@medium.updated_at, @lesson1.updated_at]
+    end
+
+    it 'touches lessons of the lecture and their media if a lesson is '\
+       'added' do
+      lesson3 = FactoryBot.build(:valid_lesson)
+      @lecture.lessons << lesson3
+      @medium.reload
+      @lesson1.reload
+      new_updated_ats = [@medium.updated_at, @lesson1.updated_at]
+      comparison = [0, 1].map { |i| @updated_ats[i] == new_updated_ats[i] }
+      expect(comparison).to eq [false, false]
+    end
+
+    it 'touches lessons of the lecture and their media if a lesson is '\
+       'removed' do
+      @lecture.lessons.delete(@lesson2)
+      @medium.reload
+      @lesson1.reload
+      new_updated_ats = [@medium.updated_at, @lesson1.updated_at]
+      comparison = [0, 1].map { |i| @updated_ats[i] == new_updated_ats[i] }
+      expect(comparison).to eq [false, false]
+    end
+  end
+
+  describe 'after save' do
+    it 'touches all related media/lessons/chapter/sections' do
+      medium = FactoryBot.create(:lesson_medium)
+      lesson = medium.teachable
+      lecture = lesson.lecture
+      chapter = lecture.chapters.first
+      section = chapter.sections.first
+      updated_ats = [medium.updated_at, lesson.updated_at,
+                     chapter.updated_at, section.updated_at]
+      lecture.save
+      medium.reload
+      lesson.reload
+      chapter.reload
+      section.reload
+      new_updated_ats = [medium.updated_at, lesson.updated_at,
+                         chapter.updated_at, section.updated_at]
+      comparison = (0..3).to_a.map { |i| updated_ats[i] == new_updated_ats[i] }
+      expect(comparison).to eq [false, false, false, false]
+    end
+
+    it 'removes the teacher as editor' do
+      lecture = FactoryBot.build(:lecture)
+      lecture.editors = [lecture.teacher]
+      lecture.save
+      expect(lecture.editors).to match_array([])
+    end
+  end
+
+  describe 'before destroy' do
+    it 'destroys the forum' do
+      lecture = FactoryBot.create(:lecture)
+      forum = Thredded::Messageboard.create(name: Faker::Book.title)
+      id = forum.id
+      lecture.update(forum_id: forum.id)
+      lecture.destroy
+      expect(Thredded::Messageboard.find_by_id(id)).to be_nil
+    end
+  end
+
   # Test methods -- NEEDS TO BE REFACTORED
+
+  describe '#lecture' do
+    it 'returns self' do
+      lecture = FactoryBot.build(:lecture)
+      expect(lecture.lecture).to eq lecture
+    end
+  end
+
+  describe '#lesson' do
+    it 'returns nil' do
+      lecture = FactoryBot.build(:lecture)
+      expect(lecture.lesson).to be_nil
+    end
+  end
+
+  describe '#media_scope' do
+    it 'returns self' do
+      lecture = FactoryBot.build(:lecture)
+      expect(lecture.media_scope).to eq lecture
+    end
+  end
+
+  describe '#selector_value' do
+    it 'returns the correct selector' do
+      lecture = FactoryBot.create(:lecture)
+      expect(lecture.selector_value).to eq "Lecture-#{lecture.id}"
+    end
+  end
+
+  describe '#title' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.title).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.title).to eq '(V) Algebra 1, SS 2020'
+      end
+    end
+  end
+
+  describe '#title_no_term' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.title_no_term).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.title_no_term).to eq '(V) Algebra 1'
+      end
+    end
+  end
+
+  describe '#to_label' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.to_label).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.to_label).to eq '(V) Algebra 1, SS 2020'
+      end
+    end
+  end
+
+  describe '#compact_title' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1', short_title: 'Alg1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.compact_title).to eq 'Alg1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1',
+                                  short_title: 'Alg1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.compact_title).to eq 'V.Alg1.SS20'
+      end
+    end
+  end
+
+  describe '#short_title' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1', short_title: 'Alg1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.short_title).to eq 'Alg1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1',
+                                  short_title: 'Alg1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.short_title).to eq '(V) Alg1 SS 20'
+      end
+    end
+  end
+
+  describe '#title_for_viewers' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1', short_title: 'Alg1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.title_for_viewers).to eq 'Alg1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1',
+                                  short_title: 'Alg1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.title_for_viewers).to eq '(V) Alg1 SS 20'
+      end
+    end
+  end
+
+  describe '#short_title_release' do
+    context 'if lecture is published' do
+      context 'if course is term independent' do
+        it 'returns the correct title' do
+          course = FactoryBot.build(:course, :term_independent,
+                                    title: 'Algebra 1', short_title: 'Alg1')
+          lecture = FactoryBot.build(:lecture, :term_independent,
+                                     :released_for_all, course: course)
+          expect(lecture.short_title_release).to eq 'Alg1'
+        end
+      end
+
+      context 'if course is not term independent' do
+        it 'returns the correct title' do
+          I18n.locale = 'de'
+          course = FactoryBot.build(:course, title: 'Algebra 1',
+                                    short_title: 'Alg1')
+          term = FactoryBot.build(:term, season: 'SS', year: 2020)
+          lecture = FactoryBot.build(:lecture, :released_for_all,
+                                     course: course, term: term)
+          expect(lecture.short_title_release).to eq '(V) Alg1 SS 20'
+        end
+      end
+    end
+
+    context 'if lecture is unpublished' do
+      context 'if course is term independent' do
+        it 'returns the correct title' do
+          I18n.locale = 'de'
+          course = FactoryBot.build(:course, :term_independent,
+                                    title: 'Algebra 1', short_title: 'Alg1')
+          lecture = FactoryBot.build(:lecture, :term_independent,
+                                     course: course)
+          expect(lecture.short_title_release).to eq 'Alg1 (unveröffentlicht)'
+        end
+      end
+
+      context 'if course is not term independent' do
+        it 'returns the correct title' do
+          I18n.locale = 'de'
+          course = FactoryBot.build(:course, title: 'Algebra 1',
+                                    short_title: 'Alg1')
+          term = FactoryBot.build(:term, season: 'SS', year: 2020)
+          lecture = FactoryBot.build(:lecture, course: course, term: term)
+          expect(lecture.short_title_release)
+            .to eq '(V) Alg1 SS 20 (unveröffentlicht)'
+        end
+      end
+    end
+  end
+
+  describe '#short_title_brackets' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1', short_title: 'Alg1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.short_title_brackets).to eq 'Alg1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1',
+                                  short_title: 'Alg1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.short_title_brackets).to eq '(V) Alg1 (SS 20)'
+      end
+    end
+  end
+
 
   # describe '#tags' do
   #   it 'returns the correct tags for the lecture' do
@@ -114,28 +470,12 @@ RSpec.describe Lecture, type: :model do
   #     expect(lecture.sections.to_a).to match_array(sections)
   #   end
   # end
-  # describe '#to_label' do
-  #   it 'returns the correct label' do
-  #     course = FactoryBot.create(:course, title: 'Usual bs')
-  #     term =   FactoryBot.create(:term)
-  #     lecture = FactoryBot.build(:lecture, course: course, term: term)
-  #     expect(lecture.to_label).to eq('Usual bs, ' + term.to_label)
-  #   end
-  # end
   # describe '#short_title' do
   #   it 'returns the correct short_title' do
   #     course = FactoryBot.create(:course, short_title: 'bs')
   #     term =   FactoryBot.create(:term)
   #     lecture = FactoryBot.build(:lecture, course: course, term: term)
   #     expect(lecture.short_title).to eq('bs ' + term.to_label_short)
-  #   end
-  # end
-  # describe '#title' do
-  #   it 'returns the correct title' do
-  #     course = FactoryBot.create(:course, title: 'Usual bs')
-  #     term =   FactoryBot.create(:term)
-  #     lecture = FactoryBot.build(:lecture, course: course, term: term)
-  #     expect(lecture.title).to eq('Usual bs, ' + term.to_label)
   #   end
   # end
   # describe '#term_teacher_info' do

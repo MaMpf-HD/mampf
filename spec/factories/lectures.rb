@@ -44,6 +44,13 @@ FactoryBot.define do
       end
     end
 
+    trait :with_forum do
+      after(:build) do |lecture|
+        forum = Thredded::Messageboard.create(name: Faker::Book.title)
+        lecture.forum_id = forum.id
+      end
+    end
+
     # note that you can give the chapter_count here as parameter as well
     factory :lecture_with_toc, traits: [:with_toc]
 

@@ -156,10 +156,6 @@ class Lecture < ApplicationRecord
     "(#{sort_localized_short}) #{course.title}"
   end
 
-  def title_term_short
-    "(#{sort_localized_short}) #{term_to_label_short}"
-  end
-
   def to_label
     title
   end
@@ -534,7 +530,7 @@ class Lecture < ApplicationRecord
 
   def begin_date
     Rails.cache.fetch("#{cache_key_with_version}/begin_date") do
-      term&.begin_date || Term.active.begin_date || Date.today
+      term&.begin_date || Term.active&.begin_date || Date.today
     end
   end
 
