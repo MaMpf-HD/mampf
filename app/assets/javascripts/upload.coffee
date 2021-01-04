@@ -112,73 +112,83 @@ videoUpload = (fileInput) ->
 
 manuscriptUpload = (fileInput) ->
   # set everything up
-  uploadArea = document.getElementById('manuscript-uploadArea')
-  uploadButton = document.getElementById('manuscript-uploadButton')
-  informer = document.getElementById('manuscript-informer')
-  progressBar = document.getElementById('manuscript-progressBar')
-  metaData = document.getElementById('manuscript-meta')
-  hiddenInput = document.getElementById('upload-manuscript-hidden')
+  uploadArea = ('manuscript-uploadArea')
+  uploadButton = ('#manuscript-uploadButton-button')
+  informer = ('manuscript-informer')
+  progressBar = ('manuscript-progressBar')
+  metaData = ('manuscript-meta')
+  hiddenInput = ('upload-manuscript-hidden')
+
+  @directUpload(
+    fileInput
+    "#manuscript-uploadButton-button-actual"
+    '#manuscript-uploadButton-button'
+    "#manuscript-uploadButton-button-actual"   
+    null
+    '/pdfs/upload'
+    "#manuscript-uploadButton-button-actual"
+    (data)->
+      console.log data
+      data = JSON.parse data.response
+      if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
+
+        manuscriptFile = document.getElementById('manuscript-file')
+        manuscriptSize = document.getElementById('manuscript-size')
+        manuscriptPages = document.getElementById('manuscript-pages')
+
+        # put metadata into place
+        manuscriptFile.innerHTML = data.metadata.filename
+        manuscriptSize.innerHTML = formatBytes(data.metadata.size)
+        manuscriptPages.innerHTML = data.metadata.pages + ' S'
+        $('#manuscript-destinations').empty().hide()
+        $('#medium-manuscript-destinations').empty().hide()
+        $('#manuscript-meta').show()
+        $('#manuscript-preview').hide()
+        $('#medium_detach_manuscript').val('false')
+        $('#medium-basics-warning').show()
+      else if data.metadata.mime_type != 'application/pdf'
+        # display error message if uppy detects wrong mime type
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      else
+        # display error message if uppy detects some other problem
+        alert('Die Datei ist beschädigt.', 'error', 5000)
+      return
+    null
+    hiddenInput
+  )
 
   # uppy will add its own file input
-  fileInput.style.display = 'none'
+  # # create uppy instance
+  # uppy = Uppy.Core(
+  #   id: fileInput.id
+  #   autoProceed: true
+  #   restrictions: allowedFileTypes: [ '.pdf' ])
+  #   .use(Uppy.FileInput,
+  #     target: uploadButton
+  #     locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+  #   .use(Uppy.Informer, target: informer)
+  #   .use(Uppy.ProgressBar, target: progressBar)
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [ '.pdf' ])
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.ProgressBar, target: progressBar)
+  # # target the endpoint for shrine uploader
+  # uppy.use Uppy.XHRUpload,
+  #   endpoint: '/pdfs/upload'
+  #   fieldName: 'file'
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/pdfs/upload'
-    fieldName: 'file'
+  # # add metadata to manuscript card if upload was successful
+  # uppy.on 'upload-success', (file, response) ->
 
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
+  # # display error message on console if an upload error has ocurred
+  # uppy.on 'upload-error', (file, error) ->
+  #   console.log('error with file:', file.id)
+  #   console.log('error message:', error)
+  #   return
 
-      manuscriptFile = document.getElementById('manuscript-file')
-      manuscriptSize = document.getElementById('manuscript-size')
-      manuscriptPages = document.getElementById('manuscript-pages')
-
-      # put metadata into place
-      manuscriptFile.innerHTML = data.metadata.filename
-      manuscriptSize.innerHTML = formatBytes(data.metadata.size)
-      manuscriptPages.innerHTML = data.metadata.pages + ' S'
-      $('#manuscript-destinations').empty().hide()
-      $('#medium-manuscript-destinations').empty().hide()
-      $('#manuscript-meta').show()
-      $('#manuscript-preview').hide()
-      $('#medium_detach_manuscript').val('false')
-      $('#medium-basics-warning').show()
-    else if data.metadata.mime_type != 'application/pdf'
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    else
-      # display error message if uppy detects some other problem
-      uppy.info('Die Datei ist beschädigt.', 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+  # uppy
 
 geogebraUpload = (fileInput) ->
   # set everything up
@@ -494,7 +504,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
             uploadedFiles.push JSON.parse(xhr.responseText)
             if  i == (fileInput.files.length)
               if successCallback != undefined 
-                successCallback()
+                successCallback(xhr)
               $(progressBarElement).text(
                 $(progressBarElement).data 'tr-success'
               )
@@ -534,7 +544,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
     
 
     fI.change () ->
-      if fileChangeCallBack != undefined
+      if fileChangeCallBack != null
         fileChangeCallBack(fI.files)
       $(actualUploadButtonElement)
         .show()
@@ -806,7 +816,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
 
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
-  manuscript = document.getElementById('upload-manuscript')
+  manuscript = 'upload-manuscript'
   geogebra = document.getElementById('upload-geogebra')
   image = document.getElementById('upload-image')
   bulkCorrection = document.getElementById('upload-bulk-correction')
