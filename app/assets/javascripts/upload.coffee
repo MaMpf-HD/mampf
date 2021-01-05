@@ -171,63 +171,44 @@ geogebraUpload = (fileInput) ->
   progressBar = document.getElementById('geogebra-progressBar')
   metaData = document.getElementById('geogebra-meta')
   hiddenInput = document.getElementById('upload-geogebra-hidden')
+  @directUpload(
+    "upload-geogebra"
+    "#geogebra-uploadButton-button-actual"
+    '#geogebra-uploadButton-button'
+    "#geogebra-uploadButton-button-actual"   
+    null
+    '/ggbs/upload'
+    "#geogebra-uploadButton-button-actual"
+    (data)->
+      console.log data
+      data = JSON.parse data.response
+      if data.metadata.mime_type == 'application/zip'
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
 
-  # uppy will add its own file input
-  fileInput.style.display = 'none'
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [ '.ggb' ])
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.ProgressBar, target: progressBar)
+        geogebraFile = document.getElementById('geogebra-file')
+        geogebraSize = document.getElementById('geogebra-size')
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/ggbs/upload'
-    fieldName: 'file'
-
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type == 'application/zip'
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-
-      geogebraFile = document.getElementById('geogebra-file')
-      geogebraSize = document.getElementById('geogebra-size')
-
-      # put metadata into place
-      geogebraFile.innerHTML = data.metadata.filename
-      geogebraSize.innerHTML = formatBytes(data.metadata.size)
-      $('#geogebra-meta').show()
-      $('#medium_detach_geogebra').val('false')
-      $('#medium-basics-warning').show()
-    else if data.metadata.mime_type != 'application/zip'
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    else
-      # display error message if uppy detects some other problem
-      uppy.info('Die Datei ist beschädigt.', 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+        # put metadata into place
+        geogebraFile.innerHTML = data.metadata.filename
+        geogebraSize.innerHTML = formatBytes(data.metadata.size)
+        $('#geogebra-meta').show()
+        $('#medium_detach_geogebra').val('false')
+        $('#medium-basics-warning').show()
+      else if data.metadata.mime_type != 'application/zip'
+        # display error message if uppy detects wrong mime type
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      else
+        # display error message if uppy detects some other problem
+        alert('Die Datei ist beschädigt.', 'error', 5000)
+      return
+    null
+    hiddenInput
+  )
 
 imageUpload = (fileInput) ->
   # set everything up
@@ -371,49 +352,6 @@ bulkCorrectionUpload = (fileInput) ->
         $("#bulk-upload-area").toggle()
       'upload-bulk-correction-hidden'
       )
-  # # create uppy instance
-  # uppy = Uppy.Core(
-  #   id: fileInput.id
-  #   autoProceed: true
-  #   allowMultipleUploads: false
-  #   restrictions:
-  #     maxFileSize: 15*1024*1024)
-  #   .use(Uppy.FileInput,
-  #     target: uploadButton
-  #     locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-  #   .use(Uppy.Informer, target: informer)
-  #   .use(Uppy.StatusBar, target: statusBar)
-
-  # # target the endpoint for shrine uploader
-  # uppy.use Uppy.XHRUpload,
-  #   endpoint: '/packages/upload'
-  #   fieldName: 'file'
-
-  # # display error message on console if an upload error has ocurred
-  # uppy.on 'upload-error', (file, error) ->
-  #   console.log('error with file:', file.id)
-  #   console.log('error message:', error)
-  #   return
-
-  # uppy.on 'complete', (result) ->
-  #   console.log('successful files:', result.successful)
-  #   console.log('failed files:', result.failed)
-    
-  #   return
-
-  # $('#cancel-bulk-upload').on 'click', ->
-  #   clearBulkUploadArea()
-  #   uppy.reset()
-  #   return
-
-  # $('#show-bulk-upload-area').on 'click', ->
-  #   $(this).hide()
-  #   uppy.reset()
-  #   $('#upload-bulk-correction-button').show()
-  #   $('#bulk-upload-area').show()
-  #   return
-
-  # uppy
 
 
 ###
