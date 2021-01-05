@@ -1,4 +1,4 @@
-<input type="file" accepts="application/pdf" id="upload-bulk-correction"
+<input type="file" accept="application/pdf" id="upload-bulk-correction"
  multiple=true/>
 <%= form_with url: bulk_upload_corrections_path(id: @tutorial.id,
                                                 ass_id: @assignment.id),
@@ -30,7 +30,7 @@
     <div class="invalid-feedback" id="upload-bulk-errors">
     </div>
     <div class="col-12">
-            <button id="upload-bulk-correction-uploadButton-call"
+            <button id="bulk-uploadButton-button-actual"
                     data-tr-success="<%= t('buttons.upload_success') %>"
                     data-tr-failure="<%= t('submission.upload_failure')%>"
                     data-tr-missing-consent="<%= t('submission.missing_consent')%>"

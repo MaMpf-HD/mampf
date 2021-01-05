@@ -118,7 +118,7 @@ manuscriptUpload = (fileInput) ->
   progressBar = ('manuscript-progressBar')
   metaData = ('manuscript-meta')
   hiddenInput = ('upload-manuscript-hidden')
-
+  return if document.getElementById(fileInput) == null
   @directUpload(
     fileInput
     "#manuscript-uploadButton-button-actual"
@@ -162,33 +162,6 @@ manuscriptUpload = (fileInput) ->
     hiddenInput
   )
 
-  # uppy will add its own file input
-  # # create uppy instance
-  # uppy = Uppy.Core(
-  #   id: fileInput.id
-  #   autoProceed: true
-  #   restrictions: allowedFileTypes: [ '.pdf' ])
-  #   .use(Uppy.FileInput,
-  #     target: uploadButton
-  #     locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-  #   .use(Uppy.Informer, target: informer)
-  #   .use(Uppy.ProgressBar, target: progressBar)
-
-  # # target the endpoint for shrine uploader
-  # uppy.use Uppy.XHRUpload,
-  #   endpoint: '/pdfs/upload'
-  #   fieldName: 'file'
-
-  # # add metadata to manuscript card if upload was successful
-  # uppy.on 'upload-success', (file, response) ->
-
-  # # display error message on console if an upload error has ocurred
-  # uppy.on 'upload-error', (file, error) ->
-  #   console.log('error with file:', file.id)
-  #   console.log('error message:', error)
-  #   return
-
-  # uppy
 
 geogebraUpload = (fileInput) ->
   # set everything up
@@ -385,57 +358,72 @@ bulkCorrectionUpload = (fileInput) ->
 
   # uppy will add its own file input
   fileInput.style.display = 'none'
+  directUpload(
+      'upload-bulk-correction'
+      '#bulk-uploadButton-button-actual'
+      '#show-bulk-upload-area'
+      '#bulk-uploadButton-button-actual'
+      null
+      '/corrections/upload'
+      '#bulk-uploadButton-button-actual'
+      (xhr) ->
+        # result = JSON.parse xhr.response
+        # console.log result
+        # if result.successful.length > 0
+        #   uploaded_files = result.successful.map (file) -> file.response.body
+        #   console.log uploaded_files
+        #   hiddenInput.value = JSON.stringify(uploaded_files)
+        #   $('#upload-bulk-correction-save').prop('disabled', false)
+        #   $(metaData).empty()
+        #     .append(result.successful.length + ' ' +$(metaData).data('tr-uploads'))
+        #   $(uploadButton).hide()
+      () ->
+        $("#bulk-upload-area").toggle()
+      'upload-bulk-correction-hidden'
+      )
+  # # create uppy instance
+  # uppy = Uppy.Core(
+  #   id: fileInput.id
+  #   autoProceed: true
+  #   allowMultipleUploads: false
+  #   restrictions:
+  #     maxFileSize: 15*1024*1024)
+  #   .use(Uppy.FileInput,
+  #     target: uploadButton
+  #     locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
+  #   .use(Uppy.Informer, target: informer)
+  #   .use(Uppy.StatusBar, target: statusBar)
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    allowMultipleUploads: false
-    restrictions:
-      maxFileSize: 30*1024*1024)
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.StatusBar, target: statusBar)
+  # # target the endpoint for shrine uploader
+  # uppy.use Uppy.XHRUpload,
+  #   endpoint: '/packages/upload'
+  #   fieldName: 'file'
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/packages/upload'
-    fieldName: 'file'
+  # # display error message on console if an upload error has ocurred
+  # uppy.on 'upload-error', (file, error) ->
+  #   console.log('error with file:', file.id)
+  #   console.log('error message:', error)
+  #   return
 
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
+  # uppy.on 'complete', (result) ->
+  #   console.log('successful files:', result.successful)
+  #   console.log('failed files:', result.failed)
+    
+  #   return
 
-  uppy.on 'complete', (result) ->
-    console.log('successful files:', result.successful)
-    console.log('failed files:', result.failed)
-    if result.successful.length > 0
-      uploaded_files = result.successful.map (file) -> file.response.body
-      console.log uploaded_files
-      hiddenInput.value = JSON.stringify(uploaded_files)
-      $('#upload-bulk-correction-save').prop('disabled', false)
-      $(metaData).empty()
-        .append(result.successful.length + ' ' +$(metaData).data('tr-uploads'))
-      $(uploadButton).hide()
-    return
+  # $('#cancel-bulk-upload').on 'click', ->
+  #   clearBulkUploadArea()
+  #   uppy.reset()
+  #   return
 
-  $('#cancel-bulk-upload').on 'click', ->
-    clearBulkUploadArea()
-    uppy.reset()
-    return
+  # $('#show-bulk-upload-area').on 'click', ->
+  #   $(this).hide()
+  #   uppy.reset()
+  #   $('#upload-bulk-correction-button').show()
+  #   $('#bulk-upload-area').show()
+  #   return
 
-  $('#show-bulk-upload-area').on 'click', ->
-    $(this).hide()
-    uppy.reset()
-    $('#upload-bulk-correction-button').show()
-    $('#bulk-upload-area').show()
-    return
-
-  uppy
+  # uppy
 
 
 ###
@@ -525,8 +513,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
           else
             console.log(xhr)
             alert(
-              $(progressBarElement).data('tr-failure')
-              + xhr.responseText
+              $(progressBarElement).data('tr-failure') + xhr.response
             )
         xhr.onload = onload(xhr)
         
@@ -830,22 +817,9 @@ $(document).on 'turbolinks:load', ->
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
   imageUpload image if image?
-  #bulkCorrectionUpload bulkCorrection if bulkCorrection?
-  if bulkCorrection?
-    directUpload(
-      'upload-bulk-correction'
-      '#upload-bulk-correction-uploadButton-call'
-      '#upload-bulk-Files'
-      '#upload-bulk-correction-uploadButton-call'
-      null
-      '/corrections/upload'
-      '#upload-bulk-correction-uploadButton-call'
-      () ->
-      () ->
-      'upload-bulk-correction-hidden'
-      )
+  bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
-  # make uppy upload buttons look like bootstrap
-  $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
-  .addClass('btn btn-sm btn-outline-secondary')
+  # # make uppy upload buttons look like bootstrap
+  # $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
+  # .addClass('btn btn-sm btn-outline-secondary')
   return
