@@ -367,16 +367,6 @@ bulkCorrectionUpload = (fileInput) ->
       '/corrections/upload'
       '#bulk-uploadButton-button-actual'
       (xhr) ->
-        # result = JSON.parse xhr.response
-        # console.log result
-        # if result.successful.length > 0
-        #   uploaded_files = result.successful.map (file) -> file.response.body
-        #   console.log uploaded_files
-        #   hiddenInput.value = JSON.stringify(uploaded_files)
-        #   $('#upload-bulk-correction-save').prop('disabled', false)
-        #   $(metaData).empty()
-        #     .append(result.successful.length + ' ' +$(metaData).data('tr-uploads'))
-        #   $(uploadButton).hide()
       () ->
         $("#bulk-upload-area").toggle()
       'upload-bulk-correction-hidden'
