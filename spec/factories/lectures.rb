@@ -13,7 +13,6 @@ FactoryBot.define do
       chapter_count { 3 }
     end
 
-
     trait :with_organizational_stuff do
       organizational { true }
       organizational_concept { Faker::ChuckNorris.fact }

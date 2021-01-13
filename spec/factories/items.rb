@@ -21,7 +21,7 @@ FactoryBot.define do
 
     factory :item_for_sample_video, traits: [:with_start_time, :with_medium] do
       transient do
-        starting_time { Faker::Number.between(from: 0, to: 42770) / 1000.0 }
+        starting_time { Faker::Number.between(from: 0, to: 42_770) / 1000.0 }
       end
     end
   end

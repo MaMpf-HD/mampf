@@ -3,8 +3,9 @@
 FactoryBot.define do
   factory :solution do
     transient do
-      sort { [:mampf_expression, :mampf_matrix, :mampf_tuple,
-              :mampf_set].sample }
+      sort do
+        [:mampf_expression, :mampf_matrix, :mampf_tuple, :mampf_set].sample
+      end
       content { build(sort) }
     end
 

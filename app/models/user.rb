@@ -293,7 +293,8 @@ class User < ApplicationRecord
   # - all courses if the user is an admin
   # - all edited courses otherwise
   def editable_courses
-    return Course.includes(lectures: [:term, :teacher]).all if admin
+    return Course.all if admin
+
     edited_courses
   end
 
@@ -314,7 +315,8 @@ class User < ApplicationRecord
   # editable courses with inheritance are all editable courses (see above)
   # together with all courses that are parent to edite lectures
   def editable_courses_with_inheritance
-    (editable_courses + edited_lectures.map(&:course)).uniq
+    (editable_courses.includes(lectures: [:term, :teacher]) +
+       edited_lectures.map(&:course)).uniq
   end
 
   # lectures as module editor are all lectures that belong to an edited course

@@ -440,6 +440,7 @@ bulkCorrectionUpload = (fileInput) ->
   fileInput.style.display = 'none'
   result = undefined
   merged = undefined
+  newFile = false
   files = []
   filez= []
   progressOptimize = 0
@@ -510,7 +511,7 @@ bulkCorrectionUpload = (fileInput) ->
     e.preventDefault()
     if merged != undefined && result == undefined
       result = merged
-    if result== undefined
+    if result== undefined || newFile
       result =document.getElementById('upload-userManuscript').files[0]
     if $("#file-permission-checkbox").is(":checked")
       #Upload blob
@@ -558,6 +559,7 @@ bulkCorrectionUpload = (fileInput) ->
     $("#userManuscript-merge-log").toggle()
   $('#userManuscript-merge-btn').on 'click',(e) ->
     e.preventDefault()
+    newFile = false
 
     workingText = $('#userManuscript-merge-btn').data('tr-working')
     $('#userManuscript-merge-btn').text(workingText)
@@ -603,6 +605,7 @@ bulkCorrectionUpload = (fileInput) ->
 
   $('#userManuscript-optimize-btn').on 'click',(e) ->
     e.preventDefault()
+    newFile = false
     file = document.getElementById('upload-userManuscript').files[0]
     console.log file
     workingText = $('#userManuscript-optimize-btn').data('tr-working')
@@ -660,6 +663,8 @@ bulkCorrectionUpload = (fileInput) ->
       reader.readAsArrayBuffer(file)
 
   $('#upload-userManuscript').change () ->
+    $('#userManuscript-uploadButton-call').text $('#userManuscript-uploadButton-call').data('tr-upload')
+    newFile = true
     $('#userManuscript-not-upload-notice').show()
     $('input[type="submit"]').prop('disabled',true)
     filez = Array.prototype.slice.call(

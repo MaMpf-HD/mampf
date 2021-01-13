@@ -4,7 +4,7 @@ require:
   - rubocop-rails
 
 AllCops:
-  TargetRubyVersion: 2.5
+  TargetRubyVersion: 2.7
   # RuboCop has a bunch of cops enabled by default. This setting tells RuboCop
   # to ignore them, so only the ones explicitly set in this file are enabled.
   DisabledByDefault: true
@@ -41,6 +41,15 @@ Rails/IndexWith:
 Style/AndOr:
   Enabled: true
 
+Layout/ArgumentAlignment:
+  Enabled: true
+
+Layout/ArrayAlignment:
+  Enabled: true
+
+Layout/BlockAlignment:
+  Enabled: true
+
 # Align `when` with `case`.
 Layout/CaseIndentation:
   Enabled: true
@@ -62,12 +71,14 @@ Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
   AutoCorrect: true
 
+Layout/EmptyLines:
+  Enabled: true
+
 Layout/EmptyLineAfterMagicComment:
   Enabled: true
 
 Layout/EmptyLinesAroundAccessModifier:
   Enabled: true
-  EnforcedStyle: only_before
 
 Layout/EmptyLinesAroundBlockBody:
   Enabled: true
@@ -84,6 +95,9 @@ Layout/EmptyLinesAroundMethodBody:
 Layout/EmptyLinesAroundModuleBody:
   Enabled: true
 
+Layout/ExtraSpacing:
+  Enabled: true
+
 Layout/LineLength:
   Max: 80
 
@@ -92,6 +106,9 @@ Style/HashSyntax:
   Enabled: true
 
 Layout/FirstArgumentIndentation:
+  Enabled: true
+
+Layout/HashAlignment:
   Enabled: true
 
 # Method definitions after `private` or `protected` isolated calls need one
@@ -105,6 +122,9 @@ Layout/IndentationWidth:
   Enabled: true
 
 Layout/LeadingCommentSpace:
+  Enabled: true
+
+Layout/MultilineOperationIndentation:
   Enabled: true
 
 Layout/SpaceAfterColon:
@@ -131,11 +151,29 @@ Layout/SpaceBeforeComment:
 Layout/SpaceBeforeFirstArg:
   Enabled: true
 
+Layout/SpaceInsideArrayLiteralBrackets:
+  Enabled: true
+
+Style/BlockDelimiters:
+  Enabled: true
+
+Style/BlockComments:
+  Enabled: true
+
+Style/ConditionalAssignment:
+  Enabled: true
+
 Style/DefWithParentheses:
+  Enabled: true
+
+Style/Documentation:
   Enabled: true
 
 # Defining a method with parameters needs parentheses.
 Style/MethodDefParentheses:
+  Enabled: true
+
+Style/MethodCallWithoutArgsParentheses:
   Enabled: true
 
 Style/FrozenStringLiteralComment:
@@ -151,7 +189,16 @@ Style/FrozenStringLiteralComment:
     - 'actionmailbox/db/migrate/**/*.rb'
     - 'actiontext/db/migrate/**/*.rb'
 
+Style/NumericLiterals:
+  Enabled: true
+
+Style/NumericPredicate:
+  Enabled: true
+
 Style/RedundantFreeze:
+  Enabled: true
+
+Style/SymbolProc:
   Enabled: true
 
 # Use `foo {}` not `foo{}`.
@@ -217,6 +264,9 @@ Lint/UselessAssignment:
   Enabled: true
 
 Lint/DeprecatedClassMethods:
+  Enabled: true
+
+Naming/VariableNumber:
   Enabled: true
 
 Style/ParenthesesAroundCondition:

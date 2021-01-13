@@ -5,8 +5,10 @@ require 'faker'
 FactoryBot.define do
   factory :chapter do
     association :lecture, factory: [:lecture]
-    title { Faker::Book.title + ' ' +
-              Faker::Number.between(from: 1, to: 9999).to_s }
+    title do
+      Faker::Book.title + ' ' +
+        Faker::Number.between(from: 1, to: 9999).to_s
+    end
 
     transient do
       section_count { 3 }

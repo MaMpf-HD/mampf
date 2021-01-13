@@ -6,8 +6,9 @@ FactoryBot.define do
 
     trait :with_notifiable do
       transient do
-        notifiable_sort { ['Medium', 'Course', 'Lecture',
-                           'Announcement'].sample }
+        notifiable_sort do
+          ['Medium', 'Course', 'Lecture', 'Announcement'].sample
+        end
       end
       after :build do |n, evaluator|
         n.notifiable = build(evaluator.notifiable_sort.downcase.to_sym)

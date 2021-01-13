@@ -12,13 +12,12 @@ FactoryBot.define do
     end
 
     trait :skip_confirmation_notification do
-      after(:build)  { |user| user.skip_confirmation_notification! }
+      after(:build, &:skip_confirmation_notification!)
     end
 
     trait :auto_confirmed do
-      after(:create) { |user| user.confirm }
+      after(:create, &:confirm)
     end
-
 
     # call it with build(:user, :with_lectures, lecture_count: n) if you want
     # n subscribed lectures associated to the user
