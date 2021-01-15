@@ -60,6 +60,8 @@ class LecturesController < ApplicationController
                                                         chapter: [:lecture],
                                                         tags: [:notions, :lessons]]])
                         .find_by_id(params[:id])
+      @accessible = @lecture.in?(current_user.lectures)
+      return unless @accessible
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
       render layout: 'application'

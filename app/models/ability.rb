@@ -199,9 +199,9 @@ class Ability
 
       can [:take, :proceed], Quiz
 
-      cannot :show, Lecture  do |lecture|
-        !lecture.in?(user.lectures)
-      end
+      #cannot :show, Lecture  do |lecture|
+      #  !lecture.in?(user.lectures)
+      #end
 
       can [:render_question_counter, :take_random_quiz], Course do |course|
         course.subscribed_by?(user)

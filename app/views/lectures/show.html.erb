@@ -1,61 +1,103 @@
-<div class="row mt-2 mb-2">
-  <div id="lecture-details" class="col-12 text-center">
-    <h4>
-      <span class="badge badge-secondary">
-        <%= @lecture.sort_localized %>
-      </span>
-      <span id="lecture-title" class="mr-3">
-        <%= @lecture.title_term_info_no_type %>
-      </span>
-      <% if @lecture.term || !@lecture.disable_teacher_display %>
-        <span>
-          <% if !@lecture.teacher.archived %>
-            <%= link_to @lecture.teacher.name,
-                        teacher_path(@lecture.teacher),
-                        id: 'lecture-teacher',
-                        class: 'text-dark' %>
-          <% else %>
-            <%= @lecture.teacher.name %>
-          <% end %>
+<% if @accessible %>
+  <div class="row mt-2 mb-2">
+    <div id="lecture-details" class="col-12 text-center">
+      <h4>
+        <span class="badge badge-secondary">
+          <%= @lecture.sort_localized %>
         </span>
-      <% end %>
-      <% privileged = current_user.admin ||
-                      current_user.in?(@lecture.editors_with_inheritance) %>
-      <%= link_to '',
-                  edit_lecture_path(@lecture),
-                  id: 'lecture-edit',
-                  class: 'far fa-edit text-dark',
-                  data: { toggle: 'tooltip',
-                          placement: 'bottom' },
-                  title: t('buttons.edit'),
-                  style: 'text-decoration: none; ' +
-                         'display: ' + show_inline(privileged) %>
-    </h4>
-  </div>
-</div>
-<% privileged = current_user.admin ||
-                  current_user.in?(@lecture.editors_with_inheritance) %>
-<div class="row">
-  <% if @notifications.present? || @new_topics_count.positive? %>
-    <div class="col-12">
-      <%= render partial: 'lectures/news_card',
-                 locals: { lecture: @lecture,
-                           notifications: @notifications,
-                           posts_count:  @new_topics_count } %>
+        <span id="lecture-title" class="mr-3">
+          <%= @lecture.title_term_info_no_type %>
+        </span>
+        <% if @lecture.term || !@lecture.disable_teacher_display %>
+          <span>
+            <% if !@lecture.teacher.archived %>
+              <%= link_to @lecture.teacher.name,
+                          teacher_path(@lecture.teacher),
+                          id: 'lecture-teacher',
+                          class: 'text-dark' %>
+            <% else %>
+              <%= @lecture.teacher.name %>
+            <% end %>
+          </span>
+        <% end %>
+        <% privileged = current_user.admin ||
+                        current_user.in?(@lecture.editors_with_inheritance) %>
+        <%= link_to '',
+                    edit_lecture_path(@lecture),
+                    id: 'lecture-edit',
+                    class: 'far fa-edit text-dark',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none; ' +
+                          'display: ' + show_inline(privileged) %>
+      </h4>
     </div>
-  <% end %>
-  <% cache @lecture do %>
-    <% if @lecture.term ||  !@lecture.organizational ||
-            !@lecture.organizational_on_top %>
+  </div>
+  <% privileged = current_user.admin ||
+                    current_user.in?(@lecture.editors_with_inheritance) %>
+  <div class="row">
+    <% if @notifications.present? || @new_topics_count.positive? %>
       <div class="col-12">
-        <%= render partial: 'lectures/show/content',
-                   locals: { lecture: @lecture } %>
-      </div>
-    <% else %>
-      <div class="col-12">
-        <%= render partial: 'lectures/organizational/organizational',
-             locals: { lecture: @lecture } %>
+        <%= render partial: 'lectures/news_card',
+                  locals: { lecture: @lecture,
+                            notifications: @notifications,
+                            posts_count:  @new_topics_count } %>
       </div>
     <% end %>
-  <% end %>
-</div>
+    <% cache @lecture do %>
+      <% if @lecture.term ||  !@lecture.organizational ||
+              !@lecture.organizational_on_top %>
+        <div class="col-12">
+          <%= render partial: 'lectures/show/content',
+                    locals: { lecture: @lecture } %>
+        </div>
+      <% else %>
+        <div class="col-12">
+          <%= render partial: 'lectures/organizational/organizational',
+              locals: { lecture: @lecture } %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% else %>
+  <div class="row mt-2 mb-2">
+    <div id="lecture-details" class="col-12 text-center">
+      <h4>
+        <span class="badge badge-secondary">
+          <%= @lecture.sort_localized %>
+        </span>
+        <span id="lecture-title" class="mr-3">
+          <%= @lecture.title_term_info_no_type %>
+        </span>
+  <% if @lecture.term || !@lecture.disable_teacher_display %>
+          <span>
+            <% if !@lecture.teacher.archived %>
+              <%= link_to @lecture.teacher.name,
+                          teacher_path(@lecture.teacher),
+                          id: 'lecture-teacher',
+                          class: 'text-dark' %>
+            <% else %>
+              <%= @lecture.teacher.name %>
+            <% end %>
+          </span>
+        <% end %>
+  </div>
+  <div class="alert alert-danger error-jumbo">
+    <div><h4 class="text-danger"><%=t("basics.error")%></h4>
+    <p>
+    <%= t("errors.not_subscribed")%>
+    </p>
+    <p>
+    <%= link_to t("profile.subscribe_lecture"),
+    subscribe_lecture_path(params:
+                                                 { lecture:
+                                                     { id: @lecture.id,
+                                                       parent: "redirect" } },
+                          ),
+    method: :patch,
+    class: "btn btn-primary"%>
+    </p>
+  </div>
+  </div>
+<% end %>

@@ -79,6 +79,8 @@ class ProfileController < ApplicationController
                 !@lecture.in?(current_user.lectures) &&
                 @lecture.passphrase != @passphrase
     @success = current_user.subscribe_lecture!(@lecture)
+
+    redirect_to lecture_path(@lecture) if @parent == "redirect"
   end
 
   def unsubscribe_lecture
@@ -148,6 +150,7 @@ class ProfileController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(lecture_params[:id])
+    p(@lecture)
     @passphrase = lecture_params[:passphrase]
     @parent = lecture_params[:parent]
     @current = !@parent.in?(['lectureSearch', 'inactive'])
