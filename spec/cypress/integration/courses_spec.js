@@ -12,14 +12,14 @@ describe("Courses", function () {
             cy.get('input[type="submit"]').click();
         });
         it("can create module", () => {
-             cy.visit('/administration');
-             cy.get('i[title="Modul anlegen"]').click();
-             cy.get('input[name="course[title]"]').type("Lineare Algebra I");
-             cy.get('input[name="course[short_title]"]').type("LA I");
-             cy.get('input[type="submit"]').click();
-             cy.visit('/administration');
-             cy.contains("Lineare Algebra I").should("exist");
-         });
+            cy.visit('/administration');
+            cy.get('i[title="Modul anlegen"]').click();
+            cy.get('input[name="course[title]"]').type("Lineare Algebra I");
+            cy.get('input[name="course[short_title]"]').type("LA I");
+            cy.get('input[type="submit"]').click();
+            cy.visit('/administration');
+            cy.contains("Lineare Algebra I").should("exist");
+        });
         it("can create lecture", () => {
             cy.appFactories([
                 ['create', 'course'],
@@ -40,7 +40,7 @@ describe("Courses", function () {
 
     });
     describe("simple user", () => {
-        beforeEach(()=>{
+        beforeEach(() => {
             cy.appScenario("non_admin");
             cy.visit("/users/sign_in");
             cy.get('input[type="email"]').type("max@mampf.edu");
@@ -60,7 +60,27 @@ describe("Courses", function () {
                 cy.get('[title="abonnieren"]').first().click();
                 cy.get('[title="abbestellen"]').should("exist");
             });
-
+        });
+        it("can subscribe on page", () => {
+            cy.appFactories([
+                ["create", "lecture", "released_for_all"]
+            ], (courses) => {
+                cy.visit(`/lectures/${courses[0].id}`);
+                cy.contains("Fehler").should("exist");
+                cy.contains("Veranstaltung abonnieren").click();
+                cy.contains("Vorlesungsinhalt").should("exist");
+            })
+        });
+        it("is blocked to subscribe on page", () => {
+            cy.appFactories([
+                ["create", "lecture"]
+            ], (courses) => {
+                cy.visit(`/lectures/${courses[0].id}`);
+                cy.contains("Fehler").should("exist");
+                cy.contains("Veranstaltung abonnieren").click();
+                cy.contains("Vorlesungsinhalt").should("not.exist");
+                cy.contains("Fehler").should("exist");
+            })
         });
     });
 });
