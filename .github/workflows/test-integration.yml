@@ -10,6 +10,7 @@ jobs:
         with:
           submodules: recursive
       - run: yarn install
+        working-directory: spec/cypress/support
       - run: docker-compose pull
         working-directory: docker/run_cypress_tests
       - uses: satackey/action-docker-layer-caching@v0.0.11

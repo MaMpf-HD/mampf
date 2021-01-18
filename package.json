@@ -18,8 +18,6 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "cypress": "5.2.0",
-    "cypress-file-upload": "^4.1.1",
     "eslint": "^7.11.0"
   }
 }
