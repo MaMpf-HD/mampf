@@ -445,6 +445,70 @@ RSpec.describe Lecture, type: :model do
     end
   end
 
+  describe '#title_with_teacher' do
+    context 'if no teacher is present' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: nil)
+        expect(lecture.title_with_teacher).to eq '(V) Algebra 1, SS 2020'
+      end
+    end
+
+    context 'if no teacher name is present' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        teacher = lecture.teacher
+        teacher.name = nil
+        expect(lecture.title_with_teacher).to eq '(V) Algebra 1, SS 2020'
+      end
+    end
+
+    context 'if teacher name is present' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: teacher)
+        expect(lecture.title_with_teacher)
+          .to eq '(V) Algebra 1, SS 2020 (Harry Bosch)'
+      end
+    end
+  end
+
+  describe '#title_with_teacher_no_type' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1', short_title: 'Alg1')
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        lecture = FactoryBot.build(:lecture, :term_independent,
+                                   course: course, teacher: teacher)
+        expect(lecture.title_with_teacher_no_type)
+          .to eq 'Algebra 1, (Harry Bosch)'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: teacher)
+        expect(lecture.title_with_teacher_no_type)
+          .to eq 'Algebra 1, SS 2020 (Harry Bosch)'
+      end
+    end
+  end
+
 
   # describe '#tags' do
   #   it 'returns the correct tags for the lecture' do
