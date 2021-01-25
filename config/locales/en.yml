@@ -2874,6 +2874,7 @@ en:
     open_comments: 'Reopen all closed discussions'
     join: 'Join'
     copy_to_clipboard: 'Copy to Clipboard'
+    copy_email_to_clipboard: 'Copy mail adresses to Clipboard'
     leave: 'Leave'
     upload: 'Upload'
     upload_success: 'Upload successful'

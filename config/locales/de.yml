@@ -3041,6 +3041,7 @@ de:
     open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
     join: 'Beitreten'
     copy_to_clipboard: 'in die Zwischenablage kopieren'
+    copy_email_to_clipboard: 'E-Mail-Adressen in die Zwischenablage kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
