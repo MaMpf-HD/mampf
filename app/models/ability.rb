@@ -213,7 +213,7 @@ class Ability
 
       can [:show_announcements, :organizational,
            :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course], Lecture
+           :display_course, :subscribe_page], Lecture
       cannot [:show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
