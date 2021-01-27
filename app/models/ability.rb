@@ -53,7 +53,7 @@ class Ability
       # anyone should be able to get a sidebar and see the announcements
       can [:organizational, :show_announcements,
            :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course],
+           :display_course, :subscribe_page],
           Lecture
 
       can [:take_random_quiz, :render_question_counter], Course
