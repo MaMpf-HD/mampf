@@ -150,7 +150,6 @@ class ProfileController < ApplicationController
 
   def set_lecture
     @lecture = Lecture.find_by_id(lecture_params[:id])
-    p(@lecture)
     @passphrase = lecture_params[:passphrase]
     @parent = lecture_params[:parent]
     @current = !@parent.in?(['lectureSearch', 'inactive'])

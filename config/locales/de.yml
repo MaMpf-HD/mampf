@@ -2296,7 +2296,7 @@ de:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
   errors:
-    not_subscribed: Du bist zur Zeit nicht in dieser Vorlesung AbonnentIn.
+    not_subscribed: Aktuell hast Du diese Veranstaltung nicht abonniert.
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
     thyme:

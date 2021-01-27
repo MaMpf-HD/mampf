@@ -2163,7 +2163,7 @@ en:
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
   errors:
-    not_subscribed: You are currently not subscribed to this course.
+    not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
     thyme:
