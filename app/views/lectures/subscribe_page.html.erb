@@ -1,0 +1,61 @@
+  <div class="row mt-2 mb-2">
+    <div id="lecture-details" class="col-12 text-center">
+      <h4>
+        <span class="badge badge-secondary">
+          <%= @lecture.sort_localized %>
+        </span>
+        <span id="lecture-title" class="mr-3">
+          <%= @lecture.title_term_info_no_type %>
+        </span>
+  <% if @lecture.term || !@lecture.disable_teacher_display %>
+          <span>
+            <% if !@lecture.teacher.archived %>
+              <%= link_to @lecture.teacher.name,
+                          teacher_path(@lecture.teacher),
+                          id: 'lecture-teacher',
+                          class: 'text-dark' %>
+            <% else %>
+              <%= @lecture.teacher.name %>
+            <% end %>
+          </span>
+        <% end %>
+  </div>
+  <div class="alert alert-danger error-jumbo">
+    <div><h4 class="text-danger"><%=t("basics.error")%></h4>
+    <p>
+    <%= t("errors.not_subscribed")%>
+    </p>
+    <p>
+    <% if @lecture.restricted? %>
+      <%= t('profile.passphrase_required', lecture_title: @lecture.title) %>
+      <%= form_with url: subscribe_lecture_path,
+              method: 'patch',
+              scope: 'lecture' do |f|%>
+              <p>
+        <%= f.text_field :passphrase,
+                        class: 'form-control',
+                        value: ""%>
+        <div class="invalid-feedback"
+            id="passphrase-error" >
+        </div>
+        <%= f.hidden_field :id,
+                          value: @lecture.id %>
+        <%= f.hidden_field :parent,
+                          value: "redirect" %>
+        </p>
+        <%= f.submit t("profile.subscribe_lecture"),
+                      class: "btn btn-primary"%>
+      <% end %>
+    <%else%>
+      <%= link_to t("profile.subscribe_lecture"),
+      subscribe_lecture_path(params:
+                                                  { lecture:
+                                                      { id: @lecture.id,
+                                                        parent: "redirect" } },
+                            ),
+      method: :patch,
+      class: "btn btn-primary"%>
+    <% end %>
+    </p>
+  </div>
+  </div>
