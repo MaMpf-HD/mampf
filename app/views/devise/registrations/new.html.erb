@@ -30,8 +30,11 @@
                                   target: :_blank)) %>
   </div>
   <%= f.hidden_field :locale, value: I18n.locale %>
+  <p>
+  <div id="captcha-widget"  data-sitekey="YOUR_SITE_KEY" data-start="auto" data-captcha-url="<%=ENV['CAPTCHA_PUZZLE_URL']%>"></div>
+  </p>
   <div class="form-group">
-    <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'register-user' %>
+    <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'register-user', disabled:true %>
   </div>
 <% end %>
 

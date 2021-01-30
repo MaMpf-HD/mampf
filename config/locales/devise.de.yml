@@ -81,6 +81,7 @@ de:
           %{policy} der Universität Heidelberg zu.
         policy: 'Datenschutzerklärung'
       user:
+        captcha_error: Das Captcha-Test wurde nicht richtig gelöst.
         too_many_registrations: In letzter Zeit sind zu viele Registrierungen versucht worden, bitte versuche es später erneut.
     sessions:
       signed_in: "Du hast Dich erfolgreich angemeldet."
