@@ -5,6 +5,7 @@ require 'json'
 class RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_registration_limit, only: [:create]
   def verify_captcha
+    return true unless ENV['USE_CAPTCHA_SERVICE']
     begin
       uri = URI.parse(ENV['CAPTCHA_VERIFY_URL'])
       data = {message:params["frc-captcha-solution"], application_token:ENV['CAPTCHA_APPLICATION_TOKEN']}

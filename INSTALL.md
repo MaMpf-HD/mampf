@@ -94,6 +94,7 @@ MUESLI_SERVER = your_muesli_server
 PROJECT_EMAIL = your_project_email
 PROJECT_NOTIFICATION_EMAIL= your_project_notification_email
 INSTANCE_PATH=mampf
+USE_CAPTCHA_SERVICE=true
 CAPTCHA_VERIFY_URL=your_captcha_service_verify_url
 CAPTCHA_PUZZLE_URL=your_captcha_service_puzzle_url
 CAPTCHA_APPLICATION_TOKEN=your_token_for_verifying_puzzle
