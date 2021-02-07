@@ -39,6 +39,25 @@ describe("Courses", function () {
         });
 
     });
+    describe("teacher",()=>{
+        beforeEach(() => {
+            cy.appScenario("teacher");
+            cy.visit("/users/sign_in");
+            cy.get('input[type="email"]').type("teacher@mampf.edu");
+            cy.get('input[type="password"]').type("test123456");
+            cy.get('input[type="submit"]').click();
+        });
+        it("can subscribe to unpublished on page", () => {
+            cy.appFactories([
+                ["create", "lecture",{"teacher_id":1} ]
+            ], (courses) => {
+                cy.visit(`/lectures/${courses[0].id}`);
+                cy.contains("Fehler").should("exist");
+                cy.contains("Veranstaltung abonnieren").click();
+                cy.contains("Vorlesungsinhalt").should("exist");
+            });
+        });
+    });
     describe("simple user", () => {
         beforeEach(() => {
             cy.appScenario("non_admin");
@@ -80,7 +99,15 @@ describe("Courses", function () {
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("not.exist");
                 cy.contains("Fehler").should("exist");
-            })
+            });
+        });
+        it("can not subscribe on page to unpublished", () => {
+            cy.appFactories([
+                ["create", "lecture" ]
+            ], (courses) => {
+                cy.visit(`/lectures/${courses[0].id}`);
+                cy.contains("unveröffentlicht").should("exist");
+            });
         });
     });
 });

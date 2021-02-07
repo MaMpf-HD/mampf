@@ -70,7 +70,7 @@ class Ability
           Lecture do |lecture|
         lecture.edited_by?(user)
       end
-      cannot [:show, :show_announcements, :organizational], Lecture do |lecture|
+      cannot [ :show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
 
