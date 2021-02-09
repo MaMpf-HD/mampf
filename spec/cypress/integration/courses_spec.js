@@ -39,7 +39,7 @@ describe("Courses", function () {
         });
 
     });
-    describe("teacher",()=>{
+    describe("teacher", () => {
         beforeEach(() => {
             cy.appScenario("teacher");
             cy.visit("/users/sign_in");
@@ -49,8 +49,10 @@ describe("Courses", function () {
         });
         it("can subscribe to unpublished on page", () => {
             cy.appFactories([
-                ["create", "lecture",{"teacher_id":1} ]
-            ], (courses) => {
+                ["create", "lecture", {
+                    "teacher_id": 1
+                }]
+            ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("Fehler").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
@@ -83,17 +85,17 @@ describe("Courses", function () {
         it("can subscribe on page", () => {
             cy.appFactories([
                 ["create", "lecture", "released_for_all"]
-            ], (courses) => {
+            ].then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("Fehler").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
-            })
+            }));
         });
         it("is blocked to subscribe on page", () => {
             cy.appFactories([
                 ["create", "lecture"]
-            ], (courses) => {
+            ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("Fehler").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
@@ -103,8 +105,8 @@ describe("Courses", function () {
         });
         it("can not subscribe on page to unpublished", () => {
             cy.appFactories([
-                ["create", "lecture" ]
-            ], (courses) => {
+                ["create", "lecture"]
+            ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("unveröffentlicht").should("exist");
             });
