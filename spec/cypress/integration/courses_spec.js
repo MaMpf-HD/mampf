@@ -41,9 +41,9 @@ describe("Courses", function () {
     });
     describe("teacher", () => {
         beforeEach(() => {
-            cy.appScenario("teacher");
+            cy.appScenario("non_admin");
             cy.visit("/users/sign_in");
-            cy.get('input[type="email"]').type("teacher@mampf.edu");
+            cy.get('input[type="email"]').type("max@mampf.edu");
             cy.get('input[type="password"]').type("test123456");
             cy.get('input[type="submit"]').click();
         });
@@ -85,16 +85,19 @@ describe("Courses", function () {
         it("can subscribe on page", () => {
             cy.appFactories([
                 ["create", "lecture", "released_for_all"]
-            ].then((courses) => {
+            ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("Fehler").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
-            }));
+            });
         });
         it("is blocked to subscribe on page", () => {
             cy.appFactories([
-                ["create", "lecture"]
+                ["create", "lecture", {
+                    "released": "locked",
+                    "passphrase": "passphrase"
+                }]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("Fehler").should("exist");
