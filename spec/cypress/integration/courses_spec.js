@@ -39,6 +39,27 @@ describe("Courses", function () {
         });
 
     });
+    describe("teacher", () => {
+        beforeEach(() => {
+            cy.appScenario("non_admin");
+            cy.visit("/users/sign_in");
+            cy.get('input[type="email"]').type("max@mampf.edu");
+            cy.get('input[type="password"]').type("test123456");
+            cy.get('input[type="submit"]').click();
+        });
+        it("can subscribe to unpublished on page", () => {
+            cy.appFactories([
+                ["create", "lecture", {
+                    "teacher_id": 1
+                }]
+            ]).then((courses) => {
+                cy.visit(`/lectures/${courses[0].id}`);
+                cy.contains("Fehler").should("exist");
+                cy.contains("Veranstaltung abonnieren").click();
+                cy.contains("Vorlesungsinhalt").should("exist");
+            });
+        });
+    });
     describe("simple user", () => {
         beforeEach(() => {
             cy.appScenario("non_admin");
@@ -64,23 +85,34 @@ describe("Courses", function () {
         it("can subscribe on page", () => {
             cy.appFactories([
                 ["create", "lecture", "released_for_all"]
-            ], (courses) => {
+            ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("Fehler").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
-            })
+            });
         });
         it("is blocked to subscribe on page", () => {
             cy.appFactories([
-                ["create", "lecture"]
-            ], (courses) => {
+                ["create", "lecture", {
+                    "released": "locked",
+                    "passphrase": "passphrase"
+                }]
+            ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
                 cy.contains("Fehler").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("not.exist");
                 cy.contains("Fehler").should("exist");
-            })
+            });
+        });
+        it("can not subscribe on page to unpublished", () => {
+            cy.appFactories([
+                ["create", "lecture"]
+            ]).then((courses) => {
+                cy.visit(`/lectures/${courses[0].id}`);
+                cy.contains("unveröffentlicht").should("exist");
+            });
         });
     });
 });
