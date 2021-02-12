@@ -1,5 +1,5 @@
 ---
-version: '3.2'
+version: "3.2"
 services:
   redis:
     image: "redis:alpine"
@@ -47,7 +47,8 @@ services:
       TEST_DATABASE_PORT: 5432
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
-      URL_HOST: localhost
+      URL_HOST: mampf
+      URL_HOST_SHORT: mampf
       SECRET_KEY_BASE: testenvironment
       ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
@@ -71,6 +72,7 @@ services:
     entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done; npx cypress run $$@"
     volumes:
       - ../../spec/cypress/integration:/cypress/integration:ro
+      - ../../spec/cypress/fixtures:/cypress/fixtures:ro
       - ../../spec/cypress/support:/cypress/support:ro
       - ../../spec/cypress.json:/cypress.json:ro
       - ../../.git:/.git:ro
