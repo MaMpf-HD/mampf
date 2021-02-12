@@ -58,13 +58,13 @@ all assets have to provided.
 A few common commands for `docker-compose` are:
 
 | command                            | action                                                         |
-|------------------------------------|----------------------------------------------------------------|
+| ---------------------------------- | -------------------------------------------------------------- |
 | `docker-compose up`                | runs the mampf stack                                           |
 | `docker-compose up -d`             | runs the mampf stack in the background                         |
-| `docker-compose logs -f`           | shows you continuous logs from the container                    |
+| `docker-compose logs -f`           | shows you continuous logs from the container                   |
 | `docker-compose down`              | deletes all the created containers                             |
 | `docker-compose down --volumes`    | deletes all the associated containers and volumes (full reset) |
-| `docker-compose exec mampf <exec>` | run an executable in the container
+| `docker-compose exec mampf <exec>` | run an executable in the container                             |
 
 
 ## Installation in production mode (with Docker)
@@ -94,6 +94,10 @@ MUESLI_SERVER = your_muesli_server
 PROJECT_EMAIL = your_project_email
 PROJECT_NOTIFICATION_EMAIL= your_project_notification_email
 INSTANCE_PATH=mampf
+USE_CAPTCHA_SERVICE=true
+CAPTCHA_VERIFY_URL=your_captcha_service_verify_url
+CAPTCHA_PUZZLE_URL=your_captcha_service_puzzle_url
+CAPTCHA_APPLICATION_TOKEN=your_token_for_verifying_puzzle
 ```
  3. Execute the following commands to install and run the service:
 ```

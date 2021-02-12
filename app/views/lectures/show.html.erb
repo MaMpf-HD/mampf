@@ -1,3 +1,4 @@
+
 <div class="row mt-2 mb-2">
   <div id="lecture-details" class="col-12 text-center">
     <h4>
@@ -29,7 +30,7 @@
                           placement: 'bottom' },
                   title: t('buttons.edit'),
                   style: 'text-decoration: none; ' +
-                         'display: ' + show_inline(privileged) %>
+                        'display: ' + show_inline(privileged) %>
     </h4>
   </div>
 </div>
@@ -39,9 +40,9 @@
   <% if @notifications.present? || @new_topics_count.positive? %>
     <div class="col-12">
       <%= render partial: 'lectures/news_card',
-                 locals: { lecture: @lecture,
-                           notifications: @notifications,
-                           posts_count:  @new_topics_count } %>
+                locals: { lecture: @lecture,
+                          notifications: @notifications,
+                          posts_count:  @new_topics_count } %>
     </div>
   <% end %>
   <% cache @lecture do %>
@@ -49,12 +50,12 @@
             !@lecture.organizational_on_top %>
       <div class="col-12">
         <%= render partial: 'lectures/show/content',
-                   locals: { lecture: @lecture } %>
+                  locals: { lecture: @lecture } %>
       </div>
     <% else %>
       <div class="col-12">
         <%= render partial: 'lectures/organizational/organizational',
-             locals: { lecture: @lecture } %>
+            locals: { lecture: @lecture } %>
       </div>
     <% end %>
   <% end %>

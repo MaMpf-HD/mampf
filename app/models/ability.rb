@@ -53,7 +53,7 @@ class Ability
       # anyone should be able to get a sidebar and see the announcements
       can [:organizational, :show_announcements,
            :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course],
+           :display_course, :subscribe_page],
           Lecture
 
       can [:take_random_quiz, :render_question_counter], Course
@@ -70,7 +70,7 @@ class Ability
           Lecture do |lecture|
         lecture.edited_by?(user)
       end
-      cannot [:show, :show_announcements, :organizational], Lecture do |lecture|
+      cannot [ :show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end
 
@@ -199,9 +199,9 @@ class Ability
 
       can [:take, :proceed], Quiz
 
-      cannot :show, Lecture  do |lecture|
-        !lecture.in?(user.lectures)
-      end
+      #cannot :show, Lecture  do |lecture|
+      #  !lecture.in?(user.lectures)
+      #end
 
       can [:render_question_counter, :take_random_quiz], Course do |course|
         course.subscribed_by?(user)
@@ -213,7 +213,7 @@ class Ability
 
       can [:show_announcements, :organizational,
            :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course], Lecture
+           :display_course, :subscribe_page], Lecture
       cannot [:show_announcements, :organizational], Lecture do |lecture|
         !lecture.in?(user.lectures)
       end

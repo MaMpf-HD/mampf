@@ -19,7 +19,39 @@
 import css from 'jquery-datetimepicker/build/jquery.datetimepicker.min.css'
 //require('./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css')
 import myLib from 'imports-loader?imports=default%20jquery%20$!./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
-console.log('Hello World from Webpacker')
-require(["jquery-datetimepicker"],function(es){
+import {
+    WidgetInstance
+} from "friendly-challenge";
+var friendlyChallengeWidgetInstance = WidgetInstance
+require(["jquery-datetimepicker"], function (es) {
     $.datetimepicker.setLocale('de');
+})
+
+
+document.addEventListener("turbolinks:load", function () {
+    // ...
+
+    var doneCallback, element, options, widget;
+
+    doneCallback = function (solution) {
+        console.log(solution);
+        document.querySelector("#register-user").disabled = false;
+    };
+    const errorCallback = (err) => {
+        console.log('There was an error when trying to solve the Captcha.');
+        console.log(err);
+    }
+    element = document.querySelector('#captcha-widget');
+    if (element != null) {
+        options = {
+            doneCallback: doneCallback,
+            errorCallback,
+            puzzleEndpoint: $('#captcha-widget').data("captcha-url"),
+            startMode: "auto"
+        };
+
+        widget = new WidgetInstance(element, options);
+        //DO not uncomment, evil
+        //    widget.reset();
+    }
 })
