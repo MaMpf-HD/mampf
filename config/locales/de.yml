@@ -2296,6 +2296,7 @@ de:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
   errors:
+    not_subscribed: Aktuell hast Du diese Veranstaltung nicht abonniert.
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
     thyme:
@@ -2792,6 +2793,7 @@ de:
       Zu dieser Vorlesung sind keine Strukturen aus der Beispieldatenbank
       assoziiert.
   basics:
+    error: Fehler
     course: 'Modul'
     courses: 'Module'
     term: 'Semester'

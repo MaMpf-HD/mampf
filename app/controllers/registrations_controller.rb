@@ -1,6 +1,38 @@
+require 'net/http'
+require 'uri'
+require 'json'
 # RegistrationsController
 class RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_registration_limit, only: [:create]
+  def verify_captcha
+    return true unless ENV['USE_CAPTCHA_SERVICE']
+    begin
+      uri = URI.parse(ENV['CAPTCHA_VERIFY_URL'])
+      data = {message:params["frc-captcha-solution"], application_token:ENV['CAPTCHA_APPLICATION_TOKEN']}
+      header = {'Content-Type': 'text/json'}
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true if ENV['CAPTCHA_VERIFY_URL'].include?('https')
+      request = Net::HTTP::Post.new(uri.request_uri, header)
+      request.body = data.to_json
+
+      # Send the request
+      response = http.request(request)
+      answer =  JSON.parse(response.body)
+      return true if answer["message"] == "verified"
+    rescue
+    end
+    return false
+  end
+  def create
+    if verify_captcha
+      super
+    else
+      build_resource(sign_up_params)
+      clean_up_passwords(resource)
+      set_flash_message :alert, :captcha_error
+      render :new
+    end
+  end
   def destroy
     password_correct = resource.valid_password?(deletion_params[:password])
     if !password_correct

@@ -2,18 +2,22 @@ name: test-integration
 on: [push, pull_request]
 jobs:
   build:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           submodules: recursive
+      - run: yarn install
+        working-directory: spec/cypress/support
       - run: docker-compose pull
         working-directory: docker/run_cypress_tests
       - uses: satackey/action-docker-layer-caching@v0.0.11
-      # Ignore the failure of a step and avoid terminating the job.
+        # Ignore the failure of a step and avoid terminating the job.
         continue-on-error: true
+      - run: docker-compose build
+        working-directory: docker/run_cypress_tests
       - name: Test
         working-directory: docker/run_cypress_tests
         env:

@@ -2163,6 +2163,7 @@ en:
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
   errors:
+    not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
     thyme:
@@ -2623,6 +2624,7 @@ en:
     no_structures: >
       There are no structures associated to this lecture.
   basics:
+    error: Error
     course: 'Course'
     courses: 'Courses'
     term: 'Term'

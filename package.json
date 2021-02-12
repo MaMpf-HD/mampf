@@ -7,10 +7,11 @@
     "coffeescript": "1.12.7",
     "core-js": "^3.6.5",
     "css-loader": "^5.0.0",
-    "jquery-datetimepicker": "^2.5.21",
-    "regenerator-runtime": "^0.13.7",
+    "friendly-challenge": "^0.6.2",
     "imports-loader": "^1.2.0",
+    "jquery-datetimepicker": "^2.5.21",
     "node-sass": "^5.0.0",
+    "regenerator-runtime": "^0.13.7",
     "sass-loader": "^10.0.5",
     "webpack-dev-server": "^3.11.0"
   },
@@ -18,7 +19,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "eslint": "^7.11.0",
-    "cypress": "5.2.0"
+    "cypress": "5.2.0",
+    "eslint": "^7.11.0"
   }
 }

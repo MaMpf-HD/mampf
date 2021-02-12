@@ -7,7 +7,7 @@ en:
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
       new:
-        resend_confirmation_instructions: 'Resend confirmation instructions'
+        resend_confirmation_instructions: "Resend confirmation instructions"
     failure:
       already_authenticated: "You are already signed in."
       inactive: "Your account is not activated yet."
@@ -23,16 +23,16 @@ en:
         greeting: "Welcome to MaMpf!"
         instruction: "You can confirm your MaMpf account through the link below:"
         subject: "Instructions on the confirmation of your MaMpf account"
-        action: 'Confirm account'
+        action: "Confirm account"
         reason: >
           You’re receiving this email because recently a MaMpf account
           was linked to this email adress. If this wasn’t you, please ignore
           this email.
       reset_password_instructions:
         subject: "Reset MaMpf password instructions"
-        greetings: 'Hi, %{name}!'
+        greetings: "Hi, %{name}!"
         no_name_fallback: "there"
-        change_password: 'Change password'
+        change_password: "Change password"
         instruction: >
           Someone has requested a link in order to change your MaMpf password.
           Click the link below to change your MaMpf password:
@@ -52,7 +52,7 @@ en:
       password_change:
         subject: "Password Changed"
     omniauth_callbacks:
-      failure: "Could not authenticate you from %{kind} because \"%{reason}\"."
+      failure: 'Could not authenticate you from %{kind} because "%{reason}".'
       success: "Successfully authenticated from %{kind} account."
     passwords:
       no_token: "You can't access this page without coming from a password reset email. If you do come from a password reset email, please make sure you used the full URL provided."
@@ -61,13 +61,13 @@ en:
       updated: "Your password has been changed successfully. You are now signed in."
       updated_not_active: "Your password has been changed successfully."
       new:
-        forgot_password: 'Forgot your password?'
-        email: 'Email'
-        instructions: 'Send me instructions on how to change my password'
+        forgot_password: "Forgot your password?"
+        email: "Email"
+        instructions: "Send me instructions on how to change my password"
       edit:
-        change_password: 'Change password'
-        new_password: 'New password'
-        confirm_new_password: 'Confirm new password'
+        change_password: "Change password"
+        new_password: "New password"
+        confirm_new_password: "Confirm new password"
     registrations:
       destroyed: "Bye! Your account has been successfully cancelled. We hope to see you again soon."
       not_destroyed: "There was a problem with the deletion of your account. Please contact the MaMpf administrators."
@@ -80,30 +80,31 @@ en:
       updated: "Your account has been updated successfully."
       updated_but_not_signed_in: "Your account has been updated successfully, but since your password was changed, you need to sign in again"
       new:
-        sign_up: 'Sign up'
-        email: 'Email'
-        password: 'Password'
-        password_confirm: 'Password confirmation'
+        sign_up: "Sign up"
+        email: "Email"
+        password: "Password"
+        password_confirm: "Password confirmation"
         consent_html: >
           I consent to the storing and processing of my data according to the
           %{policy} of Heidelberg University.
-        policy: 'Privacy Policy'
+        policy: "Privacy Policy"
       user:
+        captcha_error: The captcha test failed.
         too_many_registrations: There were too many registrations in the last few minutes. Please try again later.
     sessions:
       signed_in: "Signed in successfully."
       signed_out: "Signed out successfully."
       already_signed_out: "Signed out successfully."
       new:
-        email: 'Email'
-        password: 'Password'
-        remember: 'Remember me (a cookie will be used for that)'
-        login: 'Login'
+        email: "Email"
+        password: "Password"
+        remember: "Remember me (a cookie will be used for that)"
+        login: "Login"
     shared:
       links:
-        login: 'Login'
-        sign_up: 'Sign up'
-        forgot_password: 'Forgot your password?'
+        login: "Login"
+        sign_up: "Sign up"
+        forgot_password: "Forgot your password?"
         didn_t_receive_confirmation_instructions: >
           Didn't receive unlock instructions?
     unlocks:
