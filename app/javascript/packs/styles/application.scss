@@ -211,3 +211,24 @@ table.submission-table-bordered td {
   display: flex;
   justify-content: flex-end;
 }
+
+@import "mampf/chapters";
+@import "mampf/clickers";
+@import "mampf/colors";
+@import "mampf/courses";
+@import "mampf/lectures";
+@import "mampf/lessons";
+@import "mampf/main";
+@import "mampf/media";
+@import "mampf/notifications";
+@import "mampf/sections";
+@import "mampf/tags";
+@import "mampf/thyme";
+@import "mampf/users";
+@import "mampf/submissions";
+@import "mampf/vertices";
+//@import 'selectize';
+//@import 'selectize.default';
+
+//@import "select2";
+//@import "select2-bootstrap";

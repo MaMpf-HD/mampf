@@ -11,4 +11,4 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require geogebra
+// require geogebra

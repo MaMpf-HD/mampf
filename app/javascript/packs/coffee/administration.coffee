@@ -23,5 +23,5 @@ $(document).on 'turbolinks:load', ->
     $('#new-course-button').show()
     $('.admin-index-button').show()
     return
-
+  console.log("Hello!")
 return

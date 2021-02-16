@@ -12,5 +12,5 @@
 //
 //= require rails-ujs
 //= require js-routes
-//= require clickers
+// require clickers
 //= require katex

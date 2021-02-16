@@ -14,7 +14,7 @@ resetSelectized = (index, select) ->
     $(select).find("option[value='" + selectedValue + "']").attr('selected', true) if selectedValue != ''
   return
 
-@fillOptionsByAjax = ($selectizedSelection)->
+fillOptionsByAjax = ($selectizedSelection)->
   $selectizedSelection.each ->
     if this.dataset.drag == 'true'
       plugins = ['remove_button', 'drag_drop']

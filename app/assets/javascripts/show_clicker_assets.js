@@ -10,6 +10,4 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require rails-ujs
-//= require show_clicker
-
+//TODO show_clicker rails_ujs
