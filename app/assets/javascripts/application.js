@@ -10,17 +10,11 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery3
-//= require popper
-//= require bootstrap
-//= require rails-ujs
 //= require activestorage
 //= require js-routes
 //= require selectize
-//= require jquery-ui
 //= require select2
 //= require select2_locale_de
-//= require trix
 //= require clipboard
 //= require _selectize_turbolinks_fix
 //= require administration
@@ -56,4 +50,3 @@
 //= require upload
 //= require users
 //= require vertices
-//= require turbolinks

@@ -1,6 +1,6 @@
 module.exports = {
-    test: /\.css(\.erb)?$/,
-    use: [{
-      loader: 'css-loader'
-    }]
-  }
+  test: /\.css(\.erb)?$/,
+  use: [{
+    loader: 'css-loader'
+  }]
+}

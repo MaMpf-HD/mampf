@@ -1,0 +1,213 @@
+//@import "~jquery-ui/themes/base/all.css";
+@import "jquery-datetimepicker/build/jquery.datetimepicker.min.css";
+
+@import "~bootstrap/scss/_functions.scss";
+@import "~bootstrap/scss/_variables.scss";
+
+/* set the overriding variables */
+$grid-breakpoints: (xxxs: 0,
+  xxs: 320px,
+  xs: 568px,
+  sm: 667px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1440px,
+  xxxl: 1600px,
+  xxxxl: 1920px,
+  xxxxxl: 2160px);
+$container-max-widths: (xxxs: 0,
+  xxs: 320px,
+  xs: 568px,
+  sm: 667px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1440px,
+  xxxl: 1600px,
+  xxxxl: 1920px,
+  xxxxxl: 2160px);
+/* override the !default vars with the values we set above */
+@import "bootstrap";
+
+@import "trix";
+
+trix-toolbar .trix-button-row {
+  flex-wrap: wrap;
+}
+
+.trix-button-group--file-tools {
+  display: none !important;
+}
+
+.kaviar-sidebar {
+  padding-left: 1rem;
+}
+
+.badge-light {
+  background-color: #dae0e5;
+}
+
+.badge-light[href]:hover {
+  background-color: #f8f9fa;
+}
+
+.no_display {
+  display: none;
+}
+
+.no-decoration {
+  text-decoration: none;
+}
+
+.smaller-font {
+  font-size: 0.75em;
+}
+
+.quiz {
+  font-family: 'Cabin', sans-serif;
+}
+
+.correct {
+  color: green;
+}
+
+.incorrect {
+  color: red;
+}
+
+.card-xl {
+  max-height: 75vh;
+  overflow-y: scroll;
+}
+
+.card-large {
+  max-height: 70vh;
+  overflow-y: scroll;
+}
+
+.card-medium {
+  max-height: 60vh;
+  overflow-y: scroll;
+}
+
+
+.card-compact {
+  max-height: 50vh;
+  overflow-y: scroll;
+}
+
+.card-tiny {
+  max-height: 30vh;
+  overflow-y: scroll;
+}
+
+
+$modal-xl: 1140px !default;
+$modal-xxl: 1600px !default;
+
+@include media-breakpoint-up(xl) {
+  .modal-xl {
+    max-width: $modal-xl;
+  }
+}
+
+@include media-breakpoint-up(xxl) {
+  .modal-xxl {
+    max-width: $modal-xxl;
+  }
+}
+
+
+.dropdown-menu a {
+  text-decoration: none;
+  color: black;
+}
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -1px;
+}
+
+
+.card-columns {
+  @include media-breakpoint-only(xxxxl) {
+    column-count: 2;
+  }
+
+  @include media-breakpoint-only(xxxl) {
+    column-count: 2;
+  }
+
+  @include media-breakpoint-only(xxxl) {
+    column-count: 2;
+  }
+
+  @include media-breakpoint-only(xxl) {
+    column-count: 2;
+  }
+
+  @include media-breakpoint-only(xl) {
+    column-count: 1;
+  }
+
+  @include media-breakpoint-only(lg) {
+    column-count: 1;
+  }
+
+  @include media-breakpoint-only(md) {
+    column-count: 1;
+  }
+
+  @include media-breakpoint-only(sm) {
+    column-count: 1;
+  }
+}
+
+.assumption {
+  text-decoration: underline;
+}
+
+.propertiesCard {
+  height: 70vh;
+}
+
+.propertiesCardBody {
+  overflow-y: scroll;
+}
+
+#profileChange {
+  display: none;
+}
+
+.revertCommontator {
+  all: unset;
+}
+
+table.submission-table-bordered th {
+  border: 1px solid #c5ccd3;
+}
+
+table.submission-table-bordered td {
+  border: 1px solid #c5ccd3;
+}
+
+.exceptionBox {
+  background-color: #f8d7da;
+}
+
+.error-jumbo {
+  margin: auto;
+  text-align: center;
+  padding: 10px;
+}
+
+.flexdiv {
+  display: flex;
+  justify-content: flex-end;
+}

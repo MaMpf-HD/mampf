@@ -2,7 +2,7 @@
   <%= full_title(yield(:title)) %>
 </title>
 <%= csrf_meta_tags %>
-<%= stylesheet_link_tag 'application',
+<%= stylesheet_pack_tag 'styles/application',
                         media: 'all',
                         'data-turbolinks-track': 'reload' %>
 <link rel="stylesheet"
@@ -60,7 +60,6 @@
       content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
  <%= javascript_pack_tag 'application' %>
- <%= stylesheet_pack_tag 'application' %>
  <script type="application/javascript">
     
 </script>

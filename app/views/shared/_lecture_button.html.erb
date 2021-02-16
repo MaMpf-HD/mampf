@@ -1,0 +1,42 @@
+<li class="nav-item">
+  <% if lecture && !(controller_name == 'main' && action_name == 'start') %>
+  	<% if lecture.course.subscribed_lectures(current_user).count == 1 %>
+	    <%= link_to lecture.title_for_viewers,
+  	              lecture,
+    	            class: 'btn btn-primary text-light' %>
+    <% else %>
+      <div class="btn-group dropdown">
+        <%= link_to lecture_path(lecture),
+                    class: 'btn btn-primary btn-sm' do %>
+          <%= lecture.title_for_viewers %>
+          <% unless lecture.published? %>
+            <i class="fas fa-eye-slash redtext"
+               tabindex="-1"
+               data-toggle="tooltip"
+               title="<%=t('lecture.unpublished') %>">
+            </i>
+          <% end %>
+        <% end %>
+        <button class="btn btn-primary btn-sm dropdown-toggle mr-3"
+                type="button"
+                data-toggle="dropdown">
+        </button>
+        <div class="dropdown-menu">
+          <% (lecture.course.subscribed_lectures(current_user) - [lecture]).each do |l| %>
+            <%= link_to lecture_path(l),
+                        class: 'dropdown-item' do %>
+              <%= l.term.to_label_short %>
+              <% unless l.published? %>
+                <i class="fas fa-eye-slash redtext"
+                   tabindex="-1"
+                   data-toggle="tooltip"
+                   title="<%=t('lecture.unpublished') %>">
+                </i>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</li>

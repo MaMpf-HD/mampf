@@ -16,11 +16,9 @@ gem "sqlite3", "~> 1.4"
 # Use Puma as the app server
 gem "puma", "~> 4.1"
 # Use SCSS for stylesheets
-gem "sass-rails", ">= 6"
+#gem "sass-rails", ">= 6"
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 # gem 'webpacker', '~> 4.0'
-# Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
-gem "turbolinks", "~> 5"
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem "jbuilder"
 # Use Redis adapter to run Action Cable in production
@@ -57,10 +55,7 @@ gem "pg"
 gem "devise"
 gem "erubis"
 gem "cancancan"
-gem "jquery-rails"
-gem "jquery-ui-rails"
-gem "js-routes", '1.4.9'
-gem "bootstrap"
+gem "js-routes"
 gem "bootstrap_form"
 gem "devise-bootstrap-views"
 gem "fuzzy-string-match"
@@ -79,7 +74,6 @@ gem "kramdown-parser-gfm"
 gem "thredded-markdown_katex"
 gem "rails-i18n"
 gem "kaminari-i18n"
-gem "trix-rails", require: "trix"
 gem "xkcd"
 gem "sunspot_rails"
 gem "sunspot_solr"

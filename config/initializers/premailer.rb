@@ -1,0 +1,1 @@
+Premailer::Rails.config.merge!(remove_scripts: false)
