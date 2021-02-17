@@ -18,7 +18,7 @@ require(["jquery-datetimepicker"], function (es) {
 
 console.log();
 
-require("./coffee/bootstrap_modal_turbolinks_fix");
+require("./coffee/bootstrap_modal_turbolinks_fix.coffee");
 import 'bootstrap';
 //import 'selectize/dist/js/selectize.min.js'; // # scroll to node folder (1) get that path
 import 'selectize/dist/css/selectize.css';
@@ -29,37 +29,37 @@ require("popper.js");
 require("script-loader!trix");
 
 require("./coffee/administration.coffee");
-require("./coffee/announcements");
-require("./coffee/answers");
-require("./coffee/chapters");
-require("./coffee/clickers");
-require("./coffee/courses");
-require("./coffee/erdbeere");
-require("./coffee/file_upload");
-require("./coffee/items");
-require("./coffee/katex");
-require("./coffee/lectures");
-require("./coffee/lessons");
-require("./coffee/main");
-require("./coffee/media");
-require("./coffee/notifications");
-require("./coffee/profile");
-require("./coffee/questions");
-require("./coffee/quizzes");
-require("./coffee/referrals");
-require("./coffee/registration");
-require("./coffee/remarks");
-require("./coffee/sections");
-require("./coffee/submissions");
-require("./coffee/tutorials");
-require("./coffee/tags");
-require("./coffee/terms");
-require("./coffee/tex_preview");
-require("./coffee/thyme");
-require("./coffee/thyme_editor");
-require("./coffee/upload");
-require("./coffee/users");
-require("./coffee/vertices");
+require("./coffee/announcements.coffee");
+require("./coffee/answers.coffee");
+require("./coffee/chapters.coffee");
+require("./coffee/clickers.coffee");
+require("./coffee/courses.coffee");
+require("./coffee/erdbeere.coffee");
+require("./coffee/file_upload.coffee");
+require("./coffee/items.coffee");
+require("./coffee/katex.coffee");
+require("./coffee/lectures.coffee");
+require("./coffee/lessons.coffee");
+require("./coffee/main.coffee");
+require("./coffee/media.coffee");
+require("./coffee/notifications.coffee");
+require("./coffee/profile.coffee");
+require("./coffee/questions.coffee");
+require("./coffee/quizzes.coffee");
+require("./coffee/referrals.coffee");
+require("./coffee/registration.coffee");
+require("./coffee/remarks.coffee");
+require("./coffee/sections.coffee");
+require("./coffee/submissions.coffee");
+require("./coffee/tutorials.coffee");
+require("./coffee/tags.coffee");
+require("./coffee/terms.coffee");
+require("./coffee/tex_preview.coffee");
+require("./coffee/thyme.coffee");
+require("./coffee/thyme_editor.coffee");
+require("./coffee/upload.coffee");
+require("./coffee/users.coffee");
+require("./coffee/vertices.coffee");
 import css from 'jquery-datetimepicker/build/jquery.datetimepicker.min.css'
 
 //require('./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css')

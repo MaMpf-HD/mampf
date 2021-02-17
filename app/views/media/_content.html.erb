@@ -8,10 +8,10 @@
     <div class="form-group">
       <%= f.label :content, "#{t('admin.medium.content')} (#{t('basics.optional')})" %>
       <%= helpdesk(t('admin.medium.info.content'), false) %>
-      <%= f.trix_editor :content,
-                        class: 'bg-light',
-                        id: 'medium-content-trix',
-                        data: { content: medium.content } %>
+       <input id="medium-content-input" value="<%=medium.content%>" hidden=true>
+        <trix-editor id='medium-content-trix' name="content"
+                value="medium-content-input"
+                ></trix-editor>
     </div>
     <div class="row my-2">
       <div class="col-12">

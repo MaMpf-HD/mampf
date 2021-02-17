@@ -9,10 +9,11 @@
       <%= t('basics.details') %>
       <%= helpdesk(t('admin.section.info.details'), false) %>
     </div>
-    <%= f.trix_editor :details,
-                      class: 'bg-light',
-                      id: 'section-details-trix',
-                      data: { content: section.details } %>
+    <input id="section-details-input" value="<%=section.details%>" hidden=true>
+                <trix-editor id='section-details-trix' name="details"
+                value="section-details-input"
+                class= 'bg-light'
+                ></trix-editor>
     <div class="row my-2">
       <div class="col-12">
         <%= t('basics.preview') %>

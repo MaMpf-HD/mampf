@@ -64,9 +64,10 @@
               <% if inspection %>
                 <%= lecture.organizational_concept&.html_safe %>
               <% else %>
-                <%= f.trix_editor :organizational_concept,
-                                  id: 'lecture-concept-trix',
-                                  data: { content: lecture.organizational_concept } %>
+              <input id="lecture-concept-input" value="<%=lecture.organizational_concept%>" hidden=true>
+              <trix-editor id='lecture-concept-trix' name="organizational_concept"
+                            value="lecture-concept-input"
+                ></trix-editor>
               <% end %>
             </div>
           </div>

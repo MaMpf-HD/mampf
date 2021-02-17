@@ -1,8 +1,9 @@
 <%= form_with model: announcement  do |f|%>
   <%= f.label :details, 'Text' %>
   <%= helpdesk(t('admin.announcement.help'), false) %>
-  <%= f.trix_editor :details,
-                    id: 'announcement-details-trix' %>
+  <input id="announcements-input" name="announcement[details]" type="hidden">
+    <trix-editor id='announcement-details-trix' input="announcements-input">
+    </trix-editor>
   <div class="invalid-feedback"
        id="announcement-error">
   </div>
