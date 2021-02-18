@@ -509,6 +509,77 @@ RSpec.describe Lecture, type: :model do
     end
   end
 
+  describe '#term_teacher_info' do
+    context 'if no teacher is present' do
+      it 'returns the correct info' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: nil)
+        expect(lecture.term_teacher_info).to eq 'SS 2020'
+      end
+    end
+
+    context 'if no teacher name is present' do
+      it 'returns the correct info' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        teacher = FactoryBot.build(:user, name: nil)
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: teacher)
+        expect(lecture.term_teacher_info).to eq 'SS 2020'
+      end
+    end
+
+    context 'if no term name is present' do
+      it 'returns the correct info' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        lecture = FactoryBot.build(:lecture, course: course, term: nil,
+                                             teacher: teacher, sort: 'lecture')
+        expect(lecture.term_teacher_info).to eq 'Algebra 1, Harry Bosch'
+      end
+    end
+
+    context 'if all data are present' do
+      it 'returns the corect info' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: teacher)
+        expect(lecture.term_teacher_info).to eq '(V) SS 2020, Harry Bosch'
+      end
+    end
+  end
+
+  describe '#term_teacher_published_info' do
+    before :all do
+      @course = FactoryBot.build(:course, title: 'Algebra 1')
+      @teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+      @term = FactoryBot.build(:term, season: 'SS', year: 2020)
+    end
+
+    context 'if lecture is published' do
+      it 'returns the term_teacher_info' do
+        lecture = FactoryBot.build(:lecture, course: @course, term: @term,
+                                             teacher: @teacher, released: 'all')
+        expect(lecture.term_teacher_published_info)
+          .to eq '(V) SS 2020, Harry Bosch'
+      end
+    end
+
+    context 'if lecture is unpublished' do
+      it 'returns the term_teacher_info with an unpublished flag' do
+        lecture = FactoryBot.build(:lecture, course: @course, term: @term,
+                                             teacher: @teacher, released: nil,
+                                             locale: 'de')
+        expect(lecture.term_teacher_published_info)
+          .to eq '(V) SS 2020, Harry Bosch (unveröffentlicht)'
+      end
+    end
+  end
+
 
   # describe '#tags' do
   #   it 'returns the correct tags for the lecture' do
