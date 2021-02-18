@@ -59,7 +59,7 @@ gem "erubis"
 gem "cancancan"
 gem "jquery-rails"
 gem "jquery-ui-rails"
-gem "js-routes"
+gem "js-routes", '1.4.9'
 gem "bootstrap"
 gem "bootstrap_form"
 gem "devise-bootstrap-views"
