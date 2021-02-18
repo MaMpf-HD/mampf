@@ -14,6 +14,7 @@ class AnnouncementsController < ApplicationController
   def new
     @lecture = Lecture.find_by_id(params[:lecture])
     @announcement = Announcement.new(announcer: current_user, lecture: @lecture)
+    print("Teste")
   end
 
   def create
@@ -30,7 +31,7 @@ class AnnouncementsController < ApplicationController
         redirect_to announcements_path
         return
       end
-      redirect_to edit_lecture_path(@announcement.lecture)
+      #redirect_to edit_lecture_path(@announcement.lecture)
       return
     end
     @errors = @announcement.errors[:details].join(', ')

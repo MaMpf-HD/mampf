@@ -16,6 +16,7 @@
     "jquery-ui": "^1.12.1",
     "node-sass": "^5.0.0",
     "popper.js": "^1.16.1",
+    "rails-erb-loader": "^5.5.2",
     "regenerator-runtime": "^0.13.7",
     "sass-loader": "^10.0.5",
     "select2": "^4.1.0-rc.0",

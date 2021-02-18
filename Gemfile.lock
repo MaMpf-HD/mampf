@@ -611,7 +611,7 @@ DEPENDENCIES
   byebug
   cancancan
   clipboard-rails
-  coffee-rails
+  coffee-rails (~> 5.0.0)
   commontator!
   coveralls
   cypress-on-rails (~> 1.0)

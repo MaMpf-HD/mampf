@@ -2,7 +2,7 @@
 // like app/views/layouts/application.html.erb.
 
 console.log('Hello world from coffeescript');
-
+window.Routes = require('./routes.js.erb');
 require("@rails/ujs").start();
 require("turbolinks").start();
 require("jquery");
