@@ -13,7 +13,6 @@ class LecturesController < ApplicationController
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout 'administration'
-  layout 'application_no_sidebar', only: [:subscribe_page]
 
   def edit
     if stale?(etag: @lecture,
@@ -240,6 +239,10 @@ class LecturesController < ApplicationController
     render layout: 'application'
   end
 
+  def subscribe_page
+    render layout: 'application_no_sidebar'
+  end
+
   private
 
   def set_lecture
@@ -260,6 +263,7 @@ class LecturesController < ApplicationController
   def check_for_consent
     redirect_to consent_profile_path unless current_user.consents
   end
+
   def check_published
     if ( !@lecture.published? &&
       !(current_user.admin? || current_user.editor? || current_user.teacher?))
@@ -267,11 +271,11 @@ class LecturesController < ApplicationController
       return
     end
   end
+
   def check_for_subscribe
     redirect_to subscribe_lecture_page_path(@lecture.id) unless @lecture.in?(current_user.lectures)
   end
-  def subscribe_page
-  end
+
   def lecture_params
     params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
                                     :start_chapter, :absolute_numbering,
