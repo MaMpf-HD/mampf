@@ -1,15 +1,6 @@
 GIT
-  remote: https://github.com/fosterfarrell9/commontator
-  revision: cfc3e47c2d9b7002738f788fb463a89f318ee63a
-  branch: master
-  specs:
-    commontator (6.3.0)
-      rails (>= 5.2)
-      will_paginate
-
-GIT
-  remote: https://github.com/fosterfarrell9/thredded
-  revision: 0d879e671e842becb367f2162b36a73277c3e5c9
+  remote: https://github.com/MaMpf-HD/thredded.git
+  revision: e4125c3aa6f6cff22a607e6d510e8253c4a0a441
   branch: master
   specs:
     thredded (0.16.16)
@@ -33,6 +24,15 @@ GIT
       sassc-rails (>= 2.0.0)
       sprockets-es6
       timeago_js (>= 3.0.2.2)
+
+GIT
+  remote: https://github.com/fosterfarrell9/commontator
+  revision: cfc3e47c2d9b7002738f788fb463a89f318ee63a
+  branch: master
+  specs:
+    commontator (6.3.0)
+      rails (>= 5.2)
+      will_paginate
 
 GIT
   remote: https://github.com/rails/sprockets-rails
