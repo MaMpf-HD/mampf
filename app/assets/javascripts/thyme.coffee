@@ -691,7 +691,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   # Event listener for the volume bar
-  volumeBar.addEventListener 'change', ->
+  volumeBar.addEventListener 'input', ->
     value = volumeBar.value
     video.volume = value
     return
