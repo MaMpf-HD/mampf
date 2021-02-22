@@ -386,11 +386,7 @@ class Lecture < ApplicationRecord
     "#{term_teacher_info} (#{I18n.t('access.unpublished')})"
   end
 
-  def title_term_info
-    "(#{sort_localized_short}) #{course.title}, #{term_to_label}"
-  end
-
-  def title_term_info_no_type
+  def title_term_no_sort
     return course.title unless term
     "#{course.title}, #{term_to_label}"
   end

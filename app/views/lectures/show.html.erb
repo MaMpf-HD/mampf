@@ -5,7 +5,7 @@
         <%= @lecture.sort_localized %>
       </span>
       <span id="lecture-title" class="mr-3">
-        <%= @lecture.title_term_info_no_type %>
+        <%= @lecture.title_term_no_sort %>
       </span>
       <% if @lecture.term || !@lecture.disable_teacher_display %>
         <span>

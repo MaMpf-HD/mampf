@@ -7,7 +7,7 @@ RSpec.describe Lecture, type: :model do
     expect(FactoryBot.build(:lecture)).to be_valid
   end
 
-  # Test validations  -- SOME ARE MISSING
+  # Test validations
 
   it 'is invalid without a course' do
     lecture = FactoryBot.build(:lecture, course: nil)
@@ -531,7 +531,7 @@ RSpec.describe Lecture, type: :model do
       end
     end
 
-    context 'if no term name is present' do
+    context 'if no term is present' do
       it 'returns the correct info' do
         course = FactoryBot.build(:course, title: 'Algebra 1')
         teacher = FactoryBot.build(:user, name: 'Harry Bosch')
@@ -576,6 +576,149 @@ RSpec.describe Lecture, type: :model do
                                              locale: 'de')
         expect(lecture.term_teacher_published_info)
           .to eq '(V) SS 2020, Harry Bosch (unveröffentlicht)'
+      end
+    end
+  end
+
+  describe '#title_term_no_sort' do
+    context 'if course is term independent' do
+      it 'returns the course title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1', short_title: 'Alg1')
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        lecture = FactoryBot.build(:lecture, :term_independent,
+                                   course: course, teacher: teacher)
+        expect(lecture.title_term_no_sort).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: teacher)
+        expect(lecture.title_term_no_sort).to eq 'Algebra 1, SS 2020'
+      end
+    end
+  end
+
+  describe '#title_teacher_info' do
+    context 'if no teacher is present' do
+      it 'returns the correct info' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: nil)
+        expect(lecture.title_teacher_info).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if no teacher name is present' do
+      it 'returns the correct info' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        teacher = FactoryBot.build(:user, name: nil)
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: teacher)
+        expect(lecture.title_teacher_info).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if teacher name is present' do
+      it 'returns the correct info' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             teacher: teacher)
+        expect(lecture.title_teacher_info).to eq '(V) Algebra 1 (Harry Bosch)'
+      end
+    end
+  end
+
+  describe '#locale_with_inheritance' do
+    it 'returns the courses locale if no locale is present' do
+      course = FactoryBot.build(:course, title: 'Algebra 1', locale: 'pt')
+      term = FactoryBot.build(:term, season: 'SS', year: 2020)
+      teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+      lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                           teacher: teacher, locale: nil)
+      expect(lecture.locale_with_inheritance).to eq 'pt'
+    end
+
+    it 'returns the lectures locale if locale is present' do
+      course = FactoryBot.build(:course, title: 'Algebra 1', locale: 'pt')
+      term = FactoryBot.build(:term, season: 'SS', year: 2020)
+      teacher = FactoryBot.build(:user, name: 'Harry Bosch')
+      lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                           teacher: teacher, locale: 'br')
+      expect(lecture.locale_with_inheritance).to eq 'br'
+    end
+  end
+
+  describe '#long_title' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.long_title).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.long_title).to eq '(V) Algebra 1, SS 2020'
+      end
+    end
+  end
+
+  describe '#card_header' do
+    context 'if course is term independent' do
+      it 'returns the correct title' do
+        course = FactoryBot.build(:course, :term_independent,
+                                  title: 'Algebra 1')
+        lecture = FactoryBot.build(:lecture, :term_independent, course: course)
+        expect(lecture.card_header).to eq 'Algebra 1'
+      end
+    end
+
+    context 'if course is not term independent' do
+      it 'returns the correct title' do
+        I18n.locale = 'de'
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        expect(lecture.card_header).to eq '(V) Algebra 1, SS 2020'
+      end
+    end
+  end
+
+  describe '#card_header_path' do
+    context 'if lecture is not subscribed' do
+      it 'returns nil' do
+        course = FactoryBot.build(:course, title: 'Algebra 1')
+        term = FactoryBot.build(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        user = FactoryBot.build(:user)
+        expect(lecture.card_header_path(user)).to be_nil
+      end
+    end
+
+    context 'if lecture is subscribed' do
+      it 'returns the lecture path' do
+        course = FactoryBot.create(:course, title: 'Algebra 1')
+        term = FactoryBot.create(:term, season: 'SS', year: 2020)
+        lecture = FactoryBot.create(:lecture, course: course, term: term)
+        user = FactoryBot.build(:user)
+        user.lectures << lecture
+        expect(lecture.card_header_path(user)).to eq("/lectures/#{lecture.id}")
       end
     end
   end

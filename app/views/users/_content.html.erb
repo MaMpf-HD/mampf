@@ -4,7 +4,7 @@
   <ul>
     <% user.given_lectures.each do |l| %>
       <li>
-        <%= link_to l.title_term_info,
+        <%= link_to l.title,
                     edit_lecture_path(l),
                     class: lectures_color(l) %>
       </li>
@@ -30,7 +30,7 @@
   <ul>
     <% user.edited_lectures.each do |l| %>
       <li>
-        <%= link_to l.title_term_info,
+        <%= link_to l.title,
                     edit_lecture_path(l),
                     class: lectures_color(l) %>
       </li>
