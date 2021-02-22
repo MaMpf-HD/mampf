@@ -330,7 +330,7 @@ imageUpload = (fileInput) ->
     id: fileInput.id
     autoProceed: true
     restrictions:
-      maxFileSize: 15728640)
+      maxFileSize: 30*1024*1024)
     .use(Uppy.FileInput,
       target: uploadButton
       locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
@@ -488,7 +488,7 @@ bulkCorrectionUpload = (fileInput) ->
     $('#file-optimize').hide()
     $('#userManuscript-upload-notice').hide()
     $('#userManuscript-uploadButton-call').prop('disabled',true)
-    if file.size < 10000000
+    if file.size < 5000000
       $('#userManuscript-uploadButton-call').prop('disabled',false)
       $('#file-size-correct').show()
       $('#userManuscript-uploadCenter').show()
