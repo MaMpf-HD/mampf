@@ -723,6 +723,54 @@ RSpec.describe Lecture, type: :model do
     end
   end
 
+  describe '#restricted?' do
+    it 'returns true if a passphrase is present' do
+      lecture = FactoryBot.build(:lecture, passphrase: 'hello')
+      expect(lecture.restricted?).to be true
+    end
+
+    it 'returns false if no passphrase is present' do
+      lecture = FactoryBot.build(:lecture, passphrase: nil)
+      expect(lecture.restricted?).to be false
+    end
+  end
+
+  describe '#visible_for_user?' do
+    it 'returns true if user is admin' do
+      lecture = FactoryBot.build(:lecture)
+      admin = FactoryBot.build(:user, admin: true)
+      expect(lecture.visible_for_user?(admin)).to be true
+    end
+
+    it 'returns true if user is an editor of the lecture' do
+      lecture = FactoryBot.build(:lecture)
+      editor = FactoryBot.build(:user)
+      lecture.editors << editor
+      expect(lecture.visible_for_user?(editor)).to be true
+    end
+
+    it 'returns false if user is no admin or editor and lecture is ' \
+       'unpublished' do
+      lecture = FactoryBot.build(:lecture, released: nil)
+      user = FactoryBot.build(:user)
+      expect(lecture.visible_for_user?(user)).to be false
+    end
+
+    it 'returns false if lecture is restricted and user has not '\
+       'subscribed it' do
+      lecture = FactoryBot.build(:lecture, passphrase: 'hello')
+      user = FactoryBot.build(:user)
+      expect(lecture.visible_for_user?(user)).to be false
+    end
+
+    it 'returns true if user is generic and lecture is unrestricted' do
+      lecture = FactoryBot.build(:lecture, released: 'all')
+      user = FactoryBot.build(:user)
+      expect(lecture.visible_for_user?(user)).to be true
+    end
+  end
+
+
 
   # describe '#tags' do
   #   it 'returns the correct tags for the lecture' do
