@@ -1,6 +1,18 @@
 <div class="row">
   <div class="col-3">
     <%= submission.users.map(&:tutorial_name).join(', ') %>
+    <i class="clipboardpopup far fa-copy clickable
+          text-secondary clipboard-btn ml-3
+          clipboard-button"
+      data-clipboard-text="<%= submission.users.map(&:email).join(', ') %>"
+      data-toggle="tooltip"
+      data-id="<%= submission.id %>"
+      title="<%= t('buttons.copy_email_to_clipboard') %>">
+      <span class="clipboardpopuptext token-clipboard-popup"
+            data-id="<%= submission.id %>">
+        <%= t('basics.emails_copied_to_clipboard') %>
+      </span>
+    </i>
     <% if submission.too_late? %>
       <i class="fas fa-exclamation-triangle"
          data-toggle="tooltip"

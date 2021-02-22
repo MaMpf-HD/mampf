@@ -2956,6 +2956,7 @@ de:
     as: als
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
+    emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3043,6 +3044,7 @@ de:
     open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
     join: 'Beitreten'
     copy_to_clipboard: 'in die Zwischenablage kopieren'
+    copy_email_to_clipboard: 'E-Mail-Adressen in die Zwischenablage kopieren'
     leave: 'Austreten'
     upload: 'Hochladen'
     upload_success: 'Erfolgreich hochgeladen'
