@@ -73,18 +73,11 @@ class ApplicationController < ActionController::Base
     store_location_for(:user, request.fullpath)
   end
 
-  def strict_cookie(val)
-    {
-      value: val,
-      same_site: "Strict"
-    }
-  end
-
   def set_locale
     I18n.locale = current_user.try(:locale) || locale_param ||
                     cookie_locale_param || I18n.default_locale
     unless user_signed_in?
-      cookies[:locale] = strict_cookie(I18n.locale)
+      cookies[:locale] = I18n.locale
     end
   end
 

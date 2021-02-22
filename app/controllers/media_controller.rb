@@ -428,7 +428,7 @@ class MediaController < ApplicationController
     @lecture = Lecture.find_by_id(params[:id])
     # store current lecture in cookie
     if @lecture
-      cookies[:current_lecture_id] = strict_cookie(@lecture.id)
+      cookies[:current_lecture_id] = @lecture.id
       return
     end
     redirect_to :root, alert: I18n.t('controllers.no_lecture')
@@ -459,8 +459,8 @@ class MediaController < ApplicationController
     sanitize_page!
     sanitize_per!
     params[:all] = (params[:all] == 'true') || (cookies[:all] == 'true')
-    cookies[:all] = strict_cookie(params[:all])
-    cookies[:per] = strict_cookie(false) if cookies[:all]
+    cookies[:all] = params[:all]
+    cookies[:per] = false if cookies[:all]
     params[:reverse] = params[:reverse] == 'true'
   end
 
@@ -531,7 +531,7 @@ class MediaController < ApplicationController
 
   def sanitize_per!
     if params[:per] || cookies[:per].to_i.positive?
-      cookies[:all] = strict_cookie('false')
+      cookies[:all] = 'false'
     end
     params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
                      params[:per].to_i
@@ -540,7 +540,7 @@ class MediaController < ApplicationController
                    else
                      8
                    end
-    cookies[:per] = strict_cookie(params[:per])
+    cookies[:per] = params[:per]
   end
 
   def search_params
