@@ -227,8 +227,16 @@ table.submission-table-bordered td {
 @import "mampf/users";
 @import "mampf/submissions";
 @import "mampf/vertices";
-//@import 'selectize';
-//@import 'selectize.default';
+@import 'selectize/dist/css/selectize.css';
 
-//@import "select2";
-//@import "select2-bootstrap";
+@font-face {
+  font-family: 'Material Icons2';
+  font-style: normal;
+  font-weight: 400;
+  src: url("../../../../node_modules/@material-icons/font/font/MaterialIcons.woff");
+  src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url(../../../../node_modules/@material-icons/font/font/MaterialIcons.woff2) format('woff2'),
+    url(../../../../node_modules/@material-icons/font/font/MaterialIcons.woff) format('woff'),
+    url(../../../../node_modules/@material-icons/font/font/MaterialIcons.ttf) format('truetype');
+}

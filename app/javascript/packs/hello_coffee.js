@@ -21,7 +21,7 @@ console.log();
 require("./coffee/bootstrap_modal_turbolinks_fix.coffee");
 import 'bootstrap';
 //import 'selectize/dist/js/selectize.min.js'; // # scroll to node folder (1) get that path
-import 'selectize/dist/css/selectize.css';
+
 require("selectize");
 require("./coffee/_selectize_turbolinks_fix.coffee");
 require("select2");

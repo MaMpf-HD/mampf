@@ -2,17 +2,50 @@
   <%= full_title(yield(:title)) %>
 </title>
 <%= csrf_meta_tags %>
+<%= preload_link_tag( asset_pack_path('media/font/MaterialIcons.woff2'))%>
+<style type="text/css" rel="stylesheet">
+
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("<%= asset_pack_path 'media/font/MaterialIcons.woff' %>");
+  src: local('Material Icons'),
+    local('MaterialIcons-Regular'),
+    url("<%= asset_pack_path('media/font/MaterialIcons.woff2').sub("http://localhost:3000/","") %>") format('woff2'),
+    url("<%= asset_pack_path 'media/font/MaterialIcons.woff' %>") format('woff'),
+    url("<%= asset_pack_path 'media/font/MaterialIcons.ttf' %>") format('truetype');
+}
+
+.material-icons, .material-icons-outline, .material-icons-round, .material-icons-sharp, .material-icons-twotone {
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  -ms-word-wrap: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+</style>
  <%= javascript_pack_tag 'application' %>
 <%= stylesheet_pack_tag 'styles/application',
                         media: 'all',
                         'data-turbolinks-track': 'reload' %>
 <%= javascript_pack_tag 'hello_coffee' %>
+
 <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.0/css/all.min.css"
       integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0="
       crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
 <link href='https://fonts.googleapis.com/css?family=Roboto'
       rel='stylesheet'>
 <%= javascript_include_tag 'application',
