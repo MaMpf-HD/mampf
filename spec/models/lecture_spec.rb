@@ -770,21 +770,63 @@ RSpec.describe Lecture, type: :model do
     end
   end
 
+  context 'tag methods' do
+    before :all do
+      @lecture = FactoryBot.create(:lecture, :with_toc, released: 'all')
+      sections = @lecture.sections
+      @tags = FactoryBot.create_list(:tag, 7)
+      sections[0].tags = [@tags[1]]
+      sections[2].tags = [@tags[1], @tags[2]]
+      sections[4].tags = [@tags[3]]
+      course = @lecture.course
+      course.tags = [@tags[1], @tags[2], @tags[4]]
+    end
 
+    describe '#tags' do
+      it 'returns all tags associated to sections of the lecture' do
+        expect(@lecture.tags).to match_array([@tags[1], @tags[2], @tags[3]])
+      end
+    end
 
-  # describe '#tags' do
-  #   it 'returns the correct tags for the lecture' do
-  #     tags = FactoryBot.create_list(:tag, 3)
-  #     course = FactoryBot.create(:course, tags: tags)
-  #     additional_tags = FactoryBot.create_list(:tag, 2)
-  #     disabled_tags = [tags[0], tags[1]]
-  #     lecture = FactoryBot.create(:lecture, course: course,
-  #                                           additional_tags: additional_tags,
-  #                                           disabled_tags: disabled_tags)
-  #     expect(lecture.tags).to match_array([tags[2], additional_tags[0],
-  #                                          additional_tags[1]])
-  #   end
-  # end
+    describe '#course_tags' do
+      it "returns the intersection of lecture's tags and course's tags" do
+        expect(@lecture.course_tags).to match_array([@tags[1], @tags[2]])
+      end
+    end
+
+    describe '#extra_tags' do
+      it 'returns lecture tags that are not course tags' do
+        expect(@lecture.extra_tags).to match_array([@tags[3]])
+      end
+    end
+
+    describe '#deferred_tags' do
+      it 'returns course tags that are not lecture tags' do
+        expect(@lecture.deferred_tags).to match_array([@tags[4]])
+      end
+    end
+
+    describe '#tags_including_media_tags' do
+      it 'returns all tags of lecture and related released media' do
+        lesson = FactoryBot.create(:valid_lesson, lecture: @lecture)
+        medium1 = FactoryBot.create(:lesson_medium, released: 'all',
+                                    prescribed_teachable: lesson)
+        medium1.tags = [@tags[1], @tags[5]]
+        medium2 = FactoryBot.create(:lesson_medium,
+                                    prescribed_teachable: lesson)
+        medium2.tags = [@tags[0]]
+        medium3 = FactoryBot.create(:lecture_medium, released: 'all',
+                                    prescribed_teachable: @lecture)
+        medium3.tags = [@tags[1], @tags[6]]
+        medium4 = FactoryBot.create(:lecture_medium,
+                                    prescribed_teachable: @lecture)
+        medium4.tags = [@tags[0]]
+        expect(@lecture.tags_including_media_tags)
+          .to match_array([@tags[1], @tags[2], @tags[3], @tags[5], @tags[6]])
+      end
+    end
+  end
+
   # describe '#sections' do
   #   it 'returns the correct sections' do
   #     lecture = FactoryBot.build(:lecture)
