@@ -21,9 +21,13 @@ check_for_preseeds() {
 }
 
 cd /usr/src/app
+echo Waiting for redis to come online &> >(tee -a /usr/src/app/log/initialisation.log)
+wait-for-it redis:6379 -t 30 || exit 1
 if ! [ -f /completed_initial_run ]
 then
     echo 'Initialising mampf' &> >(tee -a /usr/src/app/log/initialisation.log)
+    echo Waiting for the DB to come online &> >(tee -a /usr/src/app/log/initialisation.log)
+    wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1 &> >(tee -a /usr/src/app/log/initialisation.log)
     if [ "$RAILS_ENV" = "docker_development" ] | [ "$RAILS_ENV" = "test" ]
     then
         echo running: bundle exec rails db:create &> >(tee -a /usr/src/app/log/initialisation.log)
@@ -37,6 +41,8 @@ then
         echo running: bundle exec rails assets:precompile &> >(tee -a /usr/src/app/log/initialisation.log)
         bundle exec rails assets:precompile &> >(tee -a /usr/src/app/log/initialisation.log)
     fi
+    echo Waiting for SOLR to come online &> >(tee -a /usr/src/app/log/initialisation.log)
+    wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1 &> >(tee -a /usr/src/app/log/initialisation.log)
     bundle exec rake sunspot:solr:reindex &
     if [ "$RAILS_ENV" = "docker_development" ]
     then

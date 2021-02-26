@@ -62,6 +62,8 @@ services:
       ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
       INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
       SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
       WEBPACKER_DEV_SERVER_HOST: webpacker
