@@ -848,6 +848,7 @@ en:
         no rights of third parties are infringed.
       lock_comments: 'Disable comments for this medium'
       comments_locked: 'Comments disabled'
+      release_date: 'Publication date'
       boost: 'Boost'
       info:
         locked: >
@@ -2786,6 +2787,8 @@ en:
     as_file_type: as %{type} file
     code_copied_to_clipboard: Code has been copied to the clipboard.
     emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    immediately: immediately
+    at_time: at the following time
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

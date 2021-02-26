@@ -21,9 +21,41 @@
         </button>
       </div>
       <div class="modal-body">
-        <%= form_with model: Medium.new(released: 'all'),
+        <%= form_with model: Medium.new(released:
+                                          medium.publisher&.release_for ||
+                                            'all'),
                       url: publish_medium_path(medium),
                       method: 'post' do |f| %>
+          <%= t('admin.medium.release_date') %>
+          <div class="custom-control custom-radio">
+            <%= f.radio_button :release_now,
+                               '1',
+                               class: 'custom-control-input',
+                               checked: !medium.release_date_set? %>
+            <%= f.label :release_now,
+                        t('basics.immediately'),
+                        value: '1',
+                        class: 'custom-control-label' %>
+          </div>
+          <div class="custom-control custom-radio mb-3">
+            <%= f.radio_button :release_now,
+                               '0',
+                               class: 'custom-control-input',
+                               checked: medium.release_date_set? %>
+            <%= f.label :release_now,
+                        t('basics.at_time'),
+                        value: '0',
+                        class: 'custom-control-label' %>
+          </div>
+          <div class="form-group col-3">
+            <%= f.text_field :release_date,
+                             class: 'form-control',
+                             id: "release_date",
+                             value: medium.planned_release_date %>
+            <div class="invalid-feedback"
+                 id="release-date-error">
+            </div>
+          </div>
           <%= render partial: 'media/access_rights',
                      locals: { f: f,
                                medium: medium } %>
@@ -34,8 +66,7 @@
           <div class="custom-control custom-checkbox">
             <%= f.check_box :lock_comments,
                             class: 'custom-control-input',
-                            checked: !!medium.teachable.media_scope
-                                             .try(:comments_disabled) %>
+                            checked: medium.planned_comment_lock? %>
             <%= f.label :lock_comments,
                         t('admin.medium.lock_comments'),
                         { class: 'custom-control-label' } %>

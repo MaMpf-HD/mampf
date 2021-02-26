@@ -388,6 +388,12 @@ $(document).on 'turbolinks:load', ->
     $('.details-warning').show()
     return
 
+  $('#release_date').on 'focus', ->
+    $('#release_date').datetimepicker
+      format:'d.m.Y H:i'
+      inline:false
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->

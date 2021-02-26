@@ -894,6 +894,7 @@ de:
         Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
       lock_comments: Kommentare für dieses Medium deaktivieren
       comments_locked: Kommentare deaktiviert
+      release_date: 'Veröffentlichungsdatum'
       boost: Boost
       info:
         locked: >
@@ -2957,6 +2958,8 @@ de:
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
     emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    immediately: sofort
+    at_time: zum folgenden Zeitpunkt
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
