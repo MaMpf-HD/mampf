@@ -16,7 +16,11 @@ services:
         source: ../../solr/development/conf/
         target: /solrconfig/
         read_only: true
-    command: ["solr-precreate", "development", "/solrconfig"]
+#    command: ["bash -c \"solr-precreate development /solrconfig ; solr-precreate test /solrconfig \""]
+    entrypoint:
+    - bash
+    - "-c"
+    - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
     image: postgres
@@ -49,6 +53,12 @@ services:
       DEVELOPMENT_DATABASE_USERNAME: mampf
       DEVELOPMENT_DATABASE_HOST: db
       DEVELOPMENT_DATABASE_PORT: 5432
+      TEST_DATABASE_ADAPTER: postgresql
+      TEST_DATABASE_DATABASE: mampf-test
+      TEST_DATABASE_INTERACTIONS: interactions-test
+      TEST_DATABASE_USERNAME: mampf
+      TEST_DATABASE_HOST: db
+      TEST_DATABASE_PORT: 5432
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: localhost
@@ -84,7 +94,6 @@ services:
       - solr
       - redis
       - mailcatcher
-
   webpacker:
     build:
       context: ./../..
