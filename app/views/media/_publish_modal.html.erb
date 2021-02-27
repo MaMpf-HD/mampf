@@ -74,7 +74,8 @@
           <div class="custom-control custom-checkbox">
             <%= f.check_box :disclaimer,
                             class: 'custom-control-input',
-                            required: true %>
+                            required: true,
+                            checked: medium.publisher.present? %>
             <%= f.label :disclaimer,
                         t('admin.medium.disclaimer'),
                         { class: 'custom-control-label' } %>

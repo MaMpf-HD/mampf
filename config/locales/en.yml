@@ -850,6 +850,7 @@ en:
       comments_locked: 'Comments disabled'
       release_date: 'Publication date'
       boost: 'Boost'
+      invalid_publish_date: This is not a valid datetime in the future.
       info:
         locked: >
           This medium has been locked. It can be unlocked via

@@ -896,6 +896,7 @@ de:
       comments_locked: Kommentare deaktiviert
       release_date: 'Veröffentlichungsdatum'
       boost: Boost
+      invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter

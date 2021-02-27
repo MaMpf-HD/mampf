@@ -153,16 +153,15 @@ class MediaController < ApplicationController
   end
 
   def publish
-    publisher_hash = { medium_id: @medium.id,
-                       release_for: publish_params[:released],
-                       release_date: Time.zone
-                                         .parse(publish_params[:release_date]),
-                       lock_comments: publish_params[:lock_comments] == '1',
-                       vertices: publish_params[:publish_vertices] == '1',
-                       user_id: current_user.id }
+    parse_publish_params
+    check_for_publish_errors
+    return if @errors.present?
+    publisher_hash = { medium_id: @medium.id, release_for: @release_for,
+                       release_date: @release_date, vertices: @vertices,
+                       lock_comments: @lock_comments, user_id: current_user.id }
     publisher = MediumPublisher.new(publisher_hash)
     @medium.update(publisher: publisher)
-    @medium.publish! if publish_params[:release_now] == '1'
+    @medium.publish! if @release_now
     redirect_to edit_medium_path(@medium)
   end
 
@@ -586,5 +585,20 @@ class MediaController < ApplicationController
 
   def store_download
     ConsumptionSaver.perform_async(@medium.id, 'download', params[:sort])
+  end
+
+  def parse_publish_params
+    @release_now = publish_params[:release_now] == '1'
+    @release_for = publish_params[:released]
+    @lock_comments = publish_params[:lock_comments] == '1'
+    @vertices = publish_params[:publish_vertices] == '1'
+    @release_date = Time.zone.parse(publish_params[:release_date])
+    rescue ArgumentError
+  end
+
+  def check_for_publish_errors
+    return if @release_now
+    return if @release_date && @release_date > DateTime.current
+    @errors = { release_date: I18n.t('admin.medium.invalid_publish_date') }
   end
 end

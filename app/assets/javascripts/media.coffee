@@ -389,6 +389,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $('#release_date').on 'focus', ->
+    $('#medium_release_now_0').prop('checked', true)
     $('#release_date').datetimepicker
       format:'d.m.Y H:i'
       inline:false
