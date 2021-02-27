@@ -92,7 +92,8 @@
                                    format: :long,
                                    locale: I18n.locale)) %>
       </span>
-      <button class="btn btn-sm btn-outline-primary"
+      <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
+      <button class="btn btn-sm btn-outline-primary ml-2"
               type="button"
               id="publish-medium-button">
         <%= t('buttons.edit') %>

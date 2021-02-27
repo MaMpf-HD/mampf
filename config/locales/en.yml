@@ -1116,6 +1116,9 @@ en:
           it does not affect media associated to a session). The default value
           is 0, Media with a higher boost will be displayed in the first places,
           media with lower boost at the end.
+        scheduled_release: >
+          The publication will not precisely occur at the right second, but it
+          should not be later than around a minute after the given time.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'

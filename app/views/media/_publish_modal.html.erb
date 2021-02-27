@@ -46,8 +46,9 @@
                         t('basics.at_time'),
                         value: '0',
                         class: 'custom-control-label' %>
+            <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
           </div>
-          <div class="form-group col-3">
+          <div class="form-group col-12">
             <%= f.text_field :release_date,
                              class: 'form-control',
                              id: "release_date",

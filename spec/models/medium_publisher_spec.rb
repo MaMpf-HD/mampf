@@ -62,6 +62,6 @@ RSpec.describe MampfMatrix, type: :model do
       expect(medium.questions.map(&:released).uniq).to eq(['all'])
     end
 
-    # TODO: check if an email is sent out sent out
+    # TODO: check if emails are sent out
   end
 end
