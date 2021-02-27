@@ -399,6 +399,11 @@ class MediaController < ApplicationController
     render layout: 'application_no_sidebar'
   end
 
+  def cancel_publication
+    @medium.update(publisher: nil)
+    redirect_to edit_medium_path(@medium)
+  end
+
   private
 
   def medium_params

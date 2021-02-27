@@ -897,6 +897,8 @@ de:
       release_date: 'Veröffentlichungsdatum'
       boost: Boost
       invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
+      scheduled_for_release: >
+        Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -3061,6 +3063,7 @@ de:
     reject: 'Ablehnen'
     dismiss: 'Ausblenden'
     validate: 'Validieren'
+    cancel_publication: 'Stornieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

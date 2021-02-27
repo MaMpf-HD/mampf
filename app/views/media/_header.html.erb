@@ -66,7 +66,7 @@
     <% end %>
     <% unless new_medium %>
       <% if medium.teachable.published? &&
-             !medium.published? %>
+             !medium.published? && !medium.publisher %>
         <button class="btn btn-sm btn-warning mb-2"
                 type="button"
                 id="publish-medium-button">
@@ -83,3 +83,24 @@
     <% end %>
   </div>
 </div>
+<% if medium.publisher&.release_date.present? %>
+  <div class="row px-2">
+    <div class="col-12">
+      <span class="badge badge-warning">
+        <%= t('admin.medium.scheduled_for_release',
+              release_date: I18n.l(medium.publisher&.release_date,
+                                   format: :long,
+                                   locale: I18n.locale)) %>
+      </span>
+      <button class="btn btn-sm btn-outline-primary"
+              type="button"
+              id="publish-medium-button">
+        <%= t('buttons.edit') %>
+      </button>
+      <%= link_to t('buttons.cancel_publication'),
+                  cancel_publication_path(medium),
+                  class: 'btn btn-sm btn-outline-primary',
+                  method: :delete %>
+    </div>
+  </div>
+<% end %>

@@ -851,6 +851,8 @@ en:
       release_date: 'Publication date'
       boost: 'Boost'
       invalid_publish_date: This is not a valid datetime in the future.
+      scheduled_for_release: >
+        This medium is scheduled for release at %{release_date}.
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -2894,6 +2896,7 @@ en:
     reject: 'Reject'
     dismiss: 'Dismiss'
     validate: 'Validate'
+    cancel_publication: 'Cancel'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
