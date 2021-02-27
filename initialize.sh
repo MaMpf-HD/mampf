@@ -26,22 +26,23 @@ if ! [ -f /completed_initial_run ]
 then
     echo 'Initialising mampf'
     echo Waiting for the DB to come online
-    wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
     echo RAILS ENV $RAILS_ENV
     if [ "$RAILS_ENV" = "docker_development" ]
     then
+        wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
         echo running: bundle exec rails db:create
         bundle exec rails db:create:interactions
         bundle exec rails db:create
     fi
     if [ "$RAILS_ENV" = "test" ]
     then
+        wait-for-it ${TEST_DATABASE_HOST}:${TEST_DATABASE_PORT} -t 30 || exit 1
         echo running: bundle exec rails db:create
         bundle exec rails db:create:interactions
         bundle exec rails db:create
     fi
     echo running: bundle exec rails db:migrate
-    bundle exec rails db:migrate > /dev/null
+    bundle exec rails db:migrate
     if [ "$RAILS_ENV" = "production" ]
     then
         echo running: bundle exec rails assets:precompile
