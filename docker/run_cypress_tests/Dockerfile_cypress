@@ -1,0 +1,6 @@
+# FROM cypress/included:6.5.0
+FROM cypress/included:5.2.0
+
+COPY ./spec/cypress/support /cypress/support
+# install the needed support stuff
+RUN cd /cypress/support && yarn install

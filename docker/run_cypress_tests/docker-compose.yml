@@ -31,7 +31,7 @@ services:
     build:
       context: ./../..
       dockerfile: docker/run_cypress_tests/Dockerfile
-    image: mampf:development
+    image: mampf:tests
     ports:
       - "127.0.0.1:3000:3000"
     # TODO: Use this
@@ -66,14 +66,16 @@ services:
       - mailcatcher
 
   cypress_runner:
-    image: cypress/included:6.5.0
+    image: mampf-cypress:5.2.0
+    build:
+      context: ./../..
+      dockerfile: docker/run_cypress_tests/Dockerfile_cypress
     environment:
       CYPRESS_baseUrl: http://mampf:3000
     entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done; npx cypress run $$@"
     volumes:
       - ../../spec/cypress/integration:/cypress/integration:ro
       - ../../spec/cypress/fixtures:/cypress/fixtures:ro
-      - ../../spec/cypress/support:/cypress/support:ro
       - ../../spec/cypress.json:/cypress.json:ro
       - ../../.git:/.git:ro
       # cypress outputs are saved here (needed only locally)
