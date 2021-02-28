@@ -68,7 +68,7 @@ services:
       - mailcatcher
 
   cypress_runner:
-    image: mampf-cypress:5.2.0
+    image: mampf-cypress:6.5.0
     build:
       context: ./../..
       dockerfile: docker/run_cypress_tests/Dockerfile_cypress
