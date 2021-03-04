@@ -64,6 +64,46 @@
             <%= render partial: 'media/quiz_rights',
                        locals: { f: f } %>
           <% end %>
+          <% if medium.sort == 'Nuesse' && medium.teachable.is_a?(Lecture) %>
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :create_assignment,
+                              class: 'custom-control-input',
+                              checked: medium.publisher&.create_assignment %>
+              <%= f.label :create_assignment,
+                          t('admin.medium.create_assignment'),
+                          { class: 'custom-control-label' } %>
+            </div>
+            <div class="form-row mb-2 ml-2 <%= medium.publisher&.create_assignment ? '' : 'no_display' %>"
+                 id="medium_assignment_row">
+              <div class="form-group col-4">
+                <%= f.label :assignment_title, t('basics.title') %>
+                <%= f.text_field :assignment_title,
+                                 class: 'form-control',
+                                 value: medium.publisher&.assignment_title ||medium.local_info %>
+                <div class="invalid-feedback"
+                     id="assignment-title-error">
+                </div>
+              </div>
+              <div class="form-group col-4">
+                <%= f.label :assignment_deadline, t('basics.deadline') %>
+                <%= f.text_field :assignment_deadline,
+                                 class: 'form-control',
+                                 value: medium.publisher&.assignment_deadline %>
+                <div class="invalid-feedback"
+                     id="assignment-deadline-error">
+                </div>
+              </div>
+              <div class="form-group col-4">
+                <%= f.label :assignment_file_type,
+                            t('submission.file_format') %>
+                <%= f.select :assignment_file_type,
+                             options_for_select(Assignment.accepted_file_types
+                                                          .map { |t| [t,t] }),
+                     {},
+                     { class: 'form-control' } %>
+              </div>
+            </div>
+          <% end %>
           <div class="custom-control custom-checkbox">
             <%= f.check_box :lock_comments,
                             class: 'custom-control-input',

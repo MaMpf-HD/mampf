@@ -899,6 +899,12 @@ de:
       invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
       scheduled_for_release: >
         Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
+      create_assignment: Hausaufgabe zu diesem Medium anlegen
+      invalid_assignment_deadline: >
+        Dies ist kein gültiges Datum nach dem Veröffentlichungsdatum des
+        Mediums.
+      invalid_assignment_title: >
+        Dieser Hausaufgabentitel ist nicht zulässig.
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter

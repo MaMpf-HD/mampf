@@ -395,6 +395,20 @@ $(document).on 'turbolinks:load', ->
       inline: false
     return
 
+  $('#medium_assignment_deadline').on 'focus', ->
+    $(this).datetimepicker
+      format: 'd.m.Y H:i'
+      inline: false
+    return
+
+  $('#medium_create_assignment').on 'click', ->
+    if $(this).prop('checked')
+      $('#medium_assignment_row').removeClass('no_display')
+    else
+      $('#medium_assignment_row').addClass('no_display')
+    console.log 'HI'
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->

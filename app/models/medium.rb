@@ -49,7 +49,7 @@ class Medium < ApplicationRecord
 
   has_many :quiz_certificates, foreign_key: 'quiz_id', dependent: :destroy
 
-  has_one :assignment
+  has_many :assignments
 
   serialize :quiz_graph, QuizGraph
 
