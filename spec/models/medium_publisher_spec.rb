@@ -136,7 +136,6 @@ RSpec.describe MediumPublisher, type: :model do
 
     it 'locks the medium thread if the lock_assignment flag is set' do
       medium = FactoryBot.create(:lecture_medium)
-      lecture = medium.teachable
       user = FactoryBot.create(:confirmed_user)
       medium.editors << user
       publisher = FactoryBot.build(:medium_publisher,
