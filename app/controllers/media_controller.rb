@@ -158,7 +158,6 @@ class MediaController < ApplicationController
     return if @errors.present?
     @medium.update(publisher: publisher)
     @medium.publish! if publisher.release_now
-    pp publisher
     redirect_to edit_medium_path(@medium)
   end
 
