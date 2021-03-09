@@ -59,8 +59,6 @@ Rails.application.routes.draw do
 
   get 'c/:id', to: 'clickers#show'
 
-  get 'courses/:id/inspect', to: 'courses#inspect',
-                             as: 'inspect_course'
   post 'courses/:id/take_random_quiz', to: 'courses#take_random_quiz',
                                       as: 'random_quiz'
   get 'courses/:id/render_question_counter', to: 'courses#render_question_counter',

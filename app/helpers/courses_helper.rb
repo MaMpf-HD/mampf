@@ -22,4 +22,11 @@ module CoursesHelper
                        edit_profile_path,
                        class: 'darkblue'))
   end
+
+  def course_link_or_text(course, user)
+    unless user.admin || user.in?(course.editors)
+      return course.title
+    end
+    link_to(course.title, edit_course_path(course))
+  end
 end

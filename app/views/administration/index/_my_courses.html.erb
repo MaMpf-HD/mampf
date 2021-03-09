@@ -28,8 +28,7 @@
       <%= render partial: 'administration/index/courses_card',
                  locals: { courses:
                              current_user.edited_courses
-                                         .natural_sort_by(&:title),
-                           inspection: false } %>
+                                         .natural_sort_by(&:title) } %>
     <% else %>
       <%= t('admin.main.no_edited_courses') %>
     <% end %>

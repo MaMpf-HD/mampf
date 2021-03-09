@@ -84,13 +84,11 @@
               <% if course_material.any? %>
                 <% if course_material.size == 1 %>
                   <%= t('admin.medium.course_medium_html',
-                        course: link_to(lecture.course.title,
-                                        edit_or_inspect_course_path(lecture.course))) %>
+                        course: course_link_or_text(lecture.course, current_user)) %>
                 <% else %>
                   <%= t('admin.medium.course_media_html',
                         count: course_material.size,
-                        course: link_to(lecture.course.title,
-                                        edit_or_inspect_course_path(lecture.course))) %>
+                        course: course_link_or_text(lecture.course, current_user)) %>
                 <% end %>
               <% end %>
             </div>

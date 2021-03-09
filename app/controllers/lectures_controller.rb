@@ -23,11 +23,12 @@ class LecturesController < ApplicationController
   end
 
   def inspect
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.parse(ENV['RAILS_CACHE_ID'])].max)
-      eager_load_stuff
-    end
+    redirect_to lecture_path(@lecture)
+    # if stale?(etag: @lecture,
+    #           last_modified: [current_user.updated_at, @lecture.updated_at,
+    #                           Time.parse(ENV['RAILS_CACHE_ID'])].max)
+    #   eager_load_stuff
+    # end
   end
 
   def update

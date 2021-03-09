@@ -1,7 +1,7 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :set_course, only: [:take_random_quiz, :render_question_counter]
-  before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
+  before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent
   authorize_resource
@@ -36,10 +36,6 @@ class CoursesController < ApplicationController
       return
     end
     @errors = @course.errors
-  end
-
-  def inspect
-    I18n.locale = @course.locale || I18n.default_locale
   end
 
   def destroy

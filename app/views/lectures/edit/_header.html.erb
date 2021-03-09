@@ -20,9 +20,11 @@
     </h4>
   </div>
   <div class="col-5 text-right">
-    <%= link_to t('buttons.parent_course'),
-                edit_or_inspect_course_path(lecture.course),
-                class: 'btn btn-sm btn-outline-primary' %>
+    <% if current_user.admin || lecture.course.edited_by?(current_user) %>
+      <%= link_to t('buttons.parent_course'),
+                  edit_course_path(lecture.course),
+                  class: 'btn btn-sm btn-outline-primary' %>
+    <% end %>
     <% if !inspection && !lecture.published? %>
       <button type="button"
               class="btn btn-sm btn-outline-danger"

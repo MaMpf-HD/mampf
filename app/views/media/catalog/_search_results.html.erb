@@ -52,8 +52,10 @@
               </div>
               <div class="col-1">
                 <% if m.teachable_type == 'Course' %>
-                  <%= link_to m.teachable.short_title,
-                              edit_or_inspect_course_path(m.teachable) %>
+                  <% if current_user.admin || current_user.in?(m.teachable.editors) %>
+                    <%= link_to m.teachable.short_title,
+                                edit_course_path(m.teachable) %>
+                  <% end %>
                 <% elsif m.teachable_type == 'Lecture' %>
                   <%= link_to m.teachable.short_title,
                               edit_or_inspect_lecture_path(m.teachable) %>
@@ -147,7 +149,7 @@
         </div>
       </div>
     <% end %>
-  </div>    
+  </div>
 <% else %>
   <div class="row">
     <div class="col-12 text-center">

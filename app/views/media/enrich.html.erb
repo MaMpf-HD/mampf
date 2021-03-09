@@ -104,9 +104,11 @@
                     class: 'btn btn-outline-light btn-sm ml-2' %>
         <% teachable_scope = @medium.teachable.media_scope %>
         <% if teachable_scope.class.to_s == 'Course' %>
-          <%= link_to t('buttons.parent_course'),
-                      edit_or_inspect_course_path(teachable_scope),
-                      class: 'btn btn-outline-light btn-sm ml-2' %>
+          <% if current_user.admin || current_user.in?(@medium.teachable.editors) %>
+            <%= link_to t('buttons.parent_course'),
+                        edit_course_path(teachable_scope),
+                        class: 'btn btn-outline-light btn-sm ml-2' %>
+          <% end %>
         <% else %>
           <%= link_to t('buttons.parent_lecture'),
                       edit_or_inspect_lecture_path(teachable_scope),

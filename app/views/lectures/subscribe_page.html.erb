@@ -46,15 +46,16 @@
         <%= f.submit t("profile.subscribe_lecture"),
                       class: "btn btn-primary"%>
       <% end %>
-    <%else%>
+    <% else %>
       <%= link_to t("profile.subscribe_lecture"),
-      subscribe_lecture_path(params:
-                                                  { lecture:
-                                                      { id: @lecture.id,
-                                                        parent: "redirect" } },
+                  subscribe_lecture_path(params:
+                                           { lecture:
+                                               { id: @lecture.id,
+                                                 parent: "redirect" } },
                             ),
-      method: :patch,
-      class: "btn btn-primary"%>
+                  method: :patch,
+                  remote: true,
+                  class: "btn btn-primary" %>
     <% end %>
     </p>
   </div>
