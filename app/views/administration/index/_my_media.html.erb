@@ -1,11 +1,11 @@
-<div class="card">
+<div class="card card-fixed-medium">
   <div class="card-header bg-primary text-white">
     <%= t('admin.main.my_media') %>
     (<%= current_user.edited_media.size %>)
     <%= helpdesk(t('admin.main.info.medium_definition'), true) %>
     </i>
   </div>
-  <div class="card-body card-compact">
+  <div class="card-body scrollable">
     <% if current_user.edited_media.any? %>
       <ul>
         <%= render partial: 'administration/index/medium',

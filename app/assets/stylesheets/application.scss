@@ -149,6 +149,26 @@ trix-toolbar .trix-button-row {
   overflow-y: scroll;
 }
 
+.card-fixed-xxl
+{
+  height: 85vh;
+}
+
+.card-fixed-medium
+{
+  height: 65vh;
+}
+
+.card-fixed-small
+{
+  height: 20vh;
+}
+
+.scrollable
+{
+  overflow-y: scroll;
+}
+
 
 $modal-xl:                    1140px !default;
 $modal-xxl:                   1600px !default;
