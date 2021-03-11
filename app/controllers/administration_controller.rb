@@ -20,4 +20,7 @@ class AdministrationController < ApplicationController
   def classification
     @subjects = Subject.includes(programs: [:divisions]).all
   end
+
+  def search_teachables
+  end
 end

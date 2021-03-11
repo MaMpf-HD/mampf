@@ -16,6 +16,8 @@ Rails.application.routes.draw do
                               as: 'exit_administration'
   get '/administration/profile', to: 'administration#profile',
                                  as: 'elevated_profile'
+  get 'administration/search_teachables', to: 'administration#search_teachables',
+                                          as: 'search_teachables'
   get '/administration/classification', to: 'administration#classification',
                                         as: 'classification'
 

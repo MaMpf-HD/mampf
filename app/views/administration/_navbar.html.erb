@@ -55,6 +55,13 @@
                     data: { toggle: 'tooltip' },
                     title: t('admin.navbar.tags') %>
       </li>
+      <li class="nav-item">
+        <%= link_to '', search_teachables_path,
+                    class: 'fas fa-chalkboard fa-lg text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: 'tooltip' },
+                    title: t('admin.navbar.teachables') %>
+      </li>
       <% if current_user.admin? %>
         <li class="nav-item">
           <%= link_to '', terms_path,
