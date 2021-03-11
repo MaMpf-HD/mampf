@@ -338,8 +338,6 @@ Rails.application.routes.draw do
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
-  get 'tags/:id/inspect', to: 'tags#inspect',
-                           as: 'inspect_tag'
   get 'tags/:id/display_cyto', to: 'tags#display_cyto',
                                 as: 'display_cyto_tag'
   patch 'tags/:id/identify', to: 'tags#identify',

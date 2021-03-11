@@ -42,10 +42,6 @@ class TagsController < ApplicationController
     render layout: 'cytoscape'
   end
 
-  def inspect
-    set_related_tags
-  end
-
   def edit
     set_related_tags
     # build notions for missing locales
