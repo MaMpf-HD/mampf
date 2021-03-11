@@ -1,4 +1,4 @@
-<% cache [media, inspection] do%>
+<% cache media do%>
 <div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
     <div class="row">
@@ -9,16 +9,14 @@
         </h5>
       </div>
       <div class="col-6">
-        <% unless inspection %>
-          <%= link_to t('buttons.create_medium'),
-                      new_medium_path(params:
-                                        { sort: 'Kaviar',
-                                          teachable_id: lecture.id,
-                                          teachable_type: 'Lecture' }),
-                      class: 'btn btn-sm btn-secondary new-in-lecture',
-                      id: 'create-new-medium',
-                      remote: true %>
-        <% end %>
+        <%= link_to t('buttons.create_medium'),
+                    new_medium_path(params:
+                                      { sort: 'Kaviar',
+                                        teachable_id: lecture.id,
+                                        teachable_type: 'Lecture' }),
+                    class: 'btn btn-sm btn-secondary new-in-lecture',
+                    id: 'create-new-medium',
+                    remote: true %>
       </div>
       <div class="col-2 text-right">
         <i id="hide-media-button"
@@ -64,7 +62,7 @@
                         .each do |m| %>
                   <li>
                     <%= link_to m.local_info_for_admins,
-                                inspect_or_edit_medium_path(m, inspection),
+                                inspect_or_edit_medium_path(m, false),
                                 id: "lecture-#{dom_id(m)}",
                                 class: textcolor(m),
                                 data: { type: m.teachable.class.to_s,

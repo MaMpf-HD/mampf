@@ -9,8 +9,8 @@ module LecturesHelper
 
   # is the current user allowed to delete the given lecture and is it
   # irrelevant enough to be able to do so?
-  def lecture_deletable?(lecture, inspection)
-    !inspection && lecture.lessons.empty? && lecture.media.empty? &&
+  def lecture_deletable?(lecture)
+    lecture.lessons.empty? && lecture.media.empty? &&
       (current_user.admin? ||
         lecture.editors_with_inheritance.include?(current_user))
   end

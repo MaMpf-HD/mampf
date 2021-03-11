@@ -27,27 +27,24 @@
              data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
           <%= render partial: 'lectures/import/imported_media',
                      locals: { media: lecture.imported_media,
-                               lecture: lecture,
-                               inspection: inspection } %>
+                               lecture: lecture } %>
         </div>
-        <% unless inspection %>
-          <div class="row mb-2">
-            <div class="col-12 text-center">
-              <button role="button"
-                      class="btn btn-sm btn-secondary"
-                      id="import-media-button">
-                <%= t('buttons.import_media') %>
-              </button>
-            </div>
+        <div class="row mb-2">
+          <div class="col-12 text-center">
+            <button role="button"
+                    class="btn btn-sm btn-secondary"
+                    id="import-media-button">
+              <%= t('buttons.import_media') %>
+            </button>
           </div>
-          <div id="importedMediaArea">
-            <hr>
-            <%= render partial: 'media/catalog/search_form',
-                       locals: { purpose: 'import' } %>
-            <div id="media-search-results">
-            </div>
+        </div>
+        <div id="importedMediaArea">
+          <hr>
+          <%= render partial: 'media/catalog/search_form',
+                     locals: { purpose: 'import' } %>
+          <div id="media-search-results">
           </div>
-        <% end %>
+        </div>
       </div>
     </div>
 </div>

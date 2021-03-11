@@ -25,7 +25,7 @@
                   edit_course_path(lecture.course),
                   class: 'btn btn-sm btn-outline-primary' %>
     <% end %>
-    <% if !inspection && !lecture.published? %>
+    <% unless lecture.published? %>
       <button type="button"
               class="btn btn-sm btn-outline-danger"
               data-toggle="modal"
@@ -33,7 +33,7 @@
         <%= t('buttons.publish') %>
       </button>
     <% end %>
-    <% if lecture_deletable?(lecture, inspection) %>
+    <% if lecture_deletable?(lecture) %>
       <%= link_to t('buttons.delete'),
                   lecture_path,
                   method: :delete,
