@@ -9,7 +9,7 @@ class LecturesController < ApplicationController
   before_action :check_for_consent
   before_action :check_published, only: [:subscribe_page]
   before_action :check_for_subscribe, only: [:show]
-  before_action :set_view_locale, only: [:edit, :show, :subscribe_page, :inspect,
+  before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout 'administration'
@@ -20,15 +20,6 @@ class LecturesController < ApplicationController
                               Time.parse(ENV['RAILS_CACHE_ID'])].max)
       eager_load_stuff
     end
-  end
-
-  def inspect
-    redirect_to lecture_path(@lecture)
-    # if stale?(etag: @lecture,
-    #           last_modified: [current_user.updated_at, @lecture.updated_at,
-    #                           Time.parse(ENV['RAILS_CACHE_ID'])].max)
-    #   eager_load_stuff
-    # end
   end
 
   def update

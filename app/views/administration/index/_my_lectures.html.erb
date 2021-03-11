@@ -26,7 +26,6 @@
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.given_lectures),
-                           inspection: false,
                            teacher: false } %>
     <% end %>
     <% if current_user.edited_lectures.any? %>
@@ -36,7 +35,6 @@
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.edited_lectures),
-                           inspection: false,
                            teacher: true } %>
     <% end %>
     <% if current_user.lectures_as_module_editor.present? %>
@@ -47,7 +45,6 @@
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
                                                     .lectures_as_module_editor),
-                           inspection: false,
                            teacher: true } %>
     <% end %>
     <% if current_user.given_lectures.empty? &&

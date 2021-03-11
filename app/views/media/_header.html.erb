@@ -58,7 +58,7 @@
       <% end %>
     <% else %>
       <%= link_to t('buttons.parent_lecture'),
-                  edit_or_inspect_lecture_path(teachable_scope),
+                  edit_or_show_lecture_path(teachable_scope),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
     <% if medium.teachable.class.to_s == 'Lesson' %>

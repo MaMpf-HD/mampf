@@ -58,10 +58,10 @@
                   <% end %>
                 <% elsif m.teachable_type == 'Lecture' %>
                   <%= link_to m.teachable.short_title,
-                              edit_or_inspect_lecture_path(m.teachable) %>
+                              edit_or_show_lecture_path(m.teachable) %>
                 <% else %>
                   <%= link_to m.teachable&.short_title_with_lecture_date,
-                              edit_or_inspect_lecture_path(m.teachable&.lecture) %>
+                              edit_or_show_lecture_path(m.teachable&.lecture) %>
                 <% end %>
               </div>
               <div class="col-3 mediumTags"

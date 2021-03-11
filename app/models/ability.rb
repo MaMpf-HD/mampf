@@ -20,7 +20,7 @@ class Ability
       # :read is a cancancan alias for index and show actions
       can [:read], :all
 
-      can :inspect, [Course, Lecture, Lesson, Tag]
+      can :inspect, [Lecture, Lesson]
       can :inspect, Medium do |medium|
         medium.visible_for_user?(user)
       end

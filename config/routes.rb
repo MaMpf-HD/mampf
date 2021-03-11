@@ -104,8 +104,6 @@ Rails.application.routes.draw do
 
   get 'lectures/:id/food', to: 'media#index',
                            as: 'lecture_food'
-  get 'lectures/:id/inspect', to: 'lectures#inspect',
-                               as: 'inspect_lecture'
   get 'lectures/:id/update_teacher', to: 'lectures#update_teacher',
                                       as: 'update_teacher'
   get 'lectures/:id/update_editors', to: 'lectures#update_editors',

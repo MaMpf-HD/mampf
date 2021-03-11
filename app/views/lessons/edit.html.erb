@@ -29,7 +29,7 @@
     </div>
     <div class="col-4 text-right">
       <%= link_to t('buttons.parent_lecture'),
-                  edit_or_inspect_lecture_path(@lesson.lecture),
+                  edit_lecture_path(@lesson.lecture),
                   class: 'btn btn-sm btn-outline-primary mb-2',
                   style: @lesson.previous.present? || @lesson.next.present? ? 'position: relative; top: -14px;' : '' %>
       <%= link_to t('buttons.delete'),

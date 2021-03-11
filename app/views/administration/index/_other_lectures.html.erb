@@ -9,7 +9,6 @@
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(other_lectures),
-                           inspection: true,
                            teacher: true } %>
     <% else %>
       <%= t('admin.main.no_other_lectures') %>

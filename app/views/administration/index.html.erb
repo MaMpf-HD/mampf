@@ -8,19 +8,6 @@
         <%= render partial: 'administration/index/my_courses' %>
       </div>
     </div>
-    <% if current_user.admin %>
-      <div class="row mt-3">
-        <div class="col-12 col-xxxl-7 mt-2">
-          <%= render partial: 'administration/index/other_lectures',
-                     locals:
-                       { other_lectures: current_user.  teaching_unrelated_lectures } %>
-        </div>
-        <div class="col-12 col-xxxl-5 mt-2 mb-2">
-          <%= render partial: 'administration/index/other_courses',
-                     locals: { other_courses: current_user.unrelated_courses } %>
-        </div>
-      </div>
-    <% end %>
   </div>
   <div class="col-12 col-md-4">
     <div class="row">
