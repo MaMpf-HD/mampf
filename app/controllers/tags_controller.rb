@@ -1,9 +1,9 @@
 # TagsController
 class TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect,
+  before_action :set_tag, only: [:show, :edit, :destroy, :update,
                                  :display_cyto, :identify, :take_random_quiz]
   before_action :set_related_tags_for_user, only: [:show, :display_cyto]
-  before_action :set_related_tags, only: [:edit, :inspect]
+  before_action :set_related_tags, only: [:edit]
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]

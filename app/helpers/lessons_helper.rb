@@ -15,11 +15,11 @@ module LessonsHelper
       (current_user.admin || current_user.in?(lecture.editors_with_inheritance))
   end
 
-  def edit_or_inspect_lesson_path(lesson)
+  def edit_or_show_lesson_path(lesson)
     if current_user.admin ||
        lesson.lecture.editors_with_inheritance.include?(current_user)
       return edit_lesson_path(lesson)
     end
-    inspect_lesson_path(lesson)    
+    lesson_path(lesson)
   end
 end

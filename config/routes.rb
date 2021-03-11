@@ -156,8 +156,6 @@ Rails.application.routes.draw do
 
   resources :lectures, except: [:index]
 
-  get 'lessons/:id/inspect', to: 'lessons#inspect',
-                             as: 'inspect_lesson'
   resources :lessons, except: [:index]
 
   get 'media/search', to: 'media#search',
