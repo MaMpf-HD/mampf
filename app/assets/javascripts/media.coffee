@@ -406,7 +406,6 @@ $(document).on 'turbolinks:load', ->
       $('#medium_assignment_row').removeClass('no_display')
     else
       $('#medium_assignment_row').addClass('no_display')
-    console.log 'HI'
     return
 
   return

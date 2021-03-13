@@ -60,3 +60,5 @@ completed_initial_run
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+
+node_modules
