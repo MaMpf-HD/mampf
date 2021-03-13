@@ -215,6 +215,7 @@ class LecturesController < ApplicationController
     @total = search.total
     @lectures = Kaminari.paginate_array(results, total_count: @total)
                         .page(params[:page]).per(search_params[:per])
+    @results_as_list = search_params[:results_as_list] == 'true'
     return unless @total.zero?
     return unless search_params[:fulltext]&.length.to_i > 1
     @similar_titles = Course.similar_courses(search_params[:fulltext])
@@ -380,6 +381,7 @@ class LecturesController < ApplicationController
     params[:search][:user_id] = current_user.id
     params.require(:search).permit(:all_types, :all_terms, :all_programs,
                                    :all_teachers, :fulltext, :per, :user_id,
+                                   :results_as_list,
                                    types: [],
                                    term_ids: [],
                                    program_ids: [],

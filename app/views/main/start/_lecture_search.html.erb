@@ -1,7 +1,7 @@
 <%= form_with url: search_lectures_path,
               scope: 'search',
               remote: true,
-              method: 'get' do |f| %>
+              method: 'post' do |f| %>
   <div class="form-row p-2">
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :types, t('basics.type') %>
@@ -93,7 +93,8 @@
     <div class="col-6 col-lg-3 form-.group">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
-                   options_for_select([[3,3],[4,4],[6,6], [12,12]],[6]),
+                   options_for_select(lecture_hits_per_page(results_as_list),
+                                      default_lecture_hits_per_page(results_as_list)),
                    {},
                    { class: 'form-control'} %>
 
@@ -105,4 +106,6 @@
                    class: 'btn btn-primary' %>
     </div>
   </div>
+  <%= f.hidden_field :results_as_list,
+                     value: results_as_list %>
 <% end %>

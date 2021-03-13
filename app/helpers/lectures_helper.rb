@@ -94,4 +94,41 @@ module LecturesHelper
     return '' if lecture.published?
     'border-danger'
   end
+
+  def lecture_hits_per_page(results_as_list)
+    return [[10, 10], [20, 20], [50, 50]] if results_as_list
+    [[3,3],[4,4],[6,6], [12,12]]
+  end
+
+  def default_lecture_hits_per_page(results_as_list)
+    return 20 if results_as_list
+    6
+  end
+
+  def lecture_access_icon(lecture)
+    return lecture_edit_icon if current_user.can_edit?(lecture)
+    lecture_view_icon
+  end
+
+  def lecture_edit_icon(lecture)
+    link_to edit_lecture_path(lecture),
+            class: 'text-dark mr-2',
+            style: 'text-decoration: none;',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.edit') do
+      tag.i class: 'far fa-edit'
+    end
+  end
+
+  def lecture_view_icon(lecture)
+    link_to lecture_path(lecture),
+            class: 'text-dark mr-2',
+            style: 'text-decoration: none;',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.view') do
+      tag.i class: 'fas fa-eye'
+    end
+  end
 end

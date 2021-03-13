@@ -553,6 +553,10 @@ class User < ApplicationRecord
       self != lecture.teacher
   end
 
+  def can_edit?(lecture)
+    admin || in?(lecture.editors_with_inheritance)
+  end
+
   private
 
   def set_defaults

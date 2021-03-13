@@ -168,6 +168,14 @@ de:
         subscriber_medium: >
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
+    teachables:
+      teachables: Veranstaltungs- und Modulsuche
+      info:
+        action: >
+          Je nachdem, ob Du EditorIn dieser Veranstaltung bist, kannst Du sie
+          betrachten oder auch editieren. Beim Betrachten wirst Du
+          aufgefordert werden, sie vorher zu abonnieren, falls Du das bisher
+          noch nicht getan hast.
     classification:
       programs: 'Studiengänge'
       divisions: 'Teilbereiche'
@@ -1184,7 +1192,7 @@ de:
           Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
           niedrigerem Boost weiter hinten.
     tag:
-      index: 'Tagübersicht'
+      index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
       extra_lectures: 'Zusätzliche Veranstaltungen'
       missing_lectures: 'Fehlende Veranstaltungen'
@@ -2297,7 +2305,9 @@ de:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
   errors:
-    not_subscribed: Aktuell hast Du diese Veranstaltung nicht abonniert.
+    not_subscribed: >
+      Aktuell hast Du diese Veranstaltung nicht abonniert.
+      Um sie betrachten zu können, musst Du sie vorher abonnieren.
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
     thyme:

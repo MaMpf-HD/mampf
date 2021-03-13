@@ -1,7 +1,7 @@
 <%= form_with url: media_search_path,
               scope: 'search',
               remote: true,
-              method: 'get' do |f| %>
+              method: 'post' do |f| %>
   <div class="form-row p-2">
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :types, t('basics.type') %>

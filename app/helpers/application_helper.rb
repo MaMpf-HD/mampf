@@ -203,10 +203,7 @@ module ApplicationHelper
   # Editor rights are determined by inheritance, e.g. module editors
   # can edit all lectures associated to the course.
   def edit_or_show_lecture_path(lecture)
-    if current_user.admin ||
-       lecture.editors_with_inheritance.include?(current_user)
-      return edit_lecture_path(lecture)
-    end
+    return edit_lecture_path(lecture) if current_user.can_edit?(lecture)
     lecture_path(lecture)
   end
 

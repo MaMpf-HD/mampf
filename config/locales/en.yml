@@ -175,6 +175,13 @@ en:
         free_medium: 'This medium is free.'
         user_medium: 'This medium is only available for MaMpf users.'
         subscriber_medium: 'This medium is only available for subscribers.'
+    teachables:
+      teachables: Lecture and Course Search
+      info:
+        action: >
+          Depending on whether you are an editor of this lecture you can view
+          or edit this lecture. Upon viewing you will be asked to subscribe the
+          lecture if you habe not done this before.
     classification:
       programs: 'Study Paths'
       divisions: 'Divisions'
@@ -199,7 +206,7 @@ en:
         Only the last 25 recently updated media are shown.
         You can find more by doing a %{media_search} or in your
         %{profile}.
-      media_search: 'media search'
+      media_search: 'Search media'
       user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
@@ -1114,7 +1121,7 @@ en:
           is 0, Media with a higher boost will be displayed in the first places,
           media with lower boost at the end.
     tag:
-      index: 'Tag Index'
+      index: 'Search Tags'
       related_tags: 'Related Tags'
       extra_lectures: 'Addictional event series'
       missing_lectures: 'Missing event series'
