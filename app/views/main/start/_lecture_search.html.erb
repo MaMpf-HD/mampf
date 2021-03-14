@@ -1,7 +1,7 @@
 <%= form_with url: search_lectures_path,
               scope: 'search',
               remote: true,
-              method: 'post' do |f| %>
+              method: :get do |f| %>
   <div class="form-row p-2">
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :types, t('basics.type') %>

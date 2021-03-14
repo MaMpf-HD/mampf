@@ -132,16 +132,13 @@ class TagsController < ApplicationController
     search.build do
       fulltext search_params[:title]
     end
-    if search_params[:course_ids] == ['']
-      search.build do
-        with(:course_ids, nil)
-      end
-    else
-      search.build do
-        with(:course_ids, search_params[:course_ids])
-      end
-    end
+    course_ids = if search_params[:all_courses] == '1'
+                   []
+                 elsif search_params[:course_ids] != ['']
+                   search_params[:course_ids]
+                 end
     search.build do
+      with(:course_ids, course_ids)
       paginate page: params[:page], per_page: 10
     end
     search.execute
@@ -338,7 +335,7 @@ class TagsController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:title, course_ids: [])
+    params.require(:search).permit(:title, :all_courses, course_ids: [])
   end
 
 end

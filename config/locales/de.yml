@@ -3199,6 +3199,11 @@ de:
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
     no_announcement: >
       Eine Mitteilung mit dieser id existiert nicht.
+    created_lecture_success: >
+      Die Veranstaltung %{lecture} wurde erfolgreich angelegt.
+    created_course_success: >
+      Das Modul %{course} (Editor(Innen): %{editors}) wurde erfolgreich
+      angelegt.
   exception:
     title: Fehler
     exception: Exception auf %{host}

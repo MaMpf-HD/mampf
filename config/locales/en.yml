@@ -3018,6 +3018,11 @@ en:
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
     no_announcement: There is no announcement with this id.
+    created_lecture_success: >
+      The lecture %{lecture} has been successfully created.
+    created_course_success: >
+      The course %{course} (editors: %{editors}) has been successfully
+      created.
   exception:
     title: Error
     exception: Exception on %{host}

@@ -132,7 +132,7 @@ Rails.application.routes.draw do
                                       as: 'edit_structures'
   get 'lectures/:id/search_examples', to: 'lectures#search_examples',
                                       as: 'search_examples'
-  post 'lectures/search', to: 'lectures#search',
+  get 'lectures/search', to: 'lectures#search',
                          as: 'search_lectures'
   get 'lectures/:id/display_course', to: 'lectures#display_course',
                                      as: 'display_course'
@@ -160,7 +160,7 @@ Rails.application.routes.draw do
 
   resources :lessons, except: [:index]
 
-  post 'media/search', to: 'media#search',
+  get 'media/search', to: 'media#search',
                       as: 'media_search'
   get 'media/catalog', to: 'media#catalog',
                        as: 'media_catalog'
@@ -345,7 +345,7 @@ Rails.application.routes.draw do
                               as: 'fill_tag_select'
   get 'events/fill_course_tags', to: 'tags#fill_course_tags',
                                  as: 'fill_course_tags'
-  post 'tags/search', to: 'tags#search',
+  get 'tags/search', to: 'tags#search',
                       as: 'tags_search'
   get 'tags/:id/take_random_quiz', to: 'tags#take_random_quiz',
                                    as: 'tag_random_quiz'

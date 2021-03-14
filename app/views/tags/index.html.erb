@@ -14,7 +14,7 @@
 <%= form_with url: tags_search_path,
               scope: 'search',
               remote: true,
-              method: 'post' do |f| %>
+              method: :get do |f| %>
 
   <div class="form-row mb-3 p-2">
     <div class="form-group col-6 mx-3">
@@ -27,31 +27,29 @@
     <div class="form-group col-5">
       <%= f.label :course_ids, t('basics.courses') %>
       <%= helpdesk(t('admin.tag.info.search_course'), true) %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_courses,
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_course_ids' } %>
+        <%= f.label :all_courses,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
       <%= f.select :course_ids,
                    options_for_select(Course.all
                                             .map { |c| [c.title, c.id] },
-                                      Course.pluck(:id)),
+                                      nil),
                    {},
                    { multiple: true,
                      class: 'selectize',
-                     id: 'inputCourses' } %>
+                     disabled: true } %>
       <button id="tags-edited-courses"
               type="button"
               class="btn btn-sm btn-outline-info"
               data-courses="<%= current_user.edited_courses.map(&:id)
                                             .to_json %>">
         <%= t('buttons.edited_courses') %>
-      </button>
-      <button id="tags-all-courses"
-              type="button"
-              class="btn btn-sm btn-outline-info"
-              data-courses="<%= Course.all.map(&:id).to_json %>">
-        <%= t('buttons.all_courses') %>
-      </button>
-      <button id="tags-no-courses"
-              type="button"
-              class="btn btn-sm btn-outline-info">
-        <%= t('buttons.clean_courses_form') %>
       </button>
     </div>
   </div>

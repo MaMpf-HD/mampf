@@ -32,7 +32,11 @@ class CoursesController < ApplicationController
     if @course.valid?
       # set organizational_concept to default
       set_organizational_defaults
-      redirect_to administration_path
+      redirect_to administration_path,
+                  notice: I18n.t('controllers.created_course_success',
+                                 course: @course.title,
+                                 editors: @course.editors.map(&:name)
+                                                         .join(', '))
       return
     end
     @errors = @course.errors

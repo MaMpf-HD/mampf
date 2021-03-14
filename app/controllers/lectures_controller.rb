@@ -82,10 +82,14 @@ class LecturesController < ApplicationController
       # depending on where the create action was trriggered from, return
       # to admin index view or edit course view
       unless params[:lecture][:from] == 'course'
-        redirect_to administration_path
+        redirect_to administration_path,
+                    notice: I18n.t('controllers.created_lecture_success',
+                                   lecture: @lecture.title_with_teacher)
         return
       end
-      redirect_to edit_course_path(@lecture.course)
+      redirect_to edit_course_path(@lecture.course),
+                  notice: I18n.t('controllers.created_lecture_success',
+                                   lecture: @lecture.title_with_teacher)
       return
     end
     @errors = @lecture.errors
