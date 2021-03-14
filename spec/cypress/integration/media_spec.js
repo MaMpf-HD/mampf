@@ -33,7 +33,7 @@ describe("Media", () => {
                 var date = new Date();
                 date.setDate(date.getDate() + 7);
                 console.log(date);
-                cy.get('input[name="medium[release_date]"]').type(date.toLocaleString("de"));
+                cy.get('input[name="medium[release_date]"]').click().clear().type(date.toLocaleString("de"));
                 cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
                 cy.get("#publishMediumModal").contains("Veröffentlichen").click();
                 cy.contains("Dieses Medium wird planmäßig").should("exist");
