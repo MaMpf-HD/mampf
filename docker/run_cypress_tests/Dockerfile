@@ -21,7 +21,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
         ffmpeg ghostscript imagemagick libarchive-tools nodejs pdftk \
-        postgresql-client-12 sqlite3 wget wait-for-it yarn && \
+        postgresql-client-12 sqlite3 wget wait-for-it && \
     rm -rf /var/lib/apt/lists/* && apt-get clean \
     && curl -o- -L https://yarnpkg.com/install.sh | bash
 
