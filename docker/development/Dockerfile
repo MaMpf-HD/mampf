@@ -22,8 +22,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get install --no-install-recommends -y ffmpeg ghostscript imagemagick \
             libarchive-tools nodejs pdftk postgresql-client-12 sqlite3 wget \
             wait-for-it yarn && \
-    rm -rf /var/lib/apt/lists/* && apt-get clean \
-    && curl -o- -L https://yarnpkg.com/install.sh | bash
+    rm -rf /var/lib/apt/lists/* && apt-get clean
 
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 WORKDIR /usr/src/app
