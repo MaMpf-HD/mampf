@@ -60,6 +60,9 @@ class CoursesController < ApplicationController
     @count = @course.question_count(tags)
   end
 
+  def search
+  end
+
   private
 
   def set_course

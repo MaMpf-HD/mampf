@@ -1,0 +1,33 @@
+<%= form_with url: search_courses_path,
+              scope: 'search',
+              remote: true,
+              method: :get do |f| %>
+  <div class="form-row p-2">
+    <div class="col-6 col-lg-3 form-group"
+         id="editorSearch">
+      <%= f.label :editor_ids, t('basics.editors') %>
+      <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_editors,
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_editor_ids' } %>
+        <%= f.label :all_editors,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
+      <%= f.select :editor_ids,
+                   options_for_select(add_prompt(User.select_teachers)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true } %>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= f.submit t('basics.search'),
+                   class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

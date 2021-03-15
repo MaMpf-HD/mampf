@@ -65,6 +65,8 @@ Rails.application.routes.draw do
                                       as: 'random_quiz'
   get 'courses/:id/render_question_counter', to: 'courses#render_question_counter',
                                              as: 'render_question_counter'
+  get 'courses/search', to: 'courses#search',
+                         as: 'search_courses'
   resources :courses, except: [:index, :show]
 
   resources :divisions, except: [:show]

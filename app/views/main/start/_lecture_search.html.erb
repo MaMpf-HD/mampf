@@ -24,7 +24,8 @@
                      disabled: true,
                      required: true } %>
     </div>
-    <div class="col-6 col-lg-3 form-group">
+    <div class="col-6 col-lg-3 form-group"
+         id="termSearch">
       <%= f.label :term_ids, t('basics.term') %>
       <%= helpdesk(t('admin.lecture.info.search_term'), true) %>
       <div class="custom-control custom-checkbox mb-2">
@@ -44,7 +45,8 @@
                      disabled: true,
                      required: true } %>
     </div>
-    <div class="col-6 col-lg-3 form-group">
+    <div class="col-6 col-lg-3 form-group"
+         id="programSearch">
       <%= f.label :program_ids,
                   t('basics.programs') %>
       <%= helpdesk(t('admin.lecture.info.search_program'), true) %>
@@ -65,8 +67,9 @@
                      disabled: true,
                      required: true } %>
     </div>
-    <div class="col-6 col-lg-3 form-group">
-      <%= f.label :editor_ids, t('basics.teachers') %>
+    <div class="col-6 col-lg-3 form-group"
+         id="teacherSearch">
+      <%= f.label :teacher_ids, t('basics.teachers') %>
       <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_teachers,
@@ -84,13 +87,15 @@
                      class: 'selectize',
                      disabled: true } %>
     </div>
-    <div class="col-6 col-lg-3 form-group">
+    <div class="col-6 col-lg-3 form-group"
+         id="fullTextSearch">
       <%= f.label :fulltext, t('basics.fulltext') %>
       <%= helpdesk(t('admin.lecture.info.search_fulltext'), false) %>
       <%= f.text_field :fulltext,
                         class: 'form-control' %>
     </div>
-    <div class="col-6 col-lg-3 form-.group">
+    <div class="col-6 col-lg-3 form-.group"
+         id="hitsPerPage">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
                    options_for_select(lecture_hits_per_page(results_as_list),
