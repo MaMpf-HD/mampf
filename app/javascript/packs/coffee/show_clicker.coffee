@@ -72,59 +72,57 @@ webNotificationPoll = ->
   return
 
 
-window.onload = ->
-  channel = $('#clickerChannel')
-  if channel.length > 0
-    adjustVoteStatus(channel)
-    channel.data('interval', -1)
+channel = $('#clickerChannel')
+if channel.length > 0
+  adjustVoteStatus(channel)
+  channel.data('interval', -1)
+  if document.visibilityState == 'visible'
+    i =  setInterval(webNotificationPoll, 5000)
+    channel.data('interval', i)
+  renderMathInElement document.getElementById('clickerChannel'),
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+
+  document.addEventListener 'visibilitychange', ->
     if document.visibilityState == 'visible'
-      i =  setInterval(webNotificationPoll, 5000)
-      channel.data('interval', i)
-    renderMathInElement document.getElementById('clickerChannel'),
-      delimiters: [
-        {
-          left: '$$'
-          right: '$$'
-          display: true
-        }
-        {
-          left: '$'
-          right: '$'
-          display: false
-        }
-        {
-          left: '\\('
-          right: '\\)'
-          display: false
-        }
-        {
-          left: '\\['
-          right: '\\]'
-          display: true
-        }
-      ]
-      throwOnError: false
+      webNotificationPoll()
+      if channel.data('interval') == -1
+        i = setInterval(webNotificationPoll, 5000)
+        channel.data('interval', i)
+    else
+      clearInterval(channel.data('interval'))
+      channel.data('interval', -1)
+    return
 
-    document.addEventListener 'visibilitychange', ->
-      if document.visibilityState == 'visible'
-        webNotificationPoll()
-        if channel.data('interval') == -1
-          i = setInterval(webNotificationPoll, 5000)
-          channel.data('interval', i)
-      else
-        clearInterval(channel.data('interval'))
-        channel.data('interval', -1)
-      return
-
-    $(document).on 'click', '.voteClicker', ->
-      value = $(this).data('value')
-      $('.voteClicker').remove()
-      $('.votedClicker[data-value="'+value+'"]').addClass('active')
-      $('.votedClicker').show()
-      $.ajax $(this).data('url'),
-        beforeSend: (xhr) ->
-          xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
-        type: 'POST'
-        dataType: 'script'
-      return
-  return
+  $(document).on 'click', '.voteClicker', ->
+    value = $(this).data('value')
+    $('.voteClicker').remove()
+    $('.votedClicker[data-value="'+value+'"]').addClass('active')
+    $('.votedClicker').show()
+    $.ajax $(this).data('url'),
+      beforeSend: (xhr) ->
+        xhr.setRequestHeader('X-CSRF-Token', $('meta[name="csrf-token"]').attr('content'))
+      type: 'POST'
+      dataType: 'script'
+    return

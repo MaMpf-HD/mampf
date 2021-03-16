@@ -28,6 +28,7 @@ require("select2");
 require("popper.js");
 require("script-loader!trix");
 require("script-loader!clipboard");
+require("katex");
 
 require("./coffee/administration.coffee");
 require("./coffee/announcements.coffee");

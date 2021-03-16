@@ -15,6 +15,7 @@
     "jquery": "^3.5.1",
     "jquery-datetimepicker": "^2.5.21",
     "jquery-ui": "^1.12.1",
+    "katex": "^0.13.0",
     "node-sass": "^5.0.0",
     "popper.js": "^1.16.1",
     "rails-erb-loader": "^5.5.2",
