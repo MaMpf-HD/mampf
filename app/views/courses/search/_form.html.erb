@@ -23,6 +23,15 @@
                      class: 'selectize',
                      disabled: true } %>
     </div>
+    <div class="col-6 col-lg-3 form-group">
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :term_independent,
+                        class: 'custom-control-input' %>
+        <%= f.label :term_independent,
+                    t('admin.course.term_independent'),
+                    { class: 'custom-control-label' } %>
+      </div>
+    </div>
   </div>
   <div class="row mb-3">
     <div class="col-12 text-center">

@@ -737,6 +737,9 @@ de:
           MaMpf-Startseite. Das Seitenverhältnis sollte idealerweise 3:2
           betragen, das hochgeladene Bild wird dann von MaMpf herunterskaliert
           (auf maximal 405 Pixel Breite, 270 Pixel Höhe).
+        action:
+          Falls Du Editor des jeweiligen Moduls bist, wird hier ein Link zum
+          Bearbeiten angezeigt.
     chapter:
       edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
@@ -2968,6 +2971,8 @@ de:
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
     emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    lecture_search: Veranstaltungssuche
+    course_search: Modulsuche
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

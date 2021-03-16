@@ -55,7 +55,7 @@ class Ability
            :display_course, :subscribe_page],
           Lecture
 
-      can [:take_random_quiz, :render_question_counter], Course
+      can [:take_random_quiz, :render_question_counter, :search], Course
 
       # editors are only allowed to edit, not to destroy courses
       can :update, Course do |course|

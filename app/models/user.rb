@@ -553,8 +553,11 @@ class User < ApplicationRecord
       self != lecture.teacher
   end
 
-  def can_edit?(lecture)
-    admin || in?(lecture.editors_with_inheritance)
+  def can_edit?(something)
+    return true if admin
+    return in?(something.editors_with_inheritance) if something.is_a?(Lecture)
+    return in?(something.editors) if something.is_a?(Course)
+    false
   end
 
   private

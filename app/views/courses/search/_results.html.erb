@@ -1,0 +1,21 @@
+<% if total.positive? %>
+  <div class="row mx-2 py-3">
+    <div class="col-12 col-lg-2">
+      <strong>
+        <%= t('basics.hits') %>:
+      </strong>
+      <%= total %>
+    </div>
+    <div class="col-12 col-lg-10">
+      <%= paginate courses, remote: true %>
+    </div>
+  </div>
+  <%= render partial: 'courses/search/list',
+             locals: { courses: courses } %>
+<% else %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= t('basics.no_hits') %>
+    </div>
+  </div>
+<% end %>

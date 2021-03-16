@@ -61,6 +61,12 @@ class CoursesController < ApplicationController
   end
 
   def search
+    search = Course.search_by(search_params, params[:page])
+    search.execute
+    results = search.results
+    @total = search.total
+    @courses = Kaminari.paginate_array(results, total_count: @total)
+                        .page(params[:page]).per(search_params[:per])
   end
 
   private
@@ -89,6 +95,13 @@ class CoursesController < ApplicationController
 
   def tag_params
     params.permit(:count, tag_ids: [])
+  end
+
+  def search_params
+    params.require(:search).permit(:all_editors, :all_programs, :fulltext,
+                                   :term_independent, :per,
+                                   editor_ids: [],
+                                   program_ids: [])
   end
 
   def random_quiz_params
