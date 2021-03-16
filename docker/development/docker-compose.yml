@@ -45,7 +45,6 @@ services:
     image: mampf:development
     ports:
       - "127.0.0.1:3000:3000"
-    entrypoint: ./entrypoint.sh
     environment:
       RAILS_ENV: docker_development
       DEVELOPMENT_DATABASE_ADAPTER: postgresql
@@ -73,6 +72,8 @@ services:
       ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
       INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
       SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
       WEBPACKER_DEV_SERVER_HOST: webpacker
@@ -101,7 +102,7 @@ services:
       - NODE_ENV=development
       - RAILS_ENV=development
       - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
-    command: sh -c "yarn  && ./bin/webpack-dev-server"
+    entrypoint: ["sh", "-c", "yarn && ./bin/webpack-dev-server"]
     volumes:
       - type: bind
         source: ../../
@@ -116,6 +117,7 @@ services:
       - solr
       - redis
       - mailcatcher
+
 volumes:
   db-data:
   solr-data:
