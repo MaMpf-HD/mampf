@@ -67,5 +67,37 @@ describe("Media", () => {
                 cy.contains("Media 1").should("exist");
             });
         });
+        it("can create medium & release it scheduled with submission", () => {
+            cy.appFactories([
+                ["create",
+                    "lecture", {
+                        "teacher_id": 1,
+                        "released": "all"
+                    }
+                ]
+            ]).then((lectures) => {
+                cy.visit(`lectures/${lectures[0].id}/edit`);
+                cy.contains("Medium anlegen").should("exist");
+                cy.contains("Medium anlegen").click();
+                cy.get('input[name="medium[description]"]').type("Media 1");
+                cy.get('select[name="medium[sort]"]').select("Übung");
+                cy.contains("Speichern und bearbeiten").click();
+                cy.contains("Media 1").should("exist");
+                cy.contains("Veröffentlichen").click();
+                cy.wait(100);
+                cy.contains("zum folgenden Zeitpunkt").click();
+                cy.contains("Hausaufgabe zu diesem Medium anlegen").click();
+
+                var date = new Date();
+                date.setDate(date.getDate() + 7);
+                console.log(date);
+                cy.get('input[name="medium[release_date]"]').click().clear().type(date.toLocaleString("de"));
+                date.setDate(date.getDate() + 8);
+                cy.get('input[name="medium[assignment_deadline]"]').click().clear().type(date.toLocaleString("de"));
+                cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
+                cy.get("#publishMediumModal").contains("Veröffentlichen").click();
+                cy.contains("Dieses Medium wird planmäßig").should("exist");
+            });
+        });
     });
 });
