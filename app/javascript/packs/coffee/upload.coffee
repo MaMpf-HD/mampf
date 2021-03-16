@@ -432,7 +432,7 @@ bulkCorrectionUpload = (fileInput) ->
 @param fileInput: dom element to listen to.
 ###
 @result = undefined
-@userManuscriptUpload = (fileInput) ->
+window.userManuscriptUpload = (fileInput) ->
   # update helpdesk
   $('[data-toggle="popover"]').popover()
   hiddenInput = document.getElementById('upload-userManuscript-hidden')

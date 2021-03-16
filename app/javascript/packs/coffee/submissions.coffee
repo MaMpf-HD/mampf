@@ -1,5 +1,5 @@
 $(document).on 'turbolinks:load', ->
-  clipboard = new Clipboard('.clipboard-btn')
+  clipboard = new ClipboardJS('.clipboard-btn')
 
   $(document).on 'click', '#removeUserManuscript', ->
     $('#userManuscriptMetadata').hide()

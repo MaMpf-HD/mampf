@@ -27,6 +27,7 @@ require("./coffee/_selectize_turbolinks_fix.coffee");
 require("select2");
 require("popper.js");
 require("script-loader!trix");
+require("script-loader!clipboard");
 
 require("./coffee/administration.coffee");
 require("./coffee/announcements.coffee");

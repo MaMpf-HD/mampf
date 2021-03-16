@@ -17,7 +17,7 @@ $('.submissionFooter[data-id!="<%= @assignment.id %>"] .btn')
   .removeClass('btn-outline-danger').addClass('btn-outline-secondary')
 
 userManuscript = document.getElementById('upload-userManuscript')
-userManuscriptUpload userManuscript
+window.userManuscriptUpload userManuscript
 
 # make uppy upload buttons look like bootstrap
 $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')

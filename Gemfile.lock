@@ -166,7 +166,6 @@ GEM
     childprocess (3.0.0)
     choice (0.2.0)
     chunky_png (1.4.0)
-    clipboard-rails (1.7.1)
     coffee-rails (5.0.0)
       coffee-script (>= 2.2.0)
       railties (>= 5.2.0)
@@ -562,8 +561,8 @@ GEM
     tins (1.28.0)
       sync
     ttfunk (1.6.2.1)
-    tzinfo (1.2.7)
-      thread_safe (~> 0.1)
+    tzinfo (2.0.4)
+      concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unf (0.1.4)
@@ -610,7 +609,6 @@ DEPENDENCIES
   bootstrap_form
   byebug
   cancancan
-  clipboard-rails
   coffee-rails (~> 5.0.0)
   commontator!
   coveralls

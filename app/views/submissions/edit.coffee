@@ -13,7 +13,7 @@ $('.submissionFooter[data-id!="<%= @assignment.id %>"] .btn')
   .removeClass('btn-outline-danger').addClass('btn-outline-secondary')
 
 userManuscript = document.getElementById('upload-userManuscript')
-userManuscriptUpload userManuscript
+window.userManuscriptUpload userManuscript
 <% else %>
 alert('<%= t("submission.too_late_no_editing") %>')
 <% end %>
