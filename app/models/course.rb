@@ -60,7 +60,6 @@ class Course < ApplicationRecord
     end
   end
 
-
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
 
@@ -295,24 +294,16 @@ class Course < ApplicationRecord
   end
 
   def self.search_by(search_params, page)
-    if search_params[:all_editors] == '1' || search_params[:teacher_ids].nil?
-      search_params[:editor_ids] = []
-    end
-    if search_params[:all_programs] == '1' || search_params[:program_ids].nil?
-      search_params[:program_ids] = []
-    end
+    editor_ids = search_params[:editor_ids] || []
+    editor_ids = [] if search_params[:all_editors] == '1'
+    program_ids = search_params[:program_ids] || []
+    program_ids = [] if search_params[:all_programs] == '1'
     search = Sunspot.new_search(Course)
     search.build do
-      with(:editor_ids, search_params[:editor_ids]) unless search_params[:editor_ids].empty?
-      with(:program_ids, search_params[:program_ids]) unless search_params[:program_ids].empty?
+      with(:editor_ids, editor_ids) unless editor_ids.empty?
+      with(:program_ids, program_ids) unless program_ids.empty?
       with(:term_independent, true) if search_params[:term_independent] == '1'
-    end
-    if search_params[:fulltext].present?
-      search.build do
-        fulltext search_params[:fulltext]
-      end
-    end
-    search.build do
+      fulltext search_params[:fulltext] if search_params[:fulltext].present?
       order_by(:sort_title, :asc)
       paginate page: page, per_page: search_params[:per]
     end

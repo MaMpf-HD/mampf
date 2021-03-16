@@ -915,4 +915,114 @@ RSpec.describe Course, type: :model do
       expect(Course.similar_courses('Ara')).to eq([])
     end
   end
+
+  describe '#seach_by' do
+    before :all do
+      Course.destroy_all
+      @editor1 = FactoryBot.create(:confirmed_user)
+      @editor2 = FactoryBot.create(:confirmed_user)
+      subject = FactoryBot.create(:subject, name: 'Mathematik')
+      @program1 = FactoryBot.create(:program, name: 'BSc100', subject: subject)
+      @program2 = FactoryBot.create(:program, name: 'BSc50', subject: subject)
+      division1 = FactoryBot.create(:division, name: 'Pflichtmodule',
+                                    program: @program1 )
+      division2 = FactoryBot.create(:division, name: 'Pflichtmodule',
+                                    program: @program2 )
+      @course1 = FactoryBot.create(:course, title: 'Analysis 1',
+                                            editors: [@editor1])
+      @course2 = FactoryBot.create(:course, title: 'Analysis 2',
+                                            editors: [@editor2])
+      @course3 = FactoryBot.create(:course, title: 'Algebra 1',
+                                            editors: [@editor1, @editor2])
+      @course4 = FactoryBot.create(:course, title: 'Algebra 2',
+                                            editors: [@editor2])
+      @course5 = FactoryBot.create(:course, :term_independent,
+                                   title: 'Helpdesk',
+                                   editors: [@editor1])
+      @course1.divisions << [division1, division2]
+      @course2.divisions << division1
+      @course3.divisions << [division1, division2]
+      @course4.divisions << division2
+      @course5.divisions << [division1, division2]
+      Course.reindex
+    end
+
+    it 'returns the correct search results (example 1)' do
+      search_params = { all_editors: '1', all_programs: '1', fulltext: '',
+                        per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.map(&:id))
+        .to eq([@course3.id, @course4.id, @course1.id, @course2.id,
+                @course5.id])
+    end
+
+    it 'returns the correct search results (example 2)' do
+      search_params = { all_editors: '1', all_programs: '1', fulltext: '',
+                        per: 50, term_independent: '1' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id)).to eq([@course5.id])
+    end
+
+    it 'returns the correct search results (example 3)' do
+      search_params = { editor_ids: [@editor1.id], all_programs: '1',
+                        fulltext: '', per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id))
+        .to eq([@course3.id, @course1.id, @course5.id])
+    end
+
+    it 'returns the correct search results (example 4)' do
+      search_params = { editor_ids: [@editor2.id], all_programs: '1',
+                        fulltext: '', per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id))
+        .to eq([@course3.id, @course4.id, @course2.id])
+    end
+
+    it 'returns the correct search results (example 5)' do
+      search_params = { all_editors: '1', program_ids: [@program1.id],
+                        fulltext: '', per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id))
+        .to eq([@course3.id, @course1.id, @course2.id, @course5.id])
+    end
+
+    it 'returns the correct search results (example 6)' do
+      search_params = { all_editors: '1', program_ids: [@program2.id],
+                        fulltext: '', per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id))
+        .to eq([@course3.id, @course4.id, @course1.id, @course5.id])
+    end
+
+    it 'returns the correct search results (example 7)' do
+      search_params = { all_editors: '1', all_programs: '1',
+                        fulltext: 'Algebra', per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id)).to eq([@course3.id, @course4.id])
+    end
+
+    it 'returns the correct search results (example 8)' do
+      search_params = { editor_ids: [@editor1.id], program_ids: [@program1.id],
+                        fulltext: 'Algebra', per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id)).to eq([@course3.id])
+    end
+
+    it 'returns the correct search results (example 9)' do
+      search_params = { editor_ids: [@editor2.id], program_ids: [@program2.id],
+                        fulltext: 'Analysis', per: 50, term_independent: '0' }
+      search = Course.search_by(search_params, 1)
+      search.execute
+      expect(search.results.to_a.map(&:id)).to eq([])
+    end
+  end
 end
