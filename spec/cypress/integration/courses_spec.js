@@ -54,7 +54,7 @@ describe("Courses", function () {
                 }]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
             });
@@ -87,7 +87,7 @@ describe("Courses", function () {
                 ["create", "lecture", "released_for_all"]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
             });
@@ -100,10 +100,10 @@ describe("Courses", function () {
                 }]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("not.exist");
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
             });
         });
         it("can not subscribe on page to unpublished", () => {
