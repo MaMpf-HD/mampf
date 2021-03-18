@@ -19,7 +19,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "cypress": "5.2.0",
+    "cypress": "6.5.0",
     "eslint": "^7.11.0"
   }
 }
