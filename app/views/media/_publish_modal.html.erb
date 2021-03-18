@@ -52,7 +52,9 @@
             <%= f.text_field :release_date,
                              class: 'form-control',
                              id: "release_date",
-                             value: medium.planned_release_date %>
+                             value: medium.planned_release_date
+                                          .try(:strftime,
+                                               '%d.%m.%Y %H:%M') %>
             <div class="invalid-feedback"
                  id="release-date-error">
             </div>
@@ -88,7 +90,10 @@
                 <%= f.label :assignment_deadline, t('basics.deadline') %>
                 <%= f.text_field :assignment_deadline,
                                  class: 'form-control',
-                                 value: medium.publisher&.assignment_deadline %>
+                                 value: medium.publisher
+                                             &.assignment_deadline
+                                              .try(:strftime,
+                                                   '%d.%m.%Y %H:%M') %>
                 <div class="invalid-feedback"
                      id="assignment-deadline-error">
                 </div>

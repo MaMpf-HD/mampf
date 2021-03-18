@@ -149,6 +149,36 @@ RSpec.describe MediumPublisher, type: :model do
     # TODO: check if emails are sent out
   end
 
+  describe '#assignment' do
+    before :all do
+      @medium = FactoryBot.create(:lecture_medium)
+      @lecture = @medium.teachable
+      user = FactoryBot.create(:confirmed_user)
+      @medium.editors << user
+      @publisher = FactoryBot.build(:medium_publisher,
+                                     medium_id: @medium.id,
+                                     user_id: user.id,
+                                     create_assignment: true,
+                                     assignment_title: 'Blatt 1',
+                                     assignment_deadline:
+                                      Time.zone.parse('2025-05-02 12:00'),
+                                     assignment_file_type: '.pdf')
+    end
+
+    it 'returns an assignment' do
+      expect(@publisher.assignment).to be_kind_of(Assignment)
+    end
+
+    it 'builds the correspnding assignment if the create_assignment flag is '\
+       'set' do
+      assignment = @publisher.assignment
+      expect([assignment.medium, assignment.lecture, assignment.title,
+              assignment.deadline, assignment.accepted_file_type])
+        .to eq([@medium, @lecture, 'Blatt 1',
+                Time.zone.parse('2025-05-02 12:00'), '.pdf'])
+    end
+  end
+
   describe '#errors' do
     before :all do
       @medium = FactoryBot.create(:lecture_medium)
@@ -245,7 +275,6 @@ RSpec.describe MediumPublisher, type: :model do
                                    assignment_deadline: Time.zone.now + 2.days,
                                    assignment_file_type: '.pdf')
       expect(publisher.errors[:assignment_title]).not_to be_nil
-      # expect(@medium.teachable.assignments.size).to eq 1
     end
   end
 end

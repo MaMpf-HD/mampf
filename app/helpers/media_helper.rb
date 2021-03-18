@@ -70,6 +70,7 @@ module MediaHelper
   def textcolor(medium)
     return '' if medium.visible?
     return 'locked' if medium.locked?
+    return 'scheduled_release' if medium.publisher.present?
     'unpublished'
   end
 
@@ -118,5 +119,13 @@ module MediaHelper
       hash[s] = media_in_s unless media_in_s.blank?
     end
     hash
+  end
+
+  def release_date_info(medium)
+    return unless medium.publisher.present?
+    t('admin.medium.scheduled_for_release_short',
+      release_date: I18n.l(medium.publisher&.release_date,
+                           format: :long,
+                           locale: I18n.locale))
   end
 end

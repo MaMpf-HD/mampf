@@ -853,6 +853,10 @@ en:
       invalid_publish_date: This is not a valid datetime in the future.
       scheduled_for_release: >
         This medium is scheduled for release at %{release_date}.
+      scheduled_for_release_short: >
+        scheduled release: %{release_date}
+      assignment_to_be_created: >
+        An assignment will be created.
       create_assignment: Create an assignment for this medium
       invalid_assignment_deadline: >
         This is not a valid datetime after the publication of the medium.
@@ -2461,6 +2465,11 @@ en:
       </i>
       An assignment can only be deleted if there are no submissions for it that
       include uploaded files.
+    info:
+      scheduled_assignment:
+        This assignment will be created when the associated medium is published.
+        In order to change things please edit the publication settings for the
+        medium.
   tutorial:
     no_submissions_for_assignment: >
       There are no submissions for this assignment.

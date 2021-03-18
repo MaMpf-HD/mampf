@@ -707,6 +707,21 @@ class Lecture < ApplicationRecord
     assignments_by_deadline.select { |x| x.first < Time.now }.last&.second.to_a
   end
 
+  def scheduled_assignments?
+    media.where(sort: 'Nuesse').where.not(publisher: nil)
+          .any? { |m| m.publisher.create_assignment }
+  end
+
+  def scheduled_assignments
+    media.where(sort: 'Nuesse').where.not(publisher: nil)
+          .select { |m| m.publisher.create_assignment }
+          .map { |m| m.publisher.assignment }
+  end
+
+  def assignments?
+    assignments.any? || scheduled_assignments?
+  end
+
   private
 
   # used for after save callback
