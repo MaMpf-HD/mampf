@@ -1,3 +1,4 @@
 :queues:
+  - critical
   - default
   - mailers

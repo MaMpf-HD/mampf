@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_26_124230) do
+ActiveRecord::Schema.define(version: 2021_03_19_102604) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -505,6 +505,9 @@ ActiveRecord::Schema.define(version: 2021_02_26_124230) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: false
+    t.datetime "submission_deletion_mail"
+    t.datetime "submission_deletion_reminder"
+    t.datetime "submissions_deleted_at"
   end
 
   create_table "thredded_categories", force: :cascade do |t|

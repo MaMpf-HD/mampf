@@ -1,4 +1,4 @@
 media_publisher_job:
   cron: "*/1 * * * *"
   class: "MediaPublisher"
-  queue: default
+  queue: critical

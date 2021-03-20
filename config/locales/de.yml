@@ -2782,6 +2782,21 @@ de:
     submission_rejection: >
       Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde abgelehnt
       und wird nicht korrigiert und nicht gewertet werden.
+    submission_deletion_subject: >
+      Löschung der Abgaben und -korrekturen aus dem %{term}
+    submission_deletion_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
+      Abgaben und -korrekturen aus dem %{term} am <b>%{deletion_date}</b>
+      automatisch gelöscht. Bitte lade diese rechtzeitig herunter, wenn Du sie
+      weiterhin verwenden möchtest.
+    submission_deletion_lecture_subject: >
+      Löschung der Abgaben und -korrekturen aus dem %{term} [%{lecture}]
+    submission_deletion_lecture_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
+      Abgaben und -korrekturen der Veranstaltung %{lecture} aus dem %{term} am
+      <b>%{deletion_date}</b> automatisch gelöscht. Sollten sie anderweitig
+      gespeichert werden müssen, so muss dies außerhalb von MaMpf geschehen,
+      und die Dateien müssen rechtzeitig heruntergeladen werden.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
@@ -2981,6 +2996,7 @@ de:
     emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
     immediately: sofort
     at_time: zum folgenden Zeitpunkt
+    reminder: Erinnerung
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
