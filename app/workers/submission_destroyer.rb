@@ -2,12 +2,12 @@ class SubmissionDestroyer
   include Sidekiq::Worker
 
   def perform
-    #date = Date.today
-    date = Date.new(2021,10,8)
+    date = Date.today
+    # date = Date.new(2020,10,15)
     result = sanity_check(date)
     return unless result[:advance]
     result[:previous_term].update(submissions_deleted_at: Time.now)
-    result[:submissions].each(&:destroy)
+    # result[:submissions].each(&:destroy)
     send_mail_to_submitters(result[:previous_term], result[:submitters])
     send_mail_to_editors(result[:previous_term], result[:lectures])
   end
@@ -39,11 +39,10 @@ class SubmissionDestroyer
     end
 
     def sanity_check(date)
-      term = Term.by_date(date)
-      previous_term = term&.previous
+      previous_term = Term.by_date(date)&.previous
       return { advance: false } unless previous_term
 
-      return { advance: false } unless date == term.begin_date + 15.days
+      return { advance: false } unless date == previous_term.end_date + 15.days
 
       return { advance: false } unless previous_term.submission_deletion_mail.present?
 
@@ -52,6 +51,7 @@ class SubmissionDestroyer
       return { advance: false } if previous_term.submissions_deleted_at.present?
 
       { advance: true,
+        previous_term: previous_term,
         submissions: previous_term.submissions,
         submitters: previous_term.submitters,
         lectures: previous_term.lectures_with_submissions }
