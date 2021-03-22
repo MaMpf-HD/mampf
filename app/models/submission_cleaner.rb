@@ -21,7 +21,7 @@ class SubmissionCleaner
 
   def set_attributes
     determine_actions
-    fetch_previous_term_props
+    fetch_previous_term_props if @advance
     true
   end
 
