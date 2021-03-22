@@ -330,7 +330,7 @@ imageUpload = (fileInput) ->
     id: fileInput.id
     autoProceed: true
     restrictions:
-      maxFileSize: 15728640)
+      maxFileSize: 30*1024*1024)
     .use(Uppy.FileInput,
       target: uploadButton
       locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
@@ -382,7 +382,7 @@ bulkCorrectionUpload = (fileInput) ->
     autoProceed: true
     allowMultipleUploads: false
     restrictions:
-      maxFileSize: 15*1024*1024)
+      maxFileSize: 30*1024*1024)
     .use(Uppy.FileInput,
       target: uploadButton
       locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
@@ -496,7 +496,7 @@ bulkCorrectionUpload = (fileInput) ->
         .removeClass('btn-outline-secondary')
         .addClass 'btn-primary'
     else if file.type == 'application/pdf'
-      if file.size > 10000000
+      if file.size > 20000000
         $('#file-size-way-too-big').show()
       else
         $('#file-size-too-big').show()
@@ -637,7 +637,7 @@ bulkCorrectionUpload = (fileInput) ->
           )
           result = new Blob([e.data.result], type: 'application/pdf')
           $('#optimization-help-text').hide()
-          if e.data.result.length> 10000000
+          if e.data.result.length> 20000000
             alert(
               $('#userManuscript-optimize-btn').data 'tr-failed'
             )
