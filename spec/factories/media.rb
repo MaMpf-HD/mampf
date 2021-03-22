@@ -48,13 +48,13 @@ FactoryBot.define do
 
     trait :with_manuscript do
       after(:build) do |m|
-        m.manuscript = File.open('spec/files/manuscript.pdf', 'rb')
+        m.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
       end
     end
 
     trait :with_video do
       after(:build) do |m|
-        m.video = File.open('spec/files/talk.mp4', 'rb')
+        m.video = File.open("#{SPEC_FILES}/talk.mp4", 'rb')
       end
     end
 
