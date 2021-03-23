@@ -79,7 +79,10 @@
                                    format: :long,
                                    locale: I18n.locale)) %>
         <% if @medium.publisher.create_assignment %>
-          <%= t('admin.medium.assignment_to_be_created') %>
+          <%= t('admin.medium.assignment_to_be_created',
+                deadline: I18n.l(@medium.publisher&.assignment_deadline,
+                                 format: :publication_time,
+                                 locale: I18n.locale)) %>
         <% end %>
       </span>
     </div>
