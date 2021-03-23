@@ -852,7 +852,7 @@ en:
       boost: 'Boost'
       invalid_publish_date: This is not a valid datetime in the future.
       scheduled_for_release: >
-        This medium is scheduled for release at %{release_date}.
+        This medium is scheduled for release on %{release_date}.
       scheduled_for_release_short: >
         scheduled release: %{release_date}
       assignment_to_be_created: >
