@@ -554,10 +554,12 @@ class User < ApplicationRecord
   end
 
   def can_edit?(something)
+    unless something.is_a?(Lecture) || something.is_a?(Course)
+      raise 'can_edit? was called with incompatible class'
+    end
     return true if admin
     return in?(something.editors_with_inheritance) if something.is_a?(Lecture)
-    return in?(something.editors) if something.is_a?(Course)
-    false
+    in?(something.editors)
   end
 
   private

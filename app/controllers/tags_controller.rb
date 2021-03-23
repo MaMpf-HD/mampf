@@ -43,7 +43,6 @@ class TagsController < ApplicationController
   end
 
   def edit
-    set_related_tags
     # build notions for missing locales
     (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
       @tag.notions.new(locale: l)
