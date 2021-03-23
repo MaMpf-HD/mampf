@@ -393,6 +393,7 @@ $(document).on 'turbolinks:load', ->
     $('#release_date').datetimepicker
       format: 'd.m.Y H:i'
       inline: false
+      lang: 'en'
     return
 
   $('#medium_assignment_deadline').on 'focus', ->

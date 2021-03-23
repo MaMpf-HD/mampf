@@ -33,7 +33,7 @@
       <div class="list-group">
         <div class="list-group-item bg-light"
              id="assignmentListHeader"
-             style="display: <%= show(lecture.assignments.any?) %>">
+             style="display: <%= show(lecture.assignments?) %>">
           <div class="row">
             <div class="col-2">
               <h6>
@@ -65,7 +65,8 @@
             </div>
           </div>
         </div>
-        <% lecture.assignments.order('deadline DESC').each do |a| %>
+        <% (lecture.scheduled_assignments.sort_by(&:deadline).reverse +
+            lecture.assignments.order('deadline DESC')).each do |a| %>
           <%= render partial: 'assignments/row',
                      locals: { assignment: a,
                                inspection: inspection } %>

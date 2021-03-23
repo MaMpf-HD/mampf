@@ -72,6 +72,15 @@ class MediumPublisher
     true
   end
 
+  def assignment
+    return unless @create_assignment
+    Assignment.new(lecture: medium.teachable,
+                   medium_id: @medium_id,
+                   title: @assignment_title,
+                   deadline: @assignment_deadline,
+                   accepted_file_type: @assignment_file_type)
+  end
+
   def errors
     return {} if @release_now && !@create_assignment
 
@@ -139,11 +148,7 @@ class MediumPublisher
     end
 
     def create_assignment!
-      Assignment.create(lecture: @medium.teachable,
-                        medium: @medium,
-                        title: @assignment_title,
-                        deadline: @assignment_deadline,
-                        accepted_file_type: @assignment_file_type)
+      assignment.save
     end
 
     def invalid_release_date?

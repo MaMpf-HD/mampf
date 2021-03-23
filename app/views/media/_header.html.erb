@@ -91,6 +91,9 @@
               release_date: I18n.l(medium.publisher&.release_date,
                                    format: :long,
                                    locale: I18n.locale)) %>
+        <% if medium.publisher.create_assignment %>
+          <%= t('admin.medium.assignment_to_be_created') %>
+        <% end %>
       </span>
       <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
       <button class="btn btn-sm btn-outline-primary ml-2"
