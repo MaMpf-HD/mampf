@@ -31,9 +31,11 @@
                   t('basics.editors') %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
-                   options_for_select([[]]),
+                   options_for_select([[current_user.name, current_user.id]],
+                                       current_user.id),
                    {},
                    { class: 'selectize',
+                     required: true,
                      multiple: true,
                      style: 'display: none;',
                      data: { ajax: true,
