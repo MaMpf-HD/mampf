@@ -2125,7 +2125,7 @@ en:
   time:
     formats:
       concise: '%Y-%m-%d'
-      publication_time: '%A, %B %d, %Y on %H:%M'
+      publication_time: '%A, %B %d, %Y at %I:%M %p'
   thyme:
     back: 'back'
     back_to: 'back to '
