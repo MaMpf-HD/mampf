@@ -53,10 +53,61 @@ class Term < ApplicationRecord
     season + year_corrected_short
   end
 
+  def previous
+    previous_year = season == 'WS' ? year : year - 1
+    previous_season = season == 'WS' ? 'SS' : 'WS'
+    Term.find_by(year: previous_year, season: previous_season)
+  end
+
+  def assignments
+    Assignment.where(lecture: lectures)
+  end
+
+  def submissions
+    Submission.where(assignment: assignments)
+  end
+
+  def submitter_ids
+    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
+  end
+
+  def submitters
+    User.where(id: submitter_ids)
+  end
+
+  def submission_deletion_date
+    end_date + 15.days
+  end
+
+  def assignments_with_submissions
+    Assignment.where(id: submissions.pluck(:assignment_id).uniq)
+  end
+
+  def lectures_with_submissions
+    Lecture.where(id: assignments_with_submissions.pluck(:lecture_id).uniq)
+  end
+
+  def people_in_charge_of_submissions
+    (lectures_with_submissions.map(&:editors).flatten +
+      lectures_with_submissions.map(&:teacher)).uniq
+  end
+
+  def submission_deletion_info_dates
+    [end_date + 1.day, end_date + 8.days, submission_deletion_date]
+  end
+
   # array of all terms together with their ids for use in options_for_select
   def self.select_terms(independent = false)
     return ['bla', nil] if independent
     Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
+  end
+
+  def self.previous_by_date(date)
+    season = date.month.in?((4..9)) ? 'SS' : 'WS'
+    year = date.year
+    previous_year = season == 'WS' ? year : year - 1
+    previous_season = season == 'WS' ? 'SS' : 'WS'
+    Term.find_by(year: previous_year, season: previous_season)
   end
 
   private

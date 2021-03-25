@@ -70,6 +70,21 @@
     <% end %>
   </div>
 </div>
+<% if @medium.publisher&.release_date.present? %>
+  <div class="row mb-3">
+    <div class="col-12">
+      <span class="badge badge-warning">
+        <%= t('admin.medium.scheduled_for_release',
+              release_date: I18n.l(@medium.publisher&.release_date,
+                                   format: :long,
+                                   locale: I18n.locale)) %>
+        <% if @medium.publisher.create_assignment %>
+          <%= t('admin.medium.assignment_to_be_created') %>
+        <% end %>
+      </span>
+    </div>
+  </div>
+<% end %>
 <div class="row mb-2">
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">

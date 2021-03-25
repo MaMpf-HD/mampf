@@ -848,7 +848,20 @@ en:
         no rights of third parties are infringed.
       lock_comments: 'Disable comments for this medium'
       comments_locked: 'Comments disabled'
+      release_date: 'Publication date'
       boost: 'Boost'
+      invalid_publish_date: This is not a valid datetime in the future.
+      scheduled_for_release: >
+        This medium is scheduled for release at %{release_date}.
+      scheduled_for_release_short: >
+        scheduled release: %{release_date}
+      assignment_to_be_created: >
+        An assignment will be created.
+      create_assignment: Create an assignment for this medium
+      invalid_assignment_deadline: >
+        This is not a valid datetime after the publication of the medium.
+      invalid_assignment_title: >
+        This assignment title is invalid.
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -1112,6 +1125,9 @@ en:
           it does not affect media associated to a session). The default value
           is 0, Media with a higher boost will be displayed in the first places,
           media with lower boost at the end.
+        scheduled_release: >
+          The publication will not precisely occur at the right second, but it
+          should not be later than around a minute after the given time.
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
@@ -2449,6 +2465,11 @@ en:
       </i>
       An assignment can only be deleted if there are no submissions for it that
       include uploaded files.
+    info:
+      scheduled_assignment:
+        This assignment will be created when the associated medium is published.
+        In order to change things please edit the publication settings for the
+        medium.
   tutorial:
     no_submissions_for_assignment: >
       There are no submissions for this assignment.
@@ -2592,6 +2613,32 @@ en:
     submission_rejection: >
       Your late submission to %{assignment} in %{lecture} has been rejected
       and will not be graded.
+    submission_deletion_subject: >
+      Deletion of submissions and corrections from %{term}
+    submission_deletion_text_html: >
+      For GDPR reasons, all of your submissions and corrections from
+      %{term} that are stored in MaMpf will be automatically deleted at
+      <b>%{deletion_date}</b>. If you want to use them in the future,
+      please download them before.
+    submission_deletion_lecture_subject: >
+      Deletion of submissions and corrections from %{term} [%{lecture}]
+    submission_deletion_lecture_text_html: >
+      For GDPR reasons, all submissions and corrections of the lecture
+      %{lecture} in %{term} that are stored in MaMpf will be automatically
+      deleted at <b>%{deletion_date}</b>. In for some reason they have to be
+      stored longer, this has to happen outside of MaMpf. In that case the files
+      have to be downloaded in time.
+    submission_destruction_subject: >
+      Deletion of submissions and corrections from %{term}
+    submission_destruction_text_html: >
+      For GDPR reasons, all of your submissions and corrections from
+      %{term} that were stored in MaMpf have been automatically deleted.
+    submission_destruction_lecture_subject: >
+      Deletion of submissions and corrections from %{term} [%{lecture}]
+    submission_destruction_lecture_text_html: >
+      For GDPR reasons, all submissions and corrections of the lecture
+      %{lecture} in %{term} that were stored in MaMpf have been automatically
+      deleted.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
@@ -2786,6 +2833,9 @@ en:
     as_file_type: as %{type} file
     code_copied_to_clipboard: Code has been copied to the clipboard.
     emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    immediately: immediately
+    at_time: at the following time
+    reminder: Reminder
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2890,6 +2940,7 @@ en:
     reject: 'Reject'
     dismiss: 'Dismiss'
     validate: 'Validate'
+    cancel_publication: 'Cancel'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
