@@ -1,6 +1,6 @@
 <div class="list-group-item assignmentRow
             <%= 'list-group-item-warning' unless assignment.persisted? %>"
-     data-id="<%= assignment.id.to_i %>">
+     data-id="<%= assignment.persisted? ? assignment.id : -1 %>">
   <div class="row">
     <div class="col-2">
       <%= assignment.title %>
