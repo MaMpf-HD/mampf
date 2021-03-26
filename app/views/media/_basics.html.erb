@@ -51,7 +51,7 @@
     <div class="form-group">
       <%= f.label :editor_ids,
                   t('basics.editors') %>
-      <%= helpdesk(t('admin.medium.info.editors'), false) %>
+      <%= helpdesk(t('admin.medium.info.editors'), true) %>
       <%= f.select :editor_ids,
                    options_for_select(add_prompt(medium.editors
                                                        .map { |e| [e.info, e.id] }),
