@@ -2620,6 +2620,32 @@ en:
     submission_rejection: >
       Your late submission to %{assignment} in %{lecture} has been rejected
       and will not be graded.
+    submission_deletion_subject: >
+      Deletion of submissions and corrections from %{term}
+    submission_deletion_text_html: >
+      For GDPR reasons, all of your submissions and corrections from
+      %{term} that are stored in MaMpf will be automatically deleted at
+      <b>%{deletion_date}</b>. If you want to use them in the future,
+      please download them before.
+    submission_deletion_lecture_subject: >
+      Deletion of submissions and corrections from %{term} [%{lecture}]
+    submission_deletion_lecture_text_html: >
+      For GDPR reasons, all submissions and corrections of the lecture
+      %{lecture} in %{term} that are stored in MaMpf will be automatically
+      deleted at <b>%{deletion_date}</b>. In for some reason they have to be
+      stored longer, this has to happen outside of MaMpf. In that case the files
+      have to be downloaded in time.
+    submission_destruction_subject: >
+      Deletion of submissions and corrections from %{term}
+    submission_destruction_text_html: >
+      For GDPR reasons, all of your submissions and corrections from
+      %{term} that were stored in MaMpf have been automatically deleted.
+    submission_destruction_lecture_subject: >
+      Deletion of submissions and corrections from %{term} [%{lecture}]
+    submission_destruction_lecture_text_html: >
+      For GDPR reasons, all submissions and corrections of the lecture
+      %{lecture} in %{term} that were stored in MaMpf have been automatically
+      deleted.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
@@ -2817,6 +2843,7 @@ en:
     immediately: immediately
     at_time: at the following time
     assignment: Assignment
+    reminder: Reminder
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

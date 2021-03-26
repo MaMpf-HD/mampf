@@ -1,0 +1,4 @@
+<%= t('mailer.submission_deletion_lecture_text_html',
+      term: @term.to_label,
+      lecture: @lecture.title_no_term,
+      deletion_date: I18n.l(@term.submission_deletion_date)) %>

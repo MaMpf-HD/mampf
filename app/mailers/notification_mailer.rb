@@ -1,7 +1,11 @@
 class NotificationMailer < ApplicationMailer
   before_action :set_sender_and_locale
   before_action :set_recipients, only: [:medium_email, :announcement_email,
-                                        :new_lecture_email]
+                                        :new_lecture_email,
+                                        :submission_deletion_email,
+                                        :submission_deletion_lecture_email,
+                                        :submission_destruction_email,
+                                        :submission_destruction_lecture_email]
   before_action :set_recipient_and_submission,
                 only: [:submission_upload_email,
                        :submission_upload_removal_email,
@@ -119,6 +123,46 @@ class NotificationMailer < ApplicationMailer
          subject: t('mailer.submission_rejection_subject',
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_deletion_email
+    @term = params[:term]
+    subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
+    subject += t('mailer.submission_deletion_subject',
+                 term: @term.to_label)
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: subject)
+  end
+
+  def submission_deletion_lecture_email
+    @term = params[:term]
+    @lecture = params[:lecture]
+    subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
+    subject += t('mailer.submission_deletion_lecture_subject',
+                 term: @term.to_label,
+                 lecture: @lecture.title_no_term)
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: subject)
+  end
+
+  def submission_destruction_email
+    @term = params[:term]
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.submission_destruction_subject',
+                    term: @term.to_label))
+  end
+
+  def submission_destruction_lecture_email
+    @term = params[:term]
+    @lecture = params[:lecture]
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.submission_destruction_lecture_subject',
+                    term: @term.to_label,
+                    lecture: @lecture.title_no_term))
   end
 
   private

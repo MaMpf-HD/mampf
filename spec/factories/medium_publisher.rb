@@ -22,7 +22,7 @@ FactoryBot.define do
       new(medium_id: medium_id, user_id: user_id, release_now: release_now,
           release_for: release_for,
           release_date: release_date, lock_comments: lock_comments,
-          vertices: vertices, user_id: user_id,
+          vertices: vertices,
           create_assignment: create_assignment,
           assignment_title: assignment_title,
           assignment_file_type: assignment_file_type,

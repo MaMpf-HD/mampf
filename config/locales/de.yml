@@ -2792,6 +2792,32 @@ de:
     submission_rejection: >
       Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde abgelehnt
       und wird nicht korrigiert und nicht gewertet werden.
+    submission_deletion_subject: >
+      Löschung der Abgaben und -korrekturen aus dem %{term}
+    submission_deletion_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
+      Abgaben und -korrekturen aus dem %{term} am <b>%{deletion_date}</b>
+      automatisch gelöscht. Bitte lade diese rechtzeitig herunter, wenn Du sie
+      weiterhin verwenden möchtest.
+    submission_deletion_lecture_subject: >
+      Löschung der Abgaben und -korrekturen aus dem %{term} [%{lecture}]
+    submission_deletion_lecture_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
+      Abgaben und -korrekturen der Veranstaltung %{lecture} aus dem %{term} am
+      <b>%{deletion_date}</b> automatisch gelöscht. Sollten sie anderweitig
+      gespeichert werden müssen, so muss dies außerhalb von MaMpf geschehen,
+      und die Dateien müssen rechtzeitig heruntergeladen werden.
+    submission_destruction_subject: >
+      Löschung der Abgaben und -korrekturen aus dem %{term}
+    submission_destruction_text_html: >
+      Aus Datenschutzgründen wurden sämtliche in MaMpf von Dir gespeicherten
+      Abgaben und -korrekturen aus dem %{term} automatisch gelöscht.
+    submission_destruction_lecture_subject: >
+      Löschung der Abgaben und -korrekturen aus dem %{term} [%{lecture}]
+    submission_destruction_lecture_text_html: >
+      Aus Datenschutzgründen wurden sämtliche in MaMpf gespeicherten
+      Abgaben und -korrekturen der Veranstaltung %{lecture} aus dem %{term}
+      automatisch gelöscht.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
@@ -2992,6 +3018,7 @@ de:
     immediately: sofort
     at_time: zum folgenden Zeitpunkt
     assignment: Hausaufgabe
+    reminder: Erinnerung
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

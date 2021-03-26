@@ -30,7 +30,7 @@ FactoryBot.define do
 
     trait :with_image do
       after(:build) do |c|
-        c.image = File.open('spec/files/image.png', 'rb')
+        c.image = File.open("#{SPEC_FILES}/image.png", 'rb')
       end
     end
 
