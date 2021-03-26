@@ -21,7 +21,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get update && \
     apt-get install --no-install-recommends -y ffmpeg ghostscript imagemagick \
             libarchive-tools nodejs pdftk postgresql-client-12 sqlite3 wget \
-            wait-for-it yarn && \
+            wait-for-it yarn shared-mime-info && \
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
