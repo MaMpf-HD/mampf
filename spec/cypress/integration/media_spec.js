@@ -35,7 +35,7 @@ describe("Media", () => {
                 console.log(date);
                 cy.get('input[name="medium[release_date]"]').click().clear().type(date.toLocaleString("de"));
                 cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
-                cy.get("#publishMediumModal").contains("Veröffentlichen").click();
+                cy.get("#publishMediumModal").contains("Speichern").click();
                 cy.contains("Dieses Medium wird planmäßig").should("exist");
             });
         });
@@ -62,7 +62,7 @@ describe("Media", () => {
                 cy.contains("Media 1").should("exist");
                 cy.contains("Veröffentlichen").click();
                 cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
-                cy.get("#publishMediumModal").contains("Veröffentlichen").click();
+                cy.get("#publishMediumModal").contains("Speichern").click();
                 cy.visit(`lectures/${lectures[0].id}/food?project=kaviar`);
                 cy.contains("Media 1").should("exist");
             });
@@ -95,7 +95,7 @@ describe("Media", () => {
                 date.setDate(date.getDate() + 8);
                 cy.get('input[name="medium[assignment_deadline]"]').click().clear().type(date.toLocaleString("de"));
                 cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
-                cy.get("#publishMediumModal").contains("Veröffentlichen").click();
+                cy.get("#publishMediumModal").contains("Speichern").click();
                 cy.contains("Dieses Medium wird planmäßig").should("exist");
             });
         });
