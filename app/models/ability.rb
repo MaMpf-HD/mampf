@@ -91,7 +91,8 @@ class Ability
            :export_references,
            :export_screenshot, :publish, :destroy,
            :import_manuscript, :fill_teachable_select,
-           :fill_media_select, :update_tags, :get_statistics], Medium do |m|
+           :fill_media_select, :update_tags, :get_statistics,
+           :cancel_publication], Medium do |m|
         m.edited_with_inheritance_by?(user)
       end
 

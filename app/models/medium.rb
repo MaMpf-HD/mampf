@@ -49,11 +49,13 @@ class Medium < ApplicationRecord
 
   has_many :quiz_certificates, foreign_key: 'quiz_id', dependent: :destroy
 
-  has_one :assignment
+  has_many :assignments
 
   serialize :quiz_graph, QuizGraph
 
   serialize :solution, Solution
+
+  serialize :publisher, MediumPublisher
 
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem
@@ -882,6 +884,29 @@ class Medium < ApplicationRecord
     Rails.cache.fetch("#{cache_key_with_version}/scoped_teachable") do
       teachable&.media_scope
     end
+  end
+
+  def publish!
+    return if published?
+    return unless publisher
+    success = publisher.publish!
+    update(publisher: nil) if success
+  end
+
+  def release_date_set?
+    return false unless publisher
+    return false unless publisher.release_date
+    true
+  end
+
+  def planned_release_date
+    return unless publisher
+    publisher.release_date
+  end
+
+  def planned_comment_lock?
+    return publisher.lock_comments if publisher
+    !!teachable.media_scope.try(:comments_disabled)
   end
 
   private

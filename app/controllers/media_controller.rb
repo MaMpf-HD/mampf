@@ -153,20 +153,11 @@ class MediaController < ApplicationController
   end
 
   def publish
-    release_state = params[:medium][:released]
-    @medium.update(released: release_state)
-    lock_comments = params[:medium][:lock_comments]
-    @medium.commontator_thread.close(current_user) if lock_comments.to_i == 1
-    if @medium.sort == 'Quiz' && params[:medium][:publish_vertices] == '1'
-      @medium.becomes(Quiz).publish_vertices!(current_user, release_state)
-    end
-    # create notification about creation of medium to all subscribers
-    # and send an email
-    unless @medium.sort.in?(['Question', 'Remark', 'RandomQuiz'])
-      @medium.teachable&.media_scope&.touch
-      create_notifications
-      send_notification_email
-    end
+    publisher = MediumPublisher.parse(@medium, current_user, publish_params)
+    @errors = publisher.errors
+    return if @errors.present?
+    @medium.update(publisher: publisher)
+    @medium.publish! if publisher.release_now
     redirect_to edit_medium_path(@medium)
   end
 
@@ -404,6 +395,11 @@ class MediaController < ApplicationController
     render layout: 'application_no_sidebar'
   end
 
+  def cancel_publication
+    @medium.update(publisher: nil)
+    redirect_to edit_medium_path(@medium)
+  end
+
   private
 
   def medium_params
@@ -416,6 +412,13 @@ class MediaController < ApplicationController
                                    editor_ids: [],
                                    tag_ids: [],
                                    linked_medium_ids: [])
+  end
+
+  def publish_params
+    params.require(:medium).permit(:release_now, :released, :release_date,
+                                   :lock_comments, :publish_vertices,
+                                   :create_assignment, :assignment_title,
+                                   :assignment_deadline, :assignment_file_type)
   end
 
   def set_medium
@@ -557,34 +560,6 @@ class MediaController < ApplicationController
                                    teachable_ids: [],
                                    tag_ids: [],
                                    editor_ids: [])
-  end
-
-  # create notifications to all users who are subscribed
-  # to the medium's teachable's media_scope
-  def create_notifications
-    notifications = []
-    @medium.teachable.media_scope.users.update_all(updated_at: Time.now)
-    @medium.teachable.media_scope.users.each do |u|
-      notifications << Notification.new(recipient: u,
-                                        notifiable_id: @medium.id,
-                                        notifiable_type: 'Medium',
-                                        action: 'create')
-    end
-    Notification.import notifications
-  end
-
-  def send_notification_email
-    recipients = @medium.teachable.media_scope.users
-                        .where(email_for_medium: true)
-    I18n.available_locales.each do |l|
-      local_recipients = recipients.where(locale: l)
-      if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients.pluck(:id),
-                                locale: l,
-                                medium: @medium)
-                          .medium_email.deliver_later
-      end
-    end
   end
 
   # destroy all notifications related to this medium
