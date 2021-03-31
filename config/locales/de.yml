@@ -308,7 +308,7 @@ de:
       editors: 'EditorInnen'
     announcement:
       help: >
-        Hier kannst Du den Text eingeben. Du kannst LaTEX benutzen
+        Hier kannst Du den Text eingeben. Du kannst LaTeX benutzen
         (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
         siehst Du unten.
       on_main_page: >
@@ -318,7 +318,7 @@ de:
       expel: von Startseite nehmen
       info:
         on_main_page: >
-          Wenn Du diesen Haken setzt, wir die Mitteilung auf der
+          Wenn Du diesen Haken setzt, wird die Mitteilung auf der
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
@@ -792,7 +792,7 @@ de:
         details: >
           Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
-          Veranstaltungsseite angezeigt werden. Du kannst LaTEX benutzen
+          Veranstaltungsseite angezeigt werden. Du kannst LaTeX benutzen
           (indem du den Ausdruck in $...$ setzt).
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
@@ -1063,7 +1063,7 @@ de:
           Tags, die Du diesem Medium hinzufügst, werden auch der Sitzung
           hinzugefügt.
         content: >
-          Hier hast Du die Möglichkeit, eine Inhaltsangabe machen. Du kannst LaTEX benutzen
+          Hier hast Du die Möglichkeit, eine Inhaltsangabe machen. Du kannst LaTeX benutzen
           (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
           siehst Du unten.
         linked_media: >
