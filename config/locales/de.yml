@@ -900,15 +900,19 @@ de:
       scheduled_for_release: >
         Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
       scheduled_for_release_short: >
-        Veröffentlichung: %{release_date}
+        Geplante Veröffentlichung: %{release_date}
       assignment_to_be_created: >
-        Es wird eine Hausaufgabe dazu angelegt werden.
+        Es wird eine Hausaufgabe dazu angelegt werden. Diese ist am %{deadline}
+        abzugeben.
       create_assignment: Hausaufgabe zu diesem Medium anlegen
       invalid_assignment_deadline: >
         Dies ist kein gültiges Datum nach dem Veröffentlichungsdatum des
         Mediums.
       invalid_assignment_title: >
         Dieser Hausaufgabentitel ist nicht zulässig.
+      manage_publication: Veröffentlichung des Mediums verwalten
+      publication_settings: Veröffentlichungseinstellungen
+      media_settings: Medieneinstellungen
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -1199,6 +1203,11 @@ de:
         scheduled_release: >
           Die Veröffentlichung erfolgt nicht sekundengenau, sollte jedoch
           spätestens etwa eine Minute nach der angegebenen Uhrzeit erfolgen.
+        assignment_settings: >
+          Einstellungen, die für <i>jede</i> Hausaufgabe in dieser
+          Veranstaltung gelten, wie die Teamgröße für Abgaben und die
+          Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
+          einstellen.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
@@ -2245,6 +2254,7 @@ de:
   time:
     formats:
       concise: '%d.%m.%Y'
+      publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
@@ -3007,6 +3017,7 @@ de:
     emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
     immediately: sofort
     at_time: zum folgenden Zeitpunkt
+    assignment: Hausaufgabe
     reminder: Erinnerung
   access:
     unpublished: 'unveröffentlicht'
