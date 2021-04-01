@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[24],{95:function(e){e.exports=JSON.parse('{"pluginId":"default","version":"current","label":"Next","isLast":true,"docsSidebars":{"docs":[{"collapsed":true,"type":"category","label":"Docusaurus Tutorial","items":[{"type":"link","label":"Getting Started","href":"/de/docs/"}]}]},"permalinkToSidebar":{"/de/docs/":"docs"}}')}}]);
