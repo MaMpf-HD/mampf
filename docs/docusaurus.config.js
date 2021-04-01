@@ -2,8 +2,8 @@
 module.exports = {
   title: 'MaMpf',
   tagline: 'Mathematische Medienplattform',
-  url: 'https://mampf.mathi.uni-heidelberg.de',
-  baseUrl: '/',
+  url: 'https://mampf-hd.github.io/mampf',
+  baseUrl: '/mampf/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
@@ -83,12 +83,12 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
+          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
+          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -116,7 +116,7 @@ module.exports = {
         path: 'lecturers',
         routeBasePath: 'lecturers',
         sidebarPath: require.resolve('./sidebarsLecturers.js'),
-        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
         // ... other options
       },
     ],
@@ -127,7 +127,7 @@ module.exports = {
         path: 'devel',
         routeBasePath: 'devel',
         sidebarPath: require.resolve('./sidebarsDevel.js'),
-        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
         // ... other options
       },
     ]
