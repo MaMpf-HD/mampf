@@ -79,8 +79,8 @@ class SubmissionCleaner
       local_submitter_ids = @submitters.where(locale: l).pluck(:id)
       next if local_submitter_ids.empty?
 
-      local_submitter_ids.in_groups_of(200) do |group|
-        NotificationMailer.with(recipients: group.compact,
+      local_submitter_ids.in_groups_of(200, false) do |group|
+        NotificationMailer.with(recipients: group,
                                 term: @previous_term,
                                 locale: l)
                           .submission_destruction_email.deliver_now
@@ -105,8 +105,8 @@ class SubmissionCleaner
     I18n.available_locales.each do |l|
       local_submitter_ids = @submitters.where(locale: l).pluck(:id)
       next if local_submitter_ids.empty?
-        local_submitter_ids.in_groups_of(200) do |group|
-          NotificationMailer.with(recipients: group.compact,
+        local_submitter_ids.in_groups_of(200, false) do |group|
+          NotificationMailer.with(recipients: group,
                                   term: @previous_term,
                                   deletion_date:
                                     @previous_term.submission_deletion_date,
