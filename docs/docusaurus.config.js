@@ -83,12 +83,12 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
-          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
-          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+          editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -116,7 +116,7 @@ module.exports = {
         path: 'lecturers',
         routeBasePath: 'lecturers',
         sidebarPath: require.resolve('./sidebarsLecturers.js'),
-        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
         // ... other options
       },
     ],
@@ -127,7 +127,7 @@ module.exports = {
         path: 'devel',
         routeBasePath: 'devel',
         sidebarPath: require.resolve('./sidebarsDevel.js'),
-        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/doc/',
         // ... other options
       },
     ]
