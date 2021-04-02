@@ -1,13 +1,10 @@
 # First build the PDF compressor Web assembly binary
-FROM golang:1.15 AS build-pdfcomprezzor
+FROM golang:1.16 AS build-pdfcomprezzor
 WORKDIR /go/src
 COPY pdfcomprezzor/go.mod .
 COPY pdfcomprezzor/go.sum .
 COPY pdfcomprezzor/main.go .
-RUN go mod vendor
-RUN sed -i 's/init(/init2(/g' vendor/github.com/pdfcpu/pdfcpu/pkg/font/metrics.go
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
-
 
 # Now build the actual mampf application
 FROM ruby:2.7.2
@@ -22,7 +19,8 @@ ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN apt-get update && apt-get install -y nodejs yarn ffmpeg imagemagick pdftk ghostscript sqlite3 rsync --no-install-recommends && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y nodejs yarn ffmpeg imagemagick pdftk ghostscript sqlite3 rsync shared-mime-info --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash \

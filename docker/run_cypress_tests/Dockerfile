@@ -1,11 +1,9 @@
 # First build the PDF compressor Web assembly binary
-FROM golang:1.15 AS build-pdfcomprezzor
+FROM golang:1.16 AS build-pdfcomprezzor
 WORKDIR /go/src
 COPY pdfcomprezzor/go.mod .
 COPY pdfcomprezzor/go.sum .
 COPY pdfcomprezzor/main.go .
-RUN go mod vendor
-RUN sed -i 's/init(/init2(/g' vendor/github.com/pdfcpu/pdfcpu/pkg/font/metrics.go
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 
 # Now build the actual mampf application
@@ -21,7 +19,7 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
         ffmpeg ghostscript imagemagick libarchive-tools nodejs pdftk \
-        postgresql-client-12 sqlite3 wget wait-for-it yarn && \
+        postgresql-client-12 sqlite3 wget wait-for-it  shared-mime-info yarn && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 

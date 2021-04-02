@@ -1,0 +1,9 @@
+media_publisher_job:
+  cron: "*/1 * * * *"
+  class: "MediaPublisher"
+  queue: critical
+
+submissions_cleaner_job:
+  cron: "0 3 */1 * *"
+  class: "SubmissionsCleaner"
+  queue: critical

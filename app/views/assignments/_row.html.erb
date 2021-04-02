@@ -1,5 +1,6 @@
-<div class="list-group-item assignmentRow"
-     data-id="<%= assignment.id.to_i %>">
+<div class="list-group-item assignmentRow
+            <%= 'list-group-item-warning' unless assignment.persisted? %>"
+     data-id="<%= assignment.persisted? ? assignment.id : -1 %>">
   <div class="row">
     <div class="col-2">
       <%= assignment.title %>
@@ -12,7 +13,9 @@
     <div class="col-3">
       <% if assignment.medium %>
         <%= link_to assignment.medium.local_title_for_viewers,
-                    assignment.medium %>
+                    assignment.medium,
+                    data: { toggle: 'tooltip' },
+                    title: release_date_info(assignment.medium) %>
       <% end %>
     </div>
     <div class="col-2">
@@ -20,29 +23,42 @@
     </div>
     <div class="col-2">
       <% unless inspection %>
-        <%= link_to edit_assignment_path(assignment),
-                    class: 'text-dark',
-                    data: { toggle: 'tooltip',
-                            placement: 'botttom' },
-                    style: 'text-decoration: none;',
-                    title: t('buttons.edit'),
-                    remote: true do %>
-          <i class="far fa-lg fa-edit mr-2">
-          </i>
-        <% end %>
-        <% if assignment.destructible? %>
-          <%= link_to assignment_path(assignment),
+        <% if assignment.persisted? %>
+          <%= link_to edit_assignment_path(assignment),
                       class: 'text-dark',
                       data: { toggle: 'tooltip',
-                              placement: 'botttom',
-                              confirm: t('confirmation.generic') },
+                              placement: 'botttom' },
                       style: 'text-decoration: none;',
-                      title: t('buttons.delete'),
-                      method: :delete,
+                      title: t('buttons.edit'),
                       remote: true do %>
-            <i class="fas fa-lg fa-trash-alt">
+            <i class="far fa-lg fa-edit mr-2">
             </i>
           <% end %>
+          <% if assignment.destructible? %>
+            <%= link_to assignment_path(assignment),
+                        class: 'text-dark',
+                        data: { toggle: 'tooltip',
+                                placement: 'botttom',
+                                confirm: t('confirmation.generic') },
+                        style: 'text-decoration: none;',
+                        title: t('buttons.delete'),
+                        method: :delete,
+                        remote: true do %>
+              <i class="fas fa-lg fa-trash-alt">
+              </i>
+            <% end %>
+          <% end %>
+        <% else %>
+          <%= link_to edit_medium_path(assignment.medium),
+                      class: 'text-dark',
+                      data: { toggle: 'tooltip',
+                              placement: 'botttom' },
+                      style: 'text-decoration: none;',
+                      title: t('buttons.edit') do %>
+            <i class="far fa-lg fa-edit mr-2">
+            </i>
+          <% end %>
+          <%= helpdesk(t('assignment.info.scheduled_assignment'), false) %>
         <% end %>
       <% end %>
     </div>

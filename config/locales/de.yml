@@ -308,7 +308,7 @@ de:
       editors: 'EditorInnen'
     announcement:
       help: >
-        Hier kannst Du den Text eingeben. Du kannst LaTEX benutzen
+        Hier kannst Du den Text eingeben. Du kannst LaTeX benutzen
         (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
         siehst Du unten.
       on_main_page: >
@@ -318,7 +318,7 @@ de:
       expel: von Startseite nehmen
       info:
         on_main_page: >
-          Wenn Du diesen Haken setzt, wir die Mitteilung auf der
+          Wenn Du diesen Haken setzt, wird die Mitteilung auf der
           MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
           eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
@@ -792,7 +792,7 @@ de:
         details: >
           Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
-          Veranstaltungsseite angezeigt werden. Du kannst LaTEX benutzen
+          Veranstaltungsseite angezeigt werden. Du kannst LaTeX benutzen
           (indem du den Ausdruck in $...$ setzt).
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
@@ -894,7 +894,25 @@ de:
         Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
       lock_comments: Kommentare für dieses Medium deaktivieren
       comments_locked: Kommentare deaktiviert
+      release_date: 'Veröffentlichungsdatum'
       boost: Boost
+      invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
+      scheduled_for_release: >
+        Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
+      scheduled_for_release_short: >
+        Geplante Veröffentlichung: %{release_date}
+      assignment_to_be_created: >
+        Es wird eine Hausaufgabe dazu angelegt werden. Diese ist am %{deadline}
+        abzugeben.
+      create_assignment: Hausaufgabe zu diesem Medium anlegen
+      invalid_assignment_deadline: >
+        Dies ist kein gültiges Datum nach dem Veröffentlichungsdatum des
+        Mediums.
+      invalid_assignment_title: >
+        Dieser Hausaufgabentitel ist nicht zulässig.
+      manage_publication: Veröffentlichung des Mediums verwalten
+      publication_settings: Veröffentlichungseinstellungen
+      media_settings: Medieneinstellungen
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -1049,7 +1067,7 @@ de:
           Tags, die Du diesem Medium hinzufügst, werden auch der Sitzung
           hinzugefügt.
         content: >
-          Hier hast Du die Möglichkeit, eine Inhaltsangabe machen. Du kannst LaTEX benutzen
+          Hier hast Du die Möglichkeit, eine Inhaltsangabe machen. Du kannst LaTeX benutzen
           (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
           siehst Du unten.
         linked_media: >
@@ -1182,6 +1200,14 @@ de:
           die zu einer Sitzung assoziiert sind). Der Standardwert ist 0,
           Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
           niedrigerem Boost weiter hinten.
+        scheduled_release: >
+          Die Veröffentlichung erfolgt nicht sekundengenau, sollte jedoch
+          spätestens etwa eine Minute nach der angegebenen Uhrzeit erfolgen.
+        assignment_settings: >
+          Einstellungen, die für <i>jede</i> Hausaufgabe in dieser
+          Veranstaltung gelten, wie die Teamgröße für Abgaben und die
+          Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
+          einstellen.
     tag:
       index: 'Tagübersicht'
       related_tags: 'Verknüpfte Tags'
@@ -2228,6 +2254,7 @@ de:
   time:
     formats:
       concise: '%d.%m.%Y'
+      publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
@@ -2608,6 +2635,11 @@ de:
       </i>
       Eine Hausaufgabe kann nur dann gelöscht werden, wenn keine Abgaben, die
       Dateiuploads beinhalten, dafür hochgeladen wurden.
+    info:
+      scheduled_assignment:
+        Diese Hausaufgabe wird bei der Veröffentlichung des assoziierten
+        Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
+        Veröffentlichungseinstellungen des Mediums bearbeiten.
   tutorial:
     no_submissions_for_assignment: >
       Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
@@ -2760,6 +2792,32 @@ de:
     submission_rejection: >
       Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde abgelehnt
       und wird nicht korrigiert und nicht gewertet werden.
+    submission_deletion_subject: >
+      Löschung der Abgaben und Korrekturen aus dem %{term}
+    submission_deletion_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
+      Abgaben und Korrekturen aus dem %{term} am <b>%{deletion_date}</b>
+      automatisch gelöscht. Bitte lade diese rechtzeitig herunter, wenn Du sie
+      weiterhin verwenden möchtest.
+    submission_deletion_lecture_subject: >
+      Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
+    submission_deletion_lecture_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
+      Abgaben und -korrekturen der Veranstaltung %{lecture} aus dem %{term} am
+      <b>%{deletion_date}</b> automatisch gelöscht. Sollten sie anderweitig
+      gespeichert werden müssen, so muss dies außerhalb von MaMpf geschehen,
+      und die Dateien müssen rechtzeitig heruntergeladen werden.
+    submission_destruction_subject: >
+      Löschung der Abgaben und Korrekturen aus dem %{term}
+    submission_destruction_text_html: >
+      Aus Datenschutzgründen wurden sämtliche in MaMpf von Dir gespeicherten
+      Abgaben und Korrekturen aus dem %{term} automatisch gelöscht.
+    submission_destruction_lecture_subject: >
+      Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
+    submission_destruction_lecture_text_html: >
+      Aus Datenschutzgründen wurden sämtliche in MaMpf gespeicherten
+      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term}
+      automatisch gelöscht.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
@@ -2957,6 +3015,10 @@ de:
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
     emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    immediately: sofort
+    at_time: zum folgenden Zeitpunkt
+    assignment: Hausaufgabe
+    reminder: Erinnerung
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3057,6 +3119,7 @@ de:
     reject: 'Ablehnen'
     dismiss: 'Ausblenden'
     validate: 'Validieren'
+    cancel_publication: 'Stornieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

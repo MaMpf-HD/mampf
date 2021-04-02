@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_12_13_123754) do
+ActiveRecord::Schema.define(version: 2021_03_19_102604) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -346,6 +346,8 @@ ActiveRecord::Schema.define(version: 2020_12_13_123754) do
     t.integer "position"
     t.boolean "text_input", default: false
     t.float "boost", default: 0.0
+    t.datetime "released_at"
+    t.text "publisher"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
@@ -503,6 +505,9 @@ ActiveRecord::Schema.define(version: 2020_12_13_123754) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "active", default: false
+    t.datetime "submission_deletion_mail"
+    t.datetime "submission_deletion_reminder"
+    t.datetime "submissions_deleted_at"
   end
 
   create_table "thredded_categories", force: :cascade do |t|

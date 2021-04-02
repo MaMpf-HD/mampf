@@ -388,6 +388,27 @@ $(document).on 'turbolinks:load', ->
     $('.details-warning').show()
     return
 
+  $('#release_date').on 'focus', ->
+    $('#medium_release_now_0').prop('checked', true)
+    $('#release_date').datetimepicker
+      format: 'd.m.Y H:i'
+      inline: false
+      lang: 'en'
+    return
+
+  $('#medium_assignment_deadline').on 'focus', ->
+    $(this).datetimepicker
+      format: 'd.m.Y H:i'
+      inline: false
+    return
+
+  $('#medium_create_assignment').on 'click', ->
+    if $(this).prop('checked')
+      $('#medium_assignment_row').removeClass('no_display')
+    else
+      $('#medium_assignment_row').addClass('no_display')
+    return
+
   return
 
 $(document).on 'turbolinks:before-cache', ->
