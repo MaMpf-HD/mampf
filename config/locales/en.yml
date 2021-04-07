@@ -852,16 +852,19 @@ en:
       boost: 'Boost'
       invalid_publish_date: This is not a valid datetime in the future.
       scheduled_for_release: >
-        This medium is scheduled for release at %{release_date}.
+        This medium is scheduled for release on %{release_date}.
       scheduled_for_release_short: >
-        scheduled release: %{release_date}
+        Scheduled release: %{release_date}
       assignment_to_be_created: >
-        An assignment will be created.
+        An assignment will be created. Its deadline will be %{deadline}.
       create_assignment: Create an assignment for this medium
       invalid_assignment_deadline: >
         This is not a valid datetime after the publication of the medium.
       invalid_assignment_title: >
         This assignment title is invalid.
+      manage_publication: Manage the Publication of this Medium
+      publication_settings: Publication settings
+      media_settings: Media settings
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -1128,6 +1131,9 @@ en:
         scheduled_release: >
           The publication will not precisely occur at the right second, but it
           should not be later than around a minute after the given time.
+        assignment_settings: >
+          Settings that will hold for <i>all</i> assignments in this lecture
+          can be adjusted on the lecture page under "Assignments".
     tag:
       index: 'Tag Index'
       related_tags: 'Related Tags'
@@ -2119,6 +2125,7 @@ en:
   time:
     formats:
       concise: '%Y-%m-%d'
+      publication_time: '%A, %B %d, %Y at %I:%M %p'
   thyme:
     back: 'back'
     back_to: 'back to '
@@ -2835,6 +2842,7 @@ en:
     emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
     immediately: immediately
     at_time: at the following time
+    assignment: Assignment
     reminder: Reminder
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'

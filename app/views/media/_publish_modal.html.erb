@@ -7,10 +7,10 @@
        role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
+        <h4 class="modal-title"
             id="publishMediumModalLabel">
-          <%= t('admin.medium.publish') %>
-        </h5>
+          <%= t('admin.medium.manage_publication') %>
+        </h4>
         <button type="button"
                 class="close"
                 data-dismiss="modal"
@@ -26,7 +26,12 @@
                                             'all'),
                       url: publish_medium_path(medium),
                       method: 'post' do |f| %>
-          <%= t('admin.medium.release_date') %>
+          <h5>
+            <%= t('admin.medium.publication_settings') %>
+          </h5>
+          <div class="mb-1">
+            <%= t('admin.medium.release_date') %>
+          </div>
           <div class="custom-control custom-radio">
             <%= f.radio_button :release_now,
                                '1',
@@ -51,7 +56,8 @@
           <div class="form-group col-12">
             <%= f.text_field :release_date,
                              class: 'form-control',
-                             id: "release_date",
+                             id: 'release_date',
+                             autocomplete: 'off',
                              value: medium.planned_release_date
                                           .try(:strftime,
                                                '%d.%m.%Y %H:%M') %>
@@ -59,41 +65,19 @@
                  id="release-date-error">
             </div>
           </div>
-          <%= render partial: 'media/access_rights',
-                     locals: { f: f,
-                               medium: medium } %>
-          <% if medium.sort == 'Quiz' %>
-            <%= render partial: 'media/quiz_rights',
-                       locals: { f: f } %>
-          <% end %>
-          <div class="custom-control custom-checkbox">
-            <%= f.check_box :lock_comments,
-                            class: 'custom-control-input',
-                            checked: medium.planned_comment_lock? %>
-            <%= f.label :lock_comments,
-                        t('admin.medium.lock_comments'),
-                        { class: 'custom-control-label' } %>
-          </div>
-          <div class="custom-control custom-checkbox">
-            <%= f.check_box :disclaimer,
-                            class: 'custom-control-input',
-                            required: true,
-                            checked: medium.publisher.present? %>
-            <%= f.label :disclaimer,
-                        t('admin.medium.disclaimer'),
-                        { class: 'custom-control-label' } %>
-          </div>
-          <div class="row mb-4">
-          </div>
-          <hr>
           <% if medium.sort == 'Nuesse' && medium.teachable.is_a?(Lecture) %>
-            <div class="custom-control custom-checkbox">
+            <div class="mb-1">
+              <%= t('basics.assignment') %>
+            </div>
+            <div class="custom-control custom-checkbox mb-2">
               <%= f.check_box :create_assignment,
                               class: 'custom-control-input',
                               checked: medium.publisher&.create_assignment %>
               <%= f.label :create_assignment,
                           t('admin.medium.create_assignment'),
                           { class: 'custom-control-label' } %>
+              <%= helpdesk(t('admin.medium.info.assignment_settings'),
+                           true) %>
             </div>
             <div class="form-row mb-2 ml-2 <%= medium.publisher&.create_assignment ? '' : 'no_display' %>"
                  id="medium_assignment_row">
@@ -110,6 +94,7 @@
                 <%= f.label :assignment_deadline, t('basics.deadline') %>
                 <%= f.text_field :assignment_deadline,
                                  class: 'form-control',
+                                 autocomplete: 'off',
                                  value: medium.publisher
                                              &.assignment_deadline
                                               .try(:strftime,
@@ -129,9 +114,43 @@
               </div>
             </div>
           <% end %>
+          <hr>
+          <h5>
+            <%= t('admin.medium.media_settings') %>
+          </h5>
+          <%= render partial: 'media/access_rights',
+                     locals: { f: f,
+                               medium: medium } %>
+          <% if medium.sort == 'Quiz' %>
+            <%= render partial: 'media/quiz_rights',
+                       locals: { f: f } %>
+          <% end %>
+          <div class="mb-1">
+            <%= t('basics.comments') %>
+          </div>
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :lock_comments,
+                            class: 'custom-control-input',
+                            checked: medium.planned_comment_lock? %>
+            <%= f.label :lock_comments,
+                        t('admin.medium.lock_comments'),
+                        { class: 'custom-control-label' } %>
+          </div>
+          <hr>
+          <div class="custom-control custom-checkbox">
+            <%= f.check_box :disclaimer,
+                            class: 'custom-control-input',
+                            required: true,
+                            checked: medium.publisher.present? %>
+            <%= f.label :disclaimer,
+                        t('admin.medium.disclaimer'),
+                        { class: 'custom-control-label' } %>
+          </div>
+          <div class="row mb-4">
+          </div>
           <div class="row mt-3">
             <div class="col-12 text-center">
-              <%= f.submit t('buttons.publish'),
+              <%= f.submit t('buttons.save'),
                            class: 'btn btn-sm btn-primary' %>
             </div>
           </div>

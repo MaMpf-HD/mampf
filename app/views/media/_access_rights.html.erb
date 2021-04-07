@@ -1,6 +1,8 @@
 <div class="form-group">
-  <%= t('basics.access_rights') %>
-  <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
+  <div class="mb-1">
+    <%= t('basics.access_rights') %>
+    <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
+  </div>
   <div class="custom-control custom-radio">
     <%= f.radio_button :released,
                        'all',
