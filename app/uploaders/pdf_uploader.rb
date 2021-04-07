@@ -50,14 +50,18 @@ class PdfUploader < Shrine
             details['sort'] = 'Markierung' if details['sort'].blank?
             result.push(details)
           end
-          linked_media = structure.scan(/BookmarkTitle: MaMpf-Link\|(.*?)\n/)
+          linked_media = structure.scan(/MaMpf-Link\|(.*?)\n/)
                                   .flatten.map(&:to_i) - [0]
+          mampf_sty_version = structure.scan(/MaMpf-Version\|(.*?)\n/).flatten
+                                       .first
           { 'pages' => pages,
             'destinations' => result.map { |b| b['destination'] },
             'bookmarks' => result,
-            'linked_media' => linked_media }
+            'linked_media' => linked_media,
+            'version' => mampf_sty_version }
         else
-          { 'pages' => nil, 'destinations' => nil, 'bookmarks' => nil }
+          { 'pages' => nil, 'destinations' => nil, 'bookmarks' => nil,
+            'version' => nil }
         end
       end
     end

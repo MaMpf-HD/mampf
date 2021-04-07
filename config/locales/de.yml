@@ -2135,6 +2135,19 @@ de:
     quarantine_info: >
       Aus diesem Grund wurden sie in Quarantäne verschoben. Dort
       kannst Du sie weiterverarbeiten.
+    version_info_html: >
+      Das Manuskript wurde nicht mit der aktuellen Version %{current_version}
+      des MaMpf-LaTeX-Paketes kompiliert, sondern mit %{version}. Es kann
+      daher kein Import von Daten erfolgen. Bitte kompiliere das Manuskript
+      mit der aktuellen Version. Du kannst sie %{package} herunterladen.
+    version_unknown_html: >
+      Das Manuskript wurde mit einer unbekannten Version des MaMpf-LaTeX-Paketes
+      kompiliert. Es kann daher kein Import von Daten erfolgen.
+      Bitte kompiliere das Manuskript mit der aktuellen Version
+      %{current_version}. Du kannst sie %{package} herunterladen.
+    version_correct: >
+      Das Skript wurde mit der aktuellen Version %{current_version}
+      des MaMpf-LaTeX-Paketes kompiliert.
     info:
       quarantined_items: >
         Dies ist eine Liste aller Items, die in Quarantäne
