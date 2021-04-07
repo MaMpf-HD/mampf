@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.7.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 6.0.3"
+gem "rails", "~> 6.1"
 # Use dalli for caching to memcached in production
 gem "dalli", ">= 2.7"
 # Ruby wrapper for UglifyJS JavaScript compressor
@@ -59,7 +59,7 @@ gem "erubis"
 gem "cancancan"
 gem "jquery-rails"
 gem "jquery-ui-rails"
-gem "js-routes"
+gem "js-routes", '1.4.9'
 gem "bootstrap"
 gem "bootstrap_form"
 gem "devise-bootstrap-views"
@@ -73,7 +73,7 @@ gem "activerecord-import",
   git: "https://github.com/zdennis/activerecord-import.git",
   branch: "master"
 gem "thredded",
-  git: "https://github.com/fosterfarrell9/thredded",
+  git: "https://github.com/MaMpf-HD/thredded.git",
   branch: "master"
 gem "kramdown-parser-gfm"
 gem "thredded-markdown_katex"
