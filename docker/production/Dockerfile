@@ -16,19 +16,16 @@ EXPOSE 3000
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript sqlite3 rsync shared-mime-info && \
-    rm -rf /var/lib/apt/lists/* && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash && \
-    apt-get update && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/* && \
+    # setup all the repos
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash && \
+    # update the sources with the repos set up
     apt-get update && \
-    apt-get install -y yarn && \
-    rm -rf /var/lib/apt/lists/*
-
+    # install all the dependencies
+    apt-get install -y --no-install-recommends \
+        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info && \
+    apt-get install -y nodejs yarn
 
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
