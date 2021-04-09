@@ -2013,6 +2013,19 @@ en:
     quarantine_info: >
       For that reason, they have been moved to Quarantine. There you can
       decide what do about them.
+    version_info_html: >
+      The manuscript has not been compiled using the current version
+      %{current_version} of the MaMpf LaTeX package, but with version
+      %{version}. Therefore no import of data is possible. Please recompile it
+      using the current version. You can download it %{package}.
+    version_unknown_html: >
+      The manuscript has been compiled using an unknown version of the MaMpf
+      LaTeX package. Therefore no import of data is possible. Please recompile it
+      using the current version %{current_version}.
+      You can find download it %{package}.
+    version_correct: >
+      The manuscript has been compiled using the current version
+      %{current_version} of the MaMpf LaTeX package.
     info:
       quarantined_items: >
         This is the list of all items that are in quarantine.
