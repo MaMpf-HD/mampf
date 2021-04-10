@@ -1,5 +1,4 @@
-class Probe < ApplicationRecord
-  connects_to database: { writing: :interactions, reading: :interactions }
+class Probe < InteractionsRecord
   scope :created_between, lambda {|start_date, end_date| where(created_at: start_date.beginning_of_day..end_date.end_of_day)}
   require 'csv'
 

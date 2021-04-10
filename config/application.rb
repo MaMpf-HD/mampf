@@ -9,12 +9,14 @@ Bundler.require(*Rails.groups)
 module Mampf
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
     config.autoloader = :zeitwerk
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
     config.time_zone = 'Berlin'
+    # Make `form_with` generate remote forms by default.
+    config.action_view.form_with_generates_remote_forms = true
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

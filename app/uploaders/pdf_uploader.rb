@@ -18,7 +18,10 @@ class PdfUploader < Shrine
     if context[:action] == :upload
       Shrine.with_file(io) do |file|
         temp_file = Tempfile.new
-        cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path}"
+        temp_folder = Dir.mktmpdir
+        structure_path = "#{temp_folder}/structure.mampf"
+        cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path} && "\
+              "pdftk #{file.path} unpack_files output #{temp_folder}"
         exit_status = system(cmd)
         if exit_status
           meta = File.read(temp_file)
@@ -26,7 +29,13 @@ class PdfUploader < Shrine
           pages = /NumberOfPages: (\d*)/.match(meta)[1].to_i
           # extract lines that correspond to MaMpf-Label entries from LaTEX
           # package mampf.sty
-          bookmarks = meta.scan(/BookmarkTitle: MaMpf-Label\|(.*?)\n/).flatten
+          structure = if File.file?(structure_path)
+                        open(structure_path, "r") do
+                          |io| io.read.encode("UTF-8", invalid: :replace)
+                        end
+                      end
+          structure ||= ''
+          bookmarks = structure.scan(/MaMpf-Label\|(.*?)\n/).flatten
           result = []
           bookmarks.each_with_index do |b,i|
             # extract bookmark data
@@ -41,14 +50,18 @@ class PdfUploader < Shrine
             details['sort'] = 'Markierung' if details['sort'].blank?
             result.push(details)
           end
-          linked_media = meta.scan(/BookmarkTitle: MaMpf-Link\|(.*?)\n/).flatten
-                             .map(&:to_i) - [0]
+          linked_media = structure.scan(/MaMpf-Link\|(.*?)\n/)
+                                  .flatten.map(&:to_i) - [0]
+          mampf_sty_version = structure.scan(/MaMpf-Version\|(.*?)\n/).flatten
+                                       .first
           { 'pages' => pages,
             'destinations' => result.map { |b| b['destination'] },
             'bookmarks' => result,
-            'linked_media' => linked_media }
+            'linked_media' => linked_media,
+            'version' => mampf_sty_version }
         else
-          { 'pages' => nil, 'destinations' => nil, 'bookmarks' => nil }
+          { 'pages' => nil, 'destinations' => nil, 'bookmarks' => nil,
+            'version' => nil }
         end
       end
     end

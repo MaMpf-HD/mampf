@@ -5,7 +5,7 @@ class Manuscript
 
   attr_reader :medium, :lecture, :chapters, :sections, :content,
               :contradictions, :contradiction_count, :count,
-              :content_descriptions
+              :content_descriptions, :version
 
   def initialize(medium)
     unless medium && medium.sort == 'Script' &&
@@ -15,6 +15,7 @@ class Manuscript
     end
     @medium = medium
     @lecture = medium.teachable.lecture
+    @version = medium.manuscript.metadata['version']
     bookmarks = medium.manuscript.metadata['bookmarks'] || []
     @chapters = get_chapters(bookmarks)
     match_mampf_chapters
@@ -380,12 +381,19 @@ class Manuscript
     { 'chapters' => @chapters.select { |c| c['contradiction'] },
       'sections' => @sections.select { |s| s['contradiction'] },
       'content' => @content.select { |c| c['contradiction'] },
-      'multiplicities' => destinations_with_higher_multiplicities }
+      'multiplicities' => destinations_with_higher_multiplicities,
+      'version' => version_info }
   end
 
   def determine_contradiction_count
     @contradictions['chapters'].size + @contradictions['sections'].size +
-      @contradictions['content'].size + @contradictions['multiplicities'].size
+      @contradictions['content'].size + @contradictions['multiplicities'].size +
+      @contradictions['version'].size
+  end
+
+  def version_info
+    return [] if @version == DefaultSetting::MAMPF_STY_VERSION
+    [@version.to_s]
   end
 
   # chapters in the manuscript not represented in mampf
