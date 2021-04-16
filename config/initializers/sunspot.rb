@@ -13,4 +13,6 @@ class StiInstanceAdapter < Sunspot::Adapters::InstanceAdapter
 
 end
 
-Sunspot::Adapters::InstanceAdapter.register(StiInstanceAdapter, Medium)
+Rails.application.reloader.to_prepare do
+  Sunspot::Adapters::InstanceAdapter.register(StiInstanceAdapter, Medium)
+end

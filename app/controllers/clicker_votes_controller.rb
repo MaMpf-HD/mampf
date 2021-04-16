@@ -8,7 +8,7 @@ class ClickerVotesController < ApplicationController
     if cookies["clicker-#{@clicker.id}"] != @clicker.instance
       @vote.save
       if @vote.valid?
-        cookies["clicker-#{@vote.clicker_id}"] = strict_cookie(@clicker.instance)
+        cookies["clicker-#{@vote.clicker_id}"] = @clicker.instance
       end
     end
     head :ok

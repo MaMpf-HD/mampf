@@ -65,9 +65,11 @@
                                 inspect_or_edit_medium_path(m, false),
                                 id: "lecture-#{dom_id(m)}",
                                 class: textcolor(m),
+                                title: release_date_info(m),
                                 data: { type: m.teachable.class.to_s,
                                         id: m.teachable.id,
-                                        tags: m.tags.pluck(:id) } %>
+                                        tags: m.tags.pluck(:id),
+                                        toggle: 'tooltip' } %>
                   </li>
                 <% end %>
               </ul>

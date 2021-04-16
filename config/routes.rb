@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   require 'sidekiq/web'
+  require 'sidekiq/cron/web'
 
   authenticate :user, lambda { |u| u.admin? } do
     mount Sidekiq::Web => '/sidekiq'
@@ -210,6 +211,8 @@ Rails.application.routes.draw do
                                   as: 'get_statistics'
   get 'media/:id/show_comments', to: 'media#show_comments',
                                  as: 'show_media_comments'
+  delete 'media/:id/cancel_publication', to: 'media#cancel_publication',
+                                         as: 'cancel_publication'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
