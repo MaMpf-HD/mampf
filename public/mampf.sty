@@ -1,4 +1,4 @@
-%% LaTeX package mampf - version 2.1 (2021/4/6)
+%% LaTeX package mampf - version 2.11 (2021/4/16)
 %% Source file for mampf.sty
 %%
 %% -------------------------------------------------------------------------------------------
@@ -12,7 +12,7 @@
 %% https://www.latex-project.org/lppl.txt
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{mampf}[2021/04/06 mampf Package]
+\ProvidesPackage{mampf}[2021/04/16 mampf Package]
 \RequirePackage{embedfile,marginnote,qrcode,mathtools}
 \RequirePackage[nomessages]{fp}
 \RequirePackage{hyperref}
@@ -41,10 +41,10 @@
 \newcommand{\setmampfurl}[1]{\renewcommand{\@mampfurl}{#1}\mampfurlundefinedfalse}
 \AtBeginDocument{%
 \ifmampfurlundefined{\PackageWarningNoLine{mampf}{MaMpf URL not defined. MaMpf links will not work.}}\fi%
-\embedfile[filespec=structure.mampf]{\jobname.mampf}
+\IfFileExists{\jobname.mampf}{\embedfile[filespec=structure.mampf]{\jobname.mampf}}{\PackageWarningNoLine{mampf}{No file \jobname.mampf found. Run again.}}
 \newwrite\outfile
 \immediate\openout\outfile=\jobname.mampf
-\immediate\write\outfile{MaMpf-Version|2.1}
+\immediate\write\outfile{MaMpf-Version|2.11}
 }
 \AtEndDocument{%
 \immediate\closeout\outfile%
@@ -192,7 +192,7 @@
   \def\@@mampfvideo[#1]#2{\global\advance\@linknumber 1\relax%
   \PackageWarning{mampf}{Outdated command '\mampfvideo'}%
   \ifnum\compileoptions>0%
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/play/?time=#1}}[-.75\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/play?time=#1}}[-.75\marginparwidth]
     \mampflinkprotokoll{#2}{\the\@linknumber}%
   \fi}
   \def\@mampfvideo#1{\global\advance\@linknumber 1\relax%
@@ -205,7 +205,7 @@
   \def\@@mampftext[#1]#2{\global\advance\@linknumber 1\relax%
   \PackageWarning{mampf}{Outdated command '\mampftext'}%
   \ifnum\compileoptions>0%
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display/?destination=#1}}[-.75\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display?destination=#1}}[-.75\marginparwidth]
     \mampflinkprotokoll{#2}{\the\@linknumber}%
     \fi}
   \def\@mampftext#1{\global\advance\@linknumber 1\relax%
@@ -218,43 +218,43 @@
 \DeclareRobustCommand\mampftime{\@ifnextchar[{\@@mampftime}{\@mampftime}}
 \def\@@mampftime[#1]#2#3#4{\global\advance\@linknumber 1\relax%
   \ifnum\compileoptions>0%
-    \href{\@mampfurl/media/#3/play/?time=#2}{#4}
+    \href{\@mampfurl/media/#3/play?time=#2}{#4}
 		\FPeval{\shift}{clip(#1-.75)}
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#3/play/?time=#2}}[\shift\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#3/play?time=#2}}[\shift\marginparwidth]
     \mampflinkprotokoll{#3}{\the\@linknumber}%
   \fi}
 \def\@mampftime#1#2#3{\global\advance\@linknumber 1\relax%
   \ifnum\compileoptions>0%
-    \href{\@mampfurl/media/#2/play/?time=#1}{#3}
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/play/?time=#1}}[-.75\marginparwidth]
+    \href{\@mampfurl/media/#2/play?time=#1}{#3}
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/play?time=#1}}[-.75\marginparwidth]
     \mampflinkprotokoll{#2}{\the\@linknumber}%
   \fi}
 \DeclareRobustCommand\mampfpage{\@ifnextchar[{\@@mampfpage}{\@mampfpage}}
 \def\@@mampfpage[#1]#2#3#4{\global\advance\@linknumber 1\relax%
   \ifnum\compileoptions>0%
-    \href{\@mampfurl/media/#3/display/?page=#2}{#4}
+    \href{\@mampfurl/media/#3/display?page=#2}{#4}
 		\FPeval{\shift}{clip(#1-.75)}
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#3/display/?page=#2}}[\shift\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#3/display?page=#2}}[\shift\marginparwidth]
     \mampflinkprotokoll{#3}{\the\@linknumber}%
   \fi}
 \def\@mampfpage#1#2#3{\global\advance\@linknumber 1\relax%
   \ifnum\compileoptions>0%
-    \href{\@mampfurl/media/#2/display/?page=#1}{#3}
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display/?page=#1}}[-.75\marginparwidth]
+    \href{\@mampfurl/media/#2/display?page=#1}{#3}
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display?page=#1}}[-.75\marginparwidth]
     \mampflinkprotokoll{#2}{\the\@linknumber}%
   \fi}
 \DeclareRobustCommand\mampfdest{\@ifnextchar[{\@@mampfdest}{\@mampfdest}}
 \def\@@mampfdest[#1]#2#3#4{\global\advance\@linknumber 1\relax%
   \ifnum\compileoptions>0%
-    \href{\@mampfurl/media/#3/display/?destination=#2}{#4}
+    \href{\@mampfurl/media/#3/display?destination=#2}{#4}
 		\FPeval{\shift}{clip(#1-.75)}
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#3/display/?destination=#2}}[\shift\marginparwidth]
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#3/display?destination=#2}}[\shift\marginparwidth]
     \mampflinkprotokoll{#3}{\the\@linknumber}%
   \fi}
 \def\@mampfdest#1#2#3{\global\advance\@linknumber 1\relax%
   \ifnum\compileoptions>0%
-    \href{\@mampfurl/media/#2/display/?destination=#1}{#3}
-    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display/?destination=#1}}[-.75\marginparwidth]
+    \href{\@mampfurl/media/#2/display?destination=#1}{#3}
+    \marginnote{\qrcode[height=\marginparwidth]{\@mampfurl/media/#2/display?destination=#1}}[-.75\marginparwidth]
     \mampflinkprotokoll{#2}{\the\@linknumber}%
   \fi}
 \DeclareRobustCommand\mampfquiz{\@ifnextchar[{\@@mampfquiz}{\@mampfquiz}}
