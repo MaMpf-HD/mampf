@@ -6,6 +6,7 @@ slug: /
 ## Step 1: Generate a new Docusaurus site
 
 If you haven't already, generate a new Docusaurus site using the classic template:
+Does it work?
 
 ```shell
 npx @docusaurus/init@latest init my-website classic
