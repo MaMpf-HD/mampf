@@ -1,7 +1,7 @@
 ---
 title: Lektionen
 ---
-Die Seite „Lektionen“ ist eine Unterseite einer Veranstaltung [Link!!!]. Sie ermöglicht Nutzer*innen Zugriff auf Lektionen der Veranstaltung. In einer Lektion werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet bzw. abgespielt und heruntergeladen sowie kommentiert werden.
+Die Seite „Lektionen“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Sie ermöglicht Nutzer*innen Zugriff auf Lektionen der Veranstaltung. In einer Lektion werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet bzw. abgespielt und heruntergeladen sowie kommentiert werden.
 
 ## Navigation zu dieser Seite
 
