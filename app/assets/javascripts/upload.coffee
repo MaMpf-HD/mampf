@@ -488,7 +488,7 @@ bulkCorrectionUpload = (fileInput) ->
     $('#file-optimize').hide()
     $('#userManuscript-upload-notice').hide()
     $('#userManuscript-uploadButton-call').prop('disabled',true)
-    if file.size < 5000000
+    if file.size < 5000000 || (file.type != 'application/pdf' && file.size < 20000000)
       $('#userManuscript-uploadButton-call').prop('disabled',false)
       $('#file-size-correct').show()
       $('#userManuscript-uploadCenter').show()

@@ -3176,9 +3176,10 @@ fresh@0.5.2:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
 
-friendly-challenge@^0.6.2:
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/friendly-challenge/-/friendly-challenge-0.6.2.tgz#9ce16b49ea971e6f7efa3cd757714d8eedd84bbf"
+friendly-challenge@^0.8.4:
+  version "0.8.4"
+  resolved "https://registry.yarnpkg.com/friendly-challenge/-/friendly-challenge-0.8.4.tgz#b03783c14057c8068f6f59de4d405cd6c874d406"
+  integrity sha512-+Se6ArlWtKmsj2kqZhqaBaHLmTxNqgVYpEZdQ3ElnuJ6CPeWN/g05boPHm5qPSFyOezY1aN/AnlIGmArAXQ+qw==
   dependencies:
     "@babel/runtime-corejs3" "^7.10.4"
     core-js "^3.6.5"

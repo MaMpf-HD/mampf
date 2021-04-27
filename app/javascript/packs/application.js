@@ -47,9 +47,10 @@ document.addEventListener("turbolinks:load", function () {
             doneCallback: doneCallback,
             errorCallback,
             puzzleEndpoint: $('#captcha-widget').data("captcha-url"),
-            startMode: "auto"
+            startMode: "auto",
+            language:$('#captcha-widget').data("lang")
         };
-
+        console.log(options)
         widget = new WidgetInstance(element, options);
         //DO not uncomment, evil
         //    widget.reset();
