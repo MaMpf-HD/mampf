@@ -10,7 +10,7 @@
       <%= paginate media, remote: true %>
     </div>
   </div>
-  <div class="row">
+  <div class="row" style="overflow-y:scroll;max-height:45vh;">
     <div class="<%= purpose == 'media' ? 'col-9' : 'col-8' %>">
       <div class="row bg-mdb-color-lighten-5 mx-2 py-3"
            id="searchResultsHeader">
@@ -114,7 +114,7 @@
         </div>
       </div>
     <% else %>
-      <div class="col-4">
+      <div class="col-4" style="overflow-y:scroll;max-height:38vh;">
         <div class="row bg-mdb-color-lighten-5 ml-2 py-2 mb-3">
           <div class="col-12">
             <strong>
