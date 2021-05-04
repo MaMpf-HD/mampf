@@ -38,6 +38,8 @@ $(document).on 'turbolinks:load', ->
   # Sliders
   seekBar = document.getElementById('seek-bar')
   volumeBar = document.getElementById('volume-bar')
+  # Selectors
+  speedSelector = document.getElementById('speed')
   # Time
   currentTime = document.getElementById('current-time')
   maxTime = document.getElementById('max-time')
@@ -204,5 +206,14 @@ $(document).on 'turbolinks:load', ->
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' +
     ' #2497E3, #2497E3 ' + value*100 + '%, #ffffff ' + value*100 + '%, #ffffff)'
     return
-
+    # Event handler for speed speed selector
+  speedSelector.addEventListener 'change', ->
+    if video.preservesPitch?
+      video.preservesPitch = true
+    else if video.mozPreservesPitch?
+      video.mozPreservesPitch = true
+    else if video.webkitPreservesPitch?
+      video.webkitPreservesPitch = true
+    video.playbackRate = @options[@selectedIndex].value
+    return
   return
