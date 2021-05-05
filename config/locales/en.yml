@@ -387,8 +387,8 @@ en:
           <i>
           script based:
           </i>
-          It is necessary to include the
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
+          It is necessary to include the latest
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Package</a>
           into the manuscript's .tex-file and to provide anything
           that is labelled with \mampflabels.
           When you upload the resulting script to MaMpf, you can import the
@@ -424,7 +424,7 @@ en:
           file of the manuscript and all items selected in the editing process
           of the session. For this to work, you need to create MaMpf labels in
           the script's LaTeX file using the
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Package</a>
           and import them to MaMpf after uploading the script.
           </li>
           </ul>
@@ -927,7 +927,7 @@ en:
           There can be only one manuscript per event series.
           Manuscripts cannot be converted to other media types, the same goes
           in the other direction. If you use the
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf Package</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf Package</a>
           for LaTeX, MaMpf can extract additional information from the pdf.
           </li>
           <li>
