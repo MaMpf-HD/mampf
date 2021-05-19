@@ -31,6 +31,12 @@
 
 en:
   mampf: 'MaMpf'
+  views:
+    pagination:
+      first: "&laquo; First"
+      last: "Last &raquo;"
+      previous: "&lsaquo; Previous"
+      next: "Next &rsaquo;"
   categories:
     kaviar:
       singular: 'Lesson'
@@ -84,6 +90,7 @@ en:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
+    mampf_news: 'MaMpf-News'
     submissions: 'Submissions'
     tutorials: 'Tutorials'
   unauthorized:
@@ -226,7 +233,7 @@ en:
           You can edit them.
         edited_lectures: >
           This is the list of all event series you can edit as an additional editor.
-        lectures_as_course_editor: >
+        lectures_as_module_editor: >
           This is the list of all event series belonging to courses you can edit as
           course editor. Your own event series are not shown here.
           By inheritance, you have editing access to these event series.
@@ -294,7 +301,7 @@ en:
           This is the list of courses you cannot edit.
           (Except if you are an admin :-P )
       term: 'Term'
-      term/type: 'Term/Type'
+      term_type: 'Term/Type'
       title: 'Title'
       teacher: 'Teacher'
       editors: 'Editors'
@@ -801,6 +808,11 @@ en:
         end_item: >
           Here you can select the manuscript item with which the
           session ended.
+        content: >
+          Here is the content extracted from media that is linked to this session.
+          This is done by extracting table of contents from videos, that have been
+          edited by the ThymE-Editor, contents descriptions and metadata from 
+          scripts (for script-based lectures).
         list: >
           This is the list of all associated sessions.
         tags_without_section: >
@@ -825,6 +837,7 @@ en:
       media_search: 'Search Media'
       create: 'Create Medium'
       edit: 'Edit Medium'
+      edit_tags: 'Edit Tags'
       inspect: 'Inspect Medium'
       no_media: 'No media found.'
       deleted: 'This medium has been deleted.'
@@ -834,7 +847,7 @@ en:
         no_title: 'untitled'
         to_session: 'to Session %{number}, %{date}'
         question: 'Question %{id}'
-        question: 'Remark %{id}'
+        remark: 'Remark %{id}'
       content: 'Content'
       preview_content: 'Content preview'
       tags_without_lesson: 'Tags missing in session'
@@ -1749,9 +1762,8 @@ en:
       You consented to our privacy policy.
     no_consent: >
       You have not consented to our privacy policy.
-    sure: 'Are you sure?'
     locale: 'Language'
-    suscribe_lecture: 'Subscribe event series'
+    subscribe_lecture: 'Subscribe event series'
     passphrase_required: >
       You want to subscribe the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
@@ -1860,6 +1872,7 @@ en:
       For this event series there are the following tutorials:
     no_submissions_yet: >
       No assignments have been due yet.
+  sure: 'Are you sure?'
   details: 'Details'
   none: 'none'
   back: 'Back'
@@ -1885,6 +1898,7 @@ en:
   related_lessons: 'Related sessions'
   no_related_lessons: 'There are no related sessions.'
   related_media: 'Related media'
+  related_questions: 'Related questions'
   no_related_media: 'There are no related media.'
   no_related_questions: >
     There are no related questions that are associated to courses or event series
@@ -1962,6 +1976,7 @@ en:
     manuscript: 'Manuscript'
     no_manuscript: 'There is no manuscript present.'
     view: 'view pdf in browser'
+    view_script: 'view script in browser'
     download: 'download manuscript'
     length: 'Length'
     size: 'Size'
@@ -2379,6 +2394,14 @@ en:
     manuscript_no_pdf: The uploaded file is not a valid pdf file.
     manuscript_size_too_big: >
       The uploaded file is too big (maximum allowed size is 10 MB).
+    wrong_file_type: >
+      This file has the wrong file type %{file_type}.Expected file type:
+      %{accepted_file_type}.
+    wrong_mime_type: >
+      File has wrong MIME type %{mime_type}. Expected MIME type:
+      %{accepted_mime_types}.
+    correction_size_too_big: >
+      The uploaded file is too big. Maximum file size is 15 MB.
     too_late_no_saving:
       The due date for this assignment has expired, therefore this change
       cannot be saved.
@@ -2588,7 +2611,7 @@ en:
       You can subscribe to it in your profile settings.
     submission_invitation_subject: >
       Invitation to submission of %{assignment} in %{lecture}
-    submission_invitation: >
+    submission_invitation_html: >
       %{issuer} issuer has invited you to join a submission to %{assignment}
       in %{lecture}. The code to join is: %{code}. You can enter and redeem
       it in MaMpf manually or follow this %{link}.
@@ -2598,7 +2621,7 @@ en:
       You have succesfully uploaded the file "%{filename}" to submission
       to %{assignment} in %{lecture}. You can view the current file via this
       %{link}.
-    submission_upload_by_others_info_html: >
+    submission_upload_by_others_html: >
       %{uploader} has succesfully uploaded the file "%{filename}" to submission
       to %{assignment} in %{lecture}. You can view the current file via this
       %{link}
@@ -2607,7 +2630,7 @@ en:
     submission_upload_removal_html: >
       You have removed the file "%{filename}" for the submission
       to %{assignment} in %{lecture}.
-    submission_upload_removal_by_others_info_html: >
+    submission_upload_removal_by_others_html: >
       %{remover} has removed the file "%{filename}" for the submission
       to %{assignment} in %{lecture}.
     submission_join_subject: >
@@ -2625,7 +2648,7 @@ en:
       %{assignment} in %{lecture}. You can view it via this %{link}.
     submission_acceptance_subject: >
       Late submission for %{assignment} in %{lecture} accepted
-    submission_acceptance_subject: >
+    submission_acceptance: >
       Your late submission for %{assignment} in %{lecture} has been accepted
       and will be graded.
     submission_rejection_subject: >
@@ -2685,7 +2708,7 @@ en:
         are displayed for this lecture.
     structures: 'Structures'
     properties: 'Properties'
-    edit_relizations: 'Edit Realizations'
+    edit_realizations: 'Edit Realizations'
     no_realizations: 'There are no realizations.'
     search_examples: 'Search for Examples'
     no_structures: >
@@ -2714,6 +2737,7 @@ en:
     preferences: 'Preferences'
     language: 'Language'
     date: 'Date'
+    section: 'Section'
     sections: 'Sections'
     at_the_beginning: 'At the beginning'
     at_beginning_of_chapter: 'At the beginning of the chapter'
@@ -3052,7 +3076,7 @@ en:
     no_teacher: 'There is no teacher with this id.'
     no_clicker: 'There is no clicker with this id.'
     no_clicker_access: 'You cannot to edit this clicker.'
-    no_answer: 'There is no subject with this id.'
+    no_subject: 'There is no subject with this id.'
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
     no_tutorial: 'There is no tutorial with this id.'
@@ -3166,7 +3190,7 @@ en:
               present: >
                 Term was given, but associated course is independent of terms
             teacher:
-              required: 'You need to give a teacher.'
+              required: 'You need to give a teacher.' 
         lesson:
           attributes:
             date:
@@ -3177,6 +3201,7 @@ en:
           attributes:
             linked_medium:
               taken: 'This link already exists.'
+              uniqueness: 'This link already exists.'
         medium:
           attributes:
             sort:

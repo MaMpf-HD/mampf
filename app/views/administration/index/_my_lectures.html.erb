@@ -42,7 +42,7 @@
     <% if current_user.lectures_as_module_editor.present? %>
       <%= t('admin.main.as_course_editor') %>
       (<%= current_user.lectures_as_module_editor.count %>)
-      <%= helpdesk(t('admin.main.info.lectures_as_course_editor'), false) %>
+      <%= helpdesk(t('admin.main.info.lectures_as_module_editor'), false) %>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
