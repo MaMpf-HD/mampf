@@ -29,7 +29,7 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinste
 * `Nächste` bzw. `Vorige Wechsel` auf die nächste bzw. vorige Seite.
 * `Letzte` bzw. `Erste` Wechsel auf die letzte bzw. erste Seite.
 
-\*Realisierung für Bedienelemente überlegen und ergänzen, Icons einbinden\*
+\*Icons einbinden\*
 
 ### Mediacards
 * `Sitzung` Gehe auf die [Seite der Sitzung](/session.md).
@@ -42,7 +42,7 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinste
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
 * `Kommentieren bzw. n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](/comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
-\*Realisierung für Bedienelemente überlegen und ergänzen, Icons einbinden\*
+\*Icons einbinden\*
 
 ## Hinweis zum Fehlen von Bedienelementen
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Eine Lektion kann aus einem PDF, einem Video und einem externen Link bestehen, sie kann aber auch weniger Komponenten enthalten. Die entsprechenden Buttons sind nur vorhanden, wenn dies auch für die entsprechenden Dateien gilt. Ebenso verhält es sich bei den Buttons zur Seitennavigation: Erst wenn es mehr Lektionen gibt, als pro Seite angezeigt werden sollen (standardmäßig acht), sind diese Buttons verfügbar. Damit Begriffe angezeigt werden, müssen welche mit der Lektion verknüpft sein. Die Verlinkung zur Sitzung ist nur vorhanden, wenn eine Sitzung assoziiert ist.
@@ -59,8 +59,6 @@ Auf der Sitzungsseite gibt es eine Gliederung, mit der zur gewünschten Stelle i
 
 ### [Seite der getaggten Begriffe](/tag.md)
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.
-
-\*Icon\*
 
 ### [THymE-Player](/thyme.md)
 
