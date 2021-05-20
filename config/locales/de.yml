@@ -402,7 +402,7 @@ de:
           skriptbasiert:
           </i>
           Hier ist es notwendig, in der .tex-Datei für das Manuskript das
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Paket</a>
           einzubinden
           und alles, was gelabelt werden soll, mit \mampflabels zu versehen.
           Das so entstandene Skript wird in Mampf hochgeladen und die
@@ -439,7 +439,7 @@ de:
           bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
           wurden. Damit das funktioniert, müssen die MaMpf-Labels im
           LaTeX-File für das Manuskript mit dem
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Paket</a>
           erzeugt werden
           und nach dem Hochladen des Skriptes in MaMpf übernommen werden.
           </li>
@@ -977,7 +977,7 @@ de:
           Pro Veranstaltung kann es höchstens ein Skript geben.
           Skripte können nicht in andere Medientypen umgewandelt werden,
           dasselbe gilt auch andersherum. Verwendest Du das
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Paket</a>
           für LaTeX, kann MaMpf aus dem pdf zusätzliche Informationen
           extrahieren.
           </li>
