@@ -4,21 +4,29 @@ module.exports = {
       type: 'category',
       label: 'Seiten',
       items: [
-        'all-pages',
+        'structure',
         {
           type: 'category',
-          label: 'Aufbau',
-          items: ['nav-bar', 'sidebar', 'footer'],
+          label: 'Nach Funktion',
+          items: ['administrative', 'active', 'informative', 'communicative',],
         },
-        'getting-started',
+        {
+          type: 'category',
+          label: 'Nach Erreichbarkeit',
+          items: ['nav-bar', 'sidebar', 'event-series-list',],
+        },
+        'all-pages',
+        'getting-started'
       ],
     },
+    'tutorials',
     {
       type: 'category',
-      label: 'Seiten',
+      label: 'Konzeption',
       items: [
-        'pages-of-a-course',
+        'navigation', 'design-and-structure', 'connecting-concepts',
       ],
     },
+    'terminology',
   ],
 };

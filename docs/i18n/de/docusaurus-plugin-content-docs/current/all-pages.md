@@ -8,4 +8,5 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 * [Lektionen](./lessons.md)
 
 ## W
+* [Wiederholung](/repetition.md)
 * [Worked Examples](/worked-examples.md)
