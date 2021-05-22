@@ -223,7 +223,7 @@ de:
           Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
           Bearbeitungsrechte an diesen Veranstaltungen.
-        lectures_as_module_editor: >
+        lectures_as_course_editor: >
           Dies ist eine Liste aller Veranstaltungen, die zu
           Modulen gehören, für die du EditorIn bist, abzüglich der
           Veranstaltungen, die Du selbst als DozentIn gehalten hast.

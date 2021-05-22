@@ -233,7 +233,7 @@ en:
           You can edit them.
         edited_lectures: >
           This is the list of all event series you can edit as an additional editor.
-        lectures_as_module_editor: >
+        lectures_as_course_editor: >
           This is the list of all event series belonging to courses you can edit as
           course editor. Your own event series are not shown here.
           By inheritance, you have editing access to these event series.
