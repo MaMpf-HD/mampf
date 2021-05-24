@@ -2,17 +2,17 @@ module.exports = {
   docs: [
     {
       type: 'category',
-      label: 'Seiten',
+      label: 'Pages',
       items: [
         'structure',
         {
           type: 'category',
-          label: 'Nach Funktion',
+          label: 'By Function',
           items: ['administrative', 'active', 'informative', 'communicative',],
         },
         {
           type: 'category',
-          label: 'Nach Erreichbarkeit',
+          label: 'By Access',
           items: ['nav-bar', 'sidebar', 'event-series-list',],
         },
         'all-pages',
@@ -22,7 +22,7 @@ module.exports = {
     'tutorials',
     {
       type: 'category',
-      label: 'Konzeption',
+      label: 'Conception',
       items: [
         'navigation', 'design-and-structure', 'connecting-concepts',
       ],

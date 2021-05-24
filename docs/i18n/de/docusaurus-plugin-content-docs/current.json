@@ -6,5 +6,21 @@
   "sidebar.docs.category.Docusaurus Tutorial": {
     "message": "Docusaurus Tutorial",
     "description": "The label for category Docusaurus Tutorial in sidebar docs"
+  },
+  "sidebar.docs.category.Pages": {
+    "message": "Seiten",
+    "description": "Label for category Pages in sidebar docs"
+  },
+  "sidebar.docs.category.Conception": {
+    "message": "Konzeption",
+    "description": "Label for category Conception in sidebar docs"
+  },
+  "sidebar.docs.category.By Function": {
+    "message": "Nach Funktion",
+    "description": "Label for subcategory By Function in sidebar docs"
+  },
+  "sidebar.docs.category.By Access": {
+    "message": "Nach Erreichbarkeit",
+    "description": "Label for subcategory By Access in sidebar docs"
   }
 }
