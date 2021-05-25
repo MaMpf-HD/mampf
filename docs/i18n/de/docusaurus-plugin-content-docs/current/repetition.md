@@ -21,8 +21,8 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](\mediacard.md) zu sehen si
 ### Seiteneinstellungen
 * `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.
 * `alle` Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Worked Examples auf einer Seite angezeigt werden.
-* `pro Seite` Arrow-drop-down.png Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen 3, 4, 8 (standardmäßig), 12, 24, und 48.
-* `Zusatzmaterialien` Arrow-drop-down.png Ändere Einstellung für die Anzeige von Zusatzmaterialien: zu bereits Behandeltem (standardmäßig), keine oder alle.
+* `pro Seite` Arrow-drop-down.png Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen *3*, *4*, *8* (standardmäßig), *12*, *24* und *48*.
+* `Zusatzmaterialien` Arrow-drop-down.png Ändere Einstellung für die Anzeige von Zusatzmaterialien: *zu bereits Behandeltem* (standardmäßig), *keine* oder *alle*.
 
 \*Icons einbinden\*
 
@@ -32,15 +32,15 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](\mediacard.md) zu sehen si
 * `Letzte` bzw. `Erste` Wechsel auf die letzte bzw. erste Seite.
 
 ### Mediacards
-* `Veranstaltung` Gehe auf die Seite der Veranstaltung.
-* `Begriff` Gehe auf die Seite des Begriffs.
-* Play-arrow.png Spiele das Video mit THymE ab.
+* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](/event-series.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* Play-arrow.png Spiele das Video mit [THymE](/thyme.md) ab.
 * Library-books.png Öffne das PDF.
 * Link.png Öffne externen Link.
-* Info-black.png Öffne die Medienseite der Wiederholung.
+* Info-black.png Öffne die [Medienseite der Wiederholung](/medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige Kommentarseite, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](/comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons einbinden\*
 

@@ -21,8 +21,8 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](/mediacard.md) zu sehen si
 ### Seiteneinstellungen
 * `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.
 * `alle` Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Worked Examples auf einer Seite angezeigt werden.
-* `pro Seite` Arrow-drop-down.png Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen 3, 4, 8 (standardmäßig), 12, 24, und 48.
-* `Zusatzmaterialien` Arrow-drop-down.png Ändere Einstellung für die Anzeige von Zusatzmaterialien: zu bereits Behandeltem (standardmäßig), keine oder alle.
+* `pro Seite` Arrow-drop-down.png Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen *3*, *4*, *8* (standardmäßig), *12*, *24* und *48*.
+* `Zusatzmaterialien` Arrow-drop-down.png Ändere Einstellung für die Anzeige von Zusatzmaterialien: *zu bereits Behandeltem* (standardmäßig), *keine* oder *alle*.
 
 \*Icons einbinden\*
 
@@ -40,7 +40,7 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](/mediacard.md) zu sehen si
 * Library-books.png Öffne das PDF.
 * Link.png Öffne externen Link.
 * Leak-add.png Öffne Geogebra-Applet.
-* Info-black.png Öffne die [Medienseite des Worked Examples](/worked-examples.md).
+* Info-black.png Öffne die [Medienseite des Worked Examples](/medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
 * `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](/comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
@@ -68,13 +68,13 @@ Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gl
 
 \*Icon\*
 
-### [Medienseite einzelner Worked Examples](/worked-examples.md)
+### [Medienseite einzelner Worked Examples](/medium.md)
 Auf der Medienseite stehen weitere Informationen zu Länge bzw. Umfang und Größe von PDFs bzw. Videos zur Verfügung. Über die dort aufgeführte Gliederung des Worked Examples kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Worked Example verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den Info-black.png-Button klicken.
 
 \*Icon\*
 
 ### [Kommentarseite](/comments-media.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf Kommentieren bzw. n Kommentare klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
