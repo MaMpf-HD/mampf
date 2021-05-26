@@ -1,7 +1,7 @@
 ---
 title: Übungen
 ---
-Die Seite „Übungen“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Sie ermöglicht Nutzer*innen Zugriff auf die Übungen zur Veranstaltung. In einer Übung werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet, heruntergeladen und kommentiert werden.
+Die Seite „Übungen“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Sie ermöglicht Nutzer\*innen Zugriff auf die Übungen zur Veranstaltung. In einer Übung werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet, heruntergeladen und kommentiert werden.
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*
@@ -71,7 +71,7 @@ Auf der Medienseite stehen weitere Informationen zu Umfang, Größe und Inhalt d
 \*Icon\*
 
 ### [Kommentarseite](/comments-media.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

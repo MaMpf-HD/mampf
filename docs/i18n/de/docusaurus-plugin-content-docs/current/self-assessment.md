@@ -28,7 +28,7 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff und Selbsttest.
 \*Links ergänzen\*
 
 ### Test
-Auf dieser Seite findet der Selbsttest statt. Nachdem Nutzer*innen Antworten angeben und bestätigt haben, erhalten sie Feedback und Begründungen dafür, warum Antwortmöglichkeiten wahr oder falsch sind.
+Auf dieser Seite findet der Selbsttest statt. Nachdem Nutzer\*innen Antworten angeben und bestätigt haben, erhalten sie Feedback und Begründungen dafür, warum Antwortmöglichkeiten wahr oder falsch sind.
 
 ### Seite der getaggten Begriffe
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.
