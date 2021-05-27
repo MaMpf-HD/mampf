@@ -3,8 +3,7 @@
 
 console.log('Hello world from coffeescript');
 window.Routes = require('./routes.js.erb');
-require("@rails/ujs").start();
-require("turbolinks").start();
+
 require("jquery");
 import JQuery from 'jquery';
 var $, jQuery;

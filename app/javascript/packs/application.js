@@ -17,16 +17,17 @@
 
 //import * from 'jquery-datetimepicker'
 import css from 'jquery-datetimepicker/build/jquery.datetimepicker.min.css'
-
+require("jquery");
+import $ from "jquery";
 //require('./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css')
-import myLib from 'imports-loader?imports=default%20jquery%20$!./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
+//import myLib from 'imports-loader?imports=default%20jquery%20$!./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
 import {
     WidgetInstance
 } from "friendly-challenge";
 import('./styles/application.scss');
 require("@rails/ujs").start();
 require("turbolinks").start();
-require("jquery");
+
 require("jquery-ui");
 require("popper.js");
 var friendlyChallengeWidgetInstance = WidgetInstance
