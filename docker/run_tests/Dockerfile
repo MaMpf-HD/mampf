@@ -7,10 +7,16 @@ EXPOSE 3000
 ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
 
 # https://github.com/nodesource/distributions#installation-instructions
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && apt-get install -y nodejs yarn ffmpeg imagemagick pdftk ghostscript sqlite3 shared-mime-info --no-install-recommends && rm -rf /var/lib/apt/lists/* && apt-get clean
-
+    curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
+    sed -i "s/deb\.debian\.org/ftp.halifax\.rwth-aachen.de/g" /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y ffmpeg ghostscript imagemagick \
+            libarchive-tools nodejs pdftk postgresql-client-12 sqlite3 wget \
+            wait-for-it yarn shared-mime-info && \
+    rm -rf /var/lib/apt/lists/* && apt-get clean
+    
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 WORKDIR /usr/src/app
 USER app
