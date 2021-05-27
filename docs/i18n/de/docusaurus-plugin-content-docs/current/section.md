@@ -2,7 +2,9 @@
 title: Abschnitt
 ---
 
-Die Seite „Abschnitt“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Auf ihr kann man sich einen Überblick über den Inhalt des Abschnitts sowie über verknüpfte Begriffe, Medien und Sitzungen verschaffen. Über die Inhaltsübersicht können PDF-Dateien und Videos an der gewünschten Stelle geöffnet werden.
+Die Seite „Abschnitt“ ist eine Unterseite einer Veranstaltung. Auf ihr kann man sich einen Überblick über den Inhalt des Abschnitts sowie über verknüpfte Begriffe, Medien und Sitzungen verschaffen. Über die Inhaltsübersicht können PDF-Dateien und Videos an der gewünschten Stelle geöffnet werden.
+
+\*Links ergänzen\*
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*

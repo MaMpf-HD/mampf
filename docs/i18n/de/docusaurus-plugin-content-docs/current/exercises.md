@@ -1,7 +1,9 @@
 ---
 title: Übungen
 ---
-Die Seite „Übungen“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Sie ermöglicht Nutzer\*innen Zugriff auf die Übungen zur Veranstaltung. In einer Übung werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet, heruntergeladen und kommentiert werden.
+Die Seite „Übungen“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen Zugriff auf die Übungen zur Veranstaltung. In einer Übung werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet, heruntergeladen und kommentiert werden.
+
+\*Links ergänzen\*
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*

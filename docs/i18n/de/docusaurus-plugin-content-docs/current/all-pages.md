@@ -13,6 +13,13 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 ## L
 * [Lektionen](./lessons.md)
 
+## M
+* [Mitteilungen](/announcements.md)
+* [Modul](/module.md)
+
+## O
+* [Organisatorisches](/general-information.md)
+
 ## S
 * [Selbsttest](/self-assessment.md)
 * [Skript](/manuscript.md)

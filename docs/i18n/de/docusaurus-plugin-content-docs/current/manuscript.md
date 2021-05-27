@@ -1,7 +1,9 @@
 ---
 title: Skript
 ---
-Die Seite „Skript“ ist eine Unterseite einer  [Veranstaltung](/event-series.md). Sie ermöglicht Nutzer\*innen Zugriff auf das Skript der Veranstaltung. Dieses kann betrachtet, heruntergeladen und kommentiert werden.
+Die Seite „Skript“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen Zugriff auf das Skript der Veranstaltung. Dieses kann betrachtet, heruntergeladen und kommentiert werden.
+
+\*Links ergänzen\*
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*

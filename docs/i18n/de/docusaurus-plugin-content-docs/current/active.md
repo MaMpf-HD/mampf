@@ -7,3 +7,5 @@ Liste aller Seiten, bei denen man aktiv werden kann
 * Zettelabgabe und Zettelrückgabe
 * Quizzes
 * Selbsttests
+
+* [Selbsttest](/self-assessment.md)

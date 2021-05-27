@@ -1,7 +1,9 @@
 ---
 title: Begriff
 ---
-Die Seite „Begriff“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Dort finden Nutzer\*innen Synonyme für den Begriff, mit dem Begriff verknüpfte Abschnitte, Begriffe, Medien und Quizzes sowie eine Mindmap („MaMpf-Map“), die veranschaulicht, mit welchen Begriffen der entsprechende Begriff zusammenhängt. Mit der MaMpf-Map können die Seiten der mit dem Begriff verbunden Begriffe geöffnet werden.
+Die Seite „Begriff“ ist eine Unterseite einer Veranstaltung. Dort finden Nutzer\*innen Synonyme für den Begriff, mit dem Begriff verknüpfte Abschnitte, Begriffe, Medien und Quizzes sowie eine Mindmap („MaMpf-Map“), die veranschaulicht, mit welchen Begriffen der entsprechende Begriff zusammenhängt. Mit der MaMpf-Map können die Seiten der mit dem Begriff verbunden Begriffe geöffnet werden.
+
+\*Links ergänzen\*
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*

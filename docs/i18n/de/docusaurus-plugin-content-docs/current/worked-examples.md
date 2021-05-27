@@ -1,7 +1,9 @@
 ---
 title: Worked Examples
 ---
-Die Seite „Worked Examples“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Sie ermöglicht Nutzer\*innen Zugriff auf Worked Examples zu Themen der Veranstaltung. In einem Worked Example werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet bzw. abgespielt und heruntergeladen sowie kommentiert werden.
+Die Seite „Worked Examples“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen Zugriff auf Worked Examples zu Themen der Veranstaltung. In einem Worked Example werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet bzw. abgespielt und heruntergeladen sowie kommentiert werden.
+
+\*Links ergänzen\*
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*

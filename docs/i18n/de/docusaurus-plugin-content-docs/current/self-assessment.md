@@ -49,4 +49,4 @@ Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zu
 * [Sonstiges](/miscellaneous.md)
 * [Übungen](/exercises.md)
 * [Wiederholung](/repetition.md)
-* [Worked-Examples](/worked-examples.md)
+* [Worked Examples](/worked-examples.md)
