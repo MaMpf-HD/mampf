@@ -1,7 +1,5 @@
 de:
   mampf: 'MaMpf'
-  send_me_reset_password_instructions: >
-    Schick mir die Anleitung zur Änderung meines Passworts.
   views:
     pagination:
       first: "&laquo; Erste"
@@ -225,7 +223,7 @@ de:
           Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
           Bearbeitungsrechte an diesen Veranstaltungen.
-        lectures_as_module_editor: >
+        lectures_as_course_editor: >
           Dies ist eine Liste aller Veranstaltungen, die zu
           Modulen gehören, für die du EditorIn bist, abzüglich der
           Veranstaltungen, die Du selbst als DozentIn gehalten hast.
@@ -522,6 +520,13 @@ de:
           Hier kannst Du auswählen, an welcher Stelle das Kapitel (bzw. der Vortrag
           im Fall eines Seminars) eingefügt werden soll, indem Du das
           Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
+        date: >
+          Hier kannst Du auswählen, wann die Sitzung stattfand.
+        sections: >
+          Hier kannst Du auswählen, welche Abschnitte in dieser Sitzung
+          behandelt wurde. Standardmäßig wird diese Sitzung mit allen Tags
+          verknüpft, die  zu diesen Abschnitten gehört. Beim Bearbeiten kannst
+          Du die Tagauswahl verfeinern.
         section_title: >
           Hier kannst Du den Titel des Abschnitts angeben.
         insert_after_section: >
@@ -806,7 +811,13 @@ de:
       no_sections: 'Zu dieser Sitzung sind keine Abschnitte assoziiert.'
       start_item: 'Anfangs-Item'
       end_item: 'End-Item'
+      content: >
+        Dies ist der Inhalt, der aus veröffentlichten Medien, die mit dieser
+        Sitzung verknüpft sind, extrahiert wurde. Dies verwendet Inhaltsverzeichnisse
+        von Videos, die mit dem ThymE-Editor bearbeitet wurden, Inhaltsbeschreibungen  
+        von Medien und Skriptmetadaten (wenn die Vorlesung auf einem Skript aufbaut).
       destroyed: 'Sitzung gelöscht'
+      tags_without_section: 'Tags ohne Abschnittsassozierung'
       info:
         date: >
           Hier kannst Du das Datum auswählen, an dem die
@@ -851,6 +862,9 @@ de:
           (im Falle skriptbasierter Vorlesungen) verwendet.
         list: >
           Dies ist die Liste aller assoziierten Sitzungen.
+        tags_without_section: >
+          Da nicht klar ist, welche Tags zu  diesem Abschnitt gehören,
+          kannst Du sie hier zu ordnen.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
@@ -1492,6 +1506,7 @@ de:
     user:
       current_lecture: 'Aktuelle Veranstaltung'
       homepage: 'Homepage'
+      profile_image: 'Profilbild'
       index: 'NutzerInnenübersicht'
       edited_content: 'Betreute Inhalte'
       no_content: 'Es gibt noch keine entsprechenden Inhalte.'
@@ -1740,7 +1755,7 @@ de:
         Diese Abzweigung wurde nicht implementiert.
       none_correct: 'Keine der angegebenen Optionen war korrekt.'
       undefined: 'undefined'
-      dafault: 'default'
+      default: 'default'
       graph: Quiz-Graph
       create_graph: 'Quiz-Graph anlegen'
       unreleased_vertices: >
@@ -1802,6 +1817,7 @@ de:
       edit: 'Studiengang bearbeiten'
       name: 'Bezeichnung'
       new: 'Studiengang anlegen'
+      no_courses: 'Es gibt noch keine Kurse in diesem Studiengang.'
     division:
       edit: 'Teilbereich bearbeiten'
       name: 'Bezeichnung'
@@ -1827,7 +1843,6 @@ de:
       Dieser Name wird Deinem Tutor bei Deinen Abgaben angezeigt. Wenn
       Du dieses Feld leerlässt, wird dafür der Anzeigename verwendet.
     change_data: 'Zugangsdaten ändern'
-    delete_account: 'Account löschen'
     courses: 'Module'
     primary_lecture: 'Primäre Veranstaltung'
     secondary_lectures: 'Weitere Veranstaltungen'
@@ -2071,6 +2086,7 @@ de:
         </ul>
   video:
     video: 'Video'
+    no_video: 'Es gibt kein Video.'
     play: 'THymE-Player'
     download: 'Video herunterladen'
     length: 'Länge'
@@ -2080,6 +2096,7 @@ de:
     resolution: 'Abmessungen'
   manuscript:
     manuscript: 'Manuskript'
+    no_manuscript: 'Es gibt kein Manuskript.'
     view: 'pdf im Browser betrachten'
     view_script: 'Skript im Browser betrachten'
     download: 'Manuskript herunterladen'
@@ -2087,6 +2104,7 @@ de:
     size: 'Größe'
     pages: 'S'
     destinations: 'Destinations'
+    structure: 'Struktur des Manuskripts'
     one_contradiction: >
       Es wurde ein Widerspruch gefunden. Wenn Du die Struktur des
       Skriptes in MaMpf importieren möchtest, musst Du erst den
@@ -2906,7 +2924,7 @@ de:
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
     associated_with_inheritance: 'Assoziiert mit Vererbung zu'
-    assoicated_to_short: 'Ass. zu'
+    associated_to_short: 'Ass. zu'
     description: 'Beschreibung'
     type: 'Typ'
     label: 'Label'
@@ -3215,7 +3233,7 @@ de:
     quiz_has_error: >
       Dieses Quiz hat einen Fehler.
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
-    no_search_string: >
+    no_search_term: >
       Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
     search_term_short: >
       Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
@@ -3356,6 +3374,7 @@ de:
           attributes:
             linked_medium:
               uniqueness: 'Diese Verknüpfung gibt es bereits.'
+              taken: 'Diese Verknüpfung gibt es bereits.'
         lesson:
           attributes:
             date:
@@ -3373,6 +3392,12 @@ de:
                 assoziiert werden.
               no_video: >
                 Medien vom Typ "Skript" beinhalten kein Video.
+              no_conversion_from_script: >
+                Ein Medium vom Typ "Manuskript" kann  nicht in einen anderen
+                Medientyp umgewandelt werden.
+              no_conversion_to_script: >
+                Ein Medium von einem anderen Typ als  "Manuskript" kann  nicht
+                in ein solches umgewandelt werden.
             teachable:
               blank: >
                 Es muss eine Assoziation zu einem Modul/Veranstaltung/Sitzung

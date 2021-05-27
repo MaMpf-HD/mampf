@@ -39,20 +39,20 @@
                            inspection: false,
                            teacher: true } %>
     <% end %>
-    <% if current_user.lectures_as_module_editor.present? %>
+    <% if current_user.lectures_as_course_editor.present? %>
       <%= t('admin.main.as_course_editor') %>
-      (<%= current_user.lectures_as_module_editor.count %>)
+      (<%= current_user.lectures_as_course_editor.count %>)
       <%= helpdesk(t('admin.main.info.lectures_as_course_editor'), false) %>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
-                                                    .lectures_as_module_editor),
+                                                    .lectures_as_course_editor),
                            inspection: false,
                            teacher: true } %>
     <% end %>
     <% if current_user.given_lectures.empty? &&
             current_user.edited_lectures.empty? &&
-            current_user.lectures_as_module_editor.empty? %>
+            current_user.lectures_as_course_editor.empty? %>
       <%= t('admin.main.no_lectures_taught') %>
     <% end %>
   </div>

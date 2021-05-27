@@ -321,7 +321,7 @@ class User < ApplicationRecord
 
   # lectures as module editor are all lectures that belong to an edited course
   # but are neither edited lectures nor given lectures
-  def lectures_as_module_editor
+  def lectures_as_course_editor
     Lecture.where(course: edited_courses) - edited_lectures.to_a -
       given_lectures.to_a
   end
@@ -329,7 +329,7 @@ class User < ApplicationRecord
   # teaching related lectures are given lectures, edited lectures and
   # lectures as module editor (see above)
   def teaching_related_lectures
-    (given_lectures + edited_lectures + lectures_as_module_editor).uniq
+    (given_lectures + edited_lectures + lectures_as_course_editor).uniq
   end
 
   # teaching unrelated lectures are all lectures that are not teaching related
