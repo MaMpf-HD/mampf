@@ -34,8 +34,7 @@
                     version: manuscript.contradictions['version'].first,
                     current_version: DefaultSetting::MAMPF_STY_VERSION,
                     package: link_to(t('here'),
-                               '/mampf.sty',
-                               download: 'mampf.sty')) %>
+                               'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
             </span>
           <% else %>
             <span class="redtext">
@@ -43,8 +42,7 @@
               <%= t('manuscript.version_unknown_html',
                     current_version: DefaultSetting::MAMPF_STY_VERSION,
                     package: link_to(t('here'),
-                               '/mampf.sty',
-                               download: 'mampf.sty')) %>
+                               'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
             </span>
           <% end %>
         </div>
