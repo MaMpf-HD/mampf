@@ -36,7 +36,7 @@ Die eigentliche Seite besteht aus einer Überschrift und den sechs Boxen „Syno
 `Test beginnen` Starte ein Quiz, das aus fünf der verknüpften Fragen besteht.
 
 ### Verknüpfte Medien
-`Medium` Klappe die Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind *Lektion*, *Worked Example*, *Quiz*, *Wiederholung*, *Beispiel*, *Übung*, *Skript*, *Quiz-Frage*, *Quiz-Erläuterung* und *Sonstiges*. Für mögliche weitere Buttons siehe [Mediacard](/medicard.md).
+`Medium` Klappe die Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind *Lektion*, *Worked Example*, *Quiz*, *Wiederholung*, *Beispiel*, *Übung*, *Skript*, *Quiz-Frage*, *Quiz-Erläuterung* und *Sonstiges*. Für mögliche weitere Buttons siehe [Mediacard](/mediacard.md).
 
 ## Hinweis zum Fehlen von Bedienelementen
 Die Box „Verknüpfte Fragen“ und die damit einhergehende Möglichkeit, ein Quiz zu starten, gibt es nur, wenn Fragen assoziiert sind.
