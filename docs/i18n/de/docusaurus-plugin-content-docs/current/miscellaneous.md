@@ -9,16 +9,16 @@ Die Seite „Sonstiges“ ist eine Unterseite einer Veranstaltung. Sie ermöglic
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Sonstiges“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Sonstiges“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](\sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Sonstiges“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Sonstiges“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
-Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](\mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
+Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
 
 \*Bilder mit Titel einfügen\*
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Mithilfe eines Screenshots, auf dem drei [Mediacards](\mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Sonstiges“ beschrieben.
+Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Sonstiges“ beschrieben.
 
 ### Seiteneinstellungen
 * `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.

@@ -9,11 +9,11 @@ Die Seite „Lektionen“ ist eine Unterseite einer Veranstaltung. Sie ermöglic
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Lektionen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Lektionen“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](\sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](\footer.md). Die Bereiche sind in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Lektionen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Lektionen“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
-Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](\mediacard.md). In den folgenden Screenshots sind diese Bereiche markiert.
+Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](mediacard.md). In den folgenden Screenshots sind diese Bereiche markiert.
 
 \*Bilder mit Titel einfügen\*
 

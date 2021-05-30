@@ -9,7 +9,7 @@ Die Seite „Organisatorisches“ ist eine Unterseite einer Veranstaltung. Sie s
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Organisatorisches“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Organisatorisches“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](\sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Organisatorisches“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Organisatorisches“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 

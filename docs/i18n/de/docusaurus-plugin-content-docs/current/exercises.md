@@ -9,16 +9,16 @@ Die Seite „Übungen“ ist eine Unterseite einer Veranstaltung. Sie ermöglich
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Übungen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Übungen“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](\sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Übungen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Übungen“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
-Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](\mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
+Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
 
 \*Bilder mit Titel einfügen\*  
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Mithilfe eines Screenshots, auf dem drei [Mediacards](\mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Übungen“ beschrieben.
+Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Übungen“ beschrieben.
 
 ### Seiteneinstellungen
 * `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.
@@ -82,7 +82,7 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilre
 ### Gleichgrangige Seiten
 * [Abgaben](/submissions.md)
 * [Beispiel-Datenbank](/erdbeere.md)
-* [Lektionen](/lektionen.md)
+* [Lektionen](/lessons.md)
 * [Mitteilungen](/announcements.md)
 * [Modul](/module.md)
 * [Organisatorisches](/general-information.md)

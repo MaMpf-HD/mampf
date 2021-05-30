@@ -10,7 +10,7 @@ Die Seite „Abschnitt“ ist eine Unterseite einer Veranstaltung. Auf ihr kann 
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Abschnitt“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Abschnitt“, die [Navigationsleiste](/nav-bar.md) und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Abschnitt“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Abschnitt“, die [Navigationsleiste](/nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
