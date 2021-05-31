@@ -2253,8 +2253,7 @@ en:
       guided proofs'
     interested_html: >
       Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
-      %{guided_tour} you can find a guided tour of MaMpf. Resources for editors
-      (e.g. the MaMpf LaTEX package) are available %{resources}.
+      %{guided_tour} you can find a guided tour of MaMpf.
     resources: here
     blog: Blog
     researchgate: Researchgate
