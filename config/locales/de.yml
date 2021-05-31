@@ -2397,7 +2397,6 @@ de:
     interested_html:
       Neugierig geworden? Auf unserem %{blog} und auf %{researchgate} findest Du weitere Informationen über
       und Neuigkeiten zu MaMpf. %{guided_tour} gibt es eine geführte Tour durch MaMpf.
-      Außerdem gelangst Du auf diesem %{resources} zu Ressourcen für EditorInnen (z.B. zum MaMpf-LaTeX-Paket).
     resources: Weg
     blog: Blog
     researchgate: Researchgate
