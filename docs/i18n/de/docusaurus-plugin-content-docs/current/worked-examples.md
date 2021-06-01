@@ -9,11 +9,11 @@ Die Seite „Worked Examples“ ist eine Unterseite einer Veranstaltung. Sie erm
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Worked Examples“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Worked Examples“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](\sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Worked Examples“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Worked Examples“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
-Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](\mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
+Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
 
 \*Bilder mit Titel einfügen\*
 
@@ -36,7 +36,7 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](/mediacard.md) zu sehen si
 \*Icons einbinden\*
 
 ### Mediacards
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](\event-series.md).
+* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
 * `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
 * Play-arrow.png Spiele das Video mit [THymE](/thyme.md) ab.
 * Library-books.png Öffne das PDF.

@@ -1,5 +1,6 @@
 module.exports = {
   docs: [
+    "mampf",
     {
       type: 'category',
       label: 'Pages',
@@ -16,7 +17,6 @@ module.exports = {
           items: ['nav-bar', 'sidebar', 'event-series-list',],
         },
         'all-pages',
-        'getting-started'
       ],
     },
     'tutorials',

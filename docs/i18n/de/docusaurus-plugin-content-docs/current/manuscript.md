@@ -9,11 +9,11 @@ Die Seite „Skript“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht 
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Skript“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Skript“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](\sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Skript“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Skript“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
-Die eigentliche Seite besteht aus zwei Teilbereichen: den Seiteneinstellungen und den [Mediacards](\mediacard.md).
+Die eigentliche Seite besteht aus zwei Teilbereichen: den Seiteneinstellungen und den [Mediacards](mediacard.md).
 
 \*Bilder mit Titel einfügen\*
 
@@ -26,7 +26,7 @@ Die eigentliche Seite besteht aus zwei Teilbereichen: den Seiteneinstellungen un
 \*Icons einbinden\*
 
 ### Mediacards
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](\event-series.md).
+* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
 * Library-books.png Öffne das PDF.
 * Info-black.png Öffne die [Medienseite des Skripts](/medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
@@ -41,7 +41,7 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Medium, Skript und Vera
 
 \*Links ergänzen\*
 
-### [Veranstaltungsseite](\event-series.md)
+### [Veranstaltungsseite](event-series.md)
 Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den Veranstaltungstitel.
 
 ### [Medienseite des Skripts](/medium.md)

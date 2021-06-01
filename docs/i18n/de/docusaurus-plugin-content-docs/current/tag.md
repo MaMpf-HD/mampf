@@ -9,7 +9,7 @@ Die Seite „Begriff“ ist eine Unterseite einer Veranstaltung. Dort finden Nut
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Begriff“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Begriff“, die [Navigationsleiste](/nav-bar.md) und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Begriff“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Begriff“, die [Navigationsleiste](/nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
