@@ -82,7 +82,7 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilre
 ### Gleichgrangige Seiten
 * [Abgaben](/submissions.md)
 * [Beispiel-Datenbank](/erdbeere.md)
-* [Lektionen](/lektionen.md)
+* [Lektionen](/lessons.md)
 * [Mitteilungen](/announcements.md)
 * [Modul](/module.md)
 * [Organisatorisches](/general-information.md)

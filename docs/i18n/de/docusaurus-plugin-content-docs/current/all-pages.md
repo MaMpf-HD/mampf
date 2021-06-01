@@ -5,6 +5,7 @@ title: Alle Seiten
 Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 
 ## A
+* [Abgaben](/submissions.md)
 * [Abschnitt](/section.md)
 
 ## B
