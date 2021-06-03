@@ -5,30 +5,30 @@ title: Alle Seiten
 Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 
 ## A
-* [Abgaben](/submissions.md)
-* [Abschnitt](/section.md)
+* [Abgaben](submissions.md)
+* [Abschnitt](section.md)
 
 ## B
-* [Begriff](/tag.md)
+* [Begriff](tag.md)
 
 ## L
-* [Lektionen](./lessons.md)
+* [Lektionen](lessons.md)
 
 ## M
-* [Mitteilungen](/announcements.md)
-* [Modul](/module.md)
+* [Mitteilungen](announcements.md)
+* [Modul](module.md)
 
 ## O
-* [Organisatorisches](/general-information.md)
+* [Organisatorisches](general-information.md)
 
 ## S
-* [Selbsttest](/self-assessment.md)
-* [Skript](/manuscript.md)
-* [Sonstiges](/miscellaneous.md)
+* [Selbsttest](self-assessment.md)
+* [Skript](manuscript.md)
+* [Sonstiges](miscellaneous.md)
 
 ## U
-* [Übungen](/exercises.md)
+* [Übungen](exercises.md)
 
 ## W
-* [Wiederholung](/repetition.md)
-* [Worked Examples](/worked-examples.md)
+* [Wiederholung](repetition.md)
+* [Worked Examples](worked-examples.md)

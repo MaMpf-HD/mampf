@@ -9,7 +9,7 @@ Die Seite „Worked Examples“ ist eine Unterseite einer Veranstaltung. Sie erm
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Worked Examples“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Worked Examples“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Worked Examples“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Worked Examples“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
@@ -18,7 +18,7 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinste
 \*Bilder mit Titel einfügen\*
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Mithilfe eines Screenshots, auf dem drei [Mediacards](/mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Worked Examples“ beschrieben.
+Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Worked Examples“ beschrieben.
 
 ### Seiteneinstellungen
 * `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.
@@ -37,15 +37,15 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](/mediacard.md) zu sehen si
 
 ### Mediacards
 * `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](/thyme.md) ab.
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
+* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
 * Library-books.png Öffne das PDF.
 * Link.png Öffne externen Link.
 * Leak-add.png Öffne Geogebra-Applet.
-* Info-black.png Öffne die [Medienseite des Worked Examples](/medium.md).
+* Info-black.png Öffne die [Medienseite des Worked Examples](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](/comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons einbinden\*
 
@@ -59,39 +59,39 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, THymE 
 
 \*Links ergänzen\*
 
-### [Veranstaltungsseite](/event-series.md)
+### [Veranstaltungsseite](event-series.md)
 Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den Veranstaltungstitel.
 
-### [Seite der getaggten Begriffe](/tag.md)
+### [Seite der getaggten Begriffe](tag.md)
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.
 
-### [THymE-Player](/thyme.md)
+### [THymE-Player](thyme.md)
 Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den Play-arrow.png-Button.
 
 \*Icon\*
 
-### [Medienseite einzelner Worked Examples](/medium.md)
+### [Medienseite einzelner Worked Examples](medium.md)
 Auf der Medienseite stehen weitere Informationen zu Länge bzw. Umfang und Größe von PDFs bzw. Videos zur Verfügung. Über die dort aufgeführte Gliederung des Worked Examples kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Worked Example verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den Info-black.png-Button klicken.
 
 \*Icon\*
 
-### [Kommentarseite](/comments-media.md)
+### [Kommentarseite](comments-media.md)
 Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](/event-series.md)
+[Veranstaltungsseite](event-series.md)
 
 ### Gleichgrangige Seiten
-* [Abgaben](/submissions.md)
-* [Beispiel-Datenbank](/erdbeere.md)
-* [Lektionen](/lessons.md)
-* [Mitteilungen](/announcements.md)
-* [Modul](/module.md)
-* [Organisatorisches](/general-information.md)
-* [Quizzes](/quizzes.md)
-* [Selbsttest](/self-assessment.md)
-* [Skript](/manuscript.md)
-* [Sonstiges](/miscellaneous.md)
-* [Übungen](/exercises.md)
-* [Wiederholung](/repetition.md)
+* [Abgaben](submissions.md)
+* [Beispiel-Datenbank](erdbeere.md)
+* [Lektionen](lessons.md)
+* [Mitteilungen](announcements.md)
+* [Modul](module.md)
+* [Organisatorisches](general-information.md)
+* [Quizzes](quizzes.md)
+* [Selbsttest](self-assessment.md)
+* [Skript](manuscript.md)
+* [Sonstiges](miscellaneous.md)
+* [Übungen](exercises.md)
+* [Wiederholung](repetition.md)

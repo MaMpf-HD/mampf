@@ -9,7 +9,7 @@ Die Seite „Quizzes“ ist eine Unterseite einer Veranstaltung. Auf ihr können
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Quizzes“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Quizzes“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Quizzes“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Quizzes“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
@@ -50,32 +50,32 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, Quiz u
 
 \*Links ergänzen\*
 
-### [Veranstaltungsseite](/event-series.md)
+### [Veranstaltungsseite](event-series.md)
 Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den Veranstaltungstitel.
 
-### [Seite der getaggten Begriffe](/tag.md)
+### [Seite der getaggten Begriffe](tag.md)
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.
 
-### [Medienseite einzelner Quizzes](/medium.md)
+### [Medienseite einzelner Quizzes](medium.md)
 Auf der Medienseite stehen weitere Informationen zum Umfang, Schwierigkeitsgrad und Inhalt des Quiz' zur Verfügung. Außerdem sind mit diesem Quiz verknüpfte Medien und Begriffe aufgeführt und verlinkt. Darüber hinaus können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den Info-black.png-Button klicken.
 
-### [Kommentarseite](/comments-media.md)
+### [Kommentarseite](comments-media.md)
 Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](/event-series.md)
+[Veranstaltungsseite](event-series.md)
 
 ### Gleichgrangige Seiten
-* [Abgaben](/submissions.md)
-* [Beispiel-Datenbank](/erdbeere.md)
-* [Lektionen](/lessons.md)
-* [Mitteilungen](/announcements.md)
-* [Modul](/module.md)
-* [Organisatorisches](/general-information.md)
-* [Selbsttest](/self-assessment.md)
-* [Skript](/manuscript.md)
-* [Sonstiges](/miscellaneous.md)
-* [Übungen](/exercises.md)
-* [Wiederholung](/repetition.md)
-* [Worked Examples](/worked-examples.md)
+* [Abgaben](submissions.md)
+* [Beispiel-Datenbank](erdbeere.md)
+* [Lektionen](lessons.md)
+* [Mitteilungen](announcements.md)
+* [Modul](module.md)
+* [Organisatorisches](general-information.md)
+* [Selbsttest](self-assessment.md)
+* [Skript](manuscript.md)
+* [Sonstiges](miscellaneous.md)
+* [Übungen](exercises.md)
+* [Wiederholung](repetition.md)
+* [Worked Examples](worked-examples.md)

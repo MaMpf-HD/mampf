@@ -1,13 +1,13 @@
 ---
 title: Selbsttest
 ---
-Die Seite „Selbsttest“ ist eine Unterseite einer [Veranstaltung](/event-series.md). Auf ihr können Nutzer\*innen ihr Wissen mit einem Selbsttest überprüfen. Bei Selbsttests werden zufällig Fragen aus der Datenbank ausgewählt. Nutzer\*innen können dabei bestimmen, wie viele Fragen der Test haben soll und welche Inhalte abgefragt werden. Quizzes hingegen haben einen fixen Fragenbestand.
+Die Seite „Selbsttest“ ist eine Unterseite einer [Veranstaltung](event-series.md). Auf ihr können Nutzer\*innen ihr Wissen mit einem Selbsttest überprüfen. Bei Selbsttests werden zufällig Fragen aus der Datenbank ausgewählt. Nutzer\*innen können dabei bestimmen, wie viele Fragen der Test haben soll und welche Inhalte abgefragt werden. Quizzes hingegen haben einen fixen Fragenbestand.
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Selbsttest“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Selbsttest“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
@@ -16,7 +16,7 @@ Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche S
 * `Inhalts-Spezifikation` Eingabefeld und scrollbare Liste. Wähle durch Eintippen oder Anklicken Begriffe aus, zu denen Fragen im Selbsttest vorkommen sollen.
 * `Test beginnen` Starte den Test in einem neuen Tab.
 * `Ein-/Ausklappen` Klappe eine Liste aller Begriffe aus, zu denen es Fragen gibt.
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md). Dies ist erst möglich, nachdem der `Ein-/Ausklappen`-Button gedrückt worden ist.
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md). Dies ist erst möglich, nachdem der `Ein-/Ausklappen`-Button gedrückt worden ist.
 
 \*Icons einbinden\*
 
@@ -35,18 +35,18 @@ Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zu
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](/event-series.md)
+[Veranstaltungsseite](event-series.md)
 
 ### Gleichgrangige Seiten
-* [Abgaben](/submissions.md)
-* [Beispiel-Datenbank](/erdbeere.md)
-* [Lektionen](/lessons.md)
-* [Mitteilungen](/announcements.md)
-* [Modul](/module.md)
-* [Organisatorisches](/general-information.md)
-* [Quizzes](/quizzes.md)
-* [Skript](/manuscript.md)
-* [Sonstiges](/miscellaneous.md)
-* [Übungen](/exercises.md)
-* [Wiederholung](/repetition.md)
-* [Worked Examples](/worked-examples.md)
+* [Abgaben](submissions.md)
+* [Beispiel-Datenbank](erdbeere.md)
+* [Lektionen](lessons.md)
+* [Mitteilungen](announcements.md)
+* [Modul](module.md)
+* [Organisatorisches](general-information.md)
+* [Quizzes](quizzes.md)
+* [Skript](manuscript.md)
+* [Sonstiges](miscellaneous.md)
+* [Übungen](exercises.md)
+* [Wiederholung](repetition.md)
+* [Worked Examples](worked-examples.md)

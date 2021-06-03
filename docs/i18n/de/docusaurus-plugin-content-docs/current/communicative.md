@@ -10,4 +10,4 @@ Liste aller kommunikativen Seiten
 
 Dies ist eine Liste aller Seiten, die der Kommunikation dienen.
 
-* [Mitteilungen](/announcements.md)
+* [Mitteilungen](announcements.md)

@@ -8,4 +8,4 @@ Liste aller Seiten, bei denen man aktiv werden kann
 * Quizzes
 * Selbsttests
 
-* [Selbsttest](/self-assessment.md)
+* [Selbsttest](self-assessment.md)

@@ -9,7 +9,7 @@ Die Seite „Lektionen“ ist eine Unterseite einer Veranstaltung. Sie ermöglic
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Lektionen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Lektionen“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Lektionen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Lektionen“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
@@ -33,15 +33,15 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinste
 
 
 ### Mediacards
-* `Sitzung` Gehe auf die [Seite der Sitzung](/session.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](/thyme.md) ab.
+* `Sitzung` Gehe auf die [Seite der Sitzung](session.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
+* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
 * Library-books.png Öffne das PDF.
 * Link.png Öffne externen Link.
 * Info-black.png Öffne die [Medienseite der Lektion](/medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren bzw. n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](/comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren bzw. n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons einbinden\*
 
@@ -55,39 +55,39 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, Lektio
 
 \*Links ergänzen\*
 
-### [Seite der assoziierten Sitzung](/session.md)
+### [Seite der assoziierten Sitzung](session.md)
 Auf der Sitzungsseite gibt es eine Gliederung, mit der zur gewünschten Stelle im PDF oder Video navigiert werden kann, und eine Übersicht über alle verknüpften Begriffe, Abschnitte und Medien. Diese sind ebenfalls verlinkt und können durch Anklicken geöffnet werden. Sitzungsseiten sind über den Titel erreichbar.
 
-### [Seite der getaggten Begriffe](/tag.md)
+### [Seite der getaggten Begriffe](tag.md)
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.
 
-### [THymE-Player](/thyme.md)
+### [THymE-Player](thyme.md)
 Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den Play-arrow.png-Button.
 
 \*Icon\*
 
-### [Medienseite einzelner Lektionen](/medium.md)
+### [Medienseite einzelner Lektionen](medium.md)
 Auf der Medienseite stehen weitere Informationen zu Länge bzw. Umfang und Größe von PDFs bzw. Videos zur Verfügung. Über die dort aufgeführte Gliederung der Lektion kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit dieser Lektion verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den Info-black.png-Button klicken.
 
 \*Icon\*
 
-### [Kommentarseite](/comments-media.md)
+### [Kommentarseite](comments-media.md)
 Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](/event-series.md)
+[Veranstaltungsseite](event-series.md)
 
 ### Gleichrangige Seiten
-* [Abgaben](/submissions.md)
-* [Beispiel-Datenbank](/erdbeere.md)
-* [Mitteilungen](/announcements.md)
-* [Modul](/module.md)
-* [Organisatorisches](/general-information.md)
-* [Quizzes](/quizzes.md)
-* [Selbsttest](/self-assessment.md)
-* [Skript](/manuscript.md)
-* [Sonstiges](/miscellaneous.md)
-* [Übungen](/exercises.md)
-* [Wiederholung](/repetition.md)
-* [Worked Examples](/worked-examples.md)
+* [Abgaben](submissions.md)
+* [Beispiel-Datenbank](erdbeere.md)
+* [Mitteilungen](announcements.md)
+* [Modul](module.md)
+* [Organisatorisches](general-information.md)
+* [Quizzes](quizzes.md)
+* [Selbsttest](self-assessment.md)
+* [Skript](manuscript.md)
+* [Sonstiges](miscellaneous.md)
+* [Übungen](exercises.md)
+* [Wiederholung](repetition.md)
+* [Worked Examples](worked-examples.md)

@@ -13,7 +13,7 @@ Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen 
 \*Realisierung überlegen und ergänzen\*
 
 ## Bereiche der Seite
-Die Seite „Abgaben“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Abgaben“, die [Navigationsleiste](/nav-bar.md), die [Seitenleiste](\sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](\footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die Seite „Abgaben“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Abgaben“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 \*Bilder mit Titel einfügen\*
 
@@ -37,10 +37,10 @@ Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Aktuelle Ab
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * `Anlegen` Lege eine Abgabe an und weiter zu „Anlegen“.
 * `Beitreten` Tritt einer Abgabe bei und weiter zu „Beitreten“. Dazu wird ein Einladungscode benötigt, den man von der Person, die die Abgabe angelegt hat, erhalten muss.
@@ -55,10 +55,10 @@ Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Aktuelle Ab
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Tutorium
 Zeit, Tutor*in        Arrow-drop-down.png
@@ -84,10 +84,10 @@ Klappe eine Liste früherer Teammitglieder und ein Suchfeld aus, um andere per E
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Code
 Eingabefeld für den Beitrittscode, den man von den bisherigen Mitgliedern der Abgabe erhalten muss.
@@ -110,10 +110,10 @@ Eingabefeld für den Beitrittscode, den man von den bisherigen Mitgliedern der A
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Copy.png Kopiere den Code in die Zwischenablage.
 * Sync.png Generiere einen neuen Beitrittscode.
@@ -137,10 +137,10 @@ Eingabefeld für den Beitrittscode, den man von den bisherigen Mitgliedern der A
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Einladungen an
 Klappe eine Liste früherer Teammitglieder und ein Suchfeld aus, um andere per E-Mail zur Abgabe einzuladen.
@@ -169,10 +169,10 @@ Klappe eine Liste früherer Teammitglieder und ein Suchfeld aus, um andere per E
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Tutorium
 Zeit, Tutor*in        Arrow-drop-down.png
@@ -200,10 +200,10 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Tutorium
 Zeit, Tutor*in        Arrow-drop-down.png
@@ -229,10 +229,10 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Tutorium
 Zeit, Tutor*in        Arrow-drop-down.png
@@ -256,10 +256,10 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Tutorium
 Zeit, Tutor*in        Arrow-drop-down.png
@@ -281,10 +281,10 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 \*Screenshot\*
 
 ###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Abgabe Long-arrow-alt-down-solid.png Öffne die Abgabedatei.
 * `Bearbeiten` Bearbeite die Abgabe und weiter zu „Bearbeiten“.
@@ -309,10 +309,10 @@ Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Vorige Abga
 \*Screenshot\*
 
 ###### Bedienlemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](/medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](/tag.md).
+* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
+* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](/medium.md).
+* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
 * Abgabe Long-arrow-alt-down-solid.png Öffne die Abgabedatei.
 * KorrekturLong-arrow-alt-down-solid.png Öffne die Korrekturdatei. Dieser Button ist erst verfügbar, nachdem die Korrektur hochgeladen worden ist.
@@ -363,7 +363,7 @@ Eine Abgabe wird als verspätet eingestuft, wenn sie innerhalb der Kulanzzeit* b
 Die Korrekturen sind ebenso wie Abgaben bis zwei Wochen nach Beginn der nächsten Vorlesungszeit verfügbar und werden danach gelöscht. Bei der Löschung eines Accounts werden nur Abgaben und Korrekturen zu Einzelabgaben mitgelöscht. Teamabgaben und deren Korrekturen werden nur vor dem Ende der Frist gelöscht, wenn alle Mitglieder ihren Account löschen. Korrekturen bleiben von der Löschung eines Tutorenaccounts unberührt.
 
 ## Einstellungen
-Nutzer\*innen können auf ihrer [Profilseite](/profile.md) zwei Einstellungen anpassen, die die Abgabe von Übungsaufgaben betreffen: den Namen in Übungsgruppen und E-Mail-Benachrichtigungen zu Abgaben.
+Nutzer\*innen können auf ihrer [Profilseite](profile.md) zwei Einstellungen anpassen, die die Abgabe von Übungsaufgaben betreffen: den Namen in Übungsgruppen und E-Mail-Benachrichtigungen zu Abgaben.
 
 ### Name in Übungsgruppen vs. Anzeigename
 Der Name in Übungsgruppen unterscheidet sich vom Anzeigenamen hinsichtlich der Kontexte, in denen er erscheint, und der Personen, die ihn sehen können. Der Anzeigename wird für Teilnehmerlisten, Kommentare und Forumsbeiträge verwendet. Bei der Registierung wird er standardmäßig auf den Anfang der E-Mail-Adresse, über die der Account läuft, bis zum @ gesetzt.
@@ -384,18 +384,18 @@ Im Gegensatz dazu sind E-Mail-Einladungen zum Beitritt zu einer Abgabe nicht opt
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](/event-series.md)
+[Veranstaltungsseite](event-series.md)
 
 ### Gleichrangige Seiten
-* [Beispiel-Datenbank](/erdbeere.md)
-* [Lektionen](/lessons.md)
-* [Mitteilungen](/announcements.md)
-* [Modul](/module.md)
-* [Organisatorisches](/general-information.md)
-* [Quizzes](/quizzes.md)
-* [Selbsttest](/self-assessment.md)
-* [Skript](/manuscript.md)
-* [Sonstiges](/miscellaneous.md)
-* [Übungen](/exercises.md)
-* [Wiederholung](/repetition.md)
-* [Worked Examples](/worked-examples.md)
+* [Beispiel-Datenbank](erdbeere.md)
+* [Lektionen](lessons.md)
+* [Mitteilungen](announcements.md)
+* [Modul](module.md)
+* [Organisatorisches](general-information.md)
+* [Quizzes](quizzes.md)
+* [Selbsttest](self-assessment.md)
+* [Skript](manuscript.md)
+* [Sonstiges](miscellaneous.md)
+* [Übungen](exercises.md)
+* [Wiederholung](repetition.md)
+* [Worked Examples](worked-examples.md)
