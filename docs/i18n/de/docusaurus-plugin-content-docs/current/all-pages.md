@@ -7,12 +7,24 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 ## A
 * [Abgaben](submissions.md)
 * [Abschnitt](section.md)
+* [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md)
 
 ## B
 * [Begriff](tag.md)
+* [Beispieldatenbank](erdbeere.md)
+* [Benachrichtigungen](notifications.md)
+
+## D
+* [DozentIn](lecturer.md)
+
+## K
+* [Kommentare](comments.md)
+* [Kommentare für ein Medium](comments-medium.md)
 
 ## L
 * [Lektionen](lessons.md)
+* [Login](login.md)
+* [Logout](logout.md)
 
 ## M
 * [Mitteilungen](announcements.md)
