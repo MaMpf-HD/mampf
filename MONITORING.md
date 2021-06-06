@@ -3,7 +3,7 @@
 ## Getting started (development mode): Setting up prometheus & grafana
 
 0. Start prometheus_exporter in the mampf container
-`sudo docker-compose exec mampf prometheus_exporter -b 0.0.0.0`
+`sudo docker-compose exec mampf prometheus_exporter -b 0.0.0.0 -a lib/collectors/mampf_collector.rb `
 1. Setup prometheus in development
 
 ```sh
@@ -28,3 +28,7 @@ grafana/grafana
 4.  Setup the dashboard, interisting metrics:
   - `rate(ruby_collector_sessions_total[5m])`
   - `rate(ruby_http_requests_total[5m])`
+  - `ruby_user_count`: Number of users in the DB
+  - `ruby_uploaded_medium_count`: Number of Media
+  - `ruby_tag_count`: Number of Tags
+  - `ruby_submissions_count`: Number of Submissions
