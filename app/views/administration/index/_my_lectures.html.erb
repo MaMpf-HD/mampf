@@ -41,10 +41,10 @@
                              Lecture.sort_by_date(current_user.edited_lectures),
                            teacher: true } %>
     <% end %>
-    <% if current_user.lectures_as_module_editor.present? %>
+    <% if current_user.lectures_as_course_editor.present? %>
       <div class="mb-2">
         <%= t('admin.main.as_course_editor') %>
-        (<%= current_user.lectures_as_module_editor.count %>)
+        (<%= current_user.lectures_as_course_editor.count %>)
         <%= helpdesk(t('admin.main.info.lectures_as_course_editor'), false) %>
       </div>
       <%= render partial: 'administration/index/lectures_card',
