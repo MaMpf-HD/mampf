@@ -294,13 +294,13 @@ class Course < ApplicationRecord
   end
 
   def self.search_by(search_params, page)
-    editor_ids = search_params[:editor_ids] || []
+    editor_ids = search_params[:editor_ids]
     editor_ids = [] if search_params[:all_editors] == '1'
     program_ids = search_params[:program_ids] || []
     program_ids = [] if search_params[:all_programs] == '1'
     search = Sunspot.new_search(Course)
     search.build do
-      with(:editor_ids, editor_ids) unless editor_ids.empty?
+      with(:editor_ids, editor_ids)
       with(:program_ids, program_ids) unless program_ids.empty?
       with(:term_independent, true) if search_params[:term_independent] == '1'
       fulltext search_params[:fulltext] if search_params[:fulltext].present?

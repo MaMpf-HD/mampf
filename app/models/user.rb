@@ -96,7 +96,7 @@ class User < ApplicationRecord
   end
 
   def self.select_teachers
-    User.teachers.map { |u| [u.name, u.id] }
+    User.teachers.pluck(:name, :id).natural_sort_by(&:first)
   end
 
   # returns the array of all editors

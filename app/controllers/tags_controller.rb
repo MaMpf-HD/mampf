@@ -127,6 +127,7 @@ class TagsController < ApplicationController
   end
 
   def search
+    per_page = search_params[:per] || 10
     search = Sunspot.new_search(Tag)
     search.build do
       fulltext search_params[:title]
@@ -138,13 +139,13 @@ class TagsController < ApplicationController
                  end
     search.build do
       with(:course_ids, course_ids)
-      paginate page: params[:page], per_page: 10
+      paginate page: params[:page], per_page: per_page
     end
     search.execute
     results = search.results
     @total = search.total
     @tags = Kaminari.paginate_array(results, total_count: @total)
-                    .page(params[:page]).per(10)
+                    .page(params[:page]).per(per_page)
   end
 
   def take_random_quiz
@@ -334,7 +335,7 @@ class TagsController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:title, :all_courses, course_ids: [])
+    params.require(:search).permit(:title, :all_courses, :per, course_ids: [])
   end
 
 end

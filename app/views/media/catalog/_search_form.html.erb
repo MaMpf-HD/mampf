@@ -153,7 +153,7 @@
                    { class: 'form-control'} %>
     </div>
     <% unless purpose == 'import' %>
-      <div class="col-6 col-lg-3 form-.group">
+      <div class="col-6 col-lg-3 form-group">
         <%= f.label :answers_count, t('basics.answer_count') %>
         <%= f.select :answers_count,
                      options_for_select([[t('access.irrelevant'), 'irrelevant'],
@@ -164,7 +164,7 @@
 
       </div>
     <% end %>
-    <div class="col-6 col-lg-3 form-.group">
+    <div class="col-6 col-lg-3 form-group">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
                    options_for_select([[10,10],[20,20],[50,50]],[10]),
