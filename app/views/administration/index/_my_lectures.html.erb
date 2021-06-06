@@ -50,12 +50,12 @@
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
-                                                    .lectures_as_module_editor),
+                                                    .lectures_as_course_editor),
                            teacher: true } %>
     <% end %>
     <% if current_user.given_lectures.empty? &&
             current_user.edited_lectures.empty? &&
-            current_user.lectures_as_module_editor.empty? %>
+            current_user.lectures_as_course_editor.empty? %>
       <%= t('admin.main.no_lectures_taught') %>
     <% end %>
   </div>

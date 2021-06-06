@@ -32,7 +32,7 @@
   <%= f.hidden_field :locale, value: I18n.locale %>
   <% if ENV['USE_CAPTCHA_SERVICE']%>
   <p>
-  <div id="captcha-widget"  data-sitekey="YOUR_SITE_KEY" data-start="auto" data-captcha-url="<%=ENV['CAPTCHA_PUZZLE_URL']%>"></div>
+  <div id="captcha-widget"  data-sitekey="YOUR_SITE_KEY" data-start="auto" data-captcha-url="<%=ENV['CAPTCHA_PUZZLE_URL']%>" data-lang="<%=I18n.locale %>"></div>
   </p>
   <%end %>
   <div class="form-group">
