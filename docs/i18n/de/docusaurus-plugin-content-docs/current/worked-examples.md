@@ -40,7 +40,7 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 * `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
 * Library-books.png Öffne das PDF.
-* Link.png Öffne externen Link.
+* Link.png Öffne den externen Link.
 * Leak-add.png Öffne Geogebra-Applet.
 * Info-black.png Öffne die [Medienseite des Worked Examples](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.

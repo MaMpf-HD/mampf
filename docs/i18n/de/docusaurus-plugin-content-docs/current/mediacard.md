@@ -114,7 +114,7 @@ Bedienelement | Medientyp | Aktion
 `Begriff` | alle außer Skript | Gehe auf die [Seite des Begriffs](tag.md).
 Play-arrow.png | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Spiele das Video mit [THymE](thyme.md) ab.
 Library-books.png | Lektion, Skript, Sonstiges, Übung, Wiederholung und Worked Example | Öffne das PDF.
-Link.png | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Öffne externen Link.
+Link.png | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Öffne den externen Link.
 Videogame-asset.png | nur Quiz | Starte das Quiz.
 Leak-add.png | nur Worked Example | Öffne Geogebra-Applet.
 Info-black.png | alle | Öffne die [Medienseite](medium.md)

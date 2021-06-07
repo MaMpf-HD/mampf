@@ -22,7 +22,7 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 
 ### Seiteneinstellungen
 * `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.
-* `alle` Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Lektionen auf einer Seite angezeigt werden.
+* `alle` Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Übungen auf einer Seite angezeigt werden.
 * `pro Seite` Arrow-drop-down.png Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen *3*, *4*, *8* (standardmäßig), *12*, *24* und *48*.
 * `Zusatzmaterialien` Arrow-drop-down.png Ändere Einstellung für die Anzeige von Zusatzmaterialien: *zu bereits Behandeltem* (standardmäßig), *keine* oder *alle*.
 
@@ -38,7 +38,7 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 * `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
 * Library-books.png Öffne das PDF.
-* Link.png Öffne externen Link.
+* Link.png Öffne den externen Link.
 * Info-black.png Öffne die [Medienseite der Übung](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
