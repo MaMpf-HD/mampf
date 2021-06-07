@@ -121,7 +121,29 @@ class Submission < ApplicationRecord
     end
     archived_filestream
   end
-
+  ###
+  # Checks size and if filetype is acceptable
+  ###
+  def check_file_properties_any(metadata, sort)
+    errors = []
+    if sort == :submission && metadata['size'] > 10*1024*1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '10 MB')
+    end
+    if sort == :correction && metadata['size'] > 15*1024*1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '15 MB')
+    end
+    file_name = metadata['filename']
+    file_type = File.extname(file_name)
+    if !file_type.in?(['.cc', '.hh', '.m',".mlx", '.pdf', 'zip'])
+      errors.push I18n.t('submission.wrong_file_type',
+                         file_type: file_type,
+                         accepted_file_type: assignment.accepted_file_type)
+    end
+    return {} unless errors.present?
+    { sort => errors }
+  end
   def check_file_properties(metadata, sort)
     errors = []
     if sort == :submission && metadata['size'] > 10*1024*1024
