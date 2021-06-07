@@ -580,6 +580,14 @@ class Medium < ApplicationRecord
     Medium.sort_localized[sort]
   end
 
+  def subheader_style
+    if sort != "Nuesse" or self.released_at.to_i == self.updated_at.to_i
+      return "badge badge-secondary"
+    else
+      return "badge badge-danger"
+    end
+  end
+
   def cache_key
     super + '-' + I18n.locale.to_s
   end
