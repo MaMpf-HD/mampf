@@ -27,11 +27,16 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 * [Logout](logout.md)
 
 ## M
+* [Medium](medium.md)
+* [Meine Startseite](my-home-page.md)
 * [Mitteilungen](announcements.md)
 * [Modul](module.md)
 
 ## O
 * [Organisatorisches](general-information.md)
+
+## P
+* [Passwort ändern](change-password.md)
 
 ## S
 * [Selbsttest](self-assessment.md)
