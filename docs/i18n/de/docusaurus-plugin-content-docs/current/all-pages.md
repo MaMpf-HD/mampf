@@ -37,6 +37,14 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 
 ## P
 * [Passwort ändern](change-password.md)
+* [Passwort vergessen](password-forgotten.md)
+* [Profil](profile.md)
+
+## Q
+* [Quizzes](quizzes.md)
+
+## R
+* [Registrieren](registration.md)
 
 ## S
 * [Selbsttest](self-assessment.md)

@@ -15,4 +15,4 @@ Die Navigationsleiste befindet sich oben auf der Seite. Mit ihr kann man sich du
 * [Startseite](home-page.md)
 * [Veranstaltungsseite](event-series.md)
 
-Weitere Informationen zur Navigationsleiste finden sich [hier](nav-bar-details.md).
+Weitere Informationen zur Navigationsleiste finden sich [hier](nav-bar.md).

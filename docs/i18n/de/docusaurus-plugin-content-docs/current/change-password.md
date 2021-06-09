@@ -31,6 +31,8 @@ Feld zur Bestätigung des neuen Passworts. Das hier eingebene Passwort muss mit 
 * `Registrieren` Wechsel zur [Seite Registrieren](registration.md).
 * `Anleitung zur Bestätigung des Accounts nicht erhalten?` Wechsel zur [Seite Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md).
 
+\*Boxen\*
+
 ## Ablauf
 Nachdem man die beiden Felder für das neue Passwort ausgefüllt und durch Klicken auf den Button `Passwort ändern` bestätigt hat, öffnet sich die [persönliche Startseite](my-home-page.md). Dort erwartet einen der Text:
 
