@@ -34,11 +34,11 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 * `Letzte` bzw. `Erste Wechsel` auf die letzte bzw. erste Seite
 
 ### Mediacards
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-.series.md).
+* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
 * `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Info-black.png Öffne die [Medienseite des Quiz'](medium.md).
 * Videogame-asset.png Starte das Quiz.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige  [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige  [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ## Hinweis zum Fehlen von Bedienelementen
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Die Buttons zur Seitennavigation werden erst angezeigt, wenn es mehr Quizzes gibt, als pro Seite angezeigt werden sollen (standardmäßig acht). Damit Begriffe angezeigt werden, müssen welche mit dem Quiz verknüpft sein.

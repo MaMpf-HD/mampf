@@ -28,5 +28,5 @@ In der Seitenleiste sind folgende Einträge vorzufinden:
 * [Modul](module.md)
 
 ## Weitere Navigationswerkzeuge
-* [MaMpf-Map](mampf-map.md)
+* [MaMpf-Map](mampf-maps.md)
 * [Navigationsleiste](nav-bar.md)

@@ -4,7 +4,7 @@ title: Seitenleiste
 
 Die Seitenleiste befindet sich auf der linken Seite, sofern eine Veranstaltung geöffnet ist. Mit ihr kann man sich durch die ausgewählte Veranstaltung bewegen. Über die Seitenleiste sind folgende Seiten erreichbar:
 
-* [Abgaben](submission.md)
+* [Abgaben](submissions.md)
 * [Beispieldatenbank](erdbeere.md)
 * Forum
 * [Lektionen](lessons.md)
