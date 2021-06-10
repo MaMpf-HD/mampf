@@ -14,7 +14,7 @@ module.exports = {
         {
           type: 'category',
           label: 'By Access',
-          items: ['nav-bar-pages', 'sidebar-pages', 'event-series-list',],
+          items: ['nav-bar-pages', 'sidebar-pages',],
         },
         'all-pages',
       ],

@@ -32,6 +32,9 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 * [Mitteilungen](announcements.md)
 * [Modul](module.md)
 
+## N
+* [News](news.md)
+
 ## O
 * [Organisatorisches](general-information.md)
 
@@ -48,12 +51,24 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 
 ## S
 * [Selbsttest](self-assessment.md)
+* [Sitzung](session.md)
 * [Skript](manuscript.md)
 * [Sonstiges](miscellaneous.md)
+* [Startseite](home-page.md)
+* [Suchergebnisse](search-results.md)
+
+## T
+* [THymE](thyme.md)
 
 ## U
 * [Übungen](exercises.md)
 
+## V
+* [Veranstaltung](event-series.md)
+
 ## W
 * [Wiederholung](repetition.md)
 * [Worked Examples](worked-examples.md)
+
+## Z
+* [Zugangsdaten ändern](change-login-data.md)
