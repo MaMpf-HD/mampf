@@ -12,3 +12,4 @@ then
 fi
 echo "running mampf master"
 exec bundle exec sidekiq &> >(tee -a /usr/src/app/log/runtime.log)
+exec prometheus_exporter -b 0.0.0.0 -a lib/collectors/mampf_collector.rb &
