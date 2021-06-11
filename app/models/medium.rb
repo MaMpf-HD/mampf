@@ -581,7 +581,7 @@ class Medium < ApplicationRecord
   end
 
   def subheader_style
-    if sort != "Nuesse" or self.released_at.to_i == self.updated_at.to_i
+    if sort != "Nuesse" or self.file_last_edited.nil?
       return "badge badge-secondary"
     else
       return "badge badge-danger"
