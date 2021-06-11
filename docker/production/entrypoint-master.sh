@@ -11,5 +11,5 @@ then
   touch completed_initial_run
 fi
 echo "running mampf master"
+prometheus_exporter -b 0.0.0.0 -p 3000 -a lib/collectors/mampf_collector.rb &> /usr/src/app/log/prometheus_exporter.log &!
 exec bundle exec sidekiq &> >(tee -a /usr/src/app/log/runtime.log)
-exec prometheus_exporter -b 0.0.0.0 -a lib/collectors/mampf_collector.rb &
