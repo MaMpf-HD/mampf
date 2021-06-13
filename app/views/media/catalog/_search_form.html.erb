@@ -9,10 +9,11 @@
       <% if purpose == 'media' %>
         <div class="custom-control custom-checkbox mb-2">
           <%= f.check_box :all_types,
+                          id: 'search_all_media_types',
                           class: 'custom-control-input',
                           checked: true,
-                          data: { id: 'search_types'} %>
-          <%= f.label :all_types,
+                          data: { id: 'search_media_types'} %>
+          <%= f.label :all_media_types,
                       t('basics.all'),
                       { class: 'custom-control-label' } %>
         </div>
@@ -23,7 +24,8 @@
                    options_for_select(media_sorts_select(purpose),
                                       sort_preselect(purpose)),
                    {},
-                   { multiple: purpose.in?(['media', 'import']),
+                   { id: 'search_media_types',
+                     multiple: purpose.in?(['media', 'import']),
                      class: 'selectize',
                      disabled: purpose.in?(['media', 'clicker']),
                      required: true } %>
@@ -119,17 +121,19 @@
       <%= helpdesk(t('admin.medium.info.search_editors'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_editors,
+                        id: 'search_all_media_editors',
                         class: 'custom-control-input',
                         checked: true,
-                        data: { id: 'search_editor_ids' } %>
-        <%= f.label :all_editors,
+                        data: { id: 'search_media_editor_ids' } %>
+        <%= f.label :all_media_editors,
                     t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
       <%= f.select :editor_ids,
                    options_for_select(add_prompt(User.only_editors_selection)),
                    {},
-                   { multiple: true,
+                   { id: 'search_media_editor_ids',
+                     multiple: true,
                      class: 'selectize',
                      disabled: true } %>
     </div>
@@ -137,6 +141,7 @@
       <%= f.label :fulltext, t('basics.fulltext') %>
       <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
       <%= f.text_field :fulltext,
+                        id: 'media_fulltext',
                         class: 'form-control' %>
     </div>
     <div class="col-6 col-lg-3 form-.group">
@@ -169,7 +174,8 @@
       <%= f.select :per,
                    options_for_select([[10,10],[20,20],[50,50]],[10]),
                    {},
-                   { class: 'form-control'} %>
+                   { id: 'media_per',
+                     class: 'form-control'} %>
 
     </div>
   </div>
