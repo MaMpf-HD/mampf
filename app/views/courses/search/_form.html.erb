@@ -7,6 +7,13 @@
          id="editorSearch">
       <%= f.label :editor_ids, t('basics.editors') %>
       <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+
+      <%= f.select :editor_ids,
+                   options_for_select(add_prompt(User.select_teachers)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true } %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_editors,
                         class: 'custom-control-input',
@@ -16,12 +23,6 @@
                     t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
-      <%= f.select :editor_ids,
-                   options_for_select(add_prompt(User.select_teachers)),
-                   {},
-                   { multiple: true,
-                     class: 'selectize',
-                     disabled: true } %>
     </div>
     <div class="col-6 col-lg-3 form-group">
       <div class="custom-control custom-checkbox mb-2">

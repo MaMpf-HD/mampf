@@ -27,15 +27,6 @@
     <div class="form-group col-5">
       <%= f.label :course_ids, t('basics.courses') %>
       <%= helpdesk(t('admin.tag.info.search_course'), true) %>
-      <div class="custom-control custom-checkbox mb-2">
-        <%= f.check_box :all_courses,
-                        class: 'custom-control-input',
-                        checked: true,
-                        data: { id: 'search_course_ids' } %>
-        <%= f.label :all_courses,
-                    t('basics.all'),
-                    { class: 'custom-control-label' } %>
-      </div>
       <%= f.select :course_ids,
                    options_for_select(Course.all
                                             .pluck(:title, :id)
@@ -45,6 +36,15 @@
                    { multiple: true,
                      class: 'selectize',
                      disabled: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_courses,
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_course_ids' } %>
+        <%= f.label :all_courses,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
       <button id="tags-edited-courses"
               type="button"
               class="btn btn-sm btn-outline-info"
