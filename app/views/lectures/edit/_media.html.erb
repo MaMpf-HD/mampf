@@ -77,7 +77,7 @@
                          .size > 50 %>
                 <%= t('admin.medium.use_search_html',
                       media_search: link_to(t('admin.main.media_search'),
-                                            media_catalog_path)) %>
+                                            administration_search_path)) %>
               <% end %>
               <% course_material = Medium.where(teachable: lecture.course,
                                                 sort: media_types[s]).load %>

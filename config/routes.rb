@@ -17,8 +17,6 @@ Rails.application.routes.draw do
                               as: 'exit_administration'
   get '/administration/profile', to: 'administration#profile',
                                  as: 'elevated_profile'
-  get 'administration/search_teachables', to: 'administration#search_teachables',
-                                          as: 'search_teachables'
   get 'administration/search', to: 'administration#search',
                                as: 'administration_search'
   get '/administration/classification', to: 'administration#classification',
@@ -167,8 +165,6 @@ Rails.application.routes.draw do
 
   get 'media/search', to: 'media#search',
                       as: 'media_search'
-  get 'media/catalog', to: 'media#catalog',
-                       as: 'media_catalog'
   get 'media/delete_destinations', to: 'media#delete_destinations',
                                    as: 'delete_destinations'
   get 'media/:id/inspect', to: 'media#inspect',

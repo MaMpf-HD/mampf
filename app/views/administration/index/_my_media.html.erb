@@ -16,7 +16,7 @@
       <% if current_user.edited_media.size > 25 %>
         <%= t('admin.main.media_restriction_html',
               media_search: link_to(t('admin.main.media_search'),
-                                    media_catalog_path),
+                                    administration_search_path),
               profile: link_to(t('admin.main.user_profile'),
                                elevated_profile_path(current_user))) %>
       <% end %>

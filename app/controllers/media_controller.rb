@@ -1,7 +1,7 @@
 # MediaController
 class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
-  before_action :set_medium, except: [:index, :catalog, :new, :create, :search,
+  before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select]
   before_action :set_lecture, only: [:index]
@@ -16,9 +16,6 @@ class MediaController < ApplicationController
   def index
     @media = paginated_results
     render layout: 'application'
-  end
-
-  def catalog
   end
 
   def show

@@ -10,10 +10,6 @@ class TagsController < ApplicationController
   authorize_resource
   layout 'administration'
 
-  def index
-    I18n.locale = current_user.locale
-  end
-
   def show
     if params[:locale].in?(I18n.available_locales.map(&:to_s))
       I18n.locale = params[:locale]
@@ -89,7 +85,7 @@ class TagsController < ApplicationController
 
   def destroy
     @tag.destroy
-    redirect_to tags_path
+    redirect_to administration_path
   end
 
   # prepare new tag instance for modal

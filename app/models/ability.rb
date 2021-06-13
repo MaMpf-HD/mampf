@@ -80,7 +80,7 @@ class Ability
 
       can :start, :main
 
-      can [:catalog, :search, :register_download, :show_comments], Medium
+      can [:search, :register_download, :show_comments], Medium
       cannot :show, Medium
       can [:play, :display, :geogebra, :show], Medium do |medium|
         medium.visible_for_user?(user)
@@ -207,7 +207,7 @@ class Ability
         course.subscribed_by?(user)
       end
 
-      cannot [:index, :update, :create], Tag
+      cannot [:update, :create], Tag
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
       can :teacher, User
 

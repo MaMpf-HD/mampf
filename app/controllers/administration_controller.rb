@@ -21,9 +21,6 @@ class AdministrationController < ApplicationController
     @subjects = Subject.includes(programs: [:divisions]).all
   end
 
-  def search_teachables
-  end
-
   def search
   end
 end
