@@ -19,6 +19,8 @@ Rails.application.routes.draw do
                                  as: 'elevated_profile'
   get 'administration/search_teachables', to: 'administration#search_teachables',
                                           as: 'search_teachables'
+  get 'administration/search', to: 'administration#search',
+                               as: 'administration_search'
   get '/administration/classification', to: 'administration#classification',
                                         as: 'classification'
 

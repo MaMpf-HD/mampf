@@ -42,25 +42,11 @@
     </ul>
     <ul class="navbar-nav mr-auto" id="adminDetails">
       <li class="nav-item">
-        <%= link_to '', media_catalog_path,
-                    class: 'far fa-file-video fa-lg text-light nav-link',
+        <%= link_to '', administration_search_path,
+                    class: 'fas fa-search fa-lg text-light nav-link',
                     style: 'text-decoration: none;',
                     data: { toggle: 'tooltip' },
                     title: t('admin.navbar.media_search') %>
-      </li>
-      <li class="nav-item">
-        <%= link_to '', tags_path,
-                    class: 'fas fa-tags fa-lg text-light nav-link',
-                    style: 'text-decoration: none;',
-                    data: { toggle: 'tooltip' },
-                    title: t('admin.navbar.tags') %>
-      </li>
-      <li class="nav-item">
-        <%= link_to '', search_teachables_path,
-                    class: 'fas fa-chalkboard fa-lg text-light nav-link',
-                    style: 'text-decoration: none;',
-                    data: { toggle: 'tooltip' },
-                    title: t('admin.navbar.teachables') %>
       </li>
       <% if current_user.admin? %>
         <li class="nav-item">

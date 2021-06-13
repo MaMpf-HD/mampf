@@ -23,4 +23,7 @@ class AdministrationController < ApplicationController
 
   def search_teachables
   end
+
+  def search
+  end
 end
