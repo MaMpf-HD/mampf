@@ -1,6 +1,9 @@
 ---
 title: Anleitung zur Bestätigung des Account erneut versenden
 ---
+
+![bla](/img/Anleitung_zur_Bestaetigung_thumb.png)
+
 Die Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ wird benötigt, wenn man sich [registriert](registration.md), aber keine Bestätigungsmail erhalten hat. Bevor man diese Seite konsultiert, sollte man überprüfen, ob die Bestätigungsmail nicht im Spamordner gelandet ist. Falls man hingegen die E-Mail zum Zurücksetzen des Passworts nicht bekommen hat, sollte man sie erneut auf der Seite [„Passwort vergessen“](password-forgotten.md) anfordern. Um die E-Mail zur Aktivierung des Accounts zu erhalten, gibt man auf der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ die E-Mail-Adresse ein, mit der man sich vorher registriert hat. Diese E-Mail enthält einen Aktivierungslink, mit dem der Account freigeschaltet werden kann.
 
 ## Navigation zu dieser Seite
