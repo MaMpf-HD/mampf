@@ -3,6 +3,8 @@ title: Mitteilungen
 ---
 Die Seite „Mitteilungen“ ist eine Unterseite einer Veranstaltung. Auf ihr können Nutzer\*innen Mitteilungen zur Veranstaltungen (z.B. Informationen zu Fehlern auf Übungsblättern oder zur Klausur) lesen.
 
+![](/img/Mitteilungen_thumb.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

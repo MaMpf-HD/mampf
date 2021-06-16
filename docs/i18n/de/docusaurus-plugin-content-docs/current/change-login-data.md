@@ -3,6 +3,8 @@ title: Zugangsdaten ändern
 ---
 Auf der Seite „Zugangsdaten ändern“ kann man die E-Mail-Adresse und das Passwort zum Account ändern.
 
+![](/img/Zugangsdaten_aendern_thumb.png)
+
 ## Navigation zu dieser Seite
 Die Seite „Zugangsdaten ändern“ erreicht man, indem man zunächst über den Button User-cog-solid.png in der Navigationsleiste zur Seite „Profil“ navigiert. Dort betätigt man dann den Button `Zugangsdaten ändern`.
 
@@ -35,22 +37,22 @@ Auf der Seite „Zugangsdaten ändern“ können E-Mail-Adresse und Passwort ge�
 ### E-Mail-Adresse
 Um den Account mit einer neuen E-Mail-Adresse zu verknüpfen, gibt man die gewünschte Adresse und das aktuelle Passwort in die dafür vorgesehenen Felder ein. Anschließend klickt man auf `Update`. Daraufhin wird man auf die [Startseite](home-page.md) geleitet, bleibt aber eingeloggt. Auf der Startseite ist nun folgender Text zu lesen:
 
-\*Screenshots\*
+![](/img/E-Mail-Adresse_geaendert2.png)
 
 Zudem wird eine E-Mail von mampf@mathi.uni-heidelberg.de mit dem Betreff „Anleitung zur Bestätigung Deines MaMpf-Accounts“ an die neue Adresse geschickt.
 
-\*Screenshot\*
+![](/img/Mail_Account_bestaetigen.png)
 
 Um die Änderung abzuschließen, muss man in der E-Mail auf „Account bestätigen“ klicken. Vorher kann man sich nur mit der alten E-Mail-Adresse anmelden, nicht aber mit der neuen. Nachdem die Umstellung erfolgt ist, erhält man folgende Fehlermeldung, wenn man versucht, sich mit der alten Adresse anzumelden:
 
-\*Screenshots\*
+![](/img/Login_Mail_PW_ungueltig2.png)
 
 Hat man besagte E-Mail nach einigen Minuten nicht erhalten und wird auch nicht im Spamordner fündig, kann man sie erneut anfordern. Dazu führt man die eben beschriebenen Schritte nochmals durch oder lässt sich einen Aktivierunglink zuschicken wie auf der [Seite „Anleitung zur Bestätitung des Accounts erneut versenden“](activate-account.md) beschrieben.
 
 ### Passwort
 Für die Änderung des Passworts muss man alle vorhandenen Felder ausfüllen. Dabei ist zu beachten, dass das neue Passwort aus mindestens sechs Zeichen bestehen muss. Nach der Bestätigung der Eingabe durch Betätigen des Buttons `Update` wird man auf die [Startseite](home-page.md) geschickt. Dort wird ist zu lesen:
 
-\*Screenshot\*
+![](/img/Passwort_geaendert3.png)
 
 ### E-Mail-Adresse und Passwort
 Um E-Mail-Adresse und Passwort gleichzeitig zu ändern, füllt man alle vorhandenen Felder aus und trägt dabei die neue E-Mail-Adresse in das dafür vorgesehene Feld ein. Anschließend klickt man auf `Update` und den Aktivierungslink in der daraufhin erhaltenen E-Mail.

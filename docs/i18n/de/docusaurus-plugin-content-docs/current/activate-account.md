@@ -2,9 +2,9 @@
 title: Anleitung zur Bestätigung des Account erneut versenden
 ---
 
-![bla](/img/Anleitung_zur_Bestaetigung_thumb.png)
-
 Die Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ wird benötigt, wenn man sich [registriert](registration.md), aber keine Bestätigungsmail erhalten hat. Bevor man diese Seite konsultiert, sollte man überprüfen, ob die Bestätigungsmail nicht im Spamordner gelandet ist. Falls man hingegen die E-Mail zum Zurücksetzen des Passworts nicht bekommen hat, sollte man sie erneut auf der Seite [„Passwort vergessen“](password-forgotten.md) anfordern. Um die E-Mail zur Aktivierung des Accounts zu erhalten, gibt man auf der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ die E-Mail-Adresse ein, mit der man sich vorher registriert hat. Diese E-Mail enthält einen Aktivierungslink, mit dem der Account freigeschaltet werden kann.
+
+![](/img/Anleitung_zur_Bestaetigung_thumb.png)
 
 ## Navigation zu dieser Seite
 Die Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ kann direkt von folgenden Seiten über `Anleitung zur Bestätigung des Account nicht erhalten?` erreicht werden:
@@ -21,7 +21,7 @@ Die Seite „Bestätigung des Accounts erneut versenden“ gliedert sich in drei
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Die Bedienelemente der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
-\*Screenshot\*
+![](/img/Anleitung_zur_Bestaetigung.png)
 
 * Email
 Feld für die E-Mail-Adresse, mit der man sich bereits registriert hat.
@@ -35,16 +35,18 @@ Feld für die E-Mail-Adresse, mit der man sich bereits registriert hat.
 ## Ablauf
 Nachdem man sich registriert und keine Bestätigungsmail erhalten hat, gibt man auf der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ die E-Mail-Adresse, mit der man sich registriert hat, ein und schickt sie durch Betätigung des Buttons `Anleitung zur Bestätigung des Accounts nicht erhalten?` ab. Daraufhin wird man zurück auf die Startseite geleitet. Dort steht nun dieser zusätzliche Text:
 
-\*Screenshot\*
+![](/img/Registriert2.png)
 
 Zudem sollte man eine E-Mail von mampf@mathi.uni-heidelberg.de mit dem Betreff „Anleitung zur Bestätigung Deines MaMpf-Accounts“ erhalten haben. Um den Account zu aktivieren, muss man auf „Account bestätigen“ in der E-Mail klicken.
 
-\*Screenshot\*
+![](/img/Mail_Account_bestaetigen.png)
 
 Infolgedessen öffnet sich Seite [„Profil“](profile.md), auf der man nun die Einstellungen für den Account (Username, Veranstaltungsabos und Einstellungen zu Sprache, angezeigten Inhalten und E-Mail-Benachrichtigungen) anpassen sollte.
 
 ## Fehlermeldung
 Wenn der Account bereits freigeschaltet worden ist, gibt MaMpf die folgende Fehlermeldung aus: „Konnte User nicht speichern: Es ist ein Fehler aufgetreten. Email-Account wurde bereits bestätigt“. In diesem Fall gibt es bereits einen Account zu dieser E-Mail-Adresse. Wenn man sich nicht mehr an das zugehörige Passwort erinnern kann, sollte man auf der Seite [„Passwort vergessen“](password-forgotten.md) ein neues anfordern.
+
+\*Screenshot\*
 
 ## Von dieser Seite aus aufrufbare Seiten
 * [Login](login.md)
