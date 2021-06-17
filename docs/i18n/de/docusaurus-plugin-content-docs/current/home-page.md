@@ -11,7 +11,7 @@ Die Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite,
 ## Bedienelemente und mögliche Aktionen
 Die Bedienelemente der Startseite und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
-\*Screenshot\*
+![](/img/Startseite.png)
 
 ### Navigationsleiste
 Die folgenden Buttons sind in der Navigationsleiste angesiedelt:
@@ -22,7 +22,7 @@ Die folgenden Buttons sind in der Navigationsleiste angesiedelt:
 * Language-solid.png Ändere die Sprache. Zur Verfügung stehen Deutsch und Englisch.
 
 ### Eigentliche Seite
-Auf der eigentlichen Seite gibt es nur die Möglichkeit, auf die [Seite „Registieren“](registration.md) oder auf externe Seiten mit weiterführenden Informationen zum MaMpf-Projekt ([MaMpf-Blog](https://mampf.blog/) und [Research Gate](https://www.researchgate.net/project/MaMpf-Mathematische-Medienplattform)) zu wechseln. 
+Auf der eigentlichen Seite gibt es nur die Möglichkeit, auf die [Seite „Registieren“](registration.md) oder auf externe Seiten mit weiterführenden Informationen zum MaMpf-Projekt ([MaMpf-Blog](https://mampf.blog/) und [Research Gate](https://www.researchgate.net/project/MaMpf-Mathematische-Medienplattform)) zu wechseln.
 
 ## Automatische Weiterleitung auf diese Seite
 Nach der Registrierung und dem Ausloggen wird man auf diese Seite geleitet. Dann befindet sich am Seitenanfang ein weiteres Textfeld.

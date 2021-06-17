@@ -9,7 +9,7 @@ In den Profileinstellungen, die über einen Button oben links in der [Navigation
 
 \*Icons\*
 
-\*Screenshot\*
+![](/img/Name_in_UEG_tut.png)
 
 Zettelabgaben sind nur in abonnierten Veranstaltungen möglich. Falls du die Vorlesung, für die du Aufgaben abgeben musst, noch nicht abonniert hast, kannst du das in den [Profileinstellungen](profile.md) nachholen. Ebenso kannst du die Veranstaltung auf deiner [Startseite](my-home-page.md) abonnieren.
 
@@ -19,7 +19,9 @@ Um einen Übungszettel abzugeben, muss ein Gruppenmitglied eine Abgabe anlegen u
 ### Abgabe anlegen
 Öffne die Veranstaltung, für die du etwas abgegeben möchtest, und klicke in der [Seitenleiste](sidebar.md) auf der linken Seite auf `Abgaben`, um auf die entsprechende Seite zu gelangen. Dort klickst du bei der aktuellen Abgabe auf den Button `Anlegen`, um eine Abgabe zu erstellen. Wähle anschließend deine Übungsgruppe aus. Damit die Abgabe angelegt wird, musst du sie speichern. Vorher kannst du noch andere Teammitglieder einladen und eine Datei hochladen. Beides ist auch später noch möglich.
 
-\*Screenshots\*
+![](/img/Abgabe.png)
+
+![](/img/Abgabe_anlegen_tut.png)
 
 * Pro Team wird nur eine Abgabe angelegt. Alle anderen Teammitglieder müssen dieser Abgabe beitreten. Das können sie nur, wenn sie selbst in keiner anderen Abgabe eingetragen sind.
 * Du kannst nur Einladungen an Personen, mit denen du schon einmal abgegeben hast, über MaMpf verschicken. Wenn du mit jemandem, mit dem du noch nicht abgegeben hast, zusammenarbeitest, musst du dieser Person eigenständig den Einladungscode zukommen lassen. Den Einladungscode erhältst du, nachdem du auf `Speichern` geklickt hast. Er steht in der Tabelle bei „Code“.
@@ -30,13 +32,17 @@ Um einen Übungszettel abzugeben, muss ein Gruppenmitglied eine Abgabe anlegen u
 * Wenn du zum ersten Mal mit jemandem zusammen abgibst, musst du dieser Person den Einladungscode, der nach dem Anlegen der Abgabe in der Tabelle bei „Code“ steht, schicken.
 * Wenn ihr schon einmal gemeinsam abgegeben habt, kannst du die Person auch beim Anlegen der Abgabe oder danach einladen. Dann erhält sie eine E-Mail mit einem Beitrittslink.
 
-\*Screenshots\
+![](/img/Code_in_Tabelle_tut.png)
+
+![](/img/Einladen_tut.png)
 
 ### Einladungen annehmen
 * Du hast von einem Teammitglied einen Einladungscode erhalten. Navigiere zur Veranstaltung, für die ihr etwas abgegeben möchtet, und klicke in der [Seitenleiste](sidebar.md) auf der linken Seite auf `Abgaben`, um auf die entsprechende Seite zu gelangen. Dort klickst du bei aktuelle Abgabe auf den Button `Beitreten` und gibst den Einladungscode ein, um der Abgabe beizutreten.
 * Du hast eine Einladung per E-Mail erhalten. Klicke auf den Beitrittslink oder tritt durch Eingabe des Codes bei.
 
-\*Screenshots\
+![](/img/Abgabe.png)
+
+![](/img/Einladungscode_eingeben_tut.png)
 
 Wenn du die Abgabe selbst angelegt hast, ist dieser Schritt nicht relevant für dich.
 
@@ -51,7 +57,10 @@ Beim Hochladen von Dateien ist Folgendes zu beachten:
 * **Größe der Dateien:** Du kannst nur Dateien abgeben, die nicht größer als 10 MB sind. Sobald du Dateien hochlädst, die größer als 5 MB sind, bietet MaMpf dir an, sie zu komprimieren. Wenn sie nach dem Optimierungsprozess immer noch zu groß sind, kannst du sie nicht hochladen. Sorge darum dafür, dass die deine Datei die maximale Dateigröße nicht überschreitet, wenn du sie erstellst.
 * **Zusammenführen von Dateien:** MaMpf kann Dateien in einer von dir festgelegten Reihenfolge zusammenführen. Wähle dazu mehrere Dateien aus, passe die Reihenfolge an und lade sie hoch. Wenn du zu einer bereits hochgeladenen Datei eine weitere Datei hinzufügen möchtest, musst du die bereits hochgeladenen Datei runterladen und anschließend zusammen mit der beizufügenden Datei hochladen. Andernfalls wird die bereits hochgeladene Datei überschrieben. Die Überschreibung kann nicht rückgängig gemacht werden.
 
-\*Screenshots\*
+![](/img/Abgabe_speichern_tut.png)
+![](/img/Hochladen_und_zusammenfuehren.png)
+![](/img/Abgabe_hochgeladen.png)
+![](/img/Abgabe_fertig.png)
 
 * Falls du deine Abgabe auf Papier geschrieben hast und digitalisieren musst, verwende dazu bitte eine Scan-App. Achte darauf, dass alles gut ausgeleuchtet und lesbar ist. MaMpf akzeptiert nur Dateien, die nicht größer als 10 MB sind. Wenn deine Abgabe auch nach der Komprimierung durch MaMpf zu groß ist, passe die Einstellungen deiner Scan-App an (z.B. die Auflösung auf 150 dpi setzen) und digitalisiere deinen Aufschrieb erneut.
 * Änderungen können, falls dies von der Übungsleitung eingestellt worden ist, auch noch nach dem Ablauf der Abgabefrist vorgenommen werden. Wenn solche Änderungen durchgeführt worden sind, wird die Abgabe als *verspätet* gekennzeichnet und unter Umständen nicht mehr von dem Tutor oder der Tutorin akzeptiert. Daher sollte darauf nur im absoluten Notfall zurückgegriffen werden.

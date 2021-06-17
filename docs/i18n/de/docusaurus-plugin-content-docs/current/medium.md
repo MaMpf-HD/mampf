@@ -5,6 +5,8 @@ title: Medium
 
 Die Seite „Medium“ ist eine Unterseite einer Veranstaltung oder eines Moduls. MaMpf kennt die Medien Lektion, Worked Example, Übung, Skript, Wiederholung, Quiz, Quiz-Frage, Quiz-Erläuterung, Beispiel-Datenbank und Sonstiges. Die jeweiligen Medienseiten enthalten weitere Informationen zum Medium (z.B. verknüpfte Begriffe und Medien sowie Kommentare) und unterscheiden sich abhängig vom Typ in wenigen Details.
 
+![](/img/Medium_thumb.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

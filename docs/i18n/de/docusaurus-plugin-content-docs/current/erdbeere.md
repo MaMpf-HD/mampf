@@ -5,6 +5,8 @@ title: Beispieldatenbank
 
 Die Seite „Beispiel-Datenbank“ ist eine Unterseite einer Veranstaltung, zu der wiederum weitere Unterseiten gehören. Sie ermöglicht Nutzer\*innen die Suche nach konkreten Beispielen. Dazu geben Nutzer\*innen an, welche Eigenschaften erfüllt und verletzt sein sollen. Als Suchergebnis werden Beispiele oder ein Beweis, dass ein solches Objekt nicht existieren kann, ausgegeben.
 
+![](/img/Beispieldatenbank.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

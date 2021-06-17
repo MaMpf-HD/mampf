@@ -4,6 +4,8 @@ title: Login
 
 Auf der Loginseite kann man sich einloggen, wenn man bereits einen MaMpf-Account besitzt. Falls man sich noch nicht auf MaMpf registriert hat, gelangt man von dort aus zur Seite [„Registrieren“](registration.md), auf der man einen Account anlegen kann. Wenn man das Passwort vergessen oder die E-Mail zum Zurücksetzen nicht erhalten hat, kann man die dafür vorgesehenen Seiten [„Passwort vergessen“](password-forgotten.md) und [„Anleitung zur Bestätigung des Accounts erneut versenden“](activate-account.md) öffnen.
 
+![](/img/Login_thumb.png)
+
 ## Navigation zu dieser Seite
 Zur Loginseite gelangt man, indem man Sign-in-alt-solid.png in der [Navigationsleiste](nav-bar.md) anklickt. Dieser Button ist nur vorhanden, wenn auf dem verwendeten Gerät gerade niemand auf MaMpf eingeloggt ist.
 

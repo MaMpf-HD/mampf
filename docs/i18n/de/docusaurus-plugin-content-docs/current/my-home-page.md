@@ -5,6 +5,8 @@ title: Meine Startseite
 
 Die persönliche Startseite ist die Seite, auf die man gelangt, nachdem man sich eingeloggt hat. Nach der Aktivierung des Accounts wird man hingegen auf die [Seite „Profil“](profile.md) geleitet. Auf der persönlichen Startseite kann man Veranstaltungsabo verwalten, sich über abonnierte Veranstaltungen informieren und diese öffen sowie nach Veranstaltungen suchen.
 
+![](/img/pers_Startseite_thumb.png)
+
 ## Navigation zu dieser Seite
 Die persönliche Startseite erreicht man, indem auf Mampf-logo 512x512.png oben links in der [Navigationsleiste](nav-bar.md) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geschickt.
 

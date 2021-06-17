@@ -3,6 +3,8 @@ title: Passwort vergessen
 ---
 Auf der Seite „Passwort vergessen“ kann man einen Link zum Zurücksetzen des Passworts anfordern. Dieser wird per E-Mail an die angegebene Adresse geschickt und ermöglicht das Ändern des Passworts. Die Änderung eines bekannten Passworts sollte auf der [Seite „Profil“](profile.md) erfolgen.
 
+
+
 ## Navigation zu dieser Seite
 Die Seite „Passwort vergessen“ kann direkt von folgenden Seiten über `Passwort vergessen?` erreicht werden:
 
@@ -18,7 +20,7 @@ Die Seite „Passwort vergessen“ gliedert sich in drei große Teilbereiche: di
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Die Bedienelemente der Seite „Passwort vergessen“ und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
-\*Screenshot*
+![](/img/Passwort_vergessen_thumb.png)
 
 * Email
 Feld für die zum zurückzusetzenden Account gehörige E-Mail-Adresse.

@@ -1,7 +1,9 @@
 ---
 title: Benachrichtigungen
 ---
-Auf der Seite „Benachrichtungen“ können Neuigkeiten zu abonnierten Veranstaltungen (Mitteilungen und Veröffentlichung neuer Medien), dem Kursangebot und zu MaMpf selbst gelsen werden.
+Auf der Seite „Benachrichtungen“ können Neuigkeiten zu abonnierten Veranstaltungen (Mitteilungen und Veröffentlichung neuer Medien), dem Kursangebot und zu MaMpf selbst gelesen werden.
+
+![](/img/Benachrichtigungen_vier_Farben_anonymisiert.png)
 
 ## Navigation zu dieser Seite
 Zur Seite „Benachrichtigungen“ gelangt man, indem man in der [Navigationsleiste](nav-bar.md) auf Bell-regular.png klickt.

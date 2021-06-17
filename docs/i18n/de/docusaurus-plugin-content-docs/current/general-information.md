@@ -3,6 +3,8 @@ title: Organisatorisches
 ---
 Die Seite „Organisatorisches“ ist eine Unterseite einer Veranstaltung. Sie soll alle organisatorischen Fragen zur Veranstaltung der Studierenden beantworten. Auf ihr sollen Editor\*innen alle für die Veranstaltungsorganisation relevanten Informationen zusammentragen, wie z.B. zu Terminen, dem Übungsbetrieb, Begleitliteratur sowie Prüfungs- und Benotungsregeln.
 
+![](/img/Organisatorisches_thumb.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

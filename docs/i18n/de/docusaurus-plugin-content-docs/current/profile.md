@@ -22,7 +22,7 @@ Die eigentliche Seite besteht aus den vier Boxen „Account“, „Module“, �
 Die Bedienelemente der Seite „Profil“ und mithilfe dieser mögliche Aktionen werden nun beschrieben. Der Button `Profil updaten` am Seitenanfang erscheint erst, nachdem das Profil bearbeitet worden ist. Die Änderungen werden nur übernommen, wenn dieser Button gedrückt wird. Alle anderen Buttons werden immer angezeigt bzw. öffnen sich durch Ausklappen eines Akkordeons und sind im Folgenden beschrieben. Dabei wird jede Box gesondert behandelt.
 
 ### Account
-\*Screenshot\*
+![](/img/Profil-Account.png)
 
 * `Zugangsdaten ändern` Wechsel auf die [Seite Zugangsdaten ändern](change-login-data.md). Dort kann der Account auf eine andere E-Mail-Adresse umgestellt und das Passwort geändert werden.
 * `Account löschen` Lösche den Account.
@@ -47,7 +47,7 @@ Die Box „Module“ besteht aus einem Akkordeon, in dessen Feldern Studiengäng
 ### Einstellungen
 \*Baustelle\*
 
-\*Screenshot\*
+![](/img/Profil-Einstellungen.png)
 
 In der Box „Einstellungen“ können die Sprache und die angezeigten verknüpften Inhalte bearbeitet werden. Dazu klickt man den Radio Button bei der gewünschten Einstellung an. In beiden Rubriken ist stets eine Option ausgewählt. Zur Auswahl stehen die Sprachen Deutsch und Englisch. Die hier ausgewählte Sprache; Editor\*innen legen für ihre Veranstaltung eine Sprache fest.
 
@@ -56,25 +56,25 @@ Bei den verknüpften Inhalten kann man wählen, ob man nur abonnierte Inhalte od
 ### E-Mail-Benachrichtigungen
 \*Baustelle\*
 
-\*Screenshot\*
+![](/img/Profil-Mailbenachrichtigungen.png)
 
 Hier kann man Haken in Checkboxen setzen, um Benachrichtigungsanlässe auszuwählen. Es gibt Benachrichtigungen zu Veranstaltungen und Modulen, zur Abgabe von Übungsaufgaben und zu Neuigkeiten auf MaMpf. Es ist nicht möglich, MaMpf das Verschicken von Einladungen zu einer Abgabe zu untersagen.
 
 ## Profil bearbeiten
 Sobald Änderungen am Profil vorgenommen worden sind, erscheint oben auf der Seite der Button `Profil updaten` sowie folgender Text:
 
-\*Screenshot\*
+![](/img/Aenderungen_speichern.png)
 
 Die Änderungen werden nur gespeichert, wenn sie durch Betätigen des Buttons `Profil updaten` bestätigt werden.
 
 ## Account löschen
 Um einen Account zu löschen, muss man auf den Button `Account löschen` klicken. Im Anschluss daran, öffnet sich ein Dialogfenster, in dem man die Löschung durch Passworteingabe bestätigen muss. In diesem Dialogfenster wird man zudem darüber informiert, wie mit hochgeladenen Abgaben und erhaltenen Korrekturen verfahren wird: Mit der Löschung des Accounts werden auch alle Einzelabgaben und die dazugehörige Korrekturen unwiderruflich aus MaMpf entfernt. Teamabgaben und die dazugehörige Korrekturen werden hingegen erst gelöscht, wenn das letzte verbleibende Teammitglied seinen Account löscht oder das regulären Löschungsdatum (zwei Wochen nach Beginn der nächsten Vorlesungszeit) erreicht ist. Wenn Tutor\*innen ihren Account löschen, bleiben ihre Korrekturen bis zum regulären Löschungstermin im System.
 
-\*Screenshot\*
+![](/img/Account_loeschen_neu.png)
 
 Nachdem man auf `Account löschen` geklickt hat, wird die Löschung durchgeführt. Dann wird man auf die [Startseite](home-page.md) geschickt, wo nun folgender zusätzlicher Text steht:
 
-\*Screenshot\*
+![](/img/Account_geloescht2.png)
 
 ## Von dieser Seite aus aufrufbare Seiten
 Von Seite „Profil“ aus kann nur zur [Seite „Zugangsdaten ändern“](change-login-data.md) navigiert werden. Dies erfolgt über den Button `Zugangsdaten ändern`.

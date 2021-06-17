@@ -3,6 +3,8 @@ title: Passwort ändern
 ---
 Auf der Seite „Passwort ändern“ kann man das Passwort ändern, wenn man es vergessen hat. Falls man das Passwort hingegen kennt und ändern möchte, ist dies auf der [Seite „Profil“](profile.md) möglich. Um die Seite „Passwort ändern“ zu öffnen, muss man die Änderung des Passworts auf der [Seite „Passwort vergessen“](password-forgotten.md) anfordern und auf den Link „Passwort ändern“ in der im Anschluss daran erhaltenen E-Mail klicken.
 
+![](/img/Passwort_aendern_thumb.png)
+
 ## Navigation zu dieser Seite
 Zur Seite „Passwort ändern“ gelangt man, indem man sich auf der [Seite „Passwort vergessen“](password-forgotten.md) eine Anleitung zur Änderung des Passworts zuschicken lässt. Die Seite „Passwort vergessen“ kann direkt von folgenden Seiten über `Passwort vergessen?` erreicht werden:
 
@@ -20,7 +22,7 @@ Die Seite „Passwort ändern“ gliedert sich in drei große Teilbereiche: die 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Die Bedienelemente der Seite „Passwort ändern“ und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
-\*Screenshots\*
+![](/img/Passwort_aendern.png)
 
 * Neues Passwort
 Feld für das neue Passwort, das man nutzen möchte. Das Passwort muss mindestens aus sechs Zeichen bestehen. Dabei sind alphanumerische und Sonderzeichen zulässig.
@@ -35,6 +37,8 @@ Feld zur Bestätigung des neuen Passworts. Das hier eingebene Passwort muss mit 
 
 ## Ablauf
 Nachdem man die beiden Felder für das neue Passwort ausgefüllt und durch Klicken auf den Button `Passwort ändern` bestätigt hat, öffnet sich die [persönliche Startseite](my-home-page.md). Dort erwartet einen der Text:
+
+![](/img/Passwort_geaendert.png)
 
 ## Fehlermeldungen
 Bei unvollständiger oder fehlerhafter Dateneingabe gibt MaMpf eine Fehlermeldung zurück. Die folgende Tabelle gibt einen Überblick über Fehlermeldungen und Fehlerbehebung.

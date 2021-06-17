@@ -6,6 +6,8 @@ title: Veranstaltung
 
 Die Veranstaltungsseite enthält aktuelle Informationen und die Gliederung der Veranstaltung. Von ihr aus gelangt man zu Veranstaltungsinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zur Veranstaltung, Diskussionsforen und der Zettelabgabe.
 
+![](/img/Veranstaltung_thumb.png)
+
 ## Navigation zu dieser Seite
 Um auf eine Veranstaltungsseite zugreifen zu können, muss man die entsprechende Veranstaltung abonniert haben. Dies ist in den [Profileinstellungen](profile.md) oder auf der [persönlichen Startseite](my-home-page.md) möglich. Abonnierte Veranstaltungen kann man von der persönlichen Startseite aus öffnen. Falls die Veranstaltung in den Schnellzugriff aufgenommen worden ist, erreicht man sie auch über diesen. Veranstaltungen können auf der [persönlichen Startseite](my-home-page.md) zum Schnellzugriff hinzugefügt werden.
 

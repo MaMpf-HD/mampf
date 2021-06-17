@@ -3,6 +3,8 @@ title: Kommentare für ein Medium
 ---
 Auf der Seite „Kommentare für ein Medium“ können Diskussionsbeiträge gelesen und verfasst werden. Editor\*innen können zudem Diskussionen moderieren und öffnen oder schließen. Zu jedem Medium gibt es eine solche Kommentarseite. Auf der Seite [„Kommentare“](comments.md) hingegen kann man sich einen Überblick über alle Aktivitäten auf den Seiten „Kommentare für ein Medium“ verschaffen. Dabei werden nur Medien berücksichtigt, die zu einer abonnierten Veranstaltung assoziiert sind.
 
+![](/img/Kommentare_zu_Medium.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

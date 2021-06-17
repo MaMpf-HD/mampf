@@ -9,6 +9,8 @@ Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen 
 
 \*Links ergänzen\*
 
+![](/img/Abgaben.png)
+
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*
 

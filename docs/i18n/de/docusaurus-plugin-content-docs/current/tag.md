@@ -5,6 +5,8 @@ Die Seite „Begriff“ ist eine Unterseite einer Veranstaltung. Dort finden Nut
 
 \*Links ergänzen\*
 
+![](/img/Begriff.png)
+
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*
 
@@ -18,6 +20,8 @@ Die eigentliche Seite besteht aus einer Überschrift und den sechs Boxen „Syno
 \*Bilder mit Titel einfügen\*
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
+![](/img/Begriff.png)
+
 ### Verknüpfte Begriffe
 `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 

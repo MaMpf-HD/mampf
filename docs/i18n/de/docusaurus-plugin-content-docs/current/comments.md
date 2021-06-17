@@ -3,6 +3,8 @@ title: Kommentare
 ---
 Die Kommentarseite gibt einen Überblick über Diskussionen in abonnierten Veranstaltungen. Von dort können Diskussionen angesteuert und zur Kenntnis genommen sowie Diskussionsabos zentral verwaltet werden. Auf der Kommentarseite eines Mediums hingegen können Beiträge zu einem Medium gelesen und verfasst werden. Die Kommentarseite eines Mediums kann von der Kommentarseite aus geöffnet werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Wenn ein neuer Diskussionbeitrag in einer abonnierten Veranstaltung veröffentlicht worden ist, so färbt sich Comments-regular.png blau.
 
+![](/img/Kommentare_thumb.png)
+
 \*Links ergänzen\*
 \*Icons\*
 

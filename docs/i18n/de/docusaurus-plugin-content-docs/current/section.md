@@ -6,6 +6,8 @@ Die Seite „Abschnitt“ ist eine Unterseite einer Veranstaltung. Auf ihr kann 
 
 \*Links ergänzen\*
 
+![](/img/Abschnitt.png)
+
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*
 

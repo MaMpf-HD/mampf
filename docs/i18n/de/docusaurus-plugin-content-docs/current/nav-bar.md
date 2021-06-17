@@ -5,6 +5,8 @@ Die Navigationsleiste befindet sich oben auf der Seite. Mit ihr kann man sich du
 
 \*Screenshot\*
 
+![](/img/Lektionen_navbar.png)
+
 ## Bedienelemente
 In der Navigationsleiste gibt es, je nachdem ob man eingeloggt ist oder nicht, unterschiedliche Buttons.
 
@@ -24,7 +26,7 @@ Nicht eingeloggten Personen stehen folgende Buttons in der Navigationsleiste zur
 ### Eingeloggt
 Eingeloggte  Nutzer\*innen können von diesen Buttons Gebrauch machen:
 
-\*Screenshot\*
+![](/img/Navbar_generic.png)
 
 * Mampf-logo 512x512.png MaMpf Wechsel auf die [persönliche Startseite](my-home-page.md). Von dieser Seite aus gelangt man auf die Seite einer Veranstaltung und kann sich über neue Mitteilungen, Medien und Forumsbeiträge in abonnierten Veranstaltungen informieren. Außerdem können Veranstaltungen gesucht und Veranstaltungsabos verwaltet werden.
 * User-cog-solid.png Wechsel auf die [Profilseite](profile.md). Dort kann man den eignen Account (Änderung des Anzeigenamens und der Zugangsdaten sowie Löschen des Accounts), Veranstaltungabos und weitere Einstellungen (Sprache, angezeichte Inhalte und Benachrichtungseinstellungen) verwalten.

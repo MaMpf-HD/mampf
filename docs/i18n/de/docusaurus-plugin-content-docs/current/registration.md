@@ -20,7 +20,7 @@ Die Seite „Registieren“ gliedert sich in drei große Teilbereiche: die eigen
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Die Bedienelemente der Seite „Registrieren“ und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
-\*Screenshot\*
+![](/img/Registrieren.png)
 
 * Email
 Feld für die E-Mail-Adresse, mit der man sich registrieren möchte. Pro E-Mail-Adresse kann nur ein Account eingerichtet werden.
@@ -39,11 +39,11 @@ Feld zu Bestätigung des Passworts. Das hier eingebene Passwort muss mit dem im 
 ## Der Registriervorgang
 Zur Registrierung muss man die Felder „E-Mail-Adresse“, „Passwort“ und „Passwortbestätigung“ ausfüllen, der [Datenschutzerklärung der Universität Heidelberg](https://www.uni-heidelberg.de/datenschutzerklaerung_web.html) durch Setzen eines Hakens zustimmen und den Button `Registrieren` betätigen. Dann erscheint die [Startseite](home-page.md). Diese zeigt nun folgenden Text an:
 
-\*Screenshot\*
+![](/img/Erfolgreiche_Registrierung.png)
 
 Zudem wird eine E-Mail an die angebene Adresse gesendet. Der Absender ist mampf@mathi.uni-heidelberg.de, der Betreff lautet „Anleitung zur Bestätigung Deines MaMpf-Accounts“. Wenn man keine E-Mail erhält, sollte man den Spamordner überprüfen. Um den Account zu aktivieren, muss man auf „Account bestätigen“ in der E-Mail klicken.
 
-\*Screenshot\*
+![](/img/Mail_Account_bestaetigen.png)
 
 Infolgedessen öffnet sich [Seite „Profil“](profile.md), auf der man nun die Einstellungen für den Account (Username, Veranstaltungsabos und Einstellungen zu Sprache, angezeigten Inhalten und E-Mail-Benachrichtigungen) anpassen sollte.
 

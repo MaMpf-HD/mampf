@@ -6,6 +6,8 @@ title: News
 ## Bereiche der Seite
 Die Seite „News“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „News“, die [Navigationsleiste](nav-bar-details.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
+![](/img/News.png)
+
 \*Screenshots\*
 
 ## Bedienelemente

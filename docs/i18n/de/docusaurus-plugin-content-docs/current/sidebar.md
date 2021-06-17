@@ -6,8 +6,9 @@ Die Sidebar ermöglicht die Navigation innerhalb einer Veranstaltung. Sie befind
 
 \*Links ergänzen\*
 
+![](/img/Veranstaltung_Sidebar.png)
+
 ## Einträge
-\*Screenshot\*
 
 In der Seitenleiste sind folgende Einträge vorzufinden:
 

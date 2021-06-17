@@ -13,6 +13,8 @@ Die Seiten „Medien eines Typs“ sind Unterseiten von Veranstaltungen. Dabei h
 
 Diese Seiten sind identisch aufgebaut und ermöglichen Nutzer\*innen Zugriff auf alle Medien des jeweiligen Typs aus dieser Veranstaltung. Unterschiede bestehen nur in den auf den [Mediacards](mediacard.md) verfügbaren Bedienelementen.
 
+![](/img/Lektionen_thumb.png)
+
 ## Bereiche der Seite
 Die Seiten gliedern sich in vier Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet.
 

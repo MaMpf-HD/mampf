@@ -5,6 +5,8 @@ Die Seite „Modul“ ist eine Unterseite einer Veranstaltung. Auf ihr können N
 
 \*Links ergänzen\*
 
+![](/img/Modul_anonym.png)
+
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*
 
