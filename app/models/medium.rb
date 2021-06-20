@@ -503,6 +503,7 @@ class Medium < ApplicationRecord
   end
 
   def manuscript_url_with_host
+    return manuscript_url(host: host) + "/"+manuscript_filename if ENV["REWRITE_ENABLED"]=="1"
     manuscript_url(host: host)
   end
 
