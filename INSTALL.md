@@ -98,6 +98,7 @@ USE_CAPTCHA_SERVICE=true
 CAPTCHA_VERIFY_URL=your_captcha_service_verify_url
 CAPTCHA_PUZZLE_URL=your_captcha_service_puzzle_url
 CAPTCHA_APPLICATION_TOKEN=your_token_for_verifying_puzzle
+REWRITE_ENABLED=1_if_you_want_nice_filenames
 ```
  3. Execute the following commands to install and run the service:
 ```
