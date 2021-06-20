@@ -167,7 +167,8 @@ de:
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
     teachables:
-      teachables: Veranstaltungs- und Modulsuche
+      teachables: Veranstaltungssuche
+      courses: Modulsuche
       info:
         action: >
           Je nachdem, ob Du EditorIn dieser Veranstaltung bist, kannst Du sie
@@ -826,7 +827,7 @@ de:
       content: >
         Dies ist der Inhalt, der aus veröffentlichten Medien, die mit dieser
         Sitzung verknüpft sind, extrahiert wurde. Dies verwendet Inhaltsverzeichnisse
-        von Videos, die mit dem ThymE-Editor bearbeitet wurden, Inhaltsbeschreibungen  
+        von Videos, die mit dem ThymE-Editor bearbeitet wurden, Inhaltsbeschreibungen
         von Medien und Skriptmetadaten (wenn die Vorlesung auf einem Skript aufbaut).
       destroyed: 'Sitzung gelöscht'
       tags_without_section: 'Tags ohne Abschnittsassozierung'
@@ -1234,6 +1235,9 @@ de:
           Veranstaltung gelten, wie die Teamgröße für Abgaben und die
           Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
           einstellen.
+        answer_count: >
+          Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
+          wieviele Antworten die Quizfrage haben soll.
     tag:
       index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
@@ -3013,7 +3017,7 @@ de:
     warning: 'Warnung'
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
-    answer_count: 'Anzahl der Antworten (nur für Quiz-Fragen)'
+    answer_count: 'Anzahl der Antworten'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'

@@ -24,19 +24,4 @@ $(document).on 'turbolinks:load', ->
     $('.admin-index-button').show()
     return
 
-  $('input:radio[name="search_teachable_radio"]').on 'change',  ->
-    if this.id == 'search_course_radio'
-      $('#lectureSearchArea').hide()
-      $('#courseSearchArea').show()
-      $('#programSearch').insertAfter($('#editorSearch'))
-      $('#fullTextSearch').insertAfter($('#programSearch'))
-      $('#hitsPerPage').insertAfter($('#fullTextSearch'))
-    else
-      $('#courseSearchArea').hide()
-      $('#lectureSearchArea').show()
-      $('#programSearch').insertAfter($('#termSearch'))
-      $('#fullTextSearch').insertAfter($('#teacherSearch'))
-      $('#hitsPerPage').insertAfter($('#fullTextSearch'))
-    return
-
 return

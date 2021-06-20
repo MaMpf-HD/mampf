@@ -165,7 +165,7 @@ en:
       logout: 'Logout'
       media_search: 'Search media'
       tags: 'Search tags'
-      teachables: 'Search courses and lectures'
+      teachables: 'Search lectures'
       terms: 'Terms'
       classification: 'Classification'
       news: 'News'
@@ -183,7 +183,8 @@ en:
         user_medium: 'This medium is only available for MaMpf users.'
         subscriber_medium: 'This medium is only available for subscribers.'
     teachables:
-      teachables: Lecture and Course Search
+      teachables: Lecture Search
+      courses: Course Search
       info:
         action: >
           Depending on whether you are an editor of this lecture you can view
@@ -822,7 +823,7 @@ en:
         content: >
           Here is the content extracted from media that is linked to this session.
           This is done by extracting table of contents from videos, that have been
-          edited by the ThymE-Editor, contents descriptions and metadata from 
+          edited by the ThymE-Editor, contents descriptions and metadata from
           scripts (for script-based lectures).
         list: >
           This is the list of all associated sessions.
@@ -1158,6 +1159,9 @@ en:
         assignment_settings: >
           Settings that will hold for <i>all</i> assignments in this lecture
           can be adjusted on the lecture page under "Assignments".
+        answer_count: >
+          If you are searching for (quiz) questions, you can select here how
+          many anwers the equestions is supposed to have.
     tag:
       index: 'Search Tags'
       related_tags: 'Related Tags'
@@ -2841,7 +2845,7 @@ en:
     warning: 'Warning'
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
-    answer_count: 'Number of answers (only for Questions)'
+    answer_count: 'Number of answers'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -3208,7 +3212,7 @@ en:
               present: >
                 Term was given, but associated course is independent of terms
             teacher:
-              required: 'You need to give a teacher.' 
+              required: 'You need to give a teacher.'
         lesson:
           attributes:
             date:

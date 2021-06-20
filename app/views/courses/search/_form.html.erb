@@ -25,6 +25,44 @@
       </div>
     </div>
     <div class="col-6 col-lg-3 form-group">
+      <%= f.label :course_program_ids,
+                  t('basics.programs') %>
+      <%= helpdesk(t('admin.lecture.info.search_program'), true) %>
+      <%= f.select :program_ids,
+                   options_for_select(Program.select_programs),
+                   { prompt: t('basics.select') },
+                   { id: 'search_course_program_ids',
+                     multiple: true,
+                     class: 'selectize',
+                     disabled: true,
+                     required: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_programs,
+                        id: 'search_all_course_programs',
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_course_program_ids' } %>
+        <%= f.label :all_course_programs,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :fulltext, t('basics.fulltext') %>
+      <%= helpdesk(t('admin.lecture.info.search_fulltext'), false) %>
+      <%= f.text_field :fulltext,
+                        class: 'form-control' %>
+    </div>
+    <div class="col-6 col-lg-3 form-.group">
+      <%= f.label :per, t('basics.hits_per_page') %>
+      <%= f.select :per,
+                   options_for_select(lecture_hits_per_page(true),
+                                      default_lecture_hits_per_page(true)),
+                   {},
+                   { class: 'form-control'} %>
+
+    </div>
+    <div class="col-6 col-lg-3 form-group">
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :term_independent,
                         class: 'custom-control-input' %>

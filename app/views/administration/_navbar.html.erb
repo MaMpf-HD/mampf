@@ -32,6 +32,14 @@
                       title: t('admin.navbar.current_lecture') %>
         </li>
       <% end %>
+      <li class="nav-item"
+          id="adminSearch">
+        <%= link_to '', administration_search_path,
+                    class: 'fas fa-search fa-lg text-light nav-link',
+                    style: 'text-decoration: none;',
+                    data: { toggle: 'tooltip' },
+                    title: t('navbar.search') %>
+      </li>
       <li class="nav-item">
         <%= link_to '', destroy_user_session_path,
                     class: 'fas fa-sign-out-alt fa-lg text-light nav-link',
@@ -41,13 +49,6 @@
       </li>
     </ul>
     <ul class="navbar-nav mr-auto" id="adminDetails">
-      <li class="nav-item">
-        <%= link_to '', administration_search_path,
-                    class: 'fas fa-search fa-lg text-light nav-link',
-                    style: 'text-decoration: none;',
-                    data: { toggle: 'tooltip' },
-                    title: t('navbar.search') %>
-      </li>
       <% if current_user.admin? %>
         <li class="nav-item">
           <%= link_to '', terms_path,
