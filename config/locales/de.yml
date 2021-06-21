@@ -20,6 +20,7 @@ de:
       short: 'Lek'
     exercises:
       singular: 'Übung'
+      singular_updated: 'Übung (aktualisiert)'
       plural: 'Übungen'
       short: 'Ü'
     examples:

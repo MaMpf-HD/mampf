@@ -63,9 +63,7 @@ class MediaController < ApplicationController
     # create screenshot for manuscript if necessary
     changed_manuscript = @medium.manuscript_data != old_manuscript_data
     if @medium.manuscript.present? && changed_manuscript
-      if @medium.released
-        @medium.file_last_edited = @medium.updated_at
-      end
+      @medium.file_last_edited = @medium.updated_at if @medium.released
       @medium.manuscript_derivatives!
       @medium.save
     end

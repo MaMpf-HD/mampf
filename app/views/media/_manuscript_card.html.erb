@@ -62,14 +62,12 @@
             </span>
           </div>
         </div>
-        <% if medium.sort == 'Nuesse' && medium.file_last_edited != nil %>
-          <div class="row">
-          <div class="col-12">
-            <p class="text-danger"><%= t('manuscript.updated') %>: <%= l medium.updated_at, format: :short %></p>
-          </div>
-        </div>
-        <% end %>
       </div>
     </div>
   </div>
+  <% if medium.sort == 'Nuesse' && medium.file_last_edited != nil %>
+    <div class="card-footer">
+        <p class="text-danger"><%= t('manuscript.updated') %>: <%= l medium.updated_at, format: :short %></p>
+    </div>
+  <% end %>
 </div>
