@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/MaMpf-HD/thredded.git
-  revision: a5f98cc1387dcb987d335b5e4f9c6b3b3bfb3fc4
+  revision: 7fe6b2a6d3d7c75665050cbc706363f87e40e1f1
   branch: master
   specs:
     thredded (0.16.16)
@@ -46,10 +46,10 @@ GIT
 
 GIT
   remote: https://github.com/zdennis/activerecord-import.git
-  revision: 2e66ba60a23edd720976ba31505945b76d0f2084
+  revision: ee0b95c6a3f17a3d76de340e2a6f4eecc4a7de16
   branch: master
   specs:
-    activerecord-import (1.0.8)
+    activerecord-import (1.1.0)
       activerecord (>= 3.2)
 
 GEM
@@ -127,7 +127,7 @@ GEM
       minitest (>= 5.1)
       tzinfo (~> 2.0)
       zeitwerk (~> 2.3)
-    acts_as_list (1.0.3)
+    acts_as_list (1.0.4)
       activerecord (>= 4.2)
     acts_as_tree (2.9.1)
       activerecord (>= 3.0.0)
@@ -153,7 +153,7 @@ GEM
       parser (>= 2.4)
       smart_properties
     bindex (0.8.1)
-    bootsnap (1.7.3)
+    bootsnap (1.7.5)
       msgpack (~> 1.0)
     bootstrap (4.6.0)
       autoprefixer-rails (>= 9.1.0)
@@ -164,7 +164,7 @@ GEM
       activemodel (>= 5.2)
     builder (3.2.4)
     byebug (11.1.3)
-    cancancan (3.2.1)
+    cancancan (3.3.0)
     case_transform (0.2)
       activesupport
     childprocess (3.0.0)
@@ -179,7 +179,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.1.9)
-    connection_pool (2.2.3)
+    connection_pool (2.2.5)
     content_disposition (1.0.0)
     coveralls (0.7.1)
       multi_json (~> 1.3)
@@ -190,18 +190,18 @@ GEM
     crass (1.0.6)
     css_parser (1.9.0)
       addressable
-    cypress-on-rails (1.9.1)
+    cypress-on-rails (1.10.1)
       rack
     dalli (2.7.11)
     database_cleaner (2.0.1)
       database_cleaner-active_record (~> 2.0.0)
-    database_cleaner-active_record (2.0.0)
+    database_cleaner-active_record (2.0.1)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
     db_text_search (0.3.2)
       activerecord (>= 4.1.15, < 7.0)
-    devise (4.7.3)
+    devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0)
@@ -209,10 +209,10 @@ GEM
       warden (~> 1.2.3)
     devise-bootstrap-views (1.1.0)
     diff-lcs (1.4.4)
-    docile (1.3.5)
+    docile (1.4.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
-    down (5.2.0)
+    down (5.2.2)
       addressable (~> 2.5)
     erb_lint (0.0.37)
       activesupport
@@ -226,29 +226,37 @@ GEM
     erubis (2.7.0)
     et-orbi (1.2.4)
       tzinfo
-    exception_handler (0.8.0.1)
+    exception_handler (0.8.0.2)
       bundler
       rails (>= 4.2.0)
       responders
     execjs (2.8.1)
-    factory_bot (6.1.0)
+    factory_bot (6.2.0)
       activesupport (>= 5.0.0)
-    factory_bot_rails (6.1.0)
-      factory_bot (~> 6.1.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
       railties (>= 5.0.0)
-    faker (2.17.0)
+    faker (2.18.0)
       i18n (>= 1.6, < 2)
-    faraday (1.3.0)
+    faraday (1.4.2)
+      faraday-em_http (~> 1.0)
+      faraday-em_synchrony (~> 1.0)
+      faraday-excon (~> 1.1)
       faraday-net_http (~> 1.0)
+      faraday-net_http_persistent (~> 1.1)
       multipart-post (>= 1.2, < 3)
-      ruby2_keywords
+      ruby2_keywords (>= 0.0.4)
+    faraday-em_http (1.0.0)
+    faraday-em_synchrony (1.0.0)
+    faraday-excon (1.1.0)
     faraday-net_http (1.0.1)
-    fastimage (2.2.3)
+    faraday-net_http_persistent (1.1.0)
+    fastimage (2.2.4)
     ffi (1.15.3)
     filesize (0.2.0)
     friendly_id (5.4.2)
       activerecord (>= 4.0.0)
-    fugit (1.4.4)
+    fugit (1.5.0)
       et-orbi (~> 1.1, >= 1.1.8)
       raabro (~> 1.4)
     fuzzy-string-match (1.0.1)
@@ -272,7 +280,7 @@ GEM
     html_tokenizer (0.0.7)
     htmlentities (4.3.4)
     http-accept (1.7.0)
-    http-cookie (1.0.3)
+    http-cookie (1.0.4)
       domain_name (~> 0.5)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
@@ -310,7 +318,7 @@ GEM
     kaminari-i18n (0.5.0)
       kaminari
       rails
-    katex (0.6.1)
+    katex (0.8.0)
       execjs (~> 2.7)
     kramdown (2.3.1)
       rexml
@@ -361,9 +369,9 @@ GEM
     options (2.3.2)
     orm_adapter (0.5.0)
     parallel (1.20.1)
-    parser (3.0.0.0)
+    parser (3.0.1.1)
       ast (~> 2.4.1)
-    pdf-reader (2.4.2)
+    pdf-reader (2.5.0)
       Ascii85 (~> 1.0)
       afm (~> 0.2.1)
       hashery (~> 2.0)
@@ -371,9 +379,9 @@ GEM
       ttfunk
     pg (1.2.3)
     pgreset (0.3)
-    popper_js (1.16.0)
+    popper_js (2.9.2)
     pr_geohash (1.0.0)
-    premailer (1.14.2)
+    premailer (1.15.0)
       addressable
       css_parser (>= 1.6.0)
       htmlentities (>= 4.0.0)
@@ -386,14 +394,14 @@ GEM
     prometheus_exporter (0.7.0)
       webrick
     public_suffix (4.0.6)
-    puma (4.3.7)
+    puma (4.3.8)
       nio4r (~> 2.0)
     pundit (2.1.0)
       activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.5.2)
     rack (2.2.3)
-    rack-proxy (0.6.5)
+    rack-proxy (0.7.0)
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
@@ -435,10 +443,10 @@ GEM
       thor (~> 1.0)
     rainbow (3.0.0)
     rake (13.0.3)
-    rb-fsevent (0.10.4)
+    rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redis (4.2.5)
+    redis (4.3.1)
     regexp_parser (2.1.1)
     request_store (1.5.0)
       rack (>= 1.4)
@@ -455,10 +463,10 @@ GEM
       lazy_priority_queue (~> 0.1.0)
       stream (~> 0.5.3)
     rinku (2.0.6)
-    rqrcode (1.2.0)
+    rqrcode (2.0.0)
       chunky_png (~> 1.0)
-      rqrcode_core (~> 0.2)
-    rqrcode_core (0.2.0)
+      rqrcode_core (~> 1.0)
+    rqrcode_core (1.0.0)
     rsolr (2.3.0)
       builder (>= 2.1.2)
       faraday (>= 0.9.0)
@@ -488,8 +496,8 @@ GEM
       rubocop-ast (>= 0.6.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 1.4.0, < 2.0)
-    rubocop-ast (1.4.1)
-      parser (>= 2.7.1.5)
+    rubocop-ast (1.7.0)
+      parser (>= 3.0.1.1)
     rubocop-packaging (0.5.1)
       rubocop (>= 0.89, < 2.0)
     rubocop-performance (1.10.2)
@@ -503,7 +511,7 @@ GEM
       rexml
     ruby-progressbar (1.11.0)
     ruby-rc4 (0.1.5)
-    ruby-vips (2.1.0)
+    ruby-vips (2.1.2)
       ffi (~> 1.12)
     ruby2_keywords (0.0.4)
     ruby_dep (1.5.0)
@@ -528,10 +536,10 @@ GEM
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
     semantic_range (3.0.0)
-    shrine (3.3.0)
+    shrine (3.4.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
-    sidekiq (6.2.0)
+    sidekiq (6.2.1)
       connection_pool (>= 2.2.2)
       rack (~> 2.0)
       redis (>= 4.2.0)
@@ -543,7 +551,7 @@ GEM
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.12.3)
-    simplecov_json_formatter (0.1.2)
+    simplecov_json_formatter (0.1.3)
     smart_properties (1.15.0)
     spring (2.1.1)
     spring-watcher-listen (2.0.1)
@@ -577,7 +585,7 @@ GEM
       kramdown-math-katex
     tilt (2.0.10)
     timeago_js (3.0.2.2)
-    tins (1.28.0)
+    tins (1.29.1)
       sync
     trix-rails (2.3.0)
       rails (> 4.1, < 7.0)
@@ -604,7 +612,7 @@ GEM
       nokogiri (~> 1.6)
       rubyzip (>= 1.3.0)
       selenium-webdriver (>= 3.0, < 4.0)
-    webpacker (5.2.1)
+    webpacker (5.4.0)
       activesupport (>= 5.2)
       rack-proxy (>= 0.6.1)
       railties (>= 5.2)
