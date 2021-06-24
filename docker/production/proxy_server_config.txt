@@ -1,6 +1,10 @@
 root /public;
 access_log off;
 
+location /metrics {
+    proxy_pass http://master:3000/metrics;
+}
+
 location / {
     client_max_body_size 4G;
     # try_files $uri $uri/ @rails;

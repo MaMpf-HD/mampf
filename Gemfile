@@ -144,3 +144,4 @@ end
 group :test, :development, :docker_development do
   gem 'cypress-on-rails', '~> 1.0'
 end
+gem 'prometheus_exporter'
