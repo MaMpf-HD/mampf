@@ -3,6 +3,50 @@ describe("Media", () => {
     beforeEach(() => {
         cy.app("clean");
     });
+    describe("Simple User",()=>{
+        beforeEach(() => {
+            cy.app("clean");
+            cy.appScenario("non_admin");
+            cy.visit("/users/sign_in");
+            cy.get('input[type="email"]').type("max@mampf.edu");
+            cy.get('input[type="password"]').type("test123456");
+            cy.get('input[type="submit"]').click();
+        });
+        it("can view media",()=>{
+            cy.appFactories([
+                
+                [
+                "create","lesson_medium", "with_manuscript","released"
+            ],
+            ["create", "lecture_user_join", {
+                user_id: 1,
+                lecture_id: 1
+            }]]).then((records)=>{
+                console.log(records);
+                cy.visit(`/media/${records[0].id}`);
+                cy.contains(records[0].description).should("exist");
+            });
+        });
+        it("can comment media",()=>{
+            cy.appFactories([
+                
+                [
+                "create","lesson_medium", "with_manuscript","released"
+            ],
+            ["create", "lecture_user_join", {
+                user_id: 1,
+                lecture_id: 1
+            }]]).then((records)=>{
+                console.log(records);
+                cy.visit(`/media/${records[0].id}`);
+                cy.contains(records[0].description).should("exist");
+                cy.contains("Neuer Kommentar").click();
+                cy.get('textarea[name="comment[body]"]').type("Dies ist ein super Test Kommentar");
+                cy.contains("Kommentar speichern").click();
+                cy.contains("Test Kommentar").should("exist");
+            });
+        })
+    })
     describe("Administration", () => {
         beforeEach(() => {
             cy.app("clean");
@@ -30,10 +74,13 @@ describe("Media", () => {
                 cy.contains("Veröffentlichen").click();
                 cy.wait(100);
                 cy.contains("zum folgenden Zeitpunkt").click();
+                
                 var date = new Date();
                 date.setDate(date.getDate() + 7);
                 console.log(date);
-                cy.get('input[name="medium[release_date]"]').click().clear().type(date.toLocaleString("de"));
+                cy.wait(100);
+                cy.get('input[name="medium[release_date]"]').click().clear().type(date.toLocaleString("de").replace(",",""));
+                cy.wait(100);
                 cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
                 cy.get("#publishMediumModal").contains("Speichern").click();
                 cy.contains("Dieses Medium wird planmäßig").should("exist");
