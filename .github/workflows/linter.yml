@@ -26,7 +26,7 @@ jobs:
         warnings_regexp: \d+ offenses detected
         compare_branch: mampf-next
         mode: changed
-        include: ".rb"
+        include: .rb
   eslint:
     runs-on: ubuntu-latest
     name: A job to check eslint linter errors
@@ -43,7 +43,7 @@ jobs:
         warnings_regexp: \d+ warnings
         compare_branch: mampf-next
         mode: changed
-        include: ".js"
+        include: .js
   coffee:
     runs-on: ubuntu-latest
     name: A job to check coffee linter errors
@@ -60,7 +60,7 @@ jobs:
         warnings_regexp: \d+ warnings
         compare_branch: mampf-next
         mode: changed
-        include: ".coffee"
+        include: .coffee
   # erblint:
   #   runs-on: ubuntu-latest
   #   name: A job to check erblint linter errors
