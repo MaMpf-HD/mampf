@@ -51,6 +51,17 @@ FactoryBot.define do
         m.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
       end
     end
+    trait :released do
+      after(:build) do |m|
+        # first release the lecture
+        l= m.teachable.lecture
+        l.released = 'all'
+        l.save
+        m.released = 'all'
+        m.released_at = Time.now
+        m.save!
+      end
+    end
 
     trait :with_video do
       after(:build) do |m|
