@@ -379,7 +379,7 @@ GEM
       ttfunk
     pg (1.2.3)
     pgreset (0.3)
-    popper_js (2.9.2)
+    popper_js (1.16.0)
     pr_geohash (1.0.0)
     premailer (1.15.0)
       addressable
