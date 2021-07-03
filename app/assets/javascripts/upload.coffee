@@ -246,7 +246,7 @@ geogebraUpload = (fileInput) ->
 
   uppy
 
-imageUpload = (fileInput,endpoint='/screenshot/upload', classname="course") ->
+imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
   # set everything up
   uploadArea = document.getElementById('image-uploadArea')
   uploadButton = document.getElementById('image-uploadButton')
@@ -703,10 +703,10 @@ $(document).on 'turbolinks:load', ->
   videoUpload video if video?
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
-  uploadPath = "/screenshot/upload"
+  uploadPath = "/screenshots/upload"
   uploadPath = "/profile_image/upload" if image2?
   imageUpload image2, uploadPath, "user" if image2?
-  imageUpload image, uploadPath if image?
+  imageUpload image, uploadPath, "course" if image?
   bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
   # make uppy upload buttons look like bootstrap
