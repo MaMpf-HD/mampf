@@ -13,9 +13,11 @@
           <%= t('basics.correction') %>
           (<%= assignment.accepted_file_type %>)
         </b>
-        <b class="col-3">
-          <%= t('basics.actions') %>
-        </b>
+        <% if !current_user.editor_or_teacher_in?(@lecture) %>
+          <b class="col-3">
+            <%= t('basics.actions') %>
+          </b>
+        <% end %>
       </div>
     </li>
     <div class="tutorialTableContent">

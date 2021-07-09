@@ -2466,7 +2466,8 @@ en:
     late: late submission
     late_submissions: late submissions
     rejected: rejected
-    bulk_download: Bulk download of submissions
+    bulk_download_submissions: Bulk download of submissions
+    bulk_download_corrections: Bulk download of corrections
     bulk_upload: Bulk upload of corrections
     code_explanation: >
       By knowledge and input of this code, other persons can join this

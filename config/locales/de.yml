@@ -2621,7 +2621,8 @@ de:
     late: verspätete Abgabe
     late_submissions: verspätetete Abgaben
     rejected: abgelehnt
-    bulk_download: Paketdownload der Abgaben
+    bulk_download_submissions: Paketdownload der Abgaben
+    bulk_download_corrections: Paketdownload der Korrekturen
     bulk_upload: Paketupload der Korrekturen
     code_explanation: >
       Durch Kenntnis und Eingabe dieses Code können andere Personen dieser

@@ -156,6 +156,8 @@ Rails.application.routes.draw do
                                 as: 'lecture_tutorials'
   get 'lectures/:id/tutorial_overview', to: 'tutorials#overview',
                                         as: 'lecture_tutorial_overview'
+  get 'lectures/:id/tutorials_teacher', to: 'tutorials#index_teacher',
+                                        as: 'lecture_tutorials_teacher'
   get 'lectures/:id/subscribe', to: 'lectures#subscribe_page',
                                       as: 'subscribe_lecture_page'
 
@@ -367,9 +369,13 @@ Rails.application.routes.draw do
   get 'tutorials/cancel_new', to: 'tutorials#cancel_new',
                               as: 'cancel_new_tutorial'
 
-  get 'tutorials/:id/assignments/:ass_id/bulk_download',
-      to: 'tutorials#bulk_download',
+  get 'tutorials/:id/assignments/:ass_id/bulk_download_submissions',
+      to: 'tutorials#bulk_download_submissions',
       as: 'bulk_download_submissions'
+    
+  get 'tutorials/:id/assignments/:ass_id/bulk_download_corrections',
+      to: 'tutorials#bulk_download_corrections',
+      as: 'bulk_download_corrections'
 
   patch 'tutorials/:id/assignments/:ass_id/bulk_upload',
         to: 'tutorials#bulk_upload',

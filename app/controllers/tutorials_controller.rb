@@ -1,11 +1,11 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
-                                      :bulk_download, :bulk_upload,
+                                      :bulk_download_submissions, :bulk_download_corrections, :bulk_upload,
                                       :export_teams]
-  before_action :set_assignment, only: [:bulk_download, :bulk_upload,
+  before_action :set_assignment, only: [:bulk_download_submissions, :bulk_download_corrections, :bulk_upload,
                                         :export_teams]
-  before_action :set_lecture, only: [:index, :overview]
+  before_action :set_lecture, only: [:index, :index_teacher, :overview]
   before_action :set_lecture_from_form, only: [:create]
   before_action :check_tutor_status, only: :index
   before_action :check_editor_status, only: [:overview, :create]
@@ -24,10 +24,21 @@ class TutorialsController < ApplicationController
                         &.order(:last_modification_by_users_at)
   end
 
+  def index_teacher
+    @assignments = @lecture.assignments.expired.order('deadline DESC')
+    @assignment = Assignment.find_by_id(params[:assignment]) ||
+                    @assignments&.first
+    @tutorials = @lecture.tutorials
+    @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
+    @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
+                        &.order(:last_modification_by_users_at)
+  end
+
   def overview
     @assignments = @lecture.assignments.expired.order('deadline DESC')
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                     @assignments&.first
+    @tutorials = @lecture.tutorials
   end
 
   def new
@@ -67,7 +78,7 @@ class TutorialsController < ApplicationController
     @none_left = @lecture&.tutorials&.none?
   end
 
-  def bulk_download
+  def bulk_download_submissions
     @zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
     if @zipped_submissions.is_a?(StringIO)
     send_data @zipped_submissions.read,
@@ -77,6 +88,23 @@ class TutorialsController < ApplicationController
     else
       flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
                              message: @zipped_submissions)
+      redirect_to lecture_tutorials_path(@tutorial.lecture,
+                                         params:
+                                          { assignment: @assignment.id,
+                                            tutorial: @tutorial.id })
+    end
+  end
+
+  def bulk_download_corrections
+    @zipped_corrections = Submission.zip_corrections!(@tutorial, @assignment)
+    if @zipped_corrections.is_a?(StringIO)
+    send_data @zipped_corrections.read,
+              filename: @assignment.title + '@' + @tutorial.title + '-Corrections.zip',
+              type: 'application/zip',
+              disposition: 'attachment'
+    else
+      flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
+                             message: @zipped_corrections)
       redirect_to lecture_tutorials_path(@tutorial.lecture,
                                          params:
                                           { assignment: @assignment.id,

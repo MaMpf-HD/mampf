@@ -11,7 +11,7 @@
           <div class="dropdown-menu">
             <% (@assignments - [@assignment]).each do |a| %>
               <%= link_to a.title,
-                          lecture_tutorials_path(@lecture,
+                          lecture_tutorials_teacher_path(@lecture,
                                                  params: { assignment: a.id,
                                                            tutorial: @tutorial.id }),
                           class: 'dropdown-item' %>
@@ -23,7 +23,7 @@
           <%= @assignment.title %>
         </button>
       <% end %>
-      <% if @tutorials.size > 1 %>
+      <% if @tutorials.size > 0 %>
         <span class="dropdown ml-3">
           <button class="btn btn-secondary dropdown-toggle"
                   data-toggle="dropdown"
@@ -31,13 +31,19 @@
             <%= @tutorial.title %>
           </button>
           <div class="dropdown-menu">
-            <% (@tutorials - [@tutorial]).each do |t| %>
-              <%= link_to t.title,
-                          lecture_tutorials_path(@lecture,
-                                                 params:
-                                                   { assignment: @assignment.id,
-                                                     tutorial: t.id }),
-                         class: 'dropdown-item' %>
+            <%= link_to t('basics.overview'), lecture_tutorial_overview_path(@lecture,
+                                                                            params: { assignment: @assignment.id }),
+                                                                            class: 'dropdown-item' %>
+            <% if (@tutorials - [@tutorial]).size > 0 %>
+              <div class="dropdown-divider"></div>
+              <% (@tutorials - [@tutorial]).each do |t| %>
+                <%= link_to t.title,
+                            lecture_tutorials_teacher_path(@lecture,
+                                                  params:
+                                                    { assignment: @assignment.id,
+                                                      tutorial: t.id }),
+                          class: 'dropdown-item' %>
+              <% end %>
             <% end %>
           </div>
         </span>
@@ -46,21 +52,23 @@
           <%= @tutorial.title %>
         </button>
       <% end %>
-      <% if current_user.editor_or_teacher_in?(@lecture) %>
-        <%= link_to t('basics.overview'),
-                    lecture_tutorial_overview_path(@lecture),
-                    class: 'btn btn-primary ml-3' %>
-      <% end %>
       <% if @stack.present? %>
         <%= link_to t('submission.bulk_download_submissions'),
                     bulk_download_submissions_path(id: @tutorial.id,
                                                    ass_id: @assignment.id),
                     class: 'btn btn-primary ml-3',
                     data: { turbolinks: false } %>
-        <button class="btn btn-primary ml-3"
-                id="show-bulk-upload-area">
-          <%= t('submission.bulk_upload') %>
-        </button>
+        <% if @stack.select{|s| s.correction.present?}.size > 0 %>
+          <%= link_to t('submission.bulk_download_corrections'),
+                      bulk_download_corrections_path(id: @tutorial.id,
+                                                    ass_id: @assignment.id),
+                      class: 'btn btn-primary ml-3',
+                      data: { turbolinks: false } %>
+        <% else %>
+          <button class="btn btn-secondary ml-3" disabled>
+            <%= t('submission.bulk_download_corrections') %>
+          </button>
+        <% end %>
         <%= link_to t('tutorial.teams_as_csv'),
                     export_teams_to_csv_path(id: @tutorial.id,
                                              ass_id: @assignment.id,
@@ -68,12 +76,6 @@
                     class: 'btn btn-primary ml-3',
                     id: 'export-teams' %>
       <% end %>
-      <%= link_to t('tutorial.certificate_check'),
-                  validate_certificate_as_tutor_path(params:
-                                                       { lecture_id:
-                                                           @lecture.id }),
-                  class: 'btn btn-primary ml-3',
-                  remote: true %>
     </div>
   </div>
   <% if @assignment.in_grace_period? %>
@@ -88,16 +90,6 @@
       </div>
     </div>
   <% end %>
-  <div class="row m-2 p-2 border border-round bg-light"
-       id="bulk-upload-area">
-    <div class="col-12">
-      <% if @stack.present? %>
-        <%= render partial: 'tutorials/bulk_correction_form',
-                   locals: { tutorial: @tutorial,
-                             assignment: @assignment } %>
-      <% end %>
-    </div>
-  </div>
   <div class="row my-3 p-3"
        id="bulk-upload-report">
   </div>

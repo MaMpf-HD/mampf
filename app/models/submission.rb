@@ -93,7 +93,12 @@ class Submission < ApplicationRecord
   	manuscript.to_io.path
   end
 
-  def filename_for_bulk_download
+  def correction_file_path
+    return unless correction
+    correction.to_io.path
+  end
+
+  def filename_for_submissions_bulk_download
 		(team.first(180) + '-' +
 			last_modification_by_users_at.strftime("%F-%H%M") +
 			(too_late? ? '-LATE' : '') +
@@ -105,14 +110,45 @@ class Submission < ApplicationRecord
    		.gsub(/[^0-9A-Za-z.\-]/, '_')
   end
 
+  def filename_for_corrections_bulk_download
+		(team.first(180) + '-' +
+			last_modification_by_users_at.strftime("%F-%H%M") +
+			(too_late? ? '-LATE' : '') +
+			+ '-ID-' + id + '-CORRECTION' +
+			assignment.accepted_file_type)
+			.gsub(/[\x00\/\\:\*\?\"<>\|]/, '_')
+	   	.gsub(/^.*(\\|\/)/, '')
+   		# Strip out the non-ascii characters
+   		.gsub(/[^0-9A-Za-z.\-]/, '_')
+  end
+
   def self.zip_submissions!(tutorial, assignment)
-		submissions = Submission.where(tutorial: tutorial,
+    submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
     begin
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
         submissions.each do |s|
-          stream.put_next_entry(s.filename_for_bulk_download)
+          stream.put_next_entry(s.filename_for_submissions_bulk_download)
           stream.write IO.read(s.file_path)
+        end
+      end
+      archived_filestream.rewind
+    rescue => e
+      archived_filestream = e.message
+    end
+    archived_filestream
+  end
+
+  def self.zip_corrections!(tutorial, assignment)
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
+    begin
+      archived_filestream = Zip::OutputStream.write_buffer do |stream|
+        submissions.each do |s|
+          if s.correction
+            stream.put_next_entry(s.filename_for_corrections_bulk_download)
+            stream.write IO.read(s.correction_file_path)
+          end
         end
       end
       archived_filestream.rewind

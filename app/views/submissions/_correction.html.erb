@@ -1,23 +1,39 @@
 <div class="row">
   <div class="col-12">
-    <%= link_to t('buttons.upload'),
-                edit_correction_path(submission),
-                class: 'btn btn-sm btn-outline-secondary mb-2',
-                remote: true %>
-    <span class="correction-action-area"
-         data-id="<%= submission.id %>">
-      <% if submission.correction %>
-        <%= link_to correction_display_mode(submission),
-                    show_correction_path(submission),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
-                    data: { turbolinks: false } %>
-        <%= link_to t('buttons.delete'),
-                    delete_correction_path(submission),
-                    class: 'btn btn-sm btn-outline-secondary mb-2',
-                    data: { confirm: t('confirmation.generic') },
-                    method: :delete,
-                    remote: true %>
-      <% end %>
-    </span>
+    <% if !current_user.editor_or_teacher_in?(@lecture) %>
+      <%= link_to t('buttons.upload'),
+                  edit_correction_path(submission),
+                  class: 'btn btn-sm btn-outline-secondary mb-2',
+                  remote: true %>
+      <span class="correction-action-area"
+          data-id="<%= submission.id %>">
+        <% if submission.correction %>
+          <%= link_to correction_display_mode(submission),
+                      show_correction_path(submission),
+                      class: 'btn btn-sm btn-outline-secondary mb-2',
+                      data: { turbolinks: false } %>
+          <%= link_to t('buttons.delete'),
+                      delete_correction_path(submission),
+                      class: 'btn btn-sm btn-outline-secondary mb-2',
+                      data: { confirm: t('confirmation.generic') },
+                      method: :delete,
+                      remote: true %>
+        <% end %>
+      </span>
+    <% else %>
+      <span class="correction-action-area"
+          data-id="<%= submission.id %>">
+        <% if submission.correction %>
+          <%= link_to t('buttons.download'),
+                      show_correction_path(submission, params: { download: 'true' }),
+                      class: 'btn btn-sm btn-outline-secondary mb-2',
+                      data: { turbolinks: false } %>
+          <%= link_to correction_display_mode(submission),
+                      show_correction_path(submission),
+                      class: 'btn btn-sm btn-outline-secondary mb-2',
+                      data: { turbolinks: false } %>
+        <% end %>
+      </span>
+    <% end %>
   </div>
 </div>
