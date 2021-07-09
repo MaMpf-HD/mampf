@@ -136,7 +136,7 @@ class Submission < ApplicationRecord
     end
     file_name = metadata['filename']
     file_type = File.extname(file_name)
-    if !file_type.in?(['.cc', '.hh', '.m',".mlx", '.pdf', 'zip'])
+    if !file_type.in?(['.cc', '.hh', '.m',".mlx", '.pdf', '.zip',".txt"])
       errors.push I18n.t('submission.wrong_file_type',
                          file_type: file_type,
                          accepted_file_type: assignment.accepted_file_type)
