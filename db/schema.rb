@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_10_230901) do
+ActiveRecord::Schema.define(version: 2021_07_10_122706) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -401,7 +401,7 @@ ActiveRecord::Schema.define(version: 2021_06_10_230901) do
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
-  create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "user_id"
     t.text "code"
@@ -463,6 +463,15 @@ ActiveRecord::Schema.define(version: 2021_06_10_230901) do
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 
+  create_table "speaker_talk_joins", force: :cascade do |t|
+    t.bigint "talk_id", null: false
+    t.bigint "speaker_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["speaker_id"], name: "index_speaker_talk_joins_on_speaker_id"
+    t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
+  end
+
   create_table "subject_translations", force: :cascade do |t|
     t.bigint "subject_id", null: false
     t.string "locale", null: false
@@ -478,7 +487,7 @@ ActiveRecord::Schema.define(version: 2021_06_10_230901) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"
@@ -498,6 +507,13 @@ ActiveRecord::Schema.define(version: 2021_06_10_230901) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "realizations"
+  end
+
+  create_table "talks", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
   create_table "terms", force: :cascade do |t|
@@ -863,8 +879,11 @@ ActiveRecord::Schema.define(version: 2021_06_10_230901) do
   add_foreign_key "quiz_certificates", "users"
   add_foreign_key "referrals", "items"
   add_foreign_key "referrals", "media"
+  add_foreign_key "speaker_talk_joins", "talks"
+  add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
+  add_foreign_key "talks", "lectures"
   add_foreign_key "thredded_messageboard_users", "thredded_messageboards", on_delete: :cascade
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade

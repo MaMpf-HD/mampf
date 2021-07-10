@@ -20,6 +20,8 @@ class Lecture < ApplicationRecord
                      after_add: :touch_siblings,
                      after_remove: :touch_siblings
 
+  has_many :talks, dependent: :destroy
+
   # being a teachable (course/lecture/lesson), a lecture has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable
 
