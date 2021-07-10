@@ -96,7 +96,7 @@ class User < ApplicationRecord
   end
 
   def self.select_teachers
-    User.teachers.map { |u| [u.name, u.id] }
+    User.teachers.pluck(:name, :id).natural_sort_by(&:first)
   end
 
   # returns the array of all editors
@@ -551,6 +551,15 @@ class User < ApplicationRecord
   def proper_student_in?(lecture)
     lecture.in?(lectures) && !in?(lecture.tutors) && !in?(lecture.editors) &&
       self != lecture.teacher
+  end
+
+  def can_edit?(something)
+    unless something.is_a?(Lecture) || something.is_a?(Course)
+      raise 'can_edit? was called with incompatible class'
+    end
+    return true if admin
+    return in?(something.editors_with_inheritance) if something.is_a?(Lecture)
+    in?(something.editors)
   end
 
   private

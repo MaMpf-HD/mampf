@@ -17,7 +17,7 @@ describe("Courses", function () {
             cy.get('input[name="course[title]"]').type("Lineare Algebra I");
             cy.get('input[name="course[short_title]"]').type("LA I");
             cy.get('input[type="submit"]').click();
-            cy.visit('/administration');
+            //cy.visit('/administration');
             cy.contains("Lineare Algebra I").should("exist");
         });
         it("can create lecture", () => {
@@ -54,7 +54,7 @@ describe("Courses", function () {
                 }]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
             });
@@ -87,7 +87,7 @@ describe("Courses", function () {
                 ["create", "lecture", "released_for_all"]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
             });
@@ -100,10 +100,10 @@ describe("Courses", function () {
                 }]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("not.exist");
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
             });
         });
         it("can not subscribe on page to unpublished", () => {

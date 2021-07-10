@@ -126,7 +126,7 @@
           <ul>
             <% tag.extra_lectures.each do |l| %>
               <li>
-                <%= link_to l.title, edit_or_inspect_lecture_path(l) %>
+                <%= link_to l.title, edit_or_show_lecture_path(l) %>
               </li>
             <% end %>
           </ul>
@@ -143,7 +143,7 @@
           <ul>
             <% tag.missing_lectures.each do |l| %>
               <li>
-                <%= link_to l.title, edit_or_inspect_lecture_path(l) %>
+                <%= link_to l.title, edit_or_show_lecture_path(l) %>
               </li>
             <% end %>
           </ul>

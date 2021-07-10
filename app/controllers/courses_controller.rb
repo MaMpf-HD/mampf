@@ -1,7 +1,7 @@
 # CoursesController
 class CoursesController < ApplicationController
   before_action :set_course, only: [:take_random_quiz, :render_question_counter]
-  before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
+  before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent
   authorize_resource
@@ -32,14 +32,14 @@ class CoursesController < ApplicationController
     if @course.valid?
       # set organizational_concept to default
       set_organizational_defaults
-      redirect_to administration_path
+      redirect_to administration_path,
+                  notice: I18n.t('controllers.created_course_success',
+                                 course: @course.title,
+                                 editors: @course.editors.map(&:name)
+                                                         .join(', '))
       return
     end
     @errors = @course.errors
-  end
-
-  def inspect
-    I18n.locale = @course.locale || I18n.default_locale
   end
 
   def destroy
@@ -58,6 +58,15 @@ class CoursesController < ApplicationController
   def render_question_counter
     tags = Tag.where(id: tag_params[:tag_ids])
     @count = @course.question_count(tags)
+  end
+
+  def search
+    search = Course.search_by(search_params, params[:page])
+    search.execute
+    results = search.results
+    @total = search.total
+    @courses = Kaminari.paginate_array(results, total_count: @total)
+                        .page(params[:page]).per(search_params[:per])
   end
 
   private
@@ -86,6 +95,13 @@ class CoursesController < ApplicationController
 
   def tag_params
     params.permit(:count, tag_ids: [])
+  end
+
+  def search_params
+    params.require(:search).permit(:all_editors, :all_programs, :fulltext,
+                                   :term_independent, :per,
+                                   editor_ids: [],
+                                   program_ids: [])
   end
 
   def random_quiz_params

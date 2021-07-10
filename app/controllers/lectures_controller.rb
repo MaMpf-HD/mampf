@@ -9,20 +9,12 @@ class LecturesController < ApplicationController
   before_action :check_for_consent
   before_action :check_published, only: [:subscribe_page]
   before_action :check_for_subscribe, only: [:show]
-  before_action :set_view_locale, only: [:edit, :show, :subscribe_page, :inspect,
+  before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
   layout 'administration'
 
   def edit
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.parse(ENV['RAILS_CACHE_ID'])].max)
-      eager_load_stuff
-    end
-  end
-
-  def inspect
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at, @lecture.updated_at,
                               Time.parse(ENV['RAILS_CACHE_ID'])].max)
@@ -90,10 +82,14 @@ class LecturesController < ApplicationController
       # depending on where the create action was trriggered from, return
       # to admin index view or edit course view
       unless params[:lecture][:from] == 'course'
-        redirect_to administration_path
+        redirect_to administration_path,
+                    notice: I18n.t('controllers.created_lecture_success',
+                                   lecture: @lecture.title_with_teacher)
         return
       end
-      redirect_to edit_course_path(@lecture.course)
+      redirect_to edit_course_path(@lecture.course),
+                  notice: I18n.t('controllers.created_lecture_success',
+                                   lecture: @lecture.title_with_teacher)
       return
     end
     @errors = @lecture.errors
@@ -223,6 +219,7 @@ class LecturesController < ApplicationController
     @total = search.total
     @lectures = Kaminari.paginate_array(results, total_count: @total)
                         .page(params[:page]).per(search_params[:per])
+    @results_as_list = search_params[:results_as_list] == 'true'
     return unless @total.zero?
     return unless search_params[:fulltext]&.length.to_i > 1
     @similar_titles = Course.similar_courses(search_params[:fulltext])
@@ -388,6 +385,7 @@ class LecturesController < ApplicationController
     params[:search][:user_id] = current_user.id
     params.require(:search).permit(:all_types, :all_terms, :all_programs,
                                    :all_teachers, :fulltext, :per, :user_id,
+                                   :results_as_list,
                                    types: [],
                                    term_ids: [],
                                    program_ids: [],

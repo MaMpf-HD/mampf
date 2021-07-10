@@ -1,0 +1,40 @@
+<ul class="nav nav-pills mt-3" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="media-tab" data-toggle="pill"
+       href="#media_catalog">
+      <%= t('admin.medium.media_search') %>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="teachable-tab" data-toggle="pill"
+       href="#teachable_search">
+      <%= t('admin.teachables.teachables') %>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="course-tab" data-toggle="pill"
+       href="#course_search">
+      <%= t('admin.teachables.courses') %>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="tags-tab" data-toggle="pill"
+       href="#tag_search">
+      <%= t('admin.tag.index') %>
+    </a>
+  </li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="media_catalog">
+    <%= render partial: 'media/catalog/catalog' %>
+  </div>
+  <div class="tab-pane fade" id="teachable_search">
+    <%= render partial: 'administration/search_teachables' %>
+  </div>
+  <div class="tab-pane fade" id="course_search">
+    <%= render partial: 'administration/search_courses' %>
+  </div>
+  <div class="tab-pane fade" id="tag_search">
+    <%= render partial: 'tags/search' %>
+  </div>
+</div>

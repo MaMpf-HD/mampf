@@ -1,29 +1,17 @@
 <div class="list-group">
   <div class="list-group-item list-group-item-secondary">
     <div class="row">
-      <div class="col-8">
+      <div class="col-12">
         <%= t('admin.main.title') %>
-      </div>
-      <div class="col-4 text-right">
-        <%= t('admin.main.editors') %>
       </div>
     </div>
   </div>
   <% courses.each do |c| %>
-    <a href="<%= edit_or_inspect_course_path(c) %>"
+    <a href="<%= edit_course_path(c) %>"
        class="list-group-item list-group-item-action">
       <div class="row">
-        <div class="col-8">
+        <div class="col-12">
           <%= c.title %>
-        </div>
-        <div class="col-4 text-right">
-          <ul class="list-unstyled">
-            <% c.editors.each do |e| %>
-              <li>
-                <%= e.name %>
-              </li>
-            <% end %>
-          </ul>
         </div>
       </div>
     </a>

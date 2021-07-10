@@ -165,7 +165,8 @@ en:
       current_lecture: 'Current event series'
       logout: 'Logout'
       media_search: 'Search media'
-      tags: 'Tag overview'
+      tags: 'Search tags'
+      teachables: 'Search lectures'
       terms: 'Terms'
       classification: 'Classification'
       news: 'News'
@@ -182,6 +183,14 @@ en:
         free_medium: 'This medium is free.'
         user_medium: 'This medium is only available for MaMpf users.'
         subscriber_medium: 'This medium is only available for subscribers.'
+    teachables:
+      teachables: Lecture Search
+      courses: Course Search
+      info:
+        action: >
+          Depending on whether you are an editor of this lecture you can view
+          or edit this lecture. Upon viewing you will be asked to subscribe the
+          lecture if you habe not done this before.
     classification:
       programs: 'Study Paths'
       divisions: 'Divisions'
@@ -206,7 +215,7 @@ en:
         Only the last 25 recently updated media are shown.
         You can find more by doing a %{media_search} or in your
         %{profile}.
-      media_search: 'media search'
+      media_search: 'Search media'
       user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
@@ -695,6 +704,9 @@ en:
           in the cards that appear in MaMpf's start page. The suggested
           aspect ratio is 3:2. The uploaded image will be downscaled by MaMpf
           (maximal width 405 pixels, maximal height 270 pixels).
+        action:
+          If you are an editor of the corresponding module, a link for editing
+          will be displayed here.
     chapter:
       edit: 'Edit %{chapter}'
       position: 'Position after %{chapter_name}'
@@ -812,7 +824,7 @@ en:
         content: >
           Here is the content extracted from media that is linked to this session.
           This is done by extracting table of contents from videos, that have been
-          edited by the ThymE-Editor, contents descriptions and metadata from 
+          edited by the ThymE-Editor, contents descriptions and metadata from
           scripts (for script-based lectures).
         list: >
           This is the list of all associated sessions.
@@ -1148,8 +1160,11 @@ en:
         assignment_settings: >
           Settings that will hold for <i>all</i> assignments in this lecture
           can be adjusted on the lecture page under "Assignments".
+        answer_count: >
+          If you are searching for (quiz) questions, you can select here how
+          many anwers the equestions is supposed to have.
     tag:
-      index: 'Tag Index'
+      index: 'Search Tags'
       related_tags: 'Related Tags'
       extra_lectures: 'Addictional event series'
       missing_lectures: 'Missing event series'
@@ -2832,7 +2847,7 @@ en:
     warning: 'Warning'
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
-    answer_count: 'Number of answers (only for Questions)'
+    answer_count: 'Number of answers'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -2879,6 +2894,8 @@ en:
     as_file_type: as %{type} file
     code_copied_to_clipboard: Code has been copied to the clipboard.
     emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    lecture_search: Lecture Search
+    course_search: Course Search
     immediately: immediately
     at_time: at the following time
     assignment: Assignment
@@ -3108,6 +3125,11 @@ en:
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
     no_announcement: There is no announcement with this id.
+    created_lecture_success: >
+      The lecture %{lecture} has been successfully created.
+    created_course_success: >
+      The course %{course} (editors: %{editors}) has been successfully
+      created.
   exception:
     title: Error
     exception: Exception on %{host}
@@ -3192,7 +3214,7 @@ en:
               present: >
                 Term was given, but associated course is independent of terms
             teacher:
-              required: 'You need to give a teacher.' 
+              required: 'You need to give a teacher.'
         lesson:
           attributes:
             date:

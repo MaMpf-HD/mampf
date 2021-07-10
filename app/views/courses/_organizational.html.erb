@@ -27,34 +27,24 @@
          aria-labelledby="heading"
          data-parent="#organizational_accordion">
       <div class="card-body">
-          <div class="form-row mb-3">
-            <div class="col-6">
-              <% if inspection %>
-                <%= t('admin.course.additional_information_visible') %>:
-                <%= course.organizational ? t('basics.yes_lc') : t('basics.no_lc') %>
-              <% else %>
-                <div class="custom-control custom-checkbox">
-                  <%= f.check_box :organizational,
-                                  class: 'custom-control-input',
-                                  disabled: inspection %>
-                  <%= f.label :organizational,
-                              t('admin.course.additional_information_visible'),
-                              { class: 'custom-control-label' } %>
-                </div>
-              <% end %>
+        <div class="form-row mb-3">
+          <div class="col-6">
+            <div class="custom-control custom-checkbox">
+              <%= f.check_box :organizational,
+                              class: 'custom-control-input' %>
+              <%= f.label :organizational,
+                          t('admin.course.additional_information_visible'),
+                          { class: 'custom-control-label' } %>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12">
-              <% if inspection %>
-                <%= course.organizational_concept&.html_safe %>
-              <% else %>
-                <%= f.trix_editor :organizational_concept,
-                                  id: 'course-concept-trix',
-                                  data: { content: course.organizational_concept} %>
-              <% end %>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <%= f.trix_editor :organizational_concept,
+                              id: 'course-concept-trix',
+                              data: { content: course.organizational_concept} %>
           </div>
+        </div>
       </div>
     </div>
   </div>

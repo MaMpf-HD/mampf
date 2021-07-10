@@ -8,7 +8,7 @@
 <%= form_with model: course,
               html: { id: 'new-course-form' } do |f| %>
   <div class="form-row">
-    <div class="col-8 form-group">
+    <div class="col-12 form-group">
       <%= f.label :title, t('basics.title') %>
       <%= helpdesk(t('admin.course.info.title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
@@ -17,7 +17,7 @@
            id="new-course-title-error">
       </div>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-12 form-group">
       <%= f.label :short_title, t('basics.short_title') %>
       <%= helpdesk(t('admin.course.info.short_title'), false) %>
       <%= f.text_field :short_title, { class: 'form-control',
@@ -31,9 +31,11 @@
                   t('basics.editors') %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
-                   options_for_select([[]]),
+                   options_for_select([[current_user.name, current_user.id]],
+                                       current_user.id),
                    {},
                    { class: 'selectize',
+                     required: true,
                      multiple: true,
                      style: 'display: none;',
                      data: { ajax: true,

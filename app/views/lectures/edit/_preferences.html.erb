@@ -31,8 +31,7 @@
                              options_for_select(@terms,
                                                 lecture.term&.id),
                              {},
-                             { class: 'form-control',
-                               disabled: inspection } %>
+                             { class: 'form-control' } %>
                 <div class="invalid-feedback"
                      id="lecture-term-error">
                 </div>
@@ -46,8 +45,7 @@
                              options_for_select(Lecture.sort_localized.invert.to_a,
                                                 lecture.sort),
                              {},
-                             { class: 'form-control',
-                               disabled: inspection } %>
+                             { class: 'form-control' } %>
                 <div class="invalid-feedback"
                      id="lecture-term-error">
                 </div>
@@ -58,8 +56,7 @@
               <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>
               <%= f.number_field :start_chapter,
                                  value: lecture.start_chapter || 1,
-                                 class: 'form-control',
-                                 disabled: inspection  %>
+                                 class: 'form-control' %>
             </div>
             <% unless lecture.seminar? %>
               <div class="col-2 mt-6">
@@ -70,15 +67,13 @@
                   <%= f.number_field :start_section,
                                      value: lecture.start_section || 1,
                                      class: 'form-control',
-                                     disabled: inspection ||
-                                                 !lecture.absolute_numbering %>
+                                     disabled: !lecture.absolute_numbering %>
                 </div>
               </div>
               <div class="col-3 mt-6">
                 <div class="custom-control custom-checkbox">
                   <%= f.check_box :absolute_numbering,
-                                  class: 'custom-control-input',
-                                  disabled: inspection %>
+                                  class: 'custom-control-input' %>
                   <%= f.label :absolute_numbering,
                               t('admin.lecture.absolute_numbering'),
                               { class: 'custom-control-label' } %>
@@ -88,7 +83,6 @@
               </div>
             <% end %>
           </div>
-          <% unless inspection %>
           <div class="form-row">
             <div class="col-auto form-group">
               <%= f.label :passphrase, t('admin.lecture.passphrase') %>
@@ -98,7 +92,6 @@
                                  size: 50 } %>
             </div>
           </div>
-          <% end %>
           <div class="form-group">
             <%= t('basics.language') %>
             <div class="form-row ml-2">
@@ -106,8 +99,7 @@
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :locale,
                                    locale.to_s,
-                                   class: 'custom-control-input',
-                                   disabled: inspection %>
+                                   class: 'custom-control-input' %>
                 <%= f.label :locale,
                             t('locales.' + locale.to_s),
                             value: locale.to_s,
@@ -123,8 +115,7 @@
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :content_mode,
                                    'video',
-                                   class: 'custom-control-input',
-                                   disabled: inspection %>
+                                   class: 'custom-control-input' %>
                 <%= f.label :content_mode,
                             t('admin.lecture.video_based'),
                             value: 'video',
@@ -133,8 +124,7 @@
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :content_mode,
                                    'manuscript',
-                                   class: 'custom-control-input',
-                                   disabled: inspection %>
+                                   class: 'custom-control-input' %>
                 <%= f.label :content_mode,
                             t('admin.lecture.script_based'),
                             value: 'manuscript',
@@ -147,8 +137,7 @@
               <div class="col-12">
                 <div class="custom-control custom-checkbox">
                   <%= f.check_box :disable_teacher_display,
-                                  class: 'custom-control-input',
-                                  disabled: inspection %>
+                                  class: 'custom-control-input' %>
                   <%= f.label :disable_teacher_display,
                               t('admin.lecture.disable_teacher_display'),
                               { class: 'custom-control-label' } %>
