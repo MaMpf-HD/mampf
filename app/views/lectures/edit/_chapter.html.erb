@@ -3,6 +3,9 @@
        class="card-header <%= chapter_header_color(chapter) %>">
     <div class="row">
       <div class="col-8">
+        <%= link_to chapter.to_label,
+                    edit_chapter_path(chapter),
+                    class: 'text-light' %>
       </div>
       <div class="col-4 text-right">
         <%= link_to t('buttons.create_section'),
