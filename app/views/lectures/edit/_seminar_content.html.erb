@@ -1,0 +1,30 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-3">
+        <h5>
+          <%= t("admin.lecture.#{lecture.sort}_content") %>
+        </h5>
+      </div>
+      <div class="col-5 text-right">
+        <%= link_to t("buttons.create_talk"),
+                    new_talk_path(lecture_id: lecture.id),
+                    remote: true,
+                    class: 'btn btn-sm btn-secondary new-in-lecture',
+                    id: 'new_talk_button' %>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <% if lecture.talks.any? %>
+      <div class="card-columns">
+        <% lecture.talks.each do |t| %>
+            <%= render partial: 'lectures/edit/talk',
+                       locals: { talk: t } %>
+        <% end %>
+      </div>
+    <% else %>
+      <%= t('admin.lecture.no_talks') %>
+    <% end %>
+  </div>
+</div>

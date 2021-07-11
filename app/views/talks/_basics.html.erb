@@ -1,0 +1,32 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-4">
+    <h5>
+      <%= t('basics.basics') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="form-row">
+      <div class="col-12 form-group">
+        <%= f.label :title, t('basics.title') %>
+        <%= helpdesk(t('admin.chapter.info.title'), false) %>
+        <%= f.text_field :title,
+                         { class: 'form-control' } %>
+        <div class="invalid-feedback" id="talk-title-error">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 form-group">
+        <%= f.label :predecessor,
+                    t('admin.chapter.position',
+                      chapter_name: t('basics.talk')) %>
+        <%= helpdesk(t('admin.chapter.info.position'), false) %>
+        <%= f.select :predecessor,
+                     options_for_select(talk_positions_for_select(talk),
+                                        talk.position - 1) ,
+                                        {},
+                                        { class: 'form-control' } %>
+      </div>
+    </div>
+  </div>
+</div>

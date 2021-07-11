@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_10_122706) do
+ActiveRecord::Schema.define(version: 2021_07_11_104739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -271,6 +271,7 @@ ActiveRecord::Schema.define(version: 2021_07_10_122706) do
     t.boolean "disable_teacher_display", default: false
     t.integer "submission_max_team_size"
     t.integer "submission_grace_period", default: 15
+    t.boolean "legacy_seminar", default: false
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -513,6 +514,10 @@ ActiveRecord::Schema.define(version: 2021_07_10_122706) do
     t.bigint "lecture_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "title"
+    t.integer "position"
+    t.text "details"
+    t.date "dates", default: [], array: true
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 

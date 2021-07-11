@@ -36,6 +36,10 @@ class User < ApplicationRecord
   has_many :given_tutorials, -> { order(:title) },
            through: :tutor_tutorial_joins, source: :tutorial
 
+  # a user has many given talks
+  has_many :speaker_talk_joins, foreign_key: 'speaker_id', dependent: :destroy
+  has_many :talks, through: :speaker_talk_joins
+
   # a user has many notifications as recipient
   has_many :notifications, foreign_key: 'recipient_id'
 

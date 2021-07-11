@@ -3,15 +3,22 @@
     <%= render partial: 'lectures/edit/header',
                locals: { lecture: lecture } %>
     <div class="row px-4 py-2">
-      <div id="lecture-content-card" class="col-12 col-xxxl-9 mb-1">
-        <%= render partial: 'lectures/edit/content',
-                   locals: { lecture: lecture } %>
-      </div>
-      <div id="lecture-media-card" class="col-12 col-xxxl-3 mb-1">
-        <%= render partial: 'lectures/edit/media',
-                   locals: { media: media,
-                             lecture: lecture } %>
-      </div>
+      <% if !lecture.seminar? || lecture.legacy_seminar %>
+        <div id="lecture-content-card" class="col-12 col-xxxl-9 mb-1">
+          <%= render partial: 'lectures/edit/content',
+                     locals: { lecture: lecture } %>
+        </div>
+        <div id="lecture-media-card" class="col-12 col-xxxl-3 mb-1">
+          <%= render partial: 'lectures/edit/media',
+                     locals: { media: media,
+                               lecture: lecture } %>
+        </div>
+      <% else %>
+        <div id="seminar-content-card" class="col-12 mb-1">
+          <%= render partial: 'lectures/edit/seminar_content',
+                     locals: { lecture: lecture } %>
+        </div>
+      <% end %>
     </div>
     <div class="row px-4 py-2 mt-3">
       <div class="accordion col-12" id="lectureAccordion">
@@ -49,8 +56,13 @@
              locals: { lecture: lecture } %>
   <%= render partial: 'lectures/edit/user_modal',
              locals: { lecture: lecture } %>
-  <%= render partial: 'chapters/modal',
-             locals: { lecture: lecture } %>
-  <%= render partial: 'sections/modal' %>
-  <%= render partial: 'lessons/modal' %>
+  <% if !lecture.seminar? || lecture.legacy_seminar %>
+    <%= render partial: 'chapters/modal',
+               locals: { lecture: lecture } %>
+    <%= render partial: 'sections/modal' %>
+    <%= render partial: 'lessons/modal' %>
+  <% else %>
+    <%= render partial: 'talks/modal',
+               locals: { lecture: lecture } %>
+  <% end %>
 <% end %>

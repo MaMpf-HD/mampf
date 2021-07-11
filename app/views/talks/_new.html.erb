@@ -1,0 +1,40 @@
+<%= form_with model: talk do |f| %>
+  <div class="form-row">
+    <div class="col-12 form-group">
+      <%= f.label :title, t('basics.title') %>
+      <%= helpdesk(t('admin.lecture.info.chapter_title'),
+                   false) %>
+      <%= f.text_field :title, { class: 'form-control',
+                                 id: 'new_talk_title' } %>
+      <div class="invalid-feedback"
+           id="new-talk-title-error">
+      </div>
+    </div>
+    <% if lecture.talks.exists? %>
+      <div class="col-12 form-group">
+        <%= f.label :predecessor,
+                    t('admin.lecture.insert_after_chapter',
+                      chapter_name: t("basics.talk")) %>
+        <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
+                       chapter_name: t("basics.talk")),
+                     false) %>
+        <%= f.select :predecessor,
+                     options_for_select([[t('basics.at_the_beginning'), 0]] +
+                                        lecture.select_talks,
+                                        lecture.last_talk_by_position.position) ,
+                                 {}, { class: 'form-control' } %>
+      </div>
+    <% end %>
+  </div>
+  <%= f.hidden_field :lecture_id, value: lecture.id %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
+      <button type="button"
+              class="btn btn-sm btn-secondary"
+              data-dismiss="modal">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>

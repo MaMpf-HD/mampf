@@ -356,6 +356,8 @@ Rails.application.routes.draw do
                            as: 'postprocess_tags'
   resources :tags
 
+  resources :talks, except: [:index]
+
   get 'tutorials/:id/cancel_edit', to: 'tutorials#cancel_edit',
                                    as: 'cancel_edit_tutorial'
   get 'tutorials/cancel_new', to: 'tutorials#cancel_new',

@@ -28,7 +28,7 @@ class Ability
       can :manage, [:administration, :erdbeere, Item, Referral]
       cannot :classification, :administration
       # :create is a cancancan alias for new and create actions
-      can :create, [Chapter, Lecture, Lesson, Medium, Section]
+      can :create, [Chapter, Lecture, Lesson, Medium, Section, Talk]
       # :update is a cancancan alias for update and edit actions
 
       can [:new, :create], Announcement
@@ -47,6 +47,12 @@ class Ability
       # or destroy them
       can [:update, :destroy], Chapter do |chapter|
         chapter.lecture.edited_by?(user)
+      end
+
+      # only users who are editors of a talk's lecture or who are speakers
+      # can edit, update or destroy them
+      can [:update, :destroy], Talk do |talk|
+        talk.lecture.edited_by?(user) || talk.given_by?(user)
       end
 
       # anyone should be able to get a sidebar and see the announcements

@@ -20,7 +20,8 @@ class Lecture < ApplicationRecord
                      after_add: :touch_siblings,
                      after_remove: :touch_siblings
 
-  has_many :talks, dependent: :destroy
+  # a lecture has many talks, which have positions
+  has_many :talks, -> { order(position: :asc) }, dependent: :destroy
 
   # being a teachable (course/lecture/lesson), a lecture has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable
@@ -105,6 +106,8 @@ class Lecture < ApplicationRecord
   scope :no_term, -> { where(term: nil) }
 
   scope :restricted, -> { where.not(passphrase: ['', nil]) }
+
+  scope :seminar, -> { where(sort: ['seminar', 'oberseminar', 'proseminar']) }
 
   searchable do
     integer :term_id do
@@ -722,6 +725,14 @@ class Lecture < ApplicationRecord
 
   def assignments?
     assignments.any? || scheduled_assignments?
+  end
+
+  def select_talks
+    talks.order(:position).map { |t| [t.to_label, t.position] }
+  end
+
+  def last_talk_by_position
+    talks.order(:position).last
   end
 
   private

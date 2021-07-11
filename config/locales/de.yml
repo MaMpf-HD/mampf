@@ -612,6 +612,7 @@ de:
           unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
+      no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
       course_tags_html: >
@@ -3232,6 +3233,7 @@ de:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
     session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
+    no_talk: Ein Vortrag mit dieser id existiert nicht.
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
     no_test: 'Für dieses Modul gibt es keinen Test.'
     no_lecture: 'Eine Veranstaltung mit der angeforderten id existiert nicht.'
@@ -3483,6 +3485,10 @@ de:
                 werden.
             aliases:
               invalid: 'Die Angaben sind ungültig.'
+        talk:
+          attributes:
+            title:
+              blank: Es muss ein Titel angegeben werden.
         term:
           attributes:
             active:
