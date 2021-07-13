@@ -17,6 +17,8 @@ class TalksController < ApplicationController
 
   def create
     @talk = Talk.new(talk_params)
+    dates = params[:talk][:dates].values.compact - ['']
+    @talk.dates = dates if dates
     I18n.locale = @talk&.lecture&.locale_with_inheritance ||
                     current_user.locale || I18n.default_locale
     position = params[:talk][:predecessor]
@@ -33,7 +35,9 @@ class TalksController < ApplicationController
   def update
     I18n.locale = @talk.lecture.locale_with_inheritance ||
                     current_user.locale || I18n.default_locale
+    dates = params[:talk][:dates].values.compact - ['']
     @talk.update(talk_params)
+    @talk.update(dates: dates) if dates && @talk.valid?
     if @talk.valid?
       predecessor = params[:talk][:predecessor]
       # place the chapter in the correct position

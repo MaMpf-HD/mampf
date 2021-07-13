@@ -10,6 +10,24 @@
            id="new-talk-title-error">
       </div>
     </div>
+    <div class="col-12">
+      <%= f.label :date, t('basics.date') %>
+      <a class="fas fa-plus-circle clickable text-dark"
+         id="new-talk-date-button"
+         data-toggle="tooltip"
+         data-count="1"
+         title="<%= t('admin.tag.create') %>">
+      </a>
+    </div>
+    <div class="col-12" id="talk-date-picker">
+      <div id="talk_dates_0">
+        <input type="date" name="talk[dates[0]]">
+      </div>
+    </div>
+    <div class="col-12 mb-3">
+      <div class="invalid-feedback" id="talk-date-error">
+      </div>
+    </div>
     <% if lecture.talks.exists? %>
       <div class="col-12 form-group">
         <%= f.label :predecessor,

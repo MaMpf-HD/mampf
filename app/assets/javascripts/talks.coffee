@@ -53,11 +53,25 @@ $(document).on 'turbolinks:load', ->
         return
       return
 
+  $(document).on 'click', '#new-talk-date-button', ->
+    count = $(this).data('count')
+    $('#talk-date-picker')
+      .append('<div class="mt-2" id="talk_dates_'+count+'"><input type="date" name="talk[dates['+count+']]"><a class="fas fa-trash-alt clickable text-dark ml-2 remove-talk-date" data-count="'+count+'"></a></div>')
+    $(this).data('count', count + 1)
+    $('#talk-basics-warning').show()
+    return
 
+  $(document).on 'click', '.remove-talk-date', ->
+    count = $(this).data('count')
+    $('#talk_dates_' + count).remove()
+    $('#talk-basics-warning').show()
+    return
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'change', '#talk-form :input'
+  $(document).off 'click', '#new-talk-date-button'
+  $(document).off 'click', '.remove-talk-date'
   $(document).off 'click', '#cancel-talk-edit'
   return

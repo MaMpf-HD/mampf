@@ -28,5 +28,35 @@
                                         { class: 'form-control' } %>
       </div>
     </div>
+    <div class="form-row">
+    <div class="col-12">
+      <%= f.label :date, t('basics.date') %>
+      <a class="fas fa-plus-circle clickable text-dark"
+         id="new-talk-date-button"
+         data-toggle="tooltip"
+         data-count="<%= talk.dates.size + 1 %>"
+         title="<%= t('admin.tag.create') %>">
+      </a>
+    </div>
+    <div class="col-12" id="talk-date-picker">
+      <% talk.dates.each_with_index do |date, i| %>
+        <div id="talk_dates_<%= i %>" class="<%= i == 0 ? '' : 'mt-2' %>">
+          <input type="date"
+                 name="talk[dates[<%= i %>]]"
+                 value="<%= date %>">
+          <% if i > 0 %>
+            <a class="fas fa-trash-alt clickable text-dark ml-2
+                      remove-talk-date"
+               data-count="<%= i %>">
+            </a>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-12 mb-3">
+      <div class="invalid-feedback" id="talk-date-error">
+      </div>
+    </div>
+    </div>
   </div>
 </div>
