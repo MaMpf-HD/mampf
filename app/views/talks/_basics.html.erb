@@ -16,6 +16,83 @@
       </div>
     </div>
     <div class="form-row">
+      <div class="col-12">
+        <%= f.label :date, t('basics.date') %>
+        <a class="fas fa-plus-circle clickable text-dark"
+           id="new-talk-date-button"
+           data-toggle="tooltip"
+           data-count="<%= talk.dates.size + 1 %>"
+           title="<%= t('admin.tag.create') %>">
+        </a>
+      </div>
+      <div class="col-12" id="talk-date-picker">
+        <% talk.dates.each_with_index do |date, i| %>
+          <div id="talk_dates_<%= i %>" class="<%= i == 0 ? '' : 'mt-2' %>">
+            <input type="date"
+                   name="talk[dates[<%= i %>]]"
+                   value="<%= date %>">
+            <% if i > 0 %>
+              <a class="fas fa-trash-alt clickable text-dark ml-2
+                        remove-talk-date"
+                 data-count="<%= i %>">
+              </a>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-12 mb-3">
+        <div class="invalid-feedback" id="talk-date-error">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <%= f.label :speaker_ids,
+                    t('admin.talk.speakers') %>
+        <%= f.select :speaker_ids,
+                     options_for_select(talk.speakers.map { |s| [s.tutorial_info, s.id] },
+                       talk.speaker_ids),
+                     {},
+                     { class: 'form-control',
+                       multiple: true,
+                       data: { locale: I18n.locale,
+                               placeholder: t('basics.select') } } %>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12">
+        <%= t('basics.media') %>
+        <%= helpdesk(t('admin.talk.info.media'), false) %>
+        <%= link_to '',
+                    new_medium_path(params: { teachable_id: talk.id,
+                                              teachable_type: 'Talk' }),
+                    class: 'fas fa-plus-circle text-dark',
+                    id: 'create-new-talk-medium',
+                    data: { toggle: 'tooltip' },
+                    title: t('buttons.create_medium'),
+                    style: 'text-decoration: none;',
+                    remote: true %>
+        <% if talk.media.present? %>
+          <ul id="sortableTalkMedia">
+            <% talk.media.each do |m| %>
+              <li>
+                <%= link_to m.sort_localized + ', ' + m.local_info,
+                            edit_medium_path(m),
+                            class: textcolor(m),
+                            data: { id: m.id } %>
+              </li>
+            <% end %>
+          </ul>
+          <%= f.hidden_field :media_order,
+                             value: talk.media.map(&:id).to_json %>
+        <% else %>
+          <p>
+            <%= t('admin.talk.no_media') %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+    <div class="form-row">
       <div class="col-12 form-group">
         <%= f.label :predecessor,
                     t('admin.chapter.position',
@@ -27,36 +104,6 @@
                                         {},
                                         { class: 'form-control' } %>
       </div>
-    </div>
-    <div class="form-row">
-    <div class="col-12">
-      <%= f.label :date, t('basics.date') %>
-      <a class="fas fa-plus-circle clickable text-dark"
-         id="new-talk-date-button"
-         data-toggle="tooltip"
-         data-count="<%= talk.dates.size + 1 %>"
-         title="<%= t('admin.tag.create') %>">
-      </a>
-    </div>
-    <div class="col-12" id="talk-date-picker">
-      <% talk.dates.each_with_index do |date, i| %>
-        <div id="talk_dates_<%= i %>" class="<%= i == 0 ? '' : 'mt-2' %>">
-          <input type="date"
-                 name="talk[dates[<%= i %>]]"
-                 value="<%= date %>">
-          <% if i > 0 %>
-            <a class="fas fa-trash-alt clickable text-dark ml-2
-                      remove-talk-date"
-               data-count="<%= i %>">
-            </a>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-    <div class="col-12 mb-3">
-      <div class="invalid-feedback" id="talk-date-error">
-      </div>
-    </div>
     </div>
   </div>
 </div>

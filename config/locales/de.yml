@@ -819,6 +819,9 @@ de:
         extracted_content: >
           Hier steht der Inhalt, der aus Medien extrahiert wurde, die zu
           Sitzungen aus diesem Abschnitt verknüpft sind.
+    talk:
+      speakers: Vortragende
+      no_media: Für diesen Vortrag sind keine Medien vorhanden.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

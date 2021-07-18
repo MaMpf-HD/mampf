@@ -2,6 +2,45 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
+@trixTalkPreview = (trixElement) ->
+  trixElement.addEventListener 'trix-initialize', ->
+    content = this.dataset.content
+    editor = this.editor
+    editor.setSelectedRange([0,65535])
+    editor.deleteInDirection("forward")
+    editor.insertHTML(content)
+    document.activeElement.blur()
+    trixElement.addEventListener 'trix-change', ->
+      $('#talk-basics-warning').show()
+      $('#talk-details-preview').html($('#talk-details-trix').html())
+      chapterDetails = document.getElementById('talk-details-preview')
+      renderMathInElement chapterDetails,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
+      return
+    return
+
 $(document).on 'turbolinks:load', ->
 
   # if form is changed, display warning that there are unsaved changes
@@ -14,44 +53,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   trixElement = document.querySelector('#talk-details-trix')
-  if trixElement?
-    trixElement.addEventListener 'trix-initialize', ->
-      content = this.dataset.content
-      editor = this.editor
-      editor.setSelectedRange([0,65535])
-      editor.deleteInDirection("forward")
-      editor.insertHTML(content)
-      document.activeElement.blur()
-      trixElement.addEventListener 'trix-change', ->
-        $('#talk-basics-warning').show()
-        $('#talk-details-preview').html($('#talk-details-trix').html())
-        chapterDetails = document.getElementById('talk-details-preview')
-        renderMathInElement chapterDetails,
-          delimiters: [
-            {
-              left: '$$'
-              right: '$$'
-              display: true
-            }
-            {
-              left: '$'
-              right: '$'
-              display: false
-            }
-            {
-              left: '\\('
-              right: '\\)'
-              display: false
-            }
-            {
-              left: '\\['
-              right: '\\]'
-              display: true
-            }
-          ]
-          throwOnError: false
-        return
-      return
+  trixTalkPreview(trixElement) if trixElement?
 
   $(document).on 'click', '#new-talk-date-button', ->
     count = $(this).data('count')
@@ -66,6 +68,23 @@ $(document).on 'turbolinks:load', ->
     $('#talk_dates_' + count).remove()
     $('#talk-basics-warning').show()
     return
+
+  $('#talk_speaker_ids').select2
+    ajax:
+      url: Routes.list_users_path()
+      data: (params) ->
+        { term: params.term }
+      dataType: 'json'
+      delay: 200
+      processResults: (data) ->
+        { results: data }
+      cache: true
+    language: $(this).data('locale')
+    theme: 'bootstrap'
+    minimumInputLength: 2
+    placeholder: $(this).data('placeholder')
+    allowClear: true
+
   return
 
 # clean up everything before turbolinks caches
@@ -74,4 +93,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#new-talk-date-button'
   $(document).off 'click', '.remove-talk-date'
   $(document).off 'click', '#cancel-talk-edit'
+  $('#talk_speaker_ids').select2('destroy');
   return

@@ -773,6 +773,9 @@ en:
         extracted_content: >
           This is all cantent that has been extracted form media that are
           associated to sessions for this section.
+    talk:
+      speakers: Speakers
+      no_media: There are no media associated  to this talk.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

@@ -145,6 +145,9 @@ class Lecture < ApplicationRecord
   def lesson
   end
 
+  def talk
+  end
+
   def media_scope
     self
   end

@@ -75,6 +75,9 @@ class Course < ApplicationRecord
   def lesson
   end
 
+  def talk
+  end
+
   def selector_value
     'Course-' + id.to_s
   end

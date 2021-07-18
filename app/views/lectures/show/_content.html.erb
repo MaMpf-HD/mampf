@@ -6,13 +6,23 @@
   </div>
   <div class="card-body">
     <div class="card-columns">
-      <% if !lecture.chapters.any? %>
-        <%= t('admin.lecture.no_content_yet') %>
+      <% if lecture.seminar? %>
+        <% if !lecture.talks.any? %>
+          <%= t('admin.lecture.no_content_yet') %>
+        <% else %>
+          <%= render partial: 'lectures/edit/talk',
+                     collection: lecture.talks,
+                     cached: true %>
+        <% end %>
       <% else %>
-        <%= render partial: 'lectures/show/chapter',
-                   collection: lecture.chapters
-                                      .select { |c| c.hidden.in?([false, nil]) },
-                   cached: true %>
+        <% if !lecture.chapters.any? %>
+          <%= t('admin.lecture.no_content_yet') %>
+        <% else %>
+          <%= render partial: 'lectures/show/chapter',
+                     collection: lecture.chapters
+                                        .select { |c| c.hidden.in?([false, nil])  },
+                    cached: true %>
+        <% end %>
       <% end %>
     </div>
   </div>

@@ -964,8 +964,11 @@ class Medium < ApplicationRecord
     if teachable.lecture.present? && teachable.lecture.persisted?
       teachable.lecture.touch
     end
-    return unless teachable.lesson.present? && teachable.lesson.persisted?
-    teachable.lesson.touch
+    if teachable.lesson.present? && teachable.lesson.persisted?
+      teachable.lesson.touch
+    end
+    return unless teachable.talk.present? && teachable.talk.persisted?
+    teachable.talk.touch
   end
 
   def vtt_start

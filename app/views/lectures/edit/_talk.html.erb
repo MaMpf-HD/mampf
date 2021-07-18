@@ -2,10 +2,24 @@
   <div id="<%= dom_id(talk) %>"
        class="card-header bg-mdb-color-lighten-2">
     <div class="row">
-      <div class="col-12">
+      <div class="col-8">
         <%= link_to talk.to_label,
                     edit_talk_path(talk),
                     class: 'text-light' %>
+      </div>
+      <div class="col-4">
+        <% talk.dates.each do |d| %>
+          <div class="badge badge-secondary">
+            <%= localize(d, format: :concise) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <span class="text-light">
+          <%= talk.speakers.map(&:name).join(', ') %>
+        </span>
       </div>
     </div>
   </div>

@@ -436,7 +436,7 @@ class MediaController < ApplicationController
   end
 
   def set_teachable
-    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson']) &&
+    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson', 'Talk']) &&
        params[:teachable_id].present?
       @teachable = params[:teachable_type].constantize
                                           .find_by_id(params[:teachable_id])
