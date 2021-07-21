@@ -10,8 +10,8 @@
           <div class="dropdown-menu">
             <% (@assignments - [@assignment]).each do |a| %>
               <%= link_to a.title,
-                          lecture_tutorial_overview_path(@lecture,
-                                                        params: { assignment: a.id }),
+                          lecture_tutorial_overview_path( @lecture,
+                                                          params: { assignment: a.id }),
                           class: 'dropdown-item' %>
             <% end %>
           </div>
@@ -32,9 +32,9 @@
           <div class="dropdown-menu">
             <% (@tutorials - [@tutorial]).each do |t| %>
               <%= link_to t.title,
-                          lecture_tutorials_teacher_path(@lecture,
-                                                        params: { assignment: @assignment.id,
-                                                                  tutorial: t.id }),
+                          lecture_tutorials_teacher_path( @lecture,
+                                                          params: { assignment: @assignment.id,
+                                                                    tutorial: t.id }),
                           class: 'dropdown-item' %>
             <% end %>
           </div>
@@ -80,17 +80,13 @@
                 <%= t.tutor_names || t('basics.tba') %>
               </td>
               <td>
-                <%= Submission.where(tutorial: t, assignment: @assignment)
-                              .where.not(manuscript_data: nil).size %>
+                <%=t.submissions_count_for(@assignment)%>
               </td>
               <td>
-                <%= Submission.where(tutorial: t, assignment: @assignment)
-                              .where.not(correction_data: nil).size %>
+                <%= t.corrected_count_for(@assignment)%>
               </td>
               <td>
-                <%= Submission.where(tutorial: t, assignment: @assignment)
-                              .where.not(manuscript_data: nil)
-                              .select { |s| s.too_late? }.size %>
+                <%= t.too_late_count_for(@assignment)  %>
               </td>
             </tr>
           <% end %>

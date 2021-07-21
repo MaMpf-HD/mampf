@@ -99,33 +99,14 @@ class Submission < ApplicationRecord
   end
 
 
-  def self.zip_submissions!(tutorial, assignment)
+  def self.zip!(tutorial, assignment,correction)
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
     begin
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
         submissions.each do |s|
-          stream.put_next_entry(s.filename_for_bulk_download)
-          stream.write IO.read(s.file_path)
-        end
-      end
-      archived_filestream.rewind
-    rescue => e
-      archived_filestream = e.message
-    end
-    archived_filestream
-  end
-
-  def self.zip_corrections!(tutorial, assignment)
-    submissions = Submission.where(tutorial: tutorial,
-                                   assignment: assignment).proper
-    begin
-      archived_filestream = Zip::OutputStream.write_buffer do |stream|
-        submissions.each do |s|
-          if s.correction
-            stream.put_next_entry(s.filename_for_bulk_download(true))
-            stream.write IO.read(s.correction_file_path)
-          end
+          stream.put_next_entry(s.filename_for_bulk_download,correction)
+          stream.write IO.read(correction ? s.correction_file_path: s.file_path)
         end
       end
       archived_filestream.rewind

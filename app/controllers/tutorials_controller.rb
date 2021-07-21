@@ -79,7 +79,7 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_download_submissions
-    @zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
+    @zipped_submissions = Submission.zip!(@tutorial, @assignment,false)
     if @zipped_submissions.is_a?(StringIO)
     send_data @zipped_submissions.read,
               filename: @assignment.title + '@' + @tutorial.title + '.zip',
@@ -96,7 +96,7 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_download_corrections
-    @zipped_corrections = Submission.zip_corrections!(@tutorial, @assignment)
+    @zipped_corrections = Submission.zip!(@tutorial, @assignment,true)
     if @zipped_corrections.is_a?(StringIO)
     send_data @zipped_corrections.read,
               filename: @assignment.title + '@' + @tutorial.title + '-Corrections.zip',
