@@ -79,7 +79,19 @@ class Tutorial < ApplicationRecord
       end
     end
   end
-
+  def submissions_count_for(assignment)
+    Submission.where(tutorial: t, assignment: assignment)
+              .where.not(manuscript_data: nil).size 
+  end
+  def too_late_count_for(assignment)
+    Submission.where(tutorial: self, assignment: assignment)
+              .where.not(manuscript_data: nil)
+              .select { |s| s.too_late? }.size
+  end
+  def corrected_count_for(assignment)
+    Submission.where(tutorial: self, assignment: assignment)
+              .where.not(correction_data: nil).size 
+  end
   private
 
   def check_destructibility
