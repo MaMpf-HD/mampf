@@ -1,55 +1,9 @@
 <% if @lecture.tutorials.present? %>
   <% if @assignments.present? %>
-      <% if @assignments.size > 1 %>
-        <span class="dropdown">
-          <button class="btn btn-secondary dropdown-toggle"
-                  data-toggle="dropdown"
-                  type="button">
-            <%= @assignment.title %>
-          </button>
-          <div class="dropdown-menu">
-            <% (@assignments - [@assignment]).each do |a| %>
-              <%= link_to a.title,
-                          lecture_tutorial_overview_path(@lecture,
-                                                        params: { assignment: a.id }),
-                          class: 'dropdown-item' %>
-            <% end %>
-          </div>
-        </span>
-      <% else %>
-        <button class="btn btn-secondary" disabled>
-          <%= @assignment.title %>
-        </button>
-      <% end %>
-
-      <% if @tutorials.size > 0 %>
-        <span class="dropdown ml-3">
-          <button class="btn btn-secondary dropdown-toggle"
-                  data-toggle="dropdown"
-                  type="button">
-            <%= t('basics.overview') %>
-          </button>
-          <div class="dropdown-menu">
-            <% (@tutorials - [@tutorial]).each do |t| %>
-              <%= link_to t.title,
-                          lecture_tutorials_teacher_path(@lecture,
-                                                        params: { assignment: @assignment.id,
-                                                                  tutorial: t.id }),
-                          class: 'dropdown-item' %>
-            <% end %>
-          </div>
-        </span>
-      <% else %>
-        <button class="btn btn-secondary" disabled>
-          <%= t('basics.tutorial') %>
-        </button>
-      <% end %>
-
-      <% if current_user.in?(@lecture.tutors) %>
-        <%= link_to t('tutorial.own_tutorials'),
-                    lecture_tutorials_path(@lecture),
-                    class: 'btn btn-primary ml-3' %>
-      <% end %>
+      <%= render partial: 'tutorials/header_overview',
+               locals: { assignment: @assignment,
+                         tutorial: @tutorial,
+                         stack: @stack } %>
       <table class="table table-bordered mt-3">
         <thead class="thead-light">
           <tr>
@@ -74,23 +28,23 @@
           <% @lecture.tutorials.natural_sort_by(&:title).each do |t| %>
             <tr>
               <td>
-                <%= t.title %>
+                <%= link_to t.title,
+                            lecture_tutorials_path(@lecture,
+                                                  params:
+                                                    { assignment: @assignment.id,
+                                                      tutorial: t.id }) %>
               </td>
               <td>
                 <%= t.tutor_names || t('basics.tba') %>
               </td>
               <td>
-                <%= Submission.where(tutorial: t, assignment: @assignment)
-                              .where.not(manuscript_data: nil).size %>
+                <%= Submission.number_of_submissions(t, @assignment) %>
               </td>
               <td>
-                <%= Submission.where(tutorial: t, assignment: @assignment)
-                              .where.not(correction_data: nil).size %>
+                <%= Submission.number_of_corrections(t, @assignment) %>
               </td>
               <td>
-                <%= Submission.where(tutorial: t, assignment: @assignment)
-                              .where.not(manuscript_data: nil)
-                              .select { |s| s.too_late? }.size %>
+                <%= Submission.number_of_late_submissions(t, @assignment) %>
               </td>
             </tr>
           <% end %>
@@ -101,17 +55,13 @@
               <td>
               </td>
               <td class="table-secondary">
-                <%= Submission.where(assignment: @assignment)
-                              .where.not(manuscript_data: nil).size %>
+                <%= Submission.submissions_total(@assignment) %>
               </td>
               <td class="table-secondary">
-                <%= Submission.where(assignment: @assignment)
-                              .where.not(correction_data: nil).size %>
+                <%= Submission.corrections_total(@assignment) %>
               </td>
               <td  class="table-secondary">
-                <%= Submission.where(assignment: @assignment)
-                              .where.not(manuscript_data: nil)
-                              .select { |s| s.too_late? }.size %>
+                <%= Submission.late_submissions_total(@assignment) %>
               </td>
             </tr>
           <% end %>

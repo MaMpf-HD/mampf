@@ -2687,6 +2687,11 @@ de:
       Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
     own_tutorials: >
       Eigene Tutorien
+    other_tutorials: >
+      Sonstige Tutorien
+    deadline_warning: >
+      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
+      können Korrekturen hochgeladen werden.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich

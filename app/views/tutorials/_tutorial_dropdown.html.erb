@@ -1,0 +1,64 @@
+<span class="dropdown ml-3">
+    <% if @tutorial.present? %>
+      <button class="btn btn-secondary dropdown-toggle"
+              data-toggle="dropdown"
+              type="button">
+        <%= @tutorial.title %>
+      </button>
+    <% else%>
+      <button class="btn btn-secondary dropdown-toggle"
+              data-toggle="dropdown"
+              type="button">
+        <%= t('categories.tutorials') %>
+      </button>
+    <% end %>
+    <div class="dropdown-menu">
+    <%# if user isnt a tutor %>
+    <% if !current_user.in?(@lecture.tutors) %>
+      <% (@lecture.tutorials - [@tutorial]).each do |t| %>
+        <%= link_to t.title,
+                    lecture_tutorials_path( @lecture,
+                                            params:
+                                              { assignment: @assignment.id,
+                                                tutorial: t.id }),
+                                            class: 'dropdown-item' %>
+      <% end %>
+    <%# else if user is editor or teacher %>
+    <% elsif current_user.editor_or_teacher_in?(@lecture) %>
+      <% if (current_user.tutorials(@lecture) - [@tutorial]).size > 0 %>
+        <h6 class="dropdown-header"><%= t('tutorial.own_tutorials') %></h6> 
+        <div class="dropdown-divider"></div>
+        <% (current_user.tutorials(@lecture) - [@tutorial]).each do |t| %>
+          <%= link_to t.title,
+                      lecture_tutorials_path( @lecture,
+                                              params:
+                                                { assignment: @assignment.id,
+                                                  tutorial: t.id }),
+                                              class: 'dropdown-item' %>
+        <% end %>
+      <% end %>
+      <% if (@lecture.tutorials - current_user.tutorials(@lecture) - [@tutorial]).size > 0 %>
+        <h6 class="dropdown-header"><%= t('tutorial.other_tutorials') %></h6> 
+        <div class="dropdown-divider"></div>
+        <% (@lecture.tutorials - current_user.tutorials(@lecture) - [@tutorial]).each do |t| %>
+          <%= link_to t.title,
+                      lecture_tutorials_path( @lecture,
+                                              params:
+                                                { assignment: @assignment.id,
+                                                  tutorial: t.id }),
+                                              class: 'dropdown-item' %>
+        <% end %>
+      <% end %>
+    <%# else if user is tutor %>
+    <% elsif current_user.in?(@lecture.tutors) %>
+      <% (current_user.tutorials(@lecture) - [@tutorial]).each do |t| %>
+        <%= link_to t.title,
+                    lecture_tutorials_path( @lecture,
+                                            params:
+                                              { assignment: @assignment.id,
+                                                tutorial: t.id }),
+                                            class: 'dropdown-item' %>
+      <% end %>
+    <% end %>
+  </div>
+</span>

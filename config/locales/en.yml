@@ -2529,6 +2529,9 @@ en:
       You can decide whether you accept it or reject it.
     own_tutorials: >
       Own Tutorials
+    deadline_warning: >
+      The deadline for submission is still %{deadline}. Only after the deadline
+      corrections can be uploaded.
     grace_period_warning: >
       The grace period lasts until %{friendly_deadline}. Within the grace
       period, submisions and retrospective changes by the students are possible

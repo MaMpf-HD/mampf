@@ -156,8 +156,6 @@ Rails.application.routes.draw do
                                 as: 'lecture_tutorials'
   get 'lectures/:id/tutorial_overview', to: 'tutorials#overview',
                                         as: 'lecture_tutorial_overview'
-  get 'lectures/:id/tutorials_teacher', to: 'tutorials#index_teacher',
-                                        as: 'lecture_tutorials_teacher'
   get 'lectures/:id/subscribe', to: 'lectures#subscribe_page',
                                       as: 'subscribe_lecture_page'
 

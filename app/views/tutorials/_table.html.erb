@@ -13,7 +13,7 @@
           <%= t('basics.correction') %>
           (<%= assignment.accepted_file_type %>)
         </b>
-        <% if !current_user.editor_or_teacher_in?(@lecture) %>
+        <% if current_user.in?(@tutorial.tutors) %>
           <b class="col-3">
             <%= t('basics.actions') %>
           </b>

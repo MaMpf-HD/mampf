@@ -5,9 +5,9 @@ class TutorialsController < ApplicationController
                                       :export_teams]
   before_action :set_assignment, only: [:bulk_download_submissions, :bulk_download_corrections, :bulk_upload,
                                         :export_teams]
-  before_action :set_lecture, only: [:index, :index_teacher, :overview]
+  before_action :set_lecture, only: [:index, :overview]
   before_action :set_lecture_from_form, only: [:create]
-  before_action :check_tutor_status, only: :index
+  before_action :can_view_index, only: :index
   before_action :check_editor_status, only: [:overview, :create]
   authorize_resource
 
@@ -15,27 +15,21 @@ class TutorialsController < ApplicationController
   require 'zip'
 
   def index
-    @assignments = @lecture.assignments.expired.order('deadline DESC')
+    @assignments = @lecture.assignments.order('deadline DESC')
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                     @assignments&.first
-    @tutorials = current_user.given_tutorials.where(lecture: @lecture)
-    @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
-    @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
-                        &.order(:last_modification_by_users_at)
-  end
-
-  def index_teacher
-    @assignments = @lecture.assignments.expired.order('deadline DESC')
-    @assignment = Assignment.find_by_id(params[:assignment]) ||
-                    @assignments&.first
-    @tutorials = @lecture.tutorials
+    if current_user.editor_or_teacher_in?(@lecture)
+      @tutorials = @lecture.tutorials
+    else
+      @tutorials = current_user.given_tutorials.where(lecture: @lecture)
+    end
     @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
   end
 
   def overview
-    @assignments = @lecture.assignments.expired.order('deadline DESC')
+    @assignments = @lecture.assignments.order('deadline DESC')
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                     @assignments&.first
     @tutorials = @lecture.tutorials
@@ -78,16 +72,15 @@ class TutorialsController < ApplicationController
     @none_left = @lecture&.tutorials&.none?
   end
 
-  def bulk_download_submissions
-    @zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
-    if @zipped_submissions.is_a?(StringIO)
-    send_data @zipped_submissions.read,
-              filename: @assignment.title + '@' + @tutorial.title + '.zip',
+  def bulk_download(zipped, end_of_file='')
+    if zipped.is_a?(StringIO)
+    send_data zipped.read,
+              filename: @assignment.title + '@' + @tutorial.title + end_of_file + '.zip',
               type: 'application/zip',
               disposition: 'attachment'
     else
       flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
-                             message: @zipped_submissions)
+                             message: zipped)
       redirect_to lecture_tutorials_path(@tutorial.lecture,
                                          params:
                                           { assignment: @assignment.id,
@@ -95,21 +88,14 @@ class TutorialsController < ApplicationController
     end
   end
 
+  def bulk_download_submissions
+    @zipped_submissions = Submission.zip_submissions!(@tutorial, @assignment)
+    bulk_download(@zipped_submissions)
+  end
+
   def bulk_download_corrections
     @zipped_corrections = Submission.zip_corrections!(@tutorial, @assignment)
-    if @zipped_corrections.is_a?(StringIO)
-    send_data @zipped_corrections.read,
-              filename: @assignment.title + '@' + @tutorial.title + '-Corrections.zip',
-              type: 'application/zip',
-              disposition: 'attachment'
-    else
-      flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
-                             message: @zipped_corrections)
-      redirect_to lecture_tutorials_path(@tutorial.lecture,
-                                         params:
-                                          { assignment: @assignment.id,
-                                            tutorial: @tutorial.id })
-    end
+    bulk_download(@zipped_corrections, '-Corrections')
   end
 
   def bulk_upload
@@ -165,8 +151,8 @@ class TutorialsController < ApplicationController
                     I18n.default_locale
   end
 
-  def check_tutor_status
-    return if current_user.in?(@lecture.tutors)
+  def can_view_index
+    return if current_user.in?(@lecture.tutors) || current_user.editor_or_teacher_in?(@lecture)
     redirect_to :root, alert: I18n.t('controllers.no_tutor_in_this_lecture')
   end
 

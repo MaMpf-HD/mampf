@@ -520,6 +520,14 @@ class User < ApplicationRecord
     in?(lecture.editors) || self == lecture.teacher
   end
 
+  def tutorials(lecture)
+    given_tutorials.where(lecture: lecture)
+  end
+
+  def has_tutorials?(lecture)
+    given_tutorials.where(lecture: lecture).size.positive?
+  end
+
   def proper_submissions_count
     submissions.proper.size
   end

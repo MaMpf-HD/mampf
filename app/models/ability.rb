@@ -140,7 +140,7 @@ class Ability
 
       cannot :read, Term
 
-      can [:new, :create, :cancel_edit, :cancel_new, :overview, :index_teacher,
+      can [:new, :create, :cancel_edit, :cancel_new, :overview, :index,
            :bulk_download_submissions, :bulk_download_corrections, :export_teams], Tutorial
 
       can [:index, :validate_certificate], Tutorial do |tutorial|
