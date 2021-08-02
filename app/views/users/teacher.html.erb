@@ -16,7 +16,7 @@
           <%= t('basics.information') %>
         </h5>
       </div>
-      <%= image_tag('/unknown-person.gif',
+      <%= image_tag(@teacher.image_url_with_host.presence ||'/unknown-person.gif',
                     width: '128',
                     alt: "Card image cap",
                     class: 'mx-auto pt-3') %>
