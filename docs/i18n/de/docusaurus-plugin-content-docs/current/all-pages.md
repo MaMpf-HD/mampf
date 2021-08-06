@@ -19,7 +19,7 @@ Im Folgenden werden alle Seiten der MaMpf alphabetisch aufgelistet.
 
 ## K
 * [Kommentare](comments.md)
-* [Kommentare für ein Medium](comments-medium.md)
+* [Kommentare für ein Medium](comments-media.md)
 
 ## L
 * [Lektionen](lessons.md)

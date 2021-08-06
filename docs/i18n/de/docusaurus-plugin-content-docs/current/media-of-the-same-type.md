@@ -56,7 +56,7 @@ Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medient
 * Info-black.png Öffne die [Medienseite der Lektion](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons\*
 
@@ -65,7 +65,7 @@ Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medient
 * `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 * Info-black.png Öffne die [Medienseite des Quiz'](medium.md).
 * Videogame-asset.png Starte das Quiz.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons\*
 
@@ -74,7 +74,7 @@ Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medient
 * Library-books.png Öffne das PDF.
 * Info-black.png Öffne die [Medienseite des Skripts](medium.md).
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons\*
 
@@ -87,7 +87,7 @@ Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medient
 * Info-black.png Öffne die [Medienseite](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons\*
 
@@ -100,7 +100,7 @@ Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medient
 * Info-black.png Öffne die [Medienseite der Übung](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons\*
 
@@ -113,7 +113,7 @@ Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medient
 * Info-black.png Öffne die [Medienseite der Wiederholung](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons\*
 
@@ -127,7 +127,7 @@ Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medient
 * Info-black.png Öffne die [Medienseite des Worked Examples](medium.md).
 * Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
 * Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 \*Icons\*
 
@@ -145,4 +145,4 @@ Leak-add.png | nur Worked Example | Öffne Geogebra-Applet.
 Info-black.png | alle | Öffne die [Medienseite](medium.md)
 Long-arrow-alt-down-solid.pngmp4 | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Lade das Video herunter.
 Long-arrow-alt-down-solid.pngpdf | Lektion, Skript, Sonstiges, Übung, Wiederholung und Worked Example | Lade das PDF herunter.
-`Kommentieren` bzw. `n Kommentare` | alle | Öffne die zum Medium gehörige [Kommentarseite](comments-medium.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+`Kommentieren` bzw. `n Kommentare` | alle | Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
