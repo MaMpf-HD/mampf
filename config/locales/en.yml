@@ -44,6 +44,7 @@ en:
       short: 'Les'
     exercises:
       singular: 'Exercise'
+      singular_updated: 'Exercise (updated)'
       plural: 'Exercises'
       short: 'Exc'
     examples:
@@ -1995,6 +1996,7 @@ en:
     download: 'download manuscript'
     length: 'Length'
     size: 'Size'
+    updated: 'Updated'
     pages: 'p'
     destinations: 'destinations'
     structure: 'Structure of the manuscript'
