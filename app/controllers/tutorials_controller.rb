@@ -23,7 +23,7 @@ class TutorialsController < ApplicationController
     else
       @tutorials = current_user.given_tutorials.where(lecture: @lecture)
     end
-    @tutorial = Tutorial.find_by_id(params[:tutorial]) || @tutorials.first
+    @tutorial = Tutorial.find_by_id(params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
   end

@@ -25,6 +25,7 @@
       <% end %>
     <%# else if user is editor or teacher %>
     <% elsif current_user.editor_or_teacher_in?(@lecture) %>
+      <%# Section for own tutorials%>
       <% if (current_user.tutorials(@lecture) - [@tutorial]).size > 0 %>
         <h6 class="dropdown-header"><%= t('tutorial.own_tutorials') %></h6> 
         <div class="dropdown-divider"></div>
@@ -37,7 +38,11 @@
                                               class: 'dropdown-item' %>
         <% end %>
       <% end %>
+      <%# Section for other tutorials %>
       <% if (@lecture.tutorials - current_user.tutorials(@lecture) - [@tutorial]).size > 0 %>
+        <% if (current_user.tutorials(@lecture) - [@tutorial]).size > 0 %>
+          <div class="dropdown-divider"></div>
+        <% end %>
         <h6 class="dropdown-header"><%= t('tutorial.other_tutorials') %></h6> 
         <div class="dropdown-divider"></div>
         <% (@lecture.tutorials - current_user.tutorials(@lecture) - [@tutorial]).each do |t| %>
