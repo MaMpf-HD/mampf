@@ -182,7 +182,7 @@ class SubmissionsController < ApplicationController
   def add_correction
   	if correction_params[:correction].present?
       @submission.correction = correction_params[:correction]
-      @errors = @submission.check_file_properties(@submission.correction
+      @errors = @submission.check_file_properties_any(@submission.correction
                                                              .metadata,
                                                   :correction)
       return if @errors.present?

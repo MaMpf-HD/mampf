@@ -13,6 +13,20 @@ describe("Authentication", function () {
             cy.url().should("contain", "main/start");
             cy.contains("Veranstaltungen").should("exist");
         });
+        it("can set profile image", () => {
+            cy.appScenario("admin");
+            cy.visit("/users/sign_in");
+            cy.get('input[type="email"]').type("administrator@mampf.edu");
+            cy.get('input[type="password"]').type("test123456");
+            cy.get('input[type="submit"]').click();
+            cy.visit(`/administration/profile`);
+            cy.contains("Profile Image").should("exist");
+            const yourFixturePath = 'files/image.png';
+            cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+            cy.wait(100);
+            cy.contains("Speichern").click();
+            cy.contains("image.png").should("exist");
+        });
     });
 });
 

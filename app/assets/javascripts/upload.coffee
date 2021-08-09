@@ -210,7 +210,7 @@ geogebraUpload = (fileInput) ->
     'upload-geogebra-hidden'
   )
 
-imageUpload = (fileInput) ->
+imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
   # set everything up
   uploadArea = document.getElementById('image-uploadArea')
   uploadButton = document.getElementById('image-uploadButton')
@@ -240,7 +240,7 @@ imageUpload = (fileInput) ->
 
   # target the endpoint for shrine uploader
   uppy.use Uppy.XHRUpload,
-    endpoint: '/screenshots/upload'
+    endpoint: endpoint
     fieldName: 'file'
 
   # add metadata to manuscript card if upload was successful
@@ -268,7 +268,7 @@ imageUpload = (fileInput) ->
       $(metaData).show()
       $(imagePreview).show()
       $('#course_detach_image').val('false')
-      $('#course-basics-warning').show()
+      $('#'+classname+'-basics-warning').show()
       $('#image-none').hide()
     else
       # display error message if uppy detects wrong mime type
@@ -734,6 +734,7 @@ $(document).on 'turbolinks:load', ->
   manuscript = 'upload-manuscript'
   geogebra = document.getElementById('upload-geogebra')
   image = document.getElementById('upload-image')
+  image2 = document.getElementById('upload-image2')
   bulkCorrection = document.getElementById('upload-bulk-correction')
 
   # make uppy idempotent for turbolinks
@@ -744,7 +745,10 @@ $(document).on 'turbolinks:load', ->
   videoUpload video if video?
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
-  imageUpload image if image?
+  uploadPath = "/screenshots/upload"
+  uploadPath = "/profile_image/upload" if image2?
+  imageUpload image2, uploadPath, "user" if image2?
+  imageUpload image, uploadPath, "course" if image?
   bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
   # # make uppy upload buttons look like bootstrap

@@ -14,7 +14,15 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find_by_id(params[:id])
+    old_image_data = @user.image_data
     @user.update(user_params)
+    @errors = @user.errors
+    @user.update(image: nil) if params[:user][:detach_image] == 'true'
+    changed_image = @user.image_data != old_image_data
+    if @user.image.present? && changed_image
+      @user.image_derivatives!
+      @user.save
+    end
     @errors = @user.errors
   end
 
@@ -78,7 +86,7 @@ class UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:name, :email, :admin, :homepage,
-                                 :current_lecture_id)
+                                 :current_lecture_id,:image)
   end
 
   def set_elevated_users
