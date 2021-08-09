@@ -207,7 +207,7 @@ geogebraUpload = (fileInput) ->
         alert('Die Datei ist beschädigt.', 'error', 5000)
       return
     null
-    hiddenInput
+    'upload-geogebra-hidden'
   )
 
 imageUpload = (fileInput) ->
