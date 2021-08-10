@@ -19,21 +19,27 @@ Die Seite „Login“ gliedert sich in drei große Teilbereiche: die eigentliche
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Die Bedienelemente der Loginseite und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
-* Email
-    Um sich einzuloggen, muss man die E-Mail-Adresse eingeben, mit der man sich zuvor auf MaMpf registriert hat.
-* Passwort
-    Um sich einzuloggen, muss man das für den Account angelegte Passwort eingeben.
-    Check-box-outline-blank.png
-     ?
-* `Einloggen` Schicke die eingegebenen Daten ab, um den Einlogvorgang zu starten.
-* `Registrieren` Wechsel zur Seite [Registrieren](registration.md).
-* `Passwort vergessen?` Wechsel zur Seite [Passwort vergessen](password-forgotten.md).
-* `Anleitung zur Bestätigung des Accounts nicht erhalten?` Wechsel zur Seite [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md).
-
-\*Boxen\*
+* <form>
+  <p><label for="fname">Email</label><br></br>
+  <input type="text" id="fname" name="fname"></input><br></br>
+  </p></form>
+  Um sich einzuloggen, muss man die E-Mail-Adresse eingeben, mit der man sich zuvor auf MaMpf registriert hat.
+* <form>
+  <p><label for="fname">Passwort</label><br></br>
+  <input type="text" id="fname" name="fname"></input><br></br>
+  </p></form>
+  Um sich einzuloggen, muss man das für den Account angelegte Passwort eingeben.
+* <form>
+  <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></input>
+  <label for="vehicle1"> Erinnere dich an mich (hierzu wird ein Cookie gesetzt)</label>
+  </form> ???
+* <button name="button">Einloggen</button> Schicke die eingegebenen Daten ab, um den Einlogvorgang zu starten.
+* <form action="/mampf/de/docs/registration"><input type="submit" value="Registrieren"/> Wechsel zur Seite „Registrieren“.</form>
+* <form action="/mampf/de/docs/password-forgotten"><input type="submit" value="Passwort vergessen?"/> Wechsel zur Seite „Passwort vergessen“.</form>
+* <form action="/mampf/de/docs/activate-account"><input type="submit" value="Anleitung zur Bestätigung des Accounts nicht erhalten?"/> Wechsel zur Seite „Anleitung zur Bestätigung des Accounts erneut versenden“.</form>
 
 ## Ablauf
-Nachdem gültige Anmeldedaten eingegeben und der Button `Einloggen` angeglickt worden ist, gelangt man auf die [persönliche Startseite](my-home-page.md).
+Nachdem gültige Anmeldedaten eingegeben und der Button <button name="button">Einloggen</button> angeglickt worden ist, gelangt man auf die [persönliche Startseite](my-home-page.md).
 
 ## Fehlermeldungen
 Bei unvollständigen oder falschen Daten sowie unbestätigtem Account gibt MaMpf eine Fehlermeldung zurück. Bevor ein Account genutzt werden kann, muss der Aktivierungslink in der Bestätigungsmail angeklickt werden. Diese Mail wird an die E-Mail-Adresse geschickt, mit der man sich registriert hat. Siehe dazu auch [Registrieren (Seite)](registration.md).
