@@ -36,6 +36,15 @@ Name, der Tutor\*innen bei Abgaben und anderen Mitgliedern des eigenen Abgabetea
 ### Module
 Die Box „Module“ besteht aus einem Akkordeon, in dessen Feldern Studiengänge aufgeführt sind. Wenn ein solches Feld angeklickt wird, klappen Module zu diesem Studiengang aus. Die Module sind nach Typ sortiert und selbst wieder Felder von Akkordeons. Diese enthalten die zu diesem Modul verfügbaren Veranstaltungen.
 
+<form>
+ <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></input>
+ <label for="vehicle1"> I have a bike</label>
+ <input type="checkbox" id="vehicle2" name="vehicle2" value="Car"></input>
+ <label for="vehicle2"> I have a car</label>
+ <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat"></input>
+ <label for="vehicle3"> I have a boat</label>
+</form>
+
 \*Screenshots\*
 
 * `Studiengang` Klappe alle zu diesem Studiengang verfügbaren Module aus.

@@ -28,19 +28,17 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: der Überschrift
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 ### Überschrift
-* `Dozent\*in` Wechsel zur [Seite der Dozent\*in](lecturer.md).
+* <a href="/mampf/de/docs/lecturer" target="_self"><button name="button">DozentIn</button></a> Wechsel zur <a href="/mampf/de/docs/lecturer" target="_self">Seite der Dozent*in</a>.
 
 ### Aktuelles
-* alle erledigen
-* Check.png
-* `Forum`
-
-\*Icons\*
+* <button name="button">alle erledigen</button>
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" height="12"/></button>
+* <button name="button">Forum</button>
 
 ### Veranstaltungsinhalt
-* `Abschnitt` Wechsel auf die [Seite des Abschnitts](section.md).
-* `Datum` Wechsel auf die [Seite der Sitzung](session.md).
-* `Begriff` Wechsel auf die [Seite des Begriffs](tag.md).
+* <a href="/mampf/de/docs/section" target="_self"><button name="button">Abschnitt</button></a> Wechsel auf die <a href="/mampf/de/docs/section" target="_self">Seite des Abschnitts</a>.
+* <a href="/mampf/de/docs/session" target="_self"><button name="button">Datum</button></a> Wechsel auf die <a href="/mampf/de/docs/session" target="_self">Seite der Sitzung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Wechsel auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
 
 ## Untergeordnete Seiten
 * [Abgaben](submissions.md)

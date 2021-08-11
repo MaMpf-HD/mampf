@@ -7,7 +7,7 @@ Die Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ wird be
 ![](/img/Anleitung_zur_Bestaetigung_thumb.png)
 
 ## Navigation zu dieser Seite
-Die Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ kann direkt von folgenden Seiten über `Anleitung zur Bestätigung des Account nicht erhalten?` erreicht werden:
+Die Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ kann direkt von folgenden Seiten über <button name="button">Anleitung zur Bestätigung des Account nicht erhalten?</button> erreicht werden:
 
 * [Login](login.md)
 * [Registrieren](registration.md)
@@ -23,17 +23,18 @@ Die Bedienelemente der Seite „Anleitung zur Bestätigung des Accounts erneut v
 
 ![](/img/Anleitung_zur_Bestaetigung.png)
 
-* Email
-Feld für die E-Mail-Adresse, mit der man sich bereits registriert hat.
-* `Anleitung zur Bestätigung des Accounts erneut versenden` Schicke die eingegebenen Daten ab, um eine E-Mail mit Freischaltungslink für den Account zu erhalten.
-* `Einloggen` Wechsel zur [Loginseite](login.md).
-* `Registrieren` Wechsel zur Seite [Registrieren](registration.md).
-* `Passwort vergessen?` Wechsel zur Seite [Passwort vergessen](password-forgotten.md).
-
- \*Box\*
+* <form>
+  <p><label for="fname">Email</label><br></br>
+  <input type="text" id="fname" name="fname"></input><br></br>
+  </p></form>
+  Feld für die E-Mail-Adresse, mit der man sich bereits registriert hat.
+* <button name="button">Anleitung zur Bestätigung des Accounts erneut versenden</button> Schicke die eingegebenen Daten ab, um eine E-Mail mit Freischaltungslink für den Account zu erhalten.
+* <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>
+* <form action="/mampf/de/docs/registration"><input type="submit" value="Registrieren"/> Wechsel zur Seite <a href="/mampf/de/docs/registration "target="_self">„Registrieren“</a>.</form>
+* <form action="/mampf/de/docs/password-forgotten"><input type="submit" value="Passwort vergessen?"/> Wechsel zur Seite <a href="/mampf/de/docs/password-forgotten "target="_self">„Passwort vergessen“</a>.</form>
 
 ## Ablauf
-Nachdem man sich registriert und keine Bestätigungsmail erhalten hat, gibt man auf der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ die E-Mail-Adresse, mit der man sich registriert hat, ein und schickt sie durch Betätigung des Buttons `Anleitung zur Bestätigung des Accounts nicht erhalten?` ab. Daraufhin wird man zurück auf die Startseite geleitet. Dort steht nun dieser zusätzliche Text:
+Nachdem man sich registriert und keine Bestätigungsmail erhalten hat, gibt man auf der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ die E-Mail-Adresse, mit der man sich registriert hat, ein und schickt sie durch Betätigung des Buttons <a href="/mampf/de/docs/home-page" target="_self"><button name="button">Anleitung zur Bestätigung des Account nicht erhalten?</button></a>. Daraufhin wird man zurück auf die [Startseite](home-page.md) geleitet. Dort steht nun dieser zusätzliche Text:
 
 ![](/img/Registriert2.png)
 

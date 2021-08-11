@@ -18,8 +18,8 @@ Die Seite „Mitteilungen“ gliedert sich in vier Teilbereiche: die eigentliche
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Auf dieser Seite gibt es höchstens zwei Bedienelemente:
 
-* `Alle abhaken` Alle Mitteilungen als gelesen markieren. Dieser Button ist nur vorhanden, wenn es unbearbeitete Mitteilungen gibt.
-* check.png <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" width="20" height="20" /> Eine Mitteilung als gelesen markieren. Dieser Button ist nur vorhanden, wenn es unbearbeitete Mitteilungen gibt. 
+* <button name="button">Alle abhaken</button> Alle Mitteilungen als gelesen markieren. Dieser Button ist nur vorhanden, wenn es unbearbeitete Mitteilungen gibt.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" height="12"/></button> Eine Mitteilung als gelesen markieren. Dieser Button ist nur vorhanden, wenn es unbearbeitete Mitteilungen gibt.
 
 Andernfalls kann auf dieser Seite lediglich Text, der u.U. Links enthält, gelesen werden. Werden unbearbeitete Mitteilungen als gelesen markiert, so ändert sich die Einfärbung der Mitteilungen (von blau zu grau und weiß) und die entsprechenden Mitteilungen werden nicht mehr unter „Aktuelles“ auf der [Veranstaltungsseite](event-series.md) angezeigt.
 
