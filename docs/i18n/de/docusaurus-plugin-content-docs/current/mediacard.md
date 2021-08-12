@@ -15,119 +15,94 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 \*Link ergänzen\*
 
 ### Lektion
-* `Sitzung` Gehe auf die [Seite der Sitzung](session.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Library-books.png Öffne das PDF.
-* Link.png Öffne externen Link.
-* Info-black.png Öffne die [Medienseite der Lektion](medium.md).
-* Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
-\*Link ergänzen\*
+* <a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/docs/session" target="_self">Seite der Sitzung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne externen Link.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite der Lektion</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ### Quiz
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Info-black.png Öffne die [Medienseite des Quiz'](medium.md).
-* Videogame-asset.png Starte das Quiz.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
-\*Link ergänzen\*
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Quiz'</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="12"/></button> Starte das Quiz.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ### Skript
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* Library-books.png Öffne das PDF.
-* Info-black.png Öffne die [Medienseite des Skripts](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
-\*Link ergänzen\*
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/tag" target="_self">Medienseite des Skripts</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ### Sonstiges
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Library-books.png Öffne das PDF.
-* Link.png Öffne externen Link.
-* Info-black.png Öffne die [Medienseite](medium.md).
-* Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
-\*Link ergänzen\*
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne externen Link.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ### Übung
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Library-books.png Öffne das PDF.
-* Link.png Öffne externen Link.
-* Info-black.png Öffne die [Medienseite der Übung](medium.md).
-* Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
-\*Link ergänzen\*
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite der Übung</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ### Wiederholung
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Library-books.png Öffne das PDF.
-* Link.png Öffne externen Link.
-* Info-black.png Öffne die [Medienseite der Wiederholung](medium.md).
-* Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
-\*Link ergänzen\*
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne externen Link.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite der Wiederholung</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ### Worked Example
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Library-books.png Öffne das PDF.
-* Link.png Öffne externen Link.
-* Leak-add.png Öffne Geogebra-Applet.
-* Info-black.png Öffne die [Medienseite des Worked Examples](medium.md).
-* Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
-
-\*Link ergänzen\*
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne externen Link.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/leak-add.png" height="12"/></button> Öffne das Geogebra-Applet.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Worked Examples</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ### Übersicht
 Bedienelement | Medientyp | Aktion
 ------------- | --------- | ------
-`Sitzung` | nur Lektion | Gehe auf die [Seite der Sitzung](session.md).
-`Veranstalung` | alle außer Lektion | Gehe auf die [Seite der Veranstaltung](event-series.md).
-`Begriff` | alle außer Skript | Gehe auf die [Seite des Begriffs](tag.md).
-Play-arrow.png | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Spiele das Video mit [THymE](thyme.md) ab.
-Library-books.png | Lektion, Skript, Sonstiges, Übung, Wiederholung und Worked Example | Öffne das PDF.
-Link.png | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Öffne den externen Link.
-Videogame-asset.png | nur Quiz | Starte das Quiz.
-Leak-add.png | nur Worked Example | Öffne Geogebra-Applet.
-Info-black.png | alle | Öffne die [Medienseite](medium.md)
-Long-arrow-alt-down-solid.pngmp4 | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Lade das Video herunter.
-Long-arrow-alt-down-solid.pngpdf | Lektion, Skript, Sonstiges, Übung, Wiederholung und Worked Example | Lade das PDF herunter.
-`Kommentieren` bzw. `n Kommentare` | alle | Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons\*
+<a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> | nur Lektion | Gehe auf die [Seite der Sitzung](session.md).
+<a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> | alle außer Lektion | Gehe auf die [Seite der Veranstaltung](event-series.md).
+<a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> | alle außer Skript | Gehe auf die [Seite des Begriffs](tag.md).
+<button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Spiele das Video mit [THymE](thyme.md) ab.
+<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> | Lektion, Skript, Sonstiges, Übung, Wiederholung und Worked Example | Öffne das PDF.
+<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Öffne den externen Link.
+<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="12"/></button>| nur Quiz | Starte das Quiz.
+<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/leak-add.png" height="12"/></button> | nur Worked Example | Öffne Geogebra-Applet.
+<button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> | alle | Öffne die [Medienseite](medium.md)
+<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Lade das Video herunter.
+<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> | Lektion, Skript, Sonstiges, Übung, Wiederholung und Worked Example | Lade das PDF herunter.
+<a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> | alle | Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ## Weitere Informationen auf Mediacards
-Auf den Medicards kann zusätzlich das Symbol File-import-solid.png im Header vorkommen. Es weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist.
+Auf den Medicards kann zusätzlich das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header vorkommen. Es weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist.
 
-\*Icon\*
 \*Link ergänzen\*
 
 ## Weitere Cards

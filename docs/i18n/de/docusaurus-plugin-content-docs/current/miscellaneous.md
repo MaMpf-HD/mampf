@@ -21,30 +21,26 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinste
 Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Sonstiges“ beschrieben.
 
 ### Seiteneinstellungen
-* `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.
-* `alle` Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Medien auf einer Seite angezeigt werden.
-* `pro Seite` Arrow-drop-down.png Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen *3*, *4*, *8* (standardmäßig), *12*, *24* und *48*.
-* `Zusatzmaterialien` Arrow-drop-down.png Ändere Einstellung für die Anzeige von Zusatzmaterialien: *zu bereits Behandeltem* (standardmäßig), *keine* oder *alle*.
-
-\*Icons einbinden\*
+* <button name="button">Reihenfolge umkehren</button> Ändere die Sortierreihenfolge der Medien.
+* <button name="button">alle</button> Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Lektionen auf einer Seite angezeigt werden.
+* <button name="button">pro Seite<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>8</i> (standardmäßig), <i>12</i>, <i>24</i> und <i>48</i>.
+* <button name="button">Zusatzmaterialien<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button>  Ändere Einstellung für die Anzeige von Zusatzmaterialien: <i>zu bereits Behandeltem</i> (standardmäßig), <i>keine</i> oder <i>alle</i>.
 
 ### Seitennavigation
-* `n` Wechsel auf Seite n.
-* `Nächste` bzw. `Vorige` Wechsel auf die nächste bzw. vorige Seite.
-* `Letzte` bzw. `Erste` Wechsel auf die letzte bzw. erste Seite
+* <button name="button">n</button> Wechsel auf Seite n.
+* <button name="button">Nächste</button> bzw. <button name="button">Vorige Wechsel</button> auf die nächste bzw. vorige Seite.
+* <button name="button">Letzte</button> bzw. <button name="button">Erste</button> Wechsel auf die letzte bzw. erste Seite.
 
 ### Mediacards
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Library-books.png Öffne das PDF.
-* Link.png Öffne den externen Link.
-* Info-black.png Öffne die [Medienseite](medium.md).
-* Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
-
-\*Icons einbinden\*
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne externen Link.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ## Hinweis zum Fehlen von Bedienelementen
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Ein sonstiges Medium kann aus einem PDF, einem Video und einem externen Link bestehen, es kann aber auch weniger Komponenten enthalten. Die entsprechenden Buttons sind nur vorhanden, wenn dies auch für die entsprechenden Dateien gilt. Ebenso verhält es sich bei den Buttons zur Seitennavigation: Erst wenn es mehr sonstige Medien gibt, als pro Seite angezeigt werden sollen (standardmäßig acht), sind diese Buttons verfügbar. Damit Begriffe angezeigt werden, müssen welche mit dem sonstigen Medium verknüpft sein.
@@ -63,17 +59,13 @@ Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. 
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.
 
 ### [THymE-Player](thyme.md)
-Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den Play-arrow.png-Button.
-
-\*Icon\*
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
 
 ### [Medienseite](medium.md)
-Auf der Medienseite stehen weitere Informationen zu Länge bzw. Umfang und Größe von PDFs bzw. Videos zur Verfügung. Über die dort aufgeführte Gliederung kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Medium verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den Info-black.png-Button klicken.
-
-\*Icon\*
+Auf der Medienseite stehen weitere Informationen zu Länge bzw. Umfang und Größe von PDFs bzw. Videos zur Verfügung. Über die dort aufgeführte Gliederung kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Medium verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ### [Kommentarseite](comments-media.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

@@ -34,11 +34,11 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 * `Letzte` bzw. `Erste Wechsel` auf die letzte bzw. erste Seite
 
 ### Mediacards
-* `Veranstaltung` Gehe auf die [Seite der Veranstaltung](event-series.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Info-black.png Öffne die [Medienseite des Quiz'](medium.md).
-* Videogame-asset.png Starte das Quiz.
-* `Kommentieren` bzw. `n Kommentare` Öffne die zum Medium gehörige  [Kommentarseite](comments-media.md), um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Quiz'</a>.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="12"/></button> Starte das Quiz.
+* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ## Hinweis zum Fehlen von Bedienelementen
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Die Buttons zur Seitennavigation werden erst angezeigt, wenn es mehr Quizzes gibt, als pro Seite angezeigt werden sollen (standardmäßig acht). Damit Begriffe angezeigt werden, müssen welche mit dem Quiz verknüpft sein.
@@ -60,7 +60,7 @@ Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zu
 Auf der Medienseite stehen weitere Informationen zum Umfang, Schwierigkeitsgrad und Inhalt des Quiz' zur Verfügung. Außerdem sind mit diesem Quiz verknüpfte Medien und Begriffe aufgeführt und verlinkt. Darüber hinaus können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den Info-black.png-Button klicken.
 
 ### [Kommentarseite](comments-media.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf `Kommentieren` bzw. `n Kommentare` klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

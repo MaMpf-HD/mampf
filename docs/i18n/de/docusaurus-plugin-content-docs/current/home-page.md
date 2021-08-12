@@ -16,10 +16,10 @@ Die Bedienelemente der Startseite und mithilfe dieser mögliche Aktionen werden 
 ### Navigationsleiste
 Die folgenden Buttons sind in der Navigationsleiste angesiedelt:
 
-* Sign-in-alt-solid.png Wechsel auf die [Loginseite](login.md). Dort kann man sich einloggen, registrieren und ein neues Passwort anfordern.
-* Newspaper-regular.png Wechsel auf die [Newsseite](news.md). Dort kann man sich über veranstaltungsunspezifische Neuigkeiten rund um MaMpf informieren.
-* Blog-solid.png Wechsel auf den externen [MaMpf-Blog](https://mampf.blog/). Auf dieser Seite wird das MaMpf-Projekt vorgestellt und ausführlich beschrieben. Auch Änderungen und Neuerungen werden hier vorgestellt.
-* Language-solid.png Ändere die Sprache. Zur Verfügung stehen Deutsch und Englisch.
+* <button name="button"><a href="/mampf/de/docs/login" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sign-in-alt-solid.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/docs/login" target="_self">Loginseite</a>. Dort kann man sich einloggen, registrieren und ein neues Passwort anfordern.
+* <button name="button"><a href="/mampf/de/docs/news" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/newspaper-regular.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/docs/news" target="_self">Newsseite</a>. Dort kann man sich über veranstaltungsunspezifische Neuigkeiten rund um MaMpf informieren.
+* <button name="button"><a href="https://mampf.blog/" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/blog-solid.png" height="12"/></a></button> Wechsel auf den externen <a href="https://mampf.blog/" target="_self">MaMpf-Blog</a>. Auf dieser Seite wird das MaMpf-Projekt vorgestellt und ausführlich beschrieben. Auch Änderungen und Neuerungen werden hier vorgestellt.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/language-solid.png" height="12"/> <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/caret-down.png" height="8"/></button> Ändere die Sprache. Zur Verfügung stehen Deutsch und Englisch.
 
 ### Eigentliche Seite
 Auf der eigentlichen Seite gibt es nur die Möglichkeit, auf die [Seite „Registieren“](registration.md) oder auf externe Seiten mit weiterführenden Informationen zum MaMpf-Projekt ([MaMpf-Blog](https://mampf.blog/) und [Research Gate](https://www.researchgate.net/project/MaMpf-Mathematische-Medienplattform)) zu wechseln.

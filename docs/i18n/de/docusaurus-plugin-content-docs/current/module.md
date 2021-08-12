@@ -16,7 +16,7 @@ Die Seite „Modul“ gliedert sich in vier Teilbereiche: die eigentliche Seite 
 \*Bilder mit Titel einfügen\*
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Auf dieser Seite aus gibt es bei einfachen Nutzer\*innen nur einen Link zur Seite „DozentIn“. Dieser öffnet sich durch Klicken auf `Dozent\*in`.
+Auf dieser Seite aus gibt es bei einfachen Nutzer\*innen nur einen Link zur Seite „DozentIn“. Dieser öffnet sich durch Klicken auf <a href="/mampf/de/docs/lecturer" target="_self"><button name="button">Dozent*in</button></a>.
 
 \*Bilder mit Titel einfügen\*
 

@@ -8,7 +8,7 @@ Die persönliche Startseite ist die Seite, auf die man gelangt, nachdem man sich
 ![](/img/pers_Startseite_thumb.png)
 
 ## Navigation zu dieser Seite
-Die persönliche Startseite erreicht man, indem auf Mampf-logo 512x512.png oben links in der [Navigationsleiste](nav-bar.md) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geschickt.
+Die persönliche Startseite erreicht man, indem auf <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="12"/> oben links in der [Navigationsleiste](nav-bar.md) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geschickt.
 
 \*Logo\*
 

@@ -42,8 +42,6 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
 * <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
-\*Icons einbinden\*
-
 ## Hinweis zum Fehlen von Bedienelementen
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Eine Übung kann aus einem PDF, einem Video und einem externen Link bestehen, sie kann aber auch weniger Komponenten enthalten. Die entsprechenden Buttons sind nur vorhanden, wenn dies auch für die entsprechenden Dateien gilt. Ebenso verhält es sich bei den Buttons zur Seitennavigation: Erst wenn es mehr Übungen gibt, als pro Seite angezeigt werden sollen (standardmäßig acht), sind diese Buttons verfügbar. Damit Begriffe angezeigt werden, müssen welche mit der Übung verknüpft sein.
 
@@ -67,7 +65,7 @@ Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gl
 Auf der Medienseite stehen weitere Informationen zu Umfang, Größe und Inhalt der Übung zur Verfügung. Außerdem sind mit der Übung verknüpfte Medien und Begriffe aufgeführt und verlinkt. Darüber hinaus können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ### [Kommentarseite](comments-media.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

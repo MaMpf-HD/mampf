@@ -25,56 +25,48 @@ Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medient
 \*Tabelle\*
 
 ### Veranstaltung
-`Veranstaltung` Gehe auf [Seite der Veranstaltung](event-series.md).
+<a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
 
 ### Sitzung
-`Sitzung` Gehe auf [Seite der Sitzung](session.md).
+<a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/docs/session" target="_self">Seite der Sitzung</a>.
 
 ### Video
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Long-arrow-alt-down-solid.pngmp4 Lade das Video herunter.
-
-\*Icons\*
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
 
 ### Manuskript
-* Library-books.png Öffne das PDF.
-* Long-arrow-alt-down-solid.pngpdf Lade das PDF herunter.
-
-\*Icons\*
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
 
 ### Externer Link
-`Hier klicken` Öffne den externen Link.
+<button name="button">Hier klicken</button> Öffne den externen Link.
 
 ### Geogebra-Applet
-* Leak-add.png Öffne das Geogebra-Applet.
-* Long-arrow-alt-down-solid.pngggb Lade das Applet herunter.
-
-\*Icons\*
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/leak-add.png" height="12"/></button> Öffne das Geogebra-Applet.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>ggb</button> Lade das Applet herunter.
 
 ### Verknüpfte Begriffe
-`Begriff` Gehe auf die [Seite des Begriffs](tag.md).
+<a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
 
 ### Inhalt
-* Menu-book.png Öffne das Skript.
-* Play-arrow.png Spiele das Video mit [THymE](thyme.md) ab.
-* Library-books.png Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
 
 ### Kommentare
-* Fullscreen.png Wechsel zur Vollbildansicht.
-* `Abonnieren` bzw. `Abonnement beenden` Schalte eine E-Mail-Benachrichtigung bei Veröffentlichung eines neuen Diskussionsbeitrags ein bzw. aus.
-* `Neuer Kommentar` Verfasse einen neuen Kommentar.
-* `Bearbeiten` Bearbeite einen Kommentar. Nur eigene Kommentare können bearbeitet werden.
-* `Löschen` Lösche einen Kommentar. Nur eigene Kommentare können gelöscht werden.
-* Caret-up.png Gib Kommentar einen Upvote oder nimm diesen zurück.
-* `Auf Kommentar antworten.` Antworte auf einen Kommentar.
-* NextLong-arrow-alt-right.png Gehe auf nächste Antwortseite.
-* `n` Gehe auf Seite n.
-* Long-arrow-alt-left.pngPrevious Gehe auf vorige Antwortseite.
-
-\*Icons\*
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" height="12"/></button> Wechsel zur Vollbildansicht.
+* <button name="button">Abonnieren</button> bzw. <button name="button">Abonnement beenden</button> Schalte eine E-Mail-Benachrichtigung bei Veröffentlichung eines neuen Diskussionsbeitrags ein bzw. aus.
+* <button name="button">Neuer Kommentar</button> Verfasse einen neuen Kommentar.
+* <button name="button">Bearbeiten</button> Bearbeite einen Kommentar. Nur eigene Kommentare können bearbeitet werden.
+* <button name="button">Löschen</button> Lösche einen Kommentar. Nur eigene Kommentare können gelöscht werden.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/caret-up.png" height="12"/></button> Gib Kommentar einen Upvote oder nimm diesen zurück.
+* <button name="button">Auf Kommentar antworten.</button> Antworte auf einen Kommentar.
+* <button name="button">Next<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-right.png" height="12"/></button> Gehe auf nächste Antwortseite.
+* <button name="button">n</button> Gehe auf Seite n.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-left.png" height="12"/> Previous</button> Gehe auf vorige Antwortseite.
 
 ### Verknüpfte Medien
-`Medium` Klappe Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind *Lektion*, *Worked Example*, *Quiz*, *Wiederholung*, *Beispiel*, *Übung*, *Skript*, *Quiz-Frage*, *Quiz-Erläuterung* und *Sonstiges*. Für mögliche weitere Buttons siehe [Mediacard](mediacard.md).
+<button name="button">Medium</button> Klappe Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind <i>Lektion</i>, <i>Worked Example</i>, <i>Quiz</i>, <i>Wiederholung</i>, <i>Beispiel</i>, <i>Übung</i>, <i>Skript</i>, <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i> und <i>Sonstiges</i>. Für mögliche weitere Buttons siehe <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a>.
 
 ## Hinweis zum Fehlen von Bedienelementen
 
