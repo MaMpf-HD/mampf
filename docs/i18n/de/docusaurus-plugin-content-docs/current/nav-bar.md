@@ -15,22 +15,20 @@ Nicht eingeloggten Personen stehen folgende Buttons in der Navigationsleiste zur
 
 \*Screenshot\*
 
-* Mampf-logo 512x512.png Wechsel auf die [Startseite](home-page.md).
-* Sign-in-alt-solid.png Wechsel auf die [Loginseite](login.md). Dort kann man sich einloggen, registrieren und ein neues Passwort anfordern.
-* Newspaper-regular.png Wechsel auf die [Newsseite](news.md). Dort kann man sich über veranstaltungsunspezifische Neuigkeiten rund um MaMpf informieren.
-* Blog-solid.png Wechsel auf den externen [MaMpf-Blog](https://mampf.blog/). Auf dieser Seite wird das MaMpf-Projekt vorgestellt und ausführlich beschrieben. Auch Änderungen und Neuerungen werden hier vorgestellt.
-* Language-solid.png Ändere die Sprache. Zur Verfügung stehen Deutsch und Englisch.
-
-\*Icons\*
+* <button name="button"><a href="/mampf/de/docs/home-page" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></a></button> Wechsel auf die <a href="/mampf/de/docs/home-page" target="_self">Startseite</a>.
+* <button name="button"><a href="/mampf/de/docs/login" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sign-in-alt-solid.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/docs/login" target="_self">Loginseite</a>. Dort kann man sich einloggen, registrieren und ein neues Passwort anfordern.
+* <button name="button"><a href="/mampf/de/docs/news" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/newspaper-regular.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/docs/news" target="_self">Newsseite</a>. Dort kann man sich über veranstaltungsunspezifische Neuigkeiten rund um MaMpf informieren.
+* <button name="button"><a href="https://mampf.blog/" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/blog-solid.png" height="12"/></a></button>  Wechsel auf den externen <a href="https://mampf.blog/" target="_self">MaMpf-Blog</a>. Auf dieser Seite wird das MaMpf-Projekt vorgestellt und ausführlich beschrieben. Auch Änderungen und Neuerungen werden hier vorgestellt.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/language-solid.png" height="12"/></button> Ändere die Sprache. Zur Verfügung stehen Deutsch und Englisch.
 
 ### Eingeloggt
 Eingeloggte  Nutzer\*innen können von diesen Buttons Gebrauch machen:
 
 ![](/img/navbar_generic.png)
 
-* Mampf-logo 512x512.png MaMpf Wechsel auf die [persönliche Startseite](my-home-page.md). Von dieser Seite aus gelangt man auf die Seite einer Veranstaltung und kann sich über neue Mitteilungen, Medien und Forumsbeiträge in abonnierten Veranstaltungen informieren. Außerdem können Veranstaltungen gesucht und Veranstaltungsabos verwaltet werden.
-* User-cog-solid.png Wechsel auf die [Profilseite](profile.md). Dort kann man den eignen Account (Änderung des Anzeigenamens und der Zugangsdaten sowie Löschen des Accounts), Veranstaltungabos und weitere Einstellungen (Sprache, angezeichte Inhalte und Benachrichtungseinstellungen) verwalten.
-* Comments-regular.png Wechsel auf die [Kommentarseite](comments.md). Auf dieser Seite gibt es eine Übersicht über Diskussionen in abonnierten Veranstaltungen. Hier können Diskussionsabos verwaltet werden. Ist der Comments-regular.png-Button blau, so gibt es neue Kommentare in abonnierten Veranstaltungen.
+* <button name="button"><a href="/mampf/de/docs/my-home-page" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></a></button> Wechsel auf die <a href="/mampf/de/docs/my-home-page" target="_self">persönliche Startseite</a>. Von dieser Seite aus gelangt man auf die Seite einer Veranstaltung und kann sich über neue Mitteilungen, Medien und Forumsbeiträge in abonnierten Veranstaltungen informieren. Außerdem können Veranstaltungen gesucht und Veranstaltungsabos verwaltet werden.
+* <button name="button"><a href="/mampf/de/docs/profile" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/docs/profile" target="_self">Profilseite</a>. Dort kann man den eignen Account (Änderung des Anzeigenamens und der Zugangsdaten sowie Löschen des Accounts), Veranstaltungabos und weitere Einstellungen (Sprache, angezeichte Inhalte und Benachrichtungseinstellungen) verwalten.
+* <button name="button"><a href="/mampf/de/docs/comments" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/docs/comments" target="_self">Kommentarseite</a>. Auf dieser Seite gibt es eine Übersicht über Diskussionen in abonnierten Veranstaltungen. Hier können Diskussionsabos verwaltet werden. Ist der Comments-regular.png-Button blau, so gibt es neue Kommentare in abonnierten Veranstaltungen.
 * Newspaper-regular.png Wechsel auf die [Newsseite](news.md). Dort kann man sich über veranstaltungsunspezifische Neuigkeiten rund um MaMpf informieren.
 * Blog-solid.png Wechsel auf den externen [MaMpf-Blog](https://mampf.blog/). Auf dieser Seite wird das MaMpf-Projekt vorgestellt und ausführlich beschrieben. Auch Änderungen und Neuerungen werden hier vorgestellt.
 * Sign-out-alt-solid.png Ausloggen und auf die [Logoutseite](logout.md) wechseln.
