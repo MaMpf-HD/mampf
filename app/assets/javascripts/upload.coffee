@@ -43,72 +43,44 @@ videoUpload = (fileInput) ->
 
   # uppy will add its own file input
   fileInput.style.display = 'none'
+  @directUpload(
+    "upload-video"
+    "#video-uploadButton-button-actual"
+    '#video-uploadButton-button'
+    "#video-uploadButton-button-actual"   
+    null
+    '/videos/upload'
+    "#video-uploadButton-button-actual"
+    (data)->
+      console.log data
+      data = JSON.parse data.response
+      $('#video-wait').hide()
+      if data.metadata.mime_type in ['video/mp4']
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
 
-  # create uppy istance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [
-      '.mp4'
-      '.webm'
-      '.ogg'
-    ])
-  uppy.use(Uppy.FileInput,
-           target: uploadButton
-           locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-  uppy.use(Uppy.Informer, target: informer)
-  uppy.use(Uppy.ProgressBar, target: progressBar)
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
 
+        videoFile = document.getElementById('video-file')
+        videoSize = document.getElementById('video-size')
 
-  # target the endpoint for shrine uploader
-  # timeout has been increased from standard value to allow storing of large
-  # files
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/videos/upload'
-    fieldName: 'file'
-    timeout: 240 * 1000
-
-  # give the user feedback after upload has started
-  uppy.on 'upload', (data) ->
-    $('#video-wait').show()
-    $('#medium-basics-warning').show()
-    return
-
-  # add metadata to video card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    $('#video-wait').hide()
-    data = response.body
-    if data.metadata.mime_type in ['video/mp4']
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-
-      videoFile = document.getElementById('video-file')
-      videoSize = document.getElementById('video-size')
-
-      # put metadata into place
-      videoFile.innerHTML = data.metadata.filename
-      videoSize.innerHTML = formatBytes(data.metadata.size)
-      $(metaData).show()
-      $(videoPreviewArea).show()
-      $('#medium_detach_video').val('false')
-      $('#medium-basics-warning').show()
-    else
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+        # put metadata into place
+        videoFile.innerHTML = data.metadata.filename
+        videoSize.innerHTML = formatBytes(data.metadata.size)
+        $(metaData).show()
+        $(videoPreviewArea).show()
+        $('#medium_detach_video').val('false')
+        $('#medium-basics-warning').show()
+      else
+        # display error message if uppy detects wrong mime type
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type)
+      return
+    null
+    'upload-video-hidden'
+    true
+  )
 
 manuscriptUpload = (fileInput) ->
   # set everything up
@@ -160,6 +132,7 @@ manuscriptUpload = (fileInput) ->
       return
     null
     hiddenInput
+    true
   )
 
 
@@ -208,6 +181,7 @@ geogebraUpload = (fileInput) ->
       return
     null
     'upload-geogebra-hidden'
+    true
   )
 
 imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
@@ -284,49 +258,31 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
 
   uppy
 
-@correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData) ->
+@correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData,actualButton) ->
   # uppy will add its own file input
-  fileInput.style.display = 'none'
-  allowedInput = fileInput.dataset.accept
+  $("#"+fileInput).hide()
+  directUpload(
+    fileInput
+    actualButton
+    uploadButton
+    actualButton
+    null
+    '/corrections/upload'
+    actualButton
+    (data) =>
+      data = JSON.parse data.response
+        # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data[0])
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions:
-      maxFileSize: 30*1024*1024)
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.StatusBar, target: statusBar)
+      # set hidden field value to the uploaded file data so that it is
+      # submitted with the form as the attachment (done by directUpload), using single option =  true
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/corrections/upload'
-    fieldName: 'file'
-
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    # read uploaded file data from the upload endpoint response
-    uploadedFileData = JSON.stringify(data)
-
-    # set hidden field value to the uploaded file data so that it is
-    # submitted with the form as the attachment
-    hiddenInput.value = uploadedFileData
-
-    metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
-    metaData.style.display = 'inline'
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+      metaData.style.display = 'inline'
+    null
+    hiddenInput
+    true
+    )
 
 bulkCorrectionUpload = (fileInput) ->
 
@@ -342,16 +298,34 @@ bulkCorrectionUpload = (fileInput) ->
   directUpload(
       'upload-bulk-correction'
       '#bulk-uploadButton-button-actual'
-      '#show-bulk-upload-area'
+      '#bulk-uploadButton-button'
       '#bulk-uploadButton-button-actual'
       null
       '/corrections/upload'
       '#bulk-uploadButton-button-actual'
-      (xhr) ->
-      () ->
+      (data) =>
+
+        data = JSON.parse data.response
+        console.log(data)
+        result = (successful: [data])
+        console.log result
+        if result.successful.length > 0
+          uploaded_files = result.successful.map (file) -> file
+          console.log uploaded_files
+          $('#upload-bulk-correction-save').prop('disabled', false)
+          $(metaData).empty()
+            .append(fileInput.files.length+ ' ' +$(metaData).data('tr-uploads'))
+          $(uploadButton).hide()
+        return
         $("#bulk-upload-area").toggle()
+      null
       'upload-bulk-correction-hidden'
       )
+  $('#show-bulk-upload-area').on 'click', ->
+    $(this).hide()
+    $('#upload-bulk-correction-button').show()
+    $('#bulk-upload-area').show()
+    return
 
 
 ###
@@ -368,6 +342,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
        requires data attribute tr-success,tr-failure, tr-missing-consent
 @param successCallback will be called, if request was sucessful (optional)
 @param fileChangeCallBack will be called, if selected files have changed
+@param single true if only one file is uploaded
 ###
 @directUpload = (
   fileInputElement
@@ -380,6 +355,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
   successCallback
   fileChangeCallBack
   hiddenInputElement
+  single
   ) ->
     # update helpdesk
     $('[data-toggle="popover"]').popover()
@@ -419,12 +395,16 @@ directUpload provides an interface to upload (multiple) files to an endpoint
             i++
             uploadedFiles.push JSON.parse(xhr.responseText)
             if  i == (fileInput.files.length)
+              uploadedFiles2 = uploadedFiles
+              if single
+                uploadedFiles2 = uploadedFiles[0]
               if successCallback != undefined 
                 successCallback(xhr)
               $(progressBarElement).text(
                 $(progressBarElement).data 'tr-success'
               )
-              hiddenInput.value = JSON.stringify uploadedFiles
+              hiddenInput.value = JSON.stringify uploadedFiles2
+              fileInput.value = null
               $(progressBarElement)
                   .removeClass('btn-primary')
                   .addClass 'btn-outline-secondary'
@@ -461,6 +441,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
     fI.change () ->
       if fileChangeCallBack != null
         fileChangeCallBack(fI.files)
+      $(uploadStatusElement).text("Upload")
       $(actualUploadButtonElement)
         .show()
         .removeClass('btn-outline-secondary')

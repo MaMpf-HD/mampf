@@ -156,7 +156,7 @@ class TutorialsController < ApplicationController
   end
 
   def send_correction_upload_emails
-    @report[:successful_saves].each do |submission|
+    @report[:successful_saves]&.each do |submission|
       submission.users.email_for_correction_upload.each do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,

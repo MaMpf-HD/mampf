@@ -193,7 +193,7 @@ class Submission < ApplicationRecord
   def self.bulk_corrections!(tutorial, assignment, files)
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
-    report = { successful_extractions: 0, submissions: submissions.size,
+    report = { successful_saves: [], submissions: submissions.size,
     					 invalid_filenames: [], invalid_id: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
     tmp_folder = Dir.mktmpdir
@@ -226,7 +226,7 @@ class Submission < ApplicationRecord
         	  report[:invalid_file].push(filename)
         	  next
           end
-          report[:successful_extractions] += 1
+          report[:successful_saves].push(submission)
        # end
       end
     rescue => e

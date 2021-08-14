@@ -14,11 +14,6 @@
          data-choosefiles="<%= t('basics.file') %>">
       <%= f.hidden_field :files,
                          id: 'upload-bulk-correction-hidden' %>
-      <button id="upload-bulk-Files"
-                    class="btn btn-sm btn-outline-secondary"
-                    >
-              <%= t('buttons.files') %>
-            </button>
     </div>
     <div class="col-12" id="upload-bulk-correction-metadata"
          data-tr-uploads="<%= t('tutorial.bulk_upload.files_in_cache') %>">
@@ -30,6 +25,10 @@
     <div class="invalid-feedback" id="upload-bulk-errors">
     </div>
     <div class="col-12">
+    <div id="bulk-uploadButton-button"
+       class="btn btn-sm btn-outline-secondary"
+       >
+       <%= t('basics.file')%></div>
             <button id="bulk-uploadButton-button-actual"
                     data-tr-success="<%= t('buttons.upload_success') %>"
                     data-tr-failure="<%= t('submission.upload_failure')%>"
