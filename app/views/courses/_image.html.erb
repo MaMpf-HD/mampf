@@ -51,6 +51,15 @@
               <%= f.file_field :image,
                                id: 'upload-image' %>
               <%= f.hidden_field :detach_image, value: false %>
+              <div id="image-uploadButton-button" class="btn btn-sm btn-outline-secondary"><%= t('basics.file') %></div>
+              <button id="image-uploadButton-button-actual"
+                    data-tr-success="<%= t('buttons.upload_success') %>"
+                    data-tr-failure="<%= t('submission.upload_failure')%>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    class="btn btn-sm btn-outline-secondary"
+                    >
+              <%= t('buttons.upload') %>
+            </button>
             </div>
           </div>
           <%= render partial: 'courses/upload_image',

@@ -24,6 +24,8 @@ describe("Authentication", function () {
             const yourFixturePath = 'files/image.png';
             cy.get('input[name="files[]"]').attachFile(yourFixturePath);
             cy.wait(100);
+            cy.wait("Upload").click();
+            cy.wait(100);
             cy.contains("Speichern").click();
             cy.contains("image.png").should("exist");
         });

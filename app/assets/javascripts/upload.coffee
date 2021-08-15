@@ -41,7 +41,6 @@ videoUpload = (fileInput) ->
   metaData = document.getElementById('video-meta')
   hiddenInput = document.getElementById('upload-video-hidden')
 
-  # uppy will add its own file input
   fileInput.style.display = 'none'
   @directUpload(
     "upload-video"
@@ -74,7 +73,7 @@ videoUpload = (fileInput) ->
         $('#medium_detach_video').val('false')
         $('#medium-basics-warning').show()
       else
-        # display error message if uppy detects wrong mime type
+        # display error message if  detects wrong mime type
         alert('Falscher MIME-Typ:' + data.metadata.mime_type)
       return
     null
@@ -124,10 +123,10 @@ manuscriptUpload = (fileInput) ->
         $('#medium_detach_manuscript').val('false')
         $('#medium-basics-warning').show()
       else if data.metadata.mime_type != 'application/pdf'
-        # display error message if uppy detects wrong mime type
+        # display error message if  detects wrong mime type
         alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
       else
-        # display error message if uppy detects some other problem
+        # display error message if  detects some other problem
         alert('Die Datei ist beschädigt.', 'error', 5000)
       return
     null
@@ -173,10 +172,8 @@ geogebraUpload = (fileInput) ->
         $('#medium_detach_geogebra').val('false')
         $('#medium-basics-warning').show()
       else if data.metadata.mime_type != 'application/zip'
-        # display error message if uppy detects wrong mime type
         alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
       else
-        # display error message if uppy detects some other problem
         alert('Die Datei ist beschädigt.', 'error', 5000)
       return
     null
@@ -194,72 +191,53 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
   hiddenInput = document.getElementById('upload-image-hidden')
   imagePreview = document.getElementById('image-preview')
 
-  # uppy will add its own file input
   fileInput.style.display = 'none'
+  actualButton = '#image-uploadButton-button-actual'
+  uploadButton = '#image-uploadButton-button'
+  directUpload(
+    'upload-image'
+    actualButton
+    uploadButton
+    actualButton
+    null
+    endpoint
+    actualButton
+    (xhr) =>
+      file = fileInput.files[0]
+      console.log(file)
+      data = JSON.parse xhr.response
+      if data.metadata.mime_type in ['image/png', 'image/jpeg', 'image/gif']
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [
-      '.png'
-      '.jpg'
-      '.gif'
-    ])
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.ProgressBar, target: progressBar)
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: endpoint
-    fieldName: 'file'
+        #show image preview
+        imagePreview.src = URL.createObjectURL(file)
 
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type in ['image/png', 'image/jpeg', 'image/gif']
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
+        imageFile = document.getElementById('image-file')
+        imageSize = document.getElementById('image-size')
+        imageResolution = document.getElementById('image-resolution')
 
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-
-      #show image preview
-      imagePreview.src = URL.createObjectURL(file.data)
-
-      imageFile = document.getElementById('image-file')
-      imageSize = document.getElementById('image-size')
-      imageResolution = document.getElementById('image-resolution')
-
-      # put metadata into place
-      imageFile.innerHTML = data.metadata.filename
-      imageSize.innerHTML = formatBytes(data.metadata.size)
-      imageResolution.innerHTML = data.metadata.width + 'x' + data.metadata.height
-      $(metaData).show()
-      $(imagePreview).show()
-      $('#course_detach_image').val('false')
-      $('#'+classname+'-basics-warning').show()
-      $('#image-none').hide()
-    else
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+        # put metadata into place
+        imageFile.innerHTML = data.metadata.filename
+        imageSize.innerHTML = formatBytes(data.metadata.size)
+        imageResolution.innerHTML = data.metadata.width + 'x' + data.metadata.height
+        $(metaData).show()
+        $(imagePreview).show()
+        $('#course_detach_image').val('false')
+        $('#'+classname+'-basics-warning').show()
+        $('#image-none').hide()
+      else
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type)
+    null
+    'upload-image-hidden'
+    true
+    )
 
 @correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData,actualButton) ->
-  # uppy will add its own file input
   $("#"+fileInput).hide()
   directUpload(
     fileInput
@@ -293,7 +271,6 @@ bulkCorrectionUpload = (fileInput) ->
   metaData = document.getElementById('upload-bulk-correction-metadata')
   fileCount = 0
 
-  # uppy will add its own file input
   fileInput.style.display = 'none'
   directUpload(
       'upload-bulk-correction'
@@ -718,11 +695,8 @@ $(document).on 'turbolinks:load', ->
   image2 = document.getElementById('upload-image2')
   bulkCorrection = document.getElementById('upload-bulk-correction')
 
-  # make uppy idempotent for turbolinks
-  $('.uppy').remove()
-  $('.uppy-Root').remove()
 
-  # initialize uppy
+  # initialize directUploads
   videoUpload video if video?
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
@@ -732,7 +706,4 @@ $(document).on 'turbolinks:load', ->
   imageUpload image, uploadPath, "course" if image?
   bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
-  # # make uppy upload buttons look like bootstrap
-  # $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
-  # .addClass('btn btn-sm btn-outline-secondary')
   return

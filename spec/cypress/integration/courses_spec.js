@@ -30,6 +30,7 @@ describe("Courses", function () {
                 cy.contains("Bild").should("exist");
                 const yourFixturePath = 'files/image.png';
                 cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+                cy.contains("Upload").click();
                 cy.wait(100);
                 cy.contains("Speichern").click();
                 cy.get("#image_heading").contains("Ein-/Ausklappen").click();
