@@ -28,8 +28,9 @@ describe("Courses", function () {
             ]).then((records)=>{
                 cy.visit(`/courses/${records[0].id}/edit`);
                 cy.contains("Bild").should("exist");
+                cy.get("#image_heading").contains("Ein-/Ausklappen").click();
                 const yourFixturePath = 'files/image.png';
-                cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+                cy.get('#upload-image').attachFile(yourFixturePath);
                 cy.contains("Upload").click();
                 cy.wait(100);
                 cy.contains("Speichern").click();
