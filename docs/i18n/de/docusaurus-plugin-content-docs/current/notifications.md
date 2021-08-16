@@ -22,12 +22,10 @@ Auf der Seite „Benachrichtigungen“ gibt es, abgesehen von Links in Nachricht
 ## Bedeutung der Farben
 Die Nachrichten haben eine von vier möglichen Hintergrundfarben. Diese richtet sich nach dem Inhalt der Nachricht.
 
-* <span style="color:blue">some *blue* text</span>. Gelb (ffffa5): In einer abonnierten Veranstaltung ist ein neues Medium veröffentlicht worden.
-* Rot (f7c5bb): In einer abonnierten Veranstaltung gibt es eine neue Mitteilung.
-* Orange (fcc782): Eine neue Veranstaltung ist angelegt worden und kann nun abonniert werden.
-* Blau (c6e3ec): An MaMpf sind Änderungen vorgenommen worden.
-
-\*Bunte Boxen wie bei den Abgaben (Submissions)\*
+* <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_yellow.png" height="12"/> In einer abonnierten Veranstaltung ist ein neues Medium veröffentlicht worden.
+* <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_red.png" height="12"/> In einer abonnierten Veranstaltung gibt es eine neue Mitteilung.
+* <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_orange.png" height="12"/> Eine neue Veranstaltung ist angelegt worden und kann nun abonniert werden.
+* <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_blue.png" height="12"/> An MaMpf sind Änderungen vorgenommen worden.
 
 ## Ähnliche Seiten
 * [Kommentare](comments.md)
