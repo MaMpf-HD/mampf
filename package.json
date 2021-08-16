@@ -13,13 +13,14 @@
     "node-sass": "^5.0.0",
     "regenerator-runtime": "^0.13.7",
     "sass-loader": "^10.0.5",
+    "smtp-tester": "^1.2.0",
     "webpack-dev-server": "^3.11.0"
   },
   "scripts": {
     "lint": "eslint ."
   },
   "devDependencies": {
-    "cypress": "6.5.0",
+    "cypress": "8.2.0",
     "eslint": "^7.11.0"
   }
 }

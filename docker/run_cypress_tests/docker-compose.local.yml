@@ -21,12 +21,6 @@ services:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
 
-  mailcatcher:
-    restart: on-failure:10
-    image: dockage/mailcatcher:latest
-    ports:
-      - "127.0.0.1:1080:1080"
-
   mampf:
     build:
       context: ./../..
@@ -45,7 +39,7 @@ services:
       TEST_DATABASE_USERNAME: mampf
       TEST_DATABASE_HOST: db
       TEST_DATABASE_PORT: 5432
-      MAILSERVER: mailcatcher
+      MAILSERVER: cypress_runner
       FROM_ADDRESS: development@localhost
       URL_HOST: mampf
       URL_HOST_SHORT: mampf
@@ -69,10 +63,9 @@ services:
       - db
       - solr
       - redis
-      - mailcatcher
 
   cypress_runner:
-    image: mampf-cypress:6.5.0
+    image: mampf-cypress:8.2.0
     build:
       context: ./../..
       dockerfile: docker/run_cypress_tests/Dockerfile_cypress
