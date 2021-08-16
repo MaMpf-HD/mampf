@@ -30,8 +30,8 @@ describe("Authentication", function () {
             cy.contains("image.png").should("exist");
         });
     });
-    describe("Simple user",()=>{
-        it("can sign up",()=>{
+    describe("Simple user", () => {
+        it("can sign up", () => {
             // by now the SMTP server has probably received the email
             cy.visit('/users/sign_up');
             cy.get('input[type="email"]').type("joe@mampf.edu");
@@ -45,44 +45,15 @@ describe("Authentication", function () {
                 log: false,
                 delay: 1000,
                 timeout: 20000,
-              })
-            .its('html') // check the HTML email text
-            // what do we do now?
-            .then((html) => {
-            cy.document().invoke('write', html)
-            cy.contains("Account bestätigen").click();
-            cy.contains("Account").should("exist");
             })
+                .its('html') // check the HTML email text
+                // what do we do now?
+                .then((html) => {
+                    cy.document().invoke('write', html)
+                    cy.contains("Account bestätigen").click();
+                    cy.contains("Account").should("exist");
+                })
         })
     });
 });
 
-describe("Clicker Admin", function () {
-    beforeEach(() => {
-        cy.app("clean");
-        cy.appScenario("admin");
-        cy.visit("/users/sign_in");
-        cy.get('input[type="email"]').type("administrator@mampf.edu");
-        cy.get('input[type="password"]').type("test123456");
-        cy.get('input[type="submit"]').click();
-    });
-
-    it("can create clicker", () => {
-        cy.visit("/administration");
-        cy.get('a[title="Clicker anlegen"]').click();
-        cy.get('input[name="clicker[title]"]').type("ErsterClicker");
-        cy.get("div#new-clicker-area").contains("Speichern").click();
-        cy.contains("ErsterClicker").should("exist");
-    });
-
-    it("can show clicker qr", () => {
-        cy.appFactories([
-            ['create', 'clicker', 'with_editor']
-        ]).then((clickers) => {
-            cy.visit(`/clickers/${clickers[0].id}/edit`);
-            cy.contains("QR-Code zeigen").click();
-            cy.get("li#clickerQRCode").should("exist");
-        });
-
-    });
-});
