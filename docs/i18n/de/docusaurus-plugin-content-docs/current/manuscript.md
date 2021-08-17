@@ -38,7 +38,7 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Medium, Skript und Vera
 \*Links ergänzen\*
 
 ### [Veranstaltungsseite](event-series.md)
-Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den Veranstaltungstitel.
+Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a>.
 
 ### [Medienseite des Skripts](medium.md)
 Auf der Medienseite stehen weitere Informationen zu Umfang, Größe und Inhalt des Skripts zur Verfügung. Außerdem sind mit dem Skript verknüpfte Medien aufgeführt und verlinkt. Darüber hinaus können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.

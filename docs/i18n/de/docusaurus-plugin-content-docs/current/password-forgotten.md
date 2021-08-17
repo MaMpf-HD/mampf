@@ -1,12 +1,10 @@
 ---
 title: Passwort vergessen
 ---
-Auf der Seite „Passwort vergessen“ kann man einen Link zum Zurücksetzen des Passworts anfordern. Dieser wird per E-Mail an die angegebene Adresse geschickt und ermöglicht das Ändern des Passworts. Die Änderung eines bekannten Passworts sollte auf der [Seite „Profil“](profile.md) erfolgen.
-
-
+Auf der Seite „Passwort vergessen“ kann man einen Link zum Zurücksetzen des Passworts anfordern. Dieser wird per E-Mail an die angegebene Adresse geschickt und ermöglicht das Ändern des Passworts. Die Änderung eines bekannten Passworts sollte auf der Seite [„Profil“](profile.md) erfolgen.
 
 ## Navigation zu dieser Seite
-Die Seite „Passwort vergessen“ kann direkt von folgenden Seiten über `Passwort vergessen?` erreicht werden:
+Die Seite „Passwort vergessen“ kann direkt von folgenden Seiten über <button name="button">Passwort vergessen?</button> erreicht werden:
 
 * [Login](login.md)
 * [Registrieren](registration.md)
@@ -22,28 +20,30 @@ Die Bedienelemente der Seite „Passwort vergessen“ und mithilfe dieser mögli
 
 ![](/img/Passwort_vergessen_thumb.png)
 
-* Email
-Feld für die zum zurückzusetzenden Account gehörige E-Mail-Adresse.
-* `Schick mir eine Anleitung zur Änderung meines Passwortes` Schicke die eingegebenen Daten ab, um eine E-Mail mit einem Link zum Zurücksetzen des Passworts zu erhalten.
-* `Einloggen` Wechsel zur [Loginseite](login.md).
-* `Registrieren` Wechsel zur [Seite Registrieren](registration.md).
-* `Anleitung zur Bestätigung des Accounts nicht erhalten?` Wechsel zur [Seite Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md).
-
-\*Box\*
+* <form>
+  <p><label for="fname">Email</label><br></br>
+  <input type="text" id="fname" name="fname"></input><br></br>
+  </p></form>
+  Feld für die zum zurückzusetzenden Account gehörige E-Mail-Adresse.
+* <button name="button">Schick mir eine Anleitung zur Änderung meines Passwortes</button> Schicke die eingegebenen Daten ab, um eine E-Mail mit einem Link zum Zurücksetzen des Passworts zu erhalten.
+* <a href="/mampf/de/docs/login" target="_self"><button name="button">Einloggen</button></a> Wechsel zur <a href="/mampf/de/docs/login" target="_self">Loginseite</a>.
+* <a href="/mampf/de/docs/registration" target="_self"><button name="button">Registrieren</button></a> Wechsel zur Seite <a href="/mampf/de/docs/registration" target="_self"> „Registrieren"</a>.
+* <a href="/mampf/de/docs/activate-account" target="_self"><button name="button">Anleitung zur Bestätigung des Accounts nicht erhalten?</button></a> Wechsel zur Seite <a href="/mampf/de/docs/activate-account" target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden"</a>.
 
 ## Ablauf
-Nachdem man das Feld für die E-Mail-Adresse ausgefüllt und den Button `Schick mir eine Anleitung zur Änderung meines Passwortes` betätigt hat, wird man zurück auf die [Loginseite](login.md) geleitet. Auf dieser steht nun folgender Text:
+Nachdem man das Feld für die E-Mail-Adresse ausgefüllt und den Button <a href="/mampf/de/docs/login" target="_self"><button name="button">Schick mir eine Anleitung zur Änderung meines Passwortes</button></a>
+ betätigt hat, wird man zurück auf die <a href="/mampf/de/docs/login" target="_self">Loginseite</a> geleitet. Auf dieser steht nun folgender Text:
 
 \*Screenshot\*
 
-Zudem sollte man eine E-Mail von mampf@mathi.uni-heidelberg.de mit dem Betreff „Anleitung für das Zurücksetzen Deines MaMpf-Passworts“ erhalten. Wenn man keine E-Mail empfangen hat, sollte man den Spamordner überprüfen. Um das Passwort zurückzusetzen und ein neues festzulegen, muss man auf „Passwort ändern“ in der E-Mail klicken.
+Zudem sollte man eine E-Mail von mampf@mathi.uni-heidelberg.de mit dem Betreff „Anleitung für das Zurücksetzen Deines MaMpf-Passworts“ erhalten. Wenn man keine E-Mail empfangen hat, sollte man den Spamordner überprüfen. Um das Passwort zurückzusetzen und ein neues festzulegen, muss man auf <button name="button">Passwort ändern</button> in der E-Mail klicken.
 
 \*Screenshot\*
 
 Infolgedessen öffnet sich die Seite „Passwort ändern“, auf der man ein neues Passwort bestimmen kann.
 
 ## Fehlermeldungen
-Wenn eine E-Mail-Adresse angegeben worden ist, zu der es keinen Mampf-Account gibt, erscheint auf MaMpf die folgende Fehlermeldung: „Konnte User nicht speichern: Es ist ein Fehler aufgetreten. Email nicht gefunden“. In diesem Fall sollte überprüft werden, ob die E-Mail-Adresse korrekt geschrieben ist. Falls es zu dieser E-Mail-Adresse noch keinen Account gibt, kann einer auf der [Seite „Registrieren“](registration.md) angelegt werden.
+Wenn eine E-Mail-Adresse angegeben worden ist, zu der es keinen Mampf-Account gibt, erscheint auf MaMpf die folgende Fehlermeldung: „Konnte User nicht speichern: Es ist ein Fehler aufgetreten. Email nicht gefunden“. In diesem Fall sollte überprüft werden, ob die E-Mail-Adresse korrekt geschrieben ist. Falls es zu dieser E-Mail-Adresse noch keinen Account gibt, kann einer auf der Seite [„Registrieren“](registration.md) angelegt werden.
 
 \*Screenshot\*
 
