@@ -1126,6 +1126,9 @@ en:
           OR
           </i>
           ).
+          Note that every medium has at least one editor. If the "all-checkbox"
+          is deselected and no editor is selected, the search will yield no
+          results.
         search_fulltext: >
           Here you can enter text that will be searched for in the fields
           description, question text, remark text, answer text.
@@ -1162,7 +1165,8 @@ en:
           can be adjusted on the lecture page under "Assignments".
         answer_count: >
           If you are searching for (quiz) questions, you can select here how
-          many anwers the equestions is supposed to have.
+          many anwers the equestions is supposed to have. This option
+          will not be considered for other media types.
     tag:
       index: 'Search Tags'
       related_tags: 'Related Tags'

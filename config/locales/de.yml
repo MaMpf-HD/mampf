@@ -1196,6 +1196,9 @@ de:
           ODER
           </i>
           ) auswählen, wer die EditorInnen des Mediums sein sollen.
+          Beachte, dass jedes Medium mindestens eine EditorIn hat.
+          Ist die "alle"-Checkbox deaktiviert und keine EditorIn ausgewählt,
+          wird die Suche keine Treffer liefern.
         search_fulltext: >
           Hier kannst Du Text eingeben, nach dem in den Feldern Beschreibung,
           Fragen- bzw. Antworttext sowie Bemerkungstext gesucht wird.
@@ -1238,7 +1241,8 @@ de:
           einstellen.
         answer_count: >
           Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
-          wieviele Antworten die Quizfrage haben soll.
+          wieviele Antworten die Quizfrage haben soll. Bei allen anderen
+          Medientypen wird diese Einstellung ignoriert.
     tag:
       index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'

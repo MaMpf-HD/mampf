@@ -562,6 +562,10 @@ class User < ApplicationRecord
     in?(something.editors)
   end
 
+  def course_editor?
+    edited_courses.any?
+  end
+
   private
 
   def set_defaults

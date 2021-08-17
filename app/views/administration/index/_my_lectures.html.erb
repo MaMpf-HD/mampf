@@ -6,11 +6,13 @@
         <%= helpdesk(t('admin.main.info.lecture_definition'), true) %>
       </div>
       <div class="col-4 text-right">
-        <%= link_to '', new_lecture_path,
-                    class: 'fas fa-plus-circle text-light admin-index-button',
-                    id: 'new-lecture-button',
-                    data: { remote: true, toggle: 'tooltip' },
-                    title: t('admin.main.create_lecture') %>
+        <% if current_user.course_editor? %>
+          <%= link_to '', new_lecture_path,
+                      class: 'fas fa-plus-circle text-light admin-index-button',
+                      id: 'new-lecture-button',
+                      data: { remote: true, toggle: 'tooltip' },
+                      title: t('admin.main.create_lecture') %>
+        <% end %>
       </div>
     </div>
   </div>

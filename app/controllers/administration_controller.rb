@@ -22,5 +22,6 @@ class AdministrationController < ApplicationController
   end
 
   def search
+    @tags = params[:sort] == 'tag'
   end
 end

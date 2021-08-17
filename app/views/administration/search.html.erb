@@ -1,6 +1,6 @@
 <ul class="nav nav-pills mt-3" role="tablist">
   <li class="nav-item">
-    <a class="nav-link active" id="media-tab" data-toggle="pill"
+    <a class="nav-link <%= active(!@tags) %>" id="media-tab" data-toggle="pill"
        href="#media_catalog">
       <%= t('admin.medium.media_search') %>
     </a>
@@ -18,14 +18,14 @@
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="tags-tab" data-toggle="pill"
+    <a class="nav-link <%= active(@tags) %>" id="tags-tab" data-toggle="pill"
        href="#tag_search">
       <%= t('admin.tag.index') %>
     </a>
   </li>
 </ul>
 <div class="tab-content">
-  <div class="tab-pane fade show active" id="media_catalog">
+  <div class="tab-pane fade <%= show_tab(!@tags) %>" id="media_catalog">
     <%= render partial: 'media/catalog/catalog' %>
   </div>
   <div class="tab-pane fade" id="teachable_search">
@@ -34,7 +34,7 @@
   <div class="tab-pane fade" id="course_search">
     <%= render partial: 'administration/search_courses' %>
   </div>
-  <div class="tab-pane fade" id="tag_search">
+  <div class="tab-pane fade <%= show_tab(@tags) %>" id="tag_search">
     <%= render partial: 'tags/search' %>
   </div>
 </div>
