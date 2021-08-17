@@ -525,7 +525,7 @@ class User < ApplicationRecord
   end
 
   def has_tutorials?(lecture)
-    given_tutorials.where(lecture: lecture).size.positive?
+    !given_tutorials.where(lecture: lecture).empty?
   end
 
   def proper_submissions_count
