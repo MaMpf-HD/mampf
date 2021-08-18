@@ -10,19 +10,33 @@ Die Seite „Medium“ ist eine Unterseite einer Veranstaltung oder eines Moduls
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und umsetzen\-+
+\*Realisierung überlegen und umsetzen\*
 
 ## Bereiche der Seite
 Die Seite „Medium“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Medium“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
+|:---: | :---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Footer|
 
 Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medientyp bestimmt, welche vorkommen können. Bei allen Medientypen können die Veranstaltung und die Sitzung in der Überschrift vorhanden sein. Zudem gibt es bei allen Medientypen die Boxen „Verknüpfte Begriffe“, „Inhalt“, „Kommentare“ und „Verknüpfte Medien“. Darüber hinaus können sich noch die Boxen „Video“, „Manuskript“, „Externer Link“ und „Geogebra-Applet“ auf der Seite befinden.
 
 \*Screenshots\*
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-\*Tabelle\*
+|Typ|Veranstaltung|Sitzung|Video|Manuskript|Externer Link|Geogebra-Applet|Verknüpfte Begriffe|Inhalt|Kommentare|Verknüpfte Medien|
+|:---: | :---: | :---:|:---: | :---: | :---:|:---: | :---: | :---:|:---: | :---: |
+|Lektion|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10006;|&#10004;|&#10004;|&#10004;|&#10004;|
+|Worked Example|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|
+|Quiz|&#10004;|&#10004;|&#10006;|&#10006;|&#10006;|&#10006;|&#10004;|&#10004;|&#10004;|&#10004;|
+|Wiederholung|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10006;|&#10004;|&#10004;|&#10004;|&#10004;|
+|Beispiel|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10006;|&#10004;|&#10004;|&#10004;|&#10004;|
+|Übung|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10006;|&#10004;|&#10004;|&#10004;|&#10004;|
+|Skript|&#10004;|&#10004;|&#10006;|&#10004;|&#10006;|&#10006;|&#10004;|&#10004;|&#10004;|&#10004;|
+|Quiz-Frage |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10006; |&#10004; |&#10004; |&#10004; |&#10004;|
+|Quiz-Erläuterung |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004;|
+|Sonstiges |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10006; |&#10004; |&#10004; |&#10004; |&#10004; |
+
 
 ### Veranstaltung
 <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.

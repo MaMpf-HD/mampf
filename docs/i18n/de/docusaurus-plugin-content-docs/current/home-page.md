@@ -6,7 +6,9 @@ Die Startseite ist die erste Seite auf die man kommt, wenn man die MaMpf-Homepag
 ## Bereiche der Seite
 Die Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
+|:---: | :---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Footer|
 
 ## Bedienelemente und mögliche Aktionen
 Die Bedienelemente der Startseite und mithilfe dieser mögliche Aktionen werden nun beschrieben.
@@ -22,7 +24,7 @@ Die folgenden Buttons sind in der Navigationsleiste angesiedelt:
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/language-solid.png" height="12"/> <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/caret-down.png" height="8"/></button> Ändere die Sprache. Zur Verfügung stehen Deutsch und Englisch.
 
 ### Eigentliche Seite
-Auf der eigentlichen Seite gibt es nur die Möglichkeit, auf die [Seite „Registieren“](registration.md) oder auf externe Seiten mit weiterführenden Informationen zum MaMpf-Projekt ([MaMpf-Blog](https://mampf.blog/) und [Research Gate](https://www.researchgate.net/project/MaMpf-Mathematische-Medienplattform)) zu wechseln.
+Auf der eigentlichen Seite gibt es nur die Möglichkeit, auf die Seite [„Registieren“](registration.md) oder auf externe Seiten mit weiterführenden Informationen zum MaMpf-Projekt ([MaMpf-Blog](https://mampf.blog/) und [Research Gate](https://www.researchgate.net/project/MaMpf-Mathematische-Medienplattform)) zu wechseln.
 
 ## Automatische Weiterleitung auf diese Seite
 Nach der Registrierung und dem Ausloggen wird man auf diese Seite geleitet. Dann befindet sich am Seitenanfang ein weiteres Textfeld.

@@ -13,7 +13,9 @@ Die Seite „Modul“ ist eine Unterseite einer Veranstaltung. Auf ihr können N
 ## Bereiche der Seite
 Die Seite „Modul“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Modul“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
+|:---: | :---: |:---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Auf dieser Seite aus gibt es bei einfachen Nutzer\*innen nur einen Link zur Seite „DozentIn“. Dieser öffnet sich durch Klicken auf <a href="/mampf/de/docs/lecturer" target="_self"><button name="button">Dozent*in</button></a>.

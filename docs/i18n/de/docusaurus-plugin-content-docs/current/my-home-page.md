@@ -13,7 +13,9 @@ Die persönliche Startseite erreicht man, indem auf <img src="https://media.gith
 ## Bereiche der Seite
 Die persönliche Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
+|:---: | :---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Footer|
 
 Die eigentliche Seite besteht aus einem Akkordeon mit den Rubriken „Mein Semester“, „Weitere abonnierte Veranstaltungen“, „Aktuelle Veranstaltungen“ und „Veranstaltungssuche“.
 

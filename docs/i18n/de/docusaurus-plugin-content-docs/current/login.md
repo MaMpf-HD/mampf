@@ -12,7 +12,9 @@ Zur Loginseite gelangt man, indem man <button name="button"><img src="https://me
 ## Bereiche der Seite
 Die Seite „Login“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Login“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
+|:---: | :---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Footer|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Die Bedienelemente der Loginseite und mithilfe dieser mögliche Aktionen werden nun beschrieben.
@@ -48,7 +50,9 @@ Bei unvollständigen oder falschen Daten sowie unbestätigtem Account gibt MaMpf
 | E-Mail-Adresse oder Passwort ungültig | Roter Kasten am Seitenanfang | Die eingebene E-Mail-Adresse ist inkorrekt oder nicht registriert oder das eingegebene Passwort ist falsch. | Überprüfe die Schreibung der E-Mail-Adresse und gib das Passwort erneut ein. |
 |Account nicht bestätigt | Roter Kasten am Seitenanfang | Die E-Mail-Adresse ist registriert, aber nicht aktiviert. | Klicke auf den Aktivierungslink in der Bestätigungsmail. Falls keine solche E-Mail eingegangen ist, fordere erneut eine auf der Seite [„Anleitung zur Bestätigung des Accounts erneut versenden“](activate-account.md) an. |
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Login_ungueltige_Anmeldedaten.png" height="200"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Login_Mail_PW_ungueltig.png" height="200"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Account_nicht_bestaetigt.png" height="200"/>|
+|:---: | :---: | :---:|
+|Anmeldedaten ungültig|E-Mail-Adresse oder Passwort ungültig |Account nicht bestätigt |
 
 ## Von dieser Seite aus aufrufbare Seiten
 * [Persönliche Startseite](my-home-page.md)

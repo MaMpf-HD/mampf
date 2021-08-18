@@ -11,27 +11,30 @@ Die Seite „Quizzes“ ist eine Unterseite einer Veranstaltung. Auf ihr können
 ## Bereiche der Seite
 Die Seite „Quizzes“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Quizzes“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
+|:---: | :---: |:---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
 Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seiteneinstellungen.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seitennavigation.png" height="250"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Mediacards.png" height="250"/>|
+|:---: | :---: | :---:|
+|Seiteneinstellungen|Seitennavigation|Mediacards|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Quizzes“ beschrieben.
 
 ### Seiteneinstellungen
-* `Reihenfolge umkehren` Ändere die Sortierreihenfolge der Medien.
-* `alle` Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Quizzes auf einer Seite angezeigt werden.
-* `pro Seite` Arrow-drop-down.png Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen *3*, *4*, *8* (standardmäßig), *12*, *24* und *48*.
-* `Zusatzmaterialien` Arrow-drop-down.png Ändere Einstellung für die Anzeige von Zusatzmaterialien: *zu bereits Behandeltem* (standardmäßig), *keine* oder *alle*.
 
-\*Icons einbinden\*
+* <button name="button">Reihenfolge umkehren</button> Ändere die Sortierreihenfolge der Medien.
+* <button name="button">alle</button> Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Quizzes auf einer Seite angezeigt werden.
+* <button name="button">pro Seite<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>8</i> (standardmäßig), <i>12</i>, <i>24</i> und <i>48</i>.
+* <button name="button">Zusatzmaterialien<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> Ändere Einstellung für die Anzeige von Zusatzmaterialien: <i>zu bereits Behandeltem</i> (standardmäßig), <i>keine</i> oder <i>alle</i>.
 
 ### Seitennavigation
-* `n` Wechsel auf Seite n.
-* `Nächste` bzw. `Vorige` Wechsel auf die nächste bzw. vorige Seite.
-* `Letzte` bzw. `Erste Wechsel` auf die letzte bzw. erste Seite
+* <button name="button">n</button> Wechsel auf Seite n.
+* <button name="button">Nächste</button> bzw. <button name="button">Vorige</button> Wechsel auf die nächste bzw. vorige Seite.
+* <button name="button">Letzte</button> bzw. <button name="button">Erste</button> Wechsel auf die letzte bzw. erste Seite.
 
 ### Mediacards
 * <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.

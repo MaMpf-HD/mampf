@@ -12,7 +12,9 @@ Die Seite „Profil“ erreicht man, indem auf <button name="button"><img src="h
 ## Bereiche der Seite
 Die Seite „Profil“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Profil“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
+|:---: | :---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Footer|
 
 Die eigentliche Seite besteht aus den vier Boxen „Account“, „Module“, „Einstellungen“ und „E-Mail-Benachrichtigungen“. Die Box „Module“ enthält ein Akkordeon. Durch Anklicken eines Studiengangs darin öffnet sich eine Übersicht über die vorhandenen Module. Diese sind nach Typ sortiert und werden ebenfalls in Akkordeons präsentiert.
 
@@ -40,7 +42,11 @@ Name, der Tutor*innen bei Abgaben und anderen Mitgliedern des eigenen Abgabeteam
 ### Module
 Die Box „Module“ besteht aus einem Akkordeon, in dessen Feldern Studiengänge aufgeführt sind. Wenn ein solches Feld angeklickt wird, klappen Module zu diesem Studiengang aus. Die Module sind nach Typ sortiert und selbst wieder Felder von Akkordeons. Diese enthalten die zu diesem Modul verfügbaren Veranstaltungen.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Profil-Veranstaltungsakkordeon-1.png" height="300"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Profil-Veranstaltungsakkordeon-2a.png" height="250"/>|
+|:---: | :---: |
+|Modulakkordeon|Studiengang ausgewählt|
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Profil-Veranstaltungsakkordeon-3a.png" height="300"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Profil-Veranstaltungsakkordeon-4a.png" height="250"/>|
+|Abonniertes Modul ausgewählt|Nicht abonniertes Modul ausgewählt|
 
 * <button name="button">Studiengang</button> Klappe alle zu diesem Studiengang verfügbaren Module aus.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/> Modul&nbsp;</button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check-circle-solid.png" height="12"/> Modul&nbsp;</button> Klappe alle zu diesem  verfügbaren Veranstaltungen aus. Dieses Bedienelement erscheint erst, wenn ein Studiengang angeklickt worden ist. Der Haken wird nur angezeigt, wenn in einem Modul eine Veranstaltung abonniert ist.

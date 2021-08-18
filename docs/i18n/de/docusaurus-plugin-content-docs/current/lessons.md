@@ -13,11 +13,15 @@ Die Seite „Lektionen“ ist eine Unterseite einer Veranstaltung. Sie ermöglic
 ## Bereiche der Seite
 Die Seite „Lektionen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Lektionen“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
+|:---: | :---: |:---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
 Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](mediacard.md). In den folgenden Screenshots sind diese Bereiche markiert.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seiteneinstellungen.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seitennavigation.png" height="250"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Mediacards.png" height="250"/>|
+|:---: | :---: | :---:|
+|Seiteneinstellungen|Seitennavigation|Mediacards|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 ### Seiteneinstellungen
@@ -54,7 +58,7 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, Lektio
 \*Links ergänzen\*
 
 ### [Seite der assoziierten Sitzung](session.md)
-Auf der Sitzungsseite gibt es eine Gliederung, mit der zur gewünschten Stelle im PDF oder Video navigiert werden kann, und eine Übersicht über alle verknüpften Begriffe, Abschnitte und Medien. Diese sind ebenfalls verlinkt und können durch Anklicken geöffnet werden. Sitzungsseiten sind über den Titel erreichbar.
+Auf der Sitzungsseite gibt es eine Gliederung, mit der zur gewünschten Stelle im PDF oder Video navigiert werden kann, und eine Übersicht über alle verknüpften Begriffe, Abschnitte und Medien. Diese sind ebenfalls verlinkt und können durch Anklicken geöffnet werden. Sitzungsseiten sind über den <a href="/mampf/de/docs/session" target="_self"><button name="button">Titel</button></a> erreichbar.
 
 ### [Seite der getaggten Begriffe](tag.md)
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.

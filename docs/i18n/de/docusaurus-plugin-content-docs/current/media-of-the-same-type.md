@@ -18,17 +18,24 @@ Diese Seiten sind identisch aufgebaut und ermöglichen Nutzer\*innen Zugriff auf
 ## Bereiche der Seite
 Die Seiten gliedern sich in vier Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
+|:---: | :---: |:---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
 Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den Mediacards. Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seiteneinstellungen.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seitennavigation.png" height="250"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Mediacards.png" height="250"/>|
+|:---: | :---: | :---:|
+|Seiteneinstellungen|Seitennavigation|Mediacards|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Nun werden sämtliche mögliche Bedienelemente einer Seite eines Medientyps sortiert nach Seitenbereich aufgeführt.
 
 ### Seiteneinstellungen
-\*Screenshot\*
+
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seiteneinstellungen_close.png" height="50"/>|
+|:---: |
+|Buttons für die Seiteneinstellungen|
 
 * <button name="button">Reihenfolge umkehren</button> Ändere die Sortierreihenfolge der Medien.
 * <button name="button">alle</button> Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Medien auf einer Seite angezeigt werden.
@@ -36,7 +43,9 @@ Nun werden sämtliche mögliche Bedienelemente einer Seite eines Medientyps sort
 * <button name="button">Zusatzmaterialien<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> Ändere Einstellung für die Anzeige von Zusatzmaterialien: <i>zu bereits Behandeltem</i> (standardmäßig), <i>keine</i> oder <i>alle</i>.
 
 ### Seitennavigation
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seitennavigation_close_1.png" height="40"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seitennavigation_close_2.png" height="40"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seitennavigation_close_3.png" height="40"/>|
+|:---: | :---: | :---:|
+|Auf der ersten Seite|Zwischen erster und letzter Seite|Auf der letzten Seite|
 
 * <button name="button">n</button> Wechsel auf Seite n.
 * <button name="button">Nächste</button> bzw. <button name="button">Vorige</button> Wechsel auf die nächste bzw. vorige Seite.
@@ -44,6 +53,8 @@ Nun werden sämtliche mögliche Bedienelemente einer Seite eines Medientyps sort
 
 ### Mediacards
 Die auf den Mediacards vorkommenden Bedienelemente richten sich nach dem Medientyp. Nach diesem wird im Folgenden differenziert.
+
+\*Screenshot\*
 
 #### Lektion
 * <a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/docs/session" target="_self">Seite der Sitzung</a>.

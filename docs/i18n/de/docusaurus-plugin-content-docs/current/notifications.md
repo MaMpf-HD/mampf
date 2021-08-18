@@ -11,7 +11,9 @@ Zur Seite „Benachrichtigungen“ gelangt man, indem man in der [Navigationslei
 ## Bereiche der Seite
 Die Seite „Benachrichtigungen“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Benachrichtigungen“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
+|:---: | :---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Footer|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Auf der Seite „Benachrichtigungen“ gibt es, abgesehen von Links in Nachrichten, nur zwei Bedienelemente.

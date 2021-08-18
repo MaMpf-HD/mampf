@@ -20,11 +20,15 @@ Um auf eine Veranstaltungsseite zugreifen zu können, muss man die entsprechende
 ## Bereiche der Seite
 Die Seite „Veranstaltung“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Veranstaltung“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb der Veranstaltung und den [Footer](footer.md). Die Bereiche sind in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Veranstaltung_Navbar.png" height="250"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Veranstaltung_Sidebar.png" height="250"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Veranstaltung_eigentliche_Seite.png" height="250"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Veranstaltung_Footer.png" height="250"/>|
+|:---: | :---: |:---: | :---: |
+|Navigationsleiste|Seitenleiste|Eigentliche Seite |Footer|
 
 Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: der Überschrift, Aktuelles und dem Veranstaltungsinhalt. In den folgenden Screenshots sind diese Bereiche markiert.
 
-\*Screenshots\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Veranstaltung_Ueberschrift.png" height="350"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Veranstaltung_Aktuelles.png" height="350"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Veranstaltung_Inhalt.png" height="350"/>|
+|:---: | :---: | :---:|
+|Überschrift|Aktuelles|Inhalt
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 ### Überschrift

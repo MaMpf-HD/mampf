@@ -13,15 +13,9 @@ Die Seite „Mitteilungen“ ist eine Unterseite einer Veranstaltung. Auf ihr k�
 ## Bereiche der Seite
 Die Seite „Mitteilungen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Mitteilungen“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="300"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="300"/>|
-|:---: | :---: |
-|Eigentliche Seite|Navigationsleiste|
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="300"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="350"/>|
-|Sidebar|Footer|
-
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
 |:---: | :---: |:---: | :---:|
-|Eigentliche Seite|Navigationsleiste|Sidebar|Footer|
+|Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Auf dieser Seite gibt es höchstens zwei Bedienelemente:

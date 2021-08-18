@@ -11,11 +11,15 @@ Die Seite „Übungen“ ist eine Unterseite einer Veranstaltung. Sie ermöglich
 ## Bereiche der Seite
 Die Seite „Übungen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Übungen“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
+|:---: | :---: |:---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
 Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinstellungen, der Seitennavigation und den [Mediacards](mediacard.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ markiert.
 
-\*Bilder mit Titel einfügen\*  
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seiteneinstellungen.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Seitennavigation.png" height="250"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Mediacards.png" height="250"/>|
+|:---: | :---: | :---:|
+|Seiteneinstellungen|Seitennavigation|Mediacards|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Übungen“ beschrieben.
