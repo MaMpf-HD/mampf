@@ -13,7 +13,15 @@ Die Seite „Mitteilungen“ ist eine Unterseite einer Veranstaltung. Auf ihr k�
 ## Bereiche der Seite
 Die Seite „Mitteilungen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Mitteilungen“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="300"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="300"/>|
+|:---: | :---: |
+|Eigentliche Seite|Navigationsleiste|
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="300"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="350"/>|
+|Sidebar|Footer|
+
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
+|:---: | :---: |:---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Sidebar|Footer|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Auf dieser Seite gibt es höchstens zwei Bedienelemente:
@@ -23,7 +31,9 @@ Auf dieser Seite gibt es höchstens zwei Bedienelemente:
 
 Andernfalls kann auf dieser Seite lediglich Text, der u.U. Links enthält, gelesen werden. Werden unbearbeitete Mitteilungen als gelesen markiert, so ändert sich die Einfärbung der Mitteilungen (von blau zu grau und weiß) und die entsprechenden Mitteilungen werden nicht mehr unter „Aktuelles“ auf der [Veranstaltungsseite](event-series.md) angezeigt.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Mitteilungen_anonymisiert.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Mitteilungen_als_gelesen_markieren_anonymisiert.png" height="250"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Mitteilungen_alle_abhaken_anonymisiert.png" height="250"/>|
+|:---: | :---: | :---:|
+|Alle Mitteilungen abgehakt|Mitteilung als gelesen markieren|Neue, nicht abgehakte Mitteilungen|
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
