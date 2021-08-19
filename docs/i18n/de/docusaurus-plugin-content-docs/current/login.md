@@ -30,8 +30,8 @@ Die Bedienelemente der Loginseite und mithilfe dieser mögliche Aktionen werden 
   </p></form>
   Um sich einzuloggen, muss man das für den Account angelegte Passwort eingeben.
 * <form>
-  <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike"></input>
-  <label for="vehicle1"> Erinnere dich an mich (hierzu wird ein Cookie gesetzt)</label>
+  <input type="checkbox" id="cook" name="cook"></input>
+  <label for="cook"> Erinnere dich an mich (hierzu wird ein Cookie gesetzt)</label>
   </form> ???
 * <button name="button">Einloggen</button> Schicke die eingegebenen Daten ab, um den Einlogvorgang zu starten.
 * <form action="/mampf/de/docs/registration"><input type="submit" value="Registrieren"/> Wechsel zur Seite <a href="/mampf/de/docs/registration "target="_self">„Registrieren“</a>.</form>

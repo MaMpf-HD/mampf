@@ -27,8 +27,21 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 ### Seiteneinstellungen
 * <button name="button">Reihenfolge umkehren</button> Ändere die Sortierreihenfolge der Medien.
 * <button name="button">alle</button> Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Übungen auf einer Seite angezeigt werden.
-* <button name="button">pro Seite<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>8</i> (standardmäßig), <i>12</i>, <i>24</i> und <i>48</i>.
-* <button name="button">Zusatzmaterialien<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> Ändere Einstellung für die Anzeige von Zusatzmaterialien: <i>zu bereits Behandeltem</i> (standardmäßig), <i>keine</i> oder <i>alle</i>.
+* <label for="cars"></label><select name="cars" id="cars">
+  <option value="" selected disabled hidden>pro Seite</option>
+  <option value="volvo">3</option>
+  <option value="saab">4</option>
+  <option value="mercedes">8</option>
+  <option value="audi">12</option>
+  <option value="volvo1">24</option>
+  <option value="saab2">48</option>
+</select> Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>8</i> (standardmäßig), <i>12</i>, <i>24</i> und <i>48</i>.
+* <label for="cars"></label><select name="cars" id="cars">
+  <option value="" selected disabled hidden>Zusatzmaterialien</option>
+  <option value="volvo">zu bereits Behandeltem</option>
+  <option value="saab">keine</option>
+  <option value="mercedes">alle</option>
+</select> Ändere Einstellung für die Anzeige von Zusatzmaterialien: <i>zu bereits Behandeltem</i> (standardmäßig), <i>keine</i> oder <i>alle</i>.
 
 ### Seitennavigation
 * <button name="button">n</button> Wechsel auf Seite n.
@@ -60,7 +73,7 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, THymE,
 Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a>.
 
 ### [Seite der getaggten Begriffe](tag.md)
-Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen Begriff.
+Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>.
 
 ### [THymE-Player](thyme.md)
 Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.

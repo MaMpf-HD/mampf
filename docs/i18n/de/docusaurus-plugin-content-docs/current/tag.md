@@ -29,8 +29,16 @@ Die eigentliche Seite besteht aus einer Überschrift und den sechs Boxen „Syno
 `Abschnitt` Gehe auf die [Seite des Abschnitts](section.md).
 
 ### MaMpf-Map
-* `Sichtbarkeit: Tags` Arrow-drop-down.png. Wähle aus, welche Begriffe angezeigt werden. Zur Auswahl stehen *aus allen abonnierten und inhaltlich vorangehenden Modulen*, *aus allen abonnierten Modulen* und *aus allen Modulen*.
-* `Tiefe` Arrow-drop-down.png Stelle ein, wie viele Begriffe angezeigt werden sollen: nur direkt mit dem Begriff verbundene *(1)* oder auch mit verknüpften Begriffen verbundene Begriffe *(2)*.
+* <label for="cars"></label><select name="cars" id="cars">
+  <option value="" selected disabled hidden>Sichtbarkeit: Tags</option>
+  <option value="volvo">aus allen abonnierten und inhaltlich vorangehenden Modulen</option>
+  <option value="saab">aus allen abonnierten Modulen</option>
+  <option value="mercedes">aus allen Modulen</option></select> Wähle aus, welche Begriffe angezeigt werden. Zur Auswahl stehen <i>aus allen abonnierten und inhaltlich vorangehenden Modulen</i>, <i>aus allen abonnierten Modulen</i> und <i>aus allen Modulen</i>.
+* <label for="cars"></label><select name="cars" id="cars">
+  <option value="" selected disabled hidden>Tiefe</option>
+  <option value="volvo">1</option>
+  <option value="saab">2</option>
+</select> Stelle ein, wie viele Begriffe angezeigt werden sollen: nur direkt mit dem Begriff verbundene <i>(1)</i> oder auch mit verknüpften Begriffen verbundene Begriffe <i>(2)</i>.
 * `in externem Tab rendern` Öffne die Mindmap in einem externen Tab.
 * `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
 
