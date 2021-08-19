@@ -69,22 +69,9 @@
         <%= t('video.video') %>
       </strong>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-8">
-      <%= t('statistics.video_thyme') %>
-    </div>
-    <div class="col-4 text-right">
-      <%= video_thyme %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-8">
-      <%= t('statistics.video_downloads') %>
-    </div>
-    <div class="col-4 text-right">
-      <%= video_downloads %>
-    </div>
+    <div class="col-12" width="300px">
+    <canvas id="videoStats"> <!-- data-videostats="<%= video_thyme %>" data-downloads="<%= video_downloads%>" -->
+    </canvas>
   </div>
 <% end %>
 <% if medium.manuscript.present? %>

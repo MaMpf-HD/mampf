@@ -375,9 +375,9 @@ class MediaController < ApplicationController
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption.where(sort: 'video',
-                                                  mode: 'download').count
+                                                  mode: 'download').map.with_index{|c,i| {x: c.created_at,y:i+1}}.to_json
       @video_thyme = medium_consumption.where(sort: 'video',
-                                              mode: 'thyme').count
+                                              mode: 'thyme').map.with_index{|c,i| {x: c.created_at,y:i+1}}.to_json
     end
     if @medium.manuscript.present?
       @manuscript_access = medium_consumption.where(sort: 'manuscript').count

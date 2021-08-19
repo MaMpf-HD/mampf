@@ -42,5 +42,46 @@ myChart = new Chart(ctx,
           beginAtZero: true
           precision: 0] )
 <% end %>
+<% if @medium.sort == 'Kaviar' %>
+Chart.platform.disableCSSInjection = true;
+Chart.defaults.global.elements.rectangle.backgroundColor = 'rgba(255, 99, 132, 0.2)'
+Chart.defaults.global.elements.rectangle.borderColor =  'rgba(255, 99, 132, 1)'
+
+ctx = $('#videoStats')
+console.log(<%= raw @video_thyme %>)
+data2=  <%= raw @video_thyme %>
+data3 = data2.map((d)-> {x:new Date(d.x),y:d.y})
+data = 
+  labels: data2.map((d)-> return d.x)
+  datasets: [
+    {
+      label: 'Thyme'
+      backgroundColor: '#4dc9f6'
+      borderColor: '#4dc9f6'
+      fill: false
+      data: data3
+    }
+  ]
+console.log data
+myChart = new Chart(ctx,
+  type: 'line'
+  data: data
+  options:
+    plugins: title:
+      text: 'Chart.js Time Scale'
+      display: true
+    scales:
+      x:
+        type: 'time'
+        time: 
+          unit: 'month'
+          tooltipFormat: 'DD T'
+        title:
+          display: true
+          text: 'Date'
+      y: title:
+        display: true
+        text: 'value' )
+<% end %>
 
 $('#statisticsModal').modal('show')
