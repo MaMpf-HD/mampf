@@ -28,7 +28,7 @@ module.exports = (on, config) => {
   // process all emails
   mailServer.bind((addr, id, email) => {
     console.log('--- email ---')
-    //console.log(addr, id, email)
+    console.log(addr, id, email.body)
     lastEmail[email.headers.to] = email
   })
   on('task', {
