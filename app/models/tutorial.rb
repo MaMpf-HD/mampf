@@ -53,7 +53,7 @@ class Tutorial < ApplicationRecord
         next
       end
       submission.correction = file_shrine.to_json
-			errors = submission.check_file_properties(submission.correction
+			errors = submission.check_file_properties_any(submission.correction
                                                            .metadata,
                                                 :correction)
 			if errors.present?

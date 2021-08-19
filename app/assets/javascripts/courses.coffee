@@ -74,6 +74,7 @@ $(document).on 'turbolinks:load', ->
     $('#image-preview').hide()
     $('#course_detach_image').val('true')
     $('#course-basics-warning').show()
+    $('#user-basics-warning').show()
     return
 
   $(document).on 'click', '.courseAlternativeSearch', ->

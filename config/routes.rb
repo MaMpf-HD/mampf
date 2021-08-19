@@ -452,6 +452,7 @@ Rails.application.routes.draw do
                     as: 'start'
 
   mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
+  mount ProfileimageUploader.upload_endpoint(:cache) => "/profile_image/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
   mount PdfUploader.upload_endpoint(:cache) => "/pdfs/upload"
   mount GeogebraUploader.upload_endpoint(:cache) => "/ggbs/upload"
