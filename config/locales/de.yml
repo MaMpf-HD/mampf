@@ -2621,7 +2621,8 @@ de:
     late: verspätete Abgabe
     late_submissions: verspätetete Abgaben
     rejected: abgelehnt
-    bulk_download: Paketdownload der Abgaben
+    bulk_download_submissions: Paketdownload der Abgaben
+    bulk_download_corrections: Paketdownload der Korrekturen
     bulk_upload: Paketupload der Korrekturen
     code_explanation: >
       Durch Kenntnis und Eingabe dieses Code können andere Personen dieser
@@ -2686,6 +2687,11 @@ de:
       Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
     own_tutorials: >
       Eigene Tutorien
+    other_tutorials: >
+      Sonstige Tutorien
+    deadline_warning: >
+      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
+      können Korrekturen hochgeladen werden.
     grace_period_warning: >
       Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
       Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
