@@ -63,15 +63,16 @@
   </div>
 <% end %>
 <% if medium.video.present? %>
-  <div class="row">
+  <div class="row mt-3">
     <div class="col-12">
       <strong>
         <%= t('video.video') %>
       </strong>
     </div>
-    <div class="col-12" width="300px">
-    <canvas id="videoStats"> <!-- data-videostats="<%= video_thyme %>" data-downloads="<%= video_downloads%>" -->
-    </canvas>
+    <div style="width: 400px;">
+      <canvas id="videoStats">
+      </canvas>
+    </div>
   </div>
 <% end %>
 <% if medium.manuscript.present? %>

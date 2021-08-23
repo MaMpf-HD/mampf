@@ -14,9 +14,6 @@ $('#statistics-modal-content').empty()
 $('[data-toggle="popover"]').popover()
 
 <% if @medium.sort == 'Quiz' %>
-Chart.platform.disableCSSInjection = true;
-Chart.defaults.global.elements.rectangle.backgroundColor = 'rgba(255, 99, 132, 0.2)'
-Chart.defaults.global.elements.rectangle.borderColor =  'rgba(255, 99, 132, 1)'
 
 ctx = $('#successChart')
 myChart = new Chart(ctx,
@@ -43,13 +40,11 @@ myChart = new Chart(ctx,
           precision: 0] )
 <% end %>
 <% if @medium.sort == 'Kaviar' %>
-Chart.platform.disableCSSInjection = true;
-Chart.defaults.global.elements.rectangle.backgroundColor = 'rgba(255, 99, 132, 0.2)'
-Chart.defaults.global.elements.rectangle.borderColor =  'rgba(255, 99, 132, 1)'
 
 ctx = $('#videoStats')
 console.log(<%= raw @video_thyme %>)
 data2=  <%= raw @video_thyme %>
+data4=  <%= raw @video_downloads %>
 data3 = data2.map((d)-> {x:new Date(d.x),y:d.y})
 data = 
   labels: data2.map((d)-> return d.x)
@@ -61,6 +56,13 @@ data =
       fill: false
       data: data3
     }
+    {
+      label: 'Downloads'
+      backgroundColor: '#990000'
+      borderColor: '#990000'
+      fill: false
+      data: data4
+    }
   ]
 console.log data
 myChart = new Chart(ctx,
@@ -68,7 +70,7 @@ myChart = new Chart(ctx,
   data: data
   options:
     plugins: title:
-      text: 'Chart.js Time Scale'
+      text: 'Video'
       display: true
     scales:
       x:
