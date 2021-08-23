@@ -1,0 +1,14 @@
+<h5>
+<%= t('admin.talk.speakers') %>:
+        <%= talk.speakers.map(&:tutorial_name).join(', ') %>
+</h5>
+<h5>
+  <%= t('basics.date') %>:
+  <% talk.dates.each do |d| %>
+    <%= localize(d, format: :concise) %>
+  <% end %>
+</h5>
+<h5>
+  <%= t('basics.details') %>:
+</h5>
+<%= talk.details&.html_safe %>

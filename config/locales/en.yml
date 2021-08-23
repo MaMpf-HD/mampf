@@ -774,10 +774,22 @@ en:
           This is all cantent that has been extracted form media that are
           associated to sessions for this section.
     talk:
-      speakers: Speakers
+      speakers: Speaker(s)
       no_media: There are no media associated  to this talk.
       next_talk: next talk
       previous_talk: previous talk
+      info:
+        details: >
+          Here you can give s description of the talk and important details
+          (e.g. literature). You can use LaTEX (by putting the expression in
+          $...$).
+        description: >
+          Here you can optionally enter a text related to the content
+          of the talk. You can use LaTEX (by putting the expression in
+          $...$).
+        media: >
+          Here you can see the list of media associated to this talk.
+          You can add new media.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

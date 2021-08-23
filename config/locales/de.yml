@@ -820,10 +820,23 @@ de:
           Hier steht der Inhalt, der aus Medien extrahiert wurde, die zu
           Sitzungen aus diesem Abschnitt verknüpft sind.
     talk:
-      speakers: Vortragende
+      speakers: Vortragende(r)
       no_media: Für diesen Vortrag sind keine Medien vorhanden.
       next_talk: 'nächster Vortrag'
       previous_talk: 'voriger Vortrag'
+      info:
+        details: >
+          Hier hast Du die Möglichkeit, eine Beschreibung des Vortrags
+          und wichtige Details anzugeben (wie etwa Literatur zu dem
+          Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
+          setzt).
+        description: >
+          Hier hast Du die Möglichkeit, optional einen Text zum Inhalt des
+          Vortrages zu schreiben. Du kannst LaTeX benutzen (indem du den
+          Ausdruck in $...$ setzt).
+        media: >
+          Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
+          sind. Du kannst neue Medien hinzufügen.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

@@ -48,29 +48,5 @@
     <% end %>
   </div>
 </div>
-<% if @talk.speakers.any? %>
-  <div class="row mb-2">
-    <div class="col-12">
-      <%= @talk.speakers.map(&:tutorial_name).join(', ') %>
-      <% @talk.dates.each do |d| %>
-        <div class="badge badge-secondary">
-          <%= localize(d, format: :concise) %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-<% end %>
-<div class="card bg-light">
-  <div class="card-header bg-generic-card-header">
-    <h5>
-      <div class="row">
-        <div class="col-12 col-lg-4">
-          <%= t('content') %>
-        </div>
-      </div>
-    </h5>
-  </div>
-  <div class="card-body">
-    <%= @talk.details&.html_safe %>
-  </div>
-</div>
+<%= render partial: 'talks/base_data',
+           locals: { talk: @talk } %>

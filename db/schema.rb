@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_11_104739) do
+ActiveRecord::Schema.define(version: 2021_08_23_141044) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -518,6 +518,7 @@ ActiveRecord::Schema.define(version: 2021_07_11_104739) do
     t.integer "position"
     t.text "details"
     t.date "dates", default: [], array: true
+    t.text "description"
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
@@ -834,6 +835,7 @@ ActiveRecord::Schema.define(version: 2021_07_11_104739) do
     t.text "name_in_tutorials"
     t.boolean "archived"
     t.datetime "locked_at"
+    t.text "image_data"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

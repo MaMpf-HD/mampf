@@ -1,0 +1,18 @@
+<div class="row px-2 py-2 mt-2">
+  <div class="col-12 col-lg-4">
+    <h4 class="pl-2">
+      <span class="badge badge-secondary">
+        <%= t('basics.talk') %>
+      </span>
+      <%= @talk.to_label %>
+    </h4>
+  </div>
+</div>
+<div class="row mb-2 p-2">
+  <div class="col-12">
+    <%= render partial: "talks/assemble_form",
+               locals: { talk: @talk,
+                         lecture: @talk.lecture } %>
+  </div>
+</div>
+<%= render partial: 'media/modal' %>
