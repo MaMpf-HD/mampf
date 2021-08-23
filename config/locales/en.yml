@@ -776,6 +776,8 @@ en:
     talk:
       speakers: Speakers
       no_media: There are no media associated  to this talk.
+      next_talk: next talk
+      previous_talk: previous talk
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

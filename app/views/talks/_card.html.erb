@@ -1,0 +1,45 @@
+<div class="card bg-mdb-color-lighten-5 %>">
+  <div id="<%= dom_id(talk) %>"
+       class="card-header <%= talk_card_color(talk, current_user) %>">
+    <div class="row">
+      <div class="col-12">
+        <% if edit %>
+          <%= link_to talk.to_label,
+                      edit_talk_path(talk),
+                      class: 'text-light' %>
+        <% else %>
+          <%= link_to talk.to_label,
+                      talk_path(talk),
+                      class: 'text-light' %>
+          <% if current_user.in?(talk.speakers) %>
+            <%= link_to '',
+                        assemble_talk_path(talk),
+                        class: 'far fa-edit text-light text-right',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('buttons.edit'),
+                        style: 'text-decoration: none; ' +
+                               'display: inline;' %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+    <% if talk.speakers.any? %>
+      <div class="row">
+        <div class="col-12">
+          <% talk.dates.each do |d| %>
+          <div class="badge badge-secondary">
+            <%= localize(d, format: :concise) %>
+          </div>
+        <% end %>
+          <span class="text-light">
+            <%= talk.speakers.map(&:tutorial_name).join(', ') %>
+          </span>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <%= raw(talk.details) %>
+  </div>
+</div>

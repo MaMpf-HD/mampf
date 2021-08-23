@@ -8,6 +8,8 @@ class Talk < ApplicationRecord
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable
 
+  after_save :touch_lecture
+
   # the talks of a lecture form an ordered list
   acts_as_list scope: :lecture
 
@@ -64,5 +66,24 @@ class Talk < ApplicationRecord
 
   def compact_title
     lecture.compact_title + '.V' + position.to_s
+  end
+
+  def number
+    lecture.talks.index(self) + 1
+  end
+
+  def previous
+    return unless number > 1
+    lecture.talks[number - 2]
+  end
+
+  def next
+    lecture.talks[number]
+  end
+
+  private
+
+  def touch_lecture
+    lecture.touch
   end
 end

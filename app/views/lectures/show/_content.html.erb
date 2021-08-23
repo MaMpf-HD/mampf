@@ -10,7 +10,7 @@
         <% if !lecture.talks.any? %>
           <%= t('admin.lecture.no_content_yet') %>
         <% else %>
-          <%= render partial: 'lectures/edit/talk',
+          <%= render partial: 'lectures/show/talk',
                      collection: lecture.talks,
                      cached: true %>
         <% end %>

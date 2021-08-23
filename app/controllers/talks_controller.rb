@@ -15,6 +15,10 @@ class TalksController < ApplicationController
   def edit
   end
 
+  def show
+    render layout: 'application_no_sidebar'
+  end
+
   def create
     @talk = Talk.new(talk_params)
     dates = params[:talk][:dates].values.compact - ['']
@@ -56,6 +60,9 @@ class TalksController < ApplicationController
     lecture = @talk.lecture
     @talk.destroy
     redirect_to edit_lecture_path(lecture)
+  end
+
+  def assemble
   end
 
   private

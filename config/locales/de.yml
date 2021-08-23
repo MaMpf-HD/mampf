@@ -822,6 +822,8 @@ de:
     talk:
       speakers: Vortragende
       no_media: Für diesen Vortrag sind keine Medien vorhanden.
+      next_talk: 'nächster Vortrag'
+      previous_talk: 'voriger Vortrag'
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
