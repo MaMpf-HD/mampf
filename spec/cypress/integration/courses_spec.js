@@ -20,6 +20,22 @@ describe("Courses", function () {
             //cy.visit('/administration');
             cy.contains("Lineare Algebra I").should("exist");
         });
+        it("can set course image", ()=>{
+            cy.appFactories([
+                ['create', 'course'],
+                ['create', 'term'],
+                ['create', 'lecture',{'term_id':1, 'course_id':1}]
+            ]).then((records)=>{
+                cy.visit(`/courses/${records[0].id}/edit`);
+                cy.contains("Bild").should("exist");
+                const yourFixturePath = 'files/image.png';
+                cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+                cy.wait(100);
+                cy.contains("Speichern").click();
+                cy.get("#image_heading").contains("Ein-/Ausklappen").click();
+                cy.contains("image.png").should("exist");
+            });
+        });
         it("can create lecture", () => {
             cy.appFactories([
                 ['create', 'course'],

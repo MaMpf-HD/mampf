@@ -1,5 +1,8 @@
 # User class
 class User < ApplicationRecord
+  include ApplicationHelper
+  include ScreenshotUploader[:image]
+
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
@@ -551,6 +554,35 @@ class User < ApplicationRecord
   def proper_student_in?(lecture)
     lecture.in?(lectures) && !in?(lecture.tutors) && !in?(lecture.editors) &&
       self != lecture.teacher
+  end
+
+  def image_url_with_host
+    return unless image
+    image_url(host: host)
+  end
+
+  def normalized_image_url_with_host
+    return unless image && image(:normalized)
+
+    image_url(:normalized, host: host)
+  end
+
+  def image_filename
+    return unless image
+
+    image.metadata['filename']
+  end
+
+  def image_size
+    return unless image
+
+    image.metadata['size']
+  end
+
+  def image_resolution
+    return unless image
+
+    "#{image.metadata['width']}x#{image.metadata['height']}"
   end
 
   def can_edit?(something)
