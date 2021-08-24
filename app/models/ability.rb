@@ -51,7 +51,7 @@ class Ability
 
       # only users who are editors of a talk's lecture or who are speakers
       # can edit, update, destroy or assemble them
-      can [:update, :destroy, :assemble], Talk do |talk|
+      can [:update, :destroy, :assemble, :modify], Talk do |talk|
         talk.lecture.edited_by?(user) || talk.given_by?(user)
       end
 
@@ -236,7 +236,13 @@ class Ability
         medium.visible_for_user?(user)
       end
 
-      can :new, Medium
+      can [:new, :create], Medium do |medium|
+        user.speaker?
+      end
+
+      can [:edit, :update, :publish], Medium do |medium|
+        user.can_edit?(medium)
+      end
 
       cannot :show, Section do |section|
         !section.visible_for_user?(user)
@@ -271,8 +277,10 @@ class Ability
         user.in?(submission.tutorial.tutors)
       end
 
+      can :fill_tag_select, Tag
+
       # only generic users who are speakers can assemble the talk
-      can :assemble, Talk do |talk|
+      can [:assemble, :modify], Talk do |talk|
         talk.given_by?(user)
       end
 

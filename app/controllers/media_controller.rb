@@ -111,6 +111,7 @@ class MediaController < ApplicationController
 
   def create
     @medium = Medium.new(medium_params)
+    check_create_permission
     @medium.locale = @medium.teachable&.locale
     @medium.editors = [current_user]
     if @medium.teachable.class.to_s == 'Lesson'
@@ -586,5 +587,12 @@ class MediaController < ApplicationController
 
   def store_download
     ConsumptionSaver.perform_async(@medium.id, 'download', params[:sort])
+  end
+
+  def check_create_permission
+    return if current_user.editor?
+    return if @medium.teachable.is_a?(Talk) &&
+      current_user.in?(@medium.teachable.speakers)
+    redirect_to :root, alert: I18n.t('controllers.no_editor_or_teacher')
   end
 end

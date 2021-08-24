@@ -52,6 +52,10 @@ $(document).on 'turbolinks:load', ->
     location.reload(true)
     return
 
+  $(document).on 'click', '#cancel-talk-assemble', ->
+    location.reload(true)
+    return
+
   trixElement = document.querySelector('#talk-details-trix')
   trixTalkPreview(trixElement) if trixElement?
 

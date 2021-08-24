@@ -3110,6 +3110,7 @@ de:
     parent_lecture: 'zur Veranstaltung'
     parent_lesson: 'zur Sitzung'
     parent_medium: 'zum Medium'
+    parent_talk: 'zum Vortrag'
     create_chapter: 'Kapitel anlegen'
     create_talk: 'Vortrag anlegen'
     create_lesson: 'Sitzung anlegen'

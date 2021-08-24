@@ -63,6 +63,14 @@ class TalksController < ApplicationController
   end
 
   def assemble
+    render layout: 'application_no_sidebar'
+  end
+
+  # modify is the update action for speakers of the talk
+  # only few columns are allowed to be modified
+  def modify
+    @talk.update(modify_params)
+    redirect_to assemble_talk_path(@talk)
   end
 
   private
@@ -76,6 +84,10 @@ class TalksController < ApplicationController
   def talk_params
     params.require(:talk).permit(:title, :lecture_id, :details,
                                  speaker_ids: [])
+  end
+
+  def modify_params
+    params.require(:talk).permit(:description)
   end
 
   def set_view_locale

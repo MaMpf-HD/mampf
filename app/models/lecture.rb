@@ -528,12 +528,18 @@ class Lecture < ApplicationRecord
                                     .order(boost: :desc, created_at: :desc)
     lesson_results = filtered_media.where(teachable:
                                             Lesson.where(lecture: self))
-    lecture_results + lesson_results.includes(:teachable)
-                                    .sort_by do |m|
-                                      [order_factor*m.lesson.date.jd,
-                                       order_factor*m.lesson.id,
-                                       m.position]
-                                    end
+    talk_results = filtered_media.where(teachable:
+                                            Talk.where(lecture: self))
+    lecture_results +
+      lesson_results.includes(:teachable)
+                    .sort_by do |m|
+                      [order_factor*m.lesson.date.jd,
+                       order_factor*m.lesson.id,
+                       m.position]
+                    end +
+      talk_results.includes(:teachable).sort_by do |m|
+        m.teachable.position
+      end
   end
 
   def order_factor
@@ -757,6 +763,9 @@ class Lecture < ApplicationRecord
                    teachable: lessons).exists? ||
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
+                   teachable: talks).exists? ||
+      Medium.where(sort: medium_sort[project],
+                   released: ['all', 'users', 'subscribers'],
                    teachable: course).exists?
     end
   end
@@ -782,7 +791,9 @@ class Lecture < ApplicationRecord
                                  teachable: self).exists?
     lesson_media = Medium.where(sort: medium_sort[project],
                                 teachable: lessons).exists?
-    course_media || lecture_media || lesson_media
+    talk_media = Medium.where(sort: medium_sort[project],
+                                teachable: talks).exists?
+    course_media || lecture_media || lesson_media || talk_media
   end
 
   def medium_sort

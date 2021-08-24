@@ -1,34 +1,17 @@
-<%= form_with model: talk, html: { id: 'talk-form' } do |f| %>
-  <div class="row">
-    <div class="col-12 col-lg-4">
-      <div id="talk-basics-warning">
-        <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary' %>
-        <button type="button"
-                class="btn btn-sm btn-secondary ml-2"
-                id="cancel-talk-assemble">
-          <%= t('buttons.discard') %>
-        </button>
-      </div>
-    </div>
-  </div>
   <div class="row">
     <div class="col-12">
       <%= render partial: 'talks/base_data',
                  locals: { talk: talk } %>
     </div>
   </div>
-    <div class="mb-2">
+    <h5 class="mb-2">
       <%= t('content') %>
       <%= helpdesk(t('admin.talk.info.description'), false) %>
-    </div>
-    <%= f.trix_editor :details,
+    </h5>
+    <%= f.trix_editor :description,
                       class: 'bg-light',
                       id: 'talk-details-trix',
-                      data: { content: talk.details } %>
-    <%= f.hidden_field :lecture_id,
-                       value: talk.lecture.id %>
+                      data: { content: talk.description } %>
     <div class="row my-2">
       <div class="col-12">
         <%= t('basics.preview') %>
@@ -36,27 +19,29 @@
     </div>
     <div class="alert alert-dark bg-mdb-color-lighten-6"
          id="talk-details-preview">
-          <%= raw(talk.details) %>
+          <%= raw(talk.description) %>
     </div>
     <div class="form-row">
       <div class="col-12">
-        <%= t('basics.media') %>
-        <%= helpdesk(t('admin.talk.info.media'), false) %>
-        <%= link_to '',
-                    new_medium_path(params: { teachable_id: talk.id,
-                                              teachable_type: 'Talk' }),
-                    class: 'fas fa-plus-circle text-dark',
-                    id: 'create-new-talk-medium',
-                    data: { toggle: 'tooltip' },
-                    title: t('buttons.create_medium'),
-                    style: 'text-decoration: none;',
-                    remote: true %>
+        <h5>
+          <%= t('basics.media') %>
+          <%= helpdesk(t('admin.talk.info.media'), false) %>
+          <%= link_to '',
+                      new_medium_path(params: { teachable_id: talk.id,
+                                                teachable_type: 'Talk' }),
+                      class: 'fas fa-plus-circle text-dark',
+                      id: 'create-new-talk-medium',
+                      data: { toggle: 'tooltip' },
+                      title: t('buttons.create_medium'),
+                      style: 'text-decoration: none;',
+                      remote: true %>
+        </h5>
         <% if talk.media.present? %>
           <ul id="sortableTalkMedia">
             <% talk.media.each do |m| %>
               <li>
                 <%= link_to m.sort_localized + ', ' + m.local_info,
-                            edit_medium_path(m),
+                            edit_or_show_medium_path(m),
                             class: textcolor(m),
                             data: { id: m.id } %>
               </li>
@@ -71,4 +56,3 @@
         <% end %>
       </div>
     </div>
-<% end %>

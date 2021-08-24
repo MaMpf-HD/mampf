@@ -2941,6 +2941,7 @@ en:
     parent_lecture: 'Parent Event Series'
     parent_lesson: 'Parent Session'
     parent_medium: 'Parent Medium'
+    parent_talk: 'Parent Talk'
     create_chapter: 'Create Chapter'
     create_talk: 'Create Talk'
     create_lesson: 'Create Session'

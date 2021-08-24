@@ -249,9 +249,10 @@ class User < ApplicationRecord
   end
 
   # a user is an editor iff he/she is a course editor or lecture editor or
-  # media editor
+  # editor of media that are not associated to talks
   def editor?
-    edited_courses.any? || edited_lectures.any? || edited_media.any?
+    edited_courses.any? || edited_lectures.any? ||
+      edited_media.where.not(teachable_type: 'Talk').any?
   end
 
   # the next methods return information about the user extracted from
@@ -410,6 +411,9 @@ class User < ApplicationRecord
     lessons = Lesson.where(lecture: lectures)
     nonsubscribed_lessons = Lesson.where(lecture: nonsubscribed_lectures)
     edited_lessons = Lesson.where(lecture: teaching_related_lectures)
+    talks = Talk.where(lecture: lectures)
+    nonsubscribed_talks = Talk.where(lecture: nonsubscribed_lectures)
+    edited_talks = Talk.where(lecture: teaching_related_lectures)
     return media if admin
     media.where(teachable: courses, released: ['all', 'subscribers', 'users'])
       .or(media.where(teachable: nonsubscribed_courses,
@@ -422,9 +426,14 @@ class User < ApplicationRecord
                       released: ['all', 'subscribers', 'users']))
       .or(media.where(teachable: nonsubscribed_lessons,
                       released: ['all', 'users']))
+      .or(media.where(teachable: talks,
+                      released: ['all', 'subscribers', 'users']))
+      .or(media.where(teachable: nonsubscribed_talks,
+                      released: ['all', 'users']))
       .or(media.where(teachable: edited_courses))
       .or(media.where(teachable: teaching_related_lectures))
       .or(media.where(teachable: edited_lessons))
+      .or(media.where(teachable: edited_talks))
   end
 
   def subscribed_commentable_media_with_comments
@@ -558,12 +567,24 @@ class User < ApplicationRecord
   end
 
   def can_edit?(something)
-    unless something.is_a?(Lecture) || something.is_a?(Course)
+    unless something.is_a?(Lecture) || something.is_a?(Course) ||
+             something.is_a?(Medium)
       raise 'can_edit? was called with incompatible class'
     end
     return true if admin
-    return in?(something.editors_with_inheritance) if something.is_a?(Lecture)
+    if something.is_a?(Lecture)
+      return in?(something.editors_with_inheritance)
+    end
+    if something.is_a?(Medium)
+      return true if in?(something.editors_with_inheritance)
+      return something.teachable.is_a?(Talk) &&
+               in?(something.teachable.speakers)
+    end
     in?(something.editors)
+  end
+
+  def speaker?
+    talks.any?
   end
 
   private

@@ -48,5 +48,9 @@
     <% end %>
   </div>
 </div>
-<%= render partial: 'talks/base_data',
-           locals: { talk: @talk } %>
+<div class="row mb-2 p-2">
+  <div class="col-12">
+    <%= render partial: 'talks/base_data',
+               locals: { talk: @talk } %>
+  </div>
+</div>

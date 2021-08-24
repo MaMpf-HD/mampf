@@ -1,14 +1,20 @@
 <h5>
-<%= t('admin.talk.speakers') %>:
-        <%= talk.speakers.map(&:tutorial_name).join(', ') %>
+  <%= t('admin.talk.speakers') %>:
+  <%= speaker_list(talk) %>
 </h5>
 <h5>
   <%= t('basics.date') %>:
-  <% talk.dates.each do |d| %>
-    <%= localize(d, format: :concise) %>
-  <% end %>
+  <%= date_list(talk) %>
 </h5>
-<h5>
-  <%= t('basics.details') %>:
-</h5>
+<% if talk.details.present? %>
+  <h5>
+    <%= t('basics.details') %>:
+  </h5>
+<% end %>
 <%= talk.details&.html_safe %>
+<% if talk.description.present? %>
+  <h5>
+    <%= t('basics.description') %>:
+  </h5>
+  <%= talk.description&.html_safe %>
+<% end %>

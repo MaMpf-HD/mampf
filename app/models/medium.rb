@@ -826,6 +826,9 @@ class Medium < ApplicationRecord
              else
                Medium.sort_localized.slice(sort)
              end
+    if teachable_type == 'Talk'
+      result.except!('RandomQuiz', 'Question', 'Remark', 'Erdbeere')
+    end
     result.map { |k, v| [v, k] }
   end
 

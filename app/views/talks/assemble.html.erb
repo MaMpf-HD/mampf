@@ -1,18 +1,41 @@
-<div class="row px-2 py-2 mt-2">
-  <div class="col-12 col-lg-4">
-    <h4 class="pl-2">
-      <span class="badge badge-secondary">
-        <%= t('basics.talk') %>
-      </span>
-      <%= @talk.to_label %>
-    </h4>
+<%= form_with url: modify_talk_path(@talk),
+              method: 'post',
+              scope: 'talk',
+              html: { id: 'talk-form' } do |f|%>
+  <div class="row px-2 py-2 mt-2">
+    <div class="col-12 col-lg-4">
+      <h4 class="pl-2">
+        <span class="badge badge-secondary">
+          <%= t('basics.talk') %>
+        </span>
+        <%= @talk.to_label %>
+      </h4>
+    </div>
+    <div class="col-12 col-lg-4">
+      <div id="talk-basics-warning">
+        <%= t('warnings.unsaved_changes') %>
+        <%= f.submit t('buttons.save'),
+                     class: 'btn btn-sm btn-primary' %>
+        <button type="button"
+                class="btn btn-sm btn-secondary ml-2"
+                id="cancel-talk-assemble">
+          <%= t('buttons.discard') %>
+        </button>
+      </div>
+    </div>
+    <div class="col-12 col-lg-4 text-right">
+      <%= link_to t('buttons.parent_lecture'),
+                  lecture_path(@talk.lecture),
+                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+    </div>
   </div>
-</div>
-<div class="row mb-2 p-2">
-  <div class="col-12">
-    <%= render partial: "talks/assemble_form",
-               locals: { talk: @talk,
-                         lecture: @talk.lecture } %>
+  <div class="row mb-2 p-2">
+    <div class="col-12">
+      <%= render partial: "talks/assemble_form",
+                 locals: { talk: @talk,
+                           lecture: @talk.lecture,
+                           f: f } %>
+    </div>
   </div>
-</div>
+<% end %>
 <%= render partial: 'media/modal' %>

@@ -38,6 +38,15 @@ class Talk < ApplicationRecord
     end
   end
 
+  def card_header
+    title_for_viewers
+  end
+
+  def card_header_path(user)
+    return unless user.lectures.include?(lecture)
+    talk_path
+  end
+
   def dates_localized
     dates.map { |d| I18n.localize d, format: :concise }.join(', ')
   end
@@ -85,5 +94,10 @@ class Talk < ApplicationRecord
 
   def touch_lecture
     lecture.touch
+  end
+
+  # path for show talk action
+  def talk_path
+    Rails.application.routes.url_helpers.talk_path(self)
   end
 end
