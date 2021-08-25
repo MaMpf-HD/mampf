@@ -77,7 +77,7 @@ myChart = new Chart(ctx,
         type: 'time'
         time: 
           unit: 'month'
-          tooltipFormat: 'DD T'
+          tooltipFormat: 'DD.MM.'
         title:
           display: true
           text: 'Date'
