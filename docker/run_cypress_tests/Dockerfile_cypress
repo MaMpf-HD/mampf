@@ -2,7 +2,9 @@ FROM cypress/included:8.2.0
 
 COPY ./spec/cypress/support /cypress/support
 COPY ./spec/cypress/plugins /cypress/plugins
+COPY ./spec/cypress/plugins/package.json /package.json
+COPY ./spec/cypress/plugins/yarn.lock /yarn.lock
 # install the needed support stuff
 RUN cd /cypress/support && yarn install
 RUN cd /cypress/plugins && yarn install
-RUN yarn add smtp-tester cypress-recurse
+RUN yarn

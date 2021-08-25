@@ -1,0 +1,11 @@
+{
+  "name": "plugins",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "cypress-recurse": "^1.8.1",
+    "smtp-tester": "^1.2.0"
+  }
+}
