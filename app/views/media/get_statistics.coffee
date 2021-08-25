@@ -83,7 +83,7 @@ myChart = new Chart(ctx,
           text: 'Date'
       y: title:
         display: true
-        text: 'value' )
+        text: 'count' )
 <% end %>
 
 $('#statisticsModal').modal('show')
