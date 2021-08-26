@@ -830,10 +830,14 @@ de:
           und wichtige Details anzugeben (wie etwa Literatur zu dem
           Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
           setzt).
+        details_info: >
+          Das ist eine Beschreibung des Vortrags durch die DozentIn.
         description: >
           Hier hast Du die Möglichkeit, optional einen Text zum Inhalt des
           Vortrages zu schreiben. Du kannst LaTeX benutzen (indem du den
           Ausdruck in $...$ setzt).
+        description_info: >
+          Das ist ein Text über den Vortrag, der von den Vortragenden stammt.
         media: >
           Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
           sind. Du kannst neue Medien hinzufügen.
@@ -1985,6 +1989,7 @@ de:
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
+    my_talks: Meine Vorträge
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -3091,6 +3096,7 @@ de:
     at_time: zum folgenden Zeitpunkt
     assignment: Hausaufgabe
     reminder: Erinnerung
+    together_with: zusammen mit
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3330,6 +3336,8 @@ de:
     created_course_success: >
       Das Modul %{course} (Editor(Innen): %{editors}) wurde erfolgreich
       angelegt.
+    unauthorized: >
+      Die hast keine Berechtigung für diese Aktion.
   exception:
     title: Fehler
     exception: Exception auf %{host}

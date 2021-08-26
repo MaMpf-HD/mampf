@@ -294,13 +294,14 @@ class Lecture < ApplicationRecord
   def media_with_inheritance_uncached
     Medium.proper.where(teachable: self)
       .or(Medium.proper.where(teachable: self.lessons))
+      .or(Medium.proper.where(teachable: self.talks))
   end
 
   def media_with_inheritance_uncached_eagerload_stuff
-    Medium.includes(:tags, teachable: [lecture: [:lessons]])
+    Medium.includes(:tags, teachable: [lecture: [:lessons, :talks]])
           .proper.where(teachable: self)
-          .or(Medium.includes(:tags, teachable: [lecture: [:lessons]])
-                    .proper.where(teachable: self.lessons))
+          .or(Medium.includes(:tags, teachable: [lecture: [:lessons, :talks]])
+                    .proper.where(teachable: self.lessons + self.talks))
   end
 
 

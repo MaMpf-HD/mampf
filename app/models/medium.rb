@@ -385,8 +385,10 @@ class Medium < ApplicationRecord
   end
 
   def editors_with_inheritance
-    (editors&.to_a + teachable.lecture&.editors.to_a +
+    result = (editors&.to_a + teachable.lecture&.editors.to_a +
       [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
+    return result unless teachable.is_a?(Talk)
+    (result + teachable.speakers).uniq
   end
 
 

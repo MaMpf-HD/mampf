@@ -2,13 +2,20 @@
               method: 'post',
               scope: 'talk',
               html: { id: 'talk-form' } do |f|%>
-  <div class="row px-2 py-2 mt-2">
+  <div class="row py-2 mt-2">
     <div class="col-12 col-lg-4">
       <h4 class="pl-2">
         <span class="badge badge-secondary">
           <%= t('basics.talk') %>
         </span>
         <%= @talk.to_label %>
+        <%= link_to '',
+                    talk_path(@talk),
+                    class: 'fas fa-eye text-dark mt-3',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.show'),
+                    style: 'text-decoration: none;' %>
       </h4>
     </div>
     <div class="col-12 col-lg-4">

@@ -1,11 +1,12 @@
   <div class="row">
     <div class="col-12">
       <%= render partial: 'talks/base_data',
-                 locals: { talk: talk } %>
+                 locals: { talk: talk,
+                           assemble: true } %>
     </div>
   </div>
-    <h5 class="mb-2">
-      <%= t('content') %>
+    <h5 class="my-2">
+      <%= t('content') %>:
       <%= helpdesk(t('admin.talk.info.description'), false) %>
     </h5>
     <%= f.trix_editor :description,
@@ -24,7 +25,7 @@
     <div class="form-row">
       <div class="col-12">
         <h5>
-          <%= t('basics.media') %>
+          <%= t('basics.media') %>:
           <%= helpdesk(t('admin.talk.info.media'), false) %>
           <%= link_to '',
                       new_medium_path(params: { teachable_id: talk.id,

@@ -2,8 +2,10 @@
 class ReferralsController < ApplicationController
   before_action :set_referral, only: [:update, :edit, :destroy]
   before_action :set_basics, only: [:update, :create]
+  authorize_resource
 
   def update
+    check_authorization
     I18n.locale = @referral.medium.locale_with_inheritance
     # if referral's item is a link, it is updated
     # this means in particular that *all referrals* that refer to it will
@@ -15,6 +17,7 @@ class ReferralsController < ApplicationController
   end
 
   def edit
+    check_authorization
     I18n.locale = @referral.medium.locale_with_inheritance
     # if referral's item is a link, load all other links,
     # otherwise load all items in the referral's item's medium scope
@@ -35,12 +38,15 @@ class ReferralsController < ApplicationController
       render :update
       return
     end
-    @referral = Referral.create(updated_params)
+    @referral = Referral.new(updated_params)
+    check_authorization
+    @referral.save
     @errors = @referral.errors unless @referral.valid?
     render :update
   end
 
   def destroy
+    check_authorization
     @medium = @referral.medium
     @referral.destroy
   end
@@ -92,5 +98,11 @@ class ReferralsController < ApplicationController
       explanation: referral_params[:explanation],
       start_time: referral_params[:start_time],
       end_time: referral_params[:end_time] }
+  end
+
+  def check_authorization
+    return if current_user.admin
+    return if current_user.can_edit?(@referral.medium)
+    redirect_to :root, alert: I18n.t('controllers.unauthorized')
   end
 end

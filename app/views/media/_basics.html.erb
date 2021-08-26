@@ -71,8 +71,10 @@
                      options_for_select((medium.teachable.speakers | medium.editors).map { |e| [e.info, e.id] },
                                         medium.editors.map(&:id)),
                      {},
-                     { class: 'form-control',
-                       multiple: true } %>
+                     { multiple: true,
+                       class: 'selectize',
+                       style: 'display: none;',
+                       data: { ajax: false } } %>
       <% end %>
       <div class="invalid-feedback"
            id="medium-editors-error">

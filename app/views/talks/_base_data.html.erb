@@ -9,12 +9,16 @@
 <% if talk.details.present? %>
   <h5>
     <%= t('basics.details') %>:
+    <%= helpdesk(t('admin.talk.info.details_info'), false) %>
   </h5>
 <% end %>
 <%= talk.details&.html_safe %>
-<% if talk.description.present? %>
-  <h5>
-    <%= t('basics.description') %>:
-  </h5>
-  <%= talk.description&.html_safe %>
+<% unless assemble %>
+  <% if talk.description.present? %>
+    <h5>
+      <%= t('content') %>:
+      <%= helpdesk(t('admin.talk.info.description_info'), false) %>
+    </h5>
+    <%= talk.description&.html_safe %>
+  <% end %>
 <% end %>

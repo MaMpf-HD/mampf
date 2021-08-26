@@ -1,20 +1,10 @@
 <div class="row">
   <div class="col-10">
-    <h2>
+    <h4>
       <span class="badge badge-secondary mr-3">
         <%= t('basics.talk') %>
       </span>
       <%= @talk.to_label %>
-      <%= t('from') %>
-      <% if current_user.lectures.include?(@talk.lecture) %>
-        <%= link_to @talk.lecture.title,
-                    @talk.lecture.path(current_user),
-                    class: 'text-dark' %>
-      <% else %>
-        <span>
-          <%= @talk.lecture.title %>
-        </span>
-      <% end %>
       <% if current_user.admin ||
           @talk.lecture.edited_by?(current_user) %>
         <%= link_to '',
@@ -24,8 +14,26 @@
                             placement: 'bottom' },
                     title: t('buttons.edit'),
                     style: 'text-decoration: none;' %>
+      <% elsif current_user.in?(@talk.speakers) %>
+        <%= link_to '',
+                    assemble_talk_path(@talk),
+                    class: 'far fa-edit fa-sm text-dark mt-3',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none;' %>
       <% end %>
-    </h2>
+      <%= t('in') %>
+      <% if current_user.lectures.include?(@talk.lecture) %>
+        <%= link_to @talk.lecture.title,
+                    @talk.lecture.path(current_user),
+                    class: 'text-dark' %>
+      <% else %>
+        <span>
+          <%= @talk.lecture.title %>
+        </span>
+      <% end %>
+    </h4>
   </div>
   <div class="col-2 text-right ">
     <% if @talk.previous.present? %>
@@ -48,9 +56,23 @@
     <% end %>
   </div>
 </div>
-<div class="row mb-2 p-2">
+<div class="row p-2">
   <div class="col-12">
     <%= render partial: 'talks/base_data',
-               locals: { talk: @talk } %>
+               locals: { talk: @talk,
+                         assemble: false } %>
   </div>
 </div>
+<% if @talk.media.any? %>
+  <div class="row mb-2 p-2">
+    <div class="col-12">
+      <h5>
+        <%= t('basics.media') %>:
+      </h5>
+      <%= render partial: 'media/media',
+                 locals: { media: @talk.media,
+                           tags: true,
+                           lecture: @talk.lecture } %>
+    </div>
+  </div>
+<% end %>

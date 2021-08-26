@@ -24,6 +24,10 @@ class Talk < ApplicationRecord
     I18n.t('talk', number: position, title: title)
   end
 
+  def long_title
+    title_for_viewers
+  end
+
   def given_by?(user)
     user.in?(speakers)
   end
@@ -88,6 +92,12 @@ class Talk < ApplicationRecord
 
   def next
     lecture.talks[number]
+  end
+
+  def team_info(user)
+    return '' unless user.in?(speakers) && (speakers - [user]).any?
+    "(#{I18n.t('basics.together_with')} " +
+      "#{(speakers - [user]).map(&:tutorial_name).join(', ')})"
   end
 
   private

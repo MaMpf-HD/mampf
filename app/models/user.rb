@@ -572,13 +572,8 @@ class User < ApplicationRecord
       raise 'can_edit? was called with incompatible class'
     end
     return true if admin
-    if something.is_a?(Lecture)
+    if something.is_a?(Lecture) || something.is_a?(Medium)
       return in?(something.editors_with_inheritance)
-    end
-    if something.is_a?(Medium)
-      return true if in?(something.editors_with_inheritance)
-      return something.teachable.is_a?(Talk) &&
-               in?(something.teachable.speakers)
     end
     in?(something.editors)
   end

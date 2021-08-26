@@ -783,10 +783,14 @@ en:
           Here you can give s description of the talk and important details
           (e.g. literature). You can use LaTEX (by putting the expression in
           $...$).
+        details_info: >
+          This is a description of the talk by the teacher.
         description: >
           Here you can optionally enter a text related to the content
           of the talk. You can use LaTEX (by putting the expression in
           $...$).
+        description_info: >
+          This is a text about the talk given by the speakers.
         media: >
           Here you can see the list of media associated to this talk.
           You can add new media.
@@ -1863,6 +1867,7 @@ en:
     miscellaneous: Miscellaneous
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
+    my_talks: my_talks
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2918,6 +2923,7 @@ en:
     at_time: at the following time
     assignment: Assignment
     reminder: Reminder
+    together_with: together with
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -3150,6 +3156,8 @@ en:
     created_course_success: >
       The course %{course} (editors: %{editors}) has been successfully
       created.
+    unauthorized: >
+      You are not authorized for this action.
   exception:
     title: Error
     exception: Exception on %{host}

@@ -5,11 +5,13 @@ class ItemsController < ApplicationController
 
   def update
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
+    check_authorization
     @item.update(item_params)
     @errors = @item.errors unless @item.valid?
   end
 
   def edit
+    check_authorization
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
   end
 
@@ -19,6 +21,7 @@ class ItemsController < ApplicationController
     end
     @item = Item.new(item_params)
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
+    check_authorization
     @item.save
     @errors = @item.errors unless @item.valid?
     # @from stores information about where the creation was triggered
@@ -31,13 +34,15 @@ class ItemsController < ApplicationController
 
   def destroy
     @medium = @item.medium
+    check_authorization
     @item.destroy
     redirect_to edit_medium_path(@medium) if params[:from] == 'quarantine'
   end
 
-  # if an item is selected form within the reference editor in thyme,
+  # if an item is selected from within the reference editor in thyme,
   # the display action provides informations abut the selected item
   def display
+    check_authorization
     @referral_id = params[:referral_id].to_i
     @reappears = true if (@item.referrals.map(&:id) - [@referral_id]).present?
     @explanation = set_explanation
@@ -67,5 +72,12 @@ class ItemsController < ApplicationController
     end
     filter[:section_id] = nil if filter[:section_id] == ''
     filter
+  end
+
+  def check_authorization
+    return if current_user.admin
+    return if @item.medium && current_user.can_edit?(@item.medium)
+    return if @item.medium.nil?
+    redirect_to :root, alert: I18n.t('controllers.unauthorized')
   end
 end
