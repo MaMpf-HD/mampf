@@ -12,7 +12,8 @@
     <%= f.trix_editor :description,
                       class: 'bg-light',
                       id: 'talk-details-trix',
-                      data: { content: talk.description } %>
+                      data: { content: talk.description,
+                              preview: 'talk-details-preview' } %>
     <div class="row my-2">
       <div class="col-12">
         <%= t('basics.preview') %>

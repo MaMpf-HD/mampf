@@ -82,7 +82,7 @@ class TalksController < ApplicationController
   end
 
   def talk_params
-    params.require(:talk).permit(:title, :lecture_id, :details,
+    params.require(:talk).permit(:title, :lecture_id, :details, :description,
                                  speaker_ids: [])
   end
 

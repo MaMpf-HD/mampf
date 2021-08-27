@@ -7,12 +7,33 @@
   <div class="card-body">
     <div class="mb-2">
       <%= t('basics.details') %>
-      <%= helpdesk(t('admin.talk.info.description'), false) %>
+      <%= helpdesk(t('admin.talk.info.details'), false) %>
+    </div>
+    <%= f.trix_editor :details,
+                      class: 'bg-light',
+                      id: 'talk-details-trix',
+                      data: { content: talk.details,
+                              preview:  'talk-details-preview' } %>
+    <%= f.hidden_field :lecture_id,
+                       value: talk.lecture.id %>
+    <div class="row my-2">
+      <div class="col-12">
+        <%= t('basics.preview') %>
+      </div>
+    </div>
+    <div class="alert alert-dark bg-mdb-color-lighten-6"
+         id="talk-details-preview">
+          <%= raw(talk.details) %>
+    </div>
+    <div class="mb-2">
+      <%= t('content') %> (<%= t('admin.talk.info.by_speakers') %>)
+      <%= helpdesk(t('admin.talk.info.description_for_editor'), false) %>
     </div>
     <%= f.trix_editor :description,
-                      class: 'bg-light',
+                      class: 'bg-falsehood',
                       id: 'talk-description-trix',
-                      data: { content: talk.description } %>
+                      data: { content: talk.description,
+                              preview: 'talk-description-preview' } %>
     <%= f.hidden_field :lecture_id,
                        value: talk.lecture.id %>
     <div class="row my-2">

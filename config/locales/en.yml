@@ -791,9 +791,16 @@ en:
           $...$).
         description_info: >
           This is a text about the talk given by the speakers.
+        description_for_editor: >
+          This is a text about the talk (to be) provided by the speakers.
+          As teacher pf the seminar (or additional seminar editor) you are
+          authorized to edit this text. You can use LaTEX (by putting the
+          expression in $...$).
         media: >
           Here you can see the list of media associated to this talk.
           You can add new media.
+        by_the_speeakers: >
+          provided by the speakers
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

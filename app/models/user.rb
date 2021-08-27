@@ -187,6 +187,7 @@ class User < ApplicationRecord
     media.where(teachable: related_lectures)
       .or(media.where(teachable: related_courses))
       .or(media.where(teachable: Lesson.where(lecture: related_lectures)))
+      .or(media.where(teachable: Talk.where(lecture: related_lectures)))
   end
 
   # returns array of all those sections from the given sections that belon to

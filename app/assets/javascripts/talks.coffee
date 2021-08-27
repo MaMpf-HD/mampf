@@ -5,6 +5,7 @@
 @trixTalkPreview = (trixElement) ->
   trixElement.addEventListener 'trix-initialize', ->
     content = this.dataset.content
+    preview = this.dataset.preview
     editor = this.editor
     editor.setSelectedRange([0,65535])
     editor.deleteInDirection("forward")
@@ -12,9 +13,9 @@
     document.activeElement.blur()
     trixElement.addEventListener 'trix-change', ->
       $('#talk-basics-warning').show()
-      $('#talk-details-preview').html($('#talk-details-trix').html())
-      chapterDetails = document.getElementById('talk-details-preview')
-      renderMathInElement chapterDetails,
+      $('#'+preview).html($(this).html())
+      previewBox = document.getElementById(preview)
+      renderMathInElement previewBox,
         delimiters: [
           {
             left: '$$'
@@ -56,8 +57,11 @@ $(document).on 'turbolinks:load', ->
     location.reload(true)
     return
 
-  trixElement = document.querySelector('#talk-details-trix')
-  trixTalkPreview(trixElement) if trixElement?
+  trixDetailsElement = document.querySelector('#talk-details-trix')
+  trixTalkPreview(trixDetailsElement) if trixDetailsElement?
+
+  trixDescriptionElement = document.querySelector('#talk-description-trix')
+  trixTalkPreview(trixDescriptionElement) if trixDescriptionElement?
 
   $(document).on 'click', '#new-talk-date-button', ->
     count = $(this).data('count')

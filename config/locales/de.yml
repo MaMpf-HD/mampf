@@ -826,7 +826,7 @@ de:
       previous_talk: 'voriger Vortrag'
       info:
         details: >
-          Hier hast Du die Möglichkeit, eine Beschreibung des Vortrags
+          Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
           und wichtige Details anzugeben (wie etwa Literatur zu dem
           Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
           setzt).
@@ -838,9 +838,16 @@ de:
           Ausdruck in $...$ setzt).
         description_info: >
           Das ist ein Text über den Vortrag, der von den Vortragenden stammt.
+        description_for_editor: >
+          Das ist ein Text über den Vortrag, der eigentlich von den Vortragenden
+          stammt. Du kannst ihn als DozentIn des Seminars bzw. zusätzliche
+          SeminareditorIn bearbeiten. Du kannst LaTeX
+          benutzen (indem du den Ausdruck in $...$ setzt).
         media: >
           Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
           sind. Du kannst neue Medien hinzufügen.
+        by_speakers: >
+          Eintragung durch die Vortragenden
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
