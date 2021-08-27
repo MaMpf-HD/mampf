@@ -17,6 +17,8 @@ Rails.application.routes.draw do
                               as: 'exit_administration'
   get '/administration/profile', to: 'administration#profile',
                                  as: 'elevated_profile'
+  get 'administration/search', to: 'administration#search',
+                               as: 'administration_search'
   get '/administration/classification', to: 'administration#classification',
                                         as: 'classification'
 
@@ -60,12 +62,12 @@ Rails.application.routes.draw do
 
   get 'c/:id', to: 'clickers#show'
 
-  get 'courses/:id/inspect', to: 'courses#inspect',
-                             as: 'inspect_course'
   post 'courses/:id/take_random_quiz', to: 'courses#take_random_quiz',
                                       as: 'random_quiz'
   get 'courses/:id/render_question_counter', to: 'courses#render_question_counter',
                                              as: 'render_question_counter'
+  get 'courses/search', to: 'courses#search',
+                         as: 'search_courses'
   resources :courses, except: [:index, :show]
 
   resources :divisions, except: [:show]
@@ -107,8 +109,6 @@ Rails.application.routes.draw do
 
   get 'lectures/:id/food', to: 'media#index',
                            as: 'lecture_food'
-  get 'lectures/:id/inspect', to: 'lectures#inspect',
-                               as: 'inspect_lecture'
   get 'lectures/:id/update_teacher', to: 'lectures#update_teacher',
                                       as: 'update_teacher'
   get 'lectures/:id/update_editors', to: 'lectures#update_editors',
@@ -161,14 +161,10 @@ Rails.application.routes.draw do
 
   resources :lectures, except: [:index]
 
-  get 'lessons/:id/inspect', to: 'lessons#inspect',
-                             as: 'inspect_lesson'
   resources :lessons, except: [:index]
 
   get 'media/search', to: 'media#search',
                       as: 'media_search'
-  get 'media/catalog', to: 'media#catalog',
-                       as: 'media_catalog'
   get 'media/delete_destinations', to: 'media#delete_destinations',
                                    as: 'delete_destinations'
   get 'media/:id/inspect', to: 'media#inspect',
@@ -343,8 +339,6 @@ Rails.application.routes.draw do
 
   get 'tags/modal', to: 'tags#modal',
                     as: 'tag_modal'
-  get 'tags/:id/inspect', to: 'tags#inspect',
-                           as: 'inspect_tag'
   get 'tags/:id/display_cyto', to: 'tags#display_cyto',
                                 as: 'display_cyto_tag'
   patch 'tags/:id/identify', to: 'tags#identify',

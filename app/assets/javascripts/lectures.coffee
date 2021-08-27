@@ -225,6 +225,7 @@ $(document).on 'turbolinks:load', ->
     $('#adminMain').css('flex-direction', 'row')
     $('#adminHome').css('padding-right', '0.5rem')
     $('#adminCurrentLecture').css('padding-right', '0.5rem')
+    $('#adminSearch').css('padding-right', '0.5rem')
     $('#mampfbrand').hide()
     return
 
@@ -246,6 +247,7 @@ $(document).on 'turbolinks:load', ->
     $('#adminMain').removeAttr('style')
     $('#adminHome').removeAttr('style')
     $('#adminCurrentLecture').removeAttr('style')
+    $('#adminSearch').removeAttr('style')
     $('#mampfbrand').show()
     return
 

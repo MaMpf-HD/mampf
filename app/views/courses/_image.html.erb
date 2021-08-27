@@ -41,21 +41,19 @@
             <% end %>
           </div>
         </div>
-        <% unless inspection %>
-          <div class="row">
-            <div class="col-12" id="image-uploadButton"
-                 data-choosefiles="<%= t('basics.file') %>">
-              <%= f.hidden_field :image,
-                                 value: course.cached_image_data,
-                                 id: 'upload-image-hidden' %>
-              <%= f.file_field :image,
-                               id: 'upload-image' %>
-              <%= f.hidden_field :detach_image, value: false %>
-            </div>
+        <div class="row">
+          <div class="col-12" id="image-uploadButton"
+               data-choosefiles="<%= t('basics.file') %>">
+            <%= f.hidden_field :image,
+                               value: course.cached_image_data,
+                               id: 'upload-image-hidden' %>
+            <%= f.file_field :image,
+                             id: 'upload-image' %>
+            <%= f.hidden_field :detach_image, value: false %>
           </div>
-          <%= render partial: 'courses/upload_image',
-                     locals: { course: course } %>
-        <% end %>
+        </div>
+        <%= render partial: 'courses/upload_image',
+                   locals: { course: course } %>
       </div>
     </div>
   </div>

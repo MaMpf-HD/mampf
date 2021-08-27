@@ -178,13 +178,11 @@
       <div class="row">
         <div class="col-12 mb-2">
           <%= render partial: 'sections/card',
-                     locals: { sections: tag.sections,
-                               inspection: false } %>
+                     locals: { sections: tag.sections } %>
         </div>
         <div class="col-12">
           <%= render partial: 'lessons/card',
-                     locals: { lessons: tag.lessons,
-                               inspection: false } %>
+                     locals: { lessons: tag.lessons } %>
         </div>
       </div>
     </div>

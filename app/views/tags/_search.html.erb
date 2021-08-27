@@ -14,10 +14,10 @@
 <%= form_with url: tags_search_path,
               scope: 'search',
               remote: true,
-              method: 'get' do |f| %>
+              method: :get do |f| %>
 
   <div class="form-row mb-3 p-2">
-    <div class="form-group col-6 mx-3">
+    <div class="form-group col-4 mx-3">
       <%= f.label :title, t('basics.title') %>
       <%= helpdesk(t('admin.tag.info.search_title'), false) %>
       <%= f.text_field :title,
@@ -29,12 +29,22 @@
       <%= helpdesk(t('admin.tag.info.search_course'), true) %>
       <%= f.select :course_ids,
                    options_for_select(Course.all
-                                            .map { |c| [c.title, c.id] },
-                                      Course.pluck(:id)),
+                                            .pluck(:title, :id)
+                                            .natural_sort_by(&:first),
+                                      nil),
                    {},
                    { multiple: true,
                      class: 'selectize',
-                     id: 'inputCourses' } %>
+                     disabled: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_courses,
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_course_ids' } %>
+        <%= f.label :all_courses,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
       <button id="tags-edited-courses"
               type="button"
               class="btn btn-sm btn-outline-info"
@@ -42,17 +52,15 @@
                                             .to_json %>">
         <%= t('buttons.edited_courses') %>
       </button>
-      <button id="tags-all-courses"
-              type="button"
-              class="btn btn-sm btn-outline-info"
-              data-courses="<%= Course.all.map(&:id).to_json %>">
-        <%= t('buttons.all_courses') %>
-      </button>
-      <button id="tags-no-courses"
-              type="button"
-              class="btn btn-sm btn-outline-info">
-        <%= t('buttons.clean_courses_form') %>
-      </button>
+    </div>
+    <div class="col-2 form-group">
+      <%= f.label :per, t('basics.hits_per_page') %>
+      <%= f.select :per,
+                   options_for_select([[10,10],[20,20],[50,50]],[10]),
+                   {},
+                   {  id: 'tags_per',
+                      class: 'form-control'} %>
+
     </div>
   </div>
   <div class="row mb-3">
