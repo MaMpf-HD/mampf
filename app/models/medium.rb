@@ -381,6 +381,7 @@ class Medium < ApplicationRecord
     return true if teachable&.lecture&.editors&.include?(user)
     return true if teachable&.lecture&.teacher == user
     return true if teachable&.course&.editors&.include?(user)
+    return true if teachable.is_a?(Talk) && user.in?(talk.speakers)
     false
   end
 

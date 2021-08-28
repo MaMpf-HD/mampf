@@ -8,6 +8,6 @@ class CreateTalks < ActiveRecord::Migration[6.1]
   end
 
   def down
-    remove_table :talks
+    drop_table :talks
   end
 end

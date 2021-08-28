@@ -96,6 +96,7 @@ class TagsController < ApplicationController
     add_section
     add_medium
     add_lesson
+    add_talk
     @from = params[:from]
     @locale = locale
   end
@@ -252,6 +253,14 @@ class TagsController < ApplicationController
     end
   end
 
+  def add_talk
+    talk = Talk.find_by_id(params[:talk])
+    if talk
+      @tag.talks << talk
+      I18n.locale = talk.lecture.locale || current_user.locale
+    end
+  end
+
   def check_for_consent
     redirect_to consent_profile_path unless current_user.consents
   end
@@ -265,6 +274,7 @@ class TagsController < ApplicationController
                                 course_ids: [],
                                 section_ids: [],
                                 lesson_ids: [],
+                                talk_ids: [],
                                 media_ids: [])
   end
 

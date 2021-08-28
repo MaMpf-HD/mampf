@@ -2,7 +2,8 @@
   <div id="<%= dom_id(talk) %>"
        class="card-header <%= talk_card_color(talk, current_user) %>">
     <div class="row">
-      <div class="col-12">
+      <div class="col-12 talkheader">
+        <div>
         <% if edit %>
           <%= link_to talk.to_label,
                       edit_talk_path(talk),
@@ -22,18 +23,21 @@
                                'display: inline;' %>
           <% end %>
         <% end %>
+        </div>
+        <div>
+          <% talk.dates.each do |d| %>
+            <div class="badge badge-secondary">
+              <%= localize(d, format: :concise) %>
+            </div>
+          <% end %>
+        </div>
       </div>
     </div>
     <% if talk.speakers.any? %>
       <div class="row">
         <div class="col-12">
-          <% talk.dates.each do |d| %>
-          <div class="badge badge-secondary">
-            <%= localize(d, format: :concise) %>
-          </div>
-        <% end %>
           <span class="text-light">
-            <%= talk.speakers.map(&:tutorial_name).join(', ') %>
+            (<%= talk.speakers.map(&:tutorial_name).join(', ') %>)
           </span>
         </div>
       </div>
@@ -41,5 +45,12 @@
   </div>
   <div class="card-body">
     <%= raw(talk.details) %>
+    <div class="row">
+      <div class="col-12 mt-2">
+        <%= render partial: 'tags/show/tag',
+                   collection: talk.tags,
+                   cached: true %>
+      </div>
+    </div>
   </div>
 </div>

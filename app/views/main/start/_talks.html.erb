@@ -1,22 +1,26 @@
-<ul>
-  <% @talks.each do |t| %>
-    <li>
-      <%= link_to t.title,
-                  talk_path(t) %>
-      <%= link_to '',
-                  assemble_talk_path(t),
-                  class: 'far fa-edit text-primary text-right',
-                  data: { toggle: 'tooltip',
-                          placement: 'bottom' },
-                  title: t('buttons.edit'),
-                  style: 'text-decoration: none; ' +
-                         'display: inline;' %>,
-      <%= t('basics.talk') %>
-      <%= t.position %>
-      <%= t('in') %>
-      <%= link_to t.lecture.title_term_info,
-                  lecture_path(t.lecture) %>
-      <%= t.team_info(current_user) %>
-    </li>
-  <% end %>
-</ul>
+<% if @talks.any? %>
+  <ul>
+    <% @talks.each do |t| %>
+      <li>
+        <%= link_to t.title,
+                    talk_path(t) %>
+        <%= link_to '',
+                    assemble_talk_path(t),
+                    class: 'far fa-edit text-primary text-right',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none; ' +
+                           'display: inline;' %>,
+        <%= t('basics.talk') %>
+        <%= t.position %>
+        <%= t('in') %>
+        <%= link_to t.lecture.title_term_info,
+                    lecture_path(t.lecture) %>
+        <%= t.team_info(current_user) %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <%= t('admin.talk.no_talks') %>
+<% end %>

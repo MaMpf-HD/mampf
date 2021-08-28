@@ -2,6 +2,7 @@
 class VerticesController < ApplicationController
   authorize_resource class: false
   before_action :set_values
+  before_action :check_permission, except: :new
   before_action :set_update_vertex_params, only: [:update]
   before_action :set_create_vertex_params, only: [:create]
 
@@ -74,5 +75,11 @@ class VerticesController < ApplicationController
     @hide = @params_v.keys.select { |k| k.start_with?('hide-') }
                      .select { |h| @params_v[h] == '1' }
                      .map { |h| h.remove('hide-').to_h }
+  end
+
+  def check_permission
+    return if current_user.admin
+    return if current_user.can_edit?(@quiz)
+    redirect_to :root, alert: I18n.t('controllers.unauthorized')
   end
 end

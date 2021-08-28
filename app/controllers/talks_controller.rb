@@ -83,11 +83,11 @@ class TalksController < ApplicationController
 
   def talk_params
     params.require(:talk).permit(:title, :lecture_id, :details, :description,
-                                 speaker_ids: [])
+                                 speaker_ids: [], tag_ids: [])
   end
 
   def modify_params
-    params.require(:talk).permit(:description)
+    params.require(:talk).permit(:description, tag_ids: [])
   end
 
   def set_view_locale

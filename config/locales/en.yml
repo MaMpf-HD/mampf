@@ -778,6 +778,7 @@ en:
       no_media: There are no media associated  to this talk.
       next_talk: next talk
       previous_talk: previous talk
+      no_talks: There a no talks yet.
       info:
         details: >
           Here you can give s description of the talk and important details
@@ -1866,8 +1867,8 @@ en:
       The defalut setting is that these remain in MaMpf. Here you can enter
       under which name they will be shown in the future:
     manual_deletion: >
-      If you do not want these materials to remain in MaMpf you can delete them
-      manually.
+      If you do not want these materials to remain in MaMpf you must delete them
+      manually before deleting the account.
     email_notifications_header: E-Mail Notifications
     lectures_and_courses: Lectures and courses
     submissions: Submission of homework assignments

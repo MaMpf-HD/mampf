@@ -1,60 +1,99 @@
   <div class="row">
-    <div class="col-12">
-      <%= render partial: 'talks/base_data',
-                 locals: { talk: talk,
-                           assemble: true } %>
+    <div class="col-12 col-lg-6">
+      <div class="card bg-light">
+        <div class="card-header bg-generic-card-header">
+          <h5>
+            <%= t('basics.basics') %>
+          </h5>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'talks/base_data',
+                     locals: { talk: talk,
+                               assemble: true } %>
+        </div>
+      </div>
+    </div>
+    <div class="col-12 col-lg-6">
+      <div class="card bg-light">
+        <div class="card-header bg-generic-card-header">
+          <h5>
+            <%= t('content') %>
+          </h5>
+        </div>
+        <div class="card-body">
+          <%= t('content') %>
+          <%= helpdesk(t('admin.talk.info.description'), false) %>
+          <%= f.trix_editor :description,
+                            class: 'bg-light',
+                            id: 'talk-details-trix',
+                            data: { content: talk.description,
+                                    preview: 'talk-details-preview' } %>
+          <div class="row my-2">
+            <div class="col-12">
+              <%= t('basics.preview') %>
+            </div>
+          </div>
+          <div class="alert alert-dark bg-mdb-color-lighten-6"
+               id="talk-details-preview">
+            <%= raw(talk.description) %>
+          </div>
+          <div class="form-row">
+            <div class="col-12">
+              <div class="form-group">
+                <%= f.label :tag_ids, t('basics.related_tags') %>
+                <%= helpdesk(t('admin.lesson.info.tags'), false) %>
+                <%= f.select :tag_ids,
+                             options_for_select(talk.tags
+                                                    .map { |t| t.extended_title_id_hash }
+                                                    .map { |t| [t[:title], t[:id]] },
+                                                talk.tag_ids),
+                             {},
+                             { multiple: true,
+                               class: 'selectize',
+                               style: 'display: none;',
+                               data: { ajax: true,
+                                       filled: false,
+                                       model: 'tag',
+                                       drag: false,
+                                       locale: I18n.locale } } %>
+                <div class="invalid-feedback"
+                     id="talk-tags-error">
+              </div>
+            </div>
+          </div>
+          <div class="col-12">
+            <%= t('basics.media') %>
+            <%= helpdesk(t('admin.talk.info.media'), false) %>
+            <%= link_to '',
+                        new_medium_path(params: { teachable_id: talk.id,
+                                                  teachable_type: 'Talk' }),
+                        class: 'fas fa-plus-circle text-dark',
+                        id: 'create-new-talk-medium',
+                        data: { toggle: 'tooltip' },
+                        title: t('buttons.create_medium'),
+                        style: 'text-decoration: none;',
+                        remote: true %>
+            <% if talk.media.present? %>
+              <ul id="sortableTalkMedia">
+                <% talk.media.each do |m| %>
+                  <li>
+                    <%= link_to m.sort_localized + ', ' + m.local_info,
+                                edit_or_show_medium_path(m),
+                                class: textcolor(m),
+                                data: { id: m.id } %>
+                  </li>
+                <% end %>
+              </ul>
+              <%= f.hidden_field :media_order,
+                                 value: talk.media.map(&:id).to_json %>
+            <% else %>
+              <p>
+                <%= t('admin.talk.no_media') %>
+              </p>
+            <% end %>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-    <h5 class="my-2">
-      <%= t('content') %>:
-      <%= helpdesk(t('admin.talk.info.description'), false) %>
-    </h5>
-    <%= f.trix_editor :description,
-                      class: 'bg-light',
-                      id: 'talk-details-trix',
-                      data: { content: talk.description,
-                              preview: 'talk-details-preview' } %>
-    <div class="row my-2">
-      <div class="col-12">
-        <%= t('basics.preview') %>
-      </div>
-    </div>
-    <div class="alert alert-dark bg-mdb-color-lighten-6"
-         id="talk-details-preview">
-          <%= raw(talk.description) %>
-    </div>
-    <div class="form-row">
-      <div class="col-12">
-        <h5>
-          <%= t('basics.media') %>:
-          <%= helpdesk(t('admin.talk.info.media'), false) %>
-          <%= link_to '',
-                      new_medium_path(params: { teachable_id: talk.id,
-                                                teachable_type: 'Talk' }),
-                      class: 'fas fa-plus-circle text-dark',
-                      id: 'create-new-talk-medium',
-                      data: { toggle: 'tooltip' },
-                      title: t('buttons.create_medium'),
-                      style: 'text-decoration: none;',
-                      remote: true %>
-        </h5>
-        <% if talk.media.present? %>
-          <ul id="sortableTalkMedia">
-            <% talk.media.each do |m| %>
-              <li>
-                <%= link_to m.sort_localized + ', ' + m.local_info,
-                            edit_or_show_medium_path(m),
-                            class: textcolor(m),
-                            data: { id: m.id } %>
-              </li>
-            <% end %>
-          </ul>
-          <%= f.hidden_field :media_order,
-                             value: talk.media.map(&:id).to_json %>
-        <% else %>
-          <p>
-            <%= t('admin.talk.no_media') %>
-          </p>
-        <% end %>
-      </div>
-    </div>
+</div>

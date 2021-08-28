@@ -57,22 +57,38 @@
   </div>
 </div>
 <div class="row p-2">
-  <div class="col-12">
-    <%= render partial: 'talks/base_data',
-               locals: { talk: @talk,
-                         assemble: false } %>
-  </div>
-</div>
-<% if @talk.media.any? %>
-  <div class="row mb-2 p-2">
-    <div class="col-12">
-      <h5>
-        <%= t('basics.media') %>:
-      </h5>
-      <%= render partial: 'media/media',
-                 locals: { media: @talk.media,
-                           tags: true,
-                           lecture: @talk.lecture } %>
+  <div class="col-12 col-lg-12 col-xl-9 col-xxl-9">
+    <div class="row">
+      <div class="col-12">
+        <%= render partial: 'talks/data',
+                   locals: { talk: @talk } %>
+      </div>
+      <% if @talk.description.present? %>
+        <div class="col-12 mt-3">
+          <div class="card bg-light">
+            <div class="card-header bg-generic-card-header">
+              <h5>
+                <%= t('content') %>
+                <%= helpdesk(t('admin.talk.info.description_info'), false) %>
+              </h5>
+            </div>
+            <div class="card-body">
+              <%= @talk.description&.html_safe %>
+            </div>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
-<% end %>
+  <div class="col-12 col-lg-12 col-xl-3 col-xxl-3">
+    <div class="row">
+      <div class="col-12">
+        <%= render partial: 'media/flat_related_media',
+                   locals: { media: @talk.media,
+                             tags: true,
+                             from: 'talk',
+                             questions: false } %>
+      </div>
+    </div>
+  </div>
+</div>

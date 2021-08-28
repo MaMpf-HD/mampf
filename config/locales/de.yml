@@ -824,6 +824,7 @@ de:
       no_media: Für diesen Vortrag sind keine Medien vorhanden.
       next_talk: 'nächster Vortrag'
       previous_talk: 'voriger Vortrag'
+      no_talks: Es sind keine Vorträge von Dir vorhanden.
       info:
         details: >
           Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
@@ -1988,8 +1989,8 @@ de:
       Hier kannst Du eingeben, unter welchem Namen diese künftig angezeigt
       werden sollen:
     manual_deletion: >
-      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, kannst
-      Du die entsprechenden Vorlesungen und Medien manuell löschen.
+      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, musst
+      Du diese vor der Löschung des Accounts manuell löschen.
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben

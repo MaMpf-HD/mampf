@@ -38,6 +38,7 @@ class MediaController < ApplicationController
   def edit
     I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
+    render layout: current_user.layout
   end
 
   def update

@@ -583,6 +583,10 @@ class User < ApplicationRecord
     talks.any?
   end
 
+  def layout
+    admin || editor? ? 'administration' : 'application_no_sidebar'
+  end
+
   private
 
   def set_defaults

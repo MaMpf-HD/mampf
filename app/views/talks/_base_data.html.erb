@@ -1,24 +1,31 @@
-<h5>
-  <%= t('admin.talk.speakers') %>:
+<p>
+  <strong>
+    <%= t('admin.talk.speakers') %>:
+  </strong>
   <%= speaker_list(talk) %>
-</h5>
-<h5>
-  <%= t('basics.date') %>:
-  <%= date_list(talk) %>
-</h5>
+</p>
+<p>
+  <strong>
+    <%= t('basics.date') %>:
+    <%= date_list(talk) %>
+  </strong>
+</p>
 <% if talk.details.present? %>
-  <h5>
-    <%= t('basics.details') %>:
-    <%= helpdesk(t('admin.talk.info.details_info'), false) %>
-  </h5>
+  <p>
+    <strong>
+      <%= t('basics.details') %>:
+      <%= helpdesk(t('admin.talk.info.details_info'), false) %>
+    </strong>
+    <%= talk.details&.html_safe %>
+  </p>
 <% end %>
-<%= talk.details&.html_safe %>
 <% unless assemble %>
-  <% if talk.description.present? %>
-    <h5>
-      <%= t('content') %>:
-      <%= helpdesk(t('admin.talk.info.description_info'), false) %>
-    </h5>
-    <%= talk.description&.html_safe %>
-  <% end %>
+  <p>
+    <strong>
+      <%= t('basics.tags') %>:
+    </strong>
+    <%= render partial: 'tags/show/tag',
+               collection: talk.tags,
+               cached: true %>
+  </p>
 <% end %>

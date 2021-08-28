@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_23_141044) do
+ActiveRecord::Schema.define(version: 2021_08_28_094735) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -510,6 +510,15 @@ ActiveRecord::Schema.define(version: 2021_08_23_141044) do
     t.text "realizations"
   end
 
+  create_table "talk_tag_joins", force: :cascade do |t|
+    t.bigint "talk_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["tag_id"], name: "index_talk_tag_joins_on_tag_id"
+    t.index ["talk_id"], name: "index_talk_tag_joins_on_talk_id"
+  end
+
   create_table "talks", force: :cascade do |t|
     t.bigint "lecture_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -890,6 +899,8 @@ ActiveRecord::Schema.define(version: 2021_08_23_141044) do
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
+  add_foreign_key "talk_tag_joins", "tags"
+  add_foreign_key "talk_tag_joins", "talks"
   add_foreign_key "talks", "lectures"
   add_foreign_key "thredded_messageboard_users", "thredded_messageboards", on_delete: :cascade
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade

@@ -229,7 +229,8 @@ class Ability
       end
 
       cannot :show, Medium do |medium|
-        !medium.visible_for_user?(user) || medium.sort == 'Question'
+        !medium.visible_for_user?(user) ||
+          (medium.sort == 'Question' && !user.can_edit?(medium))
       end
 
       can :show_comments, Medium do |medium|
@@ -303,6 +304,17 @@ class Ability
       can :delete_account, User
 
       can :manage, [Item, Referral]
+
+      can [:linearize, :set_root, :set_level,
+           :update_default_target, :delete_edge], Quiz do |quiz|
+        quiz.edited_with_inheritance_by?(user)
+      end
+
+      can :manage, [:event, :vertex]
+
+      can [:create, :update, :destroy], Answer do |answer|
+        answer.question.edited_with_inheritance_by?(user)
+      end
     end
   end
 end
