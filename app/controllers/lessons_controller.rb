@@ -66,10 +66,6 @@ class LessonsController < ApplicationController
                        .order(:position)
   end
 
-  def inspect
-    I18n.locale = @lesson.locale_with_inheritance
-  end
-
   private
 
   def set_lesson

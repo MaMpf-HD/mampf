@@ -1,0 +1,29 @@
+<% if @assignments.size > 1 %>
+  <span class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle"
+            data-toggle="dropdown"
+            type="button">
+      <%= @assignment.title %>
+    </button>
+    <div class="dropdown-menu">
+      <% (@assignments - [@assignment]).each do |a| %>
+        <%= link_to a.title,
+                    lecture_tutorial_overview_path( @lecture,
+                                                    params: { assignment: a.id }),
+                                                    class: 'dropdown-item' %>
+      <% end %>
+    </div>
+  </span>
+<% else %>
+  <button class="btn btn-secondary" disabled>
+    <%= @assignment.title %>
+  </button>
+<% end %>
+
+<% if @tutorials.size > 0 %>
+  <%= render partial: 'tutorials/tutorial_dropdown' %>
+<% else %>
+  <button class="btn btn-secondary" disabled>
+    <%= t('basics.tutorial') %>
+  </button>
+<% end %>

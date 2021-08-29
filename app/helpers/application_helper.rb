@@ -198,34 +198,13 @@ module ApplicationHelper
     list
   end
 
-  # Returns the path for the inspect or edit action of a given course,
+  # Returns the path for the show or edit action of a given lecture,
   # depending on  whether the current user has editor rights for the course.
-  def edit_or_inspect_course_path(course)
-    if current_user.admin || course.editors.include?(current_user)
-      return edit_course_path(course)
-    end
-    inspect_course_path(course)
-  end
-
-  # Returns the fontawesome icon name for inspecting or editing a given course,
-  # depending on  whether the current user has editor rights for the course.
-  def edit_or_inspect_course_icon(course)
-    if current_user.admin || course.editors.include?(current_user)
-      return 'far fa-edit'
-    end
-    'far fa-eye'
-  end
-
-  # Returns the path for the inspect or edit action of a given lecture,
-  # depending on  whether the current user has editor rights for the course.
-  # Editor rights are determnined by inheritance, e.g. module editors
+  # Editor rights are determined by inheritance, e.g. module editors
   # can edit all lectures associated to the course.
-  def edit_or_inspect_lecture_path(lecture)
-    if current_user.admin ||
-       lecture.editors_with_inheritance.include?(current_user)
-      return edit_lecture_path(lecture)
-    end
-    inspect_lecture_path(lecture)
+  def edit_or_show_lecture_path(lecture)
+    return edit_lecture_path(lecture) if current_user.can_edit?(lecture)
+    lecture_path(lecture)
   end
 
   # Returns the path for the inspect or edit action of a given medium,
@@ -237,19 +216,6 @@ module ApplicationHelper
       return edit_medium_path(medium)
     end
     inspect_medium_path(medium)
-  end
-
-
-  # Returns the fontawesome icon name for inspecting or editing a given lecture,
-  # depending on  whether the current user has editor rights for the course.
-  # Editor rights are determnined by inheritance, e.g. module editors
-  # can edit all lectures associated to the course.
-  def edit_or_inspect_lecture_icon(lecture)
-    if current_user.admin ||
-       lecture.editors_with_inheritance.include?(current_user)
-      return 'far fa-edit'
-    end
-    'far fa-eye'
   end
 
   # returns the given date in a more human readable form

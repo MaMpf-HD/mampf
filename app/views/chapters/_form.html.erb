@@ -22,7 +22,7 @@
     </div>
     <div class="col-12 col-lg-4 text-right">
       <%= link_to t('buttons.parent_lecture'),
-                  edit_or_inspect_lecture_path(chapter.lecture),
+                  edit_lecture_path(chapter.lecture),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>
       <% if chapter.sections.empty? %>
         <%= link_to t('buttons.delete'),

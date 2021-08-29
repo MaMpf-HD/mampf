@@ -1,11 +1,19 @@
 <%= form_with url: search_lectures_path,
               scope: 'search',
               remote: true,
-              method: 'get' do |f| %>
+              method: :get do |f| %>
   <div class="form-row p-2">
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :types, t('basics.type') %>
       <%= helpdesk(t('admin.lecture.info.search_type'), true) %>
+      <%= f.select :types,
+                   options_for_select(add_prompt(Lecture.select_sorts),
+                                      ''),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true,
+                     required: true } %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_types,
                          class: 'custom-control-input',
@@ -15,18 +23,18 @@
                      t('basics.all'),
                      { class: 'custom-control-label' } %>
       </div>
-      <%= f.select :types,
-                   options_for_select(add_prompt(Lecture.select_sorts),
-                                      ''),
-                   {},
+    </div>
+    <div class="col-6 col-lg-3 form-group"
+         id="termSearch">
+      <%= f.label :term_ids, t('basics.term') %>
+      <%= helpdesk(t('admin.lecture.info.search_term'), true) %>
+      <%= f.select :term_ids,
+                   options_for_select(Term.select_terms),
+                   { prompt: t('basics.select') },
                    { multiple: true,
                      class: 'selectize',
                      disabled: true,
                      required: true } %>
-    </div>
-    <div class="col-6 col-lg-3 form-group">
-      <%= f.label :term_ids, t('basics.term') %>
-      <%= helpdesk(t('admin.lecture.info.search_term'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_terms,
                         class: 'custom-control-input',
@@ -36,18 +44,19 @@
                     t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
-      <%= f.select :term_ids,
-                   options_for_select(Term.select_terms),
+    </div>
+    <div class="col-6 col-lg-3 form-group"
+         id="programSearch">
+      <%= f.label :program_ids,
+                  t('basics.programs') %>
+      <%= helpdesk(t('admin.lecture.info.search_program'), true) %>
+      <%= f.select :program_ids,
+                   options_for_select(Program.select_programs),
                    { prompt: t('basics.select') },
                    { multiple: true,
                      class: 'selectize',
                      disabled: true,
                      required: true } %>
-    </div>
-    <div class="col-6 col-lg-3 form-group">
-      <%= f.label :program_ids,
-                  t('basics.programs') %>
-      <%= helpdesk(t('admin.lecture.info.search_program'), true) %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_programs,
                         class: 'custom-control-input',
@@ -57,17 +66,17 @@
                     t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
-      <%= f.select :program_ids,
-                   options_for_select(Program.select_programs),
-                   { prompt: t('basics.select') },
+    </div>
+    <div class="col-6 col-lg-3 form-group"
+         id="teacherSearch">
+      <%= f.label :teacher_ids, t('basics.teachers') %>
+      <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+      <%= f.select :teacher_ids,
+                   options_for_select(add_prompt(User.select_teachers)),
+                   {},
                    { multiple: true,
                      class: 'selectize',
-                     disabled: true,
-                     required: true } %>
-    </div>
-    <div class="col-6 col-lg-3 form-group">
-      <%= f.label :editor_ids, t('basics.teachers') %>
-      <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+                     disabled: true } %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_teachers,
                         class: 'custom-control-input',
@@ -77,23 +86,20 @@
                     t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
-      <%= f.select :teacher_ids,
-                   options_for_select(add_prompt(User.select_teachers)),
-                   {},
-                   { multiple: true,
-                     class: 'selectize',
-                     disabled: true } %>
     </div>
-    <div class="col-6 col-lg-3 form-group">
+    <div class="col-6 col-lg-3 form-group"
+         id="fullTextSearch">
       <%= f.label :fulltext, t('basics.fulltext') %>
       <%= helpdesk(t('admin.lecture.info.search_fulltext'), false) %>
       <%= f.text_field :fulltext,
                         class: 'form-control' %>
     </div>
-    <div class="col-6 col-lg-3 form-.group">
+    <div class="col-6 col-lg-3 form-.group"
+         id="hitsPerPage">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
-                   options_for_select([[3,3],[4,4],[6,6], [12,12]],[6]),
+                   options_for_select(lecture_hits_per_page(results_as_list),
+                                      default_lecture_hits_per_page(results_as_list)),
                    {},
                    { class: 'form-control'} %>
 
@@ -105,4 +111,6 @@
                    class: 'btn btn-primary' %>
     </div>
   </div>
+  <%= f.hidden_field :results_as_list,
+                     value: results_as_list %>
 <% end %>

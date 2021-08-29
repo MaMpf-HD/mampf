@@ -5,7 +5,7 @@ class TermsController < ApplicationController
   layout 'administration'
 
   def index
-    @terms = Term.order(:year).reverse_order.page params[:page]
+    @terms = Term.order(:year, :season).reverse_order.page params[:page]
   end
 
   def destroy

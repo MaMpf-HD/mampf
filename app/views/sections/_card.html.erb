@@ -14,7 +14,7 @@
       <% sections.each do |s| %>
         <li>
           <%= link_to s.lecture.title,
-                      edit_or_inspect_lecture_path(s.lecture),
+                      edit_or_show_lecture_path(s.lecture),
                       class: lectures_color(s.lecture) %>
           :
           <%= s.to_label %>

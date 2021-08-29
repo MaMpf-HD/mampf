@@ -20,7 +20,6 @@ class Ability
       # :read is a cancancan alias for index and show actions
       can [:read], :all
 
-      can :inspect, [Course, Lecture, Lesson, Tag]
       can :inspect, Medium do |medium|
         medium.visible_for_user?(user)
       end
@@ -56,7 +55,7 @@ class Ability
            :display_course, :subscribe_page],
           Lecture
 
-      can [:take_random_quiz, :render_question_counter], Course
+      can [:take_random_quiz, :render_question_counter, :search], Course
 
       # editors are only allowed to edit, not to destroy courses
       can :update, Course do |course|
@@ -81,7 +80,7 @@ class Ability
 
       can :start, :main
 
-      can [:catalog, :search, :register_download, :show_comments], Medium
+      can [:search, :register_download, :show_comments], Medium
       cannot :show, Medium
       can [:play, :display, :geogebra, :show], Medium do |medium|
         medium.visible_for_user?(user)
@@ -140,7 +139,8 @@ class Ability
 
       cannot :read, Term
 
-      can [:new, :create, :cancel_edit, :cancel_new, :overview], Tutorial
+      can [:new, :create, :cancel_edit, :cancel_new, :overview, :index,
+           :bulk_download_submissions, :bulk_download_corrections, :export_teams], Tutorial
 
       can [:index, :validate_certificate], Tutorial do |tutorial|
         user.tutor?
@@ -150,7 +150,7 @@ class Ability
         tutorial.lecture.edited_by?(user)
       end
 
-      can [:bulk_download, :bulk_upload, :export_teams], Tutorial do |tutorial|
+      can [:bulk_download_submissions, :bulk_upload, :export_teams], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
       end
 
@@ -208,7 +208,7 @@ class Ability
         course.subscribed_by?(user)
       end
 
-      cannot [:index, :update, :create], Tag
+      cannot [:update, :create], Tag
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
       can :teacher, User
 
@@ -268,7 +268,7 @@ class Ability
         user.tutor?
       end
 
-      can [:bulk_download, :bulk_upload, :export_teams], Tutorial do |tutorial|
+      can [:bulk_download_submissions, :bulk_upload, :export_teams], Tutorial do |tutorial|
         user.in?(tutorial.tutors)
       end
 

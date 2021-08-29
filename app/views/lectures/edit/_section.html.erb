@@ -4,22 +4,17 @@
     <div class="col-6">
       <strong>
         <span class="<%= section_color(section) %>">
-          <% if inspection %>
-            <%= section.to_label %>
-          <% else %>
-            <%= link_to section.to_label,
-                        edit_section_path(section),
-                        class: 'text-dark' %>
-          <% end %>
+          <%= link_to section.to_label,
+                      edit_section_path(section),
+                      class: 'text-dark' %>
         </span>
       </strong>
     </div>
     <div class="col-6">
       <% section.lessons.sort_by(&:date).each do |l| %>
-        <% cache [l, inspection] do %>
+        <% cache l do %>
           <%= render partial: 'lectures/edit/lesson',
-                     locals: { lesson: l,
-                               inspection: inspection } %>
+                     locals: { lesson: l } %>
         <% end %>
       <% end %>
     </div>

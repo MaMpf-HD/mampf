@@ -1,0 +1,13 @@
+<div class="row mt-3 p-2">
+  <div class="col-12">
+    <h4>
+      <%= t('admin.teachables.teachables') %>
+    </h4>
+  </div>
+</div>
+<div id="lectureSearchArea">
+  <%= render partial: 'main/start/lecture_search',
+             locals: { results_as_list: true } %>
+  <div id="lecture-search-results">
+  </div>
+</div>

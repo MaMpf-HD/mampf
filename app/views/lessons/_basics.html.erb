@@ -5,161 +5,92 @@
     </h5>
   </div>
   <div class="card-body">
-    <% if inspection %>
-      <div class="row">
-        <div class="col-12">
-          <%= t('basics.date') %>
-          <%= helpdesk(t('admin.lesson.info.date_inspection'), false) %>
-        </div>
-        <div class="col-12 my-2">
-          <%= lesson.date_localized  %>
-        </div>
-        <div class="col-12">
-          <%= t('basics.media') %>
-          <%= helpdesk(t('admin.lesson.info.media'), false) %>
-        </div>
-        <div class="col-12">
-          <% if lesson.media.present? %>
-            <ul>
-              <% lesson.media.each do |m| %>
-                <li>
-                  <%= link_to m.sort_localized + ', ' + m.local_info,
-                              edit_or_inspect_medium_path(m),
-                              class: textcolor(m) %>
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            <p>
-              <%= t('admin.lesson.no_media') %>
-            </p>
-          <% end %>
-        </div>
-      </div>
-    <% else %>
-      <div class="form-group">
-        <%= f.label :date, t('basics.date') %>
-        <%= helpdesk(t('admin.lesson.info.date'), false) %>
-        <div class="row">
-          <div class="col-12">
-            <%= f.date_field :date %>
-          </div>
-        </div>
-        <div class="invalid-feedback" id="lesson-date-error">
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <%= t('basics.media') %>
-          <%= helpdesk(t('admin.lesson.info.media'), false) %>
-          <%= link_to '',
-                      new_medium_path(params: { teachable_id: lesson.id,
-                                                teachable_type: 'Lesson' }),
-                      class: 'fas fa-plus-circle text-dark',
-                      id: 'create-new-lesson-medium',
-                      data: { toggle: 'tooltip' },
-                      title: t('buttons.create_medium'),
-                      style: 'text-decoration: none;',
-                      remote: true %>
-          <% if lesson.media.present? %>
-            <ul id="sortableLessonMedia">
-              <% lesson.media.each do |m| %>
-                <li>
-                  <%= link_to m.sort_localized + ', ' + m.local_info,
-                              edit_medium_path(m),
-                              class: textcolor(m),
-                              data: { id: m.id } %>
-                </li>
-              <% end %>
-            </ul>
-            <%= f.hidden_field :media_order,
-                               value: lesson.media.map(&:id).to_json %>
-          <% else %>
-            <p>
-              <%= t('admin.lesson.no_media') %>
-            </p>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
     <div class="form-group">
-      <% if inspection %>
-        <div class="row">
-          <div class="col-12">
-            <%= t('basics.sections') %>
-            <%= helpdesk(t('admin.lesson.info.sections_inspection'), false) %>
-          </div>
-        </div>
+      <%= f.label :date, t('basics.date') %>
+      <%= helpdesk(t('admin.lesson.info.date'), false) %>
+      <div class="row">
         <div class="col-12">
-          <% if lesson.sections.present? %>
-            <ul>
-              <% lesson.sections.each do |s| %>
-                <li>
-                  <%= s.to_label %>
-                </li>
-              <% end %>
-            </ul>
-          <% else %>
-            <%= t('admin.lesson.no_sections') %>
-          <% end %>
+          <%= f.date_field :date %>
         </div>
-      <% else %>
-        <%= f.label :section_ids, t('basics.sections') %>
-        <%= helpdesk(t('admin.lesson.info.sections'), false) %>
-        <%= f.select :section_ids,
-                     options_for_select(lesson.lecture.section_selection,
-                                        lesson.section_ids),
-                     {},
-                     { multiple: true,
-                       class: 'selectize',
-                       data: { tags:
-                               lesson.lecture.section_tag_selection.to_json } }%>
-        <div class="invalid-feedback" id="lesson-sections-error">
-        </div>
-      <% end %>
+      </div>
+      <div class="invalid-feedback" id="lesson-date-error">
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <%= t('basics.media') %>
+        <%= helpdesk(t('admin.lesson.info.media'), false) %>
+        <%= link_to '',
+                    new_medium_path(params: { teachable_id: lesson.id,
+                                              teachable_type: 'Lesson' }),
+                    class: 'fas fa-plus-circle text-dark',
+                    id: 'create-new-lesson-medium',
+                    data: { toggle: 'tooltip' },
+                    title: t('buttons.create_medium'),
+                    style: 'text-decoration: none;',
+                    remote: true %>
+        <% if lesson.media.present? %>
+          <ul id="sortableLessonMedia">
+            <% lesson.media.each do |m| %>
+              <li>
+                <%= link_to m.sort_localized + ', ' + m.local_info,
+                            edit_medium_path(m),
+                            class: textcolor(m),
+                            data: { id: m.id } %>
+              </li>
+            <% end %>
+          </ul>
+          <%= f.hidden_field :media_order,
+                             value: lesson.media.map(&:id).to_json %>
+        <% else %>
+          <p>
+            <%= t('admin.lesson.no_media') %>
+          </p>
+        <% end %>
+      </div>
     </div>
     <div class="form-group">
-      <% if inspection %>
-        <div class="row">
-          <div class="col-12">
-            <%= t('basics.related_tags') %>
-            <%= helpdesk(t('admin.lesson.info.tags_inspection'), false) %>
-          </div>
-          <div class="col-12">
-            <%= render partial: 'tags/tag',
-                       collection: lesson.tags,
-                       cached: true %>
-          </div>
-        </div>
-      <% else %>
-        <%= f.label :tag_ids, t('basics.related_tags') %>
-        <%= helpdesk(t('admin.lesson.info.tags'), false) %>
-        <a class="fas fa-plus-circle clickable text-dark"
-           id="new-tag-button"
-           data-toggle="tooltip"
-           title="Tag anlegen"
-           data-course="<%= lesson.lecture.course.id %>"
-           data-lesson="<%= lesson.id %>"
-           data-from="lesson">
-        </a>
-        <%= f.select :tag_ids,
-                     options_for_select(lesson.tags
-                                              .map { |t| t.extended_title_id_hash }
-                                              .map { |t| [t[:title], t[:id]] },
-                                        lesson.tag_ids),
-                    {},
-                    { multiple: true,
-                      class: 'selectize',
-                      style: 'display: none;',
-                      data: { ajax: true,
-                              filled: false,
-                              model: 'tag',
-                              drag: false,
-                              locale: I18n.locale } } %>
-        <div class="invalid-feedback"
-             id="lesson-tags-error">
-        </div>
-      <% end %>
+      <%= f.label :section_ids, t('basics.sections') %>
+      <%= helpdesk(t('admin.lesson.info.sections'), false) %>
+      <%= f.select :section_ids,
+                   options_for_select(lesson.lecture.section_selection,
+                                      lesson.section_ids),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     data: { tags:
+                             lesson.lecture.section_tag_selection.to_json } }%>
+      <div class="invalid-feedback" id="lesson-sections-error">
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :tag_ids, t('basics.related_tags') %>
+      <%= helpdesk(t('admin.lesson.info.tags'), false) %>
+      <a class="fas fa-plus-circle clickable text-dark"
+         id="new-tag-button"
+         data-toggle="tooltip"
+         title="Tag anlegen"
+         data-course="<%= lesson.lecture.course.id %>"
+         data-lesson="<%= lesson.id %>"
+         data-from="lesson">
+      </a>
+      <%= f.select :tag_ids,
+                   options_for_select(lesson.tags
+                                            .map { |t| t.extended_title_id_hash }
+                                            .map { |t| [t[:title], t[:id]] },
+                                      lesson.tag_ids),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
+                     data: { ajax: true,
+                             filled: false,
+                             model: 'tag',
+                             drag: false,
+                             locale: I18n.locale } } %>
+      <div class="invalid-feedback"
+            id="lesson-tags-error">
+      </div>
     </div>
   </div>
 </div>

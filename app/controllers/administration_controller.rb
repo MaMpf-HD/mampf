@@ -20,4 +20,8 @@ class AdministrationController < ApplicationController
   def classification
     @subjects = Subject.includes(programs: [:divisions]).all
   end
+
+  def search
+    @tags = params[:sort] == 'tag'
+  end
 end

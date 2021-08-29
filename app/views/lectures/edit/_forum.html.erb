@@ -21,9 +21,6 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12 text-center" id="forum-buttons">
-            <% if inspection %>
-              Forum: <%= lecture.forum? ? 'Ja' : 'Nein' %>
-            <% else %>
             <% if lecture.forum? && lecture.forum %>
               <% if lecture.forum&.locked %>
                 <%= link_to t('buttons.unlock_board'),
@@ -41,7 +38,6 @@
               <%= link_to t('buttons.add_board'),
                           add_forum_path(lecture),
                           class: 'btn btn-sm btn-primary' %>
-            <% end %>
             <% end %>
           </div>
         </div>

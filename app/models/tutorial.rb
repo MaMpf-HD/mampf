@@ -79,7 +79,7 @@ class Tutorial < ApplicationRecord
       end
     end
   end
-
+  
   private
 
   def check_destructibility

@@ -25,8 +25,7 @@
           <li class="mb-2">
             <h6>
               <%= t('admin.lecture.course_tags_html',
-                    course: link_to(lecture.course.title,
-                                    edit_or_inspect_course_path(lecture.course)),
+                    course: course_link_or_text(lecture.course, current_user),
                     count: @course_tags.size) %>
               <%= helpdesk(t('admin.lecture.info.course_tags'), false) %>
             </h6>

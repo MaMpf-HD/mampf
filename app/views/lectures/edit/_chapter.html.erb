@@ -3,25 +3,17 @@
        class="card-header <%= chapter_header_color(chapter) %>">
     <div class="row">
       <div class="col-8">
-        <% if inspection %>
-          <span class="text-light">
-            <%= chapter.to_label %>
-          </span>
-        <% else %>
-          <%= link_to chapter.to_label,
-                      edit_chapter_path(chapter),
-                      class: 'text-light' %>
-        <% end %>
+        <%= link_to chapter.to_label,
+                    edit_chapter_path(chapter),
+                    class: 'text-light' %>
       </div>
-      <% unless inspection %>
-        <div class="col-4 text-right">
-          <%= link_to t('buttons.create_section'),
-                      new_section_path(chapter_id: chapter.id),
-                      remote: true,
-                      class: 'btn btn-sm btn-secondary new-in-lecture',
-                      id: 'new_lesson_button' %>
-        </div>
-      <% end %>
+      <div class="col-4 text-right">
+        <%= link_to t('buttons.create_section'),
+                    new_section_path(chapter_id: chapter.id),
+                    remote: true,
+                    class: 'btn btn-sm btn-secondary new-in-lecture',
+                    id: 'new_lesson_button' %>
+      </div>
     </div>
   </div>
   <div class="card-body">
@@ -30,10 +22,9 @@
     <% end %>
     <ul class="list-group mt-2">
       <% chapter.sections.each do |s| %>
-        <% cache [s, inspection] do %>
+        <% cache s do %>
           <%= render partial: 'lectures/edit/section',
-                     locals: { section: s,
-                               inspection: inspection } %>
+                     locals: { section: s } %>
         <% end %>
       <% end %>
     </ul>

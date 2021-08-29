@@ -88,16 +88,21 @@ class Submission < ApplicationRecord
     assignment.totally_expired? || correction.present?
   end
 
-  def file_path
-  	return unless manuscript
-  	manuscript.to_io.path
-  end
+  #def file_path(downloadable)
+  #	return unless manuscript
+  # 	manuscript.to_io.path
+  # end
 
-  def filename_for_bulk_download
+  #def correction_file_path
+  #  return unless correction
+  #  correction.to_io.path
+  #end
+
+  def filename_for_bulk_download(end_of_file='')
 		(team.first(180) + '-' +
 			last_modification_by_users_at.strftime("%F-%H%M") +
 			(too_late? ? '-LATE' : '') +
-			+ '-ID-' + id +
+			+ '-ID-' + id + end_of_file +
 			assignment.accepted_file_type)
 			.gsub(/[\x00\/\\:\*\?\"<>\|]/, '_')
 	   	.gsub(/^.*(\\|\/)/, '')
@@ -105,14 +110,12 @@ class Submission < ApplicationRecord
    		.gsub(/[^0-9A-Za-z.\-]/, '_')
   end
 
-  def self.zip_submissions!(tutorial, assignment)
-		submissions = Submission.where(tutorial: tutorial,
-                                   assignment: assignment).proper
+  def self.zip(submissions, downloadables, end_of_file='')
     begin
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
-        submissions.each do |s|
-          stream.put_next_entry(s.filename_for_bulk_download)
-          stream.write IO.read(s.file_path)
+        submissions.zip(downloadables).each do |s, d|
+          stream.put_next_entry(s.filename_for_bulk_download(end_of_file))
+          stream.write IO.read(d.to_io.path)
         end
       end
       archived_filestream.rewind
@@ -121,6 +124,23 @@ class Submission < ApplicationRecord
     end
     archived_filestream
   end
+
+  def self.zip_submissions!(tutorial, assignment)
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
+    manuscripts = submissions.collect { |s| s.manuscript if s.manuscript.present? }
+    zip(submissions, manuscripts)
+  end
+
+  def self.zip_corrections!(tutorial, assignment)
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
+    corrections = submissions.collect { |s| s.correction if s.correction.present? }
+
+    zip(submissions, corrections, '-correction')
+  end
+
+
   ###
   # Checks size and if filetype is acceptable
   ###
@@ -192,12 +212,44 @@ class Submission < ApplicationRecord
 
   private
 
-	def matching_lecture
-		return true if tutorial&.lecture == assignment&.lecture
-		errors.add(:tutorial, :lecture_not_matching)
-	end
+  def matching_lecture
+    return true if tutorial&.lecture == assignment&.lecture
+    errors.add(:tutorial, :lecture_not_matching)
+  end
 
   def set_token
     self.token = Submission.generate_token
+  end
+
+  def self.number_of_submissions(tutorial, assignment)
+    Submission.where(tutorial: tutorial, assignment: assignment)
+              .where.not(manuscript_data: nil).size
+  end
+
+  def self.number_of_corrections(tutorial, assignment)
+    Submission.where(tutorial: tutorial, assignment: assignment)
+              .where.not(correction_data: nil).size
+  end
+
+  def self.number_of_late_submissions(tutorial, assignment)
+    Submission.where(tutorial: tutorial, assignment: assignment)
+              .where.not(manuscript_data: nil)
+              .select { |s| s.too_late? }.size
+  end
+
+  def self.submissions_total(assignment)
+    Submission.where(assignment: assignment)
+              .where.not(manuscript_data: nil).size
+  end
+
+  def self.corrections_total(assignment)
+    Submission.where(assignment: assignment)
+              .where.not(correction_data: nil).size
+  end
+
+  def self.late_submissions_total(assignment)
+    Submission.where(assignment: assignment)
+              .where.not(manuscript_data: nil)
+              .select { |s| s.too_late? }.size
   end
 end

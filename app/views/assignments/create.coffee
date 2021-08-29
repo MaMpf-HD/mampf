@@ -19,7 +19,6 @@ $('#assignment_deadline').addClass('is-invalid')
 <% else %>
 $('.assignmentRow[data-id="0"')
   .replaceWith('<%= j render partial: "assignments/row",
-                      locals: { assignment: @assignment,
-                      					inspection: false } %>')
+                      locals: { assignment: @assignment } %>')
 $('#newAssignmentButton').show()
 <% end %>
