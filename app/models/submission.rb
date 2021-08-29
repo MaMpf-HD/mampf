@@ -140,6 +140,7 @@ class Submission < ApplicationRecord
     zip(submissions, corrections, '-correction')
   end
 
+
   ###
   # Checks size and if filetype is acceptable
   ###
