@@ -23,7 +23,7 @@
                       html: { id: 'lecture-preferences-form' } do |f| %>
           <div class="form-row">
             <% unless lecture.course.term_independent %>
-              <div class="col-2 form-group">
+              <div class="col-6 form-group">
                 <%= f.label :term_id,
                             t('basics.term') %>
                 <%= helpdesk(t('admin.lecture.info.term'), false) %>
@@ -38,7 +38,7 @@
               </div>
             <% end %>
             <% unless lecture.course.term_independent %>
-              <div class="col-3 form-group">
+              <div class="col-6 form-group">
                 <%= f.label :sort,
                             t('basics.type') %>
                 <%= f.select :sort,
@@ -51,7 +51,7 @@
                 </div>
               </div>
             <% end %>
-            <div class="col-2 form-group">
+            <div class="col-6 form-group">
               <%= f.label :start_chapter, t('admin.lecture.first_chapter') %>
               <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>
               <%= f.number_field :start_chapter,
@@ -59,7 +59,7 @@
                                  class: 'form-control' %>
             </div>
             <% unless lecture.seminar? %>
-              <div class="col-2 mt-6">
+              <div class="col-6 mt-6">
                 <div id="start-section-input">
                   <%= f.label :start_section,
                               t('admin.lecture.first_section') %>
@@ -70,7 +70,7 @@
                                      disabled: !lecture.absolute_numbering %>
                 </div>
               </div>
-              <div class="col-3 mt-6">
+              <div class="col-6 mt-6 mb-3">
                 <div class="custom-control custom-checkbox">
                   <%= f.check_box :absolute_numbering,
                                   class: 'custom-control-input' %>

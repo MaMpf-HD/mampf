@@ -538,6 +538,14 @@ class User < ApplicationRecord
     in?(lecture.editors) || self == lecture.teacher
   end
 
+  def tutorials(lecture)
+    given_tutorials.where(lecture: lecture)
+  end
+
+  def has_tutorials?(lecture)
+    !given_tutorials.where(lecture: lecture).empty?
+  end
+
   def proper_submissions_count
     submissions.proper.size
   end
@@ -573,7 +581,6 @@ class User < ApplicationRecord
 
   def image_url_with_host
     return unless image
-
 
     image_url(host: host)
   end
@@ -620,6 +627,10 @@ class User < ApplicationRecord
 
   def layout
     admin || editor? ? 'administration' : 'application_no_sidebar'
+  end
+
+  def course_editor?
+    edited_courses.any?
   end
 
   private
