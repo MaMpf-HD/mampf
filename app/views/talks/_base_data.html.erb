@@ -20,12 +20,14 @@
   </p>
 <% end %>
 <% unless assemble %>
-  <p>
-    <strong>
-      <%= t('basics.tags') %>:
-    </strong>
-    <%= render partial: 'tags/show/tag',
-               collection: talk.tags,
-               cached: true %>
-  </p>
+  <% if talk.tags.any? %>
+    <p>
+      <strong>
+        <%= t('basics.tags') %>:
+      </strong>
+      <%= render partial: 'tags/show/tag',
+                 collection: talk.tags,
+                 cached: true %>
+    </p>
+  <% end %>
 <% end %>
