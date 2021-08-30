@@ -13,7 +13,7 @@
             data-vertex="<%= vertex_id %>">
       <%= t('buttons.edit') %>
     </button>
-  <% else %>
+  <% elsif current_user.editor? || current_user.teacher? %>
     <button id="button-reassign"
             type="button"
             class="btn btn-sm btn-secondary"
@@ -26,9 +26,12 @@
       <%= t('buttons.create_copy') %>
     </button>
   <% end %>
-  <%= link_to t('basics.medium'),
-              edit_or_inspect_medium_path(quizzable),
-              class: 'btn btn-sm btn-secondary' %>
+  <% if current_user.in?(quizzable.editors_with_inheritance) ||
+          current_user.admin || current_user.editor? || current_user.teacher? %>
+    <%= link_to t('basics.medium'),
+                edit_or_inspect_medium_path(quizzable),
+                class: 'btn btn-sm btn-secondary' %>
+  <% end %>
   <button type="button"
           id="selectDefaultTarget"
           class="btn btn-sm btn-secondary">
