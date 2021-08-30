@@ -62,5 +62,22 @@
   </div>
 </div>
 <%= t('admin.users.profile_image') %>
-(<%= t('basics.coming_soon') %>)
 <%= helpdesk(t('admin.user.info.profile_image'), false) %>
+<div class="row">
+<%= image_tag(user.image_url_with_host.presence ||
+                          '/unknown-person.gif',
+                          width: 128,
+                          class: 'img-fluid mx-auto pt-3',
+                          id: 'image-preview') %>
+            <div class="col-12" id="image-uploadButton"
+                 data-choosefiles="<%= t('basics.file') %>">
+              <%= f.hidden_field :image,
+                                 value: user.cached_image_data,
+                                 id: 'upload-image-hidden' %>
+              <%= f.file_field :image,
+                               id: 'upload-image2' %>
+              <%= f.hidden_field :detach_image, value: false, id:'course_detach_image' %>
+            </div>
+          </div>
+          <%= render partial: 'users/upload_image',
+                     locals: { user: user } %>
