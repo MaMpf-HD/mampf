@@ -174,6 +174,14 @@ class MediaController < ApplicationController
       redirect_to edit_lesson_path(@medium.teachable)
       return
     end
+    if @medium.teachable_type == 'Talk'
+      if current_user.in?(@medium.teachable.speakers)
+        redirect_to assemble_talk_path(@medium.teachable)
+        return
+      end
+      redirect_to edit_talk_path(@medium.teachable)
+      return
+    end
     redirect_to edit_course_path(@medium.teachable)
   end
 

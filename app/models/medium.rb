@@ -381,7 +381,7 @@ class Medium < ApplicationRecord
     return true if teachable&.lecture&.editors&.include?(user)
     return true if teachable&.lecture&.teacher == user
     return true if teachable&.course&.editors&.include?(user)
-    return true if teachable.is_a?(Talk) && user.in?(talk.speakers)
+    return true if teachable&.is_a?(Talk) && user.in?(teachable.speakers)
     false
   end
 
@@ -630,7 +630,7 @@ class Medium < ApplicationRecord
     if teachable_type == 'Course'
       return false if restricted? && !teachable.in?(user.courses)
     end
-    if teachable_type.in?(['Lecture', 'Lesson'])
+    if teachable_type.in?(['Lecture', 'Lesson', 'Talk'])
       return false if restricted? && !teachable.lecture.in?(user.lectures)
     end
     true
@@ -833,6 +833,10 @@ class Medium < ApplicationRecord
       result.except!('RandomQuiz', 'Question', 'Remark', 'Erdbeere')
     end
     result.map { |k, v| [v, k] }
+  end
+
+  def select_sorts_with_self
+    (select_sorts + [[Medium.sort_localized[sort], sort]]).uniq
   end
 
   def extracted_linked_media

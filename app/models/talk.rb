@@ -104,6 +104,10 @@ class Talk < ApplicationRecord
       "#{(speakers - [user]).map(&:tutorial_name).join(', ')})"
   end
 
+  def proper_media
+    media.where.not(sort: ['Question', 'Remark'])
+  end
+
   private
 
   def touch_lecture

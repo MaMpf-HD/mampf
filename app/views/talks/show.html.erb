@@ -84,7 +84,8 @@
     <div class="row">
       <div class="col-12">
         <%= render partial: 'media/flat_related_media',
-                   locals: { media: @talk.media,
+                   locals: { media: @talk.proper_media
+                                         .select { |m| m.visible_for_user?(current_user) },
                              tags: true,
                              from: 'talk',
                              questions: false } %>

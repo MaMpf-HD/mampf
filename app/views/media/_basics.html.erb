@@ -9,7 +9,7 @@
       <%= f.label :sort, t('admin.medium.sort') %>
       <%= helpdesk(t('admin.medium.info.sort'), true) %>
       <%= f.select :sort,
-                   options_for_select(medium.select_sorts, medium.sort),
+                   options_for_select(medium.select_sorts_with_self, medium.sort),
                    {},
                    { class: 'form-control',
                      disabled: medium.sort.in?(['Script', 'Quiz',
