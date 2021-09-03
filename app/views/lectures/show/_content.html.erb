@@ -12,16 +12,18 @@
         <% else %>
           <%= render partial: 'lectures/show/talk',
                      collection: lecture.talks,
-                     cached: true %>
+                     cached: false %>
         <% end %>
       <% else %>
-        <% if !lecture.chapters.any? %>
-          <%= t('admin.lecture.no_content_yet') %>
-        <% else %>
-          <%= render partial: 'lectures/show/chapter',
-                     collection: lecture.chapters
-                                        .select { |c| c.hidden.in?([false, nil])  },
-                    cached: true %>
+        <% cache lecture do %>
+          <% if !lecture.chapters.any? %>
+            <%= t('admin.lecture.no_content_yet') %>
+          <% else %>
+            <%= render partial: 'lectures/show/chapter',
+                       collection: lecture.chapters
+                                          .select { |c| c.hidden.in?([false, nil])  },
+                      cached: true %>
+          <% end %>
         <% end %>
       <% end %>
     </div>

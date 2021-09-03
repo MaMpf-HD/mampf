@@ -38,10 +38,12 @@
                             value: 1,
                             class: 'custom-control-label' %>
               </div>
-              <%= t('admin.lecture.media_access') %>
-              <%= render partial: 'media/access_rights',
-                         locals: { f: f,
-                                   medium: nil } %>
+              <div class="p-3">
+                <%= t('admin.lecture.media_access') %>
+                <%= render partial: 'media/access_rights',
+                           locals: { f: f,
+                                     medium: nil } %>
+              </div>
               <div class="custom-control custom-radio">
                 <%= f.radio_button :publish_media,
                                     0,

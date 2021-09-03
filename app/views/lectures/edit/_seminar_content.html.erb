@@ -1,12 +1,12 @@
 <div class="card bg-mdb-color-lighten-5">
   <div class="card-header">
     <div class="row">
-      <div class="col-3">
+      <div class="col-6">
         <h5>
           <%= t("admin.lecture.#{lecture.sort}_content") %>
         </h5>
       </div>
-      <div class="col-5 text-right">
+      <div class="col-6">
         <%= link_to t("buttons.create_talk"),
                     new_talk_path(lecture_id: lecture.id),
                     remote: true,

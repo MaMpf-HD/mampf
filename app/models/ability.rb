@@ -55,6 +55,10 @@ class Ability
         talk.lecture.edited_by?(user) || talk.given_by?(user)
       end
 
+      cannot :show, Talk do |talk|
+        !talk.visible_for_user?(user)
+      end
+
       # anyone should be able to get a sidebar and see the announcements
       can [:organizational, :show_announcements,
            :show_structures, :search_examples, :search, :show_random_quizzes,
@@ -285,7 +289,11 @@ class Ability
 
       # only generic users who are speakers can assemble the talk
       can [:assemble, :modify], Talk do |talk|
-        talk.given_by?(user)
+        talk.given_by?(user) && talk.visible_for_user?(user)
+      end
+
+      cannot :show, Talk do |talk|
+        !talk.visible_for_user?(user)
       end
 
       can [:index, :validate_certificate], Tutorial do |tutorial|

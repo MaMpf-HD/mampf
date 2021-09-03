@@ -830,7 +830,7 @@ de:
           Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
           und wichtige Details anzugeben (wie etwa Literatur zu dem
           Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
-          setzt).
+          setzt). Dieser Text kann von den Vortragenden nicht bearbeitet werden.
         details_info: >
           Das ist eine Beschreibung des Vortrags durch die DozentIn.
         description: >
@@ -847,8 +847,11 @@ de:
         media: >
           Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
           sind. Du kannst neue Medien hinzufügen.
+        tags: >
+          Das ist die Liste der Tags, die zu diesem Vortrag assoziiert sind.
+          Diese kann nicht von den Vortragenden bearbeitet werden.
         by_speakers: >
-          Eintragung durch die Vortragenden
+          (Eintragung durch die Vortragenden)
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

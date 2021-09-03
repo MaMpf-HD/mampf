@@ -12,6 +12,7 @@ class Talk < ApplicationRecord
   has_many :talk_tag_joins, dependent: :destroy
   has_many :tags, through: :talk_tag_joins
 
+  after_save :remove_duplicate_dates
   after_save :touch_lecture
 
   # the talks of a lecture form an ordered list
@@ -30,6 +31,10 @@ class Talk < ApplicationRecord
 
   def long_title
     title_for_viewers
+  end
+
+  def local_title_for_viewers
+    to_label
   end
 
   def given_by?(user)
@@ -108,6 +113,10 @@ class Talk < ApplicationRecord
     media.where.not(sort: ['Question', 'Remark'])
   end
 
+  def visible_for_user?(user)
+    lecture.visible_for_user?(user)
+  end
+
   private
 
   def touch_lecture
@@ -117,5 +126,9 @@ class Talk < ApplicationRecord
   # path for show talk action
   def talk_path
     Rails.application.routes.url_helpers.talk_path(self)
+  end
+
+  def remove_duplicate_dates
+    update_columns(dates: dates.uniq)
   end
 end

@@ -783,7 +783,7 @@ en:
         details: >
           Here you can give s description of the talk and important details
           (e.g. literature). You can use LaTEX (by putting the expression in
-          $...$).
+          $...$). THis text can not be edited by the speakers.
         details_info: >
           This is a description of the talk by the teacher.
         description: >
@@ -800,8 +800,11 @@ en:
         media: >
           Here you can see the list of media associated to this talk.
           You can add new media.
+        talks: >
+          This is the list of tags that are associated to this talk.
+          This list cannot be edited by the speakers of the talk.
         by_the_speeakers: >
-          provided by the speakers
+          (provided by the speakers)
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

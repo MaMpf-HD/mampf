@@ -372,7 +372,7 @@ Rails.application.routes.draw do
   get 'tutorials/:id/assignments/:ass_id/bulk_download_submissions',
       to: 'tutorials#bulk_download_submissions',
       as: 'bulk_download_submissions'
-    
+
   get 'tutorials/:id/assignments/:ass_id/bulk_download_corrections',
       to: 'tutorials#bulk_download_corrections',
       as: 'bulk_download_corrections'

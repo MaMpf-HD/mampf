@@ -77,6 +77,9 @@ $(document).on 'turbolinks:load', ->
     $('#talk-basics-warning').show()
     return
 
+  locale = $('#talk_speaker_ids').data('locale')
+  placeholder = $('#talk_speaker_ids').data('placeholder')
+
   $('#talk_speaker_ids').select2
     ajax:
       url: Routes.list_users_path()
@@ -87,10 +90,10 @@ $(document).on 'turbolinks:load', ->
       processResults: (data) ->
         { results: data }
       cache: true
-    language: $(this).data('locale')
+    language: locale
     theme: 'bootstrap'
     minimumInputLength: 2
-    placeholder: $(this).data('placeholder')
+    placeholder: placeholder
     allowClear: true
 
   return

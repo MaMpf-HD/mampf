@@ -26,7 +26,7 @@
           <%= raw(talk.details) %>
     </div>
     <div class="mb-2">
-      <%= t('content') %> (<%= t('admin.talk.info.by_speakers') %>)
+      <%= t('content') %> <%= t('admin.talk.info.by_speakers') %>
       <%= helpdesk(t('admin.talk.info.description_for_editor'), false) %>
     </div>
     <%= f.trix_editor :description,
