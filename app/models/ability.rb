@@ -242,7 +242,7 @@ class Ability
         medium.visible_for_user?(user)
       end
 
-      can [:new, :create, :search], Medium do |medium|
+      can [:new, :create], Medium do |medium|
         user.speaker?
       end
 

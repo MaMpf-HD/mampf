@@ -19,15 +19,18 @@
         </div>
         <div class="card-body">
           <ul class="nav nav-pills mb-3" id="new-edge-tab" role="tablist">
+            <% if current_user.admin_or_editor? %>
+              <li class="nav-item">
+                <a class="nav-link active" id="importMedia"
+                   data-toggle="pill" href="#import-vertex" role="tab"
+                   aria-controls="import-vertex" aria-selected="true">
+                  <%= t('admin.quiz.import_content') %>
+                </a>
+              </li>
+            <% end %>
             <li class="nav-item">
-              <a class="nav-link active" id="importMedia"
-                 data-toggle="pill" href="#import-vertex" role="tab"
-                 aria-controls="import-vertex" aria-selected="true">
-                <%= t('admin.quiz.import_content') %>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" id="create-question-tab"
+              <a class="nav-link <%= active(!current_user.admin_or_editor?) %>"
+                 id="create-question-tab"
                  data-toggle="pill" href="#create-question" role="tab"
                  aria-controls="create-question" aria-selected="false">
                 <%= t('admin.quiz.create_question') %>
@@ -42,16 +45,20 @@
             </li>
           </ul>
           <div class="tab-content" id="new-edge-tabContent">
-            <div class="tab-pane fade show active" id="import-vertex"
-                 role="tabpanel" aria-labelledby="importMedia">
-              <div id="import-vertex">
-                <%= render partial: 'media/catalog/search_form',
-                           locals: { purpose: 'quiz' } %>
-                <div id="media-search-results">
+            <% if current_user.admin_or_editor? %>
+              <div class="tab-pane fade show active"
+                   id="import-vertex"
+                   role="tabpanel" aria-labelledby="importMedia">
+                <div id="import-vertex">
+                  <%= render partial: 'media/catalog/search_form',
+                             locals: { purpose: 'quiz' } %>
+                  <div id="media-search-results">
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="tab-pane fade" id="create-question"
+            <% end %>
+            <div class="tab-pane fade" id="create-question
+                 <%= show_tab(!current_user.admin_or_editor?) %>"
                  role="tabpanel" aria-labelledby="create-question-tab">
               <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: quiz.id),
                                       scope: 'vertex',

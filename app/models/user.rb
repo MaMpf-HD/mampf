@@ -626,11 +626,16 @@ class User < ApplicationRecord
   end
 
   def layout
-    admin || editor? ? 'administration' : 'application_no_sidebar'
+    return 'administration' if admin_or_editor?
+    'application_no_sidebar'
   end
 
   def course_editor?
     edited_courses.any?
+  end
+
+  def admin_or_editor?
+    admin? || editor?
   end
 
   private
@@ -651,11 +656,6 @@ class User < ApplicationRecord
   def preceding_course_ids
     courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
       courses.all.pluck(:id)
-  end
-
-  def admin_or_editor?
-    return true if admin? || editor?
-    false
   end
 
   def destroy_single_submissions
