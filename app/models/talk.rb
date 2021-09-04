@@ -32,6 +32,10 @@ class Talk < ApplicationRecord
     title_for_viewers
   end
 
+  def short_title_with_lecture_date
+    title_for_viewers
+  end
+
   def given_by?(user)
     user.in?(speakers)
   end
