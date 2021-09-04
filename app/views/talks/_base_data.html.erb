@@ -7,8 +7,8 @@
 <p>
   <strong>
     <%= t('basics.date') %>:
-    <%= date_list(talk) %>
   </strong>
+  <%= talk.dates.map { |d| I18n.l(d) }.join(', ') %>
 </p>
 <% if talk.details.present? %>
   <p>

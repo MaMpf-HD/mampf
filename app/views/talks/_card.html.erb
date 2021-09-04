@@ -26,9 +26,9 @@
         </div>
         <div>
           <% talk.dates.each do |d| %>
-            <div class="badge badge-secondary">
-              <%= localize(d, format: :concise) %>
-            </div>
+            <%= link_to localize(d, format: :concise),
+                        talk_path(talk),
+                        class: 'badge badge-secondary' %>
           <% end %>
         </div>
       </div>

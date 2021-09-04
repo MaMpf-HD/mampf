@@ -33,11 +33,11 @@
          class="bg-edit-question p-2">
       <%= question.parsed_text_with_params %>
     </div>
-      <div id="questionParameters"
-           class="bg-edit-question p-2">
-        <%= render partial: 'questions/edit/parameters',
-                   locals: { parameters: question.parameters } %>
-      </div>
+    <div id="questionParameters"
+         class="bg-edit-question p-2">
+      <%= render partial: 'questions/edit/parameters',
+                 locals: { parameters: question.parameters } %>
+    </div>
     <div class="mb-3">
     </div>
     <%= f.text_area :text,
