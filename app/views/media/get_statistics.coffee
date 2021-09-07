@@ -42,7 +42,6 @@ myChart = new Chart(ctx,
 <% if @medium.sort == 'Kaviar' %>
 
 ctx = $('#videoStats')
-console.log(<%= raw @video_thyme %>)
 data2=  <%= raw @video_thyme %>
 data4=  <%= raw @video_downloads %>
 data3 = data2.map((d)-> {x:new Date(d.x),y:d.y})
@@ -64,7 +63,6 @@ data =
       data: data4
     }
   ]
-console.log data
 myChart = new Chart(ctx,
   type: 'line'
   data: data
@@ -72,6 +70,8 @@ myChart = new Chart(ctx,
     plugins: title:
       text: 'Video'
       display: true
+    responsive: true
+    maintainAspectRatio: false
     scales:
       x:
         type: 'time'
@@ -81,9 +81,52 @@ myChart = new Chart(ctx,
         title:
           display: true
           text: 'Date'
-      y: title:
-        display: true
-        text: 'count' )
+      y: 
+        ticks:
+          precision: 0
+        title:
+          display: true
+          text: 'count' )
 <% end %>
+<% if @medium.manuscript.present? %>
 
+ctx = $('#manuscriptStats')
+data21=  <%= raw @manuscript_access %>
+data31 = data21.map((d)-> {x:new Date(d.x),y:d.y})
+data = 
+  labels: data21.map((d)-> return d.x)
+  datasets: [
+    {
+      label: 'Downloads'
+      backgroundColor: '#4dc9f6'
+      borderColor: '#4dc9f6'
+      fill: false
+      data: data31
+    }
+  ]
+myChart = new Chart(ctx,
+  type: 'line'
+  data: data
+  options:
+    plugins: title:
+      text: 'Manuscript'
+      display: true
+    responsive: true
+    maintainAspectRatio: false
+    scales:
+      x:
+        type: 'time'
+        time: 
+          unit: 'month'
+          tooltipFormat: 'DD.MM.'
+        title:
+          display: true
+          text: 'Date'
+      y: 
+        ticks:
+          precision: 0
+        title:
+          display: true
+          text: 'count' )
+<% end %>
 $('#statisticsModal').modal('show')

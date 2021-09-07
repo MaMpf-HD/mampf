@@ -380,7 +380,7 @@ class MediaController < ApplicationController
                                               mode: 'thyme').map.with_index{|c,i| {x: c.created_at,y:i+1}}.to_json
     end
     if @medium.manuscript.present?
-      @manuscript_access = medium_consumption.where(sort: 'manuscript').count
+      @manuscript_access = medium_consumption.where(sort: 'manuscript').map.with_index{|c,i| {x: c.created_at,y:i+1}}.to_json
     end
     if @medium.sort == 'Quiz'
       @quiz_access = Probe.finished_quizzes(@medium)

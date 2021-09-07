@@ -68,27 +68,25 @@
       <strong>
         <%= t('video.video') %>
       </strong>
-    </div>
-    <div style="width: 400px;">
-      <canvas id="videoStats">
+    
+      <div style="height: 20vh">
+      <canvas id="videoStats" >
       </canvas>
+      </div>
     </div>
   </div>
 <% end %>
 <% if medium.manuscript.present? %>
-  <div class="row">
+  <div class="row mt-3">
     <div class="col-12">
       <strong>
         <%= t('manuscript.manuscript') %>
       </strong>
+    
+    <div style="height: 20vh">
+      <canvas id="manuscriptStats" >
+      </canvas>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-8">
-      <%= t('statistics.manuscript_access') %>
-    </div>
-    <div class="col-4 text-right">
-      <%= manuscript_access %>
     </div>
   </div>
 <% end %>
