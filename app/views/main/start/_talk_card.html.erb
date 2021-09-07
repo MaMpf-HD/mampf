@@ -1,0 +1,14 @@
+<div class="card bg-mdb-color-lighten-7">
+  <div class="card-header bg-mdb-color-lighten-1"
+       style="display: flex; justify-content: space-between;">
+    <%= link_to talk.lecture.title_term_info,
+                lecture_path(talk.lecture),
+                class: 'text-light' %>
+  </div>
+  <%= image_tag(talk.lecture.course.normalized_image_url_with_host ||
+                '/no_course_information.png',
+                class: 'card-img-top teachableThumbnail border-bottom',
+                alt: 'Card image cap') %>
+  <div class="card-body">
+  </div>
+</div>

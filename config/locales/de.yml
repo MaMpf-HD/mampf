@@ -756,11 +756,10 @@ de:
       no_sections: 'Für dieses Kapitel wurden noch keine Abschnitte angelegt.'
       info:
         title: >
-          Hier kannst Du den Titel des Kapitels bzw. Vortrags angeben.
+          Hier kannst Du den Titel des Kapitels angeben.
         position: >
           Hier kannst Du auswählen, an welcher Stelle das Kapitel
-          (bzw. der Vortrag) positioniert werden soll, indem Du das
-          Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
+          positioniert werden soll, indem Du das Vorgängerkapitel auswählst.
         display_number: >
           Wird eine Anzeigenummer angegeben, so überschreibt diese
           die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
@@ -852,6 +851,13 @@ de:
           Diese kann nicht von den Vortragenden bearbeitet werden.
         by_speakers: >
           (Eintragung durch die Vortragenden)
+        title:
+          Hier kannst Du den Titel des Vortrags angeben.
+        position: >
+          Hier kannst Du auswählen, an welcher Stelle der Vortrag positioniert
+          werden soll, indem Du das den Vorgängervortrag auswählst.
+        tags: >
+          Das ist die Liste aller Tags, die zu diesem Vortrag assoziiert sind.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

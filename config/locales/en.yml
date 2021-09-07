@@ -716,10 +716,10 @@ en:
       no_sections: For this chapter, no sections have yet been created.
       info:
         title: >
-          Here you can enter the title of the chapter (or talk).
+          Here you can enter the title of the chapter.
         position: >
-          Here you can select at which position the chapter/talk is placed by
-          selecting the previous chapter/talk.
+          Here you can select at which position the chapter is placed by
+          selecting the previous chapter.
         display_number: >
           If a display number is given, it will overwrite the calculated number.
           That makes sense e.g. if you want 'Chapter A. My Chapter' as title
@@ -805,6 +805,13 @@ en:
           This list cannot be edited by the speakers of the talk.
         by_the_speeakers: >
           (provided by the speakers)
+        title: >
+          Here you can enter the title of the talk.
+        position: >
+          Here you can select at which position the talk is placed by
+          selecting the previous talk.
+        tags: >
+          This is the list of all tags associated to this talk.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
