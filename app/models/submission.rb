@@ -199,35 +199,31 @@ class Submission < ApplicationRecord
     tmp_folder = Dir.mktmpdir
     begin
       files.each do |file_shrine|
-      #Zip::File.open(zipfile) do |zip_file|
-      #  zip_file.each do |entry|
-        p "EEE2",file_shrine
-          filename = file_shrine["metadata"]["filename"]
-      	  if !'-ID-'.in?(filename)
-      	 	  report[:invalid_filenames].push(filename)
-        	  next
-      	  end
-          submission = Submission.find_by_id(filename.split('-ID-').last
-                                                  .remove('.pdf'))
-          if !submission
-        	  report[:invalid_id].push(filename)
-        	  next
-          end
-          if submission.too_late? && submission.accepted.nil?
-        	  report[:no_decision].push(submission.team)
-        	  next
-          end
-          if submission.too_late? && submission.accepted == false
-					  report[:rejected].push(submission.team)
-        	  next
-          end
-          submission.update(correction: file_shrine.to_json)
-          if !submission.valid?
-        	  report[:invalid_file].push(filename)
-        	  next
-          end
-          report[:successful_saves].push(submission)
-       # end
+        filename = file_shrine["metadata"]["filename"]
+        if !'-ID-'.in?(filename)
+          report[:invalid_filenames].push(filename)
+          next
+        end
+        submission = Submission.find_by_id(filename.split('-ID-').last
+                                                .remove('.pdf'))
+        if !submission
+          report[:invalid_id].push(filename)
+          next
+        end
+        if submission.too_late? && submission.accepted.nil?
+          report[:no_decision].push(submission.team)
+          next
+        end
+        if submission.too_late? && submission.accepted == false
+          report[:rejected].push(submission.team)
+          next
+        end
+        submission.update(correction: file_shrine.to_json)
+        if !submission.valid?
+          report[:invalid_file].push(filename)
+          next
+        end
+        report[:successful_saves].push(submission)
       end
     rescue => e
       report[:errors] = "#{e.message}"

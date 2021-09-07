@@ -27,48 +27,6 @@ class Tutorial < ApplicationRecord
 		Submission.where(tutorial: self).proper.none?
   end
 
-  def add_bulk_corrections!(assignment, files)
-    relevant_submissions = submissions.where(assignment: assignment).proper
-    report = { successful_saves: [], submissions: relevant_submissions.size,
-               invalid_filenames: [], invalid_id: [],
-               no_decision: [], rejected: [], invalid_file: [] }
-    files.each do |file_shrine|
-      filename = file_shrine["metadata"]["filename"]
-      if !'-ID-'.in?(filename)
-        report[:invalid_filenames].push(filename)
-        next
-      end
-      submission = Submission.find_by_id(filename.split('-ID-').last
-                                              	 .split('.')&.first)
-      if !submission
-        report[:invalid_id].push(filename)
-        next
-      end
-      if submission.too_late? && submission.accepted.nil?
-        report[:no_decision].push(submission.team)
-        next
-      end
-      if submission.too_late? && submission.accepted == false
-        report[:rejected].push(submission.team)
-        next
-      end
-      submission.correction = file_shrine.to_json
-			errors = submission.check_file_properties_any(submission.correction
-                                                           .metadata,
-                                                :correction)
-			if errors.present?
-        report[:invalid_file].push(filename)
-        next
-			end
-      submission.update(correction: file_shrine.to_json)
-      if !submission.valid?
-        report[:invalid_file].push(filename)
-        next
-      end
-      report[:successful_saves].push(submission)
-    end
-    report
-  end
 
   def teams_to_csv(assignment)
     submissions = Submission.where(tutorial: self, assignment: assignment)
