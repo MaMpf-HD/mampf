@@ -21,9 +21,11 @@
            name="medium[video]"
            id="upload-video">
   </div>
-  <div id="video-uploadButton-button-actual"
-         class="btn btn-sm btn-outline-secondary"
-         style="display:none">
+  <div  id="video-uploadButton-button-actual"
+        class="btn btn-sm btn-outline-secondary"
+        style="display:none"
+        data-tr-success="<%= t('buttons.upload_success') %>"
+        data-tr-failure="<%= t('submission.upload_failure')%>">
           <%= t('buttons.upload') %>
   </div>
   <div class="col-6 text-right">

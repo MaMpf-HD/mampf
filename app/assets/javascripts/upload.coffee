@@ -365,6 +365,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
         onprogress = (e) ->
             percentUpload = Math.floor(100/fileInput.files.length * e.loaded / e.total+100*(i)/fileInput.files.length)
             $(progressBarElement).text(percentUpload+" %")
+            $(progressBarElement).text("Processing...") if percentUpload == 100
             return
         onload = (xhr) -> () ->
           console.log xhr.status
