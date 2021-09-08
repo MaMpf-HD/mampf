@@ -49,6 +49,10 @@ class Medium < ApplicationRecord
 
   has_many :quiz_certificates, foreign_key: 'quiz_id', dependent: :destroy
 
+  # a medium can be in watchlists of multiple users
+  has_many :watchlist_entries, dependent: :destroy
+  has_many :watchlist_users, through: :watchlist_entries, source: :user
+
   has_many :assignments
 
   serialize :quiz_graph, QuizGraph

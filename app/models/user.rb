@@ -54,6 +54,9 @@ class User < ApplicationRecord
   # and claiming the certificate
   has_many :quiz_certificates, dependent: :destroy
 
+  # a user has a watchlist with watchlist_entries
+  has_many :watchlists, dependent: :destroy
+
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
 

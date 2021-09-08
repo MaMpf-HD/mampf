@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_133704) do
+ActiveRecord::Schema.define(version: 2021_08_27_141317) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -842,6 +842,35 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "watchables", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "medium_id", null: false
+    t.integer "medium_position"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["medium_id"], name: "index_watchables_on_medium_id"
+    t.index ["user_id"], name: "index_watchables_on_user_id"
+  end
+
+  create_table "watchlist_entries", force: :cascade do |t|
+    t.bigint "watchlist_id", null: false
+    t.bigint "medium_id", null: false
+    t.integer "medium_position"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["medium_id"], name: "index_watchlist_entries_on_medium_id"
+    t.index ["watchlist_id"], name: "index_watchlist_entries_on_watchlist_id"
+  end
+
+  create_table "watchlists", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "watchlist_entry_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_watchlists_on_user_id"
+    t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
+  end
+
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"
@@ -876,4 +905,10 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "watchables", "media"
+  add_foreign_key "watchables", "users"
+  add_foreign_key "watchlist_entries", "media"
+  add_foreign_key "watchlist_entries", "watchlists"
+  add_foreign_key "watchlists", "users"
+  add_foreign_key "watchlists", "watchlist_entries"
 end

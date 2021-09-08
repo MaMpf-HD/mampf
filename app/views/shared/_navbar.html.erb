@@ -53,6 +53,14 @@
           </a>
         </li>
         <li class="nav-item">
+          <a href="<%= show_watchlist_path %>"
+             class="fas fa-utensils fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="<%= t('navbar.watchlist') %>">
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
              class="fas fa-sign-out-alt fa-lg text-light nav-link"
              style="text-decoration: none; "

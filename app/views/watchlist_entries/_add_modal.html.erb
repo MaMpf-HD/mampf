@@ -1,0 +1,68 @@
+<div class="modal fade"
+     id="addToWatchlistModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="addWatchlistModalLabel" aria-hidden="true"
+     data-keyboard="true">
+  <div class="modal-dialog modal-lg"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="addToWatchlistModalTitle">
+          <%= t('watchlist.add') %>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"
+           id="addToWatchlistModalContent">
+        <div class="row">
+          <div class="col">
+            <%= form_with do |f| %>
+              <div class="form-group">
+                <%= f.label :watchlist, t('watchlist.select') %>
+                
+                <%= f.select :watchlist, ["dsads"],
+                             { prompt: t('watchlist.empty') },
+                             { class: 'form-control',
+                               disabled: true } %>
+              </div>
+            <% end %>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-primary"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#collapseNewWatchlist"
+                    aria-expanded="false"
+                    aria-controls="collapseNewWatchlist">
+              <%= t('watchlist.new') %>
+            </button>
+          </div>
+        </div>
+        <div class="collapse" id="collapseNewWatchlist">
+          <div class="row">
+            <div class="col-auto">
+              <%= t('watchlist.name') %>
+            </div>
+            <div class="col">
+              <input type="text" class="form-control" id="inputNewWatchlist" placeholder="<%= t('watchlist.enter_name') %>">
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-primary"
+                      type="button">
+                <%= t('watchlist.create') %>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
+        <button type="button" class="btn btn-primary"><%= t('watchlist.add') %></button>
+      </div>
+    </div>
+  </div>
+</div>

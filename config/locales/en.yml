@@ -152,6 +152,7 @@ en:
     comments: 'Comments'
     blog: 'Blog'
     logout: 'Logout'
+    watchlist: 'Watchlist'
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
@@ -1963,6 +1964,16 @@ en:
         course will be displayed.
         </li>
         </ul>
+  watchlist:
+    add: 'Add to your watchlist'
+    select: 'Select'
+    name: 'Name'
+    enter_name: 'Enter name'
+    empty: 'No watchlist created yet'
+    create: 'Create'
+    new: 'New'
+    close: 'Close'
+    confirm: 'Add'
   video:
     video: 'Video'
     no_video: 'There is no video.'

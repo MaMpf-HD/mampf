@@ -134,6 +134,7 @@ de:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+    watchlist: 'Watchlist'
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
@@ -2085,6 +2086,16 @@ de:
         zu diesem Modul angezeigt.
         </li>
         </ul>
+  watchlist:
+    add: 'Zu deiner Watchlist hinzufügen'
+    select: 'Auswählen'
+    name: 'Name'
+    enter_name: 'Namen eingeben'
+    empty: 'Noch keine Watchlist angelegt'
+    create: 'Erstellen'
+    new: 'Neu'
+    close: 'Schließen'
+    confirm: 'Hinzufügen'
   video:
     video: 'Video'
     no_video: 'Es gibt kein Video.'
