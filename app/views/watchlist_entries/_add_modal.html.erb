@@ -21,9 +21,10 @@
         <div class="row">
           <div class="col">
             <%= form_with do |f| %>
-              <div class="form-group">
+              <div class="form-group form-row">
+             
                 <%= f.label :watchlist, t('watchlist.select') %>
-                
+       
                 <%= f.select :watchlist, ["dsads"],
                              { prompt: t('watchlist.empty') },
                              { class: 'form-control',
