@@ -38,22 +38,46 @@ resetSelectized = (index, select) ->
       else if this.dataset.model == 'course_tag'
         courseId = this.dataset.course
         fill_path = Routes.fill_course_tags_path()
-      $.ajax fill_path,
-        type: 'GET'
-        dataType: 'json'
-        data: {
-          course_id: courseId
-        }
-        success: (result) ->
-          for option in result
-            if option.value.toString() not in existing_values
-              new_option = document.createElement('option')
-              new_option.value = option.value
-              new_option.text = option.text
-              model_select.add(new_option, null)
-          model_select.dataset.filled = 'true'
-          $(model_select).selectize({ plugins: plugins })
+      # $.ajax fill_path,
+      #   type: 'GET'
+      #   dataType: 'json'
+      #   data: {
+      #     course_id: courseId
+      #   }
+      #   success: (result) ->
+      #     for option in result
+      #       if option.value.toString() not in existing_values
+      #         new_option = document.createElement('option')
+      #         new_option.value = option.value
+      #         new_option.text = option.text
+      #         model_select.add(new_option, null)
+      #     model_select.dataset.filled = 'true'
+      #     console.log(Routes)
+      new TomSelect("#"+model_select.id,
+        plugins: plugins
+        valueField: 'value'
+        labelField: 'name'
+        searchField: 'name'
+        load: (query, callback) ->
+          console.log()
+          url = fill_path+"?course_id="+courseId+"&q=" + encodeURIComponent(query)
+          fetch(url).then((response) ->
+            response.json()
+          ).then((json) ->
+            callback json.map((item)-> return {name:item.text,value:item.value})
+          ).catch ->
+            callback()
+            return
           return
+        render:
+          option: (data, escape) ->
+            return '<div>' +
+              '<span class="title">' + escape(data.name) + '</span>' +
+            '</div>'
+          item: (item, escape) ->
+            console.log(item)
+            return '<div title="' + escape(item.name) + '">' + escape(item.name) + '</div>'
+      )
       return
     else
       $(this).selectize({ plugins: plugins })

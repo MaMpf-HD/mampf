@@ -35,7 +35,7 @@ $(document).on 'turbolinks:load', ->
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
     $('#publish-medium-button').hide()
-    teachableSelector = document.getElementById('medium_teachable').selectize
+    teachableSelector = document.getElementById('medium_teachable').tomselect
     value = teachableSelector.getValue()
     if value != ''
       $('#medium_teachable_id').val(value.split('-')[1])
