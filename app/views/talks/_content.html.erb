@@ -45,5 +45,15 @@
          id="talk-description-preview">
           <%= raw(talk.description) %>
     </div>
+    <div class="custom-control custom-checkbox">
+      <%= f.check_box :display_description,
+                      class: 'custom-control-input' %>
+      <%= f.label :display_description,
+                  t('admin.talk.display_description_teacher'),
+                  { class: 'custom-control-label' } %>
+      <%= t('admin.talk.info.by_speakers') %>
+      <%= helpdesk(t('admin.talk.info.display_description_teacher'),
+                   false) %>
+    </div>
   </div>
 </div>

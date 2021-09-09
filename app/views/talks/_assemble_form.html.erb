@@ -82,18 +82,39 @@
           </h5>
         </div>
         <div class="card-body">
+          <div class="row mb-3">
+            <div class="col-12">
+              <div class="custom-control custom-checkbox">
+                <%= f.check_box :display_description,
+                                class: 'custom-control-input' %>
+                <%= f.label :display_description,
+                            t('admin.talk.display_description'),
+                            { class: 'custom-control-label' } %>
+                <%= helpdesk(t('admin.talk.info.display_description'),
+                             false) %>
+              </div>
+              <div class="col-12 text-warning ml-2">
+                <% if talk.description.present? && !talk.display_description %>
+                  <span class="badge badge-warning">
+                    <%= t('basics.info') %>
+                  </span>
+                  <%= t('admin.talk.description_warning') %>
+                <% end %>
+              </div>
+            </div>
+          </div>
           <%= f.trix_editor :description,
                             class: 'bg-light',
-                            id: 'talk-details-trix',
+                            id: 'talk-description-trix',
                             data: { content: talk.description,
-                                    preview: 'talk-details-preview' } %>
+                                    preview: 'talk-description-preview' } %>
           <div class="row my-2">
             <div class="col-12">
               <%= t('basics.preview') %>
             </div>
           </div>
           <div class="alert alert-dark bg-mdb-color-lighten-6"
-               id="talk-details-preview">
+               id="talk-description-preview">
             <%= raw(talk.description) %>
           </div>
         </div>

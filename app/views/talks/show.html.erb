@@ -63,7 +63,7 @@
         <%= render partial: 'talks/data',
                    locals: { talk: @talk } %>
       </div>
-      <% if @talk.description.present? %>
+      <% if @talk.display_description && @talk.description.present? %>
         <div class="col-12 mt-3">
           <div class="card bg-light">
             <div class="card-header bg-generic-card-header">

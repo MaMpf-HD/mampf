@@ -779,11 +779,17 @@ en:
       next_talk: next talk
       previous_talk: previous talk
       no_talks: There a no talks yet.
+      display_description: Display text on talk's page
+      display_description_teacher: Display content on the talk's page
+      description_warning: >
+        You have entered text, but this will only be displayed on the talk's
+        page if you check this box and save.
       info:
         details: >
-          Here you can give s description of the talk and important details
+          Here you can give a description of the talk and important details
           (e.g. literature). You can use LaTEX (by putting the expression in
-          $...$). THis text can not be edited by the speakers.
+          $...$). This text will appear on the seminar's main page and
+          the talk's page and can not be edited by the speakers.
         details_info: >
           This is a description of the talk by the teacher.
         description: >
@@ -803,7 +809,7 @@ en:
         talks: >
           This is the list of tags that are associated to this talk.
           This list cannot be edited by the speakers of the talk.
-        by_the_speeakers: >
+        by_speakers: >
           (provided by the speakers)
         title: >
           Here you can enter the title of the talk.
@@ -813,6 +819,15 @@ en:
         tags: >
           This is the list of all tags associated to this talk.
         cospeakers: Cospeakers
+        display_description: >
+          In order that the text is displayed on the talks's page, you have to
+          check this box. Without this box being checked, the text is not
+          displayed which can make sense e.g. if the current version of the text
+          is only preliminary.
+        display_description_teacher: >
+          The speakers can decide whether their text will be displayed on the
+          talk's page (this box will typically be unchecked if the text is
+          still preliminary). You can overwrite this setting.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

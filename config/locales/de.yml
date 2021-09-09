@@ -824,12 +824,19 @@ de:
       next_talk: 'nächster Vortrag'
       previous_talk: 'voriger Vortrag'
       no_talks: Es sind keine Vorträge von Dir vorhanden.
+      display_description: Text auf Vortragsseite anzeigen
+      display_description_teacher: Inhalt auf Vortragsseite anzeigen
+      description_warning: >
+        Du hast Text eingetragen, dieser wird jedoch erst auf der
+        Vortragsseite angezeigt, wenn Du den obigen Haken setzt und
+        abspeicherst.
       info:
         details: >
           Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
           und wichtige Details anzugeben (wie etwa Literatur zu dem
           Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
-          setzt). Dieser Text kann von den Vortragenden nicht bearbeitet werden.
+          setzt). Dieser Text erscheint auf der Seminarhauptseite und der Seite
+          des Vortrags kann von den Vortragenden nicht bearbeitet werden.
         details_info: >
           Das ist eine Beschreibung des Vortrags durch die DozentIn.
         description: >
@@ -859,6 +866,16 @@ de:
         tags: >
           Das ist die Liste aller Tags, die zu diesem Vortrag assoziiert sind.
         cospeakers: Mitvortragende
+        display_description: >
+          Damit der Text auf der Vortragsseite angezeigt wird, musst Du
+          diesen Haken setzen. Ohne den Haken wird der Text nicht angezeigt,
+          was z.B. sinnvoll sein kann, wenn es sich bei der aktuellen Fassung
+          nur um einen Entwurf handelt.
+        display_description_teacher: >
+          Die Vortragenden können entscheiden, ob ihr Text zum Inhalt auf
+          der Vortragsseite angezeigt wird (dieser Halen wird typischerweise
+          nicht gesetzt sein, wenn es ich bei dem Text noch um einen Entwurf
+          handelt). Du kannst diese Einstellung überschreiben.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

@@ -39,7 +39,7 @@ class TalksController < ApplicationController
   def update
     I18n.locale = @talk.lecture.locale_with_inheritance ||
                     current_user.locale || I18n.default_locale
-    dates = params[:talk][:dates].values.compact - ['']
+    dates = params[:talk][:dates]&.values&.compact - ['']
     @talk.update(talk_params)
     @talk.update(dates: dates) if dates && @talk.valid?
     if @talk.valid?
@@ -83,11 +83,13 @@ class TalksController < ApplicationController
 
   def talk_params
     params.require(:talk).permit(:title, :lecture_id, :details, :description,
-                                 speaker_ids: [], tag_ids: [])
+                                 :display_description, speaker_ids: [],
+                                 tag_ids: [])
   end
 
   def modify_params
-    params.require(:talk).permit(:description, tag_ids: [])
+    params.require(:talk).permit(:description, :display_description,
+                                 tag_ids: [])
   end
 
   def set_view_locale
