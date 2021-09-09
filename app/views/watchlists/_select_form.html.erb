@@ -1,30 +1,52 @@
-<%= form_with model: WatchlistEntry.new, remote: true, id: "watchlistSelectForm" do |f| %>
+<%= form_with model: WatchlistEntry.new,
+              remote: true,
+              id: "watchlistSelectForm",
+              html: { class: "needs-validation",
+                      novalidate: true } do |f| %>
 	<div class="form-group form-row">
     <%= f.label :watchlist, t('watchlist.select') %>
     <%= f.hidden_field :medium_id, value: @medium.id %>
-    <div class="input-group mb-3" id="watchlist_dropdown">
+    <div class="input-group mb-3">
       <% if !Watchlist.where(user: current_user).empty? %>
         <% if !@watchlist.present? %>
-          <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                      {}, { class: 'form-control' } %>
+          <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
+            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
+                         {}, { class: 'form-control is-invalid', id: 'watchlistSelect' } %>
+          <% else %>
+            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
+                         {}, { class: 'form-control', id: 'watchlistSelect' } %>
+          <% end %>
         <% else %>
-          <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
-                      {}, { class: 'form-control' } %>
+          <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
+            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
+                         {}, { class: 'form-control is-invalid', id: 'watchlistSelect' } %>
+          <% else %>
+            <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
+                         {}, { class: 'form-control', id: 'watchlistSelect' } %>
+          <% end %>
         <% end %>
       <% else %>
         <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
                      { prompt: t('watchlist.empty')}, { class: 'form-control', disabled: true } %>
       <% end %>
       <div class="input-group-append">
-        <button class="form-control"
+        <button class="btn btn-outline-secondary"
             type="button"
             data-toggle="collapse"
             data-target="#collapseNewWatchlist"
             aria-expanded="false"
-            aria-controls="collapseNewWatchlist">
+            aria-controls="collapseNewWatchlist"
+            id="openNewWatchlistForm">
           <i class="fa fa-plus"></i>
         </button>
       </div>
+      <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
+        <div class="invalid-feedback">
+          <% @watchlist_entry.errors.full_messages.each do |msg| %>
+            <%= msg %>
+          <% end %>
+        </div>
+      <% end %>
     </div>
 	</div>
 <% end %>

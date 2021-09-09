@@ -1,19 +1,17 @@
 <div class="collapse" id="collapseNewWatchlist">
-	<%= form_with model: Watchlist.new, remote: true do |f| %>
-		<%= f.hidden_field :medium_id, value: @medium.id %>
-		<div class="form-group form-row">
-		
-			<%= f.label :label, t('watchlist.name') %>
-
-			<div class="input-group mb-3">
-		<%= f.text_field :name, placeholder: t('watchlist.enter_name'),
-					class: 'form-control',
-					:required => true %>
-		<div class="input-group-append">
-			<%= f.submit t('watchlist.create'),
-			{ class: 'btn btn-primary' } %>
-		</div>
-			</div>
-		</div>
-	<% end %>
+  <%= form_with model: Watchlist.new, remote: true do |f| %>
+    <%= f.hidden_field :medium_id, value: @medium.id %>
+      <div class="form-group form-row">
+        <%= f.label :label, t('watchlist.name') %>
+        <div class="input-group mb-3">
+          <%= f.text_field :name, placeholder: t('watchlist.enter_name'),
+                          class: 'form-control',
+                          :required => true %>
+          <div class="input-group-append">
+            <%= f.submit t('watchlist.create'),
+                        { class: 'btn btn-primary' } %>
+          </div>
+      </div>
+    </div>
+  <% end %>
 </div>

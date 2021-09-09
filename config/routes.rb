@@ -430,8 +430,6 @@ Rails.application.routes.draw do
 
   resources :watchlists
 
-  get 'watchlist_entries/submit', to: ''
-
   resources :watchlist_entries
 
   get 'examples/:id', to: 'erdbeere#show_example',

@@ -1971,14 +1971,14 @@ en:
     enter_name: 'Enter name'
     empty: 'No watchlist created yet'
     create: 'Create'
-    creation_success: 'Playlist was successfully created'
-    creation_fail: 'Playlist could not be created'
+    creation_success: 'Watchlist was successfully created'
+    creation_fail: 'Watchlist could not be created'
     new: 'New'
     close: 'Close'
     confirm: 'Add'
   watchlist_entry:
-    add_success: 'The medium was added to your playlist successfully'
-    add_fail: 'There was an error adding the medium to your playlist'
+    add_success: 'The medium was added to your watchlist successfully'
+    add_fail: 'There was an error adding the medium to your watchlist'
   video:
     video: 'Video'
     no_video: 'There is no video.'
@@ -3325,3 +3325,8 @@ en:
             value:
               out_of_range: >
                 Your vote is outside of the allowed range.
+        watchlist_entry:
+          attributes:
+            medium_id:
+              taken:
+                is already in this watchlist.

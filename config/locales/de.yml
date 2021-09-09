@@ -2093,14 +2093,14 @@ de:
     enter_name: 'Namen eingeben'
     empty: 'Noch keine Watchlist angelegt'
     create: 'Erstellen'
-    creation_success: 'Playlist wurde erfolgreich erstellt'
-    creation_fail: 'Playlist konnte nicht erstellt werden'
+    creation_success: 'Watchlist wurde erfolgreich erstellt'
+    creation_fail: 'Watchlist konnte nicht erstellt werden'
     new: 'Neu'
     close: 'Schließen'
     confirm: 'Hinzufügen'
   watchlist_entry:
-    add_success: 'Das Medium wurde erfolgreich in die Playlist hinzufügt'
-    add_fail: 'Es gab einen Fehler beim Hinzufügen zur Playlist'
+    add_success: 'Das Medium wurde erfolgreich in die Watchlist hinzufügt'
+    add_fail: 'Es gab einen Fehler beim Hinzufügen zur Watchlist'
   video:
     video: 'Video'
     no_video: 'Es gibt kein Video.'
@@ -3516,3 +3516,8 @@ de:
               out_of_range: >
                 Das abgegebene Votum ist leider außerhalb des zulässingen
                 Bereiches.
+        watchlist_entry:
+          attributes:
+            medium_id:
+              taken:
+                ist schon in dieser Watchlist.

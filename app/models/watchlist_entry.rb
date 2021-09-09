@@ -6,4 +6,5 @@ class WatchlistEntry < ApplicationRecord
 
   validates :medium, presence: true
   validates :watchlist, presence: true
+  validates :medium_id, uniqueness: { scope: :watchlist_id }
 end

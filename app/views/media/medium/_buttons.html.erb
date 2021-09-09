@@ -85,16 +85,6 @@
   </a>
 </div>
 
-<div class="mr-2">
-  <%= link_to show_add_to_watchlist_path(medium), remote: true do %>
-    <i class="fas fa-list text-secondary"
-      data-toggle="tooltip"
-      data-placement="bottom"
-      title="<%= t('watchlist.add') %>">
-    </i>
-  <% end %>
-</div>
-
 <% if medium.video.present? %>
   <div class="download-button mr-2">
     <a href="<%= medium.video_download_url %>"
@@ -132,5 +122,3 @@
     </a>
   </div>
 <% end %>
-
-<div id='watchlist-content'></div>

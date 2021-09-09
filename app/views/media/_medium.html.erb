@@ -62,6 +62,14 @@
              title="<%= t('medium.waiting_for_tag') %>">
           </i>
         <% end %>
+        <%= link_to '',
+                    show_add_to_watchlist_path(medium),
+                    class: 'fas fa-list text-light mr-2',
+                    style: 'text-decoration: none;',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('watchlist.add'),
+                    remote: true %>
       </div>
     </div>
     <% cache [medium, from == 'tag', ref_link] do %>
