@@ -1,14 +1,50 @@
 <div class="card bg-mdb-color-lighten-7">
   <div class="card-header bg-mdb-color-lighten-1"
        style="display: flex; justify-content: space-between;">
-    <%= link_to talk.lecture.title_term_info,
-                lecture_path(talk.lecture),
-                class: 'text-light' %>
+    <div>
+      <%= link_to talk.title,
+                  talk_path(talk),
+                  class: 'text-light' %>
+    </div>
+    <div>
+      <%= link_to '',
+                  assemble_talk_path(talk),
+                  class: 'far fa-edit text-primary text-light',
+                  data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none; ' +
+                           'display: inline;' %>
+    </div>
   </div>
   <%= image_tag(talk.lecture.course.normalized_image_url_with_host ||
                 '/no_course_information.png',
                 class: 'card-img-top teachableThumbnail border-bottom',
                 alt: 'Card image cap') %>
   <div class="card-body">
+    <div>
+      <%= link_to talk.lecture.title_term_info,
+                  lecture_path(talk.lecture),
+                  class: 'text-dark' %>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <% talk.dates.each do |d| %>
+            <%= link_to localize(d, format: :concise),
+                        talk_path(talk),
+                        class: 'badge badge-secondary' %>
+        <% end %>
+      </div>
+    </div>
+    <% if talk.speakers.size > 1 %>
+      <div>
+        <i class="fas fa-handshake"
+           data-toggle="tooltip"
+           title="<%= t('admin.talk.info.cospeakers') %>">
+        </i>
+        <%= talk.cospeakers(current_user).map(&:tutorial_name)
+                .join(', ') %>
+      </div>
+    <% end %>
   </div>
 </div>

@@ -121,6 +121,11 @@ class Talk < ApplicationRecord
     lecture.visible_for_user?(user)
   end
 
+  def cospeakers(user)
+    return unless user.in?(speakers)
+    speakers - [user]
+  end
+
   private
 
   def touch_lecture

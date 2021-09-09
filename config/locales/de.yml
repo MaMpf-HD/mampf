@@ -858,6 +858,7 @@ de:
           werden soll, indem Du das den Vorgängervortrag auswählst.
         tags: >
           Das ist die Liste aller Tags, die zu diesem Vortrag assoziiert sind.
+        cospeakers: Mitvortragende
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

@@ -812,6 +812,7 @@ en:
           selecting the previous talk.
         tags: >
           This is the list of all tags associated to this talk.
+        cospeakers: Cospeakers
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
