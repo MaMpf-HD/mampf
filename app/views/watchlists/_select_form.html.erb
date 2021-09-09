@@ -1,0 +1,30 @@
+<%= form_with model: WatchlistEntry.new, remote: true, id: "watchlistSelectForm" do |f| %>
+	<div class="form-group form-row">
+    <%= f.label :watchlist, t('watchlist.select') %>
+    <%= f.hidden_field :medium_id, value: @medium.id %>
+    <div class="input-group mb-3" id="watchlist_dropdown">
+      <% if !Watchlist.where(user: current_user).empty? %>
+        <% if !@watchlist.present? %>
+          <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
+                      {}, { class: 'form-control' } %>
+        <% else %>
+          <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
+                      {}, { class: 'form-control' } %>
+        <% end %>
+      <% else %>
+        <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
+                     { prompt: t('watchlist.empty')}, { class: 'form-control', disabled: true } %>
+      <% end %>
+      <div class="input-group-append">
+        <button class="form-control"
+            type="button"
+            data-toggle="collapse"
+            data-target="#collapseNewWatchlist"
+            aria-expanded="false"
+            aria-controls="collapseNewWatchlist">
+          <i class="fa fa-plus"></i>
+        </button>
+      </div>
+    </div>
+	</div>
+<% end %>

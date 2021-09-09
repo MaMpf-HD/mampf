@@ -1,0 +1,1 @@
+$('#watchlistModalBody').append("<span class='badge badge-danger'><%= t('watchlist.creation_fail')%></span>")

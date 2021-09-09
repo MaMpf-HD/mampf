@@ -86,7 +86,7 @@
 </div>
 
 <div class="mr-2">
-  <%= link_to show_add_to_watchlist_path, remote: true do %>
+  <%= link_to show_add_to_watchlist_path(medium), remote: true do %>
     <i class="fas fa-list text-secondary"
       data-toggle="tooltip"
       data-placement="bottom"
@@ -133,4 +133,4 @@
   </div>
 <% end %>
 
-<div id='addToWatchlist-content'></div>
+<div id='watchlist-content'></div>

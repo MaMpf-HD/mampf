@@ -419,11 +419,20 @@ Rails.application.routes.draw do
                               as: 'delete_account'
   resources :users, only: [:index, :edit, :update, :destroy]
 
-  get 'watchlist', to: 'watchlist_entries#show',
-                  as: 'show_watchlist'
+  get 'watchlists/show', to: 'watchlists#show',
+                         as: 'show_watchlist'
 
-  get 'watchlist_entries/add_to_watchlist', to: 'watchlist_entries#add_to_watchlist',
-                                            as: 'show_add_to_watchlist'
+  get 'watchlists/add_to_watchlist/:id', to: 'watchlists#add_to_watchlist',
+                                                as: 'show_add_to_watchlist'
+
+  get 'watchlists/add', to: 'watchlists#add',
+                        as: 'add_watchlist'
+
+  resources :watchlists
+
+  get 'watchlist_entries/submit', to: ''
+
+  resources :watchlist_entries
 
   get 'examples/:id', to: 'erdbeere#show_example',
                       as: 'erdbeere_example'

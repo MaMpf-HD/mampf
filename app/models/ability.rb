@@ -159,7 +159,7 @@ class Ability
       can :update, User do |u|
         user == u
       end
-      can [:teacher, :fill_user_select, :add_to_watchlist, :list, :delete_account], User
+      can [:teacher, :fill_user_select, :list, :delete_account], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
       can [:new, :create, :edit, :open, :close, :set_alternatives,
