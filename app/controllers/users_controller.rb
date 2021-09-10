@@ -69,6 +69,13 @@ class UsersController < ApplicationController
   end
 
   def fill_user_select
+    if params[:q]
+      result = User.where("name LIKE ?","%#{params[:q]}%").pluck(:name, :email, :id)
+                 .map { |u| { value: u.third,
+                              text: "#{u.first} (#{u.second})" } }
+      render json: result
+      return
+    end
     result = User.pluck(:name, :email, :id)
                  .map { |u| { value: u.third,
                               text: "#{u.first} (#{u.second})" } }
