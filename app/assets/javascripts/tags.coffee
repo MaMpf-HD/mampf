@@ -5,8 +5,8 @@
 $(document).on 'turbolinks:load', ->
   # fill courses selector in admin tag search with user's edited courses
   $('#tags-edited-courses').on 'click', ->
-    search_course_ids.selectize.setValue(JSON.parse(this.dataset.courses))
-    search_course_ids.selectize.enable()
+    search_course_ids.tomselect.setValue(JSON.parse(this.dataset.courses))
+    search_course_ids.tomselect.enable()
     $('#search_all_courses').prop('checked', false)
     return
 

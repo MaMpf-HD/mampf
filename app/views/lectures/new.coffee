@@ -4,7 +4,8 @@ $('#new-lecture-area').empty()
   .append('<%= j render partial: "lectures/new",
                         locals: { lecture: @lecture,
                                   from: @from } %>').show()
-$('#new-lecture-area .selectize').selectize({ plugins: ['remove_button'] })
+$('#new-lecture-area .selectize').each ->
+  new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
 $('[data-toggle="popover"]').popover()
 
 # hide all other buttons on admin index page
@@ -12,7 +13,7 @@ $('.admin-index-button').hide()
 
 # make sure that there will always be a teacher selected
 teacherSelector = document.getElementById('lecture_teacher_id')
-sel = teacherSelector.selectize
+sel = teacherSelector.tomselect
 sel.on 'blur', ->
   value = sel.getValue()
   if value == ''

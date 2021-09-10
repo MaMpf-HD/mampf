@@ -531,7 +531,6 @@ GEM
       sprockets-rails
       tilt
     select2-rails (4.0.13)
-    selectize-rails (0.12.6)
     selenium-webdriver (3.142.7)
       childprocess (>= 0.5, < 4.0)
       rubyzip (>= 1.2.2)
@@ -697,7 +696,6 @@ DEPENDENCIES
   rubyzip
   sass-rails (>= 6)
   select2-rails
-  selectize-rails
   selenium-webdriver
   shrine
   sidekiq

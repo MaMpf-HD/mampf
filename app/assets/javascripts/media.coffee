@@ -21,7 +21,7 @@ $(document).on 'turbolinks:load', ->
   # disable/enable search field on the media search page, depending on
   # whether 'all tags'/'all editors'/... are selected
   $('[id^="search_all_"]').on 'change', ->
-    selector = document.getElementById(this.dataset.id).selectize
+    selector = document.getElementById(this.dataset.id).tomselect
     if $(this).prop('checked')
       selector.disable()
     else

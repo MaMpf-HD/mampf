@@ -4,8 +4,8 @@
 
 # transfer knowledge about selected items from selectize to html options
 resetSelectized = (index, select) ->
-  selectedValue = select.selectize.getValue()
-  select.selectize.destroy()
+  selectedValue = select.tomselect.getValue()
+  select.tomselect.destroy()
   $(select).find('option').attr('selected', null)
   if $(select).prop('multiple')
     for val in selectedValue
@@ -80,7 +80,7 @@ resetSelectized = (index, select) ->
       )
       return
     else
-      $(this).selectize({ plugins: plugins })
+      new TomSelect("#"+this.id,{ plugins: plugins })
     $('input[id$="-selectized"]').css('width', '100%')
   return
 

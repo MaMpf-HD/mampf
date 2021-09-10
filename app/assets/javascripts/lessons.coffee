@@ -32,12 +32,12 @@ $(document).on 'turbolinks:load', ->
   # add/remove associated tags in the tag selector
   # if sections are selected/deselected
   if sectionSelector? && tagSelector?
-    sectionSelectize = sectionSelector.selectize
+    sectionSelectize = sectionSelector.tomselect
     # tags and their associated sections are stored in the data-tags attribute
     tags = $(sectionSelector).data('tags')
 
     sectionSelectize.on 'item_remove', (value) ->
-      tagSelectize = tagSelector.selectize
+      tagSelectize = tagSelector.tomselect
       removeTags = (tags.filter (x) -> x.section.toString() == value.toString())[0].tags
       ids = removeTags.map (x) -> x[0]
       for i in ids
@@ -47,7 +47,7 @@ $(document).on 'turbolinks:load', ->
       return
 
     sectionSelectize.on 'item_add', (value) ->
-      tagSelectize = tagSelector.selectize
+      tagSelectize = tagSelector.tomselect
       addTags = (tags.filter (x) -> x.section.toString() == value.toString())[0].tags
       for i in addTags
         tagSelectize.addItem(i[0])

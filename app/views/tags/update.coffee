@@ -50,25 +50,25 @@ $('#tag-related-tags-error-<%= @tag.id.to_i %>')
 $('#newTagModal').modal('hide')
 # update tag selectors depending on where the new tag modal was called from
 if $('#newTagModal').data('from') == 'section'
-  tagSelector = document.getElementById('section_tag_ids_<%= @section&.id&.to_i %>').selectize
+  tagSelector = document.getElementById('section_tag_ids_<%= @section&.id&.to_i %>').tomselect
   tagSelector.addOption({ value: <%= @tag.id %>, text: '<%= @tag.title %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'medium'
-  tagSelector = document.getElementById('medium_tag_ids').selectize
+  tagSelector = document.getElementById('medium_tag_ids').tomselect
   tagSelector.addOption({ value: <%= @tag.id %>, text: '<%= @tag.title %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'lesson'
-  tagSelector = document.getElementById('lesson_tag_ids').selectize
+  tagSelector = document.getElementById('lesson_tag_ids').tomselect
   tagSelector.addOption({ value: <%= @tag.id %>, text: '<%= @tag.title %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'tag'
-  tagSelector = document.getElementById('tag_related_tag_ids').selectize
+  tagSelector = document.getElementById('tag_related_tag_ids').tomselect
   tagSelector.addOption({ value: <%= @tag.id %>, text: '<%= @tag.title %>'})
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)

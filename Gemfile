@@ -66,7 +66,6 @@ gem "devise-bootstrap-views"
 gem "fuzzy-string-match"
 gem "coveralls", require: false
 gem "kaminari"
-gem "selectize-rails"
 gem "acts_as_list"
 gem "acts_as_tree"
 gem "activerecord-import",
