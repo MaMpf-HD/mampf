@@ -21,14 +21,15 @@
            name="medium[manuscript]"
            id="upload-manuscript"
            accept="application/pdf">
+  
+      <div id="manuscript-uploadButton-button-actual"
+            class="btn btn-sm btn-outline-secondary"
+            style="display:none"
+            data-tr-success="<%= t('buttons.upload_success') %>"
+            data-tr-failure="<%= t('submission.upload_failure')%>">
+              <%= t('buttons.upload') %>
+      </div>
   </div>
-  <div id="manuscript-uploadButton-button-actual"
-         class="btn btn-sm btn-outline-secondary"
-         style="display:none"
-         data-tr-success="<%= t('buttons.upload_success') %>"
-         data-tr-failure="<%= t('submission.upload_failure')%>">
-          <%= t('buttons.upload') %>
-         </div>
   <div class="col-6 text-right">
     <% if medium.manuscript.present? %>
       <button type="button"
