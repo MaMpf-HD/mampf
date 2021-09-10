@@ -39,11 +39,13 @@ myChart = new Chart(ctx,
           beginAtZero: true
           precision: 0] )
 <% end %>
-<% if @medium.sort == 'Kaviar' %>
+<% if @medium.video.present? %>
 
 ctx = $('#videoStats')
-data2=  <%= raw @video_thyme %>
-data4=  <%= raw @video_downloads %>
+data2=  <%= raw @video_thyme %> || []
+$('#videoCount').text(data2.length || 0)
+data4=  <%= raw @video_downloads %> || []
+$('#downloadCount').text(data4.length || 0)
 data3 = data2.map((d)-> {x:new Date(d.x),y:d.y})
 data = 
   labels: data2.map((d)-> return d.x)
@@ -92,6 +94,7 @@ myChart = new Chart(ctx,
 
 ctx = $('#manuscriptStats')
 data21=  <%= raw @manuscript_access %>
+$('#manuscriptCount').text(data21.length || 0)
 data31 = data21.map((d)-> {x:new Date(d.x),y:d.y})
 data = 
   labels: data21.map((d)-> return d.x)
