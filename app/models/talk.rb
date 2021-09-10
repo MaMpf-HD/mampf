@@ -45,10 +45,6 @@ class Talk < ApplicationRecord
     user.in?(speakers)
   end
 
-  def locale_with_inheritance
-    lecture.locale_with_inheritance
-  end
-
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
       lecture.title_for_viewers + ', ' + to_label
@@ -95,16 +91,15 @@ class Talk < ApplicationRecord
   end
 
   def number
-    lecture.talks.index(self) + 1
+    position
   end
 
   def previous
-    return unless number > 1
-    lecture.talks[number - 2]
+    higher_item
   end
 
   def next
-    lecture.talks[number]
+    lower_item
   end
 
   def team_info(user)
@@ -119,11 +114,6 @@ class Talk < ApplicationRecord
 
   def visible_for_user?(user)
     lecture.visible_for_user?(user)
-  end
-
-  def cospeakers(user)
-    return unless user.in?(speakers)
-    speakers - [user]
   end
 
   private
