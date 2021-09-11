@@ -33,6 +33,20 @@ RSpec.describe Talk, type: :model do
     end
   end
 
+  describe 'talk with speaker' do
+    before(:all) do
+      @talk = FactoryBot.build(:valid_talk, :with_speaker)
+    end
+    it 'is valid' do
+      expect(@talk).to be_valid
+    end
+    it 'has a speaker' do
+      expect(@talk.speakers).not_to be_nil
+    end
+  end
+
+  # Test methods
+
   describe '#talk' do
     it 'returns itself' do
       talk = FactoryBot.build(:talk)
@@ -128,30 +142,9 @@ RSpec.describe Talk, type: :model do
       @talk = FactoryBot.create(:talk, lecture: lecture)
     end
 
-    describe '#locale_with_inheritance' do
-      it 'returns the locale of the lecture' do
-        expect(@talk.locale_with_inheritance).to eq 'br'
-      end
-    end
-
     describe '#locale' do
       it 'returns the locale of the lecture' do
         expect(@talk.locale).to eq 'br'
-      end
-    end
-
-    describe '#published' do
-      before :all do
-        course = FactoryBot.build(:course)
-        @lecture = FactoryBot.build(:lecture, course: course, released: 'all')
-        @talk = FactoryBot.build(:talk, lecture: @lecture)
-      end
-      it 'returns true if the associated lecture is published' do
-        expect(@talk.published?).to be true
-      end
-      it 'returns false if the associated lecture is not published' do
-        @lecture.released = nil
-        expect(@talk.published?).to be false
       end
     end
   end
@@ -162,15 +155,6 @@ RSpec.describe Talk, type: :model do
       talk = FactoryBot.build(:valid_talk)
       talk.dates = [Date.new(2021,1,11), Date.new(2021,1,12)]
       expect(talk.dates_localized).to eq '11.01.2021, 12.01.2021'
-    end
-  end
-
-  describe '#course' do
-    it 'returns the course associated to the talk' do
-      course = FactoryBot.build(:course)
-      lecture = FactoryBot.build(:lecture, course: course, released: 'all')
-      talk = FactoryBot.build(:talk, lecture: lecture)
-      expect(talk.course).to eq course
     end
   end
 
@@ -213,6 +197,66 @@ RSpec.describe Talk, type: :model do
 
       it 'returns nil if the talk is the last one' do
         expect(@talk3.next).to be nil
+      end
+    end
+
+    describe '#team_info' do
+      before :all do
+        I18n.locale = 'de'
+        @user1 = FactoryBot.create(:confirmed_user, name: 'Harry Bosch')
+        @user2 = FactoryBot.create(:confirmed_user, name: 'Michael Haller')
+        @user3 = FactoryBot.create(:confirmed_user, name: 'Jack McEvoy')
+      end
+      it 'returns empty string if user is not a speaker of the talk' do
+        talk = FactoryBot.create(:valid_talk)
+        talk.speakers << @user1
+        expect(talk.team_info(@user2)).to eq ''
+      end
+      it 'returns empty string if user is the only speaker of the talk' do
+        talk = FactoryBot.create(:valid_talk)
+        talk.speakers << @user1
+        expect(talk.team_info(@user1)).to eq ''
+      end
+      it 'returns a string of cospeakers if user is not the only speaker '\
+         'of the talk' do
+        talk = FactoryBot.create(:valid_talk)
+        talk.speakers << [@user1, @user2, @user3]
+        expect(talk.team_info(@user1))
+          .to eq '(zusammen mit Michael Haller, Jack McEvoy)'
+      end
+    end
+
+    describe '#proper_media' do
+      it 'returns the array of media associated to the talk that are neither '\
+         'Questions nor Remarks' do
+        talk = FactoryBot.create(:valid_talk)
+        medium1 = FactoryBot.create(:talk_medium, teachable: talk,
+                                    sort: 'Kaviar')
+        medium2 = FactoryBot.create(:talk_medium, teachable: talk,
+                                    sort: 'Sesam')
+        medium3 = FactoryBot.create(:talk_medium, teachable: talk,
+                                    sort: 'Question')
+        medium4 = FactoryBot.create(:talk_medium, teachable: talk,
+                                    sort: 'Remark')
+        expect(talk.proper_media).to match_array([medium1, medium2])
+      end
+    end
+
+    describe '#card_header_path' do
+      it 'returns the path for the talk if the user is subscribed to the '\
+         'seminar' do
+        lecture = FactoryBot.build(:lecture)
+        user = FactoryBot.create(:confirmed_user)
+        user.lectures << lecture
+        talk = FactoryBot.create(:valid_talk, lecture: lecture)
+        expect(talk.card_header_path(user)).to include('talks/')
+      end
+
+      it 'returns nil if user is not subscribed to the seminar' do
+        lecture = FactoryBot.build(:lecture)
+        user = FactoryBot.create(:confirmed_user)
+        talk = FactoryBot.create(:valid_talk, lecture: lecture)
+        expect(talk.card_header_path(user)).to be_nil
       end
     end
   end

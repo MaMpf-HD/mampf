@@ -1,3 +1,4 @@
+# Talk class
 class Talk < ApplicationRecord
   belongs_to :lecture, touch: true
 
@@ -17,6 +18,9 @@ class Talk < ApplicationRecord
 
   # the talks of a lecture form an ordered list
   acts_as_list scope: :lecture
+
+  delegate :locale_with_inheritance, :published?, :visible_for_user?, :course,
+           to: :lecture
 
   def talk
     self
@@ -57,6 +61,7 @@ class Talk < ApplicationRecord
 
   def card_header_path(user)
     return unless user.lectures.include?(lecture)
+
     talk_path
   end
 
@@ -64,21 +69,8 @@ class Talk < ApplicationRecord
     dates.map { |d| I18n.localize d, format: :concise }.join(', ')
   end
 
-  def locale_with_inheritance
-    lecture.locale_with_inheritance
-  end
-
   def locale
     locale_with_inheritance
-  end
-
-  def published?
-    lecture.published?
-  end
-
-  def course
-    return unless lecture.present?
-    lecture.course
   end
 
   # a talk should also see other lessons in the same lecture
@@ -104,7 +96,8 @@ class Talk < ApplicationRecord
 
   def team_info(user)
     return '' unless user.in?(speakers) && (speakers - [user]).any?
-    "(#{I18n.t('basics.together_with')} " +
+
+    "(#{I18n.t('basics.together_with')} " \
       "#{(speakers - [user]).map(&:tutorial_name).join(', ')})"
   end
 
@@ -112,22 +105,18 @@ class Talk < ApplicationRecord
     media.where.not(sort: ['Question', 'Remark'])
   end
 
-  def visible_for_user?(user)
-    lecture.visible_for_user?(user)
-  end
-
   private
 
-  def touch_lecture
-    lecture.touch
-  end
+    def touch_lecture
+      lecture.touch
+    end
 
-  # path for show talk action
-  def talk_path
-    Rails.application.routes.url_helpers.talk_path(self)
-  end
+    # path for show talk action
+    def talk_path
+      Rails.application.routes.url_helpers.talk_path(self)
+    end
 
-  def remove_duplicate_dates
-    update_columns(dates: dates.uniq)
-  end
+    def remove_duplicate_dates
+      update_columns(dates: dates.uniq)
+    end
 end

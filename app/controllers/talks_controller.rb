@@ -9,7 +9,7 @@ class TalksController < ApplicationController
     @lecture = Lecture.find_by_id(params[:lecture_id])
     @talk = Talk.new(lecture: @lecture)
     I18n.locale = @talk.lecture.locale_with_inheritance ||
-                    current_user.locale || I18n.default_locale
+                  current_user.locale || I18n.default_locale
   end
 
   def edit
@@ -24,7 +24,7 @@ class TalksController < ApplicationController
     dates = params[:talk][:dates].values.compact - ['']
     @talk.dates = dates if dates
     I18n.locale = @talk&.lecture&.locale_with_inheritance ||
-                    current_user.locale || I18n.default_locale
+                  current_user.locale || I18n.default_locale
     position = params[:talk][:predecessor]
     # place the chapter in the correct position
     if position.present?
@@ -38,8 +38,8 @@ class TalksController < ApplicationController
 
   def update
     I18n.locale = @talk.lecture.locale_with_inheritance ||
-                    current_user.locale || I18n.default_locale
-    dates = params[:talk][:dates]&.values&.compact - ['']
+                  current_user.locale || I18n.default_locale
+    dates = params[:talk][:dates]&.values&.compact.to_a - ['']
     @talk.update(talk_params)
     @talk.update(dates: dates) if dates && @talk.valid?
     if @talk.valid?
@@ -75,25 +75,26 @@ class TalksController < ApplicationController
 
   private
 
-  def set_talk
-    @talk = Talk.find_by_id(params[:id])
-    return if @talk.present?
-    redirect_to :root, alert: I18n.t('controllers.no_talk')
-  end
+    def set_talk
+      @talk = Talk.find_by_id(params[:id])
+      return if @talk.present?
 
-  def talk_params
-    params.require(:talk).permit(:title, :lecture_id, :details, :description,
-                                 :display_description, speaker_ids: [],
-                                 tag_ids: [])
-  end
+      redirect_to :root, alert: I18n.t('controllers.no_talk')
+    end
 
-  def modify_params
-    params.require(:talk).permit(:description, :display_description,
-                                 tag_ids: [])
-  end
+    def talk_params
+      params.require(:talk).permit(:title, :lecture_id, :details, :description,
+                                   :display_description,
+                                   speaker_ids: [], tag_ids: [])
+    end
 
-  def set_view_locale
-    I18n.locale = @talk.lecture.locale_with_inheritance ||
+    def modify_params
+      params.require(:talk).permit(:description, :display_description,
+                                   tag_ids: [])
+    end
+
+    def set_view_locale
+      I18n.locale = @talk.lecture.locale_with_inheritance ||
                     current_user.locale || I18n.default_locale
-  end
+    end
 end

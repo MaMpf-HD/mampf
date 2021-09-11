@@ -24,6 +24,15 @@ FactoryBot.define do
         [ Faker::Date.in_date_period ]
     end
 
+    trait :with_speaker do
+      after(:build) do |t|
+        speaker = build(:confirmed_user)
+        t.speakers << speaker
+      end
+    end
+
     factory :valid_talk, traits: [:with_seminar]
+
+    factory :valid_talk_with_speaker, traits: [:with_seminar, :with_speaker]
   end
 end
