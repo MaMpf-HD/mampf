@@ -39,7 +39,12 @@ describe("Courses", function () {
         it("can create lecture", () => {
             cy.appFactories([
                 ['create', 'course'],
-                ['create', 'term']
+                ['create', 'term'],
+                ['create','editable_user_join',{
+                    'editable_id': 1,
+                    'editable_type':'Course',
+                    'user_id':1
+                }]
             ]).then((records) => {
                 cy.server();
                 cy.route('**/new').as('new');
