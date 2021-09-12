@@ -57,8 +57,9 @@
                 </div>
               </div>
             <% end %>
-            <div class="tab-pane fade" id="create-question
-                 <%= show_tab(!current_user.admin_or_editor?) %>"
+            <div class="tab-pane fade
+                        <%= show_tab(!current_user.admin_or_editor?) %>"
+                        id="create-question"
                  role="tabpanel" aria-labelledby="create-question-tab">
               <%= bootstrap_form_with url: quiz_vertices_path(quiz_id: quiz.id),
                                       scope: 'vertex',

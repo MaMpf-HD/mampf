@@ -42,8 +42,7 @@
            data-toggle="tooltip"
            title="<%= t('admin.talk.info.cospeakers') %>">
         </i>
-        <%= talk.cospeakers(current_user).map(&:tutorial_name)
-                .join(', ') %>
+        <%= cospeaker_list(talk, current_user) %>
       </div>
     <% end %>
   </div>

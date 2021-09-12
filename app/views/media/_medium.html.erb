@@ -66,7 +66,7 @@
     </div>
     <% if medium.teachable.is_a?(Talk) %>
       <div class="card-header bg-mdb-color-lighten-1 text-light">
-        <%= medium.teachable.speakers.map(&:tutorial_name).join(', ') %>
+        <%= speaker_list(medium.teachable) %>
       </div>
     <% end %>
     <% cache [medium, from == 'tag', ref_link] do %>

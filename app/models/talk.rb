@@ -65,10 +65,6 @@ class Talk < ApplicationRecord
     talk_path
   end
 
-  def dates_localized
-    dates.map { |d| I18n.localize d, format: :concise }.join(', ')
-  end
-
   def locale
     locale_with_inheritance
   end
@@ -94,15 +90,12 @@ class Talk < ApplicationRecord
     lower_item
   end
 
-  def team_info(user)
-    return '' unless user.in?(speakers) && (speakers - [user]).any?
-
-    "(#{I18n.t('basics.together_with')} " \
-      "#{(speakers - [user]).map(&:tutorial_name).join(', ')})"
-  end
-
   def proper_media
     media.where.not(sort: ['Question', 'Remark'])
+  end
+
+  def cospeakers(user)
+    speakers - [user]
   end
 
   private

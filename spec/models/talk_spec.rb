@@ -149,15 +149,6 @@ RSpec.describe Talk, type: :model do
     end
   end
 
-  describe '#dates_localized' do
-    it 'returns the correct localized dates' do
-      I18n.locale = 'de'
-      talk = FactoryBot.build(:valid_talk)
-      talk.dates = [Date.new(2021,1,11), Date.new(2021,1,12)]
-      expect(talk.dates_localized).to eq '11.01.2021, 12.01.2021'
-    end
-  end
-
   describe '#media_scope' do
     it 'returns the lecture associated to the talk' do
       lecture = FactoryBot.build(:lecture, released: 'all')
@@ -197,32 +188,6 @@ RSpec.describe Talk, type: :model do
 
       it 'returns nil if the talk is the last one' do
         expect(@talk3.next).to be nil
-      end
-    end
-
-    describe '#team_info' do
-      before :all do
-        I18n.locale = 'de'
-        @user1 = FactoryBot.create(:confirmed_user, name: 'Harry Bosch')
-        @user2 = FactoryBot.create(:confirmed_user, name: 'Michael Haller')
-        @user3 = FactoryBot.create(:confirmed_user, name: 'Jack McEvoy')
-      end
-      it 'returns empty string if user is not a speaker of the talk' do
-        talk = FactoryBot.create(:valid_talk)
-        talk.speakers << @user1
-        expect(talk.team_info(@user2)).to eq ''
-      end
-      it 'returns empty string if user is the only speaker of the talk' do
-        talk = FactoryBot.create(:valid_talk)
-        talk.speakers << @user1
-        expect(talk.team_info(@user1)).to eq ''
-      end
-      it 'returns a string of cospeakers if user is not the only speaker '\
-         'of the talk' do
-        talk = FactoryBot.create(:valid_talk)
-        talk.speakers << [@user1, @user2, @user3]
-        expect(talk.team_info(@user1))
-          .to eq '(zusammen mit Michael Haller, Jack McEvoy)'
       end
     end
 

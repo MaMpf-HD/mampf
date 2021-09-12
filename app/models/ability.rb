@@ -25,7 +25,15 @@ class Ability
       end
 
       cannot :index, Announcement
-      can :manage, [:administration, :erdbeere, Item, Referral]
+      can :manage, [:administration, :erdbeere]
+
+      can :manage, Referral do |referral|
+        user.can_edit?(referral.medium)
+      end
+
+      can :manage, Item do |item|
+        item.medium.nil? ||  user.can_edit?(item.medium?)
+      end
       cannot :classification, :administration
       # :create is a cancancan alias for new and create actions
       can :create, [Chapter, Lecture, Lesson, Medium, Section, Talk]
@@ -312,14 +320,24 @@ class Ability
 
       can :delete_account, User
 
-      can :manage, [Item, Referral]
+      can :manage, Referral do |referral|
+        user.can_edit?(referral.medium)
+      end
+
+      can :manage, Item do |item|
+        item.medium.nil? ||  user.can_edit?(item.medium)
+      end
 
       can [:linearize, :set_root, :set_level,
            :update_default_target, :delete_edge], Quiz do |quiz|
         quiz.edited_with_inheritance_by?(user)
       end
 
-      can :manage, [:event, :vertex]
+      can :manage, [:event]
+
+      can :manage, :vertex do |quiz|
+        user.can_edit?(@quiz)
+      end
 
       can [:create, :update, :destroy], Answer do |answer|
         answer.question.edited_with_inheritance_by?(user)

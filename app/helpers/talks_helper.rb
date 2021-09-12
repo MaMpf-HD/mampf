@@ -16,10 +16,10 @@ module TalksHelper
   end
 
   def date_list(talk)
-    return t('basics.tba') unless talk.dates.present?
-    list = talk.dates.collect do |d|
-      content_tag(:span, localize(d, format: :concise),
-                  class: 'badge badge-light mr-2')
-    end.join.html_safe
+    talk.dates.map { |d| I18n.l(d) }.join(', ')
+  end
+
+  def cospeaker_list(talk, user)
+    (talk.speakers.to_a - [user]).map(&:tutorial_name).join(', ')
   end
 end
