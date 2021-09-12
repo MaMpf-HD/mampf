@@ -248,7 +248,7 @@ class Ability
 
       can [:edit, :update, :publish, :enrich, :add_item, :add_reference,
            :add_screenshot, :remove_screenshot, :export_toc,
-           :export_screenshot, :destroy], Medium do |medium|
+           :export_screenshot, :destroy, :create], Medium do |medium|
         user.can_edit?(medium)
       end
 
