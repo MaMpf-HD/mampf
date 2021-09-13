@@ -633,6 +633,8 @@ class Medium < ApplicationRecord
     if teachable_type.in?(['Lecture', 'Lesson', 'Talk'])
       return false if restricted? && !teachable.lecture.in?(user.lectures)
     end
+    # generic users cannot view questions (they would see the answers)
+    return false if sort == 'Question' && user.generic?
     true
   end
 

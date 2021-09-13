@@ -638,6 +638,10 @@ class User < ApplicationRecord
     admin? || editor?
   end
 
+  def generic?
+    !(admin? || teacher? || editor?)
+  end
+
   private
 
   def set_defaults

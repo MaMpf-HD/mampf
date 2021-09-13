@@ -13,6 +13,10 @@ class MediaController < ApplicationController
   authorize_resource except: :create
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= MediumAbility.new(current_user)
+  end
+
   def index
     @media = paginated_results
     render layout: 'application'
@@ -369,9 +373,6 @@ class MediaController < ApplicationController
       @medium.tags = Tag.where(id: params[:tag_ids])
       @medium.update(updated_at: Time.now)
     end
-  end
-
-  def postprocess_tags
   end
 
   def register_download

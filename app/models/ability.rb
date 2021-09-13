@@ -20,9 +20,6 @@ class Ability
       # :read is a cancancan alias for index and show actions
       can [:read], :all
 
-      can :inspect, Medium do |medium|
-        medium.visible_for_user?(user)
-      end
 
       cannot :index, Announcement
       can :manage, [:administration, :erdbeere]
@@ -36,7 +33,7 @@ class Ability
       end
       cannot :classification, :administration
       # :create is a cancancan alias for new and create actions
-      can :create, [Chapter, Lecture, Lesson, Medium, Section, Talk]
+      can :create, [Chapter, Lecture, Lesson, Section, Talk]
       # :update is a cancancan alias for update and edit actions
 
       can [:new, :create], Announcement
@@ -97,21 +94,6 @@ class Ability
       can [:modal, :list_sections], Lesson
 
       can :start, :main
-
-      can [:search, :register_download, :show_comments], Medium
-      cannot :show, Medium
-      can [:play, :display, :geogebra, :show], Medium do |medium|
-        medium.visible_for_user?(user)
-      end
-      can [:update, :enrich, :add_item, :add_reference, :add_screenshot,
-           :remove_screenshot, :export_toc, :import_script_items,
-           :export_references,
-           :export_screenshot, :publish, :destroy,
-           :import_manuscript, :fill_teachable_select,
-           :fill_media_select, :update_tags, :get_statistics,
-           :cancel_publication], Medium do |m|
-        m.edited_with_inheritance_by?(user)
-      end
 
       can [:index, :destroy_all, :destroy_lecture_notifications,
            :destroy_news_notifications], Notification
@@ -199,20 +181,6 @@ class Ability
       can :start, :main
       cannot :read, [:administration, Term, User, Announcement]
       cannot :index, Interaction
-      # guest users can play/display media only when their release status
-      # is 'all', logged in users can do that unless the release status is
-      # 'locked'
-      can [:play, :display, :geogebra], Medium do |medium|
-        if !user.new_record?
-          medium.visible_for_user?(user)
-        else
-          medium.free?
-        end
-      end
-
-      can [:register_download], Medium do |medium|
-        !user.new_record?
-      end
 
       can [:edit, :open, :close, :set_alternatives, :get_votes_count], Clicker
 
@@ -239,25 +207,6 @@ class Ability
       can [:index, :destroy_all], Notification
       can :destroy, Notification do |n|
         n.recipient == user
-      end
-
-      cannot :show, Medium do |medium|
-        !medium.visible_for_user?(user) ||
-          (medium.sort == 'Question' && !user.can_edit?(medium))
-      end
-
-      can :show_comments, Medium do |medium|
-        medium.visible_for_user?(user)
-      end
-
-      can [:new, :create], Medium do |medium|
-        user.speaker?
-      end
-
-      can [:edit, :update, :publish, :enrich, :add_item, :add_reference,
-           :add_screenshot, :remove_screenshot, :export_toc,
-           :export_screenshot, :destroy, :create], Medium do |medium|
-        user.can_edit?(medium)
       end
 
       cannot :show, Section do |section|
