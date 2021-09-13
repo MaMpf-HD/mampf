@@ -23,7 +23,7 @@
     </div>
     <div class="alert alert-dark bg-mdb-color-lighten-6"
          id="talk-details-preview">
-          <%= raw(talk.details) %>
+          <%= sanitize talk.details %>
     </div>
     <div class="mb-2">
       <%= t('content') %> <%= t('admin.talk.info.by_speakers') %>
@@ -43,7 +43,7 @@
     </div>
     <div class="alert alert-dark bg-mdb-color-lighten-6"
          id="talk-description-preview">
-          <%= raw(talk.description) %>
+          <%= sanitize talk.description %>
     </div>
     <div class="custom-control custom-checkbox">
       <%= f.check_box :display_description,

@@ -44,7 +44,7 @@
     <% end %>
   </div>
   <div class="card-body">
-    <%= raw(talk.details) %>
+    <%= sanitize talk.details %>
     <div class="row">
       <div class="col-12 mt-2">
         <%= render partial: 'tags/show/tag',

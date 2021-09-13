@@ -94,10 +94,6 @@ class Talk < ApplicationRecord
     media.where.not(sort: ['Question', 'Remark'])
   end
 
-  def cospeakers(user)
-    speakers - [user]
-  end
-
   private
 
     def touch_lecture
