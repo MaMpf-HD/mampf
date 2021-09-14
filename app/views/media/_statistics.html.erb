@@ -68,10 +68,25 @@
       <strong>
         <%= t('video.video') %>
       </strong>
-    
+      <div class="row">
+        <div class="col-8">
+        <%= t('statistics.video_thyme') %>
+        </div>
+        <div class="col-4 text-right">
+        <span id="videoCount"></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-8">
+        <%= t('statistics.video_downloads') %>
+        </div>
+        <div class="col-4 text-right">
+        <span id="downloadCount"></span>
+        </div>
+      </div>
       <div style="height: 20vh">
-      <canvas id="videoStats" >
-      </canvas>
+        <canvas id="videoStats" >
+        </canvas>
       </div>
     </div>
   </div>
@@ -82,7 +97,14 @@
       <strong>
         <%= t('manuscript.manuscript') %>
       </strong>
-    
+      <div class="row">
+        <div class="col-8">
+        <%= t('statistics.manuscript_access') %>
+        </div>
+        <div class="col-4 text-right">
+        <span id="manuscriptCount"></span>
+        </div>
+      </div>
     <div style="height: 20vh">
       <canvas id="manuscriptStats" >
       </canvas>
