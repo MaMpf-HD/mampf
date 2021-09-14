@@ -375,12 +375,12 @@ class MediaController < ApplicationController
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption.where(sort: 'video',
-                                                  mode: 'download').map.with_index{|c,i| {x: c.created_at,y:i+1}}.to_json
+                                                  mode: 'download').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
       @video_thyme = medium_consumption.where(sort: 'video',
-                                              mode: 'thyme').map.with_index{|c,i| {x: c.created_at,y:i+1}}.to_json
+                                              mode: 'thyme').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
     end
     if @medium.manuscript.present?
-      @manuscript_access = medium_consumption.where(sort: 'manuscript').map.with_index{|c,i| {x: c.created_at,y:i+1}}.to_json
+      @manuscript_access = medium_consumption.where(sort: 'manuscript').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
     end
     if @medium.sort == 'Quiz'
       @quiz_access = Probe.finished_quizzes(@medium)
