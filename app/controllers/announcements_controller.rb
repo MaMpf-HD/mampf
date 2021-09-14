@@ -1,8 +1,12 @@
 # AnnouncementsController
 class AnnouncementsController < ApplicationController
-  authorize_resource
+  authorize_resource except: :create
   layout 'administration'
   before_action :set_announcement, only: [:propagate, :expel]
+
+  def current_ability
+    @current_ability ||= AnnouncementAbility.new(current_user)
+  end
 
   def index
     @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
@@ -19,6 +23,7 @@ class AnnouncementsController < ApplicationController
   def create
     @announcement = Announcement.new(announcement_params)
     @announcement.announcer = current_user
+    authorize! :create, @announcement
     @announcement.save
     if @announcement.valid?
       # trigger creation of notifications for all relevant users

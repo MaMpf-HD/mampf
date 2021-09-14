@@ -20,9 +20,7 @@ class Ability
       # :read is a cancancan alias for index and show actions
       can [:read], :all
 
-
-      cannot :index, Announcement
-      can :manage, [:administration, :erdbeere]
+      can :manage, :erdbeere
 
       can :manage, Referral do |referral|
         user.can_edit?(referral.medium)
@@ -31,28 +29,8 @@ class Ability
       can :manage, Item do |item|
         item.medium.nil? ||  user.can_edit?(item.medium?)
       end
-      cannot :classification, :administration
-      # :create is a cancancan alias for new and create actions
-      can :create, [Chapter, Lecture, Lesson, Section, Talk]
-      # :update is a cancancan alias for update and edit actions
 
-      can [:new, :create], Announcement
-
-      can [:create, :update, :destroy], Answer do |answer|
-        answer.question.edited_with_inheritance_by?(user)
-      end
-
-      can [:new, :cancel_edit, :cancel_new, :create], Assignment
-
-      can [:edit, :update, :destroy], Assignment do |assignment|
-        assignment.lecture.edited_by?(user)
-      end
-
-      # only users who are editors of a chapter's lecture can edit, update
-      # or destroy them
-      can [:update, :destroy], Chapter do |chapter|
-        chapter.lecture.edited_by?(user)
-      end
+      can :create, [Lecture, Lesson, Section]
 
       # only users who are editors of a talk's lecture or who are speakers
       # can edit, update, destroy or assemble them
@@ -101,11 +79,7 @@ class Ability
         n.recipient == user
       end
 
-      can :reassign, [Question, Remark]
-
-      can :set_solution_type, Question do |question|
-        question.edited_with_inheritance_by?(user)
-      end
+      can :reassign, Remark
 
       can [:update, :destroy], Section do |section|
         section.lecture.edited_by?(user)
@@ -179,7 +153,7 @@ class Ability
     else
       can :read, :all
       can :start, :main
-      cannot :read, [:administration, Term, User, Announcement]
+      cannot :read, [Term, User]
       cannot :index, Interaction
 
       can [:edit, :open, :close, :set_alternatives, :get_votes_count], Clicker

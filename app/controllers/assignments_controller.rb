@@ -2,18 +2,23 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: [:edit, :destroy, :update, :cancel_edit]
   before_action :set_lecture, only: :create
-  before_action :check_editor_status, only: :create
-  authorize_resource
+  authorize_resource except: [:new, :cancel_new, :create]
+
+  def current_ability
+    @current_ability ||= AssignmentAbility.new(current_user)
+  end
 
   def new
     @assignment = Assignment.new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     @assignment.lecture = @lecture
+    authorize! :new, @assignment
     set_assignment_locale
   end
 
   def create
     @assignment = Assignment.new(assignment_params)
+    authorize! :create, @assignment
     @assignment.save
     @errors = @assignment.errors
     @lecture = @assignment.lecture
@@ -39,6 +44,8 @@ class AssignmentsController < ApplicationController
 
   def cancel_new
     @lecture = Lecture.find_by_id(params[:lecture])
+    assignment = Assignment.new(lecture: @lecture)
+    authorize! :cancel_new, assignment
     set_assignment_locale
     @none_left = @lecture&.assignments&.none?
   end
@@ -66,10 +73,5 @@ class AssignmentsController < ApplicationController
   def assignment_params
     params.require(:assignment).permit(:title, :medium_id, :lecture_id,
                                        :deadline, :accepted_file_type)
-  end
-
-  def check_editor_status
-    return if current_user.editor_or_teacher_in?(@lecture)
-    redirect_to :root, alert: I18n.t('controllers.no_editor_or_teacher')
   end
 end

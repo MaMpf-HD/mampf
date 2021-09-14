@@ -1,16 +1,22 @@
 # AnswersController
 class AnswersController < ApplicationController
   before_action :set_answer, only: [:show, :edit, :update, :destroy]
-  authorize_resource
+  authorize_resource except: [:new, :create]
+
+  def current_ability
+    @current_ability ||= AnswerAbility.new(current_user)
+  end
 
   def new
-    @answer = Answer.new(value: true)
-    I18n.locale = Question.find_by_id(params[:question_id])
-                         &.locale_with_inheritance
+    question = Question.find_by_id(params[:question_id])
+    @answer = Answer.new(value: true, question: question)
+    authorize! :new, @answer
+    I18n.locale = question&.locale_with_inheritance
   end
 
   def create
     @answer = Answer.new(answer_params)
+    authorize! :create, @answer
     I18n.locale = @answer.question&.locale_with_inheritance
     return unless @answer.save
     @success = true

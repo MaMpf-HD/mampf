@@ -6,6 +6,10 @@ class QuestionsController < ApplicationController
   authorize_resource
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= QuestionAbility.new(current_user)
+  end
+
   def edit
     I18n.locale = @question.locale_with_inheritance
   end
