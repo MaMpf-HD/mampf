@@ -7,6 +7,10 @@ class CoursesController < ApplicationController
   authorize_resource
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= CourseAbility.new(current_user)
+  end
+
   def edit
     I18n.locale = @course.locale || I18n.default_locale
   end

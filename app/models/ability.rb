@@ -48,12 +48,6 @@ class Ability
            :display_course, :subscribe_page],
           Lecture
 
-      can [:take_random_quiz, :render_question_counter, :search], Course
-
-      # editors are only allowed to edit, not to destroy courses
-      can :update, Course do |course|
-        course.edited_by?(user)
-      end
 
       can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
            :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
@@ -135,11 +129,7 @@ class Ability
       can [:teacher, :fill_user_select, :list, :delete_account], User
       can :manage, [:event, :vertex]
       can [:take, :proceed, :preview], Quiz
-      # can [:new, :create, :edit, :open, :close, :set_alternatives,
-      #      :get_votes_count], Clicker
-      # can [:associate_question, :remove_question, :destroy], Clicker do |clicker|
-      #   clicker.editor == user
-      # end
+
       can [:linearize, :set_root, :set_level,
            :update_default_target, :delete_edge], Quiz do |quiz|
         quiz.edited_with_inheritance_by?(user)
@@ -156,17 +146,11 @@ class Ability
       cannot :read, [Term, User]
       cannot :index, Interaction
 
-      can [:edit, :open, :close, :set_alternatives, :get_votes_count], Clicker
-
       can [:take, :proceed], Quiz
 
       #cannot :show, Lecture  do |lecture|
       #  !lecture.in?(user.lectures)
       #end
-
-      can [:render_question_counter, :take_random_quiz], Course do |course|
-        course.subscribed_by?(user)
-      end
 
       cannot [:update, :create], Tag
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
