@@ -15,6 +15,23 @@ module TalksHelper
     talk.speakers.map(&:tutorial_name).join(', ')
   end
 
+  def speaker_icon_class(talk)
+    return 'fas fa-user' unless talk.speakers.count > 1
+    'fas fa-users'
+  end
+
+  def speaker_icon(talk)
+    content_tag(:i,
+                '',
+                class: "#{speaker_icon_class(talk)} mr-2",
+                data: { toggle: 'tooltip' },
+                title: t('admin.talk.speakers')).html_safe
+  end
+
+  def speaker_list_with_icon(talk)
+    (speaker_icon(talk) + speaker_list(talk)).html_safe
+  end
+
   def date_list(talk)
     talk.dates.map { |d| I18n.l(d) }.join(', ')
   end

@@ -93,9 +93,9 @@
                 <%= helpdesk(t('admin.talk.info.display_description'),
                              false) %>
               </div>
-              <div class="col-12 text-warning ml-2">
+              <div class="col-12 text-info ml-2">
                 <% if talk.description.present? && !talk.display_description %>
-                  <span class="badge badge-warning">
+                  <span class="badge badge-info">
                     <%= t('basics.info') %>
                   </span>
                   <%= t('admin.talk.description_warning') %>
