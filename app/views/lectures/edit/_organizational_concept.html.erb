@@ -25,8 +25,7 @@
             <div class="col-6">
               <div class="custom-control custom-checkbox">
                 <%= f.check_box :organizational,
-                                class: 'custom-control-input',
-                                disabled: inspection %>
+                                class: 'custom-control-input' %>
                 <%= f.label :organizational,
                             t('admin.lecture.organizational_visible'),
                             { class: 'custom-control-label' } %>
@@ -36,8 +35,7 @@
             <div class="col-6">
               <div class="custom-control custom-checkbox">
                 <%= f.check_box :muesli,
-                                class: 'custom-control-input',
-                                disabled: inspection %>
+                                class: 'custom-control-input' %>
                 <%= f.label :muesli,
                             t('admin.lecture.uses_muesli'),
                             { class: 'custom-control-label' } %>
@@ -48,8 +46,7 @@
               <div class="col-6">
                 <div class="custom-control custom-checkbox">
                   <%= f.check_box :organizational_on_top,
-                                  class: 'custom-control-input',
-                                  disabled: inspection %>
+                                  class: 'custom-control-input' %>
                   <%= f.label :organizational_on_top,
                               t('admin.lecture.organizational_on_top'),
                                 { class: 'custom-control-label' } %>
@@ -61,13 +58,9 @@
           </div>
           <div class="row">
             <div class="col-12">
-              <% if inspection %>
-                <%= lecture.organizational_concept&.html_safe %>
-              <% else %>
-                <%= f.trix_editor :organizational_concept,
-                                  id: 'lecture-concept-trix',
-                                  data: { content: lecture.organizational_concept } %>
-              <% end %>
+              <%= f.trix_editor :organizational_concept,
+                                id: 'lecture-concept-trix',
+                                data: { content: lecture.organizational_concept } %>
             </div>
           </div>
           <div class="row mt-3">

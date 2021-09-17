@@ -16,8 +16,8 @@
               <i>
                 <%= t('basics.answer') %>:
               </i>
-              <%= quizzable.solution.tex %>
-              <% if quizzable.solution.explanation %>
+              <%= quizzable.solution&.tex %>
+              <% if quizzable.solution&.explanation %>
                 <i>
                   <%= t('admin.quiz.reason') %>:
                 </i>

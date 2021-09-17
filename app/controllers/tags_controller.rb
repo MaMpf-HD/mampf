@@ -1,18 +1,14 @@
 # TagsController
 class TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect,
+  before_action :set_tag, only: [:show, :edit, :destroy, :update,
                                  :display_cyto, :identify, :take_random_quiz]
   before_action :set_related_tags_for_user, only: [:show, :display_cyto]
-  before_action :set_related_tags, only: [:edit, :inspect]
+  before_action :set_related_tags, only: [:edit]
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]
   authorize_resource
   layout 'administration'
-
-  def index
-    I18n.locale = current_user.locale
-  end
 
   def show
     if params[:locale].in?(I18n.available_locales.map(&:to_s))
@@ -42,12 +38,7 @@ class TagsController < ApplicationController
     render layout: 'cytoscape'
   end
 
-  def inspect
-    set_related_tags
-  end
-
   def edit
-    set_related_tags
     # build notions for missing locales
     (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
       @tag.notions.new(locale: l)
@@ -94,7 +85,7 @@ class TagsController < ApplicationController
 
   def destroy
     @tag.destroy
-    redirect_to tags_path
+    redirect_to administration_path
   end
 
   # prepare new tag instance for modal
@@ -132,27 +123,25 @@ class TagsController < ApplicationController
   end
 
   def search
+    per_page = search_params[:per] || 10
     search = Sunspot.new_search(Tag)
     search.build do
       fulltext search_params[:title]
     end
-    if search_params[:course_ids] == ['']
-      search.build do
-        with(:course_ids, nil)
-      end
-    else
-      search.build do
-        with(:course_ids, search_params[:course_ids])
-      end
-    end
+    course_ids = if search_params[:all_courses] == '1'
+                   []
+                 elsif search_params[:course_ids] != ['']
+                   search_params[:course_ids]
+                 end
     search.build do
-      paginate page: params[:page], per_page: 10
+      with(:course_ids, course_ids)
+      paginate page: params[:page], per_page: per_page
     end
     search.execute
     results = search.results
     @total = search.total
     @tags = Kaminari.paginate_array(results, total_count: @total)
-                    .page(params[:page]).per(10)
+                    .page(params[:page]).per(per_page)
   end
 
   def take_random_quiz
@@ -342,7 +331,7 @@ class TagsController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:title, course_ids: [])
+    params.require(:search).permit(:title, :all_courses, :per, course_ids: [])
   end
 
 end

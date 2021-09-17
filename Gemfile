@@ -60,7 +60,7 @@ gem "cancancan"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "js-routes", '1.4.9'
-gem "bootstrap"
+gem "bootstrap", "~>4"
 gem "bootstrap_form"
 gem "devise-bootstrap-views"
 gem "fuzzy-string-match"
@@ -101,7 +101,7 @@ gem "sprockets-rails",
 gem "premailer-rails"
 gem "select2-rails"
 gem "clipboard-rails"
-gem "rubyzip"
+gem "rubyzip", "~> 2.3.0"
 gem "exception_handler", "~> 0.8.0.0"
 gem 'webpacker', '~> 5.x'
 

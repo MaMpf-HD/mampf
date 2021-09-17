@@ -21,14 +21,12 @@
       <div class="card-body">
         <div class="row">
           <div class="col-12 text-center" id="comments-buttons">
-            <% unless inspection %>
-              <%= link_to t('buttons.close_comments'),
-                          lecture_close_comments_path(lecture),
-                          class: 'btn btn-sm btn-primary' %>
-              <%= link_to t('buttons.open_comments'),
-                          lecture_open_comments_path(lecture),
-                          class: 'btn btn-sm btn-primary' %>
-            <% end %>
+            <%= link_to t('buttons.close_comments'),
+                        lecture_close_comments_path(lecture),
+                        class: 'btn btn-sm btn-primary' %>
+            <%= link_to t('buttons.open_comments'),
+                        lecture_open_comments_path(lecture),
+                        class: 'btn btn-sm btn-primary' %>
           </div>
         </div>
         <%= form_with model: lecture,
@@ -36,8 +34,7 @@
           <div class="form-row my-3 ml-2">
             <div class="custom-control custom-checkbox">
               <%= f.check_box :comments_disabled,
-                              class: 'custom-control-input',
-                              disabled: inspection %>
+                              class: 'custom-control-input' %>
               <%= f.label :comments_disabled,
                           t('admin.lecture.comments_disabled'),
                           { class: 'custom-control-label' } %>

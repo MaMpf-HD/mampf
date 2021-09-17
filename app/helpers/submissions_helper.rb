@@ -98,9 +98,9 @@ module SubmissionsHelper
     'bg-submission-orange'
   end
 
-  def late_submission_info(submission)
+  def late_submission_info(submission, tutorial)
     text = t('submission.late')
-    return text unless submission.accepted.nil?
+    return text unless submission.accepted.nil? && current_user.in?(tutorial.tutors)
     "#{text} (#{t('tutorial.late_submission_decision')})"
   end
 

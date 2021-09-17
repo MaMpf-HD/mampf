@@ -40,8 +40,6 @@
               <%= t('admin.course.no_image') %>
             <% end %>
           </div>
-        </div>
-        <% unless inspection %>
           <div class="row">
             <div class="col-12" id="image-uploadButton"
                  data-choosefiles="<%= t('basics.file') %>">
@@ -63,9 +61,9 @@
             </button>
             </div>
           </div>
-          <%= render partial: 'courses/upload_image',
-                     locals: { course: course } %>
-        <% end %>
+        </div>
+        <%= render partial: 'courses/upload_image',
+                   locals: { course: course } %>
       </div>
     </div>
   </div>

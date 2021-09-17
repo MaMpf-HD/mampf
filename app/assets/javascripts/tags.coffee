@@ -5,17 +5,9 @@
 $(document).on 'turbolinks:load', ->
   # fill courses selector in admin tag search with user's edited courses
   $('#tags-edited-courses').on 'click', ->
-    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
-    return
-
- # fill courses selector in admin tag search with all courses
-  $('#tags-all-courses').on 'click', ->
-    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
-    return
-
-  # fill courses selector in admin tag with no courses at all
-  $('#tags-no-courses').on 'click', ->
-    inputCourses.selectize.setValue()
+    search_course_ids.selectize.setValue(JSON.parse(this.dataset.courses))
+    search_course_ids.selectize.enable()
+    $('#search_all_courses').prop('checked', false)
     return
 
   # issue a warning if tag form has changed

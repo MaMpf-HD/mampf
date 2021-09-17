@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="col-12">
+    <span class="correction-action-area"
+        data-id="<%= submission.id %>">
+      <% if submission.correction %>
+        <%= link_to t('buttons.download'),
+                    show_correction_path(submission, params: { download: 'true' }),
+                    class: 'btn btn-sm btn-outline-secondary mb-2',
+                    data: { turbolinks: false } %>
+        <%= link_to correction_display_mode(submission),
+                    show_correction_path(submission),
+                    class: 'btn btn-sm btn-outline-secondary mb-2',
+                    data: { turbolinks: false } %>
+      <% end %>
+    </span>
+  </div>
+</div>

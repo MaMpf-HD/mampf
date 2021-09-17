@@ -12,40 +12,35 @@
         </h5>
       </div>
       <div class="col-2">
-        <% unless inspection %>
-          <%= t('admin.lecture.workflow') %>
-          <%= helpdesk(t('admin.lecture.info.workflow'), true) %>
-        <% end %>
+        <%= t('admin.lecture.workflow') %>
+        <%= helpdesk(t('admin.lecture.info.workflow'), true) %>
       </div>
-      <% unless inspection %>
-        <div class="col-2">
-          <span id="no-effect-warning">
-            <%= t('warnings.save_before') %>
-          </span>
-        </div>
-        <div class="col-5 text-right">
-          <%= link_to t("buttons.create_#{lecture.chapter_name}"),
-                      new_chapter_path(lecture_id: lecture.id),
-                      remote: true,
-                      class: 'btn btn-sm btn-secondary new-in-lecture',
-                      id: 'new_chapter_button' %>
-          <%= link_to t('buttons.create_lesson'),
-                      new_lesson_path(lecture_id: lecture.id),
-                      remote: true,
-                      class: 'btn btn-sm btn-secondary new-in-lecture',
-                      id: 'new_lesson_button'%>
-        </div>
-      <% end %>
+      <div class="col-2">
+        <span id="no-effect-warning">
+          <%= t('warnings.save_before') %>
+        </span>
+      </div>
+      <div class="col-5 text-right">
+        <%= link_to t("buttons.create_#{lecture.chapter_name}"),
+                    new_chapter_path(lecture_id: lecture.id),
+                    remote: true,
+                    class: 'btn btn-sm btn-secondary new-in-lecture',
+                    id: 'new_chapter_button' %>
+        <%= link_to t('buttons.create_lesson'),
+                    new_lesson_path(lecture_id: lecture.id),
+                    remote: true,
+                    class: 'btn btn-sm btn-secondary new-in-lecture',
+                    id: 'new_lesson_button'%>
+      </div>
     </div>
   </div>
   <div class="card-body">
     <% if lecture.chapters.any? %>
       <div class="card-columns">
         <% lecture.chapters.each do |c| %>
-          <% cache [c, inspection] do %>
+          <% cache c do %>
             <%= render partial: 'lectures/edit/chapter',
-                       locals: { chapter: c,
-                                 inspection: inspection } %>
+                       locals: { chapter: c } %>
           <% end %>
         <% end %>
       </div>
@@ -57,7 +52,7 @@
       <%= helpdesk(t('admin.lecture.info.orphaned_lessons'), false) %>
       <% lecture.orphaned_lessons.each do |l| %>
         <%= link_to  l.date_localized,
-                     edit_or_inspect_lesson_path(l),
+                     edit_lesson_path(l),
                      class: 'badge badge-light' %>
       <% end %>
     <% end %>

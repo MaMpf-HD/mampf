@@ -93,7 +93,7 @@ class Question < Medium
 
   # filter variables
   def parsed_text_with_params
-    text.gsub(/\\para{(\w+),(.*?)}/, '{\color{blue}{\1}}')
+    text&.gsub(/\\para{(\w+),(.*?)}/, '{\color{blue}{\1}}')
   end
 
   def text_with_sample_params(parameters)

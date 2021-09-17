@@ -14,9 +14,6 @@ $('#statistics-modal-content').empty()
 $('[data-toggle="popover"]').popover()
 
 <% if @medium.sort == 'Quiz' %>
-Chart.platform.disableCSSInjection = true;
-Chart.defaults.global.elements.rectangle.backgroundColor = 'rgba(255, 99, 132, 0.2)'
-Chart.defaults.global.elements.rectangle.borderColor =  'rgba(255, 99, 132, 1)'
 
 ctx = $('#successChart')
 myChart = new Chart(ctx,
@@ -42,5 +39,97 @@ myChart = new Chart(ctx,
           beginAtZero: true
           precision: 0] )
 <% end %>
+<% if @medium.video.present? %>
 
+ctx = $('#videoStats')
+data2=  <%= raw @video_thyme %> || []
+$('#videoCount').text(data2.length || 0)
+data4=  <%= raw @video_downloads %> || []
+$('#downloadCount').text(data4.length || 0)
+data3 = data2.map((d)-> {x:new Date(d.x),y:d.y})
+data = 
+  labels: data2.map((d)-> return d.x)
+  datasets: [
+    {
+      label: 'Thyme'
+      backgroundColor: '#4dc9f6'
+      borderColor: '#4dc9f6'
+      fill: false
+      data: data3
+    }
+    {
+      label: 'Downloads'
+      backgroundColor: '#990000'
+      borderColor: '#990000'
+      fill: false
+      data: data4
+    }
+  ]
+myChart = new Chart(ctx,
+  type: 'line'
+  data: data
+  options:
+    plugins: title:
+      text: 'Video'
+      display: true
+    responsive: true
+    maintainAspectRatio: false
+    scales:
+      x:
+        type: 'time'
+        time: 
+          unit: 'month'
+          tooltipFormat: 'DD.MM.'
+        title:
+          display: true
+          text: 'Date'
+      y: 
+        ticks:
+          precision: 0
+        title:
+          display: true
+          text: 'count' )
+<% end %>
+<% if @medium.manuscript.present? %>
+
+ctx = $('#manuscriptStats')
+data21=  <%= raw @manuscript_access %>
+$('#manuscriptCount').text(data21.length || 0)
+data31 = data21.map((d)-> {x:new Date(d.x),y:d.y})
+data = 
+  labels: data21.map((d)-> return d.x)
+  datasets: [
+    {
+      label: 'Downloads'
+      backgroundColor: '#4dc9f6'
+      borderColor: '#4dc9f6'
+      fill: false
+      data: data31
+    }
+  ]
+myChart = new Chart(ctx,
+  type: 'line'
+  data: data
+  options:
+    plugins: title:
+      text: 'Manuscript'
+      display: true
+    responsive: true
+    maintainAspectRatio: false
+    scales:
+      x:
+        type: 'time'
+        time: 
+          unit: 'month'
+          tooltipFormat: 'DD.MM.'
+        title:
+          display: true
+          text: 'Date'
+      y: 
+        ticks:
+          precision: 0
+        title:
+          display: true
+          text: 'count' )
+<% end %>
 $('#statisticsModal').modal('show')

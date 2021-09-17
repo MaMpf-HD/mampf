@@ -51,17 +51,19 @@
   <div class="col-2 text-right">
     <% teachable_scope = medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
-      <%= link_to t('buttons.parent_course'),
-                  edit_or_inspect_course_path(teachable_scope),
-                  class: 'btn btn-sm btn-outline-primary mb-2' %>
+      <% if current_user.admin || current_user.in?(medium.teachable.editors) %>
+        <%= link_to t('buttons.parent_course'),
+                    edit_course_path(teachable_scope),
+                    class: 'btn btn-sm btn-outline-primary mb-2' %>
+      <% end %>
     <% else %>
       <%= link_to t('buttons.parent_lecture'),
-                  edit_or_inspect_lecture_path(teachable_scope),
+                  edit_or_show_lecture_path(teachable_scope),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
     <% if medium.teachable.class.to_s == 'Lesson' %>
       <%= link_to t('buttons.parent_lesson'),
-                  edit_or_inspect_lesson_path(medium.teachable),
+                  edit_or_show_lesson_path(medium.teachable),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
     <% unless new_medium %>

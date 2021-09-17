@@ -13,6 +13,10 @@ FactoryBot.define do
       association :lecture, :released_for_all
     end
 
+    trait :inactive do
+      deadline { Faker::Time.backward(days: 30)}
+    end
+
     factory :valid_assignment, traits: [:with_lecture]
   end
 end

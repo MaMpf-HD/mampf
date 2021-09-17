@@ -1,6 +1,6 @@
 <% if submission.in_time? || submission.accepted %>
   <%= render partial: 'submissions/correction',
-             locals: { submission: submission } %>
+            locals: { submission: submission } %>
 <% elsif submission.accepted == false %>
   <span class="badge badge-danger">
     <%= t('submission.rejected') %>

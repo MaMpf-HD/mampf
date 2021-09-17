@@ -1,6 +1,8 @@
 # User class
 class User < ApplicationRecord
   include ApplicationHelper
+  include ScreenshotUploader[:image]
+
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
@@ -97,7 +99,7 @@ class User < ApplicationRecord
   end
 
   def self.select_teachers
-    User.teachers.map { |u| [u.name, u.id] }
+    User.teachers.pluck(:name, :id).natural_sort_by(&:first)
   end
 
   # returns the array of all editors
@@ -521,6 +523,14 @@ class User < ApplicationRecord
     in?(lecture.editors) || self == lecture.teacher
   end
 
+  def tutorials(lecture)
+    given_tutorials.where(lecture: lecture)
+  end
+
+  def has_tutorials?(lecture)
+    !given_tutorials.where(lecture: lecture).empty?
+  end
+
   def proper_submissions_count
     submissions.proper.size
   end
@@ -553,10 +563,9 @@ class User < ApplicationRecord
     lecture.in?(lectures) && !in?(lecture.tutors) && !in?(lecture.editors) &&
       self != lecture.teacher
   end
-  include ScreenshotUploader[:image]
+
   def image_url_with_host
     return unless image
-
     image_url(host: host)
   end
 
@@ -565,6 +574,7 @@ class User < ApplicationRecord
 
     image_url(:normalized, host: host)
   end
+
   def image_filename
     return unless image
 
@@ -582,6 +592,20 @@ class User < ApplicationRecord
 
     "#{image.metadata['width']}x#{image.metadata['height']}"
   end
+
+  def can_edit?(something)
+    unless something.is_a?(Lecture) || something.is_a?(Course)
+      raise 'can_edit? was called with incompatible class'
+    end
+    return true if admin
+    return in?(something.editors_with_inheritance) if something.is_a?(Lecture)
+    in?(something.editors)
+  end
+
+  def course_editor?
+    edited_courses.any?
+  end
+
   private
 
   def set_defaults
