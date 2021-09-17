@@ -2922,6 +2922,7 @@ de:
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
+    post_processing: 'Stelle fertig...'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
