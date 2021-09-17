@@ -745,6 +745,10 @@ class Lecture < ApplicationRecord
     talks.order(:position).last
   end
 
+  def sort_in_brackets
+    "(#{sort_localized_short})"
+  end
+
   private
 
   # used for after save callback

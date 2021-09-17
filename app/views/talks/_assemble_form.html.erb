@@ -93,14 +93,14 @@
                 <%= helpdesk(t('admin.talk.info.display_description'),
                              false) %>
               </div>
-              <div class="col-12 text-info ml-2">
-                <% if talk.description.present? && !talk.display_description %>
-                  <span class="badge badge-info">
+              <% if talk.description.present? && !talk.display_description %>
+                <div class="col-12 text-dark ml-2 border border-info rounded my-2">
+                  <span class="badge badge-secondary">
                     <%= t('basics.info') %>
                   </span>
                   <%= t('admin.talk.description_warning') %>
-                <% end %>
-              </div>
+                </div>
+              <% end %>
             </div>
           </div>
           <%= f.trix_editor :description,

@@ -800,9 +800,6 @@ en:
           This is a text about the talk given by the speakers.
         description_for_editor: >
           This is a text about the talk (to be) provided by the speakers.
-          As teacher pf the seminar (or additional seminar editor) you are
-          authorized to edit this text. You can use LaTEX (by putting the
-          expression in $...$).
         media: >
           Here you can see the list of media associated to this talk.
           You can add new media.
@@ -827,7 +824,8 @@ en:
         display_description_teacher: >
           The speakers can decide whether their text will be displayed on the
           talk's page (this box will typically be unchecked if the text is
-          still preliminary). You can overwrite this setting.
+          still preliminary). You can remove the text from the talk's page
+          as teacher.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'

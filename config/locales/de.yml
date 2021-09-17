@@ -873,8 +873,8 @@ de:
           Die Vortragenden können entscheiden, ob ihr Text zum Inhalt auf
           der Vortragsseite angezeigt wird (dieser Haken wird typischerweise
           nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
-          handelt). Du kannst als DozentIn die Veröffentlichung dieses Textes
-          auf der Vortragsseite deaktivieren.
+          handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
+          entfernen.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
