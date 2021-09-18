@@ -43,26 +43,28 @@ myChart = new Chart(ctx,
 
 ctx = $('#videoStats')
 data2=  <%= raw @video_thyme %> || []
-$('#videoCount').text(data2.length || 0)
+$('#videoCount').text(<%= raw @video_thyme_count %> || 0)
 data4=  <%= raw @video_downloads %> || []
-$('#downloadCount').text(data4.length || 0)
+$('#downloadCount').text(<%= raw @video_downloads_count %> || 0)
 data3 = data2.map((d)-> {x:new Date(d.x),y:d.y})
 data = 
   labels: data2.map((d)-> return d.x)
   datasets: [
     {
       label: 'Thyme'
-      backgroundColor: '#4dc9f6'
-      borderColor: '#4dc9f6'
-      fill: false
-      data: data3
-    }
-    {
-      label: 'Downloads'
       backgroundColor: '#990000'
       borderColor: '#990000'
       fill: false
+      data: data3
+      showLine: false
+    }
+    {
+      label: 'Downloads'
+      backgroundColor: '#4dc9f6'
+      borderColor: '#4dc9f6'
+      fill: false
       data: data4
+      showLine: false
     }
   ]
 myChart = new Chart(ctx,
@@ -94,7 +96,7 @@ myChart = new Chart(ctx,
 
 ctx = $('#manuscriptStats')
 data21=  <%= raw @manuscript_access %>
-$('#manuscriptCount').text(data21.length || 0)
+$('#manuscriptCount').text(<%= raw @manuscript_access_count %> || 0)
 data31 = data21.map((d)-> {x:new Date(d.x),y:d.y})
 data = 
   labels: data21.map((d)-> return d.x)
@@ -105,6 +107,7 @@ data =
       borderColor: '#4dc9f6'
       fill: false
       data: data31
+      showLine: false
     }
   ]
 myChart = new Chart(ctx,
