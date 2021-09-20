@@ -41,144 +41,99 @@ videoUpload = (fileInput) ->
   metaData = document.getElementById('video-meta')
   hiddenInput = document.getElementById('upload-video-hidden')
 
-  # uppy will add its own file input
   fileInput.style.display = 'none'
+  @directUpload(
+    "upload-video"
+    "#video-uploadButton-button-actual"
+    '#video-uploadButton-button'
+    "#video-uploadButton-button-actual"   
+    null
+    '/videos/upload'
+    "#video-uploadButton-button-actual"
+    (data)->
+      console.log data
+      data = JSON.parse data.response
+      $('#video-wait').hide()
+      if data.metadata.mime_type in ['video/mp4']
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
 
-  # create uppy istance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [
-      '.mp4'
-      '.webm'
-      '.ogg'
-    ])
-  uppy.use(Uppy.FileInput,
-           target: uploadButton
-           locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-  uppy.use(Uppy.Informer, target: informer)
-  uppy.use(Uppy.ProgressBar, target: progressBar)
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
 
+        videoFile = document.getElementById('video-file')
+        videoSize = document.getElementById('video-size')
 
-  # target the endpoint for shrine uploader
-  # timeout has been increased from standard value to allow storing of large
-  # files
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/videos/upload'
-    fieldName: 'file'
-    timeout: 240 * 1000
-
-  # give the user feedback after upload has started
-  uppy.on 'upload', (data) ->
-    $('#video-wait').show()
-    $('#medium-basics-warning').show()
-    return
-
-  # add metadata to video card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    $('#video-wait').hide()
-    data = response.body
-    if data.metadata.mime_type in ['video/mp4']
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-
-      videoFile = document.getElementById('video-file')
-      videoSize = document.getElementById('video-size')
-
-      # put metadata into place
-      videoFile.innerHTML = data.metadata.filename
-      videoSize.innerHTML = formatBytes(data.metadata.size)
-      $(metaData).show()
-      $(videoPreviewArea).show()
-      $('#medium_detach_video').val('false')
-      $('#medium-basics-warning').show()
-    else
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+        # put metadata into place
+        videoFile.innerHTML = data.metadata.filename
+        videoSize.innerHTML = formatBytes(data.metadata.size)
+        $(metaData).show()
+        $(videoPreviewArea).show()
+        $('#medium_detach_video').val('false')
+        $('#medium-basics-warning').show()
+      else
+        # display error message if  detects wrong mime type
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type)
+      return
+    null
+    'upload-video-hidden'
+    true
+  )
 
 manuscriptUpload = (fileInput) ->
   # set everything up
-  uploadArea = document.getElementById('manuscript-uploadArea')
-  uploadButton = document.getElementById('manuscript-uploadButton')
-  informer = document.getElementById('manuscript-informer')
-  progressBar = document.getElementById('manuscript-progressBar')
-  metaData = document.getElementById('manuscript-meta')
-  hiddenInput = document.getElementById('upload-manuscript-hidden')
+  uploadArea = ('manuscript-uploadArea')
+  uploadButton = ('#manuscript-uploadButton-button')
+  informer = ('manuscript-informer')
+  progressBar = ('manuscript-progressBar')
+  metaData = ('manuscript-meta')
+  hiddenInput = ('upload-manuscript-hidden')
+  return if document.getElementById(fileInput) == null
+  @directUpload(
+    fileInput
+    "#manuscript-uploadButton-button-actual"
+    '#manuscript-uploadButton-button'
+    "#manuscript-uploadButton-button-actual"   
+    null
+    '/pdfs/upload'
+    "#manuscript-uploadButton-button-actual"
+    (data)->
+      console.log data
+      data = JSON.parse data.response
+      if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
 
-  # uppy will add its own file input
-  fileInput.style.display = 'none'
+        manuscriptFile = document.getElementById('manuscript-file')
+        manuscriptSize = document.getElementById('manuscript-size')
+        manuscriptPages = document.getElementById('manuscript-pages')
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [ '.pdf' ])
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.ProgressBar, target: progressBar)
+        # put metadata into place
+        manuscriptFile.innerHTML = data.metadata.filename
+        manuscriptSize.innerHTML = formatBytes(data.metadata.size)
+        manuscriptPages.innerHTML = data.metadata.pages + ' S'
+        $('#manuscript-destinations').empty().hide()
+        $('#medium-manuscript-destinations').empty().hide()
+        $('#manuscript-meta').show()
+        $('#manuscript-preview').hide()
+        $('#medium_detach_manuscript').val('false')
+        $('#medium-basics-warning').show()
+      else if data.metadata.mime_type != 'application/pdf'
+        # display error message if  detects wrong mime type
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      else
+        # display error message if  detects some other problem
+        alert('Die Datei ist beschädigt.', 'error', 5000)
+      return
+    null
+    hiddenInput
+    true
+  )
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/pdfs/upload'
-    fieldName: 'file'
-
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type == 'application/pdf' && data.metadata.pages != null
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-
-      manuscriptFile = document.getElementById('manuscript-file')
-      manuscriptSize = document.getElementById('manuscript-size')
-      manuscriptPages = document.getElementById('manuscript-pages')
-
-      # put metadata into place
-      manuscriptFile.innerHTML = data.metadata.filename
-      manuscriptSize.innerHTML = formatBytes(data.metadata.size)
-      manuscriptPages.innerHTML = data.metadata.pages + ' S'
-      $('#manuscript-destinations').empty().hide()
-      $('#medium-manuscript-destinations').empty().hide()
-      $('#manuscript-meta').show()
-      $('#manuscript-preview').hide()
-      $('#medium_detach_manuscript').val('false')
-      $('#medium-basics-warning').show()
-    else if data.metadata.mime_type != 'application/pdf'
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    else
-      # display error message if uppy detects some other problem
-      uppy.info('Die Datei ist beschädigt.', 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
 
 geogebraUpload = (fileInput) ->
   # set everything up
@@ -188,63 +143,43 @@ geogebraUpload = (fileInput) ->
   progressBar = document.getElementById('geogebra-progressBar')
   metaData = document.getElementById('geogebra-meta')
   hiddenInput = document.getElementById('upload-geogebra-hidden')
+  @directUpload(
+    "upload-geogebra"
+    "#geogebra-uploadButton-button-actual"
+    '#geogebra-uploadButton-button'
+    "#geogebra-uploadButton-button-actual"   
+    null
+    '/ggbs/upload'
+    "#geogebra-uploadButton-button-actual"
+    (data)->
+      console.log data
+      data = JSON.parse data.response
+      if data.metadata.mime_type == 'application/zip'
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
 
-  # uppy will add its own file input
-  fileInput.style.display = 'none'
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [ '.ggb' ])
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.ProgressBar, target: progressBar)
+        geogebraFile = document.getElementById('geogebra-file')
+        geogebraSize = document.getElementById('geogebra-size')
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/ggbs/upload'
-    fieldName: 'file'
-
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type == 'application/zip'
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
-
-      # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
-
-      geogebraFile = document.getElementById('geogebra-file')
-      geogebraSize = document.getElementById('geogebra-size')
-
-      # put metadata into place
-      geogebraFile.innerHTML = data.metadata.filename
-      geogebraSize.innerHTML = formatBytes(data.metadata.size)
-      $('#geogebra-meta').show()
-      $('#medium_detach_geogebra').val('false')
-      $('#medium-basics-warning').show()
-    else if data.metadata.mime_type != 'application/zip'
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    else
-      # display error message if uppy detects some other problem
-      uppy.info('Die Datei ist beschädigt.', 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+        # put metadata into place
+        geogebraFile.innerHTML = data.metadata.filename
+        geogebraSize.innerHTML = formatBytes(data.metadata.size)
+        $('#geogebra-meta').show()
+        $('#medium_detach_geogebra').val('false')
+        $('#medium-basics-warning').show()
+      else if data.metadata.mime_type != 'application/zip'
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+      else
+        alert('Die Datei ist beschädigt.', 'error', 5000)
+      return
+    null
+    'upload-geogebra-hidden'
+    true
+  )
 
 imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
   # set everything up
@@ -256,113 +191,76 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
   hiddenInput = document.getElementById('upload-image-hidden')
   imagePreview = document.getElementById('image-preview')
 
-  # uppy will add its own file input
   fileInput.style.display = 'none'
+  actualButton = '#image-uploadButton-button-actual'
+  uploadButton = '#image-uploadButton-button'
+  directUpload(
+    'upload-image'
+    actualButton
+    uploadButton
+    actualButton
+    null
+    endpoint
+    actualButton
+    (xhr) =>
+      file = fileInput.files[0]
+      console.log(file)
+      data = JSON.parse xhr.response
+      if data.metadata.mime_type in ['image/png', 'image/jpeg', 'image/gif']
+        # read uploaded file data from the upload endpoint response
+        uploadedFileData = JSON.stringify(data)
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions: allowedFileTypes: [
-      '.png'
-      '.jpg'
-      '.gif'
-    ])
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.ProgressBar, target: progressBar)
+        # set hidden field value to the uploaded file data so that it is
+        # submitted with the form as the attachment
+        hiddenInput.value = uploadedFileData
 
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: endpoint
-    fieldName: 'file'
+        #show image preview
+        imagePreview.src = URL.createObjectURL(file)
 
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    if data.metadata.mime_type in ['image/png', 'image/jpeg', 'image/gif']
-      # read uploaded file data from the upload endpoint response
-      uploadedFileData = JSON.stringify(data)
+        imageFile = document.getElementById('image-file')
+        imageSize = document.getElementById('image-size')
+        imageResolution = document.getElementById('image-resolution')
+
+        # put metadata into place
+        imageFile.innerHTML = data.metadata.filename
+        imageSize.innerHTML = formatBytes(data.metadata.size)
+        imageResolution.innerHTML = data.metadata.width + 'x' + data.metadata.height
+        $(metaData).show()
+        $(imagePreview).show()
+        $('#course_detach_image').val('false')
+        $('#'+classname+'-basics-warning').show()
+        $('#image-none').hide()
+      else
+        alert('Falscher MIME-Typ:' + data.metadata.mime_type)
+    null
+    'upload-image-hidden'
+    true
+    )
+
+@correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData,actualButton) ->
+  $("#"+fileInput).hide()
+  directUpload(
+    fileInput
+    actualButton
+    uploadButton
+    actualButton
+    null
+    '/corrections/upload'
+    actualButton
+    (data) =>
+      data = JSON.parse data.response
+        # read uploaded file data from the upload endpoint response
+      uploadedFileData = JSON.stringify(data[0])
 
       # set hidden field value to the uploaded file data so that it is
-      # submitted with the form as the attachment
-      hiddenInput.value = uploadedFileData
+      # submitted with the form as the attachment (done by directUpload), using single option =  true
 
-      #show image preview
-      imagePreview.src = URL.createObjectURL(file.data)
-
-      imageFile = document.getElementById('image-file')
-      imageSize = document.getElementById('image-size')
-      imageResolution = document.getElementById('image-resolution')
-
-      # put metadata into place
-      imageFile.innerHTML = data.metadata.filename
-      imageSize.innerHTML = formatBytes(data.metadata.size)
-      imageResolution.innerHTML = data.metadata.width + 'x' + data.metadata.height
-      $(metaData).show()
-      $(imagePreview).show()
-      $('#course_detach_image').val('false')
-      $('#'+classname+'-basics-warning').show()
-      $('#image-none').hide()
-    else
-      # display error message if uppy detects wrong mime type
-      uppy.info('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
-      uppy.reset()
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
-
-@correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData) ->
-  # uppy will add its own file input
-  fileInput.style.display = 'none'
-  allowedInput = fileInput.dataset.accept
-
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    restrictions:
-      maxFileSize: 30*1024*1024)
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.StatusBar, target: statusBar)
-
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/corrections/upload'
-    fieldName: 'file'
-
-  # add metadata to manuscript card if upload was successful
-  uppy.on 'upload-success', (file, response) ->
-    data = response.body
-    # read uploaded file data from the upload endpoint response
-    uploadedFileData = JSON.stringify(data)
-
-    # set hidden field value to the uploaded file data so that it is
-    # submitted with the form as the attachment
-    hiddenInput.value = uploadedFileData
-
-    metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
-    metaData.style.display = 'inline'
-    return
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy
+      metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
+      metaData.style.display = 'inline'
+    null
+    hiddenInput
+    true
+    )
 
 bulkCorrectionUpload = (fileInput) ->
 
@@ -373,60 +271,163 @@ bulkCorrectionUpload = (fileInput) ->
   metaData = document.getElementById('upload-bulk-correction-metadata')
   fileCount = 0
 
-  # uppy will add its own file input
   fileInput.style.display = 'none'
+  directUpload(
+      'upload-bulk-correction'
+      '#bulk-uploadButton-button-actual'
+      '#bulk-uploadButton-button'
+      '#bulk-uploadButton-button-actual'
+      null
+      '/corrections/upload'
+      '#bulk-uploadButton-button-actual'
+      (data) =>
 
-  # create uppy instance
-  uppy = Uppy.Core(
-    id: fileInput.id
-    autoProceed: true
-    allowMultipleUploads: false
-    restrictions:
-      maxFileSize: 30*1024*1024)
-    .use(Uppy.FileInput,
-      target: uploadButton
-      locale: strings: chooseFiles: uploadButton.dataset.choosefiles)
-    .use(Uppy.Informer, target: informer)
-    .use(Uppy.StatusBar, target: statusBar)
-
-  # target the endpoint for shrine uploader
-  uppy.use Uppy.XHRUpload,
-    endpoint: '/packages/upload'
-    fieldName: 'file'
-
-  # display error message on console if an upload error has ocurred
-  uppy.on 'upload-error', (file, error) ->
-    console.log('error with file:', file.id)
-    console.log('error message:', error)
-    return
-
-  uppy.on 'complete', (result) ->
-    console.log('successful files:', result.successful)
-    console.log('failed files:', result.failed)
-    if result.successful.length > 0
-      uploaded_files = result.successful.map (file) -> file.response.body
-      console.log uploaded_files
-      hiddenInput.value = JSON.stringify(uploaded_files)
-      $('#upload-bulk-correction-save').prop('disabled', false)
-      $(metaData).empty()
-        .append(result.successful.length + ' ' +$(metaData).data('tr-uploads'))
-      $(uploadButton).hide()
-    return
-
-  $('#cancel-bulk-upload').on 'click', ->
-    clearBulkUploadArea()
-    uppy.reset()
-    return
-
+        data = JSON.parse data.response
+        console.log(data)
+        result = (successful: [data])
+        console.log result
+        if result.successful.length > 0
+          uploaded_files = result.successful.map (file) -> file
+          console.log uploaded_files
+          $('#upload-bulk-correction-save').prop('disabled', false)
+          $(metaData).empty()
+            .append(fileInput.files.length+ ' ' +$(metaData).data('tr-uploads'))
+          $(uploadButton).hide()
+        return
+        $("#bulk-upload-area").toggle()
+      null
+      'upload-bulk-correction-hidden'
+      )
   $('#show-bulk-upload-area').on 'click', ->
     $(this).hide()
-    uppy.reset()
     $('#upload-bulk-correction-button').show()
     $('#bulk-upload-area').show()
     return
 
-  uppy
 
+###
+directUpload provides an interface to upload (multiple) files to an endpoint
+
+@param fileInputElement name of the file element that is hidden and this all is 
+       based on.
+@param uploadStatusElement name of the element were the upload status is posted
+@param uploadButtonElement name of the button were the upload is triggered
+@param actualUploadButtonElement name of the button that triggers the upload
+@param permissionElement checkbox to be confirmed (optional,  null for skip)
+@param endpoint place to put the files '/submissions/upload'
+@param progressBarElement element to write percentage in.
+       requires data attribute tr-success,tr-failure, tr-missing-consent
+@param successCallback will be called, if request was sucessful (optional)
+@param fileChangeCallBack will be called, if selected files have changed
+@param single true if only one file is uploaded
+###
+@directUpload = (
+  fileInputElement
+  uploadStatusElement
+  uploadButtonElement
+  actualUploadButtonElement
+  permissionElement
+  endpoint
+  progressBarElement
+  successCallback
+  fileChangeCallBack
+  hiddenInputElement
+  single
+  ) ->
+    # update helpdesk
+    $('[data-toggle="popover"]').popover()
+    hiddenInput = document.getElementById(hiddenInputElement)
+    hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
+    fileInput =document.getElementById(fileInputElement)
+    fI = $("#"+fileInputElement)
+    fileInput.style.display = 'none'
+    result = undefined
+    merged = undefined
+    files = []
+    filez= []
+    
+
+    uploadedFiles = []
+    progressOptimize = 0
+    $(uploadStatusElement).hide()
+    uploadButton = $(uploadButtonElement)
+    $(actualUploadButtonElement).on 'click', (e) ->
+      e.preventDefault()
+      if permissionElement == null || $(permissionElement).is(":checked")
+        #Upload blob
+        i=0
+        xhr = new XMLHttpRequest()
+        onerror = (e) ->
+          console.log(e)
+          alert(
+            $(progressBarElement).data('tr-failure')
+          )
+        onprogress = (e) ->
+            percentUpload = Math.floor(100/fileInput.files.length * e.loaded / e.total+100*(i)/fileInput.files.length)
+            $(progressBarElement).text(percentUpload+" %")
+            $(progressBarElement).text($(progressBarElement).data('tr-post-processing')||"Processing...") if percentUpload == 100
+            return
+        onload = (xhr) -> () ->
+          console.log xhr.status
+          if (xhr.status == 200)
+            i++
+            uploadedFiles.push JSON.parse(xhr.responseText)
+            if  i == (fileInput.files.length)
+              uploadedFiles2 = uploadedFiles
+              if single
+                uploadedFiles2 = uploadedFiles[0]
+              if successCallback != undefined 
+                successCallback(xhr)
+              $(progressBarElement).text(
+                $(progressBarElement).data 'tr-success'
+              )
+              hiddenInput.value = JSON.stringify uploadedFiles2
+              fileInput.value = null
+              $(progressBarElement)
+                  .removeClass('btn-primary')
+                  .addClass 'btn-outline-secondary'
+            else
+              f = fileInput.files[i]
+              formData = new FormData()
+              formData.append("file", f, f.name)
+              xhr2 = new XMLHttpRequest()
+              xhr2.onload= onload(xhr2)
+              xhr2.onerror =onerror
+              xhr.upload.onprogress = onprogress
+              xhr2.open('POST', endpoint, true)
+              xhr2.send(formData)
+          else
+            console.log(xhr)
+            alert(
+              $(progressBarElement).data('tr-failure') + xhr.response
+            )
+        xhr.onload = onload(xhr)
+        
+        xhr.onerror = onerror
+        xhr.upload.onprogress = onprogress
+        f = fileInput.files[0]
+        formData = new FormData()
+        formData.append("file", f, f.name)
+        xhr.open('POST', endpoint, true)
+        xhr.send formData
+      else
+        alert(
+          $(progressBarElement).data 'tr-missing-consent'
+        )
+    
+
+    fI.change () ->
+      if fileChangeCallBack != null
+        fileChangeCallBack(fI.files)
+      $(uploadStatusElement).text("Upload")
+      $(actualUploadButtonElement)
+        .show()
+        .removeClass('btn-outline-secondary')
+        .addClass 'btn-primary'
+
+    uploadButton.on 'click', (e) ->
+      e.preventDefault()
+      fI.trigger('click')
 
 ###
 @param fileInput: dom element to listen to.
@@ -689,17 +690,14 @@ bulkCorrectionUpload = (fileInput) ->
 
 $(document).on 'turbolinks:load', ->
   video = document.getElementById('upload-video')
-  manuscript = document.getElementById('upload-manuscript')
+  manuscript = 'upload-manuscript'
   geogebra = document.getElementById('upload-geogebra')
   image = document.getElementById('upload-image')
   image2 = document.getElementById('upload-image2')
   bulkCorrection = document.getElementById('upload-bulk-correction')
 
-  # make uppy idempotent for turbolinks
-  $('.uppy').remove()
-  $('.uppy-Root').remove()
 
-  # initialize uppy
+  # initialize directUploads
   videoUpload video if video?
   manuscriptUpload manuscript if manuscript?
   geogebraUpload geogebra if geogebra?
@@ -709,7 +707,4 @@ $(document).on 'turbolinks:load', ->
   imageUpload image, uploadPath, "course" if image?
   bulkCorrectionUpload bulkCorrection if bulkCorrection?
 
-  # make uppy upload buttons look like bootstrap
-  $('.uppy-FileInput-btn').removeClass('uppy-FileInput-btn')
-  .addClass('btn btn-sm btn-outline-secondary')
   return

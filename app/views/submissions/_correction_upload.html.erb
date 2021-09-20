@@ -3,16 +3,30 @@
               html: { class: 'correction-upload',
                       data: { id: submission.id } } do |f| %>
   <div class="row">
-    <div class="col-12"
-         id="correction-uploadButton-<%= submission.id %>"
+    <div class="btn btn-sm btn-outline-secondary"
+         id="correction-uploadButton-button-<%= submission.id %>"
          data-choosefiles="<%= t('basics.file') %>">
-      <%= f.hidden_field :correction,
+         <%=t('basics.file') %>
+      
+    </div>
+    <div>
+    <%= f.hidden_field :correction,
                          value: submission.cached_correction_data,
                          id: "upload-correction-hidden-#{submission.id}" %>
-      <%= f.file_field :correction,
+      
+      <%= f.file_field :correction2,
                        class: 'form-control-file',
                        id: "upload-correction-#{submission.id}" %>
     </div>
+    <button id="correction-uploadButton-button-actual-<%=submission.id%>"
+                    data-tr-success="<%= t('buttons.upload_success') %>"
+                    data-tr-failure="<%= t('submission.upload_failure')%>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    data-tr-post-processing="<%= t('basics.post_processing')%>"
+                    class="btn btn-sm btn-outline-secondary"
+                    >
+              <%= t('buttons.upload') %>
+    </button>
     <div class="col-12" id="upload-correction-metadata-<%= submission.id %>">
       <% if submission.correction %>
           <%= submission.correction_filename %>
