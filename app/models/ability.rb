@@ -13,24 +13,15 @@ class Ability
     user ||= User.new
     if user.admin?
       can :manage, :all
-      cannot [:show_announcements, :organizational], Lecture do |lecture|
-        !lecture.in?(user.lectures)
-      end
     elsif user.editor? || user.teacher?
       # :read is a cancancan alias for index and show actions
       can [:read], :all
-
-      can :manage, :erdbeere
 
       can :manage, Referral do |referral|
         user.can_edit?(referral.medium)
       end
 
-      can :manage, Item do |item|
-        item.medium.nil? ||  user.can_edit?(item.medium?)
-      end
-
-      can :create, [Lecture, Lesson, Section]
+      can :create, Section
 
       # only users who are editors of a talk's lecture or who are speakers
       # can edit, update, destroy or assemble them
@@ -41,31 +32,6 @@ class Ability
       cannot :show, Talk do |talk|
         !talk.visible_for_user?(user)
       end
-
-      # anyone should be able to get a sidebar and see the announcements
-      can [:organizational, :show_announcements,
-           :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course, :subscribe_page],
-          Lecture
-
-
-      can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
-           :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
-           :remove_imported_medium, :show_subscribers,
-           :edit_structures, :close_comments, :open_comments],
-          Lecture do |lecture|
-        lecture.edited_by?(user)
-      end
-      cannot [ :show_announcements, :organizational], Lecture do |lecture|
-        !lecture.in?(user.lectures)
-      end
-
-      can [:update, :destroy], Lesson do |lesson|
-        lesson.lecture.edited_by?(user)
-      end
-      can [:modal, :list_sections], Lesson
-
-      can :start, :main
 
       can [:index, :destroy_all, :destroy_lecture_notifications,
            :destroy_news_notifications], Notification
@@ -142,26 +108,15 @@ class Ability
       end
     else
       can :read, :all
-      can :start, :main
       cannot :read, [Term, User]
       cannot :index, Interaction
 
       can [:take, :proceed], Quiz
 
-      #cannot :show, Lecture  do |lecture|
-      #  !lecture.in?(user.lectures)
-      #end
-
       cannot [:update, :create], Tag
       can [:display_cyto, :fill_course_tags, :take_random_quiz], Tag
       can :teacher, User
 
-      can [:show_announcements, :organizational,
-           :show_structures, :search_examples, :search, :show_random_quizzes,
-           :display_course, :subscribe_page], Lecture
-      cannot [:show_announcements, :organizational], Lecture do |lecture|
-        !lecture.in?(user.lectures)
-      end
       can [:index, :destroy_all], Notification
       can :destroy, Notification do |n|
         n.recipient == user
@@ -170,15 +125,10 @@ class Ability
       cannot :show, Section do |section|
         !section.visible_for_user?(user)
       end
-      cannot :show, Lesson do |lesson|
-        !lesson.visible_for_user?(user)
-      end
+
       cannot :index, Interaction
       can [:index, :destroy_all, :destroy_lecture_notifications,
            :destroy_news_notifications], Notification
-
-      can [:show_example, :find_example, :show_property, :show_structure,
-           :find_tags, :display_info], :erdbeere
 
       can [:index, :new, :create, :join,:cancel_edit, :cancel_new,
            :redeem_code, :enter_code], Submission
@@ -229,10 +179,6 @@ class Ability
 
       can :manage, Referral do |referral|
         user.can_edit?(referral.medium)
-      end
-
-      can :manage, Item do |item|
-        item.medium.nil? ||  user.can_edit?(item.medium)
       end
 
       can [:linearize, :set_root, :set_level,

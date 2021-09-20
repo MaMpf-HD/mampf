@@ -2,6 +2,8 @@ class CourseAbility
   include CanCan::Ability
 
   def initialize(user)
+    clear_aliased_actions
+
     can [:create, :destroy], Course do
       user.admin?
     end

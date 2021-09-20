@@ -611,14 +611,11 @@ class User < ApplicationRecord
 
   def can_edit?(something)
     unless something.is_a?(Lecture) || something.is_a?(Course) ||
-             something.is_a?(Medium)
+           something.is_a?(Medium) || something.is_a?(Lesson)
       raise 'can_edit? was called with incompatible class'
     end
     return true if admin
-    if something.is_a?(Lecture) || something.is_a?(Medium)
-      return in?(something.editors_with_inheritance)
-    end
-    in?(something.editors)
+    in?(something.editors_with_inheritance.to_a)
   end
 
   def speaker?

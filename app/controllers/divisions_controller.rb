@@ -3,6 +3,10 @@ class DivisionsController < ApplicationController
   before_action :set_division, only: [:edit, :update, :destroy]
   authorize_resource
 
+  def current_ability
+    @current_ability ||= DivisionAbility.new(current_user)
+  end
+
 	def edit
 	end
 

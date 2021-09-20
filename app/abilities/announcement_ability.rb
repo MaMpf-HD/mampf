@@ -2,6 +2,8 @@ class AnnouncementAbility
   include CanCan::Ability
 
   def initialize(user)
+    clear_aliased_actions
+
     can [:index, :propagate, :expel], Announcement do
       user.admin?
     end

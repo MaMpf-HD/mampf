@@ -2,6 +2,8 @@ class MediumAbility
   include CanCan::Ability
 
   def initialize(user)
+    clear_aliased_actions
+
     can [:index, :new], Medium
 
     can [:show, :show_comments], Medium do |medium|

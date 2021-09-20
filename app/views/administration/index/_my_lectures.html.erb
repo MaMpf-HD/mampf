@@ -6,7 +6,7 @@
         <%= helpdesk(t('admin.main.info.lecture_definition'), true) %>
       </div>
       <div class="col-4 text-right">
-        <% if current_user.course_editor? %>
+        <% if LectureAbility.new(current_user).can? :new, Lecture.new %>
           <%= link_to '', new_lecture_path,
                       class: 'fas fa-plus-circle text-light admin-index-button',
                       id: 'new-lecture-button',

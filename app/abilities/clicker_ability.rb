@@ -2,6 +2,8 @@ class ClickerAbility
   include CanCan::Ability
 
   def initialize(user)
+    clear_aliased_actions
+
     can [:new, :create], Clicker do
       !user.generic?
     end
