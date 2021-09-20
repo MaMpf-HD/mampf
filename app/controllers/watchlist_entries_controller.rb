@@ -1,6 +1,5 @@
 # WatchlistEntriesController
 class WatchlistEntriesController < ApplicationController
-  
   def create
     @watchlist_entry = WatchlistEntry.new
     @watchlist = Watchlist.find_by_id(params[:watchlist_entry][:watchlist_id])
@@ -15,4 +14,10 @@ class WatchlistEntriesController < ApplicationController
     end
   end
 
+  def destroy
+    @watchlist_entry = WatchlistEntry.find(params[:id])
+    @watchlist_entry.destroy
+    flash[:notice] = I18n.t('watchlist_entry.deletion')
+    redirect_to show_watchlist_path
+  end
 end

@@ -3,5 +3,5 @@ class Watchlist < ApplicationRecord
   has_many :watchlist_entries, dependent: :destroy
   has_many :media, through: :watchlist_entries
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: { scope: :user_id }
 end

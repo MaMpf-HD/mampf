@@ -1,6 +1,5 @@
 # WatchlistsController
 class WatchlistsController < ApplicationController
-
   def create
     @watchlist = Watchlist.new
     @watchlist.name = params[:watchlist][:name]
@@ -14,8 +13,15 @@ class WatchlistsController < ApplicationController
   end
 
   def show
-    if !current_user.watchlists.empty?
-      @media = current_user.watchlists.first.media
+    @watchlists = current_user.watchlists
+    if params[:watchlist].present?
+      @watchlist = Watchlist.find_by_id(params[:watchlist])
+    else
+      @watchlist = Watchlist.first
+    end
+    if !current_user.watchlists.empty? && !@watchlist.watchlist_entries.empty?
+      @media = @watchlist.media
+      @watchlist_entries = @watchlist.watchlist_entries
     end
   end
 
@@ -23,5 +29,8 @@ class WatchlistsController < ApplicationController
     @watchlists = current_user.watchlists
     @medium = Medium.find_by_id(params[:id])
     render 'watchlists/show_modal'
+  end
+
+  def update_order
   end
 end

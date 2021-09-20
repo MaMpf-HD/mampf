@@ -423,10 +423,13 @@ Rails.application.routes.draw do
                          as: 'show_watchlist'
 
   get 'watchlists/add_to_watchlist/:id', to: 'watchlists#add_to_watchlist',
-                                                as: 'show_add_to_watchlist'
+                                         as: 'show_add_to_watchlist'
 
   get 'watchlists/add', to: 'watchlists#add',
                         as: 'add_watchlist'
+
+  get 'watchlists/rearrange', to: 'watchlists#update_order',
+                              as: 'rearrange_watchlist'
 
   resources :watchlists
 
@@ -442,13 +445,13 @@ Rails.application.routes.draw do
   get 'find_erdbeere_tags', to: 'erdbeere#find_tags',
                             as: 'find_erdbeere_tags'
   post 'update_erdbeere_tags', to: 'erdbeere#update_tags',
-                            as: 'update_erdbeere_tags'
+                               as: 'update_erdbeere_tags'
   get 'edit_erdbeere_tags', to: 'erdbeere#edit_tags',
                             as: 'edit_erdbeere_tags'
   get 'cancel_edit_erdbeere_tags', to: 'erdbeere#cancel_edit_tags',
-                            as: 'cancel_edit_erdbeere_tags'
+                                   as: 'cancel_edit_erdbeere_tags'
   get 'display_erdbeere_info', to: 'erdbeere#display_info',
-                            as: 'display_erdbeere_info'
+                               as: 'display_erdbeere_info'
   get 'fill_realizations_select', to: 'erdbeere#fill_realizations_select',
                                   as: 'fill_realizations_select'
 

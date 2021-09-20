@@ -1,1 +1,1 @@
-$('#watchlist-select-form').html("<%= j render partial: 'watchlists/select_form', locals: { watchlist_entry: @watchlist_entry, watchlist: @watchlist, medium: @medium } %>")
+$('#watchlistSelectForm').html("<%= j render partial: 'watchlists/select_form', locals: { watchlist_entry: @watchlist_entry, watchlist: @watchlist, medium: @medium } %>")

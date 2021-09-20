@@ -1979,6 +1979,9 @@ en:
   watchlist_entry:
     add_success: 'The medium was added to your watchlist successfully'
     add_fail: 'There was an error adding the medium to your watchlist'
+    remove: 'Remove medium from watchlist'
+    remove_confirm: 'Are you sure you want to remove this medium from the watchlist?'
+    deletion: 'The medium was removed from the current watchlist'
   video:
     video: 'Video'
     no_video: 'There is no video.'
