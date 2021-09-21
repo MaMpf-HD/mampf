@@ -1,7 +1,7 @@
 # DivisionsController
 class DivisionsController < ApplicationController
-  before_action :set_division, only: [:edit, :update, :destroy]
-  authorize_resource
+  before_action :set_division, except: [:new, :create]
+  authorize_resource except: [:new, :create]
 
   def current_ability
     @current_ability ||= DivisionAbility.new(current_user)
@@ -12,6 +12,7 @@ class DivisionsController < ApplicationController
 
 	def new
 		@division = Division.new(program_id: params[:program_id].to_i)
+    authorize! :new, @division
 	end
 
 	def update
@@ -22,6 +23,7 @@ class DivisionsController < ApplicationController
 	def create
 		@division = Division.new(division_params)
 		@division.program_id = params[:division][:program_id]
+    authorize! :create, @division
 		@division.save
 		redirect_to classification_path
 	end

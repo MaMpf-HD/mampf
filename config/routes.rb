@@ -68,7 +68,7 @@ Rails.application.routes.draw do
                                              as: 'render_question_counter'
   get 'courses/search', to: 'courses#search',
                          as: 'search_courses'
-  resources :courses, except: [:index, :show]
+  resources :courses, except: [:index, :show, :new]
 
   resources :divisions, except: [:show]
 
@@ -165,8 +165,6 @@ Rails.application.routes.draw do
 
   get 'media/search', to: 'media#search',
                       as: 'media_search'
-  get 'media/delete_destinations', to: 'media#delete_destinations',
-                                   as: 'delete_destinations'
   get 'media/:id/inspect', to: 'media#inspect',
                             as: 'inspect_medium'
   get 'media/:id/enrich', to: 'media#enrich',

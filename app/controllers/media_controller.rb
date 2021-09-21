@@ -10,7 +10,8 @@ class MediaController < ApplicationController
   before_action :check_for_consent, except: [:play, :display]
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
-  authorize_resource except: :create
+  authorize_resource except: [:index, :new, :create, :search,
+                              :fill_teachable_select, :fill_media_select]
   layout 'administration'
 
   def current_ability
@@ -18,6 +19,7 @@ class MediaController < ApplicationController
   end
 
   def index
+    authorize! :index, Medium.new
     @media = paginated_results
     render layout: 'application'
   end
@@ -32,6 +34,7 @@ class MediaController < ApplicationController
   end
 
   def new
+    authorize! :new, Medium.new
     @medium = Medium.new(teachable: @teachable,
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
@@ -194,6 +197,7 @@ class MediaController < ApplicationController
 
   # return all media that match the search parameters
   def search
+    authorize! :search, Medium.new
     search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
@@ -356,6 +360,7 @@ class MediaController < ApplicationController
   end
 
   def fill_teachable_select
+    authorize! :fill_teachable_select, Medium.new
     result = (Course.editable_selection(current_user) +
                 Lecture.editable_selection(current_user) +
                 Lesson.editable_selection(current_user))
@@ -364,6 +369,7 @@ class MediaController < ApplicationController
   end
 
   def fill_media_select
+    authorize! :fill_media_select, Medium.new
     result = Medium.select_by_name.map { |t| { value: t[1], text: t[0] } }
     render json: result
   end

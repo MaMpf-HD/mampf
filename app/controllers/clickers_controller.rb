@@ -5,7 +5,8 @@ class ClickersController < ApplicationController
                                                  :get_votes_count,
                                                  :set_alternatives]
   before_action :set_clicker, except: [:new, :create]
-  authorize_resource except: [:edit, :open, :close, :set_alternatives]
+  authorize_resource except: [:new, :create, :edit, :open, :close,
+                              :set_alternatives]
   layout 'clicker', except: [:edit]
 
   def current_ability
@@ -14,6 +15,7 @@ class ClickersController < ApplicationController
 
   def new
     @clicker = Clicker.new
+    authorize! :new, @clicker
   end
 
   def edit
@@ -48,6 +50,7 @@ class ClickersController < ApplicationController
 
   def create
     @clicker = Clicker.new(clicker_params)
+    authorize! :create, @clicker
     @clicker.save
     if @clicker.valid?
       redirect_to administration_path

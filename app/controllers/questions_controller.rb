@@ -3,7 +3,7 @@ class QuestionsController < ApplicationController
   before_action :set_question, except: [:reassign]
   before_action :set_quizzes, only: [:reassign]
   before_action :check_solution_errors, only: [:update]
-  authorize_resource
+  authorize_resource except: :reassign
   layout 'administration'
 
   def current_ability
@@ -34,6 +34,7 @@ class QuestionsController < ApplicationController
 
   def reassign
     question_old = Question.find_by_id(params[:id])
+    authorize! :reassign, question_old
     I18n.locale = question_old.locale_with_inheritance
     @question, answer_map = question_old.duplicate
     @question.editors = [current_user]

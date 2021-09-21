@@ -5,7 +5,7 @@ class LecturesController < ApplicationController
   before_action :set_lecture_cookie, only: [:show, :organizational,
                                             :show_announcements]
   before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
-  authorize_resource except: :create
+  authorize_resource except: [:new, :create, :search]
   before_action :check_for_consent
   before_action :check_for_subscribe, only: [:show]
   before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
@@ -65,6 +65,7 @@ class LecturesController < ApplicationController
 
   def new
     @lecture = Lecture.new
+    authorize! :new, @lecture
     @from = params[:from]
     return unless @from == 'course'
     # if new action was triggered from inside a course view, add the course
@@ -217,6 +218,7 @@ class LecturesController < ApplicationController
   end
 
   def search
+    authorize! :search, Lecture.new
     search = Lecture.search_by(search_params, params[:page])
     search.execute
     results = search.results

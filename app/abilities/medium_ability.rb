@@ -37,7 +37,7 @@ class MediumAbility
     end
 
     can :update_tags, Medium do |medium|
-      !user.generic && user.can_edit?(medium)
+      !user.generic? && user.can_edit?(medium)
     end
 
     can [:register_download], Medium do |medium|

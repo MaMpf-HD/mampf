@@ -1,6 +1,6 @@
 # AssignmentsController
 class AssignmentsController < ApplicationController
-  before_action :set_assignment, only: [:edit, :destroy, :update, :cancel_edit]
+  before_action :set_assignment, except: [:new, :cancel_new, :create]
   before_action :set_lecture, only: :create
   authorize_resource except: [:new, :cancel_new, :create]
 

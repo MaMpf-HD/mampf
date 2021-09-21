@@ -1,13 +1,19 @@
 # ProgramsController
 class ProgramsController < ApplicationController
-  before_action :set_program, only: [:edit, :update, :destroy]
-  authorize_resource
+  before_action :set_program, except: [:new, :create]
+  authorize_resource except: [:new, :create]
+
+
+  def current_ability
+    @current_ability ||= ProgramAbility.new(current_user)
+  end
 
 	def edit
 	end
 
 	def new
 		@program = Program.new(subject_id: params[:subject_id].to_i)
+    authorize! :new, @program
 	end
 
 	def update
@@ -18,6 +24,7 @@ class ProgramsController < ApplicationController
 	def create
 		@program = Program.new(program_params)
 		@program.subject_id = params[:program][:subject_id].to_i
+    authorize! :create, @program
 		@program.save
 		redirect_to classification_path
 	end
