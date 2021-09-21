@@ -8,10 +8,15 @@ class QuizzesController < ApplicationController
   before_action :check_vertex_accessibility, only: [:take]
   before_action :check_errors, only: [:take]
   before_action :init_values, only: [:take, :proceed]
-  authorize_resource
+  authorize_resource except: :new
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= QuizAbility.new(current_user)
+  end
+
   def new
+    authorize! :new, Quiz.new
   end
 
   def edit

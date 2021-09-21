@@ -252,8 +252,6 @@ Rails.application.routes.draw do
                           as: 'take_quiz'
   patch 'quizzes/:id/take', to: 'quizzes#proceed'
   put 'quizzes/:id/take', to: 'quizzes#proceed'
-  get 'quizzes/:id/preview', to: 'quizzes#preview',
-                             as: 'preview_quiz'
   patch 'quizzes/:id/linearize', to: 'quizzes#linearize',
                                  as: 'linearize_quiz'
   post 'quizzes/:id/set_root', to: 'quizzes#set_root',
