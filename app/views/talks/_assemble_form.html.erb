@@ -94,7 +94,8 @@
                              false) %>
               </div>
               <% if talk.description.present? && !talk.display_description %>
-                <div class="col-12 text-dark ml-2 border border-info rounded my-2">
+                <div class="col-12 text-dark ml-2 border border-warning
+                            rounded bg-yellow-lighten-5 my-2">
                   <span class="badge badge-secondary">
                     <%= t('basics.info') %>
                   </span>
