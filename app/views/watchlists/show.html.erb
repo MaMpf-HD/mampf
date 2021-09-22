@@ -3,7 +3,9 @@
   <span class="dropdown ml-3">
     <button class="btn btn-primary dropdown-toggle"
             data-toggle="dropdown"
-            type="button">
+            type="button"
+            id="watchlistButton"
+            data-id=<%= @watchlist.id %>>
       <%= @watchlist.name %>
     </button>
     <div class="dropdown-menu">
@@ -14,13 +16,18 @@
       <% end %>
     </div>
   </span>
+<% elsif @watchlists.size == 1%>
+  <button class="btn btn-secondary"
+          disabled
+          id="watchlistButton"
+          data-id=<%= @watchlist.id %>>
+    <%= @watchlist.name %>
+  </button>
 <% else %>
   <button class="btn btn-secondary" disabled>
-    <%= @watchlist.present? ? @watchlist.name : t('watchlist.empty') %>
+    <%= t('watchlist.empty') %>
   </button>
 <% end %>
-<div id="test123">
-</div>
 <% if @watchlist_entries.present? %>
   <div class="row" id="sortableWatchlistMedia">
     <% @watchlist_entries.each do |entry| %>

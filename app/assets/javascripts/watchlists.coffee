@@ -9,16 +9,12 @@ $(document).on 'turbolinks:load', ->
   })
 
   $('#sortableWatchlistMedia').on 'sortupdate', ->
-    console.log("Trying ajax.");
-    console.log($.makeArray($('[id=card-title]')))
-    #console.log($.makeArray($('#sortableWatchlistMedia')).map (x) -> x.dataset.id)
+    order = $.makeArray($('#sortableWatchlistMedia #card-title')).map (x) -> x.dataset.id;
+    id = $('#watchlistButton').data('id');
     $.ajax
       type: 'GET',
       url: '/watchlists/rearrange',
-      success: ->
-        console.log("Worked!");
-      error: ->
-        console.log("FUCK");
+      data: {order: order, id: id}
     return
 
   return

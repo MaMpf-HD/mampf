@@ -15,7 +15,8 @@
           <%= link_to medium.card_header,
                       ref,
                       class: 'text-light',
-                      id: 'card-title' %>
+                      id: 'card-title',
+                      data: { id: entry.id } %>
         <% else %>
           <span class="text-light" id="card-title">
             <%= medium.card_header %>

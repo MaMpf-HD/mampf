@@ -32,5 +32,6 @@ class WatchlistsController < ApplicationController
   end
 
   def update_order
+    params[:order].each_with_index { |id, index| WatchlistEntry.update(id, medium_position: index) }
   end
 end
