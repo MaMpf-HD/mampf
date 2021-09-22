@@ -24,11 +24,14 @@ resetSelectized = (index, select) ->
       model_select = this
       courseId = 0
       existing_values = Array.apply(null, model_select.options).map (o) -> o.value
+      send_data = false
+      loaded = false
       if this.dataset.model == 'tag'
         locale = this.dataset.locale
         fill_path = Routes.fill_tag_select_path({locale: locale})
       else if this.dataset.model == 'user'
         fill_path = Routes.fill_user_select_path()
+        send_data = true
       else if this.dataset.model == 'user_generic'
         fill_path = Routes.list_generic_users_path()
       else if this.dataset.model == 'teachable'
@@ -59,15 +62,17 @@ resetSelectized = (index, select) ->
         labelField: 'name'
         searchField: 'name'
         load: (query, callback) ->
-          console.log()
-          url = fill_path+"?course_id="+courseId+"&q=" + encodeURIComponent(query)
-          fetch(url).then((response) ->
-            response.json()
-          ).then((json) ->
-            callback json.map((item)-> return {name:item.text,value:item.value})
-          ).catch ->
-            callback()
-            return
+          if send_data || !loaded
+            url = fill_path+"?course_id="+courseId+"&q=" + encodeURIComponent(query)
+            fetch(url).then((response) ->
+              response.json()
+            ).then((json) ->
+              loaded = true
+              callback json.map((item)-> return {name:item.text,value:item.value})
+            ).catch ->
+              callback()
+              return
+          callback()
           return
         render:
           option: (data, escape) ->
