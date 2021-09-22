@@ -1,17 +1,12 @@
-# ItemsController
+# InteractionsController
 class InteractionsController < ApplicationController
+  authorize_resource
   layout 'administration'
 
-  def current_ability
-    @current_ability ||= InteractionAbility.new(current_user)
-  end
-
   def index
-    authorize! :index, Interaction.new
   end
 
   def export_interactions
-    authorize! :export_interactions, Interaction.new
   	start_date = interaction_params[:start_date].to_date
 		end_date = interaction_params[:end_date].to_date
   	@interactions = Interaction.created_between(start_date, end_date)
@@ -23,7 +18,6 @@ class InteractionsController < ApplicationController
   end
 
   def export_probes
-    authorize! :export_probes, Interaction.new
   	start_date = interaction_params[:start_date].to_date
 		end_date = interaction_params[:end_date].to_date
   	@probes = Probe.created_between(start_date, end_date)

@@ -1,8 +1,8 @@
 # AnnouncementsController
 class AnnouncementsController < ApplicationController
-  authorize_resource except: [:new, :create, :index]
   layout 'administration'
   before_action :set_announcement, except: [:new, :create, :index]
+  authorize_resource except: [:new, :create, :index]
 
   def current_ability
     @current_ability ||= AnnouncementAbility.new(current_user)
