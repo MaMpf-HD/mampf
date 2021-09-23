@@ -9,12 +9,14 @@ $(document).on 'turbolinks:load', ->
   })
 
   $('#sortableWatchlistMedia').on 'sortupdate', ->
+    reverse = $('#reverseButton').data('reverse');
     order = $.makeArray($('#sortableWatchlistMedia #card-title')).map (x) -> x.dataset.id;
     id = $('#watchlistButton').data('id');
+    console.log(reverse)
     $.ajax
       type: 'GET',
       url: '/watchlists/rearrange',
-      data: {order: order, id: id}
+      data: {order: order, id: id, reverse: reverse}
     return
 
   return

@@ -18,6 +18,12 @@ class WatchlistEntriesController < ApplicationController
     @watchlist_entry = WatchlistEntry.find(params[:id])
     @watchlist_entry.destroy
     flash[:notice] = I18n.t('watchlist_entry.deletion')
-    redirect_to show_watchlist_path
+    redirect_to controller: 'watchlists',
+                action: 'show',
+                watchlist: params[:watchlist],
+                all: params[:all],
+                reverse: params[:reverse],
+                page: 1,
+                per: params[:per]
   end
 end
