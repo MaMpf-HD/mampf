@@ -28,8 +28,10 @@ describe("Courses", function () {
             ]).then((records)=>{
                 cy.visit(`/courses/${records[0].id}/edit`);
                 cy.contains("Bild").should("exist");
+                cy.get("#image_heading").contains("Ein-/Ausklappen").click();
                 const yourFixturePath = 'files/image.png';
-                cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+                cy.get('#upload-image').attachFile(yourFixturePath);
+                cy.contains("Upload").click();
                 cy.wait(100);
                 cy.contains("Speichern").click();
                 cy.get("#image_heading").contains("Ein-/Ausklappen").click();
@@ -39,7 +41,12 @@ describe("Courses", function () {
         it("can create lecture", () => {
             cy.appFactories([
                 ['create', 'course'],
-                ['create', 'term']
+                ['create', 'term'],
+                ['create','editable_user_join',{
+                    'editable_id': 1,
+                    'editable_type':'Course',
+                    'user_id':1
+                }]
             ]).then((records) => {
                 cy.server();
                 cy.route('**/new').as('new');

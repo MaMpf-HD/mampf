@@ -99,8 +99,8 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_upload
-    files = JSON.parse(params[:package])
-    @report =@tutorial.add_bulk_corrections!(@assignment, files)
+    files = JSON.parse(params[:files])
+    @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
     @stack = @assignment.submissions.where(tutorial: @tutorial).proper
                         .order(:last_modification_by_users_at)
     send_correction_upload_emails
@@ -170,7 +170,7 @@ class TutorialsController < ApplicationController
   end
 
   def send_correction_upload_emails
-    @report[:successful_saves].each do |submission|
+    @report[:successful_saves]&.each do |submission|
       submission.users.email_for_correction_upload.each do |u|
         NotificationMailer.with(recipient: u,
                                 locale: u.locale,

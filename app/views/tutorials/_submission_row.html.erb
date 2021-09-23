@@ -16,7 +16,7 @@
     <% if submission.too_late? %>
       <i class="fas fa-exclamation-triangle"
         data-toggle="tooltip"
-        title="<%= late_submission_info(submission, @tutorial) %>">
+        title="<%= late_submission_info(submission, submission.tutorial) %>">
       </i>
     <% end %>
   </div>
@@ -34,7 +34,7 @@
                   data: { turbolinks: false } %>
     <% end %>
   </div>
-  <% if current_user.in?(@tutorial.tutors) %>
+  <% if current_user.in?(submission.tutorial.tutors) %>
     <div class="col-3 correction-column"
         data-id="<%= submission.id %>">
       <%= render partial: 'submissions/correction_column',
@@ -44,11 +44,11 @@
     <%= render partial: 'submissions/download',
               locals: { submission: submission } %>
   <% end %>
-  <% if current_user.in?(@tutorial.tutors) %>
+  <% if current_user.in?(submission.tutorial.tutors) %>
     <div class="col-3 submission-actions"
         data-id="<%= submission.id %>">
       <%= render partial: 'submissions/other_actions',
-                locals: { submission: submission } %>
+                 locals: { submission: submission } %>
     </div>
   <% end %>
 </div>
