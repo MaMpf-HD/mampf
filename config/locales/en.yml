@@ -2579,6 +2579,9 @@ en:
       Nothing has yet been submitted.
     nothing_yet_in_lecture: >
       In this lecture nothing had yet to be submitted.
+    protected: Protected Assignment
+    protected_info: >
+      "Protected" Assignments won't be deleted at the end of the semester.
     destruction_info: >
       <i>
       Note.
