@@ -2,8 +2,12 @@
 class RemarksController < MediaController
   before_action :set_remark, only: [:edit, :update]
   before_action :set_quizzes, only: [:reassign]
-  authorize_resource
+  authorize_resource except: :reassign
   layout 'administration'
+
+  def current_ability
+    @current_ability ||= RemarkAbility.new(current_user)
+  end
 
   def edit
     I18n.locale = @remark.locale_with_inheritance
@@ -15,6 +19,7 @@ class RemarksController < MediaController
 
   def reassign
     remark_old = Remark.find_by_id(params[:id])
+    authorize! :reassign, remark_old
     I18n.locale = remark_old.locale_with_inheritance
     @remark = remark_old.duplicate
     @remark.editors = [current_user]

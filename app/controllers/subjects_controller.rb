@@ -1,10 +1,15 @@
 # SubjectsController
 class SubjectsController < ApplicationController
-  before_action :set_subject, only: [:edit, :update, :destroy]
-  authorize_resource
+  before_action :set_subject, except: [:new, :create]
+  authorize_resource except: [:new, :create]
+
+  def current_ability
+    @current_ability ||= SubjectAbility.new(current_user)
+  end
 
   def new
     @subject = Subject.new
+    authorize! :new, @subject
   end
 
 	def edit
@@ -17,6 +22,7 @@ class SubjectsController < ApplicationController
 
   def create
     @subject = Subject.new(subject_params)
+    authorize! :create, @subject
     @subject.save
     redirect_to classification_path
   end

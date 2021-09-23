@@ -2,6 +2,7 @@ class MediumAbility
   include CanCan::Ability
 
   def initialize(user)
+    user ||= User.new
     clear_aliased_actions
 
     can [:index, :new], Medium

@@ -2,6 +2,7 @@ class ClickerAbility
   include CanCan::Ability
 
   def initialize(user)
+    user ||= User.new
     clear_aliased_actions
 
     can [:new, :create], Clicker do

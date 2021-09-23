@@ -2,6 +2,7 @@ class QuizAbility
   include CanCan::Ability
 
   def initialize(user)
+    user ||= User.new
     clear_aliased_actions
 
     can [:take, :proceed, :new], Quiz

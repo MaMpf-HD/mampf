@@ -1,13 +1,18 @@
 # TalksController
 class TalksController < ApplicationController
   before_action :set_talk, except: [:new, :create]
-  authorize_resource
+  authorize_resource except: [:new, :create]
   before_action :set_view_locale, only: [:edit]
   layout 'administration'
+
+  def current_ability
+    @current_ability ||= TalkAbility.new(current_user)
+  end
 
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     @talk = Talk.new(lecture: @lecture)
+    authorize! :new, @talk
     I18n.locale = @talk.lecture.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
   end
@@ -21,6 +26,7 @@ class TalksController < ApplicationController
 
   def create
     @talk = Talk.new(talk_params)
+    authorize! :create, @talk
     dates = params[:talk][:dates].values.compact - ['']
     @talk.dates = dates if dates
     I18n.locale = @talk&.lecture&.locale_with_inheritance ||

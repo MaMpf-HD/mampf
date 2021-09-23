@@ -387,8 +387,6 @@ Rails.application.routes.draw do
 
   resources :tutorials, only: [ :new, :edit, :create, :update, :destroy]
 
-  get 'sections/list_tags', to: 'sections#list_tags',
-                             as: 'list_section_tags'
   get 'sections/:id/display', to: 'sections#display',
                               as: 'display_section'
   resources :sections, except: [:index]

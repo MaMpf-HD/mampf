@@ -7,8 +7,13 @@ class TagsController < ApplicationController
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]
-  authorize_resource
+  authorize_resource except: [:new, :modal, :search, :postprocess]
   layout 'administration'
+
+
+  def current_ability
+    @current_ability ||= TagAbility.new(current_user)
+  end
 
   def show
     if params[:locale].in?(I18n.available_locales.map(&:to_s))
@@ -48,6 +53,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    authorize! :new, @tag
     set_notions
     @tag.aliases.new(locale: I18n.locale)
   end
@@ -91,6 +97,7 @@ class TagsController < ApplicationController
   # prepare new tag instance for modal
   def modal
     set_up_tag
+    authorize! :modal, @tag
     @tag.aliases.new(locale: I18n.locale)
     add_course
     add_section
@@ -124,6 +131,7 @@ class TagsController < ApplicationController
   end
 
   def search
+    authorize! :search, Tag.new
     per_page = search_params[:per] || 10
     search = Sunspot.new_search(Tag)
     search.build do
@@ -151,6 +159,7 @@ class TagsController < ApplicationController
   end
 
   def postprocess
+    authorize! :postprocess, Tag.new
     @tags_hash = params[:tags]
     @tags_hash.each do |t, section_data|
       tag = Tag.find_by_id(t)
