@@ -1903,7 +1903,7 @@ en:
     miscellaneous: Miscellaneous
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
-    my_talks: my_talks
+    my_talks: My talks
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
