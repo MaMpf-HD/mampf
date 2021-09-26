@@ -8,8 +8,9 @@ class QuizAbility
     can [:take, :proceed, :new], Quiz
 
     can [:edit, :update, :destroy, :linearize, :set_root, :set_level,
-         :update_default_target, :delete_edge], Quiz do |quiz|
-      user.can_edit?(quiz.becomes(Medium))
+         :update_default_target, :delete_edge,
+         :update_branching], Quiz do |quiz|
+      quiz && user.can_edit?(quiz.becomes(Medium))
     end
   end
 end

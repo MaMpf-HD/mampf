@@ -611,7 +611,8 @@ class User < ApplicationRecord
 
   def can_edit?(something)
     unless something.is_a?(Lecture) || something.is_a?(Course) ||
-           something.is_a?(Medium) || something.is_a?(Lesson)
+           something.is_a?(Medium) || something.is_a?(Lesson) ||
+           something.is_a?(Talk)
       raise 'can_edit? was called with incompatible class'
     end
     return true if admin

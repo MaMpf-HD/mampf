@@ -2,22 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-# update quizzable text for default target selector for remarks
-
 $(document).on 'turbolinks:load', ->
-
-  $(document).on 'change', '[id^="default_target_select_"]', ->
-    $.ajax Routes.update_vertex_default_path(),
-      type: 'GET'
-      dataType: 'script'
-      data: {
-        quiz_id: $(this).data('quizid')
-        id: $('#' + this.id + ' option:selected').val()
-        vertex_id: $(this).data('vertexid')
-      }
-      error: (jqXHR, textStatus, errorThrown) ->
-        console.log("AJAX Error: #{textStatus}")
-    return
 
   # update quizzable text for branching selectors for questions
 

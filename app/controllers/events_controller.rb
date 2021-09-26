@@ -8,36 +8,6 @@ class EventsController < ApplicationController
     @current_ability ||= EventAbility.new(current_user)
   end
 
-  def update_vertex_default
-    @quizzable = Quiz.find_by_id(params[:quiz_id]).quizzable(params[:id].to_i)
-    @vertex_id = params[:vertex_id].to_i
-    authorize! :update_vertex_default, :event
-  end
-
-  def update_branching
-    @quizzable = Quiz.find_by_id(params[:quiz_id])
-                     .quizzable(params[:vertex_id].to_i)
-    @id = params[:id].sub 'select', 'quizzable'
-  end
-
-  def update_vertex_body
-    @quiz = Quiz.find(params[:quiz_id])
-    I18n.locale = @quiz.locale_with_inheritance
-    @vertex_id = params[:vertex_id].to_i
-  end
-
-  def update_answer_body
-    @answer = Answer.find_by_id(params[:answer_id])
-    @question = @answer.question
-    I18n.locale = @question.locale_with_inheritance
-    @input = params[:input]
-  end
-
-  def update_answer_box
-    @answer_id = params[:answer_id].to_i
-    @value = params[:value] == 'true'
-  end
-
   def cancel_question_basics
     @question = Question.find_by_id(params[:question_id])
   end

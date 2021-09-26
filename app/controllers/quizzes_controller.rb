@@ -1,14 +1,14 @@
 # Quizzes controller
 class QuizzesController < ApplicationController
   skip_before_action :authenticate_user!, only: [:take, :proceed]
-  before_action :set_quiz, except: [:new]
+  before_action :set_quiz, except: [:new, :update_branching]
   # cancancan gem does not work well with single table inheritance
   # therefore, check access rights manually for :take and :proceed
   before_action :check_accessibility, only: [:take, :proceed]
   before_action :check_vertex_accessibility, only: [:take]
   before_action :check_errors, only: [:take]
   before_action :init_values, only: [:take, :proceed]
-  authorize_resource except: :new
+  authorize_resource except: [:new, :update_branching]
   layout 'administration'
 
   def current_ability
@@ -77,6 +77,13 @@ class QuizzesController < ApplicationController
     target = params[:target].to_i
     quiz_graph.delete_edge!(source, target)
     @quiz.update(quiz_graph: quiz_graph)
+  end
+
+  def update_branching
+    quiz = Quiz.find_by_id(params[:quiz_id])
+    authorize! :update_branching, quiz
+    @quizzable = quiz.quizzable(params[:vertex_id].to_i)
+    @id = params[:id].sub 'select', 'quizzable'
   end
 
   private

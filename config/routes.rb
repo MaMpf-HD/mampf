@@ -28,6 +28,8 @@ Rails.application.routes.draw do
                                   as: 'expel_announcement'
   resources :announcements, only: [ :index, :new, :create]
 
+  get 'answers/update_answer_box', as: 'update_answer_box'
+
   resources :answers, except: [:index, :show, :edit]
 
   resources :areas, except: [:show]
@@ -72,11 +74,6 @@ Rails.application.routes.draw do
 
   resources :divisions, except: [:show]
 
-  get 'events/update_vertex_default', as: 'update_vertex_default'
-  get 'events/update_branching', as: 'update_branching'
-  get 'events/update_vertex_body', as: 'update_vertex_body'
-  get 'events/update_answer_body', as: 'update_answer_body'
-  get 'events/update_answer_box', as: 'update_answer_box'
   get 'events/cancel_question_basics', as: 'cancel_question_basics'
   get 'events/cancel_remark_basics', as: 'cancel_remark_basics'
   get 'events/cancel_quiz_basics', as: 'cancel_quiz_basics'
@@ -262,6 +259,8 @@ Rails.application.routes.draw do
                                             as: 'update_default_target'
   delete 'quizzes/:id/delete_edge', to: 'quizzes#delete_edge',
                                             as: 'delete_edge'
+  get 'quizzes/update_branching', to: 'quizzes#update_branching',
+                                  as: 'update_branching'
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]
   end

@@ -1,6 +1,6 @@
 # AnswersController
 class AnswersController < ApplicationController
-  before_action :set_answer, except: [:new, :create]
+  before_action :set_answer, except: [:new, :create, :update_answer_box]
   authorize_resource except: [:new, :create]
 
   def current_ability
@@ -30,6 +30,11 @@ class AnswersController < ApplicationController
     @id = params[:id]
     return unless @answer.destroy
     @success = true
+  end
+
+  def update_answer_box
+    @answer_id = params[:answer_id].to_i
+    @value = params[:value] == 'true'
   end
 
   private
