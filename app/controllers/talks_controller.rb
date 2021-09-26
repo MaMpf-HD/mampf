@@ -89,9 +89,13 @@ class TalksController < ApplicationController
     end
 
     def talk_params
-      params.require(:talk).permit(:title, :lecture_id, :details, :description,
-                                   :display_description,
-                                   speaker_ids: [], tag_ids: [])
+      attributes = [:title, :lecture_id, :details, :description,
+                    :display_description, speaker_ids: [], tag_ids: []]
+      if @talk && !current_user.in?(@talk.speakers) &&
+         !@talk.display_description
+        attributes.delete(:display_description)
+      end
+      params.require(:talk).permit(attributes)
     end
 
     def modify_params

@@ -836,7 +836,7 @@ de:
           und wichtige Details anzugeben (wie etwa Literatur zu dem
           Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
           setzt). Dieser Text erscheint auf der Seminarhauptseite und der Seite
-          des Vortrags kann von den Vortragenden nicht bearbeitet werden.
+          des Vortrags und kann von den Vortragenden nicht bearbeitet werden.
         details_info: >
           Das ist eine Beschreibung des Vortrags durch die DozentIn.
         description: >
@@ -846,10 +846,8 @@ de:
         description_info: >
           Das ist ein Text über den Vortrag, der von den Vortragenden stammt.
         description_for_editor: >
-          Das ist ein Text über den Vortrag, der eigentlich von den Vortragenden
-          stammt. Du kannst ihn als DozentIn des Seminars bzw. zusätzliche
-          SeminareditorIn bearbeiten. Du kannst LaTeX
-          benutzen (indem du den Ausdruck in $...$ setzt).
+          Das ist ein Text über den Vortrag, der von den Vortragenden
+          stammt.
         media: >
           Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
           sind. Du kannst neue Medien hinzufügen.
@@ -873,9 +871,10 @@ de:
           nur um einen Entwurf handelt.
         display_description_teacher: >
           Die Vortragenden können entscheiden, ob ihr Text zum Inhalt auf
-          der Vortragsseite angezeigt wird (dieser Halen wird typischerweise
-          nicht gesetzt sein, wenn es ich bei dem Text noch um einen Entwurf
-          handelt). Du kannst diese Einstellung überschreiben.
+          der Vortragsseite angezeigt wird (dieser Haken wird typischerweise
+          nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
+          handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
+          entfernen.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'

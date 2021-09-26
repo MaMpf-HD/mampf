@@ -25,35 +25,44 @@
          id="talk-details-preview">
           <%= sanitize talk.details %>
     </div>
-    <div class="mb-2">
-      <%= t('content') %> <%= t('admin.talk.info.by_speakers') %>
-      <%= helpdesk(t('admin.talk.info.description_for_editor'), false) %>
-    </div>
-    <%= f.trix_editor :description,
-                      class: 'bg-falsehood',
-                      id: 'talk-description-trix',
-                      data: { content: talk.description,
-                              preview: 'talk-description-preview' } %>
-    <%= f.hidden_field :lecture_id,
-                       value: talk.lecture.id %>
-    <div class="row my-2">
-      <div class="col-12">
-        <%= t('basics.preview') %>
+    <% if current_user.in?(talk.speakers) || talk.display_description %>
+      <div class="mb-2">
+        <%= t('content') %> <%= t('admin.talk.info.by_speakers') %>
+        <%= helpdesk(t('admin.talk.info.description_for_editor'), false) %>
       </div>
-    </div>
-    <div class="alert alert-dark bg-mdb-color-lighten-6"
-         id="talk-description-preview">
+      <% if current_user.in?(talk.speakers) %>
+        <%= f.trix_editor :description,
+                          class: 'bg-falsehood',
+                          id: 'talk-description-trix',
+                          data: { content: talk.description,
+                                  preview: 'talk-description-preview' } %>
+        <%= f.hidden_field :lecture_id,
+                           value: talk.lecture.id %>
+        <div class="row my-2">
+          <div class="col-12">
+            <%= t('basics.preview') %>
+          </div>
+        </div>
+        <div class="alert alert-dark bg-mdb-color-lighten-6"
+             id="talk-description-preview">
           <%= sanitize talk.description %>
-    </div>
-    <div class="custom-control custom-checkbox">
-      <%= f.check_box :display_description,
-                      class: 'custom-control-input' %>
-      <%= f.label :display_description,
-                  t('admin.talk.display_description_teacher'),
-                  { class: 'custom-control-label' } %>
-      <%= t('admin.talk.info.by_speakers') %>
-      <%= helpdesk(t('admin.talk.info.display_description_teacher'),
-                   false) %>
-    </div>
+        </div>
+      <% elsif talk.display_description %>
+        <div class="alert alert-dark bg-mdb-color-lighten-6">
+          <%= sanitize talk.description %>
+        </div>
+      <% end %>
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :display_description,
+                        class: 'custom-control-input',
+                        disabled: !current_user.in?(talk.speakers) &&
+                                  !talk.display_description %>
+        <%= f.label :display_description,
+                    t('admin.talk.display_description_teacher'),
+                    { class: 'custom-control-label' } %>
+        <%= helpdesk(t('admin.talk.info.display_description_teacher'),
+                     false) %>
+      </div>
+    <% end %>
   </div>
 </div>

@@ -22,13 +22,24 @@
                 class: 'card-img-top teachableThumbnail border-bottom',
                 alt: 'Card image cap') %>
   <div class="card-body">
-    <div>
-      <%= link_to talk.lecture.title_term_info,
-                  lecture_path(talk.lecture),
-                  class: 'text-dark' %>
+    <div class="row">
+      <div class="col-3 text-center">
+        <%= talk.lecture.sort_in_brackets %>
+      </div>
+      <div class="col-9">
+        <%= link_to talk.lecture.title_term_info_no_type,
+                    lecture_path(talk.lecture),
+                    class: 'text-dark' %>
+      </div>
     </div>
     <div class="row">
-      <div class="col-12">
+      <div class="col-3 text-center">
+        <i class="far fa-calendar-alt mr-2"
+           data-toggle="tooltip"
+           title="<%= t('basics.date') %>">
+        </i>
+      </div>
+      <div class="col-9">
         <% talk.dates.each do |d| %>
             <%= link_to localize(d, format: :concise),
                         talk_path(talk),
@@ -37,12 +48,16 @@
       </div>
     </div>
     <% if talk.speakers.size > 1 %>
-      <div>
-        <i class="fas fa-handshake"
-           data-toggle="tooltip"
-           title="<%= t('admin.talk.info.cospeakers') %>">
-        </i>
-        <%= cospeaker_list(talk, current_user) %>
+      <div class="row">
+        <div class="col-3 text-center">
+          <i class="fas fa-handshake"
+             data-toggle="tooltip"
+             title="<%= t('admin.talk.info.cospeakers') %>">
+          </i>
+        </div>
+        <div class="col-9">
+          <%= cospeaker_list(talk, current_user) %>
+        </div>
       </div>
     <% end %>
   </div>
