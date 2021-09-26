@@ -4,9 +4,14 @@ class EventsController < ApplicationController
 #  authorize_resource class: false
 #  to do: authorization needs to be done manually
 
+  def current_ability
+    @current_ability ||= EventAbility.new(current_user)
+  end
+
   def update_vertex_default
     @quizzable = Quiz.find_by_id(params[:quiz_id]).quizzable(params[:id].to_i)
     @vertex_id = params[:vertex_id].to_i
+    authorize! :update_vertex_default, :event
   end
 
   def update_branching
