@@ -18,6 +18,7 @@ class QuizzesController < ApplicationController
     @graph_elements = @quiz.quiz_graph.to_cytoscape.to_json
     @linear = @quiz.quiz_graph.linear?
     I18n.locale = @quiz.locale_with_inheritance
+    render layout: current_user.layout
   end
 
   def update

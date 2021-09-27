@@ -96,6 +96,25 @@
 			</div>
 		</div>
 	<% end %>
+	<div class="card">
+		<div class="card-header clickable"
+				 role="tab"
+				 data-toggle="collapse"
+				 data-target="#collapseTalks">
+			<h4 class="text-dark"
+					id="talkLink">
+				<%= t('profile.my_talks') %>
+			</h4>
+		</div>
+		<div class="collapse subscriptionsCollapse" id="collapseTalks"
+				 data-parent="#subscriptionsAccordion"
+				 data-link="#talkLink">
+			<div class="card-body">
+				<%= render partial: 'main/start/talks',
+									 locals: { talks: @talks } %>
+			</div>
+		</div>
+	</div>
 	<div class="card mb-3">
 		<div class="card-header clickable"
 				 role="tab"
