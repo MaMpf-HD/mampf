@@ -17,23 +17,28 @@ module.exports = {
         src: 'img/logo.svg',
       },
       items: [{
-          to: 'docs/',
-          activeBasePath: 'docs',
-          label: 'Docs for Students',
-          position: 'left',
+        to: 'mampf-pages/',
+        activeBasePath: 'mampf-pages',
+        label: 'Pages',
+        position: 'left',
+       },
+       {
+         to: 'tutorials/',
+         activeBasePath: 'tutorials',
+         label: 'Tutorials',
+         position: 'left',
         },
         {
-          to: 'lecturers/',
-          activeBasePath: 'lecturers',
-          label: 'Docs  for Lecturers',
+          to: 'mampf-pages/terminology',
+          label: 'Terminology',
           position: 'left',
-        },
-        {
-          to: 'devel/',
-          activeBasePath: 'devel',
-          label: 'Docs  for Developers',
-          position: 'left',
-        },
+         },
+         {
+           to: 'conception/',
+           activeBasePath: 'conception',
+           label: 'Conception',
+           position: 'left',
+          },
         {
           href: 'https://mampf.blog',
           label: 'Blog',
@@ -59,7 +64,7 @@ module.exports = {
             to: 'docs/',
           }, ],
         },
-       
+
         {
           title: 'More',
           items: [{
@@ -111,6 +116,27 @@ module.exports = {
   plugins: [
     [
       '@docusaurus/plugin-content-docs',
+      {
+        id: 'mampf-pages',
+        path: 'mampf-pages',
+        routeBasePath: 'mampf-pages',
+        sidebarPath: require.resolve('./sidebarsPages.js'),
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+        // ... other options
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'tutorials',
+        path: 'tutorials',
+        routeBasePath: 'tutorials',
+        sidebarPath: require.resolve('./sidebarsTutorials.js'),
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+        // ... other options
+      },
+    ],
+    [ '@docusaurus/plugin-content-docs',
       {
         id: 'lecturers',
         path: 'lecturers',

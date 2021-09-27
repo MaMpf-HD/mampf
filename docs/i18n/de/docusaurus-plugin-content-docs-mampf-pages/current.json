@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.docs.category.Docusaurus Tutorial": {
+    "message": "Docusaurus Tutorial",
+    "description": "The label for category Docusaurus Tutorial in sidebar docs"
+  },
+  "sidebar.docs.category.Pages for Every User": {
+    "message": "Seiten für alle Nutzer*innen",
+    "description": "The label for category Pages for Every User in sidebar docs"
+  },
+  "sidebar.docs.category.By Function": {
+    "message": "Nach Funktion",
+    "description": "The label for category By Function in sidebar docs"
+  },
+  "sidebar.docs.category.By Manner of Access": {
+    "message": "Nach Erreichbarkeit",
+    "description": "The label for category By Manner of Access in sidebar docs"
+  }
+}

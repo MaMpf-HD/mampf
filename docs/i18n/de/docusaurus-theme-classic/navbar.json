@@ -3,17 +3,21 @@
     "message": "MaMpf",
     "description": "The title in the navbar"
   },
-  "item.label.Docs for Students": {
-    "message": "Studierende",
-    "description": "Navbar item with label Docs for Students"
+  "item.label.Pages": {
+    "message": "Seiten",
+    "description": "Navbar item with label Pages"
   },
-  "item.label.Docs  for Lecturers": {
-    "message": "Dozierende",
-    "description": "Navbar item with label Docs  for Lecturers"
+  "item.label.Tutorials": {
+    "message": "Tutorials",
+    "description": "Navbar item with label Tutorials"
   },
-  "item.label.Docs  for Developers": {
-    "message": "Entwicklende",
-    "description": "Navbar item with label Docs  for Developers"
+  "item.label.Terminology": {
+    "message": "Terminologie",
+    "description": "Navbar item with label Terminology"
+  },
+  "item.label.Conception": {
+    "message": "Konzeption",
+    "description": "Navbar item with label Conception"
   },
   "item.label.Blog": {
     "message": "Blog",
