@@ -19,12 +19,9 @@ $(document).on 'turbolinks:load', ->
   # restore status quo if editing of remark basics is cancelled
 
   $(document).on 'click', '#remark-basics-cancel', ->
-    $.ajax Routes.cancel_remark_basics_path(),
+    $.ajax Routes.cancel_remark_basics_path($(this).data('id')),
       type: 'GET'
       dataType: 'script'
-      data: {
-        remark_id: $(this).data('id')
-      }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
     return

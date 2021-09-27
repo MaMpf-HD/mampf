@@ -8,18 +8,6 @@ class EventsController < ApplicationController
     @current_ability ||= EventAbility.new(current_user)
   end
 
-  def cancel_question_basics
-    @question = Question.find_by_id(params[:question_id])
-  end
-
-  def cancel_remark_basics
-    @remark = Remark.find_by_id(params[:remark_id])
-  end
-
-  def cancel_quiz_basics
-    @quiz = Quiz.find_by_id(params[:quiz_id])
-  end
-
   def fill_quizzable_area
     @id = params[:id]
     @type = params[:type]
@@ -33,12 +21,6 @@ class EventsController < ApplicationController
     @type = params[:type]
     @quizzable = @type.constantize.find_by_id(@id)
     I18n.locale = @quizzable.locale_with_inheritance
-  end
-
-  def fill_medium_preview
-    I18n.locale = current_user.locale
-    @id = params[:id]
-    @medium = Medium.find_by_id(@id)
   end
 
   def render_medium_actions

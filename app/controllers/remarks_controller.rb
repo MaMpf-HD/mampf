@@ -1,6 +1,6 @@
 # Remarks controller
 class RemarksController < MediaController
-  before_action :set_remark, only: [:edit, :update]
+  before_action :set_remark, except: :reassign
   before_action :set_quizzes, only: [:reassign]
   authorize_resource except: :reassign
   layout 'administration'
@@ -34,6 +34,9 @@ class RemarksController < MediaController
     @quizzable = @remark
     @mode = 'reassigned'
     render 'events/fill_quizzable_area'
+  end
+
+  def cancel_remark_basics
   end
 
   private

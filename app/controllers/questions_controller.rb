@@ -1,6 +1,6 @@
 # Questions Controller
 class QuestionsController < ApplicationController
-  before_action :set_question, except: [:reassign]
+  before_action :set_question, except: :reassign
   before_action :set_quizzes, only: [:reassign]
   before_action :check_solution_errors, only: [:update]
   authorize_resource except: :reassign
@@ -62,6 +62,9 @@ class QuestionsController < ApplicationController
                 MampfSet.trivial_instance
               end
     @solution = Solution.new(content)
+  end
+
+  def cancel_question_basics
   end
 
   private

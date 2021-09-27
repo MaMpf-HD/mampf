@@ -159,13 +159,9 @@ $(document).on 'turbolinks:load', ->
       mediumActions = document.getElementById('mediumActions')
       unless mediumActions.dataset.filled == 'true'
         $(this).addClass('bg-orange-lighten-4')
-        $.ajax Routes.fill_medium_preview_path(),
+        $.ajax Routes.fill_medium_preview_path($(this).data('id')),
           type: 'GET'
           dataType: 'script'
-          data: {
-            id: $(this).data('id')
-            type: $(this).data('type')
-          }
           error: (jqXHR, textStatus, errorThrown) ->
              console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'quiz'
@@ -183,13 +179,9 @@ $(document).on 'turbolinks:load', ->
     else if $(this).data('purpose') == 'import'
       $('#previewHeader').show()
       $(this).addClass('bg-orange-lighten-4')
-      $.ajax Routes.fill_medium_preview_path(),
+      $.ajax Routes.fill_medium_preview_path($(this).data('id')),
         type: 'GET'
         dataType: 'script'
-        data: {
-          id: $(this).data('id')
-          type: $(this).data('type')
-        }
         error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
     return

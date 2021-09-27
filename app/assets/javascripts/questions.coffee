@@ -206,12 +206,9 @@ $(document).on 'turbolinks:load', ->
 # restore status quo if editing of question basics is cancelled
 
   $(document).on 'click', '#question-basics-cancel', ->
-    $.ajax Routes.cancel_question_basics_path(),
+    $.ajax Routes.cancel_question_basics_path($(this).data('id')),
       type: 'GET'
       dataType: 'script'
-      data: {
-        question_id: $(this).data('id')
-      }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
     return

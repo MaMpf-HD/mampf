@@ -74,14 +74,10 @@ Rails.application.routes.draw do
 
   resources :divisions, except: [:show]
 
-  get 'events/cancel_question_basics', as: 'cancel_question_basics'
-  get 'events/cancel_remark_basics', as: 'cancel_remark_basics'
-  get 'events/cancel_quiz_basics', as: 'cancel_quiz_basics'
   get 'events/fill_quizzable_area', as: 'fill_quizzable_area'
   get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
   get 'events/render_tag_title', as: 'render_tag_title'
   get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
-  get 'events/fill_medium_preview', as: 'fill_medium_preview'
   get 'events/render_import_vertex', as: 'render_import_vertex'
   get 'events/render_vertex_quizzable', as: 'render_vertex_quizzable'
   get 'events/edit_vertex_targets', as: 'edit_vertex_targets'
@@ -206,6 +202,8 @@ Rails.application.routes.draw do
                                  as: 'show_media_comments'
   delete 'media/:id/cancel_publication', to: 'media#cancel_publication',
                                          as: 'cancel_publication'
+  get 'media/:id/fill_medium_preview', to: 'media#fill_medium_preview',
+                                       as: 'fill_medium_preview'
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
@@ -237,6 +235,10 @@ Rails.application.routes.draw do
                                   as: 'reassign_question'
   patch 'question/:id/set_solution_type', to: 'questions#set_solution_type',
                                           as: 'set_solution_type'
+  get 'questions/:id/cancel_question_basics',
+      to: 'questions#cancel_question_basics',
+      as: 'cancel_question_basics'
+
   resources :questions, only: [:edit, :update]
 
   post 'quiz_certificates/:id/claim', to: 'quiz_certificates#claim',
@@ -277,6 +279,11 @@ Rails.application.routes.draw do
 
   patch 'remarks/:id/reassign', to: 'remarks#reassign',
                                 as: 'reassign_remark'
+
+  get 'remarks/:id/cancel_remark_basics',
+      to: 'remarks#cancel_remark_basics',
+      as: 'cancel_remark_basics'
+
   resources :remarks, only: [:edit, :update]
 
   resources :subjects, except: [:show]

@@ -1,4 +1,4 @@
-<% if @medium %>
+<% if @medium.persisted? %>
 $('#mediumPreview').empty()
   .append '<%= j render partial: "media/catalog/medium_preview",
                         locals: { medium: @medium } %>'

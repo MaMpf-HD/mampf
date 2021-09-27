@@ -27,7 +27,8 @@ class MediumAbility
       user.can_edit?(medium.teachable)
     end
 
-    can [:search, :fill_teachable_select, :fill_media_select], Medium do
+    can [:search, :fill_teachable_select, :fill_media_select,
+         :fill_medium_preview], Medium do
       !user.generic?
     end
 

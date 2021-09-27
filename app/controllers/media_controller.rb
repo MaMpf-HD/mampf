@@ -3,7 +3,8 @@ class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
-                                      :fill_media_select]
+                                      :fill_media_select,
+                                      :fill_medium_preview]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
@@ -413,6 +414,12 @@ class MediaController < ApplicationController
   def cancel_publication
     @medium.update(publisher: nil)
     redirect_to edit_medium_path(@medium)
+  end
+
+  def fill_medium_preview
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    authorize! :fill_medium_preview, @medium
   end
 
   private
