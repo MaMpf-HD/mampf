@@ -1,7 +1,7 @@
 <div class="row my-3">
   <div id="geogebraDescription"
        class="col-12">
-    <%= raw(@medium.content) %>
+    <%= sanitize @medium.content %>
   </div>
 </div>
 <div class="row pl-2 ml-2">

@@ -138,6 +138,8 @@ $(document).on 'turbolinks:load', ->
         course: this.dataset.course
         section: this.dataset.section
         medium: this.dataset.medium
+        lesson: this.dataset.lesson
+        talk: this.dataset.talk
         from: this.dataset.from
       }
     return

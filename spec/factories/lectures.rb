@@ -44,9 +44,15 @@ FactoryBot.define do
       end
     end
 
+    trait :is_seminar do
+      sort { 'seminar' }
+    end
+
     # note that you can give the chapter_count here as parameter as well
     factory :lecture_with_toc, traits: [:with_toc]
 
     factory :lecture_with_sparse_toc, traits: [:with_sparse_toc]
+
+    factory :seminar, traits: [:is_seminar]
   end
 end

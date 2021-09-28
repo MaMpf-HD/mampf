@@ -1,0 +1,12 @@
+<div class="card bg-light">
+  <div class="card-header bg-generic-card-header">
+    <h5>
+      <%= t('basics.basics') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <%= render partial: 'talks/base_data',
+               locals: { talk: @talk,
+                         assemble: false } %>
+  </div>
+</div>

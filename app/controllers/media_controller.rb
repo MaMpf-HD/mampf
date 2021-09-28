@@ -10,7 +10,7 @@ class MediaController < ApplicationController
   before_action :check_for_consent, except: [:play, :display]
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
-  authorize_resource
+  authorize_resource except: :create
   layout 'administration'
 
   def index
@@ -38,6 +38,7 @@ class MediaController < ApplicationController
   def edit
     I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
+    render layout: current_user.layout
   end
 
   def update
@@ -116,6 +117,7 @@ class MediaController < ApplicationController
     if @medium.teachable.class.to_s == 'Lesson'
       @medium.tags = @medium.teachable.tags
     end
+    authorize! :create, @medium
     @medium.save
     if @medium.valid?
       if @medium.sort == 'Remark'
@@ -170,6 +172,14 @@ class MediaController < ApplicationController
     end
     if @medium.teachable_type == 'Lesson'
       redirect_to edit_lesson_path(@medium.teachable)
+      return
+    end
+    if @medium.teachable_type == 'Talk'
+      if current_user.in?(@medium.teachable.speakers)
+        redirect_to assemble_talk_path(@medium.teachable)
+        return
+      end
+      redirect_to edit_talk_path(@medium.teachable)
       return
     end
     redirect_to edit_course_path(@medium.teachable)
@@ -441,7 +451,7 @@ class MediaController < ApplicationController
   end
 
   def set_teachable
-    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson']) &&
+    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson', 'Talk']) &&
        params[:teachable_id].present?
       @teachable = params[:teachable_type].constantize
                                           .find_by_id(params[:teachable_id])

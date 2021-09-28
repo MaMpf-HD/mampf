@@ -1,8 +1,11 @@
+<% suppress_label ||= false %>
 <div class="form-group">
-  <div class="mb-1">
-    <%= t('basics.access_rights') %>
-    <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
-  </div>
+  <% unless suppress_label %>
+    <div class="mb-1">
+      <%= t('basics.access_rights') %>
+      <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
+    </div>
+  <% end %>
   <div class="custom-control custom-radio">
     <%= f.radio_button :released,
                        'all',

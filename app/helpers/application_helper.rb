@@ -124,7 +124,9 @@ module ApplicationHelper
     course_ids = teachables.select { |t| t.first == 'Course'}.map(&:second)
     lecture_ids = teachables.select { |t| t.first == 'Lecture'}.map(&:second)
     lesson_ids = teachables.select { |t| t.first == 'Lesson'}.map(&:second)
+    talk_ids = teachables.select { |t| t.first == 'Talk'}.map(&:second)
     lecture_ids += Lesson.where(id: lesson_ids).pluck(:lecture_id).uniq
+    lecture_ids += Talk.where(id: talk_ids).pluck(:lecture_id).uniq
     Course.where(id: course_ids) + Lecture.where(id: lecture_ids.uniq)
   end
 
