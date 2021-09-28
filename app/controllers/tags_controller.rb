@@ -7,7 +7,8 @@ class TagsController < ApplicationController
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]
-  authorize_resource except: [:new, :modal, :search, :postprocess]
+  authorize_resource except: [:new, :modal, :search, :postprocess,
+                              :render_tag_title]
   layout 'administration'
 
 
@@ -178,6 +179,13 @@ class TagsController < ApplicationController
       return
     end
     redirect_to edit_medium_path(Medium.find_by_id(params[:id]))
+  end
+
+  def render_tag_title
+    authorize! :render_tag_title, Tag.new
+    tag = Tag.find_by_id(params[:tag_id])
+    @identified_tag = Tag.find_by_id(params[:identified_tag_id])
+    @common_titles = tag.common_titles(@identified_tag)
   end
 
   private

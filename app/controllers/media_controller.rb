@@ -4,7 +4,12 @@ class MediaController < ApplicationController
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
                                       :fill_media_select,
-                                      :fill_medium_preview]
+                                      :fill_medium_preview,
+                                      :render_medium_actions,
+                                      :render_import_media,
+                                      :render_import_vertex,
+                                      :cancel_import_media,
+                                      :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
@@ -12,7 +17,10 @@ class MediaController < ApplicationController
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
   authorize_resource except: [:index, :new, :create, :search,
-                              :fill_teachable_select, :fill_media_select]
+                              :fill_teachable_select, :fill_media_select,
+                              :fill_medium_preview, :render_medium_actions,
+                              :render_import_media, :render_import_vertex,
+                              :cancel_import_media, :cancel_import_vertex]
   layout 'administration'
 
   def current_ability
@@ -420,6 +428,41 @@ class MediaController < ApplicationController
     I18n.locale = current_user.locale
     @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
     authorize! :fill_medium_preview, @medium
+  end
+
+  def render_medium_actions
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    authorize! :render_medium_actions, @medium
+  end
+
+  def render_import_media
+    @id = params[:id]
+    @purpose = 'import'
+    authorize! :render_import_media, Medium.new
+  end
+
+  def render_import_vertex
+    @id = params[:id]
+    quiz_id = params[:quiz_id]
+    I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance
+    @purpose = 'quiz'
+    authorize! :render_import_vertex, Medium.new
+    render :render_import_media
+  end
+
+  def render_medium_tags
+    @tag_ids = @medium.tag_ids
+  end
+
+  def cancel_import_media
+    authorize! :cancel_import_media, Medium.new
+  end
+
+  def cancel_import_vertex
+    authorize! :cancel_import_vertex, Medium.new
+    I18n.locale = Quiz.find_by_id(params[:quiz_id])&.locale_with_inheritance
+    render :cancel_import_media
   end
 
   private

@@ -1,5 +1,5 @@
 mediumActions = document.getElementById('mediumActions')
-<% if @medium %>
+<% if @medium.persisted? %>
 $(mediumActions).empty()
   .append '<%= j render partial: "media/catalog/medium_actions",
                         locals: { medium: @medium } %>'

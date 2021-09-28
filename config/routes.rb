@@ -76,20 +76,11 @@ Rails.application.routes.draw do
 
   get 'events/fill_quizzable_area', as: 'fill_quizzable_area'
   get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
-  get 'events/render_tag_title', as: 'render_tag_title'
   get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
-  get 'events/render_import_vertex', as: 'render_import_vertex'
   get 'events/render_vertex_quizzable', as: 'render_vertex_quizzable'
-  get 'events/edit_vertex_targets', as: 'edit_vertex_targets'
-  get 'events/cancel_import_vertex', as: 'cancel_import_vertex'
-  get 'events/render_medium_actions', as: 'render_medium_actions'
-  get 'events/render_medium_tags', as: 'render_medium_tags'
   get 'events/render_clickerizable_actions', as: 'render_clickerizable_actions'
   get 'events/cancel_solution_edit', as: 'cancel_solution_edit'
-  get 'events/texify_solution', as: 'texify_solution'
   get 'events/render_question_parameters', as: 'render_question_parameters'
-  get 'events/render_import_media', as: 'render_import_media'
-  get 'events/cancel_import_media', as: 'cancel_import_media'
 
   get 'interactions/export_interactions', as: 'export_interactions'
   get 'interactions/export_probes', as: 'export_probes'
@@ -204,6 +195,17 @@ Rails.application.routes.draw do
                                          as: 'cancel_publication'
   get 'media/:id/fill_medium_preview', to: 'media#fill_medium_preview',
                                        as: 'fill_medium_preview'
+  get 'media/:id/render_medium_actions', to: 'media#render_medium_actions',
+                                         as: 'render_medium_actions'
+  get 'media/:id/render_import_media', to: 'media#render_import_media',
+                                       as: 'render_import_media'
+  get 'media/:id/render_import_vertex', to: 'media#render_import_vertex',
+                                        as: 'render_import_vertex'
+  get 'media/:id/render_medium_tags', to: 'media#render_medium_tags',
+                                      as: 'render_medium_tags'
+  get 'media/cancel_import_media', as: 'cancel_import_media'
+  get 'media/cancel_import_vertex', as: 'cancel_import_vertex'
+
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
@@ -263,6 +265,8 @@ Rails.application.routes.draw do
                                             as: 'delete_edge'
   get 'quizzes/update_branching', to: 'quizzes#update_branching',
                                   as: 'update_branching'
+  get 'quizzes/:id/edit_vertex_targets', to: 'quizzes#edit_vertex_targets',
+                                         as: 'edit_vertex_targets'
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]
   end
@@ -356,6 +360,7 @@ Rails.application.routes.draw do
                                    as: 'tag_random_quiz'
   post 'tags/postprocess', to: 'tags#postprocess',
                            as: 'postprocess_tags'
+  get 'tags/render_tag_title', as: 'render_tag_title'
   resources :tags
 
   get 'talks/:id/assemble', to: 'talks#assemble',

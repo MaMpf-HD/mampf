@@ -8,7 +8,7 @@ class TagAbility
          :fill_tag_select], Tag
 
     can [:new, :edit, :update, :create, :destroy, :modal, :identify,
-         :search, :postprocess], Tag do
+         :search, :postprocess, :render_tag_title], Tag do
       !user.generic?
     end
   end

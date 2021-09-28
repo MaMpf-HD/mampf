@@ -19,7 +19,7 @@ class MediumAbility
          :add_item, :add_reference, :add_screenshot, :remove_screenshot,
          :import_script_items, :export_toc, :export_references,
          :export_screenshot, :import_manuscript,
-         :get_statistics], Medium do |medium|
+         :get_statistics, :render_medium_tags], Medium do |medium|
       user.can_edit?(medium)
     end
 
@@ -28,7 +28,9 @@ class MediumAbility
     end
 
     can [:search, :fill_teachable_select, :fill_media_select,
-         :fill_medium_preview], Medium do
+         :fill_medium_preview, :render_medium_actions,
+         :render_import_media, :render_import_vertex,
+         :cancel_import_media, :cancel_import_vertex], Medium do
       !user.generic?
     end
 

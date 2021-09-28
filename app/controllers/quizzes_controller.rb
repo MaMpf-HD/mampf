@@ -86,6 +86,10 @@ class QuizzesController < ApplicationController
     @id = params[:id].sub 'select', 'quizzable'
   end
 
+  def edit_vertex_targets
+    @vertex_id = params[:vertex_id].to_i
+  end
+
   private
 
   def set_quiz

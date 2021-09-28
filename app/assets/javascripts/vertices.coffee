@@ -98,12 +98,11 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'click', '#targetsFromVertex', ->
     quizId = $(this).data('quiz')
     vertexId = $(this).data('vertex')
-    $.ajax Routes.edit_vertex_targets_path(),
+    $.ajax Routes.edit_vertex_targets_path(quizId),
       type: 'GET'
       dataType: 'script'
       data: {
-        quiz_id: quizId
-        id: vertexId
+        vertex_id: vertexId
       }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")

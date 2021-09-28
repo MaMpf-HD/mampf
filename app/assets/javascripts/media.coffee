@@ -206,12 +206,9 @@ $(document).on 'turbolinks:load', ->
         $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
         $('[id^="row-medium-"]').css('cursor','')
         if $(this).data('purpose') == 'media'
-          $.ajax Routes.render_medium_actions_path(),
+          $.ajax Routes.render_medium_actions_path(id: $(this).data('id')),
             type: 'GET'
             dataType: 'script'
-            data: {
-              id: $(this).data('id')
-            }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
         else if $(this).data('purpose') == 'clicker'
@@ -226,7 +223,7 @@ $(document).on 'turbolinks:load', ->
               console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'quiz'
       $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
-      $.ajax Routes.render_import_vertex_path(),
+      $.ajax Routes.render_import_vertex_path(id: $(this).data('id')),
         type: 'GET'
         dataType: 'script'
         data: {
@@ -237,12 +234,9 @@ $(document).on 'turbolinks:load', ->
           console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'import'
       $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
-      $.ajax Routes.render_import_media_path(),
+      $.ajax Routes.render_import_media_path($(this).data('id')),
         type: 'GET'
         dataType: 'script'
-        data: {
-          id: $(this).data('id')
-        }
         error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
     return
@@ -303,12 +297,9 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#editMediumTags', ->
-    $.ajax Routes.render_medium_tags_path(),
+    $.ajax Routes.render_medium_tags_path($(this).data('medium')),
       type: 'GET'
       dataType: 'script'
-      data: {
-        id: $(this).data('medium')
-      }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
     return
