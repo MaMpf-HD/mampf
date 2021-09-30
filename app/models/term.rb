@@ -63,7 +63,7 @@ class Term < ApplicationRecord
     Assignment.where(lecture: lectures)
   end
   def unprotected_assignments
-    Assignment.where(lecture: lectures,protected: false)
+    Assignment.where(lecture: lectures, protected: false)
   end
 
   def submissions
