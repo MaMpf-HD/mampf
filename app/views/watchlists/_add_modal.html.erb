@@ -25,11 +25,11 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
-        <%= button_to t('watchlist.add'), {}, 
-                      class: "btn btn-primary",
-                      id: "watchlistEntrySubmitButton",
-                      onclick: "Rails.fire(document.getElementById('watchlistSelectForm'), 'submit')",
-                      disabled: Watchlist.where(user: current_user).empty? %>
+        <button class="btn btn-primary"
+                id="watchlistEntrySubmitButton"
+                type="submit"
+                form="watchlistSelectForm"
+                <%= "disabled" if Watchlist.where(user: current_user).empty? %>><%= t('watchlist.add') %></button>
       </div>
     </div>
   </div>

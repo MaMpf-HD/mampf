@@ -2098,6 +2098,7 @@ de:
     new: 'Neu'
     close: 'Schließen'
     confirm: 'Hinzufügen'
+    public: 'Öffentlich'
   watchlist_entry:
     add_success: 'Das Medium wurde erfolgreich in die Watchlist hinzufügt'
     add_fail: 'Es gab einen Fehler beim Hinzufügen zur Watchlist'
@@ -3309,6 +3310,7 @@ de:
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
     no_announcement: >
       Eine Mitteilung mit dieser id existiert nicht.
+    no_watchlist: 'Watchlist existiert nicht oder ist privat.'
   exception:
     title: Fehler
     exception: Exception auf %{host}

@@ -431,6 +431,12 @@ Rails.application.routes.draw do
   get 'watchlists/rearrange', to: 'watchlists#update_order',
                               as: 'rearrange_watchlist'
 
+  get 'watchlists/change_visiblity', to: 'watchlists#change_visibility',
+                                     as: 'change_visibility'
+
+  get 'watchlists/check_ownership', to: 'watchlists#check_ownership',
+                                    as: 'check_ownership'
+
   resources :watchlists
 
   resources :watchlist_entries

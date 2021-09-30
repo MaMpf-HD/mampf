@@ -8,7 +8,7 @@ class WatchlistEntriesController < ApplicationController
     @watchlist_entry.medium = @medium
     if @watchlist_entry.save
       flash[:notice] = I18n.t('watchlist_entry.add_success')
-      render 'watchlist_entries/refresh'
+      render 'watchlist_entries/add_success'
     else
       render 'watchlist_entries/add_failed'
     end

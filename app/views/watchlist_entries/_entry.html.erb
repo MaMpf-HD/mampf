@@ -64,20 +64,22 @@
              title="<%= t('medium.waiting_for_tag') %>">
           </i>
         <% end %>
-        <%= link_to '',
-                    watchlist_entry_path(entry, 
-                                         watchlist: @watchlist.id,
-                                         reverse: params[:reverse],
-                                         all: params[:all],
-                                         page: params[:page],
-                                         per: params[:per]),
-                    class: 'fas fa-minus text-light mr-2',
-                    style: 'text-decoration: none;',
-                    data: { toggle: 'tooltip',
-                            placement: 'bottom',
-                            confirm: t('watchlist_entry.remove_confirm') },
-                    title: t('watchlist_entry.remove'),
-                    method: :delete %>
+        <% if @watchlist.ownedBy(current_user) %>
+          <%= link_to '',
+                      watchlist_entry_path(entry, 
+                                          watchlist: @watchlist.id,
+                                          reverse: params[:reverse],
+                                          all: params[:all],
+                                          page: params[:page],
+                                          per: params[:per]),
+                      class: 'fas fa-minus text-light mr-2',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip',
+                              placement: 'bottom',
+                              confirm: t('watchlist_entry.remove_confirm') },
+                      title: t('watchlist_entry.remove'),
+                      method: :delete %>
+        <% end %>
       </div>
     </div>
     <% cache [medium, from == 'tag', ref_link] do %>

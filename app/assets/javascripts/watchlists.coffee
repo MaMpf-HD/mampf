@@ -4,19 +4,30 @@
 
 $(document).on 'turbolinks:load', ->
 
-  $('#sortableWatchlistMedia').sortable({
-    handle: ".card-header"
-  })
+  id = $('#watchlistButton').data('id');
+  owned = $('#watchlistButton').data('owned');
+
+  if owned
+    $('#sortableWatchlistMedia').sortable({
+      handle: ".card-header"
+    })
 
   $('#sortableWatchlistMedia').on 'sortupdate', ->
     reverse = $('#reverseButton').data('reverse');
     order = $.makeArray($('#sortableWatchlistMedia #card-title')).map (x) -> x.dataset.id;
-    id = $('#watchlistButton').data('id');
-    console.log(reverse)
     $.ajax
       type: 'GET',
       url: '/watchlists/rearrange',
       data: {order: order, id: id, reverse: reverse}
+    return
+  
+  $('#watchlistVisiblityCheck').on 'change', ->
+    id = $('#watchlistButton').data('id');
+    checked = $(this).is(':checked');
+    $.ajax
+      type: 'GET',
+      url: '/watchlists/change_visiblity',
+      data: {id: id, public: checked}
     return
 
   return

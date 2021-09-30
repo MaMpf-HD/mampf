@@ -1976,6 +1976,7 @@ en:
     new: 'New'
     close: 'Close'
     confirm: 'Add'
+    public: 'Public'
   watchlist_entry:
     add_success: 'The medium was added to your watchlist successfully'
     add_fail: 'There was an error adding the medium to your watchlist'

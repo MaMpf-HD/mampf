@@ -1,6 +1,6 @@
 <div class="row pb-2">
   <div class="col-sm-12 col-md-12 col-lg-6">
-      <ul class="nav"
+      <ul class="nav">
         <%# Select watchlist button %>
         <% if @watchlists.size > 1 %>
           <span class="dropdown ml-3">
@@ -8,7 +8,8 @@
                     data-toggle="dropdown"
                     type="button"
                     id="watchlistButton"
-                    data-id=<%= @watchlist.id %>>
+                    data-id=<%= @watchlist.id %>
+                    data-owned=<%= @watchlist.ownedBy(current_user) %>>
               <%= @watchlist.name %>
             </button>
             <div class="dropdown-menu">
@@ -23,7 +24,8 @@
           <button class="btn btn-secondary"
                   disabled
                   id="watchlistButton"
-                  data-id=<%= @watchlist.id %>>
+                  data-id=<%= @watchlist.id %>
+                  data-owned=<%= @watchlist.ownedBy(current_user) %>>
             <%= @watchlist.name %>
           </button>
         <% else %>
@@ -73,6 +75,16 @@
               </div>
             </div>
           </li>
+          <% if @watchlist.ownedBy(current_user) %>
+            <li class="nav-item pl-1 pr-1">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="watchlistVisiblityCheck" <%= "checked" if @watchlist.public == true %>>
+                <label class="form-check-label" for="flexCheckDefault">
+                  <%= t('watchlist.public') %>
+                </label>
+              </div>
+            </li>
+          <% end %>
         <% end %>
       </ul>
     </div>
