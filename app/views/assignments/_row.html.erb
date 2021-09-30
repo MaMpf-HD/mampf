@@ -5,12 +5,12 @@
     <div class="col-2">
       <%= assignment.title %>
     </div>
-    <div class="col-3">
+    <div class="col-2">
       <% if assignment.deadline %>
         <%= I18n.l(assignment.deadline, format: :long, locale: :'de') %>
       <% end %>
     </div>
-    <div class="col-3">
+    <div class="col-2">
       <% if assignment.medium %>
         <%= link_to assignment.medium.local_title_for_viewers,
                     assignment.medium,
@@ -20,6 +20,9 @@
     </div>
     <div class="col-2">
       <%= assignment.accepted_file_type %>
+    </div>
+    <div class="col-2">
+      <input type="checkbox" disabled <%= "checked" if assignment.protected %>>
     </div>
     <div class="col-2">
       <% if assignment.persisted? %>
