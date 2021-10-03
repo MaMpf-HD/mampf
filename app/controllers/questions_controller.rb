@@ -67,6 +67,13 @@ class QuestionsController < ApplicationController
   def cancel_question_basics
   end
 
+  def cancel_solution_edit
+  end
+
+  def render_question_parameters
+    @parameters = Question.parameters_from_text(params[:text])
+  end
+
   private
 
   def set_question

@@ -58,6 +58,10 @@ Rails.application.routes.draw do
   delete 'clickers/:id/remove_question', to: 'clickers#remove_question',
                                         as: 'remove_question'
 
+  get 'clickers/:id/render_clickerizable_actions',
+    to: 'clickers#render_clickerizable_actions',
+    as: 'render_clickerizable_actions'
+
   resources :clickers, except: [:index, :update]
 
   resources :clicker_votes, only: :create
@@ -78,9 +82,6 @@ Rails.application.routes.draw do
   get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
   get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
   get 'events/render_vertex_quizzable', as: 'render_vertex_quizzable'
-  get 'events/render_clickerizable_actions', as: 'render_clickerizable_actions'
-  get 'events/cancel_solution_edit', as: 'cancel_solution_edit'
-  get 'events/render_question_parameters', as: 'render_question_parameters'
 
   get 'interactions/export_interactions', as: 'export_interactions'
   get 'interactions/export_probes', as: 'export_probes'
@@ -240,6 +241,14 @@ Rails.application.routes.draw do
   get 'questions/:id/cancel_question_basics',
       to: 'questions#cancel_question_basics',
       as: 'cancel_question_basics'
+
+  get 'questions/:id/cancel_solution_edit',
+    to: 'questions#cancel_solution_edit',
+    as: 'cancel_solution_edit'
+
+  get 'questions/:id/render_question_parameters',
+    to: 'questions#render_question_parameters',
+    as: 'render_question_parameters'
 
   resources :questions, only: [:edit, :update]
 

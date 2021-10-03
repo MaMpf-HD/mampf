@@ -3,7 +3,8 @@ class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
                                                  :reset,
                                                  :get_votes_count,
-                                                 :set_alternatives]
+                                                 :set_alternatives,
+                                                 :render_clickerizable_actions]
   before_action :set_clicker, except: [:new, :create]
   authorize_resource except: [:new, :create, :edit, :open, :close,
                               :set_alternatives]
@@ -101,6 +102,12 @@ class ClickersController < ApplicationController
     code = user_signed_in? ? nil : @clicker.code
     redirect_to edit_clicker_path(@clicker,
                                   params: { code: code })
+  end
+
+  def render_clickerizable_actions
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:medium_id])
+    @question = Question.find_by_id(params[:medium_id])
   end
 
   private

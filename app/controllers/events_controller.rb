@@ -37,21 +37,4 @@ class EventsController < ApplicationController
     @quiz_id = params[:quiz_id].to_i
     @no_rights = params[:rights] == 'none'
   end
-
-  def render_clickerizable_actions
-    I18n.locale = current_user.locale
-    @id = params[:id]
-    @medium = Medium.find_by_id(@id)
-    @question = Question.find_by_id(@id)
-    @clicker = Clicker.find_by_id(params[:clicker])
-  end
-
-  def cancel_solution_edit
-    @question = Question.find_by_id(params[:question_id])
-  end
-
-  def render_question_parameters
-    @parameters = Question.parameters_from_text(params[:text])
-    @id = params[:id]
-  end
 end

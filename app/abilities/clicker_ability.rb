@@ -15,7 +15,8 @@ class ClickerAbility
       (user&.admin? || user == clicker.editor) || code == clicker.code
     end
 
-    can [:associate_question, :remove_question, :destroy], Clicker do |clicker|
+    can [:associate_question, :remove_question, :destroy,
+         :render_clickerizable_actions], Clicker do |clicker|
       clicker.editor == user
     end
   end

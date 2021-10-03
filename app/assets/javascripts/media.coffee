@@ -212,12 +212,12 @@ $(document).on 'turbolinks:load', ->
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
         else if $(this).data('purpose') == 'clicker'
-          $.ajax Routes.render_clickerizable_actions_path(),
+          clickerId = $('#clickerSearchForm').data('clicker')
+          $.ajax Routes.render_clickerizable_actions_path(clickerId),
             type: 'GET'
             dataType: 'script'
             data: {
-              id: $(this).data('id')
-              clicker: $('#clickerSearchForm').data('clicker')
+              medium_id: $(this).data('id')
             }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
