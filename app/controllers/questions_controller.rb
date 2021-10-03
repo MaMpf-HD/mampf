@@ -48,7 +48,7 @@ class QuestionsController < ApplicationController
     end
     @quizzable = @question
     @mode = 'reassigned'
-    render 'events/fill_quizzable_area'
+    render 'media/fill_quizzable_area'
   end
 
   def set_solution_type

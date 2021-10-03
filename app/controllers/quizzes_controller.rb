@@ -90,6 +90,11 @@ class QuizzesController < ApplicationController
     @vertex_id = params[:vertex_id].to_i
   end
 
+  def render_vertex_quizzable
+    @vertex_id = params[:vertex_id].to_i
+    @quizzable = @quiz.quizzable(@vertex_id)
+  end
+
   private
 
   def set_quiz

@@ -18,8 +18,9 @@ class MediumAbility
     can [:edit, :update, :enrich, :publish, :destroy, :cancel_publication,
          :add_item, :add_reference, :add_screenshot, :remove_screenshot,
          :import_script_items, :export_toc, :export_references,
-         :export_screenshot, :import_manuscript,
-         :get_statistics, :render_medium_tags], Medium do |medium|
+         :export_screenshot, :import_manuscript, :get_statistics,
+         :render_medium_tags, :fill_quizzable_area,
+         :fill_reassign_modal], Medium do |medium|
       user.can_edit?(medium)
     end
 
@@ -30,7 +31,8 @@ class MediumAbility
     can [:search, :fill_teachable_select, :fill_media_select,
          :fill_medium_preview, :render_medium_actions,
          :render_import_media, :render_import_vertex,
-         :cancel_import_media, :cancel_import_vertex], Medium do
+         :cancel_import_media, :cancel_import_vertex,
+         :fill_quizzable_preview], Medium do
       !user.generic?
     end
 

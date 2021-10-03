@@ -465,6 +465,25 @@ class MediaController < ApplicationController
     render :cancel_import_media
   end
 
+  def fill_quizzable_area
+    @vertex_id = params[:vertex]
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+  end
+
+  def fill_quizzable_preview
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+  end
+
+  def fill_reassign_modal
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+    @in_quiz = params[:in_quiz] == 'true'
+    @quiz_id = params[:quiz_id].to_i
+    @no_rights = params[:rights] == 'none'
+  end
+
   private
 
   def medium_params

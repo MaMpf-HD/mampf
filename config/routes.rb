@@ -78,11 +78,6 @@ Rails.application.routes.draw do
 
   resources :divisions, except: [:show]
 
-  get 'events/fill_quizzable_area', as: 'fill_quizzable_area'
-  get 'events/fill_reassign_modal', as: 'fill_reassign_modal'
-  get 'events/fill_quizzable_preview', as: 'fill_quizzable_preview'
-  get 'events/render_vertex_quizzable', as: 'render_vertex_quizzable'
-
   get 'interactions/export_interactions', as: 'export_interactions'
   get 'interactions/export_probes', as: 'export_probes'
 
@@ -207,6 +202,18 @@ Rails.application.routes.draw do
   get 'media/cancel_import_media', as: 'cancel_import_media'
   get 'media/cancel_import_vertex', as: 'cancel_import_vertex'
 
+  get 'media/:id/fill_quizzable_area',
+      to: 'media#fill_quizzable_area',
+      as: 'fill_quizzable_area'
+
+  get 'media/:id/fill_quizzable_preview',
+      to: 'media#fill_quizzable_preview',
+      as: 'fill_quizzable_preview'
+
+  get 'media/:id/fill_reassign_modal',
+      to: 'media#fill_reassign_modal',
+      as: 'fill_reassign_modal'
+
   resources :media
 
   post 'notifications/destroy_all', to: 'notifications#destroy_all',
@@ -214,6 +221,7 @@ Rails.application.routes.draw do
   post 'notifications/destroy_lecture_notifications',
        to: 'notifications#destroy_lecture_notifications',
        as: 'destroy_lecture_notifications'
+
   post 'notifications/destroy_news_notifications',
        to: 'notifications#destroy_news_notifications',
        as: 'destroy_news_notifications'
@@ -258,24 +266,47 @@ Rails.application.routes.draw do
   post 'quiz_certificates/validate', to: 'quiz_certificates#validate',
                                      as: 'validate_certificate'
 
-  get 'quizzes/:id/take', to: 'quizzes#take',
-                          as: 'take_quiz'
-  patch 'quizzes/:id/take', to: 'quizzes#proceed'
-  put 'quizzes/:id/take', to: 'quizzes#proceed'
-  patch 'quizzes/:id/linearize', to: 'quizzes#linearize',
-                                 as: 'linearize_quiz'
-  post 'quizzes/:id/set_root', to: 'quizzes#set_root',
-                               as: 'set_quiz_root'
-  post 'quizzes/:id/set_level', to: 'quizzes#set_level',
-                                 as: 'set_quiz_level'
-  post 'quizzes/:id/update_default_target', to: 'quizzes#update_default_target',
-                                            as: 'update_default_target'
-  delete 'quizzes/:id/delete_edge', to: 'quizzes#delete_edge',
-                                            as: 'delete_edge'
-  get 'quizzes/update_branching', to: 'quizzes#update_branching',
-                                  as: 'update_branching'
-  get 'quizzes/:id/edit_vertex_targets', to: 'quizzes#edit_vertex_targets',
-                                         as: 'edit_vertex_targets'
+  get 'quizzes/:id/take',
+      to: 'quizzes#take',
+      as: 'take_quiz'
+
+  patch 'quizzes/:id/take',
+        to: 'quizzes#proceed'
+
+  put 'quizzes/:id/take',
+      to: 'quizzes#proceed'
+
+  patch 'quizzes/:id/linearize',
+        to: 'quizzes#linearize',
+        as: 'linearize_quiz'
+  post 'quizzes/:id/set_root',
+       to: 'quizzes#set_root',
+       as: 'set_quiz_root'
+
+  post 'quizzes/:id/set_level',
+       to: 'quizzes#set_level',
+       as: 'set_quiz_level'
+
+  post 'quizzes/:id/update_default_target',
+       to: 'quizzes#update_default_target',
+       as: 'update_default_target'
+
+  delete 'quizzes/:id/delete_edge',
+         to: 'quizzes#delete_edge',
+         as: 'delete_edge'
+
+  get 'quizzes/update_branching',
+      to: 'quizzes#update_branching',
+      as: 'update_branching'
+
+  get 'quizzes/:id/edit_vertex_targets',
+      to: 'quizzes#edit_vertex_targets',
+      as: 'edit_vertex_targets'
+
+  get 'quizzes/:id/render_vertex_quizzable',
+      to: 'quizzes#render_vertex_quizzable',
+      as: 'render_vertex_quizzable'
+
   resources :quizzes, except: [:show, :index, :create]  do
     resources :vertices, except: [:index, :show, :edit]
   end

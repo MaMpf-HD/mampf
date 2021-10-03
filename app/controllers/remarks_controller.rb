@@ -33,7 +33,7 @@ class RemarksController < MediaController
     end
     @quizzable = @remark
     @mode = 'reassigned'
-    render 'events/fill_quizzable_area'
+    render 'media/fill_quizzable_area'
   end
 
   def cancel_remark_basics

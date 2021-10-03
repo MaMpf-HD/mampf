@@ -932,6 +932,12 @@ class Medium < ApplicationRecord
     !!teachable.media_scope.try(:comments_disabled)
   end
 
+  def becomes_quizzable
+    return unless type.in?(['Question', 'Remark'])
+    return becomes(Question) if type == 'Question'
+    becomes(Remark)
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

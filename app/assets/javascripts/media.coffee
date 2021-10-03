@@ -167,13 +167,9 @@ $(document).on 'turbolinks:load', ->
     else if $(this).data('purpose') == 'quiz'
       $('#previewHeader').show()
       $(this).addClass('bg-orange-lighten-4')
-      $.ajax Routes.fill_quizzable_preview_path(),
+      $.ajax Routes.fill_quizzable_preview_path($(this).data('id')),
         type: 'GET'
         dataType: 'script'
-        data: {
-          id: $(this).data('id')
-          type: $(this).data('type')
-        }
         error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'import'
