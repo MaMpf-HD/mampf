@@ -32,7 +32,7 @@ class Ability
       end
 
       can :manage, Item do |item|
-        item.medium.nil? ||  user.can_edit?(item.medium?)
+        item.medium.nil? ||  user.can_edit?(item.medium)
       end
       cannot :classification, :administration
       # :create is a cancancan alias for new and create actions
