@@ -48,8 +48,8 @@ class SubmissionCleaner
   end
 
   def fetch_previous_term_props
-    @submissions = @previous_term.submissions
-    @submitters = @previous_term.submitters
+    @submissions = @previous_term.unprotected_submissions
+    @submitters = @previous_term.unprotected_submitters
     @lectures = @previous_term.lectures_with_submissions
   end
 

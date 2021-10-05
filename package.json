@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@rails/webpacker": "5.4.2",
+    "@webpack-cli/serve": "^1.5.2",
     "coffee-loader": "^1.0.1",
     "coffeescript": "1.12.7",
     "core-js": "^3.6.5",
@@ -14,6 +15,7 @@
     "node-sass": "^5.0.0",
     "regenerator-runtime": "^0.13.7",
     "sass-loader": "^10.0.5",
+    "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.1.0"
   },
   "scripts": {

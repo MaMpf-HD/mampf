@@ -140,10 +140,12 @@ describe("Tutorials", () => {
                 cy.contains(lectures[3].title).click();
                 cy.contains("Akzeptieren").click();
                 cy.reload();
-                cy.contains("Hochladen").click();
+                cy.get(".correction-column").contains("Hochladen").click();
                 const yourFixturePath = 'files/manuscript.pdf';
+                cy.get(".correction-column").contains("Datei").click();
                 cy.get(`#upload-correction-${lectures[5].id}`).attachFile(yourFixturePath);
-                cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').click();
+                cy.contains("Upload").click();
+                cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
                 cy.get('.correction-action-area > [data-turbolinks="false"]').should("exist");
             });
@@ -251,10 +253,11 @@ describe("Tutorials", () => {
                 cy.contains(lectures[4].title).click();
                 cy.contains("Akzeptieren").click();
                 cy.reload();
-                cy.contains("Hochladen").click();
+                cy.get(".correction-column").contains("Hochladen").click();
                 const yourFixturePath = 'files/manuscript.pdf';
                 cy.get(`#upload-correction-${lectures[6].id}`).attachFile(yourFixturePath);
-                cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').click();
+                cy.contains("Upload").click();
+                cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
                 cy.get('.correction-action-area > [data-turbolinks="false"]').should("exist");
             });

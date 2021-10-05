@@ -2743,6 +2743,9 @@ de:
       Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
+    protected: Geschützte Abgabe
+    protected_info: >
+      "Geschützte" Abgaben werden bis zur manuellen Löschung aufbewahrt und werden nicht automatisiert nach Ablauf der Aufbewahrungsfrist (Semesterende + Karenzzeit von 14 Tagen) gelöscht.
     destruction_info:
       <i>
       Hinweis.
@@ -3008,6 +3011,7 @@ de:
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
+    post_processing: 'Stelle fertig...'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
