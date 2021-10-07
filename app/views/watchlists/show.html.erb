@@ -1,7 +1,7 @@
 <%= console %>
 <div class="row pb-2">
   <div class="col-sm-12 col-md-12 col-lg-6">
-    <ul class="nav">
+    <ul class="nav justify-content-left">
       <%# Select watchlist button %>
       <% if @watchlists.size > 1 %>
         <span class="dropdown ml-3">
@@ -74,7 +74,12 @@
             </div>
           </div>
         </li>
-        <% if @watchlist.ownedBy(current_user) %>
+      <% end %>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <ul class="nav justify-content-right">
+      <% if @watchlist.ownedBy(current_user) %>
           <li class="nav-item pl-1 pr-1">
             <div class="form-check">
               <input class="form-check-input" type="checkbox" id="watchlistVisiblityCheck" <%= "checked" if @watchlist.public == true %>>
@@ -83,9 +88,22 @@
               </label>
             </div>
           </li>
-          <%= helpdesk(t('watchlist.public_help'), false) %>
+          <li class="nav-item">
+            <%= helpdesk(t('watchlist.public_help'), false) %>
+          </li>
+          
+          <li class="nav-item pl-3 pr-1">
+            <%= link_to t('watchlist.delete'),
+                        watchlist_path(@watchlist),
+                        class: 'btn btn-danger',
+                        style: 'text-decoration: none;',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom',
+                                confirm: t('watchlist.delete_confirm') },
+                        title: t('watchlist.delete'),
+                        method: :delete %>
+          </li>
         <% end %>
-      <% end %>
     </ul>
   </div>
 </div>

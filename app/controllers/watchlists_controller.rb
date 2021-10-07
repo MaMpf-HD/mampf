@@ -1,6 +1,7 @@
 # WatchlistsController
 class WatchlistsController < ApplicationController
   before_action :sanitize_params, only: [:show, :update_order, :change_visibility]
+  layout 'application_no_sidebar'
 
   def create
     @watchlist = Watchlist.new
@@ -11,6 +12,20 @@ class WatchlistsController < ApplicationController
     respond_to do |format|
       format.js
     end
+  end
+
+  def destroy
+    @watchlist = Watchlist.find(params[:id])
+
+    @watchlist.watchlist_entries.each { |e| e&.destroy }
+
+    @success = @watchlist.destroy
+    if @success
+      flash[:notice] = I18n.t('watchlist.delete_success')
+    else
+      flash[:alert] = I18n.t('watchlist.delete_failed')
+    end
+    redirect_to show_watchlist_path
   end
 
   def show
