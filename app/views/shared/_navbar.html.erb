@@ -28,6 +28,14 @@
           </li>
         <% end %>
         <li class="nav-item">
+          <a href="<%= show_watchlist_path %>"
+             class="fas fa-list fa-lg text-light nav-link"
+             style="text-decoration: none; "
+             data-toggle="tooltip"
+             title="<%= t('navbar.watchlist') %>">
+          </a>
+        </li>
+        <li class="nav-item">
           <a href="<%= comments_path %>"
              id="commentsIcon"
              class="far fa-comments fa-lg <%= current_user.unread_comments ? 'text-primary' : 'text-light' %> nav-link"
@@ -50,14 +58,6 @@
              style="text-decoration: none; "
              data-toggle="tooltip"
              title="<%= t('navbar.blog') %>">
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="<%= show_watchlist_path %>"
-             class="fas fa-list fa-lg text-light nav-link"
-             style="text-decoration: none; "
-             data-toggle="tooltip"
-             title="<%= t('navbar.watchlist') %>">
           </a>
         </li>
         <li class="nav-item">

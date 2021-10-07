@@ -1,0 +1,21 @@
+if(<%= @success%>) {
+  $('#watchlistModalBody').append("<span class='badge badge-success'><%= t('watchlist.creation_success')%></span>");
+
+  $('#collapseNewWatchlist').collapse('hide');
+
+  $('#watchlist-select-form').html("<%= j render partial: 'watchlists/select_form',locals: { watchlist_entry: @watchlist_entry,watchlist: @watchlist,medium: @medium } %>");
+
+  $('#watchlistEntrySubmitButton').attr("disabled", false);
+
+  setTimeout(function() {
+    $('#watchlistModalBody').find('.badge-success').remove();
+  }, 2000);
+} else {
+  $('#watchlistModalBody').append("<span class='badge badge-danger'><%= t('watchlist.creation_fail')%></span>");
+
+  $('#watchlistEntrySubmitButton').attr("disabled", false);
+
+  setTimeout(function() {
+    $('#watchlistModalBody').find('.badge-danger').remove();
+  }, 2000);
+}

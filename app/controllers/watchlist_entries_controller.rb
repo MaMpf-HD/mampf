@@ -6,11 +6,12 @@ class WatchlistEntriesController < ApplicationController
     @watchlist_entry.watchlist = @watchlist
     @medium = Medium.find_by_id(params[:watchlist_entry][:medium_id])
     @watchlist_entry.medium = @medium
-    if @watchlist_entry.save
+    @success = @watchlist_entry.save
+    if @success
       flash[:notice] = I18n.t('watchlist_entry.add_success')
-      render 'watchlist_entries/add_success'
-    else
-      render 'watchlist_entries/add_failed'
+    end
+    respond_to do |format|
+      format.js
     end
   end
 

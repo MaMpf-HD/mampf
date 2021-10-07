@@ -7,25 +7,34 @@ class WatchlistsController < ApplicationController
     @watchlist.name = params[:watchlist][:name]
     @watchlist.user = current_user
     @medium = Medium.find_by_id(params[:watchlist][:medium_id])
-    if @watchlist.save
-      render 'watchlists/add_success'
-    else
-      render 'watchlists/add_failed'
+    @success = @watchlist.save
+    respond_to do |format|
+      format.js
     end
   end
 
   def show
     @watchlists = current_user.watchlists
-    if params[:watchlist]
-      @watchlist = Watchlist.find_by_id(params[:watchlist])
-      if !@watchlist.present? || (current_user.id != @watchlist.user.id && !@watchlist.public)
+    if params[:id]
+      @watchlist = Watchlist.find_by_id(params[:id])
+    # if user calls 'watchlists/show' without watchlist id
+    elsif !@watchlists.empty?
+      redirect_to watchlist_path(@watchlists.first)
+      return
+    end
+    if @watchlist.present?
+      # if user tries to access someone elses private watchlist
+      if current_user.id != @watchlist.user.id && !@watchlist.public
         redirect_to :root, alert: I18n.t('controllers.no_watchlist')
         return
+      # if user tries to access someone elses public watchlist
       elsif current_user.id != @watchlist.user.id && @watchlist.public
         @watchlists = [@watchlist]
       end
+    # if watchlist is not present and user has no watchlist
     else
-      @watchlist = Watchlist.first
+      redirect_to :root, alert: I18n.t('controllers.no_watchlist')
+      return
     end
     if !@watchlists.empty? && !@watchlist.watchlist_entries.empty?
       @watchlist_entries = paginated_results

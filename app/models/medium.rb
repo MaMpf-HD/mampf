@@ -924,6 +924,15 @@ class Medium < ApplicationRecord
     !!teachable.media_scope.try(:comments_disabled)
   end
 
+  def containingWatchlists(user)
+    Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
+                    user: user)
+  end
+
+  def containingWatchlistsNames(user)
+    containingWatchlists(user).pluck(:name)
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

@@ -1977,12 +1977,19 @@ en:
     close: 'Close'
     confirm: 'Add'
     public: 'Public'
+    public_help: 'Checking this box enables other people to view this watchlist. To do this, simply share the current url.'
+    order_help: 'By dragging the dark blue area of a medium, you can change the order as you wish.'
   watchlist_entry:
     add_success: 'The medium was added to your watchlist successfully'
     add_fail: 'There was an error adding the medium to your watchlist'
     remove: 'Remove medium from watchlist'
     remove_confirm: 'Are you sure you want to remove this medium from the watchlist?'
     deletion: 'The medium was removed from the current watchlist'
+    list: {
+      zero: 'This medium does not belong to any of your watchlists.',
+      one: 'This medium belongs to the following watchlist: %{watchlist}',
+      other: 'This medium belongs to the following watchlists: %{watchlists}'
+    }
   video:
     video: 'Video'
     no_video: 'There is no video.'

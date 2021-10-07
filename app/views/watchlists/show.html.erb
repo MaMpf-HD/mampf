@@ -1,93 +1,93 @@
+<%= console %>
 <div class="row pb-2">
   <div class="col-sm-12 col-md-12 col-lg-6">
-      <ul class="nav">
-        <%# Select watchlist button %>
-        <% if @watchlists.size > 1 %>
-          <span class="dropdown ml-3">
-            <button class="btn btn-primary dropdown-toggle"
-                    data-toggle="dropdown"
-                    type="button"
-                    id="watchlistButton"
-                    data-id=<%= @watchlist.id %>
-                    data-owned=<%= @watchlist.ownedBy(current_user) %>>
-              <%= @watchlist.name %>
-            </button>
-            <div class="dropdown-menu">
-              <% (@watchlists - [@watchlist]).each do |w| %>
-                <%= link_to w.name,
-                            show_watchlist_path(params: { watchlist: w.id }),
-                                                class: 'dropdown-item' %>
-              <% end %>
-            </div>
-          </span>
-        <% elsif @watchlists.size == 1%>
-          <button class="btn btn-secondary"
-                  disabled
+    <ul class="nav">
+      <%# Select watchlist button %>
+      <% if @watchlists.size > 1 %>
+        <span class="dropdown ml-3">
+          <button class="btn btn-primary dropdown-toggle"
+                  data-toggle="dropdown"
+                  type="button"
                   id="watchlistButton"
                   data-id=<%= @watchlist.id %>
                   data-owned=<%= @watchlist.ownedBy(current_user) %>>
             <%= @watchlist.name %>
           </button>
-        <% else %>
-          <button class="btn btn-secondary" disabled>
-            <%= t('watchlist.empty') %>
-          </button>
-        <% end %>
-        <% if @watchlist_entries %>
-          <%# Reverse order button%>
+          <div class="dropdown-menu">
+            <% (@watchlists - [@watchlist]).each do |w| %>
+              <%= link_to w.name,
+                          watchlist_path(w),
+                          class: 'dropdown-item' %>
+            <% end %>
+          </div>
+        </span>
+      <% elsif @watchlists.size == 1%>
+        <button class="btn btn-secondary"
+                disabled
+                id="watchlistButton"
+                data-id=<%= @watchlist.id %>
+                data-owned=<%= @watchlist.ownedBy(current_user) %>>
+          <%= @watchlist.name %>
+        </button>
+      <% else %>
+        <button class="btn btn-secondary" disabled>
+          <%= t('watchlist.empty') %>
+        </button>
+      <% end %>
+      <% if @watchlist_entries %>
+        <%# Reverse order button%>
+        <li class="nav-item pl-2 pr-1">
+          <%= link_to t('reverse_order'),
+                      watchlist_path(@watchlist, params: { reverse: !params[:reverse],
+                                                 all: params[:all],
+                                                 per: params[:per] }),
+                      class: 'nav-link btn btn-sm bg-grey-lighten-4',
+                      id: 'reverseButton',
+                      data: { reverse: params[:reverse] } %>
+        </li>
+        <%= helpdesk(t('watchlist.order_help'), false) %>
+        <%# All button%>
+        <% unless @watchlist_entries.page(1).total_pages == 1 || params[:all] %>
           <li class="nav-item pl-2 pr-1">
-            <%= link_to t('reverse_order'),
-                        show_watchlist_path(params: { watchlist: @watchlist.id,
-                                                      reverse: !params[:reverse],
-                                                      all: params[:all],
-                                                      per: params[:per] }),
-                        class: 'nav-link btn btn-sm bg-grey-lighten-4',
-                        id: 'reverseButton',
-                        data: { reverse: params[:reverse] } %>
+              <%= link_to t('all'),
+                          watchlist_path(@watchlist, params: { reverse: params[:reverse],
+                                                     all: true }),
+                          class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
           </li>
-          <%# All button%>
-          <% unless @watchlist_entries.page(1).total_pages == 1 || params[:all] %>
-            <li class="nav-item pl-2 pr-1">
-                <%= link_to t('all'),
-                            show_watchlist_path(params: { watchlist: @watchlist.id,
-                                                          reverse: params[:reverse],
-                                                          all: true }),
-                            class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
-            </li>
-          <% end %>
-          <%# Per page button %>
+        <% end %>
+        <%# Per page button %>
+        <li class="nav-item pl-1 pr-1">
+          <div class="dropdown pl-2">
+            <button class="btn btn-sm dropdown-toggle text-primary" type="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+              <%= t('per_page') %>
+            </button>
+            <div class="dropdown-menu">
+              <% [3,4,8,12,24,48].each do |hits| %>
+                <%= link_to hits.to_s,
+                            watchlist_path(@watchlist, params: { page: 1,
+                                                       reverse: params[:reverse],
+                                                       per: hits }),
+                            class: ['dropdown-item', params[:per] == hits.to_s ? 'active' : ''] %>
+              <% end %>
+            </div>
+          </div>
+        </li>
+        <% if @watchlist.ownedBy(current_user) %>
           <li class="nav-item pl-1 pr-1">
-            <div class="dropdown pl-2">
-              <button class="btn btn-sm dropdown-toggle text-primary" type="button"
-                      data-toggle="dropdown"
-                      aria-haspopup="true" aria-expanded="false">
-                <%= t('per_page') %>
-              </button>
-              <div class="dropdown-menu">
-                <% [3,4,8,12,24,48].each do |hits| %>
-                  <%= link_to hits.to_s,
-                              show_watchlist_path(params: { page: 1,
-                                                            watchlist: @watchlist.id,
-                                                            reverse: params[:reverse],
-                                                            per: hits }),
-                              class: ['dropdown-item', params[:per] == hits.to_s ? 'active' : ''] %>
-                <% end %>
-              </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="watchlistVisiblityCheck" <%= "checked" if @watchlist.public == true %>>
+              <label class="form-check-label" for="flexCheckDefault">
+                <%= t('watchlist.public') %>
+              </label>
             </div>
           </li>
-          <% if @watchlist.ownedBy(current_user) %>
-            <li class="nav-item pl-1 pr-1">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="watchlistVisiblityCheck" <%= "checked" if @watchlist.public == true %>>
-                <label class="form-check-label" for="flexCheckDefault">
-                  <%= t('watchlist.public') %>
-                </label>
-              </div>
-            </li>
-          <% end %>
+          <%= helpdesk(t('watchlist.public_help'), false) %>
         <% end %>
-      </ul>
-    </div>
+      <% end %>
+    </ul>
+  </div>
 </div>
 <% if @watchlist_entries.present? %>
   <div class="row" id="sortableWatchlistMedia">

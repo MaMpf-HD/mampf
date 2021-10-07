@@ -133,18 +133,6 @@
                                ref_link: ref_link } %>
         </div>
     <% end %>
-    <% if medium.commontator_thread.comments.present? %>
-      <hr>
-      <%= link_to "#{medium.commontator_thread.comments.size} " \
-                  "#{medium.commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
-                  show_media_comments_path(medium),
-                  class: 'text-dark' %>
-    <% elsif !medium.commontator_thread.is_closed? %>
-      <hr>
-      <%= link_to t('comments.comment_verb'),
-                  show_media_comments_path(medium),
-                  class: 'text-dark' %>
-    <% end %>
       </div>
   </div>
 <% end %>

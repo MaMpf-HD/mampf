@@ -593,6 +593,7 @@ class User < ApplicationRecord
 
     "#{image.metadata['width']}x#{image.metadata['height']}"
   end
+
   private
 
   def set_defaults
