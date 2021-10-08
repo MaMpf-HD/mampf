@@ -81,7 +81,7 @@ Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gl
 ### [Medienseite einzelner Lektionen](medium.md)
 Auf der Medienseite stehen weitere Informationen zu Länge bzw. Umfang und Größe von PDFs bzw. Videos zur Verfügung. Über die dort aufgeführte Gliederung der Lektion kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit dieser Lektion verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
-### [Kommentarseite](comments-media.md)
+### [Kommentarseite](comments-medium.md)
 Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
 
 ## Verwandte Seiten

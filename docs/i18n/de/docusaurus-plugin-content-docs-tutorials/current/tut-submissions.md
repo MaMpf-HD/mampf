@@ -5,19 +5,19 @@ title: Tutorial – Zettelabgabe
 Registrierte MaMpf-Nutzer\*innen können bearbeitete Übungsblätter abgeben und Korrekturen ansehen. Hier erfährst du alles, was du dazu wissen musst.
 
 ## Profileinstellungen anpassen
-In den Profileinstellungen, die über einen Button oben links in der [Navigationsleiste](nav-bar.md) erreichbar sind, kannst du zwei Namen angeben: den „Anzeigenamen“ und den „Namen in Übungsgruppen“. Sie können, müssen aber nicht identisch gewählt werden. Der „Anzeigename“ wird bei Kommentaren und Diskussionsbeiträgen verwendet, der „Name in Übungsgruppen“ nur bei Übungsgruppen. Gib beim „Namen in Übungsgruppen“ bitte deinen richtigen Namen ein, um Tutor*innen die Zuordnung zu erleichtern.
+In den Profileinstellungen, die über einen Button oben links in der [Navigationsleiste](..\mampf-pages\nav-bar) erreichbar sind, kannst du zwei Namen angeben: den „Anzeigenamen“ und den „Namen in Übungsgruppen“. Sie können, müssen aber nicht identisch gewählt werden. Der „Anzeigename“ wird bei Kommentaren und Diskussionsbeiträgen verwendet, der „Name in Übungsgruppen“ nur bei Übungsgruppen. Gib beim „Namen in Übungsgruppen“ bitte deinen richtigen Namen ein, um Tutor*innen die Zuordnung zu erleichtern.
 
 \*Icons\*
 
 ![](/img/Name_in_UEG_tut.png)
 
-Zettelabgaben sind nur in abonnierten Veranstaltungen möglich. Falls du die Vorlesung, für die du Aufgaben abgeben musst, noch nicht abonniert hast, kannst du das in den [Profileinstellungen](profile.md) nachholen. Ebenso kannst du die Veranstaltung auf deiner [Startseite](my-home-page.md) abonnieren.
+Zettelabgaben sind nur in abonnierten Veranstaltungen möglich. Falls du die Vorlesung, für die du Aufgaben abgeben musst, noch nicht abonniert hast, kannst du das in den [Profileinstellungen](..\mampf-pages\profile) nachholen. Ebenso kannst du die Veranstaltung auf deiner [Startseite](..\mampf-pages\my-home-page) abonnieren.
 
 ## Wie läuft die Zettelabgabe ab?
 Um einen Übungszettel abzugeben, muss ein Gruppenmitglied eine Abgabe anlegen und alle weiteren Gruppenmitglieder einladen. Diese müssen der Abgabe beitreten. Das ist bei **jedem** Übungsblatt erneut erforderlich. Alle beigetretenen Gruppenmitgliedern können die Datei, die abgeben werden soll, ändern oder löschen. Sobald die Abgabefrist verstrichen ist, können die Tutor\*innen deine Lösung korrigieren und zurückgeben.
 
 ### Abgabe anlegen
-Öffne die Veranstaltung, für die du etwas abgegeben möchtest, und klicke in der [Seitenleiste](sidebar.md) auf der linken Seite auf `Abgaben`, um auf die entsprechende Seite zu gelangen. Dort klickst du bei der aktuellen Abgabe auf den Button `Anlegen`, um eine Abgabe zu erstellen. Wähle anschließend deine Übungsgruppe aus. Damit die Abgabe angelegt wird, musst du sie speichern. Vorher kannst du noch andere Teammitglieder einladen und eine Datei hochladen. Beides ist auch später noch möglich.
+Öffne die Veranstaltung, für die du etwas abgegeben möchtest, und klicke in der [Seitenleiste](..\mampf-pages\sidebar) auf der linken Seite auf `Abgaben`, um auf die entsprechende Seite zu gelangen. Dort klickst du bei der aktuellen Abgabe auf den Button `Anlegen`, um eine Abgabe zu erstellen. Wähle anschließend deine Übungsgruppe aus. Damit die Abgabe angelegt wird, musst du sie speichern. Vorher kannst du noch andere Teammitglieder einladen und eine Datei hochladen. Beides ist auch später noch möglich.
 
 ![](/img/Abgabe.png)
 
@@ -37,7 +37,7 @@ Um einen Übungszettel abzugeben, muss ein Gruppenmitglied eine Abgabe anlegen u
 ![](/img/Einladen_tut.png)
 
 ### Einladungen annehmen
-* Du hast von einem Teammitglied einen Einladungscode erhalten. Navigiere zur Veranstaltung, für die ihr etwas abgegeben möchtet, und klicke in der [Seitenleiste](sidebar.md) auf der linken Seite auf `Abgaben`, um auf die entsprechende Seite zu gelangen. Dort klickst du bei aktuelle Abgabe auf den Button `Beitreten` und gibst den Einladungscode ein, um der Abgabe beizutreten.
+* Du hast von einem Teammitglied einen Einladungscode erhalten. Navigiere zur Veranstaltung, für die ihr etwas abgegeben möchtet, und klicke in der [Seitenleiste](..\mampf-pages\sidebar) auf der linken Seite auf `Abgaben`, um auf die entsprechende Seite zu gelangen. Dort klickst du bei aktuelle Abgabe auf den Button `Beitreten` und gibst den Einladungscode ein, um der Abgabe beizutreten.
 * Du hast eine Einladung per E-Mail erhalten. Klicke auf den Beitrittslink oder tritt durch Eingabe des Codes bei.
 
 ![](/img/Abgabe.png)
@@ -77,7 +77,7 @@ Die Korrekturen sind ebenso wie deine Abgaben bis zwei Wochen nach Beginn der n�
 \*Roter Kasten\*
 
 ## Wofür gibt es E-Mail-Benachrichtigungen und wie kann man sie einstellen?
-Wenn dich jemand, mit dem du schon einmal abgegeben hast, einlädt, erhältst du diese Einladung per E-Mail. Das kannst du nicht deaktivieren. Alle anderen Benachrichtigungen sind optional und können in den [Profileinstellungen](profile.md) aktiviert werden. Dorthin gelangst du über einen Button oben links in der [Navigationsleiste](nav-bar.md). Du kannst dich informieren lassen bei:
+Wenn dich jemand, mit dem du schon einmal abgegeben hast, einlädt, erhältst du diese Einladung per E-Mail. Das kannst du nicht deaktivieren. Alle anderen Benachrichtigungen sind optional und können in den [Profileinstellungen](..\mampf-pages\profile) aktiviert werden. Dorthin gelangst du über einen Button oben links in der [Navigationsleiste](..\mampf-pages\nav-bar). Du kannst dich informieren lassen bei:
 
 \*Icon\*
 
