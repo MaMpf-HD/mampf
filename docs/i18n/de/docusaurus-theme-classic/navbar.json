@@ -15,9 +15,9 @@
     "message": "Terminologie",
     "description": "Navbar item with label Terminology"
   },
-  "item.label.Conception": {
-    "message": "Konzeption",
-    "description": "Navbar item with label Conception"
+  "item.label.Concept": {
+    "message": "Konzept",
+    "description": "Navbar item with label Concept"
   },
   "item.label.Blog": {
     "message": "Blog",

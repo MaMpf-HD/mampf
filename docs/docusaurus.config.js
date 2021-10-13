@@ -34,9 +34,9 @@ module.exports = {
           position: 'left',
          },
          {
-           to: 'conception/',
-           activeBasePath: 'conception',
-           label: 'Conception',
+           to: 'concept/',
+           activeBasePath: 'concept',
+           label: 'Concept',
            position: 'left',
           },
         {
@@ -132,6 +132,26 @@ module.exports = {
         path: 'tutorials',
         routeBasePath: 'tutorials',
         sidebarPath: require.resolve('./sidebarsTutorials.js'),
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+        // ... other options
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'terminology',
+        path: 'terminology',
+        routeBasePath: 'tuterminologytorials',
+        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
+        // ... other options
+      },
+    ],
+    [
+      '@docusaurus/plugin-content-docs',
+      {
+        id: 'concept',
+        path: 'concept',
+        routeBasePath: 'concept',
         editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
         // ... other options
       },
