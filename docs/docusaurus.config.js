@@ -29,7 +29,7 @@ module.exports = {
          position: 'left',
         },
         {
-          to: 'mampf-pages/terminology',
+          to: 'terminology/',
           label: 'Terminology',
           position: 'left',
          },
@@ -141,7 +141,7 @@ module.exports = {
       {
         id: 'terminology',
         path: 'terminology',
-        routeBasePath: 'tuterminologytorials',
+        routeBasePath: 'terminology',
         editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
         // ... other options
       },

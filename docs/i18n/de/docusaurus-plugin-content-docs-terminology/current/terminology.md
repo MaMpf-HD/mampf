@@ -1,5 +1,6 @@
 ---
 title: Terminologie
+slug: /
 ---
 
 Auf dieser Seite kann man die Bedeutung bestimmter Begrifflichkeiten im Kontext von MaMpf nachlesen. Sie sind im Folgenden in alphabetischer Reihenfolge aufgelistet.
