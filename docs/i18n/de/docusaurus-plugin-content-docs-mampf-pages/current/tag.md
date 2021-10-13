@@ -68,7 +68,7 @@ Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gl
 
 \*Icon\*
 
-#### [Kommentarseite](comments-media.md)
+#### [Kommentarseite](comments-medium.md)
 Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf `Kommentieren` bzw. `n Kommentare` klickt.
 
 ## Verwandte und ähnliche Seiten
