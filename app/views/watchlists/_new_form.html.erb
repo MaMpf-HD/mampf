@@ -6,10 +6,12 @@
         <div class="input-group mb-3">
           <%= f.text_field :name, placeholder: t('watchlist.enter_name'),
                           class: 'form-control',
+                          id: 'watchlistNameField',
                           :required => true %>
           <div class="input-group-append">
             <%= f.submit t('watchlist.create'),
-                        { class: 'btn btn-primary' } %>
+                        { class: 'btn btn-primary',
+                          id: 'createWatchlistBtn' } %>
           </div>
       </div>
     </div>
