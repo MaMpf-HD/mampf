@@ -18,7 +18,7 @@
                       id: 'card-title',
                       data: { id: entry.id } %>
         <% else %>
-          <span class="text-light" id="card-title">
+          <span class="text-light" id="card-title" data-id=<%= entry.id %> >
             <%= medium.card_header %>
           </span>
         <% end %>
