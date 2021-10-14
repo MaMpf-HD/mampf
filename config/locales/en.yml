@@ -1991,7 +1991,7 @@ en:
     deletion: 'The medium was removed from the current watchlist'
     list: {
       zero: 'This medium does not belong to any of your watchlists.',
-      one: 'This medium belongs to the following watchlist: %{watchlist}',
+      one: 'This medium belongs to the following watchlist: %{watchlists}',
       other: 'This medium belongs to the following watchlists: %{watchlists}'
     }
   video:
