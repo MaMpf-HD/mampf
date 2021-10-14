@@ -21,7 +21,7 @@ class WatchlistEntriesController < ApplicationController
     flash[:notice] = I18n.t('watchlist_entry.deletion')
     redirect_to controller: 'watchlists',
                 action: 'show',
-                watchlist: params[:watchlist],
+                id: params[:watchlist],
                 all: params[:all],
                 reverse: params[:reverse],
                 page: 1,
