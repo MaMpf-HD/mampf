@@ -931,7 +931,7 @@ class Medium < ApplicationRecord
 
   def containingWatchlistsNames(user)
     watchlists = containingWatchlists(user)
-    if !watchlists.empty
+    if !watchlists.empty?
       containingWatchlists(user).pluck(:name)
     else
       ''
