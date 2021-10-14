@@ -44,7 +44,7 @@ describe("Watchlists", () => {
                 cy.contains(`${data[1].name}`).click();
                 cy.contains(`${data[2].name}`).click();
                 cy.wait(100);
-                cy.get('.pl-3 > .btn').click();
+                cy.get('#deleteWatchlistBtn').click();
                 cy.contains(`${data[1].name}`).should("exist");
                 cy.get('.alert-secondary').should("exist");
             });
