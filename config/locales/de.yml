@@ -148,7 +148,8 @@ de:
       current_lecture: 'Aktuelle Veranstaltung'
       logout: 'Logout'
       media_search: 'Mediensuche'
-      tags: 'Tagübersicht'
+      tags: 'Tagsuche'
+      teachables: 'Veranstaltungssuche'
       terms: 'Semester'
       classification: 'Systematik'
       news: 'News'
@@ -167,6 +168,15 @@ de:
         subscriber_medium: >
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
+    teachables:
+      teachables: Veranstaltungssuche
+      courses: Modulsuche
+      info:
+        action: >
+          Je nachdem, ob Du EditorIn dieser Veranstaltung bist, kannst Du sie
+          betrachten oder auch editieren. Beim Betrachten wirst Du
+          aufgefordert werden, sie vorher zu abonnieren, falls Du das bisher
+          noch nicht getan hast.
     classification:
       programs: 'Studiengänge'
       divisions: 'Teilbereiche'
@@ -735,6 +745,9 @@ de:
           MaMpf-Startseite. Das Seitenverhältnis sollte idealerweise 3:2
           betragen, das hochgeladene Bild wird dann von MaMpf herunterskaliert
           (auf maximal 405 Pixel Breite, 270 Pixel Höhe).
+        action:
+          Falls Du Editor des jeweiligen Moduls bist, wird hier ein Link zum
+          Bearbeiten angezeigt.
     chapter:
       edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
@@ -816,7 +829,7 @@ de:
       content: >
         Dies ist der Inhalt, der aus veröffentlichten Medien, die mit dieser
         Sitzung verknüpft sind, extrahiert wurde. Dies verwendet Inhaltsverzeichnisse
-        von Videos, die mit dem ThymE-Editor bearbeitet wurden, Inhaltsbeschreibungen  
+        von Videos, die mit dem ThymE-Editor bearbeitet wurden, Inhaltsbeschreibungen
         von Medien und Skriptmetadaten (wenn die Vorlesung auf einem Skript aufbaut).
       destroyed: 'Sitzung gelöscht'
       tags_without_section: 'Tags ohne Abschnittsassozierung'
@@ -1184,6 +1197,9 @@ de:
           ODER
           </i>
           ) auswählen, wer die EditorInnen des Mediums sein sollen.
+          Beachte, dass jedes Medium mindestens eine EditorIn hat.
+          Ist die "alle"-Checkbox deaktiviert und keine EditorIn ausgewählt,
+          wird die Suche keine Treffer liefern.
         search_fulltext: >
           Hier kannst Du Text eingeben, nach dem in den Feldern Beschreibung,
           Fragen- bzw. Antworttext sowie Bemerkungstext gesucht wird.
@@ -1224,8 +1240,12 @@ de:
           Veranstaltung gelten, wie die Teamgröße für Abgaben und die
           Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
           einstellen.
+        answer_count: >
+          Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
+          wieviele Antworten die Quizfrage haben soll. Bei allen anderen
+          Medientypen wird diese Einstellung ignoriert.
     tag:
-      index: 'Tagübersicht'
+      index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
       extra_lectures: 'Zusätzliche Veranstaltungen'
       missing_lectures: 'Fehlende Veranstaltungen'
@@ -2388,7 +2408,9 @@ de:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
   errors:
-    not_subscribed: Aktuell hast Du diese Veranstaltung nicht abonniert.
+    not_subscribed: >
+      Aktuell hast Du diese Veranstaltung nicht abonniert.
+      Um sie betrachten zu können, musst Du sie vorher abonnieren.
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
     thyme:
@@ -2960,6 +2982,7 @@ de:
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
+    post_processing: 'Stelle fertig...'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
@@ -3039,7 +3062,7 @@ de:
     warning: 'Warnung'
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
-    answer_count: 'Anzahl der Antworten (nur für Quiz-Fragen)'
+    answer_count: 'Anzahl der Antworten'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
@@ -3086,6 +3109,8 @@ de:
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
     emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    lecture_search: Veranstaltungssuche
+    course_search: Modulsuche
     immediately: sofort
     at_time: zum folgenden Zeitpunkt
     assignment: Hausaufgabe
@@ -3323,6 +3348,11 @@ de:
     no_announcement: >
       Eine Mitteilung mit dieser id existiert nicht.
     no_watchlist: 'Watchlist existiert nicht oder ist privat.'
+    created_lecture_success: >
+      Die Veranstaltung %{lecture} wurde erfolgreich angelegt.
+    created_course_success: >
+      Das Modul %{course} (Editor(Innen): %{editors}) wurde erfolgreich
+      angelegt.
   exception:
     title: Fehler
     exception: Exception auf %{host}

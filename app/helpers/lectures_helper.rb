@@ -1,16 +1,9 @@
 # Lectures Helper
 module LecturesHelper
-  # returns true if it is an inspection AND the current user has editing rights
-  # to the lecture (beig editor by inheritance or admin)
-  def inspection_and_editor?(inspection, lecture)
-    inspection &&
-      (current_user.admin || current_user.in?(lecture.editors_with_inheritance))
-  end
-
   # is the current user allowed to delete the given lecture and is it
   # irrelevant enough to be able to do so?
-  def lecture_deletable?(lecture, inspection)
-    !inspection && lecture.lessons.empty? && lecture.media.empty? &&
+  def lecture_deletable?(lecture)
+    lecture.lessons.empty? && lecture.media.empty? &&
       (current_user.admin? ||
         lecture.editors_with_inheritance.include?(current_user))
   end
@@ -100,5 +93,42 @@ module LecturesHelper
   def lecture_border(lecture)
     return '' if lecture.published?
     'border-danger'
+  end
+
+  def lecture_hits_per_page(results_as_list)
+    return [[10, 10], [20, 20], [50, 50]] if results_as_list
+    [[3,3],[4,4],[6,6], [12,12]]
+  end
+
+  def default_lecture_hits_per_page(results_as_list)
+    return 20 if results_as_list
+    6
+  end
+
+  def lecture_access_icon(lecture)
+    return lecture_edit_icon if current_user.can_edit?(lecture)
+    lecture_view_icon
+  end
+
+  def lecture_edit_icon(lecture)
+    link_to edit_lecture_path(lecture),
+            class: 'text-dark mr-2',
+            style: 'text-decoration: none;',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.edit') do
+      tag.i class: 'far fa-edit'
+    end
+  end
+
+  def lecture_view_icon(lecture)
+    link_to lecture_path(lecture),
+            class: 'text-dark mr-2',
+            style: 'text-decoration: none;',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.view') do
+      tag.i class: 'fas fa-eye'
+    end
   end
 end

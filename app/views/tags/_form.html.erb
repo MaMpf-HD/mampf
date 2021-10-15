@@ -37,7 +37,7 @@
       </div>
       <div class="col-3 text-right">
         <%= link_to t('admin.tag.index'),
-                    tags_path,
+                    administration_search_path(params: {sort: 'tag' }),
                     class: 'btn btn-sm btn-outline-primary' %>
         <% if tag.id.present? && (current_user.admin? ||
               (tag.courses & current_user.edited_courses).any?) %>

@@ -9,6 +9,10 @@
   <div class="col-2 text-right"
        id="video-uploadButton"
        data-choosefiles="<%= t('basics.file') %>">
+    <button id="video-uploadButton-button"
+       class="btn btn-sm btn-outline-secondary"
+       >
+       <%= t('basics.file')%></button>
     <input type="hidden"
            name="medium[video]"
            value="<%= medium.cached_video_data %>"
@@ -16,6 +20,15 @@
     <input type="file"
            name="medium[video]"
            id="upload-video">
+  <div  id="video-uploadButton-button-actual"
+        class="btn btn-sm btn-outline-secondary"
+        style="display:none"
+        data-tr-success="<%= t('buttons.upload_success') %>"
+        data-tr-failure="<%= t('submission.upload_failure')%>"
+        data-tr-post-processing="<%= t('basics.post_processing')%>"
+        >
+          <%= t('buttons.upload') %>
+  </div>
   </div>
   <div class="col-6 text-right">
     <% if medium.screenshot.present? %>

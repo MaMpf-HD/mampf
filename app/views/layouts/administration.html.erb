@@ -10,7 +10,19 @@
       <%= render partial: 'administration/navbar' %>
     </div>
     <div class="container-fluid">
-      <%= yield %>
+      <main>
+        <% if alert.present? %>
+          <div class="alert alert-danger my-3" role="alert">
+            <%= alert %>
+          </div>
+        <% end %>
+        <% if notice.present? %>
+          <div class="alert alert-secondary my-3" role="alert">
+            <%= notice %>
+          </div>
+        <% end %>
+        <%= yield %>
+      </main>
     </div>
   </body>
 </html>

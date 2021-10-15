@@ -17,7 +17,7 @@ describe("Courses", function () {
             cy.get('input[name="course[title]"]').type("Lineare Algebra I");
             cy.get('input[name="course[short_title]"]').type("LA I");
             cy.get('input[type="submit"]').click();
-            cy.visit('/administration');
+            //cy.visit('/administration');
             cy.contains("Lineare Algebra I").should("exist");
         });
         it("can set course image", ()=>{
@@ -28,8 +28,10 @@ describe("Courses", function () {
             ]).then((records)=>{
                 cy.visit(`/courses/${records[0].id}/edit`);
                 cy.contains("Bild").should("exist");
+                cy.get("#image_heading").contains("Ein-/Ausklappen").click();
                 const yourFixturePath = 'files/image.png';
-                cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+                cy.get('#upload-image').attachFile(yourFixturePath);
+                cy.contains("Upload").click();
                 cy.wait(100);
                 cy.contains("Speichern").click();
                 cy.get("#image_heading").contains("Ein-/Ausklappen").click();
@@ -39,7 +41,12 @@ describe("Courses", function () {
         it("can create lecture", () => {
             cy.appFactories([
                 ['create', 'course'],
-                ['create', 'term']
+                ['create', 'term'],
+                ['create','editable_user_join',{
+                    'editable_id': 1,
+                    'editable_type':'Course',
+                    'user_id':1
+                }]
             ]).then((records) => {
                 cy.server();
                 cy.route('**/new').as('new');
@@ -70,7 +77,7 @@ describe("Courses", function () {
                 }]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
             });
@@ -103,7 +110,7 @@ describe("Courses", function () {
                 ["create", "lecture", "released_for_all"]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("exist");
             });
@@ -116,10 +123,10 @@ describe("Courses", function () {
                 }]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
                 cy.contains("Veranstaltung abonnieren").click();
                 cy.contains("Vorlesungsinhalt").should("not.exist");
-                cy.contains("Fehler").should("exist");
+                cy.contains("Achtung").should("exist");
             });
         });
         it("can not subscribe on page to unpublished", () => {

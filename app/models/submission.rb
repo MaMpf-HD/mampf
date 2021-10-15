@@ -140,6 +140,7 @@ class Submission < ApplicationRecord
     zip(submissions, corrections, '-correction')
   end
 
+
   ###
   # Checks size and if filetype is acceptable
   ###
@@ -207,6 +208,47 @@ class Submission < ApplicationRecord
     end
     return {} unless errors.present?
     { sort => errors }
+  end
+
+  def self.bulk_corrections!(tutorial, assignment, files)
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
+    report = { successful_saves: [], submissions: submissions.size,
+    					 invalid_filenames: [], invalid_id: [], in_subfolder: [],
+               no_decision: [], rejected: [], invalid_file: [] }
+    tmp_folder = Dir.mktmpdir
+    begin
+      files.each do |file_shrine|
+        filename = file_shrine["metadata"]["filename"]
+        if !'-ID-'.in?(filename)
+          report[:invalid_filenames].push(filename)
+          next
+        end
+        submission = Submission.find_by_id(filename.split('-ID-').last
+                                                .remove('.pdf'))
+        if !submission
+          report[:invalid_id].push(filename)
+          next
+        end
+        if submission.too_late? && submission.accepted.nil?
+          report[:no_decision].push(submission.team)
+          next
+        end
+        if submission.too_late? && submission.accepted == false
+          report[:rejected].push(submission.team)
+          next
+        end
+        submission.update(correction: file_shrine.to_json)
+        if !submission.valid?
+          report[:invalid_file].push(filename)
+          next
+        end
+        report[:successful_saves].push(submission)
+      end
+    rescue => e
+      report[:errors] = "#{e.message}"
+    end
+    report
   end
 
   private

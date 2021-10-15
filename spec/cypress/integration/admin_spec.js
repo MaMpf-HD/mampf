@@ -22,7 +22,9 @@ describe("Authentication", function () {
             cy.visit(`/administration/profile`);
             cy.contains("Profile Image").should("exist");
             const yourFixturePath = 'files/image.png';
-            cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+            cy.get('#upload-image').attachFile(yourFixturePath);
+            cy.wait(100);
+            cy.contains("Upload").click();
             cy.wait(100);
             cy.contains("Speichern").click();
             cy.contains("image.png").should("exist");

@@ -7,7 +7,9 @@ $('#assignment_medium_id_<%= @assignment.id %>').select2
   allowClear: true
   language: '<%= I18n.locale %>'
   theme: 'bootstrap'
-
+# using moment to format the date right
+d = moment($("#assignment_deadline_<%= @assignment.id %>").val(),"YYYY-MM-DD hh:mm:ss z")
+$("#assignment_deadline_<%= @assignment.id %>").val (d.format("DD.MM.Y H:mm"))
 $("#assignment_deadline_<%= @assignment.id %>").datetimepicker
   format:'d.m.Y H:i'
   inline:false

@@ -94,7 +94,7 @@
           <% course.lectures_by_date.each do |l| %>
             <li>
               <%= link_to l.term_teacher_info,
-                          edit_or_inspect_lecture_path(l),
+                          edit_lecture_path(l),
                           class: lectures_color(l)  %>
             </li>
           <% end %>

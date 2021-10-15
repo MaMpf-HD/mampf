@@ -22,44 +22,42 @@
       <%= assignment.accepted_file_type %>
     </div>
     <div class="col-2">
-      <% unless inspection %>
-        <% if assignment.persisted? %>
-          <%= link_to edit_assignment_path(assignment),
-                      class: 'text-dark',
-                      data: { toggle: 'tooltip',
-                              placement: 'botttom' },
-                      style: 'text-decoration: none;',
-                      title: t('buttons.edit'),
-                      remote: true do %>
-            <i class="far fa-lg fa-edit mr-2">
-            </i>
-          <% end %>
-          <% if assignment.destructible? %>
-            <%= link_to assignment_path(assignment),
-                        class: 'text-dark',
-                        data: { toggle: 'tooltip',
-                                placement: 'botttom',
-                                confirm: t('confirmation.generic') },
-                        style: 'text-decoration: none;',
-                        title: t('buttons.delete'),
-                        method: :delete,
-                        remote: true do %>
-              <i class="fas fa-lg fa-trash-alt">
-              </i>
-            <% end %>
-          <% end %>
-        <% else %>
-          <%= link_to edit_medium_path(assignment.medium),
-                      class: 'text-dark',
-                      data: { toggle: 'tooltip',
-                              placement: 'botttom' },
-                      style: 'text-decoration: none;',
-                      title: t('buttons.edit') do %>
-            <i class="far fa-lg fa-edit mr-2">
-            </i>
-          <% end %>
-          <%= helpdesk(t('assignment.info.scheduled_assignment'), false) %>
+      <% if assignment.persisted? %>
+        <%= link_to edit_assignment_path(assignment),
+                    class: 'text-dark',
+                    data: { toggle: 'tooltip',
+                            placement: 'botttom' },
+                    style: 'text-decoration: none;',
+                    title: t('buttons.edit'),
+                    remote: true do %>
+          <i class="far fa-lg fa-edit mr-2">
+          </i>
         <% end %>
+        <% if assignment.destructible? %>
+          <%= link_to assignment_path(assignment),
+                      class: 'text-dark',
+                      data: { toggle: 'tooltip',
+                              placement: 'botttom',
+                              confirm: t('confirmation.generic') },
+                      style: 'text-decoration: none;',
+                      title: t('buttons.delete'),
+                      method: :delete,
+                      remote: true do %>
+            <i class="fas fa-lg fa-trash-alt">
+            </i>
+          <% end %>
+        <% end %>
+      <% else %>
+        <%= link_to edit_medium_path(assignment.medium),
+                    class: 'text-dark',
+                    data: { toggle: 'tooltip',
+                            placement: 'botttom' },
+                    style: 'text-decoration: none;',
+                    title: t('buttons.edit') do %>
+          <i class="far fa-lg fa-edit mr-2">
+          </i>
+        <% end %>
+        <%= helpdesk(t('assignment.info.scheduled_assignment'), false) %>
       <% end %>
     </div>
   </div>

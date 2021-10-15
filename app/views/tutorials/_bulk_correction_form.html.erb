@@ -1,6 +1,8 @@
+<input type="file" accept="application/pdf" id="upload-bulk-correction"
+ multiple=true/>
 <%= form_with url: bulk_upload_corrections_path(id: @tutorial.id,
                                                 ass_id: @assignment.id),
-              html: { id: 'bulk-upload-form' },
+              html: { id: 'bulk-upload-form'},
               method: :patch do |f| %>
       <h5>
         <%= t('submission.bulk_upload') %>
@@ -9,14 +11,9 @@
   <div class="row mt-3">
     <div class="col-12"
          id="upload-bulk-correction-button"
-         data-choosefiles="<%= t('basics.files') %>">
-      <%= f.hidden_field :package,
-                         id: 'upload-bulk-correction-hidden',
-                         value: [] %>
-      <%= f.file_field :package,
-                       class: 'form-control-file mb-2',
-                       id: 'upload-bulk-correction',
-                       multiple: true %>
+         data-choosefiles="<%= t('basics.file') %>">
+      <%= f.hidden_field :files,
+                         id: 'upload-bulk-correction-hidden' %>
     </div>
     <div class="col-12" id="upload-bulk-correction-metadata"
          data-tr-uploads="<%= t('tutorial.bulk_upload.files_in_cache') %>">
@@ -27,13 +24,28 @@
     </div>
     <div class="invalid-feedback" id="upload-bulk-errors">
     </div>
+    <div class="col-12">
+    <div id="bulk-uploadButton-button"
+       class="btn btn-sm btn-outline-secondary"
+       >
+       <%= t('basics.file')%></div>
+            <button id="bulk-uploadButton-button-actual"
+                    data-tr-success="<%= t('buttons.upload_success') %>"
+                    data-tr-failure="<%= t('submission.upload_failure')%>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    data-tr-post-processing="<%= t('basics.post_processing')%>"
+                    class="btn btn-sm btn-outline-secondary"
+                    >
+              <%= t('buttons.upload') %>
+            </button>
+    </div>
   </div>
   <div class="row mt-2">
     <div class="col-12">
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary',
                    id: 'upload-bulk-correction-save',
-                   disabled: true %>
+                   disabled: false %>
       <button class="btn btn-sm btn-secondary"
               id="cancel-bulk-upload"
               type="button">
