@@ -51,13 +51,16 @@
               <%= link_to t('all'),
                           watchlist_path(@watchlist, params: { reverse: params[:reverse],
                                                      all: true }),
+                          id: 'allButton',
                           class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
           </li>
         <% end %>
         <%# Per page button %>
         <li class="nav-item pl-1 pr-1">
           <div class="dropdown pl-2">
-            <button class="btn btn-sm dropdown-toggle text-primary" type="button"
+            <button class="btn btn-sm dropdown-toggle text-primary"
+                    type="button"
+                    id="perPageButton"
                     data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
               <%= t('per_page') %>
