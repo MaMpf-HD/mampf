@@ -156,26 +156,5 @@ module.exports = {
         // ... other options
       },
     ],
-    [ '@docusaurus/plugin-content-docs',
-      {
-        id: 'lecturers',
-        path: 'lecturers',
-        routeBasePath: 'lecturers',
-        sidebarPath: require.resolve('./sidebarsLecturers.js'),
-        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
-        // ... other options
-      },
-    ],
-    [
-      '@docusaurus/plugin-content-docs',
-      {
-        id: 'devel',
-        path: 'devel',
-        routeBasePath: 'devel',
-        sidebarPath: require.resolve('./sidebarsDevel.js'),
-        editUrl: 'https://github.com/mampf-hd/mampf/edit/main/docs/',
-        // ... other options
-      },
-    ]
   ]
 };

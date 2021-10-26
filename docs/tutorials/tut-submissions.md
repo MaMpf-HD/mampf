@@ -1,5 +1,5 @@
 ---
-title: "Tutorial: Handing in Homework"
+title: Handing in Homework
 ---
 You might be asked to use MaMpf for handing in your homework assignments. This page will tell you everything you need to know about that.
 
