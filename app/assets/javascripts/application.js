@@ -49,6 +49,7 @@
 //= require submissions
 //= require tutorials
 //= require tags
+//= require talks
 //= require terms
 //= require tex_preview
 //= require thyme

@@ -67,6 +67,12 @@ else if $('#newTagModal').data('from') == 'lesson'
   tagSelector.refreshOptions(false)
   tagSelector.addItem(<%= @tag.id %>)
   tagSelector.refreshItems()
+else if $('#newTagModal').data('from') == 'talk'
+  tagSelector = document.getElementById('talk_tag_ids').selectize
+  tagSelector.addOption({ value: <%= @tag.id %>, text: '<%= @tag.title %>'})
+  tagSelector.refreshOptions(false)
+  tagSelector.addItem(<%= @tag.id %>)
+  tagSelector.refreshItems()
 else if $('#newTagModal').data('from') == 'tag'
   tagSelector = document.getElementById('tag_related_tag_ids').selectize
   tagSelector.addOption({ value: <%= @tag.id %>, text: '<%= @tag.title %>'})

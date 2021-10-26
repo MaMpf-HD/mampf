@@ -613,6 +613,7 @@ de:
           unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
+      no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
       course_tags_html: >
@@ -756,11 +757,10 @@ de:
       no_sections: 'Für dieses Kapitel wurden noch keine Abschnitte angelegt.'
       info:
         title: >
-          Hier kannst Du den Titel des Kapitels bzw. Vortrags angeben.
+          Hier kannst Du den Titel des Kapitels angeben.
         position: >
           Hier kannst Du auswählen, an welcher Stelle das Kapitel
-          (bzw. der Vortrag) positioniert werden soll, indem Du das
-          Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
+          positioniert werden soll, indem Du das Vorgängerkapitel auswählst.
         display_number: >
           Wird eine Anzeigenummer angegeben, so überschreibt diese
           die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
@@ -819,6 +819,63 @@ de:
         extracted_content: >
           Hier steht der Inhalt, der aus Medien extrahiert wurde, die zu
           Sitzungen aus diesem Abschnitt verknüpft sind.
+    talk:
+      speakers: Vortragende(r)
+      no_media: Für diesen Vortrag sind keine Medien vorhanden.
+      next_talk: 'nächster Vortrag'
+      previous_talk: 'voriger Vortrag'
+      no_talks: Es sind keine Vorträge von Dir vorhanden.
+      display_description: Text auf Vortragsseite anzeigen
+      display_description_teacher: Inhalt auf Vortragsseite anzeigen
+      description_warning: >
+        Du hast Text eingetragen, dieser wird jedoch erst auf der
+        Vortragsseite angezeigt, wenn Du den obigen Haken setzt und
+        abspeicherst.
+      info:
+        details: >
+          Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
+          und wichtige Details anzugeben (wie etwa Literatur zu dem
+          Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
+          setzt). Dieser Text erscheint auf der Seminarhauptseite und der Seite
+          des Vortrags und kann von den Vortragenden nicht bearbeitet werden.
+        details_info: >
+          Das ist eine Beschreibung des Vortrags durch die DozentIn.
+        description: >
+          Hier hast Du die Möglichkeit, optional einen Text zum Inhalt des
+          Vortrages zu schreiben. Du kannst LaTeX benutzen (indem du den
+          Ausdruck in $...$ setzt).
+        description_info: >
+          Das ist ein Text über den Vortrag, der von den Vortragenden stammt.
+        description_for_editor: >
+          Das ist ein Text über den Vortrag, der von den Vortragenden
+          stammt.
+        media: >
+          Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
+          sind. Du kannst neue Medien hinzufügen.
+        tags: >
+          Das ist die Liste der Tags, die zu diesem Vortrag assoziiert sind.
+          Diese kann nicht von den Vortragenden bearbeitet werden.
+        by_speakers: >
+          (Eintragung durch die Vortragenden)
+        title:
+          Hier kannst Du den Titel des Vortrags angeben.
+        position: >
+          Hier kannst Du auswählen, an welcher Stelle der Vortrag positioniert
+          werden soll, indem Du das den Vorgängervortrag auswählst.
+        tags: >
+          Das ist die Liste aller Tags, die zu diesem Vortrag assoziiert sind.
+        cospeakers: Mitvortragende
+        display_description: >
+          Damit der Text auf der Vortragsseite angezeigt wird, musst Du
+          diesen Haken setzen. Ohne den Haken wird der Text nicht angezeigt,
+          was z.B. sinnvoll sein kann, wenn es sich bei der aktuellen Fassung
+          nur um einen Entwurf handelt.
+        display_description_teacher: >
+          Die Vortragenden können entscheiden, ob ihr Text zum Inhalt auf
+          der Vortragsseite angezeigt wird (dieser Haken wird typischerweise
+          nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
+          handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
+          entfernen.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -1963,14 +2020,15 @@ de:
       Hier kannst Du eingeben, unter welchem Namen diese künftig angezeigt
       werden sollen:
     manual_deletion: >
-      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, kannst
-      Du die entsprechenden Vorlesungen und Medien manuell löschen.
+      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, musst
+      Du diese vor der Löschung des Accounts manuell löschen.
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
+    my_talks: Meine Vorträge
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2717,6 +2775,9 @@ de:
       Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
+    protected: Geschützte Abgabe
+    protected_info: >
+      "Geschützte" Abgaben werden bis zur manuellen Löschung aufbewahrt und werden nicht automatisiert nach Ablauf der Aufbewahrungsfrist (Semesterende + Karenzzeit von 14 Tagen) gelöscht.
     destruction_info:
       <i>
       Hinweis.
@@ -3115,6 +3176,7 @@ de:
     at_time: zum folgenden Zeitpunkt
     assignment: Hausaufgabe
     reminder: Erinnerung
+    together_with: zusammen mit
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3134,6 +3196,7 @@ de:
     parent_lecture: 'zur Veranstaltung'
     parent_lesson: 'zur Sitzung'
     parent_medium: 'zum Medium'
+    parent_talk: 'zum Vortrag'
     create_chapter: 'Kapitel anlegen'
     create_talk: 'Vortrag anlegen'
     create_lesson: 'Sitzung anlegen'
@@ -3275,6 +3338,7 @@ de:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
     session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
+    no_talk: Ein Vortrag mit dieser id existiert nicht.
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
     no_test: 'Für dieses Modul gibt es keinen Test.'
     no_lecture: 'Eine Veranstaltung mit der angeforderten id existiert nicht.'
@@ -3353,6 +3417,8 @@ de:
     created_course_success: >
       Das Modul %{course} (Editor(Innen): %{editors}) wurde erfolgreich
       angelegt.
+    unauthorized: >
+      Die hast keine Berechtigung für diese Aktion.
   exception:
     title: Fehler
     exception: Exception auf %{host}
@@ -3527,6 +3593,10 @@ de:
                 werden.
             aliases:
               invalid: 'Die Angaben sind ungültig.'
+        talk:
+          attributes:
+            title:
+              blank: Es muss ein Titel angegeben werden.
         term:
           attributes:
             active:

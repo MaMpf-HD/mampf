@@ -25,10 +25,18 @@ class Ability
       end
 
       cannot :index, Announcement
-      can :manage, [:administration, :erdbeere, Item, Referral]
+      can :manage, [:administration, :erdbeere]
+
+      can :manage, Referral do |referral|
+        user.can_edit?(referral.medium)
+      end
+
+      can :manage, Item do |item|
+        item.medium.nil? ||  user.can_edit?(item.medium)
+      end
       cannot :classification, :administration
       # :create is a cancancan alias for new and create actions
-      can :create, [Chapter, Lecture, Lesson, Medium, Section]
+      can :create, [Chapter, Lecture, Lesson, Medium, Section, Talk]
       # :update is a cancancan alias for update and edit actions
 
       can [:new, :create], Announcement
@@ -47,6 +55,16 @@ class Ability
       # or destroy them
       can [:update, :destroy], Chapter do |chapter|
         chapter.lecture.edited_by?(user)
+      end
+
+      # only users who are editors of a talk's lecture or who are speakers
+      # can edit, update, destroy or assemble them
+      can [:update, :destroy, :assemble, :modify], Talk do |talk|
+        talk.lecture.edited_by?(user) || talk.given_by?(user)
+      end
+
+      cannot :show, Talk do |talk|
+        !talk.visible_for_user?(user)
       end
 
       # anyone should be able to get a sidebar and see the announcements
@@ -224,11 +242,22 @@ class Ability
       end
 
       cannot :show, Medium do |medium|
-        !medium.visible_for_user?(user) || medium.sort == 'Question'
+        !medium.visible_for_user?(user) ||
+          (medium.sort == 'Question' && !user.can_edit?(medium))
       end
 
       can :show_comments, Medium do |medium|
         medium.visible_for_user?(user)
+      end
+
+      can [:new, :create], Medium do |medium|
+        user.speaker?
+      end
+
+      can [:edit, :update, :publish, :enrich, :add_item, :add_reference,
+           :add_screenshot, :remove_screenshot, :export_toc,
+           :export_screenshot, :destroy, :create], Medium do |medium|
+        user.can_edit?(medium)
       end
 
       cannot :show, Section do |section|
@@ -264,6 +293,17 @@ class Ability
         user.in?(submission.tutorial.tutors)
       end
 
+      can :fill_tag_select, Tag
+
+      # only generic users who are speakers can assemble the talk
+      can [:assemble, :modify], Talk do |talk|
+        talk.given_by?(user) && talk.visible_for_user?(user)
+      end
+
+      cannot :show, Talk do |talk|
+        !talk.visible_for_user?(user)
+      end
+
       can [:index, :validate_certificate], Tutorial do |tutorial|
         user.tutor?
       end
@@ -279,6 +319,29 @@ class Ability
       end
 
       can :delete_account, User
+
+      can :manage, Referral do |referral|
+        user.can_edit?(referral.medium)
+      end
+
+      can :manage, Item do |item|
+        item.medium.nil? ||  user.can_edit?(item.medium)
+      end
+
+      can [:linearize, :set_root, :set_level,
+           :update_default_target, :delete_edge], Quiz do |quiz|
+        quiz.edited_with_inheritance_by?(user)
+      end
+
+      can :manage, [:event]
+
+      can :manage, :vertex do |quiz|
+        user.can_edit?(@quiz)
+      end
+
+      can [:create, :update, :destroy], Answer do |answer|
+        answer.question.edited_with_inheritance_by?(user)
+      end
     end
   end
 end

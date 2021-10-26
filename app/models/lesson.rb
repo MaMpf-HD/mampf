@@ -45,6 +45,9 @@ class Lesson < ApplicationRecord
     self
   end
 
+  def talk
+  end
+
   # a lesson should also see other lessons in the same lecture
   def media_scope
     lecture

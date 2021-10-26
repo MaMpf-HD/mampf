@@ -45,6 +45,12 @@ class MainController < ApplicationController
     end
     @announcements = Announcement.where(on_main_page: true,
                                         lecture: nil).pluck(:details).join
+    @talks = current_user.talks.includes(lecture: :term)
+                         .select { |t| t.visible_for_user?(current_user) }
+                         .sort_by do |t|
+                            [-t.lecture.term.begin_date.jd,
+                             t.position]
+                         end
   end
 
   private

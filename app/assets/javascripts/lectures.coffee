@@ -325,6 +325,16 @@ $(document).on 'turbolinks:load', ->
       $('#newLectureSort').show()
     return
 
+  $(document).on 'change', '#medium_publish_media_0', ->
+    $('[id^="medium_released_"]').attr('disabled', true)
+    $('#access-text').css('color','grey')
+    return
+
+  $(document).on 'change', '#medium_publish_media_1', ->
+    $('[id^="medium_released_"]').attr('disabled', false)
+    $('#access-text').css('color','')
+    return
+
   return
 
 # clean up everything before turbolinks caches
