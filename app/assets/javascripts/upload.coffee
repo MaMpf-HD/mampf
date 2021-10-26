@@ -51,7 +51,6 @@ videoUpload = (fileInput) ->
     '/videos/upload'
     "#video-uploadButton-button-actual"
     (data)->
-      console.log data
       data = JSON.parse data.response
       $('#video-wait').hide()
       if data.metadata.mime_type in ['video/mp4']
@@ -75,6 +74,7 @@ videoUpload = (fileInput) ->
       else
         # display error message if  detects wrong mime type
         alert('Falscher MIME-Typ:' + data.metadata.mime_type)
+        $("#video-uploadButton-button-actual").text "Falscher MIME-Typ:" + data.metadata.mime_type
       return
     null
     'upload-video-hidden'
@@ -125,9 +125,11 @@ manuscriptUpload = (fileInput) ->
       else if data.metadata.mime_type != 'application/pdf'
         # display error message if  detects wrong mime type
         alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+        $("#manuscript-uploadButton-button-actual").text "Falscher MIME-Typ:" + data.metadata.mime_type
       else
         # display error message if  detects some other problem
         alert('Die Datei ist beschädigt.', 'error', 5000)
+        $("#manuscript-uploadButton-button-actual").text "Datei beschädigt."
       return
     null
     hiddenInput
@@ -173,6 +175,7 @@ geogebraUpload = (fileInput) ->
         $('#medium-basics-warning').show()
       else if data.metadata.mime_type != 'application/zip'
         alert('Falscher MIME-Typ:' + data.metadata.mime_type, 'error', 5000)
+        $("#geogebra-uploadButton-button-actual").text "Falscher MIME-Typ:" + data.metadata.mime_type
       else
         alert('Die Datei ist beschädigt.', 'error', 5000)
       return
@@ -232,6 +235,8 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
         $('#image-none').hide()
       else
         alert('Falscher MIME-Typ:' + data.metadata.mime_type)
+        $("#image-uploadButton-button-actual").text "Falscher MIME-Typ:" + data.metadata.mime_type
+        
     null
     'upload-image-hidden'
     true
@@ -376,11 +381,11 @@ directUpload provides an interface to upload (multiple) files to an endpoint
               uploadedFiles2 = uploadedFiles
               if single
                 uploadedFiles2 = uploadedFiles[0]
-              if successCallback != undefined 
-                successCallback(xhr)
               $(progressBarElement).text(
                 $(progressBarElement).data 'tr-success'
               )
+              if successCallback != undefined 
+                successCallback(xhr)
               hiddenInput.value = JSON.stringify uploadedFiles2
               fileInput.value = null
               $(progressBarElement)

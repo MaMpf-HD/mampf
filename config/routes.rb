@@ -356,6 +356,14 @@ Rails.application.routes.draw do
                            as: 'postprocess_tags'
   resources :tags
 
+  get 'talks/:id/assemble', to: 'talks#assemble',
+                            as: 'assemble_talk'
+
+  post 'talks/:id/modify', to: 'talks#modify',
+                           as: 'modify_talk'
+
+  resources :talks, except: [:index]
+
   get 'tutorials/:id/cancel_edit', to: 'tutorials#cancel_edit',
                                    as: 'cancel_edit_tutorial'
   get 'tutorials/cancel_new', to: 'tutorials#cancel_new',
@@ -364,7 +372,7 @@ Rails.application.routes.draw do
   get 'tutorials/:id/assignments/:ass_id/bulk_download_submissions',
       to: 'tutorials#bulk_download_submissions',
       as: 'bulk_download_submissions'
-    
+
   get 'tutorials/:id/assignments/:ass_id/bulk_download_corrections',
       to: 'tutorials#bulk_download_corrections',
       as: 'bulk_download_corrections'

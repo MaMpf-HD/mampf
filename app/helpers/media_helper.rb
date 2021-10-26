@@ -128,4 +128,9 @@ module MediaHelper
                            format: :long,
                            locale: I18n.locale))
   end
+
+  def edit_or_show_medium_path(medium)
+    return edit_medium_path(medium) if current_user.can_edit?(medium)
+    medium_path(medium)
+  end
 end

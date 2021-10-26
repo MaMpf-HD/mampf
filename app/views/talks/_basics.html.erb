@@ -1,0 +1,138 @@
+<div class="card bg-mdb-color-lighten-5">
+  <div class="card-header bg-mdb-color-lighten-4">
+    <h5>
+      <%= t('basics.basics') %>
+    </h5>
+  </div>
+  <div class="card-body">
+    <div class="form-row">
+      <div class="col-12 form-group">
+        <%= f.label :title, t('basics.title') %>
+        <%= helpdesk(t('admin.talk.info.title'), false) %>
+        <%= f.text_field :title,
+                         { class: 'form-control' } %>
+        <div class="invalid-feedback" id="talk-title-error">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12">
+        <%= f.label :date, t('basics.date') %>
+        <a class="fas fa-plus-circle clickable text-dark"
+           id="new-talk-date-button"
+           data-toggle="tooltip"
+           data-count="<%= talk.dates.size + 1 %>"
+           title="<%= t('admin.tag.create') %>">
+        </a>
+      </div>
+      <div class="col-12" id="talk-date-picker">
+        <% talk.dates.each_with_index do |date, i| %>
+          <div id="talk_dates_<%= i %>" class="<%= i == 0 ? '' : 'mt-2' %>">
+            <input type="date"
+                   name="talk[dates[<%= i %>]]"
+                   value="<%= date %>">
+            <% if i > 0 %>
+              <a class="fas fa-trash-alt clickable text-dark ml-2
+                        remove-talk-date"
+                 data-count="<%= i %>">
+              </a>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+      <div class="col-12 mb-3">
+        <div class="invalid-feedback" id="talk-date-error">
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <%= f.label :speaker_ids,
+                    t('admin.talk.speakers') %>
+        <%= f.select :speaker_ids,
+                     options_for_select(talk.speakers.map { |s| [s.tutorial_info, s.id] },
+                       talk.speaker_ids),
+                     {},
+                     { class: 'form-control',
+                       multiple: true,
+                       data: { locale: I18n.locale,
+                               placeholder: t('basics.select') } } %>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12">
+        <%= t('basics.media') %>
+        <%= helpdesk(t('admin.talk.info.media'), false) %>
+        <%= link_to '',
+                    new_medium_path(params: { teachable_id: talk.id,
+                                              teachable_type: 'Talk' }),
+                    class: 'fas fa-plus-circle text-dark',
+                    id: 'create-new-talk-medium',
+                    data: { toggle: 'tooltip' },
+                    title: t('buttons.create_medium'),
+                    style: 'text-decoration: none;',
+                    remote: true %>
+        <% if talk.media.present? %>
+          <ul id="sortableTalkMedia">
+            <% talk.media.each do |m| %>
+              <li>
+                <%= link_to m.sort_localized + ', ' + m.local_info,
+                            edit_medium_path(m),
+                            class: textcolor(m),
+                            data: { id: m.id } %>
+              </li>
+            <% end %>
+          </ul>
+          <%= f.hidden_field :media_order,
+                             value: talk.media.map(&:id).to_json %>
+        <% else %>
+          <p>
+            <%= t('admin.talk.no_media') %>
+          </p>
+        <% end %>
+      </div>
+    </div>
+    <div class="form-group">
+      <%= f.label :tag_ids, t('basics.related_tags') %>
+      <%= helpdesk(t('admin.talk.info.tags'), false) %>
+      <a class="fas fa-plus-circle clickable text-dark"
+         id="new-tag-button"
+         data-toggle="tooltip"
+         title="Tag anlegen"
+         data-course="<%= talk.lecture.course.id %>"
+         data-talk="<%= talk.id %>"
+         data-from="talk">
+      </a>
+      <%= f.select :tag_ids,
+                   options_for_select(talk.tags
+                                            .map { |t| t.extended_title_id_hash }
+                                            .map { |t| [t[:title], t[:id]] },
+                                      talk.tag_ids),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
+                     data: { ajax: true,
+                             filled: false,
+                             model: 'tag',
+                             drag: false,
+                             locale: I18n.locale } } %>
+      <div class="invalid-feedback"
+            id="talk-tags-error">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 form-group">
+        <%= f.label :predecessor,
+                    t('admin.chapter.position',
+                      chapter_name: t('basics.talk')) %>
+        <%= helpdesk(t('admin.talk.info.position'), false) %>
+        <%= f.select :predecessor,
+                     options_for_select(talk_positions_for_select(talk),
+                                        talk.position - 1) ,
+                                        {},
+                                        { class: 'form-control' } %>
+      </div>
+    </div>
+  </div>
+</div>

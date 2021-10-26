@@ -59,7 +59,7 @@ class MediumPublisher
     @medium = Medium.find_by_id(@medium_id)
     @user = User.find_by_id(@user_id)
     return unless @medium && @user && @medium.released_at.nil?
-    return unless @user.in?(@medium.editors_with_inheritance) || @user.admin
+    return unless @user.can_edit?(@medium)
 
     update_medium!
     realize_optional_stuff!

@@ -159,4 +159,8 @@
     <%= f.hidden_field :lesson_id,
                        value: tag.lesson_ids.first %>
   <% end %>
+  <% if from == 'talk' %>
+    <%= f.hidden_field :talk_id,
+                       value: tag.talk_ids.first %>
+  <% end %>
 </div>

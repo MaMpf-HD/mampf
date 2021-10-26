@@ -20,7 +20,7 @@
     </div>
     <div class="alert alert-dark bg-mdb-color-lighten-6"
          id="section-details-preview">
-        <%= raw(section.details) %>
+        <%= sanitize section.details %>
     </div>
     <div class="row mb-2">
       <div class="col-12">
