@@ -3638,3 +3638,8 @@ de:
             medium_id:
               taken:
                 ist schon in dieser Watchlist.
+        watchlist:
+          attributes:
+            name:
+              taken:
+                'Eine Watchlist mit diesem Namen existiert bereits.'

@@ -427,6 +427,9 @@ Rails.application.routes.draw do
   get 'watchlists/add_to_watchlist/:id', to: 'watchlists#add_to_watchlist',
                                          as: 'show_add_to_watchlist'
 
+  get 'watchlists/new_watchlist/', to: 'watchlists#new_watchlist',
+                                   as: 'show_new_watchlist'
+
   get 'watchlists/add', to: 'watchlists#add',
                         as: 'add_watchlist'
 

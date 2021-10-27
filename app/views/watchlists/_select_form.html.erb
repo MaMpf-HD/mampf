@@ -5,7 +5,9 @@
                       novalidate: true } do |f| %>
 	<div class="form-group form-row">
     <%= f.label :watchlist, t('watchlist.select') %>
-    <%= f.hidden_field :medium_id, value: @medium.id %>
+    <% if @medium.present? %>
+      <%= f.hidden_field :medium_id, value: @medium.id %>
+    <% end %>
     <div class="input-group mb-3">
       <% if !Watchlist.where(user: current_user).empty? %>
         <% if !@watchlist.present? %>
@@ -27,7 +29,7 @@
         <% end %>
       <% else %>
         <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                     { prompt: t('watchlist.empty')}, { class: 'form-control', disabled: true } %>
+                     { prompt: t('watchlist.none')}, { class: 'form-control', disabled: true } %>
       <% end %>
       <div class="input-group-append">
         <button class="btn btn-outline-secondary"

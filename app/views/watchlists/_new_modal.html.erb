@@ -4,13 +4,13 @@
      role="dialog"
      aria-labelledby="watchlistModalLabel" aria-hidden="true"
      data-keyboard="true">
-  <div class="modal-dialog modal-lg"
+  <div class="modal-dialog modal-sm"
        role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title"
             id="watchlistModalTitle">
-          <%= t('watchlist.add') %>
+          <%= t('watchlist.create') %>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -18,20 +18,14 @@
       </div>
       <div class="modal-body"
            id="watchlistModalBody">
-        <div id="watchlist-select-form">
-          <%= render partial: 'watchlists/select_form' %>
-        </div>
-        <div class="collapse" id="collapseNewWatchlist">
-          <%= render partial: 'watchlists/new_form' %>
-        </div>
+        <%= render partial: 'watchlists/new_form' %>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
         <button class="btn btn-primary"
-                id="watchlistEntrySubmitButton"
+                id="newWatchlistButton"
                 type="submit"
-                form="watchlistSelectForm"
-                <%= "disabled" if Watchlist.where(user: current_user).empty? %>><%= t('watchlist.add') %></button>
+                form="newWatchlistForm"><%= t('watchlist.create') %></button>
       </div>
     </div>
   </div>

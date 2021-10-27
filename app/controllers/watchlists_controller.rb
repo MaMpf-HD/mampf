@@ -9,6 +9,9 @@ class WatchlistsController < ApplicationController
     @watchlist.user = current_user
     @medium = Medium.find_by_id(params[:watchlist][:medium_id])
     @success = @watchlist.save
+    if @medium.blank?
+      flash[:notice] = I18n.t('watchlist.creation_success')
+    end
     respond_to do |format|
       format.js
     end
@@ -35,6 +38,9 @@ class WatchlistsController < ApplicationController
     # if user calls 'watchlists/show' without watchlist id
     elsif !@watchlists.empty?
       redirect_to watchlist_path(@watchlists.first)
+      return
+    # if user calls watchlists/show without id
+    else
       return
     end
     if @watchlist.present?
@@ -83,7 +89,11 @@ class WatchlistsController < ApplicationController
   def add_to_watchlist
     @watchlists = current_user.watchlists
     @medium = Medium.find_by_id(params[:id])
-    render 'watchlists/show_modal'
+    render 'watchlists/show_add_modal'
+  end
+
+  def new_watchlist
+    render 'watchlists/show_new_modal'
   end
 
   def update_order

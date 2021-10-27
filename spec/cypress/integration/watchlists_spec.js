@@ -135,6 +135,7 @@ describe("Watchlists", () => {
                 cy.wait(100);
                 cy.get(':nth-child(1) > .card > .card-header').trigger('mouseup');
                 cy.reload();
+                cy.wait(100);
                 cy.get(':nth-child(1) > .card > .card-header > :nth-child(1) > #card-title').contains(`${data[2].medium_id}`).should('exist');
             });
         });
