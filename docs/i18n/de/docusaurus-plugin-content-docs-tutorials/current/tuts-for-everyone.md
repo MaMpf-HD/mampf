@@ -2,8 +2,7 @@
 title: Tutorials für alle Nutzer*innen
 ---
 
-## Q
-* [Quizzes erstellen](tut-creating-quizzes)
+Im Folgenden sind Anleitungen für alle Nutzer\*innen aufgelistet. 
 
 ## Z
 * [Zettelabgabe](tut-submissions.md)

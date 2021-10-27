@@ -1,5 +1,5 @@
 ---
-title: Tutorial – Zettelabgabe
+title: Zettelabgabe
 ---
 
 Registrierte MaMpf-Nutzer\*innen können bearbeitete Übungsblätter abgeben und Korrekturen ansehen. Hier erfährst du alles, was du dazu wissen musst.

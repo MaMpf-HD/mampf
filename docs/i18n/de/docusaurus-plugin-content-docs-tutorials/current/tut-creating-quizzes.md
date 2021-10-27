@@ -3,7 +3,7 @@ title: Quizzes erstellen
 ---
 This page will be written soon.
 
-## Fragen mit Parametern erstellen
+## Fragen mit Parametern
 
 Man kann im Fragen-Textfeld durch \\para{name, range} einen Parameter mit Bezeichnung name und Bereich range einführen.
 z.B.: \\para{n, [1..5]}  
@@ -17,5 +17,4 @@ Antwort: Ausdruck -> n^2
 Für Nutzer im Quiz dann z.B.: Was ist das Quadrat von 3?
 Antwort: 9
 
-
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quiz_parameter.png" height="300"/>
+![](/img/quiz_parameter.png)
