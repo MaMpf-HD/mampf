@@ -633,7 +633,7 @@ de:
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
-      first_chapter: 'Nummer des ersten Kapitels/Vortrags'
+      first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
