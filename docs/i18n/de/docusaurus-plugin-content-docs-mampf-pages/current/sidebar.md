@@ -24,7 +24,7 @@ In der Seitenleiste sind folgende Einträge vorzufinden:
 * [Organisatorisches](general-information.md)
 * [Mitteilungen](announcements.md)
 * Forum
-* [Abgaben](submissions.md)
+* [Abgaben](submissions.md) bzw. [Tutorien](tut-ed-ad-tutorials) (bei Veranstaltungen, für die man über Tutor- oder Editorrechte verfügt)
 * MÜSLI
 * [Modul](module.md)
 

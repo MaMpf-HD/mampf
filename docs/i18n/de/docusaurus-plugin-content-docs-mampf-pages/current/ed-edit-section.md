@@ -1,5 +1,5 @@
 ---
-title: Begriff bearbeiten
+title: Abschnitt bearbeiten
 ---
 
 This page will be written soon.

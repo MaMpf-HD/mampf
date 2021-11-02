@@ -23,6 +23,7 @@ Nicht eingeloggten Personen stehen folgende Buttons in der Navigationsleiste zur
 Eingeloggte einfache Nutzer\*innen können von diesen Buttons Gebrauch machen:
 
 ![](/img/navbar_generic.png)
+\*kommt bald: Watchlist\*
 
 * <button name="button"><a href="/mampf/de/docs/my-home-page" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></a></button> Wechsel auf die <a href="/mampf/de/docs/my-home-page" target="_self">persönliche Startseite</a>. Von dieser Seite aus gelangt man auf die Seite einer Veranstaltung und kann sich über neue Mitteilungen, Medien und Forumsbeiträge in abonnierten Veranstaltungen informieren. Außerdem können Veranstaltungen gesucht und Veranstaltungsabos verwaltet werden.
 * <button name="button"><a href="/mampf/de/docs/profile" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/docs/profile" target="_self">Profilseite</a>. Dort kann man den eignen Account (Änderung des Anzeigenamens und der Zugangsdaten sowie Löschen des Accounts), Veranstaltungabos und weitere Einstellungen (Sprache, angezeichte Inhalte und Benachrichtungseinstellungen) verwalten.
@@ -36,32 +37,40 @@ Eingeloggte einfache Nutzer\*innen können von diesen Buttons Gebrauch machen:
  <li> <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> Klappe eine Liste der in den Schnellzugriff aufgenommenen Veranstaltungen aus und navigiere durch Anklicken zu einer <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>. Veranstaltungen können auf der <a href="/mampf/de/docs/my-home-page" target="_self">persönlichen Startseite</a> zum Schnellzugriff hinzugefügt werden.</li>
  <li> <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.</li>
 </ul>
-* <a href="/mampf/de/docs/notifications" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/bell-regular.png" height="12"/><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button></a> Wechsel durch Anklicken von <a href="/mampf/de/docs/notifications" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/bell-regular.png" height="12"/></button></a> zur <a href="/mampf/de/docs/notifications" target="_self">Benachrichtungsseite</a>. Dort werden Nachrichten zu abonnierten Veranstaltungen, MaMpf-News und Informationen zum Kursangebot angezeigt. Klicke auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> , um die neuen Mitteilungen auszuklappen. Dann ist es möglich, die Seite, auf die sich eine einzelne Mitteilung bezieht, durch Klicken auf die Mitteilung zu öffnen oder <a href="/mampf/de/docs/notifications" target="_self"><button name="button">alle anzeigen</button></a> oder <button name="button">alle erledigen</button> auszuwählen.
-* <button name="button">Suche</button> Führe eine Begriffssuche durch, um auf der <a href="/mampf/de/docs/tag" target="_self">Begriffsseite</a> weiterführende Medien und verwandte Begriffe zu finden.
+* <a href="/mampf/de/docs/notifications" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/bell-regular.png" height="12"/><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button></a> Wechsel durch Anklicken von <a href="/mampf/de/docs/notifications" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/bell-regular.png" height="12"/></button></a> zur <a href="/mampf/de/docs/notifications" target="_self">Benachrichtungsseite</a>. Dort werden Nachrichten zu abonnierten Veranstaltungen, MaMpf-News und Informationen zum Kursangebot angezeigt. Klicke auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button>, um die neuen Mitteilungen auszuklappen. Dann ist es möglich, die Seite, auf die sich eine einzelne Mitteilung bezieht, durch Klicken auf die Mitteilung zu öffnen oder <a href="/mampf/de/docs/notifications" target="_self"><button name="button">alle anzeigen</button></a> oder <button name="button">alle erledigen</button> auszuwählen.
+* <form><p><label for="fname"></label><input type="text" id="fname" name="fname" value="Suche"></input></p></form> Führe eine <a href="/mampf/de/docs/search-results" target="_self">Begriffssuche</a> durch, um auf der <a href="/mampf/de/docs/tag" target="_self">Begriffsseite</a> weiterführende Medien und verwandte Begriffe zu finden.
 
-## Eingeloggte Editor\*innen und Administrator\*innen
+### Eingeloggte Editor\*innen und Administrator\*innen
 
 Eingeloggten Editor\*innen und Administrator\*innen stehen dieselben Buttons zur Verfügung wie einfachen Nutzer\*innen. Zusätzlich dazu können sie mit dem Button <a href="/mampf/de/docs/ed-overview" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tools-solid.png" height="12"/></button></a> zur <a href="/mampf/de/docs/ed-overview" target="_self">Übersichtsseite</a> navigieren. Dies ist eine Möglichkeit, in den Adminstrationsmodus zu wechseln. In diesem stehen Funktionalitäten zur Verwaltung von Veranstaltungen bereit.
 
-## Administrationsmodus bei Editor\*innen
-In den Adminstrationsmodus kann durch Drücken des Buttons <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tools-solid.png" height="12"/></button> in der Navigationsleiste oder des Buttons <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> gewechselt werden. Der Button <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> befindet sich auf der Seite des [Abschnitts](section), des [Begriffs](tag), des [Mediums](medium), des [Moduls](module) (noch aktuell???), der [Sitzung](session) und der [Veranstaltung](event-series.md).
+![](/img/navbar_ed.png)
+\*kommt bald: Watchlist\*
+
+### Administrationsmodus bei Editor\*innen
+
+In den Adminstrationsmodus kann durch Drücken des Buttons <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tools-solid.png" height="12"/></button> in der Navigationsleiste oder des Buttons <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> gewechselt werden. Der Button <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> befindet sich auf der Seite des [Abschnitts](section), des [Begriffs](tag), des [Mediums](medium), des [Moduls](module), der [Sitzung](session) und der [Veranstaltung](event-series.md).
+
+![](/img/navbar_ed_ad.png)
 
 * <a href="/mampf/de/docs/my-home-page" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="12"/></button></a> Beende die Adminstration und wechsel zur <a href="/mampf/de/docs/my-home-page" target="_self">persönlichen Startseite</a>. Erhalte die Navigationsleiste eingeloggter Editor*innen.
-* <a href="/mampf/de/docs/ed-overview" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/home-solid.png" height="12"/></button></a> Wechsel zur Übersichtsseite. Dort gibt es eine Übersicht über eigene Veranstaltungen, Module, Medien und Clicker. Von hier aus kann alles, für das man verantwortlich ist, geöffnet und bearbeitet werden.
-* File-video-regular.png Führe eine Mediensuche durch.
-* Tags-solid.png Öffne die Tagübersicht und suche nach Begriffen.
-* User-solid.png Wechsel zur Seite Mein Profil. Hier können weitere Informationen (E-Mail-Adresse und Homepage) angebeen werden. Zudem gibt es eine Übersicht über betreute Inhalte.
+* <a href="/mampf/de/docs/ed-overview" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/home-solid.png" height="12"/></button></a> Wechsel zur <a href="/mampf/de/docs/ed-overview" target="_self">Übersichtsseite</a>. Dort gibt es eine Übersicht über eigene Veranstaltungen, Module, Medien und Clicker. Von hier aus kann alles, für das man verantwortlich ist, geöffnet und bearbeitet werden.
+* <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/chalkboard-user-solid.png" height="12"/></button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>. Dieser Button führt auf die Bearbeitungsseite der Veranstaltung, die im <a href="/mampf/de/docs/ed-profile" target="_self">Editorenprofil („Mein Profil“)</a> als aktuelle Veranstaltung eingetragen ist. Falls dort keine Veranstaltung ausgewählt ist, wird dieser Button nicht angezeigt. Ansonsten führt er entweder auf eine Seite <a href="/mampf/de/docs/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a> oder eine Seite <a href="/mampf/de/docs/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
+* <a href="/mampf/de/docs/ed-search-extended" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/magnifying-glass-solid.png" height="12"/></button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-search-extended" target="_self">„Suche“</a>. Dort kann nach Medien, Veranstaltungen, Modulen und Tags gesucht werden.
+* <a href="/mampf/de/docs/ed-profile" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-solid.png" height="12"/></button></a>  Wechsel zur Seite <a href="/mampf/de/docs/ed-profile" target="_self">„Mein Profil“</a>. Hier können die aktuelle Veranstaltung ausgewählt sowie eine E-Mail-Adresse und eine Homepage eingetragen werden, die dann für alle Abonnent*innen einsehbar sind. Zudem gibt es eine Übersicht über betreute Inhalte.
 
-## Administrationsmodus bei Administrator\*innen
+### Administrationsmodus bei Administrator\*innen
 Bei Adminstrator\*innen sind im Adminstrationsmodus dieselben Buttons wie bei Editor\*innen vorhanden. Zusätzlich dazu gibt es die folgenden weiteren Bedienelemente:
 
-* Calendar-alt-regular.png Wechsel zur Semesterübersicht. Dort können Semester angelegt und bearbeitet sowie das aktuelle Semester eingestellt werden.
-* Clipboard-list-solid.png Wechsel zur Systematik. Auf dieser Seite können Fächer angelegt und weiter in Studiengänge und Teilbereiche aufgeschlüsselt werden. Beim Erstellen eines Moduls wird auch dessen Position in der Systematik eingetragen. Die Systematik wird zur Sortierung der Veranstaltungen in den Profileinstellungen und als Filteroption bei der Veranstaltungssuche verwendet.
-* Newspaper-regular.png Wechsel zu den News. Hier können Mitteilungen verfasst und veröffentlicht werden. Außerdem gibt es eine Übersicht über alle bisherigen Mitteilungen.
-* Comment-alt-solid.png Wechsel zur Verwaltungsseite der Foren \* Thredded \* Hier können neue Foren und Gruppen erstellt und bearbeiten werden.
-* Chart-line-solid.png Öffne \* Sidekiq \* Zugriffsstatistiken.
-* Download-solid.png Wechsel zu Statistiken exportieren. Dort können anonymisierte Quiz- und Interaktionsstatistiken heruntergeladen werden.
-* Users-cog-solid-1.png Wechsel zur Nutzerverwaltung. Dort gibt es eine Übersicht über alle Editor\*innen, Dozent\*innen und Administrator\*innen. Zudem können Nutzer\*innen zum Admin befördert werden.
+![](/img/navbar_ad_ad.png)
+
+* <a href="/mampf/de/docs/ad-semester-overview" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/calendar-alt-regular.png" height="12"/></button></a> Wechsel zur <a href="/mampf/de/docs/ad-semester-overview" target="_self">Semesterübersicht</a>. Dort können Semester angelegt und bearbeitet sowie das aktuelle Semester eingestellt werden.
+* <a href="/mampf/de/docs/ad-systematics" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clipboard-list-solid.png" height="12"/></button></a> Wechsel zur <a href="/mampf/de/docs/ad-systematics" target="_self">Systematik</a>. Auf dieser Seite können Fächer angelegt und weiter in Studiengänge und Teilbereiche aufgeschlüsselt werden. Beim Erstellen eines Moduls wird auch dessen Position in der Systematik eingetragen. Die Systematik wird zur Sortierung der Veranstaltungen in den <a href="/mampf/de/docs/profile" target="_self">Profileinstellungen</a> und als Filteroption bei der <a href="/mampf/de/docs/ed-search-extended" target="_self">Veranstaltungssuche</a> verwendet.
+* <a href="/mampf/de/docs/ad-news" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/newspaper-regular.png" height="12"/></button></a> Wechsel zu den <a href="/mampf/de/docs/ad-news" target="_self">News</a>. Hier können Mitteilungen verfasst und veröffentlicht werden. Außerdem gibt es eine Übersicht über alle bisherigen Mitteilungen.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comment-alt-solid.png" height="12"/></button> Wechsel zur Verwaltungsseite der Foren <a href="https://github.com/thredded/thredded" target="_self">* Thredded -- Link? *</a> Hier können neue Foren und Gruppen erstellt und bearbeiten werden.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/chart-line-solid.png" height="12"/></button> Öffne <a href="https://sidekiq.org/" target="_self">* Sidekiq -- Link? *</a> Zugriffsstatistiken.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/download-solid.png" height="12"/></button> Wechsel zu Statistiken exportieren. Dort können anonymisierte Quiz- und Interaktionsstatistiken heruntergeladen werden.
+* <a href="/mampf/de/docs/ad-manage-users" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/users-cog-solid-1.png" height="12"/></button></a> Wechsel zur <a href="/mampf/de/docs/ad-manage-users" target="_self">Nutzerverwaltung</a>. Dort gibt es eine Übersicht über alle Editor*innen, Dozent*innen und Administrator*innen. Zudem können Nutzer*innen zum Admin befördert werden.
 
 ## Von der Navigationsleiste erreichbare Seiten
 ### Einfache Nutzer\*innen
@@ -80,16 +89,16 @@ Bei Adminstrator\*innen sind im Adminstrationsmodus dieselben Buttons wie bei Ed
 * [Erweiterte Suche](ed-search-extended)
 * [Mein Profil](ed-profile)
 * [Übersichtsseite](ed-overview)
-* Veranstaltung bearbeiten (derzeit nicht; aktuelle Veranstaltung (Person vor Tafel) fehlt) (Veranstaltung, die auf der Seite [„Mein Profil“](ed-profile) als aktuelle Veranstaltung eingetragen ist; führt entweder auf die Seite [„Vorlesung bearbeiten“](ed-edit-lecture) oder [„Seminar bearbeiten“](ed-edit-seminar))
+* [Veranstaltung bearbeiten](ed-edit-event-series) (nur möglich, wenn auf der Seite [„Mein Profil“](ed-profile) eine aktuelle Veranstaltung eingetragen ist, je nach Wahl gelangt man dann entweder zur Seite [Vorlesung bearbeiten](ed-edit-lecture) oder [Seminar bearbeiten](ed-edit-seminar))
 
 ### Adminstrator\*innen
 * [News](ad-news)
-* [Forenverwaltung](ad-manage-forums)
+* [Forenverwaltung](ad-manage-forums) ???
 * [Nutzerverwaltung](ad-manage-users)
 * [Semesterübersicht](ad-semester-overview)
 * [Statistiken exportieren](ad-export-stats)
 * [Systematik](ad-systematics)
-* [Zugriffsstatistiken](ad-stats)
+* [Zugriffsstatistiken](ad-stats) ???
 
 ## Weitere Navigationswerkzeuge
 * [MaMpf-Map](mampf-maps.md)

@@ -5,7 +5,7 @@ title: Alle Seiten
 Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich sind, alphabetisch aufgelistet.
 
 ## A
-* [Abgaben](submissions.md) (diese Seite gibt es nicht bei Editor\*innen und Tutor\*innen, das Pendant hierzu ist Tutorien)
+* [Abgaben](submissions.md) (bei Nutzer*innen, die für diese Veranstaltung über Editoren- oder Tutorenrechte verfügen, gibt es diese Seite nicht, an ihre Stelle tritt [Tutorien](tut-ed-ad-tutorials))
 * [Abschnitt](section.md)
 * [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md)
 
@@ -59,6 +59,7 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 
 ## T
 * [THymE](thyme.md)
+* Tutorien, siehe Abgaben
 
 ## U
 * [Übungen](exercises.md)

@@ -1,4 +1,4 @@
 ---
-title: Edit Lecture
+title: Vorlesung bearbeiten
 ---
 This page will be written soon.

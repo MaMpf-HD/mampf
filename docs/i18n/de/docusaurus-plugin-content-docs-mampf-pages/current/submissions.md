@@ -5,7 +5,7 @@ Die Seite „Abgaben“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht
 
 \*Links ergänzen\*
 
-Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen verwalteten bzw. tutorierten Veranstaltung zugreifen, dafür aber auf das Pendant „Tutorien“. Dort können Abgaben runtergeladen, Korrekturen hochgeladen und Abgabestatistiken angesehen werden. Das Herunterladen und Zurückgeben von Übungsaufgaben wird in diesem Tutorial erklärt.
+Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen verwalteten bzw. tutorierten Veranstaltung zugreifen, dafür aber auf das Pendant [„Tutorien“](tut-ed-ad-tutorials). Dort können Abgaben runtergeladen, Korrekturen hochgeladen und Abgabestatistiken angesehen werden. Siehe auch [Zettelabgaben für Tutor*innen](../tutorials/tut-tut-submissions) und [Zettelabgaben für Editor*innen](../tutorials/tut-ed-submissions). 
 
 \*Links ergänzen\*
 

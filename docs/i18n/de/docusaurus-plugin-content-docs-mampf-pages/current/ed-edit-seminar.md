@@ -1,4 +1,4 @@
 ---
-title: Edit Seminar
+title: Seminar bearbeiten
 ---
 This page will be written soon.
