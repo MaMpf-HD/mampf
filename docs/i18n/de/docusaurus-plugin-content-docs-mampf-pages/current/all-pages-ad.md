@@ -11,4 +11,4 @@ Im Folgenden werden alle Seiten der MaMpf, die Administrator\*innen zugänglich 
 ## S
 * [Semesterübersicht](ad-semester-overview)
 * [Statistiken exportieren](ad-export-stats)
-* [Systemantik](ad-systematics)
+* [Systematik](ad-systematics)

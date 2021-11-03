@@ -25,6 +25,10 @@ Auf der Seite „Benachrichtigungen“ gibt es, abgesehen von Links in Nachricht
 Die Nachrichten haben eine von vier möglichen Hintergrundfarben. Diese richtet sich nach dem Inhalt der Nachricht.
 
 <table>
+<tr>
+  <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_blue.png" height="12"/>&nbsp;</td>
+  <td>An MaMpf sind Änderungen vorgenommen worden.</td>
+</tr>
  <tr>
    <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_yellow.png" height="12"/>&nbsp;</td>
    <td>In einer abonnierten Veranstaltung ist ein neues Medium veröffentlicht worden.</td>
@@ -36,10 +40,6 @@ Die Nachrichten haben eine von vier möglichen Hintergrundfarben. Diese richtet 
  <tr>
    <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_orange.png" height="12"/>&nbsp;</td>
    <td>Eine neue Veranstaltung ist angelegt worden und kann nun abonniert werden.</td>
- </tr>
- <tr>
-   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/not_blue.png" height="12"/>&nbsp;</td>
-   <td>An MaMpf sind Änderungen vorgenommen worden.</td>
 </tr>
 </table>
 
