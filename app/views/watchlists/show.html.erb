@@ -1,0 +1,35 @@
+<div class="row pb-2">
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <ul class="nav justify-content-left">
+      <%= render partial: 'watchlists/show_left_header' %>
+    </ul>
+  </div>
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <ul class="nav justify-content-right">
+      <%= render partial: 'watchlists/show_right_header' %>
+  </div>
+</div>
+<% if @watchlist_entries.present? %>
+  <div class="row" id="sortableWatchlistMedia">
+    <% @watchlist_entries.each do |entry| %>
+      <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-2">
+        <%= render partial: 'watchlist_entries/entry',
+                   locals: { medium: entry.medium,
+                             entry: entry,
+                             tags: entry.medium.tags,
+                             from: 'media',
+                             ref_link: nil,
+                             data: { id: entry.id },
+                             lecture: entry.medium.lecture } %>
+      </div>
+    <% end %>
+  </div>
+  <% unless params[:all] %>
+    <div class="row my-2">
+      <div class="col-12">
+        <%= paginate @watchlist_entries, window: 2 %>
+      </div>
+    </div>
+  <% end %>
+<% end %>
+<div class="mb-auto"></div>
