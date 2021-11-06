@@ -56,6 +56,9 @@ services:
       - type: bind
         source: ../../app/
         target: /usr/src/app/app/
+      - type: bind
+        source: ../../spec/
+        target: /usr/src/app/spec/
       - /usr/src/app/completed_initial_run
     depends_on:
       - db
