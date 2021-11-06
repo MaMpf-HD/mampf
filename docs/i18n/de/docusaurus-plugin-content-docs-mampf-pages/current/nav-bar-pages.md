@@ -14,5 +14,6 @@ Die Navigationsleiste befindet sich oben auf der Seite. Mit ihr kann man sich du
 * [Profilseite](profile.md)
 * [Startseite](home-page.md)
 * [Veranstaltungsseite](event-series.md)
+* [Watchlist](watchlist)
 
 Weitere Informationen zur Navigationsleiste finden sich [hier](nav-bar.md).

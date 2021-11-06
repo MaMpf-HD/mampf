@@ -85,6 +85,47 @@ Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medient
 ## Hinweis zum Fehlen von Bedienelementen
 
 ## Von dieser Seite aus aufrufbare Seiten
+### [Veranstaltungsseite](event-series)
+Die Veranstaltungsseite enthält aktuelle Informationen und die Gliederung der Veranstaltung. Von ihr aus gelangt man zu Veranstaltungsinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zur Veranstaltung, Diskussionsforen sowie der Zettelabgabe und im Fall von Seminaren zu Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf die [Veranstaltungsseite](event-series) zu gelangen, klickt man auf <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a>.
+
+### [Sitzungsseite](session)
+Auf dieser Seite können verknüpfte Begriffe, Abschnitte und Medien sowie das Inhaltsverzeichnis bzw. der Inhaltstext angesehen werden. Diese Seite ist über <a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> zu erreichen.
+
+### [THymE-Player](thyme.md)
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
+
+### [Seite der getaggten Begriffe](tag.md)
+Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>.
+
+### [Kommentarseite](comments-medium.md)
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
+
+### Seiten anderer Medien
+
+## Hinweise für Editor*innen
+### Weitere von dieser Seite aufrufbare Seiten
+Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/docs/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>, mit diesem kann auf die Seite [„Medium bearbeiten“](ed-edit-medium) gewechselt werden. Dort sind folgende Aktionen möglich:
+
+* Änderung von Medientyp und Sprache
+* Hinzufügen und Entfernen von Editor\*innen
+* (De-)Aktivieren von Kommentaren
+* Verfassen und Bearbeiten des Inhaltstexts
+* Hinzufügen und Entfernen von Tags, Dateien und Verknüpfungen zu anderen Medien
+* Betrachten der Aufrufsstatistik
+* Editieren von Videos mit THymE
+* Veröffentlichung des Mediums im Fall von unveröffentlichten Medien
+
+### Zusätzliche Informationen
+Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
+
+\* Screenshots \*
+
+| Symbol | Bedeutung |
+| :---: | :--- |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht. Einfache Nutzer*innen können es noch nicht sehen. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-blue.png" height="12"/> | Das Medium ist auf Modulebene angesiedelt und mit Tags versehen, die in der Veranstaltung noch nicht behandelt worden sind. Bevor diese Begriffe in der Veranstaltung verwendet worden sind, können einfache Nutzer\*innen dieses Medium nur sehen, wenn sie *alle* im Menü <button name="button">Zusatzmaterialien <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> ausgewählt haben. Diese Wahl ist nicht die Standardeinstellung.  |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/calendar-check-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht, aber die Veröffentlichung ist geplant. Einfache Nutzer*innen können dieses Medium erst nach dem Zeitpunkt der Veröffentlichung sehen. Dieser kann mithilfe des Tooltips in Erfahrung gebracht werden. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht mehr sehen. |
 
 ## Verwandte und ähnliche Seiten
 ### Übergeordnete Seite

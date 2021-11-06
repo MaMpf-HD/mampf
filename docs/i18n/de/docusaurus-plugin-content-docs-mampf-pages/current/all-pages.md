@@ -68,6 +68,7 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 * [Veranstaltung](event-series.md)
 
 ## W
+* [Watchlist](watchlist)
 * [Wiederholung](repetition.md)
 * [Worked Examples](worked-examples.md)
 
