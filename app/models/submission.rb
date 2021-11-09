@@ -224,8 +224,9 @@ class Submission < ApplicationRecord
           report[:invalid_filenames].push(filename)
           next
         end
-        submission = Submission.find_by_id(filename.split('-ID-').last
-                                                .remove('.pdf'))
+        submission_id = File.basename(filename.split('-ID-').last,
+                                        File.extname(filename.split('-ID-').last))
+        submission = Submission.find_by_id(submission_id)
         if !submission
           report[:invalid_id].push(filename)
           next
