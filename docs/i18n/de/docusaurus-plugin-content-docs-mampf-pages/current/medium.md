@@ -21,7 +21,17 @@ Die Seite „Medium“ gliedert sich in drei große Teilbereiche: die eigentlich
 
 Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medientyp bestimmt, welche vorkommen können. Bei allen Medientypen können die Veranstaltung und die Sitzung in der Überschrift vorhanden sein. Zudem gibt es bei allen Medientypen die Boxen „Verknüpfte Begriffe“, „Inhalt“, „Kommentare“ und „Verknüpfte Medien“. Darüber hinaus können sich noch die Boxen „Video“, „Manuskript“, „Externer Link“ und „Geogebra-Applet“ auf der Seite befinden.
 
-\*Screenshots\*
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_veranstaltung_2.png" height="350"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_sitzung_2.png" height="350"/> |
+|:---: | :---:|
+| Veranstaltung | Sitzung  |
+
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_video.png" height="250"/> | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_manuskript.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_geo.png" height="250"/>  
+|:---: | :---: | :---:|
+| Video | Manuskript  | Geogebra-Applet  |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_ext_link.png" height="250"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_tag.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_inhalt.png" height="250"/>  |
+| Externer Link | Verknüpfte Begriffe  | Inhalt |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_kommentare.png" height="250"/> |  <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_medien.png" height="250"/> |
+| Kommentare |  Verknüpfte Medien | |
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 |Typ|Veranstaltung|Sitzung|Video|Manuskript|Externer Link|Geogebra-Applet|Verknüpfte Begriffe|Inhalt|Kommentare|Verknüpfte Medien|
