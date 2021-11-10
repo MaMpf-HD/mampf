@@ -1,9 +1,8 @@
 ---
 title: Medium
 ---
-\*Diese Seite ist in Bearbeitung.\*
 
-Die Seite „Medium“ ist eine Unterseite einer Veranstaltung oder eines Moduls. MaMpf kennt die Medien Lektion, Worked Example, Übung, Skript, Wiederholung, Quiz, Quiz-Frage, Quiz-Erläuterung, Beispiel-Datenbank und Sonstiges. Die jeweiligen Medienseiten enthalten weitere Informationen zum Medium (z.B. verknüpfte Begriffe und Medien sowie Kommentare) und unterscheiden sich abhängig vom Typ in wenigen Details.
+Die Seite „Medium“ ist eine Unterseite einer Veranstaltung oder eines Moduls. MaMpf kennt die Medien *Lektion*, *Worked Example*, *Übung*, *Skript*, *Wiederholung*, *Quiz*, *Quiz-Frage*, *Quiz-Erläuterung*, *Beispiel-Datenbank* und *Sonstiges*. Die jeweiligen Medienseiten enthalten weitere Informationen zum Medium (z.B. verknüpfte Begriffe und Medien sowie Kommentare) und unterscheiden sich abhängig vom Typ in wenigen Details.
 
 ![](/img/Medium_thumb.png)
 
@@ -21,19 +20,20 @@ Die Seite „Medium“ gliedert sich in drei große Teilbereiche: die eigentlich
 
 Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medientyp bestimmt, welche vorkommen können. Bei allen Medientypen können die Veranstaltung und die Sitzung in der Überschrift vorhanden sein. Zudem gibt es bei allen Medientypen die Boxen „Verknüpfte Begriffe“, „Inhalt“, „Kommentare“ und „Verknüpfte Medien“. Darüber hinaus können sich noch die Boxen „Video“, „Manuskript“, „Externer Link“ und „Geogebra-Applet“ auf der Seite befinden.
 
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_veranstaltung_2.png" height="350"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_sitzung_2.png" height="350"/> |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_veranstaltung_2.png" height="320"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_sitzung_2.png" height="320"/> |
 |:---: | :---:|
 | Veranstaltung | Sitzung  |
 
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_video.png" height="250"/> | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_manuskript.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_geo.png" height="250"/>  
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_video.png" height="230"/> | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_manuskript.png" height="230"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_geo.png" height="230"/>  
 |:---: | :---: | :---:|
 | Video | Manuskript  | Geogebra-Applet  |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_ext_link.png" height="250"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_tag.png" height="250"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_inhalt.png" height="250"/>  |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_ext_link.png" height="230"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_tag.png" height="230"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_inhalt.png" height="230"/>  |
 | Externer Link | Verknüpfte Begriffe  | Inhalt |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_kommentare.png" height="250"/> |  <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_medien.png" height="250"/> |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_kommentare.png" height="230"/> |  <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_alles_medien.png" height="230"/> |
 | Kommentare |  Verknüpfte Medien | |
 
-## Bedienelemente und mögliche Aktionen auf dieser Seite
+Der Medientyp und die Komponenten des jeweiligen Mediums (z.B. Video, pdf oder Link) bestimmen, welche der eben dargestellten Bereiche auf der Medienseite vorhanden sind. Die für die verschiedenen Medientyp möglichen Seitenbereiche sind in folgender Tabelle zusammengestellt.
+
 |Typ|Veranstaltung|Sitzung|Video|Manuskript|Externer Link|Geogebra-Applet|Verknüpfte Begriffe|Inhalt|Kommentare|Verknüpfte Medien|
 |:---: | :---: | :---:|:---: | :---: | :---:|:---: | :---: | :---:|:---: | :---: |
 |Lektion|&#10004;|&#10004;|&#10004;|&#10004;|&#10004;|&#10006;|&#10004;|&#10004;|&#10004;|&#10004;|
@@ -47,6 +47,8 @@ Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medient
 |Quiz-Erläuterung |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10004;|
 |Sonstiges |&#10004; |&#10004; |&#10004; |&#10004; |&#10004; |&#10006; |&#10004; |&#10004; |&#10004; |&#10004; |
 
+## Bedienelemente und mögliche Aktionen auf dieser Seite
+Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese werden nach den Bereichen, in denen sie vorkommen, gruppiert.
 
 ### Veranstaltung
 <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
@@ -62,12 +64,12 @@ Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medient
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
 
-### Externer Link
-<button name="button">Hier klicken</button> Öffne den externen Link.
-
 ### Geogebra-Applet
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/leak-add.png" height="12"/></button> Öffne das Geogebra-Applet.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>ggb</button> Lade das Applet herunter.
+
+### Externer Link
+<button name="button">Hier klicken</button> Öffne den externen Link.
 
 ### Verknüpfte Begriffe
 <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
@@ -93,6 +95,7 @@ Die eigentliche Seite besteht ebenfalls aus verschiedenen Bereichen. Der Medient
 <button name="button">Medium</button> Klappe Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind <i>Lektion</i>, <i>Worked Example</i>, <i>Quiz</i>, <i>Wiederholung</i>, <i>Beispiel</i>, <i>Übung</i>, <i>Skript</i>, <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i> und <i>Sonstiges</i>. Für mögliche weitere Buttons siehe <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a>.
 
 ## Hinweis zum Fehlen von Bedienelementen
+Nicht immer sind alle der aufgeführten Bedienelemente verfügbar, da Medien nicht aus allen möglichen Komponenten bestehen müssen.
 
 ## Von dieser Seite aus aufrufbare Seiten
 ### [Veranstaltungsseite](event-series)
