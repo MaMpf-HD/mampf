@@ -2165,7 +2165,7 @@ de:
         </li>
         </ul>
   watchlist:
-    add: 'Zu deiner Watchlist hinzufügen'
+    add: 'Zu meiner Watchlist hinzufügen'
     select: 'Auswählen'
     name: 'Name'
     enter_name: 'Namen eingeben'

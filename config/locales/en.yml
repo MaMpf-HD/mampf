@@ -2039,7 +2039,7 @@ en:
         </li>
         </ul>
   watchlist:
-    add: 'Add to your watchlist'
+    add: 'Add to my watchlist'
     select: 'Select'
     name: 'Name'
     enter_name: 'Enter name'
