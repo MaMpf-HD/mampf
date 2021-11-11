@@ -9,6 +9,15 @@
       <%= render partial: 'watchlists/show_right_header' %>
   </div>
 </div>
+<% if @watchlist_entries.blank? %>
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <ul class="nav justify-content-left">
+      <div class="alert alert-secondary" role="alert">
+        <%= t('watchlist.none_added') %>
+      </div>
+    </ul>
+  </div>
+<% end %>
 <% if @watchlist_entries.present? %>
   <div class="row" id="sortableWatchlistMedia">
     <% @watchlist_entries.each do |entry| %>

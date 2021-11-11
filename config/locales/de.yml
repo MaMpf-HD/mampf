@@ -2171,6 +2171,7 @@ de:
     enter_name: 'Namen eingeben'
     none: 'Noch keine Watchlist angelegt'
     empty: 'Diese Watchlist ist leer'
+    none_added: 'Du hast noch keine Medien zu dieser Liste hinzugefügt.'
     create: 'Erstellen'
     creation_success: 'Watchlist wurde erfolgreich erstellt'
     creation_fail: 'Watchlist konnte nicht erstellt werden'

@@ -2045,6 +2045,7 @@ en:
     enter_name: 'Enter name'
     none: 'No watchlist created yet'
     empty: 'This watchlist is empty'
+    none_added: 'You have not added any media to this watchlist yet.'
     create: 'Create'
     creation_success: 'Watchlist was successfully created'
     creation_fail: 'Watchlist could not be created'
