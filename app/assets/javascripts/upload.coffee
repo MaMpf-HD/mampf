@@ -380,7 +380,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
             if  i == (fileInput.files.length)
               uploadedFiles2 = uploadedFiles
               if single
-                uploadedFiles2 = uploadedFiles[0]
+                [..., uploadedFiles2] = uploadedFiles
               $(progressBarElement).text(
                 $(progressBarElement).data 'tr-success'
               )
@@ -407,7 +407,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
               $(progressBarElement).data('tr-failure') + xhr.response
             )
         xhr.onload = onload(xhr)
-        
+
         xhr.onerror = onerror
         xhr.upload.onprogress = onprogress
         f = fileInput.files[0]
