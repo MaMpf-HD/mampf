@@ -1,5 +1,5 @@
 ---
-title: Alle Seiten
+title: Seiten für alle Nutzer*innen
 ---
 
 Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich sind, alphabetisch aufgelistet.
@@ -66,6 +66,7 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 
 ## V
 * [Veranstaltung](event-series.md)
+* [Vortrag](talk)
 
 ## W
 * [Watchlist](watchlist)
