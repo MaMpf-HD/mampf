@@ -53,6 +53,14 @@ class MainController < ApplicationController
                          end
   end
 
+  def test_mail
+    NotificationMailer.with(recipients: current_user,
+                            locale: "de",
+                            lecture: Lecture.first)
+                      .new_lecture_email.deliver_later
+    redirect_to start_path
+  end
+
   private
 
   def check_for_consent

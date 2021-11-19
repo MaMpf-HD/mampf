@@ -478,6 +478,9 @@ Rails.application.routes.draw do
   get 'main/start', to: 'main#start',
                     as: 'start'
 
+  get 'main/mail', to: 'main#test_mail',
+                   as: 'test_mail'
+
   mount ScreenshotUploader.upload_endpoint(:cache) => "/screenshots/upload"
   mount ProfileimageUploader.upload_endpoint(:cache) => "/profile_image/upload"
   mount VideoUploader.upload_endpoint(:cache) => "/videos/upload"
