@@ -3,7 +3,7 @@
   <head>
     <%= render partial: 'layouts/head' %>
   </head>
-  <body data-locale="<%= I18n.locale %>" style="overflow-y: scroll;">
+  <body class="d-flex flex-column min-vh-100" data-locale="<%= I18n.locale %>" style="overflow-y: scroll;">
     <%= render partial: 'shared/navbar' %>
     <div class="container-fluid fluidvert">
       <div class="row">
@@ -26,7 +26,7 @@
       </div>
     </div>
     <div id="modal-container"></div>
-    <footer>
+    <footer class="mt-auto">
       <%= render partial: 'shared/footer' %>
     </footer>
   </body>

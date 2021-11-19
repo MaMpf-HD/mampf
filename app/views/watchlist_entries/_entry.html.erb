@@ -1,5 +1,5 @@
 <% I18n.with_locale(medium.locale_with_inheritance) do %>
-  <div class="card bg-mdb-color-lighten-7 <%= medium_border(medium) %>">
+  <div class="card bg-mdb-color-lighten-7 h-100 <%= medium_border(medium) %>">
     <div class="card-header bg-mdb-color-lighten-1"
          style="display: flex; justify-content: space-between;">
       <div>
@@ -132,7 +132,7 @@
                      locals: { medium: medium,
                                ref_link: ref_link } %>
         </div>
-    <% end %>
       </div>
+    <% end %>
   </div>
 <% end %>

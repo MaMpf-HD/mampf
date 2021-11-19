@@ -1,0 +1,34 @@
+<%= form_with model: @watchlist, id: "changeWatchlistForm", mathod: :patch do |f| %>
+  <div class="form-group form-row">
+    <%= f.label :label, t('watchlist.name') %>
+    <div class="input-group mb-3">
+      <% if @watchlist.present? && @watchlist.errors.any? %>
+        <%= f.text_field :name, placeholder: t('watchlist.enter_name'),
+                        class: 'form-control is-invalid',
+                        id: 'watchlistNameField',
+						value: @watchlist.name,
+                        :required => true %>
+      <% else %>
+        <%= f.text_field :name, placeholder: t('watchlist.enter_name'),
+                        class: 'form-control',
+                        id: 'watchlistNameField',
+                        :required => true %>
+      <% end %>
+      <% if @medium.present? %>
+        <div class="input-group-append">
+          <%= f.submit t('watchlist.create'),
+                      { class: 'btn btn-primary',
+                        id: 'createWatchlistBtn' } %>
+        </div>
+      <% end %>
+      <% if @watchlist.present? && @watchlist.errors.any? %>
+        <div class="invalid-feedback">
+          <% @watchlist.errors.messages.values.each do |msg| %>
+            <% msg.each do |m| %>
+              <%= m %>
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+  </div>
+<% end %>

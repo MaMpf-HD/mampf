@@ -2175,6 +2175,8 @@ de:
     create: 'Erstellen'
     creation_success: 'Watchlist wurde erfolgreich erstellt'
     creation_fail: 'Watchlist konnte nicht erstellt werden'
+    change: 'Ändern'
+    change_success: 'Watchlist wurde geändert'
     new: 'Neu'
     delete: 'Löschen'
     delete_confirm: 'Bist Du Dir sicher, dass Du diese Watchlist löschen willst?'

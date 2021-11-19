@@ -2049,6 +2049,8 @@ en:
     create: 'Create'
     creation_success: 'Watchlist was successfully created'
     creation_fail: 'Watchlist could not be created'
+    change: 'Change'
+    change_success: 'Watchlist was changed'
     new: 'New'
     delete: 'Delete'
     delete_confirm: 'Are you sure you want to delete this watchlist?'

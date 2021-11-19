@@ -17,6 +17,14 @@ class WatchlistsController < ApplicationController
     end
   end
 
+  def update
+    @watchlist = Watchlist.find_by_id(params[:id])
+    if @watchlist.update(params)
+      flash[:notice] = I18n.t('watchlist.change_success')
+    else
+    end
+  end
+
   def destroy
     @watchlist = Watchlist.find(params[:id])
 
@@ -94,6 +102,11 @@ class WatchlistsController < ApplicationController
 
   def new_watchlist
     render 'watchlists/show_new_modal'
+  end
+
+  def change_watchlist
+    @watchlist = Watchlist.find_by_id(params[:id])
+    render 'watchlists/show_change_modal'
   end
 
   def update_order
