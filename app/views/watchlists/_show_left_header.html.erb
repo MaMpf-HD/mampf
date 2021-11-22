@@ -41,6 +41,20 @@
     </div>
   </div>
 </li>
+<%# Description%>
+<% if @watchlist.present? && @watchlist.description.present? %>
+  <li class="nav-item pl-2 pr-2">
+    <a class="btn btn-secondary"
+       id="descriptionButton"
+       data-toggle="collapse"
+       data-target="#collapseDescription"
+       role="button"
+       aria-expanded="false"
+       aria-controls="collapseDescription">
+      <%= t('watchlist.description') %>
+    </a>
+  </li>
+<% end %>
 <% if @watchlist_entries %>
   <%# Reverse order button%>
   <li class="nav-item pl-2 pr-1">

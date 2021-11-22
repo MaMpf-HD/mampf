@@ -7,9 +7,10 @@ class WatchlistsController < ApplicationController
     @watchlist = Watchlist.new
     @watchlist.name = params[:watchlist][:name]
     @watchlist.user = current_user
+    @watchlist.description = params[:watchlist][:description]
     @medium = Medium.find_by_id(params[:watchlist][:medium_id])
     @success = @watchlist.save
-    if @medium.blank?
+    if @medium.blank? && @success
       flash[:notice] = I18n.t('watchlist.creation_success')
     end
     respond_to do |format|
@@ -19,9 +20,12 @@ class WatchlistsController < ApplicationController
 
   def update
     @watchlist = Watchlist.find_by_id(params[:id])
-    if @watchlist.update(params)
+    @success = @watchlist.update(params.require(:watchlist).permit(:name, :description))
+    if @success
       flash[:notice] = I18n.t('watchlist.change_success')
-    else
+    end
+    respond_to do |format|
+      format.js
     end
   end
 

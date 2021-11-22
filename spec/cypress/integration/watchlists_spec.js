@@ -39,7 +39,26 @@ describe("Watchlists", () => {
                 cy.get('#card-title').should('exist');
 			});
         });
-        it("can create and add to watchlist in watchlist view", () => {
+        it("can change watchlist", () => {
+            cy.appFactories([
+                ["create", "watchlist", {
+                    user_id: 1
+                }]
+            ]).then((data) => {
+                cy.visit(`watchlists/1`);
+                cy.get('#changeWatchlistBtn').click();
+                cy.get('#watchlistNameField').should('have.value', `${data[0].name}`);
+                cy.get('#watchlistNameField').clear();
+                cy.get('#watchlistNameField').type('Lernliste');
+                cy.wait(100);
+                cy.get('#watchlistDescriptionField').type('Dies ist eine Lernliste.');
+                cy.get('#confirmChangeWatchlistButton').click();
+                cy.get('#watchlistButton').contains('Lernliste');
+                cy.get('#descriptionButton').click();
+                cy.get('.card').contains('Dies ist eine Lernliste.')
+            });
+        })
+        it("can create new watchlist in watchlist view", () => {
 			cy.appFactories([
 			]).then((data) => {
 				cy.get('#watchlistsIcon').click();
