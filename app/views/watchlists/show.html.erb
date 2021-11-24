@@ -21,7 +21,7 @@
     </ul>
   </div>
 <% end %>
-<% if @watchlist_entries.blank? %>
+<% if @watchlist.present? && @watchlist_entries.blank? %>
   <div class="col-sm-12 col-md-12 col-lg-6 pt-2">
     <ul class="nav justify-content-left">
       <div class="alert alert-info" role="alert">

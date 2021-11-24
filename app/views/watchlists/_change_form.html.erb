@@ -25,7 +25,8 @@
       <%= f.text_area :description, placeholder: t('watchlist.enter_description'),
                       class: 'form-control',
                       id: 'watchlistDescriptionField',
-                      value: @watchlist.description %>
+                      value: @watchlist.description,
+                      rows: 5 %>
     </div>
   </div>
 <% end %>

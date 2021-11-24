@@ -21,12 +21,14 @@
         <%= render partial: 'watchlists/change_form' %>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary"
-                id="confirmChangeWatchlistButton"
-                type="submit"
-                form="changeWatchlistForm"
-                disabled ><%= t('watchlist.change') %></button>
-        <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
+        <div class="container text-center">
+          <button class="btn btn-primary"
+                  id="confirmChangeWatchlistButton"
+                  type="submit"
+                  form="changeWatchlistForm"
+                  disabled ><%= t('watchlist.save_change') %></button>
+          <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
+        </div>
       </div>
     </div>
   </div>
