@@ -2175,6 +2175,9 @@ de:
     empty: 'Diese Watchlist ist leer.'
     none_added: 'Du hast noch keine Medien zu dieser Liste hinzugefügt.'
     create: 'Erstellen'
+    creation_confirm: >
+      Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
+      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst: 
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
