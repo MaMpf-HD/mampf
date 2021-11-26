@@ -55,9 +55,8 @@ class MainController < ApplicationController
 
   def test_mail
     NotificationMailer.with(recipients: current_user,
-                            locale: "de",
-                            lecture: Lecture.first)
-                      .new_lecture_email.deliver_later
+                            locale: "de")
+                      .test_email.deliver_later
     redirect_to start_path
   end
 

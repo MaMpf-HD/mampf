@@ -5,7 +5,8 @@ class NotificationMailer < ApplicationMailer
                                         :submission_deletion_email,
                                         :submission_deletion_lecture_email,
                                         :submission_destruction_email,
-                                        :submission_destruction_lecture_email]
+                                        :submission_destruction_lecture_email,
+                                        :test_email]
   before_action :set_recipient_and_submission,
                 only: [:submission_upload_email,
                        :submission_upload_removal_email,
@@ -163,6 +164,12 @@ class NotificationMailer < ApplicationMailer
          subject: t('mailer.submission_destruction_lecture_subject',
                     term: @term.to_label,
                     lecture: @lecture.title_no_term))
+  end
+
+  def test_email
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: 'Bounce Test')
   end
 
   private
