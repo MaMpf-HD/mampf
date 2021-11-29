@@ -7,10 +7,22 @@ class WatchlistsController < ApplicationController
     @watchlist = Watchlist.new
     @watchlist.name = params[:watchlist][:name]
     @watchlist.user = current_user
+    @watchlist.description = params[:watchlist][:description]
     @medium = Medium.find_by_id(params[:watchlist][:medium_id])
     @success = @watchlist.save
-    if @medium.blank?
+    if @medium.blank? && @success
       flash[:notice] = I18n.t('watchlist.creation_success')
+    end
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def update
+    @watchlist = Watchlist.find_by_id(params[:id])
+    @success = @watchlist.update(params.require(:watchlist).permit(:name, :description))
+    if @success
+      flash[:notice] = I18n.t('watchlist.change_success')
     end
     respond_to do |format|
       format.js
@@ -94,6 +106,11 @@ class WatchlistsController < ApplicationController
 
   def new_watchlist
     render 'watchlists/show_new_modal'
+  end
+
+  def change_watchlist
+    @watchlist = Watchlist.find_by_id(params[:id])
+    render 'watchlists/show_change_modal'
   end
 
   def update_order

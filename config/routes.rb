@@ -430,6 +430,9 @@ Rails.application.routes.draw do
   get 'watchlists/new_watchlist/', to: 'watchlists#new_watchlist',
                                    as: 'show_new_watchlist'
 
+  get 'watchlists/change_watchlist/:id', to: 'watchlists#change_watchlist',
+                                         as: 'show_change_watchlist'
+
   get 'watchlists/add', to: 'watchlists#add',
                         as: 'add_watchlist'
 

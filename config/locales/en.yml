@@ -2039,15 +2039,22 @@ en:
         </li>
         </ul>
   watchlist:
-    add: 'Add to your watchlist'
+    add: 'Add to my watchlist'
     select: 'Select'
     name: 'Name'
+    description: 'Description'
     enter_name: 'Enter name'
+    enter_description: 'Enter description (optional)'
     none: 'No watchlist created yet'
     empty: 'This watchlist is empty'
+    none_added: 'You have not added any media to this watchlist yet.'
     create: 'Create'
+    creation_confirm: 'The textfield for creating a watchlist is not empty.
+                       Are you sure you want to add the medium to the watchlist "%{watchlist}"?'
     creation_success: 'Watchlist was successfully created'
     creation_fail: 'Watchlist could not be created'
+    change: 'Change'
+    change_success: 'Watchlist was changed'
     new: 'New'
     delete: 'Delete'
     delete_confirm: 'Are you sure you want to delete this watchlist?'

@@ -7,8 +7,13 @@ if(<%= @success %>) {
                                                    locals: { watchlist_entry: @watchlist_entry,
                                                              watchlist: @watchlist,
                                                              medium: @medium } %>");
-
+    $('#collapseNewWatchlist').html("<%= j render partial: 'watchlists/new_form',
+                                                   locals: { watchlist_entry: @watchlist_entry,
+                                                             watchlist: @watchlist,
+                                                             medium: @medium } %>");
+                                                             
     $('#watchlistEntrySubmitButton').attr("disabled", false);
+    $('#watchlistEntrySubmitButton').removeAttr("data-confirm");
 
     $('#watchlistSelectForm').append("<span class='badge badge-success'><%= t('watchlist.creation_success')%></span>");
     setTimeout(function() {
@@ -18,7 +23,5 @@ if(<%= @success %>) {
     location.reload(true);
   }
 } else {
-  setTimeout(function() {
-    $('#newWatchlistForm').html("<%= j render partial: 'watchlists/new_form', locals: { watchlist_entry: @watchlist_entry, watchlist: @watchlist, medium: @medium } %>")
-  }, 2000);
+  $('#newWatchlistForm').html("<%= j render partial: 'watchlists/new_form', locals: { watchlist_entry: @watchlist_entry, watchlist: @watchlist, medium: @medium } %>")
 }

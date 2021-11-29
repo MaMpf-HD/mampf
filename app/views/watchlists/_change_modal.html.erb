@@ -10,7 +10,7 @@
       <div class="modal-header">
         <h5 class="modal-title"
             id="watchlistModalTitle">
-          <%= t('watchlist.create') %>
+          <%= t('watchlist.change') %>
         </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
@@ -18,14 +18,15 @@
       </div>
       <div class="modal-body"
            id="watchlistModalBody">
-        <%= render partial: 'watchlists/new_form' %>
+        <%= render partial: 'watchlists/change_form' %>
       </div>
       <div class="modal-footer">
         <div class="container text-center">
           <button class="btn btn-primary"
-                  id="newWatchlistButton"
+                  id="confirmChangeWatchlistButton"
                   type="submit"
-                  form="newWatchlistForm"><%= t('watchlist.create') %></button>
+                  form="changeWatchlistForm"
+                  disabled ><%= t('watchlist.save_change') %></button>
           <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
         </div>
       </div>
