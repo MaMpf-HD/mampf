@@ -152,6 +152,7 @@ en:
     comments: 'Comments'
     blog: 'Blog'
     logout: 'Logout'
+    watchlist: 'Watchlist'
     login: 'Login'
     favorite_lectures: 'Fast access to favorite lectures'
     no_favorite_lectures_yet: >
@@ -2037,6 +2038,44 @@ en:
         course will be displayed.
         </li>
         </ul>
+  watchlist:
+    add: 'Add to my watchlist'
+    select: 'Select'
+    name: 'Name'
+    description: 'Description'
+    enter_name: 'Enter name'
+    enter_description: 'Enter description (optional)'
+    none: 'No watchlist created yet'
+    empty: 'This watchlist is empty'
+    none_added: 'You have not added any media to this watchlist yet.'
+    create: 'Create'
+    creation_confirm: 'The textfield for creating a watchlist is not empty.
+                       Are you sure you want to add the medium to the watchlist "%{watchlist}"?'
+    creation_success: 'Watchlist was successfully created'
+    creation_fail: 'Watchlist could not be created'
+    change: 'Change'
+    change_success: 'Watchlist was changed'
+    new: 'New'
+    delete: 'Delete'
+    delete_confirm: 'Are you sure you want to delete this watchlist?'
+    delete_success: 'The watchlist was successfully deleted.'
+    delete_failed: 'Watchlist could not be deleted.'
+    close: 'Close'
+    confirm: 'Add'
+    public: 'Public'
+    public_help: 'Checking this box enables other people to view this watchlist. To do this, simply share the current url.'
+    order_help: 'By dragging the dark blue area of a medium, you can change the order as you wish.'
+  watchlist_entry:
+    add_success: 'The medium was added to your watchlist successfully'
+    add_fail: 'There was an error adding the medium to your watchlist'
+    remove: 'Remove medium from watchlist'
+    remove_confirm: 'Are you sure you want to remove this medium from the watchlist?'
+    deletion: 'The medium was removed from the current watchlist'
+    list: {
+      zero: 'This medium does not belong to any of your watchlists.',
+      one: 'This medium belongs to the following watchlist: %{watchlists}',
+      other: 'This medium belongs to the following watchlists: %{watchlists}'
+    }
   video:
     video: 'Video'
     no_video: 'There is no video.'
@@ -3403,3 +3442,13 @@ en:
             value:
               out_of_range: >
                 Your vote is outside of the allowed range.
+        watchlist_entry:
+          attributes:
+            medium_id:
+              taken:
+                is already in this watchlist.
+        watchlist:
+          attributes:
+            name:
+              taken:
+                'A watchlist with that name already exists.'

@@ -33,6 +33,11 @@ Cypress.Commands.add('appFactories', function (options) {
 Cypress.Commands.add('appFixtures', function (options) {
   cy.app('activerecord_fixtures', options);
 });
+
+Cypress.Commands.add("dragTo", { prevSubject: "element" }, (subject, targetEl) => {
+  cy.wrap(subject).trigger("dragstart");
+  cy.get(targetEl).trigger("drop");
+});
 // CypressOnRails: end
 
 // The next is optional

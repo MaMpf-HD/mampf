@@ -57,4 +57,5 @@
 //= require upload
 //= require users
 //= require vertices
+//= require watchlists
 //= require turbolinks

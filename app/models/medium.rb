@@ -49,6 +49,10 @@ class Medium < ApplicationRecord
 
   has_many :quiz_certificates, foreign_key: 'quiz_id', dependent: :destroy
 
+  # a medium can be in watchlists of multiple users
+  has_many :watchlist_entries, dependent: :destroy
+  has_many :watchlist_users, through: :watchlist_entries, source: :user
+
   has_many :assignments
 
   serialize :quiz_graph, QuizGraph
@@ -928,6 +932,20 @@ class Medium < ApplicationRecord
   def planned_comment_lock?
     return publisher.lock_comments if publisher
     !!teachable.media_scope.try(:comments_disabled)
+  end
+
+  def containingWatchlists(user)
+    Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
+                    user: user)
+  end
+
+  def containingWatchlistsNames(user)
+    watchlists = containingWatchlists(user)
+    if !watchlists.empty?
+      containingWatchlists(user).pluck(:name)
+    else
+      ''
+    end
   end
 
   private
