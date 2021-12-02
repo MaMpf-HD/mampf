@@ -54,10 +54,10 @@ class MainController < ApplicationController
   end
 
   def test_mail
-    NotificationMailer.with(recipients: current_user,
+    NotificationMailer.with(recipients: [580, 581, 582, 583, 584],
                             locale: "de")
                       .test_email.deliver_later
-    redirect_to start_path
+    redirect_to administration_path
   end
 
   private

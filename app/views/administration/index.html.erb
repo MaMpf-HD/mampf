@@ -1,3 +1,9 @@
+<div class="row pl-3 pb-2">
+  <%= link_to "Send testmail to test accounts",
+    test_mail_path,
+    class: 'btn btn-secondary' %>
+</div>
+<%= link_to "log file", log_path(lines: 100) %>
 <div class="row mt-3 pr-2">
   <div class="col-12 col-md-8">
     <div class="row">
