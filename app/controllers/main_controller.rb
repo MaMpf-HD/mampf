@@ -54,9 +54,11 @@ class MainController < ApplicationController
   end
 
   def test_mail
-    NotificationMailer.with(recipients: [580, 581, 582, 583, 584],
+    response = NotificationMailer.with(recipients: [580, 581, 582, 583, 584],
                             locale: "de")
-                      .test_email.deliver_later
+                      .test_email.deliver_now!
+    logger = Logger.new("log/emails.log")
+    logger.info(response.message)
     redirect_to administration_path
   end
 
