@@ -27,3 +27,5 @@ jobs:
       run: docker-compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test rails spec"
     - name: Send test coverage report to codecov.io
       uses: codecov/codecov-action@v2
+      with:
+        directory: ./coverage
