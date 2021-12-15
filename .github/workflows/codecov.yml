@@ -12,13 +12,15 @@ jobs:
       working-directory: docker/development
     - uses: satackey/action-docker-layer-caching@v0.0.11
       continue-on-error: true
-    - name: Install dependencies
+    - run: docker-compose build
+      working-directory: docker/development
+    - name: create db
       working-directory: docker/development
       run: |
           docker-compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test  rails db:create"
           docker-compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test  rails db:migrate"
           docker-compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test  rails db:test:prepare"
-    - name: Create database
+    - name: Reindex sunspot
       working-directory: docker/development
       run: |
           docker-compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test  rake sunspot:reindex"
