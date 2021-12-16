@@ -51,6 +51,7 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 
 ## S
 * [Selbsttest](self-assessment.md)
+* [Seminar](seminar) (Proseminar, Seminar und Oberseminar)
 * [Sitzung](session.md)
 * [Skript](manuscript.md)
 * [Sonstiges](miscellaneous.md)
@@ -66,7 +67,8 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 
 ## V
 * [Veranstaltung](event-series.md)
-* [Vortrag](talk)
+* [Vorlesung](lecture)
+* [Vortrag](talk), siehe auch [Seiten für Vortragende](all-pages-talk)
 
 ## W
 * [Watchlist](watchlist)
