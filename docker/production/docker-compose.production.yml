@@ -63,7 +63,7 @@ services:
       - default
 
   solr:
-    image: solr:8.1
+    image: solr:8.11
     container_name: solr
     ports:
       - "127.0.0.1:8983:8983"
