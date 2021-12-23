@@ -79,6 +79,10 @@ services:
       WEBPACKER_DEV_SERVER_HOST: webpacker
       MAMPF_REGISTRATION_TIMEFRAME: 25
       MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
+      IMAPSERVER: localhost
+      PROJECT_EMAIL_USERNAME: mampf
+      PROJECT_EMAIL_PASSWORD: mampf
+      PROJECT_EMAIL_MAILBOX: mampf
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
       # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20201128165713_mampf.sql&dl=1"
       # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/?dl=1"
