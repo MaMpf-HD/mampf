@@ -10,6 +10,10 @@ module.exports = {
   organizationName: 'MaMpf-HD', // Usually your GitHub org/user name.
   projectName: 'mampf', // Usually your repo name.
   themeConfig: {
+    colorMode: {
+      defaultMode: 'light',
+      disableSwitch: true,
+    },
     navbar: {
       title: 'MaMpf',
       logo: {
