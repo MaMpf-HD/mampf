@@ -44,5 +44,5 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilre
 
 ## Ähnliche Seiten
 * [Benachrichtigungen](notifications.md)
-* [Kommentare für ein Medium](comments-media.md)
+* [Kommentare für ein Medium](comments-medium)
 * [News](news.md)

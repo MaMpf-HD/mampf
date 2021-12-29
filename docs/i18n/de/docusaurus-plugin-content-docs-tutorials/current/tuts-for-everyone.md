@@ -2,7 +2,7 @@
 title: Tutorials für alle Nutzer*innen
 ---
 
-Im Folgenden sind Anleitungen für alle Nutzer\*innen aufgelistet. 
+Im Folgenden sind Anleitungen für alle Nutzer\*innen aufgelistet.
 
 ## Z
-* [Zettelabgabe](tut-submissions.md)
+* [Zettelabgabe](tut-stud-submissions)

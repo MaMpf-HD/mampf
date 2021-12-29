@@ -53,7 +53,7 @@ Durch Klicken auf das Bild kann die Wiedergabe pausiert bzw. fortgesetzt werden.
 ### Informationsleiste
 
 #### Informationen zum Medium
-Mit dem Button <button name="button">x</button> kann die Informationsleiste geschlossen werden. Ansonsten gibt es sich in diesem Bereich keine weiteren Bedienelemente. Dort werden lediglich Informationen zum Medium aufführt, wie etwa der Medientyp und die übergeordnete Veranstaltung.
+Mit dem Button <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> kann die Informationsleiste geschlossen werden. Ansonsten gibt es sich in diesem Bereich keine weiteren Bedienelemente. Dort werden lediglich Informationen zum Medium aufführt, wie etwa der Medientyp und die übergeordnete Veranstaltung.
 
 #### Videogliederung
 Die Gliederung kann zum gezielten Springen im Video verwendet werden, in dem man auf den gewünschten <button name="button">Gliederungspunkt</button> klickt.
