@@ -56,7 +56,7 @@ Dieses Dialogfeld öffnet sich, nachdem auf <button name="button"><img src="http
       <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/watchlist_erstellen.png" width="500" /></td>
       <td>
          <ul>
-            <li><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.PNG" height="15"/></button> Schließe das Dialogfenster, ohne eine neue Liste anzulegen.</li>
+            <li><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button> Schließe das Dialogfenster, ohne eine neue Liste anzulegen.</li>
             <li> <form>
               <p><label for="fname">Name</label><br></br>
               <input type="text" id="fname" name="fname"></input><br></br>
@@ -81,7 +81,7 @@ Dieses Dialogfeld öffnet sich, nachdem auf <button name="button">Bearbeiten</bu
       <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/watchlist_bearbeiten.png" width="550" /></td>
       <td>
          <ul>
-            <li><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.PNG" height="15"/></button> Schließe das Dialogfenster, ohne eine neue Liste anzulegen.</li>
+            <li><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button> Schließe das Dialogfenster, ohne eine neue Liste anzulegen.</li>
             <li> <form>
               <p><label for="fname">Name</label><br></br>
               <input type="text" id="fname" name="fname" value="Titel der Liste"></input><br></br>
