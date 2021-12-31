@@ -35,4 +35,4 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 ## V
 * [Veranstaltung bearbeiten](ed-edit-event-series)
 * [Vorlesung bearbeiten](ed-edit-lecture)
-* [Vortrag bearbeiten](ed-edit-talk)
+* [Vortrag bearbeiten](edit-talk)

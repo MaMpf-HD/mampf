@@ -39,15 +39,6 @@ Die Seite „Vortrag bearbeiten“ gliedert sich in drei große Teilbereiche: di
 
 Die eigentliche Seite besteht aus dem Kopf und den Boxen „Basisdaten“ und  „Inhalt“. Diese Bereiche sind in den folgenden Screenshots hervorgehoben.
 
-|Vortragende|Editor*innen|
-|:---: | :---: |
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/vortrag_bearbeiten2_ueberschrift.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/vortrag_bearbeiten_ed_ueberschrift.png" height="300"/>  |
-|Kopf |Kopf |
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/vortrag_bearbeiten2_basisdaten.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/vortrag_bearbeiten_ed_basisdaten.png" height="300"/>  |
-|Basisdaten |Basisdaten |
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/vortrag_bearbeiten2_inhalt.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/vortrag_bearbeiten_ed_inhalt.png" height="300"/>  |
-|Inhalt |Inhalt |
-
 <table>
    <tr>
       <th>Vortragende</th>
