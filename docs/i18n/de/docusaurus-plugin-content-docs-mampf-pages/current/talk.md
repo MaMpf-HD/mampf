@@ -74,7 +74,7 @@ Auf der Seite [„Vortrag bearbeiten“](edit-talk) können Editor\*innen und Vo
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht mehr sehen. |
 
 ## Verwandte Seiten
-* Medium bearbeiten
-* Quizzes erstellen und bearbeiten
+* [Medium bearbeiten](edit-medium)
+* [Quizzes bearbeiten](edit-quiz)
 * [Seite des Seminars](seminar)
 * [Vortrag bearbeiten](edit-talk)
