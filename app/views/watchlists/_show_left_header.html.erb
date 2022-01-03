@@ -34,7 +34,7 @@
     <% end %>
     <div class="input-group-append">
       <%= link_to raw("<i class=\"fa fa-plus\"></i>"),
-                  show_new_watchlist_path,
+                  watchlist_modal_path(type: "new"),
                   class: "btn btn-outline-secondary",
                   id: "openNewWatchlistForm",
                   remote: true %>

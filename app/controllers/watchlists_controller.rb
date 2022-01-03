@@ -97,6 +97,20 @@ class WatchlistsController < ApplicationController
     filter_results.reverse
   end
 
+  def show_modal
+    case params[:type]
+    when 'add'
+      @watchlists = current_user.watchlists
+      @medium = Medium.find_by(id: params[:id])
+      render 'watchlists/show_add_modal'
+    when 'new'
+      render 'watchlists/show_new_modal'
+    when 'change'
+      @watchlist = Watchlist.find_by(id: params[:id])
+      render 'watchlists/show_change_modal'
+    end
+  end
+
   def add_to_watchlist
     @watchlists = current_user.watchlists
     @medium = Medium.find_by(id: params[:id])

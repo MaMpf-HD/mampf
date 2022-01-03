@@ -13,7 +13,7 @@
   
   <li class="nav-item pl-2">
     <%= link_to t('watchlist.change'),
-          show_change_watchlist_path(@watchlist),
+          watchlist_modal_path(id: @watchlist, type: "change"),
           class: 'btn btn-secondary',
           id: 'changeWatchlistBtn',
           remote: true %>
