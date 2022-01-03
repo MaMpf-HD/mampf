@@ -10,6 +10,12 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 ## B
 * [Begriff bearbeiten](ed-edit-tag)
 
+## E
+* [Erläuterung bearbeiten](ed-edit-explanation)
+
+## F
+* [Frage bearbeiten](ed-edit-question)
+
 ## K
 * [Kapitel bearbeiten](ed-edit-chapter)
 
@@ -21,13 +27,18 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 ## P
 * Profil, siehe [Mein Profil](ed-profile)
 
+## Q
+* [Quiz bearbeiten](edit-quiz)
+* [Quizerläuterung bearbeiten](ed-edit-explanation)
+* [Quizfrage bearbeiten](ed-edit-question)
+
 ## S
 * [Seminar bearbeiten](ed-edit-seminar)
 * [Sitzung bearbeiten](ed-edit-session)
 * [Suche](ed-search-extended)
 
 ## T
-* Tag bearbeiten, siehe [Begriff bearbeiten](ed-edit-tag)
+* [Tag bearbeiten](ed-edit-tag)
 
 ## U
 * [Übersicht](ed-overview)

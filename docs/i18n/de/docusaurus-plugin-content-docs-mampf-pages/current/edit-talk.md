@@ -7,28 +7,13 @@ Auf der Seite „Vortrag bearbeiten“ können Vortragende und Editor\*innen Än
 ![](/img/vortrag_bearbeiten2.png)
 
 ## Navigation zu dieser Seite
-\*Entscheidung für Vorschlag 1 oder 2 oder neuer Vorschlag\*
-
-\*Vorschlag 1\*
-
 Vortragende können diese Seite über die [persönliche Startseite](my-home-page) und die [Seite des Vortrags](talk) erreichen. Editor\*innen gelangen ebenfalls über die [Seite des Vortrags](talk) auf diese Seite. Zudem können sie auch über die Seite [„Seminar bearbeiten“](ed-edit-seminar) darauf zugreifen.
 
 <ul>
    <li><a href="/mampf/de/docs/my-home-page" target="_self"><b>Persönliche Startseite</b></a> (Vortragende)</li>Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
    <li><a href="/mampf/de/docs/talk" target="_self"><b>Seite des Vortrags</b></a> (Vortragende und Editor*innen)</li>Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
-   <li><a href="/mampf/de/docs/ed-edit-seminar" target="_self"><b>„Seminar bearbeiten“</b></a> (Editor*innen)</li>In der Seminargliederung klickt man auf den <button>Vortragstitel</button> auf der Vortragskachel, um auf die Seite „Vortrag bearbeiten“ zu navigieren.
+   <li><a href="/mampf/de/docs/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)</li>In der Seminargliederung klickt man auf den <button>Vortragstitel</button> auf der Vortragskachel, um auf die Seite „Vortrag bearbeiten“ zu navigieren.
 </ul>
-
-\*Vorschlag 2\*
-
-### Über die [persönliche Startseite](my-home-page) (Vortragende)
-Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
-
-### Über die [Seite des Vortrags](talk) (Vortragende und Editor*innen)
-In der Überschrift links neben dem Seminartitel klickt man auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, um auf die Seite „Vortrag bearbeiten“ zu gelangen.
-
-### Über die Seite [„Seminar bearbeiten“](ed-edit-seminar) (Editor*innen)
-In der Seminargliederung klickt man auf den <button>Vortragstitel</button> auf der Vortragskachel, um auf die Seite „Vortrag bearbeiten“ zu navigieren.
 
 ## Bereiche der Seite
 Die Seite „Vortrag bearbeiten“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Vortrag bearbeiten“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -62,7 +47,7 @@ Die eigentliche Seite besteht aus dem Kopf und den Boxen „Basisdaten“ und  �
 </table>
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Dabei werden die einzelnen Bereiche nacheinander behandelt und bei Bedarf Unterschiede zwischen den Bedienelementen bei Vortragenden und Editor\*innen thematisiert.
+Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Dabei werden die einzelnen Bereiche nacheinander behandelt und bei Bedarf Unterschiede zwischen den Bedienelementen bei Vortragenden und Editor\*innen thematisiert.  Editor\*innen, die auch Vortragenden sind, stehen alle Bedienelemente zur Verfügung.
 
 ### Kopf
 #### Gemeinsame Bedienelemente
@@ -88,12 +73,14 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
             <input type="text" id="fname" name="fname"></input><br></br>
             </p></form>Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Tags und wähle die aus, die mit dem Vortrag verknüpft werden sollen. Vortragende können keine eigenen Tags anlegen.</li>
             <li>Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button></li> Löse die bestehende Verknüpfung von Vortrag und Tag auf.
-            <li>Verknüpfte Medien <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a></li> Lege ein neues Medium an und wechsel danach auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a>.
-            <li><a href="/mampf/de/docs/edit-medium" target="_self"><button>Medientitel</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a>. Damit dieses Bedienelement verfügbar ist, muss es bereits Medien zum Vortrag geben.</li>
+            <li>Verknüpfte Medien <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a></li> Lege ein neues Medium an und wechsel danach auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
+            <li><a href="/mampf/de/docs/edit-medium" target="_self"><button>Medientitel</button></a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Quiztitel</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/docs/edit-medium" target="_self">„Quiz bearbeiten“</a>. Damit dieses Bedienelement verfügbar ist, muss es bereits Medien zum Vortrag geben.</li>
          </ul>
       </td>
    </tr>
 </table>
+
+Medien Vortragende: Lektion, Worked Example, Übung, Wiederholung, Quiz, Sonstiges; Mediumtyp kann bei allen Medien außer Quiz geändert werden
 
 #### Editor*innen vorbehaltenene Bedienelemente
 Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unterschiede im nachfolgenden Screenshot grün gekennzeichnet. Nun werden alle Bedienelemente aufgeführt, die zusätzlich bei Editor\*innen vorkommen:
@@ -125,7 +112,7 @@ Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unters
 </table>
 
 ### Inhalt
-Sowohl Vortragende als auch Editor\*innen können einen Text für die [Vortragsseite](talk) und die [Seite des Semimars](seminar) verfassen bzw. bearbeiten. Dabei ist zu beachten, dass es sich um unterschiedliche Texte handelt und keine Nutzergruppe Änderungen am Text der jeweils anderen Nutzergruppe vornehmen kann. Vortragende können ihren Text auf der [Vortragsseite](talk) und der [Seite des Semimars](seminar) anzeigen lassen und wieder entfernen. Editor\*innen können diesen Text nur von diesen beiden Seiten nehmen, sie können ihn nicht darauf setzen.
+Sowohl Vortragende als auch Editor\*innen können einen Text für die [Vortragsseite](talk) und die [Seite des Semimars](seminar) verfassen bzw. bearbeiten. Dabei ist zu beachten, dass es sich um unterschiedliche Texte handelt und keine Nutzergruppe Änderungen am Text der jeweils anderen Nutzergruppe vornehmen kann. Vortragende können ihren Text auf der [Vortragsseite](talk) und der [Seite des Semimars](seminar) anzeigen lassen und wieder entfernen. Editor\*innen können den Text der Vortragenden nur von diesen beiden Seiten nehmen, sie können ihn nicht darauf setzen.
 
 #### Gemeinsame Bedienelemente
 Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatierung und -bearbeitung zur Verfügung:
@@ -136,8 +123,8 @@ Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatier
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-quote.png" height="8"/></button> Beginne bzw. beende ein Zitat an der Stelle, an der sich der Cursor befindet, oder mache aus dem markierten Text ein Zitat bzw. aus dem markierten Zitat einfachen Text.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächstehöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächstehöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
@@ -175,9 +162,18 @@ Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatier
 </table>
 
 ## Von dieser Seite aus aufrufbare Seiten
+Von der Seite „Vortrag bearbeiten“ aus gelangt man zu den Seiten „Seminar“, „Vortrag“ und „Medium bearbeiten“.
+
 ### [Seite des Seminars](seminar)
+Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Veranstaltung</button></a>.
+
 ### [Vortragsseite](talk)
+Auf der Vortragsseite finden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Sie ist über <a href="/mampf/de/docs/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> erreichbar.
+
 ### [Seite „Medium bearbeiten“](edit-medium)
+Auf dieser Seite können Medien bearbeiten werden. Dabei können Medientyp und -titel und die Sprache geändert, ein Inhaltstext verfasst oder bearbeitet sowie Tags und Dateien hinzugefügt oder entfernt werden. Zu Videos kann außerdem eine Gliederung angelegt werden. Ferner kann der Öffentlichkeitsstatus den Mediums eingesehen und bearbeitet werden. Diese Seite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/edit-medium" target="_self"><button>Medientitel</button></a> und nach dem Dialog zum Anlegen eines Mediums. Diesen erreicht man wiederum über <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>.
+
+### [Seite „Quiz bearbeiten“](edit-quiz)
 
 ## Verwandte Seiten
 * [Medium bearbeiten](edit-medium)
