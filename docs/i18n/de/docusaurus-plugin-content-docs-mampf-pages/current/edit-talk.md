@@ -80,7 +80,34 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
    </tr>
 </table>
 
-Medien Vortragende: Lektion, Worked Example, Übung, Wiederholung, Quiz, Sonstiges; Mediumtyp kann bei allen Medien außer Quiz geändert werden
+##### Dialogfeld „Medium anlegen“
+Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a> bei <i>Verknüpfte Medien</i> geklickt worden ist.
+
+<table>
+   <tr>
+      <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/create-medium1.png" width="850"/></td>
+      <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/create-medium2.png" width="850"/></td>
+   </tr>
+   <tr><td colspan="2">
+   <ul>
+     <li>Typ<br></br><label for="cars"></label><select name="cars" id="cars">
+       <option value="" selected disabled hidden>Lektion</option>
+       <option value="volvo2">Lektion</option>
+       <option value="volvo">Worked Example</option>
+       <option value="saab">Übung</option>
+       <option value="mercedes">Wiederholung</option>
+       <option value="saab2">Quiz</option>
+       <option value="mercedes2">Sonstiges</option>
+     </select><br></br>Dropdown-Menü zur Auswahl des Medientyps. Sofern der gewählte Medientyp nicht <i>Quiz</i> ist, kann er nachträglich auf der Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> verändert werden.</li>
+     <li><form>
+     <p><label for="fname">Titel</label><br></br>
+     <input type="text" id="fname" name="fname"></input><br></br>
+     </p></form>Eingabefeld für den Medientitel. Dieses Feld muss ausgefüllt werden, damit ein neues Medium anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a> geändert werden.</li>
+     <li><a href="/mampf/de/docs/edit-medium" target="_self"><button>Speichern und bearbeiten</button></a> Lege das Medium und wechsel auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.</li>
+     <li><button>Abbrechen</button> Brich die Aktion ab, lege kein neues Medium an und schließe das Dialogfenster.</li>
+   </ul>
+   </td></tr>
+</table>
 
 #### Editor*innen vorbehaltenene Bedienelemente
 Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unterschiede im nachfolgenden Screenshot grün gekennzeichnet. Nun werden alle Bedienelemente aufgeführt, die zusätzlich bei Editor\*innen vorkommen:
@@ -110,6 +137,43 @@ Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unters
       </td>
    </tr>
 </table>
+
+##### Dialogfeld „Tag anlegen“
+Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> bei <i>Verknüpfte Tags</i> geklickt worden ist.
+
+<table>
+   <tr>
+      <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/create-tag.png" width="4000" /></td>
+      <td>
+         <ul>
+            <li> <form>
+              <p><label for="fname">Titel <br></br>de&nbsp;</label>
+              <input type="text" id="fname" name="fname"></input><br></br>
+              </p></form>Eingabefeld für den deutschen Titel des Tags. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.</li>
+              <li> <form>
+                <p><label for="fname">Titel <br></br>en&nbsp;</label>
+                <input type="text" id="fname" name="fname"></input><br></br>
+                </p></form>Eingabefeld für den englischen Titel des Tags. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.</li>
+            <li>Aliase</li><label for="cars"></label><select name="cars" id="cars">
+                  <option value="" selected disabled hidden>de</option>
+                  <option value="volvo">de</option>
+                  <option value="volvo2">en</option>
+                </select><br></br>Dropdown-Menü zur Sprachauswahl für eine weitere Bezeichnung des Tags. Zur Auswahl stehen Deutsch und Englisch.
+            <li> <form>
+                  <p><label for="fname">Aliase<br></br></label>
+                  <input type="text" id="fname" name="fname"></input><br></br>
+                  </p></form>Eingabefeld für eine weitere Bezeichnung des Tags. Die Bezeichnung kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.</li>
+            <li> <form>
+                  <p><label for="fname">Verknüpfte Tags</label><br></br>
+                  <input type="text" id="fname" name="fname"></input><br></br>
+                  </p></form>Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Tags und wähle die aus, die mit der Tag verknüpft werden sollen.</li>
+            <li><button name="button">Speichern</button> Lege einen Tag mit den in den Eingabefeldern eingetragenen Daten an und schließe das Dialogfenster.</li>
+            <li><button name="button">Abbrechen</button> Schließe das Dialogfenster, ohne einen neuen Tag anzulegen.</li>
+         </ul>
+      </td>
+   </tr>
+</table>
+
 
 ### Inhalt
 Sowohl Vortragende als auch Editor\*innen können einen Text für die [Vortragsseite](talk) und die [Seite des Semimars](seminar) verfassen bzw. bearbeiten. Dabei ist zu beachten, dass es sich um unterschiedliche Texte handelt und keine Nutzergruppe Änderungen am Text der jeweils anderen Nutzergruppe vornehmen kann. Vortragende können ihren Text auf der [Vortragsseite](talk) und der [Seite des Semimars](seminar) anzeigen lassen und wieder entfernen. Editor\*innen können den Text der Vortragenden nur von diesen beiden Seiten nehmen, sie können ihn nicht darauf setzen.
@@ -162,7 +226,7 @@ Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatier
 </table>
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Vortrag bearbeiten“ aus gelangt man zu den Seiten „Seminar“, „Vortrag“ und „Medium bearbeiten“.
+Von der Seite „Vortrag bearbeiten“ aus gelangt man zu den Seiten „Seminar“, „Vortrag“ und „Medium bearbeiten“ bzw. „Quiz bearbeiten“.
 
 ### [Seite des Seminars](seminar)
 Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Veranstaltung</button></a>.
@@ -174,9 +238,12 @@ Auf der Vortragsseite finden sich grundlegende Informationen zum Vortrag (Vortra
 Auf dieser Seite können Medien bearbeiten werden. Dabei können Medientyp und -titel und die Sprache geändert, ein Inhaltstext verfasst oder bearbeitet sowie Tags und Dateien hinzugefügt oder entfernt werden. Zu Videos kann außerdem eine Gliederung angelegt werden. Ferner kann der Öffentlichkeitsstatus den Mediums eingesehen und bearbeitet werden. Diese Seite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/edit-medium" target="_self"><button>Medientitel</button></a> und nach dem Dialog zum Anlegen eines Mediums. Diesen erreicht man wiederum über <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>.
 
 ### [Seite „Quiz bearbeiten“](edit-quiz)
+Auf der Seite „Quiz bearbeiten“ kann der [Quizeditor](quiz-editor) geöffnet werden. Mit diesem können komplexe Quizzes wie angeleitete Beweise angelegt und bearbeitet werden. Im Gegensatz zu einer Quizfrage kann ein Quiz aus mehreren Fragen bestehen und über antwortabhängige Verzweigungen verfügen. Auf der Seite „Quiz bearbeiten“ können außerdem der Titel, die Sprache, der Inhaltstext und die Öffentlichkeitseinstellungen des Quizzes bearbeitet sowie Tags hinzugefügt oder entfernt werden. 
+
 
 ## Verwandte Seiten
 * [Medium bearbeiten](edit-medium)
-* Quizzes erstellen und bearbeiten
+* [Quiz bearbeiten](edit-quiz) (zum Bearbeiten des Titels, verknüpfter Tags, des Beschreibungstextes und der Öffentlichkeitseinstellungen)
+* [Quizeditor](quiz-editor) (zum Bearbeiten der Fragen, der Erläuterungen und dem Aufbau)
 * [Seite des Seminars](seminar)
 * [Vortrag](talk)

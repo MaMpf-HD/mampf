@@ -28,7 +28,8 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 * Profil, siehe [Mein Profil](ed-profile)
 
 ## Q
-* [Quiz bearbeiten](edit-quiz)
+* [Quiz bearbeiten](edit-quiz) (zum Bearbeiten des Titels, verknüpfter Tags, des Beschreibungstextes und der Öffentlichkeitseinstellungen)
+* [Quizeditor](quiz-editor) (zum Bearbeiten der Fragen, der Erläuterungen und dem Aufbau)
 * [Quizerläuterung bearbeiten](ed-edit-explanation)
 * [Quizfrage bearbeiten](ed-edit-question)
 

@@ -75,6 +75,7 @@ Auf der Seite [„Vortrag bearbeiten“](edit-talk) können Editor\*innen und Vo
 
 ## Verwandte Seiten
 * [Medium bearbeiten](edit-medium)
-* [Quizzes bearbeiten](edit-quiz)
+* [Quiz bearbeiten](edit-quiz) (zum Bearbeiten des Titels, verknüpfter Tags, des Beschreibungstextes und der Öffentlichkeitseinstellungen)
+* [Quizeditor](quiz-editor) (zum Bearbeiten der Fragen, der Erläuterungen und dem Aufbau)
 * [Seite des Seminars](seminar)
 * [Vortrag bearbeiten](edit-talk)

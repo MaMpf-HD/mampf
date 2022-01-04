@@ -8,7 +8,8 @@ In einem Proseminar, Seminar oder Oberseminar können einfache Nutzer\*innen zu 
 * [Medium bearbeiten](edit-medium)
 
 ## Q
-* [Quiz bearbeiten](edit-quiz)
+* [Quiz bearbeiten](edit-quiz) (zum Bearbeiten des Titels, verknüpfter Tags, des Beschreibungstextes und der Öffentlichkeitseinstellungen)
+* [Quizeditor](quiz-editor) (zum Bearbeiten der Fragen, der Erläuterungen und dem Aufbau)
 
 ## T
 * [THymE-Editor](thyme-editor)
