@@ -1,11 +1,11 @@
 ---
-version: '3.2'
+version: '3.4'
 services:
   redis:
     image: "redis:alpine"
 
   solr:
-    image: "solr:8"
+    image: "solr:8.11.1"
     container_name: mampf_solr_test
     volumes:
       - type: bind
