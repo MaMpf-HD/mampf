@@ -57,6 +57,11 @@ module.exports = {
           label: 'GitHub',
           position: 'right',
         },
+        {
+          href: 'https://mampf.mathi.uni-heidelberg.de/',
+          label: 'MaMpf',
+          position: 'right'
+        },
       ],
     },
     footer: {
@@ -65,7 +70,7 @@ module.exports = {
           title: 'Docs',
           items: [{
             label: 'Getting Started',
-            to: 'docs/',
+            to: 'mampf-pages',
           }, ],
         },
 

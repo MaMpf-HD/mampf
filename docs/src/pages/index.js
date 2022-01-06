@@ -70,8 +70,8 @@ export default function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={useBaseUrl('docs/')}>
-              Get Started
+              to={useBaseUrl('mampf-pages/')}>
+              Get Started!
             </Link>
           </div>
         </div>
