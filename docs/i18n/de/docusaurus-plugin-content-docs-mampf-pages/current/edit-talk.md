@@ -22,7 +22,7 @@ Die Seite „Vortrag bearbeiten“ gliedert sich in drei große Teilbereiche: di
 |:---: | :---: | :---:|
 |Eigentliche Seite|Navigationsleiste|Footer|
 
-Die eigentliche Seite besteht aus dem Kopf und den Boxen „Basisdaten“ und  „Inhalt“. Diese Bereiche sind in den folgenden Screenshots hervorgehoben.
+Die eigentliche Seite besteht aus dem Kopf und den Boxen „Basisdaten“ und „Inhalt“. Diese Bereiche sind in den folgenden Screenshots hervorgehoben.
 
 <table>
    <tr>
@@ -50,6 +50,8 @@ Die eigentliche Seite besteht aus dem Kopf und den Boxen „Basisdaten“ und  �
 Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Dabei werden die einzelnen Bereiche nacheinander behandelt und bei Bedarf Unterschiede zwischen den Bedienelementen bei Vortragenden und Editor\*innen thematisiert.  Editor\*innen, die auch Vortragenden sind, stehen alle Bedienelemente zur Verfügung.
 
 ### Kopf
+In diesem Bereich gibt es Steuerelemente zur Navigation und der Übernahme von Änderungen. Editor\*innen verfügen über einen zusätzlichen Button.
+
 #### Gemeinsame Bedienelemente
 * <a href="/mampf/de/docs/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/docs/talk" target="_self">Seite des Vortrags</a>.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Vortrag bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
@@ -60,6 +62,8 @@ Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Da
 Editor\*innen steht zudem der Button <button>Löschen</button> zur Verfügung, mit dem sie den Vortrag löschen können.
 
 ### Basisdaten
+Unter Basisdaten können grundsätzliche Einstellungen des Vortrags bearbeitet und Inhalte angelegt sowie auf entsprechende Bearbeitungsseiten gewechselt werden. Editor\*innen verfügen über deutlich mehr Bedienelemente als Vortragende.
+
 #### Gemeinsame Bedienelemente
 Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfügung, die auch bei Vortragenden vorhanden sind. Daher zeigt der folgende Screenshot die Ansicht für Vortragende. Vortragende und Editor\*innen können diese Bedienelemente verwenden:
 
@@ -79,6 +83,8 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
       </td>
    </tr>
 </table>
+
+Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
 ##### Dialogfeld „Medium anlegen“
 Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a> bei <i>Verknüpfte Medien</i> geklickt worden ist.
@@ -138,6 +144,8 @@ Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unters
    </tr>
 </table>
 
+Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
+
 ##### Dialogfeld „Tag anlegen“
 Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> bei <i>Verknüpfte Tags</i> geklickt worden ist.
 
@@ -174,7 +182,6 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
    </tr>
 </table>
 
-
 ### Inhalt
 Sowohl Vortragende als auch Editor\*innen können einen Text für die [Vortragsseite](talk) und die [Seite des Semimars](seminar) verfassen bzw. bearbeiten. Dabei ist zu beachten, dass es sich um unterschiedliche Texte handelt und keine Nutzergruppe Änderungen am Text der jeweils anderen Nutzergruppe vornehmen kann. Vortragende können ihren Text auf der [Vortragsseite](talk) und der [Seite des Semimars](seminar) anzeigen lassen und wieder entfernen. Editor\*innen können den Text der Vortragenden nur von diesen beiden Seiten nehmen, sie können ihn nicht darauf setzen.
 
@@ -194,6 +201,7 @@ Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatier
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/redo.png" height="8"/></button> Wiederhole die letzte Aktion. Dazu muss die letzte Aktion zuvor rückgängig gemacht worden sein.
 
+Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
 #### Besonderheiten bei Editor*innen
 
@@ -210,6 +218,8 @@ Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatier
    </tr>
 </table>
 
+Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
+
 #### Besonderheiten bei Vortragenden
 
 <table>
@@ -225,6 +235,8 @@ Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatier
    </tr>
 </table>
 
+Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
+
 ## Von dieser Seite aus aufrufbare Seiten
 Von der Seite „Vortrag bearbeiten“ aus gelangt man zu den Seiten „Seminar“, „Vortrag“ und „Medium bearbeiten“ bzw. „Quiz bearbeiten“.
 
@@ -238,7 +250,7 @@ Auf der Vortragsseite finden sich grundlegende Informationen zum Vortrag (Vortra
 Auf dieser Seite können Medien bearbeiten werden. Dabei können Medientyp und -titel und die Sprache geändert, ein Inhaltstext verfasst oder bearbeitet sowie Tags und Dateien hinzugefügt oder entfernt werden. Zu Videos kann außerdem eine Gliederung angelegt werden. Ferner kann der Öffentlichkeitsstatus den Mediums eingesehen und bearbeitet werden. Diese Seite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/edit-medium" target="_self"><button>Medientitel</button></a> und nach dem Dialog zum Anlegen eines Mediums. Diesen erreicht man wiederum über <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>.
 
 ### [Seite „Quiz bearbeiten“](edit-quiz)
-Auf der Seite „Quiz bearbeiten“ kann der [Quizeditor](quiz-editor) geöffnet werden. Mit diesem können komplexe Quizzes wie angeleitete Beweise angelegt und bearbeitet werden. Im Gegensatz zu einer Quizfrage kann ein Quiz aus mehreren Fragen bestehen und über antwortabhängige Verzweigungen verfügen. Auf der Seite „Quiz bearbeiten“ können außerdem der Titel, die Sprache, der Inhaltstext und die Öffentlichkeitseinstellungen des Quizzes bearbeitet sowie Tags hinzugefügt oder entfernt werden. 
+Auf der Seite „Quiz bearbeiten“ kann der [Quizeditor](quiz-editor) geöffnet werden. Mit diesem können komplexe Quizzes wie angeleitete Beweise angelegt und bearbeitet werden. Im Gegensatz zu einer Quizfrage kann ein Quiz aus mehreren Fragen bestehen und über antwortabhängige Verzweigungen verfügen. Auf der Seite „Quiz bearbeiten“ können außerdem der Titel, die Sprache, der Inhaltstext und die Öffentlichkeitseinstellungen des Quizzes bearbeitet sowie Tags hinzugefügt oder entfernt werden.
 
 
 ## Verwandte Seiten

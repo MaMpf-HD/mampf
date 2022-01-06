@@ -1,5 +1,4 @@
 ---
-title: Pages for Every User
+title: Skript bearbeiten
 ---
-
 This page will be written soon.

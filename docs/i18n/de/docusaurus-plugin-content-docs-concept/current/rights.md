@@ -1,5 +1,5 @@
 ---
-title: Pages for Every User
+title: Rights
 ---
 
 This page will be written soon.
