@@ -134,6 +134,7 @@ de:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+    watchlist: 'Watchlist'
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
@@ -633,7 +634,7 @@ de:
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
-      first_chapter: 'Nummer des ersten Kapitels/Vortrags'
+      first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
@@ -2163,6 +2164,46 @@ de:
         zu diesem Modul angezeigt.
         </li>
         </ul>
+  watchlist:
+    add: 'Zu meiner Watchlist hinzufügen'
+    select: 'Auswählen'
+    name: 'Name'
+    description: 'Beschreibung'
+    enter_name: 'Namen eingeben'
+    enter_description: 'Beschreibung eingeben (optional)'
+    none: 'Noch keine Watchlist angelegt'
+    empty: 'Diese Watchlist ist leer.'
+    none_added: 'Du hast noch keine Medien zu dieser Liste hinzugefügt.'
+    create: 'Erstellen'
+    creation_confirm: >
+      Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
+      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst: 
+    creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
+    creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
+    change: 'Bearbeiten'
+    save_change: 'Übernehmen'
+    change_success: 'Die Watchlist wurde bearbeitet.'
+    new: 'Neu'
+    delete: 'Löschen'
+    delete_confirm: 'Bist Du Dir sicher, dass Du diese Watchlist löschen willst?'
+    delete_success: 'Die Watchlist wurde erfolgreich gelöscht.'
+    delete_failed: 'Die Watchlist konnte nicht gelöscht werden.'
+    close: 'Schließen'
+    confirm: 'Hinzufügen'
+    public: 'Öffentlich'
+    public_help: 'Wenn Du dieses Kästchen markierst, können andere Personen deine Watchlist sehen. Teile dafür einfach die momentane URL.'
+    order_help: 'Du kannst die Reihenfolge der Medien per Drag-and-Drop beliebig verändern.'
+  watchlist_entry:
+    add_success: 'Das Medium wurde erfolgreich zur Watchlist hinzufügt.'
+    add_fail: 'Es gab einen Fehler beim Hinzufügen zur Watchlist.'
+    remove: 'Medium aus der Watchlist entfernen'
+    remove_confirm: 'Bist Du Dir sicher, dass Du dieses Medium aus der Watchlist entfernen willst?'
+    deletion: 'Das Medium wurde aus der Watchlist entfernt.'
+    list: {
+      zero: 'Dieses Medium gehört zu keiner ihrer Watchlisten.',
+      one: 'Dieses Medium gehört zur folgenden Watchlist: %{watchlists}',
+      other: 'Dieses Medium gehört zu folgenden Watchlisten: %{watchlists}'
+    }
   video:
     video: 'Video'
     no_video: 'Es gibt kein Video.'
@@ -3379,6 +3420,7 @@ de:
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
     no_announcement: >
       Eine Mitteilung mit dieser id existiert nicht.
+    no_watchlist: 'Watchlist existiert nicht oder ist privat.'
     created_lecture_success: >
       Die Veranstaltung %{lecture} wurde erfolgreich angelegt.
     created_course_success: >
@@ -3600,3 +3642,13 @@ de:
               out_of_range: >
                 Das abgegebene Votum ist leider außerhalb des zulässingen
                 Bereiches.
+        watchlist_entry:
+          attributes:
+            medium_id:
+              taken:
+                ist schon in dieser Watchlist.
+        watchlist:
+          attributes:
+            name:
+              taken:
+                'Eine Watchlist mit diesem Namen existiert bereits.'

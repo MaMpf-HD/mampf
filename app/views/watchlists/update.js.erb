@@ -1,0 +1,5 @@
+if(<%= @success %>) {
+  location.reload(true)
+} else {
+  $('#changeWatchlistForm').html("<%= j render partial: 'watchlists/change_form', locals: { watchlist: @watchlist } %>")
+}

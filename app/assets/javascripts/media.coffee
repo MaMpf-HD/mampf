@@ -35,14 +35,16 @@ $(document).on 'turbolinks:load', ->
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
     $('#publish-medium-button').hide()
-    teachableSelector = document.getElementById('medium_teachable').selectize
-    value = teachableSelector.getValue()
-    if value != ''
-      $('#medium_teachable_id').val(value.split('-')[1])
-      $('#medium_teachable_type').val(value.split('-')[0])
-    else
-      $('#medium_teachable_id').val('')
-      $('#medium_teachable_type').val('')
+    teachableElement = document.getElementById('medium_teachable')
+    if teachableElement != null
+      teachableSelector = teachableElement.selectize
+      value = teachableSelector.getValue()
+      if value != ''
+        $('#medium_teachable_id').val(value.split('-')[1])
+        $('#medium_teachable_type').val(value.split('-')[0])
+      else
+        $('#medium_teachable_id').val('')
+        $('#medium_teachable_type').val('')
     return
 
   $('#medium_sort').on 'change', ->

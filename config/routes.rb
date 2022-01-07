@@ -466,6 +466,34 @@ Rails.application.routes.draw do
                               as: 'delete_account'
   resources :users, only: [:index, :edit, :update, :destroy]
 
+  get 'watchlists/show', to: 'watchlists#show',
+                         as: 'show_watchlist'
+
+  get 'watchlists/add_to_watchlist/:id', to: 'watchlists#add_to_watchlist',
+                                         as: 'show_add_to_watchlist'
+
+  get 'watchlists/new_watchlist/', to: 'watchlists#new_watchlist',
+                                   as: 'show_new_watchlist'
+
+  get 'watchlists/change_watchlist/:id', to: 'watchlists#change_watchlist',
+                                         as: 'show_change_watchlist'
+
+  get 'watchlists/add', to: 'watchlists#add',
+                        as: 'add_watchlist'
+
+  get 'watchlists/rearrange', to: 'watchlists#update_order',
+                              as: 'rearrange_watchlist'
+
+  get 'watchlists/change_visiblity', to: 'watchlists#change_visibility',
+                                     as: 'change_visibility'
+
+  get 'watchlists/check_ownership', to: 'watchlists#check_ownership',
+                                    as: 'check_ownership'
+
+  resources :watchlists
+
+  resources :watchlist_entries
+
   get 'examples/:id', to: 'erdbeere#show_example',
                       as: 'erdbeere_example'
   post 'examples/find', to: 'erdbeere#find_example'
@@ -476,13 +504,13 @@ Rails.application.routes.draw do
   get 'find_erdbeere_tags', to: 'erdbeere#find_tags',
                             as: 'find_erdbeere_tags'
   post 'update_erdbeere_tags', to: 'erdbeere#update_tags',
-                            as: 'update_erdbeere_tags'
+                               as: 'update_erdbeere_tags'
   get 'edit_erdbeere_tags', to: 'erdbeere#edit_tags',
                             as: 'edit_erdbeere_tags'
   get 'cancel_edit_erdbeere_tags', to: 'erdbeere#cancel_edit_tags',
-                            as: 'cancel_edit_erdbeere_tags'
+                                   as: 'cancel_edit_erdbeere_tags'
   get 'display_erdbeere_info', to: 'erdbeere#display_info',
-                            as: 'display_erdbeere_info'
+                               as: 'display_erdbeere_info'
   get 'fill_realizations_select', to: 'erdbeere#fill_realizations_select',
                                   as: 'fill_realizations_select'
 
