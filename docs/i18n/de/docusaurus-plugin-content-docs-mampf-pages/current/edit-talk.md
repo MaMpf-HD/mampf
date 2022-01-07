@@ -182,7 +182,7 @@ Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unters
            </li>
         </ul>
      </td>
-     <td>
+     <td valign="top">
         <ul>
            <li>
               Datum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button>

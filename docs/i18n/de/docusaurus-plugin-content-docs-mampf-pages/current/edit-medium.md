@@ -9,6 +9,30 @@ Auf der im Folgenden beschriebenen Seite können Vortragende Begriffe aus der Ma
 ![](/img/medium_bearbeiten_vortragender3.png)
 
 ## Navigation zu dieser Seite
+Vortragende können diese Seite über die [Medienseite](medium) und die Seite [„Vortrag bearbeiten“](edit-talk) erreichen. Editor\*innen gelangen ebenfalls über die [Medienseite](medium) und die Seite [„Vortrag bearbeiten“](edit-talk) bzw. [„Sitzung bearbeiten“](ed-edit-session) auf diese Seite. Zudem können sie auch über die Seite [„Seminar bearbeiten“](ed-edit-seminar) bzw. [„Vorlesung bearbeiten“](ed-edit-lecture) darauf zugreifen.
+
+<ul>
+  <li>
+     <a href="/mampf/de/docs/medium" target="_self"><b>Medienseite</b></a> (Vortragende und Editor*innen)
+  </li>
+  Rechtes neben dem Medientitel in der Überschrift befindet sich das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Medium bearbeiten“ führt.
+  <li>
+     <a href="/mampf/de/docs/edit-talk" target="_self"><b>Seite „Vortrag bearbeiten“</b></a> (Vortragende und Editor*innen)
+  </li>
+  In der Box „Basisdaten“ klickt man auf den gewünschten <button>Medientitel</button> in der Liste „Medien“. Dieser führt einen auf die Seite „Medium bearbeiten“.
+  <li>
+     <a href="/mampf/de/docs/ed-edit-session" target="_self"><b>Seite „Sitzung bearbeiten“</b></a> (Editor*innen)
+  </li>
+  In der Box „Basisdaten“ klickt man auf den gewünschten <button>Medientitel</button> in der Liste „Medien“. Dieser führt einen auf die Seite „Medium bearbeiten“.
+  <li>
+     <a href="/mampf/de/docs/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
+  </li>
+  In der Box „Medien“ klickt man auf den <button>Medientyp</button> und anschließend den <button>Medientitel</button>, um auf die Seite „Medium bearbeiten“ zu navigieren.
+  <li>
+     <a href="/mampf/de/docs/ed-edit-lecture" target="_self"><b>Seite „Vorlesung bearbeiten“</b></a> (Editor*innen)
+  </li>
+  In der Box „Medien“ klickt man auf den <button>Medientyp</button> und anschließend den <button>Medientitel</button>, um auf die Seite „Medium bearbeiten“ zu navigieren.
+</ul>
 
 ## Bereiche der Seite
 
@@ -389,7 +413,7 @@ In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
 * <a href="/mampf/de/docs/thyme-editor" target="_self"><button>Editor</button></a> Öffne den <a href="/mampf/de/docs/thyme-editor" target="_self">THymE-Editor</a>, um eine Videogliederung und Referenzen hinzuzufügen bzw. zu bearbeiten. Dazu muss ein Video hochgeladen und diese Änderung gespeichert worden sein.
 * <a href="/mampf/de/docs/thyme" target="_self"><button>THymE</button></a> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab. Dazu muss vorher ein Video hochgeladen und diese Änderung gespeichert worden sein.
 * <button>Screenshot</button> Öffne den Screenshot der ersten Seite des Dokuments. Dieser wird automatisch als Vorschaubild auf der <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a> und auf der <a href="/mampf/de/docs/medium" target="_self">Medienseite</a> in der Box „Manuskript“ angezeigt. Dazu muss vorher eine pdf-Datei hochgeladen und diese Änderung gespeichert worden sein.
-* <button>Ansehen</button> Öffne die pdf-Datei in einem neuen Tab. Dazu muss vorher eine pdf-Datei hochgeladen und diese Änderung gespeichert worden sein.
+* <button>Ansehen</button> Öffne die pdf-Datei bzw. die ggb-Datei in einem neuen Tab. Dazu muss vorher eine pdf-Datei bzw. eine ggb-Datei hochgeladen und diese Änderung gespeichert worden sein.
 * <form>
      <p>
         <label for="fname">Externer Link</label><br></br>
@@ -409,12 +433,27 @@ In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
   Dropdown-Menü zur Auswahl des Applettyps. Zur Auswahl stehen <i>classic</i>, <i>geometry</i>, <i>graphing</i> und <i>3d</i>.
 
 ## Von dieser Seite aus aufrufbare Seiten
+Von der Seite „Medium bearbeiten“ aus gelangt man zu den Seiten „Seminar“ bzw. „Seminar bearbeiten“ oder „Vorlesung bearbeiten“, „Vortrag bearbeiten“ bzw. „Sitzung bearbeiten“ und der Medienseite. Außerdem errreicht man den THymE-Player und -Editor.
 
-### Seite des [Seminars](seminar) bzw. der [Vorlesung](lecture)
+### [Seite des Seminars](seminar) (Vortragende)
+Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Zur Veranstaltung</button></a>.
 
-### Seite des [Vortrags](talk) bzw. der [Sitzung](session)
+### Seite [„Seminar bearbeiten“](ed-edit-seminar) bzw. [„Vorlesung bearbeiten“](ed-edit-lecture) (Editor*innen)
+Auf diesen Seiten kann die jeweilige Veranstaltung bearbeitet werden. Dort können Medien angelegt werden, bei Vorlesungen außerdem Kapitel, Abschnitte und Sitzungen und bei Seminaren Vorträge. Ferner können dort weitere die Veranstaltung betreffende Einstellungen bearbeitet werden, etwa zu Tutorien und Tutor\*innen, Abgaben, Foren, Mitteilungen, Kommentaren, dem Infotext, der Veranstaltungssprache und dem Passwortschutz der Veranstaltung. Um auf diese Seite zu gelangen, klickt man auf <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button>Zur Veranstaltung</button></a>.
+
+### Seite [„Sitzung bearbeiten“](ed-edit-session) bzw. [„Vortrag bearbeiten“](edit-talk)
+Auf dieser Seite kann die Sitzung bzw. der Vortrag bearbeitet werden. Auf der Seite „Sitzung bearbeiten“ können Editor\*innen das Datum der Sitzung bearbeiten, Medien zur Sitzung hinzufügen oder bereits angelegte Medien bearbeiten, Tags assoziieren oder anlegen und einen Inhaltstext verfassen oder bearbeiten. Um dieser Seite anzusteuern, klickt man auf <a href="/mampf/de/docs/ed-edit-session" target="_self"><button name="button">Zur Sitzung</button></a>.
+
+Auf der Seite „Vortrag bearbeiten“ können Vortragende Begriffe aus der MaMpf-Datenbank und eigene Medien hinzufügen sowie den Beschreibungstext bearbeiten. Editor\*innen können zudem neue Begriffe anlegen sowie die Vortragenden, das Vortragsdatum und die Position des Vortrags in der Gliederung bearbeiten. Außerdem können sie einen Beschreibungstext verfassen bzw. bearbeiten und den Text der Vortragenden von der Vortragsseite entfernen. Diese Seite ist über <a href="/mampf/de/docs/edit-talk" target="_self"><button name="button">Zum Vortrag</button></a> erreichbar.
 
 ### [Medienseite](medium)
+Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+
+### [THymE-Player](thyme)
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an, sofern diese zuvor mit dem <a href="/mampf/de/docs/thyme-editor" target="_self">THymE-Editor</a> angelegt worden sind. Der Player öffnet sich durch Klicken auf <a href="/mampf/de/docs/thyme" target="_self"><button name="button">THymE</button></a>.
+
+### [THymE-Editor](thyme-editor)
+Im THymE-Editor kann eine Videogliederung angelegt und Referenzen hinzugefügt werden. Diese werden dann beim Abspielden des Videos im <a href="/mampf/de/docs/thyme" target="_self">THymE-Player</a> angezeigt. Um zum Editor zu gelangen, klickt man auf <a href="/mampf/de/docs/thyme-editor" target="_self"><button name="button">Editor</button></a>.
 
 ## Verwandte Seiten
 ### Betrachtung
@@ -432,9 +471,9 @@ In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
 * [Vortrag bearbeiten](edit-talk)
 
 #### Nur Editor\*innen zugänglich
-* [Begriff bearbeiten](tag)
+* [Begriff bearbeiten](ed-edit-tag)
 * [Frage bearbeiten](ed-edit-question)
 * [Erläuterung bearbeiten](ed-edit-explanation)
-* Seminar bearbeiten
+* [Seminar bearbeiten](ed-edit-seminar)
 * [Skript bearbeiten](ed-edit-manuscript)
-* Vorlesung bearbeiten
+* [Vorlesung bearbeiten](ed-edit-lecture)
