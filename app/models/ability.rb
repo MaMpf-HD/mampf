@@ -194,6 +194,20 @@ class Ability
       can :validate, QuizCertificate do |quiz_certificate|
         user.tutor?
       end
+
+      can [:create, :show, :sanitize_params, :paginated_results,
+           :filter_results, :add_to_watchlist, :new_watchlist], Watchlist
+
+      can [:update, :destroy, :change_watchlist, :update_order, :change_visibility], Watchlist do |watchlist|
+        watchlist.ownedBy(user)
+      end
+
+      can [:create], WatchlistEntry
+
+      can [:destroy], WatchlistEntry do |watchlist_entry|
+        watchlist_entry.ownedBy(user)
+      end
+      
     else
       can :read, :all
       can :start, :main
@@ -341,6 +355,19 @@ class Ability
 
       can [:create, :update, :destroy], Answer do |answer|
         answer.question.edited_with_inheritance_by?(user)
+      end
+
+      can [:create, :show, :sanitize_params, :paginated_results,
+           :filter_results, :add_to_watchlist, :new_watchlist], Watchlist
+
+      can [:update, :destroy, :change_watchlist, :update_order, :change_visibility], Watchlist do |watchlist|
+        watchlist.ownedBy(user)
+      end
+
+      can [:create], WatchlistEntry
+
+      can [:destroy], WatchlistEntry do |watchlist_entry|
+        watchlist_entry.ownedBy(user)
       end
     end
   end
