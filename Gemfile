@@ -82,7 +82,6 @@ gem "thredded-markdown_katex",
 gem "rails-i18n"
 gem "kaminari-i18n"
 gem "trix-rails", require: "trix"
-gem "xkcd"
 gem "sunspot_rails",
   github: 'sunspot/sunspot',
   glob: 'sunspot_rails/*.gemspec'

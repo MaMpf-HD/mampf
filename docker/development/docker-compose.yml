@@ -23,7 +23,7 @@ services:
     - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
