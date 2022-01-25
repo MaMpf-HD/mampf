@@ -21,6 +21,12 @@ RSpec.describe User, type: :model do
     expect(user).not_to be_valid
   end
 
+  it 'is invalid if homepage is given but with an invalid url' do
+    user = FactoryBot.build(:confirmed_user)
+    user.homepage = 'https://github.com/MaMpf-HD/mampf'
+    expect(user).to be_valid
+  end
+
   # test traits and subfactories
 
   describe 'confirmed user' do
