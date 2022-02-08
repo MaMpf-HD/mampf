@@ -40,7 +40,7 @@ class SubmissionCleaner
     if @submissions_to_be_deleted.present?
       @advance = true
       @destroy = true
-    elsif @previous_term
+    end
   end
 
   def fetch_previous_term_props
@@ -112,21 +112,21 @@ class SubmissionCleaner
                                   reminder: @reminder,
                                   locale: l)
                             .submission_deletion_email.deliver_now
-        end
       end
     end
+  end
 
-    def send_info_mail_to_editors
-      @lectures.each do |l|
-        editor_ids = l.editors.pluck(:id) + [l.teacher.id]
-        NotificationMailer.with(recipients: editor_ids,
-                                term: @previous_term,
-                                lecture: l,
-                                deletion_date:
-                                  @previous_term.submission_deletion_date,
-                                reminder: @reminder,
-                                locale: l.locale)
-                          .submission_deletion_lecture_email.deliver_now
-      end
+  def send_info_mail_to_editors
+    @lectures.each do |l|
+      editor_ids = l.editors.pluck(:id) + [l.teacher.id]
+      NotificationMailer.with(recipients: editor_ids,
+                              term: @previous_term,
+                              lecture: l,
+                              deletion_date:
+                                @previous_term.submission_deletion_date,
+                              reminder: @reminder,
+                              locale: l.locale)
+                        .submission_deletion_lecture_email.deliver_now
     end
+  end
 end
