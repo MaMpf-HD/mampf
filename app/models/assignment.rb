@@ -33,6 +33,14 @@ class Assignment < ApplicationRecord
   									 &.first&.submission
   end
 
+  def submitter_ids
+    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
+  end
+
+  def submitters
+    User.where(id: submitter_ids)
+  end
+
   def active?
     Time.now <= deadline
   end

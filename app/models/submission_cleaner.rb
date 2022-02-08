@@ -11,64 +11,48 @@ class SubmissionCleaner
   end
 
   def clean!
-    set_attributes
-    return unless @advance
-
-    warn_about_destruction and return unless @destroy
-
-    destroy_and_inform
-  end
-
-  def set_attributes
-    fetch_previous_term_props
-    return unless @previous_term
-    determine_actions
-    true
-  end
-
-  private
-
-  def determine_actions
-    @advance = false
-    if date == @previous_term.end_date + 1.day
-      @advance = @previous_term.submission_deletion_mail.nil?
-      @reminder = false
-    elsif date == @previous_term.end_date + 8.days
-      @advance = @previous_term.submission_deletion_mail.present? &&
-                   @previous_term.submission_deletion_reminder.nil?
-      @reminder = true
-    if @submissions_to_be_deleted.present?
-      @advance = true
-      @destroy = true
-    end
-  end
-
-  def fetch_previous_term_props
     @previous_term = Term.previous_by_date(@date)
     return unless @previous_term
-    @submissions = @previous_term.submissions
-    @submissions_to_be_deleted = @previous_term.submissions.where(deletion_date: Date.today.all_day)
-    @submitters = @previous_term.submitters
-    @lectures = @previous_term.lectures_with_submissions
+
+    check_for_first_mail
+    check_for_reminder_mail
+    check_for_deletion
   end
 
-  def destroy_and_inform
-    @previous_term.update(submissions_deleted_at: Time.now)
+  def check_for_first_mail
+    @deletion_date = Time.zone.today + 14.days
+    fetch_props
+    @reminder = false
+
+    send_info_mail_to_submitters
+    send_info_mail_to_editors
+  end
+
+  def check_for_reminder_mail
+    @deletion_date = Time.zone.today + 7.days
+    fetch_props
+    @reminder = true
+
+    send_info_mail_to_submitters
+    send_info_mail_to_editors
+  end
+
+  def check_for_deletion
+    @deletion_date = Time.zone.today
+    fetch_props
+
     @submissions.each(&:destroy)
+
     send_destruction_mail_to_submitters
     send_destruction_mail_to_editors
   end
 
-  def warn_about_destruction
-    if @reminder
-      @previous_term.update(submission_deletion_reminder: Time.now)
-    else
-      @previous_term.update(submission_deletion_mail: Time.now)
-    end
+  private
 
-    send_info_mail_to_submitters
-    send_info_mail_to_editors
-    true
+  def fetch_props
+    @assignments = Assignments.where(deletion_date: @deletion_date)
+    @submitters = @assignments.submitters
+    @lectures = Lecture.find_by(id: @assignments.pluck(:lecture_id))
   end
 
   def send_destruction_mail_to_submitters
@@ -99,19 +83,19 @@ class SubmissionCleaner
   end
 
   def send_info_mail_to_submitters
-    return unless @submitters.present?
+    return if @submitters.blank?
 
     I18n.available_locales.each do |l|
       local_submitter_ids = @submitters.where(locale: l).pluck(:id)
       next if local_submitter_ids.empty?
-        local_submitter_ids.in_groups_of(200, false) do |group|
-          NotificationMailer.with(recipients: group,
-                                  term: @previous_term,
-                                  deletion_date:
-                                    @previous_term.submission_deletion_date,
-                                  reminder: @reminder,
-                                  locale: l)
-                            .submission_deletion_email.deliver_now
+
+      local_submitter_ids.in_groups_of(200, false) do |group|
+        NotificationMailer.with(recipients: group,
+                                term: @previous_term,
+                                deletion_date: @deletion_date,
+                                reminder: @reminder,
+                                locale: l)
+                          .submission_deletion_email.deliver_now
       end
     end
   end
@@ -122,8 +106,7 @@ class SubmissionCleaner
       NotificationMailer.with(recipients: editor_ids,
                               term: @previous_term,
                               lecture: l,
-                              deletion_date:
-                                @previous_term.submission_deletion_date,
+                              deletion_date: @deletion_date,
                               reminder: @reminder,
                               locale: l.locale)
                         .submission_deletion_lecture_email.deliver_now

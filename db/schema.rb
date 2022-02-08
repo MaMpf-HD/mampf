@@ -45,7 +45,7 @@ ActiveRecord::Schema.define(version: 2022_01_25_162730) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.text "accepted_file_type", default: ".pdf"
-    t.datetime "deletion_date", default: "2020-10-15 00:00:00", null: false
+    t.date "deletion_date", default: "2020-10-15", null: false
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end
