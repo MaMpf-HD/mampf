@@ -252,6 +252,10 @@ class Submission < ApplicationRecord
     report
   end
 
+  def self.to_be_deleted
+    Submission.where(assignment: Assignment.to_be_deleted)
+  end
+
   private
 
   def matching_lecture

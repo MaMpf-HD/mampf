@@ -62,16 +62,9 @@ class Term < ApplicationRecord
   def assignments
     Assignment.where(lecture: lectures)
   end
-  def unprotected_assignments
-    Assignment.where(lecture: lectures, protected: false)
-  end
 
   def submissions
     Submission.where(assignment: assignments)
-  end
-
-  def unprotected_submissions
-    Submission.where(assignment: unprotected_assignments)
   end
 
   def submitter_ids
@@ -80,18 +73,6 @@ class Term < ApplicationRecord
 
   def submitters
     User.where(id: submitter_ids)
-  end
-
-  def unprotected_submitter_ids
-    UserSubmissionJoin.where(submission: unprotected_submissions).pluck(:user_id).uniq
-  end
-
-  def unprotected_submitters
-    User.where(id: unprotected_submitter_ids)
-  end
-
-  def submission_deletion_date
-    end_date + 15.days
   end
 
   def assignments_with_submissions

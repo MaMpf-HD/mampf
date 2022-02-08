@@ -2785,6 +2785,7 @@ de:
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
     protected: Geschützte Abgabe
+    deletion_date: Löschdatum
     protected_info: >
       "Geschützte" Abgaben werden bis zur manuellen Löschung aufbewahrt und werden nicht automatisiert nach Ablauf der Aufbewahrungsfrist (Semesterende + Karenzzeit von 14 Tagen) gelöscht.
     destruction_info:
@@ -3456,6 +3457,11 @@ de:
             deadline:
               blank: >
                 Es muss ein Abgabetermin angegeben werden.
+            deletion_date:
+              blank: >
+                Es muss ein Löschdatum angegeben werden.
+              in_past: >
+                Löschdatum darf nicht in der Vergangenheit liegen.
         chapter:
           attributes:
             title:

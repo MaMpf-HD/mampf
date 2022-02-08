@@ -2619,6 +2619,7 @@ en:
     nothing_yet_in_lecture: >
       In this lecture nothing had yet to be submitted.
     protected: Protected Assignment
+    deletion_date: Deletion date
     protected_info: >
       "Protected" Assignments won't be deleted at the end of the semester.
     destruction_info: >
@@ -3266,6 +3267,9 @@ en:
               blank: You need to give a title.
             deadline:
               blank: You need to give a due date.
+            deletion_date:
+              blank: You need to give a deletion date.
+              in_past: Deletion date can't lie in the past.
         chapter:
           attributes:
             title:

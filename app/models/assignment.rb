@@ -7,6 +7,14 @@ class Assignment < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
+  validates :deletion_date, presence: true
+  validate :deletion_date_cannot_be_in_the_past
+
+  def deletion_date_cannot_be_in_the_past
+    return unless deletion_date.present? && deletion_date < DateTime.now
+
+    errors.add(:deletion_date, I18n.t('activerecord.errors.models.assignment.attributes.deletion_date.in_past'))
+  end
 
   scope :active, -> { where('deadline >= ?', Time.now) }
 
@@ -125,5 +133,9 @@ class Assignment < ApplicationRecord
   def accepted_for_file_input
   	return accepted_file_type unless accepted_file_type == '.tar.gz'
   	'.gz'
+  end
+
+  def self.to_be_deleted
+    Assignment.where('deletion_date < ?', DateTime.now)
   end
 end

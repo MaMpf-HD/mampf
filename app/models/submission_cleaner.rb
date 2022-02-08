@@ -20,8 +20,9 @@ class SubmissionCleaner
   end
 
   def set_attributes
+    fetch_previous_term_props
+    return unless @previous_term
     determine_actions
-    fetch_previous_term_props if @advance
     true
   end
 
@@ -29,9 +30,6 @@ class SubmissionCleaner
 
   def determine_actions
     @advance = false
-    @previous_term = Term.previous_by_date(@date)
-    return unless @previous_term
-    return unless @date.in?(previous_term.submission_deletion_info_dates)
     if date == @previous_term.end_date + 1.day
       @advance = @previous_term.submission_deletion_mail.nil?
       @reminder = false
@@ -39,17 +37,18 @@ class SubmissionCleaner
       @advance = @previous_term.submission_deletion_mail.present? &&
                    @previous_term.submission_deletion_reminder.nil?
       @reminder = true
-    elsif date == @previous_term.submission_deletion_date
-      @advance = @previous_term.submission_deletion_mail.present? &&
-                   @previous_term.submission_deletion_reminder.present? &&
-                   @previous_term.submissions_deleted_at.nil?
+    if @submissions_to_be_deleted.present?
+      @advance = true
       @destroy = true
-    end
+    elsif @previous_term
   end
 
   def fetch_previous_term_props
-    @submissions = @previous_term.unprotected_submissions
-    @submitters = @previous_term.unprotected_submitters
+    @previous_term = Term.previous_by_date(@date)
+    return unless @previous_term
+    @submissions = @previous_term.submissions
+    @submissions_to_be_deleted = @previous_term.submissions.where(deletion_date: Date.today.all_day)
+    @submitters = @previous_term.submitters
     @lectures = @previous_term.lectures_with_submissions
   end
 
