@@ -54,13 +54,15 @@ class MainController < ApplicationController
   end
 
   def test_mail
-    response = NotificationMailer.with(recipients: [580],#, 581, 582, 583, 584],
-                            locale: "de")
-                      .test_email.deliver_now!
+    #response = NotificationMailer.with(recipients: [580],#, 581, 582, 583, 584],
+    #                        locale: "de")
+    #                  .test_email.deliver_now!
     logger = Logger.new("log/emails.log")
     logger.info('Trying to read emails:')
-    imap = Net::IMAP.new(DefaultSetting::PROJECT_EMAIL)
-    imap.examine('INBOX')
+    logger.info("Email: #{ENV['PROJECT_EMAIL']}")
+    imap = Net::IMAP.new(ENV['IMAPSERVER'])
+    imap.authenticate('LOGIN', ENV['PROJECT_EMAIL_USERNAME'], ENV['PROJECT_EMAIL_PASSWORD'])
+    imap.examine('PROJECT_EMAIL_MAILBOX')
     imap.search(["RECENT"]).each do |message_id|
       envelope = imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
       logger.info("#{envelope.from[0].name}: \t#{envelope.subject}")
