@@ -38,9 +38,11 @@
                        id: "assignment_filetype_id_#{assignment.id}" } %>
       </div>
       <div class="form-group col-2">
-        <%= f.text_field :deletion_date,
-                         class: 'form-control',
-                         id: "assignment_deletion_date_#{assignment.id}" %>
+        <%= f.select :deletion_date,
+                     Term.possible_deletion_dates,
+                     {},
+                     class: 'form-control',
+                     id: "assignment_deletion_date_#{assignment.id}" %>
         <div class="invalid-feedback"
              id="assignment-deletion-date-error">
         </div>

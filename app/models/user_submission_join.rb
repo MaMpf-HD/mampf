@@ -5,10 +5,6 @@ class UserSubmissionJoin < ApplicationRecord
   validate :only_one_per_assignment, on: :create
   validate :max_team_size, on: :create
 
-  def self.to_be_deleted_user_ids
-    UserSubmissionJoin.where(submission: Submission.to_be_deleted).pluck(:user_id).uniq
-  end
-
   def assignment
   	submission.assignment
   end

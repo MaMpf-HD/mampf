@@ -137,10 +137,6 @@ class User < ApplicationRecord
         .map { |u| [ "#{u.first} (#{u.second})", u.third] }
   end
 
-  def self.on_submissions_to_be_deleted
-    User.where(id: UserSubmissionJoin.to_be_deleted_user_ids)
-  end
-
   def courses
     Course.where(id: lectures.pluck(:course_id).uniq)
   end

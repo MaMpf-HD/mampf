@@ -142,8 +142,5 @@ class Assignment < ApplicationRecord
   	return accepted_file_type unless accepted_file_type == '.tar.gz'
   	'.gz'
   end
-
-  def self.to_be_deleted
-    Assignment.where('deletion_date < ?', DateTime.now)
-  end
+  
 end

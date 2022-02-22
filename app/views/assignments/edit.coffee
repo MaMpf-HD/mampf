@@ -14,12 +14,6 @@ $("#assignment_deadline_<%= @assignment.id %>").datetimepicker
   format:'d.m.Y H:i'
   inline:false
 
-d = moment($("#assignment_deletion_date_<%= @assignment.id %>").val(),"YYYY-MM-DD hh:mm:ss z")
-$("#assignment_deletion_date_<%= @assignment.id %>").val (d.format("DD.MM.Y H:mm"))
-$("#assignment_deletion_date_<%= @assignment.id %>").datetimepicker
-  format:'d.m.Y H:i'
-  inline:false
-
 <% unless @assignment.medium %>
 # make sure that no medium is preselected
 $('#assignment_medium_id_<%= @assignment.id %>').val(null).trigger('change')

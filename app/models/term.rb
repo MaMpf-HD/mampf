@@ -92,6 +92,14 @@ class Term < ApplicationRecord
     [end_date + 1.day, end_date + 8.days, submission_deletion_date]
   end
 
+  def self.possible_deletion_dates
+    return [Time.zone.today + 6.months] if Term.active.blank?
+
+    [Term.active.end_date + 2.weeks,
+     Term.active.end_date + 2.weeks + 3.months,
+     Term.active.end_date + 2.weeks + 6.months]
+  end
+
   # array of all terms together with their ids for use in options_for_select
   def self.select_terms(independent = false)
     return ['bla', nil] if independent
