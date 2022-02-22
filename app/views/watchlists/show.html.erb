@@ -1,18 +1,39 @@
-<div class="row pb-2">
-  <div class="col-sm-12 col-md-12 col-lg-6">
-    <ul class="nav justify-content-left">
+<div class="row pb-2 no-gutters">
+  <div class="col-6">
+    <ul class="nav justify-content-start">
       <%= render partial: 'watchlists/show_left_header' %>
     </ul>
   </div>
-  <div class="col-sm-12 col-md-12 col-lg-6">
-    <ul class="nav justify-content-right">
+  <div class="col-6">
+    <ul class="nav justify-content-end">
       <%= render partial: 'watchlists/show_right_header' %>
+    </ul>
   </div>
 </div>
+<% if @watchlist.present? && !@watchlist.description.blank? %>
+  <div class="col-sm-12 col-md-12 col-lg-6">
+    <ul class="nav justify-content-left">
+      <div class="collapse" id="collapseDescription">
+        <div class="card card-body">
+          <%= simple_format(@watchlist.description) %>
+        </div>
+      </div>
+    </ul>
+  </div>
+<% end %>
+<% if @watchlist.present? && @watchlist_entries.blank? %>
+  <div class="col-sm-12 col-md-12 col-lg-6 pt-2">
+    <ul class="nav justify-content-left">
+      <div class="alert alert-info" role="alert">
+        <%= t('watchlist.none_added') %>
+      </div>
+    </ul>
+  </div>
+<% end %>
 <% if @watchlist_entries.present? %>
-  <div class="row" id="sortableWatchlistMedia">
+  <div class="row pt-2" id="sortableWatchlistMedia">
     <% @watchlist_entries.each do |entry| %>
-      <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-2">
+      <div class="col-12 col-md-6 col-lg-3 col-xl-2 pb-2">
         <%= render partial: 'watchlist_entries/entry',
                    locals: { medium: entry.medium,
                              entry: entry,

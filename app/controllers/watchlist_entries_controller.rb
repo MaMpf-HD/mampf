@@ -1,5 +1,8 @@
 # WatchlistEntriesController
 class WatchlistEntriesController < ApplicationController
+
+  authorize_resource
+
   def create
     @watchlist_entry = WatchlistEntry.new
     @watchlist = Watchlist.find_by_id(params[:watchlist_entry][:watchlist_id])

@@ -1,11 +1,11 @@
 ---
-version: '3.2'
+version: '3.4'
 services:
   redis:
     image: "redis:alpine"
 
   solr:
-    image: "solr:8"
+    image: "solr:8.11.1"
     ports:
       - "127.0.0.1:8983:8983"
     volumes:
@@ -23,7 +23,7 @@ services:
     - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -37,6 +37,17 @@ services:
     image: dockage/mailcatcher:latest
     ports:
       - "127.0.0.1:1080:1080"
+
+  imap:
+    image: antespi/docker-imap-devel:latest
+    ports:
+      - "1025:25"
+      - "10143:143"
+      - "10993:993"
+    environment:
+      - MAILNAME=localhost
+      - MAIL_ADDRESS=mampf@localhost
+      - MAIL_PASS=mampf
 
   mampf:
     build:
@@ -79,6 +90,11 @@ services:
       WEBPACKER_DEV_SERVER_HOST: webpacker
       MAMPF_REGISTRATION_TIMEFRAME: 25
       MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
+      IMAPSERVER: imap:10993
+      IMAP_TLS_IGNORE_CERT: 1
+      PROJECT_EMAIL_USERNAME: mampf
+      PROJECT_EMAIL_PASSWORD: mampf
+      PROJECT_EMAIL_MAILBOX: INBOX
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
       # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20201128165713_mampf.sql&dl=1"
       # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/d2f72a4069814debaf69/?dl=1"

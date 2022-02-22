@@ -9,6 +9,7 @@
         <%= f.text_field :name, placeholder: t('watchlist.enter_name'),
                         class: 'form-control is-invalid',
                         id: 'watchlistNameField',
+                        value: @watchlist.name,
                         :required => true %>
       <% else %>
         <%= f.text_field :name, placeholder: t('watchlist.enter_name'),
@@ -32,5 +33,16 @@
           <% end %>
         </div>
       <% end %>
+    </div>
+  </div>
+  <div class="form-group form-row">
+    <%= f.label :label, t('watchlist.description') %>
+    <div class="input-group mb-3">
+      <%= f.text_area :description, placeholder: t('watchlist.enter_description'),
+                      class: 'form-control',
+                      id: 'watchlistDescriptionField',
+                      value: (@watchlist.present? && @watchlist.errors.any? ? @watchlist.description : ''),
+                      rows: 5 %>
+    </div>
   </div>
 <% end %>

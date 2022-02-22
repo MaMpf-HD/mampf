@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.7.2'
+ruby '3.0.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 6.1"
+gem "rails", "~> 6.1.4.4"
 # Use dalli for caching to memcached in production
 gem "dalli", ">= 2.7"
 # Ruby wrapper for UglifyJS JavaScript compressor
@@ -73,22 +73,25 @@ gem "activerecord-import",
   git: "https://github.com/zdennis/activerecord-import.git",
   branch: "master"
 gem "thredded",
-  git: "https://github.com/MaMpf-HD/thredded.git",
+  github: "MaMpf-HD/thredded",
   branch: "master"
 gem "kramdown-parser-gfm"
-gem "thredded-markdown_katex"
+gem "thredded-markdown_katex",
+  github: "thredded/thredded-markdown_katex",
+  branch: "master"
 gem "rails-i18n"
 gem "kaminari-i18n"
 gem "trix-rails", require: "trix"
-gem "xkcd"
-gem "sunspot_rails"
+gem "sunspot_rails",
+  github: 'sunspot/sunspot',
+  glob: 'sunspot_rails/*.gemspec'
 gem "sunspot_solr"
 gem "progress_bar"
 gem "barby"
 gem "rqrcode"
 gem "sidekiq"
 gem "sidekiq-cron", "~> 1.1"
-gem "faraday"
+gem "faraday", "~> 1.8"
 gem "globalize"
 gem "globalize-accessors"
 gem "commontator",
@@ -144,5 +147,6 @@ end
 
 group :test, :development, :docker_development do
   gem 'cypress-on-rails', '~> 1.0'
+  gem 'simplecov-cobertura'
 end
 gem 'prometheus_exporter'

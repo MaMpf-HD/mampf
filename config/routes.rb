@@ -430,6 +430,9 @@ Rails.application.routes.draw do
   get 'watchlists/new_watchlist/', to: 'watchlists#new_watchlist',
                                    as: 'show_new_watchlist'
 
+  get 'watchlists/change_watchlist/:id', to: 'watchlists#change_watchlist',
+                                         as: 'show_change_watchlist'
+
   get 'watchlists/add', to: 'watchlists#add',
                         as: 'add_watchlist'
 
@@ -438,9 +441,6 @@ Rails.application.routes.draw do
 
   get 'watchlists/change_visiblity', to: 'watchlists#change_visibility',
                                      as: 'change_visibility'
-
-  get 'watchlists/check_ownership', to: 'watchlists#check_ownership',
-                                    as: 'check_ownership'
 
   resources :watchlists
 

@@ -1,8 +1,8 @@
 <%# Select watchlist button %>
-<li class="nav-item pl-2 pr-1">
+<li class="nav-item pl-2 ml-3">
   <div class="input-group">
     <% if @watchlists.size > 1 %>
-      <span class="dropdown ml-3">
+      <span class="dropdown">
         <button class="btn btn-primary dropdown-toggle"
             data-toggle="dropdown"
             type="button"
@@ -41,6 +41,20 @@
     </div>
   </div>
 </li>
+<%# Description%>
+<% if @watchlist.present? && @watchlist.description.present? %>
+  <li class="nav-item pl-2">
+    <a class="nav-link btn btn-sm bg-grey-lighten-4"
+       id="descriptionButton"
+       data-toggle="collapse"
+       data-target="#collapseDescription"
+       role="button"
+       aria-expanded="false"
+       aria-controls="collapseDescription">
+      <%= t('watchlist.description') %>
+    </a>
+  </li>
+<% end %>
 <% if @watchlist_entries %>
   <%# Reverse order button%>
   <li class="nav-item pl-2 pr-1">
