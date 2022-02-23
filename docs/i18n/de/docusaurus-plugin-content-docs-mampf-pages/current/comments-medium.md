@@ -35,7 +35,6 @@ Auf der Seite „Kommentare für ein Medium“ gibt es folgende Bedienelemente:
 Von dieser Seite aus kann nur zur [Medienseite des kommentierten Mediums](medium.md) navigiert werden. Dort stehen weitere Informationen zum Medium zur Verfügung, etwa zu Länge bzw. Umfang und Größe von PDFs bzw. Videos. Über die dort aufgeführte Gliederung kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Medium verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ## Hinweise für Editor*innen
-
 Editor\*innen können Diskussionen moderieren. Sie können einzelne Kommentare löschen und die Diskussion beenden und erneut öffnen. Dazu stehen ihnen die Bedienelemente <button name="button">Diskussion beenden</button> bzw. <button name="button">Diskussion wieder öffnen</button> und <button name="button">Löschen</button> zur Verfügung.
 
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-medium-manage1.PNG"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-medium-manage2.PNG"/>|

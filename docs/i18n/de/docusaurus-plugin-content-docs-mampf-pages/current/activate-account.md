@@ -26,9 +26,11 @@ Die Bedienelemente der Seite „Anleitung zur Bestätigung des Accounts erneut v
 ![](/img/Anleitung_zur_Bestaetigung.png)
 
 * <form>
-  <p><label for="fname">Email</label><br></br>
-  <input type="text" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Email</label><br></br>
+        <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für die E-Mail-Adresse, mit der man sich bereits registriert hat.
 * <button name="button">Anleitung zur Bestätigung des Accounts erneut versenden</button> Schicke die eingegebenen Daten ab, um eine E-Mail mit Freischaltungslink für den Account zu erhalten.
 * <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>

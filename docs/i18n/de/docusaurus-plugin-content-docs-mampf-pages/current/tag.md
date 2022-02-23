@@ -31,16 +31,19 @@ Die eigentliche Seite besteht aus einer Überschrift und den sechs Boxen „Syno
 <a href="/mampf/de/docs/section" target="_self"><button name="button">Abschnitt</button></a> Gehe auf die <a href="/mampf/de/docs/section" target="_self">Seite des Abschnitts</a>.
 
 ### MaMpf-Map
-* <label for="cars"></label><select name="cars" id="cars">
-  <option value="" selected disabled hidden>Sichtbarkeit: Tags</option>
-  <option value="volvo">aus allen abonnierten und inhaltlich vorangehenden Modulen</option>
-  <option value="saab">aus allen abonnierten Modulen</option>
-  <option value="mercedes">aus allen Modulen</option></select> Wähle aus, welche Begriffe angezeigt werden. Zur Auswahl stehen <i>aus allen abonnierten und inhaltlich vorangehenden Modulen</i>, <i>aus allen abonnierten Modulen</i> und <i>aus allen Modulen</i>.
-* <label for="cars"></label><select name="cars" id="cars">
-  <option value="" selected disabled hidden>Tiefe</option>
-  <option value="volvo">1</option>
-  <option value="saab">2</option>
-</select> Stelle ein, wie viele Begriffe angezeigt werden sollen: nur direkt mit dem Begriff verbundene <i>(1)</i> oder auch mit verknüpften Begriffen verbundene Begriffe <i>(2)</i>.
+* <label for="cars"></label>
+  <select name="cars" id="cars">
+     <option value="" selected disabled hidden>Sichtbarkeit: Tags</option>
+     <option value="volvo">aus allen abonnierten und inhaltlich vorangehenden Modulen</option>
+     <option value="saab">aus allen abonnierten Modulen</option>
+     <option value="mercedes">aus allen Modulen</option>
+  </select> Wähle aus, welche Begriffe angezeigt werden. Zur Auswahl stehen <i>aus allen abonnierten und inhaltlich vorangehenden Modulen</i>, <i>aus allen abonnierten Modulen</i> und <i>aus allen Modulen</i>.
+* <label for="cars"></label>
+  <select name="cars" id="cars">
+     <option value="" selected disabled hidden>Tiefe</option>
+     <option value="volvo">1</option>
+     <option value="saab">2</option>
+  </select> Stelle ein, wie viele Begriffe angezeigt werden sollen: nur direkt mit dem Begriff verbundene <i>(1)</i> oder auch mit verknüpften Begriffen verbundene Begriffe <i>(2)</i>.
 * <button name="button">in externem Tab rendern</button> Öffne die Mindmap in einem externen Tab.
 * <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
 

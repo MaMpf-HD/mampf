@@ -27,21 +27,23 @@ Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sin
 ### Seiteneinstellungen
 * <button name="button">Reihenfolge umkehren</button> Ändere die Sortierreihenfolge der Medien.
 * <button name="button">alle</button> Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Übungen auf einer Seite angezeigt werden.
-* <label for="cars"></label><select name="cars" id="cars">
-  <option value="" selected disabled hidden>pro Seite</option>
-  <option value="volvo">3</option>
-  <option value="saab">4</option>
-  <option value="mercedes">8</option>
-  <option value="audi">12</option>
-  <option value="volvo1">24</option>
-  <option value="saab2">48</option>
-</select> Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>8</i> (standardmäßig), <i>12</i>, <i>24</i> und <i>48</i>.
-* <label for="cars"></label><select name="cars" id="cars">
-  <option value="" selected disabled hidden>Zusatzmaterialien</option>
-  <option value="volvo">zu bereits Behandeltem</option>
-  <option value="saab">keine</option>
-  <option value="mercedes">alle</option>
-</select> Ändere Einstellung für die Anzeige von Zusatzmaterialien: <i>zu bereits Behandeltem</i> (standardmäßig), <i>keine</i> oder <i>alle</i>.
+* <label for="cars"></label>
+  <select name="cars" id="cars">
+     <option value="" selected disabled hidden>pro Seite</option>
+     <option value="volvo">3</option>
+     <option value="saab">4</option>
+     <option value="mercedes">8</option>
+     <option value="audi">12</option>
+     <option value="volvo1">24</option>
+     <option value="saab2">48</option>
+  </select> Bestimme die Anzahl der pro Seite angezeigten Medien. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>8</i> (standardmäßig), <i>12</i>, <i>24</i> und <i>48</i>.
+* <label for="cars"></label>
+  <select name="cars" id="cars">
+     <option value="" selected disabled hidden>Zusatzmaterialien</option>
+     <option value="volvo">zu bereits Behandeltem</option>
+     <option value="saab">keine</option>
+     <option value="mercedes">alle</option>
+  </select> Ändere Einstellung für die Anzeige von Zusatzmaterialien: <i>zu bereits Behandeltem</i> (standardmäßig), <i>keine</i> oder <i>alle</i>.
 
 ### Seitennavigation
 * <button name="button">n</button> Wechsel auf Seite n.

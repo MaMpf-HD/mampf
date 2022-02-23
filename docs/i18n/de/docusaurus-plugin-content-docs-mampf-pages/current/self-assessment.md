@@ -12,16 +12,21 @@ Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche S
 \*Bilder mit Titel einfügen\*
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-*  <label for="cars">Anzahl der Fragen</label> <select name="cars" id="cars">
-  <option value="volvo">5</option>
-  <option value="saab">10</option>
-  <option value="mercedes">15</option>
-</select><br></br>  
-Drop-Down-Menü, mit dem die Anzahl der Fragen festgelegt werden kann. Zur Auswahl stehen <i>5</i> (standardmäßig), <i>10</i> und <i>15</i>.
+* <label for="cars">Anzahl der Fragen </label>
+  <select name="cars" id="cars">
+     <option value="volvo">5</option>
+     <option value="saab">10</option>
+     <option value="mercedes">15</option>
+  </select>
+  <br></br>  
+  Drop-Down-Menü, mit dem die Anzahl der Fragen festgelegt werden kann. Zur Auswahl stehen <i>5</i> (standardmäßig), <i>10</i> und <i>15</i>.
 * <form>
-  <p><label for="fname">Inhalts-Spezifikation</label><br></br>
-  <input type="text" id="fname" name="fname"></input><br></br>
-  </p></form> Eingabefeld und scrollbare Liste. Wähle durch Eintippen oder Anklicken Begriffe aus, zu denen Fragen im Selbsttest vorkommen sollen.
+     <p>
+        <label for="fname">Inhalts-Spezifikation</label><br></br>
+        <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
+  Eingabefeld und scrollbare Liste. Wähle durch Eintippen oder Anklicken Begriffe aus, zu denen Fragen im Selbsttest vorkommen sollen.
 * <button name="button">Test beginnen</button> Starte den Test in einem neuen Tab.
 * <button name="button">Ein-/Ausklappen</button> Klappe eine Liste aller Begriffe aus, zu denen es Fragen gibt.
 * <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>. Dies ist erst möglich, nachdem der <button name="button">Ein-/Ausklappen</button>

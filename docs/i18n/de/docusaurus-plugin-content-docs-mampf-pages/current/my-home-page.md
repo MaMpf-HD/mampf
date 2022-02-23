@@ -38,17 +38,25 @@ Das Aussehen von Veranstaltungscards ebenso wie die auf ihnen verfügbaren Bedie
 Die folgenden Bedienelemente sind auf Veranstaltungskacheln abonnierter Veranstaltungen vorhanden.
 
 <table>
-   <tr>
-      <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/veranstaltungscard_abo.png" width="300" /></td>
-      <td>
-         <ul>
-            <li> <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.</li>
-            <li> <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" height="12"/></button></li>
-            <li> <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" height="12"/></button> Beende das Veranstaltungsabo.</li>
-            <li> <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.</li>
-         </ul>
-      </td>
-   </tr>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/veranstaltungscard_abo.png" width="300" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" height="12"/></button>
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" height="12"/></button> Beende das Veranstaltungsabo.
+           </li>
+           <li>
+              <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+           </li>
+        </ul>
+     </td>
+  </tr>
 </table>
 
 Bei den Icons <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/envelope-regular.png" height="12"/>, <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/folder-regular.png" height="12"/> und <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comment-alt-regular.png" height="12"/> handelt es sich nicht um Bedienelemente. Sie weisen durch blaue Einfärbung lediglich auf das das Vorhandensein (und die Anzahl) neuer Benachrichtigungen, Medien bzw. Forumsbeiträge hin.
@@ -57,9 +65,11 @@ Bei den Icons <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf
 Bei nicht abonnierten Veranstaltungen gibt es lediglich ein Bedienelement auf der Veranstaltungskachel. Über dieses kann die betreffende Veranstaltung abonniert werden.
 
 <table>
-   <tr>
+  <tr>
       <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/veranstaltungscard_kein_abo.png" width="300"/></td>
-      <td><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/plus-square-regular.png" height="12"/></button> Beginne ein Veranstaltungsabo.</td>
+      <td>
+         <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/plus-square-regular.png" height="12"/></button> Beginne ein Veranstaltungsabo.
+      </td>
    </tr>
 </table>
 
@@ -71,10 +81,18 @@ Auf den Vortragkachlen kommen die folgenden Bedienelemente vor:
       <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/vortragscard.png" width="300" /></td>
       <td>
          <ul>
-            <li> <a href="/mampf/de/docs/talk" target="_self"><button name="button">Vortragstitel</button></a> Wechsel zur <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a>.</li>
-            <li> <button name="button"><a href="/mampf/de/docs/edit-talk" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button> Wechsel zur <a href="/mampf/de/docs/edit-talk" target="_self">Vortragsbearbeitungsseite</a>.</li>
-            <li> <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.</li>
-            <li> <a href="/mampf/de/docs/talk" target="_self"><button name="button">Vortragsdatum</button></a> Wechsel zur <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a>.</li>
+            <li>
+               <a href="/mampf/de/docs/talk" target="_self"><button name="button">Vortragstitel</button></a> Wechsel zur <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a>.
+            </li>
+            <li>
+               <button name="button"><a href="/mampf/de/docs/edit-talk" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button> Wechsel zur <a href="/mampf/de/docs/edit-talk" target="_self">Vortragsbearbeitungsseite</a>.
+            </li>
+            <li>
+               <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+            </li>
+            <li>
+               <a href="/mampf/de/docs/talk" target="_self"><button name="button">Vortragsdatum</button></a> Wechsel zur <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a>.
+            </li>
          </ul>
       </td>
    </tr>
@@ -97,16 +115,20 @@ Checkbox alle oder Haken raus und Dropdown/Eingabefeld
 * Studiengänge
 * DozentInnen
 * <form>
-  <p><label for="fname">Volltext</label><br></br>
-  <input type="text" id="fname" name="fname"></input><br></br>
-  </p></form>  Eingabefeld für den Suchbegriff. Dieses Feld muss nicht ausgefüllt werden, um eine Suche durchzuführen.
-* <label for="cars">Treffer pro Seite<br></br></label><select name="cars" id="cars">
-  <option value="" selected disabled hidden>6</option>
-  <option value="volvo">3</option>
-  <option value="saab">4</option>
-  <option value="saab2">6</option>
-  <option value="audi">12</option>
-</select><br></br> Bestimme die Anzahl der pro Seite angezeigten Suchergebnisse. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>6</i> (standardmäßig) und <i>12</i>.
+     <p>
+        <label for="fname">Volltext</label><br></br>
+        <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
+  Eingabefeld für den Suchbegriff. Dieses Feld muss nicht ausgefüllt werden, um eine Suche durchzuführen.
+* <label for="cars">Treffer pro Seite<br></br></label>
+  <select name="cars" id="cars">
+     <option value="" selected disabled hidden>6</option>
+     <option value="volvo">3</option>
+     <option value="saab">4</option>
+     <option value="saab2">6</option>
+     <option value="audi">12</option>
+  </select><br></br> Bestimme die Anzahl der pro Seite angezeigten Suchergebnisse. Zur Auswahl stehen <i>3</i>, <i>4</i>, <i>6</i> (standardmäßig) und <i>12</i>.
 * <button name="button">Suche</button> Führe eine Suche durch.
 
 #### Seitennavigation

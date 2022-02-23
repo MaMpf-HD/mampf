@@ -3,13 +3,11 @@ title: Abgaben
 ---
 Die Seite „Abgaben“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen das Hochladen von bearbeiteten Übungsaufgaben sowie das Betrachten und Herunterladen der Korrekturen dieser Aufgaben. Dazu legt ein Teammitglied eine Abgabe an und lädt die anderen ein. Alle beigetretenen Mitglieder können die Abgabe bearbeiten, z.B. eine Datei hochladen oder ersetzen. Auf die abgegebene Datei können Tutor*innen nach der Deadline zugreifen und ihre Korrekturen dazu hochladen. Der genaue Ablauf einer Abgabe wird in diesem Tutorial erläutert. In diesem Artikel hingegen werden die Seite „Abgaben“ und Abgaben Betreffendes beschrieben.
 
-\*Links ergänzen\*
-
-Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen verwalteten bzw. tutorierten Veranstaltung zugreifen, dafür aber auf das Pendant [„Tutorien“](tut-ed-ad-tutorials). Dort können Abgaben runtergeladen, Korrekturen hochgeladen und Abgabestatistiken angesehen werden. Siehe auch [Zettelabgaben für Tutor*innen](../tutorials/tut-tut-submissions) und [Zettelabgaben für Editor*innen](../tutorials/tut-ed-submissions). 
-
-\*Links ergänzen\*
-
 ![](/img/Abgaben.png)
+
+Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen verwalteten bzw. tutorierten Veranstaltung zugreifen, dafür aber auf das Pendant [„Tutorien“](tut-ed-ad-tutorials). Dort können Abgaben runtergeladen, Korrekturen hochgeladen und Abgabestatistiken angesehen werden. Siehe auch [Zettelabgaben für Tutor*innen](../tutorials/tut-tut-submissions) und [Zettelabgaben für Editor*innen](../tutorials/tut-ed-submissions).
+
+\*Links ergänzen\*
 
 ## Navigation zu dieser Seite
 \*Realisierung überlegen und ergänzen\*
@@ -17,16 +15,28 @@ Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen 
 ## Bereiche der Seite
 Die Seite „Abgaben“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Abgaben“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_eigentliche_Seite.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_navbar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Lektionen_sidebar.png" height="150"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer.png" height="180"/>|
+|:---: | :---: |:---: | :---:|
+|Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
-Die eigentliche Seite wiederum gliedert sich in drei Teilbereiche: die aktuelle Abgabe (oben links), die vorige Abgabe (oben rechts) und ein Akkordeon der älteren und zukünftigen Abgaben (unten).
+Die eigentliche Seite wiederum gliedert sich in drei Teilbereiche: die aktuelle Abgabe, die vorige Abgabe und ein Akkordeon der älteren und zukünftigen Abgaben. Um ältere und künftige Abgaben zu betrachten, muss das entsprechende Feld des Akkordeons durch Anklicken ausgeklappt werden.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgaben_aktuell.png" height="250"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgaben_vorige.png" height="250"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgaben_akkordeon.png" height="250"/>|
+|:---: | :---: |:---: |
+|Aktuelle Abgabe|Vorige Abgabe|Akkordeon|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrieben. Mit Ausnahme des Akkordeons, bei dem die Felder „Ältere Abgaben“ und „Vorige Abgaben“ ein- und ausgeklappt werden können, befinden sich alle Buttons auf Abgabecards. Diese Cards können in allen drei Teilbereichen der Seite „Abgabe“ vorkommen, dafür muss es allerdings entsprechende Abgaben geben. Welche Buttons sich auf einer Abgabecard befinden, richtet sich danach, ob die Abgabefrist oder die Kulanzfrist\* noch läuft, und nach dem Fortschritt der Abgabe. Nach diesen Kriterien ist auch die folgende Beschreibung der Bedienelemente gegliedert.
+Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrieben. Mit Ausnahme des Akkordeons, bei dem die Felder „Ältere Abgaben“ und „Vorige Abgaben“ ein- und ausgeklappt werden können, befinden sich alle Buttons auf Abgabecards. Diese Cards können in allen drei Teilbereichen der Seite „Abgabe“ vorkommen, dafür muss es allerdings entsprechende Abgaben geben. Welche Buttons sich auf einer Abgabecard befinden, richtet sich danach, ob die Abgabefrist oder die Kulanzfrist\* noch läuft, und nach dem Fortschritt der Abgabe. Die Bedienelemente aller dieser Cards werden in diesem Abschnitt beschrieben.
 
-\* Die Kulanzfrist beginnt mit der Deadline der Abgabe. Innerhalb dieser Frist können noch Änderungen an der Abgabe vorgenommen werden. Wird eine Abgabe während der Kulanzfrist bearbeitet, kann sie von Tutor\*innen abgelehnt werden. Abgelehnte Abgaben werden nicht korrigiert. Die Dauer der Kulanzfrist wird von Editor*innen festgelegt. Während sie läuft, erscheint unten auf der Abgabecards das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit der Mauszeiger darüber, wird das Ende der Kulanzfrist angezeigt.
+Die nun folgenden Schaubilder geben eine Übersicht über einige der Cards und wie sie erreicht werden können.
+
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png" height="1000"/></a>
+
+Im zweiten Schaubild werden die Cards, die beim Dateiuplaod benötigt werden  
+
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload.png" height="1000"/></a>
+
+\* Die Kulanzfrist beginnt mit der Deadline der Abgabe. Innerhalb dieser Frist können noch Änderungen an der Abgabe vorgenommen werden. Wird eine Abgabe während der Kulanzfrist bearbeitet, kann sie von Tutor\*innen abgelehnt werden. Abgelehnte Abgaben werden nicht korrigiert. Die Dauer der Kulanzfrist wird von den Editor*innen festgelegt. Während sie läuft, erscheint unten auf der Abgabecards das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit der Mauszeiger darüber, wird das Ende der Kulanzfrist angezeigt.
 
 ### Vor dem Abgabetermin und während der Kulanzzeit
 Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Aktuelle Abgabe“ und „Zukünftige Abgaben“ sowie unter „Vorige Abgaben“ während der Kulanzfrist vor.

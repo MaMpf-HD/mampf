@@ -21,9 +21,11 @@ Die Bedienelemente der Seite „Passwort vergessen“ und mithilfe dieser mögli
 ![](/img/Passwort_vergessen_thumb.png)
 
 * <form>
-  <p><label for="fname">Email</label><br></br>
-  <input type="text" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Email</label><br></br>
+        <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für die zum zurückzusetzenden Account gehörige E-Mail-Adresse.
 * <button name="button">Schick mir eine Anleitung zur Änderung meines Passwortes</button> Schicke die eingegebenen Daten ab, um eine E-Mail mit einem Link zum Zurücksetzen des Passworts zu erhalten.
 * <a href="/mampf/de/docs/login" target="_self"><button name="button">Einloggen</button></a> Wechsel zur <a href="/mampf/de/docs/login" target="_self">Loginseite</a>.

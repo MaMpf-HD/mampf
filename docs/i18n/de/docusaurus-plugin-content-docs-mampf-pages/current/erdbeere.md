@@ -1,7 +1,6 @@
 ---
 title: Beispieldatenbank
 ---
-\*Diese Seite ist in Bearbeitung.\*
 
 Die Seite „Beispiel-Datenbank“ ist eine Unterseite einer Veranstaltung, zu der wiederum weitere Unterseiten gehören. Sie ermöglicht Nutzer\*innen die Suche nach konkreten Beispielen. Dazu geben Nutzer\*innen an, welche Eigenschaften erfüllt und verletzt sein sollen. Als Suchergebnis werden Beispiele oder ein Beweis, dass ein solches Objekt nicht existieren kann, ausgegeben.
 
@@ -19,18 +18,181 @@ Die Seite „Beispiel-Datenbank“ gliedert sich in vier Teilbereiche: die eigen
 |:---: | :---: |:---: | :---:|
 |Eigentliche Seite|Navigationsleiste|Seitenleiste|Footer|
 
-## Bedienelemente und mögliche Aktionen auf dieser Seite
+## Bedienelemente der und mögliche Aktionen auf Unterseiten
+Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispielsuche“, „Suchergebnis“, „Struktur“, „Eigenschaft“, und „Beispiel“. Die Bedienelemente aller dieser Seiten werden nun beschrieben. Das folgende Schaubild zeigt die Navigationsmöglichkeiten zwischen den Unterseiten der Beispieldatenbank.
 
-## Unterseiten
-### Suche
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere.png" width="1000"/></a>
 
-### Suchergebnis (erfolgreich, erfolglos)
+### Startseite
+<table>
+  <tr>
+     <td valign="top">
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere_start.png" width="1200"/><br></br><br></br>
+     </td>
+     <td valign="top">
+        <ul>
+           <li>
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+           </li>      
+           <li>
+              <button>Struktur</button> (Überschrift der Box, z.B. <button>kommutativer Ring mit Eins</button>) Wechsel zur Seite „Struktur“.
+           </li>
+           <li>
+              <button>Eigenschaften</button> (in der Box „Struktur“, z.B. <button>Körper</button> in der Box „kommutativer Ring mit Eins“) Wechsel zur Seite „Eigenschaft“.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
 
-### Strukur
+### Beispielsuche
+<table>
+  <tr>
+     <td valign="top">
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere_suche.png" width="2100"/><br></br><br></br>
+     </td>
+     <td valign="top">
+        <ul>
+           <li>
+              <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
+           </li>      
+           <li>
+              <button>Struktur</button> (z.B. <button>kommutativer Ring mit Eins</button>) Wechsel zur Seite einer anderen Struktur.
+           </li>
+           <li>
+              <button>Suche starten</button> Führe eine Suche mit den ausgewählten Anforderungen an das Beispiel durch.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/outline-toggle-off.png" height="12"/> globale Suche</button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/toggle-on.png" height="12"/> globale Suche</button> Aktiviere bzw. deaktiviere die globale Suche.
+           </li>
+           <li>
+              <button>Eigenschaft</button> (in der Box „Erfüllt“ oder „Verletzt“, z.B. <button>faktoriell</button>) Wähle eine Eigenschaft aus, die das Beispiel (nicht) aufweisen soll. Hier kann höchstens eine Eigenschaft ausgewählt werden.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+#### Erfolgreiche Suche
+
+<table>
+  <tr>
+     <td valign="top">
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere_success.png" width="1200"/><br></br><br></br>
+     </td>
+     <td valign="top">
+        <ul>
+           <li>
+              <button>Eigenschaft</button> (in der Box „Suchparameter“ unter „Erfüllt“ oder „Verletzt“, z.B. <button>faktoriell</button>) Wechsel auf die Seite der Eigenschaft.
+           </li>      
+           <li>
+              <button>Beispiel</button> (in der Box „Direkte Treffer“, z.B. <button>Z[X]</button>) Wechsel auf die Seite des Beispiels.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+#### Erfolglose Suche
+
+<table>
+  <tr>
+     <td valign="top">
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere_fail.png" width="1200"/><br></br><br></br>
+     </td>
+     <td valign="top">
+        <ul>
+           <li>
+              <button>Eigenschaft</button> (in der Box „Suchparameter“ unter „Erfüllt“ oder „Verletzt“, z.B. <button>faktoriell</button>) Wechsel auf die Seite der Eigenschaft.
+           </li>
+           <li>
+              <button>Eigenschaft</button> (in der Box „Widerspruch“, z.B. <button>faktoriell</button>) Wechsel auf die Seite der Eigenschaft.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+### Struktur
+
+<table>
+  <tr>
+     <td valign="top">
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere_struktur.png" width="1600"/><br></br><br></br>
+     </td>
+     <td valign="top">
+        <ul>
+           <li>
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+           </li>    
+           <li>
+              <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
+           </li>        
+           <li>
+               <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> (in der Box „Struktur“ unter „Verknüpfte Begriffe“, z.B. <button name="button">kommutativer Ring</button> in der Box „kommutativer Ring mit Eins“) Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button>Eigenschaft</button> (in der Box „Mögliche Eigenschaften“, z.B. <button>faktoriell</button>) Wechsel auf die Seite der Eigenschaft.
+           </li>
+           <li>
+              <button>Beispiel</button> (in der Box „Beispiele“, z.B. <button>Z[X]</button>) Wechsel auf die Seite des Beispiels.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
 
 ### Eigenschaft
 
+<table>
+  <tr>
+     <td valign="top">
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere_eigenschaft2.png" width="2000"/><br></br><br></br>
+     </td>
+     <td valign="top">
+        <ul>
+           <li>
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+           </li>    
+           <li>
+              <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
+           </li>     
+           <li>
+               <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> (in der Box „Eigenschaft von Struktur“ unter „Verknüpfte Begriffe“, z.B. <button name="button">faktorieller Ring</button> in der Box „Eigenschaft ‚faktoriell‘ von kommutativer Ring mit Eins“) Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button>Beispiel</button> (in der Box „Beispiele (Eigenschaft erfüllt)“ bzw. „Beispiele (Eigenschaft verletzt)“, z.B. <button>Z[X]</button>) Wechsel auf die Seite des Beispiels.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
 ### Beispiel
+
+<table>
+  <tr>
+     <td valign="top">
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/erdbeere_bsp2.png" width="1300"/><br></br><br></br>
+     </td>
+     <td valign="top">
+        <ul>
+           <li>
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+           </li>      
+           <li>
+              <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
+           </li>     
+           <li>
+              <button>Struktur</button> (Überschrift der Box „Beispiel für Struktur“, z.B. <button>kommutativer Ring mit Eins</button> in „Beispiel Z[X] für kommutativer Ring mit Eins“)
+           </li>
+           <li>
+              <button>Eigenschaft</button> (in der Box „Erfüllte Eigenschaft“ bzw. „Verletzte Eigenschaft“, z.B. <button>faktoriell</button>) Wechsel auf die Seite der Eigenschaft.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

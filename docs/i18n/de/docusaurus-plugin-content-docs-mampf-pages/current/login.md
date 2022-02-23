@@ -20,18 +20,22 @@ Die Seite „Login“ gliedert sich in drei große Teilbereiche: die eigentliche
 Die Bedienelemente der Loginseite und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
 * <form>
-  <p><label for="fname">Email</label><br></br>
-  <input type="text" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Email</label><br></br>
+        <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Um sich einzuloggen, muss man die E-Mail-Adresse eingeben, mit der man sich zuvor auf MaMpf registriert hat.
 * <form>
-  <p><label for="fname">Passwort</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Passwort</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Um sich einzuloggen, muss man das für den Account angelegte Passwort eingeben.
 * <form>
-  <input type="checkbox" id="cook" name="cook"></input>
-  <label for="cook"> Erinnere dich an mich (hierzu wird ein Cookie gesetzt)</label>
+     <input type="checkbox" id="cook" name="cook"></input>
+     <label for="cook"> Erinnere dich an mich (hierzu wird ein Cookie gesetzt)</label>
   </form> ???
 * <button name="button">Einloggen</button> Schicke die eingegebenen Daten ab, um den Einlogvorgang zu starten.
 * <form action="/mampf/de/docs/registration"><input type="submit" value="Registrieren"/> Wechsel zur Seite <a href="/mampf/de/docs/registration "target="_self">„Registrieren“</a>.</form>

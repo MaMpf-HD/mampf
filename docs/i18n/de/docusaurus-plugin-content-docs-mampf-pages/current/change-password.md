@@ -27,14 +27,18 @@ Die Bedienelemente der Seite „Passwort ändern“ und mithilfe dieser möglich
 ![](/img/Passwort_aendern.png)
 
 * <form>
-  <p><label for="fname">Neues Passwort</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Neues Passwort</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für das neue Passwort, das man nutzen möchte. Das Passwort muss mindestens aus sechs Zeichen bestehen. Dabei sind alphanumerische und Sonderzeichen zulässig.
 * <form>
-  <p><label for="fname">Neues Passwort bestätigen</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Neues Passwort bestätigen</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld zur Bestätigung des neuen Passworts. Das hier eingebene Passwort muss mit dem im Passwortfeld eingegebenen übereinstimmen.
 * <button name="button">Passwort ändern</button> Bestätige das eingegebene Passwort und führe den Login durch.
 * <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>

@@ -19,24 +19,32 @@ Die Seite „Zugangsdaten ändern“ gliedert sich in drei große Teilbereiche: 
 Die Bedienelemente der Seite „Zugangsdaten ändern“ und mithilfe dieser mögliche Aktionen werden nun beschrieben.
 
 * <form>
-  <p><label for="fname">Emailadresse</label><br></br>
-  <input type="text" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Emailadresse</label><br></br>
+        <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für die E-Mail-Adresse. Standardmäßig ist hier die aktuelle E-Mail-Adresse eingetragen. Dieses Feld muss nur bearbeitet werden, wenn man den Account auf eine andere E-Mail-Adresse umstellen möchte. In diesem Fall gibt man hier die neue E-Mail-Adresse ein.
 * <form>
-  <p><label for="fname">Aktuelles Passwort</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Aktuelles Passwort</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für das aktuelle Passwort. Dieses Feld muss ausgefüllt werden.
 * <form>
-  <p><label for="fname">Neues Passwort</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Neues Passwort</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für das neue Passwort. Dieses Feld muss nur ausgefüllt werden, wenn das Passwort geändert werden soll. Das neue Passwort muss mindestens aus sechs Zeichen bestehen.
 * <form>
-  <p><label for="fname">Bestätigung des neuen Passworts</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Bestätigung des neuen Passworts</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld zur Bestätigung des neuen Passworts. Dieses Feld muss nur ausgefüllt werden, wenn das Passwort geändert werden soll. Die Eingabe muss mit der im Feld für das neue Passwort übereinstimmen.
 * <button name="button">Update</button> Bestätige die Eingaben, um Änderungen durchzuführen.
 * <form action="/mampf/de/docs/profile"><input type="submit" value="Zurück"/> Wechsel zur Seite <a href="/mampf/de/docs/profile "target="_self">„Profil“</a>.</form>

@@ -27,26 +27,32 @@ Die Bedienelemente der Seite „Registrieren“ und mithilfe dieser mögliche Ak
 ![](/img/Registrieren.png)
 
 * <form>
-  <p><label for="fname">Email</label><br></br>
-  <input type="text" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Email</label><br></br>
+        <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für die E-Mail-Adresse, mit der man sich registrieren möchte. Pro E-Mail-Adresse kann nur ein Account eingerichtet werden.
 * <form>
-  <p><label for="fname">Passwort</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Passwort</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld für das Passwort, das man nutzen möchte. Das Passwort muss mindestens aus sechs Zeichen bestehen. Dabei sind alphanumerische und Sonderzeichen zulässig.
 * <form>
-  <p><label for="fname">Passwortbestätigung</label><br></br>
-  <input type="password" id="fname" name="fname"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Passwortbestätigung</label><br></br>
+        <input type="password" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
   Feld zu Bestätigung des Passworts. Das hier eingebene Passwort muss mit dem im Passwortfeld eingegebenen übereinstimmen.
 * <form>
-  <input type="checkbox" id="cook" name="cook"></input>
-  <label for="cook">  Ich stimme der Speicherung und Verarbeitung meiner Daten gemäß der <a href="https://www.uni-heidelberg.de/datenschutzerklaerung_web.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a> der Universität Heidelberg zu.</label></form>
+     <input type="checkbox" id="cook" name="cook"></input>
+     <label for="cook">  Ich stimme der Speicherung und Verarbeitung meiner Daten gemäß der <a href="https://www.uni-heidelberg.de/datenschutzerklaerung_web.html" target="_blank" rel="noopener noreferrer">Datenschutzerklärung</a> der Universität Heidelberg zu.</label>
+  </form>
   Stimme durch Setzen des Haken der Speicherung und Verarbeitung der Daten zu. Dies ist erforderlich für das Anlegen eines Accounts.
-* <button name="button">Registrieren</button>
- Schicke die eingegebenen Daten ab, um den Registriervorgang zu beginnen.
+* <button name="button">Registrieren</button> Schicke die eingegebenen Daten ab, um den Registriervorgang zu beginnen.
 * <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur Seite <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>
 * <form action="/mampf/de/docs/password-forgotten"><input type="submit" value="Passwort vergessen?"/> Wechsel zur Seite <a href="/mampf/de/docs/password-forgotten "target="_self">„Passwort vergessen“</a>.</form>
 * <form action="/mampf/de/docs/activate-account"><input type="submit" value="Anleitung zur Bestätigung des Accounts nicht erhalten?"/> Wechsel zur Seite <a href="/mampf/de/docs/activate-account "target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden“</a>.</form>

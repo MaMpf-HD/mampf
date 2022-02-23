@@ -27,15 +27,19 @@ Die Bedienelemente der Seite „Profil“ und mithilfe dieser mögliche Aktionen
 * <a href="/mampf/de/docs/change-login-data" target="_self"><button name="button">Zugangsdaten ändern</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/change-login-data" target="_self">„Zugangsdaten ändern“</a>. Dort kann der Account auf eine andere E-Mail-Adresse umgestellt und das Passwort geändert werden.
 * <button name="button">Account löschen</button> Lösche den Account.
 * <form>
-  <p><label for="fname">Anzeigename</label><br></br>
-  <input type="text" id="fname" name="fname" value="anonymer Musterstudi"></input><br></br>
-  </p></form>
+     <p>
+        <label for="fname">Anzeigename</label><br></br>
+        <input type="text" id="fname" name="fname" value="anonymer Musterstudi"></input><br></br>
+     </p>
+  </form>
 Name, der anderen Nutzer*innen und Editor*innen in MaMpf angezeigt wird. Dies betrifft Teilnehmerlisten, Kommentare und Forumsbeiträge. Zunächst steht hier der Anfang der E-Mail-Adresse, über die der Account läuft, bis zum @.
 * <form>
-  <p><label for="fname">Name in Übungsgruppen</label><br></br>
-  <input type="text" id="fname" name="fname" value="Musterstudi"></input><br></br>
-  </p></form>  
-Name, der Tutor*innen bei Abgaben und anderen Mitgliedern des eigenen Abgabeteams angezeigt wird. Bei Tutor*innen ist dies der Name, mithilfe dem Editor*innen die Tutorien zuteilen. Hier sollte der richtige Name eingetragen werden, um allen Beteiligten die Zuordnung zu erleichtern. Wenn dieses Feld nicht ausgefüllt ist, wird der Anzeigename für die eben genannten Zwecke verwendet.
+     <p>
+        <label for="fname">Name in Übungsgruppen</label><br></br>
+        <input type="text" id="fname" name="fname" value="Musterstudi"></input><br></br>
+     </p>
+  </form>  
+  Name, der Tutor*innen bei Abgaben und anderen Mitgliedern des eigenen Abgabeteams angezeigt wird. Bei Tutor*innen ist dies der Name, mithilfe dem Editor*innen die Tutorien zuteilen. Hier sollte der richtige Name eingetragen werden, um allen Beteiligten die Zuordnung zu erleichtern. Wenn dieses Feld nicht ausgefüllt ist, wird der Anzeigename für die eben genannten Zwecke verwendet.
 
 Änderungen an den Namen werden erst wirksam, nachdem der Button <button name="button">Profil updaten</button> am Seitenanfang angeklickt worden ist. Dieser erscheint, sobald eine Veränderung der Name vorgenommen und anschließend auf einen beliebigen Punkt außerhalb des Eingabefeld für den Namen geklickt worden ist.
 
@@ -60,26 +64,26 @@ Abonnements werden erst durch das Klicken auf den Button <button name="button">P
 In der Box „Einstellungen“ können die Sprache und die angezeigten verknüpften Inhalte bearbeitet werden. Dies erfolgt durch Anklicken der gewünschten Option. Die Auswahlmöglichkeiten werden in Form von Radio Buttons präsentiert. Radio Buttons zeichnen sich dadurch aus, dass immer nur genau eine Option aus den voreingestellten Möglichkeiten ausgewählt werden kann und muss.
 
 * <form>
- Sprache<br></br>
- <input type="radio" id="de" name="lang" checked></input>
- <label for="de"> Deutsch</label><br></br>
- <input type="radio" id="eng" name="lang"></input>
- <label for="eng"> Englisch</label>
-</form>
-<br></br>
-Zur Auswahl stehen die Sprachen Deutsch und Englisch. Die hier ausgewählte Sprachepräferenz wird nur außerhalb von Veranstaltungen berücksichtigt. Die in einer Veranstaltung verwendete Sprache wird von den Veranstaltungseditor*innen festgelegt und kann nicht durch Nutzer*innen beeinflusst werden.
+     Sprache<br></br>
+     <input type="radio" id="de" name="lang" checked></input>
+     <label for="de"> Deutsch</label><br></br>
+     <input type="radio" id="eng" name="lang"></input>
+     <label for="eng"> Englisch</label>
+  </form>
+  <br></br>
+  Zur Auswahl stehen die Sprachen Deutsch und Englisch. Die hier ausgewählte Sprachepräferenz wird nur außerhalb von Veranstaltungen berücksichtigt. Die in einer Veranstaltung verwendete Sprache wird von den Veranstaltungseditor*innen festgelegt und kann nicht durch Nutzer*innen beeinflusst werden.
 
 * <form>
- MaMpf liefert eine Vielzahl von verknüpften Inhalten. Ich möchte verknüpfte Inhalte (wenn diese freigegeben sind)<br></br>
- <input type="radio" id="before" name="content" checked></input>
- <label for="before"> auch aus allen Modulen sehen, die sich inhaltlich vor den von mir abonnierten Modulen einsortieren.</label><br></br>
- <input type="radio" id="all" name="content"></input>
- <label for="all"> aus allen Modulen sehen.</label><br></br>
- <input type="radio" id="subs" name="content"></input>
- <label for="subs"> ausschließlich aus den von mir abonnierten Modulen sehen.</label>
-</form>
-<br></br>
-Bei den verknüpften Inhalten kann man wählen, ob alle verfügbaren Inhalte angezeigt oder diese eingeschränkt werden. Dabei können entweder nur Inhalte aus abonnierten Modulen zugelassen werden oder auch Inhalte aus Modulen, auf denen die abonnierten Module aufbauen.
+     MaMpf liefert eine Vielzahl von verknüpften Inhalten. Ich möchte verknüpfte Inhalte (wenn diese freigegeben sind)<br></br>
+    <input type="radio" id="before" name="content" checked></input>
+    <label for="before"> auch aus allen Modulen sehen, die sich inhaltlich vor den von mir abonnierten Modulen einsortieren.</label><br></br>
+    <input type="radio" id="all" name="content"></input>
+    <label for="all"> aus allen Modulen sehen.</label><br></br>
+    <input type="radio" id="subs" name="content"></input>
+    <label for="subs"> ausschließlich aus den von mir abonnierten Modulen sehen.</label>
+  </form>
+  <br></br>
+  Bei den verknüpften Inhalten kann man wählen, ob alle verfügbaren Inhalte angezeigt oder diese eingeschränkt werden. Dabei können entweder nur Inhalte aus abonnierten Modulen zugelassen werden oder auch Inhalte aus Modulen, auf denen die abonnierten Module aufbauen.
 
 Um Änderungen an den Einstellungen zu übernehmen, muss der Button <button name="button">Profil updaten</button> am Seitenanfang angeklickt werden.
 
@@ -91,39 +95,43 @@ Um Änderungen an den Einstellungen zu übernehmen, muss der Button <button name
 In der Box „E-Mail-Benachrichtungen“ können Benachrichtigungsanlässe hinzugefügt oder entfernt werden. MaMpf bietet Benachrichtigungen zu Veranstaltungen und Modulen, zur Abgabe von Übungsaufgaben und zu Neuigkeiten auf MaMpf an. Standardmäßig sind keine Benachrichtungsanlässe ausgewählt. Die Verwaltung von Benachrichtungsanlässen erfolgt über Checkboxen. Diese zeichnen sich dadurch aus, dass eine beliebige Anzahl an Optionen ausgewählt werden kann. Durch Anklicken einer leeren Checkbox kann ein Haken gesetzt und damit ein Benachrichtungsanlass hinzugefügt werden. Durch Anklicken einer ausgefüllten Checkbox kann ein Haken entfernt werden und damit auch der entsprechende Benachrichtungsanlass.
 
 * <form>
- Veranstaltungen und Module<br></br>
- <input type="checkbox" id="not" name="ev"></input>
- <label for="not"> neue Mitteilungen in von mir abonnierten Veranstaltungen</label><br></br>
- <input type="checkbox" id="med" name="ev"></input>
- <label for="med"> neue Medien in vor mir abonnierten Veranstaltungen oder Modulen</label><br></br>
- <input type="checkbox" id="eve" name="ev"></input>
- <label for="eve"> neu angelegte Veranstaltungen oder Module</label>
-</form><br></br>
-*mehr Infos und Links*
+  Veranstaltungen und Module<br></br>
+     <input type="checkbox" id="not" name="ev"></input>
+        <label for="not"> neue Mitteilungen in von mir abonnierten Veranstaltungen</label><br></br>
+     <input type="checkbox" id="med" name="ev"></input>
+        <label for="med"> neue Medien in vor mir abonnierten Veranstaltungen oder Modulen</label><br></br>
+     <input type="checkbox" id="eve" name="ev"></input>
+        <label for="eve"> neu angelegte Veranstaltungen oder Module</label>
+  </form>
+  <br></br>
+  *mehr Infos und Links*
 
 * <form>
- Abgabe von Übungsaufgaben<br></br>
- <input type="checkbox" id="up" name="sub"></input>
- <label for="up"> erfolgreiches Hochladen einer Datei durch ein Teammitglied</label><br></br>
- <input type="checkbox" id="del" name="sub"></input>
- <label for="del"> Löschen einer Datei durch ein anderes Teammitglied</label><br></br>
- <input type="checkbox" id="join" name="sub"></input>
- <label for="join"> Beitritt eines Teammitglieds</label><br></br>
- <input type="checkbox" id="quit" name="sub"></input>
- <label for="quit"> Austritt eines Teammitglieds</label><br></br>
- <input type="checkbox" id="av" name="sub"></input>
- <label for="av"> Verfügbarkeit der Korrektur</label><br></br>
- <input type="checkbox" id="del" name="sub"></input>
- <label for="del"> Annahme oder Ablehnung einer verspäteten Korrektur</label>
-</form><br></br>
-*mehr Infos und Links*
-Es ist nicht möglich, MaMpf das Verschicken von Einladungen zu einer Abgabe zu untersagen.
+     Abgabe von Übungsaufgaben<br></br>
+     <input type="checkbox" id="up" name="sub"></input>
+        <label for="up"> erfolgreiches Hochladen einer Datei durch ein Teammitglied</label><br></br>
+     <input type="checkbox" id="del" name="sub"></input>
+        <label for="del"> Löschen einer Datei durch ein anderes Teammitglied</label><br></br>
+     <input type="checkbox" id="join" name="sub"></input>
+        <label for="join"> Beitritt eines Teammitglieds</label><br></br>
+     <input type="checkbox" id="quit" name="sub"></input>
+        <label for="quit"> Austritt eines Teammitglieds</label><br></br>
+     <input type="checkbox" id="av" name="sub"></input>
+        <label for="av"> Verfügbarkeit der Korrektur</label><br></br>
+     <input type="checkbox" id="del" name="sub"></input>
+        <label for="del"> Annahme oder Ablehnung einer verspäteten Korrektur</label>
+   </form>
+   <br></br>
+   *mehr Infos und Links*
+  Es ist nicht möglich, MaMpf das Verschicken von Einladungen zu einer Abgabe zu untersagen.
 
 * <form>
- Sonstiges<br></br>
- <input type="checkbox" id="news" name="mis"></input>
- <label for="news"> Neuigkeiten über MaMpf</label></form><br></br>
- *mehr Infos und Links*
+     Sonstiges<br></br>
+     <input type="checkbox" id="news" name="mis"></input>
+     <label for="news"> Neuigkeiten über MaMpf</label>
+  </form>
+  <br></br>
+  *mehr Infos und Links*
 
 Damit Änderungen an ausgewählten Benachrichtigungsanlässen übernommen werden, muss der Button <button name="button">Profil updaten</button> am Seitenanfang angeklickt werden.
 
