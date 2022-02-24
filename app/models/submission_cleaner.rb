@@ -41,6 +41,7 @@ class SubmissionCleaner
     @deletion_date = Time.zone.today
     fetch_props
 
+    @submissions = Submission.where(assignment: @assignments)
     @submissions.each(&:destroy)
 
     send_destruction_mail_to_submitters
