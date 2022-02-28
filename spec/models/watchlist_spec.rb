@@ -27,7 +27,7 @@ RSpec.describe Watchlist, type: :model do
     watchlist = FactoryBot.build(:watchlist, :with_user)
     user = FactoryBot.build(:user)
 
-    expect(watchlist.ownedBy(user)).to eq false
-    expect(watchlist.ownedBy(watchlist.user)).to eq true
+    expect(watchlist.owned_by?(user)).to eq false
+    expect(watchlist.owned_by?(watchlist.user)).to eq true
   end
 end
