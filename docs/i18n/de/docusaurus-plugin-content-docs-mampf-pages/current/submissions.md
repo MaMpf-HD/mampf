@@ -10,7 +10,7 @@ Editor\*innen und Tutor\*innen können nicht auf die Abgabenseite der von ihnen 
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Um auf die Abgaben zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Abgaben“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Abgaben“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Abgaben“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -26,93 +26,430 @@ Die eigentliche Seite wiederum gliedert sich in drei Teilbereiche: die aktuelle 
 |Aktuelle Abgabe|Vorige Abgabe|Akkordeon|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrieben. Mit Ausnahme des Akkordeons, bei dem die Felder „Ältere Abgaben“ und „Vorige Abgaben“ ein- und ausgeklappt werden können, befinden sich alle Buttons auf Abgabecards. Diese Cards können in allen drei Teilbereichen der Seite „Abgabe“ vorkommen, dafür muss es allerdings entsprechende Abgaben geben. Welche Buttons sich auf einer Abgabecard befinden, richtet sich danach, ob die Abgabefrist oder die Kulanzfrist\* noch läuft, und nach dem Fortschritt der Abgabe. Die Bedienelemente aller dieser Cards werden in diesem Abschnitt beschrieben.
+Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrieben. Mit Ausnahme des Akkordeons, bei dem die Felder „Ältere Abgaben“ und „Vorige Abgaben“ ein- und ausgeklappt werden können, befinden sich alle Buttons auf Abgabecards. Diese Cards können in allen drei Teilbereichen der Seite „Abgabe“ vorkommen, dafür muss es allerdings entsprechende Abgaben geben. Welche Buttons sich auf einer Abgabecard befinden, richtet sich danach, ob die Abgabefrist oder die Kulanzfrist\* noch läuft, und nach dem Fortschritt der Abgabe. Die Bedienelemente aller dieser Cards werden in diesem Abschnitt beschrieben. Das nun folgende Schaubilder gibt eine Übersicht über einige der Cards und wie sie erreicht werden können.
 
-Die nun folgenden Schaubilder geben eine Übersicht über einige der Cards und wie sie erreicht werden können.
-
-<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png" height="1000"/></a>
-
-Im zweiten Schaubild werden die Cards, die beim Dateiuplaod benötigt werden  
-
-<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload.png" height="1000"/></a>
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png" width="1000"/></a>
 
 \* Die Kulanzfrist beginnt mit der Deadline der Abgabe. Innerhalb dieser Frist können noch Änderungen an der Abgabe vorgenommen werden. Wird eine Abgabe während der Kulanzfrist bearbeitet, kann sie von Tutor\*innen abgelehnt werden. Abgelehnte Abgaben werden nicht korrigiert. Die Dauer der Kulanzfrist wird von den Editor*innen festgelegt. Während sie läuft, erscheint unten auf der Abgabecards das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit der Mauszeiger darüber, wird das Ende der Kulanzfrist angezeigt.
+
+### Vor der Kulanzzeit und der Deadline
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_plus.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_plus.png" width="1000"/></a>
+
+#### Anlegen oder beitreten
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgabe_anlegen_oder_beitreten_neu_neu.png" width="4600" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+           <li>
+              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+           </li>      
+           </li>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
+           </li>
+           _______________________________________________________________________________
+           <li>
+              <button name="button">Anlegen</button> Lege eine Abgabe an.
+           </li>
+           <li>
+              <button name="button">Beitreten</button> Tritt einer Abgabe bei. Dazu wird ein Einladungscode benötigt, den man von der Person, die die Abgabe angelegt hat, erhalten muss.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgabe_anlegen_neu_neu.png" width="12000" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+           <li>
+              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+           </li>      
+           </li>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
+           </li>
+           _______________________________________________________________________________
+           <li>
+             <label for="cars"></label>Tutorium <br></br>
+             <select name="cars" id="cars">
+                <option value="volvo">Tutorium 1</option>
+                <option value="saab">Tutorium 2</option>
+                <option value="mercedes">Tutorium 3</option>
+             </select>
+             <br></br> Dropdown-Menü. Wähle das Tutorium aus.
+           </li>
+           <li>
+              <form>
+                 <p>
+                    <label for="fname">Einladungen an</label><br></br>
+                    <input type="text" id="fname" name="fname"></input><br></br>
+                 </p>
+              </form>
+              Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Teammitglieder und wähle die gewünschten aus. In dieser Liste werden nur Studierende ausgeführt, mit denen man in diesem Kurs bereits abgegeben hat.
+           </li>  
+           <li>
+              <button name="button">Dateien</button> Wähle Dateien vom derzeit verwendeten Gerät aus, die hochgeladen werden sollen.
+           </li>
+           <li>
+              <button name="button">Speichern</button> Speichere die vorgenommenen Änderungen.
+           </li>
+           <li>
+              <button name="button">Abbrechen</button> Brich den Vorgang ab. Keine der vorgenommenen Änderungen wird übernommen.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Einladungscode_eingeben_neu_neu.png" width="1800" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+           <li>
+              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+           </li>      
+           </li>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
+           </li>
+           _______________________________________________________________________________
+           <li>
+              <form>
+                 <p>
+                    <label for="fname">Code</label><br></br>
+                    <input type="text" id="fname" name="fname"></input><br></br>
+                 </p>
+              </form>
+              Eingabefeld für den Beitrittscode, den man von den bisherigen Mitgliedern der Abgabe erhalten muss.
+           </li>
+           <li>
+              <button name="button">Beitreten</button> Tritt der Abgabe, zu der der Beitrittscode gehört, bei.
+           </li>
+           <li>
+              <button name="button">Abbrechen</button> Brich den Vorgang ab und tritt keine Abgabe bei.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+#### Änderungen an einer Abgabe vornehmen
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgabe_fertig_neu_neu.png" width="9000" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+           <li>
+              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+           </li>      
+           </li>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
+           </li>
+           _______________________________________________________________________________
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/copy.png" height="12"/></button> Kopiere den Beitrittscode in die Zwischenablage.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sync.png" height="12"/></button> Generiere einen neuen Beitrittscode.
+           </li>
+           <li>
+              <button name="button">Abgabe <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/></button> Öffne die Abgabedatei. Dieser Button ist nur vorhanden, wenn eine Datei hochgeladen worden ist.
+           </li>
+           <li>
+              <button name="button">Bearbeiten</button> Bearbeite die Abgabe (wähle ein anderes Tutorium aus oder lade eine Datei hoch bzw. ersetze die vorhandene).
+           </li>
+           <li>
+              <button name="button">Einladen</button> Lade andere Studierende per E-Mail zur Abgabe ein. Dabei ist zu beachten, dass auf diese Weise nur Studierende einladen werden können, mit denen man in diesem Kurs bereits abgegeben hat.
+           </li>
+           <li>
+              <button name="button">Löschen</button> (falls es keine anderen Teammitglieder gibt) bzw. <button name="button">Austreten</button> (falls es andere Teammitglieder gibt) Lösche bzw. verlasse die Abgabe.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Einladen_neu_neu.png" width="12000" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+           <li>
+              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+           </li>      
+           </li>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
+           </li>
+           _______________________________________________________________________________
+           <li>
+              <form>
+                 <p>
+                    <label for="fname">Einladungen an</label><br></br>
+                    <input type="text" id="fname" name="fname"></input><br></br>
+                 </p>
+              </form>
+              Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Teammitglieder und wähle die gewünschten aus. In dieser Liste werden nur Studierende ausgeführt, mit denen man in diesem Kurs bereits abgegeben hat.
+           </li>
+           <li>
+              <button name="button">Versenden</button> Schicke den ausgewählten Personen einen Einladungslink per E-Mail. Dabei ist zu beachten, dass auf diese Weise nur Studierende einladen werden können, mit denen man in diesem Kurs bereits abgegeben hat.
+           </li>
+           <li>
+              <button name="button">Abbrechen</button> Brich den Vorgang ab.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Bearbeiten.png" width="1200" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+           <li>
+              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+           </li>
+           <li>
+              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+           </li>      
+           </li>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
+           </li>
+           _______________________________________________________________________________
+           <li>
+              <button name="button">Dateien</button> Wähle Dateien vom derzeit verwendeten Gerät aus, die hochgeladen werden sollen.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></button> Lösche die hochgeladene Datei. Dies ist nur möglich, wenn eine Datei vorhanden ist.
+           </li>
+           <li>
+              <button name="button">Speichern</button> Speichere die vorgenommenen Änderungen.
+           </li>
+           <li>
+              <button name="button">Abbrechen</button> Brich den Vorgang ab. Keine der vorgenommenen Änderungen wird übernommen.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+#### Dateiupload
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload_plus.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload_plus.png" width="1000"/></a>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload05_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload06_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02b_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02c_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload08_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="500" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
 
 ### Vor dem Abgabetermin und während der Kulanzzeit
 Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Aktuelle Abgabe“ und „Zukünftige Abgaben“ sowie unter „Vorige Abgaben“ während der Kulanzfrist vor.
 
-#### Noch keine Abgabe angelegt oder noch keiner Abgabe beigetreten
 
-##### Anlegen oder beitreten
-\*Screenshot\*
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* `Anlegen` Lege eine Abgabe an und weiter zu „Anlegen“.
-* `Beitreten` Tritt einer Abgabe bei und weiter zu „Beitreten“. Dazu wird ein Einladungscode benötigt, den man von der Person, die die Abgabe angelegt hat, erhalten muss.
-
-\*Icons einbinden\*
-
-###### Von dieser Card aus erreichbar
-* „Anlegen“
-* „Beitreten“
-
-##### Anlegen
-\*Screenshot\*
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Tutorium
-Zeit, Tutor*in        Arrow-drop-down.png
-Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene Tutorium auszuwählen. Standardmäßig erscheint hier das zuletzt gewählte Tutorium.
-* Einladungen an
-Klappe eine Liste früherer Teammitglieder und ein Suchfeld aus, um andere per E-Mail zur Abgabe einzuladen.
-* `Dateien` Wähle auf dem Gerät gespeicherte Dateien aus, um sie abzugeben.
-* `Speichern` Speichere die Abgabe und weiter zu „Bearbeiten, einladen oder löschen“ (keine Datei ausgewählt) bzw. „Dateien hochladen 1“ (mehr als eine Datei ausgewählt) bzw. „Dateien hochladen 2“ (eine Datei ausgewählt). Das Speichern ist erforderlich zum Anlegen der Abgabe.
-* `Abbrechen` Brich den Anlegevorgang ab und zurück zu „Anlegen oder beitreten“.
-
-\*Icons einbinden\*
-
-###### Erreichbar von
-„Anlegen oder beitreten“
-
-###### Von dieser Card aus erreichbar
-* „Anlegen oder beitreten“
-* „Bearbeiten, einladen oder löschen“ (keine Datei ausgewählt)
-* „Dateien hochladen 1“ (mehr als eine Datei ausgewählt)
-* „Dateien hochladen 2“ (eine Datei ausgewählt)
-
-##### Beitreten
-\*Screenshot\*
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Code
-Eingabefeld für den Beitrittscode, den man von den bisherigen Mitgliedern der Abgabe erhalten muss.
-* `Beitreten` Schicke den Code ab, um der Abgabe beizutreten, und weiter zu „Bearbeiten, einladen oder austreten“ bzw. „Datei hochgeladen“.
-* `Abbrechen` Brich den Beitrittsvorgang ab und zurück zu „Anlegen oder beitreten“.
-
-\*Icons einbinden\*
-
-###### Erreichbar von
-„Anlegen oder beitreten“
-
-###### Von dieser Card aus erreichbar
-* „Anlegen oder beitreten“
-* „Bearbeiten, einladen oder austreten“
-* „Datei hochgeladen“
+### Nach dem Upload der Korrektur
 
 #### Abgabe angelegt oder beigetreten
 
@@ -131,20 +468,6 @@ Eingabefeld für den Beitrittscode, den man von den bisherigen Mitgliedern der A
 * `Einladen` Lade jemanden zur Abgabe ein und weiter zu „Nachträglich einladen“. Dieser Button ist nur vorhanden, wenn die maximale Teamgröße noch nicht erreicht ist.
 * `Löschen` Lösche die Abgabe und zurück zu „Anlegen oder beitreten“. Dieser Button ist nur vorhanden, falls es keine anderen Teammitglieder gibt. Gibt es andere Teammitglieder, so befindet sich an dieser Stelle der Button `Austreten`.
 
-\*Icons einbinden\*
-
-###### Erreichbar von
-* „Anlegen“
-* „Bearbeiten“
-* „Nachträglich einladen“
-
-###### Von dieser Card aus erreichbar
-* „Bearbeiten“
-* „Nachträglich einladen“
-* „Anlegen oder beitreten“
-
-##### Nachträglich einladen
-\*Screenshot\*
 
 ###### Bedienelemente
 * `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
@@ -157,26 +480,6 @@ Klappe eine Liste früherer Teammitglieder und ein Suchfeld aus, um andere per E
 * `Versenden` Lass MaMpf eine E-Mail-Einladung an die ausgewählten Personen schicken und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
 * `Abbrechen` Brich den Einladungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
 
-\*Icons einbinden\*
-
-###### Erreichbar von
-* „Bearbeiten, einladen oder löschen“
-* „Bearbeiten, einladen oder austreten“
-
-###### Von dieser Card aus erreichbar
-* „Bearbeiten, einladen oder löschen“
-* „Bearbeiten, einladen oder austreten“
-
-##### Bearbeiten, einladen oder austreten
-\*Screenshot\*
-
-###### Bedienelemente
-\*Icons einbinden\*
-###### Erreichbar von
-###### Von dieser Card aus erreichbar
-
-##### Bearbeiten
-\*Screenshot\*
 
 ###### Bedienelemente
 * `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
@@ -192,22 +495,6 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 * `Speichern` Speichere die Änderungen und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
 * `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
 
-\*Icons einbinden\*
-
-###### Erreichbar von
-* „Bearbeiten, einladen oder löschen“
-* „Bearbeiten, einladen oder austreten“
-* „Datei hochgeladen“
-
-###### Von dieser Card aus erreichbar
-* „Bearbeiten, einladen oder löschen“
-* „Bearbeiten, einladen oder austreten“
-* „Datei hochgeladen“
-* „Dateien hochladen 1“ (mehr als eine Datei ausgewählt)
-* „Dateien hochladen 2“ (eine Datei ausgewählt)
-
-##### Dateien hochladen 1
-\*Screenshot\*
 
 ###### Bedienelemente
 * `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
@@ -224,20 +511,6 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 * `Log (anzeigen)` Da passiert nix.
 * `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
 
-\*Icons einbinden\*
-
-###### Erreichbar von
-„Bearbeiten“
-
-###### Von dieser Card aus erreichbar
-* „Dateien hochladen 2“
-* „Bearbeiten, einladen oder löschen“
-* „Bearbeiten, einladen oder austreten“
-* „Datei hochgeladen“
-
-##### Dateien hochladen 2
-\*Screenshot\*
-
 ###### Bedienelemente
 * `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
 * `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
@@ -250,20 +523,6 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 * `Hochladen` Lade die ausgewählte Datei hoch und weiter zu „Dateien hochladen 3“. Zuvor muss durch Setzen eines Hakens versichert werden, dass die Datei die Rechte Dritter nicht verletzt.
 * `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
 
-\*Icons einbinden\*
-
-###### Erreichbar von
-* „Bearbeiten“
-* „Dateien hochladen 1“
-
-###### Von dieser Card aus erreichbar
-* „Bearbeiten, einladen oder löschen“
-* „Bearbeiten, einladen oder austreten“
-* „Datei hochgeladen“
-* „Dateien hochladen 3“
-
-##### Dateien hochladen 3
-\*Screenshot\*
 
 ###### Bedienelemente
 * `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
@@ -277,19 +536,6 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 * `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
 * `Speichern` Schließe den Uploadvorgang ab und weiter zu „Datei hochgeladen“.
 
-\*Icons einbinden\*
-
-###### Erreichbar von
-„Dateien hochladen 2“
-
-###### Von dieser Card aus erreichbar
-* „Bearbeiten, einladen oder löschen“
-* „Bearbeiten, einladen oder austreten“
-* „Datei hochgeladen“
-
-##### Datei hochgeladen
-\*Screenshot\*
-
 ###### Bedienelemente
 * `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
 * `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
@@ -301,22 +547,6 @@ Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene 
 * `Einladen` Lade jemanden zur Abgabe ein und weiter zu „Nachträglich einladen“.
 * `Austreten` Tritt aus und zurück zu „Anlegen oder beitreten“. Dieser Button ist nur vorhanden, falls es andere Teammitglieder gibt. Gibt es keine anderen Teammitglieder, so befindet sich an dieser Stelle der Button `Löschen`.
 
-\*Icons einbinden\*
-
-###### Erreichbar von
-* „Dateien hochladen 3“
-* „Beitreten“
-
-###### Von dieser Card aus erreichbar
-* „Bearbeiten“
-* „Nachträglich einladen“
-* „Anlegen oder beitreten“
-
-###  Nach der Kulanzzeit
-Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Vorige Abgabe“ und „Ältere Abgaben“ nach der Kulanzfrist vor.
-
-##### Abgabe vollständig
-\*Screenshot\*
 
 ###### Bedienlemente
 * `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
