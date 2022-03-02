@@ -3,6 +3,8 @@ $('#assignment_title').removeClass('is-invalid')
 $('#assignment-title-error').empty()
 $('#assignment_deadline').removeClass('is-invalid')
 $('#assignment-deadline-error').empty()
+$('#assignment_deletion_date').removeClass('is-invalid')
+$('#assignment-deletion-date-error').empty()
 
 # display error message
 <% if @errors.present? %>

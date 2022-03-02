@@ -2761,10 +2761,10 @@ de:
       Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
       Abgaben und den Upload von Korrekturen durch Deine TutorIn.
     deletion_date_info: >
-      Bei der Abgabe handelt es sich um persönliche Daten, die wir aus Gründen
-      des Datenschutzes zwei Wochen nach Ablauf des Semesters löschen.
-      Du wirst darüber vorher per Mail informiert werden, so dass Du die Daten
-      sichern kannst.
+      Bei Abgaben handelt es sich um persönliche Daten, die wir aus
+      Datenschutzgründen im nachfolgenden Semester löschen. Das genaue Löschdatum
+      kannst Du der Tabelle entnehmen. Du wirst außerdem rechtzeitig per E-Mail
+      an die Löschung erinnert, damit Du Deine Daten sichern kannst.
     team_info: >
       Hier sieht Du Dein Abgabeteam. Du kannst Dein Team vergrößern, indem Du
       anderen Personen den Abgabecode weitergibst, so dass diese beitreten
@@ -2784,10 +2784,7 @@ de:
       Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
-    protected: Geschützte Abgabe
     deletion_date: Löschdatum
-    protected_info: >
-      "Geschützte" Abgaben werden bis zur manuellen Löschung aufbewahrt und werden nicht automatisiert nach Ablauf der Aufbewahrungsfrist (Semesterende + Karenzzeit von 14 Tagen) gelöscht.
     destruction_info:
       <i>
       Hinweis.

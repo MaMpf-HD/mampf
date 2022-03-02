@@ -100,6 +100,10 @@ class Term < ApplicationRecord
      Term.active.end_date + 2.weeks + 6.months]
   end
 
+  def self.possible_deletion_dates_localized
+    possible_deletion_dates.map { |d| d.strftime(I18n.t('date.formats.concise')) }
+  end
+
   # array of all terms together with their ids for use in options_for_select
   def self.select_terms(independent = false)
     return ['bla', nil] if independent

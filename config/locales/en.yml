@@ -2597,9 +2597,10 @@ en:
       team members, decisions about the acceptance of late submissions and
       upload of corrections by your tutor.
     deletion_date_info: >
-      Your submission contains personal data which we will delete two weeks
-      after the end of this term due to protection of data privacy. You will be
-      notified ahead via email so that you can save them.
+      The data you submit is personal data that we delete in the following semester
+      for data privacy reasons. You can find the exact deletion date in the table.
+      You will also be reminded of the deletion in advance by e-mail so that you
+      can back up your data.
     team_info: >
       Here you can see your submission team. You can enlarge
       your team by giving other persons the submission code so that they can
@@ -2618,10 +2619,7 @@ en:
       Nothing has yet been submitted.
     nothing_yet_in_lecture: >
       In this lecture nothing had yet to be submitted.
-    protected: Protected Assignment
     deletion_date: Deletion date
-    protected_info: >
-      "Protected" Assignments won't be deleted at the end of the semester.
     destruction_info: >
       <i>
       Note.

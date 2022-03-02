@@ -11,9 +11,11 @@ class Assignment < ApplicationRecord
   validate :deletion_date_cannot_be_in_the_past
 
   def deletion_date_cannot_be_in_the_past
-    return unless deletion_date.present? && deletion_date < DateTime.now
+    return unless deletion_date.present? && deletion_date < Time.zone.now.to_date
 
-    errors.add(:deletion_date, I18n.t('activerecord.errors.models.assignment.attributes.deletion_date.in_past'))
+    errors.add(:deletion_date, I18n.t('activerecord.errors.models.' \
+                                      'assignment.attributes.deletion_date.' \
+                                      'in_past'))
   end
 
   scope :active, -> { where('deadline >= ?', Time.now) }

@@ -39,7 +39,7 @@
       </div>
       <div class="form-group col-2">
         <%= f.select :deletion_date,
-                     Term.possible_deletion_dates,
+                     Term.possible_deletion_dates_localized,
                      {},
                      class: 'form-control',
                      id: "assignment_deletion_date_#{assignment.id}" %>
