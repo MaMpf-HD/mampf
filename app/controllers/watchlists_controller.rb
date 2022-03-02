@@ -1,7 +1,7 @@
 # WatchlistsController
 class WatchlistsController < ApplicationController
   before_action :set_watchlist, only: [:update, :destroy, :show, :edit,
-                                       :change_visibility]
+                                       :update_order, :change_visibility]
   before_action :sanitize_params, only: [:show, :update_order,
                                          :change_visibility]
 
@@ -48,8 +48,6 @@ class WatchlistsController < ApplicationController
   def destroy
     authorize! :destroy, @watchlist
 
-    @watchlist.watchlist_entries.each { |e| e&.destroy }
-
     @success = @watchlist.destroy
     if @success
       flash[:notice] = I18n.t('watchlist.delete_success')
@@ -76,22 +74,27 @@ class WatchlistsController < ApplicationController
     @media = @watchlist_entries.pluck(:medium_id)
   end
 
-  def add_to_watchlist
-    authorize! :add_to_watchlist, Watchlist
+  def add_medium
+    authorize! :add_medium, Watchlist.new
     @watchlists = current_user.watchlists
-    @medium = Medium.find_by_id(params[:id])
+    @medium = Medium.find_by_id(params[:medium_id])
   end
 
 
   def update_order
+    entries = params[:order].map { |id| WatchlistEntry.find_by_id(id) }
+    authorize! :update_order, @watchlist, entries
+    page = params[:page].to_i
+    per = params[:per].to_i
     if params[:reverse]
-      params[:order].reverse
+      entries.reverse!
+      shift = @watchlist.watchlist_entries.size - page * per unless page == 0
     else
-      params[:order]
+      shift = page * per
     end
-      .each_with_index do |id, index|
-        WatchlistEntry.update(id, medium_position: index)
-      end
+    entries.each_with_index do |entry, index|
+      entry.update(medium_position: index + shift)
+    end
   end
 
   def change_visibility

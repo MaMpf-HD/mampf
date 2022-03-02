@@ -5,7 +5,7 @@ class WatchlistAbility
     clear_aliased_actions
     user ||= User.new
 
-    can [:index, :new, :add_to_watchlist], Watchlist do |watchlist|
+    can [:index, :new, :add_medium], Watchlist do |watchlist|
       user.persisted?
     end
 
@@ -13,9 +13,14 @@ class WatchlistAbility
       watchlist.owned_by?(user) || watchlist.public
     end
 
-    can [:create, :update, :destroy, :edit, :update_order,
-         :change_visibility, :add_to_watchlist], Watchlist do |watchlist|
+    can [:create, :update, :destroy, :edit,
+         :change_visibility], Watchlist do |watchlist|
       watchlist.owned_by?(user)
+    end
+
+    can :update_order, Watchlist do |watchlist, entries|
+      watchlist.owned_by?(user) &&
+        entries.all? { |entry| entry&.in?(watchlist.watchlist_entries) }
     end
   end
 end

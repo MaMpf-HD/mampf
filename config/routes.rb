@@ -466,8 +466,8 @@ Rails.application.routes.draw do
                               as: 'delete_account'
   resources :users, only: [:index, :edit, :update, :destroy]
 
-  get 'watchlists/add_to_watchlist/:id', to: 'watchlists#add_to_watchlist',
-                                         as: 'show_add_to_watchlist'
+  get 'watchlists/add_medium/:medium_id', to: 'watchlists#add_medium',
+                                         as: 'add_medium_to_watchlist'
 
   get 'watchlists/add', to: 'watchlists#add',
                         as: 'add_watchlist'
