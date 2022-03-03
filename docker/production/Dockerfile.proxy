@@ -6,7 +6,7 @@ RUN sed -i 's/^nginx.\+/nginx\:x\:501\:501\:nginx\:\/var\/cache\/nginx\:\/sbin\/
 # redirect to
 RUN sed -i 's/^\(\s*\)location \/ {\(\s*\)$/\1location @rails {\2/' /app/nginx.tmpl
 
-RUN mkdir /private /public
+RUN mkdir /private /public /etc/nginx/certs
 
 
 COPY docker/production/proxy_server_config.txt /etc/nginx/vhost.d/localhost
