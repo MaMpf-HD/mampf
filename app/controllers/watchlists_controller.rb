@@ -1,6 +1,8 @@
 # WatchlistsController
 class WatchlistsController < ApplicationController
   before_action :sanitize_params, only: [:show, :update_order, :change_visibility]
+  before_action :set_watchlist, only: [:update, :destroy, :change_watchlist]
+#  authorize_resource except: [:destroy, :edit, :update, :change_visibility]
   layout 'application_no_sidebar'
 
   def create
@@ -19,7 +21,6 @@ class WatchlistsController < ApplicationController
   end
 
   def update
-    @watchlist = Watchlist.find_by_id(params[:id])
     @success = @watchlist.update(params.require(:watchlist).permit(:name, :description))
     if @success
       flash[:notice] = I18n.t('watchlist.change_success')
@@ -30,7 +31,7 @@ class WatchlistsController < ApplicationController
   end
 
   def destroy
-    @watchlist = Watchlist.find(params[:id])
+    authorize! :destroy, @watchlist
 
     @watchlist.watchlist_entries.each { |e| e&.destroy }
 
@@ -75,23 +76,6 @@ class WatchlistsController < ApplicationController
     end
   end
 
-  def sanitize_params
-    params[:reverse] = params[:reverse] == 'true'
-    params[:public] = params[:public] == 'true'
-  end
-
-  def paginated_results
-    if params[:all]
-      total_count = filter_results.count
-      # without the total count parameter, kaminary will consider only only the
-      # first 25 entries
-      return Kaminari.paginate_array(filter_results,
-                                     total_count: total_count + 1)
-    end
-    Kaminari.paginate_array(filter_results).page(params[:page])
-            .per(params[:per])
-  end
-
   def filter_results
     filter_results = @watchlist.watchlist_entries
     return filter_results unless params[:reverse]
@@ -109,13 +93,13 @@ class WatchlistsController < ApplicationController
   end
 
   def change_watchlist
-    @watchlist = Watchlist.find_by_id(params[:id])
     render 'watchlists/show_change_modal'
   end
 
   def update_order
     if params[:reverse]
-      params[:order].reverse.each_with_index { |id, index| WatchlistEntry.update(id, medium_position: index) }
+      params[:order].reverse
+                    .each_with_index { |id, index| WatchlistEntry.update(id, medium_position: index) }
     else
       params[:order].each_with_index { |id, index| WatchlistEntry.update(id, medium_position: index) }
     end
@@ -128,4 +112,29 @@ class WatchlistsController < ApplicationController
   def check_ownership
     Watchlist.find_by_id(parmas[:id]).ownedBy(current_user)
   end
+
+  private
+
+    def sanitize_params
+      params[:reverse] = params[:reverse] == 'true'
+      params[:public] = params[:public] == 'true'
+    end
+
+    def paginated_results
+      if params[:all]
+        total_count = filter_results.count
+        # without the total count parameter, kaminary will consider only only the
+        # first 25 entries
+        return Kaminari.paginate_array(filter_results,
+                                       total_count: total_count + 1)
+      end
+      Kaminari.paginate_array(filter_results).page(params[:page])
+              .per(params[:per])
+    end
+
+    def set_watchlist
+      @watchlist = Watchlist.find_by_id(params[:id])
+      return if @watchlist.present?
+      redirect_to :root, alert: I18n.t('controllers.no_watchlist')
+    end
 end
