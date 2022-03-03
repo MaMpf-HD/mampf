@@ -134,7 +134,7 @@ services:
       - mailcatcher
 
   nginx:
-    image: nginx
+    image: openresty/openresty:alpine
     # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
     container_name: mampf-docker-nginx
     ports:
@@ -152,6 +152,7 @@ services:
     restart: always
     volumes:
       - "nginx-conf-d:/etc/nginx/conf.d"
+      - "../nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl"
       - "/var/run/docker.sock:/tmp/docker.sock"
 
 volumes:

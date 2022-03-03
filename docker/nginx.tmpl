@@ -1,6 +1,49 @@
 {{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
 {{ $debug_all := $.Env.DEBUG }}
 
+{{ define "echo_subrequests" }}
+	{{ $networks := .Networks }}
+    location {{ .Endpoint }} {
+        types { } default_type "text/html; charset=utf-8";
+    {{ $server_found := "false" }}
+    {{ range $container := .Containers }}
+        {{/* If only 1 port exposed, use that as a default, else 80 */}}
+        {{ $defaultPort := (when (eq (len $container.Addresses) 1) (first $container.Addresses) (dict "Port" "80")).Port }}
+        {{ $port := (coalesce $container.Env.VIRTUAL_PORT $defaultPort) }}
+        {{ $address := where $container.Addresses "Port" $port | first }}
+        {{ range $knownNetwork := $networks }}
+            {{ range $containerNetwork := $container.Networks }}
+                {{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
+                    {{ if $address }}
+                        {{/* If we got the containers from swarm and this container's port is published to host, use host IP:PORT */}}
+                        {{ if and $container.Node.ID $address.HostPort }}
+                            {{ $server_found = "true" }}
+        # {{ $container.Node.Name }}/{{ $container.Name }}
+        echo_subrequest_async GET 'http://{{ $container.Node.Address.IP }}:{{ $address.HostPort }}/metrics';
+                        {{/* If there is no swarm node or the port is not published on host, use container's IP:PORT */}}
+                        {{ else if $containerNetwork }}
+                            {{ $server_found = "true" }}
+        # {{ $container.Name }}
+        echo_subrequest_async GET 'http://{{ $containerNetwork.IP }}:{{ $address.Port }}/metrics';
+                        {{ end }}
+                    {{ else if $containerNetwork }}
+        # {{ $container.Name }}
+                        {{ if $containerNetwork.IP }}
+                            {{ $server_found = "true" }}
+        echo_subrequest_async GET 'http://{{ $containerNetwork.IP }}:{{ $port }}/metrics';
+                        {{ end }}
+                    {{ end }}
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    {{ if (eq $server_found "false") }}
+        # Fallback entry
+        return 200 '';
+    {{ end }}
+    }
+{{ end }}
+
 {{ define "upstream" }}
     {{ $fail_timeout := "5s" }}
     {{ $max_fails := "3" }}
@@ -107,8 +150,6 @@ proxy_set_header X-Original-URI $request_uri;
 # Mitigate httpoxy attack (see README for details)
 proxy_set_header Proxy "";
 
-access_log /var/log/nginx/access.log vhost;
-
 server {
 	server_name _; # This is just an invalid value which will never trigger on a real hostname.
 	server_tokens off;
@@ -126,11 +167,10 @@ server {
 	listen 80 default_server;
 
     root /public;
-    access_log off;
 
-    # location /metrics {
-    #     proxy_pass http://master:3000/metrics;
-    # }
+    {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
+    {{ template "echo_subrequests" (dict "Endpoint" "/metrics" "Containers" $containers "Networks" $CurrentContainer.Networks) }}
+    {{ end }}
 
     location / {
         client_max_body_size 4G;
