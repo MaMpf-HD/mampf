@@ -3,11 +3,8 @@ class WatchlistAbility
 
   def initialize(user)
     clear_aliased_actions
-    user ||= User.new
 
-    can [:index, :new, :add_medium], Watchlist do |watchlist|
-      user.persisted?
-    end
+    can [:index, :new, :add_medium], Watchlist
 
     can :show, Watchlist do |watchlist|
       watchlist.owned_by?(user) || watchlist.public

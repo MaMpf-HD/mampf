@@ -58,6 +58,7 @@ class WatchlistsController < ApplicationController
   end
 
   def index
+    authorize! :index, Watchlist
     @watchlists = current_user.watchlists
     if @watchlists.present?
       redirect_to watchlist_path(@watchlists.first)
@@ -75,7 +76,7 @@ class WatchlistsController < ApplicationController
   end
 
   def add_medium
-    authorize! :add_medium, Watchlist.new
+    authorize! :add_medium, Watchlist
     @watchlists = current_user.watchlists
     @medium = Medium.find_by_id(params[:medium_id])
   end
