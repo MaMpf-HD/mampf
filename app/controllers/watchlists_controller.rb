@@ -64,7 +64,7 @@ class WatchlistsController < ApplicationController
       redirect_to watchlist_path(@watchlists.first)
       return
     end
-    redirect_to :root, alert: I18n.t('controllers.no_watchlist')
+    render 'show'
   end
 
   def show
