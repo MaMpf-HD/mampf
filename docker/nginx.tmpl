@@ -1,38 +1,39 @@
 {{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
 {{ $debug_all := $.Env.DEBUG }}
 
-{{ define "echo_subrequests" }}
+{{ define "container_specific_locations" }}
 	{{ $networks := .Networks }}
-    location {{ .Endpoint }} {
-        types { } default_type "text/html; charset=utf-8";
+    {{ $port := .Port }}
     {{ $server_found := "false" }}
     {{ range $container := .Containers }}
-        {{/* If only 1 port exposed, use that as a default, else 80 */}}
-        {{ $defaultPort := (when (eq (len $container.Addresses) 1) (first $container.Addresses) (dict "Port" "80")).Port }}
-        {{ $port := (coalesce $container.Env.VIRTUAL_PORT $defaultPort) }}
-        {{ $address := where $container.Addresses "Port" $port | first }}
         {{ range $knownNetwork := $networks }}
             {{ range $containerNetwork := $container.Networks }}
                 {{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
-                    {{ if $address }}
-                        {{/* If we got the containers from swarm and this container's port is published to host, use host IP:PORT */}}
-                        {{ if and $container.Node.ID $address.HostPort }}
-                            {{ $server_found = "true" }}
-        # {{ $container.Node.Name }}/{{ $container.Name }}
-        echo_subrequest_async GET 'http://{{ $container.Node.Address.IP }}:{{ $address.HostPort }}/metrics';
-                        {{/* If there is no swarm node or the port is not published on host, use container's IP:PORT */}}
-                        {{ else if $containerNetwork }}
-                            {{ $server_found = "true" }}
+    # {{ $container.Name }}
+    location /{{ $container.Name }} {
+        internal;
+        proxy_pass 'http://{{ $containerNetwork.IP }}:{{ $port }}/';
+        proxy_set_header  X-Accel-Mapping       /private=/__accel_redirect;
+    }
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{ define "metric_location" }}
+    location {{ .Endpoint }} {
+        types { } default_type "text/plain; charset=utf-8";
+	{{ $networks := .Networks }}
+    {{ $port := .Port }}
+    {{ $server_found := "false" }}
+    {{ range $container := .Containers }}
+        {{ range $knownNetwork := $networks }}
+            {{ range $containerNetwork := $container.Networks }}
+                {{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
+                    {{ $server_found = "true" }}
         # {{ $container.Name }}
-        echo_subrequest_async GET 'http://{{ $containerNetwork.IP }}:{{ $address.Port }}/metrics';
-                        {{ end }}
-                    {{ else if $containerNetwork }}
-        # {{ $container.Name }}
-                        {{ if $containerNetwork.IP }}
-                            {{ $server_found = "true" }}
-        echo_subrequest_async GET 'http://{{ $containerNetwork.IP }}:{{ $port }}/metrics';
-                        {{ end }}
-                    {{ end }}
+        echo_location_async '/{{ $container.Name }}/metrics';
                 {{ end }}
             {{ end }}
         {{ end }}
@@ -45,63 +46,26 @@
 {{ end }}
 
 {{ define "upstream" }}
-    {{ $fail_timeout := "5s" }}
-    {{ $max_fails := "3" }}
-	{{ $networks := .Networks }}
-	{{ $debug_all := .Debug }}
 	upstream {{ .Upstream }} {
-	{{ $server_found := "false" }}
-	{{ range $container := .Containers }}
-        {{ $debug := (eq (coalesce $container.Env.DEBUG $debug_all "false") "true") }}
-        {{/* If only 1 port exposed, use that as a default, else 80 */}}
-        {{ $defaultPort := (when (eq (len $container.Addresses) 1) (first $container.Addresses) (dict "Port" "80")).Port }}
-        {{ $port := (coalesce $container.Env.VIRTUAL_PORT $defaultPort) }}
-        {{ $address := where $container.Addresses "Port" $port | first }}
-        {{ if $debug }}
-        # Exposed ports: {{ $container.Addresses }}
-        # Default virtual port: {{ $defaultPort }}
-        # VIRTUAL_PORT: {{ $container.Env.VIRTUAL_PORT }}
-            {{ if not $address }}
-        # /!\ Virtual port not exposed
+	{{ $networks := .Networks }}
+    {{ $port := .Port }}
+    {{ $server_found := "false" }}
+    {{ range $container := .Containers }}
+        {{ range $knownNetwork := $networks }}
+            {{ range $containerNetwork := $container.Networks }}
+                {{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
+                    {{ $server_found = "true" }}
+        # {{ $container.Name }}
+        server {{ $containerNetwork.IP }}:{{ $port }} max_fails=3 fail_timeout=10;
+                {{ end }}
             {{ end }}
         {{ end }}
-		{{ range $knownNetwork := $networks }}
-			{{ range $containerNetwork := $container.Networks }}
-				{{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
-        ## Can be connected with "{{ $containerNetwork.Name }}" network
-                    {{ if $address }}
-                        {{/* If we got the containers from swarm and this container's port is published to host, use host IP:PORT */}}
-                        {{ if and $container.Node.ID $address.HostPort }}
-                            {{ $server_found = "true" }}
-        # {{ $container.Node.Name }}/{{ $container.Name }}
-        server {{ $container.Node.Address.IP }}:{{ $address.HostPort }} max_fails={{ $max_fails }} fail_timeout={{ $fail_timeout }};
-                        {{/* If there is no swarm node or the port is not published on host, use container's IP:PORT */}}
-                        {{ else if $containerNetwork }}
-                            {{ $server_found = "true" }}
-        # {{ $container.Name }}
-        server {{ $containerNetwork.IP }}:{{ $address.Port }} max_fails={{ $max_fails }} fail_timeout={{ $fail_timeout }};
-                        {{ end }}
-                    {{ else if $containerNetwork }}
-        # {{ $container.Name }}
-                        {{ if $containerNetwork.IP }}
-                            {{ $server_found = "true" }}
-        server {{ $containerNetwork.IP }}:{{ $port }} max_fails={{ $max_fails }} fail_timeout={{ $fail_timeout }};
-                        {{ else }}
-        # /!\ No IP for this network!
-                    	{{ end }}
-					{{ end }}
-				{{ else }}
-        # Cannot connect to network '{{ $containerNetwork.Name }}' of this container
-				{{ end }}
-			{{ end }}
-		{{ end }}
-	{{ end }}
-	{{/* nginx-proxy/nginx-proxy#1105 */}}
-	{{ if (eq $server_found "false") }}
+    {{ end }}
+    {{ if (eq $server_found "false") }}
         # Fallback entry
         server 127.0.0.1 down;
-	{{ end }}
-	}
+    {{ end }}
+    }
 {{ end }}
 
 # If we receive X-Forwarded-Proto, pass it through; otherwise, pass along the
@@ -157,9 +121,8 @@ server {
 	return 503;
 }
 
-{{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
-{{ template "upstream" (dict "Upstream" $host "Containers" $containers "Networks" $CurrentContainer.Networks "Debug" $debug_all) }}
-{{ end }}
+{{ $worker_containers := whereLabelValueMatches $ "de.uni-heidelberg.mathi.mampf.container-type" "worker" }}
+{{ template "upstream" (dict "Upstream" "workers" "Containers" $worker_containers "Networks" $CurrentContainer.Networks "Port" "3000" "Debug" $debug_all) }}
 
 server {
 	server_name localhost;
@@ -168,9 +131,8 @@ server {
 
     root /public;
 
-    {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
-    {{ template "echo_subrequests" (dict "Endpoint" "/metrics" "Containers" $containers "Networks" $CurrentContainer.Networks) }}
-    {{ end }}
+    {{ template "container_specific_locations" (dict "Containers" $worker_containers "Networks" $CurrentContainer.Networks "Port" "9394") }}
+    {{ template "metric_location" (dict "Endpoint" "/metrics" "Containers" $worker_containers "Networks" $CurrentContainer.Networks "Port" "9394") }}
 
     location / {
         client_max_body_size 4G;

@@ -73,7 +73,6 @@ services:
       URL_HOST: localhost
       URL_HOST_SHORT: localhost
       SECRET_KEY_BASE: testenvironment
-      VIRTUAL_HOST: workers
       ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
       MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
@@ -109,6 +108,8 @@ services:
       - solr
       - redis
       - mailcatcher
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: worker
   webpacker:
     build:
       context: ./../..
