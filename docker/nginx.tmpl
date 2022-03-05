@@ -12,6 +12,7 @@
     # {{ $container.Name }}
     location /{{ $container.Name }} {
         internal;
+        gunzip on;
         proxy_pass 'http://{{ $containerNetwork.IP }}:{{ $port }}/';
         proxy_set_header  X-Accel-Mapping       /private=/__accel_redirect;
     }
