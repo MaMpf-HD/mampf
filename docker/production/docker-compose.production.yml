@@ -43,7 +43,8 @@ services:
     volumes:
       - "nginx-conf-d:/etc/nginx/conf.d"
       - "submissions:/private/submissions:ro,nocopy"
-      - "public:/public"
+      - "public:/public:ro"
+    restart: always
     depends_on:
       - master
     networks:
