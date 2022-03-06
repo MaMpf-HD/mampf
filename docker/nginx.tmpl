@@ -14,7 +14,6 @@
         internal;
         gunzip on;
         proxy_pass 'http://{{ $containerNetwork.IP }}:{{ $port }}/';
-        proxy_set_header  X-Accel-Mapping       /private=/__accel_redirect;
     }
                 {{ end }}
             {{ end }}
@@ -118,7 +117,7 @@ server {
 
     {{ $contains_with_monitoring := whereLabelValueMatches $ "de.uni-heidelberg.mathi.mampf.container-type" "worker|master" }}
     {{ template "container_specific_locations" (dict "Containers" $contains_with_monitoring "Networks" $CurrentContainer.Networks "Port" "9394") }}
-    {{ template "metric_location" (dict "Endpoint" "/metrics" "Containers" $worker_containers "Networks" $CurrentContainer.Networks "Port" "9394") }}
+    {{ template "metric_location" (dict "Endpoint" "/metrics" "Containers" $contains_with_monitoring "Networks" $CurrentContainer.Networks "Port" "9394") }}
 
     location / {
         client_max_body_size 4G;

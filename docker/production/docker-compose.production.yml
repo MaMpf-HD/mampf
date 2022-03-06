@@ -35,7 +35,7 @@ services:
       de.uni-heidelberg.mathi.mampf.container-type: worker
 
   nginx:
-    image: nginx
+    image: openresty/openresty:alpine
     ports:
       - "127.0.0.1:3000:80"
     # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
