@@ -875,16 +875,6 @@ ActiveRecord::Schema.define(version: 2021_11_19_181430) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "watchables", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "medium_id", null: false
-    t.integer "medium_position"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["medium_id"], name: "index_watchables_on_medium_id"
-    t.index ["user_id"], name: "index_watchables_on_user_id"
-  end
-
   create_table "watchlist_entries", force: :cascade do |t|
     t.bigint "watchlist_id", null: false
     t.bigint "medium_id", null: false
@@ -946,8 +936,6 @@ ActiveRecord::Schema.define(version: 2021_11_19_181430) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
-  add_foreign_key "watchables", "media"
-  add_foreign_key "watchables", "users"
   add_foreign_key "watchlist_entries", "media"
   add_foreign_key "watchlist_entries", "watchlists"
   add_foreign_key "watchlists", "users"
