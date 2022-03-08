@@ -1,7 +1,8 @@
 ---
 title: News
 ---
-\*Diese Seite ist in Bearbeitung.\*
+
+Auf der Seite „News“ kann man sich über Neuigkeiten, die MaMpf betreffen, informieren.
 
 ![](/img/news.png)
 
@@ -16,6 +17,12 @@ Die Seite „News“ gliedert sich in drei große Teilbereiche: die eigentliche 
 |Eigentliche Seite|Navigationsleiste|Footer|
 
 ## Bedienelemente
+Auf der Seite „News“ gibt es zwei Bedienelemente:
+
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" height="12"/></button> Markiere die gewählte Nachricht als gelesen. Dadurch verringert sich der Counter in der Überschrift um Eins.
+* <button name="button">Alle erledigen</button> Markiere alle Nachrichten als gelesen. Dadurch wird der Counter in der Überschrift auf Null gesetzt.
+
+![](/img/news2.png)
 
 ## Ähnliche Seiten
 * [Benachrichtigungen](notifications.md)
