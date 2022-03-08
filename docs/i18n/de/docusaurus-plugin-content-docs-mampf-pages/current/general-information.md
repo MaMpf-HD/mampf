@@ -8,7 +8,7 @@ Die Seite „Organisatorisches“ ist eine Unterseite einer Veranstaltung. Sie s
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Um auf die Seite „Organisatorisches“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Organisatorisches“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Organisatorisches“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Organisatorisches“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.

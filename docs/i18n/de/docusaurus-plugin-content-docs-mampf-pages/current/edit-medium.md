@@ -15,7 +15,7 @@ Vortragende können diese Seite über die [Medienseite](medium) und die Seite [�
   <li>
      <a href="/mampf/de/docs/medium" target="_self"><b>Medienseite</b></a> (Vortragende und Editor*innen)
   </li>
-  Rechtes neben dem Medientitel in der Überschrift befindet sich das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Medium bearbeiten“ führt.
+  Rechts neben dem Medientitel in der Überschrift befindet sich das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Medium bearbeiten“ führt.
   <li>
      <a href="/mampf/de/docs/edit-talk" target="_self"><b>Seite „Vortrag bearbeiten“</b></a> (Vortragende und Editor*innen)
   </li>

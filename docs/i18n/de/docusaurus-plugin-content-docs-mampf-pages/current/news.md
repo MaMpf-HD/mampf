@@ -5,6 +5,9 @@ title: News
 
 ![](/img/news.png)
 
+## Navigation zu dieser Seite
+Zur Seite „News“ gelangt man über das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/newspaper-regular.png" height="12"/></button> oben links in der [Navigationsleiste](nav-bar).
+
 ## Bereiche der Seite
 Die Seite „News“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „News“, die [Navigationsleiste](nav-bar-pages.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 

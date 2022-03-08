@@ -8,7 +8,18 @@ Auf der Seite „Kommentare für ein Medium“ können Diskussionsbeiträge gele
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Die Seite „Kommentare für ein Medium“ erreicht man über die [Seite des Mediums](medium) und die Seite [„Kommentare“](comments). Über die Seite „Kommentare“ ist die Navigation allerdings nur möglich, wenn das Medium bereits kommentiert und die Benachrichtigung diesbezüglich nicht gelöscht worden ist.
+
+<ul>
+  <li>
+     <a href="/mampf/de/docs/medium" target="_self"><b>Medienseite</b></a>
+  </li>
+  Auf der Seite des Mediums klickt man in der Box „Kommentare“ auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" height="12"/></button>.
+  <li>
+     <a href="/mampf/de/docs/comments" target="_self"><b>Seite „Kommentare“</b></a>
+  </li>
+   Zur Seite „Kommentare“ gelangt man überdas Icon <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" height="12"/></button> oben links in der <a href="/mampf/de/docs/nav-bar" target="_self">Navigationsleiste</a>. Dort klickt man in der Spalte „Medium“ auf „n Kommentare“.
+</ul>
 
 ## Bereiche der Seite
 Die Seite „Kommentare für ein Medium“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Kommentare für ein Medium“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.

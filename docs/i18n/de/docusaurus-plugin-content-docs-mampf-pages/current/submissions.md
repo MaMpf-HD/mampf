@@ -26,19 +26,20 @@ Die eigentliche Seite wiederum gliedert sich in drei Teilbereiche: die aktuelle 
 |Aktuelle Abgabe|Vorige Abgabe|Akkordeon|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrieben. Mit Ausnahme des Akkordeons, bei dem die Felder „Ältere Abgaben“ und „Vorige Abgaben“ ein- und ausgeklappt werden können, befinden sich alle Buttons auf Abgabecards. Diese Cards können in allen drei Teilbereichen der Seite „Abgabe“ vorkommen, dafür muss es allerdings entsprechende Abgaben geben. Welche Buttons sich auf einer Abgabecard befinden, richtet sich danach, ob die Abgabefrist oder die Kulanzfrist\* noch läuft, und nach dem Fortschritt der Abgabe. Die Bedienelemente aller dieser Cards werden in diesem Abschnitt beschrieben. Das nun folgende Schaubilder gibt eine Übersicht über einige der Cards und wie sie erreicht werden können.
+Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrieben. Mit Ausnahme des Akkordeons, bei dem die Felder „Ältere Abgaben“ und „Vorige Abgaben“ ein- und ausgeklappt werden können, befinden sich alle Buttons auf Abgabecards. Diese Cards können in allen drei Teilbereichen der Seite „Abgabe“ vorkommen, dafür muss es allerdings entsprechende Abgaben geben. Welche Buttons sich auf einer Abgabecard befinden, richtet sich danach, ob die Abgabefrist oder die Kulanzfrist\* noch läuft, und nach dem Fortschritt der Abgabe. Die Bedienelemente aller dieser Cards werden in diesem Abschnitt beschrieben. Dabei liegt der Fokus zunächst auf den Bedienelemente, die sich im Header der Cards befinden. Anschließend werden die Bedienelemente auf dem Body der Cards beschrieben. Header und Body sind in den folgenden Screenshots markiert.
 
-<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png" width="1000"/></a>
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subcard_header.png" width="450"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subcard_body.png" width="450"/>|
+|:---: | :---: |
+|Header|Body|
 
 \* Die Kulanzfrist beginnt mit der Deadline der Abgabe. Innerhalb dieser Frist können noch Änderungen an der Abgabe vorgenommen werden. Wird eine Abgabe während der Kulanzfrist bearbeitet, kann sie von Tutor\*innen abgelehnt werden. Abgelehnte Abgaben werden nicht korrigiert. Die Dauer der Kulanzfrist wird von den Editor*innen festgelegt. Während sie läuft, erscheint unten auf der Abgabecards das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit der Mauszeiger darüber, wird das Ende der Kulanzfrist angezeigt.
 
-### Vor der Kulanzzeit und der Deadline
-<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_plus.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_plus.png" width="1000"/></a>
+### Header
+Die Bedienelemente im Header der Cards stimmen überein und richten sich danach, ob ein Medium zur Abgaben assoziiert ist und aus welchen Komponenten dieses Medium besteht. Folgende Bedienelemente können dort vorkommen.
 
-#### Anlegen oder beitreten
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgabe_anlegen_oder_beitreten_neu_neu.png" width="4600" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subcard_all.png" width="400" /></td>
      <td>
         <ul>
            <li>
@@ -65,7 +66,79 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
            </li>
-           _______________________________________________________________________________
+        </ul>
+     </td>
+  </tr>
+</table>
+
+Hinsichtlich der Farbe und der Icons, die keine Bedienelemente sind, unterscheiden sich die Header. Diese enthalten weitere Informationen zur Abgabe und werden nun expliziert.
+
+#### Bedeutung der Farben
+Der Header der Abgabecards ist je nach Zustand der Abgabe eingefärbt. Die Farbanzeige folgt einem Ampelsystem. Im Folgenden ist die Bedeutung der Farben aufgelistet:
+
+<table>
+ <tr>
+   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_red.png" height="12"/>&nbsp;</td>
+   <td>Entweder gehörst du zu keinem Abgabeteam (d.h. du hast weder eine Abgabe angelegt, noch bist du einer beigetreten) oder die verspätete Abgabe ist abgelehnt worden.</td>
+ </tr>
+ <tr>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_yellow.png" height="12"/></td>
+   <td>Du gehörst zu einem Abgabeteam, aber ihr habt (noch) keine Datei zur Abgabe hochgeladen.</td>
+ </tr>
+ <tr>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_light_green.png" height="12"/></td>
+   <td>Du gehörst zu einem Abgabeteam und ihr habt eine Datei zur Abgabe hochgeladen.</td>
+  </tr>
+  <tr>
+    <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_orange.png" height="12"/></td>
+    <td>Die Abgabe ist innerhalb der Kulanzzeit bearbeitet worden und die Entscheidung bezüglich der Annahme oder Ablehnung der Abgabe steht noch aus.</td>
+   </tr>
+   <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_green.png" height="12"/></td>
+     <td>Die Korrektur ist hochgeladen worden und kann angesehen werden.</td>
+    </tr>
+</table>
+
+#### Bedeutung der Icons
+Auf den Abgabecards befinden sich in der Ecke rechts oben jeweils ein Symbol, das wie die Farbe des Headers Auskunft über den Zustand der Abgabe gibt. Die Bedeutung der Symbole wird nun erläutert:
+
+<table>
+ <tr>
+   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-triangle.png" height="12"/>&nbsp;</td>
+   <td>Entweder ist die Abgabe nicht abgabefertig (d.h. dein Team hat (noch) keine Datei hochgeladen oder du gehörst zu keinem Abgabeteam) oder die verspätete Abgabe ist abgelehnt worden.</td>
+ </tr>
+ <tr>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/smile.png" height="12"/></td>
+   <td>Die Abgabe ist abgabefertig (vor dem Ablauf der Deadline) bzw. die Korrektur ist verfügbar (nach dem Ablaufen der Deadline).</td>
+ </tr>
+ <tr>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/hourglass-start.png" height="12"/></td>
+   <td>Die Abgabe ist übermittelt worden und wird korrigiert.</td>
+  </tr>
+</table>
+
+Während der Kulanzzeit erscheint zudem unten rechts auf der Abgabecard das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit dem Mauszeiger darüber, erfährt man das Ende der Kulanzzeit.
+
+### Body
+Auf dem Body der Cards können unterschiedliche Bedienelemente vorkommen. Diese richten sich nach dem Fortschritt von Abgabe und Zeit. Die dafür entscheidenenden Ereignisse sind das Anlegen bzw. Beitreten zu einer Abgabe und das Ablaufen der Kulanzzeit. Nach dieser Einteilung wird sich die weitere Beschreibung richten.
+
+Das nun folgende Schaubilder gibt eine Übersicht über einige der Cards und wie diese erreicht werden können. Man beginnt bei der Card mit rotem Header ganz oben im Schaubild. Über das Beitreten zu oder Anlegen einer Abgabe erreicht man eine gelbe oder hellgrüne Card. Vor der Kulanzfrist kann man durch diverse Bearbeitungsaktionen beliebig oft zwischen der Ausgangscard, Cards mit gelbem Header und Card mit hellgrünem Header wechseln. Bearbeitungen während der Kulanzzeit führen zur orangenen Card. Am Ende steht entweder eine erfolgreiche Abgabe (die Card mit dunkelgrünem Header in der rechten unteren Ecke) oder eine gescheiterte Abgabe (eine der Cards mit rotem Header in der linken unteren Ecke).  
+
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_impro.png" width="1000"/></a>
+
+#### Vor der Kulanzzeit und der Deadline
+Vor der Kulanzzeit und der Deadline kann beliebig oft zwischen den Cards im nun aufgeführten Schaubild gewechselt werden. Der Beschriftung der Pfeile kann entnommen werden, welche Aktionen zur welcher Card führen. Hinter „Datei hochladen“ verbergen sich weitere Cards, die unter „Dateiupload“ behandelt werden.
+
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_plus.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_plus.png" width="1000"/></a>
+
+##### Noch keine Abgabe vorhanden
+Zunächst gehört man zu keinem Abgabeteam und der Header der Card ist rot. Die an diesem Punkt verfügbaren Bedienelemente ermöglichen es einem, eine neue Abgabe anzulegen oder mithilfe eines Einladungscodes einer bereits bestehenden Abgabe beizutreten.
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Anlegen_beitreten.png" width="600" /></td>
+     <td>
+        <ul>
            <li>
               <button name="button">Anlegen</button> Lege eine Abgabe an.
            </li>
@@ -77,36 +150,13 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
   </tr>
 </table>
 
+Zur nun folgenden Card gelangt man über den Button <button name="button">Anlegen</button>. Die von dieser Card aus erreichebaren Cards sind dem Schaubild am Eingang des Abschnitts zu entnehmen.
+
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgabe_anlegen_neu_neu.png" width="12000" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Anlegen.png" width="1200" /></td>
      <td>
         <ul>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
-           </li>    
-           <li>
-              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
-           </li>
-           <li>
-              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
-           </li>      
-           </li>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
-           </li>
-           _______________________________________________________________________________
            <li>
              <label for="cars"></label>Tutorium <br></br>
              <select name="cars" id="cars">
@@ -139,36 +189,13 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
   </tr>
 </table>
 
+Die nächste Card erreicht man mithilfe des Buttons <button name="button">Beitreten</button>. Die von dieser Card aus erreichebaren Cards sind dem Schaubild am Eingang des Abschnitts zu entnehmen.
+
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Einladungscode_eingeben_neu_neu.png" width="1800" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Beitreten.png" width="410" /></td>
      <td>
         <ul>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
-           </li>    
-           <li>
-              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
-           </li>
-           <li>
-              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
-           </li>      
-           </li>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
-           </li>
-           _______________________________________________________________________________
            <li>
               <form>
                  <p>
@@ -189,38 +216,14 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
   </tr>
 </table>
 
-#### Änderungen an einer Abgabe vornehmen
+##### Änderungen an einer Abgabe vornehmen (vor und während der Kulanzzeit)
+Sobald man zu einem Abgabeteam gehört und die Kulanzzeit noch nicht begonnen hat, stehen andere Bedienelemente zur Verfügung, die sich nur geringfügig hinsichtlich der Headerfarbe (gelb, hellgrün oder orange) unterscheiden. In jedem Fall ist die folgende Card der nächste Ausgangspunkt für weitere Aktionen.
 
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgabe_fertig_neu_neu.png" width="9000" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Bearbeiten_einladen_loeschen_gruen_inv.png" width="850" /></td>
      <td>
         <ul>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
-           </li>    
-           <li>
-              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
-           </li>
-           <li>
-              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
-           </li>      
-           </li>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
-           </li>
-           _______________________________________________________________________________
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/copy.png" height="12"/></button> Kopiere den Beitrittscode in die Zwischenablage.
            </li>
@@ -244,36 +247,13 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
   </tr>
 </table>
 
+Zu dieser Card gelangt man, indem man auf den Button <button name="button">Einladen</button> klickt. Die von dieser Card aus erreichebaren Cards sind dem Schaubild am Eingang des Abschnitts zu entnehmen.
+
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Einladen_neu_neu.png" width="12000" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Einladen.png" width="1150" /></td>
      <td>
         <ul>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
-           </li>    
-           <li>
-              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
-           </li>
-           <li>
-              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
-           </li>      
-           </li>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
-           </li>
-           _______________________________________________________________________________
            <li>
               <form>
                  <p>
@@ -294,36 +274,13 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
   </tr>
 </table>
 
+Der Button <button name="button">Bearbeiten</button> führt zur nachfolgenden Card. Die von dieser Card aus erreichebaren Cards sind dem Schaubild am Eingang des Abschnitts zu entnehmen.
+
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Bearbeiten.png" width="1200" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Bearbeiten2.png" width="350" /></td>
      <td>
         <ul>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
-           </li>    
-           <li>
-              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
-           </li>
-           <li>
-              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das Übungsblatt.
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
-           </li>      
-           </li>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button></a> Öffne diedie <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblatts</a>.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
-           </li>
-           <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das Übungsblatt als PDF herunter.
-           </li>
-           _______________________________________________________________________________
            <li>
               <button name="button">Dateien</button> Wähle Dateien vom derzeit verwendeten Gerät aus, die hochgeladen werden sollen.
            </li>
@@ -341,12 +298,38 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
   </tr>
 </table>
 
-#### Dateiupload
-<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload_plus.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload_plus.png" width="1000"/></a>
+###### Dateiupload (vor und während der Kulanzzeit)
+Mitglieder von Abgabeteams können Dateien zur Abgabe hinzufügen, entfernen oder ersetzen. Der Ablauf der Dateiupload ist im unten stehenden Schaubild dargestellt. Die Bedienelemente der einzelnen Cards werden im Anschluss beschrieben.
+
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload_plus.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload_plus.png" width="1200"/></a>
 
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload05_red.png" width="500" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload05_red.png" width="400" /></td>
+     <td>
+        <ul>
+           <li>
+              <button name="button">Dateien</button> Wähle Dateien vom derzeit verwendeten Gerät aus, die hochgeladen werden sollen.
+           </li>
+           <li>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></button> Lösche die hochgeladene Datei. Dies ist nur möglich, wenn eine Datei vorhanden ist.
+           </li>
+           <li>
+              <button name="button">Speichern</button> Speichere die vorgenommenen Änderungen.
+           </li>
+           <li>
+              <button name="button">Abbrechen</button> Brich den Vorgang ab. Keine der vorgenommenen Änderungen wird übernommen.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
+
+Die Auswahl mehrerer Dateien
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload06_red.png" width="400" /></td>
      <td>
         <ul>
            <li>
@@ -359,7 +342,19 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
 
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload06_red.png" width="500" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02b_red.png" width="400" /></td>
+     <td>
+        <ul>
+           <li>
+              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
+           </li>    
+        </ul>
+     </td>
+  </tr>
+</table>
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="400" /></td>
      <td>
         <ul>
            <li>
@@ -372,7 +367,7 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
 
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02b_red.png" width="500" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02c_red.png" width="400" /></td>
      <td>
         <ul>
            <li>
@@ -384,32 +379,7 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
 </table>
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="500" /></td>
-     <td>
-        <ul>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
-           </li>    
-        </ul>
-     </td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02c_red.png" width="500" /></td>
-     <td>
-        <ul>
-           <li>
-              <a href="/mampf/de/docs/medium" target="_self"><button name="button">Titel des Übungsblattes</button></a> Gehe auf die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Übungsblattes</a>.
-           </li>    
-        </ul>
-     </td>
-  </tr>
-</table>
-<table>
-  <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="500" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="400" /></td>
      <td>
         <ul>
            <li>
@@ -422,7 +392,7 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
 
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload08_red.png" width="500" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload08_red.png" width="400" /></td>
      <td>
         <ul>
            <li>
@@ -434,7 +404,7 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
 </table>
 <table>
   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="500" /></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/upload02a_red.png" width="400" /></td>
      <td>
         <ul>
            <li>
@@ -445,174 +415,52 @@ Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrie
   </tr>
 </table>
 
-### Vor dem Abgabetermin und während der Kulanzzeit
-Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Aktuelle Abgabe“ und „Zukünftige Abgaben“ sowie unter „Vorige Abgaben“ während der Kulanzfrist vor.
-
-
-### Nach dem Upload der Korrektur
-
-#### Abgabe angelegt oder beigetreten
-
-##### Bearbeiten, einladen oder löschen
-\*Screenshot\*
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Copy.png Kopiere den Code in die Zwischenablage.
-* Sync.png Generiere einen neuen Beitrittscode.
-* `Bearbeiten` Bearbeite die Abgabe und weiter zu „Bearbeiten“.
-* `Einladen` Lade jemanden zur Abgabe ein und weiter zu „Nachträglich einladen“. Dieser Button ist nur vorhanden, wenn die maximale Teamgröße noch nicht erreicht ist.
-* `Löschen` Lösche die Abgabe und zurück zu „Anlegen oder beitreten“. Dieser Button ist nur vorhanden, falls es keine anderen Teammitglieder gibt. Gibt es andere Teammitglieder, so befindet sich an dieser Stelle der Button `Austreten`.
-
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Einladungen an
-Klappe eine Liste früherer Teammitglieder und ein Suchfeld aus, um andere per E-Mail zur Abgabe einzuladen.
-* `Versenden` Lass MaMpf eine E-Mail-Einladung an die ausgewählten Personen schicken und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
-* `Abbrechen` Brich den Einladungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
-
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Tutorium
-Zeit, Tutor*in        Arrow-drop-down.png
-Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene Tutorium auszuwählen. Standardmäßig erscheint hier das zuletzt gewählte Tutorium.
-* `Dateien` Wähle auf dem Gerät gespeicherte Dateien aus, um sie abzugeben.
-* Trash-alt-solid.png Lösche die zuvor hochgeladene Datei. Dazu muss bereits etwas hochgeladen und gespeichert worden sein.
-* `Speichern` Speichere die Änderungen und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
-* `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
-
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Tutorium
-Zeit, Tutor*in        Arrow-drop-down.png
-Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene Tutorium auszuwählen. Standardmäßig erscheint hier das zuletzt gewählte Tutorium.
-* Caret-down.png Verschiebe Datei eine Position weiter nach unten.
-* Caret-up.png Verschiebe Datei eine Position weiter nach oben.
-* `Zusammenführen` Führe die ausgewählten Dateien in der aufgeführten Reihenfolge zusammen und weiter zu „Dateien hochladen 2“.
-* `Log (anzeigen)` Da passiert nix.
-* `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Tutorium
-Zeit, Tutor*in        Arrow-drop-down.png
-Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene Tutorium auszuwählen. Standardmäßig erscheint hier das zuletzt gewählte Tutorium.
-* `Hochladen` Lade die ausgewählte Datei hoch und weiter zu „Dateien hochladen 3“. Zuvor muss durch Setzen eines Hakens versichert werden, dass die Datei die Rechte Dritter nicht verletzt.
-* `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
-
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Tutorium
-Zeit, Tutor*in        Arrow-drop-down.png
-Klappe eine Liste der verfügbaren Tutorien und ein Suchfeld aus, um das eigene Tutorium auszuwählen. Standardmäßig erscheint hier das zuletzt gewählte Tutorium.
-* `Abbrechen` Brich den Bearbeitungsvorgang ab und zurück zu „Bearbeiten, einladen oder löschen“ bzw. „Bearbeiten, einladen oder austreten“.
-* `Speichern` Schließe den Uploadvorgang ab und weiter zu „Datei hochgeladen“.
-
-###### Bedienelemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Abgabe Long-arrow-alt-down-solid.png Öffne die Abgabedatei.
-* `Bearbeiten` Bearbeite die Abgabe und weiter zu „Bearbeiten“.
-* `Einladen` Lade jemanden zur Abgabe ein und weiter zu „Nachträglich einladen“.
-* `Austreten` Tritt aus und zurück zu „Anlegen oder beitreten“. Dieser Button ist nur vorhanden, falls es andere Teammitglieder gibt. Gibt es keine anderen Teammitglieder, so befindet sich an dieser Stelle der Button `Löschen`.
-
-
-###### Bedienlemente
-* `Titel des Übungsblattes` Gehe auf die [Medienseite des Übungsblattes](medium.md).
-* `Begriff` Gehe auf die [Seite des Begriffs](tag.md).
-* Library-books.png Öffne das Übungsblatt.
-* Info-black.png Öffne die [Medienseite des Übungsblattes](medium.md).
-* Long-arrow-alt-down-solid.pngpdf Lade das Übungsblatt als PDF herunter.
-* Abgabe Long-arrow-alt-down-solid.png Öffne die Abgabedatei.
-* KorrekturLong-arrow-alt-down-solid.png Öffne die Korrekturdatei. Dieser Button ist erst verfügbar, nachdem die Korrektur hochgeladen worden ist.
-
-\*Icons einbinden\*
-
-## Semantik der Farben und Icons
-Die Farbe des Abgabecardheaders enthält ebenso wie die Icons auf den Abgabecards, die keine Bedienelemente sind, Informationen zur Abgabe. Diese werden nun expliziert.
-
-### Bedeutung der Farben
-Der Header der Abgabecards ist je nach Zustand der Abgabe eingefärbt. Die Farbanzeige folgt einem Ampelsystem. Im Folgenden ist die Bedeutung der Farben aufgelistet:
+#### Nach der Kulanzzeit
+Wenn die Deadline erreicht ist und keine Datei abgegeben oder die verspätete Abgabe abgelehnt worden ist, färbt sich der Header rot. In diesen Fällen gibt es keine bzw. folgendes Bedienelement auf dem Body der Cards.
 
 <table>
- <tr>
-   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_red.png" height="12"/>&nbsp;</td>
-   <td>Entweder gehörst du zu keinem Abgabeteam (d.h. du hast weder eine Abgabe angelehnt, noch bist du einer beigetreten) oder die verspätete Abgabe ist abgelehnt worden.</td>
- </tr>
- <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_yellow.png" height="12"/></td>
-   <td>Du gehörst zu einem Abgabeteam, aber ihr habt (noch) keine Datei zur Abgabe hochgeladen.</td>
- </tr>
- <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_light_green.png" height="12"/></td>
-   <td>Du gehörst zu einem Abgabeteam und ihr habt eine Datei zur Abgabe hochgeladen.</td>
-  </tr>
   <tr>
-    <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_orange.png" height="12"/></td>
-    <td>Die Abgabe ist innerhalb der Kulanzzeit bearbeitet worden und die Entscheidung bezüglich der Annahme oder Ablehnung der Abgabe steht noch aus.</td>
-   </tr>
-   <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_green.png" height="12"/></td>
-     <td>Die Korrektur ist hochgeladen worden und kann angesehen werden.</td>
-    </tr>
-</table>
-
-### Bedeutung der Icons
-Auf den Abgabecards befinden sich in der Ecke rechts oben jeweils ein Symbol, das wie die Farbe des Headers Auskunft über den Zustand der Abgabe gibt. Die Bedeutung der Symbole wird nun erläutert:
-
-<table>
- <tr>
-   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-triangle.png" height="12"/>&nbsp;</td>
-   <td>Entweder ist die Abgabe nicht abgabefertig (d.h. dein Team hat (noch) keine Datei hochgeladen oder du gehörst zu keinem Abgabeteam) oder die verspätete Abgabe ist abgelehnt worden.</td>
- </tr>
- <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/smile.png" height="12"/></td>
-   <td>Die Abgabe ist abgabefertig (vor dem Ablauf der Deadline) bzw. die Korrektur ist verfügbar (nach dem Ablaufen der Deadline).</td>
- </tr>
- <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/hourglass-start.png" height="12"/></td>
-   <td>Die Abgabe ist übermittelt worden und wird korrigiert.</td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Nichts.png" width="350" /></td>
+     <td>
+        Auf dieser Card gibt es keine Bedienelemente.
+     </td>
   </tr>
 </table>
 
-Während der Kulanzzeit erscheint zudem unten rechts auf der Abgabecard das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit dem Mauszeiger darüber, erfährt man das Ende der Kulanzzeit.
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Abgelehnt.png" width="350" /></td>
+     <td>
+        <button name="button">Abgabe <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/></button> Öffne die Abgabedatei.
+     </td>
+  </tr>
+</table>
+
+Sobald eine Korrektur zu einer erfolgreichen Abgabe hochgeladen worden ist, wird der Header der Card dunkelgrün. Auf der dann angezeigten Card können Abgaben und Korrektur geöffnet werden.
+
+\* Zeile Code ????\*
+
+<table>
+  <tr>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Korrektur.png" width="350" /></td>
+     <td>
+        <ul>
+           <li>
+              <button name="button">Abgabe <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/></button> Öffne die Abgabedatei.
+           </li>
+           <li>
+              <button name="button">Abgabe <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/></button> Öffne die Korrekturdatei.
+           </li>
+        </ul>
+     </td>
+  </tr>
+</table>
 
 ## Hinweise
 ### Anforderungen an die Abgabedatei
-Die Abgabedatei muss zwei Kriterien erfüllen, damit sie hochgeladen werden kann: Sie muss das richtige Format haben und darf die Maximalgröße von 10 MB nicht überschreiten. Das jeweils zulässige Abgabeformat ist vorgegeben und kann in der Überschrift der jeweiligen Abgabecard nachgelesen werden. Andere Dateitypen können nicht hochgeladen werden. Daher muss die abzugebende Datei im erforderlichen Format erstellt oder entsprechend umgewandelt werden.
+Die Abgabedatei muss zwei Kriterien erfüllen, damit sie hochgeladen werden kann: Sie muss das richtige Format haben und darf die Maximalgröße von 20 MB nicht überschreiten. Das jeweils zulässige Abgabeformat ist vorgegeben und kann in der Überschrift der jeweiligen Abgabecard nachgelesen werden. Andere Dateitypen können nicht hochgeladen werden. Daher muss die abzugebende Datei im erforderlichen Format erstellt oder entsprechend umgewandelt werden.
 
-Dateien, die 5 MB Speichergröße überschreiten, können im Zuge des Hochladens von MaMpf komprimiert werden. Wenn die Datei nach dem Komprimierungsprozess immer noch größer als 10 MB ist, wird sie nicht hochgeladen. Darum ist bei der Erstellung der Abgabedatei dafür Sorge zu tragen, dass die Maximalgröße von 10 MB nicht überschritten wird. Große Dateien können beispielsweise aus ineffizienter Digitalisierung von Papieraufschrieben resultieren. In diesem Fall empfiehlt sich die Verwendung einer Scan-App, dabei kann 150 dpi als Richtwert für die Auflösung verwendet werden.
+Dateien, die 5 MB Speichergröße überschreiten, können im Zuge des Hochladens von MaMpf komprimiert werden. Wenn die Datei nach dem Komprimierungsprozess immer noch größer als 20 MB ist, wird sie nicht hochgeladen. Darum ist bei der Erstellung der Abgabedatei dafür Sorge zu tragen, dass die Maximalgröße von 20 MB nicht überschritten wird. Große Dateien können beispielsweise aus ineffizienter Digitalisierung von Papieraufschrieben resultieren. In diesem Fall empfiehlt sich die Verwendung einer Scan-App, dabei kann 150 dpi als Richtwert für die Auflösung verwendet werden.
 
 ### Verspätete Abgaben
 Eine Abgabe wird als verspätet eingestuft, wenn sie innerhalb der Kulanzzeit\* bearbeitet worden ist. Verspätete Abgaben müssen nicht von Tutor\*innen korrigiert werden, sie können auch abgelehnt werden. Daher sollte eine verspätete Abgabe möglichst vermieden werden.

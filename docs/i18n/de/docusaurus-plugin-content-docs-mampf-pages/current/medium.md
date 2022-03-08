@@ -9,7 +9,7 @@ Die Seite „Medium“ ist eine Unterseite einer Veranstaltung oder eines Moduls
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und umsetzen\*
+Auf die Medienseite gelangt man über das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button> auf Mediacards. Diese kommen beispielsweise auf den folgenden Seite vor, wenn Medien assoziiert sind: [„Lektionen“](lessons), [„Quizzes“](quizzes.md), [„Skript“](manuscript.md), [„Sonstiges“](miscellaneous.md), [„Übungen“](exercises.md), [„Worked Examples“](worked-examples.md), [„Wiederholung“](repetition.md), [„Abschnitt“](section), [„Sitzung“](session) und [„Vortrag“](talk).
 
 ## Bereiche der Seite
 Die Seite „Medium“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Medium“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -130,8 +130,6 @@ Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/docs
 
 ### Zusätzliche Informationen
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
-
-\* Screenshots \*
 
 | Symbol | Bedeutung |
 | :---: | :--- |

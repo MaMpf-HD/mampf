@@ -60,8 +60,6 @@ Konnte User nicht speichern: Es ist ein Fehler aufgetreten: Passwort muss ausgef
 Konnte User nicht speichern: Es ist ein Fehler aufgetreten: Passwort ist zu kurz (weniger als 6 Zeichen) | Roter Kasten am Seitenanfang | Roter Kasten am Seitenanfang  | Wähle ein längeres Passwort. Dieses muss aus mindestens sechs Zeichen bestehen.
 Konnte User nicht speichern: Es ist ein Fehler aufgetreten: Passwortbestätigung stimmt nicht mit Passwort überein | Roter Kasten am Seitenanfang | Passwort und Passwortbestätigung stimmen nicht überein. | Gib das Passwort und die Passwortbestätigung erneut ein.
 
-\*Screenshots\*
-
 ## Von dieser Seite aus aufrufbare Seiten
 * [Persönliche Startseite](my-home-page.md)
 * [Login](login.md)

@@ -4,7 +4,7 @@ title: Selbsttest
 Die Seite „Selbsttest“ ist eine Unterseite einer [Veranstaltung](event-series.md). Auf ihr können Nutzer\*innen ihr Wissen mit einem Selbsttest überprüfen. Bei Selbsttests werden zufällig Fragen aus der Datenbank ausgewählt. Nutzer\*innen können dabei bestimmen, wie viele Fragen der Test haben soll und welche Inhalte abgefragt werden. Quizzes hingegen haben einen fixen Fragenbestand.
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Um auf die Seite „Selbsttest“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Selbsttest“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Selbsttest“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -49,7 +49,7 @@ Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zu
 ### Übergeordnete Seite
 [Veranstaltungsseite](event-series.md)
 
-### Gleichgrangige Seiten
+### Gleichrangige Seiten
 * [Abgaben](submissions.md)
 * [Beispiel-Datenbank](erdbeere.md)
 * [Lektionen](lessons.md)

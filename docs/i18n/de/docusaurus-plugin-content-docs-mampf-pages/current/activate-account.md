@@ -51,8 +51,6 @@ Infolgedessen öffnet sich Seite [„Profil“](profile.md), auf der man nun die
 ## Fehlermeldung
 Wenn der Account bereits freigeschaltet worden ist, gibt MaMpf die folgende Fehlermeldung aus: „Konnte User nicht speichern: Es ist ein Fehler aufgetreten. Email-Account wurde bereits bestätigt“. In diesem Fall gibt es bereits einen Account zu dieser E-Mail-Adresse. Wenn man sich nicht mehr an das zugehörige Passwort erinnern kann, sollte man auf der Seite [„Passwort vergessen“](password-forgotten.md) ein neues anfordern.
 
-\*Screenshot\*
-
 ## Von dieser Seite aus aufrufbare Seiten
 * [Login](login.md)
 * [Registrieren](registration.md)

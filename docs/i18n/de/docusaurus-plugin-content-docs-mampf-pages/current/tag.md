@@ -8,7 +8,7 @@ Die Seite „Begriff“ ist eine Unterseite einer Veranstaltung. Dort finden Nut
 ![](/img/Begriff.png)
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Die Seite „Begriff“ ist über verschiedene Wege erreichbar. Sie kann beispielsweise über [Mediacards](mediacard) oder die Seiten [„Veranstaltung“](event-series), [„Abschnitt“](section), [„Sitzung“](session), [„Vortrag“](talk) und [„Medium“](medium) erreicht werden, sofern es entsprechende Assoziierungen mit dem Begriff gibt. In diesem Fall gibt es auf den gerade angeführten Seiten das Bedienelement <button name="button">Begriff</button>, das auf die Seite „Begriff“ führt.
 
 ## Bereiche der Seite
 Die Seite „Begriff“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Begriff“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -19,9 +19,17 @@ Die Seite „Begriff“ gliedert sich in drei große Teilbereiche: die eigentlic
 
 Die eigentliche Seite besteht aus einer Überschrift und den sechs Boxen „Synonyme“, „Verknüpfte Begriffe“, „Verknüpfte Abschnitte“, „MaMpf-Map“, „Verknüpfte Fragen“ und „Verknüpfte Medien“.
 
-\*Bilder mit Titel einfügen\*
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff_head.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff_syn.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff_beg.png" height="300"/>|
+|:---: | :---: | :---:|
+|Überschrift|Synonyme|Verknüpfte Begriffe|
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff_ab.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff_map.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff_fra.png" height="300"/>|
+|Verknüpfte Abschnitte|MaMpf-Map|Verknüpfte Fragen|
+| | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff_med.png" height="300"/> | |
+||Verknüpfte Medien||
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
+Auf der Seite „Begriff“ kommen Bedienelemente in den Bereichen „Verknüpfte Begriffe“, „Verknüpfte Abschnitte“, „MaMpf-Map“, „Verknüpfte Fragen“ und „Verknüpfte Medien“ vor. Die Bedienelemente jeder dieser Bereiche werden nun berschieben.
+
 ![](/img/Begriff.png)
 
 ### Verknüpfte Begriffe
@@ -81,7 +89,6 @@ Bei Editor\*innen befindet sich neben der Überschrift das <button name="button"
 
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
 
-\* Screenshots \*
 
 | Symbol | Bedeutung |
 | :---: | :--- |

@@ -8,7 +8,7 @@ Die Seite „Lektionen“ ist eine Unterseite einer Veranstaltung. Sie ermöglic
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Um auf die Seite „Lektionen“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Lektionen“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Lektionen“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Lektionen“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -24,6 +24,8 @@ Die eigentliche Seite kann ebenfalls in Teilbereichen eingeteilt werden: den Sei
 |Seiteneinstellungen|Seitennavigation|Mediacards|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
+In allen drei Teilbereichen der Seite kommen Bedienelemente vor. Diese werden nun beschrieben.
+
 ### Seiteneinstellungen
 * <button name="button">Reihenfolge umkehren</button> Ändere die Sortierreihenfolge der Medien.
 * <button name="button">alle</button> Zeige alle Medien auf einer Seite an. Dieser Button ist nicht vorhanden, wenn bereits alle Lektionen auf einer Seite angezeigt werden.
@@ -94,8 +96,6 @@ Zum Anlegen und Bearbeiten von Lektionen siehe die Seite [„Veranstaltung bearb
 ### Zusätzliche Informationen auf Mediacards
 
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
-
-\* Screenshots \*
 
 | Symbol | Bedeutung |
 | :---: | :--- |

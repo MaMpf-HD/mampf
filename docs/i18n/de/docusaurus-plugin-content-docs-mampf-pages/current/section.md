@@ -9,12 +9,10 @@ Die Seite „Abschnitt“ ist eine Unterseite einer Veranstaltung. Auf ihr kann 
 ![](/img/Abschnitt.png)
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Um die Seite „Abschnitt“ zu erreichen, öffnet man zunächst die [Veranstaltung](event-series), zu der der Abschnitt gehört. Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann in der Gliederung auf den Titel des Abschnitts.
 
 ## Bereiche der Seite
 Die Seite „Abschnitt“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Abschnitt“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
-
-\* Screenshots von Abschnitt \*
 
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
 |:---: | :---: | :---:|
@@ -29,6 +27,8 @@ Die eigentliche Seite besteht aus einer Überschrift, Navigationselementen und d
 |Verknüpfte Sitzungen|Inhalt|Verknüpfte Medien|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
+In allen eben vorgestellten Bereichen der Seite können Bedienelemente vorkommen. Diese werden nun beschrieben.
+
 ### Überschrift
 * <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die Seite der <a href="/mampf/de/docs/event-series" target="_self">Veranstaltung</a>.
 
@@ -83,8 +83,6 @@ Bei Editor\*innen befindet sich neben der Überschrift das <button name="button"
 ### Zusätzliche Informationen auf Mediacards
 
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
-
-\* Screenshots \*
 
 | Symbol | Bedeutung |
 | :---: | :--- |

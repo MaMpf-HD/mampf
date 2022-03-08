@@ -6,7 +6,7 @@ Die Seite „Worked Examples“ ist eine Unterseite einer Veranstaltung. Sie erm
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Um auf die Seite „Worked Examples“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Worked Examples“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Worked Examples“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Worked Examples“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -91,7 +91,7 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 ### Übergeordnete Seite
 [Veranstaltungsseite](event-series.md)
 
-### Gleichgrangige Seiten
+### Gleichrangige Seiten
 * [Abgaben](submissions.md)
 * [Beispiel-Datenbank](erdbeere.md)
 * [Lektionen](lessons.md)
