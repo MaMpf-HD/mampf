@@ -3,6 +3,8 @@ title: Registrieren
 ---
 Auf der Seite „Registrieren“ kann man einen MaMpf-Account anlegen. Dazu benötigt man lediglich eine E-Mail-Adresse. Für das Erstellen des Accounts ist ein Passwort und die Zustimmung zur Speicherung und Verarbeitung der Daten erforderlich.
 
+![](/img/Registrieren_thumb.png)
+
 ## Navigation zu dieser Seite
 Die Seite „Registrieren“ kann direkt von folgenden Seiten über <button name="button">Registrieren</button>
  bzw. <button name="button">registrieren</button>
@@ -80,8 +82,6 @@ Konnte User nicht speichern: Es sind n Fehler aufgetreten: Passwort muss ausgef�
 Konnte User nicht speichern: Es sind n Fehler aufgetreten: Passwort ist zu kurz (weniger als 6 Zeichen) | Roter Kasten am Seitenanfang | Das Passwort ist zu kurz. | Wähle ein längeres Passwort. Dieses muss aus mindestens sechs Zeichen bestehen.
 Konnte User nicht speichern: Es sind n Fehler aufgetreten: Passwortbestätigung stimmt nicht mit Passwort überein | Roter Kasten am Seitenanfang | Passwort und Passwortbestätigung stimmen nicht überein. | Gib das Passwort und die Passwortbestätigung erneut ein.
 Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt. | Dialogfeld | Der Haken zur Zustimmung zur Speicherung und Verarbeitung der Daten ist nicht gesetzt worden. | Setze den Haken, um der Speicherung und Verarbeitung der Daten zuzustimmen.
-
-\*Screenshots\*
 
 ## Von dieser Seite aus aufrufbare Seiten
 * [Login](login.md)
