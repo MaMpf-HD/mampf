@@ -26,15 +26,6 @@ GIT
       timeago_js (>= 3.0.2.2)
 
 GIT
-  remote: https://github.com/fosterfarrell9/commontator
-  revision: cfc3e47c2d9b7002738f788fb463a89f318ee63a
-  branch: master
-  specs:
-    commontator (6.3.0)
-      rails (>= 5.2)
-      will_paginate
-
-GIT
   remote: https://github.com/rails/sprockets-rails
   revision: 5badf679b206e4f218b9e3a42730d27779e572b2
   branch: master
@@ -196,6 +187,10 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    commontator (7.0.0)
+      rails (>= 6.0)
+      sprockets-rails
+      will_paginate
     concurrent-ruby (1.1.9)
     connection_pool (2.2.5)
     content_disposition (1.0.0)
@@ -659,7 +654,7 @@ DEPENDENCIES
   cancancan
   clipboard-rails
   coffee-rails (~> 5.0.0)
-  commontator!
+  commontator
   coveralls
   cypress-on-rails (~> 1.0)
   dalli (>= 2.7)

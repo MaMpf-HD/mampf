@@ -94,9 +94,7 @@ gem "sidekiq-cron", "~> 1.1"
 gem "faraday", "~> 1.8"
 gem "globalize"
 gem "globalize-accessors"
-gem "commontator",
-  git: "https://github.com/fosterfarrell9/commontator",
-  branch: "master"
+gem "commontator"
 gem "acts_as_votable"
 gem "sprockets-rails",
   git: "https://github.com/rails/sprockets-rails",
