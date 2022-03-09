@@ -5,6 +5,8 @@ title: Sitzung
 
 Die Seite „Sitzung“ ist eine Unterseite einer Veranstaltung.
 
+![](/img/sitzung.png)
+
 \*Link ergänzen\*
 
 ## Navigation zu dieser Seite
