@@ -142,6 +142,7 @@ services:
       - "127.0.0.1:3000:80"
     volumes:
       - "nginx-conf-d:/etc/nginx/conf.d"
+      # Submissions are served by nginx but are still authenticated by MaMpf. (accel_redirect)
       - "submissions:/private/submissions:ro,nocopy"
       - "public:/public"
 
