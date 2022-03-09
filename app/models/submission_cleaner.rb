@@ -20,29 +20,32 @@ class SubmissionCleaner
   end
 
   def check_for_first_mail
-    @deletion_date = Time.zone.today + 14.days
+    @deletion_date = @date + 14.days
     fetch_props
-    @reminder = false
+    return if @assignments.empty?
 
+    @reminder = false
     send_info_mail_to_submitters
     send_info_mail_to_editors
   end
 
   def check_for_reminder_mail
-    @deletion_date = Time.zone.today + 7.days
+    @deletion_date = @date + 7.days
     fetch_props
-    @reminder = true
+    return if @assignments.empty?
 
+    @reminder = true
     send_info_mail_to_submitters
     send_info_mail_to_editors
   end
 
   def check_for_deletion
-    @deletion_date = Time.zone.today
+    @deletion_date = @date
     fetch_props
+    return if @assignments.empty?
 
     @submissions = Submission.where(assignment: @assignments)
-    @submissions.each(&:destroy)
+    @submissions.each(&:destroy!)
 
     send_destruction_mail_to_submitters
     send_destruction_mail_to_editors
@@ -50,14 +53,23 @@ class SubmissionCleaner
 
   private
 
+  def clear_props
+    @assignments = nil
+    @submitters = nil
+    @lectures = nil
+  end
+
   def fetch_props
-    @assignments = Assignments.where(deletion_date: @deletion_date)
-    @submitters = @assignments.submitters
-    @lectures = Lecture.find_by(id: @assignments.pluck(:lecture_id))
+    clear_props
+    @assignments = Assignment.where(deletion_date: @deletion_date)
+    return if @assignments.empty?
+
+    @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
+    @lectures = [*Lecture.find_by(id: @assignments.pluck(:lecture_id))]
   end
 
   def send_destruction_mail_to_submitters
-    return unless @submitters.present?
+    return if @submitters.blank?
 
     I18n.available_locales.each do |l|
       local_submitter_ids = @submitters.where(locale: l).pluck(:id)
