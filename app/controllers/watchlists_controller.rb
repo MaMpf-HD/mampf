@@ -42,7 +42,7 @@ class WatchlistsController < ApplicationController
   end
 
   def edit
-    authorize! :change_watchlist, @watchlist
+    authorize! :edit, @watchlist
   end
 
   def destroy
