@@ -54,6 +54,12 @@ services:
     restart: always
     image: redis:6-alpine
     networks:
+      - mampf
+
+  cache:
+    restart: always
+    image: memcached:alpine
+    networks:
       - default
 
   solr:
@@ -66,12 +72,6 @@ services:
     networks:
       - default
     restart: always
-
-  cache:
-    restart: always
-    image: memcached:alpine
-    networks:
-      - mampf
 
 networks:
   postgres:
