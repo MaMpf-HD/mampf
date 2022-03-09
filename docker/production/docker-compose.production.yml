@@ -54,7 +54,18 @@ services:
     restart: always
     image: redis:6-alpine
     networks:
-      - mampf
+      - default
+
+  solr:
+    image: solr:8.11
+    container_name: solr
+    ports:
+      - "127.0.0.1:8983:8983"
+    volumes:
+      - /path/to/persistent/var_solr:/var/solr
+    networks:
+      - default
+    restart: always
 
   cache:
     restart: always
