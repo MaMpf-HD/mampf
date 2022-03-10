@@ -6,7 +6,8 @@ Auf der Seite „DozentIn“ können weitere Informationen zur Dozent\*in gefund
 ![](/img/dozentin.png)
 
 ## Ähnliche Seiten
-* [Abschnitt](section.md)
-* [Begriff](tag.md)
-* [Medium](medium.md)
-* [Sitzung](session.md)
+* [Abschnitt](section)
+* [Begriff](tag)
+* [Medium](medium)
+* [Sitzung](session)
+* [Vortrag](talk)

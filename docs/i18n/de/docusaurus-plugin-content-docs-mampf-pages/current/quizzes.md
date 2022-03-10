@@ -24,7 +24,7 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: den Seiteneinste
 |Seiteneinstellungen|Seitennavigation|Mediacards|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Mithilfe eines Screenshots, auf dem drei [Mediacards](mediacard.md) zu sehen sind, werden nun sämtliche mögliche Buttons der Seite „Quizzes“ beschrieben.
+In allen drei Teilbereichen der Seite kommen Bedienelemente vor. Diese werden nun beschrieben.
 
 ### Seiteneinstellungen
 
@@ -84,7 +84,9 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 
 ### Gleichrangige Seiten
 * [Abgaben](submissions.md)
@@ -99,3 +101,6 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 * [Übungen](exercises.md)
 * [Wiederholung](repetition.md)
 * [Worked Examples](worked-examples.md)
+
+### Weiterführende Seite (für Editor*innen und Vortragende)
+[Medium bearbeiten](edit-medium)

@@ -5,75 +5,75 @@ title: Seiten für alle Nutzer*innen
 Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich sind, alphabetisch aufgelistet.
 
 ## A
-* [Abgaben](submissions.md) (bei Nutzer*innen, die für diese Veranstaltung über Editoren- oder Tutorenrechte verfügen, gibt es diese Seite nicht, an ihre Stelle tritt [Tutorien](tut-ed-ad-tutorials))
-* [Abschnitt](section.md)
-* [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md)
+* [Abgaben](submissions) (bei Nutzer*innen, die für diese Veranstaltung über Editoren- oder Tutorenrechte verfügen, gibt es diese Seite nicht, an ihre Stelle tritt [Tutorien](tut-ed-ad-tutorials)
+* [Abschnitt](section)
+* [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account)
 
 ## B
-* [Begriff](tag.md)
-* [Beispieldatenbank](erdbeere.md)
-* [Benachrichtigungen](notifications.md)
+* [Begriff](tag)
+* [Beispieldatenbank](erdbeere)
+* [Benachrichtigungen](notifications)
 
 ## D
-* [DozentIn](lecturer.md)
+* [DozentIn](lecturer)
 
 ## K
-* [Kommentare](comments.md)
-* [Kommentare für ein Medium](comments-medium.md)
+* [Kommentare](comments)
+* [Kommentare für ein Medium](comments-medium)
 
 ## L
-* [Lektionen](lessons.md)
-* [Login](login.md)
-* [Logout](logout.md)
+* [Lektionen](lessons)
+* [Login](login)
+* [Logout](logout)
 
 ## M
-* [Medium](medium.md)
-* [Meine Startseite](my-home-page.md)
-* [Mitteilungen](announcements.md)
-* [Modul](module.md)
+* [Medium](medium)
+* [Meine Startseite](my-home-page)
+* [Mitteilungen](announcements)
+* [Modul](module)
 
 ## N
-* [News](news.md)
+* [News](news)
 
 ## O
-* [Organisatorisches](general-information.md)
+* [Organisatorisches](general-information)
 
 ## P
-* [Passwort ändern](change-password.md)
-* [Passwort vergessen](password-forgotten.md)
-* [Profil](profile.md)
+* [Passwort ändern](change-password)
+* [Passwort vergessen](password-forgotten)
+* [Profil](profile)
 
 ## Q
-* [Quizzes](quizzes.md)
+* [Quizzes](quizzes)
 
 ## R
-* [Registrieren](registration.md)
+* [Registrieren](registration)
 
 ## S
-* [Selbsttest](self-assessment.md)
-* [Seminar](seminar) (Proseminar, Seminar und Oberseminar)
-* [Sitzung](session.md)
-* [Skript](manuscript.md)
-* [Sonstiges](miscellaneous.md)
-* [Startseite](home-page.md)
-* [Suchergebnisse](search-results.md)
+* [Selbsttest](self-assessment)
+* [Seminar](seminar) (Proseminar, Seminar und Oberseminar), siehe auch [Veranstaltung](event-series)
+* [Sitzung](session)
+* [Skript](manuscript)
+* [Sonstiges](miscellaneous)
+* [Startseite](home-page)
+* [Suchergebnisse](search-results)
 
 ## T
-* [THymE](thyme.md)
+* [THymE](thyme)
 * Tutorien, siehe Abgaben
 
 ## U
-* [Übungen](exercises.md)
+* [Übungen](exercises)
 
 ## V
-* [Veranstaltung](event-series.md)
-* [Vorlesung](lecture)
+* [Veranstaltung](event-series), sieh auch [Seminar](seminar) und [Vorlesung](lecture)
+* [Vorlesung](lecture), siehe auch [Veranstaltung](event-series)
 * [Vortrag](talk), siehe auch [Seiten für Vortragende](all-pages-talk)
 
 ## W
 * [Watchlist](watchlist)
-* [Wiederholung](repetition.md)
-* [Worked Examples](worked-examples.md)
+* [Wiederholung](repetition)
+* [Worked Examples](worked-examples)
 
 ## Z
-* [Zugangsdaten ändern](change-login-data.md)
+* [Zugangsdaten ändern](change-login-data)

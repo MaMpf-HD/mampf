@@ -9,7 +9,7 @@ Die Seite „Abschnitt“ ist eine Unterseite einer Veranstaltung. Auf ihr kann 
 ![](/img/Abschnitt.png)
 
 ## Navigation zu dieser Seite
-Um die Seite „Abschnitt“ zu erreichen, öffnet man zunächst die [Veranstaltung](event-series), zu der der Abschnitt gehört. Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann in der Gliederung auf den Titel des Abschnitts.
+Um die Seite „Abschnitt“ zu erreichen, öffnet man zunächst die [Veranstaltung](event-series), zu der der Abschnitt gehört. Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann in der Gliederung auf den <button>Titel</button> des Abschnitts.
 
 ## Bereiche der Seite
 Die Seite „Abschnitt“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Abschnitt“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -30,6 +30,7 @@ Die eigentliche Seite besteht aus einer Überschrift, Navigationselementen und d
 In allen eben vorgestellten Bereichen der Seite können Bedienelemente vorkommen. Diese werden nun beschrieben.
 
 ### Überschrift
+* <a href="/mampf/de/docs/ed-edit-section" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> (nur bei Editor*innen) Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-section" target="_self">„Abschnitt bearbeiten“</a>.
 * <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die Seite der <a href="/mampf/de/docs/event-series" target="_self">Veranstaltung</a>.
 
 ### Navigationselemente
@@ -59,6 +60,9 @@ Von der Seite „Abschnitt“ gelangt man zu diversen anderen Seiten. Im Weitere
 Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Kommentar, Medium, Sitzung, THymE und Veranstaltung.
 
 \*Links ergänzen\*
+
+### [„Abschnitt bearbeiten“](ed-edit-section) (nur bei Editor*innen)
+Auf dieser Seite kann man den Titel und die Einordnung des Abschnitts verändern, Tags und Sitzungen assoziieren sowie den Inhaltstext bearbeiten. Um auf diese Seite zu gelangen, klickt man auf das Icon <a href="/mampf/de/docs/ed-edit-section" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> neben der Überschrift.
 
 ### [Veranstaltungsseite](event-series.md)
 Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a>.
@@ -91,12 +95,16 @@ Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/calendar-check-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht, aber die Veröffentlichung ist geplant. Einfache Nutzer*innen können dieses Medium erst nach dem Zeitpunkt der Veröffentlichung sehen. Dieser kann mithilfe des Tooltips in Erfahrung gebracht werden. |
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht mehr sehen. |
 
-## Verwandte und ähnliche Seiten
+## Verwandte Seiten
 ### Übergeordnete Seite
-* [Veranstaltungsseite](event-series.md)
+[Vorlesungsseite](lecture)
 
 ### Ähnliche Seiten
-* [Tag](tag.md)
-* [DozentIn](lecturer.md)
-* [Medium](medium.md)
-* [Sitzung](session.md)
+* [Tag](tag)
+* [DozentIn](lecturer)
+* [Medium](medium)
+* [Sitzung](session)
+* [Vortrag](talk)
+
+### Weiterführende Seite (für Editor*innen)
+[Abschnitt bearbeiten](ed-edit-section)

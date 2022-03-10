@@ -50,6 +50,9 @@ In allen erwähnten Seitenbereichen gibt es Bedienelemente. Diese werde nun aufg
 * <a href="/mampf/de/docs/session" target="_self"><button name="button">Datum</button></a> Wechsel auf die <a href="/mampf/de/docs/session" target="_self">Seite der Sitzung</a>.
 * <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Wechsel auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
 
+## Hinweis zum Fehlen von Bedienelementen
+Nicht immer sind alle Bedienelemente vorhanden. Die Box „Aktuelles“ und deren Bedienelemente werden nur angezeigt, wenn es eine neue Mitteilung und/oder einen neuen Forumsbeitrag gibt. Damit es Bedienelemente beim Veranstaltungsinhalt gibt, müssen Abschnitte bzw. Begriffe bzw. Sitzungen zur Vorlesung assoziiert sein.  
+
 ## Von dieser Seite aus aufrufbare Seiten
 Von der Vorlesungsseite gelangt man zu diversen Unterseiten der Vorlesung. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
 
@@ -78,43 +81,44 @@ Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zu
 ### [Einträge der Seitenleiste](sidebar)
 Über die Seitenleiste sind verschiedene Unterseiten erreichbar. Diesen Unterseiten kann einer der drei Überbegriffe Vorlesungsinhalt, Vorlesungsinformation und [Zettelabgabe](submissions.md) zugewiesen werden. Die Seiten mit Veranstaltungsinhalten sind:
 
-* [Beispiel-Datenbank](erdbeere.md)
-* [Lektionen](lessons.md)
-* [Quizzes](quizzes.md)
-* [Selbsttest](self-assessment.md)
-* [Skript](manuscript.md)
-* [Sonstiges](miscellaneous.md)
-* [Übungen](exercises.md)
-* [Wiederholung](repetition.md)
-* [Worked Examples](worked-examples.md)
+* [Beispiel-Datenbank](erdbeere)
+* [Lektionen](lessons)
+* [Quizzes](quizzes)
+* [Selbsttest](self-assessment)
+* [Skript](manuscript)
+* [Sonstiges](miscellaneous)
+* [Übungen](exercises)
+* [Wiederholung](repetition)
+* [Worked Examples](worked-examples)
 
 Zu den Seiten mit Veranstaltungsinformationen gehören:
 
-* [Organisatorisches](general-information.md)
-* [Mitteilungen](announcements.md)
-* [Modul](module.md)
+* [Organisatorisches](general-information)
+* [Mitteilungen](announcements)
+* [Modul](module)
 
 ## Hinweis für Editor*innen
 Editor\*innen gelangen über das Icon <a href="/mampf/de/docs/ed-edit-lecture" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> auf die Seite <a href="/mampf/de/docs/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
 
 ## Verwandte Seiten
 ### Gleichrangige Seite
-[Seminar](seminar)
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
 
 ### Untergeordnete Seiten
-* [Abgaben](submissions.md)
-* [Beispiel-Datenbank](erdbeere.md)
-* [Mitteilungen](announcements.md)
-* [Modul](module.md)
-* [Lektionen](lessons.md)
-* [Organisatorisches](general-information.md)
-* [Quizzes](quizzes.md)
-* [Selbsttest](self-assessment.md)
-* [Skript](manuscript.md)
-* [Sonstiges](miscellaneous.md)
-* [Übungen](exercises.md)
-* [Wiederholung](repetition.md)
-* [Worked Examples](worked-examples.md)
+* [Abgaben](submissions)
+* [Beispiel-Datenbank](erdbeere)
+* [Mitteilungen](announcements)
+* [Modul](module)
+* [Lektionen](lessons)
+* [Organisatorisches](general-information)
+* [Quizzes](quizzes)
+* [Selbsttest](self-assessment)
+* [Skript](manuscript)
+* [Sonstiges](miscellaneous)
+* [Übungen](exercises)
+* [Wiederholung](repetition)
+* [Worked Examples](worked-examples)
 
 ### Weiterführende Seiten für Editor*innen
 * [Seminar bearbeiten](ed-edit-seminar)

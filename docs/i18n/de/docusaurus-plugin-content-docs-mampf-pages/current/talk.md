@@ -42,7 +42,7 @@ In den Bereichen Überschrift, Navigation, Basisdaten und verknüpfte Medien gib
 
 ### Überschrift
 * <a href="/mampf/de/docs/seminar" target="_self"><button name="button">Seminar</button></a> Gehe auf die <a href="/mampf/de/docs/seminar" target="_self">Seite des Seminars</a>.
-* <a href="/mampf/de/docs/edit-talk" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> Gehe auf die Seite <a href="/mampf/de/docs/edit-talk" target="_self"> „Vortrag bearbeiten“</a>. Dieser Button ist nur beim eigenen Vortrag und bei Editor*innen vorhanden.
+* <a href="/mampf/de/docs/edit-talk" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> (nur beim eigenen Vortrag und Editor*innen) Gehe auf die Seite <a href="/mampf/de/docs/edit-talk" target="_self"> „Vortrag bearbeiten“</a>.
 
 ### Navigation
 * <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left_2.png" height="12"/></button> Wechsel auf die Seite des vorigen Vortrags. Dieses Bedienelemente ist nur vorhanden, wenn es sich nicht um den ersten Vortrag handelt.
@@ -83,8 +83,18 @@ Auf der Seite [„Vortrag bearbeiten“](edit-talk) können Editor\*innen und Vo
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht mehr sehen. |
 
 ## Verwandte Seiten
+
+### Für alle Nutzer*innen
+* [Abschnitt](section)
+* [Medium](medium)
+* [Seminar](seminar)
+* [Sitzung](session)
+
+### Für Vortragende und Editor*innen
 * [Medium bearbeiten](edit-medium)
 * [Quiz bearbeiten](edit-quiz) (zum Bearbeiten des Titels, verknüpfter Tags, des Beschreibungstextes und der Öffentlichkeitseinstellungen)
 * [Quizeditor](quiz-editor) (zum Bearbeiten der Fragen, der Erläuterungen und dem Aufbau)
-* [Seite des Seminars](seminar)
 * [Vortrag bearbeiten](edit-talk)
+
+### Für Editor*innen
+[Seminar bearbeiten](ed-edit-seminar)

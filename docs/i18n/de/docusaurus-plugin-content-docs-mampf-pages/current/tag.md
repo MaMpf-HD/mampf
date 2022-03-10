@@ -1,7 +1,7 @@
 ---
 title: Begriff
 ---
-Die Seite „Begriff“ ist eine Unterseite einer Veranstaltung. Dort finden Nutzer\*innen Synonyme für den Begriff, mit dem Begriff verknüpfte Abschnitte, Begriffe, Medien und Quizzes sowie eine Mindmap („MaMpf-Map“), die veranschaulicht, mit welchen Begriffen der entsprechende Begriff zusammenhängt. Mit der MaMpf-Map können die Seiten der mit dem Begriff verbunden Begriffe geöffnet werden.
+Auf der Seite „Begriff“ finden Nutzer\*innen Synonyme für den Begriff, mit dem Begriff verknüpfte Abschnitte, Begriffe, Medien und Quizzes sowie eine Mindmap („MaMpf-Map“), die veranschaulicht, mit welchen Begriffen der entsprechende Begriff zusammenhängt. Mit der MaMpf-Map können die Seiten der mit dem Begriff verbunden Begriffe geöffnet werden.
 
 \*Links ergänzen\*
 
@@ -28,9 +28,12 @@ Die eigentliche Seite besteht aus einer Überschrift und den sechs Boxen „Syno
 ||Verknüpfte Medien||
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Auf der Seite „Begriff“ kommen Bedienelemente in den Bereichen „Verknüpfte Begriffe“, „Verknüpfte Abschnitte“, „MaMpf-Map“, „Verknüpfte Fragen“ und „Verknüpfte Medien“ vor. Die Bedienelemente jeder dieser Bereiche werden nun berschieben.
+Auf der Seite „Begriff“ kommen Bedienelemente bei einfachen Nutzer\*innen in den Bereichen „Verknüpfte Begriffe“, „Verknüpfte Abschnitte“, „MaMpf-Map“, „Verknüpfte Fragen“ und „Verknüpfte Medien“ vor. Bei Editor\*innen gibt es außerdem ein Bedienelement neben der Überschrift. Die Bedienelemente jeder dieser Bereiche werden nun beschrieben.
 
 ![](/img/Begriff.png)
+
+### Überschrift (nur bei Editor*innen)
+<a href="/mampf/de/docs/ed-edit-tag" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> Gehe auf die Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Begriff bearbeiten“</a>.
 
 ### Verknüpfte Begriffe
 <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
@@ -64,9 +67,14 @@ Auf der Seite „Begriff“ kommen Bedienelemente in den Bereichen „Verknüpft
 ## Hinweis zum Fehlen von Bedienelementen
 Die Box „Verknüpfte Fragen“ und die damit einhergehende Möglichkeit, ein Quiz zu starten, gibt es nur, wenn Fragen assoziiert sind.
 
-Wenn keine Abschnitte, Begriffe oder Medien assozziiert sind, werden die entsprechenden Boxen zwar angezeigt, es gibt dann aber keine weiteren Bedienelemente.
+Wenn keine Abschnitte, Begriffe oder Medien assoziiert sind, werden die entsprechenden Boxen zwar angezeigt, es gibt dann aber keine weiteren Bedienelemente.
 
 ## Von dieser Seite aus aufrufbare Seiten
+Von der Seite „Begriff“ aus können die [Seiten der verknüpften Abschnitte](section), die [Seiten der verknüpften Medien](medium), der [THymE-Player](thyme.md) und [Kommentarseiten](comments-medium.md) erreicht werden. Editor*innen können darüber hinaus zur Seite [„Begriff bearbeiten“](ed-edit-tag) navigieren.
+
+### [„Begriff bearbeiten“](ed-edit-tag) (nur bei Editor*innen)
+Auf dieser Seite können der Titel des Tags bearbeitet, Synonyme oder Übersetzungen ergänzt sowie Module, Tags und Realisierungen mit dem Tag verknüpft werden. Außerdem kann der Tag mit einem anderen identifiziert oder gelöscht werden.
+
 ### [Seite des verknüpften Abschnitts](section.md)
 Auf der Seite des Abschnitts kann man sich einen Überblick über den Inhalt des Abschnitts sowie über verknüpfte Begriffe, Medien und Sitzungen verschaffen. Über die Inhaltsübersicht können PDFs und Videos an der gewünschten Stelle geöffnet werden.
 
@@ -82,13 +90,11 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 
 ## Hinweise für Editor*innen
 ### Seite bearbeiten
-
 Bei Editor\*innen befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/docs/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Begriff bearbeiten“</a>.
 
 ### Zusätzliche Informationen auf Mediacards
 
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
-
 
 | Symbol | Bedeutung |
 | :---: | :--- |
@@ -97,12 +103,16 @@ Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/calendar-check-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht, aber die Veröffentlichung ist geplant. Einfache Nutzer*innen können dieses Medium erst nach dem Zeitpunkt der Veröffentlichung sehen. Dieser kann mithilfe des Tooltips in Erfahrung gebracht werden. |
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht mehr sehen. |
 
-## Verwandte und ähnliche Seiten
+## Verwandte Seiten
 ### Übergeordnete Seite
-* [Veranstaltungsseite](event-series.md)
+[Veranstaltung](event-series)
 
 ### Ähnliche Seiten
-* [Abschnitt](section.md)
-* [DozentIn](lecturer.md)
-* [Medium](medium.md)
-* [Sitzung](session.md)
+* [Abschnitt](section)
+* [DozentIn](lecturer)
+* [Medium](medium)
+* [Sitzung](session)
+* [Vortrag](talk)
+
+### Weiterführende Seite (für Editor*innen)
+[Begriff bearbeiten](ed-edit-tag)

@@ -55,6 +55,9 @@ In allen erwähnten Seitenbereichen gibt es Bedienelemente. Diese werde nun aufg
 * <a href="/mampf/de/docs/talk" target="_self"><button name="button">Datum</button></a> Wechsel auf die <a href="/mampf/de/docs/talk" target="_self">Seite des Vortrags</a>.
 * <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Wechsel auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
 
+## Hinweis zum Fehlen von Bedienelementen
+Nicht immer sind alle Bedienelemente vorhanden. Die Box „Aktuelles“ und deren Bedienelemente werden nur angezeigt, wenn es eine neue Mitteilung und/oder einen neuen Forumsbeitrag gibt. Damit es Bedienelemente beim Veranstaltungsinhalt gibt, müssen Begriffe bzw. Vorträge zum Seminar assoziiert sein.  
+
 ## Von dieser Seite aus aufrufbare Seiten
 Von der Seminarseite gelangt man zu diversen Unterseiten des Seminars. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
 
@@ -101,7 +104,8 @@ Editor\*innen gelangen über das Icon <a href="/mampf/de/docs/ed-edit-seminar" t
 
 ## Verwandte Seiten
 ### Gleichrangige Seite
-[Vorlesung](lecture)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 
 ### Untergeordnete Seiten
 * [Abgaben](submissions.md)

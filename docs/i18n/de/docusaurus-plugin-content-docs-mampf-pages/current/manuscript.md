@@ -26,6 +26,8 @@ Die eigentliche Seite besteht aus zwei Teilbereichen: den Seiteneinstellungen un
 |Seiteneinstellungen|Seitennavigation|Mediacards|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
+In allen drei Teilbereichen der Seite kommen Bedienelemente vor. Diese werden nun beschrieben.
+
 ### Seiteneinstellungen
 * <button name="button">Reihenfolge umkehren</button> Ändere die Sortierreihenfolge der Medien.
 * <label for="cars"></label>
@@ -71,7 +73,9 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 
 ### Gleichrangige Seiten
 * [Abgaben](submissions.md)
@@ -86,3 +90,6 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 * [Übungen](exercises.md)
 * [Wiederholung](repetition.md)
 * [Worked Examples](worked-examples.md)
+
+### Weiterführende Seite (für Editor*innen)
+[Medium bearbeiten](edit-medium)

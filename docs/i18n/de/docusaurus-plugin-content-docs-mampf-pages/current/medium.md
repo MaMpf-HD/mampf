@@ -98,6 +98,18 @@ Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese wer
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar, da Medien nicht aus allen möglichen Komponenten bestehen müssen.
 
 ## Von dieser Seite aus aufrufbare Seiten
+### [„Medium bearbeiten“](edit-medium) (für Editor*innen und Vortragende)
+Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/docs/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>, mit diesem kann auf die Seite <a href="/mampf/de/docs/ed-edit-medium" target="_self">„Medium bearbeiten“</a> gewechselt werden. Dort sind folgende Aktionen möglich:
+
+* Änderung von Medientyp und Sprache
+* Hinzufügen und Entfernen von Editor\*innen
+* (De-)Aktivieren von Kommentaren
+* Verfassen und Bearbeiten des Inhaltstexts
+* Hinzufügen und Entfernen von Tags, Dateien und Verknüpfungen zu anderen Medien
+* Betrachten der Aufrufsstatistik
+* Editieren von Videos mit THymE
+* Veröffentlichung des Mediums im Fall von unveröffentlichten Medien
+
 ### [Veranstaltungsseite](event-series)
 Die Veranstaltungsseite enthält aktuelle Informationen und die Gliederung der Veranstaltung. Von ihr aus gelangt man zu Veranstaltungsinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zur Veranstaltung, Diskussionsforen sowie der Zettelabgabe und im Fall von Seminaren zu Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf die [Veranstaltungsseite](event-series) zu gelangen, klickt man auf <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a>.
 
@@ -115,18 +127,9 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 
 ### Seiten anderer Medien
 
-## Hinweise für Editor*innen
-### Weitere von dieser Seite aufrufbare Seiten
-Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/docs/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>, mit diesem kann auf die Seite <a href="/mampf/de/docs/ed-edit-medium" target="_self">„Medium bearbeiten“</a> gewechselt werden. Dort sind folgende Aktionen möglich:
-
-* Änderung von Medientyp und Sprache
-* Hinzufügen und Entfernen von Editor\*innen
-* (De-)Aktivieren von Kommentaren
-* Verfassen und Bearbeiten des Inhaltstexts
-* Hinzufügen und Entfernen von Tags, Dateien und Verknüpfungen zu anderen Medien
-* Betrachten der Aufrufsstatistik
-* Editieren von Videos mit THymE
-* Veröffentlichung des Mediums im Fall von unveröffentlichten Medien
+## Hinweise für Editor*innen und Vortragende
+### Seite bearbeiten
+Bei Editor\*innen und Vortragenden befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/docs/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a>.
 
 ### Zusätzliche Informationen
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
@@ -140,10 +143,16 @@ Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden
 
 ## Verwandte und ähnliche Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 
 ### Ähnliche Seiten
 * [Abschnitt](section.md)
 * [Begriff](tag.md)
 * [DozentIn](lecturer.md)
 * [Sitzung](session.md)
+* [Vortrag](talk)
+
+### Weiterführende Seite (für Editor*innen und Vortragende)
+[Medium bearbeiten](edit-medium)
