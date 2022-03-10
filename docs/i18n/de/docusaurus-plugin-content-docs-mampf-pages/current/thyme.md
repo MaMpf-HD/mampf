@@ -69,6 +69,9 @@ Der <button name="button">Zurück zu ...</button>-Button ist nur nach einem Spru
 
 ## Verwandtes
 
-* [Veranstaltungsseite](event-series.md)
+### Übergeordnete Seite
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 * [Sitzung](session.md)
 * [Medium](medium.md)

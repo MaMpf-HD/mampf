@@ -223,3 +223,6 @@ Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-blue.png" height="12"/> | Das Medium ist auf Modulebene angesiedelt und mit Tags versehen, die in der Veranstaltung noch nicht behandelt worden sind. Bevor diese Begriffe in der Veranstaltung verwendet worden sind, können einfache Nutzer\*innen dieses Medium nur sehen, wenn sie *alle* im Menü <button name="button">Zusatzmaterialien <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> ausgewählt haben. Diese Wahl ist nicht die Standardeinstellung. |
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/calendar-check-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht, aber die Veröffentlichung ist geplant. Einfache Nutzer*innen können dieses Medium erst nach dem Zeitpunkt der Veröffentlichung sehen. Dieser kann mithilfe des Tooltips in Erfahrung gebracht werden. |
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht mehr sehen. |
+
+## Verwandte Seite
+[Medium](medium)

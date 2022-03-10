@@ -25,18 +25,20 @@ Einfache Nutzer\*innen erreichen von dieser Seite nur eine weitere Seite, die [�
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 
 ### Gleichrangige Seiten
-* [Abgaben](submissions.md)
-* [Beispiel-Datenbank](erdbeere.md)
-* [Lektionen](lessons.md)
-* [Mitteilungen](announcements.md)
-* [Organisatorisches](general-information.md)
-* [Quizzes](quizzes.md)
-* [Selbsttest](self-assessment.md)
-* [Skript](manuscript.md)
-* [Sonstiges](miscellaneous.md)
-* [Übungen](exercises.md)
-* [Wiederholung](repetition.md)
-* [Worked Examples](worked-examples.md)
+* [Abgaben](submissions)
+* [Beispiel-Datenbank](erdbeere)
+* [Lektionen](lessons)
+* [Mitteilungen](announcements)
+* [Organisatorisches](general-information)
+* [Quizzes](quizzes)
+* [Selbsttest](self-assessment)
+* [Skript](manuscript)
+* [Sonstiges](miscellaneous)
+* [Übungen](exercises)
+* [Wiederholung](repetition)
+* [Worked Examples](worked-examples)

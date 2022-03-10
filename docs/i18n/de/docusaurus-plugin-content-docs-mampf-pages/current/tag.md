@@ -104,9 +104,6 @@ Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht mehr sehen. |
 
 ## Verwandte Seiten
-### Übergeordnete Seite
-[Veranstaltung](event-series)
-
 ### Ähnliche Seiten
 * [Abschnitt](section)
 * [DozentIn](lecturer)

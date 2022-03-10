@@ -51,7 +51,9 @@ Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zu
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 
 ### Gleichrangige Seiten
 * [Abgaben](submissions.md)

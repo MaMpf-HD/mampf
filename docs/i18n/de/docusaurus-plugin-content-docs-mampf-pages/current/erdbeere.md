@@ -195,22 +195,29 @@ Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispiels
 </table>
 
 ## Hinweis für Editor*innen
-Damit die Beispieldatenbank in der Seitenleiste einer Veranstaltung angezeigt wird, muss sie zuvor auf der Seite [„Veranstaltung bearbeiten“](ed-edit-event-series.md) freigeschaltet werden. Dort kann auch festgelegt werden, welche Strukturen verfügbar sein sollen.
+Damit die Beispieldatenbank in der Seitenleiste einer Veranstaltung angezeigt wird, muss sie zuvor auf der Seite [„Veranstaltung bearbeiten“](ed-edit-event-series) freigeschaltet werden. Dort kann auch festgelegt werden, welche Strukturen verfügbar sein sollen.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltungsseite](event-series)
+* [Vorlesung](lecture)
 
 ### Gleichrangige Seiten
-* [Abgaben](submissions.md)
-* [Lektionen](lessons.md)
-* [Mitteilungen](announcements.md)
-* [Modul](module.md)
-* [Organisatorisches](general-information.md)
-* [Quizzes](quizzes.md)
-* [Selbsttest](self-assessment.md)
-* [Skript](manuscript.md)
-* [Sonstiges](miscellaneous.md)
-* [Übungen](exercises.md)
-* [Wiederholung](repetition.md)
-* [Worked Examples](worked-examples.md)
+* [Abgaben](submissions)
+* [Lektionen](lessons)
+* [Mitteilungen](announcements)
+* [Modul](module)
+* [Organisatorisches](general-information)
+* [Quizzes](quizzes)
+* [Selbsttest](self-assessment)
+* [Skript](manuscript)
+* [Sonstiges](miscellaneous)
+* [Übungen](exercises)
+* [Wiederholung](repetition)
+* [Worked Examples](worked-examples)
+
+### Weiterführende Seiten (für Editor*innen)
+* [Seminar bearbeiten](ed-edit-seminar)
+* [Veranstaltung bearbeiten](ed-edit-event-series)
+* [Vorlesung bearbeiten](ed-edit-lecture)

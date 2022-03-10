@@ -9,10 +9,10 @@ Die persönliche Startseite ist die Seite, auf die man gelangt, nachdem man sich
 ![](/img/startseite_weitere_abonnierte.png)
 
 ## Navigation zu dieser Seite
-Die persönliche Startseite erreicht man, indem auf <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/> oben links in der [Navigationsleiste](nav-bar.md) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geleitet.
+Die persönliche Startseite erreicht man, indem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button> oben links in der [Navigationsleiste](nav-bar) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geleitet.
 
 ## Bereiche der Seite
-Die persönliche Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
+Die persönliche Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar) und den [Footer](footer). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
 |:---: | :---: | :---:|
@@ -144,7 +144,7 @@ Die Suchergebnisse werden in Form von Veranstaltungskacheln aufgeführt, siehe d
 ## Von dieser Seite aus aufrufbare Seite
 Von der persönlichen Startseite aus sind die Seiten von abonnierten Veranstaltungen erreichbar. Sofern man in einem Seminar als Vortragende\*r eingetragen ist, gelangt man zusätzlich dazu noch auf die [Seite des eigenen Vortrags](talk) und die zugehörige [Bearbeitungsseite](edit-talk).
 
-### [Seite der Veranstaltung](event-series.md)
+### [Seite der Veranstaltung](event-series)
 Die Veranstaltungsseite (die [Seite der Vorlesung](lecture) bzw. die [Seite des Seminars](seminar)) enthält aktuelle Informationen und die Gliederung der Veranstaltung. Von ihr aus gelangt man zu Veranstaltungsinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zur Veranstaltung, Diskussionsforen sowie der Zettelabgabe und im Fall von Seminaren zu [Vorträgen](talk) und [Bearbeitungsseiten](edit-talk) für den eigenen Vortrag.
 
 ### [Seite des Vortrags](talk)
@@ -154,12 +154,12 @@ Auf dieser Seite befinden sich Informationen und Inhalte zum Vortrag: Medien zum
 Auf der Bearbeitungsseite des Vortrags kann man Begriffe hinzufügen, Medien anlegen und den Text für die Vortragsseite verfassen, verändern und veröffentlichen.
 
 ## Ähnliche Seiten
-* [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md)
-* [Login](login.md)
-* [Logout](logout.md)
-* [Passwort ändern](change-password.md)
-* [Passwort vergessen](password-forgotten.md)
-* [Profil](profile.md)
-* [Registrieren](registration.md)
-* [Startseite](home-page.md)
+* [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account)
+* [Login](login)
+* [Logout](logout)
+* [Passwort ändern](change-password)
+* [Passwort vergessen](password-forgotten)
+* [Profil](profile)
+* [Registrieren](registration)
+* [Startseite](home-page)
 * [Zugangsdaten ändern](change-login-data)

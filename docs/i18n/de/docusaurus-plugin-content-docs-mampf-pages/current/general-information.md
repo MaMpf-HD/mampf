@@ -22,18 +22,20 @@ Auf dieser Seite gibt es an sich keine Bedienelemente. Auf ihr kann lediglich Te
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltung](event-series)
+* [Vorlesung](lecture)
 
 ### Gleichrangige Seiten
-* [Abgaben](submissions.md)
-* [Beispiel-Datenbank](erdbeere.md)
-* [Lektionen](lessons.md)
-* [Mitteilungen](announcements.md)
-* [Modul](module.md)
-* [Quizzes](quizzes.md)
-* [Selbsttest](self-assessment.md)
-* [Skript](manuscript.md)
-* [Sonstiges](miscellaneous.md)
-* [Übungen](exercises.md)
-* [Wiederholung](repetition.md)
-* [Worked Examples](worked-examples.md)
+* [Abgaben](submissions)
+* [Beispiel-Datenbank](erdbeere)
+* [Lektionen](lessons)
+* [Mitteilungen](announcements)
+* [Modul](module)
+* [Quizzes](quizzes)
+* [Selbsttest](self-assessment)
+* [Skript](manuscript)
+* [Sonstiges](miscellaneous)
+* [Übungen](exercises)
+* [Wiederholung](repetition)
+* [Worked Examples](worked-examples)

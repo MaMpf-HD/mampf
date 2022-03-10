@@ -157,12 +157,15 @@ Nachdem man auf <a href="/mampf/de/docs/home-page" target="_self"><button name="
 Von Seite „Profil“ aus kann nur zur Seite [„Zugangsdaten ändern“](change-login-data.md) navigiert werden. Dies erfolgt über den Button <a href="/mampf/de/docs/change-login-data" target="_self"><button name="button">Zugangsdaten ändern</button></a>.
 
 ## Ähnliche Seiten
-* [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md)
-* [Login](login.md)
-* [Logout](logout.md)
-* [Meine Startseite](my-home-page.md)
-* [Passwort ändern](change-password.md)
-* [Passwort vergessen](password-forgotten.md)
-* [Registrieren](registration.md)
-* [Startseite](home-page.md)
-* [Zugangsdaten ändern](change-login-data.md)
+* [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account)
+* [Login](login)
+* [Logout](logout)
+* [Meine Startseite](my-home-page)
+* [Passwort ändern](change-password)
+* [Passwort vergessen](password-forgotten)
+* [Registrieren](registration)
+* [Startseite](home-page)
+* [Zugangsdaten ändern](change-login-data)
+
+## Weiterführende Seite (für Editor*innen)
+[Mein Profil](ed-profile)

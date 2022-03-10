@@ -492,7 +492,9 @@ Im Gegensatz dazu sind E-Mail-Einladungen zum Beitritt zu einer Abgabe nicht opt
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Veranstaltungsseite](event-series.md)
+* [Seminar](seminar)
+* [Veranstaltungsseite](event-series)
+* [Vorlesung](lecture)
 
 ### Gleichrangige Seiten
 * [Beispiel-Datenbank](erdbeere.md)
@@ -507,3 +509,12 @@ Im Gegensatz dazu sind E-Mail-Einladungen zum Beitritt zu einer Abgabe nicht opt
 * [Übungen](exercises.md)
 * [Wiederholung](repetition.md)
 * [Worked Examples](worked-examples.md)
+
+### Weiterführende Seiten
+#### Für Tutor\*innen und Editor\*innen
+[Tutorien](tut-ed-ad-tutorials)
+
+#### Für Editor*innen
+* [Seminar bearbeiten](ed-edit-seminar)
+* [Veranstaltung bearbeiten](ed-edit-event-series)
+* [Vorlesung bearbeiten](ed-edit-lecture)
