@@ -2,12 +2,23 @@
 title: Vortrag
 ---
 
-Die Seite „Vortrag“ ist eine Unterseite eines Seminars. Dort finden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Diese Seite kann von Vortragenden bearbeiten werden, siehe dazu die Seite [„Vortrag bearbeiten“](edit-talk).
+Die Seite „Vortrag“ ist eine Unterseite eines Seminars. Dort befinden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Diese Seite kann von Vortragenden bearbeiten werden, siehe dazu die Seite [„Vortrag bearbeiten“](edit-talk).
 
 ![](/img/vortrag.png)
 
 ## Navigation zu dieser Seite
-\*Realisierung überlegen und ergänzen\*
+Auf die Vortragsseite gelangt man über die Seminarseite. Eigene Vorträge sind außerdem über die persönliche Startseite erreichbar.
+
+<ul>
+  <li>
+     <b>Seminarseite</b>
+  </li>
+     Auf die Seminarseite gelangt man über die persönliche Startseite, die man wiederum durch Anklicken des Logos <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button> oben links in der <a href="/mampf/de/docs/nav-bar" target="_self">Navigationsleiste</a> erreicht. Auf der persönlichen Startseite wählt man das Seminar aus und navigiert dadurch auf die Seite des Seminars. Dort klickt man in der Seminargliederung auf den <button>Vortragstitel</button> oder das <button>Vortragsdatum</button>.
+  <li>
+     <a href="/mampf/de/docs/my-home-page" target="_self"><b>Persönliche Startseite</b></a> (nur bei eigenen Vorträgen)
+  </li>
+     Zunächst öffnet man die persönliche Startseite, indem man auf das Logo <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button> oben links in der <a href="/mampf/de/docs/nav-bar" target="_self">Navigationsleiste</a> klickt. Dort wählt das Akkordeonfeld „Meine Vorträge“ aus. Daraufhin klappt ein Fach mit Vortragscards aus. Über den <button>Vortragstitel</button> oder das <button>Vortragsdatum</button> gelangt man dann auf die Vortragsseite.
+</ul>
 
 ## Bereiche der Seite
 Die Seite „Vortrag“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Vortrag“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -63,8 +74,6 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 
 ## Hinweise für Editor*innen und Vortragende
 Auf der Seite [„Vortrag bearbeiten“](edit-talk) können Editor\*innen und Vortragende einstellen, ob der Beschreibungstext auf der Seite „Vortrag“ angezeigt wird oder nicht. Vortragende können diesen Text außerdem bearbeiten. Weiterhin befindet sich bei Editor*innen und Vortragenden in der Überschrift das Symbol <a href="/mampf/de/docs/edit-talk" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a>, mit dem man auf die Seite <a href="/mampf/de/docs/edit-talk" target="_self"> „Vortrag bearbeiten“</a> navigieren kann. Außerdem können sich auf den [Mediacards](mediacard) zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen und Vortragenden befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
-
-\* Screenshots \*
 
 | Symbol | Bedeutung |
 | :---: | :--- |

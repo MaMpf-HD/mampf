@@ -3,6 +3,8 @@ title: Startseite
 ---
 Die Startseite ist die erste Seite auf die man kommt, wenn man die MaMpf-Homepage öffnet. Auf ihr wird das MaMpf-Projekt vorgestellt. Von ihr aus gelangt man zu Seiten, auf den man sich [registrieren](registration.md), [einloggen](login.md) oder das [Passwort zurücksetzen](password-forgotten.md) kann. Sobald man sich eingeloggt hat, ist eine andere Startseite – die [persönliche Startseite](my-home-page.md) – zugänglich, auf der man Veranstaltungen öffnen und abonnieren kann.
 
+![](/img/Startseite.png)
+
 ## Bereiche der Seite
 Die Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
@@ -12,8 +14,6 @@ Die Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite,
 
 ## Bedienelemente und mögliche Aktionen
 Die Bedienelemente der Startseite und mithilfe dieser mögliche Aktionen werden nun beschrieben.
-
-![](/img/Startseite.png)
 
 ### Navigationsleiste
 Die folgenden Buttons sind in der Navigationsleiste angesiedelt:

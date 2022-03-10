@@ -7,7 +7,7 @@ THymE steht für „The Hypermedia Experience“. Dabei handelt es sich um den V
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/thyme2.png"/>
 
 ## Navigation zu THymE
-\*Realisierung überlegen und ergänzen\*
+Zu THymE gelangt man über das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></button> auf Mediacards. Dieses Icon ist nur vorhanden, wenn ein Video assoziiert ist. Mediacards kommen beispielsweise auf den folgenden Seite vor: [„Lektionen“](lessons), [„Quizzes“](quizzes.md), [„Skript“](manuscript.md), [„Sonstiges“](miscellaneous.md), [„Übungen“](exercises.md), [„Worked Examples“](worked-examples.md), [„Wiederholung“](repetition.md), [„Abschnitt“](section), [„Sitzung“](session) und [„Vortrag“](talk).
 
 ## Bereiche von THymE
 THymE gliedert sich in drei Teilbereiche: das Bild, die Steuerleiste und die Informationspalte. Diese Bereich sind in den folgenden Screenshots eingezeichnet.

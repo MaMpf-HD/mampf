@@ -3,6 +3,8 @@ title: Quizzes
 ---
 Die Seite „Quizzes“ ist eine Unterseite einer Veranstaltung. Auf ihr können Nutzer\*innen ihr Wissen mit Quizzes überprüfen. Quizzes bestehen aus einem festen Fragenbestand, bei komplexen Quizzes (angeleitetete Beweise) wird die Auswahl und Reihenfolge der Fragen von den gegebenen Antworten bestimmt. Bei den Selbsttests hingegen werden zufällig Fragen aus der Datenbank ausgewählt.
 
+![](/img/quizzes.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

@@ -57,7 +57,7 @@ Schematisierte Seiten
 
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Begriff.png" width="500"/>|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medientyp.png" width="500"/>|
 |:---: | :---: |
-|Seite einer Struktierungseinheit|[Seite eines Medientyps](media-of-the-same-type.md)|
+|Seite einer Struktrierungseinheit|[Seite eines Medientyps](media-of-the-same-type.md)|
 
 ##### Seite einer Strukturierungseinheit
 Unter die Seiten einer Strukturierungseinheit fallen die Seiten eines Mediums, einer Sitzung, eines Begriff und eines Abschnitts. Auf ihr werden Informationen über die entsprechende Struktierungseinheit präsentiert. Sie zeichnet sich durch eine klare thematische Untergliederung in Form von Boxen aus.

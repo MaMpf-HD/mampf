@@ -3,6 +3,8 @@ title: Wiederholung
 ---
 Die Seite „Wiederholung“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen Zugriff auf Wiederholungen, also auf Inhalte, die einen Überblick über vorausgesetzte Kenntnisse vermitteln und Wissen auffrischen. In einer Wiederholung werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet bzw. abgespielt und heruntergeladen sowie kommentiert werden.
 
+![](/img/wdh.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

@@ -3,6 +3,8 @@ title: Übungen
 ---
 Die Seite „Übungen“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen Zugriff auf die Übungen zur Veranstaltung. In einer Übung werden inhaltlich zusammengehörende Dateien (PDF, Video und externer Link) gebündelt. Diese können betrachtet, heruntergeladen und kommentiert werden.
 
+![](/img/uebung.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

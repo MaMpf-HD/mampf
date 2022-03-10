@@ -217,8 +217,6 @@ Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Information
 
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
 
-\* Screenshots \*
-
 | Symbol | Bedeutung |
 | :---: | :--- |
 | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht. Einfache Nutzer*innen können es noch nicht sehen. |

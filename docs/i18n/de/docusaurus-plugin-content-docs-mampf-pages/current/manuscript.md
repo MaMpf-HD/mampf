@@ -3,6 +3,8 @@ title: Skript
 ---
 Die Seite „Skript“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen Zugriff auf das Skript der Veranstaltung. Dieses kann betrachtet, heruntergeladen und kommentiert werden.
 
+![](/img/skript.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

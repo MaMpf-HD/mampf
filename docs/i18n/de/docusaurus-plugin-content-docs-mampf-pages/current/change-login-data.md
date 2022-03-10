@@ -89,8 +89,6 @@ Konnte User nicht speichern: Es ist ein Fehler aufgetreten: Passwort ist zu kurz
 Konnte User nicht speichern. Es sind 2 Fehler aufgetreten. Passwort muss ausgefüllt werden; Passwortbestätigung stimmt nicht mit Passwort überein | Roter Kasten am Seitenanfang | Unausgefülltes Passwortfeld. | Gib das neue Passwort ein.
 Konnte User nicht speichern: Es ist ein Fehler aufgetreten: Passwortbestätigung stimmt nicht mit Passwort überein | Roter Kasten am Seitenanfang | Fehlende Passwortbestätigung oder Passwort und Passwortbestätigung stimmen nicht überein. | Gib das Passwort und die Passwortbestätigung erneut ein.
 
-\*Screenshots\*
-
 ## Von dieser Seite aus aufrufbare Seite
 Von Seite „Zugangsdaten ändern“ aus kann nur zur [Seite „Profil“](profile.md) navigiert werden. Dies erfolgt über den Button <a href="/mampf/de/docs/profile" target="_self"><button name="button">Zurück</button></a>.
 

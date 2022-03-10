@@ -3,6 +3,8 @@ title: Sonstiges
 ---
 Die Seite „Sonstiges“ ist eine Unterseite einer Veranstaltung. Sie ermöglicht Nutzer\*innen Zugriff auf Medien, die in keine der in MaMpf definierten Medien-Kategorien passen. Diese können betrachtet, heruntergeladen und kommentiert werden.
 
+![](/img/sonstiges.png)
+
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite

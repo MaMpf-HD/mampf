@@ -6,6 +6,8 @@ title: Profileinstellungen
 
 Auf der Seite „Profil“ kann der Account verwaltet werden. Dort ist es möglich, die Zugangsdaten zu ändern, den Account zu löschen, Veranstaltungen zu abonnieren oder abzubestellen sowie Änderungen an den Einstellungen vorzunehmen.
 
+![](/img/settings.png)
+
 ## Navigation zu dieser Seite
 Die Seite „Profil“ erreicht man, indem auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></button> in der [Navigationsleiste](nav-bar.md) klickt. Auf diese Seite wird man auch direkt nach der Aktivierung des Accounts geleitet.
 
