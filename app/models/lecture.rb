@@ -757,6 +757,17 @@ class Lecture < ApplicationRecord
     chapters.none? && neighbours.any?
   end
 
+  def import_toc!(imported_lecture, import_sections, import_tags)
+    return unless imported_lecture
+    imported_lecture.chapters.each do |c|
+      new_chapter = c.dup
+      new_chapter.lecture = self
+      new_chapter.save
+      next unless import_sections
+      c.sections.each { |s| s.duplicate_in_chapter(new_chapter, import_tags) }
+    end
+  end
+
   private
 
   # used for after save callback
