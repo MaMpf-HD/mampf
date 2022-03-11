@@ -240,6 +240,9 @@ class LecturesController < ApplicationController
     render layout: 'application_no_sidebar'
   end
 
+  def import_toc
+  end
+
   private
 
   def set_lecture

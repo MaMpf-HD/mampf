@@ -159,6 +159,9 @@ Rails.application.routes.draw do
   get 'lectures/:id/subscribe', to: 'lectures#subscribe_page',
                                       as: 'subscribe_lecture_page'
 
+  post 'lectures/:id/import_toc', to: 'lectures#import_toc',
+                                  as: 'import_lecture_toc'
+
   resources :lectures, except: [:index]
 
   resources :lessons, except: [:index]

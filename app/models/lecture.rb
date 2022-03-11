@@ -749,6 +749,14 @@ class Lecture < ApplicationRecord
     "(#{sort_localized_short})"
   end
 
+  def neighbours
+    course.lectures - [self]
+  end
+
+  def importable_toc?
+    chapters.none? && neighbours.any?
+  end
+
   private
 
   # used for after save callback
