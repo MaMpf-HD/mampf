@@ -67,7 +67,7 @@ In allen drei Teilbereichen der Seite kommen Bedienelemente vor. Diese werden nu
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Ein sonstiges Medium kann aus einem PDF, einem Video und einem externen Link bestehen, es kann aber auch weniger Komponenten enthalten. Die entsprechenden Buttons sind nur vorhanden, wenn dies auch für die entsprechenden Dateien gilt. Ebenso verhält es sich bei den Buttons zur Seitennavigation: Erst wenn es mehr sonstige Medien gibt, als pro Seite angezeigt werden sollen (standardmäßig acht), sind diese Buttons verfügbar. Damit Begriffe angezeigt werden, müssen welche mit dem sonstigen Medium verknüpft sein.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Sonstiges“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
+Von der Seite „Sonstiges“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
 
 Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, Veranstaltung und THymE.
 

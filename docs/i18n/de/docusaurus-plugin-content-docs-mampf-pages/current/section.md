@@ -55,7 +55,7 @@ In allen eben vorgestellten Bereichen der Seite können Bedienelemente vorkommen
 Wenn keine Abschnitte, Begriffe oder Medien assoziiert oder keine Informationen zum Inhalt hinterlegt sind, werden die entsprechenden Boxen zwar angezeigt, es gibt dann aber keine weiteren Bedienelemente.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Abschnitt“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
+Von der Seite „Abschnitt“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
 
 Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Kommentar, Medium, Sitzung, THymE und Veranstaltung.
 

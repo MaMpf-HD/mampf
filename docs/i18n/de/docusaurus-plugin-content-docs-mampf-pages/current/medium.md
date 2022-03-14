@@ -98,6 +98,8 @@ Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese wer
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar, da Medien nicht aus allen möglichen Komponenten bestehen müssen.
 
 ## Von dieser Seite aus aufrufbare Seiten
+Von der Seite „Medium“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. 
+
 ### [„Medium bearbeiten“](edit-medium) (für Editor*innen und Vortragende)
 Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/docs/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>, mit diesem kann auf die Seite <a href="/mampf/de/docs/ed-edit-medium" target="_self">„Medium bearbeiten“</a> gewechselt werden. Dort sind folgende Aktionen möglich:
 

@@ -64,7 +64,7 @@ In allen drei Teilbereichen der Seite kommen Bedienelemente vor. Diese werden nu
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Die Buttons zur Seitennavigation werden erst angezeigt, wenn es mehr Quizzes gibt, als pro Seite angezeigt werden sollen (standardmäßig acht). Damit Begriffe angezeigt werden, müssen welche mit dem Quiz verknüpft sein.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Quizzes“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind.
+Von der Seite „Quizzes“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind.
 
 Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, Quiz und Veranstaltung.
 

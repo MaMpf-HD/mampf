@@ -97,7 +97,7 @@ Die in diesem Bereich verfügbaren Bedienelemente richten sich nach dem Veransta
 Nicht immer sind alle Bedienelemente vorhanden. Die Box „Aktuelles“ und deren Bedienelemente werden nur angezeigt, wenn es eine neue Mitteilung und/oder einen neuen Forumsbeitrag gibt. Damit es Bedienelemente beim Veranstaltungsinhalt gibt, müssen Abschnitte bzw. Begriffe bzw. Sitzungen bzw. Vorträge zur Veranstaltung assoziiert sein.  
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seminarseite gelangt man zu diversen Unterseiten des Seminars. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
+Von der Seminarseite aus gelangt man zu diversen Unterseiten des Seminars. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
 
 ### [„Veranstaltung bearbeiten“](ed-edit-event-series) (nur bei Editor*innen)
 Auf dieser Seite können Editor\*innen

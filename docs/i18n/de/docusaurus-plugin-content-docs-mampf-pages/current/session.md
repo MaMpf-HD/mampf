@@ -61,6 +61,8 @@ Auf der Seite „Sitzung“ kommen Bedienelemente bei einfachen Nutzer\*innen be
 Nicht immer sind alle Bedienelmente verfügbar. Wenn keine Abschnitte, Begriffe oder Medien assoziiert sind, werden die entsprechenden Boxen zwar angezeigt, es gibt dort dann aber keine weiteren Bedienelemente. Die in der Überschrift der Box „Inhalt“ verfügbaren Bedienlemente hängen von den vorhanden Komponenten der Lektion ab. Damit in der Box „Inhalt“ an eine bestimmte Stelle im Video oder PDf gesprungen werden kann, muss es eine Gliederung und die entsprechende Medienkomponenten geben.
 
 ## Von dieser Seite aus aufrufbare Seiten
+Von der Seite „Sitzung“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. 
+
 ### [„Sitzung bearbeiten“](ed-edit-session) (nur bei Editor*innen)
 Auf der Seite „Sitzung bearbeiten“ können Abschnitte, Medien und Tags assoziiert werden. Außerdem können das Sitzungsdatum und die inhaltlichen Informationen bearbeitet werden. Diese Seite ist über <a href="/mampf/de/docs/ed-edit-session" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> erreichbar.
 

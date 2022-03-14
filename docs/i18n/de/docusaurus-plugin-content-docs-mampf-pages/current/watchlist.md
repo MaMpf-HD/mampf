@@ -204,6 +204,8 @@ Dieses Dialogfeld öffnet sich, nachdem auf <button name="button">Bearbeiten</bu
 Nicht immer sind alle der aufgeführten Bedienelemente vorhanden. Bei den Mediacards hängen die verfügbaren Elemente von den Bestandteilen des Mediums (Dateien und Assoziationen) ab. Aus welchen Komponenten ein Medium bestehen kann, ist wiederum durch die Medientyp festgelegt. Die Buttons sind nur vorhanden, wenn dies auch für die entsprechenden Dateien der Fall ist bzw. die entsprechenden Assoziationen (Begriffe und Sitzung) bestehen sind. Die Elemente zur Seitennavigation werden nur angezeigt, falls sich mehr Medien auf der Liste befinden, als pro Seite anzeigt werden sollen.
 
 ## Von dieser Seite aus aufrufbare Seiten
+Von der Seite „Watchlist“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. 
+
 ### [Seite der getaggten Begriffe](tag.md)
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>.
 

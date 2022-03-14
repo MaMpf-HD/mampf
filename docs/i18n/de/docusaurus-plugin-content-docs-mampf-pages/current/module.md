@@ -21,7 +21,7 @@ Die Seite „Modul“ gliedert sich in vier Teilbereiche: die eigentliche Seite 
 Auf dieser Seite aus gibt es bei einfachen Nutzer\*innen nur einen Link zur Seite „DozentIn“. Dieser öffnet sich durch Klicken auf <a href="/mampf/de/docs/lecturer" target="_self"><button name="button">Dozent*in</button></a>.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Einfache Nutzer\*innen erreichen von dieser Seite nur eine weitere Seite, die [„Seite der DozentIn“](lecturer.md). Auf dieser Seite kann man sich über die Homepage und E-Mailadresse sowie weitere von der Dozent\*in gehaltene oder betreute Veranstaltungen informieren.
+Einfache Nutzer\*innen erreichen von dieser Seite aus nur eine weitere Seite, die [„Seite der DozentIn“](lecturer.md). Auf dieser Seite kann man sich über die Homepage und E-Mailadresse sowie weitere von der Dozent\*in gehaltene oder betreute Veranstaltungen informieren.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

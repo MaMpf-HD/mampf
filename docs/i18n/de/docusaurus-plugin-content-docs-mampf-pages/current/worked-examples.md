@@ -68,7 +68,7 @@ In allen drei Teilbereichen der Seite kommen Bedienelemente vor. Diese werden nu
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Ein Worked Example kann aus einem PDF, einem Video, einem externen Link und einer Geogebra-Datei bestehen, es kann aber auch weniger Komponenten enthalten. Die entsprechenden Buttons sind nur vorhanden, wenn dies auch für die entsprechenden Dateien gilt. Ebenso verhält es sich bei den Buttons zur Seitennavigation: Erst wenn es mehr Worked Examples gibt, als pro Seite angezeigt werden sollen (standardmäßig acht), sind diese Buttons verfügbar. Damit Begriffe angezeigt werden, müssen welche mit dem Worked Example verknüpft sein.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Worked Examples“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
+Von der Seite „Worked Examples“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. Die vorhandenen Bedienelemente bestimmen, welche Seiten erreichbar sind.
 
 Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, THymE und Worked Example.
 

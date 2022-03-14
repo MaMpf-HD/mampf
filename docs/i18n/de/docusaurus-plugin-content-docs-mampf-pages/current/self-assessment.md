@@ -37,7 +37,7 @@ Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche S
 -Button gedrückt worden ist.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Selbsttest“ gelangt man zu zwei anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind.
+Von der Seite „Selbsttest“ aus gelangt man zu zwei anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind.
 
 Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff und Selbsttest.
 

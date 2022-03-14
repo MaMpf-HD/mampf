@@ -34,7 +34,7 @@ Auf der Seite „Kommentare“ gibt es folgende Bedienelemente:
 Bedienelemente zur Seitennavigation sind nur vorhanden, wenn die neuen Diskussionbeiträge mehr als eine Seite beanspruchen.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Kommentare“ gelangt man zu zwei weiteren Seiten.
+Von der Seite „Kommentare“ aus gelangt man zu zwei weiteren Seiten.
 
 ### [Seite des diskutierten Mediums](medium.md)
 Auf der Medienseite stehen weitere Informationen zu Länge bzw. Umfang und Größe von PDFs bzw. Videos zur Verfügung. Über die dort aufgeführte Gliederung des Mediums kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Medium verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <a href="/mampf/de/docs/medium" target="_self"><button name="button">Medientitel</button></a> klicken.
