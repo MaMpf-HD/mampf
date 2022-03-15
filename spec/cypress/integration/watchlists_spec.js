@@ -67,6 +67,7 @@ describe("Watchlists", () => {
                 cy.get('#openNewWatchlistForm').click();
                 cy.get('#watchlistNameField').type('Lernliste');
                 cy.get('#newWatchlistButton').click();
+                cy.wait(100);
                 cy.get('#watchlistButton').contains('Lernliste');
 			});
         });
@@ -121,7 +122,7 @@ describe("Watchlists", () => {
                 }]
             ]).then((data) => {
                 cy.visit(`watchlists/1`);
-                cy.get(':nth-child(3) > .row > .col-12 > :nth-child(2)').contains('Watchlist').should('exist');
+                cy.get(':nth-child(3) > .row > .col-12 > :nth-child(2)').contains('Du bist nicht berechtigt').should('exist');
             });
         });
         it("can filter watchlist_entries", () => {

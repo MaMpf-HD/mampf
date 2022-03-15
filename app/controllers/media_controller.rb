@@ -3,17 +3,32 @@ class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
-                                      :fill_media_select]
+                                      :fill_media_select,
+                                      :fill_medium_preview,
+                                      :render_medium_actions,
+                                      :render_import_media,
+                                      :render_import_vertex,
+                                      :cancel_import_media,
+                                      :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
   before_action :check_for_consent, except: [:play, :display]
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
-  authorize_resource except: :create
+  authorize_resource except: [:index, :new, :create, :search,
+                              :fill_teachable_select, :fill_media_select,
+                              :fill_medium_preview, :render_medium_actions,
+                              :render_import_media, :render_import_vertex,
+                              :cancel_import_media, :cancel_import_vertex]
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= MediumAbility.new(current_user)
+  end
+
   def index
+    authorize! :index, Medium.new
     @media = paginated_results
     render layout: 'application'
   end
@@ -28,6 +43,7 @@ class MediaController < ApplicationController
   end
 
   def new
+    authorize! :new, Medium.new
     @medium = Medium.new(teachable: @teachable,
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
@@ -190,6 +206,7 @@ class MediaController < ApplicationController
 
   # return all media that match the search parameters
   def search
+    authorize! :search, Medium.new
     search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
@@ -352,6 +369,7 @@ class MediaController < ApplicationController
   end
 
   def fill_teachable_select
+    authorize! :fill_teachable_select, Medium.new
     result = (Course.editable_selection(current_user) +
                 Lecture.editable_selection(current_user) +
                 Lesson.editable_selection(current_user))
@@ -360,6 +378,7 @@ class MediaController < ApplicationController
   end
 
   def fill_media_select
+    authorize! :fill_media_select, Medium.new
     result = Medium.select_by_name.map { |t| { value: t[1], text: t[0] } }
     render json: result
   end
@@ -369,9 +388,6 @@ class MediaController < ApplicationController
       @medium.tags = Tag.where(id: params[:tag_ids])
       @medium.update(updated_at: Time.now)
     end
-  end
-
-  def postprocess_tags
   end
 
   def register_download
@@ -411,6 +427,66 @@ class MediaController < ApplicationController
   def cancel_publication
     @medium.update(publisher: nil)
     redirect_to edit_medium_path(@medium)
+  end
+
+  def fill_medium_preview
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    authorize! :fill_medium_preview, @medium
+  end
+
+  def render_medium_actions
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    authorize! :render_medium_actions, @medium
+  end
+
+  def render_import_media
+    @id = params[:id]
+    @purpose = 'import'
+    authorize! :render_import_media, Medium.new
+  end
+
+  def render_import_vertex
+    @id = params[:id]
+    quiz_id = params[:quiz_id]
+    I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance
+    @purpose = 'quiz'
+    authorize! :render_import_vertex, Medium.new
+    render :render_import_media
+  end
+
+  def render_medium_tags
+    @tag_ids = @medium.tag_ids
+  end
+
+  def cancel_import_media
+    authorize! :cancel_import_media, Medium.new
+  end
+
+  def cancel_import_vertex
+    authorize! :cancel_import_vertex, Medium.new
+    I18n.locale = Quiz.find_by_id(params[:quiz_id])&.locale_with_inheritance
+    render :cancel_import_media
+  end
+
+  def fill_quizzable_area
+    @vertex_id = params[:vertex]
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+  end
+
+  def fill_quizzable_preview
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+  end
+
+  def fill_reassign_modal
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+    @in_quiz = params[:in_quiz] == 'true'
+    @quiz_id = params[:quiz_id].to_i
+    @no_rights = params[:rights] == 'none'
   end
 
   private

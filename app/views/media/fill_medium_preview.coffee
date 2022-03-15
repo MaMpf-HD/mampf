@@ -1,14 +1,7 @@
-mediumActions = document.getElementById('mediumActions')
-<% if @medium %>
-$(mediumActions).empty()
-  .append '<%= j render partial: "media/catalog/medium_actions",
-                        locals: { medium: @medium } %>'
-mediumActions.dataset.filled = 'true'
+<% if @medium.persisted? %>
 $('#mediumPreview').empty()
   .append '<%= j render partial: "media/catalog/medium_preview",
                         locals: { medium: @medium } %>'
-$('#edit_tag_form').hide()
-$('#mediumActions').show()
 mediumPreview = document.getElementById('mediumPreview')
 renderMathInElement mediumPreview,
   delimiters: [
@@ -34,12 +27,7 @@ renderMathInElement mediumPreview,
     }
   ]
   throwOnError: false
-
-editMediumTags = document.getElementById('editMediumTags')
-editMediumTags.dataset.medium = <%= @medium.id %>
 <% else %>
-$(mediumActions).empty()
-mediumActions.dataset.filled = 'true'
 $('#mediumPreview').empty()
   .append '<%= t("admin.medium.deleted") %>'
 <% end %>

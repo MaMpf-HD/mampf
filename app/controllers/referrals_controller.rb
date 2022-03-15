@@ -2,7 +2,11 @@
 class ReferralsController < ApplicationController
   before_action :set_referral, only: [:update, :edit, :destroy]
   before_action :set_basics, only: [:update, :create]
-  authorize_resource except: :create
+  authorize_resource except: [:create, :list_items]
+
+  def current_ability
+    @current_ability ||= ReferralAbility.new(current_user)
+  end
 
   def update
     I18n.locale = @referral.medium.locale_with_inheritance
@@ -52,6 +56,7 @@ class ReferralsController < ApplicationController
   # in the preselection dropdown, they are to populate the item dropdown
   # renders it in json as it will be called by ajax
   def list_items
+    authorize! :list_items, Referral.new
     teachable_id = params[:teachable_id].to_s.split('-')
     if teachable_id[0] == 'external'
       result = Item.where(medium: nil).pluck(:description, :id)

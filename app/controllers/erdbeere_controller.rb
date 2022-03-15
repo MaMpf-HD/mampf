@@ -3,6 +3,10 @@ class ErdbeereController < ApplicationController
   authorize_resource class: false
 	layout 'application'
 
+  def current_ability
+    @current_ability ||= ErdbeereAbility.new(current_user)
+  end
+
 	def show_example
     response = Faraday.get(ENV['ERDBEERE_API'] + "/examples/#{params[:id]}")
     @content = if response.status == 200

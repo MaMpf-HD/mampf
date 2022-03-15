@@ -8,7 +8,7 @@
             type="button"
             id="watchlistButton"
             data-id=<%= @watchlist.id %>
-            data-owned=<%= @watchlist.ownedBy(current_user) %>>
+            data-owned=<%= @watchlist.owned_by?(current_user) %>>
         <%= @watchlist.name %>
         </button>
         <div class="dropdown-menu">
@@ -24,17 +24,17 @@
           disabled
           id="watchlistButton"
           data-id=<%= @watchlist.id %>
-          data-owned=<%= @watchlist.ownedBy(current_user) %>>
+          data-owned=<%= @watchlist.owned_by?(current_user) %>>
         <%= @watchlist.name %>
       </button>
     <% else %>
-      <button class="btn btn-secondary" disabled>
+      <button class="btn btn-secondary" id="watchlistButton" disabled>
         <%= t('watchlist.none') %>
       </button>
     <% end %>
     <div class="input-group-append">
       <%= link_to raw("<i class=\"fa fa-plus\"></i>"),
-                  show_new_watchlist_path,
+                  new_watchlist_path,
                   class: "btn btn-outline-secondary",
                   id: "openNewWatchlistForm",
                   remote: true %>

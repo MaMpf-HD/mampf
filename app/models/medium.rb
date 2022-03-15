@@ -637,6 +637,8 @@ class Medium < ApplicationRecord
     if teachable_type.in?(['Lecture', 'Lesson', 'Talk'])
       return false if restricted? && !teachable.lecture.in?(user.lectures)
     end
+    # generic users cannot view questions (they would see the answers)
+    return false if sort == 'Question' && user.generic?
     true
   end
 
@@ -932,6 +934,12 @@ class Medium < ApplicationRecord
   def planned_comment_lock?
     return publisher.lock_comments if publisher
     !!teachable.media_scope.try(:comments_disabled)
+  end
+
+  def becomes_quizzable
+    return unless type.in?(['Question', 'Remark'])
+    return becomes(Question) if type == 'Question'
+    becomes(Remark)
   end
 
   def containingWatchlists(user)

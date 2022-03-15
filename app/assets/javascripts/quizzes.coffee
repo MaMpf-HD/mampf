@@ -139,12 +139,11 @@ $(document).on 'turbolinks:load', ->
           $('#cy').data('defaulttarget', defaultTarget)
           # render a preview of the quizzable that is associated to the clicked
           # vertex
-          $.ajax Routes.render_vertex_quizzable_path(),
+          $.ajax Routes.render_vertex_quizzable_path($cyContainer.data('quiz')),
             type: 'GET'
             dataType: 'script'
             data: {
-              quiz_id: $cyContainer.data('quiz')
-              id: id
+              vertex_id: id
             }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
@@ -275,12 +274,11 @@ $(document).on 'turbolinks:load', ->
     location.reload(true) if $(this).data('mode') == 'reassigned'
     $('#quizzableArea').empty()
     $('#quizGraphArea').show()
-    $.ajax Routes.render_vertex_quizzable_path(),
+    $.ajax Routes.render_vertex_quizzable_path($cyContainer.data('quiz')),
       type: 'GET'
       dataType: 'script'
       data: {
-        quiz_id: $('#cy').data('quiz')
-        id: $(this).data('vertex')
+        vertex_id: $(this).data('vertex')
       }
     return
 
