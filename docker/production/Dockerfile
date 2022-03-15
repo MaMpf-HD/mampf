@@ -12,6 +12,7 @@ FROM ruby:3.0.3
 ENV RAILS_ENV=production
 
 EXPOSE 3000
+EXPOSE 9394
 
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 

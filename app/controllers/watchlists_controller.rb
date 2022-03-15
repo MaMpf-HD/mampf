@@ -1,6 +1,9 @@
 # WatchlistsController
 class WatchlistsController < ApplicationController
   before_action :sanitize_params, only: [:show, :update_order, :change_visibility]
+
+  authorize_resource
+
   layout 'application_no_sidebar'
 
   def create
@@ -123,9 +126,5 @@ class WatchlistsController < ApplicationController
 
   def change_visibility
     Watchlist.update(params[:id], public: params[:public])
-  end
-
-  def check_ownership
-    Watchlist.find_by_id(parmas[:id]).ownedBy(current_user)
   end
 end

@@ -442,9 +442,6 @@ Rails.application.routes.draw do
   get 'watchlists/change_visiblity', to: 'watchlists#change_visibility',
                                      as: 'change_visibility'
 
-  get 'watchlists/check_ownership', to: 'watchlists#check_ownership',
-                                    as: 'check_ownership'
-
   resources :watchlists
 
   resources :watchlist_entries
@@ -491,6 +488,7 @@ Rails.application.routes.draw do
   mount ZipUploader.upload_endpoint(:submission_cache) => "/packages/upload"
   mount Thredded::Engine => '/forum'
   match '*path', to: 'main#error', via: :all
+  match '/', to: 'main#error', via: %i[post put patch delete]
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
