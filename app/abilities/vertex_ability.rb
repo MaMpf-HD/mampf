@@ -5,7 +5,7 @@ class VertexAbility
     clear_aliased_actions
 
     can [:new, :create, :update, :destroy], :vertex do |quiz|
-      user.can_edit?(@quiz)
+      user.can_edit?(quiz)
     end
   end
 end
