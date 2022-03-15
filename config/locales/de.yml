@@ -373,6 +373,10 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      import_toc: Gliederung aus anderer Veranstaltung importieren
+      import_chapters: Kapitel importieren
+      import_sections: Abschnitte importieren
+      import_tags: Tags importieren
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -2177,7 +2181,7 @@ de:
     create: 'Erstellen'
     creation_confirm: >
       Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
-      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst: 
+      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst:
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
@@ -3286,6 +3290,8 @@ de:
     dismiss: 'Ausblenden'
     validate: 'Validieren'
     cancel_publication: 'Stornieren'
+    import_lecture_toc: 'Gliederung importieren'
+    import_toc: 'Importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

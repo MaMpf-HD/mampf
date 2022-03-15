@@ -14,7 +14,7 @@ class LectureAbility
 
     can [:edit, :update, :update_teacher, :update_editors, :destroy, :add_forum,
          :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
-         :remove_imported_medium, :show_subscribers,
+         :remove_imported_medium, :show_subscribers, :import_toc,
          :edit_structures, :close_comments, :open_comments],
         Lecture do |lecture|
       user.can_edit?(lecture)

@@ -309,7 +309,7 @@ $(document).on 'turbolinks:load', ->
     previousDefault = cy.filter (element, i) ->
       element.isEdge() and element.data('source') == source and
       element.data('defaultedge')
-    if previousdefault.length == 0 && defaulttarget != 0
+    if previousDefault.length == 0 && defaulttarget != 0
       cy.add
         group: 'edges'
         data:
