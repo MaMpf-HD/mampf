@@ -335,6 +335,13 @@ $(document).on 'turbolinks:load', ->
     $('#access-text').css('color','')
     return
 
+  $('#import_sections').on 'change', ->
+    if $(this).prop('checked')
+      $('#import_tags').prop('disabled', false)
+    else
+      $('#import_tags').prop('disabled', true).prop('checked', false)
+    return
+
   return
 
 # clean up everything before turbolinks caches

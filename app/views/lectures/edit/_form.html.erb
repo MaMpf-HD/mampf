@@ -65,4 +65,8 @@
     <%= render partial: 'talks/modal',
                locals: { lecture: lecture } %>
   <% end %>
+  <% if lecture.importable_toc? %>
+    <%= render partial: 'lectures/edit/import_toc_modal',
+              locals: { lecture: lecture } %>
+  <% end %>
 <% end %>

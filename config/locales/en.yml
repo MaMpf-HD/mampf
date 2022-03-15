@@ -374,6 +374,10 @@ en:
         maximal team size for submissions
       submission_grace_period: >
         grace period for submissions (in minutes)
+      import_toc: Import table of contents from other lecture
+      import_chapters: import chapters
+      import_sections: import sections
+      import_tags: import tags
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -3112,6 +3116,8 @@ en:
     dismiss: 'Dismiss'
     validate: 'Validate'
     cancel_publication: 'Cancel'
+    import_lecture_toc: 'Import TOC'
+    import_toc: 'Import'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

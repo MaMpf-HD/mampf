@@ -21,6 +21,14 @@
         </span>
       </div>
       <div class="col-5 text-right">
+        <% if lecture.importable_toc? %>
+          <button type="button"
+                  class="btn btn-sm btn-secondary"
+                  data-toggle="modal"
+                  data-target="#importLectureTocModal">
+            <%= t('buttons.import_lecture_toc') %>
+          </button>
+        <% end %>
         <%= link_to t("buttons.create_#{lecture.chapter_name}"),
                     new_chapter_path(lecture_id: lecture.id),
                     remote: true,
