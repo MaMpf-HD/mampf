@@ -22,7 +22,9 @@
       <%= assignment.accepted_file_type %>
     </div>
     <div class="col-2">
-      <input type="checkbox" disabled <%= "checked" if assignment.protected %>>
+      <% if assignment.deletion_date %>
+        <%= I18n.l(assignment.deletion_date, format: :long, locale: :'de') %>
+      <% end %>
     </div>
     <div class="col-2">
       <% if assignment.persisted? %>
