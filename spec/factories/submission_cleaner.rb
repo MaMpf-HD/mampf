@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :submission_cleaner do
     transient do
-      date { Faker::Date.forward(days: 365) }
+      date { Time.zone.today }
     end
 
     initialize_with do

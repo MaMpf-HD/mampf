@@ -11,69 +11,65 @@ class SubmissionCleaner
   end
 
   def clean!
-    set_attributes
-    return unless @advance
-
-    warn_about_destruction and return unless @destroy
-
-    destroy_and_inform
-  end
-
-  def set_attributes
-    determine_actions
-    fetch_previous_term_props if @advance
-    true
-  end
-
-  private
-
-  def determine_actions
-    @advance = false
     @previous_term = Term.previous_by_date(@date)
     return unless @previous_term
-    return unless @date.in?(previous_term.submission_deletion_info_dates)
-    if date == @previous_term.end_date + 1.day
-      @advance = @previous_term.submission_deletion_mail.nil?
-      @reminder = false
-    elsif date == @previous_term.end_date + 8.days
-      @advance = @previous_term.submission_deletion_mail.present? &&
-                   @previous_term.submission_deletion_reminder.nil?
-      @reminder = true
-    elsif date == @previous_term.submission_deletion_date
-      @advance = @previous_term.submission_deletion_mail.present? &&
-                   @previous_term.submission_deletion_reminder.present? &&
-                   @previous_term.submissions_deleted_at.nil?
-      @destroy = true
-    end
+
+    check_for_first_mail
+    check_for_reminder_mail
+    check_for_deletion
   end
 
-  def fetch_previous_term_props
-    @submissions = @previous_term.unprotected_submissions
-    @submitters = @previous_term.unprotected_submitters
-    @lectures = @previous_term.lectures_with_submissions
+  def check_for_first_mail
+    @deletion_date = @date + 14.days
+    fetch_props
+    return if @assignments.empty?
+
+    @reminder = false
+    send_info_mail_to_submitters
+    send_info_mail_to_editors
   end
 
-  def destroy_and_inform
-    @previous_term.update(submissions_deleted_at: Time.now)
-    @submissions.each(&:destroy)
+  def check_for_reminder_mail
+    @deletion_date = @date + 7.days
+    fetch_props
+    return if @assignments.empty?
+
+    @reminder = true
+    send_info_mail_to_submitters
+    send_info_mail_to_editors
+  end
+
+  def check_for_deletion
+    @deletion_date = @date
+    fetch_props
+    return if @assignments.empty?
+
+    @submissions = Submission.where(assignment: @assignments)
+    @submissions.each(&:destroy!)
+
     send_destruction_mail_to_submitters
     send_destruction_mail_to_editors
   end
 
-  def warn_about_destruction
-    if @reminder
-      @previous_term.update(submission_deletion_reminder: Time.now)
-    else
-      @previous_term.update(submission_deletion_mail: Time.now)
-    end
+  private
 
-    send_info_mail_to_submitters
-    send_info_mail_to_editors
-    true
+  def clear_props
+    @assignments = nil
+    @submitters = nil
+    @lectures = nil
+  end
+
+  def fetch_props
+    clear_props
+    @assignments = Assignment.where(deletion_date: @deletion_date)
+    return if @assignments.empty?
+
+    @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
+    @lectures = [*Lecture.find_by(id: @assignments.pluck(:lecture_id))]
   end
 
   def send_destruction_mail_to_submitters
-    return unless @submitters.present?
+    return if @submitters.blank?
 
     I18n.available_locales.each do |l|
       local_submitter_ids = @submitters.where(locale: l).pluck(:id)
@@ -100,34 +96,33 @@ class SubmissionCleaner
   end
 
   def send_info_mail_to_submitters
-    return unless @submitters.present?
+    return if @submitters.blank?
 
     I18n.available_locales.each do |l|
       local_submitter_ids = @submitters.where(locale: l).pluck(:id)
       next if local_submitter_ids.empty?
-        local_submitter_ids.in_groups_of(200, false) do |group|
-          NotificationMailer.with(recipients: group,
-                                  term: @previous_term,
-                                  deletion_date:
-                                    @previous_term.submission_deletion_date,
-                                  reminder: @reminder,
-                                  locale: l)
-                            .submission_deletion_email.deliver_now
-        end
-      end
-    end
 
-    def send_info_mail_to_editors
-      @lectures.each do |l|
-        editor_ids = l.editors.pluck(:id) + [l.teacher.id]
-        NotificationMailer.with(recipients: editor_ids,
+      local_submitter_ids.in_groups_of(200, false) do |group|
+        NotificationMailer.with(recipients: group,
                                 term: @previous_term,
-                                lecture: l,
-                                deletion_date:
-                                  @previous_term.submission_deletion_date,
+                                deletion_date: @deletion_date,
                                 reminder: @reminder,
-                                locale: l.locale)
-                          .submission_deletion_lecture_email.deliver_now
+                                locale: l)
+                          .submission_deletion_email.deliver_now
       end
     end
+  end
+
+  def send_info_mail_to_editors
+    @lectures.each do |l|
+      editor_ids = l.editors.pluck(:id) + [l.teacher.id]
+      NotificationMailer.with(recipients: editor_ids,
+                              term: @previous_term,
+                              lecture: l,
+                              deletion_date: @deletion_date,
+                              reminder: @reminder,
+                              locale: l.locale)
+                        .submission_deletion_lecture_email.deliver_now
+    end
+  end
 end

@@ -72,6 +72,7 @@ class AssignmentsController < ApplicationController
 
   def assignment_params
     params.require(:assignment).permit(:title, :medium_id, :lecture_id,
-                                       :deadline, :accepted_file_type, :protected)
+                                       :deadline, :accepted_file_type,
+                                       :deletion_date)
   end
 end

@@ -54,6 +54,7 @@ describe("Watchlists", () => {
                 cy.wait(100);
                 cy.get('#watchlistDescriptionField').type('Dies ist eine Lernliste.');
                 cy.get('#confirmChangeWatchlistButton').click();
+                cy.wait(100);
                 cy.get('#watchlistButton').contains('Lernliste');
                 cy.get('#descriptionButton').click();
                 cy.get('.card').contains('Dies ist eine Lernliste.')
