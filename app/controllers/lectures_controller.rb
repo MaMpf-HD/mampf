@@ -240,6 +240,15 @@ class LecturesController < ApplicationController
     render layout: 'application_no_sidebar'
   end
 
+  def import_toc
+    imported_lecture = Lecture
+                         .find_by_id(import_toc_params[:imported_lecture_id])
+    import_sections = import_toc_params[:import_sections] == '1'
+    import_tags = import_toc_params[:import_tags] == '1'
+    @lecture.import_toc!(imported_lecture, import_sections, import_tags)
+    redirect_to edit_lecture_path(@lecture)
+  end
+
   private
 
   def set_lecture
@@ -293,6 +302,10 @@ class LecturesController < ApplicationController
 
   def comment_params
     params.require(:lecture).permit(:close_comments)
+  end
+
+  def import_toc_params
+    params.permit(:imported_lecture_id, :import_sections, :import_tags)
   end
 
   # create notifications to all users about creation of new lecture

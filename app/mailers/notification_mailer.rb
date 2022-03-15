@@ -127,6 +127,7 @@ class NotificationMailer < ApplicationMailer
 
   def submission_deletion_email
     @term = params[:term]
+    @deletion_date = params[:deletion_date]
     subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
     subject += t('mailer.submission_deletion_subject',
                  term: @term.to_label)
@@ -138,6 +139,7 @@ class NotificationMailer < ApplicationMailer
   def submission_deletion_lecture_email
     @term = params[:term]
     @lecture = params[:lecture]
+    @deletion_date = params[:deletion_date]
     subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
     subject += t('mailer.submission_deletion_lecture_subject',
                  term: @term.to_label,

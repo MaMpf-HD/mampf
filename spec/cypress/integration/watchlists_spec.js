@@ -29,6 +29,7 @@ describe("Watchlists", () => {
 				cy.get('#watchlistNameField').type('Lernliste');
 				cy.get('#createWatchlistBtn').click();
 				cy.get('#watchlistEntrySubmitButton').click();
+                cy.wait(100);
                 cy.get('div.text-light > .fa-list').click();
                 cy.get('#watchlistEntrySubmitButton').click();
                 cy.get('.invalid-feedback').should('exist');
@@ -53,6 +54,7 @@ describe("Watchlists", () => {
                 cy.wait(100);
                 cy.get('#watchlistDescriptionField').type('Dies ist eine Lernliste.');
                 cy.get('#confirmChangeWatchlistButton').click();
+                cy.wait(100);
                 cy.get('#watchlistButton').contains('Lernliste');
                 cy.get('#descriptionButton').click();
                 cy.get('.card').contains('Dies ist eine Lernliste.')

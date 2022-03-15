@@ -10,7 +10,8 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2021_11_19_181430) do
+ActiveRecord::Schema[7.0].define(version: 2022_01_25_162730) do
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -44,7 +45,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_11_19_181430) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "accepted_file_type", default: ".pdf"
-    t.boolean "protected", default: false
+    t.date "deletion_date", default: "2022-09-05", null: false
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end
@@ -402,7 +403,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_11_19_181430) do
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
-  create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "user_id"
     t.text "code"
@@ -488,7 +489,7 @@ ActiveRecord::Schema[7.0].define(version: 2021_11_19_181430) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"

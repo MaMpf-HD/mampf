@@ -83,7 +83,7 @@ class Ability
       can [:update, :update_teacher, :update_editors, :destroy, :add_forum,
            :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
            :remove_imported_medium, :show_subscribers,
-           :edit_structures, :close_comments, :open_comments],
+           :edit_structures, :close_comments, :open_comments, :import_toc],
           Lecture do |lecture|
         lecture.edited_by?(user)
       end
@@ -207,7 +207,7 @@ class Ability
       can [:destroy], WatchlistEntry do |watchlist_entry|
         watchlist_entry.ownedBy(user)
       end
-      
+
     else
       can :read, :all
       can :start, :main

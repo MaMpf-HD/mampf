@@ -1,0 +1,157 @@
+{{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
+{{ $debug_all := $.Env.DEBUG }}
+
+{{ define "container_specific_locations" }}
+	{{ $networks := .Networks }}
+    {{ $port := .Port }}
+    {{ $server_found := "false" }}
+    {{ range $container := .Containers }}
+        {{ range $knownNetwork := $networks }}
+            {{ range $containerNetwork := $container.Networks }}
+                {{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
+    # {{ $container.Name }}
+    location /{{ $container.Name }} {
+        internal;
+        gunzip on;
+        proxy_pass 'http://{{ $containerNetwork.IP }}:{{ $port }}/';
+    }
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+{{ define "metric_location" }}
+    location {{ .Endpoint }} {
+        types { } default_type "text/plain; charset=utf-8";
+	{{ $networks := .Networks }}
+    {{ $port := .Port }}
+    {{ $server_found := "false" }}
+    {{ range $container := .Containers }}
+        {{ range $knownNetwork := $networks }}
+            {{ range $containerNetwork := $container.Networks }}
+                {{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
+                    {{ $server_found = "true" }}
+        # {{ $container.Name }}
+        echo_location_async '/{{ $container.Name }}/metrics';
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    {{ if (eq $server_found "false") }}
+        # Fallback entry
+        return 200 '';
+    {{ end }}
+    }
+{{ end }}
+
+{{ define "upstream" }}
+	upstream {{ .Upstream }} {
+	{{ $networks := .Networks }}
+    {{ $port := .Port }}
+    {{ $server_found := "false" }}
+    {{ range $container := .Containers }}
+        {{ range $knownNetwork := $networks }}
+            {{ range $containerNetwork := $container.Networks }}
+                {{ if (and (ne $containerNetwork.Name "ingress") (or (eq $knownNetwork.Name $containerNetwork.Name) (eq $knownNetwork.Name "host"))) }}
+                    {{ $server_found = "true" }}
+        # {{ $container.Name }}
+        server {{ $containerNetwork.IP }}:{{ $port }} max_fails=3 fail_timeout=10;
+                {{ end }}
+            {{ end }}
+        {{ end }}
+    {{ end }}
+    {{ if (eq $server_found "false") }}
+        # Fallback entry
+        server 127.0.0.1 down;
+    {{ end }}
+    }
+{{ end }}
+
+# If we receive X-Forwarded-Proto, pass it through; otherwise, pass along the
+# scheme used to connect to this server
+map $http_x_forwarded_proto $proxy_x_forwarded_proto {
+  default $http_x_forwarded_proto;
+  ''      $scheme;
+}
+
+# If we receive X-Forwarded-Port, pass it through; otherwise, pass along the
+# server port the client connected to
+map $http_x_forwarded_port $proxy_x_forwarded_port {
+  default $http_x_forwarded_port;
+  ''      $server_port;
+}
+
+# If we receive Upgrade, set Connection to "upgrade"; otherwise, delete any
+# Connection header that may have been passed to this server
+map $http_upgrade $proxy_connection {
+  default upgrade;
+  '' close;
+}
+
+gzip_types text/plain text/css application/javascript application/json application/x-javascript text/xml application/xml application/xml+rss text/javascript;
+
+log_format vhost '$host [$time_local] '
+                 '"$request" $status $body_bytes_sent '
+                 '"$http_referer" '
+                 '"$upstream_addr"';
+
+error_log /dev/stderr;
+
+server {
+	server_name _; # This is just an invalid value which will never trigger on a real hostname.
+	server_tokens off;
+	listen 80;
+	return 503;
+}
+
+{{ $worker_containers := whereLabelValueMatches $ "de.uni-heidelberg.mathi.mampf.container-type" "worker" }}
+{{ template "upstream" (dict "Upstream" "workers" "Containers" $worker_containers "Networks" $CurrentContainer.Networks "Port" "3000" "Debug" $debug_all) }}
+
+server {
+	server_name localhost;
+	server_tokens off;
+	listen 80 default_server;
+
+    root /public;
+
+    {{ $contains_with_monitoring := whereLabelValueMatches $ "de.uni-heidelberg.mathi.mampf.container-type" "worker|master" }}
+    {{ template "container_specific_locations" (dict "Containers" $contains_with_monitoring "Networks" $CurrentContainer.Networks "Port" "9394") }}
+    {{ template "metric_location" (dict "Endpoint" "/metrics" "Containers" $contains_with_monitoring "Networks" $CurrentContainer.Networks "Port" "9394") }}
+
+    location / {
+        client_max_body_size 4G;
+        # try_files $uri $uri/ @rails;
+        try_files $uri @rails;
+    }
+
+    location /__accel_redirect {
+        internal;
+        alias   /private/;
+        add_header Content-Encoding $upstream_http_content_encoding;
+        gzip off;
+    }
+
+    location @rails {
+        proxy_pass http://workers;
+        proxy_set_header  X-Accel-Mapping       /private=/__accel_redirect;
+        proxy_read_timeout 240s;
+        proxy_send_timeout 240s;
+
+        # HTTP 1.1 support
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_set_header Host $http_host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $proxy_connection;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $proxy_x_forwarded_proto;
+        # proxy_set_header X-Forwarded-Ssl $proxy_x_forwarded_ssl;
+        proxy_set_header X-Forwarded-Port $proxy_x_forwarded_port;
+        proxy_set_header X-Original-URI $request_uri;
+
+        # Mitigate httpoxy attack (see README for details)
+        proxy_set_header Proxy "";
+    }
+}

@@ -373,6 +373,10 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      import_toc: Gliederung aus anderer Veranstaltung importieren
+      import_chapters: Kapitel importieren
+      import_sections: Abschnitte importieren
+      import_tags: Tags importieren
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -2177,7 +2181,7 @@ de:
     create: 'Erstellen'
     creation_confirm: >
       Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
-      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst: 
+      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst:
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
@@ -2761,10 +2765,10 @@ de:
       Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
       Abgaben und den Upload von Korrekturen durch Deine TutorIn.
     deletion_date_info: >
-      Bei der Abgabe handelt es sich um persönliche Daten, die wir aus Gründen
-      des Datenschutzes zwei Wochen nach Ablauf des Semesters löschen.
-      Du wirst darüber vorher per Mail informiert werden, so dass Du die Daten
-      sichern kannst.
+      Bei Abgaben handelt es sich um persönliche Daten, die wir aus
+      Datenschutzgründen im nachfolgenden Semester löschen. Das genaue Löschdatum
+      kannst Du der Tabelle entnehmen. Du wirst außerdem rechtzeitig per E-Mail
+      an die Löschung erinnert, damit Du Deine Daten sichern kannst.
     team_info: >
       Hier sieht Du Dein Abgabeteam. Du kannst Dein Team vergrößern, indem Du
       anderen Personen den Abgabecode weitergibst, so dass diese beitreten
@@ -2784,9 +2788,7 @@ de:
       Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
-    protected: Geschützte Abgabe
-    protected_info: >
-      "Geschützte" Abgaben werden bis zur manuellen Löschung aufbewahrt und werden nicht automatisiert nach Ablauf der Aufbewahrungsfrist (Semesterende + Karenzzeit von 14 Tagen) gelöscht.
+    deletion_date: Löschdatum
     destruction_info:
       <i>
       Hinweis.
@@ -2959,17 +2961,17 @@ de:
       Löschung der Abgaben und Korrekturen aus dem %{term}
     submission_deletion_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
-      Abgaben und Korrekturen aus dem %{term} am <b>%{deletion_date}</b>
-      automatisch gelöscht. Bitte lade diese rechtzeitig herunter, wenn Du sie
-      weiterhin verwenden möchtest.
+      Abgaben und Korrekturen aus dem %{term} mit entsprechendem Löschdatum am
+      <b>%{deletion_date}</b> automatisch gelöscht. Bitte lade diese rechtzeitig
+      herunter, wenn Du sie weiterhin verwenden möchtest.
     submission_deletion_lecture_subject: >
       Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
     submission_deletion_lecture_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
-      Abgaben und -korrekturen der Veranstaltung %{lecture} aus dem %{term} am
-      <b>%{deletion_date}</b> automatisch gelöscht. Sollten sie anderweitig
-      gespeichert werden müssen, so muss dies außerhalb von MaMpf geschehen,
-      und die Dateien müssen rechtzeitig heruntergeladen werden.
+      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term} mit
+      entsprechendem Löschdatum am <b>%{deletion_date}</b> automatisch gelöscht.
+      Sollten sie anderweitig gespeichert werden müssen, so muss dies außerhalb
+      von MaMpf geschehen, und die Dateien müssen rechtzeitig heruntergeladen werden.
     submission_destruction_subject: >
       Löschung der Abgaben und Korrekturen aus dem %{term}
     submission_destruction_text_html: >
@@ -3288,6 +3290,8 @@ de:
     dismiss: 'Ausblenden'
     validate: 'Validieren'
     cancel_publication: 'Stornieren'
+    import_lecture_toc: 'Gliederung importieren'
+    import_toc: 'Importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -3456,6 +3460,11 @@ de:
             deadline:
               blank: >
                 Es muss ein Abgabetermin angegeben werden.
+            deletion_date:
+              blank: >
+                Es muss ein Löschdatum angegeben werden.
+              in_past: >
+                Löschdatum darf nicht in der Vergangenheit liegen.
         chapter:
           attributes:
             title:
