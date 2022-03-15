@@ -1,10 +1,15 @@
 # AnnouncementsController
 class AnnouncementsController < ApplicationController
-  authorize_resource
   layout 'administration'
-  before_action :set_announcement, only: [:propagate, :expel]
+  before_action :set_announcement, except: [:new, :create, :index]
+  authorize_resource except: [:new, :create, :index]
+
+  def current_ability
+    @current_ability ||= AnnouncementAbility.new(current_user)
+  end
 
   def index
+    authorize! :index, Announcement.new
     @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
                                                          .order(:created_at)
                                                          .reverse)
@@ -14,11 +19,13 @@ class AnnouncementsController < ApplicationController
   def new
     @lecture = Lecture.find_by_id(params[:lecture])
     @announcement = Announcement.new(announcer: current_user, lecture: @lecture)
+    authorize! :new, @announcement
   end
 
   def create
     @announcement = Announcement.new(announcement_params)
     @announcement.announcer = current_user
+    authorize! :create, @announcement
     @announcement.save
     if @announcement.valid?
       # trigger creation of notifications for all relevant users

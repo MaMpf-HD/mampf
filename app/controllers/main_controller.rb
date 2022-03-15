@@ -6,6 +6,10 @@ class MainController < ApplicationController
   authorize_resource class: false, only: :start
   layout 'application_no_sidebar'
 
+  def current_ability
+    @current_ability ||= MainAbility.new(current_user)
+  end
+
   def home
     if user_signed_in?
       cookies[:locale] = current_user.locale

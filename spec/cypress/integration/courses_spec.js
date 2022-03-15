@@ -134,7 +134,7 @@ describe("Courses", function () {
                 ["create", "lecture"]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("unveröffentlicht").should("exist");
+                cy.contains("Du bist nicht berechtigt").should("exist");
             });
         });
     });

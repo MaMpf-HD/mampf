@@ -1,4 +1,4 @@
-<% if current_user.editor? %>
+<% if can? :edit_tags, :erdbeere %>
     <%= link_to '',
             edit_erdbeere_tags_path,
             remote: true,

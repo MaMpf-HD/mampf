@@ -1,20 +1,29 @@
 # TutorialsController
 class TutorialsController < ApplicationController
   before_action :set_tutorial, only: [:edit, :destroy, :update, :cancel_edit,
-                                      :bulk_download_submissions, :bulk_download_corrections, :bulk_upload,
+                                      :bulk_download_submissions,
+                                      :bulk_download_corrections,
+                                      :bulk_upload,
                                       :export_teams]
-  before_action :set_assignment, only: [:bulk_download_submissions, :bulk_download_corrections, :bulk_upload,
+  before_action :set_assignment, only: [:bulk_download_submissions,
+                                        :bulk_download_corrections´,
+                                        :bulk_upload,
                                         :export_teams]
   before_action :set_lecture, only: [:index, :overview]
   before_action :set_lecture_from_form, only: [:create]
   before_action :can_view_index, only: :index
-  before_action :check_editor_status, only: [:overview, :create]
-  authorize_resource
+  authorize_resource except: [:index, :overview, :create, :validate_certificate,
+                              :new, :cancel_new]
 
   require 'rubygems'
   require 'zip'
 
+  def current_ability
+    @current_ability ||= TutorialAbility.new(current_user)
+  end
+
   def index
+    authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order('deadline DESC')
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                     @assignments&.first
@@ -29,6 +38,7 @@ class TutorialsController < ApplicationController
   end
 
   def overview
+    authorize! :overview, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order('deadline DESC')
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                     @assignments&.first
@@ -40,11 +50,13 @@ class TutorialsController < ApplicationController
     @lecture = Lecture.find_by_id(params[:lecture_id])
     set_tutorial_locale
     @tutorial.lecture = @lecture
+    authorize! :new, @tutorial
   end
 
   def create
     @tutorial = Tutorial.new(tutorial_params)
-    @lecture = @tutorial&.lecture
+    authorize! :create, @tutorial
+    @lecture = @tutorial.lecture
     set_tutorial_locale
     @tutorial.save
     @errors = @tutorial.errors
@@ -68,24 +80,9 @@ class TutorialsController < ApplicationController
 
   def cancel_new
     @lecture = Lecture.find_by_id(params[:lecture])
+    authorize! :cancel_new, Tutorial.new(lecture: @lecture)
     set_tutorial_locale
     @none_left = @lecture&.tutorials&.none?
-  end
-
-  def bulk_download(zipped, end_of_file='')
-    if zipped.is_a?(StringIO)
-    send_data zipped.read,
-              filename: @assignment.title + '@' + @tutorial.title + end_of_file + '.zip',
-              type: 'application/zip',
-              disposition: 'attachment'
-    else
-      flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
-                             message: zipped)
-      redirect_to lecture_tutorials_path(@tutorial.lecture,
-                                         params:
-                                          { assignment: @assignment.id,
-                                            tutorial: @tutorial.id })
-    end
   end
 
   def bulk_download_submissions
@@ -107,6 +104,7 @@ class TutorialsController < ApplicationController
   end
 
   def validate_certificate
+    authorize! :validate_certificate, Tutorial.new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     set_tutorial_locale
   end
@@ -156,17 +154,28 @@ class TutorialsController < ApplicationController
     redirect_to :root, alert: I18n.t('controllers.no_tutor_in_this_lecture')
   end
 
-  def check_editor_status
-    return if current_user.editor_or_teacher_in?(@lecture)
-    redirect_to :root, alert: I18n.t('controllers.no_editor_or_teacher')
-  end
-
   def tutorial_params
     params.require(:tutorial).permit(:title, :lecture_id, tutor_ids: [])
   end
 
   def bulk_params
     params.permit(:package)
+  end
+
+  def bulk_download(zipped, end_of_file='')
+    if zipped.is_a?(StringIO)
+    send_data zipped.read,
+              filename: @assignment.title + '@' + @tutorial.title + end_of_file + '.zip',
+              type: 'application/zip',
+              disposition: 'attachment'
+    else
+      flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
+                             message: zipped)
+      redirect_to lecture_tutorials_path(@tutorial.lecture,
+                                         params:
+                                          { assignment: @assignment.id,
+                                            tutorial: @tutorial.id })
+    end
   end
 
   def send_correction_upload_emails

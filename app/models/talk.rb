@@ -94,6 +94,10 @@ class Talk < ApplicationRecord
     media.where.not(sort: ['Question', 'Remark'])
   end
 
+  def editors_with_inheritance
+    (speakers + lecture.editors_with_inheritance).uniq
+  end
+
   private
 
     def touch_lecture

@@ -90,6 +90,8 @@ class Course < ApplicationRecord
   alias title_no_term to_label
   alias card_header to_label
 
+  alias editors_with_inheritance editors
+
   def compact_title
     short_title
   end

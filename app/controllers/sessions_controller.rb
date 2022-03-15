@@ -1,6 +1,6 @@
 class SessionsController < Devise::SessionsController
 
-  # emove devise's flash message for succesful sign_in
+  # remove devise's flash message for succesful sign_in
   def create
     super
     flash.clear

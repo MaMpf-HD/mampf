@@ -497,7 +497,7 @@ class Lecture < ApplicationRecord
   # the next methods provide user related information about the lecture
 
   def edited_by?(user)
-    return true if editors_with_inheritance.include?(user) || user == teacher
+    return true if editors_with_inheritance.include?(user)
     false
   end
 
