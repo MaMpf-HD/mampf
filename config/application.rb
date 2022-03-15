@@ -33,6 +33,28 @@ module Mampf
         }
       }
     }
+    config.to_prepare do
+    # some monkey patches for sidekiq-cron
+    # see https://github.com/ondrejbartas/sidekiq-cron/issues/310
+      Sidekiq::Cron::Job.class_eval do
+        def self.all
+          job_hashes = nil
+          Sidekiq.redis do |conn|
+            set_members = conn.smembers(jobs_key)
+            job_hashes = conn.pipelined do |pipeline|
+              set_members.each do |key|
+                pipeline.hgetall(key)
+              end
+            end
+          end
+          job_hashes.compact.reject(&:empty?).collect do |h|
+            # no need to fetch missing args from redis since we just got
+            # this hash from there
+            Sidekiq::Cron::Job.new(h.merge(fetch_missing_args: false))
+          end
+        end
+      end
+    end
   end
 end
 
