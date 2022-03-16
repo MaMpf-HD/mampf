@@ -71,6 +71,7 @@ $container-max-widths: (
 @import "trix";
 @import "select2";
 @import "select2-bootstrap";
+@import "@fontsource/roboto";
 
 trix-toolbar .trix-button-row {
   flex-wrap: wrap;
