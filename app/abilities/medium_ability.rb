@@ -8,7 +8,8 @@ class MediumAbility
     can [:index, :new], Medium
 
     can [:show, :show_comments], Medium do |medium|
-      medium.visible_for_user?(user)
+      medium.visible_for_user?(user)  &&
+      !(medium.sort.in?(['Question', 'Remark']) && !user.can_edit?(medium))
     end
 
     can :inspect, Medium do |medium|
