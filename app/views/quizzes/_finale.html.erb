@@ -17,6 +17,19 @@
             </div>
           </div>
         <% end %>
+        <div class="card-body">
+          <%= t('admin.quiz.finale_html',
+                xkcd_link: link_to(t('admin.quiz.xkcd'),
+                                   'https://xkcd.com',
+                                   target: :_blank)) %>
+          <div>
+            <%= link_to image_tag(xkcd['img'],
+                                  class: "img-fluid"),
+                        xkcd['img'],
+                        target: :_blank,
+                        title: xkcd['alt'] %>
+          </div>
+        </div>
       </div>
     </div>
   </div>
