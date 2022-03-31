@@ -540,7 +540,7 @@ class MediaController < ApplicationController
       @medium.update(video: nil)
       @medium.update(screenshot: nil)
     end
-    if params[:medium][:detach_geogebra] == 'true'
+    if params[:medium][:detach_geogebra] == 'true' || @medium.sort != 'Sesam'
       @medium.update(geogebra: nil)
     end
     return unless params[:medium][:detach_manuscript] == 'true'
