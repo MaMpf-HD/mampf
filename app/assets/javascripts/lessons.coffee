@@ -57,42 +57,40 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#lesson-details-trix')
   if trixElement?
-    trixElement.addEventListener 'trix-initialize', ->
-      content = this.dataset.content
-      editor = trixElement.editor
-      editor.setSelectedRange([0,65535])
-      editor.deleteInDirection("forward")
-      editor.insertHTML(content)
-      document.activeElement.blur()
-      trixElement.addEventListener 'trix-change', ->
-        $('#lesson-basics-warning').show()
-        $('#lesson-details-preview').html($('#lesson-details-trix').html())
-        lessonDetails = document.getElementById('lesson-details-preview')
-        renderMathInElement lessonDetails,
-          delimiters: [
-            {
-              left: '$$'
-              right: '$$'
-              display: true
-            }
-            {
-              left: '$'
-              right: '$'
-              display: false
-            }
-            {
-              left: '\\('
-              right: '\\)'
-              display: false
-            }
-            {
-              left: '\\['
-              right: '\\]'
-              display: true
-            }
-          ]
-          throwOnError: false
-        return
+    content = trixElement.dataset.content
+    editor = trixElement.editor
+    editor.setSelectedRange([0,65535])
+    editor.deleteInDirection("forward")
+    editor.insertHTML(content)
+    document.activeElement.blur()
+    trixElement.addEventListener 'trix-change', ->
+      $('#lesson-basics-warning').show()
+      $('#lesson-details-preview').html($('#lesson-details-trix').html())
+      lessonDetails = document.getElementById('lesson-details-preview')
+      renderMathInElement lessonDetails,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
       return
 
   $('#sortableLessonMedia').sortable()
