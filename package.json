@@ -2,7 +2,6 @@
   "name": "mampf",
   "private": true,
   "dependencies": {
-    "@fontsource/roboto": "^4.5.3",
     "@rails/webpacker": "5.4.3",
     "@webpack-cli/serve": "^1.6.1",
     "coffee-loader": "^1.0.1",
