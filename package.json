@@ -22,7 +22,6 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "cypress": "9.5.1",
-    "eslint": "^8.10.0"
+    "cypress": "9.5.1"
   }
 }

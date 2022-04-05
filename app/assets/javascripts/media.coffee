@@ -309,7 +309,6 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#medium-content-trix')
   if trixElement?
-    trixElement.addEventListener 'trix-initialize', ->
     content = trixElement.dataset.content
     editor = trixElement.editor
     editor.setSelectedRange([0,65535])
