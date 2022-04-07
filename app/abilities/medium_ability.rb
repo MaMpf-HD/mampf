@@ -18,8 +18,7 @@ class MediumAbility
 
     can [:edit, :update, :enrich, :publish, :destroy, :cancel_publication,
          :add_item, :add_reference, :add_screenshot, :remove_screenshot,
-         :import_script_items, :export_toc, :export_references,
-         :export_screenshot, :import_manuscript, :get_statistics,
+         :import_script_items, :import_manuscript, :get_statistics,
          :render_medium_tags, :fill_quizzable_area,
          :fill_reassign_modal], Medium do |medium|
       user.can_edit?(medium)

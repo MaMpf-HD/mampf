@@ -305,21 +305,9 @@ Rails.application.routes.draw do
       to: 'media#add_reference',
       as: 'add_reference'
 
-  get 'media/:id/export_toc',
-      to: 'media#export_toc',
-      as: 'export_toc'
-
   get 'media/:id/import_script_items',
       to: 'media#import_script_items',
       as: 'import_script_items'
-
-  get 'media/:id/export_references',
-      to: 'media#export_references',
-      as: 'export_references'
-
-  get 'media/:id/export_screenshot',
-      to: 'media#export_screenshot',
-      as: 'export_screenshot'
 
   patch 'media/:id/remove_screenshot',
         to: 'media#remove_screenshot',
