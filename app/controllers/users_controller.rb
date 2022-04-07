@@ -100,6 +100,7 @@ class UsersController < ApplicationController
   end
 
   def set_elevated_users
-    @elevated_users = User.where(admin: true).or(User.editors).or(User.teachers)
+    @elevated_users = User.where(admin: true).or(User.proper_editors)
+                          .or(User.teachers)
   end
 end
