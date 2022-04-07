@@ -1,0 +1,30 @@
+<div class="card-header">
+  <div class="row">
+    <div class="col-9">
+      <h5>
+        <%= t('admin.tag.related_tags') %>
+      </h5>
+    </div>
+    <div class="col-3 text-right">
+      <i class="far fa-edit clickable"
+          id="selectRelatedTags"
+          data-remote="true"
+          data-toggle="tooltip"
+          title="<%= t('admin.tag.edit_related_tags') %>">
+      </i>
+    </div>
+  </div>
+</div>
+<div class="card-body" id="relatedTagsBodyEdit">
+  <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
+    <%= link_to t.short_title,
+                edit_tag_path(t),
+                class: "badge badge-light",
+                id: 'related-' + dom_id(t),
+                data: { toggle: 'tooltip',
+                        placement: 'top',
+                        id: t.id },
+                title: t.title %>
+    <br>
+  <% end %>
+</div>
