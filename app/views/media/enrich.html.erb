@@ -140,15 +140,6 @@
                     class: 'fas fa-trash-alt fa-lg mr-2 text-light',
                     style: 'display: ' +
                              show_inline(@medium.screenshot.present?) %>
-        <%= link_to '',
-                    export_screenshot_path(@medium),
-                    class: 'fas fa-download fa-lg mr-2 text-light',
-                    id: 'export-screenshot',
-                    data: { toggle: 'tooltip',
-                            placement: 'bottom' },
-                    title: t('buttons.export'),
-                    style: 'display: ' +
-                             show_inline(@medium.screenshot.present?) %>
       </div>
     </div>
     <div id="screenshot-area"
@@ -176,15 +167,6 @@
                     title: t('buttons.import_script_items'),
                     style: 'display: ' +
                              show_inline(@medium.script_items_importable?) %>
-        <%= link_to '',
-                    export_toc_path(@medium),
-                    class: 'fas fa-download fa-lg mr-2 text-light',
-                    id: 'export-toc',
-                    data: { toggle: 'tooltip',
-                            placement: 'bottom' },
-                    title: t('buttons.export'),
-                    style: 'display: ' +
-                             show_inline(@medium.proper_items.present?) %>
       </div>
     </div>
     <div id="toc-area">
@@ -198,14 +180,6 @@
         <%= t('thyme_editor.references') %>
         <%= helpdesk(t('thyme_editor.info.references'), true) %>
       </span>
-      <%= link_to '',
-                  export_references_path(@medium),
-                  class: 'fas fa-download fa-lg mr-2 text-light',
-                  id: 'export-references',
-                  data: { toggle: 'tooltip',
-                          placement: 'bottom' },
-                  title: t('buttons.export'),
-                  style: 'display: ' + show(@medium.referrals.present?) %>
     </div>
     <div id="meta-area">
       <%= render partial: 'media/reference',
