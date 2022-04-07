@@ -114,6 +114,15 @@ class User < ApplicationRecord
     User.where(id: EditableUserJoin.pluck(:user_id).uniq)
   end
 
+  # returns the array of all editors minus those that are only editors of talks
+  def self.proper_editors
+    talk_media_ids = Medium.where(teachable_type: 'Talk').pluck(:id)
+    talk_media_joins = EditableUserJoin.where(editable_type: 'Medium',
+                                              editable_id: talk_media_ids)
+    User.where(id: EditableUserJoin.where.not(id: talk_media_joins.pluck(:id))
+                                   .pluck(:user_id).uniq)
+  end
+
   # Returns the array of all editors (of courses, lectures, media), together
   # with their ids
   # Is used in options_for_select in form helpers.
