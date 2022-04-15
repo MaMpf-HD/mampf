@@ -1,9 +1,14 @@
 # ProfileController
 class ProfileController < ApplicationController
+  authorize_resource class: false
   before_action :set_user
   before_action :set_basics, only: [:update]
   before_action :set_lecture, only: [:subscribe_lecture, :unsubscribe_lecture,
                                      :star_lecture, :unstar_lecture]
+
+  def current_ability
+    @current_ability ||= ProfileAbility.new(current_user)
+  end
 
   def edit
     unless @user.consents
@@ -112,6 +117,7 @@ class ProfileController < ApplicationController
 
   def show_accordion
     @collapse_id = params[:id]
+    redirect_to :root and return unless @collapse_id.present?
     @lectures = case @collapse_id
       when 'collapseCurrentStuff' then current_user.current_subscribed_lectures
       when 'collapseInactiveLectures' then current_user.inactive_lectures

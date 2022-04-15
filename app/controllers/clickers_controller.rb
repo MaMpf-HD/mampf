@@ -1,19 +1,26 @@
 # ClickersController
 class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
-                                                 :reset, :set_level,
+                                                 :reset,
                                                  :get_votes_count,
-                                                 :set_alternatives]
+                                                 :set_alternatives,
+                                                 :render_clickerizable_actions]
   before_action :set_clicker, except: [:new, :create]
-  before_action :check_accessibility, only: [:edit, :open, :close, :set_level]
-  authorize_resource
+  authorize_resource except: [:new, :create, :edit, :open, :close,
+                              :set_alternatives]
   layout 'clicker', except: [:edit]
+
+  def current_ability
+    @current_ability ||= ClickerAbility.new(current_user)
+  end
 
   def new
     @clicker = Clicker.new
+    authorize! :new, @clicker
   end
 
   def edit
+    authorize! :edit, @clicker, @entered_code
     @user_path = clicker_url(@clicker,
                              host: DefaultSetting::URL_HOST_SHORT)
                  .gsub('clickers', 'c')
@@ -44,6 +51,7 @@ class ClickersController < ApplicationController
 
   def create
     @clicker = Clicker.new(clicker_params)
+    authorize! :create, @clicker
     @clicker.save
     if @clicker.valid?
       redirect_to administration_path
@@ -59,16 +67,19 @@ class ClickersController < ApplicationController
   end
 
   def open
+    authorize! :open, @clicker, @entered_code
     @clicker.open!
     render layout: 'administration' if user_signed_in?
   end
 
   def close
+    authorize! :close, @clicker, @entered_code
     @clicker.close!
     render layout: 'administration' if user_signed_in?
   end
 
   def set_alternatives
+    authorize! :set_alternatives, @clicker, @entered_code
     @clicker.update(alternatives: params[:alternatives].to_i)
     head :ok, content_type: 'text/html'
   end
@@ -93,6 +104,12 @@ class ClickersController < ApplicationController
                                   params: { code: code })
   end
 
+  def render_clickerizable_actions
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:medium_id])
+    @question = Question.find_by_id(params[:medium_id])
+  end
+
   private
 
   def clicker_params
@@ -100,19 +117,15 @@ class ClickersController < ApplicationController
                                     :teachable_id, :question_id, :title)
   end
 
+  def code_params
+    params.permit(:code)
+  end
+
   def set_clicker
     @clicker = Clicker.find_by_id(params[:id])
     @code = user_signed_in? ? nil : @clicker&.code
+    @entered_code = code_params[:code]
     return if @clicker
     redirect_to :root, alert: I18n.t('controllers.no_clicker')
-  end
-
-  def check_accessibility
-    if user_signed_in?
-      return if current_user.admin || current_user == @clicker.editor
-    else
-      return if params[:code] == @clicker.code
-    end
-    redirect_to :root, alert: I18n.t('controllers.no_clicker_access')
   end
 end

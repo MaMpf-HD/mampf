@@ -934,6 +934,12 @@ class Medium < ApplicationRecord
     !!teachable.media_scope.try(:comments_disabled)
   end
 
+  def becomes_quizzable
+    return unless type.in?(['Question', 'Remark'])
+    return becomes(Question) if type == 'Question'
+    becomes(Remark)
+  end
+
   def containingWatchlists(user)
     Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
                     user: user)

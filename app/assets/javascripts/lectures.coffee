@@ -53,16 +53,15 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#lecture-concept-trix')
   if trixElement?
-    trixElement.addEventListener 'trix-initialize', ->
-      content = this.dataset.content
-      editor = trixElement.editor
-      editor.setSelectedRange([0,65535])
-      editor.deleteInDirection("forward")
-      editor.insertHTML(content)
-      document.activeElement.blur()
-      trixElement.addEventListener 'trix-change', ->
-        disableExceptOrganizational()
-        return
+    content = trixElement.dataset.content
+    editor = trixElement.editor
+    editor.setSelectedRange([0,65535])
+    editor.deleteInDirection("forward")
+    editor.insertHTML(content)
+    document.activeElement.blur()
+    trixElement.addEventListener 'trix-change', ->
+      disableExceptOrganizational()
+      return
 
   # if absolute numbering box is checked/unchecked, enable/disable selection of
   # start section
@@ -333,6 +332,13 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'change', '#medium_publish_media_1', ->
     $('[id^="medium_released_"]').attr('disabled', false)
     $('#access-text').css('color','')
+    return
+
+  $('#import_sections').on 'change', ->
+    if $(this).prop('checked')
+      $('#import_tags').prop('disabled', false)
+    else
+      $('#import_tags').prop('disabled', true).prop('checked', false)
     return
 
   return

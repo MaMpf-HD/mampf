@@ -46,6 +46,7 @@ $(document).on 'turbolinks:load', ->
   # (relevant on media enrich page)
   $(document).on 'change', '#referral_teachable', ->
     teachableId = $(this).val()
+    canCreateExternalLink = $(this).data('can-create-external-link')
     $('#create_external_link').hide()
     if teachableId == ''
       itemSelectize = document.getElementById('referral_item_id').selectize
@@ -67,7 +68,8 @@ $(document).on 'turbolinks:load', ->
         if result?
           itemSelectize.addOption(result)
         itemSelectize.refreshOptions(false)
-        $('#create_external_link').show() if teachableId == 'external-0'
+        if teachableId == 'external-0' && canCreateExternalLink
+          $('#create_external_link').show()
         return
     return
 
