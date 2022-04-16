@@ -3,6 +3,10 @@ class ItemsController < ApplicationController
   before_action :set_item, except: [:create]
   authorize_resource except: [:create]
 
+  def current_ability
+    @current_ability ||= ItemAbility.new(current_user)
+  end
+
   def update
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
     @item.update(item_params)

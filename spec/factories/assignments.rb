@@ -7,6 +7,7 @@ FactoryBot.define do
         Faker::Number.between(from: 1, to: 9999).to_s
     end
     deadline { Faker::Time.forward(days: 30) }
+    deletion_date { Faker::Date.forward(days: 60) }
     accepted_file_type { '.pdf' }
 
     trait :with_lecture do

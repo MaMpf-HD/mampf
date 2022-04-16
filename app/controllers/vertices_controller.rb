@@ -1,16 +1,28 @@
 # VerticesController
 class VerticesController < ApplicationController
   before_action :set_values
-  before_action :check_permission, except: :new
+  # note that we do not use cancancan's authorization methods in the actions
+  # as we could not get it to work here
+  # it seems not to accept the quiz parameter:
+  # authorize! :new, :vertex, @quiz
+  # ---> calls VertexAbility#can, but does not pass the @quiz param, hence
+  # an exception
+  # authorize! :new, @quiz
+  # ---> does not call VertexAbility#can
+  before_action :check_permission
   before_action :set_update_vertex_params, only: [:update]
   before_action :set_create_vertex_params, only: [:create]
 
+  def current_ability
+    @current_ability = VertexAbility.new(current_user)
+  end
+
   def new
-    authorize! :new, @quiz
+    # authorize! :new, @quiz
   end
 
   def create
-    authorize! :create, @quiz
+    # authorize! :create, @quiz
     if @success
       @quizzables.each do |q|
         @quiz.update(quiz_graph: @quiz.quiz_graph.create_vertex(q))
@@ -20,7 +32,7 @@ class VerticesController < ApplicationController
   end
 
   def update
-    authorize! :update, @quiz
+    # authorize! :update, @quiz
     @id = params[:id].to_i
     graph = @quiz.quiz_graph.update_vertex(@vertex_id, @branching,
                                            @hide)
@@ -29,7 +41,7 @@ class VerticesController < ApplicationController
   end
 
   def destroy
-    authorize! :destroy, @quiz
+    # authorize! :destroy, @quiz
     @id = params[:id].to_i
     quiz_graph = @quiz.quiz_graph
     @quiz.update(quiz_graph: quiz_graph.destroy_vertex(@id))

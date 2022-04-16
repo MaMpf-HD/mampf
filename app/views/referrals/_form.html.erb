@@ -62,7 +62,11 @@
                      grouped_options_for_select(grouped_teachable_list,
                                                 teachable_selector(referral)),
                      { prompt: t('basics.select') },
-                     { class: 'selectize' } %>
+                     { class: 'selectize',
+                       data:
+                         { 'can-create-external-link' =>
+                              ItemAbility.new(current_user)
+                                         .can?(:create, Item.new) } } %>
       </div>
     </div>
     <div id="item_select" class="form-group form-row">

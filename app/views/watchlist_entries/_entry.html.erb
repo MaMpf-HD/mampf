@@ -64,9 +64,9 @@
              title="<%= t('medium.waiting_for_tag') %>">
           </i>
         <% end %>
-        <% if @watchlist.ownedBy(current_user) %>
+        <% if @watchlist.owned_by?(current_user) %>
           <%= link_to '',
-                      watchlist_entry_path(entry, 
+                      watchlist_entry_path(entry,
                                           watchlist: @watchlist.id,
                                           reverse: params[:reverse],
                                           all: params[:all],

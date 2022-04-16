@@ -16,6 +16,7 @@ FactoryBot.define do
       assignment_title { '' }
       assignment_file_type { '' }
       assignment_deadline { nil }
+      assignment_deletion_date { nil }
     end
 
     initialize_with do
@@ -26,7 +27,8 @@ FactoryBot.define do
           create_assignment: create_assignment,
           assignment_title: assignment_title,
           assignment_file_type: assignment_file_type,
-          assignment_deadline: assignment_deadline)
+          assignment_deadline: assignment_deadline,
+          assignment_deletion_date: assignment_deletion_date)
     end
   end
 end
