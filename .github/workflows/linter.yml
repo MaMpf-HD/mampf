@@ -6,10 +6,10 @@ jobs:
     name: A job to check rubocop linter errors
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Ruby 2.7
+    - name: Set up Ruby 3
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7.2
+        ruby-version: 3.0.3
     - name: Install gems # usual step to install the gems.
       run: |
         bin/bundle config path vendor/bundle
