@@ -1716,6 +1716,7 @@ en:
       finale_html: >
         You made it! As a small reward there is an %{xkcd_link} comic:
       xkcd: 'XKCD'
+      xkcd_error: 'Unfortunately there was an error while displaying the XKCD comic.'
       errors: 'Attention, the quiz contains errors'
       undefined_targets: 'There are undefined targets'
       no_end: 'No way leads to the end'
