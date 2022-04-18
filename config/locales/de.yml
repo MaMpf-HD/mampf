@@ -2688,7 +2688,7 @@ de:
       Änderungen vornehmen, jedoch nur solange Dein TutorIn noch keine
       Korrektur zur Abgabe hochgeladen hat. Allerdings
       wird die Abgabe dann als <b>verspätet</b> eingestuft. Es liegt im Ermessen
-      der DozentIn und der der TutorInnen, ob und wie diese gewertet wird.
+      der DozentIn und der TutorInnen, ob und wie diese gewertet wird.
       <br>
       <i>Hinweis.</i>
       Als Änderung zählen hierbei die folgenden Aktionen:
@@ -3192,7 +3192,7 @@ de:
     unpublished: 'unveröffentlicht'
     all: 'frei'
     users: 'nur registrierte MaMpf-NutzerInnen'
-    subscribers: 'nur AbonenntInnen'
+    subscribers: 'nur AbonnentInnen'
     locked: 'gesperrt'
     referenced_from: 'referenziert in'
     irrelevant: 'egal'

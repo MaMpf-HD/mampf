@@ -318,42 +318,6 @@ class MediaController < ApplicationController
     @medium.import_script_items!
   end
 
-  # export the video's toc data to a .vtt file
-  def export_toc
-    @vtt_container = @medium.create_vtt_container!
-    file = Tempfile.new
-    @vtt_container.table_of_contents.stream(file.path)
-
-    send_file file,
-              filename: 'toc-' + @medium.title + '.vtt',
-              type: 'text/vtt',
-              disposition: 'attachment'
-  end
-
-  # export the video's references to a .vtt file
-  def export_references
-    @vtt_container = @medium.create_vtt_container!
-    file = Tempfile.new
-    @vtt_container.references.stream(file.path)
-
-    send_file file,
-              filename: 'references-' + @medium.title + '.vtt',
-              type: 'text/vtt',
-              disposition: 'attachment'
-  end
-
-  # export the video's screenshot to a .vtt file
-  def export_screenshot
-    return if @medium.screenshot.nil?
-    file = Tempfile.new
-    @medium.screenshot.stream(file.path)
-
-    send_file file,
-              filename: 'screenshot-' + @medium.title + '.png',
-              type: 'image/png',
-              disposition: 'attachment'
-  end
-
   # imports all of manuscript destinations, bookmarks as chpters, sections etc.
   def import_manuscript
     manuscript = Manuscript.new(@medium)
@@ -540,7 +504,7 @@ class MediaController < ApplicationController
       @medium.update(video: nil)
       @medium.update(screenshot: nil)
     end
-    if params[:medium][:detach_geogebra] == 'true'
+    if params[:medium][:detach_geogebra] == 'true' || @medium.sort != 'Sesam'
       @medium.update(geogebra: nil)
     end
     return unless params[:medium][:detach_manuscript] == 'true'
