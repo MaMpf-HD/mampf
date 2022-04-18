@@ -27,6 +27,7 @@
                      {},
                      { class: 'selectize',
                        disabled: from == 'course',
+                       required: true,
                        data: { terminfo: Course.pluck(:id, :term_independent) } } %>
         <% if from == 'course' %>
           <%= f.hidden_field :course_id, value: lecture.course.id %>
