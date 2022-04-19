@@ -3,6 +3,57 @@
     <%= t('sponsors.sponsorships') %>
   </h3>
   <h5>
+    <%= t('sponsors.uni_hd') %>
+  </h5>
+  <ul>
+    <li>
+      <strong>
+        2022-2024:
+      </strong>
+      <%= t('sponsors.heiquality_html',
+           hendrik: link_to('Hendrik Kasten',
+                             'https://www.mathi.uni-heidelberg.de/~kasten/',
+                             target: :_blank),
+            denis: link_to('Denis Vogel',
+                           'https://www.mathi.uni-heidelberg.de/~vogel/',
+                           target: :_blank)) %>
+      <strong>
+        2019-2020:
+      </strong>
+      <%= t('sponsors.heistart_html',
+            hendrik: link_to('Hendrik Kasten',
+                             'https://www.mathi.uni-heidelberg.de/~kasten/',
+                             target: :_blank),
+            oli: link_to('Oliver Thomas',
+                         'https://www.mathi.uni-heidelberg.de/~othomas/',
+                         target: :_blank),
+            denis: link_to('Denis Vogel',
+                           'https://www.mathi.uni-heidelberg.de/~vogel/',
+                           target: :_blank),
+            fs_mathphysinfo: link_to('Fachschaft MathPhysInfo',
+                                     'https://mathphys.fsk.uni-heidelberg.de/w/',
+                                     target: :_blank)) %>
+    </li>
+    <li>
+      <strong>
+        2018:
+      </strong>
+      <%= t('sponsors.physics_html',
+            physics_faculty: link_to('Fakultät für Physik und Astronomie',
+                                     'https://www.physik.uni-heidelberg.de/',
+                                     target: :_blank)) %>
+    </li>
+    <li>
+      <strong>
+        <%= t('basics.since') %> 2017:
+      </strong>
+      <%= t('sponsors.math_html',
+          math_faculty: link_to('Fakultät für Mathematik und Informatik',
+                                'https://mathinf.uni-heidelberg.de/',
+                                target: :_blank)) %>
+    </li>
+  </ul>
+  <h5>
     <%= t('sponsors.hse') %>
   </h5>
   <ul>
@@ -49,47 +100,6 @@
             zurlamitmu_project: link_to('"ZurLAmitMU"',
                                         'https://hse-heidelberg.de/forschung/forschungsprojekte/zurlamitmu-zugaenge-zur-linearen-algebra-mit-multimedia-erleichtern',
                                         target: :_blank)) %>
-    </li>
-  </ul>
-  <h5>
-    <%= t('sponsors.uni_hd') %>
-  </h5>
-  <ul>
-    <li>
-      <strong>
-        2019-2020:
-      </strong>
-      <%= t('sponsors.heistart_html',
-            hendrik: link_to('Hendrik Kasten',
-                             'https://www.mathi.uni-heidelberg.de/~kasten/',
-                             target: :_blank),
-            oli: link_to('Oliver Thomas',
-                         'https://www.mathi.uni-heidelberg.de/~othomas/',
-                         target: :_blank),
-            denis: link_to('Denis Vogel',
-                           'https://www.mathi.uni-heidelberg.de/~vogel/',
-                           target: :_blank),
-            fs_mathphysinfo: link_to('Fachschaft MathPhysInfo',
-                                     'https://mathphys.fsk.uni-heidelberg.de/w/',
-                                     target: :_blank)) %>
-    </li>
-    <li>
-      <strong>
-        2018:
-      </strong>
-      <%= t('sponsors.physics_html',
-            physics_faculty: link_to('Fakultät für Physik und Astronomie',
-                                     'https://www.physik.uni-heidelberg.de/',
-                                     target: :_blank)) %>
-    </li>
-    <li>
-      <strong>
-        <%= t('basics.since') %> 2017:
-      </strong>
-      <%= t('sponsors.math_html',
-          math_faculty: link_to('Fakultät für Mathematik und Informatik',
-                                'https://mathinf.uni-heidelberg.de/',
-                                target: :_blank)) %>
     </li>
   </ul>
 </div>
