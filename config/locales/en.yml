@@ -100,7 +100,7 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2020. MaMpf is on %{github}.
+      &copy; MaMpf Team 2022. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs can be reported %{bugs}.
@@ -134,12 +134,19 @@ en:
       %{hendrik}, %{oli} and %{denis} together with the %{fs_mathphysinfo}
       have obtained the funding to set up a MaMpf-supported math helpdesk for
       the introductory phase of math studies.
+      Since then, the helpdesk has been an
+      important support system in the first semesters of mathematics studies.
     physics_html: >
       The %{physics_faculty} supported MaMpf by through the acquisition of
       media technology equipment.
     math_html: >
       The %{math_faculty} has been supporting MaMpf through the financing of
       assistants since 2017.
+    heiquality_html: >
+      Within the framework of the heiQUALITY program Teaching, %{hendrik} and
+      %{denis} successfully raised funds for the implementation of the project
+      MaMpf-Back project. This is a low-threshold feedback system for
+      asynchronous digital teaching.
   here: 'here'
   here_capital: 'Here'
   disclosure: 'Legal disclosure'
