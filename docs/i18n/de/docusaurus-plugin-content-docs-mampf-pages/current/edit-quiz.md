@@ -404,6 +404,8 @@ Mit dem Quizeditor kann man den Quizgraph bearbeiten, indem man Ecken und Kanten
 * [Quizeditor](quiz-editor)
 * [Vortrag bearbeiten](edit-talk)
 
+\* Vortragende können auf Bearbeitungsseiten von im Zuge eines Quiz' angelegten Fragen und Erläuterungen zugreifen. \*
+
 #### Für Editor*innen
 * [Erläuterung bearbeiten](ed-edit-explanation)
 * [Frage bearbeiten](ed-edit-question)

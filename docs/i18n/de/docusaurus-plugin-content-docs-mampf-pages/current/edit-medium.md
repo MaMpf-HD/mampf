@@ -4,6 +4,8 @@ title: Medium bearbeiten
 
 Auf der Seite „Medium bearbeiten“ können Vortragende und Editor\*innen Änderungen an einem [Medium](medium) vom Typ *Lektion*, *Worked Example*, *Übung*, *Wiederholung*, *Sonstiges* oder *Beispieldatenbank* vornehmen. Zur Bearbeitung der übrigen Medientypen siehe [Quiz bearbeiten](edit-quiz), [Frage bearbeiten](ed-edit-question), [Erläuterung bearbeiten](ed-edit-explanation) und [Skript bearbeiten](ed-edit-manuscript). Dabei ist zu beachten, dass Vortragende nur Medien der Typen *Lektion*, *Worked Example*, *Übung*, *Wiederholung* und *Sonstiges* anlegen und bearbeiten können.
 
+\* Im Zuge eines Quiz' angelegte Fragen und Erläuterungen können Vortragende bearbeiten. Inkonstitent... \*
+
 Auf der im Folgenden beschriebenen Seite können Vortragende Begriffe aus der MaMpf-Datenbank und eigene Dateien hinzufügen sowie den Beschreibungstext und den Öffentlichkeitsstatus des Mediums bearbeiten. Ferner können sie Videos mit dem [THymE-Editor](thyme-editor) mit einer Gliederung und Referenzen versehen. Editor\*innen können zudem neue Begriffe anlegen sowie Medien und Sitzungen (bei Vorlesungen) bzw. Vorträge (bei Seminaren) assoziieren. Die Unterschiede zwischen der Seite für Editor\*innen und der für Vortragende sind gering, daher werden die Seiten in diesem Artikel gemeinsam beschrieben, wobei jeweils auf die nutzertypspezifischen Besonderheiten eingegangen wird.
 
 ![](/img/medium_bearbeiten_vortragender3.png)
@@ -35,7 +37,6 @@ Vortragende können diese Seite über die [Medienseite](medium) und die Seite [�
 </ul>
 
 ## Bereiche der Seite
-
 Die Seite „Medium bearbeiten“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Medium bearbeiten“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Eigentliche_Seite_keine_Sidebar.png" height="300"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Navigationsleiste_keine_Sidebar.png" height="300"/>  | <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/Footer_keine_Sidebar.png" height="300"/>|
@@ -469,6 +470,8 @@ Im THymE-Editor kann eine Videogliederung angelegt und Referenzen hinzugefügt w
 * [Quiz bearbeiten](edit-quiz)
 * [THmyE-Editor](thyme-editor)
 * [Vortrag bearbeiten](edit-talk)
+
+\* Vortragende können auf Bearbeitungsseiten von im Zuge eines Quiz' angelegten Fragen und Erläuterungen zugreifen. \*
 
 #### Nur Editor\*innen zugänglich
 * [Begriff bearbeiten](ed-edit-tag)

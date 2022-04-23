@@ -2,8 +2,6 @@
 title: Meine Startseite
 ---
 
-\*Diese Seite ist in Bearbeitung.\*
-
 Die persönliche Startseite ist die Seite, auf die man gelangt, nachdem man sich eingeloggt hat. Auf der persönlichen Startseite kann man Veranstaltungsabo verwalten, sich über abonnierte Veranstaltungen informieren und diese öffen, zu eigenen Vorträgen navigieren sowie nach Veranstaltungen suchen.
 
 ![](/img/startseite_weitere_abonnierte.png)
@@ -109,11 +107,21 @@ Die Veranstaltungssuche besteht aus einer Suchmaske, mit der die Suche eingeschr
 #### Suchmaske
 Die Suchemaske für die Veranstaltungssuche besteht aus folgenden Bedienelementen:
 
-Checkbox alle oder Haken raus und Dropdown/Eingabefeld
-* Typ
-* Semester
-* Studiengänge
-* DozentInnen
+* Typ / Semester / Studiengang / DozentIn<br></br> <form>
+     <input type="checkbox" id="ass" name="ass" checked></input>
+     <label for="ass"> alle</label>
+  </form><br></br> bzw. <br></br><br></br>
+   <form>
+       <p>
+          <label for="fname">Typ / Semester / Studiengang / DozentIn</label><br></br>
+          <input type="text" id="fname" name="fname"></input><br></br>
+       </p>
+    </form>
+    <form>
+        <input type="checkbox" id="news" name="mis"></input>
+        <label for="news"> alle</label>
+     </form>
+     Checkbox und bei nicht gesetztem Haken auch Eingabefeld mit Dropdownmenü. Im Dropdownmenü können die gewünschten Typen / Semester / Studiengänge / Dozent*innen ausgewählt werden.
 * <form>
      <p>
         <label for="fname">Volltext</label><br></br>

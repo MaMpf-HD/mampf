@@ -3,7 +3,11 @@ title: Quizzes erstellen
 ---
 This page will be written soon.
 
+## Verzweigungen
+Wichtig: Standardziel festlegen (grün!)
+
 ## Fragen mit Parametern
+\* Das zu Fragen \*
 
 Man kann im Fragen-Textfeld durch \\para{name, range} einen Parameter mit Bezeichnung name und Bereich range einführen.
 z.B.: \\para{n, [1..5]}  
