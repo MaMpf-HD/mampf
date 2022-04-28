@@ -84,13 +84,8 @@
             <%= helpdesk(t('submission.deletion_date_info'), false) %>
           </th>
           <td>
-          <% if assignment.protected %>
-    		  <%= t("assignment.protected") %>
-			      <%= helpdesk(t('assignment.protected_info'), true) %>
-          <%else%>
-            <%= I18n.l(assignment.lecture.submission_deletion_date,
-                       format: :long) %>
-          <%end%>
+          <%= I18n.l(assignment.deletion_date,
+                      format: :long) %>
           </td>
         </tr>
         <tr>

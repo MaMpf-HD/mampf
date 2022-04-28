@@ -161,6 +161,15 @@ class Section < ApplicationRecord
     super + '-' + I18n.locale.to_s
   end
 
+  def duplicate_in_chapter(new_chapter, import_tags)
+    new_section = dup
+    new_section.chapter = new_chapter
+    new_section.save
+    return unless import_tags
+    new_section.update(tags_order: tags_order)
+    new_section.tags << tags
+  end
+
   private
 
   def touch_lecture

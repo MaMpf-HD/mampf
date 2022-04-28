@@ -28,16 +28,18 @@
                         title: t('buttons.edit'),
                         style: 'text-decoration: none;',
                         remote: true %>
-            <%= link_to '',
-                        subject_path(s),
-                        class: 'fas fa-trash-alt text-secondary ml-1',
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom',
-                                confirm: t('confirmation.generic') },
-                        title: t('buttons.delete'),
-                        style: 'text-decoration: none;',
-                        remote: true,
-                        method: :delete %>
+            <% if s.deletable? %>
+              <%= link_to '',
+                          subject_path(s),
+                          class: 'fas fa-trash-alt text-secondary ml-1',
+                          data: { toggle: 'tooltip',
+                                  placement: 'bottom',
+                                  confirm: t('confirmation.generic') },
+                          title: t('buttons.delete'),
+                          style: 'text-decoration: none;',
+                          remote: true,
+                          method: :delete %>
+            <% end %>
 					</h5>
 		  	</div>
 				<div class="card-body">

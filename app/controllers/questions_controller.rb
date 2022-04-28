@@ -1,10 +1,14 @@
 # Questions Controller
 class QuestionsController < ApplicationController
-  before_action :set_question, except: [:reassign]
+  before_action :set_question, except: :reassign
   before_action :set_quizzes, only: [:reassign]
   before_action :check_solution_errors, only: [:update]
-  authorize_resource
+  authorize_resource except: :reassign
   layout 'administration'
+
+  def current_ability
+    @current_ability ||= QuestionAbility.new(current_user)
+  end
 
   def edit
     I18n.locale = @question.locale_with_inheritance
@@ -30,6 +34,7 @@ class QuestionsController < ApplicationController
 
   def reassign
     question_old = Question.find_by_id(params[:id])
+    authorize! :reassign, question_old
     I18n.locale = question_old.locale_with_inheritance
     @question, answer_map = question_old.duplicate
     @question.editors = [current_user]
@@ -43,7 +48,7 @@ class QuestionsController < ApplicationController
     end
     @quizzable = @question
     @mode = 'reassigned'
-    render 'events/fill_quizzable_area'
+    render 'media/fill_quizzable_area'
   end
 
   def set_solution_type
@@ -57,6 +62,16 @@ class QuestionsController < ApplicationController
                 MampfSet.trivial_instance
               end
     @solution = Solution.new(content)
+  end
+
+  def cancel_question_basics
+  end
+
+  def cancel_solution_edit
+  end
+
+  def render_question_parameters
+    @parameters = Question.parameters_from_text(params[:text])
   end
 
   private

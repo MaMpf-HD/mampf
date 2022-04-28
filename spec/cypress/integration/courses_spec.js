@@ -11,6 +11,31 @@ describe("Courses", function () {
             cy.get('input[type="password"]').type("test123456");
             cy.get('input[type="submit"]').click();
         });
+        it("can add tag to course", () => {
+            cy.appFactories([
+                ['create', 'course']
+            ]).then((records) => {
+                cy.visit('/courses/1/edit');
+                cy.get('#new-tag-button').click();
+                cy.get('#tag_notions_attributes_0_title').type('Geometrie');
+                cy.wait(100);
+                cy.get('#tag_notions_attributes_1_title').type('Geometry');
+                cy.get('.col-12 > .btn-primary').click();
+                cy.wait(100);
+                cy.contains('Geometrie');
+            })
+        });
+        it("can set editor in course", () => {
+            cy.appFactories([
+                ['create', 'course']
+            ]).then((records) => {
+                cy.visit('/courses/1/edit');
+                cy.get(':nth-child(5) > .selectize-control > .selectize-input').click();
+                cy.get(':nth-child(5) > .selectize-control > .selectize-input').type('{enter}')
+                cy.get('.btn-primary').click();
+                cy.contains("Admin");
+            })
+        });
         it("can create module", () => {
             cy.visit('/administration');
             cy.get('i[title="Modul anlegen"]').click();
@@ -134,7 +159,7 @@ describe("Courses", function () {
                 ["create", "lecture"]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("unveröffentlicht").should("exist");
+                cy.contains("Du bist nicht berechtigt").should("exist");
             });
         });
     });

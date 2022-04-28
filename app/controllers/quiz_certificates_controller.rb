@@ -4,13 +4,18 @@ class QuizCertificatesController < ApplicationController
   before_action :check_if_claimed, only: :claim
   before_action :set_locale_by_quiz, only: :claim
   before_action :set_locale_by_lecture, only: :validate
-  authorize_resource
+  authorize_resource except: :validate
+
+  def current_ability
+    @current_ability ||= QuizCertificateAbility.new(current_user)
+  end
 
   def claim
     @certificate.update(user: current_user)
   end
 
   def validate
+    authorize! :validate, QuizCertificate.new
     code = certificate_params[:code]
     @certificate = QuizCertificate.find_by_code(code)
   end

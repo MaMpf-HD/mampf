@@ -7,6 +7,16 @@ class Assignment < ApplicationRecord
 
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
   validates :deadline, presence: true
+  validates :deletion_date, presence: true
+  validate :deletion_date_cannot_be_in_the_past
+
+  def deletion_date_cannot_be_in_the_past
+    return unless deletion_date.present? && deletion_date < Time.zone.now.to_date
+
+    errors.add(:deletion_date, I18n.t('activerecord.errors.models.' \
+                                      'assignment.attributes.deletion_date.' \
+                                      'in_past'))
+  end
 
   scope :active, -> { where('deadline >= ?', Time.now) }
 
@@ -23,6 +33,14 @@ class Assignment < ApplicationRecord
   	UserSubmissionJoin.where(submission: Submission.where(assignment: self),
   													 user: user)
   									 &.first&.submission
+  end
+
+  def submitter_ids
+    UserSubmissionJoin.where(submission: submissions).pluck(:user_id).uniq
+  end
+
+  def submitters
+    User.where(id: submitter_ids)
   end
 
   def active?
@@ -126,4 +144,5 @@ class Assignment < ApplicationRecord
   	return accepted_file_type unless accepted_file_type == '.tar.gz'
   	'.gz'
   end
+  
 end

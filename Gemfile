@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.0.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 6.1.4.4"
+gem "rails", "~> 6.1.4.6"
 # Use dalli for caching to memcached in production
 gem "dalli", ">= 2.7"
 # Ruby wrapper for UglifyJS JavaScript compressor
@@ -72,9 +72,7 @@ gem "acts_as_tree"
 gem "activerecord-import",
   git: "https://github.com/zdennis/activerecord-import.git",
   branch: "master"
-gem "thredded",
-  github: "MaMpf-HD/thredded",
-  branch: "master"
+gem "thredded"
 gem "kramdown-parser-gfm"
 gem "thredded-markdown_katex",
   github: "thredded/thredded-markdown_katex",
@@ -94,9 +92,7 @@ gem "sidekiq-cron", "~> 1.1"
 gem "faraday", "~> 1.8"
 gem "globalize"
 gem "globalize-accessors"
-gem "commontator",
-  git: "https://github.com/fosterfarrell9/commontator",
-  branch: "master"
+gem "commontator"
 gem "acts_as_votable"
 gem "sprockets-rails",
   git: "https://github.com/rails/sprockets-rails",

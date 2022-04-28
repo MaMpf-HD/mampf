@@ -97,6 +97,34 @@ describe("Submissions", () => {
                 cy.contains("Du").should("exist");
             });
         });
+        it("can process multiple files", () => {
+            cy.appFactories([
+                [
+                    "create",
+                    "tutorial", "with_tutors", {
+                        lecture_id: 1
+                    }
+                ],
+                [
+                    "create", "assignment", {
+                        lecture_id: 1
+                    }
+                ]
+            ]).then((assignments) => {
+                cy.visit(`lectures/${assignments[0].lecture_id}/submissions`);
+                cy.contains("Anlegen").click();
+                const yourFixturePath = 'files/manuscript.pdf';
+                cy.get('#upload-userManuscript').attachFile(yourFixturePath);
+                cy.get('#upload-userManuscript').attachFile(yourFixturePath);
+                cy.get('#upload-userManuscript').attachFile(yourFixturePath);
+                cy.get('#userManuscript-merge-btn').should("exist");
+                cy.get('#userManuscript-merge-btn').click();
+                cy.get('#multiple-files-selected').should("have.attr", "style", "display: none;");
+                cy.get('input[type="checkbox"]').check();
+                cy.get('#userManuscript-uploadButton-call').click();
+                cy.get('#userManuscript-uploadButton-call').contains("Erfolgreich hochgeladen")
+            });
+        })
         it("can join submission", () => {
             cy.appFactories([
                 [

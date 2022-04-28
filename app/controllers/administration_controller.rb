@@ -7,6 +7,10 @@ class AdministrationController < ApplicationController
   authorize_resource class: false
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= AdministrationAbility.new(current_user)
+  end
+
   def index
   end
 

@@ -23,7 +23,7 @@ services:
     - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
-    image: postgres:13
+    image: postgres
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -54,8 +54,6 @@ services:
       context: ./../..
       dockerfile: docker/development/Dockerfile
     image: mampf:development
-    ports:
-      - "127.0.0.1:3000:3000"
     environment:
       RAILS_ENV: docker_development
       DEVELOPMENT_DATABASE_ADAPTER: postgresql
@@ -110,14 +108,16 @@ services:
       - solr
       - redis
       - mailcatcher
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: worker
   webpacker:
     build:
       context: ./../..
       dockerfile: docker/development/Dockerfile
     environment:
-      - NODE_ENV=development
-      - RAILS_ENV=development
-      - WEBPACKER_DEV_SERVER_HOST=0.0.0.0
+      NODE_ENV: development
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
     entrypoint: ["sh", "-c", "yarn && ./bin/webpack-dev-server"]
     volumes:
       - type: bind
@@ -134,7 +134,33 @@ services:
       - redis
       - mailcatcher
 
+  nginx:
+    image: openresty/openresty:alpine
+    # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
+    container_name: mampf-docker-nginx
+    ports:
+      - "127.0.0.1:3000:80"
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      # Submissions are served by nginx but are still authenticated by MaMpf. (accel_redirect)
+      - "submissions:/private/submissions:ro,nocopy"
+      - "public:/public"
+
+  dockergen:
+    build:
+      context: ./../..
+      dockerfile: docker/Dockerfile.dockergen
+    command: -notify-sighup mampf-docker-nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    restart: always
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      - "../nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl"
+      - "/var/run/docker.sock:/tmp/docker.sock"
+
 volumes:
+  nginx-conf-d:
+  submissions:
+  public:
   db-data:
   solr-data:
   sprockets-cache:

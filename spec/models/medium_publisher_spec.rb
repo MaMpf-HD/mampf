@@ -38,16 +38,18 @@ RSpec.describe MediumPublisher, type: :model do
                  release_date: '04-03-2021 13:50', lock_comments: '0',
                  publish_vertices: '1', create_assignment: '1',
                  assignment_title: 'Blatt 1', assignment_file_type: '.pdf',
-                 assignment_deadline: '04-03-2021 14:50' }
+                 assignment_deadline: '04-03-2021 14:50',
+                 assignment_deletion_date: '04-03-2021' }
       publisher = MediumPublisher.parse(@medium, @user, params)
       comp_methods = [:release_now, :release_for, :release_date, :lock_comments,
                       :vertices, :create_assignment, :assignment_title,
-                      :assignment_file_type, :assignment_deadline]
+                      :assignment_file_type, :assignment_deadline,
+                      :assignment_deletion_date]
       publisher_array = comp_methods.map { |m| publisher.send(m) }
       expect(publisher_array)
         .to eq([false, 'users', Time.zone.parse('04-03-2021 13:50'), false,
                 true, true, 'Blatt 1', '.pdf',
-                Time.zone.parse('04-03-2021 14:50')])
+                Time.zone.parse('04-03-2021 14:50'), Time.zone.parse('04-03-2021')])
     end
 
     it 'rescues argument errors for the release date' do
@@ -65,6 +67,15 @@ RSpec.describe MediumPublisher, type: :model do
                  assignment_deadline: 'w47qwhhhhkc4' }
       publisher = MediumPublisher.parse(@medium, @user, params)
       expect(publisher.assignment_deadline).to be_nil
+    end
+
+    it 'rescues argument errors for the assignment deletion date' do
+      params = { release_now: '0', released: 'all',
+                 release_date: '04-03-2021 13:50', lock_comments: '1',
+                 publish_vertices: '0', create_assignment: '1',
+                 assignment_deletion_date: 'w47qwhhhhkc4' }
+      publisher = MediumPublisher.parse(@medium, @user, params)
+      expect(publisher.assignment_deletion_date).to be_nil
     end
   end
 
@@ -128,6 +139,7 @@ RSpec.describe MediumPublisher, type: :model do
                                    create_assignment: true,
                                    assignment_title: 'Blatt 1',
                                    assignment_deadline: '2025-05-02 12:00',
+                                   assignment_deletion_date: '2025-05-02',
                                    assignment_file_type: '.pdf')
       publisher.publish!
       lecture.reload
@@ -162,6 +174,8 @@ RSpec.describe MediumPublisher, type: :model do
                                      assignment_title: 'Blatt 1',
                                      assignment_deadline:
                                       Time.zone.parse('2025-05-02 12:00'),
+                                     assignment_deletion_date:
+                                      Time.zone.parse('2025-05-02'),
                                      assignment_file_type: '.pdf')
     end
 
@@ -194,7 +208,7 @@ RSpec.describe MediumPublisher, type: :model do
       expect(publisher.errors).to eq({})
     end
 
-    it 'returns {} if  there are no errors (example 1)' do
+    it 'returns {} if  there are no errors (example 2)' do
       publisher = FactoryBot.build(:medium_publisher,
                                    medium_id: @medium.id,
                                    user_id: @user.id,
@@ -203,7 +217,8 @@ RSpec.describe MediumPublisher, type: :model do
                                    create_assignment: true,
                                    assignment_title: 'Blatt 1',
                                    assignment_file_type: '.pdf',
-                                   assignment_deadline: Time.zone.now + 2.days)
+                                   assignment_deadline: Time.zone.now + 2.days,
+                                   assignment_deletion_date: Time.zone.today + 2.days)
       expect(publisher.errors).to eq({})
     end
 
@@ -223,7 +238,7 @@ RSpec.describe MediumPublisher, type: :model do
                                    medium_id: @medium.id,
                                    user_id: @user.id,
                                    release_now: false,
-                                   release_date: Time.zone.now - 1.days)
+                                   release_date: Time.zone.now - 1.day)
       expect(publisher.errors[:release_date]).not_to be_nil
     end
 
@@ -234,8 +249,20 @@ RSpec.describe MediumPublisher, type: :model do
                                    user_id: @user.id,
                                    release_now: true,
                                    create_assignment: true,
-                                   assignment_deadline: Time.zone.now - 1.days)
+                                   assignment_deadline: Time.zone.now - 1.day)
       expect(publisher.errors[:assignment_deadline]).not_to be_nil
+    end
+
+    it 'returns an assignment deletion date error if release is scheduled now' \
+       ' and deletion date is in the past' do
+      publisher = FactoryBot.build(:medium_publisher,
+                                   medium_id: @medium.id,
+                                   user_id: @user.id,
+                                   release_now: true,
+                                   create_assignment: true,
+                                   assignment_deletion_date:
+                                    Time.zone.today - 1.day)
+      expect(publisher.errors[:assignment_deletion_date]).not_to be_nil
     end
 
     it 'returns an assignment deadline error if release is scheduled later ' \
@@ -273,6 +300,7 @@ RSpec.describe MediumPublisher, type: :model do
                                    create_assignment: true,
                                    assignment_title: 'Blatt 1',
                                    assignment_deadline: Time.zone.now + 2.days,
+                                   assignment_deletion_date: Time.zone.today + 2.days,
                                    assignment_file_type: '.pdf')
       expect(publisher.errors[:assignment_title]).not_to be_nil
     end

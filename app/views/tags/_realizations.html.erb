@@ -1,0 +1,34 @@
+<div class="card-header">
+  <div class="row">
+    <div class="col-9">
+      <h5>
+        <%= t('basics.realizations') %>
+      </h5>
+    </div>
+    <div class="col-3 text-right">
+      <i class="far fa-edit clickable"
+          id="selectTagRealizations"
+          data-remote="true"
+          data-toggle="tooltip"
+          title="<%= t('admin.tag.edit_related_tags') %>">
+      </i>
+    </div>
+  </div>
+</div>
+<div class="card-body tagRealizationsBodyEdit">
+  <% if tag.realizations.any? %>
+    <% tag.realizations.each do |r| %>
+      <div class="row">
+        <div class="col-12">
+          <%= link_to t('basics.loading_data'),
+                      realization_path(r),
+                      class: 'erdbeere-realization',
+                      data: { sort: r.first,
+                              id: r.second } %>
+        </div>
+      </div>
+    <% end %>
+  <% else %>
+    <%= t('erdbeere.no_realizations') %>
+  <% end %>
+</div>
