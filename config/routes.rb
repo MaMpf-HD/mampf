@@ -870,6 +870,14 @@ Rails.application.routes.draw do
       to: 'main#start',
       as: 'start'
 
+  get 'main/test_mail',
+      to: 'main#test_mail',
+      as: 'test_mail'
+
+get 'administration/log',
+    to: 'administration#log',
+    as: 'log'
+
   # uploader routes
 
   mount ScreenshotUploader.upload_endpoint(:cache) => '/screenshots/upload'

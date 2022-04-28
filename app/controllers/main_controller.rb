@@ -65,7 +65,7 @@ class MainController < ApplicationController
     logger = Logger.new("log/emails.log")
     logger.info('Trying to read emails:')
     logger.info("Email: #{ENV['PROJECT_EMAIL']}")
-    imap = Net::IMAP.new(ENV['IMAPSERVER'])
+    imap = Net::IMAP.new(ENV['IMAPSERVER'], port: 993, ssl: true)
     imap.authenticate('LOGIN', ENV['PROJECT_EMAIL_USERNAME'], ENV['PROJECT_EMAIL_PASSWORD'])
     imap.examine('PROJECT_EMAIL_MAILBOX')
     imap.search(["RECENT"]).each do |message_id|
