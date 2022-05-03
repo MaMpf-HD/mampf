@@ -18,20 +18,16 @@
       <% if purpose == 'clicker' %>
         <%= f.hidden_field :types, value: ['Question'] %>
       <% end %>
-      <% if purpose == 'media' %>
-        <div class="custom-control custom-checkbox mb-2">
-          <%= f.check_box :all_types,
-                          id: 'search_all_media_types',
-                          class: 'custom-control-input',
-                          checked: true,
-                          data: { id: 'search_media_types'} %>
-          <%= f.label :all_media_types,
-                      t('basics.all'),
-                      { class: 'custom-control-label' } %>
-        </div>
-      <% else %>
-        <%= f.hidden_field :all_types, value: '0' %>
-      <% end %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_types,
+                        id: 'search_all_media_types',
+                        class: 'custom-control-input',
+                        checked: purpose.in?(['media', 'clicker']),
+                        data: { id: 'search_media_types'} %>
+        <%= f.label :all_media_types,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
     </div>
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :teachable_ids, t('basics.associated_to') %>
@@ -78,11 +74,12 @@
       <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
       <%= f.select :tag_ids,
                    options_for_select([[]]),
-                   {},
+                   { prompt: t('basics.select')},
                    { multiple: true,
                      class: 'selectize',
                      style: 'display: none;',
                      disabled: true,
+                     required: true,
                      data: { filled: false,
                              ajax: true,
                              model: 'tag',
@@ -125,7 +122,8 @@
                    { id: 'search_media_editor_ids',
                      multiple: true,
                      class: 'selectize',
-                     disabled: true } %>
+                     disabled: true,
+                     required: true } %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_editors,
                         id: 'search_all_media_editors',
