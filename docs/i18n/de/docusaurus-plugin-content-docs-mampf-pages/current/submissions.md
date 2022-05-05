@@ -124,7 +124,7 @@ Auf dem Body der Cards können unterschiedliche Bedienelemente vorkommen. Diese 
 
 Das nun folgende Schaubilder gibt eine Übersicht über einige der Cards und wie diese erreicht werden können. Man beginnt bei der Card mit rotem Header ganz oben im Schaubild. Über das Beitreten zu oder Anlegen einer Abgabe erreicht man eine gelbe oder hellgrüne Card. Vor der Kulanzfrist kann man durch diverse Bearbeitungsaktionen beliebig oft zwischen der Ausgangscard, Cards mit gelbem Header und Card mit hellgrünem Header wechseln. Bearbeitungen während der Kulanzzeit führen zur orangenen Card. Am Ende steht entweder eine erfolgreiche Abgabe (die Card mit dunkelgrünem Header in der rechten unteren Ecke) oder eine gescheiterte Abgabe (eine der Cards mit rotem Header in der linken unteren Ecke).  
 
-<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_impro.png" width="1000"/></a>
+<a href="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_impro.png"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/subs_impro.png" width="1000"/></a>
 
 #### Vor der Kulanzzeit und der Deadline
 Vor der Kulanzzeit und der Deadline kann beliebig oft zwischen den Cards im nun aufgeführten Schaubild gewechselt werden. Der Beschriftung der Pfeile kann entnommen werden, welche Aktionen zur welcher Card führen. Hinter „Datei hochladen“ verbergen sich weitere Cards, die unter „Dateiupload“ behandelt werden.

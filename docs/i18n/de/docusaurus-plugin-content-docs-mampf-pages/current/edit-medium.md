@@ -433,6 +433,12 @@ In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
      </select><br></br>
   Dropdown-Menü zur Auswahl des Applettyps. Zur Auswahl stehen <i>classic</i>, <i>geometry</i>, <i>graphing</i> und <i>3d</i>.
 
+
+#### Statistik
+Die Aufruf- und Downloadstatistik öffnet sich, wenn man in der Box „Dokumente“ auf <button>Statistik</button> klickt. Dort werden Anzahl und Tag der Aufrufe und Downloads von Videos und PDFs graphisch dargestellt. In diesem Fenster gibt es nur den Button zum Schließen des Fensters. Dieser befindet sich in der oberen rechten Ecke.
+
+<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medienstatistik_aufruf_download.png" width="400"/>
+
 ## Von dieser Seite aus aufrufbare Seiten
 Von der Seite „Medium bearbeiten“ aus gelangt man zu den Seiten „Seminar“ bzw. „Seminar bearbeiten“ oder „Vorlesung bearbeiten“, „Vortrag bearbeiten“ bzw. „Sitzung bearbeiten“ und der Medienseite. Außerdem errreicht man den THymE-Player und -Editor.
 
