@@ -2831,6 +2831,8 @@ en:
     number_of_correct_answers: >
       number of correctly answered questions
     number_of_users: 'Anzahl der Nutzerinnen'
+    calls: 'Call statistics'
+    success: 'Success statistics'
   erdbeere:
     show_structures: 'Structures, properties and examples'
     select_structures: Select Structures

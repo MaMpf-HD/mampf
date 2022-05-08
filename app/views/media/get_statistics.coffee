@@ -1,5 +1,5 @@
 # render new lesson form
-$('#statistics-modal-content').empty()
+$('#calls-stats').empty()
   .append('<%= j render partial: "media/statistics",
                         locals: { medium: @medium,
                                   video_downloads: @video_downloads,

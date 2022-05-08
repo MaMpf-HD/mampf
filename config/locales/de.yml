@@ -3006,6 +3006,8 @@ de:
     number_of_users: 'Anzahl der Nutzerinnen'
     number_of_correct_answers: >
       Anzahl der korrekt beantworteten Fragen
+    calls: 'Aufrufstatistik'
+    success: 'Erfolgsstatistik'
   erdbeere:
     show_structures: Strukturen, Eigenschaften und Beispiele
     select_structures: Strukturen auswählen
