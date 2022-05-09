@@ -2,7 +2,7 @@
 title: Medium bearbeiten
 ---
 
-Auf der Seite „Medium bearbeiten“ können Vortragende und Editor\*innen Änderungen an einem [Medium](medium) vom Typ *Lektion*, *Worked Example*, *Übung*, *Wiederholung*, *Sonstiges* oder *Beispieldatenbank* vornehmen. Zur Bearbeitung der übrigen Medientypen siehe [Quiz bearbeiten](edit-quiz), [Frage bearbeiten](ed-edit-question), [Erläuterung bearbeiten](ed-edit-explanation) und [Skript bearbeiten](ed-edit-manuscript). Dabei ist zu beachten, dass Vortragende nur Medien der Typen *Lektion*, *Worked Example*, *Übung*, *Wiederholung* und *Sonstiges* anlegen und bearbeiten können.
+Auf der Seite „Medium bearbeiten“ können Vortragende und Editor\*innen Änderungen an einem [Medium](medium) vom Typ *Lektion*, *Worked Example*, *Übung*, *Wiederholung*, *Sonstiges* oder *Beispieldatenbank* vornehmen. Zur Bearbeitung der übrigen Medientypen siehe [Quiz bearbeiten](edit-quiz), [Frage bearbeiten](edit-medium-question), [Erläuterung bearbeiten](edit-medium-remark) und [Skript bearbeiten](ed-edit-manuscript). Dabei ist zu beachten, dass Vortragende nur Medien der Typen *Lektion*, *Worked Example*, *Übung*, *Wiederholung* und *Sonstiges* anlegen und bearbeiten können.
 
 \* Im Zuge eines Quiz' angelegte Fragen und Erläuterungen können Vortragende bearbeiten. Inkonstitent... \*
 
@@ -474,6 +474,8 @@ Im THymE-Editor kann eine Videogliederung angelegt und Referenzen hinzugefügt w
 ### Bearbeitung
 #### Vortragenden und Editor\*innen zugänglich
 * [Quiz bearbeiten](edit-quiz)
+* [Quizerläuterung bearbeiten](edit-medium-remark) (Vortragende können nur auf die Seite eigener Erläuterungen zugreifen)
+* [Quizfrage bearbeiten](edit-medium-question) (Vortragende können nur auf die Seite eigener Fragen zugreifen)
 * [THmyE-Editor](thyme-editor)
 * [Vortrag bearbeiten](edit-talk)
 
@@ -481,8 +483,6 @@ Im THymE-Editor kann eine Videogliederung angelegt und Referenzen hinzugefügt w
 
 #### Nur Editor\*innen zugänglich
 * [Begriff bearbeiten](ed-edit-tag)
-* [Frage bearbeiten](ed-edit-question)
-* [Erläuterung bearbeiten](ed-edit-explanation)
 * [Seminar bearbeiten](ed-edit-seminar)
 * [Skript bearbeiten](ed-edit-manuscript)
 * [Vorlesung bearbeiten](ed-edit-lecture)

@@ -2,7 +2,7 @@
 title: Quiz bearbeiten
 ---
 
-Auf der Seite „Quiz bearbeiten“ können Vortragende und Editor\*innen Änderungen an einem Quiz vornehmen. Zur Bearbeitung anderer Medientypen siehe [Medium bearbeiten](edit-medium), [Frage bearbeiten](ed-edit-question), [Erläuterung bearbeiten](ed-edit-explanation) und [Skript bearbeiten](ed-edit-manuscript).
+Auf der Seite „Quiz bearbeiten“ können Vortragende und Editor\*innen Änderungen an einem Quiz vornehmen. Zur Bearbeitung anderer Medientypen siehe [Medium bearbeiten](edit-medium), [Frage bearbeiten](edit-medium-question), [Erläuterung bearbeiten](edit-medium-remark) und [Skript bearbeiten](ed-edit-manuscript).
 
 ![](/img/quiz_bearbeiten.png)
 
@@ -408,7 +408,7 @@ Mit dem Quizeditor kann man den Quizgraph bearbeiten, indem man Ecken und Kanten
 
 #### Für Editor*innen
 * [Erläuterung bearbeiten](ed-edit-explanation)
-* [Frage bearbeiten](ed-edit-question)
+* [Frage bearbeiten](edit-medium-question)
 * [Seminar bearbeiten](ed-edit-seminar)
 * [Sitzung bearbeiten](ed-edit-session)
 * [Veranstaltung bearbeiten](ed-edit-event-series)

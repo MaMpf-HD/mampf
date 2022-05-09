@@ -46,8 +46,10 @@ Der Button <a href="/mampf/de/docs/ed-edit-module" target="_self"><button name="
 \*Tabelle?\*
 
 ### Von Seminaren und Vorlesungen aufrufbare Seiten
-* [Medium bearbeiten](ed-edit-medium), sofern ein Begriff mit einem Vortrag verknüpft ist
+* [Medium bearbeiten](ed-edit-medium), sofern ein Medium gibt
 * [Modul bearbeiten](ed-edit-module) (nur Moduleditor\*innen)
+* [Quizerläuterung bearbeiten](edit-medium-remark), sofern eine Quizerläuterung gibt
+* [Quizfrage bearbeiten](edit-medium-question), sofern eine Quizfrage gibt
 
 ### Nur von Seminaren aus aufrufbare Seiten
 * [Seite des Begriffs](tag), sofern es einen Abschnitt gibt (ist das beabsichtigt?)

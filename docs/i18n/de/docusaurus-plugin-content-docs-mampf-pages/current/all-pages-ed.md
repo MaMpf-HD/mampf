@@ -11,10 +11,12 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 * [Begriff bearbeiten](ed-edit-tag)
 
 ## E
-* [Erläuterung bearbeiten](ed-edit-explanation)
+* [Erläuterung bearbeiten](edit-medium-remark) (Medium)
+* [Erläuterung bearbeiten](edit-remark)
 
 ## F
-* [Frage bearbeiten](ed-edit-question)
+* [Frage bearbeiten](edit-medium-question) (Medium)
+* [Frage bearbeiten](edit-question)
 
 ## K
 * [Kapitel bearbeiten](ed-edit-chapter)
@@ -30,8 +32,11 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 ## Q
 * [Quiz bearbeiten](edit-quiz) (zum Bearbeiten des Titels, verknüpfter Tags, des Beschreibungstextes und der Öffentlichkeitseinstellungen)
 * [Quizeditor](quiz-editor) (zum Bearbeiten der Fragen, der Erläuterungen und dem Aufbau)
-* [Quizerläuterung bearbeiten](ed-edit-explanation)
-* [Quizfrage bearbeiten](ed-edit-question)
+* [Quizerläuterung bearbeiten](edit-medium-remark) (Medium)
+* [Quizerläuterung bearbeiten](edit-remark)
+* [Quizfrage bearbeiten](edit-medium-question) (Medium)
+* [Quizfrage bearbeiten](edit-question)
+
 
 ## S
 * [Seminar bearbeiten](ed-edit-seminar)

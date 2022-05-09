@@ -62,7 +62,7 @@ Sämtliche Bedienelemente werden nun bereichsweise bzw. ansichtsweise beschriebe
 ### Kopf
 Im Kopfbereich gibt es zwei Bedienelemente.
 * <a href="/mampf/de/docs/edit-quiz" target="_self"><button name="button">zum Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
-* <button name="button">Quiz spielen</button> Öffne das Quiz in der Nutzeransicht. Dazu muss der Quizgraph strukturell fehlerfrei sein. (Verweis)
+* <button name="button">Quiz spielen</button> Öffne das Quiz in der Nutzeransicht. Dazu muss der Quizgraph strukturell fehlerfrei sein, siehe dazu den gleichnamigen Abschnitt.
 
 ### Graph
 In der Box „Quizgraph“ gibt es sowohl Bedienelemente im Graphen als auch rechts neben der Überschrift. Falls entsprechende Ecken und Kanten angelegt worden sind, stehen im Graphen Bedienelemente zur Verfügung. Zum Anlegen von Ecken siehe die Box „Ecke anlegen“. Zum Anlegen von Kanten siehe <button>Start-Ecke</button> in der Ausgangsansicht, <button>Standard-Ziel</button> in den Bedienansichten „Erläuterung“ und „Frage“ sowie <button>Verzweigung</button> in der Bedienansicht „Frage“. Mögliche Bedienelemente im Graphen sind:
@@ -339,7 +339,7 @@ Im Tab „Quizerläuterung erstellen“ gibt es zwei Bedienelemente.
 Zum Quizeditor gehören die beiden Unterseiten „Erläuterung bearbeiten“ und „Frage bearbeiten“.
 
 #### Unterseite „Erläuterung bearbeiten“
-Auf der Unterseite „Erläuterung bearbeiten“ kann man eine bereits angelegte Erläuterung bearbeiten. Die Seite erreicht man über die Bedienansicht „Erläuterung“. Dort klickt man auf <button>Bearbeiten</button>. Die Seite besteht aus einer Überschrift und der Box „Details“.
+Auf der Unterseite „Erläuterung bearbeiten“ kann man eine bereits angelegte Erläuterung bearbeiten. Die Seite erreicht man über die Bedienansicht „Erläuterung“. Dort klickt man auf <button>Bearbeiten</button>. Die Seite besteht aus einer Überschrift und der Box „Details“. Die sich dort befindlichen Bedienelemente werden nun aufgeführt.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_bem_bearbeiten.png" width="800" />
 
@@ -353,60 +353,17 @@ Auf der Unterseite „Erläuterung bearbeiten“ kann man eine bereits angelegte
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem etwas in der Box „Details“ bearbeitet worden ist.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem etwas in der Box „Details“ bearbeitet worden ist.
 * Eingabefeld
-* Checkbox
-* <button>Kopie erstellen</button>
+* <form>
+     <input type="checkbox" id="up" name="sub"></input>
+        <label for="up"> Texteingabefeld aktiv </label><br></br>
+   </form> Checkbox. Was tut das???
+* <button>Kopie erstellen</button> Öffne das Dialogfenster „Kopie erstellen“, um die ausgewählte Erläuterung zu klonen. Geht nicht!!!
 
 ##### Kopie erstellen
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_kopie_erstellen_bem.png" width="800" />
-Mit Checkbox?
+Mit Checkbox? Geht derzeit nicht!!!
 
-#### Unterseite „Frage bearbeiten“
-Auf der Unterseite „Frage bearbeiten“ kann man eine bereits angelegte Frage bearbeiten. Die Seite erreicht man über die Bedienansicht „Frage“. Dort klickt man auf <button>Bearbeiten</button>. Die Seite besteht aus einer Überschrift und den Box „Basisdaten“ und „Antworten“.
 
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_frage_bearbeiten.png" width="800" />
-
-##### Überschrift
-
-* <a href="/mampf/de/docs/edit-quiz" target="_self"><button name="button">zum Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
-* <button name="button">Quiz spielen</button> Öffne das Quiz in der Nutzeransicht. Dazu muss der Quizgraph strukturell fehlerfrei sein.
-* <button name="button">Bearbeitung beenden</button> Wechsel zur Hauptseite „Quizeditor“. Dabei werden nicht gespeicherte Änderungen nicht übernommen.
-
-##### Basisdaten
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_frage_bearbeiten_basisdaten.png" width="800" />
-
-* <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem etwas in der Box „Basisdaten“ bearbeitet worden ist.
-* <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem etwas in der Box „Basisdaten“ bearbeitet worden ist.
-* Eingabefeld
-* Radiobuttons
-* Radiobuttons
-* Checkbox
-* Eingabefeld
-* <button>Kopie erstellen</button>
-
-##### Antworten
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_frage_bearbeiten_antworten.png" width="800" />
-
-* <button>Antwort hinzufügen</button>
-* <button>Bearbeiten</button>
-* <button>Löschen</button>
-
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_frage_bearbeiten_antwort_bearbeiten.png" width="800" />
-
-* <button>Verwerfen</button>
-* <button>Löschen</button>
-* Radiobuttons
-* Textfeld
-* Textfeld
-* <button>Speichern</button>
-
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_frage_bearbeiten_antwort_hinzufuegen.png" width="800" />
-
-##### Kopie erstellen
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_kopie_erstellen.png" width="800" />
-
-* Checkbox
-* <button>Kopie erstellen und bearbeiten</button>
-* <button>Abbrechen</button>
 
 ## Strukturell fehlerfreier Quizgraph
 Damit es ein Quiz von Nutzer\*innen geöffnet werden kann, muss der Quizgraph strukturell fehlerfrei sein. Bei dem Quizgraphen handelt es sich um einen gerichteten, von der Startecke aus zusammenhängenden Multigraphen. (stimmt gar nicht; Ecken müssen nicht von Start aus erreichbar sein, solange sie zum Ziel führen; man kann Ecken haben, die niemals beim Spielen des Quiz' erreicht werden können)
@@ -431,7 +388,7 @@ keine Ecke darf unverbunden sein (zusammenhängend); die Startecke benötigt gen
 * [Medium](medium)
 
 ### Bearbeitung
-* [Frage bearbeiten](ed-edit-question)
-* [Erläuterung bearbeiten](ed-edit-explanation)
 * [Medium bearbeiten](edit-medium)
 * [Quiz bearbeiten](edit-quiz)
+* [Quizerläuterung bearbeiten](edit-medium-remark)
+* [Quizfrage bearbeiten](edit-medium-question)
