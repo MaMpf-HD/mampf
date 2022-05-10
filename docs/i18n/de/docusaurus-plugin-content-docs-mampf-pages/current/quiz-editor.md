@@ -46,12 +46,6 @@ Die Bedienansichten „Frage“ und „Erläuterung“ führen außerdem zur Ans
 
 ![](/img/quizeditor_zielecke.png)
 
-Zum Quizeditor gehören darüber hinaus die beiden Unterseiten „Frage bearbeiten“ und „Erläuterung bearbeiten“, die über die Bedienansicht „Frage“ bzw. „Erläuterung“ erreicht werden können.
-
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_frage_bearbeiten.png"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_bem_bearbeiten.png"/>  |
-|:---: | :---: |
-|Unterseite „Frage bearbeiten“|Unterseite „Erläuterung bearbeiten“|
-
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 In den Bereichen Kopf, Graph, Verzweigungen und der Box „Ecke anlegen“ kommen diverse Bedienelemente vor. Die Bedienelemente im Bereich Kopf sind immer gleich. Die Bedienelemente beim Quizgraphen hängen hingegen von der ausgewählten Ansicht ab. Das nun folgende Schaubild gibt eine Übersicht über die Erreichbarkeit und die Navigationselemente der verschiedenen Ansichten bzw. Elemente.
 
@@ -92,7 +86,7 @@ Die Bedienansicht „Erläuterung“ erreicht man, indem man in der Ausgangsansi
 In der Ansicht „Erläuterung“ können die Bedienelemente im Graphen genutzt werden. Links neben der Box „Quizgraph“ erscheint eine Vorschau der Erläuterung, dort werden gegebenenfalls Hinweise und Warnungen angezeigt. In diesem Bereich befinden sich keine Bedienelemente. Rechts neben der Überschrift der Box „Quizgraph“ gibt es die folgenden fünf Buttons:
 
 * <button>Zurück</button> Wechsel zur Ausgangsansicht „Quizgraph“.
-* <button>Bearbeiten</button> Wechsel zur Unterseite „Erläuterung bearbeiten“.
+* <a href="/mampf/de/docs/edit-remark" target="_self"><button>Bearbeiten</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-remark" target="_self">„Erläuterung bearbeiten“</a>.
 * <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
 * <button>Standard-Ziel</button> Wechsel zur Bedienansicht „Standard-Ziel“ (das Standardziel ist die Ecke, zu der man im Quiz als nächstes gelangt). Durch anschließendes Anklicken einer Ecke im Graphen wird diese zum neuen Standardziel, d.h. eine Kante zwischen der Erläuterung und der angeklickten Ecke wird angelegt. Falls es vorher bereits ein Standardziel gab, wird die Kante zwischen diesem und der Erläuterung gelöscht.
 * <button>Ecke löschen</button> Lösche die Ecke.
@@ -105,7 +99,7 @@ Die Bedienansicht „Frage“ erreicht man, indem man in der Ausgangsansicht „
 In der Ansicht „Frage“ können die Bedienelemente im Graphen genutzt werden. Links neben der Box „Quizgraph“ erscheint eine Vorschau der Frage, dort werden gegebenenfalls Hinweise und Warnungen angezeigt. In diesem Bereich befinden sich keine Bedienelemente. Rechts neben der Überschrift der Box „Quizgraph“ gibt es die folgenden sechs Buttons:
 
 * <button>Zurück</button> Wechsel zur Ausgangsansicht „Quizgraph“.
-* <button>Bearbeiten</button> Wechsel zur Unterseite „Frage bearbeiten“.
+* <a href="/mampf/de/docs/edit-question" target="_self"><button>Bearbeiten</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-question" target="_self">„Frage bearbeiten“</a>.
 * <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
 * <button>Standard-Ziel</button> Wechsel zur Bedienansicht „Standard-Ziel“ (das Standardziel ist die Ecke, zu der man gelangt, nachdem man die Frage richtig beantwortet hat). Durch anschließendes Anklicken einer Ecke im Graphen wird diese zum neuen Standardziel, d.h. eine Kante zwischen der Frage und der angeklickten Ecke wird angelegt. Falls es vorher bereits ein Standardziel gab, wird die Kante zwischen diesem und der Frage gelöscht.
 * <button>Verzweigung</button> Öffne die Verzweigungscards am Seitenende. Dort kann für jede Kombination gegebener falscher bzw. nicht komplett richtiger Antworten eine Zielecke festgelegt werden.
@@ -335,36 +329,6 @@ Im Tab „Quizerläuterung erstellen“ gibt es zwei Bedienelemente.
   Eingabefeld für den Titel der Erläuterung. Dieses Feld muss ausgefüllt werden, um eine Erläuterung anzulegen.
 * <button>Speichern</button> Lege eine neue Erläuterung mit dem im Eingabefeld gewählten Titel an und schließe die Box „Ecke anlegen“. Wenn das Eingabefeld nicht ausgefüllt wurde, wird durch Anklicken dieses Buttons keine Erläuterung angelegt.
 
-### Unterseiten
-Zum Quizeditor gehören die beiden Unterseiten „Erläuterung bearbeiten“ und „Frage bearbeiten“.
-
-#### Unterseite „Erläuterung bearbeiten“
-Auf der Unterseite „Erläuterung bearbeiten“ kann man eine bereits angelegte Erläuterung bearbeiten. Die Seite erreicht man über die Bedienansicht „Erläuterung“. Dort klickt man auf <button>Bearbeiten</button>. Die Seite besteht aus einer Überschrift und der Box „Details“. Die sich dort befindlichen Bedienelemente werden nun aufgeführt.
-
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_bem_bearbeiten.png" width="800" />
-
-##### Überschrift
-
-* <a href="/mampf/de/docs/edit-quiz" target="_self"><button name="button">zum Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
-* <button name="button">Quiz spielen</button> Öffne das Quiz in der Nutzeransicht. Dazu muss der Quizgraph strukturell fehlerfrei sein.
-* <button name="button">Bearbeitung beenden</button> Wechsel zur Hauptseite „Quizeditor“. Dabei werden nicht gespeicherte Änderungen nicht übernommen.
-
-##### Details
-* <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem etwas in der Box „Details“ bearbeitet worden ist.
-* <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem etwas in der Box „Details“ bearbeitet worden ist.
-* Eingabefeld
-* <form>
-     <input type="checkbox" id="up" name="sub"></input>
-        <label for="up"> Texteingabefeld aktiv </label><br></br>
-   </form> Checkbox. Was tut das???
-* <button>Kopie erstellen</button> Öffne das Dialogfenster „Kopie erstellen“, um die ausgewählte Erläuterung zu klonen. Geht nicht!!!
-
-##### Kopie erstellen
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_kopie_erstellen_bem.png" width="800" />
-Mit Checkbox? Geht derzeit nicht!!!
-
-
-
 ## Strukturell fehlerfreier Quizgraph
 Damit es ein Quiz von Nutzer\*innen geöffnet werden kann, muss der Quizgraph strukturell fehlerfrei sein. Bei dem Quizgraphen handelt es sich um einen gerichteten, von der Startecke aus zusammenhängenden Multigraphen. (stimmt gar nicht; Ecken müssen nicht von Start aus erreichbar sein, solange sie zum Ziel führen; man kann Ecken haben, die niemals beim Spielen des Quiz' erreicht werden können)
 
@@ -382,6 +346,8 @@ keine Ecke darf unverbunden sein (zusammenhängend); die Startecke benötigt gen
 
 ## Von dieser Seite aus aufrufbare Seiten
 * [Quiz bearbeiten](edit-quiz)
+* [Quizerläuterung bearbeiten](edit-remark)
+* [Quizfrage bearbeiten](edit-question)
 
 ## Verwandte Seiten
 ### Betrachtung
@@ -390,5 +356,7 @@ keine Ecke darf unverbunden sein (zusammenhängend); die Startecke benötigt gen
 ### Bearbeitung
 * [Medium bearbeiten](edit-medium)
 * [Quiz bearbeiten](edit-quiz)
-* [Quizerläuterung bearbeiten](edit-medium-remark)
-* [Quizfrage bearbeiten](edit-medium-question)
+* [Quizerläuterung bearbeiten](edit-medium-remark) (Medium)
+* [Quizerläuterung bearbeiten](edit-remark)
+* [Quizfrage bearbeiten](edit-medium-question) (Medium)
+* [Quizfrage bearbeiten](edit-question)
