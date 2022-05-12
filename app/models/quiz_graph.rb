@@ -5,7 +5,9 @@ class QuizGraph
   attr_accessor :vertices, :edges, :root, :default_table, :hide_solution
 
   def self.load(text)
-    YAML.load(text) if text.present?
+    return if text.blank?
+
+    YAML.safe_load(text, permitted_classes: [QuizGraph, Symbol])
   end
 
   def self.dump(quiz_graph)

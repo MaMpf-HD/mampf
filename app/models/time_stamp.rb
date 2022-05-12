@@ -8,7 +8,7 @@ class TimeStamp
 
   # extract from YAML
   def self.load(text)
-    YAML.load(text) if text.present?
+    YAML.safe_load(text) if text.present?
   end
 
   # store as YAML (for serialization)
