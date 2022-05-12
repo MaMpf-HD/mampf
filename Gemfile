@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.0.3'
+ruby '3.1.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 7.0.2.3"
@@ -72,7 +72,9 @@ gem "acts_as_tree"
 gem "activerecord-import",
   git: "https://github.com/zdennis/activerecord-import.git",
   branch: "master"
-gem "thredded"
+gem "thredded",
+  git: "https://github.com/MaMpf-HD/thredded.git",
+  branch: "master"
 gem "kramdown-parser-gfm"
 gem "thredded-markdown_katex",
   github: "thredded/thredded-markdown_katex",
@@ -103,6 +105,7 @@ gem "clipboard-rails"
 gem "rubyzip", "~> 2.3.0"
 gem "exception_handler", "~> 0.8.0.0"
 gem 'webpacker', '~> 5.x'
+gem 'net-smtp'
 
 group :development, :docker_development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -53,6 +53,7 @@ class SubmissionsController < ApplicationController
     end
     @submission.update(submission_update_params)
     if @submission.valid?
+      @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == 'true'
         @submission.update(manuscript: nil,
                            last_modification_by_users_at: Time.now)
