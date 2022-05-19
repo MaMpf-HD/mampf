@@ -7,7 +7,9 @@ class QuizGraph
   def self.load(text)
     return if text.blank?
 
-    YAML.safe_load(text, permitted_classes: [QuizGraph, Symbol])
+    YAML.safe_load(text,
+                   permitted_classes: [QuizGraph, Symbol],
+                   aliases: true)
   end
 
   def self.dump(quiz_graph)

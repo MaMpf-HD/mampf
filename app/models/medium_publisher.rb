@@ -34,7 +34,9 @@ class MediumPublisher
                    permitted_classes: [MediumPublisher,
                                        ActiveSupport::TimeWithZone,
                                        ActiveSupport::TimeZone,
-                                       Time])
+                                       DateTime,
+                                       Time],
+                   aliases: true)
   end
 
   def self.dump(medium_publisher)

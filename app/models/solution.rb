@@ -15,7 +15,8 @@ class Solution
                                              MampfTuple,
                                              MampfExpression,
                                              MampfMatrix,
-                                             MampfSet])
+                                             MampfSet],
+                         aliases: true)
   end
 
   def self.dump(solution)
