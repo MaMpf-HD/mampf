@@ -16,16 +16,15 @@ EXPOSE 9394
 
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 
-RUN # setup all the repo \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash && \
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
     # update the sources with the repos set up
-    apt-get update && \
+RUN apt-get update
     # install all the dependencies
-    apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info && \
-    apt-get install -y nodejs yarn
+RUN apt-get install -y --no-install-recommends \
+        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info
+RUN apt-get install -y nodejs yarn
 
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
