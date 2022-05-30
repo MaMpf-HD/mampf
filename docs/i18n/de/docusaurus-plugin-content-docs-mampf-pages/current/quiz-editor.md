@@ -86,7 +86,7 @@ Die Bedienansicht „Erläuterung“ erreicht man, indem man in der Ausgangsansi
 In der Ansicht „Erläuterung“ können die Bedienelemente im Graphen genutzt werden. Links neben der Box „Quizgraph“ erscheint eine Vorschau der Erläuterung, dort werden gegebenenfalls Hinweise und Warnungen angezeigt. In diesem Bereich befinden sich keine Bedienelemente. Rechts neben der Überschrift der Box „Quizgraph“ gibt es die folgenden fünf Buttons:
 
 * <button>Zurück</button> Wechsel zur Ausgangsansicht „Quizgraph“.
-* <a href="/mampf/de/docs/edit-remark" target="_self"><button>Bearbeiten</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-remark" target="_self">„Erläuterung bearbeiten“</a>.
+* <a href="/mampf/de/docs/edit-remark" target="_self"><button>Bearbeiten</button></a> bzw. <button>Kopie erstellen</button> (bei importierten Erläuterungen, für die man keine Bearbeitungsrechte hat) Wechsel zur Seite <a href="/mampf/de/docs/edit-remark" target="_self">„Erläuterung bearbeiten“</a> bzw. öffne das Dialogfeld „Kopie erstellen“.
 * <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
 * <button>Standard-Ziel</button> Wechsel zur Bedienansicht „Standard-Ziel“ (das Standardziel ist die Ecke, zu der man im Quiz als nächstes gelangt). Durch anschließendes Anklicken einer Ecke im Graphen wird diese zum neuen Standardziel, d.h. eine Kante zwischen der Erläuterung und der angeklickten Ecke wird angelegt. Falls es vorher bereits ein Standardziel gab, wird die Kante zwischen diesem und der Erläuterung gelöscht.
 * <button>Ecke löschen</button> Lösche die Ecke.
@@ -99,7 +99,7 @@ Die Bedienansicht „Frage“ erreicht man, indem man in der Ausgangsansicht „
 In der Ansicht „Frage“ können die Bedienelemente im Graphen genutzt werden. Links neben der Box „Quizgraph“ erscheint eine Vorschau der Frage, dort werden gegebenenfalls Hinweise und Warnungen angezeigt. In diesem Bereich befinden sich keine Bedienelemente. Rechts neben der Überschrift der Box „Quizgraph“ gibt es die folgenden sechs Buttons:
 
 * <button>Zurück</button> Wechsel zur Ausgangsansicht „Quizgraph“.
-* <a href="/mampf/de/docs/edit-question" target="_self"><button>Bearbeiten</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-question" target="_self">„Frage bearbeiten“</a>.
+* <a href="/mampf/de/docs/edit-question" target="_self"><button>Bearbeiten</button></a> bzw. <button>Kopie erstellen</button> (bei importierten Fragen, für die man keine Bearbeitungsrechte hat) Wechsel zur Seite <a href="/mampf/de/docs/edit-question" target="_self">„Frage bearbeiten“</a> bzw. öffne das Dialogfeld „Kopie erstellen“.
 * <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
 * <button>Standard-Ziel</button> Wechsel zur Bedienansicht „Standard-Ziel“ (das Standardziel ist die Ecke, zu der man gelangt, nachdem man die Frage richtig beantwortet hat). Durch anschließendes Anklicken einer Ecke im Graphen wird diese zum neuen Standardziel, d.h. eine Kante zwischen der Frage und der angeklickten Ecke wird angelegt. Falls es vorher bereits ein Standardziel gab, wird die Kante zwischen diesem und der Frage gelöscht.
 * <button>Verzweigung</button> Öffne die Verzweigungscards am Seitenende. Dort kann für jede Kombination gegebener falscher bzw. nicht komplett richtiger Antworten eine Zielecke festgelegt werden.
