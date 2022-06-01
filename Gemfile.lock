@@ -739,7 +739,7 @@ DEPENDENCIES
   webpacker (~> 5.x)
 
 RUBY VERSION
-   ruby 3.1.2p20
+   ruby 3.0.3p157
 
 BUNDLED WITH
    2.3.13
