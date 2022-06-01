@@ -96,11 +96,15 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_upload
-    files = JSON.parse(params[:files])
-    @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
-    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
-                        .order(:last_modification_by_users_at)
-    send_correction_upload_emails
+    begin
+      files = JSON.parse(params[:files])
+      @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
+      @stack = @assignment.submissions.where(tutorial: @tutorial).proper
+                          .order(:last_modification_by_users_at)
+      send_correction_upload_emails
+    rescue JSON::ParserError
+      flash[:alert] = I18n.t8('')
+    end
   end
 
   def validate_certificate
