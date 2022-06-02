@@ -28,7 +28,15 @@ class MediumPublisher
   end
 
   def self.load(text)
-    YAML.load(text) if text.present?
+    return if text.blank?
+
+    YAML.safe_load(text,
+                   permitted_classes: [MediumPublisher,
+                                       ActiveSupport::TimeWithZone,
+                                       ActiveSupport::TimeZone,
+                                       DateTime,
+                                       Time],
+                   aliases: true)
   end
 
   def self.dump(medium_publisher)
