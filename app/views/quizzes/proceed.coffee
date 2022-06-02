@@ -71,8 +71,9 @@ renderNext = (round) ->
 displayNext = ->
   <% if @quiz_round.progress == -1 %>
   renderFinale('<%= j render partial: "quizzes/finale",
-                             locals: { certificate:
-                                         @quiz_round.certificate } %>')
+                             locals: { xkcd: Xkcd.random,
+                                       certificate:
+                                       @quiz_round.certificate } %>')
   <% elsif @quiz_round.progress == 0 %>
   renderError('<%= j render partial: "quizzes/error" %>')
   <% else %>
