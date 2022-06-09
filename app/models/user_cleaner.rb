@@ -10,12 +10,13 @@ class UserCleaner
   def search_emails
     @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
     @imap.search(['SUBJECT', 'Undelivered Mail Returned to Sender']).each do |message_id|
-      envelope = imap.fetch(message_id, "ENVELOPE")[0].attr["ENVELOPE"]
       body = imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
       @emails = body.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}>\): User has moved to ERROR: Account expired\./)
       @emails.each do |email|
         email.sub!('>): User has moved to ERROR: Account expired.', '')
       end
+
+      @emails += body.scan(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}>[\s\S]*Unknown recipient/)
     end
   end
 

@@ -28,4 +28,9 @@ class AdministrationController < ApplicationController
   def search
     @tags = params[:sort] == 'tag'
   end
+
+  def log
+    lines = params[:lines]
+    @logs = `tail -n #{lines} log/emails.log`
+  end
 end
