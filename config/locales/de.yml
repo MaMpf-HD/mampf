@@ -1834,6 +1834,7 @@ de:
       finale_html: >
         Du hast es geschafft! Zur Belohnung gibt es ein %{xkcd_link}-Comic:
       xkcd: 'XKCD'
+      xkcd_error: 'Leider gab es einen Fehler beim Anzeigen des XKCD-Comics.'
       errors: 'Achtung, das Quiz enthält noch Fehler'
       undefined_targets: 'Es gibt undefinierte Verzweigungen'
       no_end: 'Keine Verzweigung führt zum Ende'

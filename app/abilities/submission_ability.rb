@@ -9,7 +9,7 @@ class SubmissionAbility
 
     can [:edit, :update, :destroy, :leave, :refresh_token, :enter_invitees,
          :invite], Submission do |submission|
-      user.in?(submission.users)
+      user.in?(submission.users) && !submission.not_updatable?
     end
 
     can [:add_correction, :delete_correction, :select_tutorial, :move,
