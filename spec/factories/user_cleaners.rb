@@ -4,7 +4,7 @@ FactoryBot.define do
     trait :with_mail do
       after(:build) do |c|
         user = FactoryBot.create(:confirmed_user, email: Faker::Internet.email)
-        c.emails = [user.email]
+        c.email_dict = { user.email => [] }
       end
     end
   end

@@ -1,2 +1,0 @@
-# Logfile created on 2021-12-02 21:46:32 +0000 by logger.rb/v1.4.2
-I, [2021-12-02T21:46:32.878985 #1]  INFO -- : #<Mail::Message:73420, Multipart: true, Headers: <Date: Thu, 02 Dec 2021 21:46:32 +0000>, <From: MaMpf-Benachrichtigung <project+notification@localhost>>, <Bcc: ["editor@mampf.edu"]>, <Message-ID: <8794946713495568.1638481591@>>, <Subject: Bounce Test>, <Mime-Version: 1.0>, <Content-Type: multipart/related; boundary="--==_mimepart_61a93eb863dd2_111e2c389"; charset=UTF-8>, <Content-Transfer-Encoding: 7bit>>

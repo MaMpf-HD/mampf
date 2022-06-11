@@ -72,7 +72,6 @@ Rails.application.configure do
     address: ENV["MAILSERVER"],
     port: 25,
     domain: ENV["MAILSERVER"],
-    return_response: true,
   }
 
   # Ignore bad email addresses and do not raise email delivery errors.

@@ -7,10 +7,11 @@ RSpec.describe UserCleaner, type: :model do
   end
 
   it 'can destroy users' do
-    expect(User.all.size).to eq 0
+    n_users = User.all.size
+    expect(User.all.size).to eq n_users
     u = FactoryBot.build(:user_cleaner, :with_mail)
-    expect(User.all.size).to eq 1
+    expect(User.all.size).to eq n_users+1
     u.destroy_users
-    expect(User.all.size).to eq 0
+    expect(User.all.size).to eq n_users
   end
 end
