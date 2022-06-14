@@ -1,0 +1,50 @@
+<% if quiz_finished_count.positive? %>
+  <div class="row mt-3">
+    <div class="col-12">
+      <strong>
+        <%= t('statistics.quiz_questions') %>
+      </strong>
+    </div>
+  </div>
+  <div style="height: 30vh;">
+    <canvas id="successChart">
+    </canvas>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <%= "#{t('statistics.question_number')}: #{question_count}." %>
+      <%= "#{t('statistics.median')}: #{global_success[:median]}." %>
+      <%= "#{t('statistics.lower_quartile')}: #{global_success[:lower_quartile]}." %>
+      <%= "#{t('statistics.upper_quartile')}: #{global_success[:upper_quartile]}." %>
+    </div>
+  </div>
+<% end %>
+<div class="row my-2">
+  <div class="col-12">
+    <strong>
+      <%= t('statistics.question_details') %>
+    </strong>
+  </div>
+</div>
+<div class="row"
+      id="questionStatistics">
+  <div class="col-6"
+        id="questionStatisticsBox">
+    <div id="questionStatisticsArea" >
+      <% medium.becomes(Quiz).questions.each do |q| %>
+        <div id="row-medium-<%= q.id %>"
+              data-id="<%= q.id %>"
+              data-purpose="statistics">
+          <%= render partial: 'media/statistics/question',
+                      locals: { local_success: local_success,
+                                question: q } %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-6"
+        id="mediumActions">
+    <div id="mediumPreview">
+    </div>
+  </div>
+</div>

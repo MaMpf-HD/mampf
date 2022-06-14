@@ -8,6 +8,7 @@ class QuizzesController < ApplicationController
   before_action :check_vertex_accessibility, only: [:take]
   before_action :check_errors, only: [:take]
   before_action :init_values, only: [:take, :proceed]
+  after_action :store_access, only: [:take]
   authorize_resource except: [:new, :update_branching]
   layout 'administration'
 
@@ -143,5 +144,9 @@ class QuizzesController < ApplicationController
     return if @quiz.sort == 'RandomQuiz'
     return unless @quiz.find_errors&.any?
     redirect_to :root, alert: I18n.t('controllers.quiz_has_error')
+  end
+
+  def store_access
+    ConsumptionSaver.perform_async(@quiz.id, 'browser', 'quiz')
   end
 end
