@@ -2878,6 +2878,13 @@ de:
           Korrektur hochgeladen wurde, aber bereits entschieden wurde,
           dass die verspätete Abgabe nicht akzeptiert wird. Die
           entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
+      error: >
+        Dein Bundle-Upload ist leider fehlgeschlagen. Versuch es bitte nochmal.<br>
+        Falls Du diese Fehlermeldung zum wiederholten Mal siehst:<br>
+        - schließe Deinen Browser, öffne ihn wieder und versuch es nochmal.<br>
+        - fahre Dein Gerät herunter, starte es erneut und versuch es nochmal.<br>
+        - lade die Dateien einzeln hoch.<br>
+        Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
     to_big: Die Datei ist zu groß.

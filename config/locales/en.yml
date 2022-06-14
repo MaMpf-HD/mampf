@@ -2709,6 +2709,13 @@ en:
           This is the list of submission teams for which you uploaded a correction
           but have already decided to reject the submission. The corresponding
           corrections have not been uploaded.
+      error: >
+        Unfortunately, your bundle upload failed. Please try again..<br>
+        If you see this error message repeatedly:<br>
+        - close your browser, open it again and try again.<br>
+        - shut down your device, restart it and try again.<br>
+        - upload the files one by one.<br>
+        In case of repeated occurrence please contact the MaMpf team.
   package:
     no_zip: This file is not a .zip archive.
     to_big: This file is too big.
