@@ -10,7 +10,7 @@ $('#calls-stats').empty()
                                   quiz_finished_count: @quiz_finished_count,
                                   global_success: @global_success,
                                   question_count: @question_count,
-                                  local_success: @local_success } %>').show()
+                                  local_success: @local_success } %>').show().removeAttr('style')
 
 # activate popovers
 $('[data-toggle="popover"]').popover()
@@ -27,7 +27,7 @@ $('#success-stats').empty()
                                   quiz_finished_count: @quiz_finished_count,
                                   global_success: @global_success,
                                   question_count: @question_count,
-                                  local_success: @local_success } %>').show()
+                                  local_success: @local_success } %>').show().removeAttr('style')
 
 ctx = $('#successChart')
 myChart = new Chart(ctx,
@@ -60,7 +60,7 @@ data =
   labels: data2.map((d)-> return d.x)
   datasets: [
     {
-      label: 'Plays'
+      label: '<%= t("statistics.plays") %>'
       backgroundColor: '#990000'
       borderColor: '#990000'
       fill: false
@@ -85,13 +85,13 @@ myChart = new Chart(ctx,
           tooltipFormat: 'DD.MM.'
         title:
           display: true
-          text: 'Date'
+          text: '<%= t("statistics.date") %>'
       y: 
         ticks:
           precision: 0
         title:
           display: true
-          text: 'count' )
+          text: '<%= t("statistics.count") %>' )
 
 <% end %>
 <% if @medium.video.present? %>

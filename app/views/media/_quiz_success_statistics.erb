@@ -18,6 +18,10 @@
       <%= "#{t('statistics.upper_quartile')}: #{global_success[:upper_quartile]}." %>
     </div>
   </div>
+<% else %>
+  <div class="alert alert-secondary">
+    <%= t('statistics.no_finishes_yet') %>
+  </div>
 <% end %>
 <div class="row my-2">
   <div class="col-12">

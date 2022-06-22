@@ -3016,6 +3016,10 @@ de:
       Anzahl der korrekt beantworteten Fragen
     calls: 'Aufrufstatistik'
     success: 'Erfolgsstatistik'
+    no_finishes_yet: 'Das Quiz wurde bis jetzt von niemandem beendet.'
+    date: 'Datum'
+    count: 'Anzahl'
+    plays: 'Aufrufe'
   erdbeere:
     show_structures: Strukturen, Eigenschaften und Beispiele
     select_structures: Strukturen auswählen

@@ -2841,6 +2841,10 @@ en:
     number_of_users: 'Anzahl der Nutzerinnen'
     calls: 'Call statistics'
     success: 'Success statistics'
+    no_finishes_yet: 'The quiz was not finished by anyone yet.'
+    date: 'Date'
+    count: 'Count'
+    plays: 'Plays'
   erdbeere:
     show_structures: 'Structures, properties and examples'
     select_structures: Select Structures
