@@ -1,0 +1,87 @@
+<%= form_with model: talk do |f| %>
+  <div class="form-row">
+    <div class="col-12 form-group">
+      <%= f.label :title, t('basics.title') %>
+      <%= helpdesk(t('admin.lecture.info.chapter_title'),
+                   false) %>
+      <%= f.text_field :title, { class: 'form-control',
+                                 id: 'new_talk_title' } %>
+      <div class="invalid-feedback"
+           id="new-talk-title-error">
+      </div>
+    </div>
+    <div class="col-12">
+      <%= f.label :date, t('basics.date') %>
+      <a class="fas fa-plus-circle clickable text-dark"
+         id="new-talk-date-button"
+         data-toggle="tooltip"
+         data-count="1"
+         title="<%= t('admin.tag.create') %>">
+      </a>
+    </div>
+    <div class="col-12" id="talk-date-picker">
+      <div id="talk_dates_0">
+        <input type="date" name="talk[dates[0]]">
+      </div>
+    </div>
+    <div class="col-12 mb-3">
+      <div class="invalid-feedback" id="talk-date-error">
+      </div>
+    </div>
+    <div class="col-12 mb-3">
+      <%= f.label :speaker_ids,
+                  t('admin.talk.speakers') %>
+      <%= f.select :speaker_ids,
+                   [[]],
+                   {},
+                   { class: 'form-control',
+                     multiple: true,
+                     data: { locale: I18n.locale } } %>
+    </div>
+    <% if lecture.talks.exists? %>
+      <div class="col-12 form-group">
+        <%= f.label :predecessor,
+                    t('admin.lecture.insert_after_chapter',
+                      chapter_name: t("basics.talk")) %>
+        <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
+                       chapter_name: t("basics.talk")),
+                     false) %>
+        <%= f.select :predecessor,
+                     options_for_select([[t('basics.at_the_beginning'), 0]] +
+                                        lecture.select_talks,
+                                        lecture.last_talk_by_position.position) ,
+                                 {}, { class: 'form-control' } %>
+      </div>
+    <% end %>
+  </div>
+  <div class="mb-2">
+    <%= t('basics.details') %>
+    <%= helpdesk(t('admin.talk.info.details'), false) %>
+  </div>
+  <%= f.trix_editor :details,
+                    class: 'bg-light',
+                    id: 'talk-details-trix',
+                    data: { content: talk.details,
+                            preview: 'talk-details-preview' } %>
+  <%= f.hidden_field :lecture_id,
+                     value: talk.lecture.id %>
+  <div class="row my-2">
+    <div class="col-12">
+      <%= t('basics.preview') %>
+    </div>
+  </div>
+  <div class="alert alert-dark bg-mdb-color-lighten-6"
+       id="talk-details-preview">
+  </div>
+  <%= f.hidden_field :lecture_id, value: lecture.id %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
+      <button type="button"
+              class="btn btn-sm btn-secondary"
+              data-dismiss="modal">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>

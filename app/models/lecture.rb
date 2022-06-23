@@ -20,6 +20,9 @@ class Lecture < ApplicationRecord
                      after_add: :touch_siblings,
                      after_remove: :touch_siblings
 
+  # a lecture has many talks, which have positions
+  has_many :talks, -> { order(position: :asc) }, dependent: :destroy
+
   # being a teachable (course/lecture/lesson), a lecture has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable
 
@@ -104,6 +107,8 @@ class Lecture < ApplicationRecord
 
   scope :restricted, -> { where.not(passphrase: ['', nil]) }
 
+  scope :seminar, -> { where(sort: ['seminar', 'oberseminar', 'proseminar']) }
+
   searchable do
     integer :term_id do
       term_id || 0
@@ -138,6 +143,9 @@ class Lecture < ApplicationRecord
   end
 
   def lesson
+  end
+
+  def talk
   end
 
   def media_scope
@@ -286,13 +294,14 @@ class Lecture < ApplicationRecord
   def media_with_inheritance_uncached
     Medium.proper.where(teachable: self)
       .or(Medium.proper.where(teachable: self.lessons))
+      .or(Medium.proper.where(teachable: self.talks))
   end
 
   def media_with_inheritance_uncached_eagerload_stuff
-    Medium.includes(:tags, teachable: [lecture: [:lessons]])
+    Medium.includes(:tags, teachable: [lecture: [:lessons, :talks]])
           .proper.where(teachable: self)
-          .or(Medium.includes(:tags, teachable: [lecture: [:lessons]])
-                    .proper.where(teachable: self.lessons))
+          .or(Medium.includes(:tags, teachable: [lecture: [:lessons, :talks]])
+                    .proper.where(teachable: self.lessons + self.talks))
   end
 
 
@@ -488,7 +497,7 @@ class Lecture < ApplicationRecord
   # the next methods provide user related information about the lecture
 
   def edited_by?(user)
-    return true if editors_with_inheritance.include?(user) || user == teacher
+    return true if editors_with_inheritance.include?(user)
     false
   end
 
@@ -520,12 +529,18 @@ class Lecture < ApplicationRecord
                                     .order(boost: :desc, created_at: :desc)
     lesson_results = filtered_media.where(teachable:
                                             Lesson.where(lecture: self))
-    lecture_results + lesson_results.includes(:teachable)
-                                    .sort_by do |m|
-                                      [order_factor*m.lesson.date.jd,
-                                       order_factor*m.lesson.id,
-                                       m.position]
-                                    end
+    talk_results = filtered_media.where(teachable:
+                                            Talk.where(lecture: self))
+    lecture_results +
+      lesson_results.includes(:teachable)
+                    .sort_by do |m|
+                      [order_factor*m.lesson.date.jd,
+                       order_factor*m.lesson.id,
+                       m.position]
+                    end +
+      talk_results.includes(:teachable).sort_by do |m|
+        m.teachable.position
+      end
   end
 
   def order_factor
@@ -722,6 +737,37 @@ class Lecture < ApplicationRecord
     assignments.any? || scheduled_assignments?
   end
 
+  def select_talks
+    talks.order(:position).map { |t| [t.to_label, t.position] }
+  end
+
+  def last_talk_by_position
+    talks.order(:position).last
+  end
+
+  def sort_in_brackets
+    "(#{sort_localized_short})"
+  end
+
+  def neighbours
+    course.lectures - [self]
+  end
+
+  def importable_toc?
+    chapters.none? && neighbours.any?
+  end
+
+  def import_toc!(imported_lecture, import_sections, import_tags)
+    return unless imported_lecture
+    imported_lecture.chapters.each do |c|
+      new_chapter = c.dup
+      new_chapter.lecture = self
+      new_chapter.save
+      next unless import_sections
+      c.sections.each { |s| s.duplicate_in_chapter(new_chapter, import_tags) }
+    end
+  end
+
   private
 
   # used for after save callback
@@ -739,6 +785,9 @@ class Lecture < ApplicationRecord
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: lessons).exists? ||
+      Medium.where(sort: medium_sort[project],
+                   released: ['all', 'users', 'subscribers'],
+                   teachable: talks).exists? ||
       Medium.where(sort: medium_sort[project],
                    released: ['all', 'users', 'subscribers'],
                    teachable: course).exists?
@@ -766,7 +815,9 @@ class Lecture < ApplicationRecord
                                  teachable: self).exists?
     lesson_media = Medium.where(sort: medium_sort[project],
                                 teachable: lessons).exists?
-    course_media || lecture_media || lesson_media
+    talk_media = Medium.where(sort: medium_sort[project],
+                                teachable: talks).exists?
+    course_media || lecture_media || lesson_media || talk_media
   end
 
   def medium_sort

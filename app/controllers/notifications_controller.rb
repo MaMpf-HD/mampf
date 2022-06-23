@@ -3,6 +3,10 @@ class NotificationsController < ApplicationController
   before_action :set_notification, only: [:destroy]
   authorize_resource
 
+  def current_ability
+    @current_ability ||= NotificationAbility.new(current_user)
+  end
+
   def index
     @notifications = current_user.notifications.order(:created_at)
                                  .reverse_order

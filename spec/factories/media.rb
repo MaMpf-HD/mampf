@@ -88,5 +88,12 @@ FactoryBot.define do
       sort { 'Sesam' }
       teachable_sort { :course }
     end
+
+    factory :talk_medium,
+            traits: [:with_description, :with_teachable] do
+      sort { 'Kaviar' }
+      teachable_sort { :valid_talk_with_speaker }
+      after(:build) { |m| m.editors << m.teachable.lecture.teacher }
+    end
   end
 end

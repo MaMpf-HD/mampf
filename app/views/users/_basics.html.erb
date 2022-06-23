@@ -1,7 +1,8 @@
 <div class="form-group">
   <%= f.label :name, t('basics.display_name') %>
   <%= helpdesk(t('admin.user.info.display_name'), false) %>
-  <%= f.text_field :name, { class: 'form-control' } %>
+  <%= f.text_field :name, { class: 'form-control',
+                            disabled: true } %>
   <div class="invalid-feedback" id="user-name-error">
   </div>
 </div>
@@ -10,7 +11,8 @@
               t('basics.email') %>
   <%= helpdesk(t('admin.user.info.email'), false) %>
   <%= f.text_field :email,
-                   { class: 'form-control' } %>
+                   { class: 'form-control',
+                     disabled: true } %>
   <div class="invalid-feedback"
        id="user-email-error">
   </div>
@@ -75,8 +77,18 @@
                                  value: user.cached_image_data,
                                  id: 'upload-image-hidden' %>
               <%= f.file_field :image,
-                               id: 'upload-image2' %>
+                               id: 'upload-image' %>
               <%= f.hidden_field :detach_image, value: false, id:'course_detach_image' %>
+              <div id="image-uploadButton-button" class="btn btn-sm btn-outline-secondary"><%= t('basics.file') %></div>
+              <button id="image-uploadButton-button-actual"
+                    data-tr-success="<%= t('buttons.upload_success') %>"
+                    data-tr-failure="<%= t('submission.upload_failure')%>"
+                    data-tr-post-processing="<%= t('basics.post_processing')%>"
+                    data-tr-missing-consent="<%= t('submission.missing_consent')%>"
+                    class="btn btn-sm btn-outline-secondary"
+                    >
+              <%= t('buttons.upload') %>
+            </button>
             </div>
           </div>
           <%= render partial: 'users/upload_image',

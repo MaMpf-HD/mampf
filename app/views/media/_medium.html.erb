@@ -1,67 +1,94 @@
 <% I18n.with_locale(medium.locale_with_inheritance) do %>
   <div class="card bg-mdb-color-lighten-7 <%= medium_border(medium) %>">
-    <div class="card-header bg-mdb-color-lighten-1"
-         style="display: flex; justify-content: space-between;">
-      <div>
-        <% if lecture&.imported_media&.include?(medium) %>
-          <i class="fas fa-file-import text-light"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('medium.imported') %>">
-          </i>
-        <% end %>
-        <% ref = medium.card_header_teachable_path(current_user) %>
-        <% if ref.present? %>
-          <%= link_to medium.card_header,
-                      ref,
-                      class: 'text-light' %>
-        <% else %>
-          <span class="text-light">
-            <%= medium.card_header %>
-          </span>
-        <% end %>
+    <div class="card-header bg-mdb-color-lighten-1">
+      <div style="display: flex; justify-content: space-between;">
+        <div>
+          <% if lecture&.imported_media&.include?(medium) %>
+            <i class="fas fa-file-import text-light"
+               tabindex="-1"
+               data-toggle="tooltip"
+               title="<%= t('medium.imported') %>">
+            </i>
+          <% end %>
+          <% ref = medium.card_header_teachable_path(current_user) %>
+          <% if ref.present? %>
+            <%= link_to medium.card_header,
+                        ref,
+                        class: 'text-light' %>
+          <% else %>
+            <span class="text-light">
+              <%= medium.card_header %>
+            </span>
+          <% end %>
+        </div>
+        <div class="text-light">
+          <% if current_user.locale.to_s != medium.locale_with_inheritance %>
+            <small style="color: lightgray;"
+                  data-toggle="tooltip"
+                  title="<%= t('medium.different_language',
+                               language: t('locales.' +
+                                           (medium.locale_with_inheritance ||
+                                              I18n.default_locale.to_s),
+                                           locale: current_user.locale),
+                               locale: current_user.locale) %>">
+              <%= medium.locale_with_inheritance.to_s %>
+            </small>
+          <% end %>
+          <% if !medium.published? && !medium.publisher %>
+            <i class="fas fa-eye-slash redtext ml-2"
+               tabindex="-1"
+               data-toggle="tooltip"
+               title="<%= t('medium.unpublished') %>">
+            </i>
+          <% elsif !medium.published? && medium.publisher.present? %>
+            <i class="far fa-calendar-check redtext ml-2"
+               tabindex="-1"
+               data-toggle="tooltip"
+               title="<%= t('medium.unpublished') + ' ' +
+                          release_date_info(medium) %>">
+            </i>
+          <% elsif medium.locked? %>
+            <i class="fas fa-lock redtext ml-2"
+               tabindex="-1"
+               data-toggle="tooltip"
+               title="<%= t('medium.locked') %>">
+            </i>
+          <% elsif lecture && medium.teachable_type == 'Course' && !lecture.imported_media&.include?(medium) &&
+                   (current_user.admin || lecture.edited_by?(current_user)) &&
+                   (medium.tags & lecture.tags_including_media_tags).blank? %>
+            <i class="fas fa-eye-slash bluetext ml-2"
+               tabindex="-1"
+               data-toggle="tooltip"
+               title="<%= t('medium.waiting_for_tag') %>">
+            </i>
+          <% end %>
+          <% if !medium.containingWatchlists(current_user).empty? %>
+            <%= link_to '',
+                        watchlist_path(medium.containingWatchlists(current_user).first),
+                        class: 'fas fa-bookmark text-light mr-2',
+                        style: 'text-decoration: none;',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('watchlist_entry.list',
+                                count: medium.containingWatchlists(current_user).size,
+                                watchlists: medium.containingWatchlistsNames(current_user).join(", ")) %>
+          <% end %>
+          <%= link_to '',
+                      add_medium_to_watchlist_path(medium),
+                      class: 'fas fa-list text-light mr-2',
+                      style: 'text-decoration: none;',
+                      data: { toggle: 'tooltip',
+                              placement: 'bottom' },
+                      title: t('watchlist.add'),
+                      remote: true %>
+        </div>
       </div>
-      <div class="text-light">
-        <% if current_user.locale.to_s != medium.locale_with_inheritance %>
-          <small style="color: lightgray;"
-                data-toggle="tooltip"
-                title="<%= t('medium.different_language',
-                             language: t('locales.' +
-                                         (medium.locale_with_inheritance ||
-                                            I18n.default_locale.to_s),
-                                         locale: current_user.locale),
-                             locale: current_user.locale) %>">
-            <%= medium.locale_with_inheritance.to_s %>
-          </small>
-        <% end %>
-        <% if !medium.published? && !medium.publisher %>
-          <i class="fas fa-eye-slash redtext ml-2"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('medium.unpublished') %>">
-          </i>
-        <% elsif !medium.published? && medium.publisher.present? %>
-          <i class="far fa-calendar-check redtext ml-2"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('medium.unpublished') + ' ' +
-                        release_date_info(medium) %>">
-          </i>
-        <% elsif medium.locked? %>
-          <i class="fas fa-lock redtext ml-2"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('medium.locked') %>">
-          </i>
-        <% elsif lecture && medium.teachable_type == 'Course' && !lecture.imported_media&.include?(medium) &&
-                (current_user.admin || lecture.edited_by?(current_user)) &&
-                (medium.tags & lecture.tags_including_media_tags).blank? %>
-          <i class="fas fa-eye-slash bluetext ml-2"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('medium.waiting_for_tag') %>">
-          </i>
-        <% end %>
+      <div>
+      <% if medium.teachable.is_a?(Talk) %>
+        <div class="text-light mt-1">
+          <%= speaker_list_with_icon(medium.teachable) %>
+        </div>
+      <% end %>
       </div>
     </div>
     <% cache [medium, from == 'tag', ref_link] do %>

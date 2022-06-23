@@ -1,7 +1,11 @@
 # ItemsController
 class ItemsController < ApplicationController
   before_action :set_item, except: [:create]
-  authorize_resource
+  authorize_resource except: [:create]
+
+  def current_ability
+    @current_ability ||= ItemAbility.new(current_user)
+  end
 
   def update
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
@@ -19,6 +23,7 @@ class ItemsController < ApplicationController
     end
     @item = Item.new(item_params)
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
+    authorize! :create, @item
     @item.save
     @errors = @item.errors unless @item.valid?
     # @from stores information about where the creation was triggered
@@ -35,7 +40,7 @@ class ItemsController < ApplicationController
     redirect_to edit_medium_path(@medium) if params[:from] == 'quarantine'
   end
 
-  # if an item is selected form within the reference editor in thyme,
+  # if an item is selected from within the reference editor in thyme,
   # the display action provides informations abut the selected item
   def display
     @referral_id = params[:referral_id].to_i

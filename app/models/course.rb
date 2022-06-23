@@ -75,6 +75,9 @@ class Course < ApplicationRecord
   def lesson
   end
 
+  def talk
+  end
+
   def selector_value
     'Course-' + id.to_s
   end
@@ -86,6 +89,8 @@ class Course < ApplicationRecord
   alias long_title to_label
   alias title_no_term to_label
   alias card_header to_label
+
+  alias editors_with_inheritance editors
 
   def compact_title
     short_title
@@ -179,6 +184,7 @@ class Course < ApplicationRecord
       Medium.proper.where(teachable: self)
             .or(Medium.proper.where(teachable: lectures))
             .or(Medium.proper.where(teachable: Lesson.where(lecture: lectures)))
+            .or(Medium.proper.where(teachable: Talk.where(lecture: lectures)))
     end
   end
 

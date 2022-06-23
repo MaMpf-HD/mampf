@@ -8,6 +8,10 @@ class Tag < ApplicationRecord
   has_many :lesson_tag_joins, dependent: :destroy
   has_many :lessons, through: :lesson_tag_joins
 
+  # a tag appears in many talks
+  has_many :talk_tag_joins, dependent: :destroy
+  has_many :talks, through: :talk_tag_joins
+
   # a tag appears in many sections
   has_many :section_tag_joins, dependent: :destroy
   has_many :sections, through: :section_tag_joins

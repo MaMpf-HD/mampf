@@ -49,6 +49,10 @@ class Medium < ApplicationRecord
 
   has_many :quiz_certificates, foreign_key: 'quiz_id', dependent: :destroy
 
+  # a medium can be in watchlists of multiple users
+  has_many :watchlist_entries, dependent: :destroy
+  has_many :watchlist_users, through: :watchlist_entries, source: :user
+
   has_many :assignments
 
   serialize :quiz_graph, QuizGraph
@@ -381,12 +385,15 @@ class Medium < ApplicationRecord
     return true if teachable&.lecture&.editors&.include?(user)
     return true if teachable&.lecture&.teacher == user
     return true if teachable&.course&.editors&.include?(user)
+    return true if teachable&.is_a?(Talk) && user.in?(teachable.speakers)
     false
   end
 
   def editors_with_inheritance
-    (editors&.to_a + teachable.lecture&.editors.to_a +
+    result = (editors&.to_a + teachable.lecture&.editors.to_a +
       [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
+    return result unless teachable.is_a?(Talk)
+    (result + teachable.speakers).uniq
   end
 
 
@@ -627,7 +634,7 @@ class Medium < ApplicationRecord
     if teachable_type == 'Course'
       return false if restricted? && !teachable.in?(user.courses)
     end
-    if teachable_type.in?(['Lecture', 'Lesson'])
+    if teachable_type.in?(['Lecture', 'Lesson', 'Talk'])
       return false if restricted? && !teachable.lecture.in?(user.lectures)
     end
     true
@@ -826,7 +833,14 @@ class Medium < ApplicationRecord
              else
                Medium.sort_localized.slice(sort)
              end
+    if teachable_type == 'Talk'
+      result.except!('RandomQuiz', 'Question', 'Remark', 'Erdbeere', 'Script')
+    end
     result.map { |k, v| [v, k] }
+  end
+
+  def select_sorts_with_self
+    (select_sorts + [[Medium.sort_localized[sort], sort]]).uniq
   end
 
   def extracted_linked_media
@@ -920,6 +934,26 @@ class Medium < ApplicationRecord
     !!teachable.media_scope.try(:comments_disabled)
   end
 
+  def becomes_quizzable
+    return unless type.in?(['Question', 'Remark'])
+    return becomes(Question) if type == 'Question'
+    becomes(Remark)
+  end
+
+  def containingWatchlists(user)
+    Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
+                    user: user)
+  end
+
+  def containingWatchlistsNames(user)
+    watchlists = containingWatchlists(user)
+    if !watchlists.empty?
+      containingWatchlists(user).pluck(:name)
+    else
+      ''
+    end
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require
@@ -964,8 +998,11 @@ class Medium < ApplicationRecord
     if teachable.lecture.present? && teachable.lecture.persisted?
       teachable.lecture.touch
     end
-    return unless teachable.lesson.present? && teachable.lesson.persisted?
-    teachable.lesson.touch
+    if teachable.lesson.present? && teachable.lesson.persisted?
+      teachable.lesson.touch
+    end
+    return unless teachable.talk.present? && teachable.talk.persisted?
+    teachable.talk.touch
   end
 
   def vtt_start

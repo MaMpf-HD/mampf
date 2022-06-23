@@ -77,7 +77,7 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2020. MaMpf ist auf %{github}.
+      &copy; MaMpf Team 2022. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs meldest Du am besten %{bugs}.
@@ -115,13 +115,19 @@ de:
       Im Rahmen des Projekts heiSTART2.0 haben
       %{hendrik}, %{oli} und %{denis} zusammen mit der %{fs_mathphysinfo}
       Mittel zur Einrichtung eines MaMpf-unterstützten Mathematik-Helpdesks für
-      die Studieneingangsphase eingeworben.
+      die Studieneingangsphase eingeworben. Der Helpdesk ist seither eine
+      wichtige Unterstützung in den ersten Semestern des Mathematikstudiums.
     physics_html: >
       Die %{physics_faculty} unterstützte MaMpf durch die Anschaffung
-      medientechnischer Ausstatttung.
+      medientechnischer Ausstattung.
     math_html: >
       Die %{math_faculty} unterstützt MaMpf durch Finanzierung
       studentischer und wissenschaftlicher Hilfskräfte.
+    heiquality_html: >
+      Im Rahmen des heiQUALITY-Programms Lehre konnten von %{hendrik} und
+      %{denis} erfolgreich Mittel zur Umsetzung des Projektes MaMpf-Back
+      eingeworben werden. Hierbei handelt sich um ein niederschwelliges
+      Feedbacksystem für die asynchrone digitale Lehre.
   here: 'hier'
   here_capital: 'Hier'
   disclosure: 'Impressum'
@@ -134,6 +140,7 @@ de:
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+    watchlist: 'Watchlist'
     login: 'Login'
     favorite_lectures: 'Schnellzugriff Veranstaltungen'
     no_favorite_lectures_yet: >
@@ -372,6 +379,10 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      import_toc: Gliederung aus anderer Veranstaltung importieren
+      import_chapters: Kapitel importieren
+      import_sections: Abschnitte importieren
+      import_tags: Tags importieren
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -612,6 +623,7 @@ de:
           unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
+      no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
       course_tags_html: >
@@ -632,7 +644,7 @@ de:
       organizational_visible: 'Organisatorisches sichtbar'
       organizational_on_top: 'Organisatorisches als Startseite'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
-      first_chapter: 'Nummer des ersten Kapitels/Vortrags'
+      first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
@@ -755,11 +767,10 @@ de:
       no_sections: 'Für dieses Kapitel wurden noch keine Abschnitte angelegt.'
       info:
         title: >
-          Hier kannst Du den Titel des Kapitels bzw. Vortrags angeben.
+          Hier kannst Du den Titel des Kapitels angeben.
         position: >
           Hier kannst Du auswählen, an welcher Stelle das Kapitel
-          (bzw. der Vortrag) positioniert werden soll, indem Du das
-          Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
+          positioniert werden soll, indem Du das Vorgängerkapitel auswählst.
         display_number: >
           Wird eine Anzeigenummer angegeben, so überschreibt diese
           die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
@@ -818,6 +829,63 @@ de:
         extracted_content: >
           Hier steht der Inhalt, der aus Medien extrahiert wurde, die zu
           Sitzungen aus diesem Abschnitt verknüpft sind.
+    talk:
+      speakers: Vortragende(r)
+      no_media: Für diesen Vortrag sind keine Medien vorhanden.
+      next_talk: 'nächster Vortrag'
+      previous_talk: 'voriger Vortrag'
+      no_talks: Es sind keine Vorträge von Dir vorhanden.
+      display_description: Text auf Vortragsseite anzeigen
+      display_description_teacher: Inhalt auf Vortragsseite anzeigen
+      description_warning: >
+        Du hast Text eingetragen, dieser wird jedoch erst auf der
+        Vortragsseite angezeigt, wenn Du den obigen Haken setzt und
+        abspeicherst.
+      info:
+        details: >
+          Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
+          und wichtige Details anzugeben (wie etwa Literatur zu dem
+          Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
+          setzt). Dieser Text erscheint auf der Seminarhauptseite und der Seite
+          des Vortrags und kann von den Vortragenden nicht bearbeitet werden.
+        details_info: >
+          Das ist eine Beschreibung des Vortrags durch die DozentIn.
+        description: >
+          Hier hast Du die Möglichkeit, optional einen Text zum Inhalt des
+          Vortrages zu schreiben. Du kannst LaTeX benutzen (indem du den
+          Ausdruck in $...$ setzt).
+        description_info: >
+          Das ist ein Text über den Vortrag, der von den Vortragenden stammt.
+        description_for_editor: >
+          Das ist ein Text über den Vortrag, der von den Vortragenden
+          stammt.
+        media: >
+          Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
+          sind. Du kannst neue Medien hinzufügen.
+        tags: >
+          Das ist die Liste der Tags, die zu diesem Vortrag assoziiert sind.
+          Diese kann nicht von den Vortragenden bearbeitet werden.
+        by_speakers: >
+          (Eintragung durch die Vortragenden)
+        title:
+          Hier kannst Du den Titel des Vortrags angeben.
+        position: >
+          Hier kannst Du auswählen, an welcher Stelle der Vortrag positioniert
+          werden soll, indem Du das den Vorgängervortrag auswählst.
+        tags: >
+          Das ist die Liste aller Tags, die zu diesem Vortrag assoziiert sind.
+        cospeakers: Mitvortragende
+        display_description: >
+          Damit der Text auf der Vortragsseite angezeigt wird, musst Du
+          diesen Haken setzen. Ohne den Haken wird der Text nicht angezeigt,
+          was z.B. sinnvoll sein kann, wenn es sich bei der aktuellen Fassung
+          nur um einen Entwurf handelt.
+        display_description_teacher: >
+          Die Vortragenden können entscheiden, ob ihr Text zum Inhalt auf
+          der Vortragsseite angezeigt wird (dieser Haken wird typischerweise
+          nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
+          handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
+          entfernen.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -1766,6 +1834,7 @@ de:
       finale_html: >
         Du hast es geschafft! Zur Belohnung gibt es ein %{xkcd_link}-Comic:
       xkcd: 'XKCD'
+      xkcd_error: 'Leider gab es einen Fehler beim Anzeigen des XKCD-Comics.'
       errors: 'Achtung, das Quiz enthält noch Fehler'
       undefined_targets: 'Es gibt undefinierte Verzweigungen'
       no_end: 'Keine Verzweigung führt zum Ende'
@@ -1962,14 +2031,15 @@ de:
       Hier kannst Du eingeben, unter welchem Namen diese künftig angezeigt
       werden sollen:
     manual_deletion: >
-      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, kannst
-      Du die entsprechenden Vorlesungen und Medien manuell löschen.
+      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, musst
+      Du diese vor der Löschung des Accounts manuell löschen.
     email_notifications_header: E-Mail-Benachrichtigungen
     lectures_and_courses: Veranstaltungen und Module
     submissions: Abgabe von Übungsaufgaben
     miscellaneous: Sonstiges
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
+    my_talks: Meine Vorträge
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2105,6 +2175,46 @@ de:
         zu diesem Modul angezeigt.
         </li>
         </ul>
+  watchlist:
+    add: 'Zu meiner Watchlist hinzufügen'
+    select: 'Auswählen'
+    name: 'Name'
+    description: 'Beschreibung'
+    enter_name: 'Namen eingeben'
+    enter_description: 'Beschreibung eingeben (optional)'
+    none: 'Noch keine Watchlist angelegt'
+    empty: 'Diese Watchlist ist leer.'
+    none_added: 'Du hast noch keine Medien zu dieser Liste hinzugefügt.'
+    create: 'Erstellen'
+    creation_confirm: >
+      Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
+      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst:
+    creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
+    creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
+    change: 'Bearbeiten'
+    save_change: 'Übernehmen'
+    change_success: 'Die Watchlist wurde bearbeitet.'
+    new: 'Neu'
+    delete: 'Löschen'
+    delete_confirm: 'Bist Du Dir sicher, dass Du diese Watchlist löschen willst?'
+    delete_success: 'Die Watchlist wurde erfolgreich gelöscht.'
+    delete_failed: 'Die Watchlist konnte nicht gelöscht werden.'
+    close: 'Schließen'
+    confirm: 'Hinzufügen'
+    public: 'Öffentlich'
+    public_help: 'Wenn Du dieses Kästchen markierst, können andere Personen deine Watchlist sehen. Teile dafür einfach die momentane URL.'
+    order_help: 'Du kannst die Reihenfolge der Medien per Drag-and-Drop beliebig verändern.'
+  watchlist_entry:
+    add_success: 'Das Medium wurde erfolgreich zur Watchlist hinzufügt.'
+    add_fail: 'Es gab einen Fehler beim Hinzufügen zur Watchlist.'
+    remove: 'Medium aus der Watchlist entfernen'
+    remove_confirm: 'Bist Du Dir sicher, dass Du dieses Medium aus der Watchlist entfernen willst?'
+    deletion: 'Das Medium wurde aus der Watchlist entfernt.'
+    list: {
+      zero: 'Dieses Medium gehört zu keiner ihrer Watchlisten.',
+      one: 'Dieses Medium gehört zur folgenden Watchlist: %{watchlists}',
+      other: 'Dieses Medium gehört zu folgenden Watchlisten: %{watchlists}'
+    }
   video:
     video: 'Video'
     no_video: 'Es gibt kein Video.'
@@ -2585,7 +2695,7 @@ de:
       Änderungen vornehmen, jedoch nur solange Dein TutorIn noch keine
       Korrektur zur Abgabe hochgeladen hat. Allerdings
       wird die Abgabe dann als <b>verspätet</b> eingestuft. Es liegt im Ermessen
-      der DozentIn und der der TutorInnen, ob und wie diese gewertet wird.
+      der DozentIn und der TutorInnen, ob und wie diese gewertet wird.
       <br>
       <i>Hinweis.</i>
       Als Änderung zählen hierbei die folgenden Aktionen:
@@ -2662,10 +2772,10 @@ de:
       Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
       Abgaben und den Upload von Korrekturen durch Deine TutorIn.
     deletion_date_info: >
-      Bei der Abgabe handelt es sich um persönliche Daten, die wir aus Gründen
-      des Datenschutzes zwei Wochen nach Ablauf des Semesters löschen.
-      Du wirst darüber vorher per Mail informiert werden, so dass Du die Daten
-      sichern kannst.
+      Bei Abgaben handelt es sich um persönliche Daten, die wir aus
+      Datenschutzgründen im nachfolgenden Semester löschen. Das genaue Löschdatum
+      kannst Du der Tabelle entnehmen. Du wirst außerdem rechtzeitig per E-Mail
+      an die Löschung erinnert, damit Du Deine Daten sichern kannst.
     team_info: >
       Hier sieht Du Dein Abgabeteam. Du kannst Dein Team vergrößern, indem Du
       anderen Personen den Abgabecode weitergibst, so dass diese beitreten
@@ -2685,6 +2795,7 @@ de:
       Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
+    deletion_date: Löschdatum
     destruction_info:
       <i>
       Hinweis.
@@ -2767,6 +2878,13 @@ de:
           Korrektur hochgeladen wurde, aber bereits entschieden wurde,
           dass die verspätete Abgabe nicht akzeptiert wird. Die
           entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
+      error: >
+        Dein Bundle-Upload ist leider fehlgeschlagen. Versuch es bitte nochmal.<br>
+        Falls Du diese Fehlermeldung zum wiederholten Mal siehst:<br>
+        - schließe Deinen Browser, öffne ihn wieder und versuch es nochmal.<br>
+        - fahre Dein Gerät herunter, starte es erneut und versuch es nochmal.<br>
+        - lade die Dateien einzeln hoch.<br>
+        Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
     to_big: Die Datei ist zu groß.
@@ -2857,17 +2975,17 @@ de:
       Löschung der Abgaben und Korrekturen aus dem %{term}
     submission_deletion_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
-      Abgaben und Korrekturen aus dem %{term} am <b>%{deletion_date}</b>
-      automatisch gelöscht. Bitte lade diese rechtzeitig herunter, wenn Du sie
-      weiterhin verwenden möchtest.
+      Abgaben und Korrekturen aus dem %{term} mit entsprechendem Löschdatum am
+      <b>%{deletion_date}</b> automatisch gelöscht. Bitte lade diese rechtzeitig
+      herunter, wenn Du sie weiterhin verwenden möchtest.
     submission_deletion_lecture_subject: >
       Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
     submission_deletion_lecture_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
-      Abgaben und -korrekturen der Veranstaltung %{lecture} aus dem %{term} am
-      <b>%{deletion_date}</b> automatisch gelöscht. Sollten sie anderweitig
-      gespeichert werden müssen, so muss dies außerhalb von MaMpf geschehen,
-      und die Dateien müssen rechtzeitig heruntergeladen werden.
+      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term} mit
+      entsprechendem Löschdatum am <b>%{deletion_date}</b> automatisch gelöscht.
+      Sollten sie anderweitig gespeichert werden müssen, so muss dies außerhalb
+      von MaMpf geschehen, und die Dateien müssen rechtzeitig heruntergeladen werden.
     submission_destruction_subject: >
       Löschung der Abgaben und Korrekturen aus dem %{term}
     submission_destruction_text_html: >
@@ -2950,6 +3068,7 @@ de:
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
+    post_processing: 'Stelle fertig...'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
@@ -3082,11 +3201,12 @@ de:
     at_time: zum folgenden Zeitpunkt
     assignment: Hausaufgabe
     reminder: Erinnerung
+    together_with: zusammen mit
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
     users: 'nur registrierte MaMpf-NutzerInnen'
-    subscribers: 'nur AbonenntInnen'
+    subscribers: 'nur AbonnentInnen'
     locked: 'gesperrt'
     referenced_from: 'referenziert in'
     irrelevant: 'egal'
@@ -3101,6 +3221,7 @@ de:
     parent_lecture: 'zur Veranstaltung'
     parent_lesson: 'zur Sitzung'
     parent_medium: 'zum Medium'
+    parent_talk: 'zum Vortrag'
     create_chapter: 'Kapitel anlegen'
     create_talk: 'Vortrag anlegen'
     create_lesson: 'Sitzung anlegen'
@@ -3183,6 +3304,8 @@ de:
     dismiss: 'Ausblenden'
     validate: 'Validieren'
     cancel_publication: 'Stornieren'
+    import_lecture_toc: 'Gliederung importieren'
+    import_toc: 'Importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -3242,6 +3365,7 @@ de:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
     session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
+    no_talk: Ein Vortrag mit dieser id existiert nicht.
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
     no_test: 'Für dieses Modul gibt es keinen Test.'
     no_lecture: 'Eine Veranstaltung mit der angeforderten id existiert nicht.'
@@ -3314,11 +3438,14 @@ de:
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
     no_announcement: >
       Eine Mitteilung mit dieser id existiert nicht.
+    no_watchlist: 'Watchlist existiert nicht oder ist privat.'
     created_lecture_success: >
       Die Veranstaltung %{lecture} wurde erfolgreich angelegt.
     created_course_success: >
       Das Modul %{course} (Editor(Innen): %{editors}) wurde erfolgreich
       angelegt.
+    unauthorized: >
+      Die hast keine Berechtigung für diese Aktion.
   exception:
     title: Fehler
     exception: Exception auf %{host}
@@ -3347,6 +3474,11 @@ de:
             deadline:
               blank: >
                 Es muss ein Abgabetermin angegeben werden.
+            deletion_date:
+              blank: >
+                Es muss ein Löschdatum angegeben werden.
+              in_past: >
+                Löschdatum darf nicht in der Vergangenheit liegen.
         chapter:
           attributes:
             title:
@@ -3493,6 +3625,10 @@ de:
                 werden.
             aliases:
               invalid: 'Die Angaben sind ungültig.'
+        talk:
+          attributes:
+            title:
+              blank: Es muss ein Titel angegeben werden.
         term:
           attributes:
             active:
@@ -3529,3 +3665,13 @@ de:
               out_of_range: >
                 Das abgegebene Votum ist leider außerhalb des zulässingen
                 Bereiches.
+        watchlist_entry:
+          attributes:
+            medium_id:
+              taken:
+                ist schon in dieser Watchlist.
+        watchlist:
+          attributes:
+            name:
+              taken:
+                'Eine Watchlist mit diesem Namen existiert bereits.'

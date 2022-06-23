@@ -11,6 +11,31 @@ describe("Courses", function () {
             cy.get('input[type="password"]').type("test123456");
             cy.get('input[type="submit"]').click();
         });
+        it("can add tag to course", () => {
+            cy.appFactories([
+                ['create', 'course']
+            ]).then((records) => {
+                cy.visit('/courses/1/edit');
+                cy.get('#new-tag-button').click();
+                cy.get('#tag_notions_attributes_0_title').type('Geometrie');
+                cy.wait(100);
+                cy.get('#tag_notions_attributes_1_title').type('Geometry');
+                cy.get('.col-12 > .btn-primary').click();
+                cy.wait(100);
+                cy.contains('Geometrie');
+            })
+        });
+        it("can set editor in course", () => {
+            cy.appFactories([
+                ['create', 'course']
+            ]).then((records) => {
+                cy.visit('/courses/1/edit');
+                cy.get(':nth-child(5) > .selectize-control > .selectize-input').click();
+                cy.get(':nth-child(5) > .selectize-control > .selectize-input').type('{enter}')
+                cy.get('.btn-primary').click();
+                cy.contains("Admin");
+            })
+        });
         it("can create module", () => {
             cy.visit('/administration');
             cy.get('i[title="Modul anlegen"]').click();
@@ -28,8 +53,10 @@ describe("Courses", function () {
             ]).then((records)=>{
                 cy.visit(`/courses/${records[0].id}/edit`);
                 cy.contains("Bild").should("exist");
+                cy.get("#image_heading").contains("Ein-/Ausklappen").click();
                 const yourFixturePath = 'files/image.png';
-                cy.get('input[name="files[]"]').attachFile(yourFixturePath);
+                cy.get('#upload-image').attachFile(yourFixturePath);
+                cy.contains("Upload").click();
                 cy.wait(100);
                 cy.contains("Speichern").click();
                 cy.get("#image_heading").contains("Ein-/Ausklappen").click();
@@ -39,7 +66,12 @@ describe("Courses", function () {
         it("can create lecture", () => {
             cy.appFactories([
                 ['create', 'course'],
-                ['create', 'term']
+                ['create', 'term'],
+                ['create','editable_user_join',{
+                    'editable_id': 1,
+                    'editable_type':'Course',
+                    'user_id':1
+                }]
             ]).then((records) => {
                 cy.server();
                 cy.route('**/new').as('new');
@@ -127,7 +159,7 @@ describe("Courses", function () {
                 ["create", "lecture"]
             ]).then((courses) => {
                 cy.visit(`/lectures/${courses[0].id}`);
-                cy.contains("unveröffentlicht").should("exist");
+                cy.contains("Du bist nicht berechtigt").should("exist");
             });
         });
     });

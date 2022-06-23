@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_29_133704) do
+ActiveRecord::Schema.define(version: 2022_01_25_162730) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -45,6 +45,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.text "accepted_file_type", default: ".pdf"
+    t.date "deletion_date", default: "2022-09-05", null: false
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end
@@ -271,6 +272,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.boolean "disable_teacher_display", default: false
     t.integer "submission_max_team_size"
     t.integer "submission_grace_period", default: 15
+    t.boolean "legacy_seminar", default: false
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -401,7 +403,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
-  create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "user_id"
     t.text "code"
@@ -463,6 +465,15 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
   end
 
+  create_table "speaker_talk_joins", force: :cascade do |t|
+    t.bigint "talk_id", null: false
+    t.bigint "speaker_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["speaker_id"], name: "index_speaker_talk_joins_on_speaker_id"
+    t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
+  end
+
   create_table "subject_translations", force: :cascade do |t|
     t.bigint "subject_id", null: false
     t.string "locale", null: false
@@ -478,7 +489,7 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"
@@ -498,6 +509,28 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "realizations"
+  end
+
+  create_table "talk_tag_joins", force: :cascade do |t|
+    t.bigint "talk_id", null: false
+    t.bigint "tag_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["tag_id"], name: "index_talk_tag_joins_on_tag_id"
+    t.index ["talk_id"], name: "index_talk_tag_joins_on_talk_id"
+  end
+
+  create_table "talks", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.text "title"
+    t.integer "position"
+    t.text "details"
+    t.date "dates", default: [], array: true
+    t.text "description"
+    t.boolean "display_description", default: false
+    t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
   create_table "terms", force: :cascade do |t|
@@ -842,6 +875,28 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "watchlist_entries", force: :cascade do |t|
+    t.bigint "watchlist_id", null: false
+    t.bigint "medium_id", null: false
+    t.integer "medium_position"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["medium_id"], name: "index_watchlist_entries_on_medium_id"
+    t.index ["watchlist_id"], name: "index_watchlist_entries_on_watchlist_id"
+  end
+
+  create_table "watchlists", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "watchlist_entry_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "name"
+    t.boolean "public", default: false
+    t.string "description"
+    t.index ["user_id"], name: "index_watchlists_on_user_id"
+    t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
+  end
+
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"
@@ -864,8 +919,13 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
   add_foreign_key "quiz_certificates", "users"
   add_foreign_key "referrals", "items"
   add_foreign_key "referrals", "media"
+  add_foreign_key "speaker_talk_joins", "talks"
+  add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
+  add_foreign_key "talk_tag_joins", "tags"
+  add_foreign_key "talk_tag_joins", "talks"
+  add_foreign_key "talks", "lectures"
   add_foreign_key "thredded_messageboard_users", "thredded_messageboards", on_delete: :cascade
   add_foreign_key "thredded_messageboard_users", "thredded_user_details", on_delete: :cascade
   add_foreign_key "thredded_user_post_notifications", "thredded_posts", column: "post_id", on_delete: :cascade
@@ -876,4 +936,8 @@ ActiveRecord::Schema.define(version: 2021_06_29_133704) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "watchlist_entries", "media"
+  add_foreign_key "watchlist_entries", "watchlists"
+  add_foreign_key "watchlists", "users"
+  add_foreign_key "watchlists", "watchlist_entries"
 end

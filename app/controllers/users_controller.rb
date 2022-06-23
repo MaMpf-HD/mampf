@@ -1,19 +1,25 @@
 # TermsController
 class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
-  authorize_resource
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= UserAbility.new(current_user)
+  end
+
   def index
+    authorize! :index, User.new
     @generic_users = User.where.not(id: @elevated_users.pluck(:id))
   end
 
   def edit
     @user = User.find_by_id(params[:id])
+    authorize! :edit, @user
   end
 
   def update
     @user = User.find_by_id(params[:id])
+    authorize! :update, @user
     old_image_data = @user.image_data
     @user.update(user_params)
     @errors = @user.errors
@@ -28,6 +34,7 @@ class UsersController < ApplicationController
 
   # promote a generic user to admin status
   def elevate
+    authorize! :elevate, User.new
     @errors = {}
     @user = User.find(elevate_params[:id])
     admin = elevate_params[:admin] == '1'
@@ -54,12 +61,14 @@ class UsersController < ApplicationController
 
   def destroy
     @user = User.find_by_id(params[:id])
+    authorize! :destroy, @user
     @user.destroy unless @user.admin || @user.editor? || @user.teacher?
     redirect_to users_path
   end
 
   def teacher
     @teacher = User.find_by_id(params[:teacher_id])
+    authorize! :teacher, @teacher
     if @teacher.present? && @teacher.teacher?
       render layout: 'application'
       return
@@ -83,6 +92,7 @@ class UsersController < ApplicationController
   end
 
   def delete_account
+    authorize! :delete_account, User.new
   end
 
   private
@@ -97,6 +107,7 @@ class UsersController < ApplicationController
   end
 
   def set_elevated_users
-    @elevated_users = User.where(admin: true).or(User.editors).or(User.teachers)
+    @elevated_users = User.where(admin: true).or(User.proper_editors)
+                          .or(User.teachers)
   end
 end

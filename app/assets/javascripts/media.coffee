@@ -159,37 +159,25 @@ $(document).on 'turbolinks:load', ->
       mediumActions = document.getElementById('mediumActions')
       unless mediumActions.dataset.filled == 'true'
         $(this).addClass('bg-orange-lighten-4')
-        $.ajax Routes.fill_medium_preview_path(),
+        $.ajax Routes.fill_medium_preview_path($(this).data('id')),
           type: 'GET'
           dataType: 'script'
-          data: {
-            id: $(this).data('id')
-            type: $(this).data('type')
-          }
           error: (jqXHR, textStatus, errorThrown) ->
              console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'quiz'
       $('#previewHeader').show()
       $(this).addClass('bg-orange-lighten-4')
-      $.ajax Routes.fill_quizzable_preview_path(),
+      $.ajax Routes.fill_quizzable_preview_path($(this).data('id')),
         type: 'GET'
         dataType: 'script'
-        data: {
-          id: $(this).data('id')
-          type: $(this).data('type')
-        }
         error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'import'
       $('#previewHeader').show()
       $(this).addClass('bg-orange-lighten-4')
-      $.ajax Routes.fill_medium_preview_path(),
+      $.ajax Routes.fill_medium_preview_path($(this).data('id')),
         type: 'GET'
         dataType: 'script'
-        data: {
-          id: $(this).data('id')
-          type: $(this).data('type')
-        }
         error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
     return
@@ -214,27 +202,24 @@ $(document).on 'turbolinks:load', ->
         $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
         $('[id^="row-medium-"]').css('cursor','')
         if $(this).data('purpose') == 'media'
-          $.ajax Routes.render_medium_actions_path(),
+          $.ajax Routes.render_medium_actions_path(id: $(this).data('id')),
             type: 'GET'
             dataType: 'script'
-            data: {
-              id: $(this).data('id')
-            }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
         else if $(this).data('purpose') == 'clicker'
-          $.ajax Routes.render_clickerizable_actions_path(),
+          clickerId = $('#clickerSearchForm').data('clicker')
+          $.ajax Routes.render_clickerizable_actions_path(clickerId),
             type: 'GET'
             dataType: 'script'
             data: {
-              id: $(this).data('id')
-              clicker: $('#clickerSearchForm').data('clicker')
+              medium_id: $(this).data('id')
             }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'quiz'
       $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
-      $.ajax Routes.render_import_vertex_path(),
+      $.ajax Routes.render_import_vertex_path(id: $(this).data('id')),
         type: 'GET'
         dataType: 'script'
         data: {
@@ -245,12 +230,9 @@ $(document).on 'turbolinks:load', ->
           console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'import'
       $(this).removeClass('bg-orange-lighten-4').addClass('bg-green-lighten-4')
-      $.ajax Routes.render_import_media_path(),
+      $.ajax Routes.render_import_media_path($(this).data('id')),
         type: 'GET'
         dataType: 'script'
-        data: {
-          id: $(this).data('id')
-        }
         error: (jqXHR, textStatus, errorThrown) ->
           console.log("AJAX Error: #{textStatus}")
     return
@@ -311,12 +293,9 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'click', '#editMediumTags', ->
-    $.ajax Routes.render_medium_tags_path(),
+    $.ajax Routes.render_medium_tags_path($(this).data('medium')),
       type: 'GET'
       dataType: 'script'
-      data: {
-        id: $(this).data('medium')
-      }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
     return
@@ -328,42 +307,40 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#medium-content-trix')
   if trixElement?
-    trixElement.addEventListener 'trix-initialize', ->
-      content = this.dataset.content
-      editor = trixElement.editor
-      editor.setSelectedRange([0,65535])
-      editor.deleteInDirection("forward")
-      editor.insertHTML(content)
-      document.activeElement.blur()
-      trixElement.addEventListener 'trix-change', ->
-        $('#medium-basics-warning').show()
-        $('#medium-content-preview').html($('#medium-content-trix').html())
-        mediumContentDetails = document.getElementById('medium-content-preview')
-        renderMathInElement mediumContentDetails,
-          delimiters: [
-            {
-              left: '$$'
-              right: '$$'
-              display: true
-            }
-            {
-              left: '$'
-              right: '$'
-              display: false
-            }
-            {
-              left: '\\('
-              right: '\\)'
-              display: false
-            }
-            {
-              left: '\\['
-              right: '\\]'
-              display: true
-            }
-          ]
-          throwOnError: false
-        return
+    content = trixElement.dataset.content
+    editor = trixElement.editor
+    editor.setSelectedRange([0,65535])
+    editor.deleteInDirection("forward")
+    editor.insertHTML(content)
+    document.activeElement.blur()
+    trixElement.addEventListener 'trix-change', ->
+      $('#medium-basics-warning').show()
+      $('#medium-content-preview').html($('#medium-content-trix').html())
+      mediumContentDetails = document.getElementById('medium-content-preview')
+      renderMathInElement mediumContentDetails,
+        delimiters: [
+          {
+            left: '$$'
+            right: '$$'
+            display: true
+          }
+          {
+            left: '$'
+            right: '$'
+            display: false
+          }
+          {
+            left: '\\('
+            right: '\\)'
+            display: false
+          }
+          {
+            left: '\\['
+            right: '\\]'
+            display: true
+          }
+        ]
+        throwOnError: false
       return
 
   $(document).on 'click', '.triggerDownload', ->

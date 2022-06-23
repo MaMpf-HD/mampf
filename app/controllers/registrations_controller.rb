@@ -4,12 +4,14 @@ require 'json'
 # RegistrationsController
 class RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_registration_limit, only: [:create]
+
   def verify_captcha
     return true unless ENV['USE_CAPTCHA_SERVICE']
     begin
       uri = URI.parse(ENV['CAPTCHA_VERIFY_URL'])
-      data = {message:params["frc-captcha-solution"], application_token:ENV['CAPTCHA_APPLICATION_TOKEN']}
-      header = {'Content-Type': 'text/json'}
+      data = { message:params["frc-captcha-solution"],
+               application_token:ENV['CAPTCHA_APPLICATION_TOKEN'] }
+      header = { 'Content-Type': 'text/json' }
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true if ENV['CAPTCHA_VERIFY_URL'].include?('https')
       request = Net::HTTP::Post.new(uri.request_uri, header)
@@ -23,6 +25,7 @@ class RegistrationsController < Devise::RegistrationsController
     end
     return false
   end
+
   def create
     if verify_captcha
       super
@@ -33,6 +36,7 @@ class RegistrationsController < Devise::RegistrationsController
       render :new
     end
   end
+
   def destroy
     password_correct = resource.valid_password?(deletion_params[:password])
     if !password_correct

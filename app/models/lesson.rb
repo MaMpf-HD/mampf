@@ -33,6 +33,8 @@ class Lesson < ApplicationRecord
   before_destroy :touch_siblings
   before_destroy :touch_sections, prepend: true
 
+  delegate :editors_with_inheritance, to: :lecture, allow_nil: true
+
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
 
@@ -43,6 +45,9 @@ class Lesson < ApplicationRecord
 
   def lesson
     self
+  end
+
+  def talk
   end
 
   # a lesson should also see other lessons in the same lecture

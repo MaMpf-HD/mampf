@@ -18,18 +18,19 @@
           </div>
           <% if alert.present? %>
             <div class="alert alert-danger" role="alert">
-              <%= alert %>
+              <%= sanitize alert, :tags => %w(br) %>
             </div>
           <% end %>
           <% if notice.present? %>
             <div class="alert alert-secondary" role="alert">
-              <%= notice %>
+              <%= sanitize notice, :tags => %w(br) %>
             </div>
           <% end %>
           <%= yield %>
         </main>
       </div>
     </div>
+    <div id="modal-container"></div>
     <footer>
       <%= render partial: 'shared/footer' %>
     </footer>

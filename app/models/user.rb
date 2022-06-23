@@ -1,7 +1,6 @@
 # User class
 class User < ApplicationRecord
   include ApplicationHelper
-  include ScreenshotUploader[:image]
 
   # use devise for authentification, include the following modules
   devise :database_authenticatable, :registerable,
@@ -39,6 +38,10 @@ class User < ApplicationRecord
   has_many :given_tutorials, -> { order(:title) },
            through: :tutor_tutorial_joins, source: :tutorial
 
+  # a user has many given talks
+  has_many :speaker_talk_joins, foreign_key: 'speaker_id', dependent: :destroy
+  has_many :talks, through: :speaker_talk_joins
+
   # a user has many notifications as recipient
   has_many :notifications, foreign_key: 'recipient_id'
 
@@ -55,6 +58,10 @@ class User < ApplicationRecord
   # a user has many quiz certificates that are obtained by solving quizzes
   # and claiming the certificate
   has_many :quiz_certificates, dependent: :destroy
+
+  # a user has a watchlist with watchlist_entries
+  has_many :watchlists, dependent: :destroy
+  include ScreenshotUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
@@ -105,6 +112,15 @@ class User < ApplicationRecord
   # returns the array of all editors
   def self.editors
     User.where(id: EditableUserJoin.pluck(:user_id).uniq)
+  end
+
+  # returns the array of all editors minus those that are only editors of talks
+  def self.proper_editors
+    talk_media_ids = Medium.where(teachable_type: 'Talk').pluck(:id)
+    talk_media_joins = EditableUserJoin.where(editable_type: 'Medium',
+                                              editable_id: talk_media_ids)
+    User.where(id: EditableUserJoin.where.not(id: talk_media_joins.pluck(:id))
+                                   .pluck(:user_id).uniq)
   end
 
   # Returns the array of all editors (of courses, lectures, media), together
@@ -186,6 +202,7 @@ class User < ApplicationRecord
     media.where(teachable: related_lectures)
       .or(media.where(teachable: related_courses))
       .or(media.where(teachable: Lesson.where(lecture: related_lectures)))
+      .or(media.where(teachable: Talk.where(lecture: related_lectures)))
   end
 
   # returns array of all those sections from the given sections that belon to
@@ -248,9 +265,10 @@ class User < ApplicationRecord
   end
 
   # a user is an editor iff he/she is a course editor or lecture editor or
-  # media editor
+  # editor of media that are not associated to talks
   def editor?
-    edited_courses.any? || edited_lectures.any? || edited_media.any?
+    edited_courses.any? || edited_lectures.any? ||
+      edited_media.where.not(teachable_type: 'Talk').any?
   end
 
   # the next methods return information about the user extracted from
@@ -409,6 +427,9 @@ class User < ApplicationRecord
     lessons = Lesson.where(lecture: lectures)
     nonsubscribed_lessons = Lesson.where(lecture: nonsubscribed_lectures)
     edited_lessons = Lesson.where(lecture: teaching_related_lectures)
+    talks = Talk.where(lecture: lectures)
+    nonsubscribed_talks = Talk.where(lecture: nonsubscribed_lectures)
+    edited_talks = Talk.where(lecture: teaching_related_lectures)
     return media if admin
     media.where(teachable: courses, released: ['all', 'subscribers', 'users'])
       .or(media.where(teachable: nonsubscribed_courses,
@@ -421,9 +442,14 @@ class User < ApplicationRecord
                       released: ['all', 'subscribers', 'users']))
       .or(media.where(teachable: nonsubscribed_lessons,
                       released: ['all', 'users']))
+      .or(media.where(teachable: talks,
+                      released: ['all', 'subscribers', 'users']))
+      .or(media.where(teachable: nonsubscribed_talks,
+                      released: ['all', 'users']))
       .or(media.where(teachable: edited_courses))
       .or(media.where(teachable: teaching_related_lectures))
       .or(media.where(teachable: edited_lessons))
+      .or(media.where(teachable: edited_talks))
   end
 
   def subscribed_commentable_media_with_comments
@@ -566,6 +592,7 @@ class User < ApplicationRecord
 
   def image_url_with_host
     return unless image
+
     image_url(host: host)
   end
 
@@ -594,16 +621,34 @@ class User < ApplicationRecord
   end
 
   def can_edit?(something)
-    unless something.is_a?(Lecture) || something.is_a?(Course)
+    unless something.is_a?(Lecture) || something.is_a?(Course) ||
+           something.is_a?(Medium) || something.is_a?(Lesson) ||
+           something.is_a?(Talk)
       raise 'can_edit? was called with incompatible class'
     end
     return true if admin
-    return in?(something.editors_with_inheritance) if something.is_a?(Lecture)
-    in?(something.editors)
+    in?(something.editors_with_inheritance.to_a)
+  end
+
+  def speaker?
+    talks.any?
+  end
+
+  def layout
+    return 'administration' if admin_or_editor?
+    'application_no_sidebar'
   end
 
   def course_editor?
     edited_courses.any?
+  end
+
+  def admin_or_editor?
+    admin? || editor?
+  end
+
+  def generic?
+    !(admin? || teacher? || editor?)
   end
 
   private
@@ -624,11 +669,6 @@ class User < ApplicationRecord
   def preceding_course_ids
     courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
       courses.all.pluck(:id)
-  end
-
-  def admin_or_editor?
-    return true if admin? || editor?
-    false
   end
 
   def destroy_single_submissions

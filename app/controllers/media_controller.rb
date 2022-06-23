@@ -3,17 +3,32 @@ class MediaController < ApplicationController
   skip_before_action :authenticate_user!, only: [:play, :display]
   before_action :set_medium, except: [:index, :new, :create, :search,
                                       :fill_teachable_select,
-                                      :fill_media_select]
+                                      :fill_media_select,
+                                      :fill_medium_preview,
+                                      :render_medium_actions,
+                                      :render_import_media,
+                                      :render_import_vertex,
+                                      :cancel_import_media,
+                                      :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
   before_action :sanitize_params, only: [:index]
   before_action :check_for_consent, except: [:play, :display]
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
-  authorize_resource
+  authorize_resource except: [:index, :new, :create, :search,
+                              :fill_teachable_select, :fill_media_select,
+                              :fill_medium_preview, :render_medium_actions,
+                              :render_import_media, :render_import_vertex,
+                              :cancel_import_media, :cancel_import_vertex]
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= MediumAbility.new(current_user)
+  end
+
   def index
+    authorize! :index, Medium.new
     @media = paginated_results
     render layout: 'application'
   end
@@ -28,6 +43,7 @@ class MediaController < ApplicationController
   end
 
   def new
+    authorize! :new, Medium.new
     @medium = Medium.new(teachable: @teachable,
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
@@ -38,6 +54,7 @@ class MediaController < ApplicationController
   def edit
     I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
+    render layout: current_user.layout
   end
 
   def update
@@ -116,6 +133,7 @@ class MediaController < ApplicationController
     if @medium.teachable.class.to_s == 'Lesson'
       @medium.tags = @medium.teachable.tags
     end
+    authorize! :create, @medium
     @medium.save
     if @medium.valid?
       if @medium.sort == 'Remark'
@@ -172,6 +190,14 @@ class MediaController < ApplicationController
       redirect_to edit_lesson_path(@medium.teachable)
       return
     end
+    if @medium.teachable_type == 'Talk'
+      if current_user.in?(@medium.teachable.speakers)
+        redirect_to assemble_talk_path(@medium.teachable)
+        return
+      end
+      redirect_to edit_talk_path(@medium.teachable)
+      return
+    end
     redirect_to edit_course_path(@medium.teachable)
   end
 
@@ -180,6 +206,7 @@ class MediaController < ApplicationController
 
   # return all media that match the search parameters
   def search
+    authorize! :search, Medium.new
     search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
@@ -291,42 +318,6 @@ class MediaController < ApplicationController
     @medium.import_script_items!
   end
 
-  # export the video's toc data to a .vtt file
-  def export_toc
-    @vtt_container = @medium.create_vtt_container!
-    file = Tempfile.new
-    @vtt_container.table_of_contents.stream(file.path)
-
-    send_file file,
-              filename: 'toc-' + @medium.title + '.vtt',
-              type: 'text/vtt',
-              disposition: 'attachment'
-  end
-
-  # export the video's references to a .vtt file
-  def export_references
-    @vtt_container = @medium.create_vtt_container!
-    file = Tempfile.new
-    @vtt_container.references.stream(file.path)
-
-    send_file file,
-              filename: 'references-' + @medium.title + '.vtt',
-              type: 'text/vtt',
-              disposition: 'attachment'
-  end
-
-  # export the video's screenshot to a .vtt file
-  def export_screenshot
-    return if @medium.screenshot.nil?
-    file = Tempfile.new
-    @medium.screenshot.stream(file.path)
-
-    send_file file,
-              filename: 'screenshot-' + @medium.title + '.png',
-              type: 'image/png',
-              disposition: 'attachment'
-  end
-
   # imports all of manuscript destinations, bookmarks as chpters, sections etc.
   def import_manuscript
     manuscript = Manuscript.new(@medium)
@@ -342,6 +333,7 @@ class MediaController < ApplicationController
   end
 
   def fill_teachable_select
+    authorize! :fill_teachable_select, Medium.new
     result = (Course.editable_selection(current_user) +
                 Lecture.editable_selection(current_user) +
                 Lesson.editable_selection(current_user))
@@ -350,6 +342,7 @@ class MediaController < ApplicationController
   end
 
   def fill_media_select
+    authorize! :fill_media_select, Medium.new
     result = Medium.select_by_name.map { |t| { value: t[1], text: t[0] } }
     render json: result
   end
@@ -361,9 +354,6 @@ class MediaController < ApplicationController
     end
   end
 
-  def postprocess_tags
-  end
-
   def register_download
     head :ok
   end
@@ -372,12 +362,17 @@ class MediaController < ApplicationController
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption.where(sort: 'video',
+                                                  mode: 'download').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
+      @video_downloads_count = medium_consumption.where(sort: 'video',
                                                   mode: 'download').count
       @video_thyme = medium_consumption.where(sort: 'video',
-                                              mode: 'thyme').count
+                                              mode: 'thyme').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
+      @video_thyme_count = medium_consumption.where(sort: 'video',
+                                                    mode: 'thyme').count
     end
     if @medium.manuscript.present?
-      @manuscript_access = medium_consumption.where(sort: 'manuscript').count
+      @manuscript_access = medium_consumption.where(sort: 'manuscript').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
+      @manuscript_access_count = medium_consumption.where(sort: 'manuscript').count
     end
     if @medium.sort == 'Quiz'
       @quiz_access = Probe.finished_quizzes(@medium)
@@ -398,6 +393,66 @@ class MediaController < ApplicationController
     redirect_to edit_medium_path(@medium)
   end
 
+  def fill_medium_preview
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    authorize! :fill_medium_preview, @medium
+  end
+
+  def render_medium_actions
+    I18n.locale = current_user.locale
+    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    authorize! :render_medium_actions, @medium
+  end
+
+  def render_import_media
+    @id = params[:id]
+    @purpose = 'import'
+    authorize! :render_import_media, Medium.new
+  end
+
+  def render_import_vertex
+    @id = params[:id]
+    quiz_id = params[:quiz_id]
+    I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance
+    @purpose = 'quiz'
+    authorize! :render_import_vertex, Medium.new
+    render :render_import_media
+  end
+
+  def render_medium_tags
+    @tag_ids = @medium.tag_ids
+  end
+
+  def cancel_import_media
+    authorize! :cancel_import_media, Medium.new
+  end
+
+  def cancel_import_vertex
+    authorize! :cancel_import_vertex, Medium.new
+    I18n.locale = Quiz.find_by_id(params[:quiz_id])&.locale_with_inheritance
+    render :cancel_import_media
+  end
+
+  def fill_quizzable_area
+    @vertex_id = params[:vertex]
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+  end
+
+  def fill_quizzable_preview
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+  end
+
+  def fill_reassign_modal
+    @quizzable = @medium.becomes_quizzable
+    I18n.locale = @quizzable.locale_with_inheritance
+    @in_quiz = params[:in_quiz] == 'true'
+    @quiz_id = params[:quiz_id].to_i
+    @no_rights = params[:rights] == 'none'
+  end
+
   private
 
   def medium_params
@@ -416,7 +471,8 @@ class MediaController < ApplicationController
     params.require(:medium).permit(:release_now, :released, :release_date,
                                    :lock_comments, :publish_vertices,
                                    :create_assignment, :assignment_title,
-                                   :assignment_deadline, :assignment_file_type)
+                                   :assignment_deadline, :assignment_file_type,
+                                   :assignment_deletion_date)
   end
 
   def set_medium
@@ -436,7 +492,7 @@ class MediaController < ApplicationController
   end
 
   def set_teachable
-    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson']) &&
+    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson', 'Talk']) &&
        params[:teachable_id].present?
       @teachable = params[:teachable_type].constantize
                                           .find_by_id(params[:teachable_id])
@@ -448,7 +504,7 @@ class MediaController < ApplicationController
       @medium.update(video: nil)
       @medium.update(screenshot: nil)
     end
-    if params[:medium][:detach_geogebra] == 'true'
+    if params[:medium][:detach_geogebra] == 'true' || @medium.sort != 'Sesam'
       @medium.update(geogebra: nil)
     end
     return unless params[:medium][:detach_manuscript] == 'true'

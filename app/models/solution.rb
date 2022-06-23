@@ -9,7 +9,14 @@ class Solution
   end
 
   def self.load(text)
-    YAML.load(text) if text.present?
+    return if text.blank?
+
+    YAML.safe_load(text, permitted_classes: [Solution,
+                                             MampfTuple,
+                                             MampfExpression,
+                                             MampfMatrix,
+                                             MampfSet],
+                         aliases: true)
   end
 
   def self.dump(solution)

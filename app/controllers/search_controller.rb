@@ -1,8 +1,13 @@
 # SearchController
 class SearchController < ApplicationController
+  authorize_resource class: false
   before_action :check_for_consent
   before_action :set_search_string, only: [:index]
   before_action :sanitize_search_string, only: [:index]
+
+  def current_ability
+    @current_ability ||= SearchAbility.new(current_user)
+  end
 
   def index
     search_down = @search_string.downcase

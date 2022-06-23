@@ -66,6 +66,18 @@
                   edit_or_show_lesson_path(medium.teachable),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>
     <% end %>
+    <% if medium.teachable.is_a?(Talk) %>
+      <% if current_user.in?(medium.teachable.speakers) %>
+        <%= link_to t('buttons.parent_talk'),
+                    assemble_talk_path(medium.teachable),
+                    class: 'btn btn-sm btn-outline-primary mb-2' %>
+      <% elsif current_user.in?(medium.teachable.lecture
+                                      .editors_with_inheritance) %>
+        <%= link_to t('buttons.parent_talk'),
+                    edit_talk_path(medium.teachable),
+                    class: 'btn btn-sm btn-outline-primary mb-2' %>
+      <% end %>
+    <% end %>
     <% unless new_medium %>
       <% if medium.teachable.published? &&
              !medium.published? && !medium.publisher %>

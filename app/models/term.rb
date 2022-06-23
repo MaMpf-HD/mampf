@@ -75,10 +75,6 @@ class Term < ApplicationRecord
     User.where(id: submitter_ids)
   end
 
-  def submission_deletion_date
-    end_date + 15.days
-  end
-
   def assignments_with_submissions
     Assignment.where(id: submissions.pluck(:assignment_id).uniq)
   end
@@ -94,6 +90,18 @@ class Term < ApplicationRecord
 
   def submission_deletion_info_dates
     [end_date + 1.day, end_date + 8.days, submission_deletion_date]
+  end
+
+  def self.possible_deletion_dates
+    return [Time.zone.today + 6.months] if Term.active.blank?
+
+    [Term.active.end_date + 2.weeks,
+     Term.active.end_date + 2.weeks + 3.months,
+     Term.active.end_date + 2.weeks + 6.months]
+  end
+
+  def self.possible_deletion_dates_localized
+    possible_deletion_dates.map { |d| d.strftime(I18n.t('date.formats.concise')) }
   end
 
   # array of all terms together with their ids for use in options_for_select

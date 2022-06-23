@@ -10,7 +10,14 @@ class SubmissionsController < ApplicationController
   before_action :check_if_assignments, only: :index
   before_action :check_student_status, only: :index
   before_action :set_disposition, only: [:show_manuscript, :show_correction]
+  authorize_resource
 
+  def current_ability
+    @current_ability ||= SubmissionAbility.new(current_user)
+  end
+
+  # note: authorization for #index is done manually via before_actions
+  # SubmissionAbility lets anyone pass
   def index
     @assignments = @lecture.assignments
     @current_assignments = @lecture.current_assignments
@@ -46,6 +53,7 @@ class SubmissionsController < ApplicationController
     end
     @submission.update(submission_update_params)
     if @submission.valid?
+      @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == 'true'
         @submission.update(manuscript: nil,
                            last_modification_by_users_at: Time.now)

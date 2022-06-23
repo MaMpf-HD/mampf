@@ -7,9 +7,10 @@ COPY pdfcomprezzor/main.go .
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 
 # Now build the actual mampf application
-FROM ruby:2.7.2
+FROM ruby:3.0.3
 ENV RAILS_ENV=production
 EXPOSE 3000
+EXPOSE 9394
 
 # https://github.com/nodesource/distributions#installation-instructions
 RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \

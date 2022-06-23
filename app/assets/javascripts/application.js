@@ -48,6 +48,7 @@
 //= require submissions
 //= require tutorials
 //= require tags
+//= require talks
 //= require terms
 //= require tex_preview
 //= require thyme
@@ -55,4 +56,5 @@
 //= require upload
 //= require users
 //= require vertices
+//= require watchlists
 //= require turbolinks

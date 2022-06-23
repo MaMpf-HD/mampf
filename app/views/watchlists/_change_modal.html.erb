@@ -1,0 +1,35 @@
+<div class="modal fade"
+     id="watchlistModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="watchlistModalLabel" aria-hidden="true"
+     data-keyboard="true">
+  <div class="modal-dialog modal-sm"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"
+            id="watchlistModalTitle">
+          <%= t('watchlist.change') %>
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body"
+           id="watchlistModalBody">
+        <%= render partial: 'watchlists/change_form' %>
+      </div>
+      <div class="modal-footer">
+        <div class="container text-center">
+          <button class="btn btn-primary"
+                  id="confirmChangeWatchlistButton"
+                  type="submit"
+                  form="changeWatchlistForm"
+                  disabled ><%= t('watchlist.save_change') %></button>
+          <button type="button" class="btn btn-secondary mr-auto" data-dismiss="modal"><%= t('watchlist.close') %></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

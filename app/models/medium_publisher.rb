@@ -4,13 +4,15 @@
 class MediumPublisher
   attr_reader :medium_id, :user_id, :release_now, :release_for, :release_date,
               :lock_comments, :vertices, :create_assignment, :assignment_title,
-              :assignment_file_type, :assignment_deadline
+              :assignment_file_type, :assignment_deadline,
+              :assignment_deletion_date
 
   def initialize(medium_id:, user_id:, release_now:,
                  release_for: 'all', release_date: nil,
                  lock_comments: false, vertices: false,
                  create_assignment: false, assignment_title: '',
-                 assignment_file_type: '', assignment_deadline: nil)
+                 assignment_file_type: '', assignment_deadline: nil,
+                 assignment_deletion_date: nil)
     @medium_id = medium_id
     @user_id = user_id
     @release_now = release_now
@@ -22,10 +24,19 @@ class MediumPublisher
     @assignment_title = assignment_title
     @assignment_file_type = assignment_file_type
     @assignment_deadline = assignment_deadline
+    @assignment_deletion_date = assignment_deletion_date
   end
 
   def self.load(text)
-    YAML.load(text) if text.present?
+    return if text.blank?
+
+    YAML.safe_load(text,
+                   permitted_classes: [MediumPublisher,
+                                       ActiveSupport::TimeWithZone,
+                                       ActiveSupport::TimeZone,
+                                       DateTime,
+                                       Time],
+                   aliases: true)
   end
 
   def self.dump(medium_publisher)
@@ -43,6 +54,11 @@ class MediumPublisher
     rescue ArgumentError
       puts 'Argument error for medium assignment deadline'
     end
+    begin
+      assignment_deletion_date = Time.zone.parse(params[:assignment_deletion_date] || '')
+    rescue ArgumentError
+      puts 'Argument error for medium assignment deletion date'
+    end
     MediumPublisher.new(medium_id: medium.id, user_id: user.id,
                         release_now: params[:release_now] == '1',
                         release_for: params[:released],
@@ -52,14 +68,15 @@ class MediumPublisher
                         create_assignment: params[:create_assignment] == '1',
                         assignment_title: params[:assignment_title],
                         assignment_file_type: params[:assignment_file_type],
-                        assignment_deadline: assignment_deadline)
+                        assignment_deadline: assignment_deadline,
+                        assignment_deletion_date: assignment_deletion_date)
   end
 
   def publish!
     @medium = Medium.find_by_id(@medium_id)
     @user = User.find_by_id(@user_id)
     return unless @medium && @user && @medium.released_at.nil?
-    return unless @user.in?(@medium.editors_with_inheritance) || @user.admin
+    return unless @user.can_edit?(@medium)
 
     update_medium!
     realize_optional_stuff!
@@ -78,7 +95,8 @@ class MediumPublisher
                    medium_id: @medium_id,
                    title: @assignment_title,
                    deadline: @assignment_deadline,
-                   accepted_file_type: @assignment_file_type)
+                   accepted_file_type: @assignment_file_type,
+                   deletion_date: @assignment_deletion_date)
   end
 
   def errors
@@ -89,6 +107,7 @@ class MediumPublisher
     return {} unless @create_assignment
 
     add_assignment_deadline_error if invalid_assignment_deadline?
+    add_assignment_deletion_date_error if invalid_assignment_deletion_date?
     add_assignment_title_error if invalid_assignment_title?
     @errors
   end
@@ -160,6 +179,10 @@ class MediumPublisher
       @assignment_deadline.nil? || (@assignment_deadline < earliest_deadline)
     end
 
+    def invalid_assignment_deletion_date?
+      @assignment_deletion_date.nil? || (@assignment_deletion_date < Time.zone.today)
+    end
+
     def invalid_assignment_title?
       @assignment_title.blank? ||
         @assignment_title.in?(Assignment.where(lecture: medium.teachable)
@@ -173,6 +196,13 @@ class MediumPublisher
     def add_assignment_deadline_error
       @errors[:assignment_deadline] = I18n.t('admin.medium' \
                                              '.invalid_assignment_deadline')
+    end
+
+    def add_assignment_deletion_date_error
+      @errors[:assignment_deletion_date] = I18n.t('activerecord.errors.' \
+                                                  'models.assignment.' \
+                                                  'attributes.deletion_date.' \
+                                                  'in_past')
     end
 
     def add_assignment_title_error
