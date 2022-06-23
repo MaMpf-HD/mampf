@@ -8,7 +8,9 @@ class TimeStamp
 
   # extract from YAML
   def self.load(text)
-    YAML.load(text) if text.present?
+    YAML.safe_load(text, permitted_classes: [TimeStamp,
+                                             ActiveModel::Errors],
+                         aliases: true) if text.present?
   end
 
   # store as YAML (for serialization)

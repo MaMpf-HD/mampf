@@ -7,7 +7,8 @@ class Talk < ApplicationRecord
   validates :title, presence: true
 
   # being a teachable (course/lecture/lesson), a talk has associated media
-  has_many :media, -> { order(position: :asc) }, as: :teachable
+  has_many :media, -> { order(position: :asc) }, as: :teachable,
+           dependent: :destroy
 
   # a talk has many tags
   has_many :talk_tag_joins, dependent: :destroy
@@ -92,6 +93,10 @@ class Talk < ApplicationRecord
 
   def proper_media
     media.where.not(sort: ['Question', 'Remark'])
+  end
+
+  def editors_with_inheritance
+    (speakers + lecture.editors_with_inheritance).uniq
   end
 
   private

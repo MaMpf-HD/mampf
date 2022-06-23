@@ -1,4 +1,4 @@
-# ItemsController
+# InteractionsController
 class InteractionsController < ApplicationController
   authorize_resource
   layout 'administration'

@@ -74,7 +74,7 @@
                                 watchlists: medium.containingWatchlistsNames(current_user).join(", ")) %>
           <% end %>
           <%= link_to '',
-                      watchlist_modal_path(id: medium, type: "add"),
+                      add_medium_to_watchlist_path(medium),
                       class: 'fas fa-list text-light mr-2',
                       style: 'text-decoration: none;',
                       data: { toggle: 'tooltip',

@@ -4,8 +4,12 @@ class CoursesController < ApplicationController
   before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent
-  authorize_resource
+  authorize_resource except: [:create, :search]
   layout 'administration'
+
+  def current_ability
+    @current_ability ||= CourseAbility.new(current_user)
+  end
 
   def edit
     I18n.locale = @course.locale || I18n.default_locale
@@ -28,6 +32,7 @@ class CoursesController < ApplicationController
 
   def create
     @course = Course.new(course_params)
+    authorize! :create, @course
     @course.save
     if @course.valid?
       # set organizational_concept to default
@@ -61,6 +66,7 @@ class CoursesController < ApplicationController
   end
 
   def search
+    authorize! :search, Course.new
     search = Course.search_by(search_params, params[:page])
     search.execute
     results = search.results

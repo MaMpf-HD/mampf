@@ -23,12 +23,17 @@
                                    'https://xkcd.com',
                                    target: :_blank)) %>
           <div>
-            <% xkcd_comic = URI.extract(xkcd, ['https'])&.first %>
-            <%= link_to image_tag(xkcd_comic,
-                                  class: "img-fluid"),
-                        xkcd_comic,
-                        target: :_blank,
-                        title: xkcd.remove(xkcd_comic).chomp(': ') %>
+            <% if xkcd[:error] %>
+              <div class="alert alert-danger">
+                <%= t('admin.quiz.xkcd_error') %>
+              </div>
+            <% else %>
+              <%= link_to image_tag(xkcd['img'],
+                                    class: "img-fluid"),
+                          xkcd['img'],
+                          target: :_blank,
+                          title: xkcd['alt'] %>
+            <% end %>
           </div>
         </div>
       </div>

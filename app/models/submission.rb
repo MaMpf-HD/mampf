@@ -93,8 +93,7 @@ class Submission < ApplicationRecord
 
   def not_updatable?
     return false if assignment.active?
-
-    assignment.totally_expired? || correction.present?
+    assignment.totally_expired? || correction.present? || accepted == false
   end
 
   # def file_path(downloadable)

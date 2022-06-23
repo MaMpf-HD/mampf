@@ -1,5 +1,6 @@
 # ReadersController
 class ReadersController < ApplicationController
+  # no authorization for this controller
 
   def update
     @thread = Commontator::Thread.find_by_id(reader_params[:thread_id])

@@ -64,5 +64,25 @@ describe('Thredded', function() {
                 cy.contains(records[0].title).should("exist");
             });
         });
+        it('can delete forum',()=>{
+            cy.appFactories([
+                ["create","course"],
+                ["create",
+                    "lecture","released_for_all", "with_forum", {
+                        "teacher_id": 1,
+                        "course_id":1
+                    }
+                ],["create", "lecture_user_join", {
+                    user_id: 1,
+                    lecture_id: 1
+                }]
+            ]).then((records)=>{
+                cy.visit(`/lectures/${records[1].id}/edit`);
+                cy.contains("Forum").click();
+                cy.contains("Forum löschen").click();
+                cy.contains("Forum").click();
+                cy.contains("Forum anlegen").should("exist");
+            });
+        });
     });
   });

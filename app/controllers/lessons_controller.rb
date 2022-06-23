@@ -1,8 +1,12 @@
 # LessonsController
 class LessonsController < ApplicationController
-  before_action :set_lesson, except: [:new, :create, :list_sections]
-  authorize_resource
+  before_action :set_lesson, except: [:new, :create]
+  authorize_resource except: [:new, :create]
   layout 'administration'
+
+  def current_ability
+    @current_ability ||= LessonAbility.new(current_user)
+  end
 
   def show
     I18n.locale = @lesson.locale_with_inheritance
@@ -15,14 +19,16 @@ class LessonsController < ApplicationController
 
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
-    I18n.locale = @lecture.locale_with_inheritance
+    I18n.locale = @lecture.locale_with_inheritance if @lecture
     @lesson = Lesson.new(lecture: @lecture)
     section = Section.find_by_id(params[:section_id])
     @lesson.sections << section if section
+    authorize! :new, @lesson
   end
 
   def create
     @lesson = Lesson.new(lesson_params)
+    authorize! :create, @lesson
     I18n.locale = @lesson.lecture.locale_with_inheritance if @lesson.lecture
     # add all tags from sections associated to this lesson
     @lesson.tags = @lesson.sections.map(&:tags).flatten
@@ -59,11 +65,6 @@ class LessonsController < ApplicationController
     end
     @lesson.destroy
     redirect_to edit_lecture_path(lecture)
-  end
-
-  def list_sections
-    @sections = Section.where(id: JSON.parse(params[:section_ids]))
-                       .order(:position)
   end
 
   private

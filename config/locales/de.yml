@@ -77,7 +77,7 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2020. MaMpf ist auf %{github}.
+      &copy; MaMpf Team 2022. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs meldest Du am besten %{bugs}.
@@ -115,13 +115,19 @@ de:
       Im Rahmen des Projekts heiSTART2.0 haben
       %{hendrik}, %{oli} und %{denis} zusammen mit der %{fs_mathphysinfo}
       Mittel zur Einrichtung eines MaMpf-unterstützten Mathematik-Helpdesks für
-      die Studieneingangsphase eingeworben.
+      die Studieneingangsphase eingeworben. Der Helpdesk ist seither eine
+      wichtige Unterstützung in den ersten Semestern des Mathematikstudiums.
     physics_html: >
       Die %{physics_faculty} unterstützte MaMpf durch die Anschaffung
-      medientechnischer Ausstatttung.
+      medientechnischer Ausstattung.
     math_html: >
       Die %{math_faculty} unterstützt MaMpf durch Finanzierung
       studentischer und wissenschaftlicher Hilfskräfte.
+    heiquality_html: >
+      Im Rahmen des heiQUALITY-Programms Lehre konnten von %{hendrik} und
+      %{denis} erfolgreich Mittel zur Umsetzung des Projektes MaMpf-Back
+      eingeworben werden. Hierbei handelt sich um ein niederschwelliges
+      Feedbacksystem für die asynchrone digitale Lehre.
   here: 'hier'
   here_capital: 'Hier'
   disclosure: 'Impressum'
@@ -373,6 +379,10 @@ de:
       disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
       submission_max_team_size: maximale Größe von Abgabegruppen
       submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      import_toc: Gliederung aus anderer Veranstaltung importieren
+      import_chapters: Kapitel importieren
+      import_sections: Abschnitte importieren
+      import_tags: Tags importieren
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -1824,6 +1834,7 @@ de:
       finale_html: >
         Du hast es geschafft! Zur Belohnung gibt es ein %{xkcd_link}-Comic:
       xkcd: 'XKCD'
+      xkcd_error: 'Leider gab es einen Fehler beim Anzeigen des XKCD-Comics.'
       errors: 'Achtung, das Quiz enthält noch Fehler'
       undefined_targets: 'Es gibt undefinierte Verzweigungen'
       no_end: 'Keine Verzweigung führt zum Ende'
@@ -2177,7 +2188,7 @@ de:
     create: 'Erstellen'
     creation_confirm: >
       Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
-      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst: 
+      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst:
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
@@ -2684,7 +2695,7 @@ de:
       Änderungen vornehmen, jedoch nur solange Dein TutorIn noch keine
       Korrektur zur Abgabe hochgeladen hat. Allerdings
       wird die Abgabe dann als <b>verspätet</b> eingestuft. Es liegt im Ermessen
-      der DozentIn und der der TutorInnen, ob und wie diese gewertet wird.
+      der DozentIn und der TutorInnen, ob und wie diese gewertet wird.
       <br>
       <i>Hinweis.</i>
       Als Änderung zählen hierbei die folgenden Aktionen:
@@ -2761,10 +2772,10 @@ de:
       Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
       Abgaben und den Upload von Korrekturen durch Deine TutorIn.
     deletion_date_info: >
-      Bei der Abgabe handelt es sich um persönliche Daten, die wir aus Gründen
-      des Datenschutzes zwei Wochen nach Ablauf des Semesters löschen.
-      Du wirst darüber vorher per Mail informiert werden, so dass Du die Daten
-      sichern kannst.
+      Bei Abgaben handelt es sich um persönliche Daten, die wir aus
+      Datenschutzgründen im nachfolgenden Semester löschen. Das genaue Löschdatum
+      kannst Du der Tabelle entnehmen. Du wirst außerdem rechtzeitig per E-Mail
+      an die Löschung erinnert, damit Du Deine Daten sichern kannst.
     team_info: >
       Hier sieht Du Dein Abgabeteam. Du kannst Dein Team vergrößern, indem Du
       anderen Personen den Abgabecode weitergibst, so dass diese beitreten
@@ -2784,9 +2795,7 @@ de:
       Es wurde noch nichts abgegeben.
     nothing_yet_in_lecture: >
       In dieser Vorlesung war bisher noch nichts abzugeben.
-    protected: Geschützte Abgabe
-    protected_info: >
-      "Geschützte" Abgaben werden bis zur manuellen Löschung aufbewahrt und werden nicht automatisiert nach Ablauf der Aufbewahrungsfrist (Semesterende + Karenzzeit von 14 Tagen) gelöscht.
+    deletion_date: Löschdatum
     destruction_info:
       <i>
       Hinweis.
@@ -2869,6 +2878,13 @@ de:
           Korrektur hochgeladen wurde, aber bereits entschieden wurde,
           dass die verspätete Abgabe nicht akzeptiert wird. Die
           entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
+      error: >
+        Dein Bundle-Upload ist leider fehlgeschlagen. Versuch es bitte nochmal.<br>
+        Falls Du diese Fehlermeldung zum wiederholten Mal siehst:<br>
+        - schließe Deinen Browser, öffne ihn wieder und versuch es nochmal.<br>
+        - fahre Dein Gerät herunter, starte es erneut und versuch es nochmal.<br>
+        - lade die Dateien einzeln hoch.<br>
+        Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
     to_big: Die Datei ist zu groß.
@@ -2959,17 +2975,17 @@ de:
       Löschung der Abgaben und Korrekturen aus dem %{term}
     submission_deletion_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
-      Abgaben und Korrekturen aus dem %{term} am <b>%{deletion_date}</b>
-      automatisch gelöscht. Bitte lade diese rechtzeitig herunter, wenn Du sie
-      weiterhin verwenden möchtest.
+      Abgaben und Korrekturen aus dem %{term} mit entsprechendem Löschdatum am
+      <b>%{deletion_date}</b> automatisch gelöscht. Bitte lade diese rechtzeitig
+      herunter, wenn Du sie weiterhin verwenden möchtest.
     submission_deletion_lecture_subject: >
       Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
     submission_deletion_lecture_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
-      Abgaben und -korrekturen der Veranstaltung %{lecture} aus dem %{term} am
-      <b>%{deletion_date}</b> automatisch gelöscht. Sollten sie anderweitig
-      gespeichert werden müssen, so muss dies außerhalb von MaMpf geschehen,
-      und die Dateien müssen rechtzeitig heruntergeladen werden.
+      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term} mit
+      entsprechendem Löschdatum am <b>%{deletion_date}</b> automatisch gelöscht.
+      Sollten sie anderweitig gespeichert werden müssen, so muss dies außerhalb
+      von MaMpf geschehen, und die Dateien müssen rechtzeitig heruntergeladen werden.
     submission_destruction_subject: >
       Löschung der Abgaben und Korrekturen aus dem %{term}
     submission_destruction_text_html: >
@@ -3190,7 +3206,7 @@ de:
     unpublished: 'unveröffentlicht'
     all: 'frei'
     users: 'nur registrierte MaMpf-NutzerInnen'
-    subscribers: 'nur AbonenntInnen'
+    subscribers: 'nur AbonnentInnen'
     locked: 'gesperrt'
     referenced_from: 'referenziert in'
     irrelevant: 'egal'
@@ -3288,6 +3304,8 @@ de:
     dismiss: 'Ausblenden'
     validate: 'Validieren'
     cancel_publication: 'Stornieren'
+    import_lecture_toc: 'Gliederung importieren'
+    import_toc: 'Importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -3456,6 +3474,11 @@ de:
             deadline:
               blank: >
                 Es muss ein Abgabetermin angegeben werden.
+            deletion_date:
+              blank: >
+                Es muss ein Löschdatum angegeben werden.
+              in_past: >
+                Löschdatum darf nicht in der Vergangenheit liegen.
         chapter:
           attributes:
             title:

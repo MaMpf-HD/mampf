@@ -1,4 +1,5 @@
 $('#upload-bulk-errors').empty().hide()
+<% if @report.present? %>
 <% if @errors.present? %>
 $('#upload-bulk-errors').append('<%= @errors.join(", ") %>').show()
 <% else %>
@@ -12,4 +13,7 @@ $('#tutorial-table').empty()
 																	tutorial: @tutorial,
 																	stack: @stack } %>')
 $('[data-toggle="popover"]').popover()
+<% end %>
+<% else %>
+location.reload(true)
 <% end %>

@@ -84,13 +84,8 @@
             <%= helpdesk(t('submission.deletion_date_info'), false) %>
           </th>
           <td>
-          <% if assignment.protected %>
-    		  <%= t("assignment.protected") %>
-			      <%= helpdesk(t('assignment.protected_info'), true) %>
-          <%else%>
-            <%= I18n.l(assignment.lecture.submission_deletion_date,
-                       format: :long) %>
-          <%end%>
+          <%= I18n.l(assignment.deletion_date,
+                      format: :long) %>
           </td>
         </tr>
         <tr>
@@ -140,9 +135,10 @@
     <div class="row">
       <div class="col-12 text-center">
         <% if submission %>
+          <% edit_button_class = submission.not_updatable? ? "secondary disabled" : "primary" %>
           <%= link_to t('buttons.edit'),
                       edit_submission_path(submission),
-                      class: 'btn btn-sm btn-outline-primary',
+                      class: "btn btn-sm btn-outline-#{edit_button_class}",
                       remote: true,
                       data: { color: 'btn-outline-primary'} %>
           <% if invitations_possible?(submission, current_user) %>
@@ -153,9 +149,10 @@
                         data: { color: 'btn-outline-primary'} %>
           <% end %>
           <% if submission.users.count == 1 %>
+            <% delete_button_class = submission.not_updatable? ? "disabled" : "" %>
             <%= link_to t('buttons.delete'),
                         submission_path(submission),
-                        class: 'btn btn-sm btn-outline-danger',
+                        class: "btn btn-sm btn-outline-danger #{delete_button_class}",
                         method: :delete,
                         remote: true,
                         data: { confirm: t('confirmation.generic'),

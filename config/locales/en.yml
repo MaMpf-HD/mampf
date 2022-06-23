@@ -100,7 +100,7 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2020. MaMpf is on %{github}.
+      &copy; MaMpf Team 2022. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs can be reported %{bugs}.
@@ -134,12 +134,19 @@ en:
       %{hendrik}, %{oli} and %{denis} together with the %{fs_mathphysinfo}
       have obtained the funding to set up a MaMpf-supported math helpdesk for
       the introductory phase of math studies.
+      Since then, the helpdesk has been an
+      important support system in the first semesters of mathematics studies.
     physics_html: >
       The %{physics_faculty} supported MaMpf by through the acquisition of
       media technology equipment.
     math_html: >
       The %{math_faculty} has been supporting MaMpf through the financing of
       assistants since 2017.
+    heiquality_html: >
+      Within the framework of the heiQUALITY program Teaching, %{hendrik} and
+      %{denis} successfully raised funds for the implementation of the project
+      MaMpf-Back project. This is a low-threshold feedback system for
+      asynchronous digital teaching.
   here: 'here'
   here_capital: 'Here'
   disclosure: 'Legal disclosure'
@@ -374,6 +381,10 @@ en:
         maximal team size for submissions
       submission_grace_period: >
         grace period for submissions (in minutes)
+      import_toc: Import table of contents from other lecture
+      import_chapters: import chapters
+      import_sections: import sections
+      import_tags: import tags
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -1712,6 +1723,7 @@ en:
       finale_html: >
         You made it! As a small reward there is an %{xkcd_link} comic:
       xkcd: 'XKCD'
+      xkcd_error: 'Unfortunately there was an error while displaying the XKCD comic.'
       errors: 'Attention, the quiz contains errors'
       undefined_targets: 'There are undefined targets'
       no_end: 'No way leads to the end'
@@ -2597,9 +2609,10 @@ en:
       team members, decisions about the acceptance of late submissions and
       upload of corrections by your tutor.
     deletion_date_info: >
-      Your submission contains personal data which we will delete two weeks
-      after the end of this term due to protection of data privacy. You will be
-      notified ahead via email so that you can save them.
+      The data you submit is personal data that we delete in the following semester
+      for data privacy reasons. You can find the exact deletion date in the table.
+      You will also be reminded of the deletion in advance by e-mail so that you
+      can back up your data.
     team_info: >
       Here you can see your submission team. You can enlarge
       your team by giving other persons the submission code so that they can
@@ -2618,9 +2631,7 @@ en:
       Nothing has yet been submitted.
     nothing_yet_in_lecture: >
       In this lecture nothing had yet to be submitted.
-    protected: Protected Assignment
-    protected_info: >
-      "Protected" Assignments won't be deleted at the end of the semester.
+    deletion_date: Deletion date
     destruction_info: >
       <i>
       Note.
@@ -2698,6 +2709,13 @@ en:
           This is the list of submission teams for which you uploaded a correction
           but have already decided to reject the submission. The corresponding
           corrections have not been uploaded.
+      error: >
+        Unfortunately, your bundle upload failed. Please try again..<br>
+        If you see this error message repeatedly:<br>
+        - close your browser, open it again and try again.<br>
+        - shut down your device, restart it and try again.<br>
+        - upload the files one by one.<br>
+        In case of repeated occurrence please contact the MaMpf team.
   package:
     no_zip: This file is not a .zip archive.
     to_big: This file is too big.
@@ -2782,14 +2800,14 @@ en:
       Deletion of submissions and corrections from %{term}
     submission_deletion_text_html: >
       For GDPR reasons, all of your submissions and corrections from
-      %{term} that are stored in MaMpf will be automatically deleted at
+      %{term}, with the corresponding deletion date, will be automatically deleted at
       <b>%{deletion_date}</b>. If you want to use them in the future,
       please download them before.
     submission_deletion_lecture_subject: >
       Deletion of submissions and corrections from %{term} [%{lecture}]
     submission_deletion_lecture_text_html: >
       For GDPR reasons, all submissions and corrections of the lecture
-      %{lecture} in %{term} that are stored in MaMpf will be automatically
+      %{lecture} in %{term}, with the corresponding deletion date, will be automatically
       deleted at <b>%{deletion_date}</b>. In for some reason they have to be
       stored longer, this has to happen outside of MaMpf. In that case the files
       have to be downloaded in time.
@@ -3113,6 +3131,8 @@ en:
     dismiss: 'Dismiss'
     validate: 'Validate'
     cancel_publication: 'Cancel'
+    import_lecture_toc: 'Import TOC'
+    import_toc: 'Import'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -3266,6 +3286,9 @@ en:
               blank: You need to give a title.
             deadline:
               blank: You need to give a due date.
+            deletion_date:
+              blank: You need to give a deletion date.
+              in_past: Deletion date can't lie in the past.
         chapter:
           attributes:
             title:

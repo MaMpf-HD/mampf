@@ -5,7 +5,7 @@ FactoryBot.define do
     medium_position { 1 }
 
     trait :with_watchlist do
-      watchlist { create(:watchlist, user_id: 1) }
+      watchlist { create(:watchlist, user: FactoryBot.create(:user)) }
     end
 
     trait :with_medium do
