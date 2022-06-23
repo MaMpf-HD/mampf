@@ -61,6 +61,7 @@ resetSelectized = (index, select) ->
         valueField: 'value'
         labelField: 'name'
         searchField: 'name'
+        closeAfterSelect: true
         load: (query, callback) ->
           if send_data || !loaded
             url = fill_path+"?course_id="+courseId+"&q=" + encodeURIComponent(query)
