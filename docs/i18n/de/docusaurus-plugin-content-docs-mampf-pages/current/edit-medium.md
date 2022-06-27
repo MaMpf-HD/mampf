@@ -2,9 +2,7 @@
 title: Medium bearbeiten
 ---
 
-Auf der Seite „Medium bearbeiten“ können Vortragende und Editor\*innen Änderungen an einem [Medium](medium) vom Typ *Lektion*, *Worked Example*, *Übung*, *Wiederholung*, *Sonstiges* oder *Beispieldatenbank* vornehmen. Zur Bearbeitung der übrigen Medientypen siehe [Quiz bearbeiten](edit-quiz), [Frage bearbeiten](edit-medium-question), [Erläuterung bearbeiten](edit-medium-remark) und [Skript bearbeiten](ed-edit-manuscript). Dabei ist zu beachten, dass Vortragende nur Medien der Typen *Lektion*, *Worked Example*, *Übung*, *Wiederholung* und *Sonstiges* anlegen und bearbeiten können.
-
-\* Im Zuge eines Quiz' angelegte Fragen und Erläuterungen können Vortragende bearbeiten. Inkonstitent... \*
+Auf der Seite „Medium bearbeiten“ können Vortragende und Editor\*innen Änderungen an einem [Medium](medium) vom Typ *Lektion*, *Worked Example*, *Übung*, *Wiederholung*, *Sonstiges* oder *Beispieldatenbank* vornehmen. Zur Bearbeitung der übrigen Medientypen siehe [Quiz bearbeiten](edit-quiz), [Frage bearbeiten](edit-medium-question), [Erläuterung bearbeiten](edit-medium-remark) und [Skript bearbeiten](ed-edit-manuscript). Dabei ist zu beachten, dass Vortragende Skripte weder anlegen noch bearbeiten können.
 
 Auf der im Folgenden beschriebenen Seite können Vortragende Begriffe aus der MaMpf-Datenbank und eigene Dateien hinzufügen sowie den Beschreibungstext und den Öffentlichkeitsstatus des Mediums bearbeiten. Ferner können sie Videos mit dem [THymE-Editor](thyme-editor) mit einer Gliederung und Referenzen versehen. Editor\*innen können zudem neue Begriffe anlegen sowie Medien und Sitzungen (bei Vorlesungen) bzw. Vorträge (bei Seminaren) assoziieren. Die Unterschiede zwischen der Seite für Editor\*innen und der für Vortragende sind gering, daher werden die Seiten in diesem Artikel gemeinsam beschrieben, wobei jeweils auf die nutzertypspezifischen Besonderheiten eingegangen wird.
 
@@ -413,8 +411,8 @@ In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
 * <button>Datei <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button> Lösche die Datei. Dazu muss vorher eine Datei hochgeladen und diese Änderung gespeichert worden sein.
 * <a href="/mampf/de/docs/thyme-editor" target="_self"><button>Editor</button></a> Öffne den <a href="/mampf/de/docs/thyme-editor" target="_self">THymE-Editor</a>, um eine Videogliederung und Referenzen hinzuzufügen bzw. zu bearbeiten. Dazu muss ein Video hochgeladen und diese Änderung gespeichert worden sein.
 * <a href="/mampf/de/docs/thyme" target="_self"><button>THymE</button></a> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab. Dazu muss vorher ein Video hochgeladen und diese Änderung gespeichert worden sein.
-* <button>Screenshot</button> Öffne den Screenshot der ersten Seite des Dokuments. Dieser wird automatisch als Vorschaubild auf der <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a> und auf der <a href="/mampf/de/docs/medium" target="_self">Medienseite</a> in der Box „Manuskript“ angezeigt. Dazu muss vorher eine pdf-Datei hochgeladen und diese Änderung gespeichert worden sein.
-* <button>Ansehen</button> Öffne die pdf-Datei bzw. die ggb-Datei in einem neuen Tab. Dazu muss vorher eine pdf-Datei bzw. eine ggb-Datei hochgeladen und diese Änderung gespeichert worden sein.
+* <button>Screenshot</button> Öffne den Screenshot in einem Dialogfenster. Bei PDFs und Geogebra-Dateien werden die Screenshots automatisch erstellt werden und können nicht bearbeitet werden. Bei PDFs wird immer die erste Seite verwendet. Bei Videos hingegen kann der Screenshot nur selbstständig im THymE-Editor angefertigt werden. Die vorhandenen Screenshots werden als Vorschaubilder auf der <a href="/mampf/de/docs/medium" target="_self">Medienseite</a> in den Boxen „Video“, „Manuskript“ und  „Geogebra-Applet“ verwendet. Außerdem wird ein Screenshot auf der <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a> angezeigt. Dazu wird der Videoscreenshot verwendet, sofern es ihn gibt. Andernfalls wird der PDF-Screenshot angezeigt. Falls auch kein PDF-Screenshot vorhanden ist, erscheint der Geogebra-Screenshot. Falls kein Geogebra-Screenshot verfügbar ist, gibt es keinen Screenshot auf der Mediacard. Damit es den Button <button>Screenshot</button> gibt, muss vorher ein Video, ein PDF oder eine Geogebra-Datei hochgeladen und diese Änderung gespeichert worden sein. Bei Videos muss außerdem ein Screenshot im THymE-Editor gemacht worden sein.
+* <button>Ansehen</button> Öffne das PDF bzw. die ggb-Datei in einem neuen Tab. Dazu muss vorher ein PDF bzw. eine ggb-Datei hochgeladen und diese Änderung gespeichert worden sein.
 * <form>
      <p>
         <label for="fname">Externer Link</label><br></br>
@@ -433,7 +431,6 @@ In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
      </select><br></br>
   Dropdown-Menü zur Auswahl des Applettyps. Zur Auswahl stehen <i>classic</i>, <i>geometry</i>, <i>graphing</i> und <i>3d</i>.
 
-
 #### Statistik
 Die Aufruf- und Downloadstatistik öffnet sich, wenn man in der Box „Dokumente“ auf <button>Statistik</button> klickt. Dort werden Anzahl und Tag der Aufrufe und Downloads von Videos und PDFs graphisch dargestellt. In diesem Fenster gibt es nur den Button zum Schließen des Fensters. Dieser befindet sich in der oberen rechten Ecke.
 
@@ -443,7 +440,7 @@ Die Aufruf- und Downloadstatistik öffnet sich, wenn man in der Box „Dokumente
 Von der Seite „Medium bearbeiten“ aus gelangt man zu den Seiten „Seminar“ bzw. „Seminar bearbeiten“ oder „Vorlesung bearbeiten“, „Vortrag bearbeiten“ bzw. „Sitzung bearbeiten“ und der Medienseite. Außerdem errreicht man den THymE-Player und -Editor.
 
 ### [Seite des Seminars](seminar) (Vortragende)
-Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Zur Veranstaltung</button></a>.
+Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDFs, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Zur Veranstaltung</button></a>.
 
 ### Seite [„Seminar bearbeiten“](ed-edit-seminar) bzw. [„Vorlesung bearbeiten“](ed-edit-lecture) (Editor*innen)
 Auf diesen Seiten kann die jeweilige Veranstaltung bearbeitet werden. Dort können Medien angelegt werden, bei Vorlesungen außerdem Kapitel, Abschnitte und Sitzungen und bei Seminaren Vorträge. Ferner können dort weitere die Veranstaltung betreffende Einstellungen bearbeitet werden, etwa zu Tutorien und Tutor\*innen, Abgaben, Foren, Mitteilungen, Kommentaren, dem Infotext, der Veranstaltungssprache und dem Passwortschutz der Veranstaltung. Um auf diese Seite zu gelangen, klickt man auf <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button>Zur Veranstaltung</button></a>.

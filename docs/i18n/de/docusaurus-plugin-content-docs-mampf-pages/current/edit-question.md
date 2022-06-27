@@ -68,7 +68,14 @@ In der Box „Basisdaten“ können die Texte zur Frage und zu Lösungshinweisen
         <label for="fname">LaTeX</label><br></br>
         <input type="text" id="fname" name="fname"></input><br></br>
      </p>
-  </form> Eingabefeld für den Fragetext. Um LaTeX zu verwenden, setze den gewünschten Text zwischen $-Zeichen.
+  </form> Eingabefeld für den Fragetext. Um LaTeX zu verwenden, setze den gewünschten Text zwischen $-Zeichen. Beim Fragetyp <i>freie Antwort</i> können Parameter durch $&#92;para&#123;parameter,[start..stop]&#125;$ definiert werden. Der Parameter sollte in der Lösung vorkommen.  
+  <table>
+    <tr>
+       <td>
+          <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/frage_freie_antwort_parameter.png" width="850"/>
+       </td>
+    </tr>
+  </table>  
 * <form>
      Typ: <input type="radio" id="de" name="lang" checked></input>
      <label for="de"> Multiple Choice </label>
