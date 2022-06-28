@@ -4,7 +4,12 @@ title: Seiten für Vortragende
 
 In einem Proseminar, Seminar oder Oberseminar können einfache Nutzer\*innen zu Vortragenden befördert werden. Dadurch erhalten sie Bearbeitungsrechte für ihren Vortrag, die sie auf den folgenden Seiten ausüben können.
 
+## B
+* Bearbeiten: [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Medium](edit-medium), [Quiz](edit-quiz), [Vortrag](edit-talk)
+
 ## E
+* Editieren: [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Medium](edit-medium), [Quiz](edit-quiz), [Vortrag](edit-talk)
+* Editor: [Quizeditor](quiz-editor), [THymE-Editor](thyme-editor)
 * [Erläuterung bearbeiten](edit-medium-remark) (Medium) (nur eigene Erläuterungen)
 * [Erläuterung bearbeiten](edit-remark) (nur eigene Erläuterungen)
 

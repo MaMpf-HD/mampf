@@ -2,12 +2,12 @@
 title: THymE-Editor
 ---
 
-Mit dem THymE-Editor können Videos mit einer Gliederung und Referenzen versehen werden. Diese können nutzer\*innen dann bei Videobetrachtung mit [THymE](thyme), dem mampf-eigenen Hypermediaplayer, ein- und ausblenden.
+Mit dem THymE-Editor können Videos mit einer Gliederung und Referenzen versehen werden. Diese können Nutzer\*innen dann bei der Videobetrachtung mit [THymE](thyme), dem mampf-eigenen Hypermediaplayer, ein- und ausblenden.
 
 ![](/img/thyme_editor.png)
 
 ## Navigation zu dieser Seite
-Der THymE-Editor ist erreichbar über die Bearbeitungsseiten von Medien, zu denen ein Video hochgeladen worden ist. Dafür kommen die Seiten [„Medium bearbeiten“](edit-medium), [„Quiz bearbeiten“](edit-quiz), [„Frage bearbeiten“](edit-question) und [„Erläuterung bearbeiten“](edit-remark) infrage. Gibt es ein Video zum Medium, so befindet sich in der Box „Dokumente“ bei „Video“ der Button <button>Editor</button>, der zum Editor führt.
+Der THymE-Editor ist erreichbar über die Bearbeitungsseiten von Medien, zu denen ein Video hochgeladen worden ist. Dafür kommen die Seiten [„Medium bearbeiten“](edit-medium), [„Quiz bearbeiten“](edit-quiz), [„Frage bearbeiten“](edit-question) und [„Erläuterung bearbeiten“](edit-remark) infrage. Gibt es ein Video zum Medium, so befindet sich in der Box „Dokumente“ bei „Video“ der Button <button>Editor</button>, der zum THymE-Editor führt.
 
 ## Bereiche der Seite
 Der THymE-Editor gliedert sich in fünf Teilbereiche: das Bild mit Steuerleiste, den Aktionsbereich, das Inhaltsverzeichnis, die Referenzen und den Screenshot. Diese Bereich sind in den folgenden Screenshots eingezeichnet.
@@ -63,7 +63,7 @@ Oben links befindet sich die Steuerleiste mit Bild. Dort kann das Video abgespie
                 <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" height="12"/></button> Lege einen neuen Eintrag im Inhaltsverzeichnis an. Infolgedessen öffnet sich im Aktionsbereich die Bearbeitungsansicht „Eintrag anlegen“.
             </li>
             <li>
-                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="10"/></button> Lege eine neue Referenz an. Infolgedessen öffnet sich im Aktionsbereich die Bearbeitungsansicht „Referenu anlegen“.
+                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="10"/></button> Lege eine neue Referenz an. Infolgedessen öffnet sich im Aktionsbereich die Bearbeitungsansicht „Referenz anlegen“.
             </li>
             <li>
                 <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-a-photo.png" height="14"/></button> Speichere das aktuelle Videobild und verwende dieses als Vorschaubild. Das Bild wird daraufhin in der Box „Screenshot“ angezeigt und kann dort gelöscht werden.
@@ -80,7 +80,7 @@ Oben links befindet sich die Steuerleiste mit Bild. Dort kann das Video abgespie
 </table>
 
 ### Aktionsbereich
-Der Aktionsbereich befindet sich oben rechts. Er gliedert sich in einen Kopf und einen Rumpf. Im Kopf gibt es immer drei Buttons zur Navigation. Im Rumpf können Einträge des Inhaltsverzeichnisses und Referenzen angelegt und bearbeitet werden. Dieses Inhaltsverzeichnis wird auf der [Medienseite](medium) und bei Betrachtung des Videos im [THymE-Player](thyme) angezeigt, die Referenzen nur im THymE-Player. In Vorlesungen erscheint das Inhaltsverzeichnis bei Lektionen zudem auch auf [Seite der assoziierten Sitzung](session). Das Inhaltsverzeichnis wird auf allen Seiten immer vollständig angezeigt und im THymE-Player ist außerdem der derzeit abgespielte Eintrag hellblau eingefärbt. Die Referenzen hingegen werden im THymE-Player erst bei Erreichen ihrer Zeitmarke eingeblendet und sind dann zehn Sekunden lang orange.
+Der Aktionsbereich befindet sich oben rechts. Er gliedert sich in einen Kopf und einen Rumpf. Im Kopf gibt es immer drei Buttons zur Navigation. Im Rumpf können Einträge des Inhaltsverzeichnisses und Referenzen angelegt und bearbeitet werden. Dieses Inhaltsverzeichnis wird auf der [Medienseite](medium) und bei Betrachtung des Videos im [THymE-Player](thyme) angezeigt, die Referenzen nur im THymE-Player. In Vorlesungen erscheint das Inhaltsverzeichnis bei Lektionen zudem auch auf der [Seite der assoziierten Sitzung](session). Das Inhaltsverzeichnis wird auf allen Seiten immer vollständig angezeigt und im THymE-Player ist außerdem der derzeit abgespielte Eintrag hellblau eingefärbt. Die Referenzen hingegen werden im THymE-Player erst bei Erreichen ihrer Zeitmarke eingeblendet und sind dann zehn Sekunden lang orange.
 
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/inhalt_thyme.PNG" width="1000"/> |
 |:---: |
@@ -155,7 +155,7 @@ Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bea
         <label for="fname">Beschreibung bzw. Titel (bei Abschnitt und Kapitel) </label>
         <input type="text" id="fname" name="fname"></input>
      </p>
-  </form> Eingabefeld die Beschreibung bzw. den Titel des Eintrags. Dieses Feld ist optional.
+  </form> Eingabefeld für die Beschreibung bzw. den Titel des Eintrags. Dieses Feld ist optional.
 * <form>
      <p>
         <label for="fname">Seite im pdf </label>
@@ -167,7 +167,7 @@ Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bea
 * <button>Abbrechen</button> Beende die Aktion, ohne den Eintrag zu speichern.
 * <button>Löschen</button> (nicht beim Anlegen, nur beim Bearbeiten) Lösche den Eintrag. Dieser Button ist nur beim Bearbeiten eines Eintrags vorhanden. Beim Anlegen führt ein Abbruch dazu, dass der Eintrag nicht angelegt wird.
 
-Bei Betrachtung des Videos im THymE-Player wird der aktuelle Eintrag blau eingefärbt, alle anderen Einträge sind weiß. Im THymE-Editor sowie auf der Medien- und Sitzungsseite werden für die verschiedenen Typen immer Farben verwendet. Diese und weitere Besonderheiten der Darstellung sind in der nun folgenden Tabelle zusammengefasst.
+Bei Betrachtung des Videos im THymE-Player wird der aktuelle Eintrag blau eingefärbt, alle anderen Einträge sind weiß. Im THymE-Editor sowie auf der Medien- und Sitzungsseite werden für die verschiedenen Typen Farben verwendet. Diese und weitere Besonderheiten der Darstellung sind in der nun folgenden Tabelle zusammengefasst.
 
 | Typ | Bezeichung des Eingabefelds | Vergabe einer Nummer möglich | In der Gliederung verwendete Kurzform | In der Gliederung verwendete Farbe |
 |:---: | :---: | :---:| :---:| :---:|
@@ -226,12 +226,12 @@ Die standardmäßige Voreinstellung im Dropdown-Menü „Vorauswahl“ richtet s
      <option value="a">Veranstaltung (alle) x</option>
      <option value="b">Veranstaltung x</option>
      <option value="c">extern (alle) x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
 * Eintrag <label for="cars"></label>
   <select name="cars" id="cars">
      <option value="a">Medium x</option>
      <option value="b">Gliederungseintrag x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines Mediums und oder eines Gliederungseintrags.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines Mediums oder eines Gliederungseintrags. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
 * Medien: <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-pdf-regular.png" height="16"/></button>, <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/film-solid.png" height="12"/></button> und/oder <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="12"/></button> Öffne das Medium, auf das verwiesen wird.
 * zusätzliches Medium: <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-pdf-regular.png" height="16"/></button> (nur bei importierten Einträgen, d.h. Einträge aus Skripten, die mit dem MaMpf-Paket getext und deren Gliederungen von MaMpf importiert worden sind) Öffne das Skript, aus dem der Eintrag stammt.
 * <form>
@@ -249,11 +249,11 @@ Nachdem die Aktion „Referenz anlegen“ begonnen worden ist, wird im Aktionsbe
 
 ![](/img/referenz_default.png)
 
-Die standardmäßige Voreinstellung im Dropdown-Menü „Vorauswahl“ richtet sich nach der Ebene, auf der das bearbeitete Medium angesiedelt ist. Bei Medien auf Veranstaltungsebene ist die Veranstaltung vorausgewählt, bei Medien auf Modulebene sind es alle Veranstaltungen des Moduls. Um eine externe Referenz anzulegen, wählt man im Dropdown-Menü „Vorauswahl“ die Option „extern (alle)“. Daraufhin ändert sich die Nutzeroberfläche und sieht nun folgendermaßen aus:
+Die standardmäßige Voreinstellung im Dropdown-Menü „Vorauswahl“ richtet sich nach der Ebene, auf der das bearbeitete Medium angesiedelt ist. Bei Medien auf Veranstaltungsebene ist die Veranstaltung vorausgewählt, bei Medien auf Modulebene sind es alle Veranstaltungen des Moduls. Um eine externe Referenz im Video anzulegen, wählt man im Dropdown-Menü „Vorauswahl“ die Option „extern (alle)“. Daraufhin ändert sich die Nutzeroberfläche und sieht nun folgendermaßen aus:
 
 ![](/img/thyme_editor_referenz_anlegen.png)
 
-Nun kann entweder eine bereits vorhandene externe Referenz im Dropdown-Menü „Eintrag“ ausgewählt oder über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" height="12"/></button> eine neue Referenz angelegt werden. Zum Anlegen einer neuen Referenz öffnet sich das folgende Formular:  
+Nun kann entweder ein bereits vorhandener Eintrag im Dropdown-Menü „Eintrag“ ausgewählt oder über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" height="12"/></button> ein neuer Eintrag angelegt werden. Zum Anlegen eines neuen Eintrags öffnet sich das folgende Formular:  
 
 <table>
   <tr>
@@ -267,7 +267,7 @@ Nun kann entweder eine bereits vorhandene externe Referenz im Dropdown-Menü „
                      <label for="fname">Titel </label>
                      <input type="text" id="fname" name="fname"></input>
                  </p>
-                  </form> Eingabefeld für den Titel der neuen Referenz.
+                  </form> Eingabefeld für den Titel des neuen Eintrags.
              </li>
         </ul>
      </td>
@@ -288,20 +288,20 @@ Nun kann entweder eine bereits vorhandene externe Referenz im Dropdown-Menü „
                     <label for="fname">Erläuterung </label>
                     <input type="text" id="fname" name="fname"></input>
                  </p>
-                 </form> Eingabefeld für eine näherere Erläuterung der neuen Referenz.
+                 </form> Eingabefeld für eine näherere Erläuterung des neuen Eintrags.
             </li>
             <li>
-                <button>Speichern</button> Speichere die neue Referenz und schließe das Fenster.
+                <button>Speichern</button> Speichere den neuen Eintrag und schließe das Fenster.
             </li>
             <li>
-                <button>Abbrechen</button> Brich ab, ohne die Referenz zu speichern, und schließe das Fenster.
+                <button>Abbrechen</button> Brich ab, ohne den Eintrag zu speichern, und schließe das Fenster.
             </li>
         </ul>
      </td>
   </tr>
 </table>
 
-Nachdem eine bereits vorhandene externe Referenz im Dropdown-Menü „Eintrag“ ausgewählt oder mithilfe von obigem Formular eine neue externe Referenz angelegt worden ist, sind alle Bedienelemente verfügar:
+Nachdem ein bereits vorhandener Eintrag im Dropdown-Menü „Eintrag“ ausgewählt oder mithilfe von obigem Formular ein neuer Eintrag angelegt worden ist, sind alle Bedienelemente verfügar:
 
 ![](/img/thyme_editor_externe_referenz_bereits_verwendet.png)
 
@@ -324,14 +324,14 @@ Nachdem eine bereits vorhandene externe Referenz im Dropdown-Menü „Eintrag“
      <option value="c">extern (alle) x</option>
      <option value="a">Veranstaltung (alle) x</option>
      <option value="b">Veranstaltung x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen.
-* Vorauswahl <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" height="12"/></button> Öffne das Formular zum Anlegen einer neuen externen Referenz.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
+* Vorauswahl <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" height="12"/></button> Öffne das Formular zum Anlegen eines neuen Eintrags.
 * Eintrag <label for="cars"></label>
   <select name="cars" id="cars">
      <option value="a">Externe Referenz 1</option>
      <option value="b">Externe Referenz 2</option>
      <option value="c">Externe Referenz 3</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer bereits vorhandenen externen Referenz.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines bereits vorhandenen Eintrags.
 * <form>
      <p>
         <label for="fname">Titel </label>
@@ -358,12 +358,12 @@ Nachdem eine bereits vorhandene externe Referenz im Dropdown-Menü „Eintrag“
 Die gelb umkreisten Ausrufzeichen kommen nur bei Referenzen vor, die bereits an anderer Stelle verwendet werden. Änderungen an auf diese Weise gekennzeichneten Feldern sind global, d.h. sie werden überall, wo die Referenz gesetzt ist, realisiert.
 
 ### Gliederung
-Im Bereich „Gliederung“ werden alle bereits angelegten Einträge des Inhaltsvereichnisses angezeigt. Jeder Eintrag  ist ein Bedienelement. Wenn man einen Eintrag anklickt, öffnet sich dieser zur Bearbeitung im Aktionsbereich. Außerdem springt das Video an die Stelle, an der Eintrag beginnt.
+Im Bereich „Gliederung“ werden alle bereits angelegten Einträge des Inhaltsvereichnisses angezeigt. Jeder Eintrag  ist ein Bedienelement. Wenn man einen <button>Eintrag</button> anklickt, öffnet sich dieser zur Bearbeitung im Aktionsbereich. Außerdem springt das Video an die Stelle, an der Eintrag beginnt.
 
 ![](/img/thyme_editor_inhalt_cut.png)
 
 ### Referenzen
-Im Bereich „Referenz“ werden alle bereits angelegten Referenzen angezeigt. Jede Referenz ist ein Bedienelement. Wenn man eine Referenz anklickt, öffnet sich diese zur Bearbeitung im Aktionsbereich. Außerdem springt das Video an die Stelle, an der referenziert wird.
+Im Bereich „Referenz“ werden alle bereits angelegten Referenzen angezeigt. Jede Referenz ist ein Bedienelement. Wenn man eine <button>Referenz</button> anklickt, öffnet sich diese zur Bearbeitung im Aktionsbereich. Außerdem springt das Video an die Stelle, an der referenziert wird.
 
 ![](/img/thyme_editor_referenzen_cut.png)
 

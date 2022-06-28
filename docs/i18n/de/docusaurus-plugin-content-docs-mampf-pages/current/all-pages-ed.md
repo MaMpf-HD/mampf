@@ -9,8 +9,11 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 
 ## B
 * [Begriff bearbeiten](ed-edit-tag)
+* Bearbeiten: [Abschnitt](ed-edit-section), [Begriff](ed-edit-tag), [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Kapitel](ed-edit-chapter), [Medium](edit-medium), [Quiz](edit-quiz), [Seminar](ed-edit-seminar), [Sitzung](ed-edit-session), [Tag](ed-edit-tag), [Veranstaltung](ed-edit-event-series), [Vorlesung](ed-edit-lecture), [Vortrag](edit-talk)
 
 ## E
+* Editieren: [Abschnitt](ed-edit-section), [Begriff](ed-edit-tag), [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Kapitel](ed-edit-chapter), [Medium](edit-medium), [Quiz](edit-quiz), [Seminar](ed-edit-seminar), [Sitzung](ed-edit-session), [Tag](ed-edit-tag), [Veranstaltung](ed-edit-event-series), [Vorlesung](ed-edit-lecture), [Vortrag](edit-talk)
+* Editor: [Quizeditor](quiz-editor), [THymE-Editor](thyme-editor)
 * [Erläuterung bearbeiten](edit-medium-remark) (Medium)
 * [Erläuterung bearbeiten](edit-remark)
 
@@ -22,7 +25,7 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 * [Kapitel bearbeiten](ed-edit-chapter)
 
 ## M
-* [Medium bearbeiten](ed-edit-medium)
+* [Medium bearbeiten](edit-medium)
 * [Mein Profil](ed-profile)
 * [Modul bearbeiten](ed-edit-module) (nur bei Moduleditor*innen verfügbar)
 
@@ -45,6 +48,7 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 
 ## T
 * [Tag bearbeiten](ed-edit-tag)
+* [THymE-Editor](thyme-editor)
 
 ## U
 * [Übersicht](ed-overview)
