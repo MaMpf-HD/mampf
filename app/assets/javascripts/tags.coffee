@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   # fill courses selector in admin tag search with user's edited courses
   $('#tags-edited-courses').on 'click', ->
     search_course_ids.tomselect.setValue(JSON.parse(this.dataset.courses))
@@ -201,8 +201,8 @@ $(document).on 'turbolinks:load', ->
 
 
   return
-# clean up before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#new-tag-button'
   $(document).off 'change', '#tag_identified_tag_id'
   $(document).off 'click', '.cancel-section-association'

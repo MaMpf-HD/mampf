@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # restore site after editing of term was cancelled (via ajax)
   $(document).on 'click', '#cancel-term-edit', ->
@@ -14,7 +14,7 @@ $(document).on 'turbolinks:load', ->
     return
   return
 
-# clean up before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#cancel-term-edit'
   return

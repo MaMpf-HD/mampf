@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   clipboard = new Clipboard('.clipboard-btn')
 
   $(document).on 'click', '#removeUserManuscript', ->
@@ -21,8 +21,8 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up for turbolinks
-$(document).on 'turbolinks:before-cache', ->
+# clean up for turbo
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#removeUserManuscript'
   $(document).off 'click', '.clipboard-button'
   return

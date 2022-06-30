@@ -2,14 +2,14 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 	# show all active modals
 	$('.activeModal').modal('show')
 	# remove active status (this needs to be reestablished before caching)
 	$('.activeModal').removeClass('activeModal')
 	return
 
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
 	# if some modal is open
 	if $('body').hasClass('modal-open')
 		$('.modal.show').addClass('activeModal')

@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # toggle results display for answered questions in an active quiz
 
@@ -377,8 +377,8 @@ $(document).on 'turbolinks:load', ->
     $('.basicQuizButton').show()
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '[id^="toggle_results-"]'
   $(document).off 'click', '[id^="reveal-explanation-"]'
   $(document).off 'click', '[id^="reveal-hint-"]'

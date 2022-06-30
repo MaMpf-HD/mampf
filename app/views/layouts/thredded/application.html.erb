@@ -3,12 +3,12 @@
   <head>
     <title>Thredded | <%= yield :thredded_page_title %></title>
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <%= stylesheet_link_tag 'thredded', 'data-turbolinks-track': 'reload' %>
-    <%= stylesheet_link_tag 'thredded_katex', 'data-turbolinks-track': 'reload' %>
+    <%= stylesheet_link_tag 'thredded', 'data-turbo-track': 'reload' %>
+    <%= stylesheet_link_tag 'thredded_katex', 'data-turbo-track': 'reload' %>
     <%= csrf_meta_tag %>
     <%= javascript_include_tag 'thredded_timeago',
                                defer: true,
-                               'data-turbolinks-track': 'reload'%>
+                               'data-turbo-track': 'reload'%>
     <%== RailsGravatar.prefetch_dns_tag %>
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   </head>

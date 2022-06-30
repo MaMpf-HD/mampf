@@ -147,7 +147,7 @@ describe("Tutorials", () => {
                 cy.contains("Upload").click();
                 cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
-                cy.get('.correction-action-area > [data-turbolinks="false"]').should("exist");
+                cy.get('.correction-action-area > [data-turbo="false"]').should("exist");
             });
         });
         it("can move submission if tutor", () => {
@@ -259,7 +259,7 @@ describe("Tutorials", () => {
                 cy.contains("Upload").click();
                 cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
-                cy.get('.correction-action-area > [data-turbolinks="false"]').should("exist");
+                cy.get('.correction-action-area > [data-turbo="false"]').should("exist");
             });
         });
         it("can move submission", () => {

@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # if any input is given to the lesson form, issue a warning
   $(document).on 'change', '#section-form :input', ->
@@ -78,8 +78,8 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#section-form :input'
   $(document).off 'change', '#section_chapter_id'
   $(document).off 'click', '#cancel-section-edit'

@@ -1,7 +1,9 @@
 {
   "name": "mampf",
   "private": true,
+  "type": "module",
   "dependencies": {
+    "@hotwired/turbo-rails": "^7.1.3",
     "@rails/webpacker": "5.4.3",
     "@webpack-cli/serve": "^1.6.1",
     "coffee-loader": "^1.0.1",

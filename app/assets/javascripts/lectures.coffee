@@ -9,7 +9,7 @@ disableExceptOrganizational = ->
   $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
   return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # activate all popovers
   $('[data-toggle="popover"]').popover()
@@ -343,8 +343,8 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
   $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
   $(document).off 'change', '#lecture_course_id'

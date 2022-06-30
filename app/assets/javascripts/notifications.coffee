@@ -24,7 +24,7 @@ adjustNotificationCounter = (notificationId) ->
 			.append('</div>')
 	return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
 	# clean up after lecture notification is clicked away
 	$('.removeLectureNotification').on 'click', ->

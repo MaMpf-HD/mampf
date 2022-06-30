@@ -4,7 +4,7 @@
 
 # highlight 'Ungespeicherte Änderungen' if something is entered in remark basics
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'keyup', '#remark-basics-edit', ->
     $('#remark-basics-options').removeClass("no_display")
@@ -28,8 +28,8 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'keyup', '#remark-basics-edit'
   $(document).off 'change', '#remark-basics-edit'
   $(document).off 'click', '#remark-basics-cancel'

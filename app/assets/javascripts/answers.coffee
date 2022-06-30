@@ -4,7 +4,7 @@
 
 # change button 'Bearbeiten' to 'verwerfen' after answer body is revealed
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'shown.bs.collapse', '[id^="collapse-answer-"]', ->
     $target = $('#targets-answer-' + $(this).data('id'))
@@ -59,8 +59,8 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'shown.bs.collapse', '[id^="collapse-answer-"]'
   $(document).off 'hidden.bs.collapse', '[id^="collapse-answer-"]'
   $(document).off 'change', '[id^="answer-value-"]'

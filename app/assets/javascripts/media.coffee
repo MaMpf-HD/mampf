@@ -16,7 +16,7 @@ fancyTimeFormat = (time) ->
   output += '' + (if milli < 10 then '0' else '') + milli
   output
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # disable/enable search field on the media search page, depending on
   # whether 'all tags'/'all editors'/... are selected
@@ -388,7 +388,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#test-external-link'
   $(document).off 'click', '.timer'
   $(document).off 'click', '#export-toc'

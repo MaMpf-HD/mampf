@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # adjust which fields are shown depending on which item sort is selected
   # in the toc item edit view
@@ -87,7 +87,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#item_sort'
   $(document).off 'change', '#item_section_id'
   $(document).off 'change', '#item_pdf_destination'

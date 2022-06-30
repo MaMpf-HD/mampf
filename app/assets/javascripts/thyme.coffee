@@ -372,7 +372,7 @@ setupHypervideo = ->
       initialMetadata = false
   return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   thymeContainer = document.getElementById('thyme-container')
   # no need for thyme if no thyme container on the page
   return if thymeContainer == null

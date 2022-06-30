@@ -93,7 +93,7 @@ resetSelectized = (index, select) ->
 
 # before caching, destroy selectize forms and tranfer their content to
 # vanilla html
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $('.selectized').each resetSelectized
   return
 
@@ -101,6 +101,6 @@ $(document).on 'turbolinks:before-cache', ->
 # sometimes selectize miscalculates the width of the prompt,
 # making it look empty
 # brute force solution: set width to 100%
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   fillOptionsByAjax($('.selectize'))
   return

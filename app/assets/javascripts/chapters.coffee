@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # if form is changed, display warning that there are unsaved changes
   $(document).on 'change', '#chapter-form :input', ->
@@ -54,8 +54,8 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#chapter-form :input'
   $(document).off 'click', '#cancel-chapter-edit'
   return

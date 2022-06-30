@@ -181,7 +181,7 @@ cleanSolutionBox = ->
   $('#submit-solution').hide()
   return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'keyup', '#question-basics-edit', ->
     $('#question-basics-options').removeClass("no_display")
@@ -334,8 +334,8 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'keyup', '#question-basics-edit'
   $(document).off 'change', '#question-basics-edit :input'
   $(document).off 'click', '#question-basics-cancel'

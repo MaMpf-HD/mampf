@@ -17,7 +17,7 @@ dataURLtoBlob = (dataURL) ->
   # Return our Blob object
   new Blob([ new Uint8Array(array) ], type: 'image/png')
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   thymeEdit = document.getElementById('thyme-edit')
   return if thymeEdit == null
   mediumId = thymeEdit.dataset.medium

@@ -566,7 +566,6 @@ GEM
       sprockets-rails
       tilt
     select2-rails (4.0.13)
-    selectize-rails (0.12.6)
     selenium-webdriver (4.1.0)
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
@@ -625,9 +624,10 @@ GEM
     trix-rails (2.4.0)
       rails (> 4.1)
     ttfunk (1.7.0)
-    turbolinks (5.2.1)
-      turbolinks-source (~> 5.2)
-    turbolinks-source (5.2.0)
+    turbo-rails (1.1.1)
+      actionpack (>= 6.0.0)
+      activejob (>= 6.0.0)
+      railties (>= 6.0.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
@@ -719,6 +719,7 @@ DEPENDENCIES
   rails (~> 7.0.2.3)
   rails-erd
   rails-i18n
+  redis (~> 4.0)
   responders
   rgl
   rqrcode
@@ -746,7 +747,7 @@ DEPENDENCIES
   thredded!
   thredded-markdown_katex!
   trix-rails
-  turbolinks (~> 5)
+  turbo-rails
   uglifier
   web-console (>= 3.3.0)
   webdrivers

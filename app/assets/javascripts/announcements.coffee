@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'trix-change', '#announcement-details-trix', ->
     $('#announcement-details-preview').html($('#announcement-details-trix').html())
@@ -30,7 +30,7 @@ $(document).on 'turbolinks:load', ->
     return
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+# clean up everything before turbo caches
+$(document).on 'turbo:before-cache', ->
   $(document).off 'trix-change', '#announcement-details-trix'
   return

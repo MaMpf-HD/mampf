@@ -30,7 +30,7 @@ require(["jquery-datetimepicker"], function (es) {
 })
 
 
-document.addEventListener("turbolinks:load", function () {
+document.addEventListener("turbo:load", function () {
     // ...
 
     var doneCallback, element, options, widget;
