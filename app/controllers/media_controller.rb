@@ -239,13 +239,16 @@ class MediaController < ApplicationController
       return
     end
     if params[:destination].present?
-      redirect_to @medium.manuscript_url_with_host + '#' + params[:destination].to_s
+      redirect_to @medium.manuscript_url_with_host + '#' +
+                  params[:destination].to_s, allow_other_host: true
       return
     elsif params[:page].present?
-      redirect_to @medium.manuscript_url_with_host + '#page=' + params[:page].to_s
+      redirect_to @medium.manuscript_url_with_host + '#page=' +
+                  params[:page].to_s, allow_other_host: true
       return
     end
-    redirect_to @medium.manuscript_url_with_host
+    redirect_to @medium.manuscript_url_with_host,
+                allow_other_host: true
   end
 
   # run the geogebra applet using Geogebra's Javascript API
