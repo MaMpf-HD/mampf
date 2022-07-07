@@ -1,6 +1,6 @@
-# TermsController
+# UsersController
 class UsersController < ApplicationController
-  before_action :set_elevated_users, only: [:index, :list_generic_users]
+  before_action :set_elevated_users, only: %i[index list_generic_users]
   layout 'administration'
 
   def current_ability
@@ -13,12 +13,12 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find_by_id(params[:id])
+    @user = User.find_by(id: params[:id])
     authorize! :edit, @user
   end
 
   def update
-    @user = User.find_by_id(params[:id])
+    @user = User.find_by(id: params[:id])
     authorize! :update, @user
     old_image_data = @user.image_data
     @user.update(user_params)
@@ -39,6 +39,7 @@ class UsersController < ApplicationController
     @user = User.find(elevate_params[:id])
     admin = elevate_params[:admin] == '1'
     return unless admin
+
     # enforce a name
     if @user.name.blank?
       name = @user.email.split('@')[0]
@@ -55,19 +56,19 @@ class UsersController < ApplicationController
 
   def list_generic_users
     result = User.where.not(id: @elevated_users.pluck(:id))
-                 .map { |u| { value: u.id, text: u.info }}
+                 .map { |u| { value: u.id, text: u.info } }
     render json: result
   end
 
   def destroy
-    @user = User.find_by_id(params[:id])
+    @user = User.find_by(id: params[:id])
     authorize! :destroy, @user
     @user.destroy unless @user.admin || @user.editor? || @user.teacher?
     redirect_to users_path
   end
 
   def teacher
-    @teacher = User.find_by_id(params[:teacher_id])
+    @teacher = User.find_by(id: params[:teacher_id])
     authorize! :teacher, @teacher
     if @teacher.present? && @teacher.teacher?
       render layout: 'application'
@@ -79,8 +80,10 @@ class UsersController < ApplicationController
 
   def fill_user_select
     result = User.pluck(:name, :email, :id)
-                 .map { |u| { value: u.third,
-                              text: "#{u.first} (#{u.second})" } }
+                 .map do |u|
+      { value: u.third,
+        text: "#{u.first} (#{u.second})" }
+    end
     render json: result
   end
 
@@ -90,17 +93,17 @@ class UsersController < ApplicationController
 
   private
 
-  def elevate_params
-    params.require(:generic_user).permit(:id, :admin, :editor, :teacher, :name)
-  end
+    def elevate_params
+      params.require(:generic_user).permit(:id, :admin, :editor, :teacher, :name)
+    end
 
-  def user_params
-    params.require(:user).permit(:name, :email, :admin, :homepage,
-                                 :current_lecture_id,:image)
-  end
+    def user_params
+      params.require(:user).permit(:name, :email, :admin, :homepage,
+                                   :current_lecture_id, :image)
+    end
 
-  def set_elevated_users
-    @elevated_users = User.where(admin: true).or(User.proper_editors)
-                          .or(User.teachers)
-  end
+    def set_elevated_users
+      @elevated_users = User.where(admin: true).or(User.proper_editors)
+                            .or(User.teachers)
+    end
 end

@@ -12,7 +12,8 @@
       <%= f.label :title, t('basics.title') %>
       <%= helpdesk(t('admin.course.info.title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
-                                 id: 'new_course_title' } %>
+                                 id: 'new_course_title',
+                                 autocomplete: "off" } %>
       <div class="invalid-feedback"
            id="new-course-title-error">
       </div>
@@ -21,7 +22,8 @@
       <%= f.label :short_title, t('basics.short_title') %>
       <%= helpdesk(t('admin.course.info.short_title'), false) %>
       <%= f.text_field :short_title, { class: 'form-control',
-                                 id: 'new_course_short_title' } %>
+                                 id: 'new_course_short_title',
+                                 autocomplete: "off" } %>
       <div class="invalid-feedback"
            id="new-course-short-title-error">
       </div>
