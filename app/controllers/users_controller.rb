@@ -94,7 +94,8 @@ class UsersController < ApplicationController
   private
 
     def elevate_params
-      params.require(:generic_user).permit(:id, :admin, :editor, :teacher, :name)
+      params.require(:generic_user).permit(:id, :admin, :editor, :teacher,
+                                           :name)
     end
 
     def user_params

@@ -25,6 +25,20 @@ describe("Courses", function () {
                 cy.contains('Geometrie');
             })
         });
+        it("can remove tags from course", () => {
+            cy.appFactories([
+                ['create', 'course', 'with_tags']
+            ]).then((records) => {
+                cy.visit('/courses/1/edit');
+                cy.get('[data-value="1"] > .remove').click();
+                cy.get('[data-value="2"] > .remove').click();
+                cy.get('[data-value="3"] > .remove').click();
+                cy.contains("Speichern").click();
+                cy.get('[data-value="1"] > .remove').should("not.exist");
+                cy.get('[data-value="2"] > .remove').should("not.exist");
+                cy.get('[data-value="3"] > .remove').should("not.exist");
+            })
+        });
         it("can set editor in course", () => {
             cy.appFactories([
                 ['create', 'course']

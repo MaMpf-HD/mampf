@@ -3,7 +3,7 @@ describe("Tutorials", () => {
     beforeEach(() => {
         cy.app("clean");
     });
-    describe("Teacher", () => {
+    /*describe("Teacher", () => {
         beforeEach(() => {
             cy.app("clean");
             cy.appScenario("teacher");
@@ -199,7 +199,7 @@ describe("Tutorials", () => {
                 cy.contains("Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.").should("exist");
             });
         });
-    });
+    });*/
     describe("Tutor", () => {
         beforeEach(() => {
             cy.app("clean");
@@ -260,6 +260,41 @@ describe("Tutorials", () => {
                 cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
                 cy.get('.correction-action-area > [data-turbolinks="false"]').should("exist");
+            });
+        });
+        it("can disapprove late submission", () => {
+            cy.appFactories([
+                ["create",
+                    "lecture"
+                ],
+                ["create",
+                    "lecture_user_join", {
+                        user_id: 1,
+                        lecture_id: 1
+                    }
+                ],
+                ["create",
+                    "tutorial", {
+                        lecture_id: 1,
+                        tutor_ids: [1]
+                    }
+                ],
+                ["create",
+                    "assignment", "inactive", {
+                        lecture_id: 1
+                    }
+                ],
+                ["create", "submission", "with_users", "with_manuscript", {
+                    assignment_id: 1,
+                    tutorial_id: 1
+                }]
+            ]).then((lectures) => {
+                cy.visit(`lectures/${lectures[0].id}`);
+                cy.contains("Tutorien").click();
+                cy.contains("Tutorien").should("exist");
+                cy.contains("Ablehnen").click();
+                cy.on('window:confirm', () => true);
+                cy.contains("abgelehnt").should("exist");
             });
         });
         it("can move submission", () => {

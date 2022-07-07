@@ -50,51 +50,53 @@ class VerticesController < ApplicationController
 
   private
 
-  def set_values
-    @quiz_id = params[:quiz_id]
-    @quiz = Quiz.find_by_id(@quiz_id)
-    @params_v = params[:vertex]
-  end
-
-  def set_update_vertex_params
-    @vertex_id = @params_v[:vertex_id].to_i
-    @branching = {}
-    set_branching_hash
-    set_hide_array
-  end
-
-  def set_create_vertex_params
-    @sort = @params_v[:sort]
-    if @sort == 'import'
-      @quizzables = Medium.where(id: @params_v[:quizzable_ids],
-                                 type: ['Question', 'Remark'])
-      @success = @quizzables.any?
-    else
-      quizzable = @sort.constantize.create_prefilled(@params_v[:label],
-                                                      @quiz.teachable,
-                                                      @quiz.editors)
-      @success = quizzable.valid?
-      @quizzables = [quizzable]
+    def set_values
+      @quiz_id = params[:quiz_id]
+      @quiz = Quiz.find_by(id: @quiz_id)
+      @params_v = params[:vertex]
     end
-  end
 
-  def set_branching_hash
-    @branching = {}
-    @params_v.keys.select { |k| k.start_with?('branching-') }.each do |k|
-      next if @params_v[k].to_i == 0
-      @branching[k.remove('branching-').to_h] = [@vertex_id, @params_v[k].to_i]
+    def set_update_vertex_params
+      @vertex_id = @params_v[:vertex_id].to_i
+      @branching = {}
+      set_branching_hash
+      set_hide_array
     end
-  end
 
-  def set_hide_array
-    @hide = @params_v.keys.select { |k| k.start_with?('hide-') }
-                     .select { |h| @params_v[h] == '1' }
-                     .map { |h| h.remove('hide-').to_h }
-  end
+    def set_create_vertex_params
+      @sort = @params_v[:sort]
+      if @sort == 'import'
+        @quizzables = Medium.where(id: @params_v[:quizzable_ids],
+                                   type: %w[Question Remark])
+        @success = @quizzables.any?
+      else
+        quizzable = @sort.constantize.create_prefilled(@params_v[:label],
+                                                       @quiz.teachable,
+                                                       @quiz.editors)
+        @success = quizzable.valid?
+        @quizzables = [quizzable]
+      end
+    end
 
-  def check_permission
-    return if current_user.admin
-    return if current_user.can_edit?(@quiz)
-    redirect_to :root, alert: I18n.t('controllers.unauthorized')
-  end
+    def set_branching_hash
+      @branching = {}
+      @params_v.keys.select { |k| k.start_with?('branching-') }.each do |k|
+        next if @params_v[k].to_i.zero?
+
+        @branching[k.remove('branching-').to_h] = [@vertex_id, @params_v[k].to_i]
+      end
+    end
+
+    def set_hide_array
+      @hide = @params_v.keys.select { |k| k.start_with?('hide-') }
+                       .select { |h| @params_v[h] == '1' }
+                       .map { |h| h.remove('hide-').to_h }
+    end
+
+    def check_permission
+      return if current_user.admin
+      return if current_user.can_edit?(@quiz)
+
+      redirect_to :root, alert: I18n.t('controllers.unauthorized')
+    end
 end
