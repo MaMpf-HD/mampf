@@ -1,6 +1,4 @@
-console.log("HI2")
 $(document).on 'turbo:load', ->
-  console.log("HI")
 
   # disable active state for menu entries when submenus are triggered
   $('.dropdown-submenu > a').on 'click', (e) ->

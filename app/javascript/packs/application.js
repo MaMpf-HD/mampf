@@ -20,6 +20,7 @@ import css from 'jquery-datetimepicker/build/jquery.datetimepicker.min.css'
 //require('./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.min.css')
 import myLib from 'imports-loader?imports=default%20jquery%20$!./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
 import moment from "moment"; // require
+import "@hotwired/turbo-rails";
 window.moment = moment;
 import {
     WidgetInstance

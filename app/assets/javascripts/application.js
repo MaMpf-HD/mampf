@@ -22,7 +22,6 @@
 //= require trix
 //= require clipboard
 //= require _selectize_turbolinks_fix
-//= require @hotwired/turbo-rails
 //= require administration
 //= require announcements
 //= require answers
