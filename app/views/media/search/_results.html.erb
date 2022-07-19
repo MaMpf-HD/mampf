@@ -1,0 +1,50 @@
+<% if total.positive? %>
+  <div class="row mx-2 py-3">
+    <div class="col-12 col-lg-2">
+      <strong>
+        <%= t('basics.hits') %>:
+      </strong>
+      <%= total %>
+    </div>
+    <div class="col-12 col-lg-10">
+      <%= paginate media, remote: true %>
+    </div>
+  </div>
+  <% if @results_as_list %>
+    <%= render partial: 'media/search/list',
+              locals: { media: @media,
+                        total: @total,
+                        purpose: @purpose } %>
+  <% else %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6">
+      <% media.each do |medium| %>
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-2">
+          <%= render partial: 'media/medium',
+                    locals: { medium: medium,
+                              lecture: medium.lecture,
+                              from: 'media',
+                              ref_link: nil } %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= t('basics.no_hits') %>
+      <% if @similar_titles&.any? %>
+        <%= t('search.alternative') %>
+        <%= t('search.courses_with_similar_titles') %>
+        <% @similar_titles.each do |t| %>
+          <span class="badge badge-secondary clickable courseAlternativeSearch mr-1"
+                data-title="<%= t %>"
+                data-toggle="tooltip"
+                data-placement="bottom"
+                title="<%= t('search.click_and_paste') %>">
+            <%= t %>
+          </span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

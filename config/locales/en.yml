@@ -1917,6 +1917,7 @@ en:
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
     my_talks: My talks
+    media_search: Search media
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'

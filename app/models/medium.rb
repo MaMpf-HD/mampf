@@ -316,6 +316,14 @@ class Medium < ApplicationRecord
     search
   end
 
+  def self.similar_courses(search_string)
+    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
+    titles = Medium.pluck(:description)
+    titles.select do |t|
+      jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
+    end
+  end
+
   def restricted?
     return false unless teachable
     teachable.restricted?
@@ -1110,4 +1118,5 @@ class Medium < ApplicationRecord
     return -1 unless type == 'Question'
     becomes(Question).answers.count
   end
+  
 end

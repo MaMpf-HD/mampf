@@ -214,10 +214,14 @@ class MediaController < ApplicationController
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
     @purpose = search_params[:purpose]
+    @results_as_list = search_params[:results_as_list] == 'true'
     if @purpose.in?(['quiz', 'import'])
       render template: "media/catalog/import_preview"
       return
     end
+    return unless @total.zero?
+    return unless search_params[:fulltext]&.length.to_i > 1
+    @similar_titles = Medium.similar_courses(search_params[:fulltext])
   end
 
   # play the video using thyme player
@@ -606,14 +610,18 @@ class MediaController < ApplicationController
     types -= [''] if types
     types = nil if types == []
     params[:search][:types] = types
-    params.require(:search).permit(:all_types, :all_teachables, :all_tags,
-                                   :all_editors, :tag_operator, :quiz, :access,
-                                   :teachable_inheritance, :fulltext, :per,
-                                   :clicker, :purpose, :answers_count,
-                                   types: [],
-                                   teachable_ids: [],
-                                   tag_ids: [],
-                                   editor_ids: [])
+    params.require(:search)
+          .permit(:all_types, :all_teachables, :all_tags,
+                  :all_editors, :tag_operator, :quiz, :access,
+                  :teachable_inheritance, :fulltext, :per,
+                  :clicker, :purpose, :answers_count,
+                  :results_as_list,
+                  types: [],
+                  teachable_ids: [],
+                  tag_ids: [],
+                  editor_ids: [])
+          .with_defaults(access: 'all')
+                
   end
 
   # destroy all notifications related to this medium

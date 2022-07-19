@@ -142,19 +142,6 @@
                         id: 'media_fulltext',
                         class: 'form-control' %>
     </div>
-    <div class="col-6 col-lg-3 form-.group">
-      <%= f.label :access, t('basics.access_rights') %>
-      <%= f.select :access,
-                   options_for_select([[t('access.irrelevant'), 'irrelevant'],
-                                       [t('access.all'), 'all'],
-                                       [t('access.users'), 'users'],
-                                       [t('access.subscribers'), 'subscribers'],
-                                       [t('access.locked'), 'locked'],
-                                       [t('access.unpublished'), 'unpublished']],
-                                       ['irrelevant']),
-                   {},
-                   { class: 'form-control'} %>
-    </div>
     <% unless purpose == 'import' %>
       <div class="col-6 col-lg-3 form-group">
         <%= f.label :answers_count, t('basics.answer_count') %>
@@ -171,7 +158,8 @@
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
-                   options_for_select([[10,10],[20,20],[50,50]],[10]),
+                   options_for_select(hits_per_page(results_as_list),
+                                      default_hits_per_page(results_as_list)),
                    {},
                    { id: 'media_per',
                      class: 'form-control'} %>
@@ -180,7 +168,7 @@
   </div>
   <%= f.hidden_field :purpose, value: purpose %>
   <%= f.hidden_field :results_as_list,
-                     value: 'true' %>
+                     value: 'false' %>
   <div class="row mb-3">
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),

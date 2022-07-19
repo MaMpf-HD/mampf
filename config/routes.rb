@@ -219,7 +219,7 @@ Rails.application.routes.draw do
 
   get 'lectures/search',
       to: 'lectures#search',
-      as: 'search_lectures'
+      as: 'lecture_search'
 
   get 'lectures/:id/display_course',
       to: 'lectures#display_course',
