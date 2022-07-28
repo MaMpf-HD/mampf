@@ -61,6 +61,16 @@ GIT
     activerecord-import (1.4.0)
       activerecord (>= 4.2)
 
+GIT
+  remote: https://github.com/zebleck/commontator.git
+  revision: 0fb3a3a37a955076c8e882cb71978c51d1c455d7
+  branch: main
+  specs:
+    commontator (7.0.0)
+      rails (>= 6.0)
+      sprockets-rails
+      will_paginate
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -187,10 +197,6 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    commontator (7.0.0)
-      rails (>= 6.0)
-      sprockets-rails
-      will_paginate
     concurrent-ruby (1.1.10)
     connection_pool (2.2.5)
     content_disposition (1.0.0)
@@ -662,7 +668,7 @@ DEPENDENCIES
   cancancan
   clipboard-rails
   coffee-rails (~> 5.0.0)
-  commontator
+  commontator!
   coveralls
   cypress-on-rails (~> 1.0)
   dalli (>= 2.7)
