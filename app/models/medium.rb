@@ -187,6 +187,10 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except('RandomQuiz').map { |k, v| [v, k] }
   end
 
+  def self.select_sorts_for_normal_user_search
+    Medium.sort_localized.except('RandomQuiz', 'Question', 'Remark', 'Erdbeere').map { |k, v| [v, k] }
+  end
+
   def self.select_quizzables
     Medium.sort_localized.slice('Question', 'Remark').map { |k, v| [v, k] }
   end

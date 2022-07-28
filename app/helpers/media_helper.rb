@@ -102,6 +102,7 @@ module MediaHelper
     return add_prompt(Medium.select_quizzables) if purpose == 'quiz'
     return Medium.select_question if purpose == 'clicker'
     return add_prompt(Medium.select_importables) if purpose == 'import'
+    return add_prompt(Medium.select_sorts_for_normal_user_search) if !current_user.admin?
     add_prompt(Medium.select_sorts)
   end
 
