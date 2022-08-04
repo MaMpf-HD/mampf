@@ -16,6 +16,9 @@ resetSelectized = (index, select) ->
 
 @fillOptionsByAjax = ($selectizedSelection)->
   $selectizedSelection.each ->
+    console.log 'Here'
+    console.log this
+    console.log this.dataset.ajax
     if this.dataset.drag == 'true'
       plugins = ['remove_button', 'drag_drop']
     else
@@ -94,7 +97,7 @@ resetSelectized = (index, select) ->
 # before caching, destroy selectize forms and tranfer their content to
 # vanilla html
 $(document).on 'turbolinks:before-cache', ->
-  $('.selectized').each resetSelectized
+  $('.tomselected').each resetSelectized
   return
 
 # bugfix
