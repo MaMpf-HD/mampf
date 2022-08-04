@@ -81,7 +81,6 @@ resetSelectized = (index, select) ->
               '<span class="title">' + escape(data.name) + '</span>' +
             '</div>'
           item: (item, escape) ->
-            console.log(item)
             return '<div title="' + escape(item.name) + '">' + escape(item.name) + '</div>'
       )
       return
@@ -96,10 +95,6 @@ $(document).on 'turbolinks:before-cache', ->
   $('.tomselected').each resetSelectized
   return
 
-# bugfix
-# sometimes selectize miscalculates the width of the prompt,
-# making it look empty
-# brute force solution: set width to 100%
 $(document).on 'turbolinks:load', ->
   fillOptionsByAjax($('.selectize'))
   return
