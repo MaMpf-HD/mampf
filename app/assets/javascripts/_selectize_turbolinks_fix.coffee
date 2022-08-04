@@ -16,9 +16,6 @@ resetSelectized = (index, select) ->
 
 @fillOptionsByAjax = ($selectizedSelection)->
   $selectizedSelection.each ->
-    console.log 'Here'
-    console.log this
-    console.log this.dataset.ajax
     if this.dataset.drag == 'true'
       plugins = ['remove_button', 'drag_drop']
     else
@@ -90,7 +87,6 @@ resetSelectized = (index, select) ->
       return
     else
       new TomSelect("#"+this.id,{ plugins: plugins })
-    $('input[id$="-selectized"]').css('width', '100%')
   return
 
 
