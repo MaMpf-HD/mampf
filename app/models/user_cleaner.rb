@@ -1,6 +1,6 @@
 # PORO class that removes users with inactive emails
 class UserCleaner
-  attr_accessor :email_dict
+  attr_accessor :email_dict, :imap
 
   def login
     @imap = Net::IMAP.new(ENV['IMAPSERVER'], port: 993, ssl: true)
@@ -12,8 +12,6 @@ class UserCleaner
   end
 
   def search_emails
-    login
-
     @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
     @imap.search(['SUBJECT', 'Undelivered Mail Returned to Sender']).each do |message_id|
       body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
@@ -31,8 +29,22 @@ class UserCleaner
         end
       end
     end
+  end
 
-    logout
+  def hash_based_deletion
+    @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
+    @imap.search(['SUBJECT', 'Ghost']).each do |message_id|
+      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
+      mail = body.split("\n").first
+      hash = body.split("\n").last
+
+      u = User.find_by(email: mail, ghost_hash: hash)
+      if u&.generic?
+        u.destroy!
+      end
+
+      move_mail(message_id)
+    end
   end
 
   def add_mail(email, message_id)
@@ -46,7 +58,17 @@ class UserCleaner
     end
   end
 
-  def destroy_users
+  def send_hashes
+    @emails = @email_dict.keys
+    @users = User.where(email: @emails)
+
+    @users.each do |user|
+      user.update(ghost_hash: Digest::SHA256.hexdigest(Time.now.to_i.to_s))
+      MathiMailer.ghost_email(user).deliver_now
+    end
+  end
+
+  '''def destroy_users
     @emails = @email_dict.keys
     @users = User.where(email: @emails)
     @present_emails = @users.pluck(:email)
@@ -55,30 +77,31 @@ class UserCleaner
 
     return if @present_emails.blank?
     message_ids = @email_dict.values_at(*@present_emails).flatten(1).uniq
-    move_mails(message_ids)
-  end
+    move_mail(message_ids)
+  end'''
 
-  def move_mails(message_ids, attempt=0)
+  def move_mail(message_ids, attempt=0)
     return if message_ids.blank?
+    message_ids = Array(message_ids)
     if attempt>3
-      logout
       return
     end
 
-    login
     begin
       @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
       @imap.move(message_ids, "Other Users/mampf/handled_bounces")
     rescue Net::IMAP::BadResponseError
-      move_mails(message_ids, attempt=attempt+1)
-      return
+      move_mail(message_ids, attempt=attempt+1)
     end
-    logout
   end
 
   def clean!
+    login
     search_emails
-    destroy_users
+    return if @email_dict.blank?
+    send_hashes
+    hash_based_deletion
+    logout
   end
 
 end
