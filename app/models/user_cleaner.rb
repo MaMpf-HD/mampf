@@ -104,6 +104,7 @@ class UserCleaner
     search_emails
     return if @email_dict.blank?
     send_hashes
+    sleep(10)
     hash_based_deletion
     logout
   end
