@@ -35,8 +35,12 @@ class UserCleaner
     @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
     @imap.search(['SUBJECT', 'Ghost']).each do |message_id|
       body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
-      mail = body.split("\n").first
-      hash = body.split("\n").last
+      begin
+        mail = body.match(/<p>(.*)<br>/).captures
+        hash = body.match(/<br>\r\n(.*)<\/p>/).captures
+      rescue
+        next
+      end
 
       u = User.find_by(email: mail, ghost_hash: hash)
       if u&.generic?
