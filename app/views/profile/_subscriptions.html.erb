@@ -36,7 +36,8 @@
   <div class="accordion col-12"
        id="subscriptionsAccordion">
     <% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
-              .select { |p| p.courses.any? }.each do |p| %>
+              .select { |p| p.courses.any? }.natural_sort_by(&:name_with_subject)
+              .each do |p| %>
       <div class="card">
         <div class="card-header clickable"
              data-toggle="collapse"
