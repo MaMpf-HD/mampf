@@ -1195,6 +1195,14 @@ en:
           Note that every medium has at least one editor. If the "all-checkbox"
           is deselected and no editor is selected, the search will yield no
           results.
+        search_teachers: >
+          Here you can select the teacher of the medium (in the sense of
+            <i>
+            OR
+            </i>
+            ).
+            If the "all-checkbox" is deselected and no teacher is selected,
+            the search will yield no results.
         search_fulltext: >
           Here you can enter text that will be searched for in the fields
           description, question text, remark text, answer text.

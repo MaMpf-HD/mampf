@@ -1267,6 +1267,14 @@ de:
           Beachte, dass jedes Medium mindestens eine EditorIn hat.
           Ist die "alle"-Checkbox deaktiviert und keine EditorIn ausgewählt,
           wird die Suche keine Treffer liefern.
+        search_teachers: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, wer DozentIn des Mediums sein soll.
+          Ist die "alle"-Checkbox deaktiviert und niemand als DozentIn ausgewählt,
+          wird die Suche keine Treffer liefern.
         search_fulltext: >
           Hier kannst Du Text eingeben, nach dem in den Feldern Beschreibung,
           Fragen- bzw. Antworttext sowie Bemerkungstext gesucht wird.
