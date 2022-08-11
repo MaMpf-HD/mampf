@@ -2826,7 +2826,8 @@ en:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
     manuscript_access: 'Accesses'
-    quiz: 'complete accesses'
+    quiz_access: 'Accessses'
+    quiz_full_access: 'Finished runs'
     median: 'Median'
     lower_quartile: 'Lower Quartile (correctly answered questions)'
     upper_quartile: 'Upper Quartile (correctly answered questions)'
@@ -2835,9 +2836,15 @@ en:
     question_details: 'Detailled statistics for questions'
     no_question_statistics: >
       For this question, there no data available yet.
+    number_of_users: 'Number of users'
     number_of_correct_answers: >
-      number of correctly answered questions
-    number_of_users: 'Anzahl der Nutzerinnen'
+      Number of correctly answered questions
+    calls: 'Call statistics'
+    success: 'Success statistics'
+    no_finishes_yet: 'The quiz was not finished by anyone yet.'
+    date: 'Date'
+    count: 'Count'
+    plays: 'Plays'
   erdbeere:
     show_structures: 'Structures, properties and examples'
     select_structures: Select Structures

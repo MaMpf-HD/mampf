@@ -3001,7 +3001,8 @@ de:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
     manuscript_access: 'Zugriffe'
-    quiz: 'vollständige Zugriffe'
+    quiz_access: 'Aufrufe'
+    quiz_full_access: 'beendete Durchläufe'
     median: 'Median'
     lower_quartile: 'Unteres Quartil'
     upper_quartile: 'Oberes Quartil'
@@ -3013,6 +3014,12 @@ de:
     number_of_users: 'Anzahl der Nutzerinnen'
     number_of_correct_answers: >
       Anzahl der korrekt beantworteten Fragen
+    calls: 'Aufrufstatistik'
+    success: 'Erfolgsstatistik'
+    no_finishes_yet: 'Das Quiz wurde bis jetzt von niemandem beendet.'
+    date: 'Datum'
+    count: 'Anzahl'
+    plays: 'Aufrufe'
   erdbeere:
     show_structures: Strukturen, Eigenschaften und Beispiele
     select_structures: Strukturen auswählen

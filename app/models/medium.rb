@@ -954,6 +954,10 @@ class Medium < ApplicationRecord
     end
   end
 
+  def collects_statistics
+    video.present? || manuscript.present? || sort == 'Quiz'
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require
