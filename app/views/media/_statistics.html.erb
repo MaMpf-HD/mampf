@@ -6,18 +6,18 @@
       </strong>
       <div class="row">
         <div class="col-6 text-right">
-        <%= t('statistics.quiz_access') %>
+          <%= t('statistics.quiz_access') %>
         </div>
         <div class="col-6 text-left">
-        <span id="quizCount"><%= quiz_plays_count %></span>
+          <span id="quizCount"><%= quiz_plays_count %></span>
         </div>
       </div>
       <div class="row">
         <div class="col-6 text-right">
-        <%= t('statistics.quiz_full_access') %>
+          <%= t('statistics.quiz_full_access') %>
         </div>
         <div class="col-6 text-left">
-        <span id="quizFinishedCount"><%= quiz_finished_count %></span>
+          <span id="quizFinishedCount"><%= quiz_finished_count %></span>
         </div>
       </div>
       <div style="height: 20vh">
@@ -35,18 +35,18 @@
       </strong>
       <div class="row">
         <div class="col-6 text-right">
-        <%= t('statistics.video_thyme') %>
+          <%= t('statistics.video_thyme') %>
         </div>
         <div class="col-6 text-left">
-        <span id="videoCount"><%= @video_thyme_count %></span>
+          <span id="videoCount"><%= @video_thyme_count %></span>
         </div>
       </div>
       <div class="row">
         <div class="col-6 text-right">
-        <%= t('statistics.video_downloads') %>
+          <%= t('statistics.video_downloads') %>
         </div>
         <div class="col-6 text-left">
-        <span id="downloadCount"><%= @video_downloads_count %></span>
+          <span id="downloadCount"><%= @video_downloads_count %></span>
         </div>
       </div>
       <div style="height: 20vh">
@@ -64,16 +64,16 @@
       </strong>
       <div class="row">
         <div class="col-6 text-right">
-        <%= t('statistics.manuscript_access') %>
+          <%= t('statistics.manuscript_access') %>
         </div>
         <div class="col-6 text-left">
-        <span id="manuscriptCount"><%= @manuscript_access_count %></span>
+          <span id="manuscriptCount"><%= @manuscript_access_count %></span>
         </div>
       </div>
-    <div style="height: 20vh">
-      <canvas id="manuscriptStats" >
-      </canvas>
-    </div>
+      <div style="height: 20vh">
+        <canvas id="manuscriptStats" >
+        </canvas>
+      </div>
     </div>
   </div>
 <% end %>

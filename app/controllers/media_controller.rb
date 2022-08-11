@@ -359,6 +359,7 @@ class MediaController < ApplicationController
   end
 
   def get_statistics
+    I18n.locale = @medium.locale || I18n.default_locale
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption.where(sort: 'video',

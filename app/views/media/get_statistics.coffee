@@ -44,14 +44,18 @@ myChart = new Chart(ctx,
     responsive: true
     maintainAspectRatio: false
     scales:
-      xAxes:
-        [scaleLabel:
-          labelString: '<%= t("statistics.number_of_correct_answers") %>'
-          display: true]
-      yAxes:
-        [ticks:
-          beginAtZero: true
-          precision: 0] )
+      x:
+        title:
+          display: true
+          text: '<%= t("statistics.number_of_correct_answers") %>'
+        ticks:
+          precision: 0
+      y:
+        title:
+          display: true
+          text: '<%= t("statistics.count") %>'
+        ticks:
+          precision: 0 )
 
 ctx = $('#quizStats')
 data2=  <%= raw @quiz_plays %> || []
