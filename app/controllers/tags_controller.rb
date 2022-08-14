@@ -121,6 +121,17 @@ class TagsController < ApplicationController
     if params[:locale].in?(I18n.available_locales.map(&:to_s))
       I18n.locale = params[:locale]
     end
+    if params[:q]
+      search = Sunspot.new_search(Tag)
+      search.build do
+        fulltext params[:q]
+      end
+      search.execute
+      result = search.results.map { |t| { value: t.id, text: t.title } }
+      pp result
+      render json: result
+      return
+    end
     result = Tag.select_by_title_cached
     render json: result
   end

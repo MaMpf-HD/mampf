@@ -29,6 +29,7 @@ resetSelectized = (index, select) ->
       if this.dataset.model == 'tag'
         locale = this.dataset.locale
         fill_path = Routes.fill_tag_select_path({locale: locale})
+        send_data = true
       else if this.dataset.model == 'user'
         fill_path = Routes.fill_user_select_path()
         send_data = true
