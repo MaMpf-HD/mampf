@@ -144,8 +144,8 @@ class User < ApplicationRecord
   # array of all users together with their ids for use in options_for_select
   # (e.g. in a select editors form)
   def self.select_editors
-    User.pluck(:name, :email, :id)
-        .map { |u| [ "#{u.first} (#{u.second})", u.third] }
+    User.pluck(:name, :email, :id, :name_in_tutorials)
+        .map { |u| [ "#{u.fourth || u.first} (#{u.second})", u.third] }
   end
 
   def self.name_or_email_like(search_string)
@@ -168,9 +168,8 @@ class User < ApplicationRecord
 
   def self.values_for_select
     pluck(:id, :name, :name_in_tutorials, :email)
-                   .map { |u| { value: u.first,
-                                text: "#{ u.third || u.second } "\
-                                      "(#{u.fourth})" } }
+      .map { |u| { value: u.first,
+                   text: "#{ u.third || u.second } (#{u.fourth})" } }
   end
 
   def courses
@@ -303,7 +302,7 @@ class User < ApplicationRecord
 
   def info_uncached
     return email unless name.present?
-    name + ' (' + email + ')'
+    (name_in_tutorials || name) + ' (' + email + ')'
   end
 
   def info
