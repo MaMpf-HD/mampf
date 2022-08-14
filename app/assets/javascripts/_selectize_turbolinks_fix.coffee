@@ -41,21 +41,6 @@ resetSelectized = (index, select) ->
       else if this.dataset.model == 'course_tag'
         courseId = this.dataset.course
         fill_path = Routes.fill_course_tags_path()
-      # $.ajax fill_path,
-      #   type: 'GET'
-      #   dataType: 'json'
-      #   data: {
-      #     course_id: courseId
-      #   }
-      #   success: (result) ->
-      #     for option in result
-      #       if option.value.toString() not in existing_values
-      #         new_option = document.createElement('option')
-      #         new_option.value = option.value
-      #         new_option.text = option.text
-      #         model_select.add(new_option, null)
-      #     model_select.dataset.filled = 'true'
-      #     console.log(Routes)
       new TomSelect("#"+model_select.id,
         plugins: plugins
         valueField: 'value'

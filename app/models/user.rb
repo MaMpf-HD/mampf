@@ -94,6 +94,8 @@ class User < ApplicationRecord
         -> { where(email_for_correction_upload: true) }
   scope :email_for_submission_decision,
         -> { where(email_for_submission_decision: true) }
+  scope :no_tutorial_name,
+        -> { where(name_in_tutorials: nil) }
 
   searchable do
     text :tutorial_name
@@ -144,6 +146,31 @@ class User < ApplicationRecord
   def self.select_editors
     User.pluck(:name, :email, :id)
         .map { |u| [ "#{u.first} (#{u.second})", u.third] }
+  end
+
+  def self.name_or_email_like(search_string)
+    where("name ILIKE ? OR email ILIKE ?",
+          "%#{search_string}%",
+          "%#{search_string}%")
+  end
+
+  def self.name_in_tutorials_or_email_like(search_string)
+    where("name_in_tutorials ILIKE ? OR email ILIKE ?",
+          "%#{search_string}%",
+          "%#{search_string}%")
+  end
+
+  def self.preferred_name_or_email_like(search_string)
+    where(name_in_tutorials: nil).name_or_email_like(search_string)
+      .or(where.not(name_in_tutorials: nil)
+               .name_in_tutorials_or_email_like(search_string))
+  end
+
+  def self.values_for_select
+    pluck(:id, :name, :name_in_tutorials, :email)
+                   .map { |u| { value: u.first,
+                                text: "#{ u.third || u.second } "\
+                                      "(#{u.fourth})" } }
   end
 
   def courses
