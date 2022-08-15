@@ -161,6 +161,9 @@ class User < ApplicationRecord
   end
 
   def self.preferred_name_or_email_like(search_string)
+    return User.none unless search_string
+    return User.none unless search_string.length >= 2
+
     where(name_in_tutorials: nil).name_or_email_like(search_string)
       .or(where.not(name_in_tutorials: nil)
                .name_in_tutorials_or_email_like(search_string))

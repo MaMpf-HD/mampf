@@ -131,6 +131,19 @@ class Tag < ApplicationRecord
     notions.map { |n| [n.locale, n.title] }.to_h
   end
 
+  def self.select_with_substring(search_string)
+    return {} unless search_string
+    return {} unless search_string.length >= 2
+
+    search = Sunspot.new_search(Tag)
+    search.build do
+      fulltext search_string
+    end
+    search.execute
+    result = search.results.map { |t| { value: t.id, text: t.title } }
+  end
+
+
   # returns all tags whose title is close to the given search string
   # wrt to the JaroWinkler metric
   def self.similar_tags(search_string)

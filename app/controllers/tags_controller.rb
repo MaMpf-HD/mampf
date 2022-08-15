@@ -122,13 +122,7 @@ class TagsController < ApplicationController
       I18n.locale = params[:locale]
     end
     if params[:q]
-      search = Sunspot.new_search(Tag)
-      search.build do
-        fulltext params[:q]
-      end
-      search.execute
-      result = search.results.map { |t| { value: t.id, text: t.title } }
-      pp result
+      result = Tag.select_with_substring(params[:q])
       render json: result
       return
     end
