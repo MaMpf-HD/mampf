@@ -35,6 +35,7 @@ this.fillOptionsByAjax = function($selectizedSelection) {
     if (this.dataset.ajax === 'true' && this.dataset.filled === 'false') {
       model_select = this;
       courseId = 0;
+      placeholder = this.dataset.placeholder
       existing_values = Array.apply(null, model_select.options).map(function(o) {
         return o.value;
       });
@@ -78,6 +79,8 @@ this.fillOptionsByAjax = function($selectizedSelection) {
         valueField: 'value',
         labelField: 'name',
         searchField: 'name',
+        sortField:[{field:'$order'},{field:'$score'}],
+        placeholder: placeholder,
         closeAfterSelect: true,
         load: function(query, callback) {
           var url;

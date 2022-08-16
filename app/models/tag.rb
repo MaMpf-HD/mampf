@@ -140,7 +140,8 @@ class Tag < ApplicationRecord
       fulltext search_string
     end
     search.execute
-    result = search.results.map { |t| { value: t.id, text: t.title } }
+    result = search.results.natural_sort_by(&:title)
+                   .map { |t| { value: t.id, text: t.title } }
   end
 
 

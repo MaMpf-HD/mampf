@@ -171,8 +171,10 @@ class User < ApplicationRecord
 
   def self.values_for_select
     pluck(:id, :name, :name_in_tutorials, :email)
+      .map { |u| [u.first, "#{ u.third || u.second } (#{u.fourth})"] }
+      .natural_sort_by(&:second)
       .map { |u| { value: u.first,
-                   text: "#{ u.third || u.second } (#{u.fourth})" } }
+                   text: u.second } }
   end
 
   def courses
