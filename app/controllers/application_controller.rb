@@ -15,14 +15,25 @@ class ApplicationController < ActionController::Base
       return super
     end
     @current_user ||= super.tap do |user|
-      ::ActiveRecord::Associations::Preloader.new
-                                             .preload(user, [:lectures,
-                                                             :edited_media,
-                                                             :clickers,
-                                                             edited_courses: [:editors, lectures: [:term, :teacher]],
-                                                             edited_lectures: [:course, :term, :teacher],
-                                                             given_lectures: [:course, :term, :teacher],
-                                                             notifications: [:notifiable]])
+      ::ActiveRecord::Associations::Preloader.new(records: [user],
+                                                  associations:
+                                                    [:lectures,
+                                                     :edited_media,
+                                                     :clickers,
+                                                     edited_courses:
+                                                       [:editors,
+                                                        lectures: [:term,
+                                                                   :teacher]],
+                                                     edited_lectures:
+                                                       [:course,
+                                                        :term,
+                                                        :teacher],
+                                                     given_lectures:
+                                                      [:course,
+                                                       :term,
+                                                       :teacher],
+                                                     notifications:
+                                                       [:notifiable]]).call
     end
   end
 

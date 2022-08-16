@@ -106,7 +106,7 @@ describe("Media", () => {
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
                 cy.get('input[name="medium[description]"]').type("Media 1");
-                cy.wait(10);
+                cy.wait(100);
                 cy.contains("Speichern und bearbeiten").click();
                 cy.contains("Media 1").should("exist");
                 cy.contains("Veröffentlichen").click();
@@ -130,7 +130,7 @@ describe("Media", () => {
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
                 cy.get('input[name="medium[description]"]').type("Media 1");
-                cy.wait(10);
+                cy.wait(100);
                 cy.get('select[name="medium[sort]"]').select("Übung");
                 cy.contains("Speichern und bearbeiten").click();
                 cy.contains("Media 1").should("exist");
@@ -210,7 +210,7 @@ describe("Media", () => {
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
                 cy.get('input[name="medium[description]"]').type("Media 1");
-                cy.wait(10);
+                cy.wait(100);
                 cy.contains("Speichern und bearbeiten").click();
                 cy.contains("Media 1").should("exist");
                 cy.contains("Veröffentlichen").click();
@@ -234,7 +234,7 @@ describe("Media", () => {
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
                 cy.get('input[name="medium[description]"]').type("Media 1");
-                cy.wait(10);
+                cy.wait(100);
                 cy.get('select[name="medium[sort]"]').select("Übung");
                 cy.contains("Speichern und bearbeiten").click();
                 cy.contains("Media 1").should("exist");
@@ -268,7 +268,7 @@ describe("Media", () => {
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
                 cy.get('input[name="medium[description]"]').type("Media 1");
-                cy.wait(10);
+                cy.wait(100);
                 cy.get('select[name="medium[sort]"]').select("Übung");
                 cy.contains("Speichern und bearbeiten").click();
                 cy.contains("Media 1").should("exist");
@@ -355,7 +355,7 @@ describe("Media", () => {
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
                 cy.get('input[name="medium[description]"]').type("Media 1");
-                cy.wait(10);
+                cy.wait(100);
                 cy.contains("Speichern und bearbeiten").click();
                 cy.contains("Media 1").should("exist");
                 cy.contains("Veröffentlichen").click();
@@ -385,7 +385,7 @@ describe("Media", () => {
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
                 cy.get('input[name="medium[description]"]').type("Media 1");
-                cy.wait(10);
+                cy.wait(100);
                 cy.get('select[name="medium[sort]"]').select("Übung");
                 cy.contains("Speichern und bearbeiten").click();
                 cy.contains("Media 1").should("exist");

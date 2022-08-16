@@ -75,12 +75,15 @@ describe("Courses", function () {
             ]).then((records) => {
                 cy.server();
                 cy.route('**/new').as('new');
-                cy.route('POST', '/lectures').as('courses');
+                //cy.route('POST', '/lectures').as('courses');
                 cy.visit('/administration');
                 cy.get('a[title="Veranstaltung anlegen"]').click();
+                
                 //cy.wait('@new');
+
+                cy.get(".col-8 > .selectize-control > .selectize-input").type(records[0].title).type("{enter}");
                 cy.get("div#new-lecture-area").contains("Speichern").click();
-                cy.wait('@courses');
+                //cy.wait('@courses');
                 cy.contains(records[0].title).should("exist");
                 cy.contains(`${records[1].season} ${records[1].year}`).should("exist");
             });
