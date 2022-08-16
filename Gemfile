@@ -95,7 +95,7 @@ gem "faraday", "~> 1.8"
 gem "globalize"
 gem "globalize-accessors"
 gem "commontator",
-  git: "https://github.com/zebleck/commontator.git",
+  git: "https://github.com/MaMpf-HD/commontator.git",
   branch: "main"
 gem "acts_as_votable"
 gem "sprockets-rails",

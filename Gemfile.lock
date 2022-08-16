@@ -1,4 +1,14 @@
 GIT
+  remote: https://github.com/MaMpf-HD/commontator.git
+  revision: 38b25d2f3f4e4e2d1a0a7b608f04c579a93125f9
+  branch: main
+  specs:
+    commontator (7.0.0)
+      rails (>= 6.0)
+      sprockets-rails
+      will_paginate
+
+GIT
   remote: https://github.com/MaMpf-HD/thredded.git
   revision: e41338d5dea7bb31a7d850bfcdd0a1ba552fd041
   branch: master
@@ -60,16 +70,6 @@ GIT
   specs:
     activerecord-import (1.4.0)
       activerecord (>= 4.2)
-
-GIT
-  remote: https://github.com/zebleck/commontator.git
-  revision: 0fb3a3a37a955076c8e882cb71978c51d1c455d7
-  branch: main
-  specs:
-    commontator (7.0.0)
-      rails (>= 6.0)
-      sprockets-rails
-      will_paginate
 
 GEM
   remote: https://rubygems.org/
