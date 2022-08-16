@@ -101,5 +101,24 @@
 </div>
 
 <script type="text/javascript">
-  <%= render partial: 'commontator/threads/hide_show_links.js', locals: { thread: thread } %>
+  <%#= render partial: 'commontator/threads/hide_show_links', locals: { thread: thread } %>
+  $("#commontator-thread-<%= thread.id %>-hide-link").click(function() {
+    $("#commontator-thread-<%= thread.id %>-content").hide();
+
+    var commontatorLink = $("#commontator-thread-<%= thread.id %>-show").fadeIn();
+    $('html, body').animate(
+      { scrollTop: commontatorLink.offset().top - window.innerHeight/2 }, 'fast'
+    );
+  });
+
+  $("#commontator-thread-<%= thread.id %>-show-link").click(function() {
+    var commontatorThread = $("#commontator-thread-<%= thread.id %>-content").fadeIn();
+    $('html, body').animate(
+      { scrollTop: commontatorThread.offset().top - window.innerHeight/2 }, 'fast'
+    );
+
+    $("#commontator-thread-<%= thread.id %>-show").hide();
+  });
+
+  $("#commontator-thread-<%= thread.id %>-hide").show();
 </script>
