@@ -3202,6 +3202,7 @@ de:
     assignment: Hausaufgabe
     reminder: Erinnerung
     together_with: zusammen mit
+    enter_two_letters: mind. 2 Zeichen eingeben
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

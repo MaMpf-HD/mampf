@@ -3025,6 +3025,7 @@ en:
     assignment: Assignment
     reminder: Reminder
     together_with: together with
+    enter_two_letters: enter at least 2 letters
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
