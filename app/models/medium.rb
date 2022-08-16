@@ -390,6 +390,7 @@ class Medium < ApplicationRecord
   end
 
   def editors_with_inheritance
+    return [] if sort == 'RandomQuiz'
     result = (editors&.to_a + teachable.lecture&.editors.to_a +
       [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
     return result unless teachable.is_a?(Talk)
