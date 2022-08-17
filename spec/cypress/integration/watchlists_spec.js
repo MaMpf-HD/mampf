@@ -27,6 +27,7 @@ describe("Watchlists", () => {
 				cy.get('div.text-light > .fa-list').click();
 				cy.get('#openNewWatchlistForm').click();
 				cy.get('#watchlistNameField').type('Lernliste');
+                cy.get(100);
 				cy.get('#createWatchlistBtn').click();
 				cy.get('#watchlistEntrySubmitButton').click();
                 cy.wait(100);

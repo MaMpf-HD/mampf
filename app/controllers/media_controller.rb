@@ -243,13 +243,16 @@ class MediaController < ApplicationController
       return
     end
     if params[:destination].present?
-      redirect_to @medium.manuscript_url_with_host + '#' + params[:destination].to_s
+      redirect_to @medium.manuscript_url_with_host + '#' +
+                  params[:destination].to_s, allow_other_host: true
       return
     elsif params[:page].present?
-      redirect_to @medium.manuscript_url_with_host + '#page=' + params[:page].to_s
+      redirect_to @medium.manuscript_url_with_host + '#page=' +
+                  params[:page].to_s, allow_other_host: true
       return
     end
-    redirect_to @medium.manuscript_url_with_host
+    redirect_to @medium.manuscript_url_with_host,
+                allow_other_host: true
   end
 
   # run the geogebra applet using Geogebra's Javascript API
@@ -363,6 +366,7 @@ class MediaController < ApplicationController
   end
 
   def get_statistics
+    I18n.locale = @medium.locale || I18n.default_locale
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption.where(sort: 'video',
@@ -379,7 +383,10 @@ class MediaController < ApplicationController
       @manuscript_access_count = medium_consumption.where(sort: 'manuscript').count
     end
     if @medium.sort == 'Quiz'
-      @quiz_access = Probe.finished_quizzes(@medium)
+
+      @quiz_plays = medium_consumption.where(sort: 'quiz', mode: 'browser').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
+      @quiz_plays_count = medium_consumption.where(sort: 'quiz', mode: 'browser').count
+      @quiz_finished_count = Probe.finished_quizzes(@medium)
       @global_success = Probe.global_success_in_quiz(@medium.becomes(Quiz))
       @global_success_details = Probe.global_success_details(@medium.becomes(Quiz))
       @question_count = @medium.becomes(Quiz).questions_count
