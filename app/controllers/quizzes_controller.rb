@@ -114,7 +114,7 @@ class QuizzesController < ApplicationController
     if user_signed_in? && current_user.study_participant
       quiz_round_params[:study_participant] = current_user.anonymized_id
     end
-    quiz_round_params[:save_probe] = !current_user.in?(Quiz.find(params[:id]).editors_with_inheritance) && !current_user.admin
+    quiz_round_params[:save_probe] = !current_user.in?(Quiz.find(params[:id]).editors_with_inheritance) && !current_user.admin?
     @quiz_round = QuizRound.new(quiz_round_params)
   end
 
