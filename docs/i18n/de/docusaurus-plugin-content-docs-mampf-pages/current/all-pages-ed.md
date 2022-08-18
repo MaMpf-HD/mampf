@@ -30,6 +30,7 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 ## M
 * [Mediensuche](ed-search-extended)
 * [Medium bearbeiten](edit-medium)
+* [Medium inspizieren](ed-inspect-medium)
 * [Mein Profil](ed-profile)
 * [Modul bearbeiten](ed-edit-module) (nur bei Moduleditor*innen verfügbar)
 * [Modulsuche](ed-search-extended)
@@ -52,6 +53,7 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 * [Suche (erweitert)](ed-search-extended)
 
 ## T
+* [Tag anlegen](ed-create-tag)
 * [Tag bearbeiten](ed-edit-tag)
 * [Tagsuche](ed-search-extended)
 * [THymE-Editor](thyme-editor)
