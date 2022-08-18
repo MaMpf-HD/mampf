@@ -145,7 +145,7 @@ class User < ApplicationRecord
   # (e.g. in a select editors form)
   def self.select_editors
     User.pluck(:name, :email, :id, :name_in_tutorials)
-        .map { |u| [ "#{u.fourth || u.first} (#{u.second})", u.third] }
+        .map { |u| [ "#{u.fourth.presence || u.first} (#{u.second})", u.third] }
   end
 
   def self.name_or_email_like(search_string)
@@ -164,17 +164,15 @@ class User < ApplicationRecord
     return User.none unless search_string
     return User.none unless search_string.length >= 2
 
-    where(name_in_tutorials: nil).name_or_email_like(search_string)
-      .or(where.not(name_in_tutorials: nil)
+    where(name_in_tutorials: [nil, '']).name_or_email_like(search_string)
+      .or(where.not(name_in_tutorials: [nil, ''])
                .name_in_tutorials_or_email_like(search_string))
   end
 
   def self.values_for_select
     pluck(:id, :name, :name_in_tutorials, :email)
-      .map { |u| [u.first, "#{ u.third || u.second } (#{u.fourth})"] }
-      .natural_sort_by(&:second)
       .map { |u| { value: u.first,
-                   text: u.second } }
+                   text: "#{ u.third.presence || u.second } (#{u.fourth})" } }
   end
 
   def courses

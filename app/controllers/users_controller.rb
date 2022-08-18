@@ -81,7 +81,6 @@ class UsersController < ApplicationController
     if params[:q]
       result = User.preferred_name_or_email_like(params[:q])
                    .values_for_select
-      pp result
       render json: result
       return
     end
