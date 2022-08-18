@@ -79,7 +79,6 @@ this.fillOptionsByAjax = function($selectizedSelection) {
         valueField: 'value',
         labelField: 'name',
         searchField: 'name',
-        sortField:[{field:'$order'},{field:'$score'}],
         placeholder: placeholder,
         closeAfterSelect: true,
         load: function(query, callback) {
