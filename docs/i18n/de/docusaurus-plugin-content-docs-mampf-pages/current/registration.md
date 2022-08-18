@@ -55,9 +55,9 @@ Die Bedienelemente der Seite „Registrieren“ und mithilfe dieser mögliche Ak
   </form>
   Stimme durch Setzen des Haken der Speicherung und Verarbeitung der Daten zu. Dies ist erforderlich für das Anlegen eines Accounts.
 * <button name="button">Registrieren</button> Schicke die eingegebenen Daten ab, um den Registriervorgang zu beginnen.
-* <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur Seite <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>
-* <form action="/mampf/de/docs/password-forgotten"><input type="submit" value="Passwort vergessen?"/> Wechsel zur Seite <a href="/mampf/de/docs/password-forgotten "target="_self">„Passwort vergessen“</a>.</form>
-* <form action="/mampf/de/docs/activate-account"><input type="submit" value="Anleitung zur Bestätigung des Accounts nicht erhalten?"/> Wechsel zur Seite <a href="/mampf/de/docs/activate-account "target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden“</a>.</form>
+* <a href="/mampf/de/mampf-pages/login "target="_self"><button>Einloggen</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/login "target="_self">Loginseite</a>.
+* <a href="/mampf/de/mampf-pages/password-forgotten "target="_self"><button>Passwort vergessen?</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/password-forgotten "target="_self">„Passwort vergessen“</a>.
+* <a href="/mampf/de/mampf-pages/activate-account "target="_self"><button>Anleitung zur Bestätigung des Accounts nicht erhalten?</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/activate-account "target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden“</a>.
 
 ## Der Registriervorgang
 Zur Registrierung muss man die Felder „E-Mail-Adresse“, „Passwort“ und „Passwortbestätigung“ ausfüllen, der [Datenschutzerklärung der Universität Heidelberg](https://www.uni-heidelberg.de/datenschutzerklaerung_web.html) durch Setzen eines Hakens zustimmen und den Button <button name="button">Registrieren</button> betätigen. Dann erscheint die [Startseite](home-page.md). Diese zeigt nun folgenden Text an:

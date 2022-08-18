@@ -41,13 +41,12 @@ Die Bedienelemente der Seite „Passwort ändern“ und mithilfe dieser möglich
   </form>
   Feld zur Bestätigung des neuen Passworts. Das hier eingebene Passwort muss mit dem im Passwortfeld eingegebenen übereinstimmen.
 * <button name="button">Passwort ändern</button> Bestätige das eingegebene Passwort und führe den Login durch.
-* <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>
-* <form action="/mampf/de/docs/registration"><input type="submit" value="Registrieren"/> Wechsel zur Seite <a href="/mampf/de/docs/registration "target="_self">„Registrieren“</a>.</form>
-* <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>
-* <form action="/mampf/de/docs/activate-account"><input type="submit" value="Anleitung zur Bestätigung des Accounts nicht erhalten?"/> Wechsel zur Seite <a href="/mampf/de/docs/activate-account "target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden“</a>.</form>
+* <a href="/mampf/de/mampf-pages/login "target="_self"><button>Einloggen</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/login "target="_self">Loginseite</a>.
+* <a href="/mampf/de/mampf-pages/registration "target="_self"><button>Registrieren</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/registration "target="_self">„Registrieren“</a>.
+* <a href="/mampf/de/mampf-pages/activate-account "target="_self"><button>Anleitung zur Bestätigung des Accounts nicht erhalten?</button></a>  Wechsel zur Seite <a href="/mampf/de/mampf-pages/activate-account "target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden“</a>.
 
 ## Ablauf
-Nachdem man die beiden Felder für das neue Passwort ausgefüllt und durch Klicken auf den Button <a href="/mampf/de/docs/my-home-page" target="_self"><button name="button">Passwort ändern</button></a> bestätigt hat, öffnet sich die [persönliche Startseite](my-home-page.md). Dort erwartet einen der Text:
+Nachdem man die beiden Felder für das neue Passwort ausgefüllt und durch Klicken auf den Button <a href="/mampf/de/mampf-pages/my-home-page" target="_self"><button name="button">Passwort ändern</button></a> bestätigt hat, öffnet sich die [persönliche Startseite](my-home-page.md). Dort erwartet einen der Text:
 
 ![](/img/Passwort_geaendert.png)
 

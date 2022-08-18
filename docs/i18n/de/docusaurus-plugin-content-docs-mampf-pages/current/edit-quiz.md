@@ -11,23 +11,23 @@ Vortragende können diese Seite über die [Medienseite](medium) des Quiz' und di
 
 <ul>
   <li>
-     <a href="/mampf/de/docs/medium" target="_self"><b>Medienseite</b></a> (Vortragende und Editor*innen)
+     <a href="/mampf/de/mampf-pages/medium" target="_self"><b>Medienseite</b></a> (Vortragende und Editor*innen)
   </li>
   Rechts neben dem Quiztitel in der Überschrift befindet sich das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Quiz bearbeiten“ führt.
   <li>
-     <a href="/mampf/de/docs/edit-talk" target="_self"><b>Seite „Vortrag bearbeiten“</b></a> (Vortragende und Editor*innen)
+     <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><b>Seite „Vortrag bearbeiten“</b></a> (Vortragende und Editor*innen)
   </li>
   In der Box „Basisdaten“ klickt man auf den gewünschten <button>Quiztitel</button> in der Liste „Medien“. Dieser führt einen auf die Seite „Quiz bearbeiten“.
   <li>
-     <a href="/mampf/de/docs/ed-edit-session" target="_self"><b>Seite „Sitzung bearbeiten“</b></a> (Editor*innen)
+     <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><b>Seite „Sitzung bearbeiten“</b></a> (Editor*innen)
   </li>
   In der Box „Basisdaten“ klickt man auf den gewünschten <button>Quiztitel</button> in der Liste „Medien“. Dieser führt einen auf die Seite „Quiz bearbeiten“.
   <li>
-     <a href="/mampf/de/docs/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
+     <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
   </li>
   In der Box „Medien“ klickt man auf <button>Quizzes</button> und anschließend den <button>Quiztitel</button>, um auf die Seite „Quiz bearbeiten“ zu navigieren.
   <li>
-     <a href="/mampf/de/docs/ed-edit-lecture" target="_self"><b>Seite „Vorlesung bearbeiten“</b></a> (Editor*innen)
+     <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><b>Seite „Vorlesung bearbeiten“</b></a> (Editor*innen)
   </li>
   In der Box „Medien“ klickt man auf <button>Quizzes</button> und anschließend den <button>Quiztitel</button>, um auf die Seite „Quiz bearbeiten“ zu navigieren.
 </ul>
@@ -53,13 +53,13 @@ Nun werden die Bedienelemente der Seite „Quiz bearbeiten“ beschrieben. Dabei
 ### Kopf
 In diesem Bereich gibt es Steuerelemente zur Navigation, der Verwaltung der Veröffentlichung und der Übernahme von Änderungen. Bei Vortragenden und Editor\*innen stimmen die Bedienelemente in diesem Bereich fast vollständig überein. Auf geringfügige Unterschiede wird in der Beschreibung des jeweiligen Bedienelements hingewiesen.  
 
-* <a href="/mampf/de/docs/medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/docs/medium" target="_self">Seite des Quiz'</a>.
+* <a href="/mampf/de/mampf-pages/medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/medium" target="_self">Seite des Quiz'</a>.
 * <button>Bearbeiten</button> Verwalte die Veröffentlichung. Dieser Button ist nur bei unveröffentlichten Quizzes mit geplanter Veröffentlichung vorhanden.
 * <button>Stornieren</button> Storniere die geplante Veröffentlichung. Dieser Button ist nur bei unveröffentlichten Quizzes mit geplanter Veröffentlichung vorhanden.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem Änderungen vorgenommen worden sind.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem Änderungen vorgenommen worden sind.
-* <button>zur Veranstaltung</button> Wechsel auf die <a href="/mampf/de/docs/seminar" target="_self">Seite des Seminars</a> (bei Vortragenden) bzw. auf die Seite <a href="/mampf/de/docs/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a> oder <a href="/mampf/de/docs/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> (bei Editor*innen).
-* <a href="/mampf/de/docs/ed-edit-session" target="_self"><button>zur Sitzung</button></a> bzw. <a href="/mampf/de/docs/edit-talk" target="_self"><button>zum Vortrag</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> (bei Vorlesungen) bzw. auf die Seite <a href="/mampf/de/docs/edit-talk" target="_self">„Vortrag bearbeiten“</a> (bei Seminaren). Dieser Button ist nur vorhanden, wenn das Quiz zu einer Sitzung bzw. zu einem Vortrag assoziiert ist.
+* <button>zur Veranstaltung</button> Wechsel auf die <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a> (bei Vortragenden) bzw. auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a> oder <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> (bei Editor*innen).
+* <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button>zur Sitzung</button></a> bzw. <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><button>zum Vortrag</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> (bei Vorlesungen) bzw. auf die Seite <a href="/mampf/de/mampf-pages/edit-talk" target="_self">„Vortrag bearbeiten“</a> (bei Seminaren). Dieser Button ist nur vorhanden, wenn das Quiz zu einer Sitzung bzw. zu einem Vortrag assoziiert ist.
 * <button>Veröffentlichen</button> Veröffentliche das Quiz. Dieser Button kann nur bei unveröffentlichten Quizzes vorhanden sein. Damit der Button angezeigt wird, muss ferner die Veranstaltung, zu der das Medium gehört, schon veröffentlicht worden sein und es dürfen keine Änderungen am Quiz seit dem letzten Speichern vorgenommen worden sein.
 * <button>Löschen</button> Lösche das Quiz. Dieser Button wird nur angezeigt, wenn es keine Dokumente zu dem Quiz gibt.
 
@@ -128,7 +128,7 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
                  <input type="radio" id="eng" name="lang"></input>
                  <label for="eng"> Englisch</label>
               </form>
-              Lege die Sprache des Quiz' fest. Die gewählte Sprache wird auf der hier beschriebenen Seite, der <a href="/mampf/de/docs/medium" target="_self">Medienseite</a> und der <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a> verwendet. Davon sind insbesondere die Tags betroffen. Zur Auswahl stehen Deutsch und Englisch.
+              Lege die Sprache des Quiz' fest. Die gewählte Sprache wird auf der hier beschriebenen Seite, der <a href="/mampf/de/mampf-pages/medium" target="_self">Medienseite</a> und der <a href="/mampf/de/mampf-pages/mediacard" target="_self">Mediacard</a> verwendet. Davon sind insbesondere die Tags betroffen. Zur Auswahl stehen Deutsch und Englisch.
            </li>
         </ul>
      </td>
@@ -222,7 +222,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                  <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für den deutschen Titel des Tags. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für den deutschen Titel des Tags. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
            <li>
               <form>
@@ -231,7 +231,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                     <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für den englischen Titel des Tags. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für den englischen Titel des Tags. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
         </ul>
      </td>
@@ -253,7 +253,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                     <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für eine weitere Bezeichnung des Tags. Die Bezeichnung kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für eine weitere Bezeichnung des Tags. Die Bezeichnung kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
            <li>
               <form>
@@ -352,7 +352,7 @@ In diesem Bereich kann das Quiz bearbeitet, betrachtet und gelöscht werden. Fer
               <button>Statistik</button> Öffne die Aufrufstatistik in einem Fenster.
            </li>
            <li>
-              <button>Bearbeiten</button> Wechsel in den <a href="/mampf/de/docs/quiz-editor" target="_self">Quizeditor</a>, um das Quiz zu bearbeiten.
+              <button>Bearbeiten</button> Wechsel in den <a href="/mampf/de/mampf-pages/quiz-editor" target="_self">Quizeditor</a>, um das Quiz zu bearbeiten.
            </li>
            <li>
               <button>Quiz spielen</button> Öffne das Quiz in der Ansicht für gewöhnliche Nutzer*innen.
@@ -374,21 +374,21 @@ Durch Anklicken des Buttons <button>Statistik</button> öffnet sich ein Fenster,
 Von der Seite „Quiz bearbeiten“ aus gelangt man zu den Seiten „Seminar“ bzw. „Seminar bearbeiten“ oder „Vorlesung bearbeiten“, „Vortrag bearbeiten“ bzw. „Sitzung bearbeiten“ und der Medienseite des Quiz'. Außerdem errreicht man den Quizeditor.
 
 ### [Seite des Seminars](seminar) (Vortragende)
-Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Zur Veranstaltung</button></a>.
+Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Zur Veranstaltung</button></a>.
 
 ### Seite [„Seminar bearbeiten“](ed-edit-seminar) bzw. [„Vorlesung bearbeiten“](ed-edit-lecture) (Editor*innen)
-Auf diesen Seiten kann die jeweilige Veranstaltung bearbeitet werden. Dort können Medien angelegt werden, bei Vorlesungen außerdem Kapitel, Abschnitte und Sitzungen und bei Seminaren Vorträge. Ferner können dort weitere die Veranstaltung betreffende Einstellungen bearbeitet werden, etwa zu Tutorien und Tutor\*innen, Abgaben, Foren, Mitteilungen, Kommentaren, dem Infotext, der Veranstaltungssprache und dem Passwortschutz der Veranstaltung. Um auf diese Seite zu gelangen, klickt man auf <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button>Zur Veranstaltung</button></a>.
+Auf diesen Seiten kann die jeweilige Veranstaltung bearbeitet werden. Dort können Medien angelegt werden, bei Vorlesungen außerdem Kapitel, Abschnitte und Sitzungen und bei Seminaren Vorträge. Ferner können dort weitere die Veranstaltung betreffende Einstellungen bearbeitet werden, etwa zu Tutorien und Tutor\*innen, Abgaben, Foren, Mitteilungen, Kommentaren, dem Infotext, der Veranstaltungssprache und dem Passwortschutz der Veranstaltung. Um auf diese Seite zu gelangen, klickt man auf <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button>Zur Veranstaltung</button></a>.
 
 ### Seite [„Sitzung bearbeiten“](ed-edit-session) bzw. [„Vortrag bearbeiten“](edit-talk)
-Auf dieser Seite kann die Sitzung bzw. der Vortrag bearbeitet werden. Auf der Seite „Sitzung bearbeiten“ können Editor\*innen das Datum der Sitzung bearbeiten, Medien zur Sitzung hinzufügen oder bereits angelegte Medien bearbeiten, Tags assoziieren oder anlegen und einen Inhaltstext verfassen oder bearbeiten. Um dieser Seite anzusteuern, klickt man auf <a href="/mampf/de/docs/ed-edit-session" target="_self"><button name="button">Zur Sitzung</button></a>.
+Auf dieser Seite kann die Sitzung bzw. der Vortrag bearbeitet werden. Auf der Seite „Sitzung bearbeiten“ können Editor\*innen das Datum der Sitzung bearbeiten, Medien zur Sitzung hinzufügen oder bereits angelegte Medien bearbeiten, Tags assoziieren oder anlegen und einen Inhaltstext verfassen oder bearbeiten. Um dieser Seite anzusteuern, klickt man auf <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button name="button">Zur Sitzung</button></a>.
 
-Auf der Seite „Vortrag bearbeiten“ können Vortragende Begriffe aus der MaMpf-Datenbank und eigene Medien hinzufügen sowie den Beschreibungstext bearbeiten. Editor\*innen können zudem neue Begriffe anlegen sowie die Vortragenden, das Vortragsdatum und die Position des Vortrags in der Gliederung bearbeiten. Außerdem können sie einen Beschreibungstext verfassen bzw. bearbeiten und den Text der Vortragenden von der Vortragsseite entfernen. Diese Seite ist über <a href="/mampf/de/docs/edit-talk" target="_self"><button name="button">Zum Vortrag</button></a> erreichbar.
+Auf der Seite „Vortrag bearbeiten“ können Vortragende Begriffe aus der MaMpf-Datenbank und eigene Medien hinzufügen sowie den Beschreibungstext bearbeiten. Editor\*innen können zudem neue Begriffe anlegen sowie die Vortragenden, das Vortragsdatum und die Position des Vortrags in der Gliederung bearbeiten. Außerdem können sie einen Beschreibungstext verfassen bzw. bearbeiten und den Text der Vortragenden von der Vortragsseite entfernen. Diese Seite ist über <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><button name="button">Zum Vortrag</button></a> erreichbar.
 
 ### [Medienseite des Quiz'](medium)
-Auf der Seite eines Quiz' stehen weitere Informationen zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+Auf der Seite eines Quiz' stehen weitere Informationen zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ### [Quizeditor](quiz-editor)
-Mit dem Quizeditor kann man den Quizgraph bearbeiten, indem man Ecken und Kanten anlegt oder verändert. Ferner kann man den Schwierigkeitsgrad des Quiz' festlegen und das Quiz linearisieren. Der <a href="/mampf/de/docs/quiz-editor" target="_self">Quizeditor</a> ist über <a href="/mampf/de/docs/quiz-editor" target="_self"><button>Bearbeiten</button></a> in der Box „Dokumente“ erreichbar.
+Mit dem Quizeditor kann man den Quizgraph bearbeiten, indem man Ecken und Kanten anlegt oder verändert. Ferner kann man den Schwierigkeitsgrad des Quiz' festlegen und das Quiz linearisieren. Der <a href="/mampf/de/mampf-pages/quiz-editor" target="_self">Quizeditor</a> ist über <a href="/mampf/de/mampf-pages/quiz-editor" target="_self"><button>Bearbeiten</button></a> in der Box „Dokumente“ erreichbar.
 
 ## Verwandte Seiten
 ### Betrachtung

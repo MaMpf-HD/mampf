@@ -12,13 +12,13 @@ Die Seite „Kommentare für ein Medium“ erreicht man über die [Seite des Med
 
 <ul>
   <li>
-     <a href="/mampf/de/docs/medium" target="_self"><b>Medienseite</b></a>
+     <a href="/mampf/de/mampf-pages/medium" target="_self"><b>Medienseite</b></a>
   </li>
   Auf der Seite des Mediums klickt man in der Box „Kommentare“ auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" height="12"/></button>.
   <li>
-     <a href="/mampf/de/docs/comments" target="_self"><b>Seite „Kommentare“</b></a>
+     <a href="/mampf/de/mampf-pages/comments" target="_self"><b>Seite „Kommentare“</b></a>
   </li>
-   Zur Seite „Kommentare“ gelangt man überdas Icon <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" height="12"/></button> oben links in der <a href="/mampf/de/docs/nav-bar" target="_self">Navigationsleiste</a>. Dort klickt man in der Spalte „Medium“ auf „n Kommentare“.
+   Zur Seite „Kommentare“ gelangt man überdas Icon <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" height="12"/></button> oben links in der <a href="/mampf/de/mampf-pages/nav-bar" target="_self">Navigationsleiste</a>. Dort klickt man in der Spalte „Medium“ auf „n Kommentare“.
 </ul>
 
 ## Bereiche der Seite
@@ -31,7 +31,7 @@ Die Seite „Kommentare für ein Medium“ gliedert sich in drei große Teilbere
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Auf der Seite „Kommentare für ein Medium“ gibt es folgende Bedienelemente:
 
-* <a href="/mampf/de/docs/medium" target="_self"><button name="button">zurück zum Medium</button></a> Wechsel auf die <a href="/mampf/de/docs/medium" target="_self">Seite des kommentierten Mediums</a>.
+* <a href="/mampf/de/mampf-pages/medium" target="_self"><button name="button">zurück zum Medium</button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/medium" target="_self">Seite des kommentierten Mediums</a>.
 * <button name="button">Abonnieren</button> bzw. <button name="button">Abonnement beenden</button> Schalte eine E-Mail-Benachrichtigung bei Veröffentlichung eines neuen Diskussionsbeitrags ein bzw. aus. Diskussionsabos können nur für laufende Diskussionen abgeschlossen werden. Wenn eine Diskussion beendet worden ist, kann sie nicht abonniert werden.
 * <button name="button">Neuer Kommentar</button> Verfasse einen neuen Kommentar.
 * <button name="button">Bearbeiten</button> Bearbeite einen Kommentar. Nur eigene Kommentare können bearbeitet werden.
@@ -43,7 +43,7 @@ Auf der Seite „Kommentare für ein Medium“ gibt es folgende Bedienelemente:
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-left.png" height="12"/> Previous</button> Gehe auf die vorige Antwortseite.
 
 ## Von dieser Seite aus aufrubare Seite
-Von dieser Seite aus kann nur zur [Medienseite des kommentierten Mediums](medium.md) navigiert werden. Dort stehen weitere Informationen zum Medium zur Verfügung, etwa zu Länge bzw. Umfang und Größe von PDFs bzw. Videos. Über die dort aufgeführte Gliederung kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Medium verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+Von dieser Seite aus kann nur zur [Medienseite des kommentierten Mediums](medium.md) navigiert werden. Dort stehen weitere Informationen zum Medium zur Verfügung, etwa zu Länge bzw. Umfang und Größe von PDFs bzw. Videos. Über die dort aufgeführte Gliederung kann an die entsprechende Stelle im PDF oder Video gesprungen werden. Außerdem sind mit diesem Medium verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ## Hinweise für Editor*innen
 Editor\*innen können Diskussionen moderieren. Sie können einzelne Kommentare löschen und die Diskussion beenden und erneut öffnen. Dazu stehen ihnen die Bedienelemente <button name="button">Diskussion beenden</button> bzw. <button name="button">Diskussion wieder öffnen</button> und <button name="button">Löschen</button> zur Verfügung.

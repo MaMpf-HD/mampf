@@ -33,12 +33,12 @@ Die Bedienelemente der Seite „Anleitung zur Bestätigung des Accounts erneut v
   </form>
   Feld für die E-Mail-Adresse, mit der man sich bereits registriert hat.
 * <button name="button">Anleitung zur Bestätigung des Accounts erneut versenden</button> Schicke die eingegebenen Daten ab, um eine E-Mail mit Freischaltungslink für den Account zu erhalten.
-* <form action="/mampf/de/docs/login"><input type="submit" value="Einloggen"/> Wechsel zur <a href="/mampf/de/docs/login "target="_self">Loginseite</a>.</form>
-* <form action="/mampf/de/docs/registration"><input type="submit" value="Registrieren"/> Wechsel zur Seite <a href="/mampf/de/docs/registration "target="_self">„Registrieren“</a>.</form>
-* <form action="/mampf/de/docs/password-forgotten"><input type="submit" value="Passwort vergessen?"/> Wechsel zur Seite <a href="/mampf/de/docs/password-forgotten "target="_self">„Passwort vergessen“</a>.</form>
+* <a href="/mampf/de/mampf-pages/login "target="_self"><button>Einloggen</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/login "target="_self">Loginseite</a>.
+* <a href="/mampf/de/mampf-pages/registration "target="_self"><button>Registrieren</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/registration "target="_self">„Registrieren“</a>.
+* <a href="/mampf/de/mampf-pages/password-forgotten "target="_self"><button>Passwort vergessen?</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/password-forgotten "target="_self">„Passwort vergessen“</a>.
 
 ## Ablauf
-Nachdem man sich registriert und keine Bestätigungsmail erhalten hat, gibt man auf der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ die E-Mail-Adresse, mit der man sich registriert hat, ein und schickt sie durch Betätigung des Buttons <a href="/mampf/de/docs/home-page" target="_self"><button name="button">Anleitung zur Bestätigung des Account nicht erhalten?</button></a>. Daraufhin wird man zurück auf die [Startseite](home-page.md) geleitet. Dort steht nun dieser zusätzliche Text:
+Nachdem man sich registriert und keine Bestätigungsmail erhalten hat, gibt man auf der Seite „Anleitung zur Bestätigung des Accounts erneut versenden“ die E-Mail-Adresse, mit der man sich registriert hat, ein und schickt sie durch Betätigung des Buttons <a href="/mampf/de/mampf-pages/home-page" target="_self"><button name="button">Anleitung zur Bestätigung des Account nicht erhalten?</button></a>. Daraufhin wird man zurück auf die [Startseite](home-page.md) geleitet. Dort steht nun dieser zusätzliche Text:
 
 ![](/img/Registriert2.png)
 

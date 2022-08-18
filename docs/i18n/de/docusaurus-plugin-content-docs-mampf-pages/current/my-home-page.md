@@ -41,7 +41,7 @@ Die folgenden Bedienelemente sind auf Veranstaltungskacheln abonnierter Veransta
      <td>
         <ul>
            <li>
-              <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+              <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
            </li>
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" height="12"/></button>
@@ -50,7 +50,7 @@ Die folgenden Bedienelemente sind auf Veranstaltungskacheln abonnierter Veransta
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" height="12"/></button> Beende das Veranstaltungsabo.
            </li>
            <li>
-              <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+              <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
            </li>
         </ul>
      </td>
@@ -80,16 +80,16 @@ Auf den Vortragkachlen kommen die folgenden Bedienelemente vor:
       <td>
          <ul>
             <li>
-               <a href="/mampf/de/docs/talk" target="_self"><button name="button">Vortragstitel</button></a> Wechsel zur <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a>.
+               <a href="/mampf/de/mampf-pages/talk" target="_self"><button name="button">Vortragstitel</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/talk" target="_self">Vortragsseite</a>.
             </li>
             <li>
-               <button name="button"><a href="/mampf/de/docs/edit-talk" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button> Wechsel zur <a href="/mampf/de/docs/edit-talk" target="_self">Vortragsbearbeitungsseite</a>.
+               <button name="button"><a href="/mampf/de/mampf-pages/edit-talk" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button> Wechsel zur <a href="/mampf/de/mampf-pages/edit-talk" target="_self">Vortragsbearbeitungsseite</a>.
             </li>
             <li>
-               <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+               <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
             </li>
             <li>
-               <a href="/mampf/de/docs/talk" target="_self"><button name="button">Vortragsdatum</button></a> Wechsel zur <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a>.
+               <a href="/mampf/de/mampf-pages/talk" target="_self"><button name="button">Vortragsdatum</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/talk" target="_self">Vortragsseite</a>.
             </li>
          </ul>
       </td>

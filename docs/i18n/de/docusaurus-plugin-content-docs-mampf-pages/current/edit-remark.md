@@ -15,11 +15,11 @@ Die Seite „Erläuterung bearbeiten“ erreicht man entweder über den [Quizedi
 
 <ul>
   <li>
-     <a href="/mampf/de/docs/quiz-editor" target="_self"><b>Quizeditor</b></a>
+     <a href="/mampf/de/mampf-pages/quiz-editor" target="_self"><b>Quizeditor</b></a>
   </li>
   Im Quizgraphen klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button>. Daraufhin erscheinen andere Buttons neben der Überschrift der Box „Quizgraph“. Sofern man Bearbeitungsrechte für die Erläuterung hat, ist darunter auch der Button <button>Bearbeiten</button>, der einen auf die Seite „Erläuterung bearbeiten“ führt.
   <li>
-     <a href="/mampf/de/docs/edit-medium-remark" target="_self"><b>Seite „Erläuterung bearbeiten“</b></a>
+     <a href="/mampf/de/mampf-pages/edit-medium-remark" target="_self"><b>Seite „Erläuterung bearbeiten“</b></a>
   </li>
   In der Box „Dokumente“ klickt man bei „Quiz-Erläuterung“ auf <button>Bearbeiten</button>, wodurch man auf die Seite „Erläuterung bearbeiten“ gelangt.
 </ul>
@@ -50,9 +50,9 @@ Je nachdem auf welchen Weg man die Seite erreicht hat, stehen im Bereich Kopf un
 |Unabhängige Seite (erreicht über die Bearbeitungsseite des Mediums Erläuterung)|Unterseite des Quiz' (erreicht über den Quizeditor)|
 
 Die folgenden Bedienelemente sind verfügbar:
-* <a href="/mampf/de/docs/edit-quiz" target="_self"><button name="button">zum Medium</button></a> (bei der Unterseite des Quiz') bzw. <a href="/mampf/de/docs/edit-medium-question" target="_self"><button name="button">zum Medium</button></a> (bei der unabhängigen Seiten) Wechsel auf die Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a> (bei der Unterseite des Quiz') bzw. <a href="/mampf/de/docs/edit-medium-remark" target="_self">„Erläuterung bearbeiten“ (Medium)</a> (bei der unabhängigen Seiten).
+* <a href="/mampf/de/mampf-pages/edit-quiz" target="_self"><button name="button">zum Medium</button></a> (bei der Unterseite des Quiz') bzw. <a href="/mampf/de/mampf-pages/edit-medium-question" target="_self"><button name="button">zum Medium</button></a> (bei der unabhängigen Seiten) Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a> (bei der Unterseite des Quiz') bzw. <a href="/mampf/de/mampf-pages/edit-medium-remark" target="_self">„Erläuterung bearbeiten“ (Medium)</a> (bei der unabhängigen Seiten).
 * <button name="button">Quiz spielen</button> (nur bei der Unterseite des Quiz') Öffne das Quiz in der Nutzeransicht. Dazu muss der Quizgraph strukturell fehlerfrei sein.
-* <a href="/mampf/de/docs/quiz-editor" target="_self"><button name="button">Bearbeitung beenden</button></a> (nur bei der Unterseite des Quiz') Wechsel zum <a href="/mampf/de/docs/quiz-editor" target="_self">„Quizeditor“</a>. Dabei werden nicht gespeicherte Änderungen nicht übernommen.
+* <a href="/mampf/de/mampf-pages/quiz-editor" target="_self"><button name="button">Bearbeitung beenden</button></a> (nur bei der Unterseite des Quiz') Wechsel zum <a href="/mampf/de/mampf-pages/quiz-editor" target="_self">„Quizeditor“</a>. Dabei werden nicht gespeicherte Änderungen nicht übernommen.
 
 ### Details
 In der Box „Details“ kann der Erläuterungstext bearbeitet werden. Dort gibt es die folgenden Bedienelemente:

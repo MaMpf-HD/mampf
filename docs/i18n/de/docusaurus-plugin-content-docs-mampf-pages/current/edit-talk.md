@@ -11,15 +11,15 @@ Vortragende können diese Seite über die [persönliche Startseite](my-home-page
 
 <ul>
   <li>
-     <a href="/mampf/de/docs/my-home-page" target="_self"><b>Persönliche Startseite</b></a> (Vortragende)
+     <a href="/mampf/de/mampf-pages/my-home-page" target="_self"><b>Persönliche Startseite</b></a> (Vortragende)
   </li>
   Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
   <li>
-     <a href="/mampf/de/docs/talk" target="_self"><b>Seite des Vortrags</b></a> (Vortragende und Editor*innen)
+     <a href="/mampf/de/mampf-pages/talk" target="_self"><b>Seite des Vortrags</b></a> (Vortragende und Editor*innen)
   </li>
   Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
   <li>
-     <a href="/mampf/de/docs/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
+     <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
   </li>
   In der Seminargliederung klickt man auf den <button>Vortragstitel</button> auf der Vortragskachel, um auf die Seite „Vortrag bearbeiten“ zu navigieren.
 </ul>
@@ -67,10 +67,10 @@ Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Da
 In diesem Bereich gibt es Steuerelemente zur Navigation und der Übernahme von Änderungen. Editor\*innen verfügen über einen zusätzlichen Button.
 
 #### Gemeinsame Bedienelemente
-* <a href="/mampf/de/docs/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/docs/talk" target="_self">Seite des Vortrags</a>.
+* <a href="/mampf/de/mampf-pages/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/talk" target="_self">Seite des Vortrags</a>.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Vortrag bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Vortrag bearbeitet worden ist.
-* <a href="/mampf/de/docs/seminar" target="_self"><button>Veranstaltung</button></a> Wechsel auf die <a href="/mampf/de/docs/seminar" target="_self">Seite des Seminars</a>.
+* <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Veranstaltung</button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a>.
 
 #### Editor*innen vorbehaltenene Bedienelemente
 Editor\*innen steht zudem der Button <button>Löschen</button> zur Verfügung, mit dem sie den Vortrag löschen können.
@@ -103,12 +103,12 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
            </li>
            Löse die bestehende Verknüpfung von Vortrag und Tag auf.
            <li>
-              Verknüpfte Medien <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>
+              Verknüpfte Medien <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>
            </li>
-           Lege ein neues Medium an und wechsel danach auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
+           Lege ein neues Medium an und wechsel danach auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
            <li>
-              <a href="/mampf/de/docs/edit-medium" target="_self"><button>Medientitel</button></a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Quiztitel</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw.
-              <a href="/mampf/de/docs/edit-medium" target="_self">„Quiz bearbeiten“</a>. Damit dieses Bedienelement verfügbar ist, muss es bereits Medien zum Vortrag geben.
+              <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Medientitel</button></a> bzw. <a href="/mampf/de/mampf-pages/edit-quiz" target="_self"><button>Quiztitel</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a> bzw.
+              <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Quiz bearbeiten“</a>. Damit dieses Bedienelement verfügbar ist, muss es bereits Medien zum Vortrag geben.
            </li>
         </ul>
      </td>
@@ -118,7 +118,7 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
 Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
 ##### Dialogfeld „Medium anlegen“
-Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a> bei <i>Verknüpfte Medien</i> geklickt worden ist.
+Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a> bei <i>Verknüpfte Medien</i> geklickt worden ist.
 
 <table>
   <tr>
@@ -144,7 +144,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/docs/edi
             <option value="mercedes2">Sonstiges</option>
          </select><br></br>
      Dropdown-Menü zur Auswahl des Medientyps. Sofern der gewählte Medientyp nicht <i>Quiz</i> ist, kann er nachträglich auf der Seite
-     <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a>
+     <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>
     verändert werden.
   </li>
   <li>
@@ -154,10 +154,10 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/docs/edi
            <input type="text" id="fname" name="fname"></input><br></br>
         </p>
      </form>
-     Eingabefeld für den Medientitel. Dieses Feld muss ausgefüllt werden, damit ein neues Medium anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a> geändert werden.
+     Eingabefeld für den Medientitel. Dieses Feld muss ausgefüllt werden, damit ein neues Medium anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a> geändert werden.
   </li>
   <li>
-     <a href="/mampf/de/docs/edit-medium" target="_self"><button>Speichern und bearbeiten</button></a> Lege das Medium und wechsel auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
+     <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Speichern und bearbeiten</button></a> Lege das Medium und wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
   </li>
   <li>
      <button>Abbrechen</button> Brich die Aktion ab, lege kein neues Medium an und schließe das Dialogfenster.
@@ -234,7 +234,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                     <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für den deutschen Titel des Tags. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für den deutschen Titel des Tags. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
            <li>
               <form>
@@ -243,7 +243,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                     <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für den englischen Titel des Tags. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für den englischen Titel des Tags. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
         </ul>
      </td>
@@ -263,7 +263,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                      <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für eine weitere Bezeichnung des Tags. Die Bezeichnung kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für eine weitere Bezeichnung des Tags. Die Bezeichnung kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
            <li>
               <form>
@@ -314,7 +314,7 @@ Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nich
      <td>
         <ul>
            <li>
-              Editor*innen können einen Text im Feld mit der Überschrift „Details“ verfassen bzw. ihn bearbeiten. Dieser Text wird auf der <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a> in der Box „Basisdaten“ und auf der <a href="/mampf/de/docs/seminar" target="_self">Seite des Seminars</a> auf der Vortragscard vor dem Text der Vortragenden angezeigt.
+              Editor*innen können einen Text im Feld mit der Überschrift „Details“ verfassen bzw. ihn bearbeiten. Dieser Text wird auf der <a href="/mampf/de/mampf-pages/talk" target="_self">Vortragsseite</a> in der Box „Basisdaten“ und auf der <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a> auf der Vortragscard vor dem Text der Vortragenden angezeigt.
            </li>
            <li>
               Wenn auf der Vortragsseite der Text der Vortragenden angezeigt wird, ist bei Editor*innen die folgende abgehakte Checkbox zu sehen:<br></br><br></br>
@@ -341,10 +341,10 @@ Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nich
               <form><input type="checkbox" id="news" name="mis"></input>
                  <label for="news"> Inhaltstext auf Vortragsseite anzeigen</label>
               </form><br></br>
-              Setze den Haken, um den Text auf der <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a> und der <a href="/mampf/de/docs/seminar" target="_self">Seite des Seminars</a> anzeigen zu lassen, bzw. entferne den Haken, um den den Text wieder von diesen Seiten zu nehmen.
+              Setze den Haken, um den Text auf der <a href="/mampf/de/mampf-pages/talk" target="_self">Vortragsseite</a> und der <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a> anzeigen zu lassen, bzw. entferne den Haken, um den den Text wieder von diesen Seiten zu nehmen.
            </li>
            <li>
-              Vortragende können einen Text im Feld mit der Überschrift „Inhalt“ verfassen bzw. ihn bearbeiten. Dieser Text wird auf der <a href="/mampf/de/docs/talk" target="_self">Vortragsseite</a> in der Box „Inhalt“ und auf der <a href="/mampf/de/docs/seminar" target="_self">Seite des Seminars</a> auf der Vortragscard nach dem Text der Editor*innen angezeigt.
+              Vortragende können einen Text im Feld mit der Überschrift „Inhalt“ verfassen bzw. ihn bearbeiten. Dieser Text wird auf der <a href="/mampf/de/mampf-pages/talk" target="_self">Vortragsseite</a> in der Box „Inhalt“ und auf der <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a> auf der Vortragscard nach dem Text der Editor*innen angezeigt.
            </li>
         </ul>
      </td>
@@ -357,13 +357,13 @@ Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nich
 Von der Seite „Vortrag bearbeiten“ aus gelangt man zu den Seiten „Seminar“, „Vortrag“ und „Medium bearbeiten“ bzw. „Quiz bearbeiten“.
 
 ### [Seite des Seminars](seminar)
-Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Veranstaltung</button></a>.
+Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Veranstaltung</button></a>.
 
 ### [Vortragsseite](talk)
-Auf der Vortragsseite finden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Sie ist über <a href="/mampf/de/docs/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> erreichbar.
+Auf der Vortragsseite finden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Sie ist über <a href="/mampf/de/mampf-pages/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> erreichbar.
 
 ### [Seite „Medium bearbeiten“](edit-medium)
-Auf dieser Seite können Medien bearbeiten werden. Dabei können Medientyp und -titel und die Sprache geändert, ein Inhaltstext verfasst oder bearbeitet sowie Tags und Dateien hinzugefügt oder entfernt werden. Zu Videos kann außerdem eine Gliederung angelegt werden. Ferner kann der Öffentlichkeitsstatus den Mediums eingesehen und bearbeitet werden. Diese Seite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/edit-medium" target="_self"><button>Medientitel</button></a> und nach dem Dialog zum Anlegen eines Mediums. Diesen erreicht man wiederum über <a href="/mampf/de/docs/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>.
+Auf dieser Seite können Medien bearbeiten werden. Dabei können Medientyp und -titel und die Sprache geändert, ein Inhaltstext verfasst oder bearbeitet sowie Tags und Dateien hinzugefügt oder entfernt werden. Zu Videos kann außerdem eine Gliederung angelegt werden. Ferner kann der Öffentlichkeitsstatus den Mediums eingesehen und bearbeitet werden. Diese Seite öffnet sich durch Klicken auf den <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Medientitel</button></a> und nach dem Dialog zum Anlegen eines Mediums. Diesen erreicht man wiederum über <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>.
 
 ### [Seite „Quiz bearbeiten“](edit-quiz)
 Auf der Seite „Quiz bearbeiten“ kann der [Quizeditor](quiz-editor) geöffnet werden. Mit diesem können komplexe Quizzes wie angeleitete Beweise angelegt und bearbeitet werden. Im Gegensatz zu einer Quizfrage kann ein Quiz aus mehreren Fragen bestehen und über antwortabhängige Verzweigungen verfügen. Auf der Seite „Quiz bearbeiten“ können außerdem der Titel, die Sprache, der Inhaltstext und die Öffentlichkeitseinstellungen des Quizzes bearbeitet sowie Tags hinzugefügt oder entfernt werden.

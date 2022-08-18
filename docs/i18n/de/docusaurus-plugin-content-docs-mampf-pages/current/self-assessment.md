@@ -6,7 +6,7 @@ Die Seite „Selbsttest“ ist eine Unterseite einer [Veranstaltung](event-serie
 ![](/img/selbsttest.png)
 
 ## Navigation zu dieser Seite
-Um auf die Seite „Selbsttest“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Selbsttest“ in der [Seitenleiste](sidebar) auf der linken Seite.
+Um auf die Seite „Selbsttest“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Selbsttest“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Selbsttest“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -33,7 +33,7 @@ Die Seite „Selbsttest“ gliedert sich in vier Teilbereiche: die eigentliche S
   Eingabefeld und scrollbare Liste. Wähle durch Eintippen oder Anklicken Begriffe aus, zu denen Fragen im Selbsttest vorkommen sollen.
 * <button name="button">Test beginnen</button> Starte den Test in einem neuen Tab.
 * <button name="button">Ein-/Ausklappen</button> Klappe eine Liste aller Begriffe aus, zu denen es Fragen gibt.
-* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>. Dies ist erst möglich, nachdem der <button name="button">Ein-/Ausklappen</button>
+* <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/mampf-pages/tag" target="_self">Begriffs</a>. Dies ist erst möglich, nachdem der <button name="button">Ein-/Ausklappen</button>
 -Button gedrückt worden ist.
 
 ## Von dieser Seite aus aufrufbare Seiten
@@ -47,7 +47,7 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff und Selbsttest.
 Auf dieser Seite findet der Selbsttest statt. Nachdem Nutzer\*innen Antworten angeben und bestätigt haben, erhalten sie Feedback und Begründungen dafür, warum Antwortmöglichkeiten wahr oder falsch sind.
 
 ### [Seite der getaggten Begriffe](tag.md)
-Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>.
+Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a>.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

@@ -6,7 +6,7 @@ Auf der Seite „Zugangsdaten ändern“ kann man die E-Mail-Adresse und das Pas
 ![](/img/Zugangsdaten_aendern_thumb.png)
 
 ## Navigation zu dieser Seite
-Die Seite „Zugangsdaten ändern“ erreicht man, indem man zunächst über den Button <button name="button"><a href="/mampf/de/docs/profile" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></a></button> in der Navigationsleiste zur Seite [„Profil“](profile.md) navigiert. Dort betätigt man dann den Button <button name="button">Zugangsdaten ändern</button>.
+Die Seite „Zugangsdaten ändern“ erreicht man, indem man zunächst über den Button <button name="button"><a href="/mampf/de/mampf-pages/profile" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></a></button> in der Navigationsleiste zur Seite [„Profil“](profile.md) navigiert. Dort betätigt man dann den Button <button name="button">Zugangsdaten ändern</button>.
 
 ## Bereiche der Seite
 Die Seite „Zugangsdaten ändern“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Zugangsdaten ändern“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -47,13 +47,13 @@ Die Bedienelemente der Seite „Zugangsdaten ändern“ und mithilfe dieser mög
   </form>
   Feld zur Bestätigung des neuen Passworts. Dieses Feld muss nur ausgefüllt werden, wenn das Passwort geändert werden soll. Die Eingabe muss mit der im Feld für das neue Passwort übereinstimmen.
 * <button name="button">Update</button> Bestätige die Eingaben, um Änderungen durchzuführen.
-* <form action="/mampf/de/docs/profile"><input type="submit" value="Zurück"/> Wechsel zur Seite <a href="/mampf/de/docs/profile "target="_self">„Profil“</a>.</form>
+* <a href="/mampf/de/mampf-pages/profile "target="_self"><button>Zurück</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/profile "target="_self">„Profil“</a>.
 
 ## Änderungen vornehmen
 Auf der Seite „Zugangsdaten ändern“ können E-Mail-Adresse und Passwort geändert werden. Es ist sowohl möglich, nur eine andere E-Mail-Adresse oder nur ein anderes Passwort festzulegen, als auch beide gleichzeitig zu bearbeiten.
 
 ### E-Mail-Adresse
-Um den Account mit einer neuen E-Mail-Adresse zu verknüpfen, gibt man die gewünschte Adresse und das aktuelle Passwort in die dafür vorgesehenen Felder ein. Anschließend klickt man auf <a href="/mampf/de/docs/home-page" target="_self"><button name="button">Update</button></a>. Daraufhin wird man auf die [Startseite](home-page.md) geleitet, bleibt aber eingeloggt. Auf der Startseite ist nun folgender Text zu lesen:
+Um den Account mit einer neuen E-Mail-Adresse zu verknüpfen, gibt man die gewünschte Adresse und das aktuelle Passwort in die dafür vorgesehenen Felder ein. Anschließend klickt man auf <a href="/mampf/de/mampf-pages/home-page" target="_self"><button name="button">Update</button></a>. Daraufhin wird man auf die [Startseite](home-page.md) geleitet, bleibt aber eingeloggt. Auf der Startseite ist nun folgender Text zu lesen:
 
 ![](/img/E-Mail-Adresse_geaendert2.png)
 
@@ -68,7 +68,7 @@ Um die Änderung abzuschließen, muss man in der E-Mail auf „Account bestätig
 Hat man besagte E-Mail nach einigen Minuten nicht erhalten und wird auch nicht im Spamordner fündig, kann man sie erneut anfordern. Dazu führt man die eben beschriebenen Schritte nochmals durch oder lässt sich einen Aktivierunglink zuschicken wie auf der [Seite „Anleitung zur Bestätitung des Accounts erneut versenden“](activate-account.md) beschrieben.
 
 ### Passwort
-Für die Änderung des Passworts muss man alle vorhandenen Felder ausfüllen. Dabei ist zu beachten, dass das neue Passwort aus mindestens sechs Zeichen bestehen muss. Nach der Bestätigung der Eingabe durch Betätigen des Buttons <a href="/mampf/de/docs/home-page" target="_self"><button name="button">Update</button></a> wird man auf die [Startseite](home-page.md) geschickt. Dort wird ist zu lesen:
+Für die Änderung des Passworts muss man alle vorhandenen Felder ausfüllen. Dabei ist zu beachten, dass das neue Passwort aus mindestens sechs Zeichen bestehen muss. Nach der Bestätigung der Eingabe durch Betätigen des Buttons <a href="/mampf/de/mampf-pages/home-page" target="_self"><button name="button">Update</button></a> wird man auf die [Startseite](home-page.md) geschickt. Dort wird ist zu lesen:
 
 ![](/img/Passwort_geaendert3.png)
 
@@ -90,7 +90,7 @@ Konnte User nicht speichern. Es sind 2 Fehler aufgetreten. Passwort muss ausgef�
 Konnte User nicht speichern: Es ist ein Fehler aufgetreten: Passwortbestätigung stimmt nicht mit Passwort überein | Roter Kasten am Seitenanfang | Fehlende Passwortbestätigung oder Passwort und Passwortbestätigung stimmen nicht überein. | Gib das Passwort und die Passwortbestätigung erneut ein.
 
 ## Von dieser Seite aus aufrufbare Seite
-Von Seite „Zugangsdaten ändern“ aus kann nur zur [Seite „Profil“](profile.md) navigiert werden. Dies erfolgt über den Button <a href="/mampf/de/docs/profile" target="_self"><button name="button">Zurück</button></a>.
+Von Seite „Zugangsdaten ändern“ aus kann nur zur [Seite „Profil“](profile.md) navigiert werden. Dies erfolgt über den Button <a href="/mampf/de/mampf-pages/profile" target="_self"><button name="button">Zurück</button></a>.
 
 ## Ähnliche Seiten
 * [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account.md)

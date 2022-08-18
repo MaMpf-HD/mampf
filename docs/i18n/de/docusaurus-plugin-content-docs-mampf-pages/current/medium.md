@@ -51,13 +51,13 @@ Der Medientyp und die Komponenten des jeweiligen Mediums (z.B. Video, pdf oder L
 Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese werden nach den Bereichen, in denen sie vorkommen, gruppiert.
 
 ### Veranstaltung
-<a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
+<a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
 
 ### Sitzung
-<a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/docs/session" target="_self">Seite der Sitzung</a>.
+<a href="/mampf/de/mampf-pages/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/session" target="_self">Seite der Sitzung</a>.
 
 ### Video
-* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
 
 ### Manuskript
@@ -72,11 +72,11 @@ Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese wer
 <button name="button">Hier klicken</button> Öffne den externen Link.
 
 ### Verknüpfte Begriffe
-<a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+<a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 
 ### Inhalt
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript.
-* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
 
 ### Kommentare
@@ -92,16 +92,16 @@ Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese wer
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-left.png" height="12"/> Previous</button> Gehe auf vorige Antwortseite.
 
 ### Verknüpfte Medien
-<button name="button">Medium</button> Klappe Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind <i>Lektion</i>, <i>Worked Example</i>, <i>Quiz</i>, <i>Wiederholung</i>, <i>Beispiel</i>, <i>Übung</i>, <i>Skript</i>, <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i> und <i>Sonstiges</i>. Für mögliche weitere Buttons siehe <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a>.
+<button name="button">Medium</button> Klappe Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind <i>Lektion</i>, <i>Worked Example</i>, <i>Quiz</i>, <i>Wiederholung</i>, <i>Beispiel</i>, <i>Übung</i>, <i>Skript</i>, <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i> und <i>Sonstiges</i>. Für mögliche weitere Buttons siehe <a href="/mampf/de/mampf-pages/mediacard" target="_self">Mediacard</a>.
 
 ## Hinweis zum Fehlen von Bedienelementen
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar, da Medien nicht aus allen möglichen Komponenten bestehen müssen.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Medium“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. 
+Von der Seite „Medium“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind.
 
 ### [„Medium bearbeiten“](edit-medium) (für Editor*innen und Vortragende)
-Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/docs/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>, mit diesem kann auf die Seite <a href="/mampf/de/docs/ed-edit-medium" target="_self">„Medium bearbeiten“</a> gewechselt werden. Dort sind folgende Aktionen möglich:
+Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/mampf-pages/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>, mit diesem kann auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-medium" target="_self">„Medium bearbeiten“</a> gewechselt werden. Dort sind folgende Aktionen möglich:
 
 * Änderung von Medientyp und Sprache
 * Hinzufügen und Entfernen von Editor\*innen
@@ -113,25 +113,25 @@ Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/docs
 * Veröffentlichung des Mediums im Fall von unveröffentlichten Medien
 
 ### [Veranstaltungsseite](event-series)
-Die Veranstaltungsseite enthält aktuelle Informationen und die Gliederung der Veranstaltung. Von ihr aus gelangt man zu Veranstaltungsinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zur Veranstaltung, Diskussionsforen sowie der Zettelabgabe und im Fall von Seminaren zu Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf die [Veranstaltungsseite](event-series) zu gelangen, klickt man auf <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a>.
+Die Veranstaltungsseite enthält aktuelle Informationen und die Gliederung der Veranstaltung. Von ihr aus gelangt man zu Veranstaltungsinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zur Veranstaltung, Diskussionsforen sowie der Zettelabgabe und im Fall von Seminaren zu Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf die [Veranstaltungsseite](event-series) zu gelangen, klickt man auf <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a>.
 
 ### [Sitzungsseite](session)
-Auf dieser Seite können verknüpfte Begriffe, Abschnitte und Medien sowie das Inhaltsverzeichnis bzw. der Inhaltstext angesehen werden. Diese Seite ist über <a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> zu erreichen.
+Auf dieser Seite können verknüpfte Begriffe, Abschnitte und Medien sowie das Inhaltsverzeichnis bzw. der Inhaltstext angesehen werden. Diese Seite ist über <a href="/mampf/de/mampf-pages/session" target="_self"><button name="button">Sitzung</button></a> zu erreichen.
 
 ### [THymE-Player](thyme.md)
-Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
 
 ### [Seite der getaggten Begriffe](tag.md)
-Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>.
+Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a>.
 
 ### [Kommentarseite](comments-medium.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
 
 ### Seiten anderer Medien
 
 ## Hinweise für Editor*innen und Vortragende
 ### Seite bearbeiten
-Bei Editor\*innen und Vortragenden befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/docs/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a>.
+Bei Editor\*innen und Vortragenden befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>.
 
 ### Zusätzliche Informationen
 Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.

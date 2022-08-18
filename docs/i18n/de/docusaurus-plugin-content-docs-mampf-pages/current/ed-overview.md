@@ -39,7 +39,7 @@ Folgende Bedienelemente sind in der Box „Meine Veranstaltungen“ verfügbar:
      </td>
      <td valign="top">
         <b>Veranstaltungseditor*in</b><br></br><br></br>
-        <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button>Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>.
+        <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button>Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>.
      </td>
   </tr>
   <tr>
@@ -50,7 +50,7 @@ Folgende Bedienelemente sind in der Box „Meine Veranstaltungen“ verfügbar:
         <b>Moduleditor*in und Administrator*in</b>
         <ul>
             <li>
-                <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button>Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>.
+                <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button>Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>.
             </li>
             <li>
                 <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> Öffne das Formular zum Anlegen einer Veranstaltung.
@@ -135,7 +135,7 @@ In der Box „Meine Module“ werden alle Module aufgeführt, für die man auf d
      </td>
      <td valign="top">
         <b>Moduleditor*in</b><br></br><br></br>
-        <a href="/mampf/de/docs/ed-edit-module" target="_self"><button>Modul</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-module" target="_self">„Modul bearbeiten“</a>.
+        <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button>Modul</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self">„Modul bearbeiten“</a>.
      </td>
   </tr>
   <tr>
@@ -146,7 +146,7 @@ In der Box „Meine Module“ werden alle Module aufgeführt, für die man auf d
         <b>Administrator*in</b>
         <ul>
             <li>
-                <a href="/mampf/de/docs/ed-edit-module" target="_self"><button>Modul</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-module" target="_self">„Modul bearbeiten“</a>.
+                <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button>Modul</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self">„Modul bearbeiten“</a>.
             </li>
             <li>
                 <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> Öffne das Formular zum Anlegen eines Moduls.
@@ -229,7 +229,7 @@ Wenn bereits mehr als 25 Medien bearbeitet worden sind, gibt es weitere Bedienel
      </td>
      <td valign="top">
         <b>Maximal 25 Medien</b><br></br><br></br>
-        <a href="/mampf/de/docs/edit-medium" target="_self"><button>Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a>.
+        <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>.
      </td>
   </tr>
   <tr>
@@ -240,13 +240,13 @@ Wenn bereits mehr als 25 Medien bearbeitet worden sind, gibt es weitere Bedienel
         <b>Mehr als 25 Medien</b>
         <ul>
             <li>
-                <a href="/mampf/de/docs/edit-medium" target="_self"><button>Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-medium" target="_self">„Medium bearbeiten“</a>.
+                <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>.
             </li>
             <li>
-                <a href="/mampf/de/docs/ed-search-extended" target="_self"><button>Mediensuche</button></a> Wechsel zum Tab „Mediensuche“ der <a href="/mampf/de/docs/ed-search-extended" target="_self">„Suche“</a>.
+                <a href="/mampf/de/mampf-pages/ed-search-extended" target="_self"><button>Mediensuche</button></a> Wechsel zum Tab „Mediensuche“ der <a href="/mampf/de/mampf-pages/ed-search-extended" target="_self">„Suche“</a>.
             </li>
             <li>
-                <a href="/mampf/de/docs/ed-profile" target="_self"><button>Nutzerprofil</button></a> Wechsel zur Seite <a href="/mampf/de/docs/ed-profile" target="_self">„Nutzerprofil“</a>.
+                <a href="/mampf/de/mampf-pages/ed-profile" target="_self"><button>Nutzerprofil</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/ed-profile" target="_self">„Nutzerprofil“</a>.
             </li>
         </ul>
      </td>
@@ -316,7 +316,7 @@ Veranstaltungseditor\*innen, Moduleditor\*innen und Administrator\*innen können
 Von der Übersichtsseite aus sind die Seiten „Veranstaltung bearbeiten“, „Modul bearbeiten“, „Medium bearbeiten“, „Mein Profil“, „Erweiterte Suche“ und „Clicker“ erreichbar.
 
 ### [Veranstaltung bearbeiten](ed-edit-event-series)
-Bei der Seite „Veranstaltung bearbeiten“ handelt es sich entweder um eine Seite [„Seminar bearbeiten“](ed-edit-seminar) oder [„Vorlesung bearbeiten“](ed-edit-lecture). Sie ist über den <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button>Veranstaltungstitel</button></a> in der Box „Meine Veranstaltungen“ erreichbar. Dort können
+Bei der Seite „Veranstaltung bearbeiten“ handelt es sich entweder um eine Seite [„Seminar bearbeiten“](ed-edit-seminar) oder [„Vorlesung bearbeiten“](ed-edit-lecture). Sie ist über den <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button>Veranstaltungstitel</button></a> in der Box „Meine Veranstaltungen“ erreichbar. Dort können
 * Medien und Vorträge bzw. Kapitel, Abschnitte und Sitzungen angelegt und und deren Bearbeitungsseite geöffnet werden,
 * Editorenrechte für die Veranstaltung vergeben und entzogen werden,
 * Namen und E-Mail-Adressen der Veranstaltungsabonnent\*innen betrachtet werden,
@@ -325,23 +325,23 @@ Bei der Seite „Veranstaltung bearbeiten“ handelt es sich entweder um eine Se
 * weitere Veranstaltungseinstellungen (Kommentare, Forum, Sprache, Veranstaltungstyp und Semester) bearbeitet werden.
 
 ### [Modul bearbeiten](ed-edit-module) (nur Moduleditor\*innen und Administrator\*innen)
-Zur Seite „Modul bearbeiten“ gelangt man durch den <a href="/mampf/de/docs/ed-edit-module" target="_self"><button>Modultitel</button></a> in der Box „Meine Module“. Dort können
+Zur Seite „Modul bearbeiten“ gelangt man durch den <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button>Modultitel</button></a> in der Box „Meine Module“. Dort können
 * Einstellungen wie Titel und Sprache bearbeitet werden,
 * weitere Informationen zum Modul (Bild, vorausgehende Module und Einordnung in das Modulshandbuch) hinzugefügt und bearbeitet werden,
 * Editorenrechte für das Module vergeben und entzogen werden und
 * Veranstaltungen, Medien und Tags angelegt und deren Bearbeitungsseite geöffnet werden.
 
-### [Medium bearbeiten](ed-edit-medium)
+### [Medium bearbeiten](edit-medium)
 \* to do: nur eine Seite für alle Medien? \*
 
 ### [Mein Profil](ed-profile)
-Das Editorenprofil kann mithilfe von <a href="/mampf/de/docs/ed-profile" target="_self"><button>Nutzerprofil</button></a> in der Box „Meine Medien“ erreicht werden. Dort kann eine aktuelle Veranstaltung eingestellt sowie eine Homepage und ein Profilbild hinzugefügt und bearbeitet. Außerdem gibt es eine Übersicht über alle Medien, Veranstaltungen und Module, für die man Bearbeitungsrechte hat, mit Verlinkungen zu den entsprechenden Bearbeitungsseiten.
+Das Editorenprofil kann mithilfe von <a href="/mampf/de/mampf-pages/ed-profile" target="_self"><button>Nutzerprofil</button></a> in der Box „Meine Medien“ erreicht werden. Dort kann eine aktuelle Veranstaltung eingestellt sowie eine Homepage und ein Profilbild hinzugefügt und bearbeitet. Außerdem gibt es eine Übersicht über alle Medien, Veranstaltungen und Module, für die man Bearbeitungsrechte hat, mit Verlinkungen zu den entsprechenden Bearbeitungsseiten.
 
 ### [Erweiterte Suche](ed-search-extended)
-Die erweiterte Suche öffnet sich, wenn man auf <a href="/mampf/de/docs/ed-search-extended" target="_self"><button>Mediensuche</button></a> in der Box „Meine Medien“ klickt. Auf dieser Seite kann unter Verwendung von Filtern nach Medien, Veranstaltungen, Modulen und Tags gesucht werden.
+Die erweiterte Suche öffnet sich, wenn man auf <a href="/mampf/de/mampf-pages/ed-search-extended" target="_self"><button>Mediensuche</button></a> in der Box „Meine Medien“ klickt. Auf dieser Seite kann unter Verwendung von Filtern nach Medien, Veranstaltungen, Modulen und Tags gesucht werden.
 
 ### [Clicker](clicker)
-Über den <a href="/mampf/de/docs/clicker" target="_self"><button>Clickertitel</button></a> in der Box „Meine Clicker“ öffnet sich der Clicker. Dort kann
+Über den <a href="/mampf/de/mampf-pages/clicker" target="_self"><button>Clickertitel</button></a> in der Box „Meine Clicker“ öffnet sich der Clicker. Dort kann
 * der Zugangslink für Teilnehmer\*innen und der für Editor\*innen angesehen werden,
 * die Anzahl der Antwortmöglichkeiten festlegt oder eine Frage aus der Datenbank verwendet werden,
 * der Clicker freigeschaltet, geschlossen und gelöscht werden und
@@ -349,6 +349,6 @@ Die erweiterte Suche öffnet sich, wenn man auf <a href="/mampf/de/docs/ed-searc
 
 ## Verwandte Seiten
 * [Clicker](clicker)
-* [Medium bearbeiten](ed-edit-medium)
+* [Medium bearbeiten](edit-medium)
 * [Modul bearbeiten](ed-edit-module)
 * [Veranstaltung bearbeiten](ed-edit-event-series)

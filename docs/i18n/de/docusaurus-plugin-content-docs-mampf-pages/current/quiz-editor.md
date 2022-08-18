@@ -55,7 +55,7 @@ Sämtliche Bedienelemente werden nun bereichsweise bzw. ansichtsweise beschriebe
 
 ### Kopf
 Im Kopfbereich gibt es zwei Bedienelemente.
-* <a href="/mampf/de/docs/edit-quiz" target="_self"><button name="button">zum Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
+* <a href="/mampf/de/mampf-pages/edit-quiz" target="_self"><button name="button">zum Medium</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
 * <button name="button">Quiz spielen</button> Öffne das Quiz in der Nutzeransicht. Dazu muss der Quizgraph strukturell fehlerfrei sein, siehe dazu den gleichnamigen Abschnitt.
 
 ### Graph
@@ -86,8 +86,8 @@ Die Bedienansicht „Erläuterung“ erreicht man, indem man in der Ausgangsansi
 In der Ansicht „Erläuterung“ können die Bedienelemente im Graphen genutzt werden. Links neben der Box „Quizgraph“ erscheint eine Vorschau der Erläuterung, dort werden gegebenenfalls Hinweise und Warnungen angezeigt. In diesem Bereich befinden sich keine Bedienelemente. Rechts neben der Überschrift der Box „Quizgraph“ gibt es die folgenden fünf Buttons:
 
 * <button>Zurück</button> Wechsel zur Ausgangsansicht „Quizgraph“.
-* <a href="/mampf/de/docs/edit-remark" target="_self"><button>Bearbeiten</button></a> bzw. <button>Kopie erstellen</button> (bei importierten Erläuterungen, für die man keine Bearbeitungsrechte hat) Wechsel zur Seite <a href="/mampf/de/docs/edit-remark" target="_self">„Erläuterung bearbeiten“</a> bzw. öffne das Dialogfeld „Kopie erstellen“.
-* <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
+* <a href="/mampf/de/mampf-pages/edit-remark" target="_self"><button>Bearbeiten</button></a> bzw. <button>Kopie erstellen</button> (bei importierten Erläuterungen, für die man keine Bearbeitungsrechte hat) Wechsel zur Seite <a href="/mampf/de/mampf-pages/edit-remark" target="_self">„Erläuterung bearbeiten“</a> bzw. öffne das Dialogfeld „Kopie erstellen“.
+* <a href="/mampf/de/mampf-pages/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
 * <button>Standard-Ziel</button> Wechsel zur Bedienansicht „Standard-Ziel“ (das Standardziel ist die Ecke, zu der man im Quiz als nächstes gelangt). Durch anschließendes Anklicken einer Ecke im Graphen wird diese zum neuen Standardziel, d.h. eine Kante zwischen der Erläuterung und der angeklickten Ecke wird angelegt. Falls es vorher bereits ein Standardziel gab, wird die Kante zwischen diesem und der Erläuterung gelöscht.
 * <button>Ecke löschen</button> Lösche die Ecke.
 
@@ -99,8 +99,8 @@ Die Bedienansicht „Frage“ erreicht man, indem man in der Ausgangsansicht „
 In der Ansicht „Frage“ können die Bedienelemente im Graphen genutzt werden. Links neben der Box „Quizgraph“ erscheint eine Vorschau der Frage, dort werden gegebenenfalls Hinweise und Warnungen angezeigt. In diesem Bereich befinden sich keine Bedienelemente. Rechts neben der Überschrift der Box „Quizgraph“ gibt es die folgenden sechs Buttons:
 
 * <button>Zurück</button> Wechsel zur Ausgangsansicht „Quizgraph“.
-* <a href="/mampf/de/docs/edit-question" target="_self"><button>Bearbeiten</button></a> bzw. <button>Kopie erstellen</button> (bei importierten Fragen, für die man keine Bearbeitungsrechte hat) Wechsel zur Seite <a href="/mampf/de/docs/edit-question" target="_self">„Frage bearbeiten“</a> bzw. öffne das Dialogfeld „Kopie erstellen“.
-* <a href="/mampf/de/docs/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/docs/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
+* <a href="/mampf/de/mampf-pages/edit-question" target="_self"><button>Bearbeiten</button></a> bzw. <button>Kopie erstellen</button> (bei importierten Fragen, für die man keine Bearbeitungsrechte hat) Wechsel zur Seite <a href="/mampf/de/mampf-pages/edit-question" target="_self">„Frage bearbeiten“</a> bzw. öffne das Dialogfeld „Kopie erstellen“.
+* <a href="/mampf/de/mampf-pages/edit-quiz" target="_self"><button>Medium</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
 * <button>Standard-Ziel</button> Wechsel zur Bedienansicht „Standard-Ziel“ (das Standardziel ist die Ecke, zu der man gelangt, nachdem man die Frage richtig beantwortet hat). Durch anschließendes Anklicken einer Ecke im Graphen wird diese zum neuen Standardziel, d.h. eine Kante zwischen der Frage und der angeklickten Ecke wird angelegt. Falls es vorher bereits ein Standardziel gab, wird die Kante zwischen diesem und der Frage gelöscht.
 * <button>Verzweigung</button> Öffne die Verzweigungscards am Seitenende. Dort kann für jede Kombination gegebener falscher bzw. nicht komplett richtiger Antworten eine Zielecke festgelegt werden.
 * <button>Ecke löschen</button> Lösche die Ecke.
@@ -275,8 +275,8 @@ Die Treffer werden in einer Tabelle aufgeführt. Dort kommen weitere Bedieneleme
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/importieren_quiz_treffer.png" width="800" />
 
 * <button>Zeile</button> (nicht <button>Tag</button> oder <button>Modul</button>) Falls das Objekt noch nicht ausgewählt worden ist, nimm es in die in Auswahl auf. Entferne es andernfalls. Bei ausgewählten Treffern ist die Zeile grün, sofern sich der Cursor nicht auf dieser Zeile befindet.
-* <a href="/mampf/de/docs/ed-edit-module" target="_self"><button>Modul</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-module" target="_self">„Modul bearbeiten“</a>. Dieser Button steht nur Editor*innen des entsprechenden Moduls zur Verfügung.
-* <a href="/mampf/de/docs/ed-edit-tag" target="_self"><button>Tag</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a>.
+* <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button>Modul</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self">„Modul bearbeiten“</a>. Dieser Button steht nur Editor*innen des entsprechenden Moduls zur Verfügung.
+* <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><button>Tag</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a>.
 
 Darüber hinaus gibt es eine weitere Funktionalität in der Tabelle. Wenn man mit dem Cursor über einen Treffer fährt, wird das entsprechende Objekt in der Vorschau angezeigt und die Zeile färbt sich orange. Dies erfolgt unabhängig davon, ob das Objekt in die Auswahl aufgenommen worden ist oder nicht.
 

@@ -8,7 +8,7 @@ Die Seite „Quizzes“ ist eine Unterseite einer Veranstaltung. Auf ihr können
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-Um auf die Seite „Quizzes“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Quizzes“ in der [Seitenleiste](sidebar) auf der linken Seite.
+Um auf die Seite „Quizzes“ zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Quizzes“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Quizzes“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Quizzes“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -54,11 +54,11 @@ In allen drei Teilbereichen der Seite kommen Bedienelemente vor. Diese werden nu
 * <button name="button">Letzte</button> bzw. <button name="button">Erste</button> Wechsel auf die letzte bzw. erste Seite.
 
 ### Mediacards
-* <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/docs/event-series" target="_self">Seite der Veranstaltung</a>.
-* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
-* <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite des Quiz'</a>.
+* <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
+* <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
+* <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/mampf-pages/medium" target="_self">Medienseite des Quiz'</a>.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="12"/></button> Starte das Quiz.
-* <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
+* <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die zum Medium gehörige <a href="/mampf/de/mampf-pages/comments-medium" target="_self">Kommentarseite</a>, um einen Kommentar zu verfassen oder bereits veröffentlichte Kommentare zu lesen.
 
 ## Hinweis zum Fehlen von Bedienelementen
 Nicht immer sind alle der aufgeführten Bedienelemente verfügbar. Die Buttons zur Seitennavigation werden erst angezeigt, wenn es mehr Quizzes gibt, als pro Seite angezeigt werden sollen (standardmäßig acht). Damit Begriffe angezeigt werden, müssen welche mit dem Quiz verknüpft sein.
@@ -71,16 +71,16 @@ Zu den verwendeten Begriffen siehe die Erläuterungen zu Begriff, Medium, Quiz u
 \*Links ergänzen\*
 
 ### [Veranstaltungsseite](event-series.md)
-Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a>.
+Die Veranstaltungsseite informiert über neue Mitteilungen und Forumsbeiträge. Weiterhin gibt sie einen Überblick über den Veranstaltungsinhalt in Form einer Gliederung. Die Veranstaltungsseite öffnet sich durch Klicken auf den <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a>.
 
 ### [Seite der getaggten Begriffe](tag.md)
-Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>.
+Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a>.
 
 ### [Medienseite einzelner Quizzes](medium.md)
-Auf der Medienseite stehen weitere Informationen zum Umfang, Schwierigkeitsgrad und Inhalt des Quiz' zur Verfügung. Außerdem sind mit diesem Quiz verknüpfte Medien und Begriffe aufgeführt und verlinkt. Darüber hinaus können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+Auf der Medienseite stehen weitere Informationen zum Umfang, Schwierigkeitsgrad und Inhalt des Quiz' zur Verfügung. Außerdem sind mit diesem Quiz verknüpfte Medien und Begriffe aufgeführt und verlinkt. Darüber hinaus können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ### [Kommentarseite](comments-medium.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, indem auf <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
 
 ## Verwandte Seiten
 ### Übergeordnete Seite

@@ -26,7 +26,7 @@ Die Bedienelemente der Seite „Profil“ und mithilfe dieser mögliche Aktionen
 ### Account
 ![](/img/Profil-Account.png)
 
-* <a href="/mampf/de/docs/change-login-data" target="_self"><button name="button">Zugangsdaten ändern</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/change-login-data" target="_self">„Zugangsdaten ändern“</a>. Dort kann der Account auf eine andere E-Mail-Adresse umgestellt und das Passwort geändert werden.
+* <a href="/mampf/de/mampf-pages/change-login-data" target="_self"><button name="button">Zugangsdaten ändern</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/change-login-data" target="_self">„Zugangsdaten ändern“</a>. Dort kann der Account auf eine andere E-Mail-Adresse umgestellt und das Passwort geändert werden.
 * <button name="button">Account löschen</button> Lösche den Account.
 * <form>
      <p>
@@ -149,12 +149,12 @@ Um einen Account zu löschen, muss man auf den Button <button name="button">Acco
 
 ![](/img/Account_loeschen_neu.png)
 
-Nachdem man auf <a href="/mampf/de/docs/home-page" target="_self"><button name="button">Account löschen</button></a> geklickt hat, wird die Löschung durchgeführt. Dann wird man auf die [Startseite](home-page.md) geschickt, wo nun folgender zusätzlicher Text steht:
+Nachdem man auf <a href="/mampf/de/mampf-pages/home-page" target="_self"><button name="button">Account löschen</button></a> geklickt hat, wird die Löschung durchgeführt. Dann wird man auf die [Startseite](home-page.md) geschickt, wo nun folgender zusätzlicher Text steht:
 
 ![](/img/Account_geloescht2.png)
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von Seite „Profil“ aus kann nur zur Seite [„Zugangsdaten ändern“](change-login-data.md) navigiert werden. Dies erfolgt über den Button <a href="/mampf/de/docs/change-login-data" target="_self"><button name="button">Zugangsdaten ändern</button></a>.
+Von Seite „Profil“ aus kann nur zur Seite [„Zugangsdaten ändern“](change-login-data.md) navigiert werden. Dies erfolgt über den Button <a href="/mampf/de/mampf-pages/change-login-data" target="_self"><button name="button">Zugangsdaten ändern</button></a>.
 
 ## Ähnliche Seiten
 * [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account)

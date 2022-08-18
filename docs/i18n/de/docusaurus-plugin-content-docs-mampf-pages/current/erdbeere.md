@@ -9,7 +9,7 @@ Die Seite „Beispiel-Datenbank“ ist eine Unterseite einer Veranstaltung, zu d
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-Um auf die Beispieldatenbank zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/docs/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Beispiel-Datenbank“ in der [Seitenleiste](sidebar) auf der linken Seite.
+Um auf die Beispieldatenbank zuzugreifen, öffnet man zunächst eine [Veranstaltungsseite](event-series). Dazu klickt man auf das Logo <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button></a> oben links in der [Navigationsleiste](nav-bar), um auf die [persönliche Startseite](my-home-page) zu gelangen. Dort wählt man die gewünschte Veranstaltung aus. Auf der Veranstaltungsseite klickt man dann auf den Eintrag „Beispiel-Datenbank“ in der [Seitenleiste](sidebar) auf der linken Seite.
 
 ## Bereiche der Seite
 Die Seite „Beispiel-Datenbank“ gliedert sich in vier Teilbereiche: die eigentliche Seite „Beispiel-Datenbank“, die [Navigationsleiste](nav-bar.md), die [Seitenleiste](sidebar.md) zur Navigation innerhalb einer Veranstaltung und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Lektionen“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -129,7 +129,7 @@ Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispiels
               <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
            </li>        
            <li>
-               <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> (in der Box „Struktur“ unter „Verknüpfte Begriffe“, z.B. <button name="button">kommutativer Ring</button> in der Box „kommutativer Ring mit Eins“) Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+               <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> (in der Box „Struktur“ unter „Verknüpfte Begriffe“, z.B. <button name="button">kommutativer Ring</button> in der Box „kommutativer Ring mit Eins“) Gehe auf die Seite des <a href="/mampf/de/mampf-pages/tag" target="_self">Begriffs</a>.
            </li>
            <li>
               <button>Eigenschaft</button> (in der Box „Mögliche Eigenschaften“, z.B. <button>faktoriell</button>) Wechsel auf die Seite der Eigenschaft.
@@ -158,7 +158,7 @@ Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispiels
               <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
            </li>     
            <li>
-               <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> (in der Box „Eigenschaft von Struktur“ unter „Verknüpfte Begriffe“, z.B. <button name="button">faktorieller Ring</button> in der Box „Eigenschaft ‚faktoriell‘ von kommutativer Ring mit Eins“) Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+               <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> (in der Box „Eigenschaft von Struktur“ unter „Verknüpfte Begriffe“, z.B. <button name="button">faktorieller Ring</button> in der Box „Eigenschaft ‚faktoriell‘ von kommutativer Ring mit Eins“) Gehe auf die Seite des <a href="/mampf/de/mampf-pages/tag" target="_self">Begriffs</a>.
            </li>
            <li>
               <button>Beispiel</button> (in der Box „Beispiele (Eigenschaft erfüllt)“ bzw. „Beispiele (Eigenschaft verletzt)“, z.B. <button>Z[X]</button>) Wechsel auf die Seite des Beispiels.

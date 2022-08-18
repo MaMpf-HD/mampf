@@ -164,16 +164,16 @@ Dieses Dialogfeld öffnet sich, nachdem auf <button name="button">Bearbeiten</bu
               <button name="button">Mediacard</button> Die Medienreihenfolge kann per Drag-and-Drop verändert werden.
            </li>
            <li>
-              <a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/docs/session" target="_self">Seite der Sitzung</a>. Dies kann nur bei Lektionen ein Bedienelement sein. Dazu muss eine Sitzung assoziiert sein. Bei allen anderen Medien steht an dieser Stelle der Veranstaltungstitel.
+              <a href="/mampf/de/mampf-pages/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/session" target="_self">Seite der Sitzung</a>. Dies kann nur bei Lektionen ein Bedienelement sein. Dazu muss eine Sitzung assoziiert sein. Bei allen anderen Medien steht an dieser Stelle der Veranstaltungstitel.
            </li>
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-solid.png" height="12"/></button> Entferne das Medium von der Watchlist.
            </li>
            <li>
-              <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
+              <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/mampf-pages/tag" target="_self">Begriffs</a>.
            </li>
            <li>
-              <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+              <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
            </li>
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
@@ -182,7 +182,7 @@ Dieses Dialogfeld öffnet sich, nachdem auf <button name="button">Bearbeiten</bu
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
            </li>
            <li>
-              <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/docs/medium" target="_self">Medienseite der Lektion</a>.
+              <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/mampf-pages/medium" target="_self">Medienseite der Lektion</a>.
            </li>
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
@@ -204,16 +204,16 @@ Dieses Dialogfeld öffnet sich, nachdem auf <button name="button">Bearbeiten</bu
 Nicht immer sind alle der aufgeführten Bedienelemente vorhanden. Bei den Mediacards hängen die verfügbaren Elemente von den Bestandteilen des Mediums (Dateien und Assoziationen) ab. Aus welchen Komponenten ein Medium bestehen kann, ist wiederum durch die Medientyp festgelegt. Die Buttons sind nur vorhanden, wenn dies auch für die entsprechenden Dateien der Fall ist bzw. die entsprechenden Assoziationen (Begriffe und Sitzung) bestehen sind. Die Elemente zur Seitennavigation werden nur angezeigt, falls sich mehr Medien auf der Liste befinden, als pro Seite anzeigt werden sollen.
 
 ## Von dieser Seite aus aufrufbare Seiten
-Von der Seite „Watchlist“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind. 
+Von der Seite „Watchlist“ aus gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind.
 
 ### [Seite der getaggten Begriffe](tag.md)
-Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>.
+Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a>.
 
 ### [THymE-Player](thyme.md)
-Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
 
 ### [Seite des verknüpften Mediums](medium.md)
-Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ## Hinweise für Editor*innen: Zusätzliche Informationen auf Mediacards
 

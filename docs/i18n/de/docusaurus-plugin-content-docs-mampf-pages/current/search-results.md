@@ -19,7 +19,7 @@ Die Seite „Suchergebnisse“ gliedert sich in drei große Teilbereiche: die ei
 \* Derzeit ist eine Seitenleiste da. Seitenleisten gehören aber zu Veranstaltungen. Die Suche gehört zu keiner Veranstaltung.\*
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Auf dieser Seite kommen nur Bedienelemente vor, wenn es Treffer gibt. In diesem Fall gibt es die Buttons <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a>, die auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a> führen.
+Auf dieser Seite kommen nur Bedienelemente vor, wenn es Treffer gibt. In diesem Fall gibt es die Buttons <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a>, die auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a> führen.
 
 ## Verwandte Seiten
 * [Begriff](tag)

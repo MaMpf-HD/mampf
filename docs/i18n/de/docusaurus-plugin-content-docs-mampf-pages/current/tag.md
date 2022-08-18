@@ -33,13 +33,13 @@ Auf der Seite „Begriff“ kommen Bedienelemente bei einfachen Nutzer\*innen in
 ![](/img/Begriff.png)
 
 ### Überschrift (nur bei Editor*innen)
-<a href="/mampf/de/docs/ed-edit-tag" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> Gehe auf die Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Begriff bearbeiten“</a>.
+<a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> Gehe auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Begriff bearbeiten“</a>.
 
 ### Verknüpfte Begriffe
-<a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+<a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 
 ### Verknüpfte Abschnitte
-<a href="/mampf/de/docs/section" target="_self"><button name="button">Abschnitt</button></a> Gehe auf die <a href="/mampf/de/docs/section" target="_self">Seite des Abschnitts</a>.
+<a href="/mampf/de/mampf-pages/section" target="_self"><button name="button">Abschnitt</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/section" target="_self">Seite des Abschnitts</a>.
 
 ### MaMpf-Map
 * <label for="cars"></label>
@@ -56,13 +56,13 @@ Auf der Seite „Begriff“ kommen Bedienelemente bei einfachen Nutzer\*innen in
      <option value="saab">2</option>
   </select> Stelle ein, wie viele Begriffe angezeigt werden sollen: nur direkt mit dem Begriff verbundene <i>(1)</i> oder auch mit verknüpften Begriffen verbundene Begriffe <i>(2)</i>.
 * <button name="button">in externem Tab rendern</button> Öffne die Mindmap in einem externen Tab.
-* <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/docs/tag" target="_self">Seite des Begriffs</a>.
+* <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 
 ### Verknüpfte Fragen
 <button name="button">Test beginnen</button> Starte ein Quiz, das aus fünf der verknüpften Fragen besteht.
 
 ### Verknüpfte Medien
-<button name="button">Medium</button> Klappe die Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind <em>Lektion</em>, <em>Worked Example</em>, <em>Quiz</em>, <em>Wiederholung</em>, <em>Beispiel</em>, <em>Übung</em>, <em>Skript</em>, <em>Quiz-Frage</em>, <em>Quiz-Erläuterung</em> und <em>Sonstiges</em>. Für mögliche weitere Buttons siehe <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a>.
+<button name="button">Medium</button> Klappe die Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind <em>Lektion</em>, <em>Worked Example</em>, <em>Quiz</em>, <em>Wiederholung</em>, <em>Beispiel</em>, <em>Übung</em>, <em>Skript</em>, <em>Quiz-Frage</em>, <em>Quiz-Erläuterung</em> und <em>Sonstiges</em>. Für mögliche weitere Buttons siehe <a href="/mampf/de/mampf-pages/mediacard" target="_self">Mediacard</a>.
 
 ## Hinweis zum Fehlen von Bedienelementen
 Die Box „Verknüpfte Fragen“ und die damit einhergehende Möglichkeit, ein Quiz zu starten, gibt es nur, wenn Fragen assoziiert sind.
@@ -80,17 +80,17 @@ Auf der Seite des Abschnitts kann man sich einen Überblick über den Inhalt des
 
 ### [Mediacards](mediacard.md)
 #### [Seite des verknüpften Mediums](medium.md)
-Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 #### [THymE-Player](thyme.md)
-Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
 
 #### [Kommentarseite](comments-medium.md)
-Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
+Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfreich gekennzeichnet werden. Eigene Kommentare können geändert und gelöscht werden. Außerdem kann eine Diskussion abonniert werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Editor\*innen können zudem Diskussionen beenden und Kommentare löschen. Zur Kommentarseite gelangt man, in dem auf <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">Kommentieren</button></a> bzw. <a href="/mampf/de/mampf-pages/comments-medium" target="_self"><button name="button">n Kommentare</button></a> klickt.
 
 ## Hinweise für Editor*innen
 ### Seite bearbeiten
-Bei Editor\*innen befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/docs/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Begriff bearbeiten“</a>.
+Bei Editor\*innen befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Begriff bearbeiten“</a>.
 
 ### Zusätzliche Informationen auf Mediacards
 

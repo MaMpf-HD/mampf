@@ -40,7 +40,7 @@ Akkordeon mit Schaltflächen „Verknüpfte Begriffe“, „Importiere Medien“
 * Einstellungen (zusätzlich bei Vorlesung: Nummer des ersten Kapitels und des ersten Abschnitts,  Option absolute Nummerierung, Wahl der Inhaltsermittlung (medienbasiert vs. unter Verwendung eines -Veranstaltungsskriptes, das mit dem MaMpf LaTeX-Paket erstellt wurde))
 
 ## Unterschiede zwischen Moduleditor\*innen und Veranstaltungseditor\*innen
-Der Button <a href="/mampf/de/docs/ed-edit-module" target="_self"><button name="button">zum Modul</button></a> ist bei Veranstaltungseditor*innen nicht vorhanden.
+Der Button <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button name="button">zum Modul</button></a> ist bei Veranstaltungseditor*innen nicht vorhanden.
 
 ## Von dieser Seite aus aufrufbare Seiten
 \*Tabelle?\*

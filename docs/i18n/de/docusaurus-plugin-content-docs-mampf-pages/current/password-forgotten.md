@@ -32,13 +32,13 @@ Die Bedienelemente der Seite „Passwort vergessen“ und mithilfe dieser mögli
   </form>
   Feld für die zum zurückzusetzenden Account gehörige E-Mail-Adresse.
 * <button name="button">Schick mir eine Anleitung zur Änderung meines Passwortes</button> Schicke die eingegebenen Daten ab, um eine E-Mail mit einem Link zum Zurücksetzen des Passworts zu erhalten.
-* <a href="/mampf/de/docs/login" target="_self"><button name="button">Einloggen</button></a> Wechsel zur <a href="/mampf/de/docs/login" target="_self">Loginseite</a>.
-* <a href="/mampf/de/docs/registration" target="_self"><button name="button">Registrieren</button></a> Wechsel zur Seite <a href="/mampf/de/docs/registration" target="_self"> „Registrieren"</a>.
-* <a href="/mampf/de/docs/activate-account" target="_self"><button name="button">Anleitung zur Bestätigung des Accounts nicht erhalten?</button></a> Wechsel zur Seite <a href="/mampf/de/docs/activate-account" target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden"</a>.
+* <a href="/mampf/de/mampf-pages/login" target="_self"><button name="button">Einloggen</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/login" target="_self">Loginseite</a>.
+* <a href="/mampf/de/mampf-pages/registration" target="_self"><button name="button">Registrieren</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/registration" target="_self"> „Registrieren"</a>.
+* <a href="/mampf/de/mampf-pages/activate-account" target="_self"><button name="button">Anleitung zur Bestätigung des Accounts nicht erhalten?</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/activate-account" target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden"</a>.
 
 ## Ablauf
-Nachdem man das Feld für die E-Mail-Adresse ausgefüllt und den Button <a href="/mampf/de/docs/login" target="_self"><button name="button">Schick mir eine Anleitung zur Änderung meines Passwortes</button></a>
- betätigt hat, wird man zurück auf die <a href="/mampf/de/docs/login" target="_self">Loginseite</a> geleitet. Auf dieser steht nun folgender Text:
+Nachdem man das Feld für die E-Mail-Adresse ausgefüllt und den Button <a href="/mampf/de/mampf-pages/login" target="_self"><button name="button">Schick mir eine Anleitung zur Änderung meines Passwortes</button></a>
+ betätigt hat, wird man zurück auf die <a href="/mampf/de/mampf-pages/login" target="_self">Loginseite</a> geleitet. Auf dieser steht nun folgender Text:
 
 ![](/img/Passwort_zurueckgesetzt.png)
 

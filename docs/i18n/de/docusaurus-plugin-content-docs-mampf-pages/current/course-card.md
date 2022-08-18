@@ -13,14 +13,14 @@ Die folgenden Bedienelemente sind auf Veranstaltungskacheln abonnierter Veransta
      <td>
         <ul>
            <li>
-              <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+              <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
            </li>
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" height="12"/></button></li>
             <li> <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" height="12"/></button> Beende das Veranstaltungsabo.
            </li>
            <li>
-              <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
+              <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
            </li>
         </ul>
      </td>

@@ -38,12 +38,12 @@ Die Bedienelemente der Loginseite und mithilfe dieser mögliche Aktionen werden 
      <label for="cook"> Erinnere dich an mich (hierzu wird ein Cookie gesetzt)</label>
   </form> ???
 * <button name="button">Einloggen</button> Schicke die eingegebenen Daten ab, um den Einlogvorgang zu starten.
-* <form action="/mampf/de/docs/registration"><input type="submit" value="Registrieren"/> Wechsel zur Seite <a href="/mampf/de/docs/registration "target="_self">„Registrieren“</a>.</form>
-* <form action="/mampf/de/docs/password-forgotten"><input type="submit" value="Passwort vergessen?"/> Wechsel zur Seite <a href="/mampf/de/docs/password-forgotten "target="_self">„Passwort vergessen“</a>.</form>
-* <form action="/mampf/de/docs/activate-account"><input type="submit" value="Anleitung zur Bestätigung des Accounts nicht erhalten?"/> Wechsel zur Seite <a href="/mampf/de/docs/activate-account "target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden“</a>.</form>
+* <a href="/mampf/de/mampf-pages/registration "target="_self"><button>Registrieren</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/registration "target="_self">„Registrieren“</a>.
+* <a href="/mampf/de/mampf-pages/password-forgotten "target="_self"><button>Passwort vergessen?</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/password-forgotten "target="_self">„Passwort vergessen“</a>.
+* <a href="/mampf/de/mampf-pages/activate-account "target="_self"><button>Anleitung zur Bestätigung des Accounts nicht erhalten?</button></a> Wechsel zur Seite <a href="/mampf/de/mampf-pages/activate-account "target="_self">„Anleitung zur Bestätigung des Accounts erneut versenden“</a>.
 
 ## Ablauf
-Nachdem gültige Anmeldedaten eingegeben und der Button <a href="/mampf/de/docs/my-home-page" target="_self"><button name="button">Einloggen</button></a> angeglickt worden ist, gelangt man auf die [persönliche Startseite](my-home-page.md).
+Nachdem gültige Anmeldedaten eingegeben und der Button <a href="/mampf/de/mampf-pages/my-home-page" target="_self"><button name="button">Einloggen</button></a> angeglickt worden ist, gelangt man auf die [persönliche Startseite](my-home-page.md).
 
 ## Fehlermeldungen
 Bei unvollständigen oder falschen Daten sowie unbestätigtem Account gibt MaMpf eine Fehlermeldung zurück. Bevor ein Account genutzt werden kann, muss der Aktivierungslink in der Bestätigungsmail angeklickt werden. Diese Mail wird an die E-Mail-Adresse geschickt, mit der man sich registriert hat. Siehe dazu auch [Registrieren (Seite)](registration.md).

@@ -13,23 +13,23 @@ Vortragende können diese Seite über die [Medienseite](medium) und die Seite [�
 
 <ul>
   <li>
-     <a href="/mampf/de/docs/medium" target="_self"><b>Medienseite</b></a> (Vortragende und Editor*innen)
+     <a href="/mampf/de/mampf-pages/medium" target="_self"><b>Medienseite</b></a> (Vortragende und Editor*innen)
   </li>
   Rechts neben dem Medientitel in der Überschrift befindet sich das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Medium bearbeiten“ führt.
   <li>
-     <a href="/mampf/de/docs/edit-talk" target="_self"><b>Seite „Vortrag bearbeiten“</b></a> (Vortragende und Editor*innen)
+     <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><b>Seite „Vortrag bearbeiten“</b></a> (Vortragende und Editor*innen)
   </li>
   In der Box „Basisdaten“ klickt man auf den gewünschten <button>Medientitel</button> in der Liste „Medien“. Dieser führt einen auf die Seite „Medium bearbeiten“.
   <li>
-     <a href="/mampf/de/docs/ed-edit-session" target="_self"><b>Seite „Sitzung bearbeiten“</b></a> (Editor*innen)
+     <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><b>Seite „Sitzung bearbeiten“</b></a> (Editor*innen)
   </li>
   In der Box „Basisdaten“ klickt man auf den gewünschten <button>Medientitel</button> in der Liste „Medien“. Dieser führt einen auf die Seite „Medium bearbeiten“.
   <li>
-     <a href="/mampf/de/docs/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
+     <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
   </li>
   In der Box „Medien“ klickt man auf den <button>Medientyp</button> und anschließend den <button>Medientitel</button>, um auf die Seite „Medium bearbeiten“ zu navigieren.
   <li>
-     <a href="/mampf/de/docs/ed-edit-lecture" target="_self"><b>Seite „Vorlesung bearbeiten“</b></a> (Editor*innen)
+     <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><b>Seite „Vorlesung bearbeiten“</b></a> (Editor*innen)
   </li>
   In der Box „Medien“ klickt man auf den <button>Medientyp</button> und anschließend den <button>Medientitel</button>, um auf die Seite „Medium bearbeiten“ zu navigieren.
 </ul>
@@ -100,13 +100,13 @@ Nun werden die Bedienelemente der Seite „Medium bearbeiten“ beschrieben. Dab
 ### Kopf
 In diesem Bereich gibt es Steuerelemente zur Navigation, der Verwaltung der Veröffentlichung und der Übernahme von Änderungen. Bei Vortragenden und Editor\*innen stimmen die Bedienelemente in diesem Bereich fast vollständig überein. Auf geringfügige Unterschiede wird in der Beschreibung des jeweiligen Bedienelements hingewiesen.  
 
-* <a href="/mampf/de/docs/medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/docs/medium" target="_self">Seite des Mediums</a>.
+* <a href="/mampf/de/mampf-pages/medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/medium" target="_self">Seite des Mediums</a>.
 * <button>Bearbeiten</button> Verwalte die Veröffentlichung. Dieser Button ist nur bei unveröffentlichten Medien mit geplanter Veröffentlichung vorhanden.
 * <button>Stornieren</button> Storniere die geplante Veröffentlichung. Dieser Button ist nur bei unveröffentlichten Medien mit geplanter Veröffentlichung vorhanden.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem Änderungen vorgenommen worden sind.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem Änderungen vorgenommen worden sind.
-* <button>zur Veranstaltung</button> Wechsel auf die <a href="/mampf/de/docs/seminar" target="_self">Seite des Seminars</a> (bei Vortragenden) bzw. auf die Seite <a href="/mampf/de/docs/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a> oder <a href="/mampf/de/docs/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> (bei Editor*innen).
-* <a href="/mampf/de/docs/ed-edit-session" target="_self"><button>zur Sitzung</button></a> bzw. <a href="/mampf/de/docs/edit-talk" target="_self"><button>zum Vortrag</button></a> Wechsel auf die Seite <a href="/mampf/de/docs/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> (bei Vorlesungen) bzw. auf die Seite <a href="/mampf/de/docs/edit-talk" target="_self">„Vortrag bearbeiten“</a> (bei Seminaren). Dieser Button ist nur vorhanden, wenn das Medium zu einer Sitzung bzw. zu einem Vortrag assoziiert ist.
+* <button>zur Veranstaltung</button> Wechsel auf die <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a> (bei Vortragenden) bzw. auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a> oder <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> (bei Editor*innen).
+* <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button>zur Sitzung</button></a> bzw. <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><button>zum Vortrag</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> (bei Vorlesungen) bzw. auf die Seite <a href="/mampf/de/mampf-pages/edit-talk" target="_self">„Vortrag bearbeiten“</a> (bei Seminaren). Dieser Button ist nur vorhanden, wenn das Medium zu einer Sitzung bzw. zu einem Vortrag assoziiert ist.
 * <button>Veröffentlichen</button> Veröffentliche das Medium. Dieser Button kann nur bei unveröffentlichten Medien vorhanden sein. Damit der Button angezeigt wird, muss ferner die Veranstaltung, zu der das Medium gehört, schon veröffentlicht worden sein und es dürfen keine Änderungen am Medium seit dem letzten Speichern vorgenommen worden sein.
 * <button>Löschen</button> Lösche das Medium. Dieser Button wird nur angezeigt, wenn es keine Dokumente zu dem Medium gibt.
 
@@ -188,7 +188,7 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
                  <input type="radio" id="eng" name="lang"></input>
                  <label for="eng"> Englisch</label>
               </form>
-              Lege die Sprache des Mediums fest. Die gewählte Sprache wird auf der hier beschriebenen Seite, der <a href="/mampf/de/docs/medium" target="_self">Medienseite</a> und der <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a> verwendet. Davon sind insbesondere die Einträge in THmyE und die Tags betroffen. Zur Auswahl stehen Deutsch und Englisch.
+              Lege die Sprache des Mediums fest. Die gewählte Sprache wird auf der hier beschriebenen Seite, der <a href="/mampf/de/mampf-pages/medium" target="_self">Medienseite</a> und der <a href="/mampf/de/mampf-pages/mediacard" target="_self">Mediacard</a> verwendet. Davon sind insbesondere die Einträge in THmyE und die Tags betroffen. Zur Auswahl stehen Deutsch und Englisch.
            </li>
         </ul>
      </td>
@@ -282,7 +282,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                  <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für den deutschen Titel des Tags. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für den deutschen Titel des Tags. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
            <li>
               <form>
@@ -291,7 +291,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                     <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für den englischen Titel des Tags. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für den englischen Titel des Tags. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
         </ul>
      </td>
@@ -313,7 +313,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
                     <input type="text" id="fname" name="fname"></input><br></br>
                  </p>
               </form>
-              Eingabefeld für eine weitere Bezeichnung des Tags. Die Bezeichnung kann nachträglich auf der Seite <a href="/mampf/de/docs/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
+              Eingabefeld für eine weitere Bezeichnung des Tags. Die Bezeichnung kann nachträglich auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> bearbeitet werden.
            </li>
            <li>
               <form>
@@ -409,9 +409,9 @@ In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
 * <button>Datei</button> Wähle eine Datei vom Endgerät aus, die hochgeladen werden soll. Die Datei muss das richtige Format haben, d.h. mp4 bei Videos, pdf bei Manuskripten und ggb bei Geogebra-Applets. Pro Dokumententyp kann höchstens eine Datei hinzugefügt werden. Wenn also schon eine Datei dieses Typs hochgeladen worden ist, wird diese nach dem Speichern unwiderruflich überschrieben.
 * <button>Upload</button> Lade die ausgewählte Datei hoch. Dazu muss vorher auf <button>Datei</button> geklickt und eine Datei ausgewählt worden sein.
 * <button>Datei <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button> Lösche die Datei. Dazu muss vorher eine Datei hochgeladen und diese Änderung gespeichert worden sein.
-* <a href="/mampf/de/docs/thyme-editor" target="_self"><button>Editor</button></a> Öffne den <a href="/mampf/de/docs/thyme-editor" target="_self">THymE-Editor</a>, um eine Videogliederung und Referenzen hinzuzufügen bzw. zu bearbeiten. Dazu muss ein Video hochgeladen und diese Änderung gespeichert worden sein.
-* <a href="/mampf/de/docs/thyme" target="_self"><button>THymE</button></a> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab. Dazu muss vorher ein Video hochgeladen und diese Änderung gespeichert worden sein.
-* <button>Screenshot</button> Öffne den Screenshot in einem Dialogfenster. Bei PDFs und Geogebra-Dateien werden die Screenshots automatisch erstellt werden und können nicht bearbeitet werden. Bei PDFs wird immer die erste Seite verwendet. Bei Videos hingegen kann der Screenshot nur selbstständig im THymE-Editor angefertigt werden. Die vorhandenen Screenshots werden als Vorschaubilder auf der <a href="/mampf/de/docs/medium" target="_self">Medienseite</a> in den Boxen „Video“, „Manuskript“ und  „Geogebra-Applet“ verwendet. Außerdem wird ein Screenshot auf der <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a> angezeigt. Dazu wird der Videoscreenshot verwendet, sofern es ihn gibt. Andernfalls wird der PDF-Screenshot angezeigt. Falls auch kein PDF-Screenshot vorhanden ist, erscheint der Geogebra-Screenshot. Falls kein Geogebra-Screenshot verfügbar ist, gibt es keinen Screenshot auf der Mediacard. Damit es den Button <button>Screenshot</button> gibt, muss vorher ein Video, ein PDF oder eine Geogebra-Datei hochgeladen und diese Änderung gespeichert worden sein. Bei Videos muss außerdem ein Screenshot im THymE-Editor gemacht worden sein.
+* <a href="/mampf/de/mampf-pages/thyme-editor" target="_self"><button>Editor</button></a> Öffne den <a href="/mampf/de/mampf-pages/thyme-editor" target="_self">THymE-Editor</a>, um eine Videogliederung und Referenzen hinzuzufügen bzw. zu bearbeiten. Dazu muss ein Video hochgeladen und diese Änderung gespeichert worden sein.
+* <a href="/mampf/de/mampf-pages/thyme" target="_self"><button>THymE</button></a> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab. Dazu muss vorher ein Video hochgeladen und diese Änderung gespeichert worden sein.
+* <button>Screenshot</button> Öffne den Screenshot in einem Dialogfenster. Bei PDFs und Geogebra-Dateien werden die Screenshots automatisch erstellt werden und können nicht bearbeitet werden. Bei PDFs wird immer die erste Seite verwendet. Bei Videos hingegen kann der Screenshot nur selbstständig im THymE-Editor angefertigt werden. Die vorhandenen Screenshots werden als Vorschaubilder auf der <a href="/mampf/de/mampf-pages/medium" target="_self">Medienseite</a> in den Boxen „Video“, „Manuskript“ und  „Geogebra-Applet“ verwendet. Außerdem wird ein Screenshot auf der <a href="/mampf/de/mampf-pages/mediacard" target="_self">Mediacard</a> angezeigt. Dazu wird der Videoscreenshot verwendet, sofern es ihn gibt. Andernfalls wird der PDF-Screenshot angezeigt. Falls auch kein PDF-Screenshot vorhanden ist, erscheint der Geogebra-Screenshot. Falls kein Geogebra-Screenshot verfügbar ist, gibt es keinen Screenshot auf der Mediacard. Damit es den Button <button>Screenshot</button> gibt, muss vorher ein Video, ein PDF oder eine Geogebra-Datei hochgeladen und diese Änderung gespeichert worden sein. Bei Videos muss außerdem ein Screenshot im THymE-Editor gemacht worden sein.
 * <button>Ansehen</button> Öffne das PDF bzw. die ggb-Datei in einem neuen Tab. Dazu muss vorher ein PDF bzw. eine ggb-Datei hochgeladen und diese Änderung gespeichert worden sein.
 * <form>
      <p>
@@ -440,24 +440,24 @@ Die Aufruf- und Downloadstatistik öffnet sich, wenn man in der Box „Dokumente
 Von der Seite „Medium bearbeiten“ aus gelangt man zu den Seiten „Seminar“ bzw. „Seminar bearbeiten“ oder „Vorlesung bearbeiten“, „Vortrag bearbeiten“ bzw. „Sitzung bearbeiten“ und der Medienseite. Außerdem errreicht man den THymE-Player und -Editor.
 
 ### [Seite des Seminars](seminar) (Vortragende)
-Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDFs, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/docs/seminar" target="_self"><button>Zur Veranstaltung</button></a>.
+Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDFs, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Zur Veranstaltung</button></a>.
 
 ### Seite [„Seminar bearbeiten“](ed-edit-seminar) bzw. [„Vorlesung bearbeiten“](ed-edit-lecture) (Editor*innen)
-Auf diesen Seiten kann die jeweilige Veranstaltung bearbeitet werden. Dort können Medien angelegt werden, bei Vorlesungen außerdem Kapitel, Abschnitte und Sitzungen und bei Seminaren Vorträge. Ferner können dort weitere die Veranstaltung betreffende Einstellungen bearbeitet werden, etwa zu Tutorien und Tutor\*innen, Abgaben, Foren, Mitteilungen, Kommentaren, dem Infotext, der Veranstaltungssprache und dem Passwortschutz der Veranstaltung. Um auf diese Seite zu gelangen, klickt man auf <a href="/mampf/de/docs/ed-edit-event-series" target="_self"><button>Zur Veranstaltung</button></a>.
+Auf diesen Seiten kann die jeweilige Veranstaltung bearbeitet werden. Dort können Medien angelegt werden, bei Vorlesungen außerdem Kapitel, Abschnitte und Sitzungen und bei Seminaren Vorträge. Ferner können dort weitere die Veranstaltung betreffende Einstellungen bearbeitet werden, etwa zu Tutorien und Tutor\*innen, Abgaben, Foren, Mitteilungen, Kommentaren, dem Infotext, der Veranstaltungssprache und dem Passwortschutz der Veranstaltung. Um auf diese Seite zu gelangen, klickt man auf <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button>Zur Veranstaltung</button></a>.
 
 ### Seite [„Sitzung bearbeiten“](ed-edit-session) bzw. [„Vortrag bearbeiten“](edit-talk)
-Auf dieser Seite kann die Sitzung bzw. der Vortrag bearbeitet werden. Auf der Seite „Sitzung bearbeiten“ können Editor\*innen das Datum der Sitzung bearbeiten, Medien zur Sitzung hinzufügen oder bereits angelegte Medien bearbeiten, Tags assoziieren oder anlegen und einen Inhaltstext verfassen oder bearbeiten. Um dieser Seite anzusteuern, klickt man auf <a href="/mampf/de/docs/ed-edit-session" target="_self"><button name="button">Zur Sitzung</button></a>.
+Auf dieser Seite kann die Sitzung bzw. der Vortrag bearbeitet werden. Auf der Seite „Sitzung bearbeiten“ können Editor\*innen das Datum der Sitzung bearbeiten, Medien zur Sitzung hinzufügen oder bereits angelegte Medien bearbeiten, Tags assoziieren oder anlegen und einen Inhaltstext verfassen oder bearbeiten. Um dieser Seite anzusteuern, klickt man auf <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button name="button">Zur Sitzung</button></a>.
 
-Auf der Seite „Vortrag bearbeiten“ können Vortragende Begriffe aus der MaMpf-Datenbank und eigene Medien hinzufügen sowie den Beschreibungstext bearbeiten. Editor\*innen können zudem neue Begriffe anlegen sowie die Vortragenden, das Vortragsdatum und die Position des Vortrags in der Gliederung bearbeiten. Außerdem können sie einen Beschreibungstext verfassen bzw. bearbeiten und den Text der Vortragenden von der Vortragsseite entfernen. Diese Seite ist über <a href="/mampf/de/docs/edit-talk" target="_self"><button name="button">Zum Vortrag</button></a> erreichbar.
+Auf der Seite „Vortrag bearbeiten“ können Vortragende Begriffe aus der MaMpf-Datenbank und eigene Medien hinzufügen sowie den Beschreibungstext bearbeiten. Editor\*innen können zudem neue Begriffe anlegen sowie die Vortragenden, das Vortragsdatum und die Position des Vortrags in der Gliederung bearbeiten. Außerdem können sie einen Beschreibungstext verfassen bzw. bearbeiten und den Text der Vortragenden von der Vortragsseite entfernen. Diese Seite ist über <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><button name="button">Zum Vortrag</button></a> erreichbar.
 
 ### [Medienseite](medium)
-Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
 
 ### [THymE-Player](thyme)
-Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an, sofern diese zuvor mit dem <a href="/mampf/de/docs/thyme-editor" target="_self">THymE-Editor</a> angelegt worden sind. Der Player öffnet sich durch Klicken auf <a href="/mampf/de/docs/thyme" target="_self"><button name="button">THymE</button></a>.
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an, sofern diese zuvor mit dem <a href="/mampf/de/mampf-pages/thyme-editor" target="_self">THymE-Editor</a> angelegt worden sind. Der Player öffnet sich durch Klicken auf <a href="/mampf/de/mampf-pages/thyme" target="_self"><button name="button">THymE</button></a>.
 
 ### [THymE-Editor](thyme-editor)
-Im THymE-Editor kann eine Videogliederung angelegt und Referenzen hinzugefügt werden. Diese werden dann beim Abspielden des Videos im <a href="/mampf/de/docs/thyme" target="_self">THymE-Player</a> angezeigt. Um zum Editor zu gelangen, klickt man auf <a href="/mampf/de/docs/thyme-editor" target="_self"><button name="button">Editor</button></a>.
+Im THymE-Editor kann eine Videogliederung angelegt und Referenzen hinzugefügt werden. Diese werden dann beim Abspielden des Videos im <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE-Player</a> angezeigt. Um zum Editor zu gelangen, klickt man auf <a href="/mampf/de/mampf-pages/thyme-editor" target="_self"><button name="button">Editor</button></a>.
 
 ## Verwandte Seiten
 ### Betrachtung
