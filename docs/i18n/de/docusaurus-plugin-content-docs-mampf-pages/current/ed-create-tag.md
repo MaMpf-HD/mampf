@@ -7,7 +7,7 @@ Auf der Seite „Tag anlegen“ können Editor\*innen einen neuen Tag anlegen.
 ![](/img/tag_anlegen1.png)
 
 ## Navigation zu dieser Seite
-Die Seite kann über die [Tagsuche](ed-search-extended) mithilfe des Buttons <button>Tag anlegen</button> erreicht werden.
+Die Seite kann über die [Tagsuche](ed-search-extended) mithilfe des Buttons <a href="/mampf/de/mampf-pages/ed-search-extended" target="_self"><button>Tag anlegen</button></a> erreicht werden.
 
 ## Bereiche der Seite
 Die Seite gliedert sich in zwei große Teilbereiche: die eigentliche Seite und die [Navigationsleiste](nav-bar). Die Bereiche sind exemplarisch in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
