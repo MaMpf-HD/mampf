@@ -8,6 +8,7 @@ class QuizzesController < ApplicationController
   before_action :check_vertex_accessibility, only: [:take]
   before_action :check_errors, only: [:take]
   before_action :init_values, only: [:take, :proceed]
+  after_action :store_access, only: [:take]
   authorize_resource except: [:new, :update_branching]
   layout 'administration'
 
@@ -113,6 +114,7 @@ class QuizzesController < ApplicationController
     if user_signed_in? && current_user.study_participant
       quiz_round_params[:study_participant] = current_user.anonymized_id
     end
+    quiz_round_params[:save_probe] = !current_user.in?(Quiz.find(params[:id]).editors_with_inheritance) && !current_user.admin?
     @quiz_round = QuizRound.new(quiz_round_params)
   end
 
@@ -142,5 +144,9 @@ class QuizzesController < ApplicationController
     return if @quiz.sort == 'RandomQuiz'
     return unless @quiz.find_errors&.any?
     redirect_to :root, alert: I18n.t('controllers.quiz_has_error')
+  end
+
+  def store_access
+    ConsumptionSaver.perform_async(@quiz.id, 'browser', 'quiz')
   end
 end

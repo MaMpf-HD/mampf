@@ -9,9 +9,26 @@
        role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="statisticsModalLabel">
-          <%= t("basics.statistics") %>
-        </h5>
+        <% if @medium.sort == 'Quiz' %>
+          <ul class="nav nav-pills mt-3" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="media-tab" data-toggle="pill"
+                href="#calls-stats">
+                <%= t('statistics.calls') %>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="teachable-tab" data-toggle="pill"
+                href="#success-stats">
+                <%= t('statistics.success') %>
+              </a>
+            </li>
+          </ul>
+        <% else %>
+          <h5 class="modal-title" id="statisticsModalLabel">
+            <%= t("statistics.calls") %>
+          </h5>
+        <% end %>
         <button type="button"
                 class="close"
                 data-dismiss="modal"
@@ -21,8 +38,16 @@
           </span>
         </button>
       </div>
-      <div class="modal-body" id="statistics-modal-content">
-      </div>
+      <% if @medium.sort == 'Quiz' %>
+        <div class="modal-body" id="statistics-modal-content">
+          <div class="tab-content">
+            <div class="tab-pane fade active show" id="calls-stats"></div>
+            <div class="tab-pane fade" id="success-stats"></div>
+          </div>
+        </div>
+      <% else %>
+        <div class="modal-body" id="calls-stats"></div>
+      <% end %>
     </div>
   </div>
 </div>

@@ -10,7 +10,8 @@
         <button type="button"
                 class="btn btn-sm btn-outline-secondary"
                 id="showMediaStatistics"
-                data-medium="<%= medium.id %>">
+                data-medium="<%= medium.id %>"
+                <%= "disabled" unless medium.collects_statistics %>>
           <%= t('basics.statistics') %>
         </button>
       </div>
