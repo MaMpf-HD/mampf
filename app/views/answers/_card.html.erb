@@ -45,7 +45,7 @@
        data-id="<%= answer.id %>">
     <div class="card-body bg-mdb-color-lighten-6"
          id="answer-body-<%= answer.id %>">
-      <%= render partial: 'answers/form.html',
+      <%= render partial: 'answers/form',
                  locals: { answer: answer,
                            question_id: answer.question.id } %>
     </div>
