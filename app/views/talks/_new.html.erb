@@ -34,9 +34,13 @@
       <%= f.select :speaker_ids,
                    [[]],
                    {},
-                   { class: 'form-control',
+                   { class: 'selectize',
+                     style: 'display: none;',
                      multiple: true,
-                     data: { locale: I18n.locale } } %>
+                     data: { ajax: true,
+                             filled: false,
+                             model: 'user',
+                             placeholder: t('basics.enter_two_letters')} } %>
     </div>
     <% if lecture.talks.exists? %>
       <div class="col-12 form-group">

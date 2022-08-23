@@ -53,10 +53,13 @@
                      options_for_select(talk.speakers.map { |s| [s.tutorial_info, s.id] },
                        talk.speaker_ids),
                      {},
-                     { class: 'form-control',
+                     { class: 'selectize',
+                       style: 'display: none;',
                        multiple: true,
-                       data: { locale: I18n.locale,
-                               placeholder: t('basics.select') } } %>
+                       data: { ajax: true,
+                               filled: false,
+                               model: 'user',
+                               placeholder: t('basics.enter_two_letters')} } %>
       </div>
     </div>
     <div class="form-row">
