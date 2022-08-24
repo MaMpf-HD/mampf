@@ -2349,6 +2349,14 @@ en:
       You might try the following fulltext terms and start the search again.
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
+    media:
+      lecture_options:
+        subscribed: 'subscribed'
+        subscribed_and_preceding: 'subscribed and preceding'
+        all: 'all'
+        own_selection: 'custom selection'
+        all_media: 'all media'
+        only_extras: 'only extra material'
   errors:
     not_subscribed: You are currently not subscribed to this lecture.
     profile:

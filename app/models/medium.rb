@@ -144,6 +144,10 @@ class Medium < ApplicationRecord
     integer :tag_ids, multiple: true
     integer :editor_ids, multiple: true
     integer :answers_count
+    integer :term_id do
+      lecture_id = Teachable.find_by(id: teachable_id).lecture_id
+      Lecture.find_by(id: lecture_id).term_id || 0
+    end
   end
 
   # these are all the sorts of food(=projects) we currently serve
@@ -252,7 +256,12 @@ class Medium < ApplicationRecord
     search_params[:types] = [] if search_params[:all_types] == '1'
     search_params[:teachable_ids] = TeachableParser.new(search_params)
                                                    .teachables_as_strings
-    search_params[:editor_ids] = [] if search_params[:all_editors] == '1'
+    search_params[:editor_ids] = [] if search_params[:all_editors] == '1' || search_params[:all_editors].nil?
+    search_params[:term_ids] = [] if search_params[:all_terms] == '1' || search_params[:term_ids].nil?
+    # add lectures without term to current term
+    if Term.active.try(:id).to_i.to_s.in?(search_params[:term_ids])
+      search_params[:term_ids].push('0')
+    end
     if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
       search_params[:tag_ids] = Tag.pluck(:id)
     end
@@ -262,6 +271,7 @@ class Medium < ApplicationRecord
       without(:sort, 'RandomQuiz')
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
+      with(:term_id, search_params[:term_ids])
     end
     if search_params[:purpose] == 'clicker'
       search.build do

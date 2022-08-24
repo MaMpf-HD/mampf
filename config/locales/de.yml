@@ -2494,6 +2494,14 @@ de:
       Suche anschließend neu starten:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
+    media:
+      lecture_options:
+        subscribed: 'abonnierte'
+        subscribed_and_preceding: 'abonnierte und vorrangehende'
+        all: 'alle'
+        own_selection: 'eigene Auswahl'
+        all_media: 'alle Medien'
+        only_extras: 'nur Zusatzmaterialien'
   errors:
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
