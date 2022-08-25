@@ -49,7 +49,7 @@ class UserCleaner
   def try_get_hash(body, email)
     @hash_dict = {} if @hash_dict.blank?
     begin
-      hash = body.match(/Hash:(.*)/).captures
+      hash = body.match(/Hash:([a-zA-Z0-9]*)/).captures
       @hash_dict[email] = hash
     rescue
       return
