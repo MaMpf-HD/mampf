@@ -105,7 +105,7 @@ In der Suchmaske kommen die Bedienelemente Dropdownmenü, Eingabefeld, Checkbox,
                  <label for="oder"> ODER</label>
                  <input type="radio" id="de" name="lang"></input>
                  <label for="und"> UND</label>
-              </form> Radiobuttons mit den Auswahlmöglichkeiten <em>ODER</em> und <em>UND</em>. Bestimme, ob Medien mindestens einen (<em>ODER</em>) oder alle (<em>UND</em>) Tags tragen sollen.
+              </form> Radiobuttons mit den Auswahlmöglichkeiten <em>ODER</em> und <em>UND</em>. Bestimme, ob die Medien mindestens einen (<em>ODER</em>) oder alle (<em>UND</em>) Tags tragen sollen.
             </li>
             <li>
               <form>

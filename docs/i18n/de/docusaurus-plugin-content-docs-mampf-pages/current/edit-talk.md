@@ -61,7 +61,7 @@ Die eigentliche Seite besteht aus dem Kopf und den Boxen „Basisdaten“ und �
 </table>
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Dabei werden die einzelnen Bereiche nacheinander behandelt und bei Bedarf Unterschiede zwischen den Bedienelementen bei Vortragenden und Editor\*innen thematisiert.  Editor\*innen, die auch Vortragenden sind, stehen alle Bedienelemente zur Verfügung.
+Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Dabei werden die einzelnen Bereiche nacheinander behandelt und bei Bedarf Unterschiede zwischen den Bedienelementen bei Vortragenden und Editor\*innen thematisiert. Editor\*innen, die auch Vortragenden sind, stehen alle Bedienelemente zur Verfügung.
 
 ### Kopf
 In diesem Bereich gibt es Steuerelemente zur Navigation und der Übernahme von Änderungen. Editor\*innen verfügen über einen zusätzlichen Button.
@@ -70,7 +70,7 @@ In diesem Bereich gibt es Steuerelemente zur Navigation und der Übernahme von �
 * <a href="/mampf/de/mampf-pages/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/talk" target="_self">Seite des Vortrags</a>.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Vortrag bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Vortrag bearbeitet worden ist.
-* <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Veranstaltung</button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a>.
+* <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a>.
 
 #### Editor*innen vorbehaltenene Bedienelemente
 Editor\*innen steht zudem der Button <button>Löschen</button> zur Verfügung, mit dem sie den Vortrag löschen können.

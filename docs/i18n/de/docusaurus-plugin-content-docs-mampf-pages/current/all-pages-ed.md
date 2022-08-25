@@ -50,6 +50,7 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 ## S
 * [Seminar bearbeiten](ed-edit-seminar)
 * [Sitzung bearbeiten](ed-edit-session)
+* [Skript bearbeiten](ed-edit-manuscript)
 * [Suche (erweitert)](ed-search-extended)
 
 ## T

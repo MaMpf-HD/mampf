@@ -34,8 +34,8 @@ In allen eben vorgestellten Bereichen der Seite können Bedienelemente vorkommen
 * <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die Seite der <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltung</a>.
 
 ### Navigationselemente
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" height="12"/></button> Wechsel zum nächsten Abschnitt. (Auf der Seite des letzten Abschnitts ist dieser Button nicht vorhanden.)
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left.png" height="12"/></button> Wechsel zum vorigen Abschnitt. (Auf der Seite des ersten Abschnitts ist dieser Button nicht vorhanden.)
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" height="12"/></button> Wechsel zum nächsten Abschnitt. (Auf der Seite des letzten Abschnitts ist dieser Button nicht vorhanden.)
 
 ### Verknüpfte Begriffe
 <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/mampf-pages/tag" target="_self">Begriffs</a>.
