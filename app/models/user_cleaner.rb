@@ -11,13 +11,17 @@ class UserCleaner
     @imap.logout
   end
 
-  def search_emails
+  def search_emails_and_hashes
+    @email_dict = {}
+    @hash_dict = {}
     @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
     @imap.search(['SUBJECT', 'Undelivered Mail Returned to Sender']).each do |message_id|
       body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
       if match = body.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User has moved to ERROR: Account expired\./)
         match.captures.each do |email|
           add_mail(email, message_id)
+
+          check_for_hash(body, email)
         end
       end
     end
@@ -26,8 +30,29 @@ class UserCleaner
       if match = body.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?Unknown recipient/)
         match.captures.each do |email|
           add_mail(email, message_id)
+
+          check_for_hash(body, email)
         end
       end
+    end
+  end
+
+  def add_mail(email, message_id)
+    @email_dict = {} if @email_dict.blank?
+    if @email_dict.key?(email)
+      @email_dict[email] << message_id
+    else
+      @email_dict[email] = [message_id]
+    end
+  end
+
+  def try_add_hash(body, email)
+    @hash_dict = {} if @hash_dict.blank?
+    begin
+      hash = body.match(/Hash:(.*)/).captures
+      @hash_dict[email] = hash
+    rescue
+      return
     end
   end
 
@@ -42,39 +67,11 @@ class UserCleaner
     end
   end
 
-  def find_hashes
-    @hash_dict = {}
-    @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
-    @imap.search(['SUBJECT', 'Ghost']).each do |message_id|
-      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
-      begin
-        mail = body.match(/<p>(.*)<br>/).captures
-        hash = body.match(/<br>\r\n(.*)<\/p>/).captures
-        @hash_dict[mail] = hash
-      rescue
-        next
-      end
-
-      u = User.find_by(email: mail, ghost_hash: hash)
-      move_mail(message_id) if u.present?
-    end
-  end
-
   def delete_ghosts
     @hash_dict.each do |mail, hash|
       u = User.find_by(email: mail, ghost_hash: hash)
       u.destroy! if u&.generic?
-    end
-  end
-
-  def add_mail(email, message_id)
-    if @email_dict.blank?
-      @email_dict = {}
-    end
-    if @email_dict.key?(email)
-      @email_dict[email] << message_id
-    else
-      @email_dict[email] = [message_id]
+      move_mail(@email_dict[mail]) if u.present?
     end
   end
 
@@ -95,11 +92,11 @@ class UserCleaner
 
   def clean!
     login
-    search_emails
+    search_emails_and_hashes
     return if @email_dict.blank?
     send_hashes
     sleep(10)
-    find_hashes
+    search_emails_and_hashes
     delete_ghosts
     logout
   end
