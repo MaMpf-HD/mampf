@@ -2992,10 +2992,10 @@ de:
       automatisch gelöscht.
     hash_mail_subject: Überprüfung der Emailadresse
     hash_mail_body: >
-      Hallo, %{name}!<br>
+      Hallo, %{name}!
       Du erhältst diese Email, weil eine frühere Email von MaMpf nicht zugestellt werden konnte.
       Mit dieser Email wird überprüft, ob Dein Emailkonto noch existiert. Da dies der Fall ist,
-      werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.<br>
+      werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.
       Hash:%{hash}
   statistics:
     video_thyme: 'THymE-Aufrufe'
