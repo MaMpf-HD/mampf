@@ -3,6 +3,12 @@ $('.submission-actions[data-id="<%= @submission.id %>"]').empty()
                         locals: { submission: @submission,
                                   lecture: @lecture,
                                   tutorial: @tutorial } %>')
-$('#submission_tutorial_id-<%= @submission.id %>').select2
-  theme: 'bootstrap'
-  language: '<%= I18n.locale %>'
+
+new TomSelect('#submission_tutorial_id-<%= @submission.id %>',
+  sortField:
+    field: 'text'
+    direction: 'asc'
+  render:
+    no_results: (data, escape) ->
+      '<div class="no-results"><%= t("basics.no_results") %></div>'
+)
