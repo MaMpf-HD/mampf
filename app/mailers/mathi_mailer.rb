@@ -6,6 +6,6 @@ class MathiMailer < ApplicationMailer
     return if user.ghost_hash.nil?
     @email = user.email
     @hash = user.ghost_hash
-    mail(to: DefaultSetting::PROJECT_EMAIL, subject: "Ghost:#{@email}")
+    mail(to: user.email, subject: "Ghost:#{@email}")
   end
 end
