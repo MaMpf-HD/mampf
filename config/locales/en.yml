@@ -2815,6 +2815,13 @@ en:
       For GDPR reasons, all submissions and corrections of the lecture
       %{lecture} in %{term} that were stored in MaMpf have been automatically
       deleted.
+    hash_mail_subject: Email address verification
+    hash_mail_body: >
+      Hello, %{name}!<br>
+      You are receiving this email because a previous email from MaMpf could not be delivered.
+      This email is to check if your email account still exists. Since this is the case, no changes
+      will be made to your account. You can therefore ignore this email.<br>
+      Hash:%{hash}
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
