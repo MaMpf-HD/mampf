@@ -21,7 +21,7 @@ class UserCleaner
         match.captures.each do |email|
           add_mail(email, message_id)
 
-          check_for_hash(body, email)
+          try_get_hash(body, email)
         end
       end
     end
@@ -31,7 +31,7 @@ class UserCleaner
         match.captures.each do |email|
           add_mail(email, message_id)
 
-          check_for_hash(body, email)
+          try_get_hash(body, email)
         end
       end
     end
@@ -46,7 +46,7 @@ class UserCleaner
     end
   end
 
-  def try_add_hash(body, email)
+  def try_get_hash(body, email)
     @hash_dict = {} if @hash_dict.blank?
     begin
       hash = body.match(/Hash:(.*)/).captures
