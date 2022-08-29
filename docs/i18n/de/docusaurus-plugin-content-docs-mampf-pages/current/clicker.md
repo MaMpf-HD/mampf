@@ -53,7 +53,7 @@ Im Fach „Löschen“ kommt lediglich der Button <button>Löschen</button> vor,
 Das Aussehen und die Bedienelemente dieses Fach richten sich danach, ob eine Quizfrage zum Clicker assoziiert ist.
 
 ##### Keine Assoziierung mit einer Quizfrage
-Ist keine Quizfrage zum Clicker assoziiert, so gibt es Radiobuttons und einen einfachen Button.
+Ist keine Quizfrage zum Clicker assoziiert, so gibt es Radiobuttons und einen einfachen Button. Diese sind nur bedienbar, wenn der Clicker geschlossen ist.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clicker_antworten.png" width="800"/>
 
@@ -71,24 +71,23 @@ Ist keine Quizfrage zum Clicker assoziiert, so gibt es Radiobuttons und einen ei
 * <button>Quizfrage assoziieren</button> Wechsel zur Suche, um eine Frage zu finden und zum Clicker zu assoziieren. Nachdem eine Assoziierung angelegt worden ist, erscheint die Ansicht „Assoziierung mit einer Quizfrage“.
 
 ##### Bei Assoziierung mit einer Quizfrage
-Ist eine Frage assoziiert, so wird diese angezeigt und es gibt zwei Buttons.
+Ist eine Frage assoziiert, so wird diese angezeigt und es gibt zwei Buttons. Diese sind nur bedienbar, wenn der Clicker geschlossen ist.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clicker_frage.png" width="800"/>
 
 * <button>Assoziierung zu Quizfrage aufheben</button> Hebe die bestehende Assoziierung zwischen Frage und Clicker auf. Nachdem die Assoziierung aufgehoben worden ist, erscheint die Ansicht „Keine Assoziierung mit einer Quizfrage“.
-* <button>Andere Quizfrage assoziieren</button> Wechsel zur Suche, um eine andere Frage zu finden und zum Clicker zu assoziieren.
+* <button>Andere Quizfrage assoziieren</button> Wechsel zur Suche, um eine andere Frage zu finden und diese zum Clicker zu assoziieren.
 
 ##### Suche
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clicker_suche.png" width="800"/> |
-|:---: |
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clicker_suchergebnis.png" width="800"/> |
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clicker_frage_waehlen.png" width="800"/> |
+Bei der Suche gibt es zunächst nur eine Suchmaske. Nachdem eine Suche durchgeführt worden ist, werden die Treffer in einer Tabelle aufgeführt und bei entsprechender Trefferzahl stehen auch Elemente zur Seitennavigation zur Verfügung. Einzelne Treffer können durch Anlicken in der Vorschau geöffnet werden.
 
 ###### Maske
+In der Suchmaske sind folgende Bedienelemente vorzufinden:
+
 <table>
   <tr>
      <td>
-        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/suche_medien_cut.png" width="5000"/>
+        <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clicker_suche_kompakt.png" width="5000"/>
         <ul>
           <li>
             Assoziiert zu / Verknüpfte Tags / EditorInnen<br></br> <form>
@@ -189,7 +188,7 @@ Wenn es mehr Treffer, als pro Seite angezeigt werden sollen, gibt, stehen folgen
 ###### Treffer
 Die Treffer werden in einer Tabelle mit den fünf Spalten „Beschreibung“ (Medientitel), „Assoziiert zu“, „Verknüpfte Tags“, „EditorInnen“ und „Zugänglichkeit“ präsentiert. Die Anzahl der Zeilen kann in der Suchmaske festgelegt werden.
 
-<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/suche_medien_treffer.png" width="5000"/>
+![](/img/clicker_treffer.png)
 
 In jeder Zeile gibt es bis zu drei Typen von Bedienelemente. Die Anzahl der Bedienelemente hängt einerseits von den angelegten Assoziationen und andererseits von den Nutzerrechten ab.
 
@@ -197,25 +196,16 @@ In jeder Zeile gibt es bis zu drei Typen von Bedienelemente. Die Anzahl der Bedi
 * <button>Begriff</button> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a>.
 * <button>Zeile</button> Öffne das Medium in der Vorschau.
 
-Fährt man über eine Zeile, so färbt sie sich orange. Klickt man auf eine Zeile, so färbt sie sich grün und das zugehörige Medium wird in der Vorschau geöffnet. Dann werden weitere Bedienelemente verfügbar. Sobald man eine Zeile durch Anklicken ausgewählt hat, färben sich die Zeilen bei den aktuellen Sucherergebnissen nicht mehr orange, wenn man über sie hovert.
-Die Zugänglichkeit der Medien wird mittels Icons angezeigt. Die Bedeutung der Icons kann der der nachfolgenden Tabelle entnommen werden:
-
-| Symbol | Bedeutung |  Konsequenz |
-| :---: | :---: | :--- |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/public.png" height="12"/> | frei | Alle Personen können über den entsprechenden Link auf das Medium zugreifen. Dazu ist kein MaMpf-Account erforderlich. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-solid.png" height="12"/> | nur registrierte MaMpf-NutzerInnen | Alle Personen mit MaMpf-Account können über den entsprechenden Link auf das Medium zugreifen. Dazu müssen sie sich einloggen. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-plus-solid.png" height="12"/> | nur AbonnentInnen | Alle Personen, die eine Veranstaltung abonniert haben, können über den entsprechenden Link auf das Medium zugreifen. Manche Veranstaltungen können nur mit einem Zugangsschlüssel abonniert werden. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid.png" height="12"/> | gesperrt | Einfache Nutzer*innen können das Medium nicht mehr öfnnen. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/> | unveröffentlicht | Einfache Nutzer*inne können das Medium noch nicht öffnen. |
-
-Kann man unveröffentlichte, gesperrte, ... Fragen als gewöhnliche Editor\*in assoziieren????
+Fährt man über eine Zeile, so färbt sie sich orange. Klickt man auf eine Zeile, so färbt sie sich grün und die zugehörige Frage wird in der Vorschau geöffnet. Dann werden weitere Bedienelemente verfügbar. Sobald man eine Zeile durch Anklicken ausgewählt hat, färben sich die Zeilen bei den aktuellen Sucherergebnissen nicht mehr orange, wenn man über sie hovert.
+Die Zugänglichkeit der Fragen wird mittels Icons angezeigt. Diese hat jedoch keinen Einfluss darauf, ob die Fragen mit dem Clicker assoziiert werden können. Zur Bedeutung der Icons siehe die [Mediensuche](ed-search-extended#zugänglichkeit).
 
 ###### Vorschau
-<button>Quizfrage assoziieren</button>
+Sobald man eine Frage aus der Treffertabelle angeklickt hat, wird die Frage in der Vorschau angezeigt. Dort gibt es dann den Button <button>Quizfrage assoziieren</button>. Wenn man diesen Button betätigt, wird die Frage mit dem Clicker assoziiert, die Suche geschlossen und im Fach  „Antworten bzw. Frage“ die Ansicht „Bei Assoziierung mit einer Quizfrage“ angezeigt.
+
+![](/img/clicker_vorschau.png)
 
 #### Ergebnis
 Im Fach „Ergebnis“ gibt es keine Bedienelemente, solange der Clicker freigeschaltet ist.
-
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/clicker_ergebnis_laufend.png" width="800"/>
 

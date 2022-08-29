@@ -28,12 +28,12 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 * [Kapitel bearbeiten](ed-edit-chapter)
 
 ## M
-* [Mediensuche](ed-search-extended)
+* [Mediensuche](ed-search-extended#tab-mediensuche)
 * [Medium bearbeiten](edit-medium)
 * [Medium inspizieren](ed-inspect-medium)
 * [Mein Profil](ed-profile)
 * [Modul bearbeiten](ed-edit-module) (nur bei Moduleditor*innen verfügbar)
-* [Modulsuche](ed-search-extended)
+* [Modulsuche](ed-search-extended#tab-modulsuche)
 
 ## P
 * Profil, siehe [Mein Profil](ed-profile)
@@ -46,7 +46,6 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 * [Quizfrage bearbeiten](edit-medium-question) (Medium)
 * [Quizfrage bearbeiten](edit-question)
 
-
 ## S
 * [Seminar bearbeiten](ed-edit-seminar)
 * [Sitzung bearbeiten](ed-edit-session)
@@ -56,7 +55,7 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 ## T
 * [Tag anlegen](ed-create-tag)
 * [Tag bearbeiten](ed-edit-tag)
-* [Tagsuche](ed-search-extended)
+* [Tagsuche](ed-search-extended#tab-tagsuche)
 * [THymE-Editor](thyme-editor)
 
 ## U
@@ -64,6 +63,6 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 
 ## V
 * [Veranstaltung bearbeiten](ed-edit-event-series)
-* [Veranstaltungssuche](ed-search-extended)
+* [Veranstaltungssuche](ed-search-extended#tab-veranstaltungssuche)
 * [Vorlesung bearbeiten](ed-edit-lecture)
 * [Vortrag bearbeiten](edit-talk)

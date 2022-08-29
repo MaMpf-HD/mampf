@@ -47,7 +47,7 @@ In diesem Bereich gibt es Bedienelemente zur Navigation und der Übernahme von �
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Abschnitt bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Abschnitt bearbeitet worden ist.
 * <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button>zur Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“ </a>.
-* <button>Löschen</button> Lösche den Abschnitt. Falls es Sitzungen zu diesem Abschnitt gibt, erhalten diese den Status „verwaist“ und werden in der Vorlesungsgliederung auf der <a href="/mampf/de/mampf-pages/lecture" target="_self">Vorlesungsseite</a> nicht mehr angezeigt. Verwaiste Sitzungen werden auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> unter der Gliederung aufgeführt. Auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> kann ihnen wieder einen Abschnitt zuweisen, wodurch sie wieder in der Gliederung auf der Vorlesungsseite erscheinen.
+* <button>Löschen</button> Lösche den Abschnitt. Falls es Sitzungen zu diesem Abschnitt gibt, erhalten diese den Status „verwaist“ und werden in der Gliederung auf der <a href="/mampf/de/mampf-pages/lecture" target="_self">Vorlesungsseite</a> nicht mehr angezeigt. Verwaiste Sitzungen werden auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> unter der Gliederung aufgeführt. Auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> kann ihnen wieder ein Abschnitt zugewiesen werden, wodurch sie wieder in der Gliederung auf der Vorlesungsseite erscheinen.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left.png" height="12"/></button> Wechsel zur Bearbeitungsseite des vorigen Abschnitts. (Auf der Bearbeitungsseite des ersten Abschnitts ist dieser Button nicht vorhanden.)
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" height="12"/></button> Wechsel zur Bearbeitungsseite des nächsten Abschnitts. (Auf der Bearbeitungsseite des letzten Abschnitts ist dieser Button nicht vorhanden.)
 
@@ -301,7 +301,7 @@ In der Box „Inhalt“ gibt es Bedienelemente zur Texteingabe und -formatierung
   </tr>
 </table>
 
-Damit Bedienelemente zum Betrachten von verknüpften Videos und PDFs verfügbar sind muss eine der zwei folgenden Bedingungen erfüllt sein:
+Damit Bedienelemente zum Betrachten von verknüpften Videos und PDFs verfügbar sind, muss eine der zwei folgenden Bedingungen erfüllt sein:
 1. Eine Lektion ist zur verknüpften Sitzung assoziiert und das zur Lektion gehörige Video wurde mit dem [THymE-Editor](thyme-editor) gegliedert.
 2. Das Vorlesungsskript wurde mit dem MaMpf-LaTeX-Paket erstellt und seine Gliederung ist in MaMpf importiert. Falls das MaMpf-Paket verwendet wird, hat die Videogliederung der assoziierten Lektionen keinen Einfluss auf den extrahierten Inhalt.
 
