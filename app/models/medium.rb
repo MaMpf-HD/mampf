@@ -125,7 +125,9 @@ class Medium < ApplicationRecord
   scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 1.day.ago) }
 
   searchable do
-    text :description
+    text :description do
+      caption
+    end
     text :text do
       text_join
     end
@@ -145,8 +147,14 @@ class Medium < ApplicationRecord
     integer :editor_ids, multiple: true
     integer :answers_count
     integer :term_id do
-      lecture_id = Teachable.find_by(id: teachable_id).lecture_id
-      Lecture.find_by(id: lecture_id).term_id || 0
+      term_id || 0
+    end
+    integer :teacher_id do
+      supervising_teacher_id
+    end
+    integer :subscribed_users, multiple: true
+    integer :lecture do
+      lecture&.id
     end
   end
 
@@ -191,7 +199,7 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except('RandomQuiz').map { |k, v| [v, k] }
   end
 
-  def self.select_sorts_for_normal_user_search
+  def self.select_generic
     Medium.sort_localized.except('RandomQuiz', 'Question', 'Remark', 'Erdbeere').map { |k, v| [v, k] }
   end
 
@@ -250,6 +258,15 @@ class Medium < ApplicationRecord
     search_params[:types] || []
   end
 
+  def self.lecture_search_option
+    {
+      '0' => 'subscribed',
+      '1' => 'subscribed and preceding',
+      '2' => 'all',
+      '3' => 'custom'
+    }
+  end
+
   # returns search results for the media search with search_params provided
   # by the controller
   def self.search_by(search_params, page)
@@ -257,21 +274,21 @@ class Medium < ApplicationRecord
     search_params[:teachable_ids] = TeachableParser.new(search_params)
                                                    .teachables_as_strings
     search_params[:editor_ids] = [] if search_params[:all_editors] == '1' || search_params[:all_editors].nil?
-    search_params[:term_ids] = [] if search_params[:all_terms] == '1' || search_params[:term_ids].nil?
-    # add lectures without term to current term
-    if Term.active.try(:id).to_i.to_s.in?(search_params[:term_ids])
-      search_params[:term_ids].push('0')
-    end
+    # add media without term to current term
+    search_params[:all_terms] = '1' if search_params[:all_terms].blank?
+    search_params[:term_ids].push('0') if search_params[:term_ids].present?
     if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
       search_params[:tag_ids] = Tag.pluck(:id)
     end
+    admin = User.find_by(id: search_params[:user_id])&.admin?
     search = Sunspot.new_search(Medium)
     search.build do
       with(:sort, search_params[:types])
-      without(:sort, 'RandomQuiz')
+      without(:sort, ['Question', 'Remark', 'RandomQuiz']) unless admin
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
-      with(:term_id, search_params[:term_ids])
+      with(:term_id, search_params[:term_ids]) unless search_params[:all_terms] == '1'
+      with(:teacher_id, search_params[:teacher_ids]) unless search_params[:all_teachers] == '1'
     end
     if search_params[:purpose] == 'clicker'
       search.build do
@@ -310,6 +327,18 @@ class Medium < ApplicationRecord
       search.build do
         fulltext search_params[:fulltext] do
           boost_fields :description => 2.0
+        end
+      end
+    end
+    if search_params[:lecture_option].present?
+      case Medium.lecture_search_option[search_params[:lecture_option]]
+      when 'subscribed'
+        search.build do
+          with(:subscribed_users, search_params[:user_id])
+        end
+      when 'custom'
+        search.build do
+          with(:lecture, search_params[:media_lectures])
         end
       end
     end
@@ -979,6 +1008,34 @@ class Medium < ApplicationRecord
 
   def collects_statistics
     video.present? || manuscript.present? || sort == 'Quiz'
+  end
+
+  def term_id
+    teachable.term_id if teachable.class.to_s == 'Lecture'
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).term_id
+  end
+
+  def supervising_teacher_id
+    return teachable.teacher_id if teachable.class.to_s == 'Lecture'
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).teacher_id
+  end
+
+  def supervising_teacher_id
+    return teachable.teacher_id if teachable.class.to_s == 'Lecture'
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).teacher_id
+  end
+
+  def subscribed_users
+    return teachable.user_ids if ['Lecture', 'Course'].include? teachable.class.to_s
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).user_ids
   end
 
   private

@@ -102,7 +102,7 @@ module MediaHelper
     return add_prompt(Medium.select_quizzables) if purpose == 'quiz'
     return Medium.select_question if purpose == 'clicker'
     return add_prompt(Medium.select_importables) if purpose == 'import'
-    return add_prompt(Medium.select_sorts_for_normal_user_search) if !current_user.admin?
+    return add_prompt(Medium.select_generic) if !current_user.admin?
     add_prompt(Medium.select_sorts)
   end
 
@@ -133,5 +133,14 @@ module MediaHelper
   def edit_or_show_medium_path(medium)
     return edit_medium_path(medium) if current_user.can_edit?(medium)
     medium_path(medium)
+  end
+
+  def lecture_search_option_description
+    {
+      '0' => 'subscribed',
+      '1' => 'subscribed and preceding',
+      '2' => 'all',
+      '3' => 'custom'
+    }
   end
 end

@@ -617,18 +617,22 @@ class MediaController < ApplicationController
     types -= [''] if types
     types = nil if types == []
     params[:search][:types] = types
+    params[:search][:user_id] = current_user.id
     params.require(:search)
           .permit(:all_types, :all_teachables, :all_tags,
                   :all_editors, :tag_operator, :quiz, :access,
                   :teachable_inheritance, :fulltext, :per,
                   :clicker, :purpose, :answers_count,
-                  :results_as_list,
+                  :results_as_list, :all_terms, :all_teachers,
+                  :lecture_option, :user_id,
                   types: [],
                   teachable_ids: [],
                   tag_ids: [],
-                  editor_ids: [])
+                  editor_ids: [],
+                  term_ids: [],
+                  teacher_ids: [],
+                  media_lectures: [])
           .with_defaults(access: 'all')
-                
   end
 
   # destroy all notifications related to this medium

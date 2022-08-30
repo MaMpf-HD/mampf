@@ -28,6 +28,29 @@ $(document).on 'turbolinks:load', ->
       selector.enable()
     return
 
+  # disable search fields associated with radio buttons
+  prev = null
+  $('[type="radio"]').on 'change', ->
+
+    try
+      selector = document.getElementById(this.dataset.id).selectize
+      if $(this).prop('checked')
+        selector.enable()
+      else
+        selector.disable()
+    catch e
+
+    try
+      selector = document.getElementById(prev.dataset.id).selectize
+      if $(prev).prop('checked')
+        selector.enable()
+      else
+        selector.disable()
+    catch e
+    
+    prev = this
+    return
+
   # issue a warning if an input has been changed in the media form
   # extract the teachable type and id from the teachable selection and
   # store it in hidden fields' values
