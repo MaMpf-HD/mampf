@@ -70,8 +70,8 @@ class UserCleaner
   def delete_ghosts
     @hash_dict.each do |mail, hash|
       u = User.find_by(email: mail, ghost_hash: hash)
-      u.destroy! if u&.generic?
       move_mail(@email_dict[mail]) if u.present?
+      u.destroy! if u&.generic?
     end
   end
 
