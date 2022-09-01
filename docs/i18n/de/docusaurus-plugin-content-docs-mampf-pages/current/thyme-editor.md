@@ -362,13 +362,18 @@ Im Bereich „Gliederung“ werden alle bereits angelegten Einträge des Inhalts
 
 ![](/img/thyme_editor_inhalt_cut.png)
 
+#### Gliederungsimport bei Verwendung des MaMpf-Pakets
+In skriptbasierten Vorlesungen kann die Gliederung aus den Metadaten des PDFs importiert werden. Dazu muss das Medium zu einer Sitzung assoziiert sein. Die Sitzung muss wiederum zu mindestens einem Abschnitt assoziiert sein, darf also nicht verwaist sein. Um dies zu erreichen, legt man zunächst auf der Seite [„Abschnitt bearbeiten“](ed-edit-section) eine Sitzung an. Danach kann man bei Bedarf auf der Seite [„Sitzung bearbeiten“](ed-edit-session) weitere Abschnitte zur Sitzung assoziieren. Dort legt man außerdem das Medium, in das man die Gliederung importieren möchte, an und wählt sowohl ein Anfangsitem als auch ein Enditem aus. Unter diesen Bedingungen können alle in der TeX-Datei gesetzten Marker zwischen dem Anfangs- und Enditem mithilfe des Buttons <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="14"/></button> importiert werden. Den Einträgen muss dann nur noch eine sinnvolle Zeitmarke zugewiesen werden.
+
+![](/img/thyme_editor_inhalt_import.png)
+
 ### Referenzen
 Im Bereich „Referenz“ werden alle bereits angelegten Referenzen angezeigt. Jede Referenz ist ein Bedienelement. Wenn man eine <button>Referenz</button> anklickt, öffnet sich diese zur Bearbeitung im Aktionsbereich. Außerdem springt das Video an die Stelle, an der referenziert wird.
 
 ![](/img/thyme_editor_referenzen_cut.png)
 
 ### Screenshot
-Im Bereich „Screenshot“ wird ein Screenshot angezeigt, sofern mithilfe <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-a-photo.png" height="14"/></button> in der Steuerleiste des Bildes ein Screenshot angefertigt worden ist. Falls es einen Screenshot gibt, so steht in diesem Bereich genau ein Bedienelement zur Verfügung. Dabei handelt es sich um den Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></button> zum Löschen des Screenshots.
+Im Bereich „Screenshot“ wird ein Screenshot angezeigt, sofern mithilfe <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-a-photo.png" height="14"/></button> in der Steuerleiste des Bildes ein Screenshot angefertigt worden ist. Falls es einen Screenshot gibt, so steht in diesem Bereich genau ein Bedienelement zur Verfügung. Dabei handelt es sich um den Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></button> zum Löschen des Screenshots.
 
 ![](/img/thyme_editor_screenshot_cut.png)
 

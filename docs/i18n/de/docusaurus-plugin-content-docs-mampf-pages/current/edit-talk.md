@@ -143,9 +143,8 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/mampf-pa
             <option value="saab2">Quiz</option>
             <option value="mercedes2">Sonstiges</option>
          </select><br></br>
-     Dropdown-Menü zur Auswahl des Medientyps. Sofern der gewählte Medientyp nicht <i>Quiz</i> ist, kann er nachträglich auf der Seite
-     <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>
-    verändert werden.
+     Dropdown-Menü zur Auswahl des Medientyps. Sofern der gewählte Medientyp nicht <i>Quiz</i> ist, kann er nachträglich auf der Seite&nbsp;
+     <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a> verändert werden.
   </li>
   <li>
      <form>

@@ -117,7 +117,7 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
               Sitzungen <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> Öffne das Formular zum Anlegen einer neuen Sitzung.
           </li>
           <li>
-              <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button>Sitzung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a>.
+              <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button>Sitzung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a>. Die Nummerierung der Sitzungen richtet sich nach dem Sitzungstermin und ist daher variabel.
           </li>
           <li>
               <form>
@@ -240,7 +240,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
 * <button>Abbrechen</button> Schließe das Dialogfenster, ohne eine Sitzung anzulegen.
 
 ### Inhalt
-In der Box „Inhalt“ gibt es Bedienelemente zur Texteingabe und -formatierung. Außerdem können Bedienelemente zuum Betrachten von verknüpften Videos und PDFs vorhanden sein. Nun werden die Bedienelemente zur Texteingabe und -formatierung vorgestellt.
+In der Box „Inhalt“ gibt es Bedienelemente zur Texteingabe und -formatierung. Außerdem können Bedienelemente zum Betrachten von verknüpften Videos und PDFs vorhanden sein. Nun werden die Bedienelemente zur Texteingabe und -formatierung vorgestellt.
 
 <table>
   <tr>
@@ -308,6 +308,9 @@ Damit Bedienelemente zum Betrachten von verknüpften Videos und PDFs verfügbar 
 Falls eine der beiden Bedingungen erfüllt ist, können die folgenden Bedienelemente bei „Aus Medium extrahierter Inhalt“ vorzufinden sein:
 
 <ul>
+  <li>
+    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen. 
+  </li>
   <li>
     <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" height="12"/></button> Öffne das Video an der entsprechenden Stelle in <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a>.
   </li>
