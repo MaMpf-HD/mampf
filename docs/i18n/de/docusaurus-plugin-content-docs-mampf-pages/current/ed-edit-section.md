@@ -46,7 +46,7 @@ In diesem Bereich gibt es Bedienelemente zur Navigation und der Übernahme von �
 * <a href="/mampf/de/mampf-pages/section" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/section" target="_self">Seite des Abschnitts</a>.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Abschnitt bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Abschnitt bearbeitet worden ist.
-* <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button>zur Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“ </a>.
+* <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button>zur Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
 * <button>Löschen</button> Lösche den Abschnitt. Falls es Sitzungen zu diesem Abschnitt gibt, erhalten diese den Status „verwaist“ und werden in der Gliederung auf der <a href="/mampf/de/mampf-pages/lecture" target="_self">Vorlesungsseite</a> nicht mehr angezeigt. Verwaiste Sitzungen werden auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> unter der Gliederung aufgeführt. Auf der Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> kann ihnen wieder ein Abschnitt zugewiesen werden, wodurch sie wieder in der Gliederung auf der Vorlesungsseite erscheinen.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left.png" height="12"/></button> Wechsel zur Bearbeitungsseite des vorigen Abschnitts. (Auf der Bearbeitungsseite des ersten Abschnitts ist dieser Button nicht vorhanden.)
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" height="12"/></button> Wechsel zur Bearbeitungsseite des nächsten Abschnitts. (Auf der Bearbeitungsseite des letzten Abschnitts ist dieser Button nicht vorhanden.)
@@ -66,7 +66,7 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
                   <input type="text" id="fname" name="fname"></input><br></br>
                 </p>
               </form>
-              Eingabefeld für den Titel des Abschnitts. Dieses Feld muss ausgefüllt werden.
+              Eingabefeld für den Titel des Abschnitts. Dieses Feld muss ausgefüllt werden. Ein Abschnittstitel kann mehrfach innerhalb einer Vorlesung und sogar innerhalb eines Kapitels vergeben werden.
            </li>
            <li>
               <label for="cars"></label>Kapitel <br></br>
@@ -95,7 +95,7 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
                 <input type="text" id="fname" name="fname"></input><br></br>
               </p>
             </form>
-            Eingabefeld für die Nummer des Abschnitts. Diese überschreibt die automatisch berechnete Nummer des Abschnitts.
+            Eingabefeld für die Nummer des Abschnitts. Diese überschreibt die automatisch berechnete Nummer des Abschnitts. Dabei kann eine Nummer mehrfach vergeben werden.
           </li>
           <li>
               Verknüpfte Tags <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> Öffne das Formular zum Anlegen eines neuen Tags.
@@ -309,7 +309,7 @@ Falls eine der beiden Bedingungen erfüllt ist, können die folgenden Bedienelem
 
 <ul>
   <li>
-    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen. 
+    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen.
   </li>
   <li>
     <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" height="12"/></button> Öffne das Video an der entsprechenden Stelle in <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a>.
