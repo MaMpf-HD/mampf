@@ -2,7 +2,7 @@
 title: Vortrag bearbeiten
 ---
 
-Auf der Seite „Vortrag bearbeiten“ können Vortragende und Editor\*innen Änderungen am [Vortrag](talk) vornehmen. Vortragende können Begriffe aus der MaMpf-Datenbank und eigene Medien hinzufügen sowie den Beschreibungstext bearbeiten. Editor\*innen können zudem neue Begriffe anlegen sowie die Vortragenden, das Vortragsdatum und die Position des Vortrags in der Gliederung bearbeiten. Außerdem können sie einen Beschreibungstext verfassen bzw. bearbeiten und den Text der Vortragenden von der Vortragsseite entfernen. Die Unterschiede zwischen der Seite für Editor\*innen und der für Vortragende sind gering, daher werden die Seiten in diesem Artikel gemeinsam beschrieben, wobei jeweils auf die nutzertypspezifischen Besonderheiten eingegangen wird.
+Auf der Seite „Vortrag bearbeiten“ können Vortragende und Editor\*innen Änderungen am [Vortrag](talk) vornehmen. Vortragende können Begriffe aus der MaMpf-Datenbank und eigene Medien hinzufügen sowie den Beschreibungstext bearbeiten. Editor\*innen können zudem neue Begriffe anlegen sowie die Vortragenden, das Vortragsdatum und die Position des Vortrags in der Gliederung bearbeiten. Außerdem können sie einen Beschreibungstext verfassen bzw. bearbeiten und den Text der Vortragenden von der Vortragsseite entfernen. Die Unterschiede zwischen der Seite für Editor\*innen und der für Vortragende sind gering, daher werden die Seiten in diesem Artikel gemeinsam beschrieben, wobei jeweils auf die nutzertypspezifischen Besonderheiten eingegangen wird. Das Pendant zu dieser Seite bei Veranstaltungen des Typs Vorlesung ist die Seite [„Sitzung bearbeiten“](ed-edit-session).
 
 ![](/img/vortrag_bearbeiten2.png)
 

@@ -2,7 +2,7 @@
 title: Sitzung bearbeiten
 ---
 
-Auf der Seite „Sitzung bearbeiten“ können Editor\*innen Änderungen an einer [Sitzung](session) einer Vorlesung vornehmen. Sie können Medien erstellen, Tags anlegen, hinzufügen und entfernen, Abschnitte assoziieren, das Datum bearbeiten und den Beschreibungstext der Sitzung bearbeiten.
+Auf der Seite „Sitzung bearbeiten“ können Editor\*innen Änderungen an einer [Sitzung](session) einer Vorlesung vornehmen. Sie können Medien erstellen, Tags anlegen, hinzufügen und entfernen, Abschnitte assoziieren, sowie das Datum und den Beschreibungstext der Sitzung bearbeiten. Das Pendant zu dieser Seite bei Veranstaltungen des Typs Seminar ist die Seite [„Vortrag bearbeiten“](edit-talk).
 
 ![](/img/sitzung_bearbeiten.png)
 
@@ -17,26 +17,26 @@ Auf die Seite „Sitzung bearbeiten“ gelangt man über die [Seite der Sitzung]
   <li>
      <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><b>„Vorlesung bearbeiten“</b></a>
   </li>
-  Im Vorlesungsinhalt erreicht man über den <button>Sitzungstermin</button> die Seite „Sitzung bearbeiten“. Bei verwaisten Sitzungen, also solchen bei denen der assoziierte Abschnitt gelöscht worden ist, befindet sich der  <button>Sitzungstermin</button> unter der Gliederung.
+  Im Vorlesungsinhalt erreicht man über den <button>Sitzungstermin</button> die Seite „Sitzung bearbeiten“. Bei verwaisten Sitzungen, also solchen bei denen alle assoziierten Abschnitte gelöscht worden sind, befindet sich der  <button>Sitzungstermin</button> unter der Gliederung.
   <li>
      <a href="/mampf/de/mampf-pages/ed-edit-section" target="_self"><b>„Abschnitt bearbeiten“</b></a>
   </li>
-     Auf der Bearbeitungsseite eines zur Sitzung assoziierten Abschnitts befindet sich in der Box „Basisdaten“ bei „Sitzungen“ das Bedienelement <button>Sitzungsnummer, Sitzungstermin</button>, über das man auf die Seite „Sitzung bearbeiten“ erreicht.
+     Auf der Bearbeitungsseite eines zur Sitzung assoziierten Abschnitts befindet sich in der Box „Basisdaten“ bei „Sitzungen“ das Bedienelement <button>Sitzungsnummer, Sitzungstermin</button>, über das man die Seite „Sitzung bearbeiten“ erreicht.
 </ul>
 
 ## Bereiche der Seite
 Die Seite gliedert sich in zwei große Teilbereiche: die eigentliche Seite und die [Navigationsleiste](nav-bar). Die Bereiche sind exemplarisch in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
 
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_navbar.png" width="800"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_eigentlich.png" width="800"/>  |
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_navbar.png" height="350"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_eigentlich.png" height="350"/>  |
 |:---: | :---: |
 |Navigationsleiste|Eigentliche Seite|
 
 Die eigentliche Seite besteht aus dem Kopf und den Boxen „Basisdaten“ und „Inhalt“. Diese Bereiche sind in den folgenden Screenshots hervorgehoben.
 
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_kopf.png" width="800"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_basisdaten.png" width="800"/>  |
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_kopf.png" height="350"/> |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_basisdaten.png" height="350"/>  |
 |:---: | :---: |
 |Kopf|Basisdaten|
-|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_inhalt.png" width="800"/> |  |
+|<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_inhalt.png" height="350"/> |  |
 |Inhalt||
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
@@ -251,12 +251,40 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
 </table>
 
 ### Inhalt
-In der Box „Inhalt“ gibt es Bedienelemente zur Texteingabe und -formatierung. Außerdem können Bedienelemente zum Betrachten von verknüpften Videos und PDFs vorhanden sein. Nun werden die Bedienelemente zur Texteingabe und -formatierung vorgestellt.
+In der Box „Inhalt“ gibt es Bedienelemente zur Texteingabe und -formatierung. Außerdem können Bedienelemente zum Betrachten von verknüpften Videos und PDFs sowie zum Import von Gliederungsdaten aus dem Skript vorhanden sein.
+
+Damit Bedienelemente zum Betrachten von verknüpften Videos und PDFs verfügbar sind, muss eine der zwei folgenden Bedingungen erfüllt sein:
+1. Eine Lektion ist zur verknüpften Sitzung assoziiert und das zur Lektion gehörige Video wurde mit dem [THymE-Editor](thyme-editor) gegliedert.
+2. Das Vorlesungsskript wurde mit dem MaMpf-LaTeX-Paket erstellt und seine Gliederung ist in MaMpf importiert. Falls das MaMpf-Paket verwendet wird, hat die Videogliederung der assoziierten Lektionen keinen Einfluss auf den extrahierten Inhalt.
+
+Damit es die Bedienelemente zum Gliederungsimport gibt, muss die Veranstaltung skriptbasiert sein. Außerdem muss die Sitzung zu mindestens einem Abschnitt assoziiert sein, darf also nicht verwaist sein.
+
+Die folgenden Bedienelemente können vorhanden sein:
 
 <table>
   <tr>
     <td>
-      <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_inhalt_cut.png" width="3000"/>
+      <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_inhalt_thyme.png" width="3000"/>
+      Gliederungsimport
+      <ul>
+        <li>
+          <label for="cars"></label>Anfangs-Item <br></br>
+          <select name="cars" id="cars">
+             <option value="saab">Marker 1</option>
+             <option value="mercedes">Marker 2</option>
+             <option value="audi">Marker 3</option>
+          </select><br></br> Dropdownmenü und Eingabefeld zur Festlegung des Anfangspunktes, ab dem Informationen zum Inhalt aus den Metadaten des Skripts importiert werden (nur bei skriptbasierten Vorlesungen).
+        </li>
+        <li>
+          <label for="cars"></label>End-Item <br></br>
+          <select name="cars" id="cars">
+             <option value="saab">Marker 1</option>
+             <option value="mercedes">Marker 2</option>
+             <option value="audi">Marker 3</option>
+          </select><br></br> Dropdownmenü und Eingabefeld zur Festlegung des Endpunktes, bis zu dem Informationen zum Inhalt aus den Metadaten des Skripts importiert werden (nur bei skriptbasierten Vorlesungen).
+        </li>
+      </ul>
+      Texteingabe und -formatierung
       <ul>
         <li>
           <form>
@@ -273,13 +301,13 @@ In der Box „Inhalt“ gibt es Bedienelemente zur Texteingabe und -formatierung
         <li>
           <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
         </li>
-        <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
-        </li>
       </ul>
     </td>
     <td>
       <ul>
+        <li>
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
+        </li>
         <li>
           <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
         </li>
@@ -308,32 +336,26 @@ In der Box „Inhalt“ gibt es Bedienelemente zur Texteingabe und -formatierung
           <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/redo.png" height="8"/></button> Wiederhole die letzte Aktion. Dazu muss die letzte Aktion zuvor rückgängig gemacht worden sein.
         </li>
       </ul>
+      Extrahierter Inhalt
+        <ul>
+          <li>
+            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen.
+          </li>
+          <li>
+            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" height="12"/></button> Öffne das Video an der entsprechenden Stelle in <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a>.
+          </li>
+          <li>
+            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF in einem neuen Tab.
+          </li>
+        </ul>
     </td>
   </tr>
 </table>
 
-Damit Bedienelemente zum Betrachten von verknüpften Videos und PDFs verfügbar sind, muss eine der zwei folgenden Bedingungen erfüllt sein:
-1. Eine Lektion ist zur verknüpften Sitzung assoziiert und das zur Lektion gehörige Video wurde mit dem [THymE-Editor](thyme-editor) gegliedert.
-2. Das Vorlesungsskript wurde mit dem MaMpf-LaTeX-Paket erstellt und seine Gliederung ist in MaMpf importiert. Falls das MaMpf-Paket verwendet wird, hat die Videogliederung der assoziierten Lektionen keinen Einfluss auf den extrahierten Inhalt.
-
-Falls eine der beiden Bedingungen erfüllt ist, können die folgenden Bedienelemente bei „Aus Medium extrahierter Inhalt“ vorzufinden sein:
-
-<ul>
-  <li>
-    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen.
-  </li>
-  <li>
-    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" height="12"/></button> Öffne das Video an der entsprechenden Stelle in <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a>.
-  </li>
-  <li>
-    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF in einem neuen Tab.
-  </li>
-</ul>
-
 Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
 ## Verwaiste Sitzungen
-Eine Sitzung erhält den Status „verwaist“, wenn sie nur zu gelöschten Sitzungen assoziiert ist. Sie erscheint dann nicht mehr in der Veranstaltungsgliederung auf der [Vorlesungsseite](lecture). Sobald ihr ein neuer Abschnitt zugewiesen wird, ist sie nicht mehr verwaist.
+Eine Sitzung erhält den Status „verwaist“, wenn sie nur zu gelöschten Abschnitten assoziiert ist. Sie erscheint dann nicht mehr in der Veranstaltungsgliederung auf der [Vorlesungsseite](lecture). Sobald ihr ein neuer Abschnitt zugewiesen wird, ist sie nicht mehr verwaist. Dies ist auf der Seite Bearbeitungsseite der verwaisten Sitzung möglich. Diese erreicht man über die [Bearbeitungsseite der Vorlesung](ed-edit-lecture). Das <button>Sitzungsdatum</button> von verwaisten Sitzungen, das auf die Bearbeitungsseite der verwaisten Sitzung führt, befindet sich unter der Gliederung.
 
 ## Von dieser Seite aus erreichbare Seiten
 * [Medium bearbeiten](edit-medium)

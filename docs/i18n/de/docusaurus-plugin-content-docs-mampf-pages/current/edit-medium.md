@@ -398,6 +398,22 @@ Der unter Inhaltsangabe eingegebene Text erscheint auf der [Medienseite](medium)
 
 Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
+Falls zu dem Medium ein Video gehört, das mit dem THymE-Editor mit einer Gliederung versehen worden ist, so können weitere Informationen extrahiert werden. Mit diesen gehen weitere Bedienelemente einher. Diese befinden sich bei „Extrahierter Inhalt“:
+
+![](/img/medium_bearbeiten_inhalt.png)
+
+<ul>
+  <li>
+    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen.
+  </li>
+  <li>
+    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" height="12"/></button> Öffne das Video an der entsprechenden Stelle in <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a>.
+  </li>
+  <li>
+    <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF in einem neuen Tab.
+  </li>
+</ul>
+
 ### Dokumente
 In diesem Bereich können Dateien hinzugefügt, bearbeitet oder entfernt werden.
 
