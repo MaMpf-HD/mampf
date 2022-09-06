@@ -56,7 +56,7 @@ Auf der Seite „Begriff“ kommen Bedienelemente bei einfachen Nutzer\*innen in
      <option value="saab">2</option>
   </select> Stelle ein, wie viele Begriffe angezeigt werden sollen: nur direkt mit dem Begriff verbundene <i>(1)</i> oder auch mit verknüpften Begriffen verbundene Begriffe <i>(2)</i>.
 * <button name="button">in externem Tab rendern</button> Öffne die Mindmap in einem externen Tab.
-* <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
+* <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-solid.png" height="12"/></button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 
 ### Verknüpfte Fragen
 <button name="button">Test beginnen</button> Starte ein Quiz, das aus fünf der verknüpften Fragen besteht.
