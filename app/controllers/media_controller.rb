@@ -221,7 +221,6 @@ class MediaController < ApplicationController
     end
     return unless @total.zero?
     return unless search_params[:fulltext]&.length.to_i > 1
-    @similar_titles = Medium.similar_courses(search_params[:fulltext])
   end
 
   # play the video using thyme player
