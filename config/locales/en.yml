@@ -1156,7 +1156,9 @@ en:
         manuscript_structure: >
           This is the structure of the manuscript that was extracted from the
           pdf. You can import chapters, sections and tags to MaMpf if no
-          contradisctions are displayed.
+          contradictions are displayed. Note that the language of the manuscript
+          in which it was TeXed is expected to coincide with the language that
+          is set in the lecture preferences.
         import_warning: >
           Attention: The structure of the manuscript has not yet been imported
           to MaMpf.
@@ -1312,6 +1314,7 @@ en:
       no_section: 'no associated section from the database'
       create_external: 'Create external item'
       explanation: 'Explanation'
+      chapter_short: 'Chap.'
       sort:
         definition: 'Definition'
         remark: 'Remark'
@@ -2110,6 +2113,8 @@ en:
     pages: 'p'
     destinations: 'destinations'
     structure: 'Structure of the manuscript'
+    chapter: 'chapter'
+    section: 'section'
     one_contradiction: >
       A contradiction has been found. If you want to import the manuscript's
       structure to MaMpf, you have to resolve that contradiction first.

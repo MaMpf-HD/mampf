@@ -1389,6 +1389,7 @@ de:
       no_section: 'kein zugeordneter Abschnitt aus der Datenbank'
       create_external: 'Externen Eintrag anlegen'
       explanation: 'Erläuterung'
+      chapter_short: 'Kap.'
       sort:
         definition: 'Definition'
         remark: 'Bemerkung'
@@ -2237,6 +2238,8 @@ de:
     pages: 'S'
     destinations: 'Destinations'
     structure: 'Struktur des Manuskripts'
+    chapter: 'Kapitel'
+    section: 'Abschnitt'
     one_contradiction: >
       Es wurde ein Widerspruch gefunden. Wenn Du die Struktur des
       Skriptes in MaMpf importieren möchtest, musst Du erst den
