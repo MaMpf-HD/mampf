@@ -332,8 +332,10 @@ class Item < ApplicationRecord
   end
 
   def chapter_reference
-    return 'Kap. ' + ref_number if ref_number.present?
-    'Kap.'
+    chapter_short = I18n.t('admin.item.chapter_short',
+                           locale: locale)
+    return "#{chapter_short} #{ref_number}" if ref_number.present?
+    chapter_short
   end
 
   def toc_reference
@@ -464,5 +466,9 @@ class Item < ApplicationRecord
   def destroy_joins(related_item)
     ItemSelfJoin.where(item: [self, related_item],
                        related_item: [self, related_item]).delete_all
+  end
+
+  def locale
+    medium&.locale || I18n.default_locale
   end
 end
