@@ -2356,6 +2356,10 @@ en:
         but is part of a session, its title will be considered in the search instead.
         If you leave this field blank (or enter less than two characters)
         it will be ignored during the search.
+      lectures: >
+        Here you can specify from which lectures the medium should originate.
+        You can allow all events, only those that you have subscribed to, or
+        you can make your own selection, which will be taken into account during the search.
       lecture_options:
         subscribed: 'subscribed'
         subscribed_and_preceding: 'subscribed and preceding'

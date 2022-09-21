@@ -2498,10 +2498,14 @@ de:
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
     media:
       title: > 
-        Hier kannst den Titel des Mediums eingeben. Falls das Medium keinen Titel hat,
+        Hier kannst Du den Titel des Mediums eingeben. Falls das Medium keinen Titel hat,
         sondern teil einer Sitzung ist, wird dessen Titel stattdessen bei der Suche beachtet.
         Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
-        eingibst), wird es bei der Suche ignoriert.
+        eingibst) wird es bei der Suche ignoriert.
+      lectures: >
+        Hier kannst Du bestimmen, aus welchen Veranstaltungen das Medium stammen soll.
+        Dabei kannst du alle Veranstaltungen zulassen oder nur welche, die du auch abonniert hast, oder
+        kannst eine eigene Auswahl treffen, welche bei der Suche berücksichtigt wird.
       lecture_options:
         subscribed: 'abonnierte'
         subscribed_and_preceding: 'abonnierte und vorrangehende'
