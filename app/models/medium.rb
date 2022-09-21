@@ -260,9 +260,9 @@ class Medium < ApplicationRecord
 
   def self.lecture_search_option
     {
-      '0' => 'subscribed',
-      '1' => 'subscribed and preceding',
-      '2' => 'all',
+      '0' => 'all',
+      '1' => 'subscribed',
+      '2' => 'subscribed and preceding',
       '3' => 'custom'
     }
   end
@@ -1032,6 +1032,7 @@ class Medium < ApplicationRecord
   end
 
   def subscribed_users
+
     return teachable.user_ids if ['Lecture', 'Course'].include? teachable.class.to_s
     return unless teachable.class.to_s == 'Lesson'
 

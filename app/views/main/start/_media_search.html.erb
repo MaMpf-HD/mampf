@@ -3,178 +3,159 @@
               remote: true,
               method: :get do |f| %>
   <div class="form-row p-2">
-    <div class="col-8">
-      <div class="row pb-2">
-        <div class="col-6 form-group">
-          <%= f.label :types, t('basics.type') %>
-          <%= helpdesk(t('admin.medium.info.search_type'), true) %>
-          <%= f.select :types,
-                      options_for_select(add_prompt(Medium.select_generic),
-                                          sort_preselect(purpose)),
-                      {},
-                      { id: 'search_media_types',
-                        multiple: purpose.in?(['media', 'import']),
-                        class: 'selectize',
-                        disabled: purpose.in?(['media', 'clicker']),
-                        required: true } %>
-          <% if purpose == 'clicker' %>
-            <%= f.hidden_field :types, value: ['Question'] %>
-          <% end %>
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :all_types,
-                            id: 'search_all_media_types',
-                            class: 'custom-control-input',
-                            checked: purpose.in?(['media', 'clicker']),
-                            data: { id: 'search_media_types'} %>
-            <%= f.label :all_media_types,
-                        t('basics.all'),
-                        { class: 'custom-control-label' } %>
-          </div>
-        </div>
-        <div class="col-6 form-group">
-        </div>
-      </div>
-      <div class="row pb-2">
-        <div class="col-6 form-group">
-          <%= f.label :tag_ids,
-                      t('basics.related_tags') %>
-          <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
-          <%= f.select :tag_ids,
-                       options_for_select([[]]),
-                       { prompt: t('basics.select')},
-                       { multiple: true,
-                         class: 'selectize',
-                         style: 'display: none;',
-                         disabled: true,
-                         required: true,
-                         data: { filled: false,
-                                 ajax: true,
-                                 model: 'tag',
-                                 locale: I18n.locale } } %>
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :all_tags,
-                            class: 'custom-control-input',
-                            checked: true,
-                            data: { id: 'search_tag_ids' } %>
-            <%= f.label :all_tags,
-                        t('basics.all'),
-                        { class: 'custom-control-label' } %>
-          </div>
-          <div class="custom-control custom-radio custom-control-inline">
-            <%= f.radio_button :tag_operator,
-                              'or',
-                              checked: true,
-                              class: 'custom-control-input' %>
-            <%= f.label :tag_operator,
-                        t('basics.OR'),
-                        value: 'or',
-                        class: 'custom-control-label' %>
-          </div>
-          <div class="custom-control custom-radio custom-control-inline">
-            <%= f.radio_button :tag_operator,
-                              'and',
-                              class: 'custom-control-input' %>
-            <%= f.label :tag_operator,
-                        t('basics.AND'),
-                        value: 'and',
-                        class: 'custom-control-label' %>
-          </div>
-        </div>
-        <div class="col-6 form-group">
-          <%= f.label :teacher_ids, t('basics.teachers') %>
-          <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
-          <%= f.select :teacher_ids,
-                      options_for_select(add_prompt(User.select_teachers)),
-                      {},
-                      { id: 'search_media_teacher_ids',
-                        multiple: true,
-                        class: 'selectize',
-                        disabled: true,
-                        required: true } %>
-          <div class="custom-control custom-checkbox mb-2">
-            <%= f.check_box :all_teachers,
-                            id: 'search_all_media_teachers',
-                            class: 'custom-control-input',
-                            checked: true,
-                            data: { id: 'search_media_teacher_ids' } %>
-            <%= f.label :all_media_teachers,
-                        t('basics.all'),
-                        { class: 'custom-control-label' } %>
-          </div>
-        </div>
+    <div class="col-4 form-group">
+      <%= f.label :types, t('basics.type') %>
+      <%= helpdesk(t('admin.medium.info.search_type'), true) %>
+      <%= f.select :types,
+                  options_for_select(add_prompt(Medium.select_generic),
+                                      sort_preselect(purpose)),
+                  {},
+                  { id: 'search_media_types',
+                    multiple: purpose.in?(['media', 'import']),
+                    class: 'selectize',
+                    disabled: purpose.in?(['media', 'clicker']),
+                    required: true } %>
+      <% if purpose == 'clicker' %>
+        <%= f.hidden_field :types, value: ['Question'] %>
+      <% end %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_types,
+                        id: 'search_all_media_types',
+                        class: 'custom-control-input',
+                        checked: purpose.in?(['media', 'clicker']),
+                        data: { id: 'search_media_types'} %>
+        <%= f.label :all_media_types,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
       </div>
     </div>
-    <div class="col-4">
+    <div class="col-4 form-group">
+      <%= f.label :tag_ids,
+                  t('basics.related_tags') %>
+      <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
+      <%= f.select :tag_ids,
+                    options_for_select([[]]),
+                    { prompt: t('basics.select')},
+                    { multiple: true,
+                      class: 'selectize',
+                      style: 'display: none;',
+                      disabled: true,
+                      required: true,
+                      data: { filled: false,
+                              ajax: true,
+                              model: 'tag',
+                              locale: I18n.locale } } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_tags,
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_tag_ids' } %>
+        <%= f.label :all_tags,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <%= f.radio_button :tag_operator,
+                          'or',
+                          checked: true,
+                          class: 'custom-control-input' %>
+        <%= f.label :tag_operator,
+                    t('basics.OR'),
+                    value: 'or',
+                    class: 'custom-control-label' %>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <%= f.radio_button :tag_operator,
+                          'and',
+                          class: 'custom-control-input' %>
+        <%= f.label :tag_operator,
+                    t('basics.AND'),
+                    value: 'and',
+                    class: 'custom-control-label' %>
+      </div>
+    </div>
+    <div class="col-4 form-group">
+      <%= f.label :teacher_ids, t('basics.teachers') %>
+      <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+      <%= f.select :teacher_ids,
+                  options_for_select(add_prompt(User.select_teachers)),
+                  {},
+                  { id: 'search_media_teacher_ids',
+                    multiple: true,
+                    class: 'selectize',
+                    disabled: true,
+                    required: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_teachers,
+                        id: 'search_all_media_teachers',
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_media_teacher_ids' } %>
+        <%= f.label :all_media_teachers,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
+    </div>
+    <div class="col-4 form-group">
       <%= f.label :teachable_ids, t('basics.lectures') %>
       <%= helpdesk(t('admin.medium.info.search_teachable'), true) %>
       <div class="custom-control custom-radio mb-2">
         <%= f.radio_button :lecture_option,
-                           '0',
-                           checked: true,
-                           class: 'custom-control-input' %>
+                            '0',
+                            checked: true,
+                            class: 'custom-control-input' %>
         <%= f.label :lecture_option,
-                    t('search.media.lecture_options.subscribed'),
+                    t('search.media.lecture_options.all'),
                     value: '0',
                     class: 'custom-control-label' %>
       </div>
       <div class="custom-control custom-radio mb-2">
         <%= f.radio_button :lecture_option,
-                           '1',
-                           checked: false,
-                           class: 'custom-control-input',
-                           disabled: true %>
+                            '1',
+                            checked: false,
+                            class: 'custom-control-input' %>
         <%= f.label :lecture_option,
-                    t('search.media.lecture_options.subscribed_and_preceding'),
+                    t('search.media.lecture_options.subscribed'),
                     value: '1',
                     class: 'custom-control-label' %>
       </div>
       <div class="custom-control custom-radio mb-2">
         <%= f.radio_button :lecture_option,
-                           '2',
-                           checked: false,
-                           class: 'custom-control-input' %>
+                            '2',
+                            checked: false,
+                            class: 'custom-control-input',
+                            disabled: true %>
         <%= f.label :lecture_option,
-                    t('search.media.lecture_options.all'),
+                    t('search.media.lecture_options.subscribed_and_preceding'),
                     value: '2',
                     class: 'custom-control-label' %>
       </div>
       <div class="custom-control custom-radio mb-2">
         <%= f.radio_button :lecture_option,
-                           '3',
-                           checked: false,
-                           class: 'custom-control-input',
-                           data: { type: 'toggle', 
-                                   id: 'search_media_lectures'} %>
+                            '3',
+                            checked: false,
+                            class: 'custom-control-input',
+                            data: { type: 'toggle', 
+                                    id: 'search_media_lectures'} %>
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.own_selection'),
                     value: '3',
                     class: 'custom-control-label' %>
       </div>
       <%= f.select :media_lectures,
-                   options_for_select(add_prompt(Lecture.select)),
-                   {},
-                   { multiple: true,
-                     class: 'pl-4 selectize',
-                     disabled: true,
-                     required: true } %>
+                    options_for_select(add_prompt(Lecture.select)),
+                    {},
+                    { multiple: true,
+                      class: 'pl-4 selectize',
+                      disabled: true,
+                      required: true } %>
     </div>
     <div class="col-4 form-group">
-      <%= f.label :fulltext, t('basics.fulltext') %>
-      <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
+      <%= f.label :fulltext, t('basics.title') %>
+      <%= helpdesk(t('search.media.title'), false) %>
       <%= f.text_field :fulltext,
                         id: 'media_fulltext',
                         class: 'form-control' %>
-    </div>
-    <div class="col-4 form-group">
-      <%= f.label :answers_count, t('basics.answer_count') %>
-      <%= helpdesk(t('admin.medium.info.answer_count'), false) %>
-      <%= f.select :answers_count,
-                    options_for_select([[t('access.irrelevant'), 'irrelevant'],
-                                        [1,1],[2,2],[3,3],[4,4],[5,5], [6,6],
-                                        ['>6', 7]],['irrelevant']),
-                    {},
-                    { class: 'form-control'} %>
-
     </div>
     <div class="col-4 form-group">
       <%= f.label :per, t('basics.hits_per_page') %>

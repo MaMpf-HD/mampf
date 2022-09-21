@@ -1185,7 +1185,8 @@ en:
           <i>
           OR/AND
           </i>
-          ) which are associated to the medium.
+          ) which are associated to the medium. A tag normally looks like this: 
+          <span class="badge badge-light">Example tag</span>
         search_editors: >
           Here you can select the editors of the medium (in the sense of
           <i>
@@ -2350,6 +2351,11 @@ en:
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
     media:
+      title: >
+        Here you can enter the title of the medium. If the medium has no title
+        but is part of a session, its title will be considered in the search instead.
+        If you leave this field blank (or enter less than two characters)
+        it will be ignored during the search.
       lecture_options:
         subscribed: 'subscribed'
         subscribed_and_preceding: 'subscribed and preceding'

@@ -574,7 +574,7 @@ de:
           ODER
           </i>
           ) auswählen,
-          was der Typ der Veranstaltung sein soll. Andernfalls wird die Suche ergebnislos sein.
+          was der Typ der Veranstaltung sein soll.
         search_program: >
           Hier musst Du (im Sinne von
           <i>
@@ -1236,7 +1236,7 @@ de:
           ODER
           </i>
           ) auswählen,
-          was der Typ des Mediums sein soll. Andernfalls wird die Suche ergebnislos sein.
+          was der Typ des Mediums sein soll.
         search_teachable: >
           Hier musst Du (im Sinne von
           <i>
@@ -1258,6 +1258,8 @@ de:
           ODER/UND
           </i>
           ) die Tags auswählen, mit denen das Medium verknüpft sein soll.
+          Ein Tag sieht normalerweise so aus: 
+          <span class="badge badge-light">Beispieltag</span>
         search_editors: >
           Hier kannst Du (im Sinne von
           <i>
@@ -2495,6 +2497,11 @@ de:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
     media:
+      title: > 
+        Hier kannst den Titel des Mediums eingeben. Falls das Medium keinen Titel hat,
+        sondern teil einer Sitzung ist, wird dessen Titel stattdessen bei der Suche beachtet.
+        Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
+        eingibst), wird es bei der Suche ignoriert.
       lecture_options:
         subscribed: 'abonnierte'
         subscribed_and_preceding: 'abonnierte und vorrangehende'
