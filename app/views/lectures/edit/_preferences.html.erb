@@ -1,24 +1,27 @@
-  <div class="card bg-light">
-    <div class="card-header clickable"
-         role="tab"
-         id="preferences_heading"
-         data-toggle="collapse"
-         data-target="#preferences_collapse"
-         aria-expanded="false" aria-controls="preferences_collapse">
-      <div class="row">
-        <div class="col-12">
-          <h5>
-            <%= t('basics.preferences') %>
-          </h5>
+  <div class="accordion-item bg-light">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              id="preferences_heading"
+              data-bs-toggle="collapse"
+              data-bs-target="#preferences_collapse"
+              aria-expanded="false"
+              aria-controls="preferences_collapse">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              <%= t('basics.preferences') %>
+            </h5>
+          </div>
         </div>
-      </div>
+      </button>
     </div>
     <div id="preferences_collapse"
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#lectureAccordion">
-      <div class="card-body">
+         data-bs-parent="#lectureAccordion">
+      <div class="accordion-body">
         <%= form_with model: lecture,
                       html: { id: 'lecture-preferences-form' } do |f| %>
           <div class="form-row">

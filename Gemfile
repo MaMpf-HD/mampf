@@ -60,7 +60,7 @@ gem "cancancan"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "js-routes", '1.4.9'
-gem "bootstrap", "~>4"
+gem "bootstrap", "~>5"
 gem "bootstrap_form"
 gem "devise-bootstrap-views"
 gem "fuzzy-string-match"

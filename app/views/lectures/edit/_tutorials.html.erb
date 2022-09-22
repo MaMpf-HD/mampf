@@ -1,24 +1,27 @@
-<div class="card bg-light">
-  <div class="card-header clickable"
-       role="tab"
-       id="exercises_heading"
-       data-toggle="collapse"
-       data-target="#exercises_collapse"
-       aria-expanded="false" aria-controls="exercises_collapse">
-    <div class="row">
-      <div class="col-12">
-        <h5>
-          <%= t('basics.tutorials') %>
-        </h5>
+<div class="accordion-item bg-light">
+  <div class="accordion-header">
+    <button class="accordion-button collapsed"
+            type="button"
+            id="exercises_heading"
+            data-bs-toggle="collapse"
+            data-bs-target="#exercises_collapse"
+            aria-expanded="false"
+            aria-controls="exercises_collapse">
+      <div class="row">
+        <div class="col-12">
+          <h5>
+            <%= t('basics.tutorials') %>
+          </h5>
+        </div>
       </div>
-    </div>
+    </button>
   </div>
   <div id="exercises_collapse"
        class="collapse"
        role="tabpanel"
        aria-labelledby="heading"
-       data-parent="#lectureAccordion">
-    <div class="card-body">
+       data-bs-parent="#lectureAccordion">
+    <div class="accordion-body">
       <div class="row mb-3">
         <div class="col-12 text-center">
           <%= link_to t('admin.tutorial.new'),

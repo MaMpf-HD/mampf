@@ -1,26 +1,28 @@
-  <div class="card bg-light">
-    <div class="card-header clickable"
-         role="tab"
-         id="tags_heading"
-         data-toggle="collapse"
-         data-target="#tags_collapse"
-         aria-expanded="false"
-         aria-controls="tags_collapse">
-      <div class="row">
-        <div class="col-12">
-          <h5 class="text-dark">
-            <%= t('admin.lecture.related_tags') %>
-            <%= ' (' + lecture.tags.size.to_s + ') '%>
-          </h5>
+  <div class="accordion-item bg-light">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              id="tags_heading"
+              data-bs-toggle="collapse"
+              data-bs-target="#tags_collapse"
+              aria-expanded="false"
+              aria-controls="tags_collapse">
+        <div class="row">
+          <div class="col-12">
+            <h5 class="text-dark">
+              <%= t('admin.lecture.related_tags') %>
+              <%= ' (' + lecture.tags.size.to_s + ') '%>
+            </h5>
+          </div>
         </div>
-      </div>
+      </button>
     </div>
     <div id="tags_collapse"
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#lectureAccordion">
-      <div class="card-body">
+         data-bs-parent="#lectureAccordion">
+      <div class="accordion-body">
         <ul>
           <li class="mb-2">
             <h6>
