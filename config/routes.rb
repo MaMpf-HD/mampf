@@ -780,6 +780,10 @@ Rails.application.routes.draw do
       to: 'users#delete_account',
       as: 'delete_account'
 
+  get 'users/search',
+      to: 'users#search',
+      as: 'user_search'
+
   resources :users, only: [:index, :edit, :update, :destroy]
 
   # watchlists routes

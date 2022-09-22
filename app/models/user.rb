@@ -96,9 +96,16 @@ class User < ApplicationRecord
         -> { where(email_for_submission_decision: true) }
 
   searchable do
+    text :name
     text :tutorial_name
   end
 
+  def self.search_by(search_params)
+    search.build do
+      with(:name, search_params[:name])
+    end
+    search
+  end
 
   # returns the array of all teachers
   def self.teachers

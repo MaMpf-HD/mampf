@@ -17,5 +17,9 @@ class UserAbility
     can [:fill_user_select, :list, :list_generic_users], User do
       !user.generic?
     end
+
+    can :search, User do
+      user.admin?
+    end
   end
 end

@@ -1,0 +1,25 @@
+<%= form_with url: user_search_path,
+              scope: 'search',
+              remote: true,
+              method: :get do |f| %>
+  <div class="form-row p-2">
+    <div class="col-12 col-lg-12 form-group">
+      <%= f.label :name, t('basics.fulltext') %>
+      <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
+      <%= f.text_field :name,
+                        id: 'user_name',
+                        class: 'form-control' %>
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= f.submit t('basics.search'),
+                   class: 'btn btn-primary' %>
+      <button type="button"
+              class="btn btn-secondary"
+              id="cancelSearch">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>
