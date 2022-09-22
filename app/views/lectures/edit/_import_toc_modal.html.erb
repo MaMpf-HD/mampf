@@ -13,7 +13,7 @@
         </h5>
         <button type="button"
                 class="close"
-                data-dismiss="modal"
+                data-bs-dismiss="modal"
                 aria-label="Close">
           <span aria-hidden="true">
             &times;
@@ -34,7 +34,7 @@
                                                                 l.id]}),
                            {},
                            { class: 'form-control' } %>
-              <div class="custom-control custom-checkbox my-2">
+              <div class="custom-control form-checkbox my-2">
                 <%= f.check_box :import_chapters,
                                 class: 'custom-control-input',
                                 checked: true,
@@ -43,7 +43,7 @@
                             t('admin.lecture.import_chapters'),
                             class: 'custom-control-label' %>
               </div>
-              <div class="custom-control custom-checkbox mb-2">
+              <div class="custom-control form-checkbox mb-2">
                 <%= f.check_box :import_sections,
                                 class: 'custom-control-input',
                                 checked: true %>
@@ -51,7 +51,7 @@
                             t('admin.lecture.import_sections'),
                             class: 'custom-control-label' %>
               </div>
-              <div class="custom-control custom-checkbox">
+              <div class="custom-control form-checkbox">
                 <%= f.check_box :import_tags,
                                 class: 'custom-control-input',
                                 checked: true %>
@@ -69,7 +69,7 @@
                            class: 'btn btn-sm btn-primary' %>
               <button type="button"
                       class="btn btn-sm btn-secondary"
-                      data-dismiss="modal">
+                      data-bs-dismiss="modal">
                 <%= t('buttons.cancel') %>
               </button>
             </div>

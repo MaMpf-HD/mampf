@@ -13,7 +13,7 @@
         </h4>
         <button type="button"
                 class="close"
-                data-dismiss="modal"
+                data-bs-dismiss="modal"
                 aria-label="Close">
           <span aria-hidden="true">
             &times;
@@ -69,7 +69,7 @@
             <div class="mb-1">
               <%= t('basics.assignment') %>
             </div>
-            <div class="custom-control custom-checkbox mb-2">
+            <div class="custom-control form-checkbox mb-2">
               <%= f.check_box :create_assignment,
                               class: 'custom-control-input',
                               checked: medium.publisher&.create_assignment %>
@@ -139,7 +139,7 @@
           <div class="mb-1">
             <%= t('basics.comments') %>
           </div>
-          <div class="custom-control custom-checkbox">
+          <div class="custom-control form-checkbox">
             <%= f.check_box :lock_comments,
                             class: 'custom-control-input',
                             checked: medium.planned_comment_lock? %>
@@ -148,7 +148,7 @@
                         { class: 'custom-control-label' } %>
           </div>
           <hr>
-          <div class="custom-control custom-checkbox">
+          <div class="custom-control form-checkbox">
             <%= f.check_box :disclaimer,
                             class: 'custom-control-input',
                             required: true,

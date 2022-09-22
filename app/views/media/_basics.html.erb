@@ -142,7 +142,7 @@
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
                  medium: medium } %>
-      <div class="custom-control custom-checkbox mb-2">
+      <div class="custom-control form-checkbox mb-2">
         <%= f.check_box :comments_locked,
                          class: 'custom-control-input',
                          checked:  medium.commontator_thread.is_closed? %>

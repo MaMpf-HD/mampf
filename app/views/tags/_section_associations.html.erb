@@ -9,7 +9,7 @@
         <%= t.title %>
         <div class="form-group">
           <% sections.each do |s| %>
-            <div class="custom-control custom-checkbox">
+            <div class="custom-control form-checkbox">
               <%= f.check_box "tags[#{t.id}][#{s.id}]",
                   class: 'custom-control-input' %>
               <%= f.label "tags[#{t.id}][#{s.id}]",

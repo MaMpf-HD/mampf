@@ -22,7 +22,7 @@
       <%= f.select :active_term,
                    options_for_select(Term.select_terms, Term.active&.id),
                    {},
-                   { class: 'custom-select custom-select-sm ml-3' }  %>
+                   { class: 'form-select form-select-sm ml-3' }  %>
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary ml-3',
                    data: { confirm: t('confirmation.generic') } %>
