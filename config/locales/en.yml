@@ -1156,9 +1156,7 @@ en:
         manuscript_structure: >
           This is the structure of the manuscript that was extracted from the
           pdf. You can import chapters, sections and tags to MaMpf if no
-          contradictions are displayed. Note that the language of the manuscript
-          in which it was TeXed is expected to coincide with the language that
-          is set in the lecture preferences.
+          contradisctions are displayed.
         import_warning: >
           Attention: The structure of the manuscript has not yet been imported
           to MaMpf.
@@ -1314,7 +1312,6 @@ en:
       no_section: 'no associated section from the database'
       create_external: 'Create external item'
       explanation: 'Explanation'
-      chapter_short: 'Chap.'
       sort:
         definition: 'Definition'
         remark: 'Remark'
@@ -2113,8 +2110,6 @@ en:
     pages: 'p'
     destinations: 'destinations'
     structure: 'Structure of the manuscript'
-    chapter: 'chapter'
-    section: 'section'
     one_contradiction: >
       A contradiction has been found. If you want to import the manuscript's
       structure to MaMpf, you have to resolve that contradiction first.
@@ -2744,6 +2739,8 @@ en:
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
+    new_editor_subject: "You are now an editor of %{title}"
+    new_editor: "You are now an editor of %{title}"
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can subscribe to it in your profile settings.'
@@ -2827,19 +2824,11 @@ en:
       For GDPR reasons, all submissions and corrections of the lecture
       %{lecture} in %{term} that were stored in MaMpf have been automatically
       deleted.
-    hash_mail_subject: Email address verification
-    hash_mail_body: >
-      Hello, %{name}!
-      You are receiving this email because a previous email from MaMpf could not be delivered.
-      This email is to check if your email account still exists. Since this is the case, no changes
-      will be made to your account. You can therefore ignore this email.
-      Hash:%{hash}
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
     manuscript_access: 'Accesses'
-    quiz_access: 'Accessses'
-    quiz_full_access: 'Finished runs'
+    quiz: 'complete accesses'
     median: 'Median'
     lower_quartile: 'Lower Quartile (correctly answered questions)'
     upper_quartile: 'Upper Quartile (correctly answered questions)'
@@ -2848,15 +2837,9 @@ en:
     question_details: 'Detailled statistics for questions'
     no_question_statistics: >
       For this question, there no data available yet.
-    number_of_users: 'Number of users'
     number_of_correct_answers: >
-      Number of correctly answered questions
-    calls: 'Call statistics'
-    success: 'Success statistics'
-    no_finishes_yet: 'The quiz was not finished by anyone yet.'
-    date: 'Date'
-    count: 'Count'
-    plays: 'Plays'
+      number of correctly answered questions
+    number_of_users: 'Anzahl der Nutzerinnen'
   erdbeere:
     show_structures: 'Structures, properties and examples'
     select_structures: Select Structures
