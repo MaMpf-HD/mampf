@@ -24,8 +24,27 @@ class LecturesController < ApplicationController
       eager_load_stuff
     end
   end
-
+  
   def update
+    # removes the empty String "" in the NEW array of editor ids
+    # and converts it into an array of integers
+    all_ids = lecture_params[:editor_ids].clone.drop(1).map {|s| s.to_i}
+    old_ids = @lecture.editor_ids
+    new_ids = all_ids - old_ids
+
+    # returns an array of Users that match the given ids
+    recipients = User.where(id: new_ids)
+
+    I18n.available_locales.each do |l|
+      local_recipients = recipients.where(locale: l)
+      if local_recipients.any?
+        NotificationMailer.with(recipients: local_recipients.pluck(:id),
+                                locale: l,
+                                lecture: @lecture)
+                          .new_editor_email.deliver_later
+      end
+    end
+
     @lecture.update(lecture_params)
     if structure_params.present?
       structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys
