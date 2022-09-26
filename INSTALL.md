@@ -2,7 +2,8 @@
 
 To simply try out mampf you can use `docker-compose` ([needs docker](https://docs.docker.com/engine/install/ubuntu/) && `apt install docker-compose`). Simply clone the mampf repository and run docker-compose by executing
 ```
-$ git clone -b main --recursive git@github.com:fosterfarrell9/mampf.git
+$ git clone -b main --recursive https://github.com/MaMpf-HD/mampf.git
+
 $ cd mampf/docker/development/
 # docker-compose up
 ```
