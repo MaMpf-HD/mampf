@@ -88,6 +88,16 @@ class UsersController < ApplicationController
     authorize! :delete_account, User.new
   end
 
+  def search
+    authorize! :search, current_user
+    search = User.search_by(search_params, params[:page])
+    search.execute
+    results = search.results
+    @total = search.total
+    @users = Kaminari.paginate_array(results, total_count: @total)
+                        .page(params[:page]).per(search_params[:per])
+  end
+
   private
 
   def elevate_params
@@ -106,15 +116,5 @@ class UsersController < ApplicationController
 
   def search_params
     params.require(:search).permit(:name)
-  end
-
-  def search
-    authorize! :search, User.new
-    search = User.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @lectures = Kaminari.paginate_array(results, total_count: @total)
-                        .page(params[:page]).per(search_params[:per])
   end
 end

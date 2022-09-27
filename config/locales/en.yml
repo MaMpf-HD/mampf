@@ -1505,6 +1505,8 @@ en:
       edited_lectures: 'Additional Edited Event Series'
       edited_media: 'Edited Media'
       administration: 'User Administration'
+      search:
+        name: 'Name'
       sorts: 'Admins, Editors and Teachers'
       edit_generics: 'Edit generic users'
       elevate: 'Promote to Administrator'
@@ -2962,6 +2964,7 @@ en:
     administrator: 'Administrator'
     coming_soon: 'Coming soon.'
     user: 'User'
+    users: 'Users'
     administrator_short: 'Admin'
     role: 'Role'
     information: 'Information'

@@ -1604,6 +1604,8 @@ de:
       edited_lectures: 'Weitere editierte Veranstaltungen'
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
+      search:
+        name: 'Name'
       sorts: 'Admins, EditorInnen und DozentInnen'
       edit_generics: 'Sonstige NutzerInnen bearbeiten'
       elevate: 'zum Administrator befördern'
@@ -3139,6 +3141,7 @@ de:
     administrator: 'Administrator'
     coming_soon: 'Kommt bald.'
     user: 'NutzerIn'
+    users: 'NutzerInnen'
     administrator_short: 'Admin'
     role: 'Rolle'
     information: 'Information'

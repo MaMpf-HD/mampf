@@ -100,9 +100,14 @@ class User < ApplicationRecord
     text :tutorial_name
   end
 
-  def self.search_by(search_params)
-    search.build do
-      with(:name, search_params[:name])
+  def self.search_by(search_params, page)
+    search = Sunspot.new_search(User)
+    if search_params[:name].present?
+      search.build do
+        fulltext search_params[:name] do
+          boost_fields :name => 2.0
+        end
+      end
     end
     search
   end

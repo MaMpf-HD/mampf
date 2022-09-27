@@ -4,7 +4,7 @@
               method: :get do |f| %>
   <div class="form-row p-2">
     <div class="col-12 col-lg-12 form-group">
-      <%= f.label :name, t('basics.fulltext') %>
+      <%= f.label :name, t('user.search.name') %>
       <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
       <%= f.text_field :name,
                         id: 'user_name',
