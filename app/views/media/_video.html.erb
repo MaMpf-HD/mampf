@@ -6,7 +6,7 @@
     </span>
     <%= helpdesk(t('admin.medium.info.video'), false) %>
   </div>
-  <div class="col-2 text-right"
+  <div class="col-2 text-end"
        id="video-uploadButton"
        data-choosefiles="<%= t('basics.file') %>">
     <button id="video-uploadButton-button"
@@ -30,7 +30,7 @@
           <%= t('buttons.upload') %>
   </div>
   </div>
-  <div class="col-6 text-right">
+  <div class="col-6 text-end">
     <% if medium.screenshot.present? %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"

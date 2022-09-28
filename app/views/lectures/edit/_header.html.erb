@@ -1,6 +1,6 @@
 <div class="row px-4 py-2 mt-2">
   <div class="col-7">
-    <h4 class="pl-2">
+    <h4 class="ps-2">
       <span class="badge badge-secondary">
         <%= lecture.sort_localized %>
       </span>
@@ -19,7 +19,7 @@
                   style: 'text-decoration: none;' %>
     </h4>
   </div>
-  <div class="col-5 text-right">
+  <div class="col-5 text-end">
     <% if current_user.admin || lecture.course.edited_by?(current_user) %>
       <%= link_to t('buttons.parent_course'),
                   edit_course_path(lecture.course),

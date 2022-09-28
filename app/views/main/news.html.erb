@@ -12,7 +12,7 @@
           <% end %>
         </h4>
      	</div>
-      <div class="col-12 col-sm-2 text-right">
+      <div class="col-12 col-sm-2 text-end">
       	<% if user_signed_in? && current_user.active_news.present? %>
         	<%= link_to t('mampf_news.check_notifications'),
           		        destroy_news_notifications_path,

@@ -112,7 +112,7 @@ module LecturesHelper
 
   def lecture_edit_icon(lecture)
     link_to edit_lecture_path(lecture),
-            class: 'text-dark mr-2',
+            class: 'text-dark me-2',
             style: 'text-decoration: none;',
             data: { toggle: 'tooltip',
                     placement: 'bottom' },
@@ -123,7 +123,7 @@ module LecturesHelper
 
   def lecture_view_icon(lecture)
     link_to lecture_path(lecture),
-            class: 'text-dark mr-2',
+            class: 'text-dark me-2',
             style: 'text-decoration: none;',
             data: { toggle: 'tooltip',
                     placement: 'bottom' },

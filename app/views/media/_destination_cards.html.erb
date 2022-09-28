@@ -7,7 +7,7 @@
         <div class="row">
           <div class="col-12">
             <% if c['mampf_chapter'].nil? %>
-              <span class="badge badge-secondary mr-2">
+              <span class="badge badge-secondary me-2">
                 <%= t('basics.new') %>
               </span>
             <% end %>
@@ -79,7 +79,7 @@
                           <%= t('basics.description') %>
                         </strong>
                       </div>
-                      <div class="col-1 mt-2 text-right">
+                      <div class="col-1 mt-2 text-end">
                         <i class="fas fa-tag"
                            data-toggle="tooltip"
                            data-placement="bottom"
@@ -111,7 +111,7 @@
                                         edit_tag_path(content['tag_id']) %>
                           <% end %>
                         </div>
-                        <div class="col-1 mt-2 text-right">
+                        <div class="col-1 mt-2 text-end">
                           <div class="custom-control form-checkbox">
                             <input type="checkbox"
                                    class="custom-control-input"

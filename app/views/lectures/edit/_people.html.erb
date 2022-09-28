@@ -85,7 +85,7 @@
               <% if lecture.users.any? %>
                 <button type="button"
                         id="lectureUserModalButton"
-                        class="ml-3 btn btn-outline-primary btn-sm"
+                        class="ms-3 btn btn-outline-primary btn-sm"
                         data-toggle="modal"
                         data-target="#lectureUserModal">
                   <%= t('basics.details') %>
@@ -100,7 +100,7 @@
                 <%= f.submit t('buttons.save'),
                     class: "btn btn-sm btn-primary" %>
                 <button type="button"
-                        class="btn btn-sm btn-secondary ml-2"
+                        class="btn btn-sm btn-secondary ms-2"
                         id="lecture-basics-cancel"
                         data-id="<%= lecture.id %>">
                   <%= t('buttons.discard') %>

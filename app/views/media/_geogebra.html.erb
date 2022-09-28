@@ -7,7 +7,7 @@
     </span>
     <%= helpdesk(t('admin.medium.info.geogebra'), false) %>
   </div>
-  <div class="col-2 text-right"
+  <div class="col-2 text-end"
        id="geogebra-uploadButton"
        data-choosefiles="<%= t('basics.file') %>">
     
@@ -32,7 +32,7 @@
           <%= t('buttons.upload') %>
   </div>
   </div>
-  <div class="col-6 text-right">
+  <div class="col-6 text-end">
     <% if medium.geogebra_screenshot_url.present? %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"

@@ -24,7 +24,7 @@
     <% end %>
   </div>
   <% if user_signed_in? %>
-    <div class="col-4 text-right">
+    <div class="col-4 text-end">
       <button role="button"
               class="btn btn-sm btn-outline-secondary mt-2 associateClickerQuestion"
               data-change="false"
@@ -51,7 +51,7 @@
       <%= t('admin.clicker.associated_to_question') %>
     </div>
     <% if user_signed_in? %>
-      <div class="col-6 text-right">
+      <div class="col-6 text-end">
         <%= link_to t('admin.clicker.remove_question'),
                     remove_question_path(clicker),
                     class: 'btn btn-sm btn-outline-secondary mt-2',

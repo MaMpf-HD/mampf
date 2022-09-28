@@ -23,7 +23,7 @@ module TalksHelper
   def speaker_icon(talk)
     content_tag(:i,
                 '',
-                class: "#{speaker_icon_class(talk)} mr-2",
+                class: "#{speaker_icon_class(talk)} me-2",
                 data: { toggle: 'tooltip' },
                 title: t('admin.talk.speakers')).html_safe
   end

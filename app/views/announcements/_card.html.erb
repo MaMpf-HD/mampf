@@ -8,7 +8,7 @@
           <%= announcement.announcer&.name %>
         <% end %>
 			</div>
-			<div class="col-2 text-right">
+			<div class="col-2 text-end">
 				<% if user_signed_in? && announcement.active?(current_user) %>
 					<%= link_to notification_path(current_user
           		                          	.matching_notification(announcement)),

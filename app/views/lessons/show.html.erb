@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-10">
     <h2>
-      <span class="badge badge-secondary mr-3">
+      <span class="badge badge-secondary me-3">
         <%= t('lesson') %>
       </span>
       <%= @lesson.to_label %>
@@ -27,10 +27,10 @@
       <% end %>
     </h2>
   </div>
-  <div class="col-2 text-right ">
+  <div class="col-2 text-end ">
     <% if @lesson.previous.present? %>
       <a href="<%= lesson_path(@lesson.previous) %>"
-         class="text-secondary material-icons mr-2"
+         class="text-secondary material-icons me-2"
          style="text-decoration:none; font-size: 3em;"
          data-toggle="tooltip"
          title="<%= t('previous_lesson') %>">

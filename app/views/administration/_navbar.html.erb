@@ -1,17 +1,18 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark"
      id="first-admin-nav">
-  <%= link_to image_tag('/MaMpf-Logo_32x32.png',
-                        class: 'img-fluid mr-2'),
-              exit_administration_path,
-              title: t('admin.navbar.exit'),
-              data: { toggle: 'tooltip' }%>
-  <%= link_to t('mampf'),
-              exit_administration_path,
-              class: 'navbar-brand',
-              title: t('admin.navbar.exit'),
-              data: { toggle: 'tooltip' } %>
-    <ul class="navbar-nav mr-auto" id="adminMain">
+  <div class="container-fluid">
+    <%= link_to image_tag('/MaMpf-Logo_32x32.png',
+                          class: 'img-fluid me-2'),
+                exit_administration_path,
+                title: t('admin.navbar.exit'),
+                data: { toggle: 'tooltip' }%>
+    <%= link_to t('mampf'),
+                exit_administration_path,
+                class: 'navbar-brand',
+                title: t('admin.navbar.exit'),
+                data: { toggle: 'tooltip' } %>
+    <ul class="navbar-nav me-auto" id="adminMain">
       <li class="nav-item"
           id="adminHome">
         <%= link_to '', administration_path,
@@ -48,7 +49,7 @@
                     title: t('admin.navbar.logout') %>
       </li>
     </ul>
-    <ul class="navbar-nav mr-auto" id="adminDetails">
+    <ul class="navbar-nav me-auto" id="adminDetails">
       <% if current_user.admin? %>
         <li class="nav-item">
           <%= link_to '', terms_path,
@@ -98,7 +99,7 @@
       <% end %>
     </ul>
     <% if current_user.admin? %>
-      <ul class="navbar-nav mr-auto" id="adminUsers">
+      <ul class="navbar-nav me-auto" id="adminUsers">
         <li class="nav-item <%= active_controller?('users') %>">
           <%= link_to '', users_path,
                       class: 'fas fa-users-cog fa-lg text-light nav-link',
@@ -117,6 +118,7 @@
                     title: t('admin.navbar.profile') %>
       </li>
     </ul>
+  </div>
 </nav>
 <nav class="navbar navbar-expand navbar-dark bg-dark" id="second-admin-nav"
      style="display: none;">

@@ -1,18 +1,18 @@
-<i class="fas fa-eye-slash fa-lg redtext ml-2"
+<i class="fas fa-eye-slash fa-lg redtext ms-2"
    id="unpublished_medium_item"
    style="display: <%= show_no_block(!!item&.medium && !item.medium.published?) %>"
    tabindex="-1"
    data-toggle="tooltip"
    title="<%= t('admin.referral.info.unpublished_medium') %>">
 </i>
-<i class="fas fa-lock fa-lg redtext ml-2"
+<i class="fas fa-lock fa-lg redtext ms-2"
    id="locked_medium_item"
    style="display: <%= show_no_block(!!item&.medium&.locked?) %>"
    tabindex="-1"
    data-toggle="tooltip"
    title="<%= t('admin.referral.info.locked_medium') %>">
 </i>
-<i class="fas fa-notes-medical fa-lg redtext ml-2"
+<i class="fas fa-notes-medical fa-lg redtext ms-2"
    id="locked_medium_item"
    style="display: <%= show_no_block(!!item&.quarantine) %>"
    tabindex="-1"

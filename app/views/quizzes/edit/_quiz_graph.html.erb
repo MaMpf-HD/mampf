@@ -6,7 +6,7 @@
           <%= t('admin.quiz.graph') %>
         </h5>
       </div>
-      <div class="col-10 text-left">
+      <div class="col-10 text-start">
         <div id="quiz_buttons">
           <%= link_to t('buttons.create_vertex'),
                       new_quiz_vertex_path(quiz_id: quiz.id),
@@ -37,7 +37,7 @@
           </button>
         </div>
         <span id="quizLevelForm">
-          <span class="mr-4">
+          <span class="me-4">
             <%= t('basics.level') %>
           </span>
           <div class="custom-control custom-radio custom-control-inline">

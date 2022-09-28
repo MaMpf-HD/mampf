@@ -64,7 +64,7 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'click', '#new-talk-date-button', ->
     count = $(this).data('count')
     $('#talk-date-picker')
-      .append('<div class="mt-2" id="talk_dates_'+count+'"><input type="date" name="talk[dates['+count+']]"><a class="fas fa-trash-alt clickable text-dark ml-2 remove-talk-date" data-count="'+count+'"></a></div>')
+      .append('<div class="mt-2" id="talk_dates_'+count+'"><input type="date" name="talk[dates['+count+']]"><a class="fas fa-trash-alt clickable text-dark ms-2 remove-talk-date" data-count="'+count+'"></a></div>')
     $(this).data('count', count + 1)
     $('#talk-basics-warning').show()
     return

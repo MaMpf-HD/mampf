@@ -10,7 +10,7 @@
 			</h5>
 		</div>
 		<% if @media_comments.size.positive? %>
-			<div class="col-12 col-xl-6 text-right">
+			<div class="col-12 col-xl-6 text-end">
 				<%= link_to t('notifications.check_notifications'),
 										update_all_readers_path,
 										class: 'btn btn-secondary mediaCommentsDecoration',
@@ -87,7 +87,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-2 text-right">
+						<div class="col-2 text-end">
 							<%= link_to update_reader_path(params: { thread_id: m[:thread].id,
 																											 size: @media_comments.size }),
 													method: :patch,

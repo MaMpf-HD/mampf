@@ -17,7 +17,7 @@
                  locals: { quiz: @quiz } %>
     </div>
   </div>
-  <div class="col-3 text-right">
+  <div class="col-3 text-end">
     <% unless @quiz.sort == 'RandomQuiz' %>
       <%= link_to t('buttons.parent_medium'),
                   edit_medium_path(@quiz),

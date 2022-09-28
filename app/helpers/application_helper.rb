@@ -265,7 +265,7 @@ module ApplicationHelper
   end
 
   def helpdesk(text, html)
-    tag.i class: 'far fa-question-circle helpdesk ml-2',
+    tag.i class: 'far fa-question-circle helpdesk ms-2',
                   tabindex: -1,
                   data: { toggle: 'popover',
                           trigger: 'focus',

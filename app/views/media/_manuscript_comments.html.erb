@@ -62,7 +62,7 @@
       <%= t('manuscript.unmatched_chapters') %>
       <div class="row mb-3">
         <% manuscript.unmatched_mampf_chapters.each do |c| %>
-          <div class="col-12 ml-3">
+          <div class="col-12 ms-3">
             <%= c.to_label %>
           </div>
         <% end %>
@@ -77,7 +77,7 @@
       <%= t('manuscript.unmatched_sections') %>
       <div class="row">
         <% manuscript.unmatched_mampf_sections.each do |s| %>
-          <div class="col-12 ml-3">
+          <div class="col-12 ms-3">
             <%= s.to_label %>
           </div>
         <% end %>

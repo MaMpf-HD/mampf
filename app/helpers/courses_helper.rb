@@ -32,7 +32,7 @@ module CoursesHelper
 
   def course_edit_icon(course)
     link_to edit_course_path(course),
-            class: 'text-dark mr-2',
+            class: 'text-dark me-2',
             style: 'text-decoration: none;',
             data: { toggle: 'tooltip',
                     placement: 'bottom' },

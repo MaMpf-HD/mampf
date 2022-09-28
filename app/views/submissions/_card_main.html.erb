@@ -22,7 +22,7 @@
                 <%= submission.token %>
               </span>
               <i class="clipboardpopup far fa-copy clickable
-                        text-secondary clipboard-btn ml-3
+                        text-secondary clipboard-btn ms-3
                         clipboard-button"
                 data-clipboard-text="<%= submission.token %>"
                 data-toggle="tooltip"
@@ -35,7 +35,7 @@
               </i>
               <%= link_to '',
                           refresh_submission_token_path(submission),
-                          class: 'fas fa-sync-alt text-secondary ml-2',
+                          class: 'fas fa-sync-alt text-secondary ms-2',
                           id: 'refreshTokenButton',
                           data: { toggle: 'tooltip',
                                   placement: 'bottom' },

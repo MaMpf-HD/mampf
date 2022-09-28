@@ -6,12 +6,12 @@
           <%= notification_header(notification) %>
         </h5>
       </div>
-      <div class="col-4 text-right">
+      <div class="col-4 text-end">
         <span class="smaller-font">
           <%= human_readable_date(notification.created_at) %>
         </span>
       </div>
-      <div class="col-2 text-right">
+      <div class="col-2 text-end">
         <a href="<%= notification_path(notification) %>"
            data-method="delete"
            data-remote="true"

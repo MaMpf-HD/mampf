@@ -1,7 +1,7 @@
 <%= form_with model: talk, html: { id: 'talk-form' } do |f| %>
   <div class="row px-2 py-2 mt-2">
     <div class="col-12 col-lg-4">
-      <h4 class="pl-2">
+      <h4 class="ps-2">
         <span class="badge badge-secondary">
           <%= t('basics.talk') %>
         </span>
@@ -21,13 +21,13 @@
         <%= f.submit t('buttons.save'),
                      class: 'btn btn-sm btn-primary' %>
         <button type="button"
-                class="btn btn-sm btn-secondary ml-2"
+                class="btn btn-sm btn-secondary ms-2"
                 id="cancel-talk-edit">
           <%= t('buttons.discard') %>
         </button>
       </div>
     </div>
-    <div class="col-12 col-lg-4 text-right">
+    <div class="col-12 col-lg-4 text-end">
       <%= link_to t('buttons.parent_lecture'),
                   edit_lecture_path(talk.lecture),
                   class: 'btn btn-sm btn-outline-primary mb-2' %>

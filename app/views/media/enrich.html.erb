@@ -58,14 +58,14 @@
             playlist_add
           </i>
           <i id="add-reference"
-             class="material-icons clickable ml-2"
+             class="material-icons clickable ms-2"
              title="<%= t('thyme_editor.add_referral') %>"
              data-toggle="tooltip"
              data-placement="bottom">
               insert_link
           </i>
           <i id="add-screenshot"
-             class="material-icons clickable ml-2"
+             class="material-icons clickable ms-2"
              title="<%= t('thyme_editor.create_screenshot') %>"
              data-toggle="tooltip"
              data-placement="bottom">
@@ -101,18 +101,18 @@
                     target: :blank %>
         <%= link_to t('thyme_editor.back_to_medium'),
                     edit_medium_path(@medium),
-                    class: 'btn btn-outline-light btn-sm ml-2' %>
+                    class: 'btn btn-outline-light btn-sm ms-2' %>
         <% teachable_scope = @medium.teachable.media_scope %>
         <% if teachable_scope.class.to_s == 'Course' %>
           <% if current_user.admin || current_user.in?(@medium.teachable.editors) %>
             <%= link_to t('buttons.parent_course'),
                         edit_course_path(teachable_scope),
-                        class: 'btn btn-outline-light btn-sm ml-2' %>
+                        class: 'btn btn-outline-light btn-sm ms-2' %>
           <% end %>
         <% else %>
           <%= link_to t('buttons.parent_lecture'),
                       edit_or_show_lecture_path(teachable_scope),
-                      class: 'btn btn-outline-light btn-sm ml-2' %>
+                      class: 'btn btn-outline-light btn-sm ms-2' %>
         <% end %>
       </div>
     </div>
@@ -137,7 +137,7 @@
                             placement: 'bottom'},
                     title: t('buttons.remove'),
                     id: 'remove-screenshot',
-                    class: 'fas fa-trash-alt fa-lg mr-2 text-light',
+                    class: 'fas fa-trash-alt fa-lg me-2 text-light',
                     style: 'display: ' +
                              show_inline(@medium.screenshot.present?) %>
       </div>
@@ -159,7 +159,7 @@
       <div>
         <%= link_to '',
                     import_script_items_path(@medium),
-                    class: 'fas fa-file-import fa-lg mr-2 text-light',
+                    class: 'fas fa-file-import fa-lg me-2 text-light',
                     id: 'import-script-items',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },

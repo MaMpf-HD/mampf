@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <h2>
-      <span class="badge badge-secondary mr-3">
+      <span class="badge badge-secondary me-3">
         <%= t('tag') %>
       </span>
       <%= @tag.title %>
@@ -131,7 +131,7 @@
             </h5>
           </div>
           <div class="col-12 col-sm-6 mb-2 d-flex">
-            <div class="dropdown mr-2">
+            <div class="dropdown me-2">
               <button class="btn btn-sm btn-secondary dropdown-toggle"
                       type="button"
                       data-toggle="dropdown">
@@ -170,7 +170,7 @@
               </div>
             </div>
           </div>
-          <div class="col-12 col-sm-3 text-right">
+          <div class="col-12 col-sm-3 text-end">
             <%= link_to t('external_render'),
                         display_cyto_tag_path(@tag,
                                               params: { selection: @selection_type,

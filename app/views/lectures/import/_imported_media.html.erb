@@ -18,7 +18,7 @@
   </div>
   <div style="max-height: 30vh; overflow-y: scroll;" class="mb-3">
     <% media.each do |m| %>
-      <div class="row mx-2 border-left border-right border-bottom imported-medium-row"
+      <div class="row mx-2 border-start border-end border-bottom imported-medium-row"
            data-medium="<%= m.id %>">
         <div class="col-3">
           <%= m.sort_localized %>
@@ -61,7 +61,7 @@
                       lecture_remove_imported_medium_path(lecture,
                                                           params:
                                                             { medium: m.id }),
-                      class: 'fas fa-trash-alt text-dark ml-2',
+                      class: 'fas fa-trash-alt text-dark ms-2',
                       style: 'text-decoration: none; padding-top: 12px;',
                       data: { toggle: "tooltip" },
                       title: t('buttons.delete'),

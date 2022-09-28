@@ -12,7 +12,7 @@
           <% end %>
         </h4>
       </div>
-      <div class="col-12 col-sm-2 text-right">
+      <div class="col-12 col-sm-2 text-end">
         <% if @active_notification_count.positive? %>
           <%= link_to t('buttons.clear_all'),
                       destroy_lecture_notifications_path(params: { lecture_id: @lecture.id }),

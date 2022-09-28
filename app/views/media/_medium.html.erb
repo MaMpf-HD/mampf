@@ -35,20 +35,20 @@
             </small>
           <% end %>
           <% if !medium.published? && !medium.publisher %>
-            <i class="fas fa-eye-slash redtext ml-2"
+            <i class="fas fa-eye-slash redtext ms-2"
                tabindex="-1"
                data-toggle="tooltip"
                title="<%= t('medium.unpublished') %>">
             </i>
           <% elsif !medium.published? && medium.publisher.present? %>
-            <i class="far fa-calendar-check redtext ml-2"
+            <i class="far fa-calendar-check redtext ms-2"
                tabindex="-1"
                data-toggle="tooltip"
                title="<%= t('medium.unpublished') + ' ' +
                           release_date_info(medium) %>">
             </i>
           <% elsif medium.locked? %>
-            <i class="fas fa-lock redtext ml-2"
+            <i class="fas fa-lock redtext ms-2"
                tabindex="-1"
                data-toggle="tooltip"
                title="<%= t('medium.locked') %>">
@@ -56,7 +56,7 @@
           <% elsif lecture && medium.teachable_type == 'Course' && !lecture.imported_media&.include?(medium) &&
                    (current_user.admin || lecture.edited_by?(current_user)) &&
                    (medium.tags & lecture.tags_including_media_tags).blank? %>
-            <i class="fas fa-eye-slash bluetext ml-2"
+            <i class="fas fa-eye-slash bluetext ms-2"
                tabindex="-1"
                data-toggle="tooltip"
                title="<%= t('medium.waiting_for_tag') %>">
@@ -65,7 +65,7 @@
           <% if !medium.containingWatchlists(current_user).empty? %>
             <%= link_to '',
                         watchlist_path(medium.containingWatchlists(current_user).first),
-                        class: 'fas fa-bookmark text-light mr-2',
+                        class: 'fas fa-bookmark text-light me-2',
                         style: 'text-decoration: none;',
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
@@ -75,7 +75,7 @@
           <% end %>
           <%= link_to '',
                       add_medium_to_watchlist_path(medium),
-                      class: 'fas fa-list text-light mr-2',
+                      class: 'fas fa-list text-light me-2',
                       style: 'text-decoration: none;',
                       data: { toggle: 'tooltip',
                               placement: 'bottom' },

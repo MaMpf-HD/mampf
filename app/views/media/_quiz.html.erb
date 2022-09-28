@@ -3,7 +3,7 @@
     <%= t('admin.quiz.graph') %>
     <%= helpdesk(t('admin.quiz.info.graph'), false) %>
   </div>
-  <div class="col-8 text-right">
+  <div class="col-8 text-end">
     <% if quiz.quiz_graph %>
       <%= link_to t('buttons.edit'),
                   edit_quiz_path(quiz),

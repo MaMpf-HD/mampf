@@ -62,7 +62,7 @@
       <div class="col-4">
         <%= f.text_field :ref_number, class: 'form-control' %>
       </div>
-      <div class="col-6 col-form-label text-right">
+      <div class="col-6 col-form-label text-end">
         <div class="custom-control form-checkbox">
           <%= f.check_box :hidden,
                           class: 'custom-control-input' %>
@@ -106,7 +106,7 @@
       <%= f.hidden_field :medium_id, value: item.medium.id %>
       <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
       <button id="cancel-item"
-              class="btn btn-sm btn-secondary ml-3"
+              class="btn btn-sm btn-secondary ms-3"
               type="button">
         <%= t('buttons.cancel') %>
       </button>
@@ -117,7 +117,7 @@
                   remote: true,
                   data: { confirm: t('confirmation.generic') },
                   id: 'delete-item',
-                  class: 'btn btn-sm btn-danger mr-2' %>
+                  class: 'btn btn-sm btn-danger me-2' %>
       <% end %>
     </div>
   <% end %>

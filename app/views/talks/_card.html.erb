@@ -15,7 +15,7 @@
           <% if current_user.in?(talk.speakers) %>
             <%= link_to '',
                         assemble_talk_path(talk),
-                        class: 'far fa-edit text-light text-right',
+                        class: 'far fa-edit text-light text-end',
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
                         title: t('buttons.edit'),

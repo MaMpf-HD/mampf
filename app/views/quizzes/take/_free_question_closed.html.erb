@@ -9,9 +9,9 @@
     <% end %>
   </div>
   <% if input == question.answer_scheme %>
-    <div class="col-1 text-right">
+    <div class="col-1 text-end">
       <% unless answer.explanation.blank? %>
-        <span class="text-right">
+        <span class="text-end">
           <i class="far fa-question-circle"
              id="reveal-explanation-<%= old_id %>-<%= answer.id %>"
              style="cursor: pointer;"

@@ -25,7 +25,7 @@
 <% if @tutorials.size > 1 %>
   <%= render partial: 'tutorials/tutorial_dropdown' %>
 <% else %>
-  <button class="btn btn-secondary ml-3" disabled>
+  <button class="btn btn-secondary ms-3" disabled>
     <%= @tutorial.title %>
   </button>
 <% end %>
@@ -34,23 +34,23 @@
   <%= link_to t('basics.overview'),
               lecture_tutorial_overview_path( @lecture,
                                               params: { assignment: @assignment.id }),
-                                              class: 'btn btn-primary ml-3' %>
+                                              class: 'btn btn-primary ms-3' %>
 <% end %>
 <%# Bulk download and upload submission buttons %>
 <% if @stack.present? %>
   <%= link_to t('submission.bulk_download_submissions'),
               bulk_download_submissions_path( id: @tutorial.id,
                                               ass_id: @assignment.id),
-                                              class: 'btn btn-primary ml-3',
+                                              class: 'btn btn-primary ms-3',
                                               data: { turbolinks: false } %>
   <% if current_user.in?(@tutorial.tutors) %>
     <% if !@assignment.active? %>
-      <button class="btn btn-primary ml-3"
+      <button class="btn btn-primary ms-3"
                   id="show-bulk-upload-area">
             <%= t('submission.bulk_upload') %>
           </button>
     <% else %>
-      <button class="btn btn-secondary ml-3"
+      <button class="btn btn-secondary ms-3"
                   id="show-bulk-upload-area" disabled>
             <%= t('submission.bulk_upload') %>
           </button>
@@ -60,10 +60,10 @@
       <%= link_to t('submission.bulk_download_corrections'),
                   bulk_download_corrections_path( id: @tutorial.id,
                                                   ass_id: @assignment.id),
-                                                  class: 'btn btn-primary ml-3',
+                                                  class: 'btn btn-primary ms-3',
                                                   data: { turbolinks: false } %>
     <% else %>
-      <button class="btn btn-secondary ml-3" disabled>
+      <button class="btn btn-secondary ms-3" disabled>
         <%= t('submission.bulk_download_corrections') %>
       </button>
     <% end %>
@@ -73,14 +73,14 @@
               export_teams_to_csv_path( id: @tutorial.id,
                                         ass_id: @assignment.id,
                                         format: 'csv'),
-                                        class: 'btn btn-primary ml-3',
+                                        class: 'btn btn-primary ms-3',
                                         id: 'export-teams' %>
 <% end %>
 <%# Certificate check button %>
 <%= link_to t('tutorial.certificate_check'),
             validate_certificate_as_tutor_path( params:
                                                   { lecture_id: @lecture.id }),
-                                                class: 'btn btn-primary ml-3',
+                                                class: 'btn btn-primary ms-3',
                                                 remote: true %>
 <% if current_user.in?(@tutorial.tutors) %>
   <%# Deadline and grace period warnings %>
