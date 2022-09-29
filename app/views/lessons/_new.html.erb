@@ -6,12 +6,13 @@
   </div>
 </div>
 <%= form_with model: lesson do |f| %>
-  <div class="form-row">
+  <div class="row mb-2">
     <div class="col-4">
       <div class="row">
         <div class="col-12">
           <%= f.label :date,
-                      t('basics.date') %>
+                      t('basics.date'),
+                      class: 'form-label' %>
           <%= helpdesk(t('admin.lesson.info.date'), false) %>
         </div>
         <div class="col-12">
@@ -24,18 +25,17 @@
       </div>
     </div>
     <div class="col-8">
-      <div class="form-group">
-        <%= f.label :section_ids,
-                    t('basics.sections') %>
-        <%= helpdesk(t('admin.lesson.info.sections'), false) %>
-        <%= f.select :section_ids,
-                     options_for_select(lesson.lecture.section_selection,
-                                        lesson.section_ids),
-                     {},
-                     { multiple: true,
-                       class: 'selectize' } %>
-        <div class="invalid-feedback" id="lesson-sections-error">
-        </div>
+      <%= f.label :section_ids,
+                  t('basics.sections'),
+                  class: 'form-label' %>
+      <%= helpdesk(t('admin.lesson.info.sections'), false) %>
+      <%= f.select :section_ids,
+                    options_for_select(lesson.lecture.section_selection,
+                                      lesson.section_ids),
+                    {},
+                    { multiple: true,
+                      class: 'selectize' } %>
+      <div class="invalid-feedback" id="lesson-sections-error">
       </div>
     </div>
   </div>

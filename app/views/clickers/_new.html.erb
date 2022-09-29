@@ -9,7 +9,7 @@
               method: 'post',
               scope: 'clicker' do |f|%>
   <%= f.hidden_field :editor_id, value: current_user.id %>
-  <div class="form-row">
+  <div class="row">
     <div class="col-8 form-group">
       <%= f.label :title, t('basics.title') %>
       <%= helpdesk(t('admin.clicker.info.title'), false) %>

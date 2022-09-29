@@ -6,18 +6,18 @@
 <%= form_for(resource, as: resource_name,
                        url: session_path(resource_name),
                        html: { role: 'form' }) do |f| %>
-  <div class="form-group">
-    <%= f.label :email, t('.email') %>
+  <div class="form-floating mb-3">
     <%= f.email_field :email, autofocus: true, class: 'form-control' %>
+    <%= f.label :email, t('.email') %>
   </div>
-  <div class="form-group">
-    <%= f.label :password, t('.password') %>
+  <div class="form-floating mb-3">
     <%= f.password_field :password, autocomplete: 'off',
                          class: 'form-control' %>
+    <%= f.label :password, t('.password') %>
   </div>
 
   <% if devise_mapping.rememberable? %>
-    <div class="form-check">
+    <div class="form-check mb-3">
       <%= f.label :remember_me, class: 'form-check-label' do %>
         <%= f.check_box :remember_me, class: 'form-check-input' %>
         <%= t('.remember') %>
@@ -25,7 +25,7 @@
     </div>
   <% end %>
 
-  <div class="form-group mt-2">
+  <div class="form-group mb-2">
     <%= f.submit  t('.login'), class: 'btn btn-primary' %>
   </div>
 <% end %>

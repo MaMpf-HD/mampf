@@ -1,7 +1,9 @@
 <%= form_with model: chapter do |f| %>
-  <div class="form-row">
-    <div class="col-12 form-group">
-      <%= f.label :title, t('basics.title') %>
+  <div class="row mb-3">
+    <div class="col-12">
+      <%= f.label :title,
+                  t('basics.title'),
+                  class: 'form-label' %>
       <%= helpdesk(t('admin.lecture.info.chapter_title'),
                    false) %>
       <%= f.text_field :title, { class: 'form-control',
@@ -11,10 +13,11 @@
       </div>
     </div>
     <% if lecture.chapters.exists? %>
-      <div class="col-12 form-group">
+      <div class="col-12">
         <%= f.label :predecessor,
                     t('admin.lecture.insert_after_chapter',
-                      chapter_name: t("basics.#{lecture.chapter_name}")) %>
+                      chapter_name: t("basics.#{lecture.chapter_name}")),
+                    class: 'form-label' %>
         <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
                        chapter_name: t("basics.#{lecture.chapter_name}")),
                      false) %>
@@ -22,7 +25,7 @@
                      options_for_select([[t('basics.at_the_beginning'), 0]] +
                                         lecture.select_chapters,
                                         lecture.last_chapter_by_position.position) ,
-                                 {}, { class: 'form-control' } %>
+                                 {}, { class: 'form-select' } %>
       </div>
     <% end %>
   </div>

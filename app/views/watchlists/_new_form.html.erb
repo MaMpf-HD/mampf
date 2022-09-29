@@ -2,7 +2,7 @@
   <% if @medium.present? %>
     <%= f.hidden_field :medium_id, value: @medium.id %>
   <% end %>
-  <div class="form-group form-row">
+  <div class="form-group row">
     <%= f.label :label, t('watchlist.name') %>
     <div class="input-group mb-3">
       <% if @watchlist.present? && @watchlist.errors.any? %>
@@ -35,7 +35,7 @@
       <% end %>
     </div>
   </div>
-  <div class="form-group form-row">
+  <div class="form-group row">
     <%= f.label :label, t('watchlist.description') %>
     <div class="input-group mb-3">
       <%= f.text_area :description, placeholder: t('watchlist.enter_description'),

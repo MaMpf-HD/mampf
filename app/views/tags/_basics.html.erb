@@ -18,7 +18,7 @@
   </div>
   <div id="titlesInput">
     <%= f.fields_for :notions do |n| %>
-      <div class="form-row">
+      <div class="row">
         <div class="form-group col-11">
           <div class="input-group">
             <div class="input-group-prepend">
@@ -51,7 +51,7 @@
       </div>
     </div>
     <%= f.fields_for :aliases do |n| %>
-      <div class="form-row">
+      <div class="row">
         <div class="form-group col-11">
           <div class="input-group">
             <div class="input-group-prepend">
@@ -98,7 +98,7 @@
       </div>
     </div>
   <% end %>
-  <div class="form-row">
+  <div class="row">
   <div class="form-group col-12">
     <%= f.label :course_ids,
                 t('basics.courses') %>

@@ -5,7 +5,7 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-row">
+    <div class="row">
     <div class="col-12 form-group">
       <%= f.label :title, t('basics.title') %>
       <%= helpdesk(t('admin.section.info.title'), false) %>
@@ -18,7 +18,7 @@
       </div>
     </div>
   </div>
-  <div class="form-row">
+  <div class="row">
     <div class="col-12 form-group">
       <%= f.label :chapter_id,
                   t("basics.#{section.lecture.chapter_name}") %>
@@ -111,7 +111,7 @@
       <% end %>
     </div>
   </div>
-  <div class="form-row">
+  <div class="row">
     <div class="col-12">
       <div class="custom-control form-checkbox mb-2">
         <%= f.check_box :hidden,

@@ -1,6 +1,6 @@
 <div class="action-box">
   <%= form_with model: referral  do |f|%>
-    <div class="form-group form-row">
+    <div class="form-group row">
       <div class="col-2 col-form-label">
         <%= t('admin.referral.start_time') %>
         <%= helpdesk(t('admin.referral.info.start_time'), false) %>
@@ -25,7 +25,7 @@
         </i>
       </div>
     </div>
-    <div class="form-group form-row">
+    <div class="form-group row">
       <div class="col-2 col-form-label">
         <%= t('admin.referral.end_time') %>
         <%= helpdesk(t('admin.referral.info.end_time'), false) %>
@@ -51,7 +51,7 @@
       </div>
     </div>
     <div id="teachable_selector"
-         class="form-group form-row">
+         class="form-group row">
       <div class="col-2 col-form-label">
         <%= f.label :teachable,
                     t('admin.referral.preselection') %>
@@ -69,7 +69,7 @@
                                          .can?(:create, Item.new) } } %>
       </div>
     </div>
-    <div id="item_select" class="form-group form-row">
+    <div id="item_select" class="form-group row">
       <div class="col-2 col-form-label">
         <%= f.label :item_id,
                     t('admin.referral.item') %>
@@ -94,7 +94,7 @@
     </div>
     <div id="link_details" style="display: <%= show(show_link(referral)) %>">
       <div id="referral_description_field"
-           class="form-group form-row">
+           class="form-group row">
         <div class="col-2 col-form-label">
           <%= f.label :description,
                       t('basics.title') %>
@@ -118,7 +118,7 @@
         </div>
       </div>
       <div id="referral_link_field"
-           class="form-group form-row">
+           class="form-group row">
         <div class="col-2 col-form-label">
           <%= f.label :link,
                       t('basics.link') %>
@@ -156,7 +156,7 @@
     </div>
     <div id="explanation_details"
          style="display: <%= show(show_explanation(referral)) %>;">
-      <div class="form-group form-row">
+      <div class="form-group row">
         <div class="col-2 col-form-label">
           <%= f.label :explanation,
                       t('admin.referral.explanation') %>

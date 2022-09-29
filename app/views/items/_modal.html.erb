@@ -22,7 +22,7 @@
            id="new-item-modal-content">
         <%= form_with model: item, id: 'external_item_form' do |f|%>
           <div id="referral_description_field"
-               class="form-group form-row">
+               class="form-group row">
             <div class="col-2 col-form-label">
               <%= f.label :description, t('basics.title') %>
               <%= helpdesk(t('admin.item.info.title'), false) %>
@@ -35,7 +35,7 @@
             </div>
           </div>
           <div id="referral_link_field"
-               class="form-group form-row">
+               class="form-group row">
             <div class="col-2 col-form-label">
               <%= f.label :link, t('basics.link') %>
               <%= helpdesk(t('admin.item.info.link'), false) %>
@@ -54,7 +54,7 @@
             </div>
           </div>
           <div id="referral_explanation_field"
-               class="form-group form-row">
+               class="form-group row">
             <div class="col-2 col-form-label">
               <%= f.label :explanation, t('admin.item.explanation') %>
               <%= helpdesk(t('admin.item.info.explanation'), false) %>

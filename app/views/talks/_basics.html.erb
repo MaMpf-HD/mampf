@@ -5,7 +5,7 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-row">
+    <div class="row">
       <div class="col-12 form-group">
         <%= f.label :title, t('basics.title') %>
         <%= helpdesk(t('admin.talk.info.title'), false) %>
@@ -15,7 +15,7 @@
         </div>
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12">
         <%= f.label :date, t('basics.date') %>
         <a class="fas fa-plus-circle clickable text-dark"
@@ -45,7 +45,7 @@
         </div>
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12 mb-3">
         <%= f.label :speaker_ids,
                     t('admin.talk.speakers') %>
@@ -59,7 +59,7 @@
                                placeholder: t('basics.select') } } %>
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12">
         <%= t('basics.media') %>
         <%= helpdesk(t('admin.talk.info.media'), false) %>
@@ -121,7 +121,7 @@
             id="talk-tags-error">
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12 form-group">
         <%= f.label :predecessor,
                     t('admin.chapter.position',
