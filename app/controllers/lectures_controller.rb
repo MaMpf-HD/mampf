@@ -28,7 +28,7 @@ class LecturesController < ApplicationController
   def update
     # removes the empty String "" in the NEW array of editor ids
     # and converts it into an array of integers
-    all_ids = lecture_params[:editor_ids].clone.drop(1).map {|s| s.to_i}
+    all_ids = lecture_params[:editor_ids].map(&:to_i) - [0]
     old_ids = @lecture.editor_ids
     new_ids = all_ids - old_ids
 
