@@ -26,7 +26,7 @@ resetSelectized = function(index, select) {
 
 this.fillOptionsByAjax = function($selectizedSelection) {
   $selectizedSelection.each(function() {
-    var courseId, existing_values, fill_path, loaded, locale, model_select, plugins, send_data;
+    var courseId, existing_values, fill_path, loaded, locale, model_select, plugins, send_data, parent;
     if (this.dataset.drag === 'true') {
       plugins = ['remove_button', 'drag_drop'];
     } else {
@@ -41,6 +41,7 @@ this.fillOptionsByAjax = function($selectizedSelection) {
       });
       send_data = false;
       loaded = false;
+      parent = this.dataset.modal === undefined ? document.body : null;
       if (this.dataset.model === 'tag') {
         locale = this.dataset.locale;
         fill_path = Routes.fill_tag_select_path({
@@ -81,7 +82,7 @@ this.fillOptionsByAjax = function($selectizedSelection) {
         searchField: 'name',
         placeholder: placeholder,
         closeAfterSelect: true,
-        dropdownParent: document.body,
+        dropdownParent: parent,
         onInitialize:function(){
           this.popper = Popper.createPopper(this.control,this.dropdown, {
           placement: "bottom-start",

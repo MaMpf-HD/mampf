@@ -129,7 +129,7 @@ class User < ApplicationRecord
   # with their ids
   # Is used in options_for_select in form helpers.
   def self.only_editors_selection
-    User.editors.map { |e| [e.info, e.id] }
+    User.editors.map { |e| [e.info, e.id] }.natural_sort_by(&:first)
   end
 
   # returns the ARel of all users that are editors or whose id is among a
@@ -305,7 +305,7 @@ class User < ApplicationRecord
 
   def info_uncached
     return email unless name.present?
-    (name_in_tutorials || name) + ' (' + email + ')'
+    (name_in_tutorials.presence || name) + ' (' + email + ')'
   end
 
   def info
@@ -380,6 +380,10 @@ class User < ApplicationRecord
   # lectures as module editor (see above)
   def teaching_related_lectures
     (given_lectures + edited_lectures + lectures_as_course_editor).uniq
+  end
+
+  def proper_teaching_related_lectures
+    (given_lectures + edited_lectures).uniq
   end
 
   # teaching unrelated lectures are all lectures that are not teaching related

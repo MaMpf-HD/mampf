@@ -314,15 +314,16 @@ $(document).on 'turbolinks:load', ->
     courseId = parseInt($(this).val())
     termInfo = $(this).data('terminfo').filter (x) -> x[0] == courseId
     console.log termInfo[0]
-    if termInfo[0][1]
-      $('#newLectureTerm').hide()
-      $('#lecture_term_id').prop('disabled', true)
-      $('#newLectureSort').hide()
-    else
-      $('#newLectureTerm').show()
-      $('#lecture_term_id').prop('disabled', false)
-      $('#newLectureSort').show()
-    return
+    if (termInfo[0]?)
+      if termInfo[0][1]
+        $('#newLectureTerm').hide()
+        $('#lecture_term_id').prop('disabled', true)
+        $('#newLectureSort').hide()
+      else
+        $('#newLectureTerm').show()
+        $('#lecture_term_id').prop('disabled', false)
+        $('#newLectureSort').show()
+      return
 
   $(document).on 'change', '#medium_publish_media_0', ->
     $('[id^="medium_released_"]').attr('disabled', true)

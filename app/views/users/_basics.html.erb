@@ -36,8 +36,7 @@
               t('admin.user.current_lecture') %>
 <%= helpdesk(t('admin.user.info.current_lecture'), false) %>
   <%= f.select :current_lecture_id,
-               options_for_select(user.teaching_related_lectures
-                                              .map { |l| [l.title, l.id] },
+               options_for_select(select_proper_teaching_related_lectures(user),
                                   user.current_lecture_id),
                { prompt: t('basics.select') },
                { class: 'selectize' } %>

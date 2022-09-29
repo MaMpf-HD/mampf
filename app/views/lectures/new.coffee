@@ -3,9 +3,9 @@
 $('#new-lecture-area').empty()
   .append('<%= j render partial: "lectures/new",
                         locals: { lecture: @lecture,
-                                  from: @from } %>').show()
-$('#new-lecture-area .selectize').each ->
-  new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
+                                  from: @from,
+                                  modal: @from == "course" } %>').show()
+fillOptionsByAjax($('#new-lecture-area .selectize'))
 $('[data-toggle="popover"]').popover()
 
 # hide all other buttons on admin index page
