@@ -95,9 +95,9 @@ class Term < ApplicationRecord
   def self.possible_deletion_dates
     return [Time.zone.today + 6.months] if Term.active.blank?
 
-    [Term.active.end_date + 2.weeks,
-     Term.active.end_date + 2.weeks + 3.months,
-     Term.active.end_date + 2.weeks + 6.months]
+    [Term.active.end_date + 2.weeks + 1.day,
+     Term.active.end_date + 2.weeks + 3.months + 1.day,
+     Term.active.end_date + 2.weeks + 6.months + 1.day]
   end
 
   def self.possible_deletion_dates_localized
