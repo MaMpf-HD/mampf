@@ -2,6 +2,7 @@ class NotificationMailer < ApplicationMailer
   before_action :set_sender_and_locale
   before_action :set_recipients, only: [:medium_email, :announcement_email,
                                         :new_lecture_email,
+                                        :new_editor_email,
                                         :submission_deletion_email,
                                         :submission_deletion_lecture_email,
                                         :submission_destruction_email,
@@ -49,7 +50,15 @@ class NotificationMailer < ApplicationMailer
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: t('mailer.new_lecture_subject',
-                    title: @lecture.title_for_viewers))
+         title: @lecture.title_for_viewers))
+  end
+
+  def new_editor_email
+    @lecture = params[:lecture]
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.new_editor_subject',
+         title: @lecture.title_for_viewers))
   end
 
   def submission_invitation_email

@@ -390,6 +390,7 @@ $(document).on 'turbolinks:load', ->
   nextChapterButton = document.getElementById('next-chapter')
   previousChapterButton = document.getElementById('previous-chapter')
   backButton = document.getElementById('back-button')
+  emergencyButton = document.getElementById('emergency-button')
   # Sliders
   seekBar = document.getElementById('seek-bar')
   volumeBar = document.getElementById('volume-bar')
@@ -449,36 +450,42 @@ $(document).on 'turbolinks:load', ->
     $('#caption').show()
     $('#video-controlBar').show()
     video.style.width = '82%'
+    if iaButton.dataset.status == 'false'
+      iaButton.innerHTML = 'remove_from_queue'
+      $('#caption').hide()
+      video.style.width = '100%'
+      $('#video-controlBar').css('width', '100%')
+      $(window).trigger('resize')
     return
 
   # display native control bar if screen is very small
-  if window.matchMedia("screen and (max-width: 767px)").matches
+  if window.matchMedia("screen and (max-width: 850px)").matches
     mobileDisplay()
 
-  if window.matchMedia("screen and (max-device-width: 767px)").matches
+  if window.matchMedia("screen and (max-device-width: 850px)").matches
     mobileDisplay()
 
   # mediaQuery listener for very small screens
-  match_verysmall = window.matchMedia("screen and (max-width: 767px)")
+  match_verysmall = window.matchMedia("screen and (max-width: 850px)")
   match_verysmall.addListener (result) ->
     if result.matches
       mobileDisplay()
     return
 
-  match_verysmalldevice = window.matchMedia("screen and (max-device-width: 767px)")
+  match_verysmalldevice = window.matchMedia("screen and (max-device-width: 850px)")
   match_verysmalldevice.addListener (result) ->
     if result.matches
       mobileDisplay()
     return
 
   # mediaQuery listener for normal screens
-  match_normal = window.matchMedia("screen and (min-width: 768px)")
+  match_normal = window.matchMedia("screen and (min-width: 851px)")
   match_normal.addListener (result) ->
     if result.matches
       largeDisplay()
     return
 
-  match_normal = window.matchMedia("screen and (min-device-width: 768px)")
+  match_normal = window.matchMedia("screen and (min-device-width: 851px)")
   match_normal.addListener (result) ->
     if result.matches
       largeDisplay()
@@ -538,6 +545,11 @@ $(document).on 'turbolinks:load', ->
   previousChapterButton.addEventListener 'click', ->
     previous = previousChapterStart(video.currentTime)
     video.currentTime = previousChapterStart(video.currentTime) if previous?
+    return
+
+  # Event handler for the emergency button
+  emergencyButton.addEventListener 'click', ->
+    alert "test"
     return
 
   # Event handler for speed speed selector

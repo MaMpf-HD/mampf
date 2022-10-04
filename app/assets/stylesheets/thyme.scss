@@ -125,7 +125,7 @@
 	position: absolute;
 	padding: 3px;
 	font-size: 12px;
-	left: 81%;
+	left: 79%;
 }
 
 #volume-bar {
@@ -133,6 +133,12 @@
 	min-width: 50%;
 	margin-top: 7px;
 	margin-left: 4px;
+}
+
+#emergency-button {
+  position: absolute;
+  display: flex;
+  left: 89%;
 }
 
 #size-buttons {
