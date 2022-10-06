@@ -1389,6 +1389,7 @@ de:
       no_section: 'kein zugeordneter Abschnitt aus der Datenbank'
       create_external: 'Externen Eintrag anlegen'
       explanation: 'Erläuterung'
+      chapter_short: 'Kap.'
       sort:
         definition: 'Definition'
         remark: 'Bemerkung'
@@ -2237,6 +2238,8 @@ de:
     pages: 'S'
     destinations: 'Destinations'
     structure: 'Struktur des Manuskripts'
+    chapter: 'Kapitel'
+    section: 'Abschnitt'
     one_contradiction: >
       Es wurde ein Widerspruch gefunden. Wenn Du die Struktur des
       Skriptes in MaMpf importieren möchtest, musst Du erst den
@@ -2999,6 +3002,13 @@ de:
       Aus Datenschutzgründen wurden sämtliche in MaMpf gespeicherten
       Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term}
       automatisch gelöscht.
+    hash_mail_subject: Überprüfung der Emailadresse
+    hash_mail_body: >
+      Hallo, %{name}!
+      Du erhältst diese Email, weil eine frühere Email von MaMpf nicht zugestellt werden konnte.
+      Mit dieser Email wird überprüft, ob Dein Emailkonto noch existiert. Da dies der Fall ist,
+      werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.
+      Hash:%{hash}
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
