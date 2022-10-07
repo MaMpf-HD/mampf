@@ -1,2 +1,2 @@
 <%= t('mailer.submission_destruction_text_html',
-      term: @term.to_label) %>
+      deletion_date: @deletion_date.strftime(I18n.t('date.formats.concise'))) %>
