@@ -35,7 +35,8 @@ this.fillOptionsByAjax = function($selectizedSelection) {
     if (this.dataset.ajax === 'true' && this.dataset.filled === 'false') {
       model_select = this;
       courseId = 0;
-      placeholder = this.dataset.placeholder
+      placeholder = this.dataset.placeholder;
+      no_result_msg = this.dataset.noResults;
       existing_values = Array.apply(null, model_select.options).map(function(o) {
         return o.value;
       });
@@ -130,6 +131,9 @@ this.fillOptionsByAjax = function($selectizedSelection) {
           },
           item: function(item, escape) {
             return '<div title="' + escape(item.name) + '">' + escape(item.name) + '</div>';
+          },
+          no_results: function(data, escape) {
+            return '<div class="no-results">'+ escape(no_result_msg) + '</div>';
           }
         }
       });
