@@ -174,7 +174,7 @@ class MediaController < ApplicationController
     return if @errors.present?
     @medium.update(publisher: publisher)
     @medium.publish! if publisher.release_now
-    Medium.reindex
+    Sunspot.index! @medium
     redirect_to edit_medium_path(@medium)
   end
 
