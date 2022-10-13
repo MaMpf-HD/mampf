@@ -173,8 +173,11 @@ class MediaController < ApplicationController
     @errors = publisher.errors
     return if @errors.present?
     @medium.update(publisher: publisher)
-    @medium.publish! if publisher.release_now
-    Sunspot.index! @medium
+    if publisher.release_now
+      @medium.publish!
+      @medium.update(released: publisher.release_for, released_at: Time.zone.now,
+                     publisher: nil)
+    end
     redirect_to edit_medium_path(@medium)
   end
 
