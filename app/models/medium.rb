@@ -199,8 +199,16 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except('RandomQuiz').map { |k, v| [v, k] }
   end
 
+  def self.advanced_sorts
+    ['RandomQuiz', 'Question', 'Remark', 'Erdbeere']
+  end
+
+  def self.generic_sorts
+    ['Kaviar', 'Sesam', 'Nuesse', 'Script', 'Kiwi', 'Quiz', 'Reste']
+  end
+
   def self.select_generic
-    Medium.sort_localized.except('RandomQuiz', 'Question', 'Remark', 'Erdbeere').map { |k, v| [v, k] }
+    Medium.sort_localized.slice(*Medium.generic_sorts).map { |k, v| [v, k] }
   end
 
   def self.select_quizzables
@@ -276,6 +284,7 @@ class Medium < ApplicationRecord
     search_params[:editor_ids] = [] if search_params[:all_editors] == '1' || search_params[:all_editors].nil?
     # add media without term to current term
     search_params[:all_terms] = '1' if search_params[:all_terms].blank?
+    search_params[:all_teachers] = '1' if search_params[:all_teachers].blank?
     search_params[:term_ids].push('0') if search_params[:term_ids].present?
     if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
       search_params[:tag_ids] = Tag.pluck(:id)
@@ -284,7 +293,7 @@ class Medium < ApplicationRecord
     search = Sunspot.new_search(Medium)
     search.build do
       with(:sort, search_params[:types])
-      without(:sort, ['Question', 'Remark', 'RandomQuiz']) unless admin
+      without(:sort, Medium.advanced_sorts) unless admin
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
       with(:term_id, search_params[:term_ids]) unless search_params[:all_terms] == '1'
