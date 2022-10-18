@@ -270,8 +270,7 @@ class Medium < ApplicationRecord
     {
       '0' => 'all',
       '1' => 'subscribed',
-      '2' => 'subscribed and preceding',
-      '3' => 'custom'
+      '2' => 'custom'
     }
   end
 

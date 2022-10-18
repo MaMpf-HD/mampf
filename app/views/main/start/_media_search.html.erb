@@ -3,7 +3,7 @@
               remote: true,
               method: :get do |f| %>
   <div class="form-row p-2">
-    <div class="col-4 form-group">
+    <div class="col-6 col-lg-4 form-group">
       <%= f.label :types, t('basics.type') %>
       <%= helpdesk(t('admin.medium.info.search_type'), true) %>
       <%= f.select :types,
@@ -29,7 +29,7 @@
                     { class: 'custom-control-label' } %>
       </div>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-6 col-lg-4 form-group">
       <%= f.label :tag_ids,
                   t('basics.related_tags') %>
       <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
@@ -74,7 +74,7 @@
                     class: 'custom-control-label' %>
       </div>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-6 col-lg-4 form-group">
       <%= f.label :teacher_ids, t('basics.teachers') %>
       <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
       <%= f.select :teacher_ids,
@@ -96,7 +96,7 @@
                     { class: 'custom-control-label' } %>
       </div>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-6 col-lg-4 form-group">
       <%= f.label :teachable_ids, t('basics.lectures') %>
       <%= helpdesk(t('search.media.lectures'), true) %>
       <div class="custom-control custom-radio mb-2">
@@ -124,22 +124,11 @@
                             '2',
                             checked: false,
                             class: 'custom-control-input',
-                            disabled: true %>
-        <%= f.label :lecture_option,
-                    t('search.media.lecture_options.subscribed_and_preceding'),
-                    value: '2',
-                    class: 'custom-control-label' %>
-      </div>
-      <div class="custom-control custom-radio mb-2">
-        <%= f.radio_button :lecture_option,
-                            '3',
-                            checked: false,
-                            class: 'custom-control-input',
                             data: { type: 'toggle', 
                                     id: 'search_media_lectures'} %>
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.own_selection'),
-                    value: '3',
+                    value: '2',
                     class: 'custom-control-label' %>
       </div>
       <%= f.select :media_lectures,
@@ -150,14 +139,14 @@
                       disabled: true,
                       required: true } %>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-6 col-lg-4 form-group">
       <%= f.label :fulltext, t('basics.title') %>
       <%= helpdesk(t('search.media.title'), false) %>
       <%= f.text_field :fulltext,
                         id: 'media_fulltext',
                         class: 'form-control' %>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-6 col-lg-4 form-group">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
                    options_for_select(hits_per_page(results_as_list),

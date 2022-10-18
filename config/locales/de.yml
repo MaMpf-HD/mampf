@@ -2500,15 +2500,13 @@ de:
       title: > 
         Hier kannst Du den Titel des Mediums eingeben. Falls das Medium keinen Titel hat,
         sondern teil einer Sitzung ist, wird dessen Titel stattdessen bei der Suche beachtet.
-        Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
-        eingibst) wird es bei der Suche ignoriert.
+        Wenn Du dieses Feld leer lässt wird es bei der Suche ignoriert.
       lectures: >
         Hier kannst Du bestimmen, aus welchen Veranstaltungen das Medium stammen soll.
         Dabei kannst du alle Veranstaltungen zulassen oder nur welche, die du auch abonniert hast, oder
         kannst eine eigene Auswahl treffen, welche bei der Suche berücksichtigt wird.
       lecture_options:
         subscribed: 'abonnierte'
-        subscribed_and_preceding: 'abonnierte und vorrangehende'
         all: 'alle'
         own_selection: 'eigene Auswahl'
         all_media: 'alle Medien'
