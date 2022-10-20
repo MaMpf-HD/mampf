@@ -2041,6 +2041,20 @@ de:
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
     my_talks: Meine Vorträge
+    my_data: Welchen Daten werden über mich gespeichert?
+    data_explanation: >
+      Im Rahmen des Services, die Mampf anbietet, werden einige Daten über Nutzer
+      gespeichert. Alle deine Daten, die oben nicht aufgeführt sind, sind nun hier aufgeführt.
+    attribute: 'Attribut'
+    value: 'Wert'
+    email: 'Email'
+    created_at: 'Erstellt am'
+    updated_at: 'Geupdatet am'
+    admin: 'Admin'
+    consents: 'Hat zugestimmt'
+    consented_at: 'Hat zugestimmt am'
+    value_yes: 'Ja'
+    value_no: 'Nein' 
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

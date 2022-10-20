@@ -37,6 +37,10 @@ module ApplicationHelper
     base_title
   end
 
+  def yesno(value)
+    value ? 'yes' : 'no'
+  end
+
   # next methods are service methods for the display status of HTML elmements
   def hide(value)
     value ? 'none;' : 'block;'

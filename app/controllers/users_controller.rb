@@ -15,6 +15,9 @@ class UsersController < ApplicationController
   def edit
     @user = User.find_by_id(params[:id])
     authorize! :edit, @user
+
+    # variables for data transparency
+    
   end
 
   def update
