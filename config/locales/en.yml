@@ -2345,6 +2345,8 @@ en:
       You might try the following fulltext terms and start the search again.
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
+    tag_title: >
+      enter at least 2 letters (or leave free for all tags)
   errors:
     not_subscribed: You are currently not subscribed to this lecture.
     profile:
@@ -3047,6 +3049,8 @@ en:
     assignment: Assignment
     reminder: Reminder
     together_with: together with
+    enter_two_letters: enter at least 2 letters
+    no_results: No results found
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

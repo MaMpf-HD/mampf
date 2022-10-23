@@ -2488,6 +2488,8 @@ de:
       Suche anschließend neu starten:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
+    tag_title: >
+      mind. 2 Zeichen eingeben (freilassen für alle Tags)
   errors:
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
@@ -3221,6 +3223,8 @@ de:
     assignment: Hausaufgabe
     reminder: Erinnerung
     together_with: zusammen mit
+    enter_two_letters: mind. 2 Zeichen eingeben
+    no_results: Keine Resultate gefunden
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

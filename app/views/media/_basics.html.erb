@@ -65,7 +65,9 @@
                        style: 'display: none;',
                        data: { ajax: true,
                                filled: false,
-                               model: 'user' } } %>
+                               model: 'user',
+                               placeholder: t('basics.enter_two_letters'),
+                               no_results: t('basics.no_results') } } %>
       <% else %>
         <%= f.select :editor_ids,
                      options_for_select((medium.teachable.speakers | medium.editors).map { |e| [e.info, e.id] },
@@ -114,7 +116,9 @@
                      data: { ajax: true,
                              filled: false,
                              model: 'tag',
-                             locale: I18n.locale } } %>
+                             locale: I18n.locale,
+                             placeholder: t('basics.enter_two_letters'),
+                             no_results: t('basics.no_results') } } %>
       <div class="invalid-feedback"
            id="medium-tags-error">
       </div>
@@ -134,8 +138,10 @@
                      { multiple: true,
                        class: 'selectize',
                       data: { ajax: true,
-                               model: 'medium',
-                               filled: false } } %>
+                              model: 'medium',
+                              filled: false,
+                              placeholder: t('basics.enter_two_letters'),
+                              no_results: t('basics.no_results') } } %>
       </div>
     <% end %>
     <% if medium.published? %>
