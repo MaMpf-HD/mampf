@@ -126,45 +126,41 @@ class NotificationMailer < ApplicationMailer
   end
 
   def submission_deletion_email
-    @term = params[:term]
     @deletion_date = params[:deletion_date]
+    @lectures = params[:lectures]
     subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
-    subject += t('mailer.submission_deletion_subject',
-                 term: @term.to_label)
+    subject += t('mailer.submission_deletion_subject')
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: subject)
   end
 
   def submission_deletion_lecture_email
-    @term = params[:term]
     @lecture = params[:lecture]
     @deletion_date = params[:deletion_date]
     subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
     subject += t('mailer.submission_deletion_lecture_subject',
-                 term: @term.to_label,
-                 lecture: @lecture.title_no_term)
+                 lecture: @lecture.title)
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: subject)
   end
 
   def submission_destruction_email
-    @term = params[:term]
+    @deletion_date = params[:deletion_date]
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: t('mailer.submission_destruction_subject',
-                    term: @term.to_label))
+                    deletion_date: @deletion_date.strftime(I18n.t('date.formats.concise'))))
   end
 
   def submission_destruction_lecture_email
-    @term = params[:term]
     @lecture = params[:lecture]
+    @deletion_date = params[:deletion_date]
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: t('mailer.submission_destruction_lecture_subject',
-                    term: @term.to_label,
-                    lecture: @lecture.title_no_term))
+                    lecture: @lecture.title))
   end
 
   private

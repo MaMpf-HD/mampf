@@ -2977,31 +2977,33 @@ de:
       Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde abgelehnt
       und wird nicht korrigiert und nicht gewertet werden.
     submission_deletion_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term}
+      Löschung von Abgaben und Korrekturen
     submission_deletion_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
-      Abgaben und Korrekturen aus dem %{term} mit entsprechendem Löschdatum am
-      <b>%{deletion_date}</b> automatisch gelöscht. Bitte lade diese rechtzeitig
+      Abgaben und Korrekturen mit Löschdatum <b>%{deletion_date}</b> an dem
+      betreffenden Tag automatisch gelöscht. Bitte lade diese rechtzeitig
       herunter, wenn Du sie weiterhin verwenden möchtest.
+    submission_deletion_lectures: >
+      Betroffen von der Löschung sind die folgenden Veranstaltungen in MaMpf:
     submission_deletion_lecture_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
+      Löschung von Abgaben und Korrekturen [%{lecture}]
     submission_deletion_lecture_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
-      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term} mit
-      entsprechendem Löschdatum am <b>%{deletion_date}</b> automatisch gelöscht.
+      Abgaben und Korrekturen der Veranstaltung %{lecture} mit
+      Löschdatum <b>%{deletion_date}</b> an dem betreffenden Tag automatisch gelöscht.
       Sollten sie anderweitig gespeichert werden müssen, so muss dies außerhalb
       von MaMpf geschehen, und die Dateien müssen rechtzeitig heruntergeladen werden.
     submission_destruction_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term}
+      Löschung von Abgaben und Korrekturen
     submission_destruction_text_html: >
       Aus Datenschutzgründen wurden sämtliche in MaMpf von Dir gespeicherten
-      Abgaben und Korrekturen aus dem %{term} automatisch gelöscht.
+      Abgaben und Korrekturen mit Löschdatum %{deletion_date} automatisch gelöscht.
     submission_destruction_lecture_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
+      Löschung von Abgaben und Korrekturen [%{lecture}]
     submission_destruction_lecture_text_html: >
       Aus Datenschutzgründen wurden sämtliche in MaMpf gespeicherten
-      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term}
-      automatisch gelöscht.
+      Abgaben und Korrekturen der Veranstaltung %{lecture} mit dem
+      Löschdatum %{deletion_date} automatisch gelöscht.
     hash_mail_subject: Überprüfung der Emailadresse
     hash_mail_body: >
       Hallo, %{name}!
