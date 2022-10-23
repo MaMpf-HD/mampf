@@ -1924,6 +1924,8 @@ en:
     data_explanation: >
       Within the framework of the services offered by Mampf, some data about users will be
       stored. All of your data that is not listed above are listed here.
+    data_extra: >
+      Additionally, we store the currently viewed lecture for users to improve user experience.
     attribute: 'Attribute'
     value: 'Value'
     email: 'Email'
@@ -1932,8 +1934,9 @@ en:
     admin: 'Admin'
     consents: 'Consented'
     consented_at: 'Consented on'
-    yes: 'Yes'
-    no: 'No'
+    archived: 'Archived'
+    "yes": 'Yes'
+    "no": 'No'
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'

@@ -2045,6 +2045,9 @@ de:
     data_explanation: >
       Im Rahmen des Services, die Mampf anbietet, werden einige Daten über Nutzer
       gespeichert. Alle deine Daten, die oben nicht aufgeführt sind, sind nun hier aufgeführt.
+    data_extra: >
+      Darüber hinaus speichern wir die aktuell betrachtete Vorlesung, um die
+      Benutzerfreundlichkeit zu verbessern.
     attribute: 'Attribut'
     value: 'Wert'
     email: 'Email'
@@ -2053,8 +2056,9 @@ de:
     admin: 'Admin'
     consents: 'Hat zugestimmt'
     consented_at: 'Hat zugestimmt am'
-    value_yes: 'Ja'
-    value_no: 'Nein' 
+    archived: 'Archiviert'
+    "yes": 'Ja'
+    "no": 'Nein' 
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
