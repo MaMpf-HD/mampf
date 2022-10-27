@@ -1,72 +1,8 @@
-<%= t('profile.data_explanation') %>
-<table class="table table-bordered mt-3">
-  <thead class="thead-light">
-    <tr>
-      <th sope="col">
-        <%= t('profile.attribute') %>
-      </th>
-      <th scope="col">
-        <%= t('profile.value') %>
-      </th>
-    </tr>
-  </thead>
-  <tbody style="max-height: 50px; overflow-y: scroll;">
-    <tr>
-      <td>
-        <%= t('profile.email') %>
-      </td>
-      <td>
-        <%= @user.email %>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <%= t('profile.created_at') %>
-      </td>
-      <td>
-        <%= @user.created_at %>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <%= t('profile.updated_at') %>
-      </td>
-      <td>
-        <%= @user.updated_at %>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <%= t('profile.admin') %>
-      </td>
-      <td>
-        <%= t("profile.#{yesno(@user.admin?)}") %>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <%= t('profile.consents') %>
-      </td>
-      <td>
-        <%= t("profile.#{yesno(@user.admin?)}") %>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <%= t('profile.consented_at') %>
-      </td>
-      <td>
-        <%= @user.consented_at %>
-      </td>
-    </tr>
-    <tr>
-      <td>
-        <%= t('profile.archived') %>
-      </td>
-      <td>
-        <%= t("profile.#{yesno(@user.archived?)}") %>
-      </td>
-    </tr>
-  </tbody>
-</table>
-<%= t('profile.data_extra') %>
+<div class="col-12 mb-3">
+  <%= t('profile.data_explanation') %>
+</div>
+<div class="col-12 text-center">
+  <%= link_to t('profile.data_request'),
+              request_data_path,
+              class: 'btn btn-sm btn-primary' %>
+</div>

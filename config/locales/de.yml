@@ -2044,10 +2044,14 @@ de:
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
       Im Rahmen des Services, die Mampf anbietet, werden einige Daten über Nutzer
-      gespeichert. Alle deine Daten, die oben nicht aufgeführt sind, sind nun hier aufgeführt.
-    data_extra: >
-      Darüber hinaus speichern wir die aktuell betrachtete Vorlesung, um die
-      Benutzerfreundlichkeit zu verbessern.
+      gespeichert. Neben den oben aufgeführten Daten werden essentielle Informationen
+      wie deine abonnierten Vorlesungen oder eingereichten Abgaben gespeichert. Mit dem
+      folgenden Knopf kannst du alle Daten, die wir über dich speichern, anfordern. Wir
+      werden sie an deine bei MaMpf hinterlegte E-Mail schicken.
+    data_request: >
+      Daten anfordern
+    data_request_sent: >
+      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnahe schicken.
     attribute: 'Attribut'
     value: 'Wert'
     email: 'Email'
@@ -3029,6 +3033,8 @@ de:
       Mit dieser Email wird überprüft, ob Dein Emailkonto noch existiert. Da dies der Fall ist,
       werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.
       Hash:%{hash}
+    data_request_mail_body: >
+      %{mail} mit User-Id: %{id} hat Ihre Daten angefordert.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'

@@ -1924,8 +1924,10 @@ en:
     data_explanation: >
       Within the framework of the services offered by Mampf, some data about users will be
       stored. All of your data that is not listed above are listed here.
-    data_extra: >
-      Additionally, we store the currently viewed lecture for users to improve user experience.
+    data_request: >
+      Request data
+    data_request_sent: >
+      We have received your request and will send you your data as soon as possible.
     attribute: 'Attribute'
     value: 'Value'
     email: 'Email'
@@ -2856,6 +2858,8 @@ en:
       This email is to check if your email account still exists. Since this is the case, no changes
       will be made to your account. You can therefore ignore this email.
       Hash:%{hash}
+    data_request_mail_body: >
+      %{mail} with user-id: %{id} has requested his data.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
