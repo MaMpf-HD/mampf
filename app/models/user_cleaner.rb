@@ -79,7 +79,7 @@ class UserCleaner
 
     @users.each do |user|
       user.update(ghost_hash: Digest::SHA256.hexdigest(Time.now.to_i.to_s))
-      MathiMailer.ghost_email(user).deliver_now
+      MathiMailer.ghost_email(user).deliver_later
       move_mail(@email_dict[user])
     end
   end
