@@ -49,9 +49,9 @@ $(document).on 'turbolinks:load', ->
       $('.admin-index-button').show()
     return
 
-  $(document).on 'change', '#search_tag_ids', ->
+  $(document).on 'change', '#search_course_tag_ids', ->
     courseId = $(this).data('course')
-    tagIds = $('#search_tag_ids').val()
+    tagIds = $('#search_course_tag_ids').val()
     $('#questionCounter').empty()
     return if tagIds.length == 0
     $.ajax Routes.render_question_counter_path(courseId),
@@ -82,6 +82,6 @@ $(document).on 'turbolinks:load', ->
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'
-  $(document).off 'change', '#search_tag_ids'
+  $(document).off 'change', '#search_course_tag_ids'
   $(document).off 'click', '.courseAlternativeSearch'
   return

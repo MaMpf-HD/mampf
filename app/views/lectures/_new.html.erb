@@ -55,11 +55,17 @@
                     t('basics.teacher') %>
         <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
         <%= f.select :teacher_id,
-                     options_for_select(User.select_editors,
+                     options_for_select([[current_user.info, current_user.id]],
                                         current_user.id),
                      {},
                      { class: 'selectize',
-                       data: { current: current_user.id } } %>
+                       data: { ajax: true,
+                               model: 'user',
+                               filled: false,
+                               placeholder: t('basics.enter_two_letters'),
+                               no_results: t('basics.no_results'),
+                               current: current_user.id,
+                               modal: modal } } %>
       </div>
       <div class="col-12 form-group" id="newLectureSort"
            style="<%= term_independent ? 'display: none;' : '' %>">

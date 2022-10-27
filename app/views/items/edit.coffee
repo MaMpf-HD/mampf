@@ -16,7 +16,8 @@ $('#item_number_field').hide()
 <% end %>
 
 # activate selectize and popovers
-$('.selectize').selectize({ plugins: ['remove_button'] })
+$('.selectize').each ->
+  new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
 $('[data-toggle="popover"]').popover()
 
 # workaround for a selectize bug whwere the width of
