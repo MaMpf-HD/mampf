@@ -34,17 +34,19 @@
                   t('basics.related_tags') %>
       <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
       <%= f.select :tag_ids,
-                    options_for_select([[]]),
-                    { prompt: t('basics.select')},
-                    { multiple: true,
-                      class: 'selectize',
-                      style: 'display: none;',
-                      disabled: true,
-                      required: true,
-                      data: { filled: false,
-                              ajax: true,
-                              model: 'tag',
-                              locale: I18n.locale } } %>
+                   options_for_select([[]]),
+                   { prompt: t('basics.select')},
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
+                     disabled: true,
+                     required: true,
+                     data: { filled: false,
+                             ajax: true,
+                             model: 'tag',
+                             locale: I18n.locale,
+                             placeholder: t('basics.enter_two_letters'),
+                             no_results: t('basics.no_results') } } %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_tags,
                         class: 'custom-control-input',

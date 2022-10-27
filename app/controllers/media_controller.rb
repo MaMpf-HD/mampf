@@ -211,10 +211,24 @@ class MediaController < ApplicationController
   # return all media that match the search parameters
   def search
     authorize! :search, Medium.new
+    
     search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
     @total = search.total
+
+    # in the case of a search with tag_operator 'or', we 
+    # execute two searches and merge the results, where media
+    # with the selected tags are now shown at the front of the list
+    if params["search"]["tag_operator"] == "or"
+      params["search"]["all_tags"] = '1'
+      search_no_tags = Medium.search_by(search_params, params[:page])
+      search_no_tags.execute
+      results_no_tags = search_no_tags.results
+      results = (results + results_no_tags).uniq
+      @total = search_no_tags.total
+    end
+
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
     @purpose = search_params[:purpose]

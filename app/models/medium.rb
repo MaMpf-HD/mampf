@@ -316,7 +316,7 @@ class Medium < ApplicationRecord
     unless search_params[:all_tags] == '1' &&
              search_params[:tag_operator] == 'or'
       if search_params[:tag_ids]
-        if search_params[:tag_operator] == 'or'
+        if search_params[:tag_operator] == 'or' || search_params[:all_tags] == '1'
           search.build do
             with(:tag_ids).any_of(search_params[:tag_ids])
           end
@@ -324,10 +324,6 @@ class Medium < ApplicationRecord
           search.build do
             with(:tag_ids).all_of(search_params[:tag_ids])
           end
-        end
-      else
-        search.build do
-          with(:tag_ids, nil)
         end
       end
     end
