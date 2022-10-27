@@ -81,6 +81,7 @@ this.fillOptionsByAjax = function($selectizedSelection) {
         valueField: 'value',
         labelField: 'name',
         searchField: 'name',
+        maxOptions: null,
         placeholder: placeholder,
         closeAfterSelect: true,
         dropdownParent: parent,
@@ -139,7 +140,8 @@ this.fillOptionsByAjax = function($selectizedSelection) {
       });
     })();} else {
       return new TomSelect("#" + this.id, {
-        plugins: plugins
+        plugins: plugins,
+        maxOptions: null
       });
     }
   });
