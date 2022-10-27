@@ -46,6 +46,6 @@ if tagIdsSelect and tagIdsSelect.dataset.filled == 'false'
         new_option.text = option.text
         tagIdsSelect.add(new_option, null)
         tagIdsSelect.dataset.filled = 'true'
-      $(tagIdsSelect).selectize({ plugins: ['remove_button'] })
+      new TomSelect("#medium_tag_ids",{ plugins: ['remove_button'] })
       return
   return

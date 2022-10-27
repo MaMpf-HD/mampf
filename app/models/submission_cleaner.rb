@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-# PORO class that handles the cleaning of submissions of the previous term
+# PORO class that handles the cleaning of submissions
 # in order to fulfill GDPR regulations
 class SubmissionCleaner
-  attr_reader :date, :advance, :previous_term, :reminder, :destroy,
+  attr_reader :date, :advance, :reminder, :destroy,
               :submissions, :submitters, :lectures
 
   def initialize(date:)
@@ -11,9 +11,6 @@ class SubmissionCleaner
   end
 
   def clean!
-    @previous_term = Term.previous_by_date(@date)
-    return unless @previous_term
-
     check_for_first_mail
     check_for_reminder_mail
     check_for_deletion
@@ -65,7 +62,7 @@ class SubmissionCleaner
     return if @assignments.empty?
 
     @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
-    @lectures = [*Lecture.find_by(id: @assignments.pluck(:lecture_id))]
+    @lectures = Lecture.where(id: @assignments.pluck(:lecture_id))
   end
 
   def send_destruction_mail_to_submitters
@@ -77,7 +74,7 @@ class SubmissionCleaner
 
       local_submitter_ids.in_groups_of(200, false) do |group|
         NotificationMailer.with(recipients: group,
-                                term: @previous_term,
+                                deletion_date: @deletion_date,
                                 locale: l)
                           .submission_destruction_email.deliver_now
       end
@@ -88,8 +85,8 @@ class SubmissionCleaner
     @lectures.each do |l|
       editor_ids = l.editors.pluck(:id) + [l.teacher.id]
       NotificationMailer.with(recipients: editor_ids,
-                              term: @previous_term,
                               lecture: l,
+                              deletion_date: @deletion_date,
                               locale: l.locale)
                         .submission_destruction_lecture_email.deliver_now
     end
@@ -104,9 +101,9 @@ class SubmissionCleaner
 
       local_submitter_ids.in_groups_of(200, false) do |group|
         NotificationMailer.with(recipients: group,
-                                term: @previous_term,
                                 deletion_date: @deletion_date,
                                 reminder: @reminder,
+                                lectures: @lectures,
                                 locale: l)
                           .submission_deletion_email.deliver_now
       end
@@ -117,7 +114,6 @@ class SubmissionCleaner
     @lectures.each do |l|
       editor_ids = l.editors.pluck(:id) + [l.teacher.id]
       NotificationMailer.with(recipients: editor_ids,
-                              term: @previous_term,
                               lecture: l,
                               deletion_date: @deletion_date,
                               reminder: @reminder,

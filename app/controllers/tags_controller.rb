@@ -121,6 +121,11 @@ class TagsController < ApplicationController
     if params[:locale].in?(I18n.available_locales.map(&:to_s))
       I18n.locale = params[:locale]
     end
+    if params[:q]
+      result = Tag.select_with_substring(params[:q])
+      render json: result
+      return
+    end
     result = Tag.select_by_title_cached
     render json: result
   end

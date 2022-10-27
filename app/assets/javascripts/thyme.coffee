@@ -449,6 +449,13 @@ $(document).on 'turbolinks:load', ->
     $('#caption').show()
     $('#video-controlBar').show()
     video.style.width = '82%'
+    # directly closes the IA again, if the IA-button status is "-"
+    if iaButton.dataset.status == 'false'
+      iaButton.innerHTML = 'remove_from_queue'
+      $('#caption').hide()
+      video.style.width = '100%'
+      $('#video-controlBar').css('width', '100%')
+      $(window).trigger('resize')
     return
 
   # display native control bar if screen is very small
