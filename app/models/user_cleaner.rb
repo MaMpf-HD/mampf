@@ -48,10 +48,6 @@ class UserCleaner
         end
       end
     end
-
-    # regex match every two pairs of "hello" seperated by one or more spaces
-    
-
   end
 
   def add_mail(email, message_id)
