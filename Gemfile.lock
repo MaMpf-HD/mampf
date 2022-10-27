@@ -736,7 +736,6 @@ DEPENDENCIES
   rubyzip (~> 2.3.0)
   sass-rails (>= 6)
   select2-rails
-  selectize-rails
   selenium-webdriver
   shrine
   sidekiq

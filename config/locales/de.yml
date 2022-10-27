@@ -1399,6 +1399,7 @@ de:
       no_section: 'kein zugeordneter Abschnitt aus der Datenbank'
       create_external: 'Externen Eintrag anlegen'
       explanation: 'Erläuterung'
+      chapter_short: 'Kap.'
       sort:
         definition: 'Definition'
         remark: 'Bemerkung'
@@ -2055,8 +2056,7 @@ de:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
     no_news: 'Es liegen keine MaMpf-News vor.'
-  notifications:
-    title: 'Neue Benachrichtigungen'
+  notifications:    title: 'Neue Benachrichtigungen'
     check_notifications: 'alle erledigen'
     check: 'erledigen'
     new_medium_in: 'Neues Medium in '
@@ -2248,6 +2248,8 @@ de:
     pages: 'S'
     destinations: 'Destinations'
     structure: 'Struktur des Manuskripts'
+    chapter: 'Kapitel'
+    section: 'Abschnitt'
     one_contradiction: >
       Es wurde ein Widerspruch gefunden. Wenn Du die Struktur des
       Skriptes in MaMpf importieren möchtest, musst Du erst den
@@ -2511,6 +2513,8 @@ de:
         own_selection: 'eigene Auswahl'
         all_media: 'alle Medien'
         only_extras: 'nur Zusatzmaterialien'
+    tag_title: >
+      mind. 2 Zeichen eingeben (freilassen für alle Tags)
   errors:
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
@@ -2998,31 +3002,40 @@ de:
       Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde abgelehnt
       und wird nicht korrigiert und nicht gewertet werden.
     submission_deletion_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term}
+      Löschung von Abgaben und Korrekturen
     submission_deletion_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
-      Abgaben und Korrekturen aus dem %{term} mit entsprechendem Löschdatum am
-      <b>%{deletion_date}</b> automatisch gelöscht. Bitte lade diese rechtzeitig
+      Abgaben und Korrekturen mit Löschdatum <b>%{deletion_date}</b> an dem
+      betreffenden Tag automatisch gelöscht. Bitte lade diese rechtzeitig
       herunter, wenn Du sie weiterhin verwenden möchtest.
+    submission_deletion_lectures: >
+      Betroffen von der Löschung sind die folgenden Veranstaltungen in MaMpf:
     submission_deletion_lecture_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
+      Löschung von Abgaben und Korrekturen [%{lecture}]
     submission_deletion_lecture_text_html: >
       Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
-      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term} mit
-      entsprechendem Löschdatum am <b>%{deletion_date}</b> automatisch gelöscht.
+      Abgaben und Korrekturen der Veranstaltung %{lecture} mit
+      Löschdatum <b>%{deletion_date}</b> an dem betreffenden Tag automatisch gelöscht.
       Sollten sie anderweitig gespeichert werden müssen, so muss dies außerhalb
       von MaMpf geschehen, und die Dateien müssen rechtzeitig heruntergeladen werden.
     submission_destruction_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term}
+      Löschung von Abgaben und Korrekturen
     submission_destruction_text_html: >
       Aus Datenschutzgründen wurden sämtliche in MaMpf von Dir gespeicherten
-      Abgaben und Korrekturen aus dem %{term} automatisch gelöscht.
+      Abgaben und Korrekturen mit Löschdatum %{deletion_date} automatisch gelöscht.
     submission_destruction_lecture_subject: >
-      Löschung der Abgaben und Korrekturen aus dem %{term} [%{lecture}]
+      Löschung von Abgaben und Korrekturen [%{lecture}]
     submission_destruction_lecture_text_html: >
       Aus Datenschutzgründen wurden sämtliche in MaMpf gespeicherten
-      Abgaben und Korrekturen der Veranstaltung %{lecture} aus dem %{term}
-      automatisch gelöscht.
+      Abgaben und Korrekturen der Veranstaltung %{lecture} mit dem
+      Löschdatum %{deletion_date} automatisch gelöscht.
+    hash_mail_subject: Überprüfung der Emailadresse
+    hash_mail_body: >
+      Hallo, %{name}!
+      Du erhältst diese Email, weil eine frühere Email von MaMpf nicht zugestellt werden konnte.
+      Mit dieser Email wird überprüft, ob Dein Emailkonto noch existiert. Da dies der Fall ist,
+      werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.
+      Hash:%{hash}
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
@@ -3235,6 +3248,8 @@ de:
     assignment: Hausaufgabe
     reminder: Erinnerung
     together_with: zusammen mit
+    enter_two_letters: mind. 2 Zeichen eingeben
+    no_results: Keine Resultate gefunden
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

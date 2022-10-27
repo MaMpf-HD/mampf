@@ -21,7 +21,7 @@ $(document).on 'turbolinks:load', ->
   # disable/enable search field on the media search page, depending on
   # whether 'all tags'/'all editors'/... are selected
   $('[id^="search_all_"]').on 'change', ->
-    selector = document.getElementById(this.dataset.id).selectize
+    selector = document.getElementById(this.dataset.id).tomselect
     if $(this).prop('checked')
       selector.disable()
     else
@@ -58,16 +58,14 @@ $(document).on 'turbolinks:load', ->
   $('#medium-form :input').on 'change', ->
     $('#medium-basics-warning').show()
     $('#publish-medium-button').hide()
-    teachableElement = document.getElementById('medium_teachable')
-    if teachableElement != null
-      teachableSelector = teachableElement.selectize
-      value = teachableSelector.getValue()
-      if value != ''
-        $('#medium_teachable_id').val(value.split('-')[1])
-        $('#medium_teachable_type').val(value.split('-')[0])
-      else
-        $('#medium_teachable_id').val('')
-        $('#medium_teachable_type').val('')
+    teachableSelector = document.getElementById('medium_teachable').tomselect
+    value = teachableSelector.getValue()
+    if value != ''
+      $('#medium_teachable_id').val(value.split('-')[1])
+      $('#medium_teachable_type').val(value.split('-')[0])
+    else
+      $('#medium_teachable_id').val('')
+      $('#medium_teachable_type').val('')
     return
 
   $('#medium_sort').on 'change', ->

@@ -55,7 +55,7 @@ class UsersController < ApplicationController
 
   def list_generic_users
     result = User.where.not(id: @elevated_users.pluck(:id))
-                 .map { |u| { value: u.id, text: u.info }}
+                 .values_for_select
     render json: result
   end
 
@@ -78,9 +78,13 @@ class UsersController < ApplicationController
   end
 
   def fill_user_select
-    result = User.pluck(:name, :email, :id)
-                 .map { |u| { value: u.third,
-                              text: "#{u.first} (#{u.second})" } }
+    if params[:q]
+      result = User.preferred_name_or_email_like(params[:q])
+                   .values_for_select
+      render json: result
+      return
+    end
+    result = User.values_for_select
     render json: result
   end
 

@@ -49,7 +49,7 @@ $(document).on 'turbolinks:load', ->
     canCreateExternalLink = $(this).data('can-create-external-link')
     $('#create_external_link').hide()
     if teachableId == ''
-      itemSelectize = document.getElementById('referral_item_id').selectize
+      itemSelectize = document.getElementById('referral_item_id').tomselect
       itemSelectize.clear()
       itemSelectize.clearOptions()
       itemSelectize.refreshOptions(false)
@@ -62,7 +62,7 @@ $(document).on 'turbolinks:load', ->
         teachable_id: teachableId
       }
       success: (result) ->
-        itemSelectize = document.getElementById('referral_item_id').selectize
+        itemSelectize = document.getElementById('referral_item_id').tomselect
         itemSelectize.clear()
         itemSelectize.clearOptions()
         if result?

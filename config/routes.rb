@@ -683,7 +683,7 @@ Rails.application.routes.draw do
   get 'tags/render_tag_title',
       as: 'render_tag_title'
 
-  resources :tags
+  resources :tags, except: :index
 
   # talks routes
 

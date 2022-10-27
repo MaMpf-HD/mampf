@@ -35,18 +35,18 @@ if @results_as_list
 
   $('html, body').animate scrollTop: $('#media-search-results').offset().top - 20
 
-  tagIdsSelect = document.getElementById('medium_tag_ids')
-  if tagIdsSelect and tagIdsSelect.dataset.filled == 'false'
-    $.ajax Routes.fill_tag_select_path(),
-      type: 'GET'
-      dataType: 'json'
-      success: (result) ->
-        for option in result
-          new_option = document.createElement('option')
-          new_option.value = option.value
-          new_option.text = option.text
-          tagIdsSelect.add(new_option, null)
-          tagIdsSelect.dataset.filled = 'true'
-        $(tagIdsSelect).selectize({ plugins: ['remove_button'] })
-        return
-    return
+tagIdsSelect = document.getElementById('medium_tag_ids')
+if tagIdsSelect and tagIdsSelect.dataset.filled == 'false'
+  $.ajax Routes.fill_tag_select_path(),
+    type: 'GET'
+    dataType: 'json'
+    success: (result) ->
+      for option in result
+        new_option = document.createElement('option')
+        new_option.value = option.value
+        new_option.text = option.text
+        tagIdsSelect.add(new_option, null)
+        tagIdsSelect.dataset.filled = 'true'
+      new TomSelect("#medium_tag_ids",{ plugins: ['remove_button'] })
+      return
+  return

@@ -145,7 +145,7 @@ Commontator.configure do |config|
   # Returns: a Boolean, true if and only if the user is a moderator for that thread
   # If you want global moderators, make this proc true for them regardless of thread
   # Default: ->(thread, user) { false } (no moderators)
-  config.thread_moderator_proc = ->(thread, user) { thread.commontable.edited_with_inheritance_by?(user) }
+  config.thread_moderator_proc = ->(thread, user) { thread.commontable.edited_with_inheritance_by?(user) || user.admin? }
 
   # comment_editing
   # Type: Symbol
