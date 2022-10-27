@@ -2056,7 +2056,8 @@ de:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
     no_news: 'Es liegen keine MaMpf-News vor.'
-  notifications:    title: 'Neue Benachrichtigungen'
+  notifications:
+    title: 'Neue Benachrichtigungen'
     check_notifications: 'alle erledigen'
     check: 'erledigen'
     new_medium_in: 'Neues Medium in '
