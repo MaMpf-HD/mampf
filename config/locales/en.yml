@@ -1928,17 +1928,6 @@ en:
       Request data
     data_request_sent: >
       We have received your request and will send you your data as soon as possible.
-    attribute: 'Attribute'
-    value: 'Value'
-    email: 'Email'
-    created_at: 'Created on'
-    updated_at: 'Updated on'
-    admin: 'Admin'
-    consents: 'Consented'
-    consented_at: 'Consented on'
-    archived: 'Archived'
-    "yes": 'Yes'
-    "no": 'No'
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'

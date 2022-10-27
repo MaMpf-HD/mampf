@@ -2051,18 +2051,7 @@ de:
     data_request: >
       Daten anfordern
     data_request_sent: >
-      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnahe schicken.
-    attribute: 'Attribut'
-    value: 'Wert'
-    email: 'Email'
-    created_at: 'Erstellt am'
-    updated_at: 'Geupdatet am'
-    admin: 'Admin'
-    consents: 'Hat zugestimmt'
-    consented_at: 'Hat zugestimmt am'
-    archived: 'Archiviert'
-    "yes": 'Ja'
-    "no": 'Nein' 
+      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnahe schicken. 
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
