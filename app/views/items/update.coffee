@@ -81,7 +81,7 @@ setTimeout (->
 $('#newItemModal').modal('hide')
 
 # update item selection field in referral edit view
-itemSelector = document.getElementById('referral_item_id').selectize
+itemSelector = document.getElementById('referral_item_id').tomselect
 itemSelector.addOption
   value: <%= @item.id %>
   text: 'extern <%= @item.description %>'
