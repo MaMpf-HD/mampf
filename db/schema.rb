@@ -10,11 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_25_162730) do
+ActiveRecord::Schema.define(version: 2022_10_15_114100) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "annotations", force: :cascade do |t|
+    t.bigint "medium_id", null: false
+    t.bigint "user_id", null: false
+    t.text "timestamp"
+    t.string "color"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["medium_id"], name: "index_annotations_on_medium_id"
+    t.index ["user_id"], name: "index_annotations_on_user_id"
+  end
 
   create_table "announcements", force: :cascade do |t|
     t.bigint "lecture_id"
@@ -897,6 +908,8 @@ ActiveRecord::Schema.define(version: 2022_01_25_162730) do
     t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
   end
 
+  add_foreign_key "annotations", "media"
+  add_foreign_key "annotations", "users"
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"

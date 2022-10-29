@@ -1,8 +1,10 @@
 <% content_for :title, "THymE - \"#{@medium.caption}\"" %>
 <div id="thyme-container">
-  <div id="thyme">
+  <div id="thyme" data-medium="<%= @medium.id %>">
     <figure id="hypervideo-container">
       <div id="video-container">
+        <div id="annotation-bar">
+        </div>
         <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
           <source src="<%= @medium.video.url(host: host) %>">
             <track kind="chapters"
@@ -59,7 +61,6 @@
               </select>
             </div>
 
-            <!--- EMERGENCY BUTTON --->
             <div id="emergency-button">
               <i id="emergency-button" class="material-icons clickable">
                 flutter_dash

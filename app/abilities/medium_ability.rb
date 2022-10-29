@@ -5,7 +5,7 @@ class MediumAbility
     user ||= User.new
     clear_aliased_actions
 
-    can [:index, :new], Medium
+    can [:index, :new, :add_annotation], Medium
 
     can [:show, :show_comments], Medium do |medium|
       medium.visible_for_user?(user)  &&

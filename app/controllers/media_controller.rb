@@ -258,6 +258,10 @@ class MediaController < ApplicationController
     render layout: 'geogebra'
   end
 
+  # add an annotation for the video
+  def add_annotation
+  end
+
   # add a toc item for the video
   def add_item
     I18n.locale = @medium.locale_with_inheritance

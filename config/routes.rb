@@ -297,6 +297,10 @@ Rails.application.routes.draw do
       to: 'media#geogebra',
       as: 'geogebra_medium'
 
+  get 'media/:id/add_annotation',
+      to: 'media#add_annotation',
+      as: 'add_annotation'
+
   get 'media/:id/add_item',
       to: 'media#add_item',
       as: 'add_item'

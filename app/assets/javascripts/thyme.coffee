@@ -549,7 +549,20 @@ $(document).on 'turbolinks:load', ->
 
   # Event handler for the emergency button
   emergencyButton.addEventListener 'click', ->
-    alert "test"
+    mediumId = thyme.dataset.medium
+    video.pause()
+    # round time down to three decimal digits
+    time = video.currentTime
+    intTime = Math.floor(time)
+    roundTime = intTime + Math.floor((time - intTime) * 1000) / 1000
+    video.currentTime = roundTime
+    $.ajax Routes.add_annotation_path(mediumId),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        time: video.currentTime
+      }
+    $('#exampleModal').modal('show')
     return
 
   # Event handler for speed speed selector
