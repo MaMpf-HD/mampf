@@ -684,6 +684,19 @@ class User < ApplicationRecord
     !(admin? || teacher? || editor?)
   end
 
+  def can_change_stale_lecture?(lecture)
+    return true if admin? or lecture.teacher == self
+    false
+  end
+
+  def can_change_stale_medium?(medium)
+    return true if admin?
+    return true if medium.teachable.is_a?(Course)
+    return true if medium.teachable.is_a?(Lecture) && can_change_stale_lecture?(medium.teachable)
+    return true if medium.teachable.is_a?(Lesson) && can_change_stale_lecture?(medium.teachable.lecture)
+    false
+  end
+
   private
 
   def set_defaults

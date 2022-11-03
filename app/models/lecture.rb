@@ -218,6 +218,11 @@ class Lecture < ApplicationRecord
     true
   end
 
+  def stale?
+    return if term_independent?
+    term != Term.active and term != Term.active.previous
+  end
+
   # the next methods deal with the lecture's tags
   # tags are associated to courses, sections, media and lessons
   # in this context, tags associated to courses and to sections are relevant

@@ -497,6 +497,10 @@ de:
           DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
           Veranstaltung einpflegen.
+        stale: >
+          Diese Vorlesung ist zu alt. Aus diesem Grund kannst Du keine
+          neuen Editoren hinzufügen. Ist dies dringend nötig, so kontaktiere
+          bitte das MaMpf-Team.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese
           Veranstaltung in ihrem Profil abonniert haben.
@@ -1100,6 +1104,10 @@ de:
           Rubrik passt.
           </li>
           </ul>
+        stale: >
+          Dieses Medium ist zu alt. Aus diesem Grund kannst Du keine
+          neuen Editoren hinzufügen. Ist dies dringend nötig, so kontaktiere
+          bitte das MaMpf-Team.
         latex_package_html: >
           <i>
           Beachte:

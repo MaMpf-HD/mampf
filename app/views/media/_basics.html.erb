@@ -54,29 +54,39 @@
       <%= f.label :editor_ids,
                   t('basics.editors') %>
       <%= helpdesk(t('admin.medium.info.editors'), true) %>
-      <% if current_user.admin || current_user.editor? %>
-        <%= f.select :editor_ids,
-                     options_for_select(add_prompt(medium.editors
-                                                         .map { |e| [e.info, e.id] }),
-                                        medium.editors.map(&:id)),
-                     {},
-                     { multiple: true,
-                       class: 'selectize',
-                       style: 'display: none;',
-                       data: { ajax: true,
-                               filled: false,
-                               model: 'user',
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results') } } %>
+      <% if !current_user.can_change_stale_lecture?(medium) and medium.stale? %>
+        <div class="row">
+          <div class="col-1">
+            <%= helpdesk(t('admin.medium.info.stale'), false) %>
+          </div>
+          <div class="col-11">
+            <%= f.select :editor_ids,
+                        [],
+                        {},
+                        { multiple: true,
+                          disabled: true,
+                          class: 'selectize',
+                          data: { filled: false,
+                                  placeholder: t('basics.enter_two_letters'),
+                                  no_results: t('basics.no_results') } } %>
+          </div>
+        </div>
       <% else %>
-        <%= f.select :editor_ids,
-                     options_for_select((medium.teachable.speakers | medium.editors).map { |e| [e.info, e.id] },
-                                        medium.editors.map(&:id)),
-                     {},
-                     { multiple: true,
-                       class: 'selectize',
-                       style: 'display: none;',
-                       data: { ajax: false } } %>
+        <% if current_user.admin || current_user.editor? %>
+          <%= f.select :editor_ids,
+                       options_for_select(add_prompt(medium.editors
+                                                          .map { |e| [e.info, e.id] }),
+                                          medium.editors.map(&:id)),
+                       {},
+                       { multiple: true,
+                         class: 'selectize',
+                         style: 'display: none;',
+                         data: { ajax: true,
+                                 filled: false,
+                                 model: 'user',
+                                 placeholder: t('basics.enter_two_letters'),
+                                 no_results: t('basics.no_results') } } %>
+        <% end %>
       <% end %>
       <div class="invalid-feedback"
            id="medium-editors-error">

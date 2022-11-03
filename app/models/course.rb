@@ -168,6 +168,9 @@ class Course < ApplicationRecord
                                   .pluck(:user_id).uniq)
   end
 
+  def stale?
+  end
+
   # a course is addable by the user if the user is an editor or teacher of
   # this course or a lecture of this course
   def addable_by?(user)

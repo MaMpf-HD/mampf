@@ -62,18 +62,37 @@
                           t('basics.lecture_editors') %>
               <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
               <div id="lecture_editors_select" %>
-                <%= f.select :editor_ids,
-                             options_for_select([[t('none'), '']] +
-                                                lecture.select_editors,
-                                                lecture.editors.map(&:id)),
-                             {},
-                             { multiple: true,
-                               class: 'selectize',
-                               data: { ajax: true,
-                                       model: 'user',
-                                       filled: false,
-                                       placeholder: t('basics.enter_two_letters'),
-                                       no_results: t('basics.no_results') } } %>
+                <% if current_user.can_change_stale_lecture?(lecture) and lecture.stale? %>
+                  <div class="row">
+                    <div class="col-1">
+                      <%= helpdesk(t('admin.lecture.info.stale'), false) %>
+                    </div>
+                    <div class="col-11">
+                      <%= f.select :editor_ids,
+                                   [],
+                                   {},
+                                   { multiple: true,
+                                     disabled: true,
+                                     class: 'selectize',
+                                     data: { filled: false,
+                                             placeholder: t('basics.enter_two_letters'),
+                                             no_results: t('basics.no_results') } } %>
+                    </div>
+                  </div>
+                <% else %>
+                  <%= f.select :editor_ids,
+                               options_for_select([[t('none'), '']] +
+                                                  lecture.select_editors,
+                                                  lecture.editors.map(&:id)),
+                               {},
+                               { multiple: true,
+                                 class: 'selectize',
+                                 data: { ajax: true,
+                                         model: 'user',
+                                         filled: false,
+                                         placeholder: t('basics.enter_two_letters'),
+                                         no_results: t('basics.no_results') } } %>
+                <% end %>
               </div>
             </div>
           </div>

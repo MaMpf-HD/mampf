@@ -959,6 +959,10 @@ class Medium < ApplicationRecord
     video.present? || manuscript.present? || sort == 'Quiz'
   end
 
+  def stale?
+    teachable.stale?
+  end
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

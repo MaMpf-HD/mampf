@@ -481,6 +481,9 @@ en:
           Additional event series editors can edit event series, but are
           neither teacher nor course editor, e.g. teaching assistants uploading
           materials for an event series.
+        stale: >
+          This lecture is too old. For this reason you can not add new editors.
+          If this is really necessary, please contact the MaMpf team.
         subscribers_count: >
           This is the number of all users subscribed to this event series in
           their profile settings.
@@ -1044,6 +1047,9 @@ en:
           the other categories.
           </li>
           </ul>
+        stale:
+          This medium is too old. For this reason you can not add new editors.
+          If this is really necessary, please contact the MaMpf team.
         latex_package_html: >
           <i>
           Note:

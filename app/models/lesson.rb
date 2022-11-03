@@ -158,6 +158,11 @@ class Lesson < ApplicationRecord
     lecture.visible_for_user?(user)
   end
 
+  def stale?
+    return false unless lecture.present?
+    lecture.stale?
+  end
+
   # the number of a lesson is calculated by its date relative to the other
   # lessons
   def number
