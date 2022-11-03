@@ -32,7 +32,6 @@ class UserCleaner
     patterns = [
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?Unknown recipient',
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User unknown in virtual mailbox table'
-      '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?IP address of NS/MX host is a RFC1918 address'
     ]
 
     @imap.search(['SUBJECT', 'Delivery Status Notification (Failure)']).each do |message_id|
