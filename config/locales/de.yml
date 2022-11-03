@@ -1258,7 +1258,7 @@ de:
           ODER/UND
           </i>
           ) die Tags auswählen, mit denen das Medium verknüpft sein soll.
-          Ein Tag sieht normalerweise so aus: 
+          Ein Tag sieht normalerweise so aus:
           <span class="badge badge-light">Beispieltag</span>
         search_editors: >
           Hier kannst Du (im Sinne von
@@ -2056,7 +2056,8 @@ de:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
     no_news: 'Es liegen keine MaMpf-News vor.'
-  notifications:    title: 'Neue Benachrichtigungen'
+  notifications:
+    title: 'Neue Benachrichtigungen'
     check_notifications: 'alle erledigen'
     check: 'erledigen'
     new_medium_in: 'Neues Medium in '
@@ -2499,7 +2500,7 @@ de:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
     media:
-      title: > 
+      title: >
         Hier kannst Du den Titel des Mediums eingeben. Falls das Medium keinen Titel hat,
         sondern teil einer Sitzung ist, wird dessen Titel stattdessen bei der Suche beachtet.
         Wenn Du dieses Feld leer lässt wird es bei der Suche ignoriert.
