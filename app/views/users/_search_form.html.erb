@@ -1,25 +1,68 @@
+<% console %>
 <%= form_with url: user_search_path,
               scope: 'search',
               remote: true,
               method: :get do |f| %>
   <div class="form-row p-2">
-    <div class="col-12 col-lg-12 form-group">
-      <%= f.label :name, t('user.search.name') %>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :name, t('admin.user.search.name') %>
       <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
       <%= f.text_field :name,
                         id: 'user_name',
                         class: 'form-control' %>
+    </div>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :name, t('admin.user.search.email') %>
+      <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
+      <%= f.text_field :email,
+                        id: 'user_email',
+                        class: 'form-control' %>
+    </div>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :elevated_in, t('admin.user.search.elevated_in') %>
+      <%= helpdesk(t('admin.user.search.elevated_in'), true) %>
+      <%= f.select :elevated_in,
+                   options_for_select(add_prompt(Lecture.select)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true,
+                     required: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_elevated_in,
+                         class: 'custom-control-input',
+                         checked: true,
+                         data: { id: 'search_elevated_in'} %>
+        <%= f.label :all_elevated_in,
+                     t('basics.all'),
+                     { class: 'custom-control-label' } %>
+      </div>
+    </div>
+    <div class="col-6 col-lg-3 form-group">
+      <%= f.label :roles, t('basics.role') %>
+      <%= helpdesk(t('basics.role'), true) %>
+      <%= f.select :roles,
+                   options_for_select(add_prompt(User.select_roles)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true,
+                     required: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_roles,
+                         class: 'custom-control-input',
+                         checked: true,
+                         data: { id: 'search_roles'} %>
+        <%= f.label :all_roles,
+                     t('basics.all'),
+                     { class: 'custom-control-label' } %>
+      </div>
     </div>
   </div>
   <div class="row mb-3">
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),
                    class: 'btn btn-primary' %>
-      <button type="button"
-              class="btn btn-secondary"
-              id="cancelSearch">
-        <%= t('buttons.cancel') %>
-      </button>
     </div>
   </div>
 <% end %>

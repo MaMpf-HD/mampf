@@ -1,0 +1,42 @@
+<div class="card">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-6">
+        <h5>
+          <%= t('basics.users') %>
+        </h5>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row bg-mdb-color-lighten-2 py-3">
+      <div class="col-3 text-light">
+        <strong>
+          <%= t('basics.display_name') %>
+        </strong>
+      </div>
+      <div class="col-3 text-light">
+        <strong>
+          <%= t('basics.email') %>
+        </strong>
+      </div>
+      <div class="col-3 text-light">
+        <strong>
+          <%= t('basics.role') %>
+        </strong>
+      </div>
+      <div class="col-3 text-light">
+        <strong>
+          <%= t('basics.action') %>
+        </strong>
+      </div>
+    </div>
+    <% @flagged.each do |u| %>
+      <div class="row border-bottom"
+           id="row-user-<%= u.id %>">
+        <%= render partial: 'users/flagged_row',
+                   locals: { user: u }%>
+      </div>
+    <% end %>
+  </div>
+</div>

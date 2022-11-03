@@ -1604,8 +1604,13 @@ de:
       edited_lectures: 'Weitere editierte Veranstaltungen'
       edited_media: 'Editierte Medien'
       administration: 'Nutzerverwaltung'
+      flagged: 'Löschungskandidaten (%{n})'
+      flagged_warning: 'Dieser Nutzer wurde zur Löschung markiert!'
+      hash: 'Markierungs-Hash: %{hash}'
       search:
         name: 'Name'
+        email: 'E-Mail'
+        elevated_in: 'Hat erweiterte Rechte in'
       sorts: 'Admins, EditorInnen und DozentInnen'
       edit_generics: 'Sonstige NutzerInnen bearbeiten'
       elevate: 'zum Administrator befördern'
@@ -3211,7 +3216,8 @@ de:
     as: als
     as_file_type: als %{type}-Datei
     code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
-    emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    email_copied_to_clipboard: Die E-Mail wurde in die Zwischenablage kopiert.
+    emails_copied_to_clipboard: Die E-Mails wurden in die Zwischenablage kopiert.
     lecture_search: Veranstaltungssuche
     course_search: Modulsuche
     immediately: sofort

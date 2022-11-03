@@ -97,15 +97,35 @@ class User < ApplicationRecord
 
   searchable do
     text :name
+    text :email
     text :tutorial_name
+    integer :elevated_in, multiple: true do
+      administrated_lectures.pluck(:id)
+    end
+    integer :roles, multiple: true do
+      roles
+    end
   end
 
   def self.search_by(search_params, page)
     search = Sunspot.new_search(User)
+    search_params[:elevated_in] = [] if search_params[:elevated_in].nil?
+    search_params[:roles] = [] if search_params[:roles].nil?
+    search.build do
+      with(:elevated_in, search_params[:elevated_in]) unless search_params[:elevated_in].empty?
+      with(:roles, search_params[:roles]) unless search_params[:roles].empty?
+    end
     if search_params[:name].present?
       search.build do
         fulltext search_params[:name] do
           boost_fields :name => 2.0
+        end
+      end
+    end
+    if search_params[:email].present?
+      search.build do
+        fulltext search_params[:email] do
+          boost_fields :email => 2.0
         end
       end
     end
@@ -158,6 +178,26 @@ class User < ApplicationRecord
         .map { |u| [ "#{u.first} (#{u.second})", u.third] }
   end
 
+  def self.flagged
+    User.where.not(ghost_hash: nil)
+  end
+
+  def self.select_roles
+    [
+      [I18n.t('basics.administrator_short'), 0],
+      [I18n.t('basics.teacher'), 1],
+      [I18n.t('basics.editor'), 2]
+    ]
+  end
+
+  def roles
+    roles = []
+    roles << 0 if admin?
+    roles << 1 if teacher?
+    roles << 2 if editor?
+    roles
+  end
+
   def courses
     Course.where(id: lectures.pluck(:course_id).uniq)
   end
@@ -187,6 +227,10 @@ class User < ApplicationRecord
 
   def administrated_courses
     admin ? Course.all : edited_courses
+  end
+
+  def administrated_lectures
+    admin ? Lecture.all : (edited_lectures + given_lectures)
   end
 
   # related lectures are lectures associated to related courses (see above)

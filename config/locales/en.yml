@@ -1505,8 +1505,13 @@ en:
       edited_lectures: 'Additional Edited Event Series'
       edited_media: 'Edited Media'
       administration: 'User Administration'
+      flagged: 'Deletion candidates (%{n})'
+      flagged: 'This user was flagged for deletion!'
+      hash: 'Marker hash: %{hash}'
       search:
         name: 'Name'
+        email: 'E-Mail'
+        elevated_in: 'Has elevated rights in'
       sorts: 'Admins, Editors and Teachers'
       edit_generics: 'Edit generic users'
       elevate: 'Promote to Administrator'
@@ -3034,7 +3039,8 @@ en:
     as: as
     as_file_type: as %{type} file
     code_copied_to_clipboard: Code has been copied to the clipboard.
-    emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    email_copied_to_clipboard: Email has been copied to the clipboard.
+    emails_copied_to_clipboard: Emails have been copied to the clipboard.
     lecture_search: Lecture Search
     course_search: Course Search
     immediately: immediately

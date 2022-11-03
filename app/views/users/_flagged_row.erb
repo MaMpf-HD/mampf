@@ -1,4 +1,4 @@
-<div class="col-2">
+<div class="col-3">
   <%= user.name %>
 </div>
 <div class="col-3">
@@ -33,11 +33,14 @@
     </span>
   <% end %>
 </div>
-<div class="col-2">
-  <%= user.edited_media.count %>
-</div>
-<div class="col-2">
+<div class="col-3">
   <%= link_to t('buttons.edit'),
               edit_user_path(user),
               class: 'btn btn-sm btn-outline-primary my-1' %>
+  <%= link_to t('buttons.delete'),
+              user_path(user),
+              class: 'btn btn-sm btn-outline-danger my-1',
+              method: :delete,
+              remote: true,
+              data: { confirm: t('confirmation.generic') } %>
 </div>

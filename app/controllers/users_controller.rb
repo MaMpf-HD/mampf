@@ -10,6 +10,7 @@ class UsersController < ApplicationController
   def index
     authorize! :index, User.new
     @generic_users = User.where.not(id: @elevated_users.pluck(:id))
+    @flagged = User.flagged
   end
 
   def edit
@@ -115,6 +116,6 @@ class UsersController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:name)
+    params.require(:search).permit(:name, :email, elevated_in: [], roles: [])
   end
 end

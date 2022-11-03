@@ -36,22 +36,54 @@
     </div>
   </div>
   <div class="col-12 col-lg-7">
-    <div class="card bg-light">
-      <div class="card-header">
-        <h5>
-          <%= t('admin.user.edited_content') %>
-        </h5>
-      </div>
-      <div class="card-body">
-        <% if user.edited_courses.any? || user.edited_lectures.any? ||
-              user.given_lectures.any? %>
-          <%= render partial: 'users/content',
-                     locals: { user: user,
-                               f: f } %>
-        <% else %>
-          <%= t('admin.user.no_content') %>
-        <% end %>
+    <div class="row pb-4">
+      <div class="col-12">
+        <div class="card bg-light">
+          <div class="card-header">
+            <h5>
+              <%= t('admin.user.edited_content') %>
+            </h5>
+          </div>
+          <div class="card-body">
+            <% if user.edited_courses.any? || user.edited_lectures.any? ||
+                  user.given_lectures.any? %>
+              <%= render partial: 'users/content',
+                        locals: { user: user,
+                                  f: f } %>
+            <% else %>
+              <%= t('admin.user.no_content') %>
+            <% end %>
+          </div>
+          </div>
       </div>
     </div>
+    <% if @user.ghost_hash.present? %>
+      <div class="row">
+        <div class="col-12">
+          <div class="card text-white bg-danger">
+            <div class="card-header">
+              <div class="row">
+                <div class="col-6">
+                  <h5>
+                    <%= t('admin.user.flagged_warning') %>
+                  </h5>
+                </div>
+                <div class="col-6 text-right">
+                  <%= link_to t('buttons.delete'),
+                    user_path(@user),
+                    class: 'btn btn-sm btn-dark my-1',
+                    method: :delete,
+                    remote: true,
+                    data: { confirm: t('confirmation.generic') } %>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <%= t('admin.user.hash', hash: @user.ghost_hash) %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
   </div>
 </div>
