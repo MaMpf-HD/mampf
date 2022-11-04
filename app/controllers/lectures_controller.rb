@@ -35,15 +35,22 @@ class LecturesController < ApplicationController
     # returns an array of Users that match the given ids
     recipients = User.where(id: new_ids)
 
-    I18n.available_locales.each do |l|
-      local_recipients = recipients.where(locale: l)
-      if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients.pluck(:id),
-                                locale: l,
-                                lecture: @lecture)
-                          .new_editor_email.deliver_later
-      end
+    recipients.each do |r|
+      NotificationMailer.with(recipient: r,
+                              locale: r.locale,
+                              lecture: @lecture)
+                        .new_editor_email.deliver_later
     end
+    
+    #I18n.available_locales.each do |l|
+    #  local_recipients = recipients.where(locale: l)
+    #  if local_recipients.any?
+    #    NotificationMailer.with(recipients: local_recipients.pluck(:id),
+    #                            locale: l,
+    #                            lecture: @lecture)
+    #                      .new_editor_email.deliver_later
+    #  end
+    #end
     
     @lecture.update(lecture_params)
     if structure_params.present?
