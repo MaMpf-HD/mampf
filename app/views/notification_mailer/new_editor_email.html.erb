@@ -1,8 +1,8 @@
-<%= t('mailer.new_editor', title: @lecture.title_with_teacher) %>
+<%= t('mailer.new_editor', title: @lecture.title_with_teacher, username: @username) %>
 <br>
 <!--- <%= t('mailer.subscribe_editor') %> --->
 <p class="pt-2">
-  <%= link_to(t('notifications.goto_profile'),
-              edit_profile_url,
+  <%= link_to(t('notifications.edit_lecture'),
+              edit_lecture_url(@lecture),
               class: 'btn btn-primary') %>
 </p>
