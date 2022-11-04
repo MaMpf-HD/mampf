@@ -55,8 +55,11 @@ class NotificationMailer < ApplicationMailer
   
   def new_editor_email
     @lecture = params[:lecture]
+    @recipient = params[:recipient]
+    @username = @recipient.tutorial_name
+
     mail(from: @sender,
-         bcc: @recipients.pluck(:email),
+         to: @recipient.email,
          subject: t('mailer.new_editor_subject',
          title: @lecture.title_for_viewers))
   end
