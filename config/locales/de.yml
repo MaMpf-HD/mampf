@@ -2917,8 +2917,8 @@ de:
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'VerfasserIn'
     text: 'Text'
-    new_editor_subject: '%{title}-Editor'
-    new_editor: 'Du bist nun ein Editor von %{title}'
+    new_editor_subject: 'EditorInnenrechte für %{title}'
+    new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
