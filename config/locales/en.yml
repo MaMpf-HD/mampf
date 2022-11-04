@@ -2746,8 +2746,8 @@ en:
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
-    new_editor_subject: "%{title} editor"
-    new_editor: "You are now an editor of %{title}"
+    new_editor_subject: 'Editing Rights for %{title}'
+    new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can subscribe to it in your profile settings.'
