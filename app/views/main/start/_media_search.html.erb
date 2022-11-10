@@ -4,17 +4,17 @@
               method: :get do |f| %>
   <div class="form-row p-2">
     <div class="col-6 col-lg-4 form-group">
-      <%= f.label :types, t('basics.type') %>
-      <%= helpdesk(t('admin.medium.info.search_type'), true) %>
+      <%= f.label :types, t('basics.types') %>
+      <%= helpdesk(t('search.media.type'), true) %>
       <%= f.select :types,
-                  options_for_select(add_prompt(Medium.select_generic),
+                   options_for_select(add_prompt(Medium.select_generic),
                                       sort_preselect(purpose)),
-                  {},
-                  { id: 'search_media_types',
-                    multiple: purpose.in?(['media', 'import']),
-                    class: 'selectize',
-                    disabled: purpose.in?(['media', 'clicker']),
-                    required: true } %>
+                   {},
+                   { id: 'search_media_types',
+                     multiple: purpose.in?(['media', 'import']),
+                     class: 'selectize',
+                     disabled: purpose.in?(['media', 'clicker']),
+                     required: true } %>
       <% if purpose == 'clicker' %>
         <%= f.hidden_field :types, value: ['Question'] %>
       <% end %>
@@ -78,7 +78,7 @@
     </div>
     <div class="col-6 col-lg-4 form-group">
       <%= f.label :teacher_ids, t('basics.teachers') %>
-      <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+      <%= helpdesk(t('admin.medium.info.search_teachers'), true) %>
       <%= f.select :teacher_ids,
                   options_for_select(add_prompt(User.select_teachers)),
                   {},
@@ -146,7 +146,8 @@
       <%= helpdesk(t('search.media.title'), false) %>
       <%= f.text_field :fulltext,
                         id: 'media_fulltext',
-                        class: 'form-control' %>
+                        class: 'form-control',
+                        placeholder: t('search.media.title_placeholder') %>
     </div>
     <div class="col-6 col-lg-4 form-group">
       <%= f.label :per, t('basics.hits_per_page') %>

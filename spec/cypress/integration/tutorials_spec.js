@@ -191,8 +191,8 @@ describe("Tutorials", () => {
                 cy.visit(`lectures/${lectures[0].id}`);
                 cy.contains("Tutorien").click();
                 cy.contains("Verschieben").click();
-                cy.get('.select2-selection').click();
-                cy.get('.select2-dropdown').contains(lectures[3].title).click();
+                cy.get('.ts-control').type(lectures[3].title);
+                cy.get('.ts-control').type('{enter}');
                 cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").should("exist");
                 cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
