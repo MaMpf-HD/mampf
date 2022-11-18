@@ -282,6 +282,7 @@ class Medium < ApplicationRecord
                                                    .teachables_as_strings
     search_params[:editor_ids] = [] if search_params[:all_editors] == '1' || search_params[:all_editors].nil?
     # add media without term to current term
+    
     search_params[:all_terms] = '1' if search_params[:all_terms].blank?
     search_params[:all_teachers] = '1' if search_params[:all_teachers].blank?
     search_params[:term_ids].push('0') if search_params[:term_ids].present?

@@ -33,7 +33,7 @@ $(document).on 'turbolinks:load', ->
   $('[type="radio"]').on 'change', ->
 
     try
-      selector = document.getElementById(this.dataset.id).selectize
+      selector = document.getElementById(this.dataset.id).tomselect
       if $(this).prop('checked')
         selector.enable()
       else
@@ -41,7 +41,7 @@ $(document).on 'turbolinks:load', ->
     catch e
 
     try
-      selector = document.getElementById(prev.dataset.id).selectize
+      selector = document.getElementById(prev.dataset.id).tomselect
       if $(prev).prop('checked')
         selector.enable()
       else
