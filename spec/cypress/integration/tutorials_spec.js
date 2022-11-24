@@ -46,6 +46,7 @@ describe("Tutorials", () => {
                 cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").should("exist");
                 cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").click();
                 cy.get('.col-sm-9 > .dropdown > .dropdown-menu > .dropdown-item').contains(lectures[2].title).click();
+                cy.reload();
                 cy.contains("Übersicht").should("exist");
             });
         });
@@ -195,6 +196,7 @@ describe("Tutorials", () => {
                 cy.get('.ts-control').type('{enter}');
                 cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").should("exist");
                 cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
+                cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
                 cy.contains("Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.").should("exist");
             });
@@ -297,9 +299,10 @@ describe("Tutorials", () => {
                 cy.visit(`lectures/${lectures[0].id}`);
                 cy.contains("Tutorien").click();
                 cy.contains("Verschieben").click();
-                cy.get('.select2-selection').click();
-                cy.get('.select2-dropdown').contains(lectures[3].title).click();
+                cy.get('.ts-control').type(lectures[3].title);
+                cy.get('.ts-control').type('{enter}');
                 cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").should("exist");
+                cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.get('.submission-actions > form > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
                 cy.contains("Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.").should("exist");
