@@ -217,6 +217,7 @@ class MediaController < ApplicationController
       filter_media = true
       params["search"]["access"] = 'irrelevant'
     end
+    params["search"]["answers_count"] = 'irrelevant' if search_params[:answers_count].blank?
 
     search = Medium.search_by(search_params, params[:page])
     search.execute
@@ -236,7 +237,8 @@ class MediaController < ApplicationController
       params["search"]["all_tags"] = '0'
     end
 
-    
+    Rails.logger.info "search params: #{search_params}"
+
     if filter_media
       search_arel = Medium.where(id: results.pluck(:id))
       visible_search_results = current_user.filter_visible_media(search_arel)
