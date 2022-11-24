@@ -212,6 +212,12 @@ class MediaController < ApplicationController
   def search
     authorize! :search, Medium.new
     
+    # get all media, then set them to only those that are visible to the current user
+    if search_params[:access].blank?
+      filter_media = true
+      params["search"]["access"] = 'irrelevant'
+    end
+
     search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
@@ -220,13 +226,22 @@ class MediaController < ApplicationController
     # in the case of a search with tag_operator 'or', we 
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
-    if params["search"]["tag_operator"] == "or"
+    if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0"
       params["search"]["all_tags"] = '1'
       search_no_tags = Medium.search_by(search_params, params[:page])
       search_no_tags.execute
       results_no_tags = search_no_tags.results
       results = (results + results_no_tags).uniq
-      @total = search_no_tags.total
+      @total = results.size
+      params["search"]["all_tags"] = '0'
+    end
+
+    
+    if filter_media
+      search_arel = Medium.where(id: results.pluck(:id))
+      visible_search_results = current_user.filter_visible_media(search_arel)
+      results &= visible_search_results
+      @total = results.size
     end
 
     @media = Kaminari.paginate_array(results, total_count: @total)
@@ -649,7 +664,7 @@ class MediaController < ApplicationController
                   term_ids: [],
                   teacher_ids: [],
                   media_lectures: [])
-          .with_defaults(access: 'all')
+          #.with_defaults(access: 'all')
   end
 
   # destroy all notifications related to this medium

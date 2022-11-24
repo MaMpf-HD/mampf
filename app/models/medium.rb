@@ -347,8 +347,9 @@ class Medium < ApplicationRecord
         end
       end
     end
+    # this is needed for kaminari to function correctly
     search.build do
-      paginate page: page, per_page: search_params[:per]
+      paginate page: 1, per_page: Medium.all.count
     end
     search
   end
