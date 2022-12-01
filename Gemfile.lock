@@ -462,6 +462,10 @@ GEM
       activesupport (= 7.0.2.4)
       bundler (>= 1.15.0)
       railties (= 7.0.2.4)
+    rails-controller-testing (1.0.5)
+      actionpack (>= 5.0.1.rc1)
+      actionview (>= 5.0.1.rc1)
+      activesupport (>= 5.0.1.rc1)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -571,8 +575,6 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    select2-rails (4.0.13)
-    selectize-rails (0.12.6)
     selenium-webdriver (4.1.0)
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
@@ -723,6 +725,7 @@ DEPENDENCIES
   puma (~> 4.1)
   rack
   rails (~> 7.0.2.3)
+  rails-controller-testing (~> 1.0)
   rails-erd
   rails-i18n
   responders
@@ -735,7 +738,6 @@ DEPENDENCIES
   rubocop-rails
   rubyzip (~> 2.3.0)
   sass-rails (>= 6)
-  select2-rails
   selenium-webdriver
   shrine
   sidekiq

@@ -211,7 +211,7 @@ class MediaController < ApplicationController
   # return all media that match the search parameters
   def search
     authorize! :search, Medium.new
-    
+
     # get all media, then set them to only those that are visible to the current user
     if search_params[:access].blank?
       filter_media = true
@@ -227,7 +227,7 @@ class MediaController < ApplicationController
     # in the case of a search with tag_operator 'or', we 
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
-    if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0"
+    if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2
       params["search"]["all_tags"] = '1'
       search_no_tags = Medium.search_by(search_params, params[:page])
       search_no_tags.execute

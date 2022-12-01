@@ -5,6 +5,38 @@ require 'rails_helper'
 RSpec.describe MediaController, type: :controller do
   # NEEDS TO BE REFACTORED
 
+  describe '#search_by' do
+    before :all do
+      Medium.destroy_all
+      
+      # create a medium with title test1
+      # @medium1 = FactoryBot.create(:medium, title: 'Test1')
+      # # create a medium with a teacher
+      # @medium2 = FactoryBot.create(:medium, :with_editors, editors_count: 1)
+      # # create a medium with a tag
+      # @medium3 = FactoryBot.create(:medium, :with_tags, tags_count: 1)
+      # # create a medium of type quiz belonging to a lecture
+      # @medium4 = FactoryBot.create(:medium, :with_teachable, teachable_sort: :lecture, sort: :quiz)
+
+      Medium.reindex
+      
+      @user = FactoryBot.create(:confirmed_user)
+      
+    end
+
+    it 'should find a medium by title' do
+
+      # login user
+      sign_in @user
+
+
+      get :search, params: { search: 'Test1' }
+      puts response.body
+      assert_equal "TEST", assigns(:test)
+      expect(assigns(:media)).to include(@media)
+    end
+  end
+
   # describe '#index' do
   #   before do
   #     FactoryBot.create(:medium)
