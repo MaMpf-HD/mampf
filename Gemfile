@@ -148,4 +148,3 @@ group :test, :development, :docker_development do
   gem 'simplecov-cobertura'
 end
 gem 'prometheus_exporter'
-gem "rails-controller-testing", "~> 1.0"

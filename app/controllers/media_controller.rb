@@ -237,8 +237,6 @@ class MediaController < ApplicationController
       params["search"]["all_tags"] = '0'
     end
 
-    Rails.logger.info "search params: #{search_params}"
-
     if filter_media
       search_arel = Medium.where(id: results.pluck(:id))
       visible_search_results = current_user.filter_visible_media(search_arel)
@@ -646,7 +644,7 @@ class MediaController < ApplicationController
   end
 
   def search_params
-    types = params[:search][:types]
+    types = params[:search][:types] || []
     types = [types] if types && !types.kind_of?(Array)
     types -= [''] if types
     types = nil if types == []
