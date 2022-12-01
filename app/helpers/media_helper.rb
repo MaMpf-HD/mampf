@@ -134,13 +134,4 @@ module MediaHelper
     return edit_medium_path(medium) if current_user.can_edit?(medium)
     medium_path(medium)
   end
-
-  def lecture_search_option_description
-    {
-      '0' => 'subscribed',
-      '1' => 'subscribed and preceding',
-      '2' => 'all',
-      '3' => 'custom'
-    }
-  end
 end
