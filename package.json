@@ -5,7 +5,7 @@
     "@rails/webpacker": "5.4.3",
     "@webpack-cli/serve": "^1.6.1",
     "coffee-loader": "^1.0.1",
-    "coffeescript": "2.6.1",
+    "coffeescript": "2.7.0",
     "core-js": "^3.21.1",
     "css-loader": "^5.2.7",
     "friendly-challenge": "^0.9.1",
@@ -16,7 +16,7 @@
     "regenerator-runtime": "^0.13.7",
     "sass-loader": "^10.1.1",
     "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "webpack-dev-server": "4.11.1"
   },
   "scripts": {
     "lint": "eslint ."
