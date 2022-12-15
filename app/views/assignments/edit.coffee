@@ -6,6 +6,7 @@ new TomSelect('#assignment_medium_id_<%= @assignment.id %>',
   sortField:
     field: 'text'
     direction: 'asc'
+  plugins: ['remove_button']
   render:
     no_results: (data, escape) ->
       '<div class="no-results"><%= t("basics.no_results") %></div>'
