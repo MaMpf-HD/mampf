@@ -144,5 +144,9 @@ class Assignment < ApplicationRecord
   	return accepted_file_type unless accepted_file_type == '.tar.gz'
   	'.gz'
   end
+
+  def localized_deletion_date
+    deletion_date.strftime(I18n.t('date.formats.concise'))
+  end
   
 end
