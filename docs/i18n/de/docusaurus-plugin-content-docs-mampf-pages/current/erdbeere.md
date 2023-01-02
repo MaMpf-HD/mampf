@@ -32,7 +32,7 @@ Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispiels
      <td valign="top">
         <ul>
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.PNG" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
            </li>      
            <li>
               <button>Struktur</button> (Überschrift der Box, z.B. <button>kommutativer Ring mit Eins</button>) Wechsel zur Seite „Struktur“.
@@ -123,7 +123,7 @@ Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispiels
      <td valign="top">
         <ul>
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.PNG" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
            </li>    
            <li>
               <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
@@ -152,7 +152,7 @@ Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispiels
      <td valign="top">
         <ul>
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.PNG" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
            </li>    
            <li>
               <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
@@ -178,7 +178,7 @@ Die Beispieldatenbank besteht aus den Unterseiten „Startseite“, „Beispiels
      <td valign="top">
         <ul>
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/magnifying-glass-solid.PNG" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/magnifying-glass-solid.png" height="15"/> Beispiele suchen</button> Wechsel zur Seite „Beispielsuche“.
            </li>      
            <li>
               <button>zur Strukturenübersicht</button> Wechsel zur Seite „Strukturenübersicht“.
