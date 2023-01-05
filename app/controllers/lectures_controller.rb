@@ -42,16 +42,6 @@ class LecturesController < ApplicationController
                         .new_editor_email.deliver_later
     end
     
-    #I18n.available_locales.each do |l|
-    #  local_recipients = recipients.where(locale: l)
-    #  if local_recipients.any?
-    #    NotificationMailer.with(recipients: local_recipients.pluck(:id),
-    #                            locale: l,
-    #                            lecture: @lecture)
-    #                      .new_editor_email.deliver_later
-    #  end
-    #end
-    
     @lecture.update(lecture_params)
     if structure_params.present?
       structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys
