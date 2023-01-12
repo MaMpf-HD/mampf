@@ -2051,7 +2051,7 @@ de:
     data_request: >
       Daten anfordern
     data_request_sent: >
-      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnahe schicken. 
+      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnah schicken. 
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -3023,7 +3023,7 @@ de:
       werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.
       Hash:%{hash}
     data_request_mail_body: >
-      %{mail} mit User-Id: %{id} hat Ihre Daten angefordert.
+      %{mail} mit User-Id: %{id} hat ihre Daten angefordert.
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
