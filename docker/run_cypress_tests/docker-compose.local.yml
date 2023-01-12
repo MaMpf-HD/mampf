@@ -16,7 +16,7 @@ services:
     command: ["solr-precreate", "test", "/solrconfig"]
 
   db:
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
