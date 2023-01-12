@@ -615,6 +615,7 @@ de:
           Hier kannst Du angeben, wieviele Minuten nach dem Abgabeschluss für
           Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
           aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
+        section_needed: Bitte erstelle zuerst einen Abschnitt
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'

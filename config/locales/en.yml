@@ -588,6 +588,7 @@ en:
           submissions. Files that are uploaded after the deadline but before the
           grace period is expired will be accepted by the system, but will be
           timestamped and marked as "too late".
+        section_needed: Please create a section first
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
