@@ -38,7 +38,7 @@
           <%= link_to t('buttons.create_lesson'),
                       new_lesson_path(lecture_id: lecture.id),
                       remote: true,
-                      class: 'btn btn-sm btn-secondary new-in-lecture disabled',
+                      class: 'btn btn-sm btn-secondary new-in-lecture',
                       id: 'new_lesson_button' %>
         <% else %>
           <span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="<%= t('admin.lecture.info.section_needed') %>" >
