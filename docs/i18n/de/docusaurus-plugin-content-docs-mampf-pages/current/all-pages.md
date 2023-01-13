@@ -66,7 +66,7 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 * [Übungen](exercises)
 
 ## V
-* [Veranstaltung](event-series), sieh auch [Seminar](seminar) und [Vorlesung](lecture)
+* [Veranstaltung](event-series), siehe auch [Seminar](seminar) und [Vorlesung](lecture)
 * [Vorlesung](lecture), siehe auch [Veranstaltung](event-series)
 * [Vortrag](talk), siehe auch [Seiten für Vortragende](all-pages-talk)
 

@@ -88,6 +88,9 @@ In der Suchmaske kommen die Bedienelemente Dropdownmenü, Eingabefeld, Checkbox,
                 Checkbox und bei nicht gesetztem Haken auch Eingabefeld mit Dropdownmenü. Im Dropdownmenü können Typ / Assoziationen / verknüpfte Tags / Editor*innen des Mediums ausgewählt werden.
            </li>
            <li>
+              Typ bzw. Assoziiert zu bzw. Verknüpfte Tags bzw. EditorInnen <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> Entferne den Medientyp bzw. die Veranstaltung oder das Modul bzw. den Begriff bzw. den/die EditorIn aus dem Feld.
+           </li>
+           <li>
              Assoziiert zu <form>
                 <input type="radio" id="de" name="lang" checked></input>
                 <label for="vererb"> mit Verebung</label>

@@ -107,8 +107,53 @@ In diesem Bereich gibt es Steuerelemente zur Navigation, der Verwaltung der Ver�
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem Änderungen vorgenommen worden sind.
 * <button>zur Veranstaltung</button> Wechsel auf die <a href="/mampf/de/mampf-pages/seminar" target="_self">Seite des Seminars</a> (bei Vortragenden) bzw. auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a> oder <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a> (bei Editor*innen).
 * <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button>zur Sitzung</button></a> bzw. <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><button>zum Vortrag</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a> (bei Vorlesungen) bzw. auf die Seite <a href="/mampf/de/mampf-pages/edit-talk" target="_self">„Vortrag bearbeiten“</a> (bei Seminaren). Dieser Button ist nur vorhanden, wenn das Medium zu einer Sitzung bzw. zu einem Vortrag assoziiert ist.
-* <button>Veröffentlichen</button> Veröffentliche das Medium. Dieser Button kann nur bei unveröffentlichten Medien vorhanden sein. Damit der Button angezeigt wird, muss ferner die Veranstaltung, zu der das Medium gehört, schon veröffentlicht worden sein und es dürfen keine Änderungen am Medium seit dem letzten Speichern vorgenommen worden sein.
+* <button>Veröffentlichen</button> Öffne das Formular „Veröffentlichung des Mediums verwalten“. Veröffentliche das Medium. Dieser Button kann nur bei unveröffentlichten Medien vorhanden sein. Damit der Button angezeigt wird, muss ferner die Veranstaltung, zu der das Medium gehört, schon veröffentlicht worden sein und es dürfen keine Änderungen am Medium seit dem letzten Speichern vorgenommen worden sein.
 * <button>Löschen</button> Lösche das Medium. Dieser Button wird nur angezeigt, wenn es keine Dokumente zu dem Medium gibt.
+
+#### Formular „Veröffentlichung des Mediums verwalten“
+Das Formular „Veröffentlichung des Mediums verwalten“ öffnet sich, nach dem auf <button>Veröffentlichen</button> geklickt worden ist.
+
+![](/img/publish_medium1.png)
+
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> Bricht die Aktion ab und schließe das Formular.
+* Veröffentlichungsdatum <form>
+    <input type="radio" id="de1" name="lang" checked></input>
+    <label for="vererb"> sofort</label><br></br>
+    <input type="radio" id="de2" name="lang"></input>
+    <label for="ohnever"> zum folgenden Zeitpunkt</label>
+ </form> Radio Buttons zur Festlegung des Veröffentlichungsdatums. Zur Auswahl stehen <i>sofort</i> und <i>zum folgenden Zeitpunkt</i>. Soll das Medium zu einem bestimmten Zeitpunkt veröffentlicht werden, muss dieser in das entsprechende Feld eingetragen werden.
+* <form>
+     <p>
+         <input type="text" id="fname" name="fname"></input><br></br>
+     </p>
+  </form>
+  Eingabefeld für den geplanten Veröffentlichungszeitpunkt. Dieser kann manuell eingegeben oder im Datepicker, der sich beim Anklicken des Felds öffnet, ausgewählt werden. Dieses Bedienelement ist nur aktiv, wenn als Veröffentlichtungsdatum <i>zum folgenden Zeitpunkt</i> ausgewählt ist.
+* Zugriffsrechte <form>
+    <input type="radio" id="de4" name="lang" checked></input>
+    <label for="vererb"> frei</label><br></br>
+    <input type="radio" id="de5" name="lang"></input>
+    <label for="ohnever"> nur registrierte MaMpf-NutzerInnen</label><br></br>
+    <input type="radio" id="de6" name="lang"></input>
+    <label for="vererb"> nur AbonnentInnen</label><br></br>
+    <input type="radio" id="de7" name="lang"></input>
+    <label for="ohnever"> gesperrt</label>
+ </form> Radio Buttons zur Festlegung der Zugriffsrechte. Zur Auswahl stehen <i>frei</i>, <i>nur registrierte MaMpf-NutzerInnen</i>, <i>nur AbonnentInnen</i> und <i>gesperrt</i>. Diese Einstellung kann nachträglich in der Box „Basisdaten“ verändert werden.
+* <form>
+      <input type="checkbox" id="ass" name="ass" checked></input>
+      <label for="ass"> veröffentlichte alle zum Quiz gehörigen Quiz-Fragen und Quiz-Erläuterungen </label>
+  </form>
+   Checkbox. Setze oder entferne durch Anklicken den Haken. Standardmäßig ist dieser Haken gesetzt. Diese Checkbox ist nur bei Quizzes vorhanden.
+* <form>
+      <input type="checkbox" id="ass" name="ass"></input>
+      <label for="ass"> Kommentare für dieses Medium deaktivieren </label>
+  </form>
+   Checkbox. Setze oder entferne durch Anklicken den Haken, um die Kommentarfunktion für das Medium zu deaktivieren bzw. aktivieren. Diese Einstellung kann nachträglich in der Box „Basisdaten“ verändert werden. Standardmäßig ist der Haken nicht gesetzt. Auf der Seite  <a href="/mampf/de/mampf-pages/ed-edit-event-series#kommentare" target="_self">„Veranstaltung bearbeiten“</a> kann eingestellt werden, dass der Haken standardmäßig in diesem Formular gesetzt wird.
+* <form>
+      <input type="checkbox" id="ass" name="ass"></input>
+      <label for="ass"> Ich bestätigte hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.</label>
+  </form>
+   Checkbox. Setze durch Anklicken den Haken und bestätige damit, dass die Veröffentlichung keine Rechte Dritter verletzt. Dieser Haken muss für die Veröffentlichung des Mediums gesetzt werden.
+* <button>Speichern</button> Veröffentliche das Medium bzw. bestätige die die geplante Veröffentlichung und schließe das Formular.
 
 Bei <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/unveroeffentlicht.png" height="16"/>, <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/veroeffentlichungszeitpunkt.png" height="16"/> und <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/gesperrt.png" height="16"/> handelt es sich nicht um Bedienelemente. Sie informieren lediglich über den Öffentlichkeitsstatus des Mediums und bei Medien mit geplanter Veröffentlichung über deren Zeitpunkt. Falls an dieser Stelle kein Badge angezeigt wird, ist das Medium öffentlich und alle Nutzer\*innen, die über die unter „Basisdaten“ ausgewählten Rechte verfügen, können das Medium sehen und darauf zugreifen.
 
