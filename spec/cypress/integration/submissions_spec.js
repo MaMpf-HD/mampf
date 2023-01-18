@@ -26,7 +26,7 @@ describe("Submissions", () => {
                 cy.contains("Tutorien").click();
                 cy.contains("Neues Tutorium anlegen").click();
                 cy.get('input[name="tutorial[title]"]').type("Tutorium A");
-                cy.get('input[role="searchbox"]').type(lectures[1].name);
+                cy.get('#tutorial_tutor_ids_-ts-control').type(lectures[1].name);
                 cy.contains(lectures[1].name).click();
                 cy.get("#exercises_collapse").contains("Speichern").click();
             });

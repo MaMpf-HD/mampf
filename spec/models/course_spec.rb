@@ -916,7 +916,7 @@ RSpec.describe Course, type: :model do
     end
   end
 
-  describe '#seach_by' do
+  describe '#search_by' do
     before :all do
       Course.destroy_all
       @editor1 = FactoryBot.create(:confirmed_user)

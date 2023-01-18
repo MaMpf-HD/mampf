@@ -569,12 +569,9 @@ de:
           Du kannst bei der Veröffentlichung aber Kommentare deaktivieren.
           Hier kannst Du dises Verhaltenb umdrehen.
         search_type: >
-          Hier musst Du (im Sinne von
-          <i>
-          ODER
-          </i>
-          ) auswählen,
-          was der Typ der Veranstaltung sein soll. Andernfalls wird die Suche ergebnislos sein.
+          Hier kannst Du einen, mehrere oder alle der folgenden Veranstaltungstypen auswählen: <i>Lektion</i>,
+          <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i>. Dabei wird der Operator inklusives
+          <i>ODER</i> verwendet.
         search_program: >
           Hier musst Du (im Sinne von
           <i>
@@ -1232,12 +1229,10 @@ de:
         import_warning: >
           Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
         search_type: >
-          Hier musst Du (im Sinne von
-          <i>
-          ODER
-          </i>
-          ) auswählen,
-          was der Typ des Mediums sein soll. Andernfalls wird die Suche ergebnislos sein.
+          Hier kannst Du einen, mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
+          <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i>,
+          <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i>, <i>Beispiel-Datenbank</i> und <i>Sonstiges</i>.
+          Dabei wird der Operator inklusives <i>ODER</i> verwendet.
         search_teachable: >
           Hier musst Du (im Sinne von
           <i>
@@ -1254,11 +1249,11 @@ de:
           bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
           die mit Sitzungen dieser Veranstaltung verknüpft sind.
         search_tags: >
-          Hier kannst Du (im Sinne von
-          <i>
-          ODER/UND
-          </i>
-          ) die Tags auswählen, mit denen das Medium verknüpft sein soll.
+          Mit einem Medium verknüpfte Begriffe werden als <span class="badge badge-light">Beispielbegriff</span>
+          auf der Medienkachel angezeigt. Hier kannst Du Begriffe, mit denen das Medium verknüpft sein soll, aus
+          der Datenbank auswählen. Dabei kannst Du einen, mehrere oder alle dieser Begriffe in die Auswahl aufnehmen.
+          Außerdem kannst Du entscheiden, ob das Medium entweder mit mindestens einem der gewählten Begriffe
+          (inklusives <i>ODER</i>) oder mit allen gewählten Begriffen (<i>UND</i>) versehen sein soll.
         search_editors: >
           Hier kannst Du (im Sinne von
           <i>
@@ -1268,6 +1263,9 @@ de:
           Beachte, dass jedes Medium mindestens eine EditorIn hat.
           Ist die "alle"-Checkbox deaktiviert und keine EditorIn ausgewählt,
           wird die Suche keine Treffer liefern.
+        search_teachers: >
+          Hier kannst Du die DozentInnen einstellen. Wähle eine/n, mehrere oder alle aus.
+          Dabei wird der Operator inklusives <i>ODER</i> verwendet.
         search_fulltext: >
           Hier kannst Du Text eingeben, nach dem in den Feldern Beschreibung,
           Fragen- bzw. Antworttext sowie Bemerkungstext gesucht wird.
@@ -2042,6 +2040,7 @@ de:
     star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
     unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
     my_talks: Meine Vorträge
+    media_search: Mediensuche
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2489,8 +2488,28 @@ de:
       Suche anschließend neu starten:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
+    media:
+      title: >
+        Hier kannst Du den Medien- bzw. Sitzungstitel in die Suche miteinbeziehen. Lass das Feld
+        frei, falls Du dieses Suchkriterium nicht verwenden möchtest.
+      title_placeholder: frei lassen oder mind. 2 Zeichen eingeben
+      lectures: >
+        Hier kannst Du bestimmen, aus welcher Veranstaltung das Medium stammen soll. Dabei kannst
+        Du alle, nur die von Dir abonnierten oder eine eigene Auswahl an Veranstaltungen berücksichtigen
+        lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator
+        inklusives <i>ODER</i> verwendet.
+      lecture_options:
+        subscribed: 'abonnierte'
+        all: 'alle'
+        own_selection: 'eigene Auswahl'
+        all_media: 'alle Medien'
+        only_extras: 'nur Zusatzmaterialien'
+      type: >
+        Hier kannst Du einen,   mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
+        <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i> und
+        <i>Sonstiges</i>. Dabei wird der Operator inklusives <i>ODER</i> verwendet.
     tag_title: >
-      mind. 2 Zeichen eingeben (freilassen für alle Tags)
+      mind. 2 Zeichen eingeben (frei lassen für alle Tags)
   errors:
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
@@ -3098,6 +3117,7 @@ de:
     associated_to_short: 'Ass. zu'
     description: 'Beschreibung'
     type: 'Typ'
+    types: 'Typen'
     label: 'Label'
     related_media: 'Verknüpfte Medien'
     related_questions: 'Verknüpfte Fragen'

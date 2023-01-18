@@ -543,11 +543,8 @@ en:
           By default, comments for newly published media are enabled, and you
           can disable them upon publishing. Here you can reverse this.
         search_type: >
-          Here you have to select (in the sense of
-          <i>
-          OR
-          </i>
-          ) of what type the event series is.
+          Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>,
+          <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is the inclusive <i>OR</i>.
         search_program: >
           Here you have to select (in the sense of
           <i>
@@ -1164,11 +1161,9 @@ en:
           Attention: The structure of the manuscript has not yet been imported
           to MaMpf.
         search_type: >
-          Here you have to select (in the sense of
-          <i>
-          OR
-          </i>
-          ) of what type the medium is.
+          Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
+          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i>,
+          <i>example</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
         search_teachable: >
           Here you have to select (in the sense of
           <i>
@@ -1184,11 +1179,10 @@ en:
           if you select a event series, media that are associated to the event series's
           sessions will be shown as well.
         search_tags: >
-          Here you can select the tags (in the sense of
-          <i>
-          OR/AND
-          </i>
-          ) which are associated to the medium.
+          Tags related to a medium are displayed as <span class="badge badge-light">example tag</span> on the media card.
+          If you are looking for media with specific tags, you can select tags from the data base. You can choose one,
+          several, or all of them. Moreover, you can decide whether the medium has to be related to either at least one
+          of the selected tags (inclusive <i>OR</i>) or all of them (<i>AND</i>).
         search_editors: >
           Here you can select the editors of the medium (in the sense of
           <i>
@@ -1198,6 +1192,8 @@ en:
           Note that every medium has at least one editor. If the "all-checkbox"
           is deselected and no editor is selected, the search will yield no
           results.
+        search_teachers: >
+          Select the teachers. Choose one, several, or all. The operator used is the inclusive <i>OR</i>.
         search_fulltext: >
           Here you can enter text that will be searched for in the fields
           description, question text, remark text, answer text.
@@ -1858,11 +1854,11 @@ en:
     passphrase_required: >
       You want to subscribe the event series %{lecture_title}. It is protected
       by a pass phrase. Please enter it here.
-    my_term_html: My Term &ndash; %{term}
-    inactive_lectures: Futher subscribed event series
+    my_term_html: My term &ndash; %{term}
+    inactive_lectures: Further subscribed event series
     active_nonsubscribed_lectures_html: >
       Current event series &ndash; %{term}
-    lecture_search: Search for event series
+    lecture_search: Search event series
     no_current_stuff: >
       You have not yet subscribed any event series of the current term.
     no_inactive_stuff: >
@@ -1921,6 +1917,7 @@ en:
     star_lecture: Add Lecture to Fast Access
     unstar_lecture: Remove Lecture from Fast Access
     my_talks: My talks
+    media_search: Search media
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2346,6 +2343,26 @@ en:
       You might try the following fulltext terms and start the search again.
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
+    media:
+      title: >
+        You can search the titles of media or related sessions. If you do not wantto use
+        this criterion, leave the input box empty.
+      title_placeholder: leave free or enter at least 2 letters 
+      lectures: >
+        Select the event series you want to search. You can choose all event series, the
+        ones you are subscribed to, or make up your own selection. If you opt for your own
+        selection, you can choose one or several event series. The operator used is the
+        inclusive <i>OR</i>.
+      lecture_options:
+        subscribed: 'subscribed'
+        all: 'all'
+        own_selection: 'custom selection'
+        all_media: 'all media'
+        only_extras: 'only extra material'
+      type: >
+        Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
+        <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
+        The operator used is the inclusive <i>OR</i>. 
     tag_title: >
       enter at least 2 letters (or leave free for all tags)
   errors:
@@ -2925,6 +2942,7 @@ en:
     associated_to_short: 'Ass. to'
     description: 'Description'
     type: 'Type'
+    types: 'Types'
     label: 'Label'
     related_media: 'Related media'
     related_questions: 'Related questions'
