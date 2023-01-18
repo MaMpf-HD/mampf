@@ -1947,6 +1947,7 @@ en:
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
+    edit_lecture: 'Edit event'
     subscribe_lecture: 'You can subscribe it via your profile.'
     subscribe_lecture_html: 'You can subscribe it via your %{profile}.'
     new_lecture_created_html: >
@@ -2772,6 +2773,8 @@ en:
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
+    new_editor_subject: 'Editing Rights for %{title}'
+    new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can subscribe to it in your profile settings.'

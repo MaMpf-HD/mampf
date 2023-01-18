@@ -2073,6 +2073,7 @@ de:
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
+    edit_lecture: 'Veranstaltung bearbeiten'
     subscribe_lecture: 'Abonniere sie in Deinem Profil.'
     subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
     new_lecture_created_html: >
@@ -2948,6 +2949,8 @@ de:
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'VerfasserIn'
     text: 'Text'
+    new_editor_subject: 'EditorInnenrechte für %{title}'
+    new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
