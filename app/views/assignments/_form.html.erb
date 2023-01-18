@@ -20,12 +20,12 @@
       </div>
       <div class="form-group col-2">
         <%= f.select :medium_id,
-                     options_for_select(Medium.where(teachable: assignment.lecture,
-                                                     sort: 'Nuesse')
-                                              .map { |m| [m.local_title_for_viewers, m.id] },
-                                        assignment.medium_id ),
-                     {},
-                     { id: "assignment_medium_id_#{assignment.id}" } %>
+                    options_for_select(Medium.where(teachable: assignment.lecture,
+                                                    sort: 'Nuesse')
+                                             .map { |m| [m.local_title_for_viewers, m.id] },
+                                       assignment.medium_id ),
+                    { include_blank: true },
+                    { id: "assignment_medium_id_#{assignment.id}" } %>
       </div>
       <div class="form-group col-2">
         <%= f.select :accepted_file_type,
