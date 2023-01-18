@@ -1918,6 +1918,14 @@ en:
     unstar_lecture: Remove Lecture from Fast Access
     my_talks: My talks
     media_search: Search media
+    my_data: What data is saved about me?
+    data_explanation: >
+      Within the framework of the services offered by Mampf, some data about users will be
+      stored. All of your data that is not listed above are listed here.
+    data_request: >
+      Request data
+    data_request_sent: >
+      We have received your request and will send you your data as soon as possible.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2857,6 +2865,8 @@ en:
       This email is to check if your email account still exists. Since this is the case, no changes
       will be made to your account. You can therefore ignore this email.
       Hash:%{hash}
+    data_request_mail_body: >
+      %{mail} with user-id: %{id} has requested his data.
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'

@@ -442,6 +442,9 @@ Rails.application.routes.draw do
   patch 'profile/unstar_lecture',
         as: 'unstar_lecture'
 
+  get 'profile/request_data',
+      as: 'request_data'
+
   # programs routes
 
   resources :programs, except: [:show]
