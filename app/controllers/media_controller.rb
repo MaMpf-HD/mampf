@@ -173,7 +173,11 @@ class MediaController < ApplicationController
     @errors = publisher.errors
     return if @errors.present?
     @medium.update(publisher: publisher)
-    @medium.publish! if publisher.release_now
+    if publisher.release_now
+      @medium.publish!
+      @medium.update(released: publisher.release_for, released_at: Time.zone.now,
+                     publisher: nil)
+    end
     redirect_to edit_medium_path(@medium)
   end
 
@@ -207,17 +211,49 @@ class MediaController < ApplicationController
   # return all media that match the search parameters
   def search
     authorize! :search, Medium.new
+
+    # get all media, then set them to only those that are visible to the current user
+    if current_user.generic? || search_params[:access].blank?
+      filter_media = true
+      params["search"]["access"] = 'irrelevant'
+    end
+    params["search"]["answers_count"] = 'irrelevant' if search_params[:answers_count].blank?
+
     search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
     @total = search.total
+
+    # in the case of a search with tag_operator 'or', we 
+    # execute two searches and merge the results, where media
+    # with the selected tags are now shown at the front of the list
+    if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2
+      params["search"]["all_tags"] = '1'
+      search_no_tags = Medium.search_by(search_params, params[:page])
+      search_no_tags.execute
+      results_no_tags = search_no_tags.results
+      results = (results + results_no_tags).uniq
+      @total = results.size
+      params["search"]["all_tags"] = '0'
+    end
+
+    if filter_media
+      search_arel = Medium.where(id: results.pluck(:id))
+      visible_search_results = current_user.filter_visible_media(search_arel)
+      results &= visible_search_results
+      @total = results.size
+    end
+
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
     @purpose = search_params[:purpose]
+    @results_as_list = search_params[:results_as_list] == 'true'
     if @purpose.in?(['quiz', 'import'])
       render template: "media/catalog/import_preview"
       return
     end
+    return unless @total.zero?
+    return unless search_params[:fulltext]&.length.to_i > 1
   end
 
   # play the video using thyme player
@@ -608,19 +644,27 @@ class MediaController < ApplicationController
   end
 
   def search_params
-    types = params[:search][:types]
+    types = params[:search][:types] || []
     types = [types] if types && !types.kind_of?(Array)
     types -= [''] if types
     types = nil if types == []
     params[:search][:types] = types
-    params.require(:search).permit(:all_types, :all_teachables, :all_tags,
-                                   :all_editors, :tag_operator, :quiz, :access,
-                                   :teachable_inheritance, :fulltext, :per,
-                                   :clicker, :purpose, :answers_count,
-                                   types: [],
-                                   teachable_ids: [],
-                                   tag_ids: [],
-                                   editor_ids: [])
+    params[:search][:user_id] = current_user.id
+    params.require(:search)
+          .permit(:all_types, :all_teachables, :all_tags,
+                  :all_editors, :tag_operator, :quiz, :access,
+                  :teachable_inheritance, :fulltext, :per,
+                  :clicker, :purpose, :answers_count,
+                  :results_as_list, :all_terms, :all_teachers,
+                  :lecture_option, :user_id,
+                  types: [],
+                  teachable_ids: [],
+                  tag_ids: [],
+                  editor_ids: [],
+                  term_ids: [],
+                  teacher_ids: [],
+                  media_lectures: [])
+          #.with_defaults(access: 'all')
   end
 
   # destroy all notifications related to this medium

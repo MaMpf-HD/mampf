@@ -30,8 +30,9 @@ describe("Courses", function () {
                 ['create', 'course']
             ]).then((records) => {
                 cy.visit('/courses/1/edit');
-                cy.get(':nth-child(5) > .selectize-control > .selectize-input').click();
-                cy.get(':nth-child(5) > .selectize-control > .selectize-input').type('{enter}')
+                cy.get('#course_editor_ids-ts-control').click();
+                cy.get('#course_editor_ids-ts-control').type('ad');
+                cy.contains('administrator@mampf.edu').click();
                 cy.get('.btn-primary').click();
                 cy.contains("Admin");
             })
@@ -81,7 +82,7 @@ describe("Courses", function () {
                 
                 //cy.wait('@new');
 
-                cy.get(".col-8 > .selectize-control > .selectize-input").type(records[0].title).type("{enter}");
+                cy.get("#lecture_course_id-ts-control").type(records[0].title).type("{enter}");
                 cy.get("div#new-lecture-area").contains("Speichern").click();
                 //cy.wait('@courses');
                 cy.contains(records[0].title).should("exist");

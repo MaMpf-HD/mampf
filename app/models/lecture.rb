@@ -134,6 +134,9 @@ class Lecture < ApplicationRecord
     end
   end
 
+  def self.select
+    Lecture.all.map { |l| [l.title, l.id] }
+  end
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*

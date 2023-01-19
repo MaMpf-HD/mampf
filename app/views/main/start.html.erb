@@ -115,7 +115,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="card mb-3">
+	<div class="card">
 		<div class="card-header clickable"
 				 role="tab"
 				 data-toggle="collapse"
@@ -132,6 +132,28 @@
 				<%= render partial: 'main/start/lecture_search',
 									 locals: { results_as_list: false } %>
 				<div id="lecture-search-results">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="card mb-3">
+		<div class="card-header clickable"
+				 role="tab"
+				 data-toggle="collapse"
+				 data-target="#collapseMediaSearch">
+			<h4 class="text-dark"
+					id="mediaSearchLink">
+				<%= t('profile.media_search') %>
+			</h4>
+		</div>
+		<div class="collapse subscriptionsCollapse" id="collapseMediaSearch"
+				 data-parent="#subscriptionsAccordion"
+				 data-link="#mediaSearchLink">
+			<div class="card-body">
+				<%= render partial: 'main/start/media_search',
+									 locals: { results_as_list: false,
+									 		   purpose: 'media' } %>
+				<div id="media-search-results">
 				</div>
 			</div>
 		</div>
