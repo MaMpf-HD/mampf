@@ -1,4 +1,4 @@
-class UserCleaner
+class UserCleanerJob
   include Sidekiq::Worker
 
   def perform
