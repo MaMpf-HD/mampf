@@ -129,7 +129,7 @@ Zunächst sind nur Bedienelemente zum Anlegen der Vorlesungsgliederung vorhanden
 ![](/img/lec_gliederung_import_cut.png)
 
 * <button>Gliederung importieren</button> Öffne das Formular „Gliederung aus einer anderen Veranstaltung importieren“, um die Gliederung einer anderen Vorlesung des Modul zu übernehmen. Dieses Bedienelement ist nur vorhanden, solange es keine Gliederungselemente in der Vorlesung gibt.
-* <button>Kapitel anlegen</button> Öffne das Formular „Kapital anlegen“, um ein neues Kapitel anzulegen.
+* <button>Kapitel anlegen</button> Öffne das Formular „Kapitel anlegen“, um ein neues Kapitel anzulegen.
 * <button>Sitzung anlegen</button> Öffne das Formular „Sitzung anlegen“, um eine neue Sitzung anzulegen.
 
 ###### Formular „Gliederung aus einer anderen Veranstaltung importieren“
@@ -160,7 +160,7 @@ Zunächst sind nur Bedienelemente zum Anlegen der Vorlesungsgliederung vorhanden
 Nachdem Vorlesungsstruktur angelegt oder importiert worden ist, sind weitere Bedienelemente verfügbar.
 
 ![](/img/lec_inhalt_cut.png)
-* <button>Kapitel anlegen</button> Öffne das Formular „Kapital anlegen“, um ein neues Kapitel anzulegen.
+* <button>Kapitel anlegen</button> Öffne das Formular „Kapitel anlegen“, um ein neues Kapitel anzulegen.
 * <button>Sitzung anlegen</button> Öffne das Formular „Sitzung anlegen“, um eine neue Sitzung anzulegen.
 * <a href="/mampf/de/mampf-pages/ed-edit-chapter" target="_self"><button>Kapiteltitel</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-chapter" target="_self">„Kapitel bearbeiten“</a>.
 * <button>Abschnitt anlegen</button> Öffne das Formular „Abschnitt anlegen“, um einen neuen Abschnitt anzulegen.
@@ -168,7 +168,7 @@ Nachdem Vorlesungsstruktur angelegt oder importiert worden ist, sind weitere Bed
 * <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self"><button>Datum</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-session" target="_self">„Sitzung bearbeiten“</a>.
 * <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><button>Begriff</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Begriff bearbeiten“</a>.
 
-##### Formular „Kapital anlegen“
+##### Formular „Kapitel anlegen“
 Das Formular „Kapital anlegen“ öffnet sich, nachdem im Vorlesungsinhalt auf <button>Kapitel anlegen</button> geklickt worden ist.
 
 ![](/img/lec_create_chap.png)
@@ -339,7 +339,7 @@ Das Formular „Medium anlegen“ öffnet sich, nachdem in der Box „Medien“ 
 * <button>Abbrechen</button> Schließe das Dialogfenster, ohne ein Medium anzulegen.
 
 ### Akkordeon
-Das Akkordeon besteht aus den elf Fächern <button>Verknüpfte Begriffe</button>, <button>Importierte Medien</button>, <button>Beispiel-Datenbank</button>, <button>Personen</button>, <button>Organisatorisches</button>, <button>Tutorien</button>, <button>Hausaufgaben</button>, <button>Mitteilungen</button>, <button>Forum</button>, <button>Kommentare</button> und <button>Einstellungen</button>. Durch Anklicken von <button>Fach</button> klappen weitere Informationen und/oder Bedienelemente aus. Die Bedienelemente der einzelnen Fächer werden nun beschrieben.
+Das Akkordeon besteht aus den elf Fächern <button>Verknüpfte Begriffe</button>, <button>Importierte Medien</button>, <button>Beispiel-Datenbank</button>, <button>Personen</button>, <span class="nobr"><button>Organisatorisches</button>,</span> <button>Tutorien</button>, <button>Hausaufgaben</button>, <button>Mitteilungen</button>, <button>Forum</button>, <button>Kommentare</button> und <button>Einstellungen</button>. Durch Anklicken von <button>Fach</button> klappen weitere Informationen und/oder Bedienelemente aus. Die Bedienelemente der einzelnen Fächer werden nun beschrieben.
 
 ![](/img/lec_akkordeon_cut.png)
 
@@ -610,7 +610,7 @@ Dort sind die nun aufgeführten Bedienelemente zu finden:
 * <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> Bearbeite das Tutorium.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></button> Lösche das Tutorium. Dieses Bedienelement ist nur vorhanden, wenn es keine Abgaben in diesem Tutorium gibt.
 
-Sobald auf <button>Neues Tutorium anlegen</button> oder <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> geklickt worden ist, verändert sich die Ansicht zum nachfolgenden Screenshot.
+Sobald auf <button>Neues Tutorium anlegen</button> oder <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> geklickt worden ist, verändert sich die Ansicht. Diese zeigt der nachfolgende Screenshot.
 
 ![](/img/lec_tut2.png)
 
@@ -622,7 +622,7 @@ Nun sind weitere Bedienelemente verfügbar:
          <input type="text" id="fname" name="fname"></input><br></br>
      </p>
   </form>
-  Eingabefeld für den Titel des Tutoriums. Dieser kann jederzeit bearbeitet werden. Dieses Fled muss ausgefüllt werden.
+  Eingabefeld für den Titel des Tutoriums. Dieser kann jederzeit bearbeitet werden. Dieses Feld muss ausgefüllt werden.
 * <form>
      <p>
          <label for="fname">TutorInnen</label><br></br>
@@ -655,14 +655,14 @@ Dort sind die nun aufgeführten Bedienelemente zu finden:
   <form>
       <input type="number" min ="1"></input>
   </form>
-  Eingabefeld für die maximale Größe der Abgabegruppen. Änderungen in diesem Feld wirken sich nicht auf bereits angelegte Abgaben aus.
+  Eingabefeld für die maximale Größe der Abgabegruppen. Änderungen in diesem Feld wirken sich nicht auf bereits angelegte Abgaben aus. Ist nichts in diesem Feld eingetragen, so ist die Gruppengröße nicht begrenzt. Ist etwas eingetragen, so muss es sich um eine ganze Zahl handeln. Der kleinste Wert zulässige ist 1.
 * Kulanzfrist für Abgaben (in Minuten)
     <form>
         <input type="number" min ="0"></input>
     </form>
-    Eingabefeld für die Kulanzzeit. Die Kulanzzeit beginnt nach der Abgabefrist. Bis zum Ende der Kulanzfrist können noch Änderungen an der Abgabe vorgenommen werden. Änderungen führen jedoch dazu, dass die Abgabe als „verspätet“ eingestuft wird und von Tutor*innen abgelehnt werden kann.
+  Eingabefeld für die Kulanzzeit. Die Kulanzzeit beginnt nach der Abgabefrist. Bis zum Ende der Kulanzfrist können von der Abgabegruppe noch Änderungen an der Abgabe vorgenommen werden. Änderungen führen jedoch dazu, dass die Abgabe als „verspätet“ eingestuft wird und von Tutor*innen abgelehnt werden kann. Ist nichts in diesem Feld eingetragen, so gibt es keine Kulanzfrist. Die Abgabe kann nach der Deadline nicht mehr von der Abgabegruppe bearbeitet werden. Ist etwas in diesem Feld eingetragen, so muss es sich um eine ganze Zahl handeln. Der kleinste Wert zulässige ist 0.
 
-Sobald auf <button>Neue Hausaufgabe anlegen</button> oder <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> geklickt worden ist, verändert sich die Ansicht zum nachfolgenden Screenshot.
+Sobald auf <button>Neue Hausaufgabe anlegen</button> oder <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> geklickt worden ist, verändert sich die Ansicht. Diese zeigt der nachfolgende Screenshot.
 
 ![](/img/lec_ha2.png)
 
@@ -674,23 +674,48 @@ Nun sind weitere Bedienelemente verfügbar:
          <input type="text" id="fname" name="fname"></input><br></br>
      </p>
   </form>
-  Eingabefeld für den Titel der Hausaufgabe. Dieser kann jederzeit bearbeitet werden. Dieses Feld muss ausgefüllt werden.
+  Eingabefeld für den Titel der Hausaufgabe. Dieser kann jederzeit bearbeitet werden. Dieses Feld muss ausgefüllt und kann nachträglich bearbeitet werden.
 * <form>
      <p>
          <label for="fname">Abgabetermin</label><br></br>
          <input type="text" id="fname" name="fname"></input><br></br>
      </p>
   </form>
-  Eingabefeld für
+  Eingabefeld für den Abgabetermin. Dieser kann manuell eingegeben oder im Datepicker, der sich beim Anklicken des Felds öffnet, ausgewählt werden. Dieses Feld muss ausgefüllt und kann nachträglich bearbeitet werden.
 * <form>
      <p>
          <label for="fname">Medium</label><br></br>
          <input type="text" id="fname" name="fname"></input><br></br>
      </p>
   </form>
-  Eingabefeld für
-* Dropdown
-* Dropdown
+  Eingabefeld und Dropdownmenü für das Übungsblatt zur Abgabe. Gib den Medientitel einer Übung ein oder klappe die Liste der Medien des Typs Übung aus dieser Veranstaltung aus. Hier können nur zu Veranstaltung gehörende Übungen eingetragen werden. Falls ein Medium ausgewählt ist, so kann es über die <a href="/mampf/de/mampf-pages/sumbmissions" target="_self">Abgabeseite</a> betrachtet und heruntergeladen werden. Ferner werden die dazu assoziierten Begriffe angezeigt.
+* Abgabeformat <br></br><label for="cars"></label>
+   <select name="cars" id="cars">
+      <option value="" selected disabled hidden>.pdf</option>
+      <option value="volvo1">.pdf</option>
+      <option value="volvo2">.tar.gz</option>
+      <option value="volvo3">.cc</option>
+      <option value="volvo4">.hh</option>
+      <option value="volvo5">.mlx</option>
+      <option value="volvo6">.m</option>
+      <option value="volvo7">.zip</option>
+   </select><br></br>
+   Dropdown-Menü zur Auswahl des Abgabeformats. Nur Dateien des hier eingestellten Typs können abgegeben werden. Unterstützte Format sind <i>.pdf</i>, <i>.tar.gz</i>, <i>.cc</i>, <i>.hh</i>, <i>.m</i>, <i>.mlx</i> und <i>.zip</i>. Sollen mehrere Dateitypen abgegeben werden, kann dies über mehrere Abgaben unterschiedlichen Formats oder eine Abgabe des Formats <i>.zip</i> realisiert werden.
+* Löschdatum <br></br><label for="cars"></label>
+  <select name="cars" id="cars">
+      <option value="" selected disabled hidden>15.04.20x(y+1)</option>
+      <option value="xvolvo1">15.04.20x(y+1)</option>
+      <option value="xvolvo2">15.07.20x(y+1)</option>
+      <option value="xvolvo3">15.10.20x(y+1)</option>
+   </select> (Wintersemester 20xy/20x(y+1)) bzw. <label for="cars"></label>
+   <select name="cars" id="carsw">
+         <option value="" selected disabled hidden>15.10.20xy</option>
+         <option value="xvolvo4">15.10.20xy</option>
+         <option value="xvolvo5">15.01.20x(y+1)</option>
+         <option value="xvolvo6">15.04.20x(y+1)</option>
+   </select> (Sommersemester 20xy)
+   <br></br>
+   Dropdown-Menü zur Auswahl des Löschdatums. Die Abgaben und das Feedback zu diesen wird aus Datenschutzgründen gelöscht. Die Löschung erfolgt frühstens zu Beginn des nächsten Semesters und spätestens zu Beginn des übernächsten Semesters. Das Löschdatum kann für jede Abgabe unabhängig gewählt werden. Es wird auf der <a href="/mampf/de/mampf-pages/sumbmissions" target="_self">Abgabeseite</a> anzeigt. Dieses Feld kann nachträglich bearbeitet werden.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen und kehre zur vorherigen Ansicht zurück.
 * <button>Abbrechen</button> Verwirf die vorgenommenen Änderungen und kehre zur vorherigen Ansicht zurück.
 
@@ -699,28 +724,55 @@ Hausaufgaben können von Veranstaltungsabonnent\*innen auf der Seite [„Abgaben
 ![](/img/lec_ha3.png)
 
 #### Mitteilungen
-Das Fach „Mitteilungen“
+Im Fach „Mitteilungen“ können Nachrichten an alle Abonnent\*innen verfasst und veröffentlicht sowie bereits veröffentlichte Nachrichten betrachtet werden. Die Mitteilung wird auf der [Veranstaltungsseite](event-series) anzeigt. Personen, die in den [Profileinstellungen](profile) die E-Mail-Benachrichtigung zu Mitteilungen aktiviert haben, erhalten diese Nachricht zusätzlich per E-Mail.
 
-![](/img/lec_mit1.png)
-* <button>Mitteilung anlegen</button>
-
-![](/img/lec_mit2.png)
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>
-* <button>Speichern</button>
-* <button>Abbrechen</button>
+Zunächst gibt es nur das Bedienelement <button>Mitteilung anlegen</button>. Wenn man darauf klickt, öffnet sich das Formular „Mitteilungen anlegen“.
 
 ![](/img/lec_mit3.png)
 
+##### Formular „Mitteilungen anlegen“
+Das Formular „Mitteilungen anlegen“ öffnet sich, nachdem auf <button>Mitteilungen anlegen</button> geklickt worden ist.
+
+![](/img/lec_mit2.png)
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> Bricht die Aktion ab und schließe das Formular.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-bold.png" height="12"/></button> Beginne bzw. beende Fettdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text fett bzw. stelle den Fettdruck ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-quote.png" height="8"/></button> Beginne bzw. beende ein Zitat an der Stelle, an der sich der Cursor befindet, oder mache aus dem markierten Text ein Zitat bzw. aus dem markierten Zitat einfachen Text.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/redo.png" height="8"/></button> Wiederhole die letzte Aktion. Dazu muss die letzte Aktion zuvor rückgängig gemacht worden sein.
+*  <form>
+            <p>
+               <label for="fname">Text</label><br></br>
+               <input type="text" id="fname" name="fname"></input><br></br>
+            </p>
+         </form>Eingabefeld für den Mitteilungstext.
+* <button>Speichern</button> Veröffentliche die eingegebene Mitteilung. Infolgedessen wird die Mitteilung allen Abonnent*innen auf der <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a> angezeigt. Diese Aktion kann nicht rückgängig gemacht werden.
+* <button>Abbrechen</button> Bricht die Aktion ab und schließe das Formular.
+
+Der folgende Screenshot zeigt eine Mitteilung aus der Sicht von einfachen Nutzer\*innen.
+
+![](/img/lec_mitteilung_user.png)
+
 #### Forum
-Das Fach „Forum“
+Im Fach „Forum“ kann ein Forum angelegt, gesperrt oder gelöscht werden.
+
+Wenn es noch kein Forum gibt, wird das Bedienelement <button>Forum anlegen</button> angezeigt. Klickt man darauf, wird ein Forum angelegt. Dieses ist über die [Seitenliste](sidebar) der [Verstaltung](event-series) erreichbar. Falls es neue Beiträge im Forum gibt, wird darüber auf der [Verstaltungsseite](event-series) informiert.
+
 ![](/img/lec_forum1.png)
 
-* <button>Forum anlegen</button>
+Nachdem ein Forum eingerichtet ist, gibt es zwei andere Bedienelemente.
 
 ![](/img/lec_forum2.png)
 
-* <button>Forum sperren</button>
-* <button>Forum löschen</button>
+* <button>Forum sperren</button> bzw. <button>Forum entsperren</button> Sperre bzw. entsperre das Forum. In gesperrten Foren können bisher veröffentlichte Beiträge betrachtet. Bereits bestehende Beiträge können jedoch nicht bearbeitet oder gelöscht werden. Außerdem können keine neuen Beiträge verfasst werden.
+* <button>Forum löschen</button> Lösche das Forum.
 
 #### Kommentare
 Das Fach „Kommentare“
@@ -733,14 +785,19 @@ Das Fach „Kommentare“
       <input type="checkbox" id="ass" name="ass"></input>
       <label for="ass"> Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert.</label>
   </form>
-   Checkbox zur ... Im Formular „Veröffentlichung des Mediums verwalten“ auf Seite <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self">„Medium bearbeiten“</a> ist
+   Checkbox. Setze bzw. entferne den Haken durch Anklicken der Box. Diese Einstellung betrifft die Checkbox
    <form>
-         <input type="checkbox" id="ass" name="ass" checked></input>
-         <label for="ass"> Kommentare für dieses Medium deaktivieren</label>
-     </form>
+         <input type="checkbox" id="ass" name="ass"></input>
+         <label for="ass"> Kommentare für dieses Medien deaktivieren</label>
+   </form>
+   im Formular <a href="/mampf/de/mampf-pages/edit-medium#formular-veröffentlichung-des-mediums-verwalten" target="_self">„Veröffentlichung des Mediums verwalten“</a>, das über die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a> geöffnet werden kann. Ist der Haken im Akkordeon nicht gesetzt, so stellt die aktivierte Kommentarfunktion die Regel und die deaktivierte Kommentarfunktion eine Ausnahme dar. In diesem Fall ist der erwähnte  Haken im Formular „Veröffentlichung des Mediums verwalten“ nicht gesetzt, kann aber bei Bedarf gesetzt werden. Ist der Haken im Akkordeon gesetzt, kehrt sich das eben beschriebene Verhalten um. Unabhängig davon kann die Kommentarfunktion für ein Medium jederzeit auf der Bearbeitungsseite des Mediums ein- und ausgeschaltet werden.
+
+Der folgende Screenshot zeigt das Formular „Veröffentlichung des Mediums verwalten“, das durch eines der eben aufgeführten Bedienelemente beeinflusst werden kann.
+
+![](/img/publish_medium1.png)
 
 #### Einstellungen
-Das Fach „Einstellungen“
+Im Fach „Einstellungen“ können grundlegende Einstellungen wie die Sprache, das Semester und der Verstaltungstyp festgelegt werden. Ferner kann ein Zugangsschlüssel eingerichtet oder entfernt werden.
 
 ![](/img/lec_einstellungen.png)
 * Semester <br></br><label for="cars"></label>
@@ -759,12 +816,12 @@ Das Fach „Einstellungen“
       <option value="saab2">Oberseminar</option>
    </select><br></br>
    Dropdown-Menü zur Auswahl des Verstaltungstyps. Dabei kann einer der folgenden Typ <i>Vorlesung</i>, <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i> eingestellt werden.
-* Nummer des ersten Kapitels Eingabe
+* Nummer des ersten Kapitels
   <form>
      <input type="number"></input>
   </form>
   Eingabefeld für die Nummer des ersten Kapitels. Dieses Bedienelement ist nur in Vorlesungen verfügbar.
-* Nummer des ersten Abschnitts Eingabe
+* Nummer des ersten Abschnitts
   <form>
      <input type="number"></input>
   </form>
@@ -780,7 +837,7 @@ Das Fach „Einstellungen“
          <input type="text" id="fname" name="fname"></input><br></br>
      </p>
   </form>
-  Eingabefeld für einen Zugangsschlüssel für die Veranstaltung. Wenn ein Schlüssel in diesem Feld eingetragen ist, wird dieser für das Abonnieren der der Veranstaltung benötigt.
+  Eingabefeld für einen Zugangsschlüssel für die Veranstaltung. Wenn ein Schlüssel in diesem Feld eingetragen ist, wird dieser für das Abonnieren der Veranstaltung benötigt.
 * Sprache <form>
   <input type="radio" id="de1" name="lang" checked></input>
   <label for="vererb"> Deutsch</label> &nbsp;
@@ -794,14 +851,85 @@ Das Fach „Einstellungen“
      <input type="radio" id="de2" name="lang"></input>
      <label for="ohnever"> unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf-LaTeX-Paket erstellt wurde</label>
   </form>
-  Radio Buttons zur Auswahl der Inhaltsermittlung. Dieses Bedienelemente ist nur in Vorlesungen verfügbar. Dabei muss <i>medienbasiert</i> ode <i>unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf-LaTeX-Paket erstellt wurde</i> eingestellt werden. Mit THymE angelegte Videogliederung ...
+  Radio Buttons zur Auswahl der Inhaltsermittlung. Dieses Bedienelemente ist nur in Vorlesungen verfügbar. Dabei muss <i>medienbasiert</i> oder <i>unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf-LaTeX-Paket erstellt wurde</i> eingestellt werden. Mit THymE angelegte Videogliederung ...
 * <button>Speichern und zurück</button> Übernimm die vorgenommmenen Änderungen und schließe das Fach.
 * <button>Abbrechen</button> Verwirf die vorgenommenen Änderungen und schließe das Fach.
 
+Video -> Abschnitt
+Abschnitt -> Sitzung
+Sitzung -> Medium -> Video
+Sitzung, Abschnitt, Medium -> Tag
+
+Tag -> Medium -> Sitzung -> Abschnitt
+
 ## Unterschiede zwischen Seminaren und Vorlesungen
-\* Tabelle: Spalten: Inhalt, Einstellungen; Zeilen: VL, Seminar \*
-* Veranstaltungsinhalt (Seminar: Vorträge anlegen, Vorlesung: Kapitel, Sitzung, Abschnitt anlegen)
-* Einstellungen (zusätzlich bei Vorlesung: Nummer des ersten Kapitels und des ersten Abschnitts,  Option absolute Nummerierung, Wahl der Inhaltsermittlung (medienbasiert vs. unter Verwendung eines -Veranstaltungsskriptes, das mit dem MaMpf LaTeX-Paket erstellt wurde))
+
+<table>
+ <tr>
+   <th>Ort</th>
+   <th>Vorlesung</th>
+   <th>Seminar, Proseminar und Oberseminar</th>
+ </tr>
+ <tr>
+   <td>Veranstaltungsinhalt</td>
+   <td>
+      <ul>
+         <li>Gliederungsimport möglich</li>
+         <li>Buttons <button>Kapitel anlegen</button>, <button>Abschnitt anlegen</button> und <button>Sitzung anlegen</button></li>
+         <li>Gliederung bestehend aus Kapiteln, Abschnitten und Sitzungen</li>
+      </ul>
+   </td>
+   <td>
+      <ul>
+         <li>Kein Gliederungsimport möglich</li>
+         <li>Button <button>Vortrag anlegen</button></li>
+         <li>Gliederung bestehend aus Vorträgen</li>
+      </ul>
+   </td>
+ </tr>
+ <tr>
+   <td>Akkordeonfach <button>Einstellungen</button></td>
+   <td>
+      <ul>
+         <li>
+            Nummer des ersten Kapitels
+            <form>
+               <input type="number"></input>
+            </form>
+         </li>
+         <li>
+            Nummer des ersten Abschnitts
+            <form>
+               <input type="number"></input>
+            </form>
+         </li>
+         <li>
+            <form>
+               <input type="checkbox" id="ass" name="ass"></input>
+               <label for="ass"> absolute Nummerierung</label>
+            </form>
+         </li>
+         <li>
+             Inhaltsermittlung
+             <form>
+                 <input type="radio" id="de1" name="lang" checked></input>
+                 <label for="vererb"> medienbasiert</label><br></br>
+                 <input type="radio" id="de2" name="lang"></input>
+                 <label for="ohnever"> unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf-LaTeX-Paket erstellt wurde</label>
+             </form>
+         </li>
+   </ul>
+   </td>
+   <td>
+      <ul>
+         <li>Nummer des ersten Kapitels nicht vorhanden</li>
+         <li>Nummer des ersten Abschnitts nicht vorhanden</li>
+         <li>Absolute Nummerierung nicht vorhanden</li>
+         <li>Inhaltsermittlung nicht vorhanden</li>
+      </ul>
+   </td>
+ </tr>
+</table>
 
 ## Unterschiede zwischen Moduleditor\*innen und Veranstaltungseditor\*innen
 Der Button <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button name="button">zum Modul</button></a> ist bei Veranstaltungseditor*innen nicht vorhanden.
@@ -810,10 +938,10 @@ Der Button <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button
 \*Tabelle?\*
 
 ### Von Seminaren und Vorlesungen aufrufbare Seiten
-* [Medium bearbeiten](ed-edit-medium), sofern ein Medium gibt
+* [Medium bearbeiten](ed-edit-medium), sofern es ein Medium gibt
 * [Modul bearbeiten](ed-edit-module) (nur Moduleditor\*innen)
-* [Quizerläuterung bearbeiten](edit-medium-remark), sofern eine Quizerläuterung gibt
-* [Quizfrage bearbeiten](edit-medium-question), sofern eine Quizfrage gibt
+* [Quizerläuterung bearbeiten](edit-medium-remark), sofern es eine Quizerläuterung gibt
+* [Quizfrage bearbeiten](edit-medium-question), sofern es eine Quizfrage gibt
 
 ### Nur von Seminaren aus aufrufbare Seiten
 * [Seite des Begriffs](tag), sofern es einen Abschnitt gibt (ist das beabsichtigt?)
@@ -821,7 +949,7 @@ Der Button <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button
 
 ### Nur von Veranstaltungen aus aufrufbare Seiten
 * [Abschnitt bearbeiten](ed-edit-section), sofern es einen Abschnitt gibt
-* [Begriff bearbeiten](ed-edit-tag), sofern ein Begriff mit einem Abschnitt verknüpft ist
+* [Begriff bearbeiten](ed-edit-tag), sofern Begriff mit einem Abschnitt verknüpft ist
 * [Kapitel beabeiten](ed-edit-chapter), sofern es ein Kapitel gibt
 * [Sitzung bearbeiten](ed-edit-session), sofern es eine Sitzung gibt
 

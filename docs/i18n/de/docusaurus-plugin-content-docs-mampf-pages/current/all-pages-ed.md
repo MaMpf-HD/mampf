@@ -9,13 +9,13 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 
 ## B
 * [Begriff bearbeiten](ed-edit-tag)
-* Bearbeiten: [Abschnitt](ed-edit-section), [Begriff](ed-edit-tag), [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Kapitel](ed-edit-chapter), [Medium](edit-medium), [Quiz](edit-quiz), [Seminar](ed-edit-seminar), [Sitzung](ed-edit-session), [Tag](ed-edit-tag), [Veranstaltung](ed-edit-event-series), [Vorlesung](ed-edit-lecture), [Vortrag](edit-talk)
+* Bearbeiten: [Abschnitt](ed-edit-section), [Begriff](ed-edit-tag), [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Kapitel](ed-edit-chapter), [Medium](edit-medium), [Quiz](edit-quiz), [Seminar](ed-edit-seminar), [Sitzung](ed-edit-session), [Skript](ed-edit-manuscript), [Tag](ed-edit-tag), [Veranstaltung](ed-edit-event-series), [Vorlesung](ed-edit-lecture), [Vortrag](edit-talk)
 
 ## C
 * [Clicker](clicker)
 
 ## E
-* Editieren: [Abschnitt](ed-edit-section), [Begriff](ed-edit-tag), [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Kapitel](ed-edit-chapter), [Medium](edit-medium), [Quiz](edit-quiz), [Seminar](ed-edit-seminar), [Sitzung](ed-edit-session), [Tag](ed-edit-tag), [Veranstaltung](ed-edit-event-series), [Vorlesung](ed-edit-lecture), [Vortrag](edit-talk)
+* Editieren: [Abschnitt](ed-edit-section), [Begriff](ed-edit-tag), [(Quiz-)Erläuterung (Medium)](edit-medium-remark), [(Quiz-)Erläuterung](edit-remark), [(Quiz-)Frage (Medium)](edit-medium-question), [(Quiz-)Frage](edit-question), [Kapitel](ed-edit-chapter), [Medium](edit-medium), [Quiz](edit-quiz), [Seminar](ed-edit-seminar), [Sitzung](ed-edit-session), [Skript](ed-edit-manuscript), [Tag](ed-edit-tag), [Veranstaltung](ed-edit-event-series), [Vorlesung](ed-edit-lecture), [Vortrag](edit-talk)
 * Editor: [Quizeditor](quiz-editor), [THymE-Editor](thyme-editor)
 * [Erläuterung bearbeiten](edit-medium-remark) (Medium)
 * [Erläuterung bearbeiten](edit-remark)

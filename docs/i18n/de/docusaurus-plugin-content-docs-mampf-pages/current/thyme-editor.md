@@ -140,7 +140,7 @@ Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bea
      <option value="a">Assoziierter Abschnitt 1 x</option>
      <option value="b">Assoziierter Abschnitt 2 x</option>
      <option value="c">Assoziierter Abschnitt 3 x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines assoziierten Abschnitts. Dieses Bedienelement ist nur in Vorlesungen bei Lektionen, die zu einer Sitzung assoziiert sind, vorhanden. Zur Sitzung muss außerdem mindestens ein Abschnitt assoziiert sein. Im Dropdown-Menü werden alle zur Sitzung assoziierten Abschnitte aufgeführt. Im Menü kann höchstens ein Abschnitt ausgewählt werden. Um die Assoziation zwischen Abschnitt und Eintrag auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines assoziierten Abschnitts. Dieses Bedienelement ist bei Lektionen aus Vorlesungen vorhanden. ??? Zur Sitzung muss außerdem mindestens ein Abschnitt assoziiert sein. Im Dropdown-Menü werden alle zur Sitzung assoziierten Abschnitte aufgeführt (keine Sitzung, alle Abschnitte). Im Menü kann höchstens ein Abschnitt ausgewählt werden. Um die Assoziation zwischen Abschnitt und Eintrag auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
 * <form>
      <p>
         <label for="fname">Nummer </label>

@@ -10,6 +10,10 @@ module.exports = {
   organizationName: 'MaMpf-HD', // Usually your GitHub org/user name.
   projectName: 'mampf', // Usually your repo name.
   themeConfig: {
+    tableOfContents: {
+      minHeadingLevel: 2,
+      maxHeadingLevel: 4,
+    },
     colorMode: {
       defaultMode: 'light',
       disableSwitch: true,
