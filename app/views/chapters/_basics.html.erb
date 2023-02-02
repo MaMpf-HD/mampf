@@ -6,8 +6,9 @@
   </div>
   <div class="card-body">
     <div class="row">
-      <div class="col-12 form-group">
-        <%= f.label :title, t('basics.title') %>
+      <div class="col-12">
+        <%= f.label :title, t('basics.title'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.chapter.info.title'), false) %>
         <%= f.text_field :title,
                          { class: 'form-control' } %>
@@ -16,10 +17,11 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-10 form-group">
+      <div class="col-10">
         <%= f.label :predecessor,
                     t('admin.chapter.position',
-                      chapter_name: t("basics.#{chapter.lecture.chapter_name}")) %>
+                    chapter_name: t("basics.#{chapter.lecture.chapter_name}")),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.chapter.info.position'), false) %>
         <%= f.select :predecessor,
                      options_for_select(chapter_positions_for_select(chapter),
@@ -27,9 +29,10 @@
                                         {},
                                         { class: 'form-control' } %>
       </div>
-      <div class="col-2 form-group">
+      <div class="col-2">
         <%= f.label :display_number,
-                    t('admin.chapter.display_number') %>
+                    t('admin.chapter.display_number'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.chapter.info.display_number'), false) %>
         <%= f.text_field :display_number,
                          { class: 'form-control' } %>

@@ -34,26 +34,26 @@
                                                                 l.id]}),
                            {},
                            { class: 'form-control' } %>
-              <div class="custom-control form-checkbox my-2">
+              <div class="custom-control form-check my-2">
                 <%= f.check_box :import_chapters,
-                                class: 'custom-control-input',
+                                class: 'form-check-input',
                                 checked: true,
                                 disabled: true %>
                 <%= f.label :import_chapters,
                             t('admin.lecture.import_chapters'),
                             class: 'custom-control-label' %>
               </div>
-              <div class="custom-control form-checkbox mb-2">
+              <div class="custom-control form-check mb-2">
                 <%= f.check_box :import_sections,
-                                class: 'custom-control-input',
+                                class: 'form-check-input',
                                 checked: true %>
                 <%= f.label :import_sections,
                             t('admin.lecture.import_sections'),
                             class: 'custom-control-label' %>
               </div>
-              <div class="custom-control form-checkbox">
+              <div class="custom-control form-check">
                 <%= f.check_box :import_tags,
-                                class: 'custom-control-input',
+                                class: 'form-check-input',
                                 checked: true %>
                 <%= f.label :import_tags,
                             t('admin.lecture.import_tags'),

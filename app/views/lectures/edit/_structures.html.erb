@@ -9,9 +9,9 @@
 <%= form_with model: lecture,
               html: { id: 'lecture-structures-form' } do |f| %>
   <% all_structures.each do |s| %>
-    <div class="custom-control form-checkbox">
+    <div class="custom-control form-check">
       <%= f.check_box "structures[#{s['id']}]",
-                      class: 'custom-control-input',
+                      class: 'form-check-input',
                       checked: s['id'].to_i.in?(@structure_ids) %>
       <%= f.label "structures[#{s['id']}]",
                   s['attributes']['name'],

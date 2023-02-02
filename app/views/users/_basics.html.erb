@@ -20,9 +20,9 @@
   <div class="form-group row"
        style="display: <%= hide(profile) %>">
     <div class="col-12">
-      <div class="custom-control form-checkbox">
+      <div class="custom-control form-check">
         <%= f.check_box :admin,
-                        class: 'custom-control-input',
+                        class: 'form-check-input',
                         disabled: user == current_user %>
         <%= f.label :admin,
                     t('basics.administrator'),

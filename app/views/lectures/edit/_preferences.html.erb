@@ -74,9 +74,9 @@
                 </div>
               </div>
               <div class="col-6 mt-6 mb-3">
-                <div class="custom-control form-checkbox">
+                <div class="custom-control form-check">
                   <%= f.check_box :absolute_numbering,
-                                  class: 'custom-control-input' %>
+                                  class: 'form-check-input' %>
                   <%= f.label :absolute_numbering,
                               t('admin.lecture.absolute_numbering'),
                               { class: 'custom-control-label' } %>
@@ -102,7 +102,7 @@
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :locale,
                                    locale.to_s,
-                                   class: 'custom-control-input' %>
+                                   class: 'form-check-input' %>
                 <%= f.label :locale,
                             t('locales.' + locale.to_s),
                             value: locale.to_s,
@@ -119,7 +119,7 @@
                 <div class="custom-control custom-radio custom-control-inline">
                   <%= f.radio_button :content_mode,
                                      'video',
-                                     class: 'custom-control-input' %>
+                                     class: 'form-check-input' %>
                   <%= f.label :content_mode,
                               t('admin.lecture.video_based'),
                               value: 'video',
@@ -128,7 +128,7 @@
                 <div class="custom-control custom-radio custom-control-inline">
                   <%= f.radio_button :content_mode,
                                      'manuscript',
-                                     class: 'custom-control-input' %>
+                                     class: 'form-check-input' %>
                   <%= f.label :content_mode,
                               t('admin.lecture.script_based'),
                               value: 'manuscript',
@@ -140,9 +140,9 @@
           <% if !lecture.term %>
             <div class="row">
               <div class="col-12">
-                <div class="custom-control form-checkbox">
+                <div class="custom-control form-check">
                   <%= f.check_box :disable_teacher_display,
-                                  class: 'custom-control-input' %>
+                                  class: 'form-check-input' %>
                   <%= f.label :disable_teacher_display,
                               t('admin.lecture.disable_teacher_display'),
                               { class: 'custom-control-label' } %>

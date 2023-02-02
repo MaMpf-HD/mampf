@@ -112,9 +112,9 @@
                           <% end %>
                         </div>
                         <div class="col-1 mt-2 text-end">
-                          <div class="custom-control form-checkbox">
+                          <div class="custom-control form-check">
                             <input type="checkbox"
-                                   class="custom-control-input"
+                                   class="form-check-input"
                                    id="tag-<%= content['counter'] %>"
                                    data-counter="<%= content['counter'] %>"
                                    <%= content['tag_id'].nil? ? '' : 'checked disabled' %>
@@ -128,7 +128,7 @@
                           <div class="custom-control custom-switch">
                             <input type="checkbox"
                                    <%= check_status(content) %>
-                                   class="custom-control-input"
+                                   class="form-check-input"
                                    id="visible-<%= content['counter'] %>"
                                    data-counter="<%= content['counter'] %>">
                             <label class="custom-control-label"

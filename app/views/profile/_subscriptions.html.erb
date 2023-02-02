@@ -1,28 +1,28 @@
 <% Course.includes(lectures: [:term, :teacher]).all.natural_sort_by(&:title)
          .each do |c| %>
   <% subscribed = c.subscribed_by?(@user) %>
-  <div class="card"
+  <div class="accordion-item"
        id="course-card-<%= c.id %>"
        style="display: none;">
-    <div class="card-header clickable"
-         id="course-heading-<%= c.id %>"
-         data-toggle="collapse"
-         data-target="#collapse-course-<%= c.id %>">
+    <button class="accordion-button collapsed"
+            type="button"
+            id="course-heading-<%= c.id %>"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapse-course-<%= c.id %>">
       <div class="row">
         <div class="col-12">
-          <%= tag.i class: [circle_icon(subscribed), 'me-2', 'text-dark',
-                            'courseSubInfo'],
-                    data: { course: c.id } %>
-          <%= c.title %>
+      <%= tag.i class: [circle_icon(subscribed), 'me-2', 'text-dark',
+                        'courseSubInfo'],
+                data: { course: c.id } %>
+      <%= c.title %>
         </div>
       </div>
-    </div>
+    </button>
     <div id="collapse-course-<%= c.id %>"
          class="collapse collapseCourse"
          aria-labelledby="course-heading-<%= c.id %>"
-         data-parent="#accordion"
          data-course="<%= c.id %>">
-      <div class="card-body"
+      <div class="accordion-body"
            id="course-body-<%= c.id %>">
         <%= render partial: 'profile/details',
                    locals: { c: c,
@@ -38,17 +38,18 @@
     <% Program.includes(divisions: [courses: [lectures: [:term, :teacher]]])
               .select { |p| p.courses.any? }.natural_sort_by(&:name_with_subject)
               .each do |p| %>
-      <div class="card">
-        <div class="card-header clickable"
-             data-toggle="collapse"
-             data-target="#program-<%= p.id %>-collapse">
+      <div class="accordion-item">
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#program-<%= p.id %>-collapse">
           <%= p.name_with_subject %>
-        </div>
+        </button>
         <div id="<%= 'program-' + p.id.to_s + '-collapse' %>"
              class="collapse programCollapse"
              data-program="<%= p.id %>"
-             data-parent="#subscriptionsAccordion">
-          <div class="card-body">
+             data-bs-parent="#subscriptionsAccordion">
+          <div class="accordion-body">
             <%= render partial: 'profile/divisions',
                        locals: { divisions: p.divisions.select { |p| p.courses.any? },
                                  f: f } %>

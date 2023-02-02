@@ -35,7 +35,7 @@
           <div class="custom-control custom-radio">
             <%= f.radio_button :release_now,
                                '1',
-                               class: 'custom-control-input',
+                               class: 'form-check-input',
                                checked: !medium.release_date_set? %>
             <%= f.label :release_now,
                         t('basics.immediately'),
@@ -45,7 +45,7 @@
           <div class="custom-control custom-radio mb-3">
             <%= f.radio_button :release_now,
                                '0',
-                               class: 'custom-control-input',
+                               class: 'form-check-input',
                                checked: medium.release_date_set? %>
             <%= f.label :release_now,
                         t('basics.at_time'),
@@ -69,9 +69,9 @@
             <div class="mb-1">
               <%= t('basics.assignment') %>
             </div>
-            <div class="custom-control form-checkbox mb-2">
+            <div class="custom-control form-check mb-2">
               <%= f.check_box :create_assignment,
-                              class: 'custom-control-input',
+                              class: 'form-check-input',
                               checked: medium.publisher&.create_assignment %>
               <%= f.label :create_assignment,
                           t('admin.medium.create_assignment'),
@@ -139,18 +139,18 @@
           <div class="mb-1">
             <%= t('basics.comments') %>
           </div>
-          <div class="custom-control form-checkbox">
+          <div class="custom-control form-check">
             <%= f.check_box :lock_comments,
-                            class: 'custom-control-input',
+                            class: 'form-check-input',
                             checked: medium.planned_comment_lock? %>
             <%= f.label :lock_comments,
                         t('admin.medium.lock_comments'),
                         { class: 'custom-control-label' } %>
           </div>
           <hr>
-          <div class="custom-control form-checkbox">
+          <div class="custom-control form-check">
             <%= f.check_box :disclaimer,
-                            class: 'custom-control-input',
+                            class: 'form-check-input',
                             required: true,
                             checked: medium.publisher.present? %>
             <%= f.label :disclaimer,

@@ -31,7 +31,7 @@
               <div class="custom-control custom-radio">
                 <%= f.radio_button :publish_media,
                                    1,
-                                   class: 'custom-control-input',
+                                   class: 'form-check-input',
                                    checked: true %>
                 <%= f.label :publish_media,
                             t('admin.lecture.publish_all_media'),
@@ -51,7 +51,7 @@
               <div class="custom-control custom-radio">
                 <%= f.radio_button :publish_media,
                                     0,
-                                    class: 'custom-control-input',
+                                    class: 'form-check-input',
                                     checked: false %>
                 <%= f.label :publish_media,
                             t('admin.lecture.media_unpublished'),

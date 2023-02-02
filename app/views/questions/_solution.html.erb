@@ -36,7 +36,7 @@
       <div class="custom-control custom-control-inline custom-radio">
         <%= f.radio_button :solution_type,
                            'MampfExpression',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfExpression',
                            data: { type: 'MampfExpression' } %>
         <%= f.label :solution_type,
@@ -47,7 +47,7 @@
       <div class="custom-control custom-control-inline custom-radio">
         <%= f.radio_button :solution_type,
                            'MampfMatrix',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfMatrix',
                            data: { type: 'MampfMatrix' } %>
         <%= f.label :solution_type,
@@ -58,7 +58,7 @@
       <div class="custom-control custom-control-inline custom-radio">
         <%= f.radio_button :solution_type,
                            'MampfTuple',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfTuple',
                            data: { type: 'MampfTuple' } %>
         <%= f.label :solution_type,
@@ -69,7 +69,7 @@
       <div class="custom-control custom-control-inline custom-radio">
         <%= f.radio_button :solution_type,
                            'MampfSet',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfSet',
                            data: { type: 'MampfSet' } %>
         <%= f.label :solution_type,

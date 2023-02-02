@@ -26,9 +26,9 @@
                       html: { id: 'lecture-organizational-form' } do |f| %>
           <div class="row mb-3">
             <div class="col-6">
-              <div class="custom-control form-checkbox">
+              <div class="custom-control form-check">
                 <%= f.check_box :organizational,
-                                class: 'custom-control-input' %>
+                                class: 'form-check-input' %>
                 <%= f.label :organizational,
                             t('admin.lecture.organizational_visible'),
                             { class: 'custom-control-label' } %>
@@ -36,9 +36,9 @@
               </div>
             </div>
             <div class="col-6">
-              <div class="custom-control form-checkbox">
+              <div class="custom-control form-check">
                 <%= f.check_box :muesli,
-                                class: 'custom-control-input' %>
+                                class: 'form-check-input' %>
                 <%= f.label :muesli,
                             t('admin.lecture.uses_muesli'),
                             { class: 'custom-control-label' } %>
@@ -47,9 +47,9 @@
             </div>
             <% if !lecture.term && lecture.organizational %>
               <div class="col-6">
-                <div class="custom-control form-checkbox">
+                <div class="custom-control form-check">
                   <%= f.check_box :organizational_on_top,
-                                  class: 'custom-control-input' %>
+                                  class: 'form-check-input' %>
                   <%= f.label :organizational_on_top,
                               t('admin.lecture.organizational_on_top'),
                                 { class: 'custom-control-label' } %>

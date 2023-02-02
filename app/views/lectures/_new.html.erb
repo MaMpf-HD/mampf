@@ -16,8 +16,9 @@
     <% term_independent = (from != 'course' && first_course_independent?) ||
                             (from == 'course' && lecture.course.term_independent) %>
     <div class="row">
-      <div class="col-8 form-group">
-        <%= f.label :course_id, t('basics.course') %>
+      <div class="col-8">
+        <%= f.label :course_id, t('basics.course'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.course'), false) %>
         <%= f.select :course_id,
                      options_for_select(current_user
@@ -36,10 +37,11 @@
              id="new-lecture-course-error">
         </div>
       </div>
-      <div class="col-4 form-group" id="newLectureTerm"
+      <div class="col-4" id="newLectureTerm"
            style="<%= term_independent ? 'display: none;' : '' %>">
         <%= f.label :term_id,
-                    t('basics.term') %>
+                    t('basics.term'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.term'), false) %>
         <%= f.select :term_id,
                      options_for_select(Term.select_terms),
@@ -50,9 +52,10 @@
              id="new-lecture-term-error">
         </div>
       </div>
-      <div class="col-12 form-group">
+      <div class="col-12">
         <%= f.label :teacher_id,
-                    t('basics.teacher') %>
+                    t('basics.teacher'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
         <%= f.select :teacher_id,
                      options_for_select(User.select_editors,
@@ -61,10 +64,11 @@
                      { class: 'selectize',
                        data: { current: current_user.id } } %>
       </div>
-      <div class="col-12 form-group" id="newLectureSort"
+      <div class="col-12" id="newLectureSort"
            style="<%= term_independent ? 'display: none;' : '' %>">
         <%= f.label :sort,
-                    t('basics.type') %>
+                    t('basics.type'),
+                    class: "form-label" %>
         <%= f.select :sort,
                      options_for_select(Lecture.sort_localized.invert.to_a,
                                         'lecture'),

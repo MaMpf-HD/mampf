@@ -22,7 +22,7 @@
             <% if current_user.admin_or_editor? %>
               <li class="nav-item">
                 <a class="nav-link active" id="importMedia"
-                   data-toggle="pill" href="#import-vertex" role="tab"
+                   data-bs-toggle="pill" href="#import-vertex" role="tab"
                    aria-controls="import-vertex" aria-selected="true">
                   <%= t('admin.quiz.import_content') %>
                 </a>
@@ -31,14 +31,14 @@
             <li class="nav-item">
               <a class="nav-link <%= active(!current_user.admin_or_editor?) %>"
                  id="create-question-tab"
-                 data-toggle="pill" href="#create-question" role="tab"
+                 data-bs-toggle="pill" href="#create-question" role="tab"
                  aria-controls="create-question" aria-selected="false">
                 <%= t('admin.quiz.create_question') %>
               </a>
             </li>
             <li class="nav-item">
               <a class="nav-link" id="create-remark-tab"
-                 data-toggle="pill" href="#create-remark" role="tab"
+                 data-bs-toggle="pill" href="#create-remark" role="tab"
                  aria-controls="create-remark" aria-selected="false">
                 <%= t('admin.quiz.create_remark') %>
               </a>

@@ -54,14 +54,14 @@
             <% @tag.locales.each do |l| %>
               <%= link_to l.to_s,
                           tag_path(@tag, params: { locale: l }),
-                          class: 'badge badge-light' %>
+                          class: 'badge badge-light text-dark' %>
               <%= @tag.notions.where(locale: l)&.first&.title %>
               <br>
             <% end %>
             <% if @tag.aliases.any? %>
               <hr>
               <% @tag.aliases.each do |a| %>
-                <span class="badge badge-light">
+                <span class="badge badge-light text-dark">
                   <%= a.locale %>
                 </span>
                 <%= a.title %>
@@ -85,7 +85,7 @@
               <% @related_tags.natural_sort_by(&:title).each do |t| %>
                 <%= link_to t.short_title,
                             tag_path(t),
-                            class: "badge badge-light",
+                            class: "badge badge-light text-dark",
                             id: 'related-' + dom_id(t),
                             data: { toggle: 'tooltip',
                                     placement: 'top',
@@ -103,7 +103,7 @@
               <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
                 <%= link_to t.short_title,
                             tag_path(t),
-                            class: "badge badge-light",
+                            class: "badge badge-light text-dark",
                             id: 'related-' + dom_id(t),
                             data: { toggle: 'tooltip',
                                     placement: 'top',

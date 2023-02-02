@@ -142,9 +142,9 @@
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
                  medium: medium } %>
-      <div class="custom-control form-checkbox mb-2">
+      <div class="custom-control form-check mb-2">
         <%= f.check_box :comments_locked,
-                         class: 'custom-control-input',
+                         class: 'form-check-input',
                          checked:  medium.commontator_thread.is_closed? %>
         <%= f.label :comments_locked,
                     t('admin.medium.comments_locked'),
@@ -159,7 +159,7 @@
           <div class="custom-control custom-radio custom-control-inline">
             <%= f.radio_button :locale,
                                locale.to_s,
-                               class: 'custom-control-input' %>
+                               class: 'form-check-input' %>
             <%= f.label :locale,
                         t('locales.' + locale.to_s),
                         value: locale.to_s,

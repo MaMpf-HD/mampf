@@ -52,9 +52,9 @@
           <%= sanitize talk.description %>
         </div>
       <% end %>
-      <div class="custom-control form-checkbox">
+      <div class="custom-control form-check">
         <%= f.check_box :display_description,
-                        class: 'custom-control-input',
+                        class: 'form-check-input',
                         disabled: !current_user.in?(talk.speakers) &&
                                   !talk.display_description %>
         <%= f.label :display_description,

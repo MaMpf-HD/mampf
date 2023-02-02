@@ -10,7 +10,7 @@
   </div>
   <% unless announcement.lecture.present? %>
     <div class="my-3">
-      <div class="custom-control form-checkbox">
+      <div class="custom-control form-check">
         <%= f.check_box :on_main_page,
                         class: 'form-check-input' %>
         <%= f.label :on_main_page,
