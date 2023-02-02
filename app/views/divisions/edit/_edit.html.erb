@@ -10,7 +10,8 @@
 	</div>
 	<% I18n.available_locales.each do |l| %>
 		<%= f.label "name_#{l}",
-								"#{l}" %>
+								"#{l}",
+                class: "form-label" %>
 		<%= f.text_field "name_#{l}",
 										 { class: 'form-control mb-2',
 										 	 required: true } %>

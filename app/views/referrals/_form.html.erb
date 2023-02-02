@@ -1,6 +1,6 @@
 <div class="action-box">
   <%= form_with model: referral  do |f|%>
-    <div class="form-group row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= t('admin.referral.start_time') %>
         <%= helpdesk(t('admin.referral.info.start_time'), false) %>
@@ -25,7 +25,7 @@
         </i>
       </div>
     </div>
-    <div class="form-group row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= t('admin.referral.end_time') %>
         <%= helpdesk(t('admin.referral.info.end_time'), false) %>
@@ -51,10 +51,11 @@
       </div>
     </div>
     <div id="teachable_selector"
-         class="form-group row">
+         class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= f.label :teachable,
-                    t('admin.referral.preselection') %>
+                    t('admin.referral.preselection'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.referral.info.end_time'), false) %>
       </div>
       <div class="col-9">
@@ -69,10 +70,11 @@
                                          .can?(:create, Item.new) } } %>
       </div>
     </div>
-    <div id="item_select" class="form-group row">
+    <div id="item_select" class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= f.label :item_id,
-                    t('admin.referral.item') %>
+                    t('admin.referral.item'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.referral.info.item'), false) %>
       </div>
       <div class="col-9">
@@ -94,10 +96,11 @@
     </div>
     <div id="link_details" style="display: <%= show(show_link(referral)) %>">
       <div id="referral_description_field"
-           class="form-group row">
+           class="mb-3 row">
         <div class="col-2 col-form-label">
           <%= f.label :description,
-                      t('basics.title') %>
+                      t('basics.title'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.referral.info.description'), true) %>
           <i id="link_reappearance_title"
              class="fas fa-exclamation-circle"
@@ -118,10 +121,11 @@
         </div>
       </div>
       <div id="referral_link_field"
-           class="form-group row">
+           class="mb-3 row">
         <div class="col-2 col-form-label">
           <%= f.label :link,
-                      t('basics.link') %>
+                      t('basics.link'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.referral.info.link'), true) %>
           <i id="link_reappearance_link"
              class="fas fa-exclamation-circle"
@@ -156,10 +160,11 @@
     </div>
     <div id="explanation_details"
          style="display: <%= show(show_explanation(referral)) %>;">
-      <div class="form-group row">
+      <div class="mb-3 row">
         <div class="col-2 col-form-label">
           <%= f.label :explanation,
-                      t('admin.referral.explanation') %>
+                      t('admin.referral.explanation'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.referral.info.explanation'), true) %>
         </div>
         <div class="col-8">

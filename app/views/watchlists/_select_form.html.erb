@@ -3,8 +3,9 @@
               id: "watchlistSelectForm",
               html: { class: "needs-validation",
                       novalidate: true } do |f| %>
-	<div class="form-group row">
-    <%= f.label :watchlist, t('watchlist.select') %>
+	<div class="mb-3 row">
+    <%= f.label :watchlist, t('watchlist.select'),
+                class: "form-label" %>
     <% if @medium.present? %>
       <%= f.hidden_field :medium_id, value: @medium.id %>
     <% end %>

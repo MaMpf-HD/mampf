@@ -8,21 +8,23 @@
   </div>
 </div>
 <div class="card-body p-2">
-  <div class="form-group">
-    <%= f.label :title, t('basics.title') %>
+  <div class="mb-3">
+    <%= f.label :title, t('basics.title'),
+                class: "form-label" %>
     <%= helpdesk(t('admin.course.info.title'), false) %>
     <%= f.text_field :title, { class: 'form-control' } %>
     <div class="invalid-feedback" id="course-title-error">
     </div>
   </div>
-  <div class="form-group">
-    <%= f.label :short_title, t('basics.short_title') %>
+  <div class="mb-3">
+    <%= f.label :short_title, t('basics.short_title'),
+                class: "form-label"  %>
     <%= helpdesk(t('admin.course.info.short_title'), false) %>
     <%= f.text_field :short_title, { class: 'form-control' } %>
     <div class="invalid-feedback" id="course-short-title-error">
     </div>
   </div>
-  <div class="form-group">
+  <div class="mb-3">
     <%= t('basics.language') %>
     <div class="row ms-2">
     <% I18n.available_locales.each do |locale| %>
@@ -38,9 +40,10 @@
     <% end %>
     </div>
   </div>
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :preceding_course_ids,
-                t('admin.course.preceding_courses') %>
+                t('admin.course.preceding_courses'),
+                class: "form-label"  %>
     <%= helpdesk(t('admin.course.info.preceding_courses'), false) %>
     <%= f.select :preceding_course_ids,
                  options_for_select(Course.all.map { |c| [c.title, c.id]},
@@ -49,8 +52,9 @@
 
   </div>
   <% if current_user.admin? %>
-    <div class="form-group">
-      <%= f.label :editor_ids, t('basics.editors') %>
+    <div class="mb-3">
+      <%= f.label :editor_ids, t('basics.editors'),
+          class: "form-label"  %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
                    options_for_select(course.editors.map { |e| [ e.info, e.id] },
@@ -117,9 +121,10 @@
     </div>
   </div>
   <div class="row mt-2">
-    <div class="col-12 form-group">
+    <div class="col-12 mb-3">
       <%= f.label :division_ids,
-                  t('admin.course.divisions') %>
+                  t('admin.course.divisions'),
+                  class: "form-label"  %>
       <%= helpdesk(t('admin.course.info.divisions'), false) %>
       <%= f.select :division_ids,
                    options_for_select(Division.all.map { |d| [d.name_with_program, d.id] },

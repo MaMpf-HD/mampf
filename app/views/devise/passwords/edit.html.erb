@@ -11,18 +11,19 @@
 
   <div class="form-group">
     <%= f.label :password,
-                t('.new_password') %>
+                t('.new_password'),
+                class: "form-label" %>
     <%= f.password_field :password,
                          autofocus: true,
                          class: 'form-control'  %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :password_confirmation,
                 t('.confirm_new_password') %>
     <%= f.password_field :password_confirmation, class: 'form-control'  %>
   </div>
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.submit t('.change_password'),
                  class: 'btn btn-primary' %>
   </div>

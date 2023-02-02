@@ -7,7 +7,7 @@
     <% tags_without_section.each do |t| %>
       <li>
         <%= t.title %>
-        <div class="form-group">
+        <div class="mb-3">
           <% sections.each do |s| %>
             <div class="custom-control form-check">
               <%= f.check_box "tags[#{t.id}][#{s.id}]",

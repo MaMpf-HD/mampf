@@ -27,9 +27,10 @@
           </div>
         </div>
         <div class="card-body">
-          <div class="form-group">
+          <div class="mb-3">
             <%= f.label :name,
-                        t('profile.name') %>
+                        t('profile.name'),
+                        class: "form-label" %>
             <i class="far fa-question-circle helpdesk"
                tabindex="-1"
                data-toggle="popover" data-trigger="focus"
@@ -42,9 +43,10 @@
                  id="username-error">
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <%= f.label :name_in_tutorials,
-                        t('profile.name_in_tutorials') %>
+                        t('profile.name_in_tutorials'),
+                        class: "form-label" %>
             <i class="far fa-question-circle helpdesk"
                tabindex="-1"
                data-toggle="popover" data-trigger="focus"

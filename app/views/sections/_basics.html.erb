@@ -6,8 +6,9 @@
   </div>
   <div class="card-body">
     <div class="row">
-    <div class="col-12 form-group">
-      <%= f.label :title, t('basics.title') %>
+    <div class="col-12 mb-3">
+      <%= f.label :title, t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.section.info.title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'section_title_' + section.id.to_s,
@@ -19,18 +20,20 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-12 form-group">
+    <div class="col-12 mb-3">
       <%= f.label :chapter_id,
-                  t("basics.#{section.lecture.chapter_name}") %>
+                  t("basics.#{section.lecture.chapter_name}"),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.section.info.chapter'), false) %>
       <%= f.select :chapter_id,
                    options_for_select(lecture_chapters_for_select(section),
                                       section.chapter.id), {},
                    { class: 'form-control'} %>
     </div>
-    <div class="col-8 form-group">
+    <div class="col-8 mb-3">
       <%= f.label :predecessor,
-                  t('admin.section.position') %>
+                  t('admin.section.position'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.section.info.position'), false) %>
       <%= f.select :predecessor,
                    options_for_select(section_positions_for_select(section),
@@ -38,9 +41,10 @@
                                       {},
                                       { class: 'form-control' } %>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-4 mb-3">
       <%= f.label :display_number,
-                  t('admin.section.display_number') %>
+                  t('admin.section.display_number'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.section.info.display_number'), false) %>
       <%= f.text_field :display_number,
                        { class: 'form-control',
@@ -49,9 +53,10 @@
                                  chapter: section.chapter.id } } %>
     </div>
   </div>
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.label :tag_ids,
-                t('basics.related_tags') %>
+                t('basics.related_tags'),
+                class: "form-label" %>
     <%= helpdesk(t('admin.section.info.related_tags'), false) %>
     <a class="fas fa-plus-circle clickable text-dark"
        id="new-tag-button"

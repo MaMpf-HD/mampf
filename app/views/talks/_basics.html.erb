@@ -6,8 +6,9 @@
   </div>
   <div class="card-body">
     <div class="row">
-      <div class="col-12 form-group">
-        <%= f.label :title, t('basics.title') %>
+      <div class="col-12 mb-3">
+        <%= f.label :title, t('basics.title'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.talk.info.title'), false) %>
         <%= f.text_field :title,
                          { class: 'form-control' } %>
@@ -17,7 +18,8 @@
     </div>
     <div class="row">
       <div class="col-12">
-        <%= f.label :date, t('basics.date') %>
+        <%= f.label :date, t('basics.date'),
+                    class: "form-label" %>
         <a class="fas fa-plus-circle clickable text-dark"
            id="new-talk-date-button"
            data-toggle="tooltip"
@@ -48,7 +50,8 @@
     <div class="row">
       <div class="col-12 mb-3">
         <%= f.label :speaker_ids,
-                    t('admin.talk.speakers') %>
+                    t('admin.talk.speakers'),
+                    class: "form-label" %>
         <%= f.select :speaker_ids,
                      options_for_select(talk.speakers.map { |s| [s.tutorial_info, s.id] },
                        talk.speaker_ids),
@@ -92,8 +95,9 @@
         <% end %>
       </div>
     </div>
-    <div class="form-group">
-      <%= f.label :tag_ids, t('basics.related_tags') %>
+    <div class="mb-3">
+      <%= f.label :tag_ids, t('basics.related_tags'),
+                   class: "form-label" %>
       <%= helpdesk(t('admin.talk.info.tags'), false) %>
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-tag-button"
@@ -122,10 +126,11 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-12 form-group">
+      <div class="col-12 mb-3">
         <%= f.label :predecessor,
                     t('admin.chapter.position',
-                      chapter_name: t('basics.talk')) %>
+                    chapter_name: t('basics.talk')),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.talk.info.position'), false) %>
         <%= f.select :predecessor,
                      options_for_select(talk_positions_for_select(talk),

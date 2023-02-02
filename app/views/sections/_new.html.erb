@@ -1,8 +1,9 @@
 <%= form_with model: section do |f| %>
   <div class="row">
-    <div class="col-12 form-group">
+    <div class="col-12 mb-3">
       <%= f.label :title,
-                  t('basics.title') %>
+                  t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lecture.info.section_title'), false) %>
       <%= f.text_field :title,
                        { class: 'form-control',
@@ -12,9 +13,10 @@
       </div>
     </div>
     <% if chapter.sections.exists? %>
-      <div class="col-12 form-group">
+      <div class="col-12 mb-3">
         <%= f.label :predecessor,
-                    t('admin.lecture.insert_after_section') %>
+                    t('admin.lecture.insert_after_section'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.insert_after_section'), false) %>
         </i>
         <%= f.select :predecessor,

@@ -1,6 +1,6 @@
 <div class="action-box">
   <%= form_with model: item do |f|%>
-    <div class="form-group row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= t('admin.item.start_time') %>
         <%= helpdesk(t('admin.item.info.start_time'), false) %>
@@ -20,9 +20,10 @@
         </i>
       </div>
     </div>
-    <div class="form-group row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
-        <%= f.label :sort, t('basics.type') %>
+        <%= f.label :sort, t('basics.type'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.item.info.type'), false) %>
       </div>
       <div class="col-auto">
@@ -35,10 +36,11 @@
     <% if item.medium.sort == 'Kaviar' &&
           item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
       <div id="item_section_select"
-           class="form-group row"
+           class="mb-3 row"
            style="display: <%= show_no_block(item.sort != 'chapter') %>">
         <div class="col-2 col-form-label">
-          <%= f.label :section_id, t('basics.section') %>
+          <%= f.label :section_id, t('basics.section'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.item.info.section'), true) %>
         </div>
         <div class="col-10">
@@ -54,9 +56,10 @@
     <% end %>
     <div id="item_number_field"
          style="display: <%= show_no_block(item.sort != 'label') %>"
-         class="form-group row">
+         class="mb-3 row">
       <div class="col-2 col-form-label">
-        <%= f.label :ref_number, t('basics.number') %>
+        <%= f.label :ref_number, t('basics.number'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.item.info.number'), false) %>
       </div>
       <div class="col-4">
@@ -73,9 +76,10 @@
         </div>
       </div>
     </div>
-    <div id="item_description_field" class="form-group row">
+    <div id="item_description_field" class="mb-3 row">
       <div class="col-2 col-form-label">
-        <%= f.label :description, t('basics.description') %>
+        <%= f.label :description, t('basics.description'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.item.info.description'), false) %>
       </div>
       <div class="col-10">
@@ -83,10 +87,11 @@
       </div>
     </div>
     <% if item.manuscript? %>
-      <div id="item_page_field" class="form-group row"
+      <div id="item_page_field" class="mb-3 row"
            style="display: <%= show_no_block(item.pdf_destination.blank?) %>">
         <div class="col-2 col-form-label">
-          <%= f.label :page, t('admin.item.page') %>
+          <%= f.label :page, t('admin.item.page'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.item.info.page'), false) %>
         </div>
         <div class="col-auto">

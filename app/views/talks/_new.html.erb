@@ -1,7 +1,8 @@
 <%= form_with model: talk do |f| %>
   <div class="row">
-    <div class="col-12 form-group">
-      <%= f.label :title, t('basics.title') %>
+    <div class="col-12 mb-3">
+      <%= f.label :title, t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lecture.info.chapter_title'),
                    false) %>
       <%= f.text_field :title, { class: 'form-control',
@@ -30,7 +31,8 @@
     </div>
     <div class="col-12 mb-3">
       <%= f.label :speaker_ids,
-                  t('admin.talk.speakers') %>
+                  t('admin.talk.speakers'),
+                  class: "form-label" %>
       <%= f.select :speaker_ids,
                    [[]],
                    {},
@@ -39,10 +41,11 @@
                      data: { locale: I18n.locale } } %>
     </div>
     <% if lecture.talks.exists? %>
-      <div class="col-12 form-group">
+      <div class="col-12 mb-3">
         <%= f.label :predecessor,
                     t('admin.lecture.insert_after_chapter',
-                      chapter_name: t("basics.talk")) %>
+                    chapter_name: t("basics.talk")),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
                        chapter_name: t("basics.talk")),
                      false) %>

@@ -24,9 +24,10 @@
       <div class="accordion-body">
         <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
           <div class="row">
-            <div class="col-4 form-group">
+            <div class="col-4 mb-3">
               <%= f.label :teacher_id,
-                          t('basics.teacher') %>
+                          t('basics.teacher'),
+                          class: "form-label" %>
               <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
               <div id="lecture_teacher_select" %>
                 <%= f.select :teacher_id,
@@ -58,9 +59,10 @@
                 <%= t('admin.lecture.no_course_editors') %>
               <% end %>
             </div>
-            <div class="col-4 form-group">
+            <div class="col-4 mb-3">
               <%= f.label :editor_ids,
-                          t('basics.lecture_editors') %>
+                          t('basics.lecture_editors'),
+                          class: "form-label" %>
               <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
               <div id="lecture_editors_select" %>
                 <%= f.select :editor_ids,

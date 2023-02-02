@@ -12,9 +12,10 @@
                                assemble: true } %>
           <div class="row">
             <div class="col-12">
-              <div class="form-group">
+              <div class="mb-3">
                 <strong>
-                  <%= f.label :tag_ids, t('basics.related_tags') %>:
+                  <%= f.label :tag_ids, t('basics.related_tags'),
+                              class: "form-label" %>:
                   <%= helpdesk(t('admin.talk.info.tags'), false) %>
                 </strong>
                 <%= f.select :tag_ids,

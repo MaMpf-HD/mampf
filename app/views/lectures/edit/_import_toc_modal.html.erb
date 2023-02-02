@@ -27,7 +27,8 @@
           <div class="row mt-2 mb-2">
             <div class="col-12">
               <%= f.label :imported_lecture_id,
-                  t('basics.lecture') %>
+                  t('basics.lecture'),
+                  class: "form-label" %>
               <%= f.select :imported_lecture_id,
                            options_for_select(lecture.neighbours
                                                      .map{ |l| [l.title_with_teacher,

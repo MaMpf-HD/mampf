@@ -8,11 +8,12 @@
 	<div class="row mt-2 p-2">
 		<div class="col-12">
 			<%= f.label :start_date,
-									t('admin.interaction.start') %>
+									t('admin.interaction.start'),
+									class: "form-label" %>
 			<%= f.date_field :start_date, required: true %>
 			<%= f.label :end_date,
 									t('admin.interaction.end'),
-									class: 'ms-3' %>
+									class: 'form-label ms-3' %>
 			<%= f.date_field :end_date, required: true %>
 			<%= f.submit t('buttons.export'),
 									 class: 'btn btn-primary ms-3',
@@ -30,11 +31,12 @@
 	<div class="row mt-2 p-2">
 		<div class="col-12">
 			<%= f.label :start_date,
-									t('admin.interaction.start') %>
+									t('admin.interaction.start'),
+                  class: "form-label" %>
 			<%= f.date_field :start_date, required: true %>
 			<%= f.label :end_date,
 									t('admin.interaction.end'),
-									class: 'ms-3' %>
+									class: 'form-label ms-3' %>
 			<%= f.date_field :end_date, required: true %>
 			<%= f.submit t('buttons.export'),
 									 class: 'btn btn-primary ms-3',

@@ -14,7 +14,8 @@
       <div class="row my-2">
         <div class="col-auto">
           <%= f.label :random_quiz_count,
-                      t('quiz.number_of_questions_label') %>
+                      t('quiz.number_of_questions_label'),
+                      class: "form-label" %>
           <%= helpdesk(t('quiz.info.reduced_questions'), false) %>
         </div>
         <div class="col-auto ms-2">
@@ -27,7 +28,8 @@
       </div>
       <% if @course.question_tags.count.positive? %>
         <%= f.label :search_tag_ids,
-                    t('quiz.compile_tags') %>
+                    t('quiz.compile_tags'),
+                    class: "form-label" %>
         <%= helpdesk(t('quiz.info.compile_tags'), false) %>
         <%= f.select :search_tag_ids,
                      [[]],
