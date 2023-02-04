@@ -42,6 +42,31 @@
                        false) %>
             </div>
           </div>
+          <!-- EMERGENCY BUTTON -->
+          <div class="form-group">
+            Enable Emergency Button?
+            <div class="form-row ml-2">
+              <div class="custom-control custom-radio custom-control-inline">
+                <%= f.radio_button :annotations_status,
+                                   1,
+                                   class: 'custom-control-input' %>
+                <%= f.label :annotations_status,
+                            'yes',
+                            value: 1,
+                            class: 'custom-control-label' %>
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <%= f.radio_button :annotations_status,
+                                   -1,
+                                   class: 'custom-control-input' %>
+                <%= f.label :annotations_status,
+                            'no',
+                            value: -1,
+                            class: 'custom-control-label' %>
+              </div>
+            </div>
+          </div>
+          <!-- EMERGENCY BUTTON -->
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-comments-warning">

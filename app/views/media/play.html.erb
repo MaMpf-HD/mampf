@@ -23,6 +23,9 @@
               <span id="current-time">
                 0:00:00
               </span>
+              <span id="markers">
+                <!-- COFFEE SCRIPT INSERTS MARKERS HERE -->
+              </span>
               <input type="range" id="seek-bar"
                      min="0" max="100" step="0.1" value="0">
               <span id="max-time">
@@ -60,13 +63,21 @@
                 <option value="2">2x</option>
               </select>
             </div>
-
+            <!-- EMERGENCY BUTTON -->
             <div id="emergency-button">
               <i id="emergency-button" class="material-icons clickable">
-                flutter_dash
+                bookmark_add
               </i>
             </div>
-
+            <!-- TOGGLE FOR TURNING ON/OFF VISIBLE ANNOTATIONS -->
+            <% if @medium.annotations_visible?(current_user) %>
+              <div id="annotations-toggle">
+                <label class="switch">
+                  <input id="annotations-toggle-check" type="checkbox" checked="true">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+            <% end %>
             <div id="size-buttons">
               <i id="ia-active" class="material-icons clickable"
                  data-status="true">
@@ -80,6 +91,42 @@
           </div>
         </div>
       </div>
+      <figcaption id="annotation-caption">
+        <div id="annotation-infobar">
+          <!-- ANNOTATION CATEGORY -->
+        </div>
+        <div id="annotation-comment">
+          <!-- ANNOTATION COMMENT -->
+        </div>
+        <!-- ANNOTATION AREA BUTTONS -->
+        <div id="annotation-buttons">
+          <i id="annotation-previous-button"
+             class="fa fa-arrow-left fa-lg clickable"
+             data-toggle="tooltip"
+             title="previous annotation">
+          </i>
+          <i id="annotation-goto-button"
+             class="fa fa-map-marker fa-lg clickable"
+             data-toggle="tooltip"
+             title="go to the annotation's position">
+          </i>
+          <i id="annotation-edit-button"
+             class="fa fa-edit fa-lg clickable"
+             data-toggle="tooltip"
+             title="edit annotation">
+          </i>
+          <i id="annotation-close-button"
+             class="fa fa-window-close fa-lg clickable"
+             data-toggle="tooltip"
+             title="close annotation area">
+          </i>
+          <i id="annotation-next-button"
+             class="fa fa-arrow-right fa-lg clickable"
+             data-toggle="tooltip"
+             title="next annotation">
+          </i>
+        </div>
+      </figcaption>
       <figcaption id="caption" tabindex="0" role="menu"
                   aria-label="Captions">
         <div id="infobar">
@@ -112,3 +159,6 @@
     </figure>
   </div>
 </div>
+
+<%= render partial: "annotations/annotation_modal" %>
+<%#= javascript_include_tag('markers.js') %>

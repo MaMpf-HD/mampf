@@ -954,6 +954,35 @@ class Medium < ApplicationRecord
     end
   end
 
+  def get_annotations_status
+    if annotations_status != 0
+      return annotations_status
+    else
+      return lecture.annotations_status
+    end
+  end
+
+  def annotations_visible?(user)
+    # find lecture to which this medium is associated (might be nil)
+    if lesson != nil
+      lecture = lesson.lecture
+    end
+
+    # If the medium is associated to a lecture/course
+    # and the user is a teacher/editor of this lecture,
+    # return true
+    if lecture&.teacher == user ||
+        lecture&.editors&.include?(user) ||
+        editors&.include?(user) ||
+        course&.editors&.include?(user)
+      return true
+    else
+      return false
+    end
+  end
+
+  
+
   private
 
   # media of type kaviar associated to a lesson and script do not require

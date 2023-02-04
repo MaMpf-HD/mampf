@@ -39,6 +39,14 @@ Rails.application.routes.draw do
       to: 'administration#classification',
       as: 'classification'
 
+  # annotation routes
+
+  get 'annotations/update_markers',
+      to: 'annotations#update_markers',
+      as: 'update_markers'
+
+  resources :annotations, only: [:new, :create, :edit, :update, :destroy]
+
   # announcements routes
 
   post 'announcements/:id/propagate',
@@ -297,10 +305,6 @@ Rails.application.routes.draw do
       to: 'media#geogebra',
       as: 'geogebra_medium'
 
-  get 'media/:id/add_annotation',
-      to: 'media#add_annotation',
-      as: 'add_annotation'
-
   get 'media/:id/add_item',
       to: 'media#add_item',
       as: 'add_item'
@@ -394,6 +398,10 @@ Rails.application.routes.draw do
   get 'media/:id/fill_reassign_modal',
       to: 'media#fill_reassign_modal',
       as: 'fill_reassign_modal'
+      
+  get 'media/:id/check_annotation_visibility',
+      to: 'media#check_annotation_visibility',
+      as: 'check_annotation_visibility'
 
   resources :media
 

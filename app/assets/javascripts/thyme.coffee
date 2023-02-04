@@ -1,8 +1,48 @@
+# a boolean that helps to deactivate all key listeners
+# for the time the annotation modal opens and the user
+# has to write text into the command box
+lockKeyListeners = false
+
+# when callig the updateMarkers() method this will be used to save an
+# array containing all annotations
+annotations = null
+
+# helps to find the annotation that is currently shown in the
+# annotation area
+activeAnnotationId = 0
+
+# if the window width (in px) gets over this threshold value, hide the control bar
+# (default value)
+hideControlBarThreshold =
+  x: 850
+  y: 500
+
 # convert time in seconds to string of the form H:MM:SS
 secondsToTime = (seconds) ->
   date = new Date(null)
   date.setSeconds seconds
   return date.toISOString().substr(12, 7)
+
+# convert time in H:MM:SS to seconds
+timeToSeconds = (time) ->
+  array = time.split(':')
+  return (+array[0]) * 3600 + (+array[1]) * 60 + (+array[2])
+
+# lightens up a given color (given in a string in hexadecimal
+# representation "#xxyyzz") such that e.g. black becomes dark grey.
+# The higher the value of "factor" the brighter the colors become.
+lightenUp = (color, factor) ->
+  red   = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(5, 2))) / factor)
+  green = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(3, 2))) / factor)
+  blue  = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(1, 2))) / factor)
+  return "#" + blue.toString(16) + green.toString(16) + red.toString(16)
+
+sortAnnotations = ->
+  if annotations == null
+    return
+  annotations.sort (ann1, ann2) ->
+    timeToSeconds(ann1.timestamp) - timeToSeconds(ann2.timestamp)
+  return
 
 # return the start time of the next chapter relative to a given time in seconds
 nextChapterStart = (seconds) ->
@@ -391,6 +431,7 @@ $(document).on 'turbolinks:load', ->
   previousChapterButton = document.getElementById('previous-chapter')
   backButton = document.getElementById('back-button')
   emergencyButton = document.getElementById('emergency-button')
+  annotationsToggle = document.getElementById('annotations-toggle-check')
   # Sliders
   seekBar = document.getElementById('seek-bar')
   volumeBar = document.getElementById('volume-bar')
@@ -401,6 +442,21 @@ $(document).on 'turbolinks:load', ->
   maxTime = document.getElementById('max-time')
   # ControlBar
   videoControlBar = document.getElementById('video-controlBar')
+
+  # User is teacher/editor for the given medium?
+  #-> show toggle annotations button
+  mediumId = thyme.dataset.medium
+  $.ajax Routes.check_annotation_visibility_path(mediumId),
+    type: 'GET'
+    dataType: 'json'
+    success: (isPermitted) ->
+      if isPermitted
+        $('#volume-controls').css('left', '66%')
+        $('#speed-control').css('left', '77%')
+        $('#emergency-button').css('left', '86%')
+        hideControlBarThreshold.x = 960
+        updateControlBarType()
+      return
 
   # resizes the thyme container to the window dimensions, taking into account
   # whether the interactive area is displayed or hidden
@@ -419,6 +475,10 @@ $(document).on 'turbolinks:load', ->
     $('#thyme-container').css('width', width + 'px')
     $('#thyme-container').css('top', top + 'px')
     $('#thyme-container').css('left', left + 'px')
+    #iaHeight = $('#annotation-caption').css('height')
+    #commentHeight = Number(iaHeight.substr(0, iaHeight.length - 2)) - 110
+    #$('#annotation-comment').css('height', commentHeight + 'px')
+    updateMarkers()
     return
 
   # detect IE/edge and inform user that they are not suppported if necessary,
@@ -426,6 +486,7 @@ $(document).on 'turbolinks:load', ->
   if document.documentMode || /Edge/.test(navigator.userAgent)
     alert($('body').data('badbrowser'))
     $('#caption').hide()
+    $('#annotation-caption').hide()
     $('#video-controlBar').hide()
     video.style.width = '100%'
     video.controls = true
@@ -439,6 +500,7 @@ $(document).on 'turbolinks:load', ->
   # on small mobile display, fall back to standard browser player
   mobileDisplay = ->
     $('#caption').hide()
+    $('#annotation-caption').hide()
     $('#video-controlBar').hide()
     video.controls = true
     video.style.width = '100%'
@@ -448,48 +510,80 @@ $(document).on 'turbolinks:load', ->
   largeDisplay = ->
     video.controls = false
     $('#caption').show()
+    $('#annotation-caption').show()
     $('#video-controlBar').show()
     video.style.width = '82%'
     if iaButton.dataset.status == 'false'
       iaButton.innerHTML = 'remove_from_queue'
       $('#caption').hide()
+      $('#annotation-caption').hide()
       video.style.width = '100%'
       $('#video-controlBar').css('width', '100%')
       $(window).trigger('resize')
     return
 
-  # display native control bar if screen is very small
-  if window.matchMedia("screen and (max-width: 850px)").matches
-    mobileDisplay()
-
-  if window.matchMedia("screen and (max-device-width: 850px)").matches
-    mobileDisplay()
-
-  # mediaQuery listener for very small screens
-  match_verysmall = window.matchMedia("screen and (max-width: 850px)")
-  match_verysmall.addListener (result) ->
-    if result.matches
+  updateControlBarType = ->
+    # display native control bar if screen is very small
+    if window.matchMedia("screen and (max-width: " + hideControlBarThreshold.x + "px)").matches or
+       window.matchMedia("screen and (max-height: " + hideControlBarThreshold.y + "px)").matches
       mobileDisplay()
-    return
 
-  match_verysmalldevice = window.matchMedia("screen and (max-device-width: 850px)")
-  match_verysmalldevice.addListener (result) ->
-    if result.matches
+    if window.matchMedia("screen and (max-device-width: " + hideControlBarThreshold.x + "px)").matches or
+       window.matchMedia("screen and (max-device-height: " + hideControlBarThreshold.y + "px)").matches
       mobileDisplay()
+
+    # mediaQuery listener for very small screens
+    match_verysmall_x = window.matchMedia("screen and (max-width: " + hideControlBarThreshold.x + "px)")
+    match_verysmall_x.addListener (result) ->
+      if result.matches
+        mobileDisplay()
+      return
+    match_verysmall_y = window.matchMedia("screen and (max-height: " + hideControlBarThreshold.y + "px)")
+    match_verysmall_y.addListener (result) ->
+      if result.matches
+        mobileDisplay()
+      return
+
+    match_verysmalldevice_x = window.matchMedia("screen and (max-device-width: " + hideControlBarThreshold.x + "px)")
+    match_verysmalldevice_x.addListener (result) ->
+      if result.matches
+        mobileDisplay()
+      return
+    match_verysmalldevice_y = window.matchMedia("screen and (max-device-height: " + hideControlBarThreshold.y + "px)")
+    match_verysmalldevice_y.addListener (result) ->
+      if result.matches
+        mobileDisplay()
+      return
+
+    # mediaQuery listener for normal screens
+    match_normal_x = window.matchMedia("screen and (min-width: " + (hideControlBarThreshold.x + 1) + "px)")
+    match_normal_x.addListener (result) ->
+      match_normal_y = window.matchMedia("screen and (min-height: " + (hideControlBarThreshold.y + 1) + "px)")
+      if result.matches && match_normal_y.matches
+        largeDisplay()
+      return
+    match_normal_y = window.matchMedia("screen and (min-height: " + (hideControlBarThreshold.y + 1) + "px)")
+    match_normal_y.addListener (result) ->
+      match_normal_x = window.matchMedia("screen and (min-width: " + (hideControlBarThreshold.x + 1) + "px)")
+      if result.matches && match_normal_x.matches
+        largeDisplay()
+      return
+
+    match_normaldevice_x = window.matchMedia("screen and (min-device-width: " + (hideControlBarThreshold.x + 1) + "px)")
+    match_normaldevice_x.addListener (result) ->
+      match_normaldevice_y = window.matchMedia("screen and (min-device-height: " + (hideControlBarThreshold.y + 1) + "px)")
+      if result.matches && match_normal_y.matches
+        largeDisplay()
+      return
+    match_normaldevice_y = window.matchMedia("screen and (min-device-height: " + (hideControlBarThreshold.y + 1) + "px)")
+    match_normaldevice_y.addListener (result) ->
+      match_normaldevice_x = window.matchMedia("screen and (min-device-width: " + (hideControlBarThreshold.x + 1) + "px)")
+      if result.matches && match_normal_x.matches
+        largeDisplay()
+      return
     return
 
-  # mediaQuery listener for normal screens
-  match_normal = window.matchMedia("screen and (min-width: 851px)")
-  match_normal.addListener (result) ->
-    if result.matches
-      largeDisplay()
-    return
-
-  match_normal = window.matchMedia("screen and (min-device-width: 851px)")
-  match_normal.addListener (result) ->
-    if result.matches
-      largeDisplay()
-    return
+  updateControlBarType()
 
   window.onresize = resizeContainer
   video.onloadedmetadata =  resizeContainer
@@ -549,21 +643,54 @@ $(document).on 'turbolinks:load', ->
 
   # Event handler for the emergency button
   emergencyButton.addEventListener 'click', ->
-    mediumId = thyme.dataset.medium
     video.pause()
-    # round time down to three decimal digits
+    # round time to full seconds
     time = video.currentTime
     intTime = Math.floor(time)
-    roundTime = intTime + Math.floor((time - intTime) * 1000) / 1000
-    video.currentTime = roundTime
-    $.ajax Routes.add_annotation_path(mediumId),
+    roundTime = intTime
+    mediumId = thyme.dataset.medium
+    $.ajax Routes.new_annotation_path(),
       type: 'GET'
       dataType: 'script'
       data: {
-        time: video.currentTime
+        timestamp: secondsToTime(roundTime)
+        mediumId: mediumId
       }
-    $('#exampleModal').modal('show')
+    # When the modal opens, all key listeners must be
+    # deactivated until the modal gets closed again
+    lockKeyListeners = true
+    $('#annotation-modal').on('hidden.bs.modal', ->
+      lockKeyListeners = false
+    )
     return
+
+  if annotationsToggle != null
+    annotationsToggle.addEventListener 'click', ->
+      updateMarkers()
+
+  # Update annotations after submitting the annotations form
+  $(document).on 'click', '#submit-button', ->
+    # NOTE:
+    # Updating might take some time on the backend,
+    # so I added a slight delay.
+    # I couldn't think of an easy way to let the script
+    # wait for the update to complete (as with the delete button),
+    # but it might be possible!
+    setTimeout(updateMarkers, 500)
+
+  # Update annotations after deleting an annotation
+  $(document).on 'click', '#delete-button', ->
+    annotationId = Number(document.getElementById('annotation_id').textContent)
+    $.ajax Routes.annotation_path(annotationId),
+      type: 'DELETE'
+      dataType: 'json'
+      data: {
+        annotationId: annotationId
+      }
+      success: ->
+        updateMarkers()
+        $('#annotation-close-button').click()
+        return
 
   # Event handler for speed speed selector
   speedSelector.addEventListener 'change', ->
@@ -582,6 +709,7 @@ $(document).on 'turbolinks:load', ->
       iaButton.innerHTML = 'remove_from_queue'
       iaButton.dataset.status = 'false'
       $('#caption').hide()
+      $('#annotation-caption').hide()
       video.style.width = '100%'
       $('#video-controlBar').css('width', '100%')
       $(window).trigger('resize')
@@ -591,6 +719,7 @@ $(document).on 'turbolinks:load', ->
       video.style.width = '82%'
       $('#video-controlBar').css('width', '82%')
       $('#caption').show()
+      $('#annotation-caption').show()
       $(window).trigger('resize')
     return
 
@@ -747,6 +876,8 @@ $(document).on 'turbolinks:load', ->
   # m - mute
   # i - toggle interactive area
   window.addEventListener 'keydown', (evt) ->
+    if lockKeyListeners == true
+      return
     key = evt.key
     if key == ' '
       if video.paused == true
@@ -772,4 +903,126 @@ $(document).on 'turbolinks:load', ->
     else if key == 'i'
       $(iaButton).trigger('click')
     return
+
+  # updates the annotation markers
+  updateMarkers = ->
+    mediumId = thyme.dataset.medium
+    toggled = $('#annotations-toggle-check').is(":checked")
+    $.ajax Routes.update_markers_path(),
+      type: 'GET'
+      dataType: 'json'
+      data: {
+        mediumId: mediumId
+        toggled: toggled
+      }
+      success: (annots) ->
+        annotations = annots
+        sortAnnotations()
+        $('#markers').empty()
+        if annotations == null
+          return
+        flag = false
+        for annotation in annotations
+          createMarker(annotation)
+          if annotation.id == activeAnnotationId
+            updateAnnotationArea(annotation)
+            flag = true
+        if flag == false && $('#annotation-caption').is(":visible") == true
+          $('#annotation-caption').hide()
+          $('#caption').show()
+        return
+    return
+
+  # an auxiliary method for "updateMarkers()" creating a single marker
+  createMarker = (annotation) ->
+    # create marker
+    markerStr = '<span id="marker-' + annotation.id + '">
+                  <svg width="15" height="15">
+                  <polygon points="1,1 9,1 5,10"
+                  style="fill:' + annotation.color + ';
+                  stroke:black;stroke-width:1;fill-rule:evenodd;"/>
+                 </svg></span>'
+    $('#markers').append(markerStr)
+    # set the correct position for the marker
+    marker = $('#marker-' + annotation.id)
+    size = seekBar.clientWidth - 13
+    ratio = timeToSeconds(annotation.timestamp) / video.duration
+    offset = marker.parent().offset().left + ratio * size + 3
+    marker.offset({ left: offset })
+    marker.on 'click', ->
+      updateAnnotationArea(annotation)
+      $('#caption').hide()
+      $('#annotation-caption').show()
+    return
+
+  updateAnnotationArea = (annotation) ->
+    activeAnnotationId = annotation.id
+    comment = annotation.comment.replaceAll('\n', '<br>')
+    headColor = lightenUp(annotation.color, 2)
+    backgroundColor = lightenUp(annotation.color, 3)
+    $('#annotation-infobar').empty().append(annotation.category)
+    $('#annotation-infobar').css('background-color', headColor)
+    $('#annotation-infobar').css('text-align', 'center')
+    $('#annotation-comment').empty().append(comment)
+    $('#annotation-caption').css('background-color', backgroundColor)
+    # remove old listeners
+    $('#annotation-previous-button').off 'click'
+    $('#annotation-next-button').off 'click'
+    $('#annotation-goto-button').off 'click'
+    $('#annotation-edit-button').off 'click'
+    $('#annotation-close-button').off 'click'
+    # previous annotation listener
+    $('#annotation-previous-button').on 'click', ->
+      for i in [0 .. annotations.length - 1]
+        if i != 0 && annotations[i] == annotation
+          updateAnnotationArea(annotations[i - 1])
+    # next annotation Listener
+    $('#annotation-next-button').on 'click', ->
+      for i in [0 .. annotations.length - 1]
+        if i != annotations.length - 1 && annotations[i] == annotation
+          updateAnnotationArea(annotations[i + 1])
+    # goto listener
+    $('#annotation-goto-button').on 'click', ->
+      video.currentTime = timeToSeconds(annotation.timestamp)
+    # edit listener
+    $('#annotation-edit-button').on 'click', ->
+      lockKeyListeners = true
+      $.ajax Routes.edit_annotation_path(annotation.id),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        annotationId: annotation.id
+      }
+    # close listener
+    $('#annotation-close-button').on 'click', ->
+      activeAnnotationId = 0
+      $('#annotation-caption').hide()
+      $('#caption').show()
+    # LaTex
+    renderMathInElement document.getElementById('annotation-comment'),
+      delimiters: [
+        {
+          left: '$$'
+          right: '$$'
+          display: true
+        }
+        {
+          left: '$'
+          right: '$'
+          display: false
+        }
+        {
+          left: '\\('
+          right: '\\)'
+          display: false
+        }
+        {
+          left: '\\['
+          right: '\\]'
+          display: true
+        }
+      ]
+      throwOnError: false
+    return
+
   return

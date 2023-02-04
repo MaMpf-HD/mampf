@@ -176,6 +176,42 @@
                          class: 'form-control' %>
       </div>
     <% end %>
+    <!-- EMERGENCY BUTTON -->
+    <% if medium.video.present? %>
+      <div class="form-group">
+        Enable Emergency Button?
+        <div class="form-row ml-2">
+          <div class="custom-control custom-radio custom-control-inline">
+            <%= f.radio_button :annotations_status,
+                               '0',
+                               class: 'custom-control-input' %>
+            <%= f.label :annotations_status,
+                        'inherit from lecture',
+                        value: '0',
+                        class: 'custom-control-label' %>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <%= f.radio_button :annotations_status,
+                               '1',
+                               class: 'custom-control-input' %>
+            <%= f.label :annotations_status,
+                        'yes',
+                        value: '1',
+                        class: 'custom-control-label' %>
+          </div>
+          <div class="custom-control custom-radio custom-control-inline">
+            <%= f.radio_button :annotations_status,
+                               '-1',
+                               class: 'custom-control-input' %>
+            <%= f.label :annotations_status,
+                        'no',
+                        value: '-1',
+                        class: 'custom-control-label' %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <!-- EMERGENCY BUTTON -->
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
     <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
   </div>

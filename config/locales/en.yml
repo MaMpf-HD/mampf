@@ -1938,6 +1938,7 @@ en:
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
+    edit_lecture: 'Edit event'
     subscribe_lecture: 'You can subscribe it via your profile.'
     subscribe_lecture_html: 'You can subscribe it via your %{profile}.'
     new_lecture_created_html: >

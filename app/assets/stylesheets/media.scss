@@ -314,3 +314,19 @@
 #import-script-items {
   text-decoration: none;
 }
+
+
+/* annotation modal */
+#annotation-modal {
+	#annotation_comment {
+		height: 150px;
+    resize: none;
+	}
+  #annotation_category_text {
+    width: 200px;
+  }
+	#annotation_visible_for_teacher {
+		width: 18px;
+		height: 18px;
+	}
+}

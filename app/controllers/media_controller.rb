@@ -258,10 +258,6 @@ class MediaController < ApplicationController
     render layout: 'geogebra'
   end
 
-  # add an annotation for the video
-  def add_annotation
-  end
-
   # add a toc item for the video
   def add_item
     I18n.locale = @medium.locale_with_inheritance
@@ -457,6 +453,14 @@ class MediaController < ApplicationController
     @no_rights = params[:rights] == 'none'
   end
 
+  def check_annotation_visibility
+    medium = Medium.find_by_id(params[:id])
+    isPermitted = medium.annotations_visible?(current_user)
+    render json: isPermitted
+  end
+
+
+
   private
 
   def medium_params
@@ -466,6 +470,7 @@ class MediaController < ApplicationController
                                    :teachable_type, :teachable_id,
                                    :released, :text, :locale,
                                    :content, :boost,
+                                   :annotations_status,
                                    editor_ids: [],
                                    tag_ids: [],
                                    linked_medium_ids: [])

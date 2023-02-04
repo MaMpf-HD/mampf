@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_10_15_114100) do
+ActiveRecord::Schema.define(version: 2023_01_17_125523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
@@ -23,6 +23,9 @@ ActiveRecord::Schema.define(version: 2022_10_15_114100) do
     t.string "color"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "comment"
+    t.boolean "visible_for_teacher"
+    t.integer "category"
     t.index ["medium_id"], name: "index_annotations_on_medium_id"
     t.index ["user_id"], name: "index_annotations_on_user_id"
   end
@@ -284,6 +287,7 @@ ActiveRecord::Schema.define(version: 2022_10_15_114100) do
     t.integer "submission_max_team_size"
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
+    t.integer "annotations_status"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -362,6 +366,7 @@ ActiveRecord::Schema.define(version: 2022_10_15_114100) do
     t.datetime "released_at"
     t.text "publisher"
     t.datetime "file_last_edited"
+    t.integer "annotations_status"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
