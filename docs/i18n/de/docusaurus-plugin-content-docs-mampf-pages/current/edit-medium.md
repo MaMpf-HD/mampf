@@ -137,7 +137,7 @@ Das Formular „Veröffentlichung des Mediums verwalten“ öffnet sich, nach de
     <label for="vererb"> nur AbonnentInnen</label><br></br>
     <input type="radio" id="de7" name="lang"></input>
     <label for="ohnever"> gesperrt</label>
- </form> Radio Buttons zur Festlegung der Zugriffsrechte. Zur Auswahl stehen <i>frei</i>, <i>nur registrierte MaMpf-NutzerInnen</i>, <i>nur AbonnentInnen</i> und <i>gesperrt</i>. Diese Einstellung kann nachträglich in der Box „Basisdaten“ verändert werden.
+ </form> Radio Buttons zur Festlegung der Zugriffsrechte, die erst nach der Veröffentlichung des Mediums verfügbar sind.. Zur Auswahl stehen <i>frei</i>, <i>nur registrierte MaMpf-NutzerInnen</i>, <i>nur AbonnentInnen</i> und <i>gesperrt</i>. Diese Einstellung kann nachträglich in der Box „Basisdaten“ verändert werden.
 * <form>
       <input type="checkbox" id="ass" name="ass" checked></input>
       <label for="ass"> veröffentlichte alle zum Quiz gehörigen Quiz-Fragen und Quiz-Erläuterungen </label>
@@ -543,4 +543,5 @@ Im THymE-Editor kann eine Videogliederung angelegt und Referenzen hinzugefügt w
 * [Begriff bearbeiten](ed-edit-tag)
 * [Seminar bearbeiten](ed-edit-seminar)
 * [Skript bearbeiten](ed-edit-manuscript)
+* [Veranstaltung bearbeiten](ed-edit-event-series)
 * [Vorlesung bearbeiten](ed-edit-lecture)

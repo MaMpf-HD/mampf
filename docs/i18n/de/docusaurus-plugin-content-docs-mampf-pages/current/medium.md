@@ -78,6 +78,7 @@ Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese wer
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript.
 * <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <a href="/mampf/de/mampf-pages/section" target="_self"><button>Abschnittstitel</button></a> (nur bei Skripten) Wechsel auf die <a href="/mampf/de/mampf-pages/section" target="_self">Seite des Abschnitts</a>.
 
 ### Kommentare
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" height="12"/></button> Wechsel zur Vollbildansicht.
