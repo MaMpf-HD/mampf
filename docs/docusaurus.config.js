@@ -2,7 +2,7 @@
 module.exports = {
   title: 'MaMpf',
   tagline: 'Mathematische Medienplattform',
-  url: 'https://mampf-hd.github.io/mampf',
+  url: 'https://mampf-hd.github.io/',
   baseUrl: '/mampf/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
