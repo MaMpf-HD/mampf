@@ -10,12 +10,12 @@ Before handing in your homework, you need to take care of the following three th
 For handing in your homework, you need an account. If you don’t have one, [sign up](https://mampf.mathi.uni-heidelberg.de/users/sign_up?locale=en).
 
 ### Subscribe to the Course
-You can only upload files in courses you’re subscribed to. This is also true for accessing course materials. So log in, go to your [profile settings](profile.md) (click on the icon on the left side of the [navigation bar](nav-bar.md) at the top of the page) and subscribe to the course. Don’t forget to save the changes afterwards. Alternatively, you can subscribe to a course on the [start page](my-home-page.md).
+You can only upload files in courses you’re subscribed to. This is also true for accessing course materials. So log in, go to your [profile settings](../docs/profile) (click on the icon on the left side of the [navigation bar](../docs/nav-bar) at the top of the page) and subscribe to the course. Don’t forget to save the changes afterwards. Alternatively, you can subscribe to a course on the [start page](../docs/my-home-page).
 
 \*icons\*
 
 ### Enter Your Name for Tutorials
-On MaMpf, you’re asked to enter two names: a *display name* and a *name in tutorials*. The *display name* is shown with your comments and posts. Choose whatever name you like for your *display name*. The *name in tutorials* is used only in tutorials. Make your tutor’s life easier by entering your actual name as *name in tutorials*. You can change both names in the [profile settings](profile.md).
+On MaMpf, you’re asked to enter two names: a *display name* and a *name in tutorials*. The *display name* is shown with your comments and posts. Choose whatever name you like for your *display name*. The *name in tutorials* is used only in tutorials. Make your tutor’s life easier by entering your actual name as *name in tutorials*. You can change both names in the [profile settings](../docs/profile).
 
 \*screenshot\*
 
@@ -23,7 +23,7 @@ On MaMpf, you’re asked to enter two names: a *display name* and a *name in tut
 First of all, a member of your group has to create a submission and invite the other team members. Then everybody invited needs to join the submission. This process has to be repeated for **every** single assignment. Everyone who’s joined the submission can upload a file or replace an existing file. After the deadline, your tutor gets access to your homework, grades it, and returns it to you. The details are explained in the following.
 
 ### Creating a Submission
-Go to the course your homework assignment is for. Click on `Submissions` in the [sidebar](sidebar.md). After that, click on `Create`, select your tutorial, and save it. You also might want to invite someone to join the submission or upload a file. Both can still be done afterwards.
+Go to the course your homework assignment is for. Click on `Submissions` in the [sidebar](../docs/sidebar). After that, click on `Create`, select your tutorial, and save it. You also might want to invite someone to join the submission or upload a file. Both can still be done afterwards.
 
 \*screenshots\*
 
@@ -39,7 +39,7 @@ Go to the course your homework assignment is for. Click on `Submissions` in the 
 \*screenshots\*
 
 ### Joining a Submission
-* If you’ve received a code from your team mate, go the course your homework is for. Click on `Submissions` on the [sidebar](sidebar.md). Now you can click on `Join` (under *Current Submission*) and enter the code.
+* If you’ve received a code from your team mate, go the course your homework is for. Click on `Submissions` on the [sidebar](../docs/sidebar). Now you can click on `Join` (under *Current Submission*) and enter the code.
 * If you received an invitation by email, just click on the link. If this does not work, use the right mouse button to copy the link and paste it into the address bar.
 
 \*screenshots\*
@@ -74,7 +74,7 @@ Submissions and feedback are only stored until two weeks after the beginning of 
 \*red box\*
 
 ## Email Notifications
-MaMpf has email notification. Apart from submission invitations, all notifications can be turned on and off as desired. Go to your [profile settings](profile.md) (click on the icon on the left in the navigation bar at the top) to administer your notifications. You can be notified when:
+MaMpf has email notification. Apart from submission invitations, all notifications can be turned on and off as desired. Go to your [profile settings](../docs/profile) (click on the icon on the left in the navigation bar at the top) to administer your notifications. You can be notified when:
 
 \*icon\*
 
