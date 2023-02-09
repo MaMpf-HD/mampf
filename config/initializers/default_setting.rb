@@ -8,5 +8,6 @@ class DefaultSetting
   RESEARCHGATE_LINK = 'https://www.researchgate.net/project/MaMpf-Mathematische-Medienplattform'
   TOUR_LINK = 'https://mampf.blog/ueber-mampf/'
   RESOURCES_LINK = 'https://mampf.blog/ressourcen-fur-editorinnen/'
+  DOCS_LINK = 'https://mampf-hd.github.io/mampf/'
   MAMPF_STY_VERSION = '2.12'
 end

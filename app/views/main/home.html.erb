@@ -35,12 +35,18 @@
   </ul>
   <%= t('main.interested_html',
         blog: link_to(t('main.blog'),
-                      DefaultSetting::BLOG_LINK, target: :_blank),
+                      DefaultSetting::BLOG_LINK,
+                      target: :_blank),
         researchgate: link_to(t('main.researchgate'),
-                              DefaultSetting::RESEARCHGATE_LINK, target: :_blank),
+                              DefaultSetting::RESEARCHGATE_LINK,
+                              target: :_blank),
         guided_tour: link_to(t('here_capital'),
-                             DefaultSetting::TOUR_LINK, target: :_blank),
+                             DefaultSetting::TOUR_LINK,
+                             target: :_blank),
         resources: link_to(t('main.resources'),
                            DefaultSetting::RESOURCES_LINK,
-                           target: :_blank)) %>
+                           target: :_blank),
+        documentation: link_to(t('main.documentation'),
+                        DefaultSetting::DOCS_LINK,
+                        target: :_blank)) %>
 </div>

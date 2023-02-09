@@ -2414,11 +2414,13 @@ en:
       guided proofs'
     interested_html: >
       Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
+      Information about the use and functionality of MaMpf can be found in the %{documentation}.
       %{guided_tour} you can find a guided tour of MaMpf. Resources for editors
       (e.g. the MaMpf LaTEX package) are available %{resources}.
     resources: here
     blog: Blog
     researchgate: Researchgate
+    documentation: Documentation
   math:
     number: 'number'
     complex_number: 'complex number'
