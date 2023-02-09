@@ -3,8 +3,8 @@ module.exports = {
   title: 'MaMpf',
   tagline: 'Mathematische Medienplattform',
   url: 'https://mampf-hd.github.io/',
-  baseUrl: '/mampf/',
-  onBrokenLinks: 'throw',
+  baseUrl: '/',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'MaMpf-HD', // Usually your GitHub org/user name.
