@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
         <title>MaMpf Blog</title>
-        <link>https://mampf-hd.github.io/de/blog</link>
+        <link>https://mampf-hd.github.io/mampf/de/blog</link>
         <description>MaMpf Blog</description>
         <lastBuildDate>Thu, 30 May 2019 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
@@ -10,8 +10,8 @@
         <language>de</language>
         <item>
             <title><![CDATA[Welcome]]></title>
-            <link>https://mampf-hd.github.io/de/blog/welcome</link>
-            <guid>https://mampf-hd.github.io/de/blog/welcome</guid>
+            <link>https://mampf-hd.github.io/mampf/de/blog/welcome</link>
+            <guid>https://mampf-hd.github.io/mampf/de/blog/welcome</guid>
             <pubDate>Thu, 30 May 2019 00:00:00 GMT</pubDate>
             <description><![CDATA[Blog features are powered by the blog plugin. Simply add files to the blog directory. It supports tags as well!]]></description>
             <content:encoded><![CDATA[<p>Blog features are powered by the blog plugin. Simply add files to the <code>blog</code> directory. It supports tags as well!</p><p>Delete the whole directory if you don't want the blog features. As simple as that!</p>]]></content:encoded>
@@ -21,8 +21,8 @@
         </item>
         <item>
             <title><![CDATA[Hello]]></title>
-            <link>https://mampf-hd.github.io/de/blog/hello-world</link>
-            <guid>https://mampf-hd.github.io/de/blog/hello-world</guid>
+            <link>https://mampf-hd.github.io/mampf/de/blog/hello-world</link>
+            <guid>https://mampf-hd.github.io/mampf/de/blog/hello-world</guid>
             <pubDate>Wed, 29 May 2019 00:00:00 GMT</pubDate>
             <description><![CDATA[Welcome to this blog. This blog is created with Docusaurus 2 alpha.]]></description>
             <content:encoded><![CDATA[<p>Welcome to this blog. This blog is created with <a href="https://v2.docusaurus.io/" target="_blank" rel="noopener noreferrer"><strong>Docusaurus 2 alpha</strong></a>.</p><p>This is a test post.</p><p>A whole bunch of other information.</p>]]></content:encoded>
@@ -31,8 +31,8 @@
         </item>
         <item>
             <title><![CDATA[Hola]]></title>
-            <link>https://mampf-hd.github.io/de/blog/hola</link>
-            <guid>https://mampf-hd.github.io/de/blog/hola</guid>
+            <link>https://mampf-hd.github.io/mampf/de/blog/hola</link>
+            <guid>https://mampf-hd.github.io/mampf/de/blog/hola</guid>
             <pubDate>Tue, 28 May 2019 00:00:00 GMT</pubDate>
             <description><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet]]></description>
             <content:encoded><![CDATA[<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque elementum dignissim ultricies. Fusce rhoncus ipsum tempor eros aliquam consequat. Lorem ipsum dolor sit amet</p>]]></content:encoded>
