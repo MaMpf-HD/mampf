@@ -10,11 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_01_25_162730) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_01_17_124528) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "annotations", force: :cascade do |t|
+    t.bigint "medium_id", null: false
+    t.bigint "user_id", null: false
+    t.string "timestamp"
+    t.text "comment"
+    t.integer "category"
+    t.boolean "visible_for_teacher"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medium_id"], name: "index_annotations_on_medium_id"
+    t.index ["user_id"], name: "index_annotations_on_user_id"
+  end
 
   create_table "announcements", force: :cascade do |t|
     t.bigint "lecture_id"
@@ -273,6 +286,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_01_25_162730) do
     t.integer "submission_max_team_size"
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
+    t.integer "annotations_status"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -351,6 +365,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_01_25_162730) do
     t.datetime "released_at", precision: nil
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
+    t.integer "annotations_status"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
@@ -898,6 +913,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_01_25_162730) do
     t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
   end
 
+  add_foreign_key "annotations", "media"
+  add_foreign_key "annotations", "users"
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"
