@@ -228,6 +228,12 @@ class LecturesController < ApplicationController
 
   def close_comments
     @lecture.close_comments!(current_user)
+    # disable emergency button
+    @lecture.update(annotations_status: -1)
+    @lecture.media.update(annotations_status: 0)
+    @lecture.lessons.each do |lesson|
+      lesson.media.update(annotations_status: 0)
+    end
     redirect_to edit_lecture_path(@lecture)
   end
 
@@ -310,6 +316,7 @@ class LecturesController < ApplicationController
                                     :comments_disabled,
                                     :submission_max_team_size,
                                     :submission_grace_period,
+                                    :annotation_status,
                                     editor_ids: [])
   end
 
