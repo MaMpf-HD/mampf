@@ -1,0 +1,71 @@
+<%= form_with model: @annotation do |f| %>
+  <b>Time:</b> &nbsp <%= @timestamp %>
+
+  <br><br>
+
+  <!-- HIDDEN FIELDS -->
+  <%= f.hidden_field :medium_id, value: @medium_id %>
+  <%= f.hidden_field :timestamp, value: @timestamp %>
+  <div hidden>
+    <div id="annotation_id">
+      <%= @annotation.id %>
+    </div>
+  </div>
+
+  <!-- COMMENT TEXT AREA -->
+  <b>Comment:</b>
+  <%= f.text_area :comment, class: 'form-control' %>
+
+  <br><br>
+
+  <!-- COLOR SELECTION -->
+  <b>Color: &nbsp</b>
+  <%= f.color_field :color %>
+
+  <br><br>
+
+  <!-- CATEGORY SELECT LIST -->
+  <b>Category: &nbsp</b>
+  <%= f.select :category_text,
+    ['Need help!', 'Found a mistake', 'Give a comment', 'Note',
+     'Other'],
+    {},
+    { class: 'form-control' } %>
+
+  <br><br>
+
+  <!-- VISIBLE FOR TEACHER? - CHECKBOX -->
+  <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
+  <% if annotations_status == 1 %>
+    <%= f.label :visible_for_teacher, class: "checkbox inline" do %>
+      <span><b>Visible for teacher? &nbsp</b></span>
+      <%= f.check_box :visible_for_teacher %>
+    <% end %>
+  <% elsif annotations_status == -1 %>
+    <%= f.hidden_field :visible_for_teacher, value: false %>
+  <% end %>
+
+  <br>
+
+  <!-- BUTTONS -->
+  <% if @annotation.id == nil %>
+  <%    button_text = "Create Annotation" %>
+  <% else %>
+  <%    button_text = "Save Changes" %>
+  <% end %>
+
+  <div class="modal-footer">
+    <%= f.submit button_text, class: "btn btn-primary", id: "submit-button" %>
+    <% if @annotation.id != nil %>
+      <button type="button"
+              id="delete-button"
+              class="btn btn-secondary"
+              data-dismiss="modal">
+      Delete Annotation
+    <% end %>
+    <button type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal">
+    <%= t('buttons.cancel') %>
+  </div>
+<% end %>
