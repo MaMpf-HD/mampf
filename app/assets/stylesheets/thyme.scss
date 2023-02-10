@@ -125,7 +125,7 @@
 	position: absolute;
 	padding: 3px;
 	font-size: 12px;
-	left: 81%;
+	left: 79%;
 }
 
 #volume-bar {
@@ -133,6 +133,84 @@
 	min-width: 50%;
 	margin-top: 7px;
 	margin-left: 4px;
+}
+
+#emergency-button {
+  position: absolute;
+  display: flex;
+  left: 89%;
+}
+
+#annotations-toggle {
+  position: absolute;
+  display: flex;
+  left: 89%;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 17px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }
 
 #size-buttons {
@@ -325,7 +403,7 @@ figure {
 .replay {
   position: absolute;
   top: 0;
-  right:0;
+  right: 0;
   padding: 3px;
   cursor: pointer;
   -webkit-user-select: none;
@@ -341,3 +419,37 @@ figure {
  {
    background-color: black;
  }
+
+
+#markers {
+  position: relative;
+  top: -2px;
+  width: 0;
+  height: 0;
+  display: flex;
+  cursor: pointer;
+}
+
+#annotation-infobar {
+  height: 2em;
+  color: black;
+  overflow-y: scroll;
+  padding: 3px;
+  border-left: 1px solid darkgray;
+  border-right: 1px solid darkgray;
+  border-top: 1px solid darkgray;
+}
+
+#annotation-comment {
+  margin-left: 3px;
+  margin-right: 3px;
+  overflow-y: scroll;
+  height: 85%;
+}
+
+#annotation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 10%;
+  margin-right: 10%;
+}
