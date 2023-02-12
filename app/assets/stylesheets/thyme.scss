@@ -430,6 +430,12 @@ figure {
   cursor: pointer;
 }
 
+#annotation-caption {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 #annotation-infobar {
   height: 2em;
   color: black;
@@ -452,4 +458,6 @@ figure {
   justify-content: space-between;
   margin-left: 10%;
   margin-right: 10%;
+  margin-bottom: 15px;
+  margin-top: auto;
 }
