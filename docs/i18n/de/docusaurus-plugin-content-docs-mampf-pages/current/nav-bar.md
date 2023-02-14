@@ -45,7 +45,6 @@ Eingeloggte einfache Nutzer\*innen können von diesen Buttons Gebrauch machen:
 Eingeloggten Editor\*innen und Administrator\*innen stehen dieselben Buttons zur Verfügung wie einfachen Nutzer\*innen. Zusätzlich dazu können sie mit dem Button <a href="/mampf/de/mampf-pages/ed-overview" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tools-solid.png" height="12"/></button></a> zur <a href="/mampf/de/mampf-pages/ed-overview" target="_self">Übersichtsseite</a> navigieren. Dies ist eine Möglichkeit, in den Adminstrationsmodus zu wechseln. In diesem stehen Funktionalitäten zur Verwaltung von Veranstaltungen bereit.
 
 ![](/img/navbar_ed.png)
-\*kommt bald: Watchlist\*
 
 Wenn Editor\*innen eine eigene unveröffentlichte Veranstaltung in der Nutzeransicht öffnen, weist im Schnellzugriff das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-red.png" height="12"/> rechts neben dem Veranstaltungstitel darauf hin, dass einfache Nutzer\*innen diese Veranstaltung nicht sehen können. Dabei handelt es sich allerdings nicht um ein Bedienelement.
 
