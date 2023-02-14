@@ -23,7 +23,6 @@ Nicht eingeloggten Personen stehen folgende Buttons in der Navigationsleiste zur
 Eingeloggte einfache Nutzer\*innen können von diesen Buttons Gebrauch machen:
 
 ![](/img/navbar_generic.png)
-\*kommt bald: Watchlist\*
 
 * <button name="button"><a href="/mampf/de/mampf-pages/my-home-page" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></a></button> Wechsel auf die <a href="/mampf/de/mampf-pages/my-home-page" target="_self">persönliche Startseite</a>. Von dieser Seite aus gelangt man auf die Seite einer Veranstaltung und kann sich über neue Mitteilungen, Medien und Forumsbeiträge in abonnierten Veranstaltungen informieren. Außerdem können Veranstaltungen gesucht und Veranstaltungsabos verwaltet werden.
 * <button name="button"><a href="/mampf/de/mampf-pages/profile" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></a></button> Wechsel auf die <a href="/mampf/de/mampf-pages/profile" target="_self">Profilseite</a>. Dort kann man den eignen Account (Änderung des Anzeigenamens und der Zugangsdaten sowie Löschen des Accounts), Veranstaltungabos und weitere Einstellungen (Sprache, angezeichte Inhalte und Benachrichtungseinstellungen) verwalten.
