@@ -66,7 +66,6 @@ gem "devise-bootstrap-views"
 gem "fuzzy-string-match"
 gem "coveralls", require: false
 gem "kaminari"
-gem "selectize-rails"
 gem "acts_as_list"
 gem "acts_as_tree"
 gem "activerecord-import",
@@ -102,7 +101,6 @@ gem "sprockets-rails",
   git: "https://github.com/rails/sprockets-rails",
   branch: "master"
 gem "premailer-rails"
-gem "select2-rails"
 gem "clipboard-rails"
 gem "rubyzip", "~> 2.3.0"
 gem "exception_handler", "~> 0.8.0.0"

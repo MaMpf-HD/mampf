@@ -79,7 +79,9 @@
                            filled: false,
                            model: 'tag',
                            drag: true,
-                           locale: I18n.locale },
+                           locale: I18n.locale,
+                           placeholder: t('basics.enter_two_letters'),
+                           no_results: t('basics.no_results') },
                    id: 'section_tag_ids_' + section.id.to_s } %>
     <div class="invalid-feedback"
          id="section-tags-error-<%= section.id %>">

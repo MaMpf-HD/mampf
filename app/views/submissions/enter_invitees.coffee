@@ -4,9 +4,16 @@ $('.submissionMain[data-id="<%= @assignment.id %>"]').empty()
                         locals: { submission: @submission,
 					                        assignment: @assignment,
 					                        lecture: @lecture } %>')
-$('#submission_invitee_ids').select2
-  theme: 'bootstrap'
-  language: '<%= I18n.locale %>'
+
+new TomSelect('#submission_invitee_ids',
+  sortField:
+    field: 'text'
+    direction: 'asc'
+  render:
+    no_results: (data, escape) ->
+      '<div class="no-results"><%= t("basics.no_results") %></div>'
+)
+
 $('.submissionFooter[data-id!="<%= @assignment.id %>"] .btn')
   .prop('disabled', true).removeClass('btn-outline-primary')
   .removeClass('btn-outline-danger').addClass('btn-outline-secondary')

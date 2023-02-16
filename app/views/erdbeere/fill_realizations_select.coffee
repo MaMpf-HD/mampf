@@ -3,4 +3,4 @@ $('#tag_realizations').empty()
                         locals: { structures: @structures,
                                   properties: @properties,
                                   tag: @tag } %>')
-  .selectize({ plugins: ['remove_button'] })
+  new TomSelect('#tag_realizations',{ plugins: ['remove_button'] })

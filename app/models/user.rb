@@ -94,6 +94,8 @@ class User < ApplicationRecord
         -> { where(email_for_correction_upload: true) }
   scope :email_for_submission_decision,
         -> { where(email_for_submission_decision: true) }
+  scope :no_tutorial_name,
+        -> { where(name_in_tutorials: nil) }
 
   searchable do
     text :tutorial_name
@@ -127,7 +129,7 @@ class User < ApplicationRecord
   # with their ids
   # Is used in options_for_select in form helpers.
   def self.only_editors_selection
-    User.editors.map { |e| [e.info, e.id] }
+    User.editors.map { |e| [e.info, e.id] }.natural_sort_by(&:first)
   end
 
   # returns the ARel of all users that are editors or whose id is among a
@@ -142,8 +144,35 @@ class User < ApplicationRecord
   # array of all users together with their ids for use in options_for_select
   # (e.g. in a select editors form)
   def self.select_editors
-    User.pluck(:name, :email, :id)
-        .map { |u| [ "#{u.first} (#{u.second})", u.third] }
+    User.pluck(:name, :email, :id, :name_in_tutorials)
+        .map { |u| [ "#{u.fourth.presence || u.first} (#{u.second})", u.third] }
+  end
+
+  def self.name_or_email_like(search_string)
+    where("name ILIKE ? OR email ILIKE ?",
+          "%#{search_string}%",
+          "%#{search_string}%")
+  end
+
+  def self.name_in_tutorials_or_email_like(search_string)
+    where("name_in_tutorials ILIKE ? OR email ILIKE ?",
+          "%#{search_string}%",
+          "%#{search_string}%")
+  end
+
+  def self.preferred_name_or_email_like(search_string)
+    return User.none unless search_string
+    return User.none unless search_string.length >= 2
+
+    where(name_in_tutorials: [nil, '']).name_or_email_like(search_string)
+      .or(where.not(name_in_tutorials: [nil, ''])
+               .name_in_tutorials_or_email_like(search_string))
+  end
+
+  def self.values_for_select
+    pluck(:id, :name, :name_in_tutorials, :email)
+      .map { |u| { value: u.first,
+                   text: "#{ u.third.presence || u.second } (#{u.fourth})" } }
   end
 
   def courses
@@ -276,7 +305,7 @@ class User < ApplicationRecord
 
   def info_uncached
     return email unless name.present?
-    name + ' (' + email + ')'
+    (name_in_tutorials.presence || name) + ' (' + email + ')'
   end
 
   def info
@@ -351,6 +380,10 @@ class User < ApplicationRecord
   # lectures as module editor (see above)
   def teaching_related_lectures
     (given_lectures + edited_lectures + lectures_as_course_editor).uniq
+  end
+
+  def proper_teaching_related_lectures
+    (given_lectures + edited_lectures).uniq
   end
 
   # teaching unrelated lectures are all lectures that are not teaching related
@@ -492,6 +525,10 @@ class User < ApplicationRecord
     return false unless lecture.is_a?(Lecture)
     return false if lecture.in?(lectures)
     lectures << lecture
+    
+    # make sure subscribed_users is updated in media
+    Sunspot.index! lecture.media
+
     true
   end
 
@@ -500,6 +537,9 @@ class User < ApplicationRecord
     return false unless lecture.in?(lectures)
     lectures.delete(lecture)
     favorite_lectures.delete(lecture)
+
+    # make sure subscribed_users is updated in media
+    Sunspot.index! lecture.media
     true
   end
 

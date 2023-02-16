@@ -128,6 +128,11 @@ class ProfileController < ApplicationController
     @link = @collapse_id.remove('collapse').camelize(:lower) + 'Link'
   end
 
+  def request_data
+    MathiMailer.data_request_email(current_user).deliver_later
+    redirect_to edit_profile_path, notice: t('profile.data_request_sent')
+  end
+
   private
 
   def set_user

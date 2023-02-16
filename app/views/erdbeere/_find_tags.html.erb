@@ -22,7 +22,9 @@
                  data: { ajax: true,
                          filled: false,
                          model: 'tag',
-                         locale: I18n.locale } } %>
+                         locale: I18n.locale,
+                         placeholder: t('basics.enter_two_letters'),
+                         no_results: t('basics.no_results') } } %>
   <%= f.hidden_field :sort, value: @sort %>
   <%= f.hidden_field :id, value: @id %>
   <div class="row mt-2">

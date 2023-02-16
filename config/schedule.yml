@@ -14,6 +14,6 @@ cache_cleaner_job:
   queue: critical
 
 user_cleaner_job:
-  cron: "0 0 1 * *"
-  class: "UserCleaner"
+  cron: "0 4 * * 1,4"
+  class: "UserCleanerJob"
   queue: critical

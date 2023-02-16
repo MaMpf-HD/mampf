@@ -75,25 +75,6 @@ $(document).on 'turbolinks:load', ->
     $('#talk-basics-warning').show()
     return
 
-  locale = $('#talk_speaker_ids').data('locale')
-  placeholder = $('#talk_speaker_ids').data('placeholder')
-
-  $('#talk_speaker_ids').select2
-    ajax:
-      url: Routes.list_users_path()
-      data: (params) ->
-        { term: params.term }
-      dataType: 'json'
-      delay: 200
-      processResults: (data) ->
-        { results: data }
-      cache: true
-    language: locale
-    theme: 'bootstrap'
-    minimumInputLength: 2
-    placeholder: placeholder
-    allowClear: true
-
   return
 
 # clean up everything before turbolinks caches
@@ -102,5 +83,4 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#new-talk-date-button'
   $(document).off 'click', '.remove-talk-date'
   $(document).off 'click', '#cancel-talk-edit'
-  $('#talk_speaker_ids').select2('destroy');
   return

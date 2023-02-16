@@ -27,20 +27,22 @@
         </div>
       </div>
       <% if @course.question_tags.count.positive? %>
-        <%= f.label :search_tag_ids,
+        <%= f.label :search_course_tag_ids,
                     t('quiz.compile_tags'),
                     class: "form-label" %>
         <%= helpdesk(t('quiz.info.compile_tags'), false) %>
-        <%= f.select :search_tag_ids,
+        <%= f.select :search_course_tag_ids,
                      [[]],
                      {},
                      { multiple: true,
-                       id: 'search_tag_ids',
+                       id: 'search_course_tag_ids',
                        class: 'selectize',
                        data: { ajax: true,
                                filled: false,
                                model: 'course_tag',
-                               course: @course.id } } %>
+                               course: @course.id,
+                               placeholder: t('basics.enter_two_letters'),
+                               no_results: t('basics.no_results') } } %>
       <% end %>
       <div id="questionCounter">
       </div>

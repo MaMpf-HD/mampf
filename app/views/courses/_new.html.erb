@@ -34,7 +34,7 @@
                   class: "form-label" %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
-                   options_for_select([[current_user.name, current_user.id]],
+                   options_for_select([[current_user.info, current_user.id]],
                                        current_user.id),
                    {},
                    { class: 'selectize',
@@ -43,7 +43,9 @@
                      style: 'display: none;',
                      data: { ajax: true,
                              model: 'user',
-                             filled: false } } %>
+                             filled: false,
+                             placeholder: t('basics.enter_two_letters'),
+                             no_results: t('basics.no_results') } } %>
     </div>
     <div class="col-12 mb-3">
       <%= f.label :division_ids,

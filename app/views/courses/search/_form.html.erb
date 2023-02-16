@@ -61,8 +61,8 @@
       <%= f.label :per, t('basics.hits_per_page'),
                   class: 'form-label' %>
       <%= f.select :per,
-                   options_for_select(lecture_hits_per_page(true),
-                                      default_lecture_hits_per_page(true)),
+                   options_for_select(hits_per_page(true),
+                                      default_hits_per_page(true)),
                    {},
                    { class: 'form-control'} %>
 

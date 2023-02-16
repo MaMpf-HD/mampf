@@ -38,7 +38,9 @@
                              { class: 'selectize',
                                data: { ajax: true,
                                        model: 'user',
-                                       filled: false } } %>
+                                       filled: false,
+                                       placeholder: t('basics.enter_two_letters'),
+                                       no_results: t('basics.no_results') } } %>
                 <div class="invalid-feedback" id="lecture-teacher-error">
                 </div>
               </div>
@@ -74,7 +76,9 @@
                                class: 'selectize',
                                data: { ajax: true,
                                        model: 'user',
-                                       filled: false } } %>
+                                       filled: false,
+                                       placeholder: t('basics.enter_two_letters'),
+                                       no_results: t('basics.no_results') } } %>
               </div>
             </div>
           </div>

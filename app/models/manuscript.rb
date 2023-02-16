@@ -15,6 +15,9 @@ class Manuscript
     end
     @medium = medium
     @lecture = medium.teachable.lecture
+    @locale = @lecture.locale_with_inheritance || I18n.default_locale
+    @chapter_marker = I18n.t('manuscript.chapter', locale: @locale)
+    @section_marker = I18n.t('manuscript.section', locale: @locale)
     @version = medium.manuscript.metadata['version']
     bookmarks = medium.manuscript.metadata['bookmarks'] || []
     @chapters = get_chapters(bookmarks)
@@ -316,18 +319,18 @@ class Manuscript
 #  private
 
   def get_chapters(bookmarks)
-    bookmarks.select { |b| b['sort'] == 'Kapitel' }
+    bookmarks.select { |b| b['sort'] == @chapter_marker }
              .sort_by { |c| c['counter'] }
              .each_with_index { |c, i| c['new_position'] = i + 1 }
   end
 
   def get_sections(bookmarks)
-    bookmarks.select { |b| b['sort'] == 'Abschnitt' }
+    bookmarks.select { |b| b['sort'] == @section_marker }
              .sort_by { |s| s['counter'] }
   end
 
   def get_content(bookmarks)
-    bookmarks.reject { |b| b['sort'].in?(['Kapitel', 'Abschnitt']) }
+    bookmarks.reject { |b| b['sort'].in?([@chapter_marker, @section_marker]) }
              .sort_by { |c| c['counter'] }
   end
 

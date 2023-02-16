@@ -19,6 +19,12 @@ FactoryBot.define do
       after(:create, &:confirm)
     end
 
+    trait :consented do
+      after(:create) do |user|
+        user.update(consents: true, consented_at: Time.now)
+      end
+    end
+
     # call it with build(:user, :with_lectures, lecture_count: n) if you want
     # n subscribed lectures associated to the user
     trait :with_lectures do
@@ -29,6 +35,7 @@ FactoryBot.define do
     end
 
     factory :confirmed_user, traits: [:skip_confirmation_notification,
-                                      :auto_confirmed]
+                                      :auto_confirmed,
+                                      :consented]
   end
 end

@@ -15,23 +15,35 @@ class UserCleaner
     @email_dict = {}
     @hash_dict = {}
     @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
+    # Mails containing multiple email addresses (Subject: "Undelivered Mail Returned to Sender")
     @imap.search(['SUBJECT', 'Undelivered Mail Returned to Sender']).each do |message_id|
-      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
-      if match = body.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User has moved to ERROR: Account expired\./)
-        match.captures.each do |email|
+      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
+      if match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/)
+        match = match.flatten.uniq
+        match.each do |email|
           add_mail(email, message_id)
 
           try_get_hash(body, email)
         end
       end
     end
-    @imap.search(['SUBJECT', 'Delivery Status Notification (Failure)']).each do |message_id|
-      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"]
-      if match = body.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?Unknown recipient/)
-        match.captures.each do |email|
-          add_mail(email, message_id)
+    # Mails containing single email addresses (Subject: "Delivery Status Notification (Failure)")
+    # define array containing all used regex patterns
+    patterns = [
+      '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?Unknown recipient',
+      '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User unknown in virtual mailbox table'
+    ]
 
-          try_get_hash(body, email)
+    @imap.search(['SUBJECT', 'Delivery Status Notification (Failure)']).each do |message_id|
+      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
+      patterns.each do |pattern|
+        if match = body.scan(/#{pattern}/)
+          match = match.flatten.uniq
+          match.each do |email|
+            add_mail(email, message_id)
+
+            try_get_hash(body, email)
+          end
         end
       end
     end
@@ -70,7 +82,7 @@ class UserCleaner
   def delete_ghosts
     @hash_dict.each do |mail, hash|
       u = User.find_by(email: mail, ghost_hash: hash)
-      move_mail(@email_dict[mail]) if u.present?
+      move_mail(@email_dict[mail]) if u.present? and @email_dict.present?
       u.destroy! if u&.generic?
     end
   end
