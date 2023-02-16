@@ -133,7 +133,7 @@
       </div>
     </div>
   </div>
-  <div class="accordion-item mb-3">
+  <div class="accordion-item">
     <div class="accordion-header">
       <button class="accordion-button collapsed"
               type="button"
@@ -154,6 +154,32 @@
         <%= render partial: 'main/start/lecture_search',
                    locals: { results_as_list: false } %>
         <div id="lecture-search-results">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item mb-3">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseMediaSearch"
+              aria-expanded="false"
+              aria-controls="collapseMediaSearch">
+        <h4 class="text-dark"
+            id="lectureSearchLink">
+          <%= t('profile.media_search') %>
+        </h4>
+      </button>
+    </div>
+    <div class="collapse subscriptionsCollapse" id="collapseMediaSearch"
+         data-bs-parent="#subscriptionsAccordion"
+         data-link="#mediaSearchLink">
+      <div class="accordion-body">
+        <%= render partial: 'main/start/media_search',
+                   locals: { results_as_list: false,
+                             purpose: 'media' } %>
+        <div id="media-search-results">
         </div>
       </div>
     </div>
