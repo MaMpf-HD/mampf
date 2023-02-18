@@ -646,8 +646,7 @@ $(document).on 'turbolinks:load', ->
     video.pause()
     # round time to full seconds
     time = video.currentTime
-    intTime = Math.floor(time)
-    roundTime = intTime
+    roundTime = Math.floor(time)
     mediumId = thyme.dataset.medium
     $.ajax Routes.new_annotation_path(),
       type: 'GET'
@@ -945,7 +944,7 @@ $(document).on 'turbolinks:load', ->
     $('#markers').append(markerStr)
     # set the correct position for the marker
     marker = $('#marker-' + annotation.id)
-    size = seekBar.clientWidth - 13
+    size = seekBar.clientWidth - 15
     ratio = timeToSeconds(annotation.timestamp) / video.duration
     offset = marker.parent().offset().left + ratio * size + 3
     marker.offset({ left: offset })
