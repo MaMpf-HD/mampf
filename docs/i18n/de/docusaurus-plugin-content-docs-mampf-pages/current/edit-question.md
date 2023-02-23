@@ -17,7 +17,7 @@ Die Seite „Frage bearbeiten“ erreicht man entweder über den [Quizeditor](qu
   <li>
      <a href="/mampf/de/mampf-pages/quiz-editor" target="_self"><b>Quizeditor</b></a>
   </li>
-  Im Quizgraphen klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/></button>. Daraufhin erscheinen andere Buttons neben der Überschrift der Box „Quizgraph“. Sofern man Bearbeitungsrechte für die Frage hat, ist darunter auch der Button <button>Bearbeiten</button>, der einen auf die Seite „Frage bearbeiten“ führt.
+  Im Quizgraphen klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/></button>. Daraufhin erscheinen andere Buttons neben der Überschrift der Box „Quizgraph“. Sofern man Bearbeitungsrechte für die Frage hat, ist darunter auch der Button <button>Bearbeiten</button>, der einen auf die Seite „Frage bearbeiten“ führt.
   <li>
      <a href="/mampf/de/mampf-pages/edit-medium-question" target="_self"><b>Seite „Frage bearbeiten“</b></a>
   </li>
@@ -103,7 +103,7 @@ In der Box „Basisdaten“ können die Texte zur Frage und zu Lösungshinweisen
            <label for="fname">Lösungshinweis</label><br></br>
            <input type="text" id="fname" name="fname"></input><br></br>
         </p>
-     </form> Eingabefeld für den Lösungshinweis. Um LaTeX zu verwenden, setze den gewünschten Text zwischen $-Zeichen. Der Hinweis kann beim Bearbeiten der Frage eingeblendet werden. Dazu klickt man oben rechts auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" height="12"/></button>.
+     </form> Eingabefeld für den Lösungshinweis. Um LaTeX zu verwenden, setze den gewünschten Text zwischen $-Zeichen. Der Hinweis kann beim Bearbeiten der Frage eingeblendet werden. Dazu klickt man oben rechts auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" width="12" height="12"/></button>.
      <table>
        <tr>
           <td>
@@ -111,7 +111,7 @@ In der Box „Basisdaten“ können die Texte zur Frage und zu Lösungshinweisen
           </td>
        </tr>
        <tr>
-          <td colspan="2" text align="center">Der Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" height="12"/></button> zum Einblenden des Hinweises befindet sich oben rechts.</td>
+          <td colspan="2" text align="center">Der Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" width="12" height="12"/></button> zum Einblenden des Hinweises befindet sich oben rechts.</td>
        </tr>
        <tr>
           <td>
@@ -165,7 +165,7 @@ Die Box „Neue Antwort“ erscheint innerhalb der Box „Antworten“, nachdem 
           </td>
        </tr>
        <tr>
-          <td colspan="2" text align="center">Der Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" height="12"/></button> zum Einblenden der Erklärung befindet sich bei jeder Antwortmöglichkeit oben rechts.</td>
+          <td colspan="2" text align="center">Der Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" width="12" height="12"/></button> zum Einblenden der Erklärung befindet sich bei jeder Antwortmöglichkeit oben rechts.</td>
        </tr>
      </table>  
 * <button>Speichern</button> Speichere die neue Antwort. Sie wird dann wie die anderen bereits angelegten Antworten anzeigt.
@@ -205,7 +205,7 @@ Zu einer vorhandenen Antwort klappen Bedienelemente zur Bearbeitung aus, nachdem
           </td>
        </tr>
        <tr>
-          <td colspan="2" text align="center">Der Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" height="12"/></button> zum Einblenden der Erklärung befindet sich bei jeder Antwortmöglichkeit oben rechts.</td>
+          <td colspan="2" text align="center">Der Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/question-circle-regular.png" width="12" height="12"/></button> zum Einblenden der Erklärung befindet sich bei jeder Antwortmöglichkeit oben rechts.</td>
        </tr>
      </table>  
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen und minimiere die Antwortbox.

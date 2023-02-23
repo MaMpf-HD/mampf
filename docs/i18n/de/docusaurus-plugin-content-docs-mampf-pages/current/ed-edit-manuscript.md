@@ -14,7 +14,7 @@ Auf die Seite „Skript bearbeiten“ gelangt man über die [Seite des Skriptes]
   <li>
      <a href="/mampf/de/mampf-pages/medium" target="_self"><b>Seite des Skriptes</b></a>
   </li>
-  Oben links neben dem Titel des Skriptes befindet sich das Symbol <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Skript bearbeiten“ führt.
+  Oben links neben dem Titel des Skriptes befindet sich das Symbol <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button>, das einen auf die Seite „Skript bearbeiten“ führt.
   <li>
      <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><b>„Veranstaltung bearbeiten“</b></a>
   </li>
@@ -43,7 +43,7 @@ Nun werden die Bedienelemente der Seite „Skript bearbeiten“ beschrieben. Dab
 ### Kopf
 In diesem Bereich gibt es Steuerelemente zur Navigation, der Verwaltung der Veröffentlichung und der Übernahme von Änderungen.
 
-* <a href="/mampf/de/mampf-pages/medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/medium" target="_self">Seite des Skriptes</a>.
+* <a href="/mampf/de/mampf-pages/medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" width="12" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/medium" target="_self">Seite des Skriptes</a>.
 * <button>Bearbeiten</button> Verwalte die Veröffentlichung. Dieser Button ist nur bei unveröffentlichten Skripten mit geplanter Veröffentlichung vorhanden.
 * <button>Stornieren</button> Storniere die geplante Veröffentlichung. Dieser Button ist nur bei unveröffentlichten Skripten mit geplanter Veröffentlichung vorhanden.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem Änderungen vorgenommen worden sind.
@@ -57,7 +57,7 @@ Das Formular „Veröffentlichung des Mediums verwalten“ öffnet sich, nach de
 
 ![](/img/medium_veroeffentlichen_ohne_quiz.png)
 
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> Bricht die Aktion ab und schließe das Formular.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button> Bricht die Aktion ab und schließe das Formular.
 * Veröffentlichungsdatum <form>
     <input type="radio" id="de1" name="lang" checked></input>
     <label for="vererb"> sofort</label><br></br>
@@ -113,7 +113,7 @@ In diesem Bereich können Detailseinstellungen des Skriptes verändert werden, d
              Eingabefeld und Dropdown-Menü. Gib mindestens zwei Zeichen ein, scrolle durch die Liste aller Nutzer*innen und wähle die aus, die Editorenrechte für das Skript erhalten sollen.
            </li>
            <li>
-              EditorIn <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+              EditorIn <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
            </li>
               Entziehe dieser Person die Editorenrechten für das Skript. Das funktioniert nur, wenn die Person keine höheren Rechte als Medienbearbeitung in dieser Veranstaltung besitzt. Jedes Medium benötigt mindestens ein*e Editor*in.
           <li>
@@ -139,7 +139,7 @@ In diesem Bereich können Detailseinstellungen des Skriptes verändert werden, d
               Eingabefeld und Dropdown-Menü. Gib mindestens zwei Zeichen ein, scrolle durch die Liste aller Medien und wähle die aus, die mit dem Skript verknüpft werden sollen.
            </li>
            <li>
-              Verknüpftes Medium <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+              Verknüpftes Medium <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
            </li>
               Hebe die Assoziierung mit dem Medium auf.
            <li>
@@ -196,19 +196,19 @@ Der unter Inhaltsangabe eingegebene Text erscheint auf der [Medienseite](medium)
         <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/medium_bearbeiten_vortragender_inhalt.png" width="4000" /><br></br><br></br>
         <ul>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-bold.png" height="12"/></button> Beginne bzw. beende Fettdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text fett bzw. stelle den Fettdruck ab.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-bold.png" width="12" height="12"/></button> Beginne bzw. beende Fettdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text fett bzw. stelle den Fettdruck ab.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" width="12" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" width="12" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" width="12" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" width="12" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
            </li>
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-quote.png" height="8"/></button> Beginne bzw. beende ein Zitat an der Stelle, an der sich der Cursor befindet, oder mache aus dem markierten Text ein Zitat bzw. aus dem markierten Zitat einfachen Text.
@@ -218,16 +218,16 @@ Der unter Inhaltsangabe eingegebene Text erscheint auf der [Medienseite](medium)
      <td valign="top">
         <ul>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" width="12" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" width="12" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" width="12" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" width="12" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
            </li>
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
@@ -250,7 +250,7 @@ Der unter Inhaltsangabe eingegebene Text erscheint auf der [Medienseite](medium)
 
 Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
-Falls die Gliederung aus dem Skript importiert wurde, gibt es bei „Extrahierter Inhalt“ zusätzlich das Bedienelement <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button>. Dieses führt dazu, dass das Skript an der entsprechenden Stelle in einem neuen Tab geöffnet wird. Damit die Gliederung aus dem PDF übernommen werden kann, muss zu einen in den [Veranstaltungseinstellungen](ed-edit-event-series#einstellungen) die Inhaltsvermittlung „unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf LaTeX-Paket erstellt wurde“ ausgewählt und zum anderen das Skript mit dem [MaMpf-LaTeX-Paket](https://github.com/MaMpf-HD/mampf-sty/releases/) erstellt worden sein. Weitere Informationen zum Gliederungs- und Tagimport sind im Abschnitt über die Box „Dokumente“ zu finden.
+Falls die Gliederung aus dem Skript importiert wurde, gibt es bei „Extrahierter Inhalt“ zusätzlich das Bedienelement <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" width="12" height="12"/></button>. Dieses führt dazu, dass das Skript an der entsprechenden Stelle in einem neuen Tab geöffnet wird. Damit die Gliederung aus dem PDF übernommen werden kann, muss zu einen in den [Veranstaltungseinstellungen](ed-edit-event-series#einstellungen) die Inhaltsvermittlung „unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf LaTeX-Paket erstellt wurde“ ausgewählt und zum anderen das Skript mit dem [MaMpf-LaTeX-Paket](https://github.com/MaMpf-HD/mampf-sty/releases/) erstellt worden sein. Weitere Informationen zum Gliederungs- und Tagimport sind im Abschnitt über die Box „Dokumente“ zu finden.
 
 ![](/img/skript_bearbeiten_inhalt_import_plus.png)
 
@@ -303,13 +303,13 @@ Das Formular „Struktur des Manuskripts“ öffnet sich, nachdem in der Box „
 ![](/img/skript_bearbeiten_details.png)
 
 In diesem Formular sind die folgenden Bedienelemente vorhanden:
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> Schließe das Formular.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button> Schließe das Formular.
 * <button>Kapiteltitel</button> Klappe Details zum Kapitel aus bzw. ein.
 * <button>Abschnittstitel</button> Klappe Details zum Abschnitt aus bzw. ein.
 * <a href="/mampf/de/mampf-pages/ed-editmedium" target="_self"><button>Begriff</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-editmedium" target="_self">„Tag bearbeiten“</a>. Dieses Bedienelement ist nur vorhanden, wenn der Begriff bereits importiert oder auf andere Weise angelegt wurde.
-*  <form><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tag-solid.png" height="12"/><input type="checkbox" id="ass" name="ass"></input></form>
+*  <form><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tag-solid.png" width="12" height="12"/><input type="checkbox" id="ass" name="ass"></input></form>
    Checkbox. Setze bzw. entferne den Haken durch Anklicken. Wenn der Haken gesetzt ist, wird der Tag bei der Übernahme importiert.
-* <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye_other.png" height="14"/> <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/toggle-on.png" height="12"/> bzw. <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/outline-toggle-off.png" height="12"/> Schalter. Verschiebe den Regler durch Anklicken. Wenn <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/toggle-on.png" height="12"/> ausgewählt ist, wird das Gliederungselement importiert und auf den Seiten <a href="/mampf/de/mampf-pages/section" target="_self">„Abschnitt“</a> und <a href="/mampf/de/mampf-pages/ed-edit-section" target="_self">„Abschnitt bearbeiten“</a> angezeigt.
+* <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye_other.png" height="14"/> <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/toggle-on.png" width="12" height="12"/> bzw. <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/outline-toggle-off.png" width="12" height="12"/> Schalter. Verschiebe den Regler durch Anklicken. Wenn <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/toggle-on.png" width="12" height="12"/> ausgewählt ist, wird das Gliederungselement importiert und auf den Seiten <a href="/mampf/de/mampf-pages/section" target="_self">„Abschnitt“</a> und <a href="/mampf/de/mampf-pages/ed-edit-section" target="_self">„Abschnitt bearbeiten“</a> angezeigt.
 
 Nachdem in der Box „Dokumente“ auf <button>Übernehmen</button> geklickt worden ist, wird in der Box „Inhalt“ die Grobstruktur der importierten Gliederung, d.h. Kapitel und Abschnitte, angezeigt. Die Feinstruktur kann auf der Seite [„Abschnitt bearbeiten“](ed-edit-section) betrachtet werden.
 

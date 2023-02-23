@@ -7,7 +7,7 @@ Die persönliche Startseite ist die Seite, auf die man gelangt, nachdem man sich
 ![](/img/startseite_weitere_abonnierte.png)
 
 ## Navigation zu dieser Seite
-Die persönliche Startseite erreicht man, indem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button> oben links in der [Navigationsleiste](nav-bar) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geleitet.
+Die persönliche Startseite erreicht man, indem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" width="15" height="15"/></button> oben links in der [Navigationsleiste](nav-bar) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geleitet.
 
 ## Bereiche der Seite
 Die persönliche Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar) und den [Footer](footer). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -44,10 +44,10 @@ Die folgenden Bedienelemente sind auf Veranstaltungskacheln abonnierter Veransta
               <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" height="12"/></button>
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" width="12" height="12"/></button>
            </li>
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" height="12"/></button> Beende das Veranstaltungsabo.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" width="12" height="12"/></button> Beende das Veranstaltungsabo.
            </li>
            <li>
               <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
@@ -57,7 +57,7 @@ Die folgenden Bedienelemente sind auf Veranstaltungskacheln abonnierter Veransta
   </tr>
 </table>
 
-Bei den Icons <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/envelope-regular.png" height="12"/>, <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/folder-regular.png" height="12"/> und <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comment-alt-regular.png" height="12"/> handelt es sich nicht um Bedienelemente. Sie weisen durch blaue Einfärbung lediglich auf das das Vorhandensein (und die Anzahl) neuer Benachrichtigungen, Medien bzw. Forumsbeiträge hin.
+Bei den Icons <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/envelope-regular.png" width="12" height="12"/>, <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/folder-regular.png" width="12" height="12"/> und <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comment-alt-regular.png" width="12" height="12"/> handelt es sich nicht um Bedienelemente. Sie weisen durch blaue Einfärbung lediglich auf das das Vorhandensein (und die Anzahl) neuer Benachrichtigungen, Medien bzw. Forumsbeiträge hin.
 
 #### Nicht abonnierte Veranstaltungen
 Bei nicht abonnierten Veranstaltungen gibt es lediglich ein Bedienelement auf der Veranstaltungskachel. Über dieses kann die betreffende Veranstaltung abonniert werden.
@@ -66,7 +66,7 @@ Bei nicht abonnierten Veranstaltungen gibt es lediglich ein Bedienelement auf de
   <tr>
       <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/veranstaltungscard_kein_abo.png" width="300"/></td>
       <td>
-         <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/plus-square-regular.png" height="12"/></button> Beginne ein Veranstaltungsabo.
+         <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/plus-square-regular.png" width="12" height="12"/></button> Beginne ein Veranstaltungsabo.
       </td>
    </tr>
 </table>
@@ -83,7 +83,7 @@ Auf den Vortragkachlen kommen die folgenden Bedienelemente vor:
                <a href="/mampf/de/mampf-pages/talk" target="_self"><button name="button">Vortragstitel</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/talk" target="_self">Vortragsseite</a>.
             </li>
             <li>
-               <button name="button"><a href="/mampf/de/mampf-pages/edit-talk" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button> Wechsel zur <a href="/mampf/de/mampf-pages/edit-talk" target="_self">Vortragsbearbeitungsseite</a>.
+               <button name="button"><a href="/mampf/de/mampf-pages/edit-talk" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></a></button> Wechsel zur <a href="/mampf/de/mampf-pages/edit-talk" target="_self">Vortragsbearbeitungsseite</a>.
             </li>
             <li>
                <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/event-series" target="_self">Veranstaltungsseite</a>.
@@ -96,7 +96,7 @@ Auf den Vortragkachlen kommen die folgenden Bedienelemente vor:
    </tr>
 </table>
 
-Das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/handshake-solid.png" height="12"/> ist kein Bedienelement. Im Fall eines Gruppenvortrags werden hinter diesem Icon die anderen Teammitglieder aufgeführt.
+Das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/handshake-solid.png" width="12" height="12"/> ist kein Bedienelement. Im Fall eines Gruppenvortrags werden hinter diesem Icon die anderen Teammitglieder aufgeführt.
 
 ### Veranstaltungssuche
 

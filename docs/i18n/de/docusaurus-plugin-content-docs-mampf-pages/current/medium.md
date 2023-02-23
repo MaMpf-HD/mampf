@@ -9,7 +9,7 @@ Die Seite „Medium“ ist eine Unterseite einer Veranstaltung oder eines Moduls
 \*Links ergänzen\*
 
 ## Navigation zu dieser Seite
-Auf die Medienseite gelangt man über das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></button> auf Mediacards. Diese kommen beispielsweise auf den folgenden Seite vor, wenn Medien assoziiert sind: [„Lektionen“](lessons), [„Quizzes“](quizzes.md), [„Skript“](manuscript.md), [„Sonstiges“](miscellaneous.md), [„Übungen“](exercises.md), [„Worked Examples“](worked-examples.md), [„Wiederholung“](repetition.md), [„Abschnitt“](section), [„Sitzung“](session) und [„Vortrag“](talk).
+Auf die Medienseite gelangt man über das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" width="12" height="12" class="img"/></button> auf Mediacards. Diese kommen beispielsweise auf den folgenden Seite vor, wenn Medien assoziiert sind: [„Lektionen“](lessons), [„Quizzes“](quizzes.md), [„Skript“](manuscript.md), [„Sonstiges“](miscellaneous.md), [„Übungen“](exercises.md), [„Worked Examples“](worked-examples.md), [„Wiederholung“](repetition.md), [„Abschnitt“](section), [„Sitzung“](session) und [„Vortrag“](talk).
 
 ## Bereiche der Seite
 Die Seite „Medium“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Medium“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -57,16 +57,16 @@ Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese wer
 <a href="/mampf/de/mampf-pages/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/session" target="_self">Seite der Sitzung</a>.
 
 ### Video
-* <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>mp4</button> Lade das Video herunter.
+* <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12" class="img"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" width="12" height="12" class="img"/>mp4</button> Lade das Video herunter.
 
 ### Manuskript
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" width="12" height="12" class="img"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" width="12" height="12" class="img"/>pdf</button> Lade das PDF herunter.
 
 ### Geogebra-Applet
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/leak-add.png" height="12"/></button> Öffne das Geogebra-Applet.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>ggb</button> Lade das Applet herunter.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/leak-add.png" width="12" height="12" class="img"/></button> Öffne das Geogebra-Applet.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" width="12" height="12" class="img"/>ggb</button> Lade das Applet herunter.
 
 ### Externer Link
 <button name="button">Hier klicken</button> Öffne den externen Link.
@@ -75,22 +75,22 @@ Nun werden alle möglichen Bedienelemente der Medienseite beschrieben. Diese wer
 <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 
 ### Inhalt
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript.
-* <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" width="12" height="12" class="img"/></button> Öffne das Skript.
+* <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12" class="img"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" width="12" height="12" class="img"/></button> Öffne das PDF.
 * <a href="/mampf/de/mampf-pages/section" target="_self"><button>Abschnittstitel</button></a> (nur bei Skripten) Wechsel auf die <a href="/mampf/de/mampf-pages/section" target="_self">Seite des Abschnitts</a>.
 
 ### Kommentare
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" height="12"/></button> Wechsel zur Vollbildansicht.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" width="12" height="12" class="img"/></button> Wechsel zur Vollbildansicht.
 * <button name="button">Abonnieren</button> bzw. <button name="button">Abonnement beenden</button> Schalte eine E-Mail-Benachrichtigung bei Veröffentlichung eines neuen Diskussionsbeitrags ein bzw. aus.
 * <button name="button">Neuer Kommentar</button> Verfasse einen neuen Kommentar.
 * <button name="button">Bearbeiten</button> Bearbeite einen Kommentar. Nur eigene Kommentare können bearbeitet werden.
 * <button name="button">Löschen</button> Lösche einen Kommentar. Nur eigene Kommentare können gelöscht werden.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/caret-up.png" height="12"/></button> Gib Kommentar einen Upvote oder nimm diesen zurück.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/caret-up.png" width="12" height="12" class="img"/></button> Gib Kommentar einen Upvote oder nimm diesen zurück.
 * <button name="button">Auf Kommentar antworten.</button> Antworte auf einen Kommentar.
-* <button name="button">Next<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-right.png" height="12"/></button> Gehe auf nächste Antwortseite.
+* <button name="button">Next<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-right.png" width="12" height="12" class="img"/></button> Gehe auf nächste Antwortseite.
 * <button name="button">n</button> Gehe auf Seite n.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-left.png" height="12"/> Previous</button> Gehe auf vorige Antwortseite.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-left.png" width="12" height="12" class="img"/> Previous</button> Gehe auf vorige Antwortseite.
 
 ### Verknüpfte Medien
 <button name="button">Medium</button> Klappe Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind <i>Lektion</i>, <i>Worked Example</i>, <i>Quiz</i>, <i>Wiederholung</i>, <i>Beispiel</i>, <i>Übung</i>, <i>Skript</i>, <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i> und <i>Sonstiges</i>. Für mögliche weitere Buttons siehe <a href="/mampf/de/mampf-pages/mediacard" target="_self">Mediacard</a>.
@@ -102,7 +102,7 @@ Nicht immer sind alle der aufgeführten Bedienelemente verfügbar, da Medien nic
 Von der Seite „Medium“ gelangt man zu diversen anderen Seiten. Im Weiteren wird beschrieben, welche Informationen diese Seiten enthalten und welche Aktionen dort möglich sind.
 
 ### [„Medium bearbeiten“](edit-medium) (für Editor*innen und Vortragende)
-Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/mampf-pages/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>, mit diesem kann auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-medium" target="_self">„Medium bearbeiten“</a> gewechselt werden. Dort sind folgende Aktionen möglich:
+Neben dem Titel gibt es das Symbol <button name="button"><a href="/mampf/de/mampf-pages/ed-edit-medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12" class="img"/></a></button>, mit diesem kann auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-medium" target="_self">„Medium bearbeiten“</a> gewechselt werden. Dort sind folgende Aktionen möglich:
 
 * Änderung von Medientyp und Sprache
 * Hinzufügen und Entfernen von Editor\*innen
@@ -120,7 +120,7 @@ Die Veranstaltungsseite enthält aktuelle Informationen und die Gliederung der V
 Auf dieser Seite können verknüpfte Begriffe, Abschnitte und Medien sowie das Inhaltsverzeichnis bzw. der Inhaltstext angesehen werden. Diese Seite ist über <a href="/mampf/de/mampf-pages/session" target="_self"><button name="button">Sitzung</button></a> zu erreichen.
 
 ### [THymE-Player](thyme.md)
-Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12" class="img"/></a></button>-Button.
 
 ### [Seite der getaggten Begriffe](tag.md)
 Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zudem sind verknüpfte Begriffe, Abschnitte und Medien angeben und verlinkt. Die Beziehungen zu anderen Begriffen wird mit einer Mindmap visualisiert. Diese Mindmap kann auch zur Navigation genutzt werden. Begriffsseiten öffnen sich durch Klick auf den jeweiligen <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a>.
@@ -132,17 +132,17 @@ Auf dieser Seite können Kommentare gelesen, verfasst und durch Upvote als hilfr
 
 ## Hinweise für Editor*innen und Vortragende
 ### Seite bearbeiten
-Bei Editor\*innen und Vortragenden befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>.
+Bei Editor\*innen und Vortragenden befindet sich neben der Überschrift das <button name="button"><a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12" class="img"/></a></button>-Symbol. Dieses führt auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>.
 
 ### Zusätzliche Informationen
-Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" height="12"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
+Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden. Das Symbol <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-import-solid.png" width="12" height="12" class="img"/> im Header weist darauf hin, dass das Medium aus einer anderen Veranstaltung importiert worden ist. Bei Editor\*innen befinden sich gegebenenfalls zusätzliche Icons auf den Mediacards, die Auskunft über die Sichtbarkeit eines Mediums geben.
 
 | Symbol | Bedeutung |
 | :---: | :--- |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht. Einfache Nutzer*innen können es noch nicht sehen. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-blue.png" height="12"/> | Das Medium ist auf Modulebene angesiedelt und mit Tags versehen, die in der Veranstaltung noch nicht behandelt worden sind. Bevor diese Begriffe in der Veranstaltung verwendet worden sind, können einfache Nutzer\*innen dieses Medium nur sehen, wenn sie *alle* im Menü <button name="button">Zusatzmaterialien <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" height="12"/></button> ausgewählt haben. Diese Wahl ist nicht die Standardeinstellung.  |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/calendar-check-solid-red.png" height="12"/> | Das Medium ist noch nicht veröffentlicht, aber die Veröffentlichung ist geplant. Einfache Nutzer*innen können dieses Medium erst nach dem Zeitpunkt der Veröffentlichung sehen. Dieser kann mithilfe des Tooltips in Erfahrung gebracht werden. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" height="12"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht (mehr) sehen. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-red.png" width="12" height="12" class="img"/> | Das Medium ist noch nicht veröffentlicht. Einfache Nutzer*innen können es noch nicht sehen. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-slash-solid-blue.png" width="12" height="12" class="img"/> | Das Medium ist auf Modulebene angesiedelt und mit Tags versehen, die in der Veranstaltung noch nicht behandelt worden sind. Bevor diese Begriffe in der Veranstaltung verwendet worden sind, können einfache Nutzer\*innen dieses Medium nur sehen, wenn sie *alle* im Menü <button name="button">Zusatzmaterialien <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/arrow-drop-down.png" width="12" height="12" class="img"/></button> ausgewählt haben. Diese Wahl ist nicht die Standardeinstellung.  |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/calendar-check-solid-red.png" width="12" height="12" class="img"/> | Das Medium ist noch nicht veröffentlicht, aber die Veröffentlichung ist geplant. Einfache Nutzer*innen können dieses Medium erst nach dem Zeitpunkt der Veröffentlichung sehen. Dieser kann mithilfe des Tooltips in Erfahrung gebracht werden. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid-red.png" width="12" height="12" class="img"/> | Das Medium ist gesperrt. Einfache Nutzer*innen können es nicht (mehr) sehen. |
 
 ## Verwandte und ähnliche Seiten
 ### Übergeordnete Seite

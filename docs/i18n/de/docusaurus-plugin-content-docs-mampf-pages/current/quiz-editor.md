@@ -61,9 +61,9 @@ Im Kopfbereich gibt es zwei Bedienelemente.
 ### Graph
 In der Box „Quizgraph“ gibt es sowohl Bedienelemente im Graphen als auch rechts neben der Überschrift. Falls entsprechende Ecken und Kanten angelegt worden sind, stehen im Graphen Bedienelemente zur Verfügung. Zum Anlegen von Ecken siehe die Box „Ecke anlegen“. Zum Anlegen von Kanten siehe <button>Start-Ecke</button> in der Ausgangsansicht, <button>Standard-Ziel</button> in den Bedienansichten „Erläuterung“ und „Frage“ sowie <button>Verzweigung</button> in der Bedienansicht „Frage“. Mögliche Bedienelemente im Graphen sind:
 
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button> Wechsel zur Bedienansicht „Erläuterung“. Dort kann die Ecke bearbeitet oder gelöscht werden. Außerdem wird die ausgewählte Erläuterung rechts neben dem Quizgraphen in der Vorschau angezeigt.
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/></button> Wechsel zur Bedienansicht „Frage“. Dort kann die Ecke bearbeitet oder gelöscht werden. Außerdem wird die ausgewählte Frage rechts neben dem Quizgraphen in der Vorschau angezeigt.
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edge2.png" height="12"/></button> Wechsel zur Bedienansicht „Kante“. Dort kann die ausgewählte Kante gelöscht werden.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/></button> Wechsel zur Bedienansicht „Erläuterung“. Dort kann die Ecke bearbeitet oder gelöscht werden. Außerdem wird die ausgewählte Erläuterung rechts neben dem Quizgraphen in der Vorschau angezeigt.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/></button> Wechsel zur Bedienansicht „Frage“. Dort kann die Ecke bearbeitet oder gelöscht werden. Außerdem wird die ausgewählte Frage rechts neben dem Quizgraphen in der Vorschau angezeigt.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edge2.png" width="12" height="12"/></button> Wechsel zur Bedienansicht „Kante“. Dort kann die ausgewählte Kante gelöscht werden.
 
 Die Bedienelemente im Graphen können verwendet werden, sofern nicht bestimmte Bearbeitungsprozesse im Gang sind. Diese Prozesse können in den diversen Ansichten des Quizgraphen gestartet werden. Darauf wird in den jeweiligen Beschreibungen der Ansichten eingegangen, von denen es insgesamt sieben gibt: die Ausgangsansicht, die Ansichten „Erläuterung“, „Frage“, „Kante“, „Schwierigkeitsgrad“, „Standard-Ziel“ und „Start-Ecke“. Die Ansichten werden nun thematisiert.
 
@@ -79,7 +79,7 @@ In der Ausgangsansicht können die Bedienelemente im Graphen genutzt werden, sof
 * <button>Schwierigkeitsgrad</button> Wechsel zur Bedienansichtt „Schwierigkeitsgrad“. Dort kann dem Quiz ein Schwierigkeitsgrad zugewiesen werden.
 
 #### Bedienansicht „Erläuterung“
-Die Bedienansicht „Erläuterung“ erreicht man, indem man in der Ausgangsansicht „Quizgraph“ auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button> im Quizgraphen klickt. Dazu muss bereits eine Erläuterung angelegt oder importiert worden sein, was in der Box „Ecke anlegen“ vorgenommen werden kann.
+Die Bedienansicht „Erläuterung“ erreicht man, indem man in der Ausgangsansicht „Quizgraph“ auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/></button> im Quizgraphen klickt. Dazu muss bereits eine Erläuterung angelegt oder importiert worden sein, was in der Box „Ecke anlegen“ vorgenommen werden kann.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_unverzweigte_ecke.png" width="800" />
 
@@ -92,7 +92,7 @@ In der Ansicht „Erläuterung“ können die Bedienelemente im Graphen genutzt 
 * <button>Ecke löschen</button> Lösche die Ecke.
 
 #### Bedienansicht „Frage“
-Die Bedienansicht „Frage“ erreicht man, indem man in der Ausgangsansicht „Quizgraph“ auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/></button> im Quizgraphen klickt. Dazu muss bereits eine Frage angelegt oder importiert worden sein, was in der Box „Ecke anlegen“ vorgenommen werden kann.
+Die Bedienansicht „Frage“ erreicht man, indem man in der Ausgangsansicht „Quizgraph“ auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/></button> im Quizgraphen klickt. Dazu muss bereits eine Frage angelegt oder importiert worden sein, was in der Box „Ecke anlegen“ vorgenommen werden kann.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_verweigte_ecke.png" width="800" />
 
@@ -106,7 +106,7 @@ In der Ansicht „Frage“ können die Bedienelemente im Graphen genutzt werden.
 * <button>Ecke löschen</button> Lösche die Ecke.
 
 #### Bedienansicht „Kante“
-Die Bedienansicht „Kante“ erreicht man, indem man in der Ausgangsansicht „Quizgraph“ auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edge2.png" height="12"/></button> im Quizgraphen klickt. Dazu muss bereits eine Kante angelegt worden sein. Zum Anlegen von Kanten siehe <button>Start-Ecke</button> in der Ausgangsansicht, <button>Standard-Ziel</button> in den Bedienansichten „Erläuterung“ und „Frage“ sowie <button>Verzweigung</button> in der Bedienansicht „Frage“.
+Die Bedienansicht „Kante“ erreicht man, indem man in der Ausgangsansicht „Quizgraph“ auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edge2.png" width="12" height="12"/></button> im Quizgraphen klickt. Dazu muss bereits eine Kante angelegt worden sein. Zum Anlegen von Kanten siehe <button>Start-Ecke</button> in der Ausgangsansicht, <button>Standard-Ziel</button> in den Bedienansichten „Erläuterung“ und „Frage“ sowie <button>Verzweigung</button> in der Bedienansicht „Frage“.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_kante.png" width="800" />
 
@@ -119,7 +119,7 @@ In der Bedienansicht „Schwierigkeitsgrad“ kann der Schwierigkeitsgrad des Qu
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_schwierigkeitsgrad.png" width="800" />
 
-In der Bedienansicht „Schwierigkeitsgrad“ können die Bedienelemente <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button> und <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/></button> des Graphen genutzt werden, sofern Ecken angelegt worden sind. Außerdem gibt es rechts neben der Überschrift die folgende Bedienelemente:
+In der Bedienansicht „Schwierigkeitsgrad“ können die Bedienelemente <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/></button> und <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/></button> des Graphen genutzt werden, sofern Ecken angelegt worden sind. Außerdem gibt es rechts neben der Überschrift die folgende Bedienelemente:
 
 * <form>
      Schwierigkeitsgrad
@@ -135,7 +135,7 @@ In der Bedienansicht „Schwierigkeitsgrad“ können die Bedienelemente <button
 #### Bedienansicht „Standard-Ziel“
 In der Bedienansicht „Standard-Ziel“ kann man ein Standard-Ziel festlegen. Bei Erläuterungen ist das Standard-Ziel das, was im Quiz auf die Erläuterung folgt. Bei Fragen verhält es sich ebenso, sofern es keine Verzweigung gibt. Wenn es hingegen eine Verzweigung gibt, wird das Quiz nur mit dem Standard-Ziel fortgesetzt, wenn die gegebene Antwort korrekt ist oder das Standard-Ziel als Ziel der gegebenen Antwort ausgewählt worden ist. Zum Anlegen und Bearbeiten von Verzweigungen siehe den gleichnamigen Abschnitt.
 
-Die Bedienansicht „Standard-Ziel“ erreicht man über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button> bzw. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/></button> im  „Quizgraph“. In der Ansicht „Standard-Ziel“ können die Bedienelemente im Graphen nicht standardmäßig genutzt werden. Zunächst gibt es nur das Bedienelement <button>Abbrechen</button>. Klickt man eine Ecke im Quizgraphen an, so erscheinen der Button <button>Speichern</button> und eine dunkelgrüne Kante zwischen der Ecke und ihrem neuen möglichen Standardziel. Falls es vorher bereits ein Standardziel gab, wird die dazugehörige Kante nicht mehr angezeigt; diese Kante wird allerdings erst nach dem Abspeichern gelöscht.
+Die Bedienansicht „Standard-Ziel“ erreicht man über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/></button> bzw. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/></button> im  „Quizgraph“. In der Ansicht „Standard-Ziel“ können die Bedienelemente im Graphen nicht standardmäßig genutzt werden. Zunächst gibt es nur das Bedienelement <button>Abbrechen</button>. Klickt man eine Ecke im Quizgraphen an, so erscheinen der Button <button>Speichern</button> und eine dunkelgrüne Kante zwischen der Ecke und ihrem neuen möglichen Standardziel. Falls es vorher bereits ein Standardziel gab, wird die dazugehörige Kante nicht mehr angezeigt; diese Kante wird allerdings erst nach dem Abspeichern gelöscht.
 
 *  <button>Abbrechen</button> Wechsel zur Ausgangsansicht „Quizgraph“.
 *  <button>Speichern</button> Bestätige, dass die gewählte Ecke zum neuen Standard-Ziel werden soll. Nach dem Speichern wird dunkelgrüne Kante angelegt und färbt sich hellgrün. Falls es zuvor bereits ein Standard-Ziel gab, wird die Kante zu diesem gelöscht.
@@ -144,12 +144,12 @@ Die Bedienansicht „Standard-Ziel“ erreicht man über <button><img src="https
 In der Bedienansicht „Startecke“ kann man eine Startecke festlegen. Diese Ansicht erreicht man über den Button <button>Startecke</button> in der Ausgangsansicht „Quizgraph“. In der Ansicht „Start-Ecke“ können die Bedienelemente im Graphen nicht standardmäßig genutzt werden. Es gibt das Bedienelement <button>Abbrechen</button>. Außerdem ist jede Ecke im Graphen ein Bedienelement.
 
 * <button>Abbrechen</button> Wechsel zur Ausgangsansicht „Quizgraph“.
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button> bzw. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/></button> Mache die Ecke zur neuen Startecke. Infolgedessen wird eine Kante zwischen der gewählten Ecke und Start angelegt und gegebenenfalls die zuvor bestehende Kante zwischen Start und einer anderen Ecke gelöscht.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/></button> bzw. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/></button> Mache die Ecke zur neuen Startecke. Infolgedessen wird eine Kante zwischen der gewählten Ecke und Start angelegt und gegebenenfalls die zuvor bestehende Kante zwischen Start und einer anderen Ecke gelöscht.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_startecke.png" width="800" />
 
 ### Verzweigung
-In der Ansicht „Verzweigung“ kann man für jede Antwortmöglichkeit einer Frage festlegen, womit das Quiz fortzgesetzt werden soll. Die im Folgenden beschriebenen Bedienelemente werden angezeigt, nachdem man zuerst die gewünschte Frage im Quizgraphen und anschließend den Button <button>Verzweigung</button> angeklickt hat. In dieser Ansicht ist  <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edge2.png" height="12"/></button> im Quizgraphen kein Bedienelement. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button> und <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/></button> im Graphen sind weiterhin Bedienelemente, die dazu führen, dass sich die Bedienansicht „Erläuterung“ bzw. „Frage“ öffnet und die Ansicht „Verzweigung“ geschlossen wird.
+In der Ansicht „Verzweigung“ kann man für jede Antwortmöglichkeit einer Frage festlegen, womit das Quiz fortzgesetzt werden soll. Die im Folgenden beschriebenen Bedienelemente werden angezeigt, nachdem man zuerst die gewünschte Frage im Quizgraphen und anschließend den Button <button>Verzweigung</button> angeklickt hat. In dieser Ansicht ist  <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edge2.png" width="12" height="12"/></button> im Quizgraphen kein Bedienelement. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/></button> und <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/></button> im Graphen sind weiterhin Bedienelemente, die dazu führen, dass sich die Bedienansicht „Erläuterung“ bzw. „Frage“ öffnet und die Ansicht „Verzweigung“ geschlossen wird.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/quizeditor_frage_verweigung.png" width="800" />
 

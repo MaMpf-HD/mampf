@@ -1,7 +1,7 @@
 ---
 title: Logout
 ---
-Auf die Logoutseite gelangt man, nachdem man eingeloggt gewesen ist und sich ausgeloggt hat, indem man auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sign-out-alt-solid.png" height="12"/></button> in der [Navigationsleiste](nav-bar.md) geklickt hat. Abgesehen von dem zusätzlichen Text „Du hast Dich erfolgreich abgemeldet.“ unterscheidet sich diese Seite nicht von der [Startseite](home-page.md).
+Auf die Logoutseite gelangt man, nachdem man eingeloggt gewesen ist und sich ausgeloggt hat, indem man auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sign-out-alt-solid.png" width="12" height="12"/></button> in der [Navigationsleiste](nav-bar.md) geklickt hat. Abgesehen von dem zusätzlichen Text „Du hast Dich erfolgreich abgemeldet.“ unterscheidet sich diese Seite nicht von der [Startseite](home-page.md).
 
 ![](/img/Logout_thumb.png)
 

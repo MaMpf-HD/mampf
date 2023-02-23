@@ -17,7 +17,7 @@ Die Seite „Erläuterung bearbeiten“ erreicht man entweder über den [Quizedi
   <li>
      <a href="/mampf/de/mampf-pages/quiz-editor" target="_self"><b>Quizeditor</b></a>
   </li>
-  Im Quizgraphen klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/></button>. Daraufhin erscheinen andere Buttons neben der Überschrift der Box „Quizgraph“. Sofern man Bearbeitungsrechte für die Erläuterung hat, ist darunter auch der Button <button>Bearbeiten</button>, der einen auf die Seite „Erläuterung bearbeiten“ führt.
+  Im Quizgraphen klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/></button>. Daraufhin erscheinen andere Buttons neben der Überschrift der Box „Quizgraph“. Sofern man Bearbeitungsrechte für die Erläuterung hat, ist darunter auch der Button <button>Bearbeiten</button>, der einen auf die Seite „Erläuterung bearbeiten“ führt.
   <li>
      <a href="/mampf/de/mampf-pages/edit-medium-remark" target="_self"><b>Seite „Erläuterung bearbeiten“</b></a>
   </li>

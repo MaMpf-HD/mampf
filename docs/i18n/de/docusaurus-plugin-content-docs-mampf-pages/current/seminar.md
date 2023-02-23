@@ -15,7 +15,7 @@ Um auf eine Seminarseite zugreifen zu können, muss man das entsprechende Semina
   <li>
      <a href="/mampf/de/mampf-pages/my-home-page" target="_self"><b>Persönliche Startseite</b></a>
   </li>
-     Die persönliche Startseite erreicht man über das Logo <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button> oben links in der <a href="/mampf/de/mampf-pages/nav-bar" target="_self">Navigationsleiste</a>. Dort wählt man das gewünschte Seminar aus.
+     Die persönliche Startseite erreicht man über das Logo <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" width="15" height="15"/></button> oben links in der <a href="/mampf/de/mampf-pages/nav-bar" target="_self">Navigationsleiste</a>. Dort wählt man das gewünschte Seminar aus.
   <li>
      <b>Schnellzugriff</b>
   </li>
@@ -42,16 +42,16 @@ In allen erwähnten Seitenbereichen gibt es Bedienelemente. Diese werde nun aufg
 
 ### Überschrift
 * <a href="/mampf/de/mampf-pages/lecturer" target="_self"><button name="button">DozentIn</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/lecturer" target="_self">Seite der Dozent*in</a>.
-* <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> (nur bei Editor*innen) Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a>.
+* <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> (nur bei Editor*innen) Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a>.
 
 ### Aktuelles
 * <button name="button">alle erledigen</button> Entferne alle Mitteilungen. Daraufhin verschwindet die Box „Aktuelles“ und erscheint erst wieder, wenn es neue Mitteilungen in der Veranstaltung gibt.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" height="12"/></button> Entferne die ausgewählte Mitteilung aus der Box „Aktuelles“.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" width="12" height="12"/></button> Entferne die ausgewählte Mitteilung aus der Box „Aktuelles“.
 * <button name="button">Forum</button> Öffne das Forum.
 
 ### Veranstaltungsinhalt
 * <a href="/mampf/de/mampf-pages/talk" target="_self"><button name="button">Vortragstitel</button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/talk" target="_self">Seite des Vortrags</a>.
-* <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> (nur bei Vortragenden) Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-talk" target="_self">„Vortrag bearbeiten“</a>.
+* <a href="/mampf/de/mampf-pages/edit-talk" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> (nur bei Vortragenden) Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-talk" target="_self">„Vortrag bearbeiten“</a>.
 * <a href="/mampf/de/mampf-pages/talk" target="_self"><button name="button">Datum</button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/talk" target="_self">Seite des Vortrags</a>.
 * <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 
@@ -72,7 +72,7 @@ Auf dieser Seite können Editor\*innen
 * den Text für [Organisatorisches](general-information) bearbeiten, anzeigen oder verschwinden lassen und
 * Tutorien und Hausaufgaben anlegen und verwalten.
 
-Diese Seite ist über das Symbol <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> neben der Überschrift erreichbar.
+Diese Seite ist über das Symbol <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> neben der Überschrift erreichbar.
 
 ### [Seite des Vortrags](talk)
 Auf der Vortragsseite befinden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Vortragsseiten sind über das <a href="/mampf/de/mampf-pages/talk" target="_self"><button name="button">Vortragsdatum</button></a> in der Seminargliederung erreichbar.
@@ -100,7 +100,7 @@ Zu den Seiten mit Veranstaltungsinformationen gehören:
 * [Modul](module.md)
 
 ## Hinweis für Editor*innen
-Editor\*innen gelangen über das Icon <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a>.
+Editor\*innen gelangen über das Icon <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a>.
 
 ## Verwandte Seiten
 ### Gleichrangige Seite

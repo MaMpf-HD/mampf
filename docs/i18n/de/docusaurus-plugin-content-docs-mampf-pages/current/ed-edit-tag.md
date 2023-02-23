@@ -12,7 +12,7 @@ Die Seite „Begriff bearbeiten“ ist über verschiedene Wege erreichbar. Einig
   <li>
      <a href="/mampf/de/mampf-pages/tag" target="_self"><b>Seite des Tags</b></a>
   </li>
-  Rechts neben dem Titel des Tags in der Überschrift befindet sich das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Tag bearbeiten“ führt.
+  Rechts neben dem Titel des Tags in der Überschrift befindet sich das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button>, das einen auf die Seite „Tag bearbeiten“ führt.
   <li>
      <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><b>Seite „Veranstaltung bearbeiten“</b></a>
   </li>
@@ -24,7 +24,7 @@ Die Seite „Begriff bearbeiten“ ist über verschiedene Wege erreichbar. Einig
   <li>
      <a href="/mampf/de/mampf-pages/ed-search-extended#tab-tagsuche" target="_self"><b>Tagsuche</b></a>
   </li>
-  Nachdem man eine Suche, für die es Treffer gibt, durchgeführt hat, werden die Ergebnisse in einer Tabelle aufgeführt. In der Spalte „Verknüpfte Tags“ kann das Bedienelement <button>Tag</button> vorhanden sein, in der Spalte „Aktionen“ <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>. Über beide erreicht man die Seite „Tag bearbeiten“.
+  Nachdem man eine Suche, für die es Treffer gibt, durchgeführt hat, werden die Ergebnisse in einer Tabelle aufgeführt. In der Spalte „Verknüpfte Tags“ kann das Bedienelement <button>Tag</button> vorhanden sein, in der Spalte „Aktionen“ <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button>. Über beide erreicht man die Seite „Tag bearbeiten“.
 </ul>
 
 ## Bereiche der Seite
@@ -54,7 +54,7 @@ Nun werden die Bedienelemente der Seite „Begriff bearbeiten“ beschrieben. Da
 ### Kopf
 In diesem Bereich gibt es die folgenden Bedienelemente:
 
-* <a href="/mampf/de/mampf-pages/tag" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Tags</a>.
+* <a href="/mampf/de/mampf-pages/tag" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" width="12" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Tags</a>.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Tag bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Tag bearbeitet worden ist.
 * <a href="/mampf/de/mampf-pages/ed-search-extended#tab-tagsuche" target="_self"><button>Tagsuche</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/ed-search-extended#tab-tagsuche" target="_self">Tagsuche</a>
@@ -136,7 +136,7 @@ Falls sowohl der zu identifizierende als auch der identifizierte Tag einen Titel
 ### MaMpf-Map
 MaMpf-Maps visualisieren die zwischen Tags bestehenden Verknüpfungen und dienen als Navigationswerkzeug. In MaMpf-Maps kommen zwei Bedienelemente vor:
 
-* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-solid.png" height="12"/></button> Wechsel auf die Bearbeitungsseite des ausgewählten Tags.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-solid.png" width="12" height="12"/></button> Wechsel auf die Bearbeitungsseite des ausgewählten Tags.
 * <button>in externem Tab rendern</button> Öffne die Map in einem neuen Tab.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tag_bearbeiten_map_cut.png" width="800"/>
@@ -152,7 +152,7 @@ In der Box „Basisdaten“ können Titel und assoziierte Modul betrachtet und b
          <p>
             <label for="fname">Titel <br></br>de&nbsp;</label>
             <input type="text" id="fname" name="fname"></input>
-            <input type="checkbox" id="news" name="mis"></input><label for="news"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></label>
+            <input type="checkbox" id="news" name="mis"></input><label for="news"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" width="12" height="12"/></label>
          </p>
       </form>
       Eingabefeld für den deutschen Titel des Tags und Checkbox zum Löschen des Titels. Mindestens dieses Feld oder das Feld für den englischen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf dieser Seite bearbeitet werden. Setze den Haken und speichere am Seitenanfang, um den Titel zu löschen.
@@ -162,7 +162,7 @@ In der Box „Basisdaten“ können Titel und assoziierte Modul betrachtet und b
          <p>
             <label for="fname">Titel <br></br>en&nbsp;</label>
             <input type="text" id="fname" name="fname"></input>
-            <input type="checkbox" id="news" name="mis"></input><label for="news"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></label>
+            <input type="checkbox" id="news" name="mis"></input><label for="news"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" width="12" height="12"/></label>
         </p>
       </form>
       Eingabefeld für den englischen Titel des Tags und Checkbox zum Löschen des Titels. Mindestens dieses Feld oder das Feld für den deutschen Titel muss ausgefüllt werden, damit ein neuer Tag anlegt werden kann. Der Titel kann nachträglich auf dieser Seite bearbeitet werden. Setze den Haken und speichere am Seitenanfang, um den Titel zu löschen.
@@ -179,7 +179,7 @@ In der Box „Basisdaten“ können Titel und assoziierte Modul betrachtet und b
          <p>
             <label for="fname">Aliase<br></br></label>
              <input type="text" id="fname" name="fname"></input>
-             <input type="checkbox" id="news" name="mis"></input><label for="news"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></label>
+             <input type="checkbox" id="news" name="mis"></input><label for="news"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" width="12" height="12"/></label>
          </p>
        </form>
       Eingabefeld für eine weitere Bezeichnung des Tags und Checkbox zum Löschen des weiteren Titels. Die Bezeichnung kann nachträglich auf dieser Seite bearbeitet werden. Setze den Haken und speichere am Seitenanfang, um den Alias zu löschen.
@@ -194,7 +194,7 @@ In der Box „Basisdaten“ können Titel und assoziierte Modul betrachtet und b
    Eingabefeld und Dropdownmenü für assoziierte Module. Zum Hinzufügen von Modulen sind Editorenrechte für das entsprechende Modul erforderlich. Die Änderung muss am Seitenanfang gespeichert werden, andernfalls wird sie nicht übernommen.
    </li>
    <li>
-      Modul <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+      Modul <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
    </li>
    Löse die Verknüpfung von Tag und Modul auf. Zum Entfernen von Modulen sind Editorenrechte für das entsprechende Modul erforderlich. Die Änderung muss am Seitenanfang gespeichert werden, andernfalls wird sie nicht übernommen.
    <li>
@@ -213,7 +213,7 @@ Die Box „Verknüpfte Tags“ bietet einen Überblick über die verknüpften Be
      <td valign="top">
         <ul>
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> Öffne die Aktion „Verknüpfte Tags hinzufügen/entfernen“ in der Box „Aktion“.
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button> Öffne die Aktion „Verknüpfte Tags hinzufügen/entfernen“ in der Box „Aktion“.
            </li>
            <li>
               <button>Begriff</button> Wechsel auf die Bearbeitungsseite des Begriffs.
@@ -234,7 +234,7 @@ Die Box „Realisierungen“ bietet einen Überblick über die Realisierungen de
      <td valign="top">
         <ul>
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button> Öffne die Aktion „Realsierung“ in der Box „Aktion“.
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button> Öffne die Aktion „Realsierung“ in der Box „Aktion“.
            </li>
            <li>
               <a href="/mampf/de/mampf-pages/erdbeere" target="_self"><button>Realisierung</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/erdbeere" target="_self">Realisierung in der Beispieldatenbank</a>.
@@ -257,7 +257,7 @@ Die Box „Aktion“ ist leer, solange noch keine Aktion in der Box „Verknüpf
      <td valign="top">
         <ul>
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-circle.png" height="12"/></button> Öffne das Formular zum Anlegen eines neuen Begriffs.
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-circle.png" width="12" height="12"/></button> Öffne das Formular zum Anlegen eines neuen Begriffs.
            </li>
            <li>
               <form>
@@ -269,7 +269,7 @@ Die Box „Aktion“ ist leer, solange noch keine Aktion in der Box „Verknüpf
            Eingabefeld und Dropdownmenü für verknüpfte Begriffe. Erst nach Eingabe zweier Zeichen klappt das Dropdownmenü aus. Wähle Begriffe aus. Änderungen müssen am Seitenanfang gespeichert werden, andernfalls werden sie nicht übernommen.
            </li>
            <li>
-              Begriff <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button> Entferne den Begriff aus der Liste der verknüpften Begriffe. Die Änderung muss am Seitenanfang gespeichert werden, sonst wird sie nicht übernommen.
+              Begriff <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button> Entferne den Begriff aus der Liste der verknüpften Begriffe. Die Änderung muss am Seitenanfang gespeichert werden, sonst wird sie nicht übernommen.
            </li>
            <li>
               <button>Abbrechen</button> Brich die Aktion ab und schließe sie.

@@ -26,7 +26,7 @@ Die eigentliche Seite wiederum gliedert sich in drei Teilbereiche: die aktuelle 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
 Im Weiteren werden sämtliche mögliche Buttons der Seite „Abgaben“ beschrieben. Mit Ausnahme des Akkordeons, bei dem die Felder „Ältere Abgaben“ und „Vorige Abgaben“ ein- und ausgeklappt werden können, befinden sich alle Buttons auf Abgabecards. Diese Cards können in allen drei Teilbereichen der Seite „Abgabe“ vorkommen, dafür muss es allerdings entsprechende Abgaben geben. Welche Buttons sich auf einer Abgabecard befinden, richtet sich danach, ob die Abgabefrist oder die Kulanzfrist\* noch läuft, und nach dem Fortschritt der Abgabe. Nach diesen Kriterien ist auch die folgende Beschreibung der Bedienelemente gegliedert.
 
-\* Die Kulanzfrist beginnt mit der Deadline der Abgabe. Innerhalb dieser Frist können noch Änderungen an der Abgabe vorgenommen werden. Wird eine Abgabe während der Kulanzfrist bearbeitet, kann sie von Tutor\*innen abgelehnt werden. Abgelehnte Abgaben werden nicht korrigiert. Die Dauer der Kulanzfrist wird von Editor*innen festgelegt. Während sie läuft, erscheint unten auf der Abgabecards das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit der Mauszeiger darüber, wird das Ende der Kulanzfrist angezeigt.
+\* Die Kulanzfrist beginnt mit der Deadline der Abgabe. Innerhalb dieser Frist können noch Änderungen an der Abgabe vorgenommen werden. Wird eine Abgabe während der Kulanzfrist bearbeitet, kann sie von Tutor\*innen abgelehnt werden. Abgelehnte Abgaben werden nicht korrigiert. Die Dauer der Kulanzfrist wird von Editor*innen festgelegt. Während sie läuft, erscheint unten auf der Abgabecards das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" width="12" height="12"/>. Fährt man mit der Mauszeiger darüber, wird das Ende der Kulanzfrist angezeigt.
 
 ### Vor dem Abgabetermin und während der Kulanzzeit
 Die nun aufgeführten Bedienelemente kommen auf Abgabecards unter „Aktuelle Abgabe“ und „Zukünftige Abgaben“ sowie unter „Vorige Abgaben“ während der Kulanzfrist vor.
@@ -327,23 +327,23 @@ Der Header der Abgabecards ist je nach Zustand der Abgabe eingefärbt. Die Farba
 
 <table>
  <tr>
-   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_red.png" height="12"/>&nbsp;</td>
+   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_red.png" width="12" height="12"/>&nbsp;</td>
    <td>Entweder gehörst du zu keinem Abgabeteam (d.h. du hast weder eine Abgabe angelehnt, noch bist du einer beigetreten) oder die verspätete Abgabe ist abgelehnt worden.</td>
  </tr>
  <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_yellow.png" height="12"/></td>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_yellow.png" width="12" height="12"/></td>
    <td>Du gehörst zu einem Abgabeteam, aber ihr habt (noch) keine Datei zur Abgabe hochgeladen.</td>
  </tr>
  <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_light_green.png" height="12"/></td>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_light_green.png" width="12" height="12"/></td>
    <td>Du gehörst zu einem Abgabeteam und ihr habt eine Datei zur Abgabe hochgeladen.</td>
   </tr>
   <tr>
-    <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_orange.png" height="12"/></td>
+    <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_orange.png" width="12" height="12"/></td>
     <td>Die Abgabe ist innerhalb der Kulanzzeit bearbeitet worden und die Entscheidung bezüglich der Annahme oder Ablehnung der Abgabe steht noch aus.</td>
    </tr>
    <tr>
-     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_green.png" height="12"/></td>
+     <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sub_green.png" width="12" height="12"/></td>
      <td>Die Korrektur ist hochgeladen worden und kann angesehen werden.</td>
     </tr>
 </table>
@@ -353,20 +353,20 @@ Auf den Abgabecards befinden sich in der Ecke rechts oben jeweils ein Symbol, da
 
 <table>
  <tr>
-   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-triangle.png" height="12"/>&nbsp;</td>
+   <td>&nbsp;<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-triangle.png" width="12" height="12"/>&nbsp;</td>
    <td>Entweder ist die Abgabe nicht abgabefertig (d.h. dein Team hat (noch) keine Datei hochgeladen oder du gehörst zu keinem Abgabeteam) oder die verspätete Abgabe ist abgelehnt worden.</td>
  </tr>
  <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/smile.png" height="12"/></td>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/smile.png" width="12" height="12"/></td>
    <td>Die Abgabe ist abgabefertig (vor dem Ablauf der Deadline) bzw. die Korrektur ist verfügbar (nach dem Ablaufen der Deadline).</td>
  </tr>
  <tr>
-   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/hourglass-start.png" height="12"/></td>
+   <td><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/hourglass-start.png" width="12" height="12"/></td>
    <td>Die Abgabe ist übermittelt worden und wird korrigiert.</td>
   </tr>
 </table>
 
-Während der Kulanzzeit erscheint zudem unten rechts auf der Abgabecard das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/>. Fährt man mit dem Mauszeiger darüber, erfährt man das Ende der Kulanzzeit.
+Während der Kulanzzeit erscheint zudem unten rechts auf der Abgabecard das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" width="12" height="12"/>. Fährt man mit dem Mauszeiger darüber, erfährt man das Ende der Kulanzzeit.
 
 ## Hinweise
 ### Anforderungen an die Abgabedatei
@@ -377,7 +377,7 @@ Dateien, die 5 MB Speichergröße überschreiten, können im Zuge des Hochladens
 ### Verspätete Abgaben
 Eine Abgabe wird als verspätet eingestuft, wenn sie innerhalb der Kulanzzeit\* bearbeitet worden ist. Verspätete Abgaben müssen nicht von Tutor\*innen korrigiert werden, sie können auch abgelehnt werden. Daher sollte eine verspätete Abgabe möglichst vermieden werden.
 
-\* Die Kulanzzeit beginnt nach dem Abgabetermin, ihre Dauer können Editor*innen bestimmen. Während der Kulanzzeit erscheint das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" height="12"/> unten rechts auf der Abgabecard.
+\* Die Kulanzzeit beginnt nach dem Abgabetermin, ihre Dauer können Editor*innen bestimmen. Während der Kulanzzeit erscheint das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/exclamation-circle.png" width="12" height="12"/> unten rechts auf der Abgabecard.
 
 ### Löschungsdatum von Abgaben
 Die Korrekturen sind ebenso wie Abgaben bis zwei Wochen nach Beginn der nächsten Vorlesungszeit verfügbar und werden danach gelöscht. Bei der Löschung eines Accounts werden nur Abgaben und Korrekturen zu Einzelabgaben mitgelöscht. Teamabgaben und deren Korrekturen werden nur vor dem Ende der Frist gelöscht, wenn alle Mitglieder ihren Account löschen. Korrekturen bleiben von der Löschung eines Tutorenaccounts unberührt.

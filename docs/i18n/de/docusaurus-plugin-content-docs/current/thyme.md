@@ -31,13 +31,13 @@ Im Folgenden werden sämtliche mögliche Bedienelemente von THymE aufgeführt.
 Durch Klicken auf das Bild kann die Wiedergabe pausiert bzw. fortgesetzt werden.
 
 ### Steuerleiste
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/pause.png" height="9"/></button> Spiele das Video ab bzw. pausiere es.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/pause.png" height="9"/></button> Spiele das Video ab bzw. pausiere es.
 * <input type="range" min="1" max="10" class="slider" id="myRange"/> Zeitsuchleiste. Verschiebe den Regler, um die Wiedergabe am gewünschten Punkt fortzusetzen.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/replay-10.png" height="18"/></button> Spule das Video zehn Sekunden zurück.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/forward-10.png" height="18"/></button> Spule das Video zehn Sekunden vor.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/skip-previous.png" height="10"/></button> Springe zum vorherigen Gliederungspunkt.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/skip-next.png" height="10"/></button> Springe zum nächsten Gliederungspunkt.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-up.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-off.png" height="12"/></button> Schalte den Ton aus bzw. ein.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-up.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-off.png" width="12" height="12"/></button> Schalte den Ton aus bzw. ein.
 * <input type="range" min="1" max="10" class="slider" id="myRange" height="5" width="5"/> Lautstärkeregler. Verschiebe den Regler, um die Lautstärke anzupassen.
 * <label for="cars"></label><select name="cars" id="cars">
   <option value="volvo">0.85x</option>
@@ -47,8 +47,8 @@ Durch Klicken auf das Bild kann die Wiedergabe pausiert bzw. fortgesetzt werden.
   <option value="volvo1">1.75x</option>
   <option value="saab2">2x</option>
 </select> Lege die Wiedergabegeschwindigkeit fest. Zur Auswahl stehen das 0,85-, 1- (standardmäßig), 1,25-, 1,5-, 1,75- und 2-fache der Originalgeschwindigkeit.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-to-queue.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/remove-from-queue.png" height="12"/></button> Blende die Informationsspalte ein bzw. aus.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen-exit.png" height="12"/></button> Wechsel in den Vollbildmodus bzw. beende den ihn.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-to-queue.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/remove-from-queue.png" width="12" height="12"/></button> Blende die Informationsspalte ein bzw. aus.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/fullscreen-exit.png" width="12" height="12"/></button> Wechsel in den Vollbildmodus bzw. beende den ihn.
 
 ### Informationsleiste
 
@@ -62,8 +62,8 @@ Die Gliederung kann zum gezielten Springen im Video verwendet werden, in dem man
 Der <button name="button">Zurück zu ...</button>-Button ist nur nach einem Sprung mithilfe der Gliederung vorhanden. Er ermöglicht die Rückkehr zur Stelle im Video, von der aus man gesprungen ist.
 
 #### Referenzen
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" height="12"/></button> Öffne das Video in THymE in einem neuen Tab.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF in einem neuen Tab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" width="12" height="12"/></button> Öffne das Video in THymE in einem neuen Tab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" width="12" height="12"/></button> Öffne das PDF in einem neuen Tab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link in einem neuen Tab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="8"/></button> Öffne das Quiz in einem neuen Tab.
 

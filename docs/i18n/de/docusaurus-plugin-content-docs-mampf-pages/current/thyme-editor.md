@@ -32,7 +32,7 @@ Oben links befindet sich die Steuerleiste mit Bild. Dort kann das Video abgespie
         <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/thyme_editor_player_cut.png" width="3500"/>
         <ul>
             <li>
-                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/pause.png" height="9"/></button> Spiele das Video ab bzw. pausiere es.
+                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/pause.png" height="9"/></button> Spiele das Video ab bzw. pausiere es.
             </li>
             <li>
                 <input type="range" min="1" max="10" class="slider" id="myRange"/> Zeitsuchleiste. Verschiebe den Regler, um die Wiedergabe am gewünschten Punkt fortzusetzen.
@@ -60,7 +60,7 @@ Oben links befindet sich die Steuerleiste mit Bild. Dort kann das Video abgespie
                 <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/forward-10.png" height="18"/></button> Spule das Video zehn Sekunden vor.
             </li>
             <li>
-                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" height="12"/></button> Lege einen neuen Eintrag im Inhaltsverzeichnis an. Infolgedessen öffnet sich im Aktionsbereich die Bearbeitungsansicht „Eintrag anlegen“.
+                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" width="12" height="12"/></button> Lege einen neuen Eintrag im Inhaltsverzeichnis an. Infolgedessen öffnet sich im Aktionsbereich die Bearbeitungsansicht „Eintrag anlegen“.
             </li>
             <li>
                 <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="10"/></button> Lege eine neue Referenz an. Infolgedessen öffnet sich im Aktionsbereich die Bearbeitungsansicht „Referenz anlegen“.
@@ -69,7 +69,7 @@ Oben links befindet sich die Steuerleiste mit Bild. Dort kann das Video abgespie
                 <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-a-photo.png" height="14"/></button> Speichere das aktuelle Videobild und verwende dieses als Vorschaubild. Das Bild wird daraufhin in der Box „Screenshot“ angezeigt und kann dort gelöscht werden.
             </li>
             <li>
-                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-up.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-off.png" height="12"/></button> Schalte den Ton aus bzw. ein.
+                <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-up.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/volume-off.png" width="12" height="12"/></button> Schalte den Ton aus bzw. ein.
             </li>
             <li>
                 <input type="range" min="1" max="10" class="slider" id="myRange" height="5" width="5"/> Lautstärkeregler. Verschiebe den Regler, um die Lautstärke anzupassen.
@@ -88,7 +88,7 @@ Der Aktionsbereich befindet sich oben rechts. Er gliedert sich in einen Kopf und
 |<img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/inhalt_medienseite.PNG" width="1000"/> |
 |Gliederung auf der Medienseite (in ähnlicher Weise auch auf der Sitzungsseite)|
 
-Der Aktionsbereich ist leer, bis eine Aktion begonnen wird. Dann erscheint je nach Auswahl die Aktion „Eintrag anlegen“, „Referenz anlegen“, „Eintrag bearbeiten“ oder „Referenz bearbeiten“. Um eine Aktion zu starten, klickt man auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" height="12"/></button> oder <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="10"/></button> in der Steuerleiste oder einen bereits vorhandenen <button>Eintrag</button> im Inhaltsverzeichnis oder bei den Referenzen.
+Der Aktionsbereich ist leer, bis eine Aktion begonnen wird. Dann erscheint je nach Auswahl die Aktion „Eintrag anlegen“, „Referenz anlegen“, „Eintrag bearbeiten“ oder „Referenz bearbeiten“. Um eine Aktion zu starten, klickt man auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" width="12" height="12"/></button> oder <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="10"/></button> in der Steuerleiste oder einen bereits vorhandenen <button>Eintrag</button> im Inhaltsverzeichnis oder bei den Referenzen.
 
 ![](/img/thyme_editor_eintrag_bearbeiten.png)
 
@@ -102,7 +102,7 @@ Im Kopf gibt es rechts die folgenden drei Buttons.
 Im Rumpf können die Aktionen „Eintrag anlegen“, „Referenz anlegen“, „Eintrag bearbeiten“ und „Referenz bearbeiten“ ausgeführt werden. Wenn keine Aktion ausgewählt ist, wird in diesem Bereich nichts angezeigt. Nachdem eine Aktion durch Speichern oder Abbruch beendet worden ist, verschwinden alle Elemente aus diesem Bereich wieder. Im Folgenden werden die je nach Aktion verfügbaren Bedienelemente beschrieben.
 
 ##### Eintrag anlegen oder bearbeiten
-Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bearbeiten“ nur geringfügig unterscheiden, werden sie gemeinsam vorgestellt. Um die Aktion „Eintrag anlegen“ zu beginnen, klickt man auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" height="12"/></button> in der Steuerleiste. Zum Starten der Aktion „Eintrag bearbeiten“ klickt man auf einen bereits vorhandenen Eintrag im Inhaltsverzeichnis. Im Aktionsbereich kommen dann die nun aufgeführten Bedienelemente vor. Dabei ist zu beachten, dass der Button <button>Löschen</button> nur bei der Aktion „Eintrag bearbeiten“ auftritt. Außerdem gibt es das Dropdown-Menü „Abschnitt“ nur in Vorlesungen bei Lektionen, die zu einer Sitzung assoziiert sind, zu der wiederum mindestens ein Abschnitt assoziiert ist.
+Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bearbeiten“ nur geringfügig unterscheiden, werden sie gemeinsam vorgestellt. Um die Aktion „Eintrag anlegen“ zu beginnen, klickt man auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" width="12" height="12"/></button> in der Steuerleiste. Zum Starten der Aktion „Eintrag bearbeiten“ klickt man auf einen bereits vorhandenen Eintrag im Inhaltsverzeichnis. Im Aktionsbereich kommen dann die nun aufgeführten Bedienelemente vor. Dabei ist zu beachten, dass der Button <button>Löschen</button> nur bei der Aktion „Eintrag bearbeiten“ auftritt. Außerdem gibt es das Dropdown-Menü „Abschnitt“ nur in Vorlesungen bei Lektionen, die zu einer Sitzung assoziiert sind, zu der wiederum mindestens ein Abschnitt assoziiert ist.
 
 ![](/img/thyme_editor_eintrag_bearbeiten.png)
 
@@ -111,7 +111,7 @@ Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bea
         <label for="fname">Startzeit </label>
         <input type="text" id="fname" name="fname"></input>
      </p>
-  </form> Eingabefeld für die Startzeit des Gliederungspunktes. Beim Anlegen eines Eintrag steht hier zunächst die Zeit, an der sich die Zeitsuchleiste beim Anklicken von <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" height="12"/></button> befand. Gib die gewünschte Startzeit manuell ein.
+  </form> Eingabefeld für die Startzeit des Gliederungspunktes. Beim Anlegen eines Eintrag steht hier zunächst die Zeit, an der sich die Zeitsuchleiste beim Anklicken von <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/playlist-add.png" width="12" height="12"/></button> befand. Gib die gewünschte Startzeit manuell ein.
 * Startzeit <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/timer_black.png" height="16"/></button> Übernimm die aktuelle Zeit aus der Zeitsuchleiste als Startzeit für den Gliederungseintrag. Wenn das Video in dem Moment, in dem der Button angeklickt wird, läuft, wird es dadurch pausiert.
 * Typ <label for="cars"></label>
   <select name="cars" id="cars">
@@ -140,7 +140,7 @@ Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bea
      <option value="a">Assoziierter Abschnitt 1 x</option>
      <option value="b">Assoziierter Abschnitt 2 x</option>
      <option value="c">Assoziierter Abschnitt 3 x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines assoziierten Abschnitts. Dieses Bedienelement ist bei Lektionen aus Vorlesungen vorhanden. ??? Zur Sitzung muss außerdem mindestens ein Abschnitt assoziiert sein. Im Dropdown-Menü werden alle zur Sitzung assoziierten Abschnitte aufgeführt (keine Sitzung, alle Abschnitte). Im Menü kann höchstens ein Abschnitt ausgewählt werden. Um die Assoziation zwischen Abschnitt und Eintrag auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines assoziierten Abschnitts. Dieses Bedienelement ist bei Lektionen aus Vorlesungen vorhanden. ??? Zur Sitzung muss außerdem mindestens ein Abschnitt assoziiert sein. Im Dropdown-Menü werden alle zur Sitzung assoziierten Abschnitte aufgeführt (keine Sitzung, alle Abschnitte). Im Menü kann höchstens ein Abschnitt ausgewählt werden. Um die Assoziation zwischen Abschnitt und Eintrag auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button>.
 * <form>
      <p>
         <label for="fname">Nummer </label>
@@ -161,7 +161,7 @@ Da sich die Bedienelemente der Aktionen „Eintrag anlegen“ und „Eintrag bea
         <label for="fname">Seite im pdf </label>
         <input type="text" id="fname" name="fname"></input>
      </p>
-  </form> Eingabefeld für die Seitenzahl. Mithilfe der Buttons <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/angle-up-solid.png" height="12"/></button> und <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/angle-down-solid.png" height="12"/></button> kann die Seitenzahl um Eins herauf- bzw. herabgesetzt werden. Dieses Feld ist nur vorhanden, wenn es ein PDF gibt, und optional.
+  </form> Eingabefeld für die Seitenzahl. Mithilfe der Buttons <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/angle-up-solid.png" width="12" height="12"/></button> und <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/angle-down-solid.png" width="12" height="12"/></button> kann die Seitenzahl um Eins herauf- bzw. herabgesetzt werden. Dieses Feld ist nur vorhanden, wenn es ein PDF gibt, und optional.
 * <button>pdf ansehen</button> Öffne das PDF. Dieser Button ist nur verfügbar, wenn zum Medium ein PDF hinzugefügt worden ist.
 * <button>Speichern</button> Speichere den Eintrag und beende die Aktion.
 * <button>Abbrechen</button> Beende die Aktion, ohne den Eintrag zu speichern.
@@ -226,13 +226,13 @@ Die standardmäßige Voreinstellung im Dropdown-Menü „Vorauswahl“ richtet s
      <option value="a">Veranstaltung (alle) x</option>
      <option value="b">Veranstaltung x</option>
      <option value="c">extern (alle) x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button>.
 * Eintrag <label for="cars"></label>
   <select name="cars" id="cars">
      <option value="a">Medium x</option>
      <option value="b">Gliederungseintrag x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines Mediums oder eines Gliederungseintrags. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
-* Medien: <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-pdf-regular.png" height="16"/></button>, <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/film-solid.png" height="12"/></button> und/oder <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="12"/></button> Öffne das Medium, auf das verwiesen wird.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl eines Mediums oder eines Gliederungseintrags. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button>.
+* Medien: <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-pdf-regular.png" height="16"/></button>, <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/film-solid.png" width="12" height="12"/></button> und/oder <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" width="12" height="12"/></button> Öffne das Medium, auf das verwiesen wird.
 * zusätzliches Medium: <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/file-pdf-regular.png" height="16"/></button> (nur bei importierten Einträgen, d.h. Einträge aus Skripten, die mit dem MaMpf-Paket getext und deren Gliederungen von MaMpf importiert worden sind) Öffne das Skript, aus dem der Eintrag stammt.
 * <form>
      <p>
@@ -253,7 +253,7 @@ Die standardmäßige Voreinstellung im Dropdown-Menü „Vorauswahl“ richtet s
 
 ![](/img/thyme_editor_referenz_anlegen.png)
 
-Nun kann entweder ein bereits vorhandener Eintrag im Dropdown-Menü „Eintrag“ ausgewählt oder über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" height="12"/></button> ein neuer Eintrag angelegt werden. Zum Anlegen eines neuen Eintrags öffnet sich das folgende Formular:  
+Nun kann entweder ein bereits vorhandener Eintrag im Dropdown-Menü „Eintrag“ ausgewählt oder über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" width="12" height="12"/></button> ein neuer Eintrag angelegt werden. Zum Anlegen eines neuen Eintrags öffnet sich das folgende Formular:  
 
 <table>
   <tr>
@@ -324,8 +324,8 @@ Nachdem ein bereits vorhandener Eintrag im Dropdown-Menü „Eintrag“ ausgewä
      <option value="c">extern (alle) x</option>
      <option value="a">Veranstaltung (alle) x</option>
      <option value="b">Veranstaltung x</option>
-  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>.
-* Vorauswahl <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" height="12"/></button> Öffne das Formular zum Anlegen eines neuen Eintrags.
+  </select><br></br> Dropdown-Menü mit Eingabefeld zur Auswahl einer Veranstaltung, aller Veranstaltungen eines Moduls oder aller externer Referenzen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button>.
+* Vorauswahl <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/note-add.png" width="12" height="12"/></button> Öffne das Formular zum Anlegen eines neuen Eintrags.
 * Eintrag <label for="cars"></label>
   <select name="cars" id="cars">
      <option value="a">Externe Referenz 1</option>
@@ -373,7 +373,7 @@ Im Bereich „Referenz“ werden alle bereits angelegten Referenzen angezeigt. J
 ![](/img/thyme_editor_referenzen_cut.png)
 
 ### Screenshot
-Im Bereich „Screenshot“ wird ein Screenshot angezeigt, sofern mithilfe <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-a-photo.png" height="14"/></button> in der Steuerleiste des Bildes ein Screenshot angefertigt worden ist. Falls es einen Screenshot gibt, so steht in diesem Bereich genau ein Bedienelement zur Verfügung. Dabei handelt es sich um den Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="12"/></button> zum Löschen des Screenshots.
+Im Bereich „Screenshot“ wird ein Screenshot angezeigt, sofern mithilfe <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/add-a-photo.png" height="14"/></button> in der Steuerleiste des Bildes ein Screenshot angefertigt worden ist. Falls es einen Screenshot gibt, so steht in diesem Bereich genau ein Bedienelement zur Verfügung. Dabei handelt es sich um den Button <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" width="12" height="12"/></button> zum Löschen des Screenshots.
 
 ![](/img/thyme_editor_screenshot_cut.png)
 

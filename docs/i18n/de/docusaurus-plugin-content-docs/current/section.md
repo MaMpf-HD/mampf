@@ -31,8 +31,8 @@ Die eigentliche Seite besteht aus einer Überschrift, Navigationselementen und d
 * <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die Seite der <a href="/mampf/de/docs/event-series" target="_self">Veranstaltung</a>.
 
 ### Navigationselemente
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" height="12"/></button> Wechsel zum nächsten Abschnitt. (Auf der Seite des letzten Abschnitts ist dieser Button nicht vorhanden.)
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left.png" height="12"/></button> Wechsel zum vorigen Abschnitt. (Auf der Seite des ersten Abschnitts ist dieser Button nicht vorhanden.)
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" width="12" height="12"/></button> Wechsel zum nächsten Abschnitt. (Auf der Seite des letzten Abschnitts ist dieser Button nicht vorhanden.)
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left.png" width="12" height="12"/></button> Wechsel zum vorigen Abschnitt. (Auf der Seite des ersten Abschnitts ist dieser Button nicht vorhanden.)
 
 ### Verknüpfte Begriffe
 <a href="/mampf/de/docs/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die Seite des <a href="/mampf/de/docs/tag" target="_self">Begriffs</a>.
@@ -41,9 +41,9 @@ Die eigentliche Seite besteht aus einer Überschrift, Navigationselementen und d
 <a href="/mampf/de/docs/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die Seite der <a href="/mampf/de/docs/session" target="_self">Sitzung</a>.
 
 ### Inhalt
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript.
-* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" width="12" height="12"/></button> Öffne das Skript.
+* <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/docs/thyme" target="_self">THymE</a> ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" width="12" height="12"/></button> Öffne das PDF.
 
 ### Verknüpfte Medien
 <button name="button">Medium</button> Klappe die Mediacard-Liste aller verknüpfter Medien des angegebenen Typs aus. Mögliche Typen sind Lektion, Worked Example, Quiz, Wiederholung, Beispiel, Übung, Skript, Quiz-Frage, Quiz-Erläuterung und Sonstiges. Zu möglichen weiteren Buttons siehe <a href="/mampf/de/docs/mediacard" target="_self">Mediacard</a>.
@@ -68,10 +68,10 @@ Auf dieser Seite werden Synonyme und Übersetzungen des Begriffs aufgelistet. Zu
 Auf der Sitzungsseite gibt es eine Gliederung, mit der zur gewünschten Stelle im PDF oder Video navigiert werden kann, und eine Übersicht über alle verknüpften Begriffe, Abschnitte und Medien. Diese sind ebenfalls verlinkt und können durch Anklicken geöffnet werden. Sitzungsseiten sind über den <a href="/mampf/de/docs/session" target="_self"><button name="button">Titel</button></a> erreichbar erreichbar.
 
 ### [THymE-Player](thyme.md)
-Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button>-Button.
+Im THymE-Player können Videos abgespielt werden. Der Player zeigt zudem eine Gliederung des Videos und weiterführende Informationen (z.B. Links zu Zusatzmaterial) an. Er öffnet sich durch Klicken auf den <button name="button"><a href="/mampf/de/docs/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12"/></a></button>-Button.
 
 ### [Seite des verknüpften Mediums](medium.md)
-Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button>-Button klicken.
+Auf der Seite eines Mediums stehen weitere, vom Medientyp abhängige Informationen (z.B. zu Länge bzw. Umfang und Größe von PDFs bzw. Videos) zur Verfügung. Auf allen Medienseiten sind verknüpfte Medien und Begriffe aufgeführt und verlinkt. Zudem können Kommentare verfasst und gelesen werden. Um auf eine Medienseite zu gelangen, muss man auf den <button name="button"><a href="/mampf/de/docs/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" width="12" height="12"/></a></button>-Button klicken.
 
 ## Verwandte und ähnliche Seiten
 ### Übergeordnete Seite
