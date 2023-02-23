@@ -97,14 +97,14 @@ Auf den [Mediacards](mediacard) können sich zusätzliche Informationen befinden
 
 ## Verwandte Seiten
 ### Übergeordnete Seite
-[Vorlesungsseite](lecture)
+[Vorlesungsseite](lecture.md)
 
 ### Ähnliche Seiten
-* [Tag](tag)
-* [DozentIn](lecturer)
-* [Medium](medium)
-* [Sitzung](session)
-* [Vortrag](talk)
+* [Tag](tag.md)
+* [DozentIn](lecturer.md)
+* [Medium](medium.md)
+* [Sitzung](session.md)
+* [Vortrag](talk.md)
 
 ### Weiterführende Seite (für Editor*innen)
-[Abschnitt bearbeiten](ed-edit-section)
+[Abschnitt bearbeiten](ed-edit-section.md)
