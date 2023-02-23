@@ -46,7 +46,7 @@ Auf der Seite „Sitzung“ kommen Bedienelemente bei einfachen Nutzer\*innen be
 ### Inhalt
 * <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" width="12" height="12"/></a></button> Spiele das Video von vorne mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" width="12" height="12"/></button> Öffne das PDF auf der ersten Seite.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" width="16" height="8"/></button> Öffne den externen Link.
 * <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" width="12" height="12"/></a></button> Öffne die <a href="/mampf/de/mampf-pages/medium" target="_self">Medienseite der Lektion</a>.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" width="12" height="12"/>mp4</button> Lade das Video herunter.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" width="12" height="12"/>pdf</button> Lade das PDF herunter.

@@ -54,7 +54,7 @@ Die Bedienelemente im Header der Cards stimmen überein und richten sich danach,
            <li>
               <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" width="12" height="12"/></button> Öffne das Übungsblatt.
            <li>
-              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" height="8"/></button> Öffne den externen Link.
+              <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link.png" width="16" height="8"/></button> Öffne den externen Link.
            </li>      
            </li>
            <li>
