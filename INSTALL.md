@@ -25,17 +25,21 @@ You now have the following things ready:
 
 ### Database setup
 
-#### Use an empty database
+#### Using a prefilled database
 
-1. register via <a href="http://localhost:3000/users/sign_up?" target="_blank">MaMpf-GUI</a>
-2. visit the <a href="http://localhost:1080/" target="_blank">mailcatcher webinterface</a> and confirm your account
-3. make your account admin
-   ```
-   # docker-compose exec mampf rails r "User.first.update(admin: true)"
-   ```
-4. There you go :tada:
+After setting up everything you can call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for several users that you can use to sign in (with the obvious roles). Each of these have `dockermampf` as password.:
 
-#### Use a prefilled database
+- `admin@mampf.edu`
+- `teacher@mampf.edu`
+- `tutor@mampf.edu`
+- `student1@mampf.edu`,..., `student5@mampf.edu`
+
+##### Prefilled database: automatic setup
+
+Just uncomment the lines containing `DB_SQL_PRESEED_URL` and `UPLOADS_PRESEED_URL` in the development docker-compose.yml, start Mampf and you should be good to go after it finished initialising.
+If that for some reason does not work, open a new issue about it (https://github.com/MaMpf-HD/mampf/issues/new) and follow the manual setup instead.
+
+##### Prefilled database: Manual setup
 
 1. Download the latest version of the docker development database from <a href="https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/" target="_blank">here</a>
 and put it in the `db/backups/docker_development` folder in your project directory. The file should have a timestamp in its name, e.g. `20220923120841_mampf.sql`
@@ -50,15 +54,21 @@ and put it in the `db/backups/docker_development` folder in your project directo
    ```
 4. Download the sample videos and sample manuscripts that match the data in the prepopulated
      database <a href="https://heibox.uni-heidelberg.de/f/1c4804dcd78446139fd9/?dl=1" target="_blank">here</a> and extract the .zip file into the `public/` folder of your project directory.
-5. Call the MaMpf Server on <a href="http://localhost:3000/" target="_blank">localhost:3000</a>. The prepopulated database contains data for several users
-that you can use to sign in: `admin@mampf.edu`, `teacher@mampf.edu`, `tutor@mampf.edu` and `student1@mampf.edu`,..., `student5@mampf.edu` (with the obvious roles). Each of these have `dockermampf` as password.
-6. There you go :tada:
-
-Instead you can also uncomment the preseed options in the docker-compose file. When in daut, just follow this guide here.
-
 
 Note that in both cases, the first start of the MaMpf server can take a while, as
 all assets have to provided.
+
+#### Using an empty database
+
+1. register via <a href="http://localhost:3000/users/sign_up?" target="_blank">MaMpf-GUI</a>
+2. visit the <a href="http://localhost:1080/" target="_blank">mailcatcher webinterface</a> and confirm your account
+3. make your account admin
+   ```
+   # docker-compose exec mampf rails r "User.first.update(admin: true)"
+   ```
+4. There you go :tada:
+
+### Common docker-compose commands
 
 A few common commands for `docker-compose` are:
 
@@ -70,6 +80,8 @@ A few common commands for `docker-compose` are:
 | `docker-compose down`              | deletes all the created containers                             |
 | `docker-compose down --volumes`    | deletes all the associated containers and volumes (full reset) |
 | `docker-compose exec mampf <exec>` | run an executable in the container                             |
+
+If you installed docker compose as a plugin to docker these commands are instead prefixed with `docker compose` (note the space).
 
 
 ## Installation in production mode
