@@ -1,7 +1,7 @@
 <% tags.each do |t| %>
   <%= link_to t.short_title,
               edit_tag_path(t),
-              class:'badge badge-light text-dark',
+              class:'badge bg-light text-dark',
               data: { toggle: 'tooltip',
                       placement: 'top'},
               title: t.title %>

@@ -117,56 +117,56 @@ $(document).on 'turbolinks:load', ->
     if this.dataset.type == 'Lesson'
       lessonId = this.dataset.id
       $('.lecture-lesson[data-id="'+lessonId+'"]')
-        .removeClass('badge-secondary')
-        .addClass('badge-info')
+        .removeClass('bg-secondary')
+        .addClass('bg-info')
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light')
-        .addClass('badge-warning')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-light')
+        .addClass('bg-warning')
     return
 
   # mouseleave over lesson -> restore original color of lessons and tags
   $('[id^="lecture-medium_"]').on 'mouseleave', ->
     if this.dataset.type == 'Lesson'
       lessonId = this.dataset.id
-      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-info')
-        .addClass('badge-secondary')
+      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('bg-info')
+        .addClass('bg-secondary')
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning')
-        .addClass('badge-light')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
+        .addClass('bg-light')
     return
 
   # mouseenter over lesson -> colorize tags
   $('[id^="lecture-lesson_"]').on 'mouseenter', ->
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light')
-        .addClass('badge-warning')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-light')
+        .addClass('bg-warning')
     return
 
   # mouseleave over lesson -> restore original color of tags
   $('[id^="lecture-lesson_"]').on 'mouseleave', ->
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning')
-        .addClass('badge-light')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
+        .addClass('bg-light')
     return
 
   # mouseenter over tag -> colorize lessons
   $('[id^="lecture-tag_"]').on 'mouseenter', ->
     lessons = $(this).data('lessons')
     for l in lessons
-      $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-secondary')
-        .addClass('badge-info')
+      $('.lecture-lesson[data-id="'+l+'"]').removeClass('bg-secondary')
+        .addClass('bg-info')
     return
 
   # mouseleave over tag -> restore original color of lessons
   $('[id^="lecture-tag_"]').on 'mouseleave', ->
     lessons = $(this).data('lessons')
     for l in lessons
-      $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-info')
-        .addClass('badge-secondary')
+      $('.lecture-lesson[data-id="'+l+'"]').removeClass('bg-info')
+        .addClass('bg-secondary')
     return
 
   $('#edited-media-tab a[data-toggle="tab"]').on 'shown.bs.tab', (e) ->
@@ -346,7 +346,7 @@ $(document).on 'turbolinks:load', ->
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
-  $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
-  $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
+  $('.lecture-tag').removeClass('bg-warning').addClass('bg-light')
+  $('.lecture-lesson').removeClass('bg-info').addClass('bg-secondary')
   $(document).off 'change', '#lecture_course_id'
   return

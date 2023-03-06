@@ -5,7 +5,7 @@
        	<h4>
          	<%= t('mampf_news.title') %>
          	<% if user_signed_in? && current_user.active_news.present? %>
-            <span class="badge badge-secondary newsCounter"
+            <span class="badge bg-secondary newsCounter"
             			data-count="<%= @current_user.active_news.count %>">
               <%= @current_user.active_news.count %>
             </span>

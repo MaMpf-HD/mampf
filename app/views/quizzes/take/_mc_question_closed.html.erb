@@ -27,7 +27,7 @@
     <div class="col-12 <%= hide_as_class(input == question.answer_scheme) %>"
          id="feedback-<%= old_id %>-<%= a.id %>">
       <% if input[a.id] != a.value %>
-        <span class="badge badge-danger">
+        <span class="badge bg-danger">
           <% if input[a.id] %>
             <%= t('admin.quiz.checked_false') %>
           <% else %>
@@ -54,7 +54,7 @@
                 <%= hide_as_class(input == question.answer_scheme || input[a.id] == a.value) %>"
          id="explanation-<%= old_id %>-<%= a.id %>">
       <% unless a.explanation.blank? %>
-        <span class="badge badge-secondary">
+        <span class="badge bg-secondary">
           <%= t('admin.quiz.reason') %>:
         </span>
         <%= a.conditional_explanation(input[a.id] == a.value) %>

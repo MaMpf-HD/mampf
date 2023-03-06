@@ -4,7 +4,7 @@
     <% if @watchlists.size > 1 %>
       <span class="dropdown">
         <button class="btn btn-primary dropdown-toggle"
-            data-toggle="dropdown"
+            data-bs-toggle="dropdown"
             type="button"
             id="watchlistButton"
             data-id=<%= @watchlist.id %>
@@ -83,7 +83,7 @@
       <button class="btn btn-sm dropdown-toggle text-primary"
           type="button"
           id="perPageButton"
-          data-toggle="dropdown"
+          data-bs-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
         <%= t('per_page') %>
       </button>

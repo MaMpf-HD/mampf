@@ -37,7 +37,7 @@
        <%= hide_as_class(input == question.answer_scheme || input[answer.id] == answer.value) %>"
        id="explanation-<%= old_id %>-<%= answer.id %>">
     <% unless answer.explanation.blank? %>
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= t('admin.quiz.reason') %>:
       </span>
       <%= answer.conditional_explanation(input[answer.id] == answer.value) %>

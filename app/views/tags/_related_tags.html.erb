@@ -19,7 +19,7 @@
   <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
     <%= link_to t.short_title,
                 edit_tag_path(t),
-                class: "badge badge-light text-dark",
+                class: "badge bg-light text-dark",
                 id: 'related-' + dom_id(t),
                 data: { toggle: 'tooltip',
                         placement: 'top',

@@ -652,8 +652,8 @@ class Medium < ApplicationRecord
   end
 
   def subheader_style
-    return 'badge badge-secondary' unless sort == 'Nuesse' && file_last_edited
-    'badge badge-danger'
+    return 'badge bg-secondary' unless sort == 'Nuesse' && file_last_edited
+    'badge bg-danger'
   end
 
   def cache_key

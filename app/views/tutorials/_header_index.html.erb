@@ -2,7 +2,7 @@
 <% if @assignments.size > 1 %>
   <span class="dropdown">
     <button class="btn btn-secondary dropdown-toggle"
-            data-toggle="dropdown"
+            data-bs-toggle="dropdown"
             type="button">
       <%= @assignment.title %>
     </button>
@@ -87,7 +87,7 @@
   <% if @assignment.active? || @assignment.in_grace_period? %>
     <div class="row my-3">
       <div class="col-12">
-        <span class="badge badge-danger">
+        <span class="badge bg-danger">
           <%= t('basics.attention') %>
         </span>
         <% if @assignment.active? %>

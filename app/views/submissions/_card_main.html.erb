@@ -55,12 +55,12 @@
               <%= link_to raw(t('basics.submission') + ' &darr;'),
                           show_submission_manuscript_path(submission),
                           target: :_blank,
-                          class: 'badge badge-secondary' %>
+                          class: 'badge bg-secondary' %>
               <% if submission.correction %>
                 <%= link_to raw(t('basics.correction') + ' &darr;') ,
                           show_correction_path(submission),
                           target: :_blank,
-                          class: 'badge badge-secondary' %>
+                          class: 'badge bg-secondary' %>
               <% end %>
             <% else %>
               <%= t('submission.no_manuscript_yet') %>

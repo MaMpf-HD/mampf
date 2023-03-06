@@ -1,11 +1,11 @@
 <div class="row px-4 py-2 mt-2">
   <div class="col-7">
     <h4 class="ps-2">
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= lecture.sort_localized %>
       </span>
       <% unless lecture.published? %>
-        <span class="badge badge-warning">
+        <span class="badge bg-warning">
           <%= t('access.unpublished') %>
         </span>
       <% end %>

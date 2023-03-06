@@ -5,7 +5,7 @@
         <h4>
           <%= t('categories.announcements') %>
           <% if @active_notification_count.positive? %>
-            <span class="badge badge-secondary newsCounter"
+            <span class="badge bg-secondary newsCounter"
                   data-count="<%= @active_notification_count %>">
               <%= @active_notification_count %>
             </span>

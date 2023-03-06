@@ -9,14 +9,14 @@
            href="<%= notifications_path %>">
           <i class="far fa-bell text-light">
           </i>
-          <span class="badge badge-light text-dark notificationCounter"
+          <span class="badge bg-light text-dark notificationCounter"
                 data-count="<%= relevant_notifications.count %>">
             <%= relevant_notifications.count %>
           </span>
         </a>
         <button type="button"
                 class="btn btn-primary btn-sm dropdown-toggle dropdown-toggle-split"
-                data-toggle="dropdown"
+                data-bs-toggle="dropdown"
                 aria-haspopup="true" aria-expanded="false">
           <span class="sr-only">
             <%= t('buttons.toggle') %>
