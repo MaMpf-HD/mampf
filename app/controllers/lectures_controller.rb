@@ -91,6 +91,7 @@ class LecturesController < ApplicationController
     # info to the lecture
     @lecture.course = Course.find_by_id(params[:course])
     I18n.locale = @lecture.course.locale
+    @lecture.annotations_status = 0
   end
 
   def create
@@ -316,7 +317,7 @@ class LecturesController < ApplicationController
                                     :comments_disabled,
                                     :submission_max_team_size,
                                     :submission_grace_period,
-                                    :annotation_status,
+                                    :annotations_status,
                                     editor_ids: [])
   end
 
