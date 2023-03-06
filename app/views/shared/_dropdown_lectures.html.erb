@@ -12,7 +12,7 @@
         <% unless lecture.published? %>
           <i class="fas fa-eye-slash redtext"
              tabindex="-1"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%=t('lecture.unpublished') %>">
           </i>
         <% end %>
@@ -37,7 +37,7 @@
             <% unless l.published? %>
               <i class="fas fa-eye-slash redtext"
                  tabindex="-1"
-                 data-toggle="tooltip"
+                 data-bs-toggle="tooltip"
                  title="<%=t('lecture.unpublished') %>">
               </i>
             <% end %>

@@ -1,3 +1,4 @@
+<% console %>
 <div class="row">
   <div class="col-4">
     <%= t('manuscript.manuscript') %>
@@ -36,8 +37,8 @@
     <% if medium.manuscript.present? %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"
-              data-toggle="modal"
-              data-target="#snapshotModal">
+              data-bs-toggle="modal"
+              data-bs-target="#snapshotModal">
         <%= t('basics.screenshot') %>
       </button>
       <%= link_to t('buttons.view'),

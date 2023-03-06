@@ -6,7 +6,7 @@
       </span>
       <% unless medium.published? %>
         <span class="badge bg-warning"
-              data-toggle="tooltip"
+              data-bs-toggle="tooltip"
               title="<%= if !medium.teachable.published?
                            t('admin.medium.info.unpublished_lecture')
                          end %>">
@@ -15,7 +15,7 @@
       <% end %>
       <% if medium.locked? %>
         <span class="badge bg-warning"
-              data-toggle="tooltip"
+              data-bs-toggle="tooltip"
               title="<%= t('admin.medium.info.locked') %>">
           <%= t('access.locked') %>
         </span>

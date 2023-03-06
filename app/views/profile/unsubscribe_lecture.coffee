@@ -1,5 +1,5 @@
 <% if @success %>
-$card = $('.lectureCard[data-id="<%= @lecture.id %>"][data-parent="<%= @parent %>"]')
+$card = $('.lectureCard[data-id="<%= @lecture.id %>"][data-bs-parent="<%= @parent %>"]')
 <% if @parent.in?(['inactive', 'current_subscribed']) %>
 $card.remove()
 <% if @none_left %>

@@ -36,8 +36,8 @@
     <% if medium.geogebra_screenshot_url.present? %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"
-              data-toggle="modal"
-              data-target="#geogebraScreenshotModal">
+              data-bs-toggle="modal"
+              data-bs-target="#geogebraScreenshotModal">
         <%= t('basics.screenshot') %>
       </button>
       <%= link_to t('buttons.view'),

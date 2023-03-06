@@ -22,7 +22,7 @@
                     class: "form-label" %>
         <a class="fas fa-plus-circle clickable text-dark"
            id="new-talk-date-button"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-count="<%= talk.dates.size + 1 %>"
            title="<%= t('admin.tag.create') %>">
         </a>
@@ -105,7 +105,7 @@
       <%= helpdesk(t('admin.talk.info.tags'), false) %>
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-tag-button"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          title="Tag anlegen"
          data-course="<%= talk.lecture.course.id %>"
          data-talk="<%= talk.id %>"

@@ -104,7 +104,7 @@
       <% if current_user.admin || current_user.editor? %>
         <a class="fas fa-plus-circle clickable text-dark"
            id="new-tag-button"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            title="<%= t('admin.tag.create') %>"
            data-course="<%= medium.course.id %>"
            data-medium="<%= medium.id %>"

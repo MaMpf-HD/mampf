@@ -2,21 +2,21 @@
    id="unpublished_medium_item"
    style="display: <%= show_no_block(!!item&.medium && !item.medium.published?) %>"
    tabindex="-1"
-   data-toggle="tooltip"
+   data-bs-toggle="tooltip"
    title="<%= t('admin.referral.info.unpublished_medium') %>">
 </i>
 <i class="fas fa-lock fa-lg redtext ms-2"
    id="locked_medium_item"
    style="display: <%= show_no_block(!!item&.medium&.locked?) %>"
    tabindex="-1"
-   data-toggle="tooltip"
+   data-bs-toggle="tooltip"
    title="<%= t('admin.referral.info.locked_medium') %>">
 </i>
 <i class="fas fa-notes-medical fa-lg redtext ms-2"
    id="locked_medium_item"
    style="display: <%= show_no_block(!!item&.quarantine) %>"
    tabindex="-1"
-   data-toggle="tooltip"
+   data-bs-toggle="tooltip"
    title="<%= t('admin.referral.info.quarantine_item') %>">
 </i>
 <a id="video-ref"
@@ -24,7 +24,7 @@
    class="fas fa-film fa-lg mx-2 text-dark"
    style="text-decoration: none;
           display: <%= show_no_block(!!item&.video? && item.sort != 'pdf_destination') %>"
-   data-toggle="tooltip"
+   data-bs-toggle="tooltip"
    title="<%= t('video.video') %>"
    target="_blank">
 </a>
@@ -33,7 +33,7 @@
    class="far fa-file-pdf fa-lg mx-2 text-dark"
    style="text-decoration: none;
           display: <%= show_no_block(!!item&.manuscript?) %>"
-   data-toggle="tooltip"
+   data-bs-toggle="tooltip"
    title="<%= t('manuscript.manuscript') %>"
    target="_blank">
 </a>
@@ -42,7 +42,7 @@
    class="fas fa-gamepad fa-lg mx-2 text-dark"
    style="text-decoration: none;
           display: <%= show_no_block(!!item&.quiz?) %>"
-   data-toggle="tooltip"
+   data-bs-toggle="tooltip"
    title="<%= t('quiz.quiz') %>"
    target="_blank">
 </a>
@@ -51,7 +51,7 @@
    class="fas fa-link fa-lg mx-2 text-dark"
    style="text-decoration: none;
           display: <%= show_no_block(!!item&.medium_link?) %>"
-   data-toggle="tooltip"
+   data-bs-toggle="tooltip"
    title="externer Link"
    target="_blank">
 </a>

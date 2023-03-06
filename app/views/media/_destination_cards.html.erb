@@ -41,8 +41,8 @@
                     <% end %>
                     <button class="btn btn-link"
                             type="button"
-                            data-toggle="collapse"
-                            data-target="#<%= 'collapse' + s['counter'].to_s %>">
+                            data-bs-toggle="collapse"
+                            data-bs-target="#<%= 'collapse' + s['counter'].to_s %>">
                       <%= "§#{s['label']}. #{s['description']}" %>
                     </button>
                   </div>
@@ -58,7 +58,7 @@
               </div>
               <div id="<%= 'collapse' + s['counter'].to_s %>"
                    class="collapse"
-                   data-parent="#manuscriptAccordion">
+                   data-bs-parent="#manuscriptAccordion">
                 <div class="card-body">
                   <% if manuscript.content_in_section(s).blank? %>
                     <%= t('manuscript.no_labels') %>
@@ -81,14 +81,14 @@
                       </div>
                       <div class="col-1 mt-2 text-end">
                         <i class="fas fa-tag"
-                           data-toggle="tooltip"
+                           data-bs-toggle="tooltip"
                            data-placement="bottom"
                            title="<%= t('admin.tag.create') %>">
                         </i>
                       </div>
                       <div class="col-2 mt-2 text-center">
                         <i class="far fa-eye"
-                           data-toggle="tooltip"
+                           data-bs-toggle="tooltip"
                            data-placement="bottom"
                            title="<%= t('manuscript.visibility') %>">
                         </i>

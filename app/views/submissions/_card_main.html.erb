@@ -25,7 +25,7 @@
                         text-secondary clipboard-btn ms-3
                         clipboard-button"
                 data-clipboard-text="<%= submission.token %>"
-                data-toggle="tooltip"
+                data-bs-toggle="tooltip"
                 data-id="<%= assignment.id %>"
                 title="<%= t('buttons.copy_to_clipboard') %>">
                 <span class="clipboardpopuptext token-clipboard-popup"
@@ -185,7 +185,7 @@
         <% if assignment.in_grace_period? %>
           <i class="fas fa-2x fa-exclamation-circle clickable"
              id="late-submission-warning"
-             data-toggle="popover"
+             data-bs-toggle="popover"
              data-content="<%= t('submission.late_submission_warning_html',
                           friendly_deadline: l(assignment.friendly_deadline,
                                                format: :short)) %>"

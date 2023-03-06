@@ -53,7 +53,7 @@
             <% if remark.video %>
               <a href="<%= play_medium_path(remark) %>"
                  class="no-deco ms-3 fas fa-play fa-2x text-info"
-                 data-toggle="tooltip"
+                 data-bs-toggle="tooltip"
                  data-placement="bottom"
                  title="<%= t('admin.quiz.video_info') %>"
                  target="_blank">
@@ -62,7 +62,7 @@
             <% if remark.manuscript %>
               <a href="<%= display_medium_path(remark) %>"
                  class="no-deco ms-3 far fa-file-pdf fa-2x text-info"
-                 data-toggle="tooltip"
+                 data-bs-toggle="tooltip"
                  data-placement="bottom"
                  title="<%= t('admin.quiz.manuscript_info') %>"
                  target="_blank">
@@ -71,7 +71,7 @@
             <% if remark.geogebra %>
               <a href="<%= geogebra_medium_path(remark) %>"
                  class="no-deco ms-3 fas fa-draw-polygon fa-2x text-info"
-                 data-toggle="tooltip"
+                 data-bs-toggle="tooltip"
                  data-placement="bottom"
                  title="<%= t('admin.quiz.geogebra_info') %>"
                  target="_blank">

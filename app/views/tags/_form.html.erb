@@ -43,8 +43,8 @@
               (tag.courses & current_user.edited_courses).any?) %>
           <button class="btn btn-sm btn-secondary"
                   type="button"
-                  data-toggle="modal"
-                  data-target="#identifyTagModal">
+                  data-bs-toggle="modal"
+                  data-bs-target="#identifyTagModal">
             <%= t('admin.tag.identify') %>
           </button>
           <%= link_to t('buttons.delete'),

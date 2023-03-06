@@ -5,7 +5,7 @@
           text-secondary clipboard-btn ms-3
           clipboard-button"
       data-clipboard-text="<%= submission.users.map(&:email).join(', ') %>"
-      data-toggle="tooltip"
+      data-bs-toggle="tooltip"
       data-id="<%= submission.id %>"
       title="<%= t('buttons.copy_email_to_clipboard') %>">
       <span class="clipboardpopuptext token-clipboard-popup"
@@ -15,7 +15,7 @@
     </i>
     <% if submission.too_late? %>
       <i class="fas fa-exclamation-triangle"
-        data-toggle="tooltip"
+        data-bs-toggle="tooltip"
         title="<%= late_submission_info(submission, submission.tutorial) %>">
       </i>
     <% end %>

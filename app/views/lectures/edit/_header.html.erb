@@ -28,8 +28,8 @@
     <% unless lecture.published? %>
       <button type="button"
               class="btn btn-sm btn-outline-danger"
-              data-toggle="modal"
-              data-target="#publishLectureModal">
+              data-bs-toggle="modal"
+              data-bs-target="#publishLectureModal">
         <%= t('buttons.publish') %>
       </button>
     <% end %>

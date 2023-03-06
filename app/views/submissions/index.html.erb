@@ -32,13 +32,14 @@
         <div class="col-2 text-end">
           <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ms-2',
                     tabindex: -1,
-                    data: { toggle: 'popover',
-                            trigger: 'focus',
-                            content: t('submission.profile_info_html',
-                                       profile:
-                                         link_to(t('notifications.profile'),
-                                                 edit_profile_path)),
-                            html: true },
+                    'data-bs-toggle': 'popover',
+                    'data-bs-trigger': 'focus',
+                    'data-bs-placement': 'left',
+                    'data-bs-container': 'body',
+                    'data-bs-content': "t('submission.profile_info_html',
+                                         profile: link_to(t('notifications.profile'),
+                                                  edit_profile_path))",
+                    'data-bs-html': true,
                     title: t('info') %>
         </div>
         <% @previous_assignments.each do |a| %>
@@ -58,22 +59,23 @@
     </div>
   </div>
   <div class="accordion mb-3" id="submissionsAccordion">
-    <div class="card">
-      <div class="card-header clickable"
-           role="tab"
-           id="old_submissions_heading"
-           data-toggle="collapse"
-           data-target="#old_submissions_collapse"
-           aria-expanded="false"
-           aria-controls="old_submissions_collapse">
-        <h4>
-          <%= t('submission.old_ones') %>
-        </h4>
+    <div class="accordion-item">
+      <div class="accordion-header clickable">
+        <button class="accordion-button collapsed"
+                type="button"
+                id="old_submissions_heading"
+                data-bs-toggle="collapse"
+                data-bs-target="#old_submissions_collapse"
+                aria-expanded="false"
+                aria-controls="old_submissions_collapse">
+          <h4>
+            <%= t('submission.old_ones') %>
+          </h4>
+        </button>
       </div>
       <div id="old_submissions_collapse"
            class="collapse"
-           role="tabpanel"
-           data-parent="#submissionsAccordion"
+           data-bs-parent="#submissionsAccordion"
            aria-labelledby="old_submissions_heading">
         <div class="row p-3">
           <% if @old_assignments.any? %>
@@ -93,22 +95,23 @@
         </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header clickable"
-           role="tab"
-           id="future_submissions_heading"
-           data-toggle="collapse"
-           data-target="#future_submissions_collapse"
-           aria-expanded="false"
-           aria-controls="future_submissions_collapse">
-        <h4>
-          <%= t('submission.future_ones') %>
-        </h4>
+    <div class="accordion-item">
+      <div class="accordion-header clickable">
+        <button class="accordion-button collapsed"
+                type="button"
+                id="future_submissions_heading"
+                data-bs-toggle="collapse"
+                data-bs-target="#future_submissions_collapse"
+                aria-expanded="false"
+                aria-controls="future_submissions_collapse">
+          <h4>
+            <%= t('submission.future_ones') %>
+          </h4>
+        </button>
       </div>
       <div id="future_submissions_collapse"
            class="collapse"
-           role="tabpanel"
-           data-parent="#submissionsAccordion"
+           data-bs-parent="#submissionsAccordion"
            aria-labelledby="future_submissions_heading">
         <div class="row p-3">
           <% if @future_assignments.any? %>

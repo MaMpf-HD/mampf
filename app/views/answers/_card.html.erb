@@ -14,8 +14,8 @@
       <div class="col-4">
         <button id="targets-answer-<%= answer.id %>"
                 class="btn btn-sm btn-primary collapsed m-1"
-                data-toggle="collapse"
-                data-target="#collapse-answer-<%= answer.id %>"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapse-answer-<%= answer.id %>"
                 aria-expanded="true"
                 aria-controls="collapse-answer-<%= answer.id %>"
                 data-locale="<%= answer.question.locale_with_inheritance %>"
@@ -41,7 +41,7 @@
   <div id="collapse-answer-<%= answer.id %>"
        class="collapse"
        aria-labelledby="answer-heading-<%= answer.id %>"
-       data-parent="#answers-accordion"
+       data-bs-parent="#answers-accordion"
        data-id="<%= answer.id %>">
     <div class="card-body bg-mdb-color-lighten-6"
          id="answer-body-<%= answer.id %>">

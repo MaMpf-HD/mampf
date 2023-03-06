@@ -6,7 +6,7 @@
         <% if lecture&.imported_media&.include?(medium) %>
           <i class="fas fa-file-import text-light"
              tabindex="-1"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%= t('medium.imported') %>">
           </i>
         <% end %>
@@ -26,7 +26,7 @@
       <div class="text-light">
         <% if current_user.locale.to_s != medium.locale_with_inheritance %>
           <small style="color: lightgray;"
-                data-toggle="tooltip"
+                data-bs-toggle="tooltip"
                 title="<%= t('medium.different_language',
                              language: t('locales.' +
                                          (medium.locale_with_inheritance ||
@@ -39,20 +39,20 @@
         <% if !medium.published? && !medium.publisher %>
           <i class="fas fa-eye-slash redtext ms-2"
              tabindex="-1"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%= t('medium.unpublished') %>">
           </i>
         <% elsif !medium.published? && medium.publisher.present? %>
           <i class="far fa-calendar-check redtext ms-2"
              tabindex="-1"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%= t('medium.unpublished') + ' ' +
                         release_date_info(medium) %>">
           </i>
         <% elsif medium.locked? %>
           <i class="fas fa-lock redtext ms-2"
              tabindex="-1"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%= t('medium.locked') %>">
           </i>
         <% elsif lecture && medium.teachable_type == 'Course' && !lecture.imported_media&.include?(medium) &&
@@ -60,7 +60,7 @@
                 (medium.tags & lecture.tags_including_media_tags).blank? %>
           <i class="fas fa-eye-slash bluetext ms-2"
              tabindex="-1"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%= t('medium.waiting_for_tag') %>">
           </i>
         <% end %>
@@ -109,7 +109,7 @@
             </div>
             <div>
               <span class="<%= medium.subheader_style %>"
-                    data-toggle="tooltip"
+                    data-bs-toggle="tooltip"
                     title="<%= medium.card_tooltip %>">
                 <%= medium.card_subheader %>
               </span>

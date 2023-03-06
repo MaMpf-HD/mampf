@@ -17,7 +17,7 @@
       </div>
       <div class="col-1 col-form-label">
         <i class="material-icons clickable timer"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-placement="right"
            title="<%= t('admin.referral.take_time') %>"
            data-timer="referral_start_time">
@@ -42,7 +42,7 @@
       </div>
       <div class="col-1 col-form-label">
         <i class="material-icons clickable timer"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-placement="right"
            title="<%= t('admin.referral.take_time') %>"
            data-timer="referral_end_time">
@@ -86,7 +86,7 @@
       <div class="col-1 col-form-label">
         <i id="create_external_link"
            class="material-icons clickable"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-placement="left"
            title="<%= t('admin.item.create_external') %>"
            style="display: <%= show(referral.item&.sort == 'link') %>">
@@ -105,7 +105,7 @@
           <i id="link_reappearance_title"
              class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              data-placement="left"
              title="<%= t('admin.item.info.title_warning') %>">
           </i>
@@ -130,7 +130,7 @@
           <i id="link_reappearance_link"
              class="fas fa-exclamation-circle"
              style="display: <%= show_inline(referral.reappears) %>"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              data-placement="left"
              title="<%= t('admin.item.info.link_warning') %>">
           </i>

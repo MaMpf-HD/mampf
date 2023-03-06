@@ -6,4 +6,4 @@ $('#section-modal-content').empty()
 
 $('#sectionModal').modal('show')
  # activate popovers
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()

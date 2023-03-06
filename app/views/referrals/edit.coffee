@@ -9,4 +9,4 @@ $('#action-container').empty()
 # activate selectize and popovers
 $('.selectize').each ->
   new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
