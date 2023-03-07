@@ -16,6 +16,7 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 
 ### Lektion
 * <a href="/mampf/de/mampf-pages/session" target="_self"><button name="button">Sitzung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/session" target="_self">Seite der Sitzung</a>.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> Füge das Medium zu einer Watchlist hinzu.
 * <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 * <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
@@ -27,6 +28,7 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 
 ### Quiz
 * <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> Füge das Medium zu einer Watchlist hinzu.
 * <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 * <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/mampf-pages/medium" target="_self">Medienseite des Quiz'</a>.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/videogame-asset.png" height="12"/></button> Starte das Quiz.
@@ -34,6 +36,7 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 
 ### Skript
 * <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> Füge das Medium zu einer Watchlist hinzu.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
 * <button name="button"><a href="/mampf/de/mampf-pages/medium" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/info-black.png" height="12"/></a></button> Öffne die <a href="/mampf/de/mampf-pages/tag" target="_self">Medienseite des Skripts</a>.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/long-arrow-alt-down-solid.png" height="12"/>pdf</button> Lade das PDF herunter.
@@ -41,6 +44,7 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 
 ### Sonstiges
 * <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> Füge das Medium zu einer Watchlist hinzu.
 * <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 * <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
@@ -52,6 +56,7 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 
 ### Übung
 * <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> Füge das Medium zu einer Watchlist hinzu.
 * <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 * <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
@@ -63,6 +68,7 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 
 ### Wiederholung
 * <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> Füge das Medium zu einer Watchlist hinzu.
 * <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 * <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
@@ -74,6 +80,7 @@ Je nach Medientyp können unterschiedliche Bedienelemente auf den Mediacards vor
 
 ### Worked Example
 * <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>.
+* <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> Füge das Medium zu einer Watchlist hinzu.
 * <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> Gehe auf die <a href="/mampf/de/mampf-pages/tag" target="_self">Seite des Begriffs</a>.
 * <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> Spiele das Video mit <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a> ab.
 * <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF.
@@ -89,6 +96,7 @@ Bedienelement | Medientyp | Aktion
 ------------- | --------- | ------
 <a href="/mampf/de/mampf-pages/session" target="_self"><button name="button">Sitzung</button></a> | nur Lektion | Gehe auf die [Seite der Sitzung](session.md).
 <a href="/mampf/de/mampf-pages/event-series" target="_self"><button name="button">Veranstaltung</button></a> | alle außer Lektion | Gehe auf die [Seite der Veranstaltung](event-series.md).
+<button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/list-solid.png" height="12"/></button> | alle | Füge das Medium zu einer Watchlist hinzu.
 <a href="/mampf/de/mampf-pages/tag" target="_self"><button name="button">Begriff</button></a> | alle außer Skript | Gehe auf die [Seite des Begriffs](tag.md).
 <button name="button"><a href="/mampf/de/mampf-pages/thyme" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/play-arrow.png" height="12"/></a></button> | Lektion, Sonstiges, Übung, Wiederholung und Worked Example | Spiele das Video mit [THymE](thyme.md) ab.
 <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> | Lektion, Skript, Sonstiges, Übung, Wiederholung und Worked Example | Öffne das PDF.

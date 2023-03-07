@@ -5,7 +5,7 @@ title: Seiten für alle Nutzer*innen
 Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich sind, alphabetisch aufgelistet.
 
 ## A
-* [Abgaben](submissions) (bei Nutzer*innen, die für diese Veranstaltung über Editoren- oder Tutorenrechte verfügen, gibt es diese Seite nicht, an ihre Stelle tritt [Tutorien](tut-ed-ad-tutorials)
+* [Abgaben](submissions) (bei Nutzer*innen, die für diese Veranstaltung über Editoren- oder Tutorenrechte verfügen, gibt es diese Seite nicht, an ihre Stelle tritt [Tutorien](tut-ed-ad-tutorials))
 * [Abschnitt](section)
 * [Anleitung zur Bestätigung des Accounts erneut versenden](activate-account)
 
@@ -55,7 +55,7 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 * [Sitzung](session)
 * [Skript](manuscript)
 * [Sonstiges](miscellaneous)
-* [Startseite](home-page)
+* [Startseite](home-page), siehe auch [Meine Startseite](my-home-page)
 * [Suchergebnisse](search-results)
 
 ## T
@@ -66,9 +66,9 @@ Im Folgenden werden alle Seiten der MaMpf, die allen Nutzer\*innen zugänglich s
 * [Übungen](exercises)
 
 ## V
-* [Veranstaltung](event-series), siehe auch [Seminar](seminar) und [Vorlesung](lecture)
+* [Veranstaltung](event-series), siehe auch [Seminar](seminar) und [Vorlesung](lecture) sowie [Veranstaltungssuche](my-home-page#veranstaltungssuche)
 * [Vorlesung](lecture), siehe auch [Veranstaltung](event-series)
-* [Vortrag](talk), siehe auch [Seiten für Vortragende](all-pages-talk)
+* [Vortrag](talk), siehe auch [Seiten für Vortragende](all-pages-talk) und [Meine Vortäge](my-home-page#meine-vorträge)
 
 ## W
 * [Watchlist](watchlist)
