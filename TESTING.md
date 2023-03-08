@@ -1,7 +1,13 @@
 # Testing with cypress and a docker container as test env
 
-1. Build the docker mampf container by `docker-compose -f docker-compose.local.yml build`
-2. execute the tests `docker-compose -f docker-compose.local.yml run cypress_runner `
+1. Build the docker mampf container by running
+   ```
+   docker-compose -f docker-compose.local.yml build
+   ```
+2. execute the tests
+   ```
+   docker-compose -f docker-compose.local.yml run cypress_runner
+   ```
 3. Review the results in console and the results in `cypress/*` folder.
 
 ## Writing own tests

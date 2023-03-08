@@ -1,9 +1,8 @@
 # First build the PDF compressor Web assembly binary
-FROM golang:1.16 AS build-pdfcomprezzor
+# this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
+FROM golang:1.20 AS build-pdfcomprezzor
 WORKDIR /go/src
-COPY pdfcomprezzor/go.mod .
-COPY pdfcomprezzor/go.sum .
-COPY pdfcomprezzor/main.go .
+COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 
 # Now build the actual mampf application
@@ -20,7 +19,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
             libarchive-tools nodejs pdftk postgresql-client-12 sqlite3 wget \
             wait-for-it yarn shared-mime-info && \
     rm -rf /var/lib/apt/lists/* && apt-get clean
-    
+
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 WORKDIR /usr/src/app
 
