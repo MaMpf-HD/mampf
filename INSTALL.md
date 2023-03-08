@@ -37,6 +37,7 @@ After setting up everything you can call the MaMpf Server on <a href="http://loc
 ##### Prefilled database: automatic setup
 
 Just uncomment the lines containing `DB_SQL_PRESEED_URL` and `UPLOADS_PRESEED_URL` in the development docker-compose.yml, start Mampf and you should be good to go after it finished initialising.
+After the first initialization is done you should comment them again, otherwise the DB will be reset on each container start.
 If that for some reason does not work, open a new issue about it (https://github.com/MaMpf-HD/mampf/issues/new) and follow the manual setup instead.
 
 ##### Prefilled database: Manual setup
