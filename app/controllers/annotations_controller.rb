@@ -42,7 +42,6 @@ class AnnotationsController < ApplicationController
   def update_markers
     medium = Medium.find_by_id(params[:mediumId])
     toggled = params[:toggled]
-
     if medium.annotations_visible?(current_user) && toggled == "true"
       annots = Annotation.where(medium: medium,
                                 visible_for_teacher: true).or(

@@ -28,4 +28,35 @@ module AnnotationsHelper
       return 'Other'
     end
   end
+  
+  def color(int)
+  	case int
+  	when 1
+  	  return '#ff0000'
+  	when 2
+  	  return '#ff8800'
+  	when 3
+  	  return '#ffff00'
+  	when 4
+  	  return '#00ff00'
+  	when 5
+  	  return '#00ffff'
+  	when 6
+  	  return '#0000ff'
+  	when 7
+  	  return '#dd00ff'
+  	when 8
+  	  return '#ff99ff'
+  	when 9
+  	  return '#aa5500'
+  	when 10
+  	  return '#993300'
+  	when 11
+  	  return '#ffffff'
+  	when 12
+  	  return '#888888'
+  	when 13
+  	  return '#000000'
+  	end
+  end
 end

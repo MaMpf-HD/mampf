@@ -461,3 +461,67 @@ figure {
   margin-bottom: 15px;
   margin-top: auto;
 }
+
+
+
+
+
+
+
+
+
+$colors: (
+  red: #DB2828,
+  orange: #F2711C,
+  yellow: #FBBD08,
+  olive: #B5CC18,
+  green: #21BA45,
+  teal: #00B5AD,
+  blue: #2185D0,
+  violet: #6435C9,
+  purple: #A333C8,
+  pink: #E03997
+);
+
+* {
+  box-sizing: border-box;
+}
+
+input[type="radio"] {
+  display: none;
+  &:checked + label {
+    span { transform: scale(1.25); }
+    @each $name, $value in $colors {
+      .#{$name} {
+        border: 2px solid darken($value, 25%);
+      }
+    }
+  }
+}
+
+#color-picker {
+  text-align: center;
+  label {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    cursor: pointer;
+    &:hover {
+      span { 
+        transform: scale(1.25); 
+      }
+    }
+    span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transition: transform .2s ease-in-out;
+      @each $name, $value in $colors {
+        &.#{$name} {
+          background: $value;
+        }
+      }
+    }
+  }
+}
